@@ -20,8 +20,8 @@ import { localeSelector } from "~/reducers/settings";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
-import type { RentSignatureExtraProps } from "../intents/signRawTransactionIntent/componentLWM";
-import { signRawTransactionIntentLWMDefinition } from "../intents/signRawTransactionIntent/intentLWMDefinition";
+import type { RentSignatureExtraProps } from "../intents/signRawTransactionIntent/component";
+import { signRawTransactionIntentPlatformDefinition } from "../intents/signRawTransactionIntent/intentPlatformDefinition";
 
 const LOG_TYPE = "sponsored-send";
 
@@ -115,7 +115,7 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
     setSignIntent(previous =>
       previous?.input.transaction === toSign
         ? previous
-        : createIntent(signRawTransactionIntentLWMDefinition, input),
+        : createIntent(signRawTransactionIntentPlatformDefinition, input),
     );
   }, [account, parentAccount, toSign]);
 

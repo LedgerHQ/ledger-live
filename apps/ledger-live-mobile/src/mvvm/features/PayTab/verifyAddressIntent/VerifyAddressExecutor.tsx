@@ -1,0 +1,149 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FlowName } from "@ledgerhq/live-common/device-action/utils";
+import type { Account } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { trackEvent } from "@features/platform-pay-analytics";
+import { createIntent, type DeviceConnectionParams } from "@features/platform-device-intent";
+import type {
+  VerifyAddressIntentInput,
+  VerifyAddressIntentJobState,
+} from "@features/platform-verify-address-intent";
+import {
+  buildDeviceInitializationInput,
+  DeviceIntentExecutor,
+  type InitializationInput,
+} from "LLM/components/DeviceIntentExecutor";
+import type { PayVerifyOutcome } from "../hooks/usePayTabVerifyAddress";
+import { buildVerifyAddressIntentInput } from "./buildVerifyAddressIntentInput";
+import { verifyAddressIntentPlatformDefinition } from "./intentPlatformDefinition";
+
+const CONNECTION_PARAMS: DeviceConnectionParams = { acceptedDeviceModelIds: [] };
+
+const JOB_TRACK_EVENT: Partial<Record<VerifyAddressIntentJobState["type"], string>> = {
+  verified: "request_verification_complete",
+  cancelled: "request_verification_cancelled",
+  mismatch: "request_verification_mismatch",
+  unsupported: "request_verification_unsupported",
+};
+
+export type VerifyAddressExecutorProps = Readonly<{
+  mainAccount: Account;
+  tokenCurrency?: TokenCurrency;
+  page: string;
+  onReady: () => void;
+  onExit: (outcome: PayVerifyOutcome) => void;
+}>;
+
+const noop = () => undefined;
+
+function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): PayVerifyOutcome {
+  switch (state?.type) {
+    case "mismatch":
+      return "mismatch";
+    case "unsupported":
+      return "unsupported";
+    case "cancelled":
+      return "cancelled";
+    default:
+      return "dismissed";
+  }
+}
+
+export function VerifyAddressExecutor({
+  mainAccount,
+  tokenCurrency,
+  page,
+  onReady,
+  onExit,
+}: VerifyAddressExecutorProps): React.ReactElement | null {
+  const [initInput, setInitInput] = useState<InitializationInput | null>(null);
+  const lastJobStateRef = useRef<VerifyAddressIntentJobState | undefined>(undefined);
+  const exitedRef = useRef(false);
+
+  const exit = useCallback(
+    (outcome: PayVerifyOutcome) => {
+      if (exitedRef.current) return;
+      exitedRef.current = true;
+      onExit(outcome);
+    },
+    [onExit],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    buildDeviceInitializationInput({
+      appRequest: {
+        account: mainAccount,
+        currency: mainAccount.currency,
+        tokenCurrency,
+      },
+      flow: FlowName.receive,
+    })
+      .then(input => {
+        if (cancelled) return;
+        setInitInput(input);
+        onReady();
+      })
+      .catch(() => {
+        if (!cancelled) exit("initFailed");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [mainAccount, tokenCurrency, onReady, exit]);
+
+  const onJobStateChanged = useCallback(
+    (jobState: VerifyAddressIntentJobState) => {
+      if (exitedRef.current) return;
+      lastJobStateRef.current = jobState;
+      const event = JOB_TRACK_EVENT[jobState.type];
+      if (event) {
+        trackEvent(event, {
+          page,
+          flow: "request",
+          asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
+          network: mainAccount.currency.id,
+        });
+      }
+      if (jobState.type === "verified") exit("verified");
+    },
+    [exit, mainAccount.currency.id, mainAccount.currency.ticker, page, tokenCurrency],
+  );
+
+  const onUserCancel = useCallback(() => {
+    if (exitedRef.current) return;
+    trackEvent("request_verification_dismiss", {
+      page,
+      flow: "request",
+      asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
+      network: mainAccount.currency.id,
+    });
+    exit(outcomeFromLastState(lastJobStateRef.current));
+  }, [exit, mainAccount.currency.id, mainAccount.currency.ticker, page, tokenCurrency]);
+
+  const intent = useMemo(
+    () =>
+      createIntent(
+        verifyAddressIntentPlatformDefinition,
+        buildVerifyAddressIntentInput(mainAccount),
+      ),
+    [mainAccount],
+  );
+
+  if (!initInput) return null;
+
+  return (
+    <DeviceIntentExecutor<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
+      enabled
+      sourceFlow="receive"
+      deviceConnectionParams={CONNECTION_PARAMS}
+      deviceInitializationInput={initInput}
+      intent={intent}
+      intentComponentExtraProps={undefined}
+      onExecutorStateChanged={noop}
+      onIntentJobStateChanged={onJobStateChanged}
+      cancelIntentRequestId={undefined}
+      onUserCancel={onUserCancel}
+    />
+  );
+}

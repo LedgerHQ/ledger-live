@@ -54,7 +54,7 @@ import {
 } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
-import { contactsIntentLWDDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
+import { contactsIntentPlatformDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
@@ -94,7 +94,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const meContact = useContactsMeContact();
   const contacts = useContacts();
   const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
-    intents: contactsIntentLWDDefinitions,
+    intents: contactsIntentPlatformDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
   const currencySelection = useContactsCurrencySelectionAdapter();

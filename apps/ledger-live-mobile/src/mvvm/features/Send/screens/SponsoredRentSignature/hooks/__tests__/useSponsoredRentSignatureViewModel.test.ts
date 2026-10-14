@@ -30,8 +30,8 @@ jest.mock("@features/platform-device-intent", () => ({
 jest.mock("LLM/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
 }));
-jest.mock("../../intents/signRawTransactionIntent/intentLWMDefinition", () => ({
-  signRawTransactionIntentLWMDefinition: {},
+jest.mock("../../intents/signRawTransactionIntent/intentPlatformDefinition", () => ({
+  signRawTransactionIntentPlatformDefinition: {},
 }));
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: () => ({

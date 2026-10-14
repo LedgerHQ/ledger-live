@@ -4,7 +4,7 @@ import { InfoState } from "@shared/ui-info-state";
 import type { SignRawTransactionIntentJobState } from "@ledgerhq/live-common/intents/signRawTransactionIntent";
 import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import TranslatedError from "~/components/TranslatedError";
-import type { RentSignatureExtraProps } from "../intents/signRawTransactionIntent/componentLWM";
+import type { RentSignatureExtraProps } from "../intents/signRawTransactionIntent/component";
 import type { SponsoredRentSignatureStep } from "../hooks/useSponsoredRentSignatureViewModel";
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };

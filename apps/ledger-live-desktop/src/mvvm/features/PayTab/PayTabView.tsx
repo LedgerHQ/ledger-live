@@ -9,7 +9,7 @@ import { FeatureTour } from "@features/flow-pay-feature-tour";
 import { TrackPage } from "@shared/analytics-react";
 import PayTabHeader from "./components/PayTabHeader";
 import { PayCardDisclaimer } from "./components/PayCardDisclaimer";
-import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
+import { VerifyAddressExecutor } from "./verifyAddressIntent/VerifyAddressExecutor";
 import type { PayTabViewModel } from "./usePayTabViewModel";
 
 export function PayTabView({
@@ -66,7 +66,7 @@ export function PayTabView({
 
       <VerifyAddress {...verifyAddress} />
       {deviceIntent.active && deviceIntent.selection && (
-        <VerifyAddressExecutorLWD
+        <VerifyAddressExecutor
           selection={deviceIntent.selection}
           onReady={deviceIntent.onReady}
           onExit={deviceIntent.onExit}
