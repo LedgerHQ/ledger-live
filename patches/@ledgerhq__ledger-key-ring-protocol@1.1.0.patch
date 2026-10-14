@@ -1,0 +1,1110 @@
+diff --git a/lib-es/mockSdk.d.ts b/lib-es/mockSdk.d.ts
+index 5dd93193565bc0680fad75a4e2e69e8082a9b2e4..db6366ceb2f3076ef43fd3d37672f0119eaf235f 100644
+--- a/lib-es/mockSdk.d.ts
++++ b/lib-es/mockSdk.d.ts
+@@ -1,4 +1,4 @@
+-import { JWT, MemberCredentials, Trustchain, TrustchainDeviceCallbacks, TrustchainLifecycle, TrustchainMember, TrustchainResult, TrustchainSDK, TrustchainSDKContext } from "./types";
++import { JWT, MemberCredentials, Trustchain, TrustchainDeviceCallbacks, TrustchainLifecycle, TrustchainMember, TrustchainResult, TrustchainSDK, TrustchainSDKContext, TrustchainSubtree } from "./types";
+ export declare class MockSDK implements TrustchainSDK {
+     private context;
+     private lifecyle?;
+@@ -26,5 +26,12 @@ export declare class MockSDK implements TrustchainSDK {
+     encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array>;
+     decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array>;
+     invalidateJwt(): void;
++    addMemberToApplicationWithHardware(): Promise<string>;
++    prepareApplicationStreamRotationWithHardware(): Promise<Trustchain>;
++    closeApplicationStreamWithHardware(): Promise<boolean>;
++    addMembersToSubtreeWithHardware(): Promise<void>;
++    getApplicationStreamState(): Promise<TrustchainSubtree | undefined>;
++    getSubtrees(): Promise<TrustchainSubtree[]>;
++    closeSubtreeWithHardware(): Promise<boolean>;
+ }
+ //# sourceMappingURL=mockSdk.d.ts.map
+\ No newline at end of file
+diff --git a/lib-es/mockSdk.js b/lib-es/mockSdk.js
+index abbe8845fcfe1273d4256f2a5800510ebbf789b3..c7012239bf0ac9b44a84f68efb4fd7c8599f1c8d 100644
+--- a/lib-es/mockSdk.js
++++ b/lib-es/mockSdk.js
+@@ -216,5 +216,27 @@ export class MockSDK {
+     invalidateJwt() {
+         this.deviceJwtAcquired = false;
+     }
++    // Temporary ledger-live patch: upstream to LedgerHQ/ts-libs, remove once released.
++    addMemberToApplicationWithHardware() {
++        return Promise.reject(new Error("addMemberToApplicationWithHardware is not mocked"));
++    }
++    prepareApplicationStreamRotationWithHardware() {
++        return Promise.reject(new Error("prepareApplicationStreamRotationWithHardware is not mocked"));
++    }
++    closeApplicationStreamWithHardware() {
++        return Promise.reject(new Error("closeApplicationStreamWithHardware is not mocked"));
++    }
++    addMembersToSubtreeWithHardware() {
++        return Promise.reject(new Error("addMembersToSubtreeWithHardware is not mocked"));
++    }
++    getApplicationStreamState() {
++        return Promise.reject(new Error("getApplicationStreamState is not mocked"));
++    }
++    getSubtrees() {
++        return Promise.reject(new Error("getSubtrees is not mocked"));
++    }
++    closeSubtreeWithHardware() {
++        return Promise.reject(new Error("closeSubtreeWithHardware is not mocked"));
++    }
+ }
+ //# sourceMappingURL=mockSdk.js.map
+\ No newline at end of file
+diff --git a/lib-es/sdk.d.ts b/lib-es/sdk.d.ts
+index 0599a9b25cf61bb7396326d30c71f0652ec04304..c2c51ccbb5fd37a8643135ef9ee75c6aff7b1713 100644
+--- a/lib-es/sdk.d.ts
++++ b/lib-es/sdk.d.ts
+@@ -1,4 +1,4 @@
+-import { JWT, MemberCredentials, TrustchainSDKContext, Trustchain, TrustchainMember, TrustchainSDK, TrustchainDeviceCallbacks, AuthCachePolicy, TrustchainResult, TrustchainLifecycle, GetOrCreateTrustchainCallbacks } from "./types";
++import { JWT, MemberCredentials, TrustchainSDKContext, Trustchain, TrustchainMember, TrustchainSDK, TrustchainDeviceCallbacks, AuthCachePolicy, TrustchainResult, TrustchainLifecycle, GetOrCreateTrustchainCallbacks, TrustchainSubtree } from "./types";
+ import { HWDeviceProvider } from "./HWDeviceProvider";
+ export declare class SDK implements TrustchainSDK {
+     private context;
+@@ -15,6 +15,18 @@ export declare class SDK implements TrustchainSDK {
+     getMembers(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<TrustchainMember[]>;
+     removeMember(deviceId: string, trustchain: Trustchain, memberCredentials: MemberCredentials, member: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<Trustchain>;
+     addMember(trustchain: Trustchain, memberCredentials: MemberCredentials, member: TrustchainMember): Promise<void>;
++    addMemberToApplicationWithHardware(deviceId: string, trustchain: Trustchain, member: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<string>;
++    prepareApplicationStreamRotationWithHardware(deviceId: string, trustchain: Trustchain, memberCredentials: MemberCredentials, retainedMember: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<Trustchain>;
++    closeApplicationStreamWithHardware(deviceId: string, trustchain: Trustchain, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
++    addMembersToSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, members: TrustchainMember[], callbacks?: TrustchainDeviceCallbacks): Promise<void>;
++    getApplicationStreamState(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree | undefined>;
++    getSubtrees(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree[]>;
++    closeSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
++    private closeStreamWithHardware;
+     invalidateJwt(): void;
+     destroyTrustchain(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void>;
+     destroyApplication(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<{
+diff --git a/lib-es/sdk.js b/lib-es/sdk.js
+index 639e49096cc21cdcd84ad1e41ce246a63b93e588..db635add0e9175873ffa09fde9d68053b83ff346 100644
+--- a/lib-es/sdk.js
++++ b/lib-es/sdk.js
+@@ -1,5 +1,5 @@
+ import { TrustchainResultType, } from "./types";
+-import { crypto, Challenge, CommandStreamEncoder, StreamTree, Permissions, DerivationPath, SoftwareDevice, } from "@ledgerhq/hw-ledger-key-ring-protocol";
++import { crypto, Challenge, CommandStream, CommandStreamDecoder, CommandStreamEncoder, StreamTree, Permissions, DerivationPath, SoftwareDevice, } from "@ledgerhq/hw-ledger-key-ring-protocol";
+ import getApi from "./api";
+ import { log } from "@ledgerhq/logs";
+ import { TrustchainAlreadyInitialized, TrustchainAlreadyInitializedWithOtherSeed, TrustchainEjected, TrustchainNotAllowed, TrustchainOutdated, } from "./errors";
+@@ -101,7 +101,8 @@ export class SDK {
+             streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+                 id: memberCredentials.pubkey,
+                 name: this.context.name,
+-                permissions: Permissions.OWNER,
++                // Temporary ledger-live patch: upstream to LedgerHQ/ts-libs, remove once released.
++                permissions: callbacks?.softwareMemberPermissions ?? Permissions.OWNER,
+             });
+         }
+         const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
+@@ -185,6 +186,132 @@ export class SDK {
+         const withSw = (job) => job(softwareDevice);
+         await this.pushMember(streamTree, applicationRootPath, trustchain.rootId, withJwt, withSw, member);
+     }
++    // Temporary ledger-live patch (device-signed app/subtree management, e.g. Agent Intent app 18):
++    // upstream to LedgerHQ/ts-libs, remove once released.
++    async addMemberToApplicationWithHardware(deviceId, trustchain, member, callbacks) {
++        // the given path may be stale (rotated since): target the latest stream of that application
++        const applicationId = applicationIdOf(trustchain.applicationPath);
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        const { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const applicationPath = streamTree.getApplicationRootPath(applicationId);
++        const stream = streamTree.getChild(applicationPath);
++        invariant(stream, `application stream ${applicationPath} was not found`);
++        const resolved = await stream.resolve();
++        invariant(!resolved.isClosed(), `application stream ${applicationPath} is closed`);
++        const existing = resolved
++            .getMembersData()
++            .find(candidate => candidate.id.toLowerCase() === member.id.toLowerCase());
++        if (existing && existing.permissions !== member.permissions) {
++            throw new Error(`Existing member permissions ${existing.permissions} do not match requested permissions ${member.permissions}.`);
++        }
++        await this.pushMember(streamTree, applicationPath, trustchain.rootId, withJwt, withHw, member);
++        return applicationPath;
++    }
++    async prepareApplicationStreamRotationWithHardware(deviceId, trustchain, memberCredentials, retainedMember, callbacks) {
++        invariant(retainedMember.id.toLowerCase() === memberCredentials.pubkey.toLowerCase(), "retained member must match the supplied credentials.");
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const replacementPath = nextApplicationPath(trustchain.applicationPath);
++        const replacement = streamTree.getChild(replacementPath);
++        if (replacement) {
++            const resolved = await replacement.resolve();
++            invariant(!resolved.isClosed(), `replacement stream ${replacementPath} is closed`);
++            const replacementMembers = resolved.getMembersData();
++            invariant(replacementMembers.length === 1 &&
++                replacementMembers[0]?.id.toLowerCase() === retainedMember.id.toLowerCase() &&
++                replacementMembers[0]?.permissions === retainedMember.permissions, `replacement stream ${replacementPath} does not contain only the retained member.`);
++        }
++        else {
++            const source = streamTree.getChild(trustchain.applicationPath);
++            invariant(source, `application stream ${trustchain.applicationPath} was not found`);
++            const resolved = await source.resolve();
++            invariant(!resolved.isClosed(), `application stream ${trustchain.applicationPath} is closed`);
++            const sourceMember = resolved
++                .getMembersData()
++                .find(candidate => candidate.id.toLowerCase() === retainedMember.id.toLowerCase());
++            invariant(sourceMember, "retained member is missing from the source application stream.");
++            invariant(sourceMember.permissions === retainedMember.permissions, "retained member permissions do not match the source application stream.");
++            streamTree = await this.pushMember(streamTree, replacementPath, trustchain.rootId, withJwt, withHw, retainedMember);
++        }
++        return {
++            rootId: trustchain.rootId,
++            walletSyncEncryptionKey: await extractEncryptionKey(streamTree, replacementPath, memberCredentials),
++            applicationPath: replacementPath,
++        };
++    }
++    closeApplicationStreamWithHardware(deviceId, trustchain, callbacks) {
++        return this.closeStreamWithHardware(deviceId, trustchain, trustchain.applicationPath, callbacks);
++    }
++    async addMembersToSubtreeWithHardware(deviceId, trustchain, path, members, callbacks) {
++        assertSubtreePath(trustchain.applicationPath, path);
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const existingStream = streamTree.getChild(path);
++        if (!existingStream) {
++            // a new derivation is posted once, with all its members
++            for (const member of members) {
++                streamTree = await withHw(device => streamTree.share(path, device, crypto.from_hex(member.id), member.name, member.permissions));
++            }
++            const child = streamTree.getChild(path);
++            invariant(child, "StreamTree.share failed to create the subtree.");
++            await child.resolve();
++            const commandStream = CommandStreamEncoder.encode(child.blocks);
++            await withJwt(jwt => this.api.postDerivation(jwt, trustchain.rootId, crypto.to_hex(commandStream)));
++            return;
++        }
++        const resolved = await existingStream.resolve();
++        if (resolved.isClosed()) {
++            throw new Error(`Cannot add members to closed subtree ${path}.`);
++        }
++        const existingMembers = resolved.getMembersData();
++        for (const member of members) {
++            const existing = existingMembers.find(candidate => candidate.id.toLowerCase() === member.id.toLowerCase());
++            if (existing && existing.permissions !== member.permissions) {
++                throw new Error(`Existing member permissions ${existing.permissions} do not match requested permissions ${member.permissions}.`);
++            }
++            if (existing)
++                continue;
++            streamTree = await this.pushMember(streamTree, path, trustchain.rootId, withJwt, withHw, member);
++        }
++    }
++    async getApplicationStreamState(trustchain, memberCredentials, options) {
++        const { streamTree } = await this.withAuth(trustchain, memberCredentials, jwt => this.fetchTrustchain(jwt, trustchain.rootId), undefined, options?.ignorePermissionsChecks);
++        const stream = streamTree.getChild(trustchain.applicationPath);
++        return stream ? describeStream(trustchain.applicationPath, stream) : undefined;
++    }
++    async getSubtrees(trustchain, memberCredentials, options) {
++        const { streamTree } = await this.withAuth(trustchain, memberCredentials, jwt => this.fetchTrustchain(jwt, trustchain.rootId), undefined, options?.ignorePermissionsChecks);
++        const prefix = `${trustchain.applicationPath}/`;
++        return Promise.all(Object.keys(streamTree.serialize())
++            .filter(path => path.startsWith(prefix))
++            .map(path => {
++            const stream = streamTree.getChild(path);
++            invariant(stream, `subtree ${path} could not be resolved`);
++            return describeStream(path, stream);
++        }));
++    }
++    closeSubtreeWithHardware(deviceId, trustchain, path, callbacks) {
++        assertSubtreePath(trustchain.applicationPath, path);
++        return this.closeStreamWithHardware(deviceId, trustchain, path, callbacks);
++    }
++    async closeStreamWithHardware(deviceId, trustchain, path, callbacks) {
++        this.jwt = undefined;
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        const { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const stream = streamTree.getChild(path);
++        invariant(stream, `stream ${path} was not found`);
++        if ((await stream.resolve()).isClosed())
++            return false;
++        const sendCloseStreamToAPI = await this.closeStream(streamTree, path, trustchain.rootId, withJwt, withHw);
++        await sendCloseStreamToAPI();
++        // deviceJwt have changed, proactively refresh it
++        await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
++        return true;
++    }
+     invalidateJwt() {
+         this.jwt = undefined;
+         this.hwDeviceProvider.clearJwt();
+@@ -229,7 +356,8 @@ export class SDK {
+     }
+     async fetchTrustchain(jwt, trustchainId) {
+         const trustchainData = await this.api.getTrustchain(jwt, trustchainId);
+-        const streamTree = StreamTree.deserialize(trustchainData);
++        // Temporary ledger-live patch: StreamTree.from drops children listed before their parent.
++        const streamTree = deserializeStreamTreeParentFirst(trustchainData);
+         return { streamTree };
+     }
+     async fetchTrustchainAndResolve(jwt, trustchainId, applicationId) {
+@@ -302,6 +430,32 @@ export class SDK {
+         return () => withJwt(jwt => this.api.putCommands(jwt, trustchainId, request));
+     }
+ }
++// Temporary ledger-live patch helpers: upstream to LedgerHQ/ts-libs, remove once released.
++function assertSubtreePath(applicationPath, path) {
++    invariant(path.startsWith(`${applicationPath}/`), `path must be below ${applicationPath}`);
++}
++function applicationIdOf(applicationPath) {
++    const match = /^m\/0'\/(\d+)'\/\d+'$/.exec(applicationPath);
++    invariant(match, `invalid application stream path ${applicationPath}`);
++    return Number.parseInt(match[1], 10);
++}
++function nextApplicationPath(applicationPath) {
++    const match = /^(m\/0'\/\d+'\/)(\d+)'$/.exec(applicationPath);
++    invariant(match, `invalid application stream path ${applicationPath}`);
++    return `${match[1]}${Number.parseInt(match[2], 10) + 1}'`;
++}
++async function describeStream(path, stream) {
++    const resolved = await stream.resolve();
++    return { path, members: resolved.getMembersData(), closed: resolved.isClosed() };
++}
++function deserializeStreamTreeParentFirst(data) {
++    const streams = Object.values(data).map(value => new CommandStream(CommandStreamDecoder.decode(crypto.from_hex(value))));
++    return StreamTree.from(...streams.sort((a, b) => streamPathDepth(a) - streamPathDepth(b)));
++}
++function streamPathDepth(stream) {
++    const path = stream.getStreamPath();
++    return path ? path.split("/").length : 0;
++}
+ function getSoftwareDevice(memberCredentials) {
+     const kp = convertLiveCredentialsToKeyPair(memberCredentials);
+     return new SoftwareDevice(kp);
+diff --git a/lib-es/types.d.ts b/lib-es/types.d.ts
+index 21370d92f02d4b6d1ea1c97c639794cc85ca1677..246748741da1436736b1f660428ea68e956f32ff 100644
+--- a/lib-es/types.d.ts
++++ b/lib-es/types.d.ts
+@@ -61,6 +61,12 @@ export type TrustchainMember = {
+      */
+     permissions: number;
+ };
++// Temporary ledger-live patch (LIVE agent-intent app 18): upstream to LedgerHQ/ts-libs, remove once released.
++export type TrustchainSubtree = {
++    path: string;
++    members: TrustchainMember[];
++    closed: boolean;
++};
+ /**
+  * The TrustchainSDKContext is a context that is used to initialize the TrustchainSDK.
+  */
+@@ -153,6 +159,17 @@ export interface TrustchainSDK {
+      * add a member to the application trustchain
+      */
+     addMember(trustchain: Trustchain, memberCredentials: MemberCredentials, member: TrustchainMember): Promise<void>;
++    addMemberToApplicationWithHardware(deviceId: string, trustchain: Trustchain, member: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<string>;
++    prepareApplicationStreamRotationWithHardware(deviceId: string, trustchain: Trustchain, memberCredentials: MemberCredentials, retainedMember: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<Trustchain>;
++    closeApplicationStreamWithHardware(deviceId: string, trustchain: Trustchain, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
++    addMembersToSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, members: TrustchainMember[], callbacks?: TrustchainDeviceCallbacks): Promise<void>;
++    getApplicationStreamState(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree | undefined>;
++    getSubtrees(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree[]>;
++    closeSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
+     /**
+      * destroy the trustchain
+      */
+@@ -183,5 +200,6 @@ export interface TrustchainDeviceCallbacks {
+ }
+ export interface GetOrCreateTrustchainCallbacks extends TrustchainDeviceCallbacks {
+     onInitialResponse?: (trustchains: TrustchainsResponse) => void;
++    softwareMemberPermissions?: number;
+ }
+ //# sourceMappingURL=types.d.ts.map
+\ No newline at end of file
+diff --git a/lib/mockSdk.d.ts b/lib/mockSdk.d.ts
+index 5dd93193565bc0680fad75a4e2e69e8082a9b2e4..db6366ceb2f3076ef43fd3d37672f0119eaf235f 100644
+--- a/lib/mockSdk.d.ts
++++ b/lib/mockSdk.d.ts
+@@ -1,4 +1,4 @@
+-import { JWT, MemberCredentials, Trustchain, TrustchainDeviceCallbacks, TrustchainLifecycle, TrustchainMember, TrustchainResult, TrustchainSDK, TrustchainSDKContext } from "./types";
++import { JWT, MemberCredentials, Trustchain, TrustchainDeviceCallbacks, TrustchainLifecycle, TrustchainMember, TrustchainResult, TrustchainSDK, TrustchainSDKContext, TrustchainSubtree } from "./types";
+ export declare class MockSDK implements TrustchainSDK {
+     private context;
+     private lifecyle?;
+@@ -26,5 +26,12 @@ export declare class MockSDK implements TrustchainSDK {
+     encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array>;
+     decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array>;
+     invalidateJwt(): void;
++    addMemberToApplicationWithHardware(): Promise<string>;
++    prepareApplicationStreamRotationWithHardware(): Promise<Trustchain>;
++    closeApplicationStreamWithHardware(): Promise<boolean>;
++    addMembersToSubtreeWithHardware(): Promise<void>;
++    getApplicationStreamState(): Promise<TrustchainSubtree | undefined>;
++    getSubtrees(): Promise<TrustchainSubtree[]>;
++    closeSubtreeWithHardware(): Promise<boolean>;
+ }
+ //# sourceMappingURL=mockSdk.d.ts.map
+\ No newline at end of file
+diff --git a/lib/mockSdk.js b/lib/mockSdk.js
+index 9b17a2ac09f66a4c4a71cbd579b4b6d37a6da3d0..4cf387fd7847a7166f2df6099f35f23e069d39e6 100644
+--- a/lib/mockSdk.js
++++ b/lib/mockSdk.js
+@@ -222,6 +222,28 @@ class MockSDK {
+     invalidateJwt() {
+         this.deviceJwtAcquired = false;
+     }
++    // Temporary ledger-live patch: upstream to LedgerHQ/ts-libs, remove once released.
++    addMemberToApplicationWithHardware() {
++        return Promise.reject(new Error("addMemberToApplicationWithHardware is not mocked"));
++    }
++    prepareApplicationStreamRotationWithHardware() {
++        return Promise.reject(new Error("prepareApplicationStreamRotationWithHardware is not mocked"));
++    }
++    closeApplicationStreamWithHardware() {
++        return Promise.reject(new Error("closeApplicationStreamWithHardware is not mocked"));
++    }
++    addMembersToSubtreeWithHardware() {
++        return Promise.reject(new Error("addMembersToSubtreeWithHardware is not mocked"));
++    }
++    getApplicationStreamState() {
++        return Promise.reject(new Error("getApplicationStreamState is not mocked"));
++    }
++    getSubtrees() {
++        return Promise.reject(new Error("getSubtrees is not mocked"));
++    }
++    closeSubtreeWithHardware() {
++        return Promise.reject(new Error("closeSubtreeWithHardware is not mocked"));
++    }
+ }
+ exports.MockSDK = MockSDK;
+ //# sourceMappingURL=mockSdk.js.map
+\ No newline at end of file
+diff --git a/lib/sdk.d.ts b/lib/sdk.d.ts
+index 0599a9b25cf61bb7396326d30c71f0652ec04304..c2c51ccbb5fd37a8643135ef9ee75c6aff7b1713 100644
+--- a/lib/sdk.d.ts
++++ b/lib/sdk.d.ts
+@@ -1,4 +1,4 @@
+-import { JWT, MemberCredentials, TrustchainSDKContext, Trustchain, TrustchainMember, TrustchainSDK, TrustchainDeviceCallbacks, AuthCachePolicy, TrustchainResult, TrustchainLifecycle, GetOrCreateTrustchainCallbacks } from "./types";
++import { JWT, MemberCredentials, TrustchainSDKContext, Trustchain, TrustchainMember, TrustchainSDK, TrustchainDeviceCallbacks, AuthCachePolicy, TrustchainResult, TrustchainLifecycle, GetOrCreateTrustchainCallbacks, TrustchainSubtree } from "./types";
+ import { HWDeviceProvider } from "./HWDeviceProvider";
+ export declare class SDK implements TrustchainSDK {
+     private context;
+@@ -15,6 +15,18 @@ export declare class SDK implements TrustchainSDK {
+     getMembers(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<TrustchainMember[]>;
+     removeMember(deviceId: string, trustchain: Trustchain, memberCredentials: MemberCredentials, member: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<Trustchain>;
+     addMember(trustchain: Trustchain, memberCredentials: MemberCredentials, member: TrustchainMember): Promise<void>;
++    addMemberToApplicationWithHardware(deviceId: string, trustchain: Trustchain, member: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<string>;
++    prepareApplicationStreamRotationWithHardware(deviceId: string, trustchain: Trustchain, memberCredentials: MemberCredentials, retainedMember: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<Trustchain>;
++    closeApplicationStreamWithHardware(deviceId: string, trustchain: Trustchain, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
++    addMembersToSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, members: TrustchainMember[], callbacks?: TrustchainDeviceCallbacks): Promise<void>;
++    getApplicationStreamState(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree | undefined>;
++    getSubtrees(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree[]>;
++    closeSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
++    private closeStreamWithHardware;
+     invalidateJwt(): void;
+     destroyTrustchain(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void>;
+     destroyApplication(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<{
+diff --git a/lib/sdk.js b/lib/sdk.js
+index cad9ab8536e38b1c54c3ceed6752a36395f6610e..f9fdedb98c61e10187307e9f9878677e24d2f861 100644
+--- a/lib/sdk.js
++++ b/lib/sdk.js
+@@ -107,7 +107,8 @@ class SDK {
+             streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+                 id: memberCredentials.pubkey,
+                 name: this.context.name,
+-                permissions: hw_ledger_key_ring_protocol_1.Permissions.OWNER,
++                // Temporary ledger-live patch: upstream to LedgerHQ/ts-libs, remove once released.
++                permissions: callbacks?.softwareMemberPermissions ?? hw_ledger_key_ring_protocol_1.Permissions.OWNER,
+             });
+         }
+         const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
+@@ -191,6 +192,132 @@ class SDK {
+         const withSw = (job) => job(softwareDevice);
+         await this.pushMember(streamTree, applicationRootPath, trustchain.rootId, withJwt, withSw, member);
+     }
++    // Temporary ledger-live patch (device-signed app/subtree management, e.g. Agent Intent app 18):
++    // upstream to LedgerHQ/ts-libs, remove once released.
++    async addMemberToApplicationWithHardware(deviceId, trustchain, member, callbacks) {
++        // the given path may be stale (rotated since): target the latest stream of that application
++        const applicationId = applicationIdOf(trustchain.applicationPath);
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        const { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const applicationPath = streamTree.getApplicationRootPath(applicationId);
++        const stream = streamTree.getChild(applicationPath);
++        invariant(stream, `application stream ${applicationPath} was not found`);
++        const resolved = await stream.resolve();
++        invariant(!resolved.isClosed(), `application stream ${applicationPath} is closed`);
++        const existing = resolved
++            .getMembersData()
++            .find(candidate => candidate.id.toLowerCase() === member.id.toLowerCase());
++        if (existing && existing.permissions !== member.permissions) {
++            throw new Error(`Existing member permissions ${existing.permissions} do not match requested permissions ${member.permissions}.`);
++        }
++        await this.pushMember(streamTree, applicationPath, trustchain.rootId, withJwt, withHw, member);
++        return applicationPath;
++    }
++    async prepareApplicationStreamRotationWithHardware(deviceId, trustchain, memberCredentials, retainedMember, callbacks) {
++        invariant(retainedMember.id.toLowerCase() === memberCredentials.pubkey.toLowerCase(), "retained member must match the supplied credentials.");
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const replacementPath = nextApplicationPath(trustchain.applicationPath);
++        const replacement = streamTree.getChild(replacementPath);
++        if (replacement) {
++            const resolved = await replacement.resolve();
++            invariant(!resolved.isClosed(), `replacement stream ${replacementPath} is closed`);
++            const replacementMembers = resolved.getMembersData();
++            invariant(replacementMembers.length === 1 &&
++                replacementMembers[0]?.id.toLowerCase() === retainedMember.id.toLowerCase() &&
++                replacementMembers[0]?.permissions === retainedMember.permissions, `replacement stream ${replacementPath} does not contain only the retained member.`);
++        }
++        else {
++            const source = streamTree.getChild(trustchain.applicationPath);
++            invariant(source, `application stream ${trustchain.applicationPath} was not found`);
++            const resolved = await source.resolve();
++            invariant(!resolved.isClosed(), `application stream ${trustchain.applicationPath} is closed`);
++            const sourceMember = resolved
++                .getMembersData()
++                .find(candidate => candidate.id.toLowerCase() === retainedMember.id.toLowerCase());
++            invariant(sourceMember, "retained member is missing from the source application stream.");
++            invariant(sourceMember.permissions === retainedMember.permissions, "retained member permissions do not match the source application stream.");
++            streamTree = await this.pushMember(streamTree, replacementPath, trustchain.rootId, withJwt, withHw, retainedMember);
++        }
++        return {
++            rootId: trustchain.rootId,
++            walletSyncEncryptionKey: await extractEncryptionKey(streamTree, replacementPath, memberCredentials),
++            applicationPath: replacementPath,
++        };
++    }
++    closeApplicationStreamWithHardware(deviceId, trustchain, callbacks) {
++        return this.closeStreamWithHardware(deviceId, trustchain, trustchain.applicationPath, callbacks);
++    }
++    async addMembersToSubtreeWithHardware(deviceId, trustchain, path, members, callbacks) {
++        assertSubtreePath(trustchain.applicationPath, path);
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const existingStream = streamTree.getChild(path);
++        if (!existingStream) {
++            // a new derivation is posted once, with all its members
++            for (const member of members) {
++                streamTree = await withHw(device => streamTree.share(path, device, hw_ledger_key_ring_protocol_1.crypto.from_hex(member.id), member.name, member.permissions));
++            }
++            const child = streamTree.getChild(path);
++            invariant(child, "StreamTree.share failed to create the subtree.");
++            await child.resolve();
++            const commandStream = hw_ledger_key_ring_protocol_1.CommandStreamEncoder.encode(child.blocks);
++            await withJwt(jwt => this.api.postDerivation(jwt, trustchain.rootId, hw_ledger_key_ring_protocol_1.crypto.to_hex(commandStream)));
++            return;
++        }
++        const resolved = await existingStream.resolve();
++        if (resolved.isClosed()) {
++            throw new Error(`Cannot add members to closed subtree ${path}.`);
++        }
++        const existingMembers = resolved.getMembersData();
++        for (const member of members) {
++            const existing = existingMembers.find(candidate => candidate.id.toLowerCase() === member.id.toLowerCase());
++            if (existing && existing.permissions !== member.permissions) {
++                throw new Error(`Existing member permissions ${existing.permissions} do not match requested permissions ${member.permissions}.`);
++            }
++            if (existing)
++                continue;
++            streamTree = await this.pushMember(streamTree, path, trustchain.rootId, withJwt, withHw, member);
++        }
++    }
++    async getApplicationStreamState(trustchain, memberCredentials, options) {
++        const { streamTree } = await this.withAuth(trustchain, memberCredentials, jwt => this.fetchTrustchain(jwt, trustchain.rootId), undefined, options?.ignorePermissionsChecks);
++        const stream = streamTree.getChild(trustchain.applicationPath);
++        return stream ? describeStream(trustchain.applicationPath, stream) : undefined;
++    }
++    async getSubtrees(trustchain, memberCredentials, options) {
++        const { streamTree } = await this.withAuth(trustchain, memberCredentials, jwt => this.fetchTrustchain(jwt, trustchain.rootId), undefined, options?.ignorePermissionsChecks);
++        const prefix = `${trustchain.applicationPath}/`;
++        return Promise.all(Object.keys(streamTree.serialize())
++            .filter(path => path.startsWith(prefix))
++            .map(path => {
++            const stream = streamTree.getChild(path);
++            invariant(stream, `subtree ${path} could not be resolved`);
++            return describeStream(path, stream);
++        }));
++    }
++    closeSubtreeWithHardware(deviceId, trustchain, path, callbacks) {
++        assertSubtreePath(trustchain.applicationPath, path);
++        return this.closeStreamWithHardware(deviceId, trustchain, path, callbacks);
++    }
++    async closeStreamWithHardware(deviceId, trustchain, path, callbacks) {
++        this.jwt = undefined;
++        const withJwt = job => this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++        const withHw = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++        const { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++        const stream = streamTree.getChild(path);
++        invariant(stream, `stream ${path} was not found`);
++        if ((await stream.resolve()).isClosed())
++            return false;
++        const sendCloseStreamToAPI = await this.closeStream(streamTree, path, trustchain.rootId, withJwt, withHw);
++        await sendCloseStreamToAPI();
++        // deviceJwt have changed, proactively refresh it
++        await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
++        return true;
++    }
+     invalidateJwt() {
+         this.jwt = undefined;
+         this.hwDeviceProvider.clearJwt();
+@@ -235,7 +362,8 @@ class SDK {
+     }
+     async fetchTrustchain(jwt, trustchainId) {
+         const trustchainData = await this.api.getTrustchain(jwt, trustchainId);
+-        const streamTree = hw_ledger_key_ring_protocol_1.StreamTree.deserialize(trustchainData);
++        // Temporary ledger-live patch: StreamTree.from drops children listed before their parent.
++        const streamTree = deserializeStreamTreeParentFirst(trustchainData);
+         return { streamTree };
+     }
+     async fetchTrustchainAndResolve(jwt, trustchainId, applicationId) {
+@@ -309,6 +437,32 @@ class SDK {
+     }
+ }
+ exports.SDK = SDK;
++// Temporary ledger-live patch helpers: upstream to LedgerHQ/ts-libs, remove once released.
++function assertSubtreePath(applicationPath, path) {
++    invariant(path.startsWith(`${applicationPath}/`), `path must be below ${applicationPath}`);
++}
++function applicationIdOf(applicationPath) {
++    const match = /^m\/0'\/(\d+)'\/\d+'$/.exec(applicationPath);
++    invariant(match, `invalid application stream path ${applicationPath}`);
++    return Number.parseInt(match[1], 10);
++}
++function nextApplicationPath(applicationPath) {
++    const match = /^(m\/0'\/\d+'\/)(\d+)'$/.exec(applicationPath);
++    invariant(match, `invalid application stream path ${applicationPath}`);
++    return `${match[1]}${Number.parseInt(match[2], 10) + 1}'`;
++}
++async function describeStream(path, stream) {
++    const resolved = await stream.resolve();
++    return { path, members: resolved.getMembersData(), closed: resolved.isClosed() };
++}
++function deserializeStreamTreeParentFirst(data) {
++    const streams = Object.values(data).map(value => new hw_ledger_key_ring_protocol_1.CommandStream(hw_ledger_key_ring_protocol_1.CommandStreamDecoder.decode(hw_ledger_key_ring_protocol_1.crypto.from_hex(value))));
++    return hw_ledger_key_ring_protocol_1.StreamTree.from(...streams.sort((a, b) => streamPathDepth(a) - streamPathDepth(b)));
++}
++function streamPathDepth(stream) {
++    const path = stream.getStreamPath();
++    return path ? path.split("/").length : 0;
++}
+ function getSoftwareDevice(memberCredentials) {
+     const kp = (0, utils_1.convertLiveCredentialsToKeyPair)(memberCredentials);
+     return new hw_ledger_key_ring_protocol_1.SoftwareDevice(kp);
+diff --git a/lib/types.d.ts b/lib/types.d.ts
+index 21370d92f02d4b6d1ea1c97c639794cc85ca1677..246748741da1436736b1f660428ea68e956f32ff 100644
+--- a/lib/types.d.ts
++++ b/lib/types.d.ts
+@@ -61,6 +61,12 @@ export type TrustchainMember = {
+      */
+     permissions: number;
+ };
++// Temporary ledger-live patch (LIVE agent-intent app 18): upstream to LedgerHQ/ts-libs, remove once released.
++export type TrustchainSubtree = {
++    path: string;
++    members: TrustchainMember[];
++    closed: boolean;
++};
+ /**
+  * The TrustchainSDKContext is a context that is used to initialize the TrustchainSDK.
+  */
+@@ -153,6 +159,17 @@ export interface TrustchainSDK {
+      * add a member to the application trustchain
+      */
+     addMember(trustchain: Trustchain, memberCredentials: MemberCredentials, member: TrustchainMember): Promise<void>;
++    addMemberToApplicationWithHardware(deviceId: string, trustchain: Trustchain, member: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<string>;
++    prepareApplicationStreamRotationWithHardware(deviceId: string, trustchain: Trustchain, memberCredentials: MemberCredentials, retainedMember: TrustchainMember, callbacks?: TrustchainDeviceCallbacks): Promise<Trustchain>;
++    closeApplicationStreamWithHardware(deviceId: string, trustchain: Trustchain, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
++    addMembersToSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, members: TrustchainMember[], callbacks?: TrustchainDeviceCallbacks): Promise<void>;
++    getApplicationStreamState(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree | undefined>;
++    getSubtrees(trustchain: Trustchain, memberCredentials: MemberCredentials, options?: {
++        ignorePermissionsChecks?: boolean;
++    }): Promise<TrustchainSubtree[]>;
++    closeSubtreeWithHardware(deviceId: string, trustchain: Trustchain, path: string, callbacks?: TrustchainDeviceCallbacks): Promise<boolean>;
+     /**
+      * destroy the trustchain
+      */
+@@ -183,5 +200,6 @@ export interface TrustchainDeviceCallbacks {
+ }
+ export interface GetOrCreateTrustchainCallbacks extends TrustchainDeviceCallbacks {
+     onInitialResponse?: (trustchains: TrustchainsResponse) => void;
++    softwareMemberPermissions?: number;
+ }
+ //# sourceMappingURL=types.d.ts.map
+\ No newline at end of file
+diff --git a/src/mockSdk.ts b/src/mockSdk.ts
+index 40c11ebbd8930725426db3b95600b35a2d9a4c1c..edc979540e3f018bbc30bd5436f418ab12d37ae2 100644
+--- a/src/mockSdk.ts
++++ b/src/mockSdk.ts
+@@ -9,6 +9,7 @@ import {
+   TrustchainResultType,
+   TrustchainSDK,
+   TrustchainSDKContext,
++  TrustchainSubtree,
+ } from "./types";
+ import { Permissions } from "@ledgerhq/hw-ledger-key-ring-protocol";
+ import { TrustchainEjected } from "./errors";
+@@ -314,4 +315,33 @@ export class MockSDK implements TrustchainSDK {
+   invalidateJwt(): void {
+     this.deviceJwtAcquired = false;
+   }
++
++  // Temporary ledger-live patch: upstream to LedgerHQ/ts-libs, remove once released.
++  addMemberToApplicationWithHardware(): Promise<string> {
++    return Promise.reject(new Error("addMemberToApplicationWithHardware is not mocked"));
++  }
++
++  prepareApplicationStreamRotationWithHardware(): Promise<Trustchain> {
++    return Promise.reject(new Error("prepareApplicationStreamRotationWithHardware is not mocked"));
++  }
++
++  closeApplicationStreamWithHardware(): Promise<boolean> {
++    return Promise.reject(new Error("closeApplicationStreamWithHardware is not mocked"));
++  }
++
++  addMembersToSubtreeWithHardware(): Promise<void> {
++    return Promise.reject(new Error("addMembersToSubtreeWithHardware is not mocked"));
++  }
++
++  getApplicationStreamState(): Promise<TrustchainSubtree | undefined> {
++    return Promise.reject(new Error("getApplicationStreamState is not mocked"));
++  }
++
++  getSubtrees(): Promise<TrustchainSubtree[]> {
++    return Promise.reject(new Error("getSubtrees is not mocked"));
++  }
++
++  closeSubtreeWithHardware(): Promise<boolean> {
++    return Promise.reject(new Error("closeSubtreeWithHardware is not mocked"));
++  }
+ }
+diff --git a/src/sdk.ts b/src/sdk.ts
+index 6d17bd649fba6f7a64fa855aaa58748128c8a516..483bf1e2bdf69b3a09fa5b32d99ba5453a0d0530 100644
+--- a/src/sdk.ts
++++ b/src/sdk.ts
+@@ -11,10 +11,13 @@ import {
+   TrustchainResultType,
+   TrustchainLifecycle,
+   GetOrCreateTrustchainCallbacks,
++  TrustchainSubtree,
+ } from "./types";
+ import {
+   crypto,
+   Challenge,
++  CommandStream,
++  CommandStreamDecoder,
+   CommandStreamEncoder,
+   StreamTree,
+   Permissions,
+@@ -183,7 +186,8 @@ export class SDK implements TrustchainSDK {
+       streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+         id: memberCredentials.pubkey,
+         name: this.context.name,
+-        permissions: Permissions.OWNER,
++        // Temporary ledger-live patch: upstream to LedgerHQ/ts-libs, remove once released.
++        permissions: callbacks?.softwareMemberPermissions ?? Permissions.OWNER,
+       });
+     }
+ 
+@@ -351,6 +355,230 @@ export class SDK implements TrustchainSDK {
+     );
+   }
+ 
++  // Temporary ledger-live patch (device-signed app/subtree management, e.g. Agent Intent app 18):
++  // upstream to LedgerHQ/ts-libs, remove once released.
++  async addMemberToApplicationWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    member: TrustchainMember,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<string> {
++    // the given path may be stale (rotated since): target the latest stream of that application
++    const applicationId = applicationIdOf(trustchain.applicationPath);
++    const withJwt: WithJwt = job =>
++      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++    const { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++    const applicationPath = streamTree.getApplicationRootPath(applicationId);
++    const stream = streamTree.getChild(applicationPath);
++    invariant(stream, `application stream ${applicationPath} was not found`);
++    const resolved = await stream.resolve();
++    invariant(!resolved.isClosed(), `application stream ${applicationPath} is closed`);
++    const existing = resolved
++      .getMembersData()
++      .find(candidate => candidate.id.toLowerCase() === member.id.toLowerCase());
++    if (existing && existing.permissions !== member.permissions) {
++      throw new Error(
++        `Existing member permissions ${existing.permissions} do not match requested permissions ${member.permissions}.`,
++      );
++    }
++    await this.pushMember(streamTree, applicationPath, trustchain.rootId, withJwt, withHw, member);
++    return applicationPath;
++  }
++
++  async prepareApplicationStreamRotationWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    memberCredentials: MemberCredentials,
++    retainedMember: TrustchainMember,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<Trustchain> {
++    invariant(
++      retainedMember.id.toLowerCase() === memberCredentials.pubkey.toLowerCase(),
++      "retained member must match the supplied credentials.",
++    );
++    const withJwt: WithJwt = job =>
++      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++    let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++    const replacementPath = nextApplicationPath(trustchain.applicationPath);
++    const replacement = streamTree.getChild(replacementPath);
++    if (replacement) {
++      const resolved = await replacement.resolve();
++      invariant(!resolved.isClosed(), `replacement stream ${replacementPath} is closed`);
++      const replacementMembers = resolved.getMembersData();
++      invariant(
++        replacementMembers.length === 1 &&
++          replacementMembers[0]?.id.toLowerCase() === retainedMember.id.toLowerCase() &&
++          replacementMembers[0]?.permissions === retainedMember.permissions,
++        `replacement stream ${replacementPath} does not contain only the retained member.`,
++      );
++    } else {
++      const source = streamTree.getChild(trustchain.applicationPath);
++      invariant(source, `application stream ${trustchain.applicationPath} was not found`);
++      const resolved = await source.resolve();
++      invariant(!resolved.isClosed(), `application stream ${trustchain.applicationPath} is closed`);
++      const sourceMember = resolved
++        .getMembersData()
++        .find(candidate => candidate.id.toLowerCase() === retainedMember.id.toLowerCase());
++      invariant(sourceMember, "retained member is missing from the source application stream.");
++      invariant(
++        sourceMember.permissions === retainedMember.permissions,
++        "retained member permissions do not match the source application stream.",
++      );
++      streamTree = await this.pushMember(
++        streamTree,
++        replacementPath,
++        trustchain.rootId,
++        withJwt,
++        withHw,
++        retainedMember,
++      );
++    }
++    return {
++      rootId: trustchain.rootId,
++      walletSyncEncryptionKey: await extractEncryptionKey(
++        streamTree,
++        replacementPath,
++        memberCredentials,
++      ),
++      applicationPath: replacementPath,
++    };
++  }
++
++  closeApplicationStreamWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<boolean> {
++    return this.closeStreamWithHardware(deviceId, trustchain, trustchain.applicationPath, callbacks);
++  }
++
++  async addMembersToSubtreeWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    path: string,
++    members: TrustchainMember[],
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<void> {
++    assertSubtreePath(trustchain.applicationPath, path);
++    const withJwt: WithJwt = job =>
++      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++    let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++    const existingStream = streamTree.getChild(path);
++    if (!existingStream) {
++      // a new derivation is posted once, with all its members
++      for (const member of members) {
++        streamTree = await withHw(device =>
++          streamTree.share(path, device, crypto.from_hex(member.id), member.name, member.permissions),
++        );
++      }
++      const child = streamTree.getChild(path);
++      invariant(child, "StreamTree.share failed to create the subtree.");
++      await child.resolve();
++      const commandStream = CommandStreamEncoder.encode(child.blocks);
++      await withJwt(jwt =>
++        this.api.postDerivation(jwt, trustchain.rootId, crypto.to_hex(commandStream)),
++      );
++      return;
++    }
++    const resolved = await existingStream.resolve();
++    if (resolved.isClosed()) {
++      throw new Error(`Cannot add members to closed subtree ${path}.`);
++    }
++    const existingMembers = resolved.getMembersData();
++    for (const member of members) {
++      const existing = existingMembers.find(
++        candidate => candidate.id.toLowerCase() === member.id.toLowerCase(),
++      );
++      if (existing && existing.permissions !== member.permissions) {
++        throw new Error(
++          `Existing member permissions ${existing.permissions} do not match requested permissions ${member.permissions}.`,
++        );
++      }
++      if (existing) continue;
++      streamTree = await this.pushMember(streamTree, path, trustchain.rootId, withJwt, withHw, member);
++    }
++  }
++
++  async getApplicationStreamState(
++    trustchain: Trustchain,
++    memberCredentials: MemberCredentials,
++    options?: { ignorePermissionsChecks?: boolean },
++  ): Promise<TrustchainSubtree | undefined> {
++    const { streamTree } = await this.withAuth(
++      trustchain,
++      memberCredentials,
++      jwt => this.fetchTrustchain(jwt, trustchain.rootId),
++      undefined,
++      options?.ignorePermissionsChecks,
++    );
++    const stream = streamTree.getChild(trustchain.applicationPath);
++    return stream ? describeStream(trustchain.applicationPath, stream) : undefined;
++  }
++
++  async getSubtrees(
++    trustchain: Trustchain,
++    memberCredentials: MemberCredentials,
++    options?: { ignorePermissionsChecks?: boolean },
++  ): Promise<TrustchainSubtree[]> {
++    const { streamTree } = await this.withAuth(
++      trustchain,
++      memberCredentials,
++      jwt => this.fetchTrustchain(jwt, trustchain.rootId),
++      undefined,
++      options?.ignorePermissionsChecks,
++    );
++    const prefix = `${trustchain.applicationPath}/`;
++    return Promise.all(
++      Object.keys(streamTree.serialize())
++        .filter(path => path.startsWith(prefix))
++        .map(path => {
++          const stream = streamTree.getChild(path);
++          invariant(stream, `subtree ${path} could not be resolved`);
++          return describeStream(path, stream);
++        }),
++    );
++  }
++
++  closeSubtreeWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    path: string,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<boolean> {
++    assertSubtreePath(trustchain.applicationPath, path);
++    return this.closeStreamWithHardware(deviceId, trustchain, path, callbacks);
++  }
++
++  private async closeStreamWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    path: string,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<boolean> {
++    this.jwt = undefined;
++    const withJwt: WithJwt = job =>
++      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
++    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
++    const { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchain.rootId));
++    const stream = streamTree.getChild(path);
++    invariant(stream, `stream ${path} was not found`);
++    if ((await stream.resolve()).isClosed()) return false;
++    const sendCloseStreamToAPI = await this.closeStream(
++      streamTree,
++      path,
++      trustchain.rootId,
++      withJwt,
++      withHw,
++    );
++    await sendCloseStreamToAPI();
++    // deviceJwt have changed, proactively refresh it
++    await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
++    return true;
++  }
++
+   invalidateJwt() {
+     this.jwt = undefined;
+     this.hwDeviceProvider.clearJwt();
+@@ -422,7 +650,8 @@ export class SDK implements TrustchainSDK {
+ 
+   private async fetchTrustchain(jwt: JWT, trustchainId: string) {
+     const trustchainData = await this.api.getTrustchain(jwt, trustchainId);
+-    const streamTree = StreamTree.deserialize(trustchainData);
++    // Temporary ledger-live patch: StreamTree.from drops children listed before their parent.
++    const streamTree = deserializeStreamTreeParentFirst(trustchainData);
+     return { streamTree };
+   }
+ 
+@@ -519,6 +748,40 @@ export class SDK implements TrustchainSDK {
+   }
+ }
+ 
++// Temporary ledger-live patch helpers: upstream to LedgerHQ/ts-libs, remove once released.
++function assertSubtreePath(applicationPath: string, path: string): void {
++  invariant(path.startsWith(`${applicationPath}/`), `path must be below ${applicationPath}`);
++}
++
++function applicationIdOf(applicationPath: string): number {
++  const match = /^m\/0'\/(\d+)'\/\d+'$/.exec(applicationPath);
++  invariant(match, `invalid application stream path ${applicationPath}`);
++  return Number.parseInt(match[1], 10);
++}
++
++function nextApplicationPath(applicationPath: string): string {
++  const match = /^(m\/0'\/\d+'\/)(\d+)'$/.exec(applicationPath);
++  invariant(match, `invalid application stream path ${applicationPath}`);
++  return `${match[1]}${Number.parseInt(match[2], 10) + 1}'`;
++}
++
++async function describeStream(path: string, stream: CommandStream): Promise<TrustchainSubtree> {
++  const resolved = await stream.resolve();
++  return { path, members: resolved.getMembersData(), closed: resolved.isClosed() };
++}
++
++function deserializeStreamTreeParentFirst(data: Record<string, string>): StreamTree {
++  const streams = Object.values(data).map(
++    value => new CommandStream(CommandStreamDecoder.decode(crypto.from_hex(value))),
++  );
++  return StreamTree.from(...streams.sort((a, b) => streamPathDepth(a) - streamPathDepth(b)));
++}
++
++function streamPathDepth(stream: CommandStream): number {
++  const path = stream.getStreamPath();
++  return path ? path.split("/").length : 0;
++}
++
+ function getSoftwareDevice(memberCredentials: MemberCredentials): SoftwareDevice {
+   const kp = convertLiveCredentialsToKeyPair(memberCredentials);
+   return new SoftwareDevice(kp);
+diff --git a/src/types.ts b/src/types.ts
+index 9adf8132c31e63eb418ebf5852fc210460974730..669db2a1cc3970fed898be5b62708fc7b6ef34a3 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -68,6 +68,15 @@ export type TrustchainMember = {
+    */
+   permissions: number;
+ };
++// Temporary ledger-live patch (LIVE agent-intent app 18): upstream to LedgerHQ/ts-libs, remove once released.
++/**
++ * A stream below the application stream (e.g. an agent subtree) and its members.
++ */
++export type TrustchainSubtree = {
++  path: string;
++  members: TrustchainMember[];
++  closed: boolean;
++};
+ 
+ /**
+  * The TrustchainSDKContext is a context that is used to initialize the TrustchainSDK.
+@@ -211,6 +220,77 @@ export interface TrustchainSDK {
+     member: TrustchainMember,
+   ): Promise<void>;
+ 
++  /**
++   * add a member to the latest stream of the application named by
++   * `trustchain.applicationPath` using hardware authentication and hardware command signing;
++   * resolves to that stream's path
++   */
++  addMemberToApplicationWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    member: TrustchainMember,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<string>;
++
++  /**
++   * derive the next application stream with only `retainedMember` (the current member), device-signed
++   */
++  prepareApplicationStreamRotationWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    memberCredentials: MemberCredentials,
++    retainedMember: TrustchainMember,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<Trustchain>;
++
++  /**
++   * close `trustchain.applicationPath` with the device; false when already closed
++   */
++  closeApplicationStreamWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<boolean>;
++
++  /**
++   * create (or extend) the subtree at `path`, below the application stream, device-signed
++   */
++  addMembersToSubtreeWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    path: string,
++    members: TrustchainMember[],
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<void>;
++
++  /**
++   * members and closed state of `trustchain.applicationPath`
++   */
++  getApplicationStreamState(
++    trustchain: Trustchain,
++    memberCredentials: MemberCredentials,
++    options?: { ignorePermissionsChecks?: boolean },
++  ): Promise<TrustchainSubtree | undefined>;
++
++  /**
++   * every stream below `trustchain.applicationPath`
++   */
++  getSubtrees(
++    trustchain: Trustchain,
++    memberCredentials: MemberCredentials,
++    options?: { ignorePermissionsChecks?: boolean },
++  ): Promise<TrustchainSubtree[]>;
++
++  /**
++   * close the subtree at `path` with the device; false when already closed
++   */
++  closeSubtreeWithHardware(
++    deviceId: string,
++    trustchain: Trustchain,
++    path: string,
++    callbacks?: TrustchainDeviceCallbacks,
++  ): Promise<boolean>;
++
+   /**
+    * destroy the trustchain
+    */
+@@ -248,4 +328,9 @@ export interface TrustchainDeviceCallbacks {
+ 
+ export interface GetOrCreateTrustchainCallbacks extends TrustchainDeviceCallbacks {
+   onInitialResponse?: (trustchains: TrustchainsResponse) => void;
++  /**
++   * Permission bits assigned when this call adds the software member.
++   * Defaults to Permissions.OWNER. Does not alter an already-enrolled member.
++   */
++  softwareMemberPermissions?: number;
+ }

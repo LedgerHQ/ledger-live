@@ -839,6 +839,7 @@ patchedDependencies:
   '@callstack/repack@5.2.5': 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
   '@changesets/get-github-info@0.6.0': e4ccd9dc35d4ccf42e8e83fdf0dcd00efc4170407493e6e0a3d15e2991e7d2b9
   '@exodus/patch-broken-hermes-typed-arrays': 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
+  '@ledgerhq/ledger-key-ring-protocol@1.1.0': 495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06
   '@taquito/http-utils': 74970a17ec07ec4fa7e3a168cec614cd9350646589f9b3dbffee742b2b15d90e
   '@testing-library/react-native@13.3.3': 4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76
   '@ton/core': 9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324
@@ -1435,7 +1436,7 @@ importers:
         version: 6.36.1
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.1.0(patch_hash=495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06)(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -2351,7 +2352,7 @@ importers:
         version: link:../../libs/ui/packages/icons
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.1.0(patch_hash=495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06)(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -3114,7 +3115,7 @@ importers:
         version: 6.36.1
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.1.0(patch_hash=495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06)(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -3342,7 +3343,7 @@ importers:
         version: 1.0.1(@typescript/typescript6@6.0.2)
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.1.0(patch_hash=495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06)(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -7300,7 +7301,7 @@ importers:
         version: 6.36.1
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.1.0(patch_hash=495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06)(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/live-cli':
         specifier: workspace:^
         version: link:../../apps/cli/dist
@@ -19834,7 +19835,7 @@ importers:
         version: 6.36.1
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.1.0(patch_hash=495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06)(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -45192,7 +45193,7 @@ snapshots:
       '@ledgerhq/logs': 6.19.0
       events: 3.3.0
 
-  '@ledgerhq/ledger-key-ring-protocol@1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
+  '@ledgerhq/ledger-key-ring-protocol@1.1.0(patch_hash=495da7c1f7a0d59762f4fc69cc30ecf9c4d41ec9ca716b60c3b627026c156b06)(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/auth': 0.1.1
       '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.1(@typescript/typescript6@6.0.2)
