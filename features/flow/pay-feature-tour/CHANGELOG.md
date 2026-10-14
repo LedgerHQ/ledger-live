@@ -1,5 +1,21 @@
 # @features/flow-pay-feature-tour
 
+## 0.8.0
+
+### Minor Changes
+
+- [#22833](https://github.com/LedgerHQ/ledger-live/pull/22833) [`29b0e0c`](https://github.com/LedgerHQ/ledger-live/commit/29b0e0c324494c21d82f5deb26f6774c3c5aca6f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide the Pay feature tour card row when the pay-tab flag's card param is off
+
+- [#22869](https://github.com/LedgerHQ/ledger-live/pull/22869) [`eb65ce4`](https://github.com/LedgerHQ/ledger-live/commit/eb65ce49ea0fa2d2c44f79fd2b0f8de365ae5e53) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+### Patch Changes
+
+- Updated dependencies [[`ff5e1b0`](https://github.com/LedgerHQ/ledger-live/commit/ff5e1b0f5a315aaccd3e23aeb8ccd2c7d48730f4)]:
+  - @features/platform-feature-flags@0.9.0
+  - @shared/i18n@0.2.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @features/platform-pay-analytics@0.3.0
+
 ## 0.8.0-next.0
 
 ### Minor Changes

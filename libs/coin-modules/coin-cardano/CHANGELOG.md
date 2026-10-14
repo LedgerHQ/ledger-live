@@ -1,5 +1,36 @@
 # @ledgerhq/coin-cardano
 
+## 2.0.0
+
+### Major Changes
+
+- [#23209](https://github.com/LedgerHQ/ledger-live/pull/23209) [`bc85ada`](https://github.com/LedgerHQ/ledger-live/commit/bc85ada15c9403d1180d5af23f730196fd0cc672) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-cardano): stop resolving the currency with `getCryptoCurrencyById`
+
+  The module no longer needs the host currencies resolver. The network is read from a new required
+  `testnet` field of the Cardano coin config, served `false` in `config_currency_cardano` and `true` in
+  a new `config_currency_cardano_testnet`. `createApi(currencyId)` resolves the config with
+  `context.config()` and uses its `currencyId` directly where the id itself is needed (operation ids,
+  TTL, network parameters, pool bech32 ids), so no `id` is added to the config. The bridge resolves the
+  config for the account's currency instead of always reading `cardano`.
+
+  Breaking: `CardanoConfig` requires `testnet`. `isTestnet`, `lastBlock`, `getValidators`, `getBalance`,
+  `getStakes`, `broadcast`, `validateIntent`, `fetchDelegation`, `getTransactions` and the api fetchers
+  (`fetchNetworkInfo`, `fetchLatestBlock`, `fetchEpochInfo`, `fetchPoolList`, `fetchPoolDetails`,
+  `getDelegationInfo`, `getAllTransactionsByKeys`, `submitTransaction`) take the coin config instead of
+  a currency, as first parameter. `listOperations`, `craftTransaction`, `buildUnsignedTransaction` and
+  `estimateFees` take `(config, currencyId, ...)`. The live-common `fetchPoolDetails` and
+  `useCardanoFamilyPools` keep taking a currency and resolve its config.
+
+### Minor Changes
+
+- [#23007](https://github.com/LedgerHQ/ledger-live/pull/23007) [`94e247b`](https://github.com/LedgerHQ/ledger-live/commit/94e247bcaa49bd601951be6f39182ee26ed67ecc) Thanks [@ishaba](https://github.com/ishaba)! - cardano: stop counting unclaimed staking rewards as spendable. A send never withdraws rewards (the device swap policy rejects withdrawals), so whatever the dRep delegation the account-sync spendable balance now excludes them, the CoinModule `getBalance` reports them as `locked`, and an ADA send is validated against the spendable balance instead of the total balance. Sends and swaps of an amount only the rewards would cover now fail early with `NotEnoughBalance` instead of a build-time `CardanoNotEnoughFunds`, including on an account holding only rewards (no UTXO). Send Max skips that pre-check and is left to the transaction builder.
+
+### Patch Changes
+
+- Updated dependencies [[`20484ff`](https://github.com/LedgerHQ/ledger-live/commit/20484ff8d7cc0aab2e4b8448c7e8ce9ebf6840fe), [`f047501`](https://github.com/LedgerHQ/ledger-live/commit/f047501381efde857b48c1314d2de637fdce8ade), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`9c9cae5`](https://github.com/LedgerHQ/ledger-live/commit/9c9cae5ab492b74d52b13e0a5b0673bd681f8d9d), [`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`18166fb`](https://github.com/LedgerHQ/ledger-live/commit/18166fbe8719d50c911aa0ab349e68c414f8fc62), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`6d744e0`](https://github.com/LedgerHQ/ledger-live/commit/6d744e0d30b4480282d35c359d096f3f6d6602af), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e), [`8312d68`](https://github.com/LedgerHQ/ledger-live/commit/8312d6818aa5fa37f523352f81f51a61dd502bf2), [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4)]:
+  - @ledgerhq/ledger-wallet-framework@3.7.0
+  - @ledgerhq/types-live@6.127.0
+
 ## 2.0.0-next.1
 
 ### Patch Changes

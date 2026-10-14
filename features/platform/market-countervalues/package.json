@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-market-countervalues",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Countervalues React and Redux glue: the provider, the hooks reading it and the Redux slice",
   "main": "src/index.ts",

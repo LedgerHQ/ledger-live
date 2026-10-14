@@ -1,5 +1,15 @@
 # @support/msw-features-flow-pay-card
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`e7996b4`](https://github.com/LedgerHQ/ledger-live/commit/e7996b4bb9f13726af09cc5202d26d1e471563ef), [`77e7162`](https://github.com/LedgerHQ/ledger-live/commit/77e716257785645b79027b580fcef2dfbab7ad3b), [`57921f9`](https://github.com/LedgerHQ/ledger-live/commit/57921f955b6c07389cb78d4c087c881667858dc2), [`eb65ce4`](https://github.com/LedgerHQ/ledger-live/commit/eb65ce49ea0fa2d2c44f79fd2b0f8de365ae5e53), [`bed3cf9`](https://github.com/LedgerHQ/ledger-live/commit/bed3cf9bd880e00d51fc90849dca3741b9ab779f)]:
+  - @shared/api-services@0.10.0
+  - @features/flow-pay-card-auth@0.10.0
+  - @domain/api-card-management@0.8.1
+  - @features/flow-pay-card-widget@0.5.1
+
 ## 0.4.1-next.0
 
 ### Patch Changes

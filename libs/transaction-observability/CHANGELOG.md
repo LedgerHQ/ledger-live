@@ -1,5 +1,45 @@
 # @ledgerhq/transaction-observability
 
+## 0.5.0
+
+### Minor Changes
+
+- [#22961](https://github.com/LedgerHQ/ledger-live/pull/22961) [`5b62ecb`](https://github.com/LedgerHQ/ledger-live/commit/5b62ecb5c84b36099b4f29fcca9665431a468fb7) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Report `earn_transaction_*` for the StakeKit, Kiln DeFi and P2P TON stake programs.
+
+  `kiln-widget` (Kiln DeFi) is now on the staking-app allow list, so its stablecoin vault deposits reach Segment. Its ERC-4626 `deposit`, `withdraw` and `redeem` calls already map. It reports no `staking_method`, because a lending yield fits none of them. The built-in stake-program list now includes `p2p-ton-staking`, and it is typed against the allow list, so a stake program that Segment would drop fails to compile.
+
+  StakeKit's EVM stakes (bsc, avalanche_c_chain, POL and USDe on ethereum) are contract calls with no staking `mode`, so they had no action and were dropped. `stakekit` is now on the staking-app allow list, so they emit, with an unmapped function reported as `transaction_type: unknown` and its selector in `raw_transaction_type`. StakeKit reports no `staking_method`: one manifest stakes natively, liquidly and through validators. Its native routes (tron, crypto_org, assethub_polkadot) already emitted and keep their family wording. Observed runs confirm USDe `deposit`, AVAX `submit` → `deposit`, and POL `buyVoucherPOL` → `delegate`: each Polygon validator has its own ValidatorShare contract, so the call names a validator. BSC is not yet observed and reports its selector until it is. AVAX calls `submit` on sAVAX itself, so the contract map now reports it as `liquid` with `output_currency: sAVAX`, checked against CAL like the ETH receipt tokens.
+
+  TON has no `mode`, so its action is now read from what the signer signs: `payload.type`, or a non-empty top-level comment, which replaces the payload. `tonstakers-deposit` and `tonwhales-pool-deposit` are deposits, and `tonwhales-pool-withdraw` and `single-nominator-withdraw` are withdraws. `jetton-burn` stays unmapped, because a Tonstakers unstake and any other burn look the same. `p2p-ton-staking` is on the allow list as pooled staking.
+
+  A P2P deposit carries no payload: it is a plain transfer to the pool with the comment `Deposit`. Inside `p2p-ton-staking` only, an unencrypted comment of exactly `Deposit` is classified, and reported as the fixed `raw_transaction_type` `pool-comment-deposit`. The comment text itself is never reported, and the same comment outside a staking app classifies nothing. A P2P withdrawal needs nothing new: it sends the `tonwhales-pool-withdraw` payload.
+
+  `contract_address` is now only ever reported for EVM. With StakeKit and P2P allow-listed, a native or TON stake reached the contract fallback, which reported its recipient, lower-cased, as a contract. Lower-casing also corrupts TON's case-sensitive addresses.
+
+  These three manifests come from the `stakePrograms` remote config, not from the Earn API, so the drift guard does not cover them.
+
+- [#22787](https://github.com/LedgerHQ/ledger-live/pull/22787) [`1bf1044`](https://github.com/LedgerHQ/ledger-live/commit/1bf1044e3eb3b57187bf6c837b17b4ed00f870cc) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Map the ETH staking dApp exit calls that reached `earn_transaction_*` as `transaction_type: unknown`.
+
+  Every name comes from a completed stake in production, not from the selector list: Chorus One `enterExitQueue` and `claimExitedAssets`, Coinbase and Kiln `requestExit` and `multiClaim`, Kiln `requestValidatorsExit`, Lido `requestWithdrawalsWithPermit` and Kelp `completeWithdrawal` are withdraws, and Kelp `requestRedeem` is a redeem.
+
+  Kiln `batchWithdrawCLFee` stays unmapped on purpose. It sweeps rewards, but after a validator exit the same call returns the principal, so either mapping would be wrong for some calls.
+
+- [#22962](https://github.com/LedgerHQ/ledger-live/pull/22962) [`5eca063`](https://github.com/LedgerHQ/ledger-live/commit/5eca063fe675ec5cb59cc96fffe4b67fcd7f3061) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Report the staked token as `input_currency` for StakeKit's USDe and POL stakes, not the network coin. These calls come from the parent ETH account, so the token is known only from the contract that was called. The contract map now carries an optional `inputCurrency` next to `outputCurrency`. The POL entry covers one Polygon validator, because each validator has its own ValidatorShare contract. The StakeKit USDe vault also reports `output_currency: stk-USDe`, the vault share token the user receives. CAL does not list it, so the drift guard cannot check it.
+
+- [#23083](https://github.com/LedgerHQ/ledger-live/pull/23083) [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/ledger-key-ring-protocol`, `@ledgerhq/hw-ledger-key-ring-protocol` to 1.0.0 and `@ledgerhq/evm-tools` to 2.0.0 (ts-libs). No API change.
+
+- [#22781](https://github.com/LedgerHQ/ledger-live/pull/22781) [`6c8bd31`](https://github.com/LedgerHQ/ledger-live/commit/6c8bd31900a6b6aa8987cc82f6d907bbc3611fc1) Thanks [@KVNLS](https://github.com/KVNLS)! - Build the desktop renderer as a web target instead of `electron-renderer`: Node builtins resolve at build time rather than as runtime `require()` calls, and the bundle has no externals. `process` reads are supplied from a snapshot captured in main at startup, deliberately not a `process/browser` polyfill, which would report `platform === "browser"`. A build-time guard fails the build on an unguarded `process` read or a bare `setImmediate`/`clearImmediate`, rather than letting it surface as a runtime crash.
+
+  ZCash shielded sync receives its IPC channel through `setZCashIpcRenderer` instead of reaching for `electron`; the desktop app supplies it over the preload bridge.
+
+  `@ledgerhq/transaction-observability` (the dApp intent's `app_version`) and `@features/platform-device-action-content` (the E2E animation switch) read `process.env` directly instead of `globalThis.process`, which the web-target renderer does not have.
+
+### Patch Changes
+
+- Updated dependencies [[`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`c9b7594`](https://github.com/LedgerHQ/ledger-live/commit/c9b75949c8f01cade6b061bd5b6ecb0af5b0ec5f), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e)]:
+  - @ledgerhq/types-live@6.127.0
+  - @shared/env@0.10.0
+
 ## 0.5.0-next.0
 
 ### Minor Changes

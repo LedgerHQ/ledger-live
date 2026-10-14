@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.68.0
+
+### Minor Changes
+
+- [#23080](https://github.com/LedgerHQ/ledger-live/pull/23080) [`4e7c1ae`](https://github.com/LedgerHQ/ledger-live/commit/4e7c1ae11a76a078d027dac7584fd68bd0a82811) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate mobile Add Account off pre-ldls onto Lumen and remove the native pre-ldls entry
+
 ## 0.68.0-next.0
 
 ### Minor Changes

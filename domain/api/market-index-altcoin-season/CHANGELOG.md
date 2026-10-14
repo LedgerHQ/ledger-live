@@ -1,5 +1,13 @@
 # @domain/api-altcoins-sentiment
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0
+  - @domain/entity-market-index-altcoin-season@0.3.0
+
 ## 0.4.1-next.0
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @features/flow-contacts-add-address
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`4101467`](https://github.com/LedgerHQ/ledger-live/commit/4101467e60d17f1facfae9c71e5b684bcf9f48e3), [`8376d49`](https://github.com/LedgerHQ/ledger-live/commit/8376d497d552cd4644e806afdfbd5323bf10a695), [`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`8783545`](https://github.com/LedgerHQ/ledger-live/commit/87835456704c2322a25339ef27ef92a320d02025), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9)]:
+  - @domain/entity-contact@0.12.0
+  - @features/platform-contacts@0.10.0
+  - @domain/entity-currency-crypto@0.15.0
+  - @domain/entity-currency-token@0.5.5
+  - @shared/linking@0.3.0
+
 ## 0.6.2-next.0
 
 ### Patch Changes

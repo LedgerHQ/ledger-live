@@ -1,5 +1,13 @@
 # @features/flow-contacts-delete-contact
 
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`4101467`](https://github.com/LedgerHQ/ledger-live/commit/4101467e60d17f1facfae9c71e5b684bcf9f48e3), [`8376d49`](https://github.com/LedgerHQ/ledger-live/commit/8376d497d552cd4644e806afdfbd5323bf10a695), [`8783545`](https://github.com/LedgerHQ/ledger-live/commit/87835456704c2322a25339ef27ef92a320d02025)]:
+  - @domain/entity-contact@0.12.0
+  - @features/platform-contacts@0.10.0
+
 ## 0.2.5-next.0
 
 ### Patch Changes

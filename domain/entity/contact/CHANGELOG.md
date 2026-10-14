@@ -1,5 +1,28 @@
 # @domain/entity-contact
 
+## 0.12.0
+
+### Minor Changes
+
+- [#23143](https://github.com/LedgerHQ/ledger-live/pull/23143) [`4101467`](https://github.com/LedgerHQ/ledger-live/commit/4101467e60d17f1facfae9c71e5b684bcf9f48e3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - refactor(contacts): clean up the Contacts debug tools
+
+  The send-history contacts builder was copied in both apps. It now lives once in
+  `@domain/entity-contact/schema.mock` as `mockContactsFromSendHistory`. `@features/platform-contacts`
+  adds `parseExcludedCurrencyIdsInput`, which works like `parseEligibleAddressFamiliesInput`. The
+  desktop tool no longer copies flag params into local state with effects. Its inputs show the flag
+  value unless you are editing them, use `cn`, and have no hard-coded strings left. The mobile tool
+  drops its `StyleSheet`, shows the families as tags, and builds the flag preview in its view model.
+
+- [#22719](https://github.com/LedgerHQ/ledger-live/pull/22719) [`8376d49`](https://github.com/LedgerHQ/ledger-live/commit/8376d497d552cd4644e806afdfbd5323bf10a695) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Restrict contact names to 1-32 printable ASCII characters, as signers only support ASCII
+
+### Patch Changes
+
+- Updated dependencies [[`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9)]:
+  - @domain/entity-currency-crypto@0.15.0
+  - @domain/entity-currency-token@0.5.5
+  - @shared/cloud-sync-module@0.4.0
+  - @shared/schema-primitives@0.5.0
+
 ## 0.12.0-next.0
 
 ### Minor Changes

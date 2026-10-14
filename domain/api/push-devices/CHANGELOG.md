@@ -1,5 +1,13 @@
 # @domain/api-push-devices
 
+## 0.2.8
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`d1eeaab`](https://github.com/LedgerHQ/ledger-live/commit/d1eeaabf43a54a3d2c4796ea1c5b11a0b9202814), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be)]:
+  - @shared/api-services@0.10.0
+  - @domain/entity-client-identity@0.3.0
+
 ## 0.2.8-next.0
 
 ### Patch Changes
