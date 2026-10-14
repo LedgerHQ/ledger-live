@@ -14,7 +14,7 @@ Page objects extending [`PageHolder`](../tests/page/abstractClasses.ts) can call
 
 ## Why the helper
 
-Soft assertions do not get a point-in-time screenshot. 
+Soft assertions do not get a point-in-time screenshot.
 That is misleading when a soft check fails early and the test keeps going.
 
 See this Playwright [thread](https://github.com/microsoft/playwright/issues/40819) for more information.

@@ -1,6 +1,6 @@
-# E2E Desktop Testing Agent
+# Adding or updating a desktop E2E test
 
-This agent guides you through adding or updating E2E tests for ledger-live-desktop using Playwright and Speculos.
+This document guides you through adding or updating E2E tests for ledger-live-desktop using Playwright and Speculos.
 
 ## When to Use
 
@@ -17,21 +17,6 @@ This agent guides you through adding or updating E2E tests for ledger-live-deskt
 - `e2e/desktop/tests/page/` — Page Objects with reusable actions
 - `e2e/desktop/tests/utils/` — desktop test helpers (tags, feature flags, Allure)
 - `libs/live-e2e-shared/src/` — shared e2e enums, families, and Speculos helpers
-
----
-
-## Environment Setup
-
-Before running tests, ensure these environment variables are set:
-
-```bash
-export COINAPPS=/path/to/coin-apps
-export SEED="your test seed phrase here"
-export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
-# SPECULOS_DEVICE valid values: nanoS, nanoSP, nanoX, stax, flex, nanoGen5
-export SPECULOS_DEVICE=nanoSP
-export MOCK=0
-```
 
 ---
 
@@ -165,15 +150,15 @@ pnpm build:lld:deps
 | FLEX   | `flex`     | Ledger Flex        |
 | NG5    | `nanoGen5` | Ledger NG5         |
 
-Run tests for each device using the `SPECULOS_MODEL` environment variable:
+Run tests for each device using the `SPECULOS_DEVICE` environment variable:
 
 ```bash
-SPECULOS_MODEL=nanoS DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
-SPECULOS_MODEL=nanoSP DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
-SPECULOS_MODEL=nanoX DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
-SPECULOS_MODEL=stax DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
-SPECULOS_MODEL=flex DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
-SPECULOS_MODEL=nanoGen5 DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
+SPECULOS_DEVICE=nanoS DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts
+SPECULOS_DEVICE=nanoSP DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts
+SPECULOS_DEVICE=nanoX DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts
+SPECULOS_DEVICE=stax DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts
+SPECULOS_DEVICE=flex DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts
+SPECULOS_DEVICE=nanoGen5 DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts
 ```
 
 **Note:** Each device may have different button layouts and screen flows. Ensure the family file handles device-specific interactions correctly.
@@ -194,13 +179,6 @@ test.use({
 - **Speculos:** `Account.currency.speculosApp`
 - **CLI commands:** `liveDataCommand`, `liveDataWithAddressCommand`, `liveDataWithRecipientAddressCommand`
 
-### Pay tab
-
-A spec that needs an injected Card session must live under `specs/paytab/`. The card-session reporter
-mints once before workers when a selected spec path contains `/paytab/`. `--grep` is already applied,
-so a smoke run that does not select that spec does not log in. The fixture injects the session when
-the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
-
 ---
 
 ## Commands
@@ -214,28 +192,10 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 
 ---
 
-## Best Practices
+## Finishing
 
-- **Never use hardcoded timeouts** (e.g., `page.waitForTimeout(1000)`)
-- Do not use Playwright's `test.step()`; use the `@step` decorator in Page Objects instead for reusable, consistently reported steps
-- Access methods via `app` fixture (e.g., `app.layout`, `app.send`, `app.speculos`)
-- **MANDATORY:** Test on all 6 device models (LNS, LNSP, LNX, STAX, FLEX, NG5) before marking tests complete
-- **Every `test()` must include a TMS annotation** with a valid `B2CQA-XXXX` id. The `annotationLinks` auto
-  fixture reads that annotation and publishes the Allure TMS link before any other fixture runs, so
-  the link is present even when CLI/Speculos setup fails and the body never executes. Never call
-  `addTmsLink()` from a test body — a test with no annotation simply gets no link.
+Follow [validate-before-finishing](../../../docs/validate-before-finishing.md), then:
 
-  ```typescript
-  const xrayTicket = "B2CQA-XXXX"; // obtain from QA before merging
-  test(
-    "description",
-    {
-      tag: buildTags({ currencyId: account.currency.id }),
-      annotation: { type: "TMS", description: xrayTicket },
-    },
-    async ({ app }) => { ... },
-  );
-  ```
+Dispatch filtered desktop CI (`/run-e2e-ci`) and read Allure, not just the green check. A retry hides a failed first attempt.
 
-- Be aware that there may be environment variables to gate which UI elements you can assert on. For example, CI may set `wallet40-q2` (enabling `earnUpselling: true` → `crowd-favourites`), while a local run without the variable defaults to Q1 (`earnUpselling: false` → different UI). So tests may pass locally but exercise different elements than CI. '
-- As such, you may need to declare flags explicitly in `test.use({ featureFlags })` if your UI varies based on specific feature flag parameters or configurations.
+Comments follow `/comments`. Keep only those recording a non-obvious reason.

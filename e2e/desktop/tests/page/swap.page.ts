@@ -774,6 +774,7 @@ export class SwapPage extends WebViewAppPage {
     expect(fileContents).toContain(swap.accountToCredit.address);
   }
 
+  @step("Retrieve the minimum swap amount")
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
     const amount = await getMinimumSwapAmount(accountFrom, accountTo);
     return amount ? Number.parseFloat(amount.toFixed(6)).toString() : "";
