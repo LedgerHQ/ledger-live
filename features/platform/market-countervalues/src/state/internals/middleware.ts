@@ -36,6 +36,13 @@ import {
   type CountervaluesLoad,
 } from "../slice";
 import { log } from "../../utils/internals/logger";
+import {
+  markLoopStart,
+  probeLoad,
+  probeRates,
+  probeRestore,
+  probeSettings,
+} from "../../utils/internals/renderProbe";
 
 /** Before the first start: no session, no tick queued. */
 export const initialSyncState: SyncState = { status: "idle", queuedTick: "none" };
@@ -234,7 +241,9 @@ export function restoreSavedState<S>(
 ): void {
   if (!savedState || typeof savedState !== "object") return;
   if (!Object.keys(savedState).length) return;
-  context.dispatch(setCountervaluesState(importCountervalues(savedState, settings)));
+  const restored = importCountervalues(savedState, settings);
+  probeRestore(savedState, restored);
+  context.dispatch(setCountervaluesState(restored));
 }
 
 /**
@@ -349,7 +358,7 @@ function openSession<S>(
   const { config, dispatch, getState } = context;
   const selectSettings = settings ? () => settings : config.createSettingsSelector();
   selectSettings(getState());
-  const rates = config.createRates(dispatch);
+  const rates = probeRates(config.createRates(dispatch));
   const subscription = dispatch(
     supportedIdsEndpoint.initiate(undefined, {
       subscriptionOptions: {
@@ -388,7 +397,9 @@ function openSession<S>(
  * The session returned by {@link openSession}.
  */
 function startSession<S>(context: SyncContext<S>, session: Session): void {
+  markLoopStart();
   session.lastSupportedSettings = readSupportedSettings(context, session);
+  probeSettings(session.lastSupportedSettings);
   context.dispatch(countervaluesLoadRequested());
   tryStep("restore", () => {
     restoreSavedState(context, session.savedState, readSettings(context, session));
@@ -415,6 +426,7 @@ function reconcileSessionWithStore<S>(context: SyncContext<S>, session: Session)
   logNewSupportedIdsError(context, session);
 
   const settings = readSupportedSettings(context, session);
+  probeSettings(settings);
   if (settings !== session.lastSupportedSettings) {
     session.lastSupportedSettings = settings;
     debounceReload(context, session);
@@ -454,15 +466,17 @@ function loadRates<S>(
   const { dispatch } = context;
   dispatch(countervaluesLoadStarted());
   const supportedIds = readSupportedIdsOrDefault(context);
-  loadCountervalues(currentState, settings, {
-    rates,
-    batchStrategySolver: {
-      shouldBatchCurrencyFrom: currency =>
-        shouldBatchCurrency(currency, supportedIds, settings.marketCapBatchingAfterRank),
-    },
-    granularitiesRates: settings.granularitiesRates,
-    log,
-  }).then(
+  probeLoad(settings, () =>
+    loadCountervalues(currentState, settings, {
+      rates,
+      batchStrategySolver: {
+        shouldBatchCurrencyFrom: currency =>
+          shouldBatchCurrency(currency, supportedIds, settings.marketCapBatchingAfterRank),
+      },
+      granularitiesRates: settings.granularitiesRates,
+      log,
+    }),
+  ).then(
     next => {
       dispatch(setCountervaluesState(next));
       dispatch(countervaluesLoadSucceeded());

@@ -1,4 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
+import { probeAction } from "../utils/internals/renderProbe";
 import {
   countervaluesRatesSlice,
   initialState,
@@ -14,10 +15,16 @@ import {
  * What both apps mount at the `countervalues` store key: the rates from the entity, and the loop's
  * own state next to them.
  */
-export const countervaluesReducer = combineReducers({
+const combinedCountervaluesReducer = combineReducers({
   rates: countervaluesRatesSlice.reducer,
   sync: countervaluesSyncSlice.reducer,
 });
+
+// MEASUREMENT BUILD ONLY, NEVER MERGE.
+export const countervaluesReducer: typeof combinedCountervaluesReducer = (state, action) => {
+  probeAction(state, action);
+  return combinedCountervaluesReducer(state, action);
+};
 
 export type CountervaluesStoreState = {
   rates: CounterValuesState;

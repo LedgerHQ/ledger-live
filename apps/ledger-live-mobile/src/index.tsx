@@ -31,6 +31,7 @@ import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
 import LedgerStoreProvider from "~/context/LedgerStore";
+import { CountervaluesProbeProfiler } from "@features/platform-market-countervalues";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { store } from "~/state-manager/configureStore";
 import LoadingApp from "~/components/LoadingApp";
@@ -404,60 +405,62 @@ export default class Root extends Component {
   render() {
     logStartupEvent("Root render");
     return (
-      <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-        {({ ready, currencyInitialized }) =>
-          ready ? (
-            <RebootProvider>
-              <SetEnvsFromSettings />
-              <SegmentSetup />
-              <EvmAddressBookSetup />
-              <TronAddressBookSetup />
-              <BrazeContentCardsProvider>
-                <HookNotifications />
-                <HookDevTools />
-                <TermsAndConditionMigrateLegacyData />
-                <QueuedBottomSheetsProvider>
-                  {/* Two providers, one instance: `I18nextProvider` serves the app's own
+      <CountervaluesProbeProfiler>
+        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
+          {({ ready, currencyInitialized }) =>
+            ready ? (
+              <RebootProvider>
+                <SetEnvsFromSettings />
+                <SegmentSetup />
+                <EvmAddressBookSetup />
+                <TronAddressBookSetup />
+                <BrazeContentCardsProvider>
+                  <HookNotifications />
+                  <HookDevTools />
+                  <TermsAndConditionMigrateLegacyData />
+                  <QueuedBottomSheetsProvider>
+                    {/* Two providers, one instance: `I18nextProvider` serves the app's own
                     react-i18next call sites, `I18nProvider` serves `features/*` and `domain/*`
                     through `@shared/i18n`. */}
-                  <LinkingProviderWrapper>
-                    <I18nextProvider i18n={i18n}>
-                      <I18nProvider i18n={i18n}>
-                        <LocaleProvider>
-                          <PlatformAppProviderWrapper>
-                            <SafeAreaProvider>
-                              <ModalSystemPrimer />
-                              <StylesProvider>
-                                <StyledStatusBar />
-                                <NavBarColorHandler />
-                                <GestureHandlerRootView style={styles.root}>
-                                  <WaitForAppReady currencyInitialized={currencyInitialized}>
-                                    <AppProviders>
-                                      <AppGeoBlocker>
-                                        <AppVersionBlocker>
-                                          <BridgeSyncProvider>
-                                            <App />
-                                          </BridgeSyncProvider>
-                                        </AppVersionBlocker>
-                                      </AppGeoBlocker>
-                                    </AppProviders>
-                                  </WaitForAppReady>
-                                </GestureHandlerRootView>
-                              </StylesProvider>
-                            </SafeAreaProvider>
-                          </PlatformAppProviderWrapper>
-                        </LocaleProvider>
-                      </I18nProvider>
-                    </I18nextProvider>
-                  </LinkingProviderWrapper>
-                </QueuedBottomSheetsProvider>
-              </BrazeContentCardsProvider>
-            </RebootProvider>
-          ) : (
-            <LoadingApp />
-          )
-        }
-      </LedgerStoreProvider>
+                    <LinkingProviderWrapper>
+                      <I18nextProvider i18n={i18n}>
+                        <I18nProvider i18n={i18n}>
+                          <LocaleProvider>
+                            <PlatformAppProviderWrapper>
+                              <SafeAreaProvider>
+                                <ModalSystemPrimer />
+                                <StylesProvider>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+                                  <GestureHandlerRootView style={styles.root}>
+                                    <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                      <AppProviders>
+                                        <AppGeoBlocker>
+                                          <AppVersionBlocker>
+                                            <BridgeSyncProvider>
+                                              <App />
+                                            </BridgeSyncProvider>
+                                          </AppVersionBlocker>
+                                        </AppGeoBlocker>
+                                      </AppProviders>
+                                    </WaitForAppReady>
+                                  </GestureHandlerRootView>
+                                </StylesProvider>
+                              </SafeAreaProvider>
+                            </PlatformAppProviderWrapper>
+                          </LocaleProvider>
+                        </I18nProvider>
+                      </I18nextProvider>
+                    </LinkingProviderWrapper>
+                  </QueuedBottomSheetsProvider>
+                </BrazeContentCardsProvider>
+              </RebootProvider>
+            ) : (
+              <LoadingApp />
+            )
+          }
+        </LedgerStoreProvider>
+      </CountervaluesProbeProfiler>
     );
   }
 }
