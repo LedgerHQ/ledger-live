@@ -391,6 +391,7 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Device
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/DeviceActionContentDevTool/  @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/OsUpdate/             @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
 libs/**/hw-transport-*/                                            @ledgerhq/live-devices
 libs/**/types-devices/                                             @ledgerhq/live-devices
@@ -400,6 +401,7 @@ libs/ledger-live-common/src/hw/                                    @ledgerhq/liv
 libs/ledger-live-common/src/manager/                               @ledgerhq/live-devices
 libs/ledger-live-common/src/device/                                @ledgerhq/live-devices
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
+libs/ledger-live-common/src/os-update/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
 features/platform/device-onboarding/                               @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
