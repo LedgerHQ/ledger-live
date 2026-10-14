@@ -100,12 +100,14 @@ export default class PayTabPage {
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
     const maxAttempts = 5;
+    const closeButtonCounts: number[] = [];
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      closeButtonCounts.push(await countElementsById(this.bankTransferCloseId));
       await tapById(this.bankTransferCloseId);
       if (await waitForElementNotVisible(this.bankTransferContentId)) return;
     }
     throw new Error(
-      `${this.bankTransferContentId} stayed visible after ${maxAttempts} close attempts`,
+      `${this.bankTransferContentId} stayed visible after ${maxAttempts} close attempts; visible ${this.bankTransferCloseId} counts: ${closeButtonCounts.join(", ")}`,
     );
   }
 
