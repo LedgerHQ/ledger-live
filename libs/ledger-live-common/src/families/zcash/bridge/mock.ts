@@ -3,15 +3,16 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/coin-zcash/types/
 import type { ZcashAccountBridge } from "@ledgerhq/coin-zcash/bridge";
 import { createTransaction } from "@ledgerhq/coin-zcash/bridge/createTransaction";
 import { updateTransaction } from "@ledgerhq/coin-zcash/bridge/updateTransaction";
-import { getTransactionStatus } from "@ledgerhq/coin-zcash/bridge/getTransactionStatus";
-import { prepareTransaction } from "@ledgerhq/coin-zcash/bridge/prepareTransaction";
-import { estimateMaxSpendable } from "@ledgerhq/coin-zcash/bridge/estimateMaxSpendable";
+import { buildGetTransactionStatus } from "@ledgerhq/coin-zcash/bridge/getTransactionStatus";
+import { buildPrepareTransaction } from "@ledgerhq/coin-zcash/bridge/prepareTransaction";
+import { buildEstimateMaxSpendable } from "@ledgerhq/coin-zcash/bridge/estimateMaxSpendable";
+import type { ZcashCoinConfig } from "@ledgerhq/coin-zcash/config";
 import { getSerializedAddressParameters } from "@ledgerhq/coin-zcash/bridge/exchange";
 import {
   assignToAccountRaw,
   makeAssignFromAccountRaw,
 } from "@ledgerhq/coin-zcash/bridge/serialization";
-import { contextLogger } from "../../../bridge/generic-coin-framework/api/context";
+import { buildContext, contextLogger } from "../../../bridge/generic-coin-framework/api/context";
 import { validateAddress as validateZcashAddress } from "@ledgerhq/coin-zcash/logic/validateAddress";
 import { ZCASH_ESTIMATION_RECIPIENT } from "@ledgerhq/coin-zcash/constants";
 import {
@@ -37,6 +38,10 @@ import { delay } from "../../../promise";
 // below, which the generic mockHelpers know nothing about.
 
 const receive = makeAccountBridgeReceive();
+
+// The same context the real bridge gets (families/zcash/setup.ts): it only reads the
+// currency's coin config, which the fee rules of the three builders below need.
+const context = buildContext<ZcashCoinConfig>("zcash");
 
 // Stand-ins for what the device (getFullViewingKey/getShieldedAddress) and the
 // Zaino client (deriveShieldedAddress) answer on the real bridge.
@@ -66,9 +71,9 @@ type ZcashMockAccountBridge = AccountBridge<Transaction, any, TransactionStatus>
 const accountBridge: ZcashMockAccountBridge = {
   createTransaction,
   updateTransaction,
-  getTransactionStatus,
-  prepareTransaction,
-  estimateMaxSpendable,
+  getTransactionStatus: buildGetTransactionStatus(context),
+  prepareTransaction: buildPrepareTransaction(context),
+  estimateMaxSpendable: buildEstimateMaxSpendable(context),
   sync,
   receive,
   signOperation,
