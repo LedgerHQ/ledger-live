@@ -481,7 +481,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     family: "xrp",
-    supportedCoins: ["ripple", "ripple_testnet"],
+    supportedCoins: ["ripple", "ripple_testnet", "ripple_devnet"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/xrp/setup"),
     loadLocalApi: () => import("../families/xrp/coinModuleApi").then(m => m.createLocalXrpApi),

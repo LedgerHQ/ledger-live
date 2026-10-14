@@ -1322,6 +1322,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "ripple_devnet",
+    ticker: "XRP",
+    name: "XRP (Devnet)",
+    family: "ripple",
+    color: "#27a2db",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
     id: "ripple_testnet",
     ticker: "XRP",
     name: "XRP (Testnet)",
