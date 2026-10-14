@@ -1,5 +1,13 @@
 # @ledgerhq/wallet-cli
 
+## 2.11.2
+
+### Patch Changes
+
+- [#23334](https://github.com/LedgerHQ/ledger-live/pull/23334) [`ba7dd9c`](https://github.com/LedgerHQ/ledger-live/commit/ba7dd9c7d5dfcd87c922835ceaa4c1fc90dd403e) Thanks [@Justkant](https://github.com/Justkant)! - Send the wallet-cli User-Agent on fetch requests so swap quotes are no longer blocked
+
+- [#23306](https://github.com/LedgerHQ/ledger-live/pull/23306) [`b641da8`](https://github.com/LedgerHQ/ledger-live/commit/b641da86d889e6e81278c5af70b16da216a19f92) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Coin modules declare their AccountDescriptor type; the legacy account converters read it instead of the bitcoin family, so Cardano, Kaspa and Zcash map to utxo descriptors
+
 ## 2.11.1
 
 ### Patch Changes
