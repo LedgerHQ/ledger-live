@@ -3,6 +3,13 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useDeviceOnboarding, type DeviceOnboardingSession } from "../../hooks/useDeviceOnboarding";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
+const goBack = jest.fn();
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
+  useNavigation: () => ({ goBack }),
+}));
+
 jest.mock("../../hooks/useDeviceOnboarding", () => ({
   useDeviceOnboarding: jest.fn(),
 }));
@@ -35,6 +42,11 @@ function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboar
   };
 }
 
+function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status !== "checks") throw new Error(model.status);
+  return model.checks;
+}
+
 describe("useDeviceOnboardingFunnelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,7 +59,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
       const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-      expect(result.current).toBeNull();
+      expect(result.current.status).toBe("connecting");
     },
   );
 
@@ -56,7 +68,25 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(result.current).toBeNull();
+    expect(result.current.status).toBe("connecting");
+  });
+
+  it("should offer a way out when the connection fails", () => {
+    const reset = jest.fn();
+    const connect = jest.fn();
+    useSession.mockReturnValue(
+      session({ liveDevice: null, state: null, error: "no-known-device", reset, connect }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    if (result.current.status !== "failed") throw new Error(result.current.status);
+
+    result.current.onRetry();
+    expect(reset).toHaveBeenCalledTimes(1);
+    expect(connect).toHaveBeenCalledTimes(2);
+
+    result.current.onQuit();
+    expect(goBack).toHaveBeenCalledTimes(1);
   });
 
   it.each(["checks.firmwareCheck", "checks.firmwareUpdateOffered", "checks.checksSucceeded"])(
@@ -74,11 +104,12 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       );
 
       const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      const checks = checksOf(result.current);
 
-      result.current?.onQuit();
+      checks.onQuit();
 
       expect(send).toHaveBeenCalledWith({ type: "QUIT" });
-      expect(result.current?.update).toEqual({ current: "1.0.0", available: "1.1.0" });
+      expect(checks.update).toEqual({ current: "1.0.0", available: "1.1.0" });
     },
   );
 
@@ -94,13 +125,14 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     );
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const checks = checksOf(result.current);
 
-    result.current?.onStart();
-    result.current?.onContinue();
-    result.current?.onRetry();
-    result.current?.onCloseSheet();
-    result.current?.onAcceptUpdate();
-    result.current?.onDeclineUpdate();
+    checks.onStart();
+    checks.onContinue();
+    checks.onRetry();
+    checks.onCloseSheet();
+    checks.onAcceptUpdate();
+    checks.onDeclineUpdate();
 
     expect(send.mock.calls).toEqual([
       [{ type: "CONTINUE" }],
@@ -110,8 +142,8 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       [{ type: "USER_ACCEPT" }],
       [{ type: "USER_DECLINE" }],
     ]);
-    expect(result.current?.state).toBe("awaitingAllow");
-    expect(result.current?.error).toEqual({ kind: "declined" });
+    expect(checks.state).toBe("awaitingAllow");
+    expect(checks.error).toEqual({ kind: "declined" });
     expect(useSession).toHaveBeenCalledWith(
       expect.objectContaining({ navigateOnExit: true, wasReadOnlyAtEntry: true }),
     );

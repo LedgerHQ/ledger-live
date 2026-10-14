@@ -2566,6 +2566,10 @@
       "learnMore": "Learn more",
       "activate": "Activate",
       "skip": "Skip for now"
+    },
+    "connection": {
+      "connecting": "Connecting to your device",
+      "failed": "Connection failed"
     }
   },
   "onboarding": {
