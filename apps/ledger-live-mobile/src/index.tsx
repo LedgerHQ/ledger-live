@@ -18,6 +18,7 @@ import "./config/bridge-setup";
 import "./analytics/registerTransactionObserver";
 import Config from "react-native-config";
 import useEnv from "@features/platform-env";
+import { AppAvailability } from "@features/flow-app-availability";
 import { init } from "~/e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
@@ -79,7 +80,6 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
-import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
 import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
@@ -433,13 +433,13 @@ export default class Root extends Component {
                                 <GestureHandlerRootView style={styles.root}>
                                   <WaitForAppReady currencyInitialized={currencyInitialized}>
                                     <AppProviders>
-                                      <AppGeoBlocker>
+                                      <AppAvailability>
                                         <AppVersionBlocker>
                                           <BridgeSyncProvider>
                                             <App />
                                           </BridgeSyncProvider>
                                         </AppVersionBlocker>
-                                      </AppGeoBlocker>
+                                      </AppAvailability>
                                     </AppProviders>
                                   </WaitForAppReady>
                                 </GestureHandlerRootView>

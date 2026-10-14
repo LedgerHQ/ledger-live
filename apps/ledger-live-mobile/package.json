@@ -113,6 +113,7 @@
     "@domain/entity-starred-account": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
+    "@features/flow-app-availability": "workspace:*",
     "@features/flow-app-longer-password": "workspace:*",
     "@features/flow-app-password-removal": "workspace:*",
     "@features/flow-app-password-setup": "workspace:*",
