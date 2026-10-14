@@ -11170,5 +11170,8 @@
     "dialogTitle": "Transaction detail",
     "title": "Fund Perpetuals",
     "currencies": "{{sendTicker}} → {{receiveTicker}}"
+  },
+  "chainIntegrators": {
+    "integratedBy": "Integrated by {{team}}."
   }
 }

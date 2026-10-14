@@ -139,6 +139,10 @@ features/platform/pay-analytics/                         @ledgerhq/wallet-xp
 # Wallet — Intents
 features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
 
+# Wallet — Account detail
+features/platform/chain-integrators/                     @ledgerhq/wallet-xp
+features/platform/chain-integrators/src/chainIntegrators.ts @ledgerhq/wallet-xp @ledgerhq/coin-integration
+
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
 features/flow/app-unlock/                                @ledgerhq/wallet-xp

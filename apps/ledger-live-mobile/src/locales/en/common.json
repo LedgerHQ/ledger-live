@@ -11953,5 +11953,8 @@
         }
       }
     }
+  },
+  "chainIntegrators": {
+    "integratedBy": "Integrated by {{team}}."
   }
 }
