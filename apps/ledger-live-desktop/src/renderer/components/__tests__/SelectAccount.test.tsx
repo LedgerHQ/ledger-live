@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { render } from "tests/testSetup";
 import { RawSelectAccount } from "../SelectAccount";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 
 const mockSelect = jest.fn();
 
@@ -168,5 +169,38 @@ describe("RawSelectAccount", () => {
 
     const options = mockSelect.mock.calls[0][0].options;
     expect(options.map((o: { account: { id: string } }) => o.account.id)).toEqual(["parent-celo"]);
+  });
+
+  describe("selected value", () => {
+    it("resolves a held token account from the store", () => {
+      const heldTokenAccount = parentAccount.subAccounts![0];
+
+      render(
+        <RawSelectAccount
+          accounts={[parentAccount]}
+          withSubAccounts
+          onChange={jest.fn()}
+          value={heldTokenAccount}
+        />,
+      );
+
+      expect(mockSelect.mock.calls[0][0].value.account).toBe(heldTokenAccount);
+    });
+
+    it("keeps a not-yet-held token account built with makeEmptyTokenAccount", () => {
+      const { token } = makeTokenAccount("usdc", "0x3333333333333333333333333333333333333333");
+      const emptyTokenAccount = makeEmptyTokenAccount(parentAccount, token);
+
+      render(
+        <RawSelectAccount
+          accounts={[parentAccount]}
+          withSubAccounts
+          onChange={jest.fn()}
+          value={emptyTokenAccount}
+        />,
+      );
+
+      expect(mockSelect.mock.calls[0][0].value.account).toBe(emptyTokenAccount);
+    });
   });
 });

@@ -286,7 +286,8 @@ export const RawSelectAccount = ({
   }, [filtered, withSubAccounts, enforceHideEmptySubAccounts, subAccountFilter]);
   const selectedOption = value
     ? {
-        account: all.find(o => o.id === value.id),
+        // value may not be in the store yet (e.g. a token account from makeEmptyTokenAccount)
+        account: all.find(o => o.id === value.id) ?? value,
       }
     : null;
   const onChangeCallback = useCallback(
