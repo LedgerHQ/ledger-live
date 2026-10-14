@@ -85,6 +85,8 @@ export type PerpsSignResult = {
 };
 
 const PERPS_APP_NAME = "Hyperliquid";
+/** Legacy Perps accounts are identified by their Arbitrum account. */
+const LEGACY_CURRENCY_ID = "arbitrum";
 
 async function signActionsOnDevice(
   transport: Transport,
@@ -201,9 +203,9 @@ export const handlers = ({
         }
 
         const legacyAccount = findAccountOrThrow(params.legacyAccountId);
-        if (legacyAccount.type !== "Account") {
+        if (legacyAccount.type !== "Account" || legacyAccount.currency.id !== LEGACY_CURRENCY_ID) {
           throw new ServerError(
-            createUnknownError({ message: "legacy Perps account must be a main account" }),
+            createUnknownError({ message: "legacy Perps account must be a main Arbitrum account" }),
           );
         }
 
