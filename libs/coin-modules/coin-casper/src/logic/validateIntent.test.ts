@@ -19,7 +19,7 @@ import {
 } from "../constants";
 import { CasperInvalidTransferId, InvalidMinimumAmount, MayBlockAccount } from "../errors";
 import { TEST_ADDRESSES } from "../__tests__/fixtures/addresses.fixture";
-import type { CasperAccount, CasperMemo, Transaction } from "../types";
+import type { CasperAccount, CasperConfig, CasperMemo, Transaction } from "../types";
 import { validateIntent } from "./validateIntent";
 
 const FEES = BigInt(CASPER_FEES_MOTES);
@@ -29,6 +29,7 @@ const LARGE_BALANCE = 100_000_000_000n;
 const VALID_AMOUNT = 3_000_000_000n;
 const SENDER = TEST_ADDRESSES.SECP256K1;
 const RECIPIENT = TEST_ADDRESSES.RECIPIENT_SECP256K1;
+const CONFIG = { name: "Casper" } as CasperConfig;
 
 type Case = {
   name?: string;
@@ -83,7 +84,7 @@ const buildTransaction = (c: Case): Transaction =>
   }) as unknown as Transaction;
 
 const validate = (c: Case, customFees: FeeEstimation = { value: FEES }) =>
-  validateIntent(buildIntent(c), buildBalances(c), customFees);
+  validateIntent(CONFIG, buildIntent(c), buildBalances(c), customFees);
 
 const errorClasses = (rec: Record<string, Error>): Array<[string, unknown]> =>
   Object.entries(rec)
@@ -142,7 +143,7 @@ describe("validateIntent", () => {
         memo: { type: "transferId", value: "42" },
       };
 
-      const { errors } = validateIntent(intent, buildBalances(sendCase()), { value: FEES });
+      const { errors } = validateIntent(CONFIG, intent, buildBalances(sendCase()), { value: FEES });
 
       expect(errors.sender).toBeUndefined();
       expect(errors.transaction).toBeUndefined();
@@ -154,7 +155,7 @@ describe("validateIntent", () => {
         memo: { type: "transferId", value: OUT_OF_RANGE_TRANSFER_ID },
       };
 
-      const { errors } = validateIntent(intent, buildBalances(sendCase()), { value: FEES });
+      const { errors } = validateIntent(CONFIG, intent, buildBalances(sendCase()), { value: FEES });
 
       expect(errors.sender).toBeInstanceOf(CasperInvalidTransferId);
       expect(errors.transaction).toBeInstanceOf(CasperInvalidTransferId);
@@ -203,7 +204,9 @@ describe("validateIntent", () => {
   });
 
   it("treats a missing native balance as zero funds", () => {
-    const { errors, totalSpent } = validateIntent(buildIntent(sendCase()), [], { value: FEES });
+    const { errors, totalSpent } = validateIntent(CONFIG, buildIntent(sendCase()), [], {
+      value: FEES,
+    });
 
     expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
     expect(totalSpent).toBe(VALID_AMOUNT + FEES);
@@ -212,7 +215,7 @@ describe("validateIntent", () => {
   it("defaults estimatedFees to 0 when no customFees are provided", () => {
     const c = sendCase();
 
-    const { estimatedFees } = validateIntent(buildIntent(c), buildBalances(c));
+    const { estimatedFees } = validateIntent(CONFIG, buildIntent(c), buildBalances(c));
 
     expect(estimatedFees).toBe(0n);
   });
@@ -227,6 +230,18 @@ describe("validateIntent", () => {
     expect(errors.recipient).toBeInstanceOf(expected);
   });
 
+  it.each([
+    ["recipient", sendCase({ recipient: TEST_ADDRESSES.INVALID })],
+    ["sender", sendCase({ sender: TEST_ADDRESSES.INVALID })],
+  ] as const)("names Casper in an invalid %s error regardless of the asset name", (field, c) => {
+    const intent = { ...buildIntent(c), asset: { type: "native", name: "Not Casper" } } as const;
+
+    const { errors } = validateIntent(CONFIG, intent, buildBalances(c), { value: FEES });
+
+    expect(errors[field]).toBeInstanceOf(InvalidAddress);
+    expect(errors[field]).toMatchObject({ currencyName: "Casper" });
+  });
+
   describe("unsupported intents", () => {
     it("throws for a non-native asset", () => {
       const intent = {
@@ -234,7 +249,7 @@ describe("validateIntent", () => {
         asset: { type: "token", assetReference: "cep18-contract" },
       } as unknown as TransactionIntent<CasperMemo>;
 
-      expect(() => validateIntent(intent, buildBalances(sendCase()))).toThrow(/asset type/);
+      expect(() => validateIntent(CONFIG, intent, buildBalances(sendCase()))).toThrow(/asset type/);
     });
 
     it("throws for a staking intent", () => {
@@ -243,7 +258,7 @@ describe("validateIntent", () => {
         intentType: "staking",
       } as unknown as TransactionIntent<CasperMemo>;
 
-      expect(() => validateIntent(intent, buildBalances(sendCase()))).toThrow(/staking/);
+      expect(() => validateIntent(CONFIG, intent, buildBalances(sendCase()))).toThrow(/staking/);
     });
   });
 });
