@@ -1,9 +1,18 @@
 import React from "react";
+import { getEnv } from "@shared/env";
+import { AppAvailability } from "@features/flow-app-availability";
+import { http, HttpResponse } from "msw";
 import { server } from "tests/server";
-import { waitFor, render, cleanup } from "tests/testSetup";
+import { screen, waitFor, render, cleanup } from "tests/testSetup";
 import { mockMarket } from "tests/utils/assetDetailMocks";
 import createStore from "~/state-manager/configureStore";
 import { LiftSplashOnAppAvailability } from "../index";
+
+const CAL_CURRENCIES = `${getEnv("CAL_SERVICE_URL")}/v1/currencies`;
+
+function hangCal() {
+  server.use(http.get(CAL_CURRENCIES, () => new Promise(() => {})));
+}
 
 const windowApi = {
   appDirname: "",
@@ -43,14 +52,34 @@ describe("LiftSplashOnAppAvailability", () => {
     await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
   });
 
+  it("should lift the splash onto the unavailable screen when CAL fails", async () => {
+    server.use(http.get(CAL_CURRENCIES, () => new HttpResponse(null, { status: 503 })));
+    const store = createStore({});
+    render(
+      <LiftSplashOnAppAvailability>
+        <AppAvailability>
+          <div>App</div>
+        </AppAvailability>
+      </LiftSplashOnAppAvailability>,
+      { store },
+    );
+
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+    expect(
+      screen.getByRole("heading", { name: "Ledger Wallet is currently unavailable" }),
+    ).toBeVisible();
+    expect(screen.queryByText("App")).toBeNull();
+  });
+
   it("should not call appLoaded while the availability check is pending", async () => {
     mockMarket.hang();
+    hangCal();
     const store = createStore({});
     render(<LiftSplashOnAppAvailability />, { store });
 
     await expect(
       waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled(), { timeout: 300 }),
-    ).rejects.toThrow();
+    ).rejects.toThrow("toHaveBeenCalled");
   });
 
   it("should not throw if window.api is undefined", async () => {

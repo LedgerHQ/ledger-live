@@ -1,11 +1,30 @@
-import { useEffect } from "react";
-import { useAppAvailability } from "@features/flow-app-availability";
+import { useEffect, useState } from "react";
+import { useAppAvailability, useCalCheck } from "@features/flow-app-availability";
 
-export function useLiftSplashOnAppAvailabilityViewModel(): void {
+const SPLASH_CAP_MS = 3_000;
+
+export function useLiftSplashOnAppAvailabilityViewModel(): {
+  holdSplash: boolean;
+  showServiceUnavailable: boolean;
+} {
   const availability = useAppAvailability();
+  const cal = useCalCheck();
+  const [capReached, setCapReached] = useState(false);
 
   useEffect(() => {
-    if (availability.status === "pending") return;
-    globalThis.api?.appLoaded();
-  }, [availability.status]);
+    const timeoutId = setTimeout(() => setCapReached(true), SPLASH_CAP_MS);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const calPending = cal.status === "pending";
+  const showServiceUnavailable = capReached && calPending;
+  const holdSplash = calPending && !capReached;
+
+  useEffect(() => {
+    if (holdSplash) return;
+    if (availability.status === "pending" && !showServiceUnavailable) return;
+    window.api?.appLoaded();
+  }, [availability.status, holdSplash, showServiceUnavailable]);
+
+  return { holdSplash, showServiceUnavailable };
 }

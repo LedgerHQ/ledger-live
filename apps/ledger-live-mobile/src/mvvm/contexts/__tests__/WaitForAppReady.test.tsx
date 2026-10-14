@@ -6,6 +6,7 @@ import { State } from "~/reducers/types";
 import { WaitForAppReady } from "../WaitForAppReady";
 
 jest.mock("@features/flow-app-availability", () => ({
+  ...jest.requireActual("@features/flow-app-availability"),
   useAppAvailability: jest.fn(() => ({ status: "available" })),
 }));
 
@@ -55,17 +56,30 @@ describe("WaitForAppReady", () => {
     expect(screen.queryByText("App is Ready")).toBeNull();
   });
 
-  it("renders children after the one second timeout while still waiting", () => {
+  it("renders children when the availability check is unavailable", () => {
+    mockedUseAppAvailability.mockReturnValue({
+      status: "unavailable",
+      reason: "serviceUnavailable",
+    });
+
+    renderApp(false);
+
+    expect(screen.getByText("App is Ready")).toBeTruthy();
+  });
+
+  it("shows the unavailable screen after one second while the check is still pending", () => {
     jest.useFakeTimers();
     mockedUseAppAvailability.mockReturnValue({ status: "pending" });
 
     renderApp(false);
     expect(screen.queryByText("App is Ready")).toBeNull();
+    expect(screen.queryByText("Ledger Wallet is currently unavailable")).toBeNull();
 
     act(() => {
       jest.advanceTimersByTime(1_000);
     });
 
-    expect(screen.getByText("App is Ready")).toBeTruthy();
+    expect(screen.queryByText("App is Ready")).toBeNull();
+    expect(screen.getByText("Ledger Wallet is currently unavailable")).toBeTruthy();
   });
 });

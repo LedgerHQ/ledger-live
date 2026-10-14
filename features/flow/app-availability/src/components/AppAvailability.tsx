@@ -3,22 +3,8 @@ import { useTranslation } from "@shared/i18n";
 import { useLocalizedUrl, useOpenLink } from "@shared/linking";
 import { AppUnavailable } from "@shared/ui-app-unavailable";
 import { useAppAvailability } from "../hooks/useAppAvailability";
-import type { AppAvailabilityStatus } from "../types";
 import { urls } from "../urls";
-
-const UNAVAILABLE_COPY = {
-  geoBlocked: {
-    titleKey: "geoBlocking.title",
-    descriptionKey: "geoBlocking.description",
-  },
-  serviceUnavailable: {
-    titleKey: "serviceUnavailable.title",
-    descriptionKey: "serviceUnavailable.description",
-  },
-} as const satisfies Record<
-  Extract<AppAvailabilityStatus, { status: "unavailable" }>["reason"],
-  { titleKey: string; descriptionKey: string }
->;
+import { ServiceUnavailable } from "./ServiceUnavailable";
 
 export type AppAvailabilityProps = Readonly<{
   children: React.ReactNode;
@@ -34,26 +20,24 @@ export function AppAvailability({ children, testID }: AppAvailabilityProps): Rea
     openLink(learnMoreUrl);
   }, [learnMoreUrl, openLink]);
 
-  if (availability.status !== "unavailable") {
-    return <>{children}</>;
-  }
-
-  const copy = UNAVAILABLE_COPY[availability.reason];
-  const action =
-    availability.reason === "geoBlocked"
-      ? {
+  if (availability.status === "unavailable" && availability.reason === "geoBlocked") {
+    return (
+      <AppUnavailable
+        title={t("geoBlocking.title")}
+        description={t("geoBlocking.description")}
+        action={{
           label: t("geoBlocking.learnMore"),
           onPress: openLearnMore,
           testID: "app-availability-learn-more",
-        }
-      : undefined;
+        }}
+        testID={testID}
+      />
+    );
+  }
 
-  return (
-    <AppUnavailable
-      title={t(copy.titleKey)}
-      description={t(copy.descriptionKey)}
-      action={action}
-      testID={testID}
-    />
-  );
+  if (availability.status === "unavailable" && availability.reason === "serviceUnavailable") {
+    return <ServiceUnavailable testID={testID} />;
+  }
+
+  return <>{children}</>;
 }

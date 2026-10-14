@@ -18,7 +18,6 @@ import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAva
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import SideBar from "LLD/components/SideBar";
-import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
@@ -465,9 +464,7 @@ export default function Default() {
   }, [navigate, pathname, hasCompletedOnboarding, areSettingsLoadedSelector]);
 
   return (
-    <>
-      <TriggerAppReady />
-      <LiftSplashOnAppAvailability />
+    <LiftSplashOnAppAvailability>
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
       <Idler />
@@ -553,6 +550,6 @@ export default function Default() {
 
       {analyticsConsoleActive ? <AnalyticsConsole /> : null}
       {themeConsoleActive || process.env.DEBUG_THEME ? <ThemeConsole /> : null}
-    </>
+    </LiftSplashOnAppAvailability>
   );
 }

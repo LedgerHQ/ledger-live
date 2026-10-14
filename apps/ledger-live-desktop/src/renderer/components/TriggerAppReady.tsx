@@ -8,8 +8,10 @@ import React, { useEffect } from "react";
  * up-to-date.  Falls back to a triple-rAF chain when requestIdleCallback is
  * unavailable.
  */
-const TriggerAppReady = () => {
+const TriggerAppReady = ({ holdSplash = false }: { holdSplash?: boolean }) => {
   useEffect(() => {
+    if (holdSplash) return;
+
     let cancelled = false;
 
     const notifyReady = () => {
@@ -38,7 +40,7 @@ const TriggerAppReady = () => {
       cancelled = true;
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [holdSplash]);
   return <div id="__app__ready__" />;
 };
 
