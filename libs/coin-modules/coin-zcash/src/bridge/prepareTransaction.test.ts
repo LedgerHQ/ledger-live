@@ -2,7 +2,15 @@ import { BigNumber } from "bignumber.js";
 import { prepareTransaction } from "./prepareTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { reserveNotes, _resetReservationsForTest } from "./note-reservation";
-import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import {
+  LEGACY_MARGINAL_FEE,
+  ZIP2009_MARGINAL_FEE,
+  ZIP2009_MAINNET_HEIGHT,
+  ZIP2009_SWITCH_MARGIN,
+  zip317MinimumFee,
+} from "../logic/coin-selection";
+
+const ZIP317_MINIMUM_FEE = zip317MinimumFee(LEGACY_MARGINAL_FEE);
 import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 
@@ -573,5 +581,101 @@ describe("prepareTransaction, note maturity", () => {
     );
 
     expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([50_000]);
+  });
+});
+
+// ZIP 2009: the fee per logical action follows the account's synced height. The
+// switch is at mainnet height 3_590_000 and is applied ZIP2009_SWITCH_MARGIN blocks
+// late, so a target of height + 1 prices at 1_000 from 3_590_099 on.
+describe("prepareTransaction, marginal fee by height", () => {
+  const SWITCH_EDGE = ZIP2009_MAINNET_HEIGHT + ZIP2009_SWITCH_MARGIN - 1;
+
+  const accountAt = (
+    currencyId: string,
+    blockHeight: number,
+    options: Parameters<typeof account>[0] = {},
+  ): ZcashAccount =>
+    ({
+      ...account(options),
+      currency: { id: currencyId, name: "Zcash" },
+      blockHeight,
+    }) as unknown as ZcashAccount;
+
+  // [transfer type, recipient, legacy fee, ZIP 2009 fee]: the layout is the same on
+  // both sides, only the marginal fee differs.
+  it.each([
+    ["transparent", T_ADDRESS, 10_000, 2_000],
+    ["transparent-to-shielded", U_ADDRESS, 15_000, 3_000],
+    ["shielded", U_ADDRESS, 10_000, 2_000],
+    ["shielded-to-transparent", T_ADDRESS, 15_000, 3_000],
+  ] as [ZcashTransferType, string, number, number][])(
+    "prices %s at the legacy fee just below the edge and at the ZIP 2009 fee at it",
+    async (transferType, recipient, legacyFee, zip2009Fee) => {
+      const tx = transaction({ transferType, recipient, amount: new BigNumber(30_000) });
+      // One UTXO, so the transparent legs are one action on both sides.
+      const options = { utxos: [100_000] };
+
+      const below = await prepareTransaction(accountAt("zcash", SWITCH_EDGE - 1, options), tx);
+      const at = await prepareTransaction(accountAt("zcash", SWITCH_EDGE, options), tx);
+
+      expect(SWITCH_EDGE).toBe(3_590_099);
+      expect(below.zcashFee).toEqual(new BigNumber(legacyFee));
+      expect(at.zcashFee).toEqual(new BigNumber(zip2009Fee));
+      expect(legacyFee * ZIP2009_MARGINAL_FEE).toBe(zip2009Fee * LEGACY_MARGINAL_FEE);
+    },
+  );
+
+  it("keeps the same change arithmetic on both sides (change = inputs - amount - fee)", async () => {
+    const tx = transaction({ transferType: "transparent", amount: new BigNumber(30_000) });
+    const base = { utxos: [100_000] };
+
+    const below = await prepareTransaction(accountAt("zcash", 3_590_098, base), tx);
+    const past = await prepareTransaction(accountAt("zcash", 3_590_099, base), tx);
+
+    expect(below.changeAmount).toEqual(new BigNumber(100_000 - 30_000 - 10_000));
+    expect(past.changeAmount).toEqual(new BigNumber(100_000 - 30_000 - 2_000));
+  });
+
+  it("spends everything for the lower fee when sending the max past the switch", async () => {
+    const acc = accountAt("zcash", 3_590_099, { utxos: [100_000, 25_000] });
+
+    const prepared = await prepareTransaction(acc, transaction({ useAllAmount: true }));
+
+    expect(prepared.zcashFee).toEqual(new BigNumber(2_000));
+    expect(prepared.amount).toEqual(new BigNumber(123_000));
+  });
+
+  it("prices a shielded max send at the lower fee past the switch", async () => {
+    const acc = accountAt("zcash", 3_590_099, { ironwoodNotes: [30_000, 20_000] });
+
+    const prepared = await prepareTransaction(
+      acc,
+      transaction({ transferType: "shielded", recipient: U_ADDRESS, useAllAmount: true }),
+    );
+
+    expect(prepared.zcashFee).toEqual(new BigNumber(2_000));
+    expect(prepared.amount).toEqual(new BigNumber(48_000));
+  });
+
+  it.each(["transparent", "shielded"] as ZcashTransferType[])(
+    "prices a %s send on a test network at the ZIP 2009 fee at height 0",
+    async transferType => {
+      const prepared = await prepareTransaction(
+        accountAt("zcash_testnet", 0, { utxos: [100_000] }),
+        transaction({
+          transferType,
+          recipient: transferType === "shielded" ? U_ADDRESS : T_ADDRESS,
+          amount: new BigNumber(10_000),
+        }),
+      );
+
+      expect(prepared.zcashFee).toEqual(new BigNumber(2_000));
+    },
+  );
+
+  it("prices an account with no synced height at the legacy fee", async () => {
+    const prepared = await prepareTransaction(account(), transaction());
+
+    expect(prepared.zcashFee).toEqual(new BigNumber(10_000));
   });
 });

@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
-import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import { marginalFeeFor, zip317MinimumFee } from "../logic/coin-selection";
 import {
   ZcashAmountBelowDustThreshold,
   ZcashMemoTooLong,
@@ -53,7 +53,7 @@ function getTransparentInputStatus(
     new BigNumber(0),
   );
 
-  const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
+  const fee = tx.zcashFee ?? new BigNumber(zip317MinimumFee(marginalFeeFor(account)));
   const totalSpent = tx.amount.plus(fee);
 
   const recipientError = computeRecipientError(
@@ -120,7 +120,7 @@ export const getTransactionStatus: AccountBridge<
   // check ever runs.
   const reserved = getReservedNullifiers(account);
   const poolBalance = getSpendableIronwoodBalance(account, reserved);
-  const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
+  const fee = transaction.zcashFee ?? new BigNumber(zip317MinimumFee(marginalFeeFor(account)));
   const totalSpent = transaction.amount.plus(fee);
 
   const recipientError = computeRecipientError(

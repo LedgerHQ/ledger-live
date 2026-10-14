@@ -10,7 +10,14 @@ import {
   isTransparentOutputDust,
   resolveTransparentUtxos,
 } from "./statusHelpers";
-import { TRANSPARENT_OUTPUT_DUST_THRESHOLD, ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import {
+  LEGACY_MARGINAL_FEE,
+  TRANSPARENT_OUTPUT_DUST_THRESHOLD,
+  ZIP2009_MARGINAL_FEE,
+  zip317MinimumFee,
+} from "../logic/coin-selection";
+
+const ZIP317_MINIMUM_FEE = zip317MinimumFee(LEGACY_MARGINAL_FEE);
 import { ZcashAmountBelowDustThreshold, ZcashSendTooLarge } from "../types/errors";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
@@ -986,5 +993,47 @@ describe("getTransactionStatus, recipientIsReadOnly", () => {
 
     expect(errorNames(statusWithFlag.errors)).toEqual(errorNames(statusWithoutFlag.errors));
     expect(Object.keys(statusWithFlag.warnings)).toEqual(Object.keys(statusWithoutFlag.warnings));
+  });
+});
+
+describe("getTransactionStatus, fallback fee by height", () => {
+  const at = (currencyId: string, blockHeight: number): ZcashAccount =>
+    ({
+      ...account(),
+      currency: { id: currencyId, name: "Zcash" },
+      blockHeight,
+    }) as unknown as ZcashAccount;
+
+  it.each([
+    ["transparent", "mainnet below the margin edge", "zcash", 3_590_098, LEGACY_MARGINAL_FEE],
+    ["transparent", "mainnet at the margin edge", "zcash", 3_590_099, ZIP2009_MARGINAL_FEE],
+    ["transparent", "testnet at height 0", "zcash_testnet", 0, ZIP2009_MARGINAL_FEE],
+    ["shielded", "mainnet below the margin edge", "zcash", 3_590_098, LEGACY_MARGINAL_FEE],
+    ["shielded", "mainnet at the margin edge", "zcash", 3_590_099, ZIP2009_MARGINAL_FEE],
+    ["shielded", "testnet at height 0", "zcash_testnet", 0, ZIP2009_MARGINAL_FEE],
+  ] as [ZcashTransferType, string, string, number, number][])(
+    "falls back to two actions of the account's marginal fee for a %s send (%s)",
+    async (transferType, _label, id, height, marginalFee) => {
+      const status = await getTransactionStatus(
+        at(id, height),
+        transaction({
+          transferType,
+          recipient: transferType === "shielded" ? UTEST_ORCHARD : T_ADDRESS,
+          amount: new BigNumber(10_000),
+        }),
+      );
+
+      expect(status.estimatedFees).toEqual(new BigNumber(2 * marginalFee));
+      expect(status.totalSpent).toEqual(new BigNumber(10_000 + 2 * marginalFee));
+    },
+  );
+
+  it("keeps the fee a prepared transaction resolved, whatever the height", async () => {
+    const status = await getTransactionStatus(
+      at("zcash", 3_590_099),
+      transaction({ amount: new BigNumber(30_000), zcashFee: new BigNumber(15_000) }),
+    );
+
+    expect(status.estimatedFees).toEqual(new BigNumber(15_000));
   });
 });

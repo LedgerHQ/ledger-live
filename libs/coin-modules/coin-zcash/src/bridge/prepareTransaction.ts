@@ -5,6 +5,7 @@ import type { SpendableNote } from "../network/types";
 import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
+  marginalFeeFor,
   selectNotes,
   selectTransparentInputs,
 } from "../logic/coin-selection";
@@ -21,19 +22,24 @@ function resetPreparedTransaction(tx: Transaction, amount: BigNumber): Transacti
 
 // Prepare a transparent-input flow (Public→*): ZIP-317 fee/change resolution over
 // transparent UTXOs, with no Orchard note selection.
-function prepareTransparentTransaction(account: ZcashAccount, tx: Transaction): Transaction {
+function prepareTransparentTransaction(
+  account: ZcashAccount,
+  tx: Transaction,
+  marginalFee: number,
+): Transaction {
   const utxoValues = resolveTransparentUtxos(account, tx).map(utxo => utxo.value);
   // When useAllAmount is set, the effective amount is the max spendable over the
   // current UTXO set — recomputed here so it stays coherent even if a prior
   // prepare mutated tx.amount and the UTXOs have since changed.
   const effectiveAmount = tx.useAllAmount
-    ? estimateMaxSpendableTransparent(utxoValues, tx.transferType)
+    ? estimateMaxSpendableTransparent(utxoValues, tx.transferType, marginalFee)
     : tx.amount;
   const result = selectTransparentInputs(
     utxoValues,
     effectiveAmount,
     !!tx.useAllAmount,
     tx.transferType,
+    marginalFee,
   );
   if (!result) return resetPreparedTransaction(tx, effectiveAmount);
   return {
@@ -46,13 +52,17 @@ function prepareTransparentTransaction(account: ZcashAccount, tx: Transaction): 
 }
 
 // Prepare a shielded (Ironwood note-selection) flow.
-function prepareNoteTransaction(notes: SpendableNote[], tx: Transaction): Transaction {
+function prepareNoteTransaction(
+  notes: SpendableNote[],
+  tx: Transaction,
+  marginalFee: number,
+): Transaction {
   // When useAllAmount is set, compute the effective amount from max spendable.
   const effectiveAmount = tx.useAllAmount
-    ? estimateMaxSpendableAmount(notes, tx.transferType)
+    ? estimateMaxSpendableAmount(notes, tx.transferType, marginalFee)
     : tx.amount;
   if (effectiveAmount.lte(0)) return resetPreparedTransaction(tx, effectiveAmount);
-  const result = selectNotes(notes, effectiveAmount, tx.transferType);
+  const result = selectNotes(notes, effectiveAmount, tx.transferType, marginalFee);
   if (!result) return resetPreparedTransaction(tx, effectiveAmount);
   return {
     ...tx,
@@ -74,11 +84,12 @@ export const prepareTransaction: AccountBridge<
   ZcashAccount
 >["prepareTransaction"] = async (account, transaction) => {
   const tx = transaction;
+  const marginalFee = marginalFeeFor(account);
 
   if (isTransparentInputTransfer(tx.transferType)) {
-    return prepareTransparentTransaction(account, tx);
+    return prepareTransparentTransaction(account, tx, marginalFee);
   }
 
   const notes = collectSelectableIronwoodNotes(account, getReservedNullifiers(account));
-  return prepareNoteTransaction(notes, tx);
+  return prepareNoteTransaction(notes, tx, marginalFee);
 };

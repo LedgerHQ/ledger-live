@@ -4,6 +4,7 @@ import type { Transaction, ZcashAccount } from "../types/bridge";
 import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
+  marginalFeeFor,
 } from "../logic/coin-selection";
 import {
   boundTransparentUtxos,
@@ -19,10 +20,11 @@ export const estimateMaxSpendable: AccountBridge<
 >["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount) as ZcashAccount;
   const tx = transaction;
+  const marginalFee = marginalFeeFor(mainAccount);
 
   if (tx && isTransparentInputTransfer(tx.transferType)) {
     const utxoValues = resolveTransparentUtxos(mainAccount, tx).map(utxo => utxo.value);
-    return estimateMaxSpendableTransparent(utxoValues, tx.transferType);
+    return estimateMaxSpendableTransparent(utxoValues, tx.transferType, marginalFee);
   }
 
   const transferType = tx?.transferType ?? "transparent";
@@ -34,9 +36,9 @@ export const estimateMaxSpendable: AccountBridge<
     const utxoValues = boundTransparentUtxos(mainAccount.bitcoinResources?.utxos ?? []).map(
       utxo => utxo.value,
     );
-    return estimateMaxSpendableTransparent(utxoValues, "transparent");
+    return estimateMaxSpendableTransparent(utxoValues, "transparent", marginalFee);
   }
 
   const notes = collectSelectableIronwoodNotes(mainAccount, getReservedNullifiers(mainAccount));
-  return estimateMaxSpendableAmount(notes, transferType);
+  return estimateMaxSpendableAmount(notes, transferType, marginalFee);
 };

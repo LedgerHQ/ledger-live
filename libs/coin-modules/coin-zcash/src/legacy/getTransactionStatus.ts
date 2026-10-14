@@ -5,6 +5,7 @@ import type { ZcashContext } from "../config";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
 import { ZcashAmountBelowDustThreshold } from "../types/errors";
 import { computeRecipientError, isTransparentOutputDust } from "../bridge/statusHelpers";
+import { marginalFeeFor } from "../logic/coin-selection";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
 
 /**
@@ -35,7 +36,12 @@ export const buildLegacyGetTransactionStatus =
     if (!recipientError) {
       const walletAccount = await resolveWalletAccount(context, account);
       try {
-        const { txInfo } = await buildLegacyTransaction(context.logger, walletAccount, transaction);
+        const { txInfo } = await buildLegacyTransaction(
+          context.logger,
+          walletAccount,
+          transaction,
+          marginalFeeFor(account),
+        );
         estimatedFees = new BigNumber(txInfo.fee);
         const sumOfInputs = txInfo.inputs.reduce(
           (sum, input) => sum.plus(input.value),
