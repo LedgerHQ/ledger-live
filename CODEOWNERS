@@ -620,8 +620,9 @@ libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts
 libs/ledger-live-common/src/__fixtures__/
 libs/ledger-live-common/src/__tests__/
 libs/**/errors/
-apps/ledger-live-desktop/static/i18n/
-apps/ledger-live-mobile/src/locales/
+apps/ledger-live-desktop/static/i18n/                          @LedgerHQ/team-delivery
+apps/ledger-live-mobile/src/locales/                                @LedgerHQ/team-delivery
+apps/ledger-live-desktop/RELEASE_NOTES.md                           @LedgerHQ/team-delivery
 apps/ledger-live-mobile/src/components/RootNavigator/
 apps/ledger-live-mobile/src/const/navigation.ts
 apps/**/package.json
