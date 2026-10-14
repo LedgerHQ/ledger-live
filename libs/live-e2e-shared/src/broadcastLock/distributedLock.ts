@@ -97,7 +97,10 @@ function hold(
     if (!lost && now() - renewedAt + marginMs >= leaseMs) markLost(undefined);
   };
 
-  const writeOwnRecord = async (next: LockRecord): Promise<boolean> => {
+  const writeOwnRecord = async (
+    next: LockRecord,
+    releaseMayHaveLanded = false,
+  ): Promise<boolean> => {
     const sentAt = now();
     const written = await store.replace(key, next, etag);
     if (written) {
@@ -107,12 +110,18 @@ function hold(
     }
     const current = await store.read(key);
     const ourLastWrite = current?.record.holder === record.holder ? current : undefined;
+    if (releaseMayHaveLanded && ourLastWrite?.record.released) return true;
     const rewritten = ourLastWrite ? await store.replace(key, next, ourLastWrite.etag) : undefined;
     if (rewritten) {
       etag = rewritten;
       renewedAt = sentAt;
       return true;
     }
+    // Nobody can take a lease before it expires, so another holder within it means the release an
+    // earlier attempt sent was written and only its response was lost.
+    const releasedBeforeTheirClaim =
+      releaseMayHaveLanded && current !== undefined && !ourLastWrite && now() - renewedAt < leaseMs;
+    if (releasedBeforeTheirClaim) return true;
     markLost(ourLastWrite ? undefined : current);
     return false;
   };
@@ -138,7 +147,7 @@ function hold(
 
   const writeReleasedRecord = async (settleMs: number, attempt = 1): Promise<void> => {
     try {
-      if (await writeOwnRecord({ ...record, released: true, settleMs })) {
+      if (await writeOwnRecord({ ...record, released: true, settleMs }, attempt > 1)) {
         log.info(`[broadcastLock] released "${key}" (${record.label})`);
       }
     } catch (error) {

@@ -9,7 +9,6 @@ import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
-import { PAYTAB_SPECS_DIR } from "tests/reporters/cardSessionReporter";
 import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
@@ -18,17 +17,15 @@ import {
   attachMergedFeatureFlags,
   attachSpeculinhoLogs,
 } from "tests/utils/allureUtils";
-import { isLastRetry } from "tests/utils/testInfoUtils";
+import { isLastRetry, isPaytabTest } from "tests/utils/testInfoUtils";
 import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import type { SharedResource } from "@ledgerhq/live-e2e-shared/broadcastLock";
 import {
   BROADCAST_LOCK_FIXTURE_TIMEOUT,
-  deleteBroadcastLockEnv,
   lockDeclaredTargets,
+  type BroadcastLockDeclaration,
 } from "tests/utils/broadcastLock";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import {
@@ -87,8 +84,7 @@ type TestFixtures = {
   annotationLinks: void;
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
-  broadcastAccounts: readonly Account[];
-  sharedResources: readonly SharedResource[];
+  broadcastLockDeclaration: BroadcastLockDeclaration;
   broadcastLock: void;
 };
 
@@ -115,14 +111,22 @@ export const test = base.extend<TestFixtures>({
   coinConfigOverrides: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
-  broadcastAccounts: [],
-  sharedResources: [],
+  broadcastLockDeclaration: {},
 
   // Automatic fixtures are set up before the others, so the lock is held before Speculos and the
-  // app start, and released after they stop.
+  // app start, and released after they stop. The Allure labels and links come first, so a test
+  // whose lock fails still reports them.
   broadcastLock: [
-    async ({ broadcastAccounts, sharedResources }, use, testInfo) => {
-      const lease = await lockDeclaredTargets({ broadcastAccounts, sharedResources }, testInfo);
+    async (
+      {
+        teamOwnerLabel: _teamOwnerLabel,
+        annotationLinks: _annotationLinks,
+        broadcastLockDeclaration,
+      },
+      use,
+      testInfo,
+    ) => {
+      const lease = await lockDeclaredTargets(broadcastLockDeclaration, testInfo);
       try {
         await use();
       } finally {
@@ -287,9 +291,8 @@ export const test = base.extend<TestFixtures>({
       env,
     );
     delete env[CARD_SESSION_BOOTSTRAP_ENV];
-    deleteBroadcastLockEnv(env);
 
-    if (testInfo.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`)) {
+    if (isPaytabTest(testInfo)) {
       const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
       env["CARD_BAANX_API_URL"] = BAANX_TEST_API_URL || "https://dev.api.baanx.com";
       env["CARD_BAANX_CLIENT_KEY"] =

@@ -7,13 +7,10 @@ import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { isCurrencyUnsupportedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
-import { isPaytabSpec } from "@e2e/utils/paytab";
+import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
-import {
-  CARD_SESSION_BOOTSTRAP_ENV,
-  resolveCardSessionBootstrap,
-} from "@ledgerhq/baanx-test-client";
+import { CARD_SESSION_BOOTSTRAP_ENV } from "@ledgerhq/baanx-test-client";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -106,7 +103,7 @@ export const isAppBroadcastDisabled = () => Boolean(getEnv("DISABLE_TRANSACTION_
 
 export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) {
   const cardSession = isPaytabSpec()
-    ? { [CARD_SESSION_BOOTSTRAP_ENV]: await resolveCardSessionBootstrap() }
+    ? { [CARD_SESSION_BOOTSTRAP_ENV]: await paytabCardSession() }
     : {};
 
   const port = await findFreePort();
