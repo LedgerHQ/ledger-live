@@ -99,25 +99,24 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
 
       if (existingAccounts.length === 0) {
         openDiscovery();
-        return request;
+      } else {
+        openDrawer({
+          currencies: [HYPERCORE_CURRENCY_ID],
+          areCurrenciesFiltered: true,
+          enableAccountSelection: true,
+          uiUseCase: PERPS_UI_USE_CASE.receive,
+          flow: PERPS_UI_USE_CASE.receive,
+          onAccountSelected: account => {
+            if (account.type === "Account") {
+              settleMigrationRequest(requestId, [account]);
+            } else {
+              cancelMigrationRequest();
+            }
+          },
+          onAddAccount: openDiscovery,
+          onCancel: () => cancelMigrationRequest(),
+        });
       }
-
-      openDrawer({
-        currencies: [HYPERCORE_CURRENCY_ID],
-        areCurrenciesFiltered: true,
-        enableAccountSelection: true,
-        uiUseCase: PERPS_UI_USE_CASE.receive,
-        flow: PERPS_UI_USE_CASE.receive,
-        onAccountSelected: account => {
-          if (account.type === "Account") {
-            settleMigrationRequest(requestId, [account]);
-          } else {
-            cancelMigrationRequest();
-          }
-        },
-        onAddAccount: openDiscovery,
-        onCancel: () => cancelMigrationRequest(),
-      });
 
       return request;
     },

@@ -91,30 +91,29 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
 
       if (existingAccounts.length === 0) {
         openMigrationDiscovery(requestId);
-        return request;
+      } else {
+        dispatch(
+          openDialog({
+            currencies: [HYPERCORE_CURRENCY_ID],
+            areCurrenciesFiltered: true,
+            dialogConfiguration: createModularDrawerConfiguration(),
+            uiUseCase: PERPS_UI_USE_CASE.receive,
+            onAccountSelected: account => {
+              dispatch(closeDialog());
+              if (account.type === "Account") {
+                settleMigrationRequest(requestId, [account]);
+              } else {
+                cancelMigrationRequest();
+              }
+            },
+            onAddAccount: () => {
+              dispatch(closeDialog());
+              openMigrationDiscovery(requestId);
+            },
+            onClose: () => cancelMigrationRequest(),
+          }),
+        );
       }
-
-      dispatch(
-        openDialog({
-          currencies: [HYPERCORE_CURRENCY_ID],
-          areCurrenciesFiltered: true,
-          dialogConfiguration: createModularDrawerConfiguration(),
-          uiUseCase: PERPS_UI_USE_CASE.receive,
-          onAccountSelected: account => {
-            dispatch(closeDialog());
-            if (account.type === "Account") {
-              settleMigrationRequest(requestId, [account]);
-            } else {
-              cancelMigrationRequest();
-            }
-          },
-          onAddAccount: () => {
-            dispatch(closeDialog());
-            openMigrationDiscovery(requestId);
-          },
-          onClose: () => cancelMigrationRequest(),
-        }),
-      );
 
       return request;
     },
