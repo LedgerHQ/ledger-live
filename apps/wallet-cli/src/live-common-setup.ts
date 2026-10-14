@@ -20,6 +20,7 @@ import {
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { ledgerClientVersion } from "./shared/client-version";
+import { withDefaultUserAgent } from "./shared/default-user-agent";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -30,6 +31,7 @@ if (!process.env.USER_ID) {
 
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
+globalThis.fetch = withDefaultUserAgent(globalThis.fetch, ledgerClientVersion);
 bridgeEnvToNetworkState();
 
 /**
