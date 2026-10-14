@@ -1074,7 +1074,7 @@
       }
     },
     "contacts" : {
-      "title" : "Kişiye ödeme yapın",
+      "title" : "Ödeme kişisi",
       "me" : "Ben",
       "empty" : {
         "info" : "Henüz bir kişiniz yok",
@@ -2988,6 +2988,46 @@
       "feeAsset" : "Ücret ödeme varlığı",
       "feesAmount" : "Ücret tutarı ({{unit}})",
       "payFeesIn" : "Bu varlıkla öde:"
+    },
+    "feePayment" : {
+      "title" : "Ücret ödeme yöntemini seçin",
+      "regular" : "Standart transfer",
+      "sponsored" : "{{provider}} ile öde",
+      "payIn" : "Ağ ücretini {{feeCurrency}} ile öde",
+      "paidIn" : "{{currency}} ile ödendi",
+      "nudge" : "{{provider}} ile {{amount}} tasarruf edebilirsiniz",
+      "saved" : "{{provider}} ile tasarruf edildi",
+      "confirm" : "Onayla",
+      "disclaimer" : "Üçüncü taraf bir enerji sağlayıcısı olan {{provider}} ile ücretler {{feeCurrency}} olarak ödenir.",
+      "insufficientFunds" : "Tutarı ve {{provider}} enerji kiralama ücretini karşılamak için yeterli {{feeCurrency}} bakiyeniz yok."
+    },
+    "sponsoredRentSignature" : {
+      "title" : "1/2. Adım",
+      "strategy" : "Enerji kiralama - {{provider}}",
+      "crafting" : "Enerji kiralama hazırlanıyor…",
+      "submitting" : "Enerji kiralama ödemesi gönderiliyor…",
+      "feeLabel" : "Kiralama ücreti"
+    },
+    "sponsoredTransferSignature" : {
+      "title" : "2/2. Adım"
+    },
+    "sponsoredPolling" : {
+      "title" : "Enerji teslimatı bekleniyor",
+      "waiting" : "{{provider}} kiralanan enerjiyi teslim ediyor. Bu işlem biraz sürebilir.",
+      "elapsed" : "Geçen süre: {{time}}"
+    },
+    "sponsoredFailure" : {
+      "title" : "Bir hata oluştu",
+      "rentPayment" : "Ücret ödemesi başarısız oldu; fonlarınız taşınmadı.",
+      "rentPaymentReportedFailed" : "{{provider}} ücret ödemesinin başarısız olduğunu bildirdi ancak ödeme yine de gerçekleşebilir.",
+      "priceIncreased" : "Enerji kiralama fiyatı {{fee}} seviyesine yükseldi. Bakiyeniz taşınmadı.",
+      "deliveryFailed" : "Enerji teslim edilmedi. Kiralama ücreti ödemeniz gönderildi: {{txidSuffix}} iadesi için {{provider}} desteğiyle iletişime geçin.",
+      "transfer" : "Transferiniz başarısız oldu ancak kiralanan enerji hâlâ geçerli; transferi tekrar deneyebilirsiniz.",
+      "retryLocked" : "Kiralama ödemesini iki kez yapmamanız için {{time}} sonra tekrar deneyebilirsiniz.",
+      "retry" : "Tekrar dene",
+      "retryPaying" : "Yeniden öde ve tekrar dene",
+      "acceptPrice" : "Yeni fiyatı kabul et",
+      "cancel" : "İptal et"
     },
     "coinControl" : {
       "title" : "Coin yönetimi",
@@ -5127,6 +5167,62 @@
       "OUT" : "Çek"
     }
   },
+  "stacks" : {
+    "stake" : {
+      "flow" : {
+        "title" : "Stake edin",
+        "preparingTransaction" : "İşlem hazırlanıyor…",
+        "steps" : {
+          "validator" : {
+            "title" : "Havuz",
+            "description" : "STX varlıklarınızı stake etmek için yetki devredeceğiniz bir havuz seçin.",
+            "poolAddressLabel" : "Havuz adresi",
+            "numCyclesLabel" : "Döngü sayısı"
+          },
+          "amount" : {
+            "title" : "Tutar",
+            "disclaimer" : "STX'leriniz, staking havuzundan serbest kalana kadar kilitli kalacaktır."
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "{{amount}} yatırdınız. İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Hesap Panosuna git"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "Stake'i durdur",
+        "preparingTransaction" : "İşlem hazırlanıyor…",
+        "steps" : {
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "broadcastError" : "Stake durdurma işleminiz ağa gönderilemedi. Lütfen tekrar deneyin.",
+            "success" : {
+              "title" : "Stake durdurma işlemi gönderildi",
+              "text" : "STX yetki devrini geri çekme işleminiz başarıyla yayımlandı.",
+              "cta" : "Ayrıntıları gör"
+            }
+          }
+        }
+      }
+    },
+    "account" : {
+      "staked" : "Stake edildi",
+      "unlockCycle" : "Kilit açma döngüsü"
+    }
+  },
   "tezos" : {
     "operationTypes" : {
       "UNSTAKE" : "Staking durduruluyor",
@@ -5642,7 +5738,10 @@
         "eligibleAddressFamilies" : "Uygun adres formatları",
         "customFamiliesHint" : "Özel çoklu format testi için virgülle ayrılmış formatlar.",
         "customFamiliesPlaceholder" : "EVM, Stellar, Aptos",
-        "applyFamilies" : "Uygula",
+        "apply" : "Uygula",
+        "newBadge" : "Yeni rozet",
+        "excludedCurrencyIds" : "Hariç tutulan para birimi kimlikleri",
+        "excludedCurrencyIdsPlaceholder" : "ör. Ethereum, Bitcoin",
         "contactsData" : "Kişi verileri",
         "loadPopulatedContacts" : "Örnek kişileri yükle",
         "loadFromSendHistory" : "Gönderim geçmişinden kişileri yükle",
@@ -5751,6 +5850,9 @@
       "featureFlagsOverride" : "Uygula",
       "featureFlagsRestoreAll" : "Tüm bayrak değerlerini geri yükle",
       "flagHint" : "Bir özellik bayrağı, Hedeflenen Firebase ortamında tanımlanmış\nolmasına rağmen aşağıdaki listede yoksa arama girişinde\nbunun **tam** adını girebilirsiniz ve listede görünecektir. Bayrak adını\n\"feature\" (özellik) ön eki olmadan, ilk harf küçük ve sonraki sözcüklerin ilk harfi büyük olacak şekilde (camelCase ile) yazın.",
+      "contentAbTests" : {
+        "invalidPayload" : "Geçersiz veri yükü. \"enabled\" parametresi boolean olmalı, \"copy\" ise anahtarları string (metin) değerleriyle eşlemelidir."
+      },
       "showButtonDesc" : "Özellik Bayrakları düğmelerini Yan Menüde her zaman göster",
       "buttonTitle" : "Bayraklar yerel olarak uygulandı",
       "overridden" : {
@@ -6770,6 +6872,7 @@
       "undelegate" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
       "redelegate" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
       "claimRewardCompound" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "compoundReward" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
       "nominate" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
       "chill" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
       "bond" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
@@ -6796,7 +6899,9 @@
       "undelegate" : "doğrulayıcı",
       "claimReward" : "ödüllerin alıcısı",
       "claimRewardCompound" : "ödülleri alacak olan doğrulayıcı",
+      "compoundReward" : "ödülleri alacak olan doğrulayıcı",
       "optIn" : "alıcı",
+      "tokenAssociate" : "alıcı",
       "nominate" : "doğrulayıcı",
       "stake" : "doğrulayıcı",
       "unstake" : "doğrulayıcı",
@@ -7248,6 +7353,10 @@
     "CosmosDelegateAllFundsWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
     },
+    "CosmosMemoTooLong" : {
+      "title" : "Memo, azami uzunluğu aşıyor",
+      "description" : "Memo’nuz {{memoLength}} bayt; ancak izin verilen maksimum boyut {{maxLength}} bayttır. Memo boyutunu lütfen küçültün."
+    },
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} desteklenmiyor",
       "description" : "Bu kripto varlık henüz desteklenmiyor. Lütfen Ledger Destek ile iletişime geçin."
@@ -7606,6 +7715,10 @@
     "TransactionRefusedOnDevice" : {
       "title" : "İşlem cihazda reddedildi",
       "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "TransferOfferExpiredError" : {
+      "title" : "Bu teklifin süresi doldu",
+      "description" : "Transfer teklifinin süresi kabul edilmeden önce doldu. Göndericiden yeni bir teklif göndermesini isteyin."
     },
     "UserRefusedAddress" : {
       "title" : "Alıcı adresi reddedildi",
@@ -8133,6 +8246,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "Memo çok fazla uzun"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "Staking işlemi bir sonraki ödül döngüsüne kadar duraklatıldı.",
+      "description" : "Stacks ağı, bir sonraki ödül döngüsüne hazırlanırken yeni stake işlemlerini kabul etmiyor. Staking işlemleri {{blocksUntilReopen}} Bitcoin bloğu sonra yeniden açılacaktır."
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo biçimi yanlış"
@@ -9528,7 +9645,7 @@
   "marketBanner" : {
     "title" : "Piyasa",
     "genericError" : "Bağlantı başarısız oldu",
-    "cta" : "Tümünü gör",
+    "cta" : "Daha fazlası",
     "ranking" : {
       "trending" : "Revaçtakiler",
       "gainers" : "Yükselenler",

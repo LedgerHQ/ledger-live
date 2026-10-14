@@ -2989,6 +2989,46 @@
       "feesAmount" : "Gebührenbetrag ({{unit}})",
       "payFeesIn" : "Bezahl Gebühren in"
     },
+    "feePayment" : {
+      "title" : "Gebührenzahlung auswählen",
+      "regular" : "Regulärer Transfer",
+      "sponsored" : "Mit {{provider}} bezahlen",
+      "payIn" : "Netzwerkgebühr in {{feeCurrency}} bezahlen",
+      "paidIn" : "Bezahlt in {{currency}}",
+      "nudge" : "Sie könnten {{amount}} mit {{provider}} sparen",
+      "saved" : "Gespart mit {{provider}}",
+      "confirm" : "Bestätigen",
+      "disclaimer" : "Mit {{provider}}, einem Drittanbieter für Energie, werden Gebühren in {{feeCurrency}} bezahlt.",
+      "insufficientFunds" : "Du hast nicht genügend {{feeCurrency}}, um den Betrag und die Energiemietgebühr von {{provider}} zu decken."
+    },
+    "sponsoredRentSignature" : {
+      "title" : "Schritt 1 von 2",
+      "strategy" : "Energiemiete – {{provider}}",
+      "crafting" : "Energiemiete wird vorbereitet …",
+      "submitting" : "Zahlung für Energiemiete wird übermittelt …",
+      "feeLabel" : "Mietgebühr"
+    },
+    "sponsoredTransferSignature" : {
+      "title" : "Schritt 2 von 2"
+    },
+    "sponsoredPolling" : {
+      "title" : "Warten auf Energielieferung",
+      "waiting" : "{{provider}} liefert die gemietete Energie. Dies kann einen Moment dauern.",
+      "elapsed" : "Verstrichen: {{time}}"
+    },
+    "sponsoredFailure" : {
+      "title" : "Etwas ist schief gelaufen",
+      "rentPayment" : "Gebührenzahlung fehlgeschlagen – Dein Guthaben wurde nicht bewegt.",
+      "rentPaymentReportedFailed" : "{{provider}} hat die Gebührenzahlung als fehlgeschlagen gemeldet, aber sie könnte dennoch durchgeführt werden.",
+      "priceIncreased" : "Der Preis für die Energiemiete ist auf {{fee}} gestiegen. Dein Guthaben wurde nicht bewegt.",
+      "deliveryFailed" : "Energie wurde nicht geliefert. Deine Zahlung der Mietgebühren wurde gesendet – kontaktiere den {{provider}}-Support für eine Rückerstattung{{txidSuffix}}.",
+      "transfer" : "Dein Transfer ist fehlgeschlagen, aber die gemietete Energie ist weiterhin gültig – Du kannst den Transfer erneut versuchen.",
+      "retryLocked" : "Damit du die Miete nicht doppelt bezahlst, kannst du es nach {{time}} erneut versuchen.",
+      "retry" : "Wiederholen",
+      "retryPaying" : "Erneut bezahlen und wiederholen",
+      "acceptPrice" : "Neuen Preis akzeptieren",
+      "cancel" : "Abbrechen"
+    },
     "coinControl" : {
       "title" : "Coin-Kontrolle",
       "strategy" : "Strategie",
@@ -5127,6 +5167,62 @@
       "OUT" : "Abheben"
     }
   },
+  "stacks" : {
+    "stake" : {
+      "flow" : {
+        "title" : "Staken",
+        "preparingTransaction" : "Transaktion wird vorbereitet…",
+        "steps" : {
+          "validator" : {
+            "title" : "Pool",
+            "description" : "Wähle einen Pool, an den du deine STX für das Staking delegierst.",
+            "poolAddressLabel" : "Pool-Adresse",
+            "numCyclesLabel" : "Anzahl der Zyklen"
+          },
+          "amount" : {
+            "title" : "Betrag",
+            "disclaimer" : "Deine STX bleiben gesperrt, bis der Staking-Pool sie freigibt."
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich gestaket",
+              "text" : "Du hast {{amount}} gestaket. Dein Guthaben wird aktualisiert, sobald die Transaktion durch das Blockchain-Netzwerk bestätigt wurde.",
+              "cta" : "Zum Konto-Dashboard"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "Unstake",
+        "preparingTransaction" : "Transaktion wird vorbereitet…",
+        "steps" : {
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "broadcastError" : "Deine Unstaking-Transaktion konnte nicht an das Netzwerk gesendet werden. Bitte versuche es erneut.",
+            "success" : {
+              "title" : "Unstaking übermittelt",
+              "text" : "Die Aufhebung deiner STX-Delegierung wurde erfolgreich übertragen.",
+              "cta" : "Details anzeigen"
+            }
+          }
+        }
+      }
+    },
+    "account" : {
+      "staked" : "Gestaked",
+      "unlockCycle" : "Entsperren-Zyklus"
+    }
+  },
   "tezos" : {
     "operationTypes" : {
       "UNSTAKE" : "Unstaking",
@@ -5642,7 +5738,10 @@
         "eligibleAddressFamilies" : "Zulässige Adressfamilien",
         "customFamiliesHint" : "Kommagetrennte Familien für benutzerdefinierte Multi-Familien-Tests.",
         "customFamiliesPlaceholder" : "EVM, Stellar, Aptos",
-        "applyFamilies" : "Anwenden",
+        "apply" : "Anwenden",
+        "newBadge" : "Neues Badge",
+        "excludedCurrencyIds" : "Ausgeschlossene Währungs-IDs",
+        "excludedCurrencyIdsPlaceholder" : "z. B. Ethereum, Bitcoin",
         "contactsData" : "Kontaktdaten",
         "loadPopulatedContacts" : "Befüllte Kontakte laden",
         "loadFromSendHistory" : "Kontakte aus dem Verlauf laden",
@@ -5751,6 +5850,9 @@
       "featureFlagsOverride" : "Überschreiben",
       "featureFlagsRestoreAll" : "Alle Flag-Werte wiederherstellen",
       "flagHint" : "Wenn ein Feature-Flag in der gewünschten Firebase-Umgebung \ndefiniert, in der folgenden Liste jedoch nicht aufgeführt ist, kannst du seinen \n**exakten** Namen in das Suchfeld eingeben. Daraufhin wird es in der Liste angezeigt. Gib \nden Flag-Namen mit korrekter Groß-/Kleinschreibung und ohne das Präfix „feature“ ein.",
+      "contentAbTests" : {
+        "invalidPayload" : "Ungültige Payload. \"enabled\" muss ein boolescher Wert sein und \"copy\" muss Schlüssel auf Strings abbilden."
+      },
       "showButtonDesc" : "Die Schaltfläche „Feature-Flags“ immer in der Seitenleiste anzeigen",
       "buttonTitle" : "Flags lokal überschrieben",
       "overridden" : {
@@ -6770,6 +6872,7 @@
       "undelegate" : "Bitte bestätige den Vorgang auf deinem Gerät, um ihn abzuschließen",
       "redelegate" : "Bitte bestätige den Vorgang auf deinem Gerät, um ihn abzuschließen",
       "claimRewardCompound" : "Bitte bestätige den Vorgang auf deinem Gerät, um ihn abzuschließen",
+      "compoundReward" : "Bitte bestätige den Vorgang auf deinem Gerät, um ihn abzuschließen",
       "nominate" : "Bitte bestätige den Vorgang auf deinem Gerät, um ihn abzuschließen",
       "chill" : "Bitte bestätige den Vorgang auf deinem Gerät, um ihn abzuschließen",
       "bond" : "Bitte bestätige den Vorgang auf deinem Gerät, um ihn abzuschließen",
@@ -6796,7 +6899,9 @@
       "undelegate" : "Validator",
       "claimReward" : "Prämienempfänger",
       "claimRewardCompound" : "Validator, der die Belohnungen erhält",
+      "compoundReward" : "Validator, der die Rewards erhält",
       "optIn" : "Empfänger",
+      "tokenAssociate" : "Empfänger",
       "nominate" : "Validator",
       "stake" : "Validator",
       "unstake" : "Validator",
@@ -7248,6 +7353,10 @@
     "CosmosDelegateAllFundsWarning" : {
       "title" : "Stelle sicher, dass dein Guthaben zur Deckung künftiger Transaktionsgebühren ausreicht"
     },
+    "CosmosMemoTooLong" : {
+      "title" : "Memo überschreitet zulässige Länge",
+      "description" : "Dein Memo hat eine Länge von {{memoLength}} Byte. Zulässig ist jedoch nur eine Länge von {{maxLength}} Byte. Bitte reduziere die Memogröße."
+    },
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} wird nicht unterstützt",
       "description" : "Dieses Krypto-Asset wird noch nicht unterstützt. Bitte kontaktiere den Ledger-Kundenservice."
@@ -7606,6 +7715,10 @@
     "TransactionRefusedOnDevice" : {
       "title" : "Aktion auf Gerät verweigert",
       "description" : "Bitte versuche es noch einmal oder wende dich im Zweifelsfall an den Ledger-Kundenservice"
+    },
+    "TransferOfferExpiredError" : {
+      "title" : "Dieses Angebot ist abgelaufen",
+      "description" : "Das Transferangebot ist abgelaufen, bevor es angenommen wurde. Bitte den Absender, ein neues zu senden."
     },
     "UserRefusedAddress" : {
       "title" : "Empfangsadresse abgelehnt",
@@ -8133,6 +8246,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "Staking ist bis zum nächsten Rewards-Zyklus pausiert",
+      "description" : "Das Stacks-Netzwerk akzeptiert kein neues Staking, während es den nächsten Rewards-Zyklus vorbereitet. Staking wird in {{blocksUntilReopen}} Bitcoin-Blöcken wieder geöffnet."
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo-Format ist falsch"
@@ -9528,7 +9645,7 @@
   "marketBanner" : {
     "title" : "Markt",
     "genericError" : "Verbindung fehlgeschlagen",
-    "cta" : "Alles anzeigen",
+    "cta" : "Mehr",
     "ranking" : {
       "trending" : "Im Trend",
       "gainers" : "Gewinner",
