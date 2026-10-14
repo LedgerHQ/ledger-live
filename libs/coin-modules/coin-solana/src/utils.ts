@@ -1,12 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import {
-  AccountInfo,
-  Cluster,
-  ConfirmedSignatureInfo,
-  ParsedAccountData,
-  PublicKey,
-  clusterApiUrl,
-} from "@solana/web3.js";
+import { AccountInfo, Cluster, ParsedAccountData, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { partition } from "lodash/fp";
 import { ValidatorsAppValidator } from "./network/validator-app";
@@ -59,16 +52,6 @@ export const SOLANA_DELEGATION_RESERVE = 0.01;
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
 };
-
-export async function drainSeqAsyncGen<T>(...asyncGens: AsyncGenerator<T>[]): Promise<T[]> {
-  const items: T[] = [];
-  for (const gen of asyncGens) {
-    for await (const item of gen) {
-      items.push(item);
-    }
-  }
-  return items;
-}
 
 export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
   const items: T[] = [];
@@ -270,28 +253,5 @@ export function isHistoryEntry(value: unknown): value is HistoryEntry {
     typeof value.stakeHistory.effective === "number" &&
     typeof value.stakeHistory.activating === "number" &&
     typeof value.stakeHistory.deactivating === "number"
-  );
-}
-
-function isConfirmedSignatureInfo(value: unknown): value is ConfirmedSignatureInfo {
-  return (
-    isUnknownObject(value) &&
-    typeof value.signature === "string" &&
-    typeof value.slot === "number" &&
-    typeof value.err === "object" &&
-    (value.memo === null || typeof value.memo === "string") &&
-    (value.blockTime === null || typeof value.blockTime === "number") &&
-    (value.confirmationStatus === null || typeof value.confirmationStatus === "string")
-  );
-}
-
-export function isSignaturesForAddressResponse(
-  value: unknown,
-): value is { result: Array<ConfirmedSignatureInfo>; id: string } {
-  return (
-    isUnknownObject(value) &&
-    typeof value.id === "string" &&
-    Array.isArray(value.result) &&
-    value.result.every(isConfirmedSignatureInfo)
   );
 }

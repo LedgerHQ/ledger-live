@@ -1,7 +1,7 @@
 import { create } from "superstruct";
 import { PARSED_PROGRAMS } from "./program/constants";
 import { PublicKeyFromString } from "./validators/pubkey";
-import { getMaybeTokenAccount, getTransactions } from "./web3";
+import { getMaybeTokenAccount } from "./web3";
 import { getChainAPI } from ".";
 
 const api = getChainAPI({
@@ -73,24 +73,4 @@ describe("findTokenAccAddress", () => {
 
     expect(ata).toEqual(address);
   });
-});
-
-describe("getTransactions", () => {
-  it.each([
-    {
-      address: "Cv9b7PuxVdKXTKTBXvZSQfSqbMNmPHP8brv77ZL2D95m",
-      untilTxSignature: undefined,
-    },
-    {
-      address: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
-      untilTxSignature: undefined,
-    },
-  ])(
-    "returns the expected transactions without any fail transactions",
-    async ({ address, untilTxSignature }) => {
-      const txs = await getTransactions(address, untilTxSignature, api);
-      const hasError = txs.some(tx => tx.info.err);
-      expect(hasError).toBe(false);
-    },
-  );
 });
