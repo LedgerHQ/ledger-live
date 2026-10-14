@@ -130,8 +130,8 @@ The session stays open after the exit, so the app can keep using it.
 
 ## Usage context
 
-Consumed by `apps/ledger-live-desktop`, `apps/ledger-live-mobile`, and `@devtools/device-onboarding`,
-which open the session, send its events, give `leaveOnboarding` and render the screens. The package
+Consumed by `apps/ledger-live-desktop`, `apps/ledger-live-mobile`, `@devtools/device-onboarding`, and `@devtools/bindings`.
+The apps open the session, send its events, give `leaveOnboarding` and render the screens. The package
 imports neither app, nor `live-dmk-desktop`, `live-dmk-mobile`, or
 any legacy onboarding flow.
 
