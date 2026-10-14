@@ -72,6 +72,45 @@ describe("ScanDeviceAccounts (common coins)", () => {
     expect(replace).not.toHaveBeenCalledWith(ScreenName.NoAssociatedAccounts, expect.anything());
   });
 
+  it("preselects the first discovered account by default", async () => {
+    const ethAccount = createAccount({ id: "js:eth:1:eth" });
+    setScanObservable(of(makeDiscoveredEvent(ethAccount)));
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() => expect(result.current.selectedIds).toEqual([ethAccount.id]));
+  });
+
+  it("leaves every discovered account unchecked when autoSelect is false", async () => {
+    setRouteParams("ethereum", "device-1", { autoSelect: false });
+    const ethAccount = createAccount({
+      id: "js:eth:2:eth",
+      balance: new BigNumber(10),
+      used: true,
+    });
+    setScanObservable(of(makeDiscoveredEvent(ethAccount)));
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scannedAccounts).toHaveLength(1));
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    expect(result.current.autoSelect).toBe(false);
+    expect(result.current.selectedIds).toEqual([]);
+  });
+
   it("stores multiple discovered BTC accounts", async () => {
     setRouteParams("bitcoin");
     const btcAccount1 = createAccount({

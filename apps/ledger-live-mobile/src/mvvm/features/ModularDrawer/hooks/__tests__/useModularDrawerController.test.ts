@@ -202,6 +202,47 @@ describe("useModularDrawerController", () => {
     });
   });
 
+  describe("onAddAccount callback", () => {
+    it("should not expose an add account override by default", () => {
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({ flow: "test_flow", source: "test_source" });
+      });
+
+      expect(result.current.hasAddAccountOverride).toBe(false);
+    });
+
+    it("should hand Add account over to the caller and close without cancelling", () => {
+      const onAddAccount = jest.fn();
+      const onCancel = jest.fn();
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          onAddAccount,
+          onCancel,
+        });
+      });
+      expect(result.current.hasAddAccountOverride).toBe(true);
+
+      act(() => {
+        result.current.handleAddAccount();
+      });
+
+      expect(onAddAccount).toHaveBeenCalledTimes(1);
+      expect(store.getState().modularDrawer.isOpen).toBe(false);
+      expect(store.getState().modularDrawer.addAccountCallbackId).toBeUndefined();
+
+      act(() => {
+        result.current.closeDrawer();
+      });
+      expect(onCancel).not.toHaveBeenCalled();
+    });
+  });
+
   describe("handleAccountSelected", () => {
     it("should invoke registered onAccountSelected callback and close the drawer", () => {
       const onAccountSelected = jest.fn();

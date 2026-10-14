@@ -1,9 +1,16 @@
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
-import { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { convertAction, type ActionWithNonce } from "./types";
-import { getAccountIdFromWalletAccountId } from "../converters";
+import { getAccountIdFromWalletAccountId, getWalletApiIdFromAccountId } from "../converters";
+import {
+  getHypercoreAccounts,
+  type PerpsMigrationParams,
+  type PerpsMigrationResult,
+  type PerpsMigrationUiParams,
+} from "./migration";
+import { sameAccountIdentity } from "../../account/addAccounts";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
 import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
@@ -55,6 +62,11 @@ export type PerpsUiHooks = {
    * A rejection is forwarded as is, so reject with a `UserRefused*` error when the user abandons.
    */
   "deposit.execute"?: (params: PerpsDepositUiParams) => Promise<PerpsDepositResult> | void;
+  /**
+   * Lets the user pick one of `existingAccounts` or add one through account discovery, and
+   * resolves with the accounts the user selected. Reject with a `UserRefused*` error when the user abandons.
+   */
+  "migration.execute"?: (params: PerpsMigrationUiParams) => Promise<Account[]>;
 };
 
 export type PerpsSignParams = {
@@ -109,7 +121,11 @@ function createSignFactory(derivationPath: string, params: PerpsSignParams) {
 
 export const handlers = ({
   accounts,
-  uiHooks: { "signing.execute": uiSigningExecute, "deposit.execute": uiDepositExecute },
+  uiHooks: {
+    "signing.execute": uiSigningExecute,
+    "deposit.execute": uiDepositExecute,
+    "migration.execute": uiMigrationExecute,
+  },
 }: {
   accounts: AccountLike[];
   uiHooks: PerpsUiHooks;
@@ -172,5 +188,41 @@ export const handlers = ({
         throw error;
       }
     }),
+    "custom.perps.migrateAccount": customWrapper<PerpsMigrationParams, PerpsMigrationResult>(
+      async params => {
+        if (!params) {
+          throw new ServerError(createUnknownError({ message: "params is undefined" }));
+        }
+
+        if (!uiMigrationExecute) {
+          throw new ServerError(
+            createUnknownError({ message: "migration is not supported by this client" }),
+          );
+        }
+
+        const legacyAccount = findAccountOrThrow(params.legacyAccountId);
+        if (legacyAccount.type !== "Account") {
+          throw new ServerError(
+            createUnknownError({ message: "legacy Perps account must be a main account" }),
+          );
+        }
+
+        const existingAccounts = getHypercoreAccounts(accounts);
+
+        try {
+          const selectedAccounts = await uiMigrationExecute({ legacyAccount, existingAccounts });
+          return {
+            accounts: selectedAccounts.map(account => ({
+              accountId: getWalletApiIdFromAccountId(account.id),
+              // Discovery can rescan a known account under a new id, so compare by identity.
+              created: !existingAccounts.some(existing => sameAccountIdentity(existing, account)),
+            })),
+          };
+        } catch (error) {
+          console.warn("[perps] Migration request rejected", error);
+          throw error;
+        }
+      },
+    ),
   };
 };

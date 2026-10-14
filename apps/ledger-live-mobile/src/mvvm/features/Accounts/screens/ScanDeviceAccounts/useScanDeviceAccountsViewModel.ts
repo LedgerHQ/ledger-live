@@ -64,6 +64,7 @@ export default function useScanDeviceAccountsViewModel({
     onCloseNavigation,
     navigationDepth,
     context,
+    autoSelect = true,
   } = route.params || {};
 
   const customFlow = getCustomAddAccountFlow(currency);
@@ -262,7 +263,8 @@ export default function useScanDeviceAccountsViewModel({
         renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
       }),
     );
-    const { onSuccess } = route.params;
+    const { onSuccess, onAccountsAdded } = route.params;
+    onAccountsAdded?.(accountsToAdd);
 
     if (inline) {
       popInlineScreens();
@@ -380,17 +382,20 @@ export default function useScanDeviceAccountsViewModel({
 
     if (!hasAlreadyBeenScanned) {
       setScannedAccounts([...scannedAccounts, latestScannedAccount]);
-      setSelectedIds(
-        onlyNewAccounts
-          ? hasAlreadyBeenImported || selectedIds.length > 0
-            ? selectedIds
-            : [latestScannedAccount.id]
-          : !hasAlreadyBeenImported && !isNewAccount
-            ? uniq([...selectedIds, latestScannedAccount.id])
-            : selectedIds,
-      );
+      if (autoSelect) {
+        setSelectedIds(
+          onlyNewAccounts
+            ? hasAlreadyBeenImported || selectedIds.length > 0
+              ? selectedIds
+              : [latestScannedAccount.id]
+            : !hasAlreadyBeenImported && !isNewAccount
+              ? uniq([...selectedIds, latestScannedAccount.id])
+              : selectedIds,
+        );
+      }
     }
   }, [
+    autoSelect,
     customFlow,
     existingAccounts,
     latestScannedAccount,
@@ -488,6 +493,7 @@ export default function useScanDeviceAccountsViewModel({
     returnToSwap,
     currency,
     onCloseNavigation,
+    autoSelect,
     confirmLabel: t(
       customFlow?.scanDeviceAccountsCtaI18nKey ?? "addAccounts.scanDeviceAccounts.confirm",
       { count: selectedIds.length },
