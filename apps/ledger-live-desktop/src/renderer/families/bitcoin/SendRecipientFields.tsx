@@ -17,6 +17,7 @@ import { State } from "~/renderer/reducers";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import ZcashSyncStateBanner from "./ZcashSyncStateBanner";
 import ZcashMemoField from "./ZcashMemoField";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 // FIXME: ConfirmationNB seems to be specific.
 // So we can't do
@@ -33,7 +34,7 @@ type Props = {
 const SendRecipientFields = (props: Props) => {
   const { confirmationsNb, account, transaction, status, onChange, autoFocus } = props;
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
-  const isZcash = account.currency.id === "zcash";
+  const isZcash = isZcashCurrencyId(account.currency.id);
   const pendingOperationError = new PendingOperation();
   const operations = account.pendingOperations.concat(account.operations);
   const incomingTransactionPending = operations.some(
