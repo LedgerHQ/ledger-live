@@ -15,7 +15,7 @@ import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { SeedPathStatus } from "./types";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer from "~/renderer/components/SyncOnboarding/Manual/LockedDeviceDrawer";
@@ -212,16 +212,16 @@ const useSyncOnboardingCompanionViewModel = ({
        * will trigger directly the install apps step, so its tracking is treated separately.
        */
       trackPage(
-        `Set up ${productName}: Step 3 Seed Success`,
-        undefined,
         {
-          seedPhraseType: analyticsSeedPhraseType.current
-            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
-            : undefined,
-          seedConfiguration: analyticsSeedConfiguration.current,
+          category: `Set up ${productName}: Step 3 Seed Success`,
+          props: {
+            seedPhraseType: analyticsSeedPhraseType.current
+              ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
+              : undefined,
+            seedConfiguration: analyticsSeedConfiguration.current,
+          },
         },
-        true,
-        true,
+        { updateRoutes: true, refreshSource: true },
       );
 
       analyticsSeedingTracked.current = true;
@@ -356,14 +356,17 @@ const useSyncOnboardingCompanionViewModel = ({
 
     if (stepKey === StepKey.Success) {
       trackPage(
-        `Set up ${productName}: Final Step ${productName} is ready`,
-        undefined,
-        properties,
-        true,
-        true,
+        {
+          category: `Set up ${productName}: Final Step ${productName} is ready`,
+          props: properties,
+        },
+        { updateRoutes: true, refreshSource: true },
       );
     } else if (stepKey === StepKey.Apps) {
-      trackPage(`Set up ${productName}: Secure your crypto`, undefined, properties, true, true);
+      trackPage(
+        { category: `Set up ${productName}: Secure your crypto`, props: properties },
+        { updateRoutes: true, refreshSource: true },
+      );
     }
   }, [stepKey, productName]);
 

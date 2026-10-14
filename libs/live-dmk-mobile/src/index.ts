@@ -20,15 +20,23 @@ export { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-n
 export {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
-  ConnectDeviceUIStateTypes,
+  ConnectivityUIStateTypes,
   ConnectionErrorTypes,
   DiscoveryErrorTypes,
   type MobileConnectionError as ConnectionError,
   type MobileDiscoveryError as DiscoveryError,
+} from "./deviceConnectivity/types";
+export {
+  ConnectDeviceUIStateTypes,
   type MobileConnectDeviceUIState as ConnectDeviceUIState,
 } from "./connectDevice/types";
-export type { DisplayedDevice } from "@ledgerhq/live-dmk-shared";
+export {
+  ConnectNewDeviceUIStateTypes,
+  type MobileConnectNewDeviceUIState as ConnectNewDeviceUIState,
+} from "./connectNewDevice/types";
+export type { DisplayedDevice, SelectableDevice } from "@ledgerhq/live-dmk-shared";
 export { connectDevice, type ConnectDeviceInput } from "./connectDevice/connectDevice";
+export { connectNewDevice, type ConnectNewDeviceInput } from "./connectNewDevice/connectNewDevice";
 export * from "./errors";
 export * from "./hooks";
 export * from "./utils/matchDevicesByNameOrId";

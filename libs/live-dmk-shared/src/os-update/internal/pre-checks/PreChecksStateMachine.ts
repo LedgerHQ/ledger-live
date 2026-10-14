@@ -1,5 +1,6 @@
 import {
   BatteryStatusType,
+  type DeviceModelId,
   DeviceSessionId,
   GetBatteryStatusCommand,
   GetOsVersionCommand,
@@ -21,7 +22,7 @@ import { PreChecksStateType, type PreChecksState } from "../../api/model/PreChec
 import { OsUpdatesOrchestratorStateMachineEventType } from "../orchestrator/types";
 import { checkErrorCauseStateMachine } from "../shared/checkErrorCauseStateMachine";
 import { POLL_INTERVAL_MS } from "../shared/constants";
-import { CheckErrorCauseResult, DeviceSituationEventType } from "../shared/types";
+import { DeviceSituationEventType, isRecovered } from "../shared/types";
 import {
   CHARGING_MODE_NONE,
   DEVICE_MODELS_WITH_BATTERY,
@@ -111,10 +112,10 @@ export const preChecksStateMachine = setup({
       }: {
         input: {
           storage: DeviceBackupStorage;
-          deviceId: string;
+          deviceModelId: DeviceModelId;
         };
       }): Promise<Backup | undefined> => {
-        return input.storage.getBackup(input.deviceId);
+        return input.storage.getBackup(input.deviceModelId);
       },
     ),
   },
@@ -154,7 +155,7 @@ export const preChecksStateMachine = setup({
     nextAction: null,
     send: self.send,
   }),
-  initial: "WaitingForAppAndVersion",
+  initial: "GetOsVersion",
   on: {
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
@@ -164,8 +165,37 @@ export const preChecksStateMachine = setup({
     },
   },
   states: {
+    GetOsVersion: {
+      entry: assign({ lastAction: PreChecksStateMachineLastAction.GetOsVersion }),
+      invoke: {
+        src: "getOsVersion",
+        input: ({ context }) => ({
+          dmk: context.dmk,
+          sessionId: context.connectedDevice.sessionId,
+        }),
+        onDone: {
+          actions: assign({ osVersion: ({ event }) => event.output }),
+          target: "CheckOsVersion",
+        },
+        onError: {
+          actions: assign({ error: ({ event }) => event.error }),
+          target: "CheckErrorCause",
+        },
+      },
+    },
+    CheckOsVersion: {
+      always: [
+        {
+          guard: "isBootloaderOrOsu",
+          actions: assign({ nextAction: PreChecksNextAction.PerformOsUpdates }),
+          target: "Done",
+        },
+        {
+          target: "WaitingForAppAndVersion",
+        },
+      ],
+    },
     WaitingForAppAndVersion: {
-      entry: assign({ lastAction: PreChecksStateMachineLastAction.WaitForAppAndVersion }),
       invoke: {
         src: "waitForAppAndVersion",
         input: ({ context }) => ({
@@ -202,7 +232,7 @@ export const preChecksStateMachine = setup({
           {
             guard: ({ event }) =>
               event.output.map(({ name }) => isDashboardName(name)).orDefault(false),
-            target: "GetOsVersion",
+            target: "CheckOsUpdates",
           },
           {
             target: "GoToDashboard",
@@ -250,35 +280,6 @@ export const preChecksStateMachine = setup({
         ],
       },
     },
-    GetOsVersion: {
-      invoke: {
-        src: "getOsVersion",
-        input: ({ context }) => ({
-          dmk: context.dmk,
-          sessionId: context.connectedDevice.sessionId,
-        }),
-        onDone: {
-          actions: assign({ osVersion: ({ event }) => event.output }),
-          target: "CheckOsVersion",
-        },
-        onError: {
-          actions: assign({ error: ({ event }) => event.error }),
-          target: "CheckErrorCause",
-        },
-      },
-    },
-    CheckOsVersion: {
-      always: [
-        {
-          guard: "isBootloaderOrOsu",
-          actions: assign({ nextAction: PreChecksNextAction.PerformOsUpdates }),
-          target: "Done",
-        },
-        {
-          target: "CheckOsUpdates",
-        },
-      ],
-    },
     CheckOsUpdates: {
       always: [
         {
@@ -307,7 +308,7 @@ export const preChecksStateMachine = setup({
         src: "getBackup",
         input: ({ context }) => ({
           storage: context.storage,
-          deviceId: context.connectedDevice.id,
+          deviceModelId: context.connectedDevice.modelId,
         }),
         onDone: [
           {
@@ -383,7 +384,11 @@ export const preChecksStateMachine = setup({
         }),
         onDone: [
           {
-            guard: ({ event }) => event.output === CheckErrorCauseResult.Recovered,
+            guard: ({ event }) => isRecovered(event.output),
+            actions: assign({
+              connectedDevice: ({ context, event }) =>
+                isRecovered(event.output) ? event.output.connectedDevice : context.connectedDevice,
+            }),
             target: "ResumeLastAction",
           },
           {

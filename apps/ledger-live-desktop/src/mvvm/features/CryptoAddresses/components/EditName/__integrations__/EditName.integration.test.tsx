@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
@@ -7,13 +7,37 @@ import { parseAnyAccountId } from "@domain/entity-account";
 
 const ASSET_NAME = "Ethereum";
 
-const renderEditName = () => {
-  return render(
-    <EditName account={ETH_ACCOUNT} asset={ASSET_NAME}>
-      <Button data-testid="edit-name-trigger">Edit</Button>
-    </EditName>,
-    { initialState: { accounts: [ETH_ACCOUNT] } },
+const EditNameHarness = ({ isSyncing }: { isSyncing: boolean }) => {
+  const [open, setOpen] = useState(false);
+  const [session, setSession] = useState(0);
+
+  return (
+    <>
+      <Button
+        data-testid="edit-name-trigger"
+        onClick={() => {
+          setSession(prev => prev + 1);
+          setOpen(true);
+        }}
+      >
+        Edit
+      </Button>
+      <EditName
+        key={session}
+        account={ETH_ACCOUNT}
+        asset={ASSET_NAME}
+        open={open}
+        onOpenChange={setOpen}
+        isSyncing={isSyncing}
+      />
+    </>
   );
+};
+
+const renderEditName = (isSyncing = false) => {
+  return render(<EditNameHarness isSyncing={isSyncing} />, {
+    initialState: { accounts: [ETH_ACCOUNT] },
+  });
 };
 
 describe("EditName", () => {
@@ -74,5 +98,18 @@ describe("EditName", () => {
         screen.queryByTestId("edit-crypto-address-name-dialog-content"),
       ).not.toBeInTheDocument();
     });
+  });
+
+  it("should disable the confirm button while accounts are syncing", async () => {
+    const { user } = renderEditName(true);
+
+    await user.click(screen.getByTestId("edit-name-trigger"));
+    await waitFor(() => {
+      expect(screen.getByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Ethereum savings" }));
+
+    expect(screen.getByTestId("edit-crypto-address-name-dialog-cta")).toBeDisabled();
   });
 });

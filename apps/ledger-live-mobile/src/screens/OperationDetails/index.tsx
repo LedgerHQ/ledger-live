@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
@@ -9,7 +10,6 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/accoun
 import { Operation } from "@ledgerhq/types-live";
 
 import byFamiliesOperationDetails from "../../generated/operationDetails";
-import { TrackScreen } from "~/analytics";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Footer from "./Footer";
 import Content from "./Content";

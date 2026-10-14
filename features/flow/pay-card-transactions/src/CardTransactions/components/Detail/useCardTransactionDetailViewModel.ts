@@ -1,6 +1,6 @@
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useTranslation } from "@shared/i18n";
-import { copyToClipboard } from "./copyToClipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import {
   formatCashback,
   formatFundingLabel,

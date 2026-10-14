@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { View } from "react-native";
@@ -10,7 +11,6 @@ import SearchList from "./components/SearchList";
 import Header, { TOTAL_HEADER_HEIGHT } from "./components/Header";
 import RecentlyUsed from "./components/RecentlyUsed";
 import { Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 

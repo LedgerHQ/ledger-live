@@ -11,6 +11,8 @@ export const iconConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "ICON",
+      unit: { name: "ICX", code: "ICX", magnitude: 18 },
     },
   },
 };

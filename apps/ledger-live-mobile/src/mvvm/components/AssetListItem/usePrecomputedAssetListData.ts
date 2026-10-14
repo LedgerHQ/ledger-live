@@ -1,13 +1,13 @@
 import { useMemo, useRef } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { calculate } from "@domain/entity-market-countervalues";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
-import { useThrottledValue } from "@ledgerhq/live-hooks/useThrottledFunction";
+import { useThrottledValues } from "@ledgerhq/live-common/hooks/useThrottledValues";
 import { ValueChange } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useLocale } from "~/context/Locale";
@@ -151,7 +151,7 @@ export function usePrecomputedAssetListData(
   const range = "day" as const;
 
   const rawCvState = useCountervaluesState();
-  const cvState = useThrottledValue(rawCvState, CV_THROTTLE_MS);
+  const [cvState] = useThrottledValues([rawCvState], CV_THROTTLE_MS);
 
   const cacheRef = useRef(new Map<string, AssetListItemViewModelResult>());
 

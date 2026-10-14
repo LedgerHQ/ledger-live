@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
 import RingChart from "../components/RingChart";

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
@@ -8,7 +9,6 @@ import {
   setNotificationsModalOpen,
 } from "~/actions/notifications";
 import { setNotifications } from "~/actions/settings";
-import { track } from "~/analytics";
 import { updateUserPreferences } from "~/notifications/braze";
 import {
   notificationsDrawerPromptTarget,

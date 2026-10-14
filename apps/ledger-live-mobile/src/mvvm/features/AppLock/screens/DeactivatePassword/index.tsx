@@ -1,4 +1,4 @@
-import { DeactivatePasswordView } from "@features/flow-app-lock";
+import { DeactivatePasswordView } from "@features/flow-app-password-removal";
 import React from "react";
 import { useKeyboardInset } from "../../hooks/useKeyboardInset";
 import useDeactivatePasswordScreenViewModel from "./useDeactivatePasswordScreenViewModel";

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Spinner, Spot } from "@ledgerhq/lumen-ui-react";
 import { QrCodeScanner } from "@ledgerhq/lumen-ui-react/symbols";
 import TranslatedError from "~/renderer/components/TranslatedError";
@@ -6,6 +6,7 @@ import { useQrCodeScanner } from "../hooks/useQrCodeScanner";
 
 type RecipientQrScannerProps = Readonly<{
   onPick: (code: string) => void;
+  onErrorShown?: (error: Error) => void;
 }>;
 
 const TARGET_SIZE = 176;
@@ -24,8 +25,12 @@ const blurCutoutStyle = {
   maskComposite: "exclude",
 } as const;
 
-export function RecipientQrScanner({ onPick }: RecipientQrScannerProps) {
+export function RecipientQrScanner({ onPick, onErrorShown }: RecipientQrScannerProps) {
   const { videoRef, error, isLoading } = useQrCodeScanner({ onPick });
+
+  useEffect(() => {
+    if (error) onErrorShown?.(error);
+  }, [error, onErrorShown]);
 
   return (
     <div className="px-16 pb-16" data-testid="send-recipient-qr-scanner">

@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Flex, Text, SlideIndicator } from "@ledgerhq/native-ui";
@@ -8,7 +9,6 @@ import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import NewSeedIllustration from "LLM/features/Onboarding/assets/NewSeedIllustration";
 import { setIsOnboardingFlow, setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";
 import { isOnboardingFlowReceiveSuccessSelector } from "~/reducers/settings";
-import { screen, track } from "~/analytics";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import Button from "~/components/PreventDoubleClickButton";
 import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
@@ -79,9 +79,12 @@ export default function OnboardingSecureYourCrypto() {
   useEffect(() => {
     if (!isInitialised) {
       if (isOnboardingFlowReceiveSuccess) dispatch(setIsOnboardingFlowReceiveSuccess(false));
-      screen("Set up device: Final Step Your device is ready", undefined, {
-        deviceModelId,
-        seedConfiguration: "new_seed",
+      trackPage({
+        category: "Set up device: Final Step Your device is ready",
+        props: {
+          deviceModelId,
+          seedConfiguration: "new_seed",
+        },
       });
       setIsInitialised(true);
     } else if (isOnboardingFlowReceiveSuccess) {
@@ -98,9 +101,12 @@ export default function OnboardingSecureYourCrypto() {
   // Need to trigger this second screen tracking call after the first one
   useEffect(() => {
     if (isInitialised) {
-      screen("Set up device: Secure your crypto", undefined, {
-        deviceModelId,
-        seedConfiguration: "new_seed",
+      trackPage({
+        category: "Set up device: Secure your crypto",
+        props: {
+          deviceModelId,
+          seedConfiguration: "new_seed",
+        },
       });
     }
   }, [isInitialised, deviceModelId]);

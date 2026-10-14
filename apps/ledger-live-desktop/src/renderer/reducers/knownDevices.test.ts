@@ -1,9 +1,11 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
+import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import reducer, {
   INITIAL_STATE,
+  seedMockServerKnownDevice,
   importKnownDevices,
   knownDevicesSelector,
   knownDevicesStoreSelector,
@@ -13,6 +15,7 @@ import reducer, {
   type PersistedKnownDevice,
 } from "./knownDevices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { mockServerKnownDevice } from "../mockServerTransport";
 import type { State } from "./index";
 
 const makeLastSeenDevice = (modelId: DeviceModelId): DeviceModelInfo => ({
@@ -40,12 +43,91 @@ const setLastOnboardedDevice = (payload: Device | null) => ({
 });
 const addDevice = (payload: Device) => ({ type: "ADD_DEVICE", payload });
 
+function withSpeculosEnv(device: string, run: () => void) {
+  const previousDevice = process.env.SPECULOS_DEVICE;
+  const previousPort = process.env.SPECULOS_API_PORT;
+  process.env.SPECULOS_DEVICE = device;
+  process.env.SPECULOS_API_PORT = "5000";
+  try {
+    run();
+  } finally {
+    if (previousDevice === undefined) delete process.env.SPECULOS_DEVICE;
+    else process.env.SPECULOS_DEVICE = previousDevice;
+    if (previousPort === undefined) delete process.env.SPECULOS_API_PORT;
+    else process.env.SPECULOS_API_PORT = previousPort;
+  }
+}
+
 describe("knownDevices reducer", () => {
   it("starts empty", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toEqual(INITIAL_STATE);
   });
 
+  describe("mock server device", () => {
+    it("keeps the mock server transport when a later device update arrives", () => {
+      const seeded = reducer(
+        INITIAL_STATE,
+        seedMockServerKnownDevice(mockServerKnownDevice("nanoX")),
+      );
+      const state = reducer(seeded, lastSeenDeviceInfo(DeviceModelId.nanoX));
+      expect(state.knownDevices).toEqual([
+        {
+          transport: mockserverIdentifier,
+          deviceModelId: DeviceModelId.nanoX,
+          id: "",
+          name: null,
+        },
+      ]);
+    });
+
+    it("adds the mock server device beside saved devices", () => {
+      const seeded = reducer(
+        INITIAL_STATE,
+        fetchSettings({
+          lastSeenDevice: makeLastSeenDevice(DeviceModelId.stax),
+          lastOnboardedDevice: null,
+        }),
+      );
+      const state = reducer(seeded, seedMockServerKnownDevice(mockServerKnownDevice("nanoX")));
+      const savedDevice = {
+        transport: webHidTransportIdentifier,
+        deviceModelId: DeviceModelId.stax,
+        id: "",
+        name: null,
+      };
+      expect(state.knownDevices).toEqual([
+        savedDevice,
+        {
+          transport: mockserverIdentifier,
+          deviceModelId: DeviceModelId.nanoX,
+          id: "",
+          name: null,
+        },
+      ]);
+      expect(knownDevicesStoreSelector({ knownDevices: state } as State)).toEqual({
+        knownDevices: [{ ...savedDevice, transport: "webhid" }],
+      });
+    });
+  });
+
   describe("migration on settings fetch", () => {
+    it("seeds a Speculos device from SPECULOS_DEVICE when the API port is set", () => {
+      withSpeculosEnv("nanoX", () => {
+        const state = reducer(
+          INITIAL_STATE,
+          fetchSettings({ lastSeenDevice: makeLastSeenDevice(DeviceModelId.nanoSP) }),
+        );
+        expect(state.knownDevices).toEqual([
+          {
+            transport: speculosIdentifier,
+            deviceModelId: DeviceModelId.nanoX,
+            id: "",
+            name: null,
+          },
+        ]);
+      });
+    });
+
     it("seeds from lastSeenDevice when empty", () => {
       const state = reducer(
         INITIAL_STATE,
@@ -100,6 +182,34 @@ describe("knownDevices reducer", () => {
         fetchSettings({ lastSeenDevice: null, lastOnboardedDevice: null }),
       );
       expect(state.knownDevices).toEqual([]);
+    });
+
+    it("replaces persisted devices with the Speculos device when the API port is set", () => {
+      const seeded: KnownDevicesState = {
+        knownDevices: [
+          {
+            transport: webHidTransportIdentifier,
+            deviceModelId: DeviceModelId.stax,
+            id: "persisted",
+            name: "Desk",
+          },
+        ],
+      };
+
+      withSpeculosEnv("nanoX", () => {
+        const state = reducer(
+          seeded,
+          fetchSettings({ lastSeenDevice: makeLastSeenDevice(DeviceModelId.stax) }),
+        );
+        expect(state.knownDevices).toEqual([
+          {
+            transport: speculosIdentifier,
+            deviceModelId: DeviceModelId.nanoX,
+            id: "",
+            name: null,
+          },
+        ]);
+      });
     });
 
     it("does not seed when known devices already exist", () => {

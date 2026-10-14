@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { type PolkadotCoinConfig } from "../config";
+import { polkadotMainnetConfigValue } from "../test/config.fixture";
 import * as sidecar from "./sidecar";
 import network from ".";
 
@@ -9,7 +9,8 @@ jest.mock("./sidecar");
 const mockedSidecar = jest.mocked(sidecar);
 
 const currency: CryptoCurrency = getCryptoCurrencyById("polkadot");
-const config = {} as PolkadotCoinConfig;
+const config = polkadotMainnetConfigValue;
+const logger = jest.fn();
 
 describe("getMetadata", () => {
   afterEach(() => {
@@ -63,6 +64,20 @@ describe("getMinimumBondBalance", () => {
     expect(minBond).toEqual(new BigNumber("12"));
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(1);
   });
+
+  it("is called again once the configured TTL has elapsed", async () => {
+    const shortLivedConfig = {
+      ...config,
+      sidecar: { ...config.sidecar, minimumBondCacheTtlMs: 10 },
+    };
+    mockedSidecar.getMinimumBondBalance.mockResolvedValue(new BigNumber("12"));
+
+    await network.getMinimumBondBalance(shortLivedConfig, currency);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await network.getMinimumBondBalance(shortLivedConfig, currency);
+
+    expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(2);
+  });
 });
 
 describe("getStakingProgress", () => {
@@ -78,15 +93,32 @@ describe("getStakingProgress", () => {
       bondingDuration: 28,
     };
     mockedSidecar.getStakingProgress.mockResolvedValueOnce(progress);
-    let result = await network.getStakingProgress(config, currency);
+    let result = await network.getStakingProgress(logger, config, currency);
     expect(result).toEqual(progress);
     expect(mockedSidecar.getStakingProgress).toHaveBeenCalledTimes(1);
 
     // Second call for the same currency is served from cache
     mockedSidecar.getStakingProgress.mockResolvedValueOnce({ ...progress, activeEra: 2 });
-    result = await network.getStakingProgress(config, currency);
+    result = await network.getStakingProgress(logger, config, currency);
     expect(result.activeEra).toEqual(1);
     expect(mockedSidecar.getStakingProgress).toHaveBeenCalledTimes(1);
+  });
+
+  it("forwards the injected logger to the sidecar", async () => {
+    mockedSidecar.getStakingProgress.mockResolvedValue({
+      activeEra: 3,
+      electionClosed: true,
+      maxNominatorRewardedPerValidator: 512,
+      bondingDuration: 28,
+    });
+
+    await network.getStakingProgress(logger, config, getCryptoCurrencyById("westend"));
+
+    expect(mockedSidecar.getStakingProgress).toHaveBeenCalledWith(
+      logger,
+      config,
+      getCryptoCurrencyById("westend"),
+    );
   });
 });
 
@@ -98,13 +130,13 @@ describe("getValidators", () => {
   it("caches per (status, currency) key", async () => {
     mockedSidecar.getValidators.mockResolvedValue([]);
 
-    await network.getValidators("all", currency);
-    await network.getValidators("all", currency);
+    await network.getValidators(config, "all", currency);
+    await network.getValidators(config, "all", currency);
     // Same status + currency → cached, sidecar hit only once
     expect(mockedSidecar.getValidators).toHaveBeenCalledTimes(1);
 
     // Different status → different cache key → new sidecar call
-    await network.getValidators("elected", currency);
+    await network.getValidators(config, "elected", currency);
     expect(mockedSidecar.getValidators).toHaveBeenCalledTimes(2);
   });
 });

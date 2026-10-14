@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -9,7 +11,6 @@ import { useTokensData } from "@features/platform-currencies";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import invariant from "invariant";
 
-import { TrackScreen, track } from "~/analytics";
 import BigCurrencyRow from "~/components/BigCurrencyRow";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import SafeAreaView from "~/components/SafeAreaView";

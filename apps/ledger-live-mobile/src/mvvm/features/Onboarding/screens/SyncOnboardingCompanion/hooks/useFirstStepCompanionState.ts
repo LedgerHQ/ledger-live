@@ -31,7 +31,7 @@ const useFirstStepCompanionState = ({
   const seededDeviceHandled = useRef(false);
 
   useEffect(() => {
-    let timer: null | NodeJS.Timeout = null;
+    let timer: null | ReturnType<typeof setTimeout> = null;
     const delayedStepUpdate = (step: FirstStepCompanionStepKey) => {
       timer = setTimeout(() => setCompanionStep(step), 400);
     };

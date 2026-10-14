@@ -14,7 +14,7 @@ import {
 } from "@e2e/utils/loggingUtils";
 import { allure } from "jest-allure2-reporter/api";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
-import { getLogs } from "@e2e/bridge/server";
+import { BRIDGE_RESPONSE_TIMEOUT, getLogs } from "@e2e/bridge/server";
 import { Circus } from "@jest/types";
 import {
   logMemoryUsage,
@@ -42,9 +42,13 @@ import type { ServerData } from "~/e2e/bridge/types";
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
+import { armWorkerWatchdog, setWatchdogState, watchdogPhase } from "@e2e/helpers/workerWatchdog";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
+// getLogs is already capped by the bridge's own response timeout; this outer bound is
+// defense-in-depth for a wedged worker where that inner timer is starved, so it must stay larger.
+const GET_LOGS_TIMEOUT_MS = BRIDGE_RESPONSE_TIMEOUT + 2_000;
 
 // Set by the patched Detox retry (patches/detox@20.51.3.patch) to the exact full names of the
 // tests that failed in the previous attempt.
@@ -55,6 +59,9 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
 /**
  * Mark every test that is not in `names` (so passed in the previous attempt) as skipped.
  * Skipped tests write no Allure result, so the previous attempt's verdict remains.
+ *
+ * A block that keeps nothing is skipped as a block: jest-circus gates beforeAll/afterAll on the
+ * block's own mode, so marking only its tests still runs every unrelated block's setup.
  */
 const skipToRetrySet = (
   block: Circus.DescribeBlock,
@@ -64,7 +71,9 @@ const skipToRetrySet = (
   let kept = 0;
   for (const child of block.children) {
     if (child.type === "describeBlock") {
-      kept += skipToRetrySet(child, names, [...path, child.name]);
+      const keptInBlock = skipToRetrySet(child, names, [...path, child.name]);
+      if (keptInBlock === 0) child.mode = "skip";
+      kept += keptInBlock;
       // Mirrors jest-circus getTestID: the names path minus the root block, space-joined.
     } else if (names.has([...path, child.name].join(" "))) {
       kept++;
@@ -108,9 +117,7 @@ async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap
       "attachMergedFeatureFlags",
     );
   }
-  // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
-  // is just defense-in-depth in case the inner timer is starved on a wedged worker.
-  let logs = await withTimeout(getLogs(), 12_000, "getLogs");
+  let logs = await withTimeout(getLogs(), GET_LOGS_TIMEOUT_MS, "getLogs");
   if (logs)
     await withTimeout(
       attachFailureLogsToAllure(logs),
@@ -165,8 +172,12 @@ function installSpeculosTerminationHandlers() {
 
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
+  declare readonly testPath: string;
 
   async setup() {
+    await armWorkerWatchdog();
+    setWatchdogState({ spec: this.testPath, phase: "environment setup" });
+
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
     await super.setup();
@@ -301,6 +312,8 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   async teardown() {
+    setWatchdogState({ phase: "teardown" });
+
     try {
       await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
     } catch (error) {
@@ -336,9 +349,13 @@ export default class TestEnvironment extends DetoxEnvironment {
     }
 
     await super.teardown();
+    setWatchdogState({ spec: "<idle>", phase: "idle" });
   }
 
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
+    const phase = watchdogPhase(event, state);
+    if (phase) setWatchdogState({ phase });
+
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
       await captureFailureDiagnostics(this.global.mergedFeatureFlags);

@@ -13,8 +13,12 @@ type ExplorerParams = {
   order?: "ascending" | "descending";
 };
 
+// Needs to be bigger than the number of txs from the same address that can be in the same block.
+export const DEFAULT_EXPLORER_BATCH_SIZE = 1000;
+
 class BitcoinLikeExplorer implements IExplorer {
   baseUrl: string;
+  batchSize: number;
   constructor({
     cryptoCurrency,
     forcedExplorerURI,
@@ -23,6 +27,7 @@ class BitcoinLikeExplorer implements IExplorer {
     forcedExplorerURI?: string;
   }) {
     this.baseUrl = forcedExplorerURI ? forcedExplorerURI : blockchainBaseURL(cryptoCurrency);
+    this.batchSize = cryptoCurrency.explorerBatchSize ?? DEFAULT_EXPLORER_BATCH_SIZE;
   }
 
   async broadcast(
@@ -92,7 +97,7 @@ class BitcoinLikeExplorer implements IExplorer {
     return data as NetworkInfoResponse;
   }
 
-  async getPendings(address: Address, nbMax = 1000): Promise<TX[]> {
+  async getPendings(address: Address, nbMax = this.batchSize): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: nbMax,
     };

@@ -3,7 +3,7 @@ import { PaySuccess } from "@features/flow-pay-contact";
 import { usePaySuccessViewModel } from "./hooks/usePaySuccessViewModel";
 import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "../../hooks/useSendFlowTrackingProperties";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 export function PaySuccessScreen() {
   const viewModel = usePaySuccessViewModel();

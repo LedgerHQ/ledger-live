@@ -9,7 +9,7 @@ import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
 import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceDashboard from "./DeviceDashboard";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";

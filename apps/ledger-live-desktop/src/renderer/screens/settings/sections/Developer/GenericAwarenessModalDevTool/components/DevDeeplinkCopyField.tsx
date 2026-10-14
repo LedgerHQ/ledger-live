@@ -3,6 +3,7 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { Check } from "@ledgerhq/lumen-ui-react/symbols";
 import { COPY } from "../utils/copy";
 import { DevLabeledInput } from "./DevLabeledInput";
+import { copyToClipboard } from "@shared/clipboard";
 
 type DevDeeplinkCopyFieldProps = {
   deeplink: string;
@@ -13,11 +14,10 @@ const COPY_FEEDBACK_MS = 1500;
 export const DevDeeplinkCopyField = ({ deeplink }: DevDeeplinkCopyFieldProps) => {
   const [copied, setCopied] = useState(false);
 
-  const onCopy = useCallback(() => {
-    void navigator.clipboard.writeText(deeplink).then(() => {
-      setCopied(true);
-      globalThis.setTimeout(() => setCopied(false), COPY_FEEDBACK_MS);
-    });
+  const onCopy = useCallback(async () => {
+    if (!(await copyToClipboard(deeplink))) return;
+    setCopied(true);
+    globalThis.setTimeout(() => setCopied(false), COPY_FEEDBACK_MS);
   }, [deeplink]);
 
   return (

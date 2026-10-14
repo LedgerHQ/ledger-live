@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { IconsLegacy, Link as BaseLink } from "@ledgerhq/native-ui";
 import { LinkProps } from "@ledgerhq/native-ui/components/cta/Link/index";
-import { track } from "~/analytics";
 import { GestureResponderEvent } from "react-native";
 
 type Props = {

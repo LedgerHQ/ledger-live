@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import Braze from "@braze/react-native-sdk";
 import { useCallback, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { track } from "~/analytics";
 import { setDismissedContentCard } from "~/actions/settings";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import { localMobileCardsSelector, localWalletCardsSelector } from "~/reducers/dynamicContent";

@@ -60,8 +60,8 @@ return useBalanceData({
 Under the hood the hook memoizes the pure `buildBalanceData` (which composes
 `buildBalanceFilterOptions` + `aggregateBalance`) and runs the reset side effect when the
 persisted filter no longer matches an available option. `aggregateBalance` matches held rows
-to the active filter by ticker (falling back to currencyId) so market-id defaults and chain-specific
-held ids still sum correctly.
+to the active filter by exact `currency.id`; each stablecoin is its own filter option, so a ticker shared
+across chains does not merge rows.
 
 `FormattedValue` is re-exported from `@ledgerhq/lumen-utils-shared` (the shared source used by both
 lumen `AmountDisplay` packages) so the contract stays platform-agnostic and tracks Lumen API changes.

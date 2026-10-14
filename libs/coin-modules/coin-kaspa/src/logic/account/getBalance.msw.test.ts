@@ -28,8 +28,9 @@ describe("getBalance via MSW", () => {
     expect(balance.value).toBe(0n);
   });
 
+  // A non-retried status, so the error surfaces at once — 5xx retries are covered by the unit tests.
   it("throws when the endpoint returns a non-ok status", async () => {
-    server.use(http.post(BALANCES_URL, () => new HttpResponse(null, { status: 500 })));
+    server.use(http.post(BALANCES_URL, () => new HttpResponse(null, { status: 404 })));
 
     await expect(getBalance(ADDR)).rejects.toThrow("Error fetching balance");
   });

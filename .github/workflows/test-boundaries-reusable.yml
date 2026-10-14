@@ -71,3 +71,10 @@ jobs:
 
       - name: Enforce package structure
         run: pnpm exec nx run-many -t lint:structure
+
+      - name: Test the i18n key check
+        # run-many is a no-op when the project is absent: older branches (e.g. release) call this workflow from develop.
+        run: pnpm exec nx run-many -t test -p enforce-i18n-keys
+
+      - name: Check i18n keys exist in the Desktop and Mobile catalogs
+        run: pnpm exec nx run-many -t lint:i18n-keys -p enforce-i18n-keys

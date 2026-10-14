@@ -37,9 +37,6 @@ export const shape = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 360,
-  },
   explorerViews: [
     {
       tx: "https://shapescan.xyz/tx/$hash",

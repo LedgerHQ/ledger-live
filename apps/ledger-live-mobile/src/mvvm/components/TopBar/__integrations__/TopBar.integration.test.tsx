@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import {
   renderWithReactQuery,
@@ -6,7 +7,6 @@ import {
 } from "@tests/test-renderer";
 import { expectedNavigationParams } from "../const";
 import { TopBar } from "../index";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { useSyncIndicator } from "../hooks/useSyncIndicator";
 

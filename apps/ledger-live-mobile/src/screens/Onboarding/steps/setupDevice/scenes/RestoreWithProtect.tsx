@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { IconsLegacy, NumberedList, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@features/platform-feature-flags";
 import { Linking } from "react-native";
 import Button from "~/components/wrappedUi/Button";
-import { TrackScreen } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { urls } from "~/utils/urls";
 

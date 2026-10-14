@@ -13,7 +13,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "../common";
-import coinConfig from "../config";
+import type { PolkadotContext } from "../config";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import polkadotAPI from "../network";
 import { DEFAULT_STAKING_PROGRESS } from "../network/sidecar";
@@ -32,7 +32,7 @@ import {
 } from "../types";
 import {
   EXISTENTIAL_DEPOSIT,
-  FEES_SAFETY_BUFFER,
+  getFeesSafetyBuffer,
   isFirstBond,
   isController,
   isStash,
@@ -43,11 +43,11 @@ import {
 } from "./utils";
 
 // Should try to refacto
-const getSendTransactionStatus: AccountBridge<
-  Transaction,
-  PolkadotAccount,
-  TransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
+const getSendTransactionStatus = async (
+  context: PolkadotContext,
+  account: PolkadotAccount,
+  transaction: Transaction,
+) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
@@ -66,10 +66,11 @@ const getSendTransactionStatus: AccountBridge<
   }
 
   const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
-  const config = coinConfig.getCoinConfig(account.currency.id);
+  const config = await context.config(account.currency.id);
 
   const estimatedFees = transaction.fees || new BigNumber(0);
   const amount = calculateAmount({
+    config,
     account,
     transaction,
   });
@@ -90,7 +91,7 @@ const getSendTransactionStatus: AccountBridge<
     if (
       account.polkadotResources?.lockedBalance.gt(0) &&
       (transaction.useAllAmount ||
-        account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
+        account.spendableBalance.minus(totalSpent).lt(getFeesSafetyBuffer(config)))
     ) {
       warnings.amount = new PolkadotAllFundsWarning();
     }
@@ -118,199 +119,205 @@ const getSendTransactionStatus: AccountBridge<
   };
 };
 
-export const getTransactionStatus: AccountBridge<
-  Transaction,
-  PolkadotAccount,
-  TransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
-  await loadPolkadotCrypto();
+export const buildGetTransactionStatus =
+  (
+    context: PolkadotContext,
+  ): AccountBridge<Transaction, PolkadotAccount, TransactionStatus>["getTransactionStatus"] =>
+  async (account, transaction) => {
+    await loadPolkadotCrypto();
 
-  const errors: {
-    staking?: Error;
-    amount?: Error;
-    recipient?: Error;
-    unbondings?: Error;
-  } = {};
-  const warnings: {
-    amount?: Error;
-  } = {};
-  const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
-  const config = coinConfig.getCoinConfig(account.currency.id);
+    const errors: {
+      staking?: Error;
+      amount?: Error;
+      recipient?: Error;
+      unbondings?: Error;
+    } = {};
+    const warnings: {
+      amount?: Error;
+    } = {};
+    const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
+    const config = await context.config(account.currency.id);
 
-  if (transaction.mode === "send") {
-    return await getSendTransactionStatus(account, transaction);
-  }
-
-  const [staking, minimumBondBalance] = await Promise.all([
-    // Fall back to a safe default (election closed) when staking info is
-    // unavailable (e.g. on networks without staking such as AssetHub).
-    polkadotAPI.getStakingProgress(config, currency).catch(() => DEFAULT_STAKING_PROGRESS),
-    polkadotAPI.getMinimumBondBalance(config, currency).catch(() => new BigNumber(0)),
-  ]);
-
-  if (!staking.electionClosed) {
-    errors.staking = new PolkadotElectionClosed();
-  }
-
-  const amount = calculateAmount({
-    account,
-    transaction,
-  });
-  const unlockingBalance = account.polkadotResources?.unlockingBalance || new BigNumber(0);
-  const unlockedBalance = account.polkadotResources?.unlockedBalance || new BigNumber(0);
-  const currentBonded =
-    account.polkadotResources?.lockedBalance.minus(unlockingBalance) || new BigNumber(0);
-
-  const minimumAmountToBond = getMinimumAmountToBond(account, minimumBondBalance);
-
-  switch (transaction.mode) {
-    case "bond":
-      if (amount.lt(minimumAmountToBond)) {
-        errors.amount = new PolkadotBondMinimumAmount("", {
-          minimumBondAmount: formatCurrencyUnit(account.currency.units[0], minimumAmountToBond, {
-            showCode: true,
-          }),
-        });
-      }
-
-      if (isFirstBond(account)) {
-        // Not a stash yet -> bond method sets the controller
-        if (!transaction.recipient) {
-          errors.recipient = new RecipientRequired("");
-        } else if (!isValidAddress(transaction.recipient)) {
-          errors.recipient = new InvalidAddress("", {
-            currencyName: account.currency.name,
-          });
-        } else if (await polkadotAPI.isControllerAddress(config, transaction.recipient, currency)) {
-          errors.recipient = new PolkadotUnauthorizedOperation("Recipient is already a controller");
-        }
-      }
-
-      break;
-
-    case "unbond":
-      if (!isController(account) || !hasLockedBalance(account)) {
-        errors.staking = new PolkadotUnauthorizedOperation();
-      }
-
-      if (hasMaxUnlockings(account)) {
-        errors.unbondings = new PolkadotMaxUnbonding();
-      }
-
-      if (amount.lte(0)) {
-        errors.amount = new AmountRequired();
-      } else if (amount.gt(currentBonded.minus(minimumBondBalance)) && amount.lt(currentBonded)) {
-        warnings.amount = new PolkadotBondMinimumAmountWarning("", {
-          minimumBondBalance: formatCurrencyUnit(account.currency.units[0], minimumBondBalance, {
-            showCode: true,
-          }),
-        });
-      } else if (amount.gt(currentBonded)) {
-        errors.amount = new NotEnoughBalance();
-      }
-
-      break;
-
-    case "rebond":
-      if (!isController(account)) {
-        errors.staking = new PolkadotUnauthorizedOperation();
-      }
-
-      if (amount.lte(0)) {
-        errors.amount = new AmountRequired();
-      } else if (amount.gt(unlockingBalance)) {
-        errors.amount = new NotEnoughBalance();
-      } else if (amount.lt(minimumAmountToBond)) {
-        warnings.amount = new PolkadotBondMinimumAmountWarning("", {
-          minimumBondBalance: formatCurrencyUnit(account.currency.units[0], minimumBondBalance, {
-            showCode: true,
-          }),
-        });
-      }
-
-      break;
-
-    case "withdrawUnbonded":
-      if (!isController(account)) {
-        errors.staking = new PolkadotUnauthorizedOperation();
-      }
-
-      if (unlockedBalance.lte(0)) {
-        errors.amount = new PolkadotNoUnlockedBalance();
-      }
-
-      break;
-
-    case "nominate":
-      if (!isController(account)) {
-        errors.staking = new PolkadotUnauthorizedOperation();
-      } else if (!transaction.validators || transaction.validators?.length === 0) {
-        errors.staking = new PolkadotValidatorsRequired();
-      } else {
-        // Validate the targeted addresses directly via the (lightweight) API
-        // instead of fetching the full validator set on demand.
-        const notValidators = await polkadotAPI.verifyValidatorAddresses(
-          transaction.validators || [],
-          currency,
-        );
-
-        if (notValidators.length) {
-          errors.staking = new PolkadotNotValidator(undefined, {
-            validators: notValidators,
-          });
-          break;
-        }
-      }
-
-      break;
-
-    case "chill":
-      if (!isController(account)) {
-        errors.staking = new PolkadotUnauthorizedOperation();
-      } else if (!account.polkadotResources?.nominations) {
-        errors.staking = new PolkadotNoNominations();
-      }
-
-      break;
-
-    case "setController":
-      if (!isStash(account)) {
-        errors.staking = new PolkadotUnauthorizedOperation();
-      }
-      break;
-  }
-
-  const estimatedFees = transaction.fees || new BigNumber(0);
-  const totalSpent = transaction.mode === "bond" ? amount.plus(estimatedFees) : estimatedFees;
-
-  if (
-    transaction.mode === "bond" ||
-    transaction.mode === "unbond" ||
-    transaction.mode === "rebond"
-  ) {
-    if (amount.lte(0)) {
-      errors.amount = new AmountRequired();
+    if (transaction.mode === "send") {
+      return await getSendTransactionStatus(context, account, transaction);
     }
-  }
 
-  if (
-    transaction.mode === "bond" &&
-    account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER)
-  ) {
-    errors.amount = new NotEnoughBalance();
-  }
+    const [staking, minimumBondBalance] = await Promise.all([
+      // Fall back to a safe default (election closed) when staking info is
+      // unavailable (e.g. on networks without staking such as AssetHub).
+      polkadotAPI
+        .getStakingProgress(context.logger, config, currency)
+        .catch(() => DEFAULT_STAKING_PROGRESS),
+      polkadotAPI.getMinimumBondBalance(config, currency).catch(() => new BigNumber(0)),
+    ]);
 
-  if (errors.amount?.name !== "AmountRequired" && totalSpent.gt(account.spendableBalance)) {
-    errors.amount = new NotEnoughBalance();
-  }
+    if (!staking.electionClosed) {
+      errors.staking = new PolkadotElectionClosed();
+    }
 
-  return {
-    errors,
-    warnings,
-    estimatedFees,
-    amount: amount.lt(0) ? new BigNumber(0) : amount,
-    totalSpent,
+    const amount = calculateAmount({
+      config,
+      account,
+      transaction,
+    });
+    const unlockingBalance = account.polkadotResources?.unlockingBalance || new BigNumber(0);
+    const unlockedBalance = account.polkadotResources?.unlockedBalance || new BigNumber(0);
+    const currentBonded =
+      account.polkadotResources?.lockedBalance.minus(unlockingBalance) || new BigNumber(0);
+
+    const minimumAmountToBond = getMinimumAmountToBond(account, minimumBondBalance);
+
+    switch (transaction.mode) {
+      case "bond":
+        if (amount.lt(minimumAmountToBond)) {
+          errors.amount = new PolkadotBondMinimumAmount("", {
+            minimumBondAmount: formatCurrencyUnit(account.currency.units[0], minimumAmountToBond, {
+              showCode: true,
+            }),
+          });
+        }
+
+        if (isFirstBond(account)) {
+          // Not a stash yet -> bond method sets the controller
+          if (!transaction.recipient) {
+            errors.recipient = new RecipientRequired("");
+          } else if (!isValidAddress(transaction.recipient)) {
+            errors.recipient = new InvalidAddress("", {
+              currencyName: account.currency.name,
+            });
+          } else if (
+            await polkadotAPI.isControllerAddress(config, transaction.recipient, currency)
+          ) {
+            errors.recipient = new PolkadotUnauthorizedOperation(
+              "Recipient is already a controller",
+            );
+          }
+        }
+
+        break;
+
+      case "unbond":
+        if (!isController(account) || !hasLockedBalance(account)) {
+          errors.staking = new PolkadotUnauthorizedOperation();
+        }
+
+        if (hasMaxUnlockings(account)) {
+          errors.unbondings = new PolkadotMaxUnbonding();
+        }
+
+        if (amount.lte(0)) {
+          errors.amount = new AmountRequired();
+        } else if (amount.gt(currentBonded.minus(minimumBondBalance)) && amount.lt(currentBonded)) {
+          warnings.amount = new PolkadotBondMinimumAmountWarning("", {
+            minimumBondBalance: formatCurrencyUnit(account.currency.units[0], minimumBondBalance, {
+              showCode: true,
+            }),
+          });
+        } else if (amount.gt(currentBonded)) {
+          errors.amount = new NotEnoughBalance();
+        }
+
+        break;
+
+      case "rebond":
+        if (!isController(account)) {
+          errors.staking = new PolkadotUnauthorizedOperation();
+        }
+
+        if (amount.lte(0)) {
+          errors.amount = new AmountRequired();
+        } else if (amount.gt(unlockingBalance)) {
+          errors.amount = new NotEnoughBalance();
+        } else if (amount.lt(minimumAmountToBond)) {
+          warnings.amount = new PolkadotBondMinimumAmountWarning("", {
+            minimumBondBalance: formatCurrencyUnit(account.currency.units[0], minimumBondBalance, {
+              showCode: true,
+            }),
+          });
+        }
+
+        break;
+
+      case "withdrawUnbonded":
+        if (!isController(account)) {
+          errors.staking = new PolkadotUnauthorizedOperation();
+        }
+
+        if (unlockedBalance.lte(0)) {
+          errors.amount = new PolkadotNoUnlockedBalance();
+        }
+
+        break;
+
+      case "nominate":
+        if (!isController(account)) {
+          errors.staking = new PolkadotUnauthorizedOperation();
+        } else if (!transaction.validators || transaction.validators?.length === 0) {
+          errors.staking = new PolkadotValidatorsRequired();
+        } else {
+          // Validate the targeted addresses directly via the (lightweight) API
+          // instead of fetching the full validator set on demand.
+          const notValidators = await polkadotAPI.verifyValidatorAddresses(
+            config,
+            transaction.validators || [],
+            currency,
+          );
+
+          if (notValidators.length) {
+            errors.staking = new PolkadotNotValidator(undefined, {
+              validators: notValidators,
+            });
+            break;
+          }
+        }
+
+        break;
+
+      case "chill":
+        if (!isController(account)) {
+          errors.staking = new PolkadotUnauthorizedOperation();
+        } else if (!account.polkadotResources?.nominations) {
+          errors.staking = new PolkadotNoNominations();
+        }
+
+        break;
+
+      case "setController":
+        if (!isStash(account)) {
+          errors.staking = new PolkadotUnauthorizedOperation();
+        }
+        break;
+    }
+
+    const estimatedFees = transaction.fees || new BigNumber(0);
+    const totalSpent = transaction.mode === "bond" ? amount.plus(estimatedFees) : estimatedFees;
+
+    if (
+      transaction.mode === "bond" ||
+      transaction.mode === "unbond" ||
+      transaction.mode === "rebond"
+    ) {
+      if (amount.lte(0)) {
+        errors.amount = new AmountRequired();
+      }
+    }
+
+    if (
+      transaction.mode === "bond" &&
+      account.spendableBalance.minus(totalSpent).lt(getFeesSafetyBuffer(config))
+    ) {
+      errors.amount = new NotEnoughBalance();
+    }
+
+    if (errors.amount?.name !== "AmountRequired" && totalSpent.gt(account.spendableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+
+    return {
+      errors,
+      warnings,
+      estimatedFees,
+      amount: amount.lt(0) ? new BigNumber(0) : amount,
+      totalSpent,
+    };
   };
-};
-
-export default getTransactionStatus;

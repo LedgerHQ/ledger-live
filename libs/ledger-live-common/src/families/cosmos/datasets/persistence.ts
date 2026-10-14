@@ -4,7 +4,12 @@ import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
 import BigNumber from "bignumber.js";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
+  FIXME_ignoreAccountFields: [
+    "cosmosResources",
+    "stakingResources",
+    "operationsCount",
+    "operations",
+  ],
   scanAccounts: [
     {
       name: "persistence seed 1",

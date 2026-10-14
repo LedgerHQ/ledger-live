@@ -1,6 +1,6 @@
 import { renderHook, act } from "tests/testSetup";
 import { useSearch } from "../useSearch";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { jest } from "@jest/globals";
 
 describe("useSearch", () => {

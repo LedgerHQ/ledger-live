@@ -2,18 +2,13 @@ import { Subscription } from "rxjs";
 import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
-  BaseDiscoveryErrorTypes,
   ConnectDeviceStateMachineEventTypes,
   ConnectDeviceUIStateTypes,
-  type BaseConnectionError,
-  type BaseDiscoveryError,
   type ConnectDeviceStateMachineContext,
   type ConnectDeviceStateMachineEvent,
   type ConnectDeviceStateMachineInput,
-  type DeviceDiscoveryService,
   type KnownDevice,
   type MatchedDevice,
-  type UnknownDiscoveryError,
 } from "./types";
 import {
   getSelectedMatchedDeviceFromDiscoveryEvent,
@@ -21,6 +16,13 @@ import {
   getFirstMatchedDeviceFromDiscoveryEvent,
   buildDisplayedDevices,
 } from "./utils";
+import {
+  type BaseConnectionError,
+  type BaseDiscoveryError,
+  BaseDiscoveryErrorTypes,
+  type DeviceDiscoveryService,
+  type UnknownDiscoveryError,
+} from "../deviceConnectivity/types";
 
 const WAITING_FOR_SELECTED_DEVICE_TIMEOUT = 30000;
 

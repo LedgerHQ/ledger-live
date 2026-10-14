@@ -3,7 +3,7 @@ import {
   type DeviceManagementKit,
   type DeviceSessionId,
 } from "@ledgerhq/device-management-kit";
-import { fromCallback } from "xstate";
+import { createActor, fromCallback, setup } from "xstate";
 import type { OnboardingEvent } from "../types";
 
 export type SessionEvent = Extract<
@@ -83,3 +83,33 @@ export const sessionListener = fromCallback<SessionEvent, SessionListenerInput>(
     return () => subscription?.unsubscribe();
   },
 );
+
+export function createSessionEventsActor(
+  dmk: DeviceManagementKit,
+  sessionId: DeviceSessionId,
+  forward: (event: SessionEvent) => void,
+) {
+  const machine = setup({
+    types: {
+      events: {} as SessionEvent,
+    },
+    actors: {
+      sessionListener,
+    },
+    actions: {
+      forward: ({ event }) => forward(event),
+    },
+  }).createMachine({
+    invoke: {
+      src: "sessionListener",
+      input: { dmk, sessionId },
+    },
+    on: {
+      LOCKED: { actions: "forward" },
+      UNLOCKED: { actions: "forward" },
+      TRANSPORT_LOST: { actions: "forward" },
+    },
+  });
+
+  return createActor(machine).start();
+}

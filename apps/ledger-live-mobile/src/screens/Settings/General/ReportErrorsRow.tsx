@@ -1,3 +1,4 @@
+import { Track } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -5,7 +6,6 @@ import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setReportErrors } from "~/actions/settings";
 import { reportErrorsEnabledSelector } from "~/reducers/settings";
-import { Track } from "~/analytics";
 
 const ReportErrorsRow = () => {
   const { t } = useTranslation();

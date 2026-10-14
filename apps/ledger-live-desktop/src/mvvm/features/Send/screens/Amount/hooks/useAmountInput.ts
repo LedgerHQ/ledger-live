@@ -4,7 +4,7 @@ import { useSelector } from "LLD/hooks/redux";
 import {
   useSendAmount,
   useCalculateCountervalueCallback,
-} from "@ledgerhq/live-countervalues-react";
+} from "@features/platform-market-countervalues";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
@@ -54,7 +54,7 @@ export function useAmountInput({
   }, [transaction.amount, transaction.useAllAmount, status.amount]);
 
   const { fiatAmount, calculateCryptoAmount } = useSendAmount({
-    account,
+    cryptoCurrency: accountCurrency,
     fiatCurrency: counterValueCurrency,
     cryptoAmount,
   });

@@ -24,7 +24,7 @@ permissions:
 jobs:
   test-e2e-tooling:
     name: "E2E Tooling Checks"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-aws-public
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -47,6 +47,11 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - name: Install dependencies
         run: pnpm i --frozen-lockfile --filter="{./e2e/tooling/**}..."
 
@@ -58,4 +63,3 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@develop
         with:
           projects: "tag:scope:e2e-tooling"
-          parallel: "4"

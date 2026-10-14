@@ -59,8 +59,6 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
   InvalidOperationComponent: InvalidOperation,
 };
 
-const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
-
 export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps, Result = undefined>(
   props: Props<JobState, Input, ExtraProps, Result>,
 ): React.ReactElement | null {
@@ -68,16 +66,12 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps, Result = un
     wrappedProps,
     hasHeaderOverride,
     headerContextValue,
+    trackingContextValue,
     onOpenChange,
     onHeaderClosePressed,
     onOverlayDismiss,
     onEscapeKeyDown,
   } = useDeviceIntentExecutorLWDViewModel(props);
-  const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
-  const trackingContextValue = React.useMemo(
-    () => ({ sourceFlow: props.sourceFlow, analyticsProperties }),
-    [props.sourceFlow, analyticsProperties],
-  );
 
   if (!wrappedProps.enabled) return null;
 

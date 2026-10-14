@@ -43,7 +43,12 @@ export function ContactDetailHeaderIdentity({
             name={name}
             size={isCollapsed ? "heading-5-semi-bold" : "heading-3-semi-bold"}
           />
-          <p className="body-2 text-muted">{addressCount}</p>
+          <p
+            className="body-2 text-muted"
+            data-testid={isCollapsed ? undefined : "contacts-detail-address-count"}
+          >
+            {addressCount}
+          </p>
         </div>
       </div>
     </>

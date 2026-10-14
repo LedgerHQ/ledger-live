@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-onboarding",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Shared DMK-native device onboarding state machine",
   "license": "Apache-2.0",
@@ -52,6 +52,7 @@
       "require": "./lib/index.js",
       "default": "./lib/index.js"
     },
+    "./testing": "./src/tests/index.ts",
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",
     "./package.json": "./package.json"

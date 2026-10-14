@@ -8,3 +8,6 @@ export { useTrustchainDevToolProps } from "./useTrustchainDevToolProps";
 export { useCloudSyncDevToolProps } from "./useCloudSyncDevToolProps";
 export { usePayCardAuthProps } from "./usePayCardAuthProps";
 export type { UsePayCardAuthPropsOptions } from "./usePayCardAuthProps";
+export { useDeviceOnboardingActor } from "./useDeviceOnboardingActor";
+export type { OnboardingActorSnapshot } from "./useDeviceOnboardingActor";
+export type { DeviceOnboardingPorts, DeviceOnboardingSession } from "./ports";

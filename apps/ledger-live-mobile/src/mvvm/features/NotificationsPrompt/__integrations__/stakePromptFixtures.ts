@@ -1,6 +1,5 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { NavigatorName, ScreenName } from "~/const";
 
 export type AccountKey =
@@ -17,6 +16,7 @@ export type AccountKey =
   | "near"
   | "polkadot"
   | "solana"
+  | "stacks"
   | "sui"
   | "tezos";
 
@@ -86,6 +86,9 @@ export const accountsByKey = {
   },
   solana: genAccount("notifications-prompt-solana", {
     currency: getCryptoCurrencyById("solana"),
+  }),
+  stacks: genAccount("notifications-prompt-stacks", {
+    currency: getCryptoCurrencyById("stacks"),
   }),
   sui: genAccount("notifications-prompt-sui", {
     currency: getCryptoCurrencyById("sui"),
@@ -341,7 +344,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaClaimRewardsValidationError,
     accountKey: "hedera",
     operationType: "REWARD",
-    transaction: { family: "hedera", mode: HEDERA_TRANSACTION_MODES.ClaimRewards },
+    transaction: { family: "hedera", mode: "claimReward" },
     params: { source: stakePromptSource },
   },
   {
@@ -353,11 +356,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaDelegationValidationError,
     accountKey: "hedera",
     operationType: "DELEGATE",
-    transaction: {
-      family: "hedera",
-      mode: HEDERA_TRANSACTION_MODES.Delegate,
-      properties: { stakingNodeId: 1 },
-    },
+    transaction: { family: "hedera", mode: "delegate", valId: "1" },
     params: { source: stakePromptSource },
   },
   {
@@ -369,11 +368,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaRedelegationValidationError,
     accountKey: "hedera",
     operationType: "REDELEGATE",
-    transaction: {
-      family: "hedera",
-      mode: HEDERA_TRANSACTION_MODES.Redelegate,
-      properties: { stakingNodeId: 2 },
-    },
+    transaction: { family: "hedera", mode: "redelegate", valId: "2" },
     params: { source: stakePromptSource },
   },
   {
@@ -385,11 +380,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaUndelegationValidationError,
     accountKey: "hedera",
     operationType: "UNDELEGATE",
-    transaction: {
-      family: "hedera",
-      mode: HEDERA_TRANSACTION_MODES.Undelegate,
-      properties: { stakingNodeId: 1 },
-    },
+    transaction: { family: "hedera", mode: "undelegate" },
     params: { source: stakePromptSource },
   },
   {
@@ -565,6 +556,37 @@ export const stakePromptCases: StakePromptCase[] = [
     operationType: "DELEGATE",
     transaction: { family: "solana", mode: "delegate" },
     params: { validatorName: "solana-validator", source: stakePromptSource },
+  },
+  {
+    label: "Stacks staking",
+    bucket: "delegation/staking",
+    flowName: NavigatorName.StacksStakingFlow,
+    familyExportKey: "StacksStakingFlow",
+    successScreenName: ScreenName.StacksStakingValidationSuccess,
+    errorScreenName: ScreenName.StacksStakingValidationError,
+    accountKey: "stacks",
+    operationType: "DELEGATE",
+    transaction: {
+      family: "stacks",
+      mode: "delegate",
+      valAddress: "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA.native-pool-signer-manager",
+    },
+    params: { source: stakePromptSource },
+  },
+  {
+    label: "Stacks unstaking",
+    bucket: "undelegation/unstaking",
+    flowName: NavigatorName.StacksUnstakingFlow,
+    familyExportKey: "StacksUnstakingFlow",
+    successScreenName: ScreenName.StacksUnstakingValidationSuccess,
+    errorScreenName: ScreenName.StacksUnstakingValidationError,
+    accountKey: "stacks",
+    operationType: "UNDELEGATE",
+    transaction: {
+      family: "stacks",
+      mode: "undelegate",
+      valAddress: "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA.native-pool-signer-manager",
+    },
   },
   {
     label: "Sui staking",

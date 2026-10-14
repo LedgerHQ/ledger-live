@@ -1,4 +1,4 @@
-import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import type { TrackingPair } from "@domain/entity-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
 import type { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";

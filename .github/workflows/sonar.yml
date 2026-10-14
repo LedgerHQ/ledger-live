@@ -47,6 +47,9 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      - name: Install other platforms' optional deps (wallet-cli cross-compilation)
+        uses: LedgerHQ/ledger-live/tools/actions/composites/pnpm-cross-platform-optional-deps@develop
+
       - name: Install dependencies
         env:
           LANG: en_US.UTF-8

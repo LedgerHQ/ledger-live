@@ -9,4 +9,5 @@ export {
   getDeviceManagementKit,
   DeviceManagementKitProvider,
   useDeviceManagementKit,
+  setFirmwareDistributionSalt,
 } from "./useDeviceManagementKit";

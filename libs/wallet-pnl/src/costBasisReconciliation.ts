@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Currency } from "@domain/entity-currency";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { getRateLookup } from "./rateLookup";
 import type { CostBasisState, Reconciliation } from "./types";
 
 const ZERO = new BigNumber(0);
@@ -55,7 +54,7 @@ export function applyBalanceReconciliation(
   gap: Reconciliation,
   asset: Currency,
   fiat: Currency,
-  countervalues: CounterValuesState,
+  countervalues: unknown,
 ): { state: CostBasisState; applied: boolean } {
   if (gap.isClean) return { state, applied: false };
 
@@ -67,7 +66,7 @@ export function applyBalanceReconciliation(
   // because rebase / missed-IN gains accrue continuously up to "now".
   const valuationDate = delta.isPositive() ? null : (state.lastOperationDate ?? null);
 
-  const cvAtDelta = calculate(countervalues, {
+  const cvAtDelta = getRateLookup().calculate(countervalues, {
     value: delta.absoluteValue().toNumber(),
     from: asset,
     to: fiat,
@@ -137,7 +136,7 @@ export function reconcileCostBasisWithBalance(
   balance: BigNumber,
   asset: Currency,
   fiat: Currency,
-  countervalues: CounterValuesState,
+  countervalues: unknown,
   apply: boolean,
 ): { state: CostBasisState; reconciliation: Reconciliation } {
   const gap = detectBalanceGap(state, balance);

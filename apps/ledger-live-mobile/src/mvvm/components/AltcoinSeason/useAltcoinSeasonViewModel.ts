@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { useGetAltcoinSeasonIndexLatestQuery } from "@domain/api-market-index-altcoin-season";
-import { track } from "~/analytics";
 import type { AltcoinSeasonViewModel } from "./types";
 import { ALTCOIN_SEASON_REFRESH_INTERVAL_MS } from "./constants";
 

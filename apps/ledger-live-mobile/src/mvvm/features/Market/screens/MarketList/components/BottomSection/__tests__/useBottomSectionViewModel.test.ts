@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import useBottomSectionViewModel from "../useBottomSectionViewModel";
 import { withMarketState } from "LLM/features/Market/__tests__/helpers";

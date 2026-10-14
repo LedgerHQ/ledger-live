@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 

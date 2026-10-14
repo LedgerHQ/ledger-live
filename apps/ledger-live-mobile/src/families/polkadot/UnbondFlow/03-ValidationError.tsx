@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
 import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";

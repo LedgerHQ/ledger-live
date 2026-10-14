@@ -3,7 +3,7 @@
  */
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { FiatCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import type { TrackingPair } from "@domain/entity-market-countervalues";
 import { renderHook, act } from "@testing-library/react";
 import { inferTrackingPairForAccounts } from "../trackingPairs";
 import { useTrackingPairForAccounts } from "../useTrackingPairForAccounts";

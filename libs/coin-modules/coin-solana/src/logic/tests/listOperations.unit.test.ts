@@ -213,6 +213,34 @@ describe("listOperations", () => {
       expect(result.items[0]).toMatchObject({ type: "FEES" });
     });
 
+    it("types a stake split as the fee it costs the owner, as its optimistic operation does", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["sig1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              // What `buildStakeSplitInstructions` crafts; the RPC leaves compute budget unparsed.
+              instructions: [
+                { programId: new PublicKey("ComputeBudget111111111111111111111111111111") },
+                { program: "system", parsed: { type: "allocateWithSeed", info: {} } },
+                { program: "stake", parsed: { type: "split", info: {} } },
+              ],
+            },
+          },
+          meta: { fee: 5000, preBalances: [1_000_000_000], postBalances: [999_995_000] },
+        },
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: "FEES", value: 0n });
+    });
+
     it("ignores a memo when counting instructions", async () => {
       mockGetSignaturesForAddress.mockResolvedValue([
         { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
@@ -440,8 +468,7 @@ describe("listOperations", () => {
     const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
     expect(result.items).toHaveLength(1);
-    expect(result.items[0].type).toBe("FEES");
-    expect(result.items[0].value).toBe(5000n);
+    expect(result.items[0]).toMatchObject({ type: "FEES", value: 0n });
   });
 
   it("should pass cursor as before parameter", async () => {
@@ -1487,7 +1514,6 @@ describe("listOperations", () => {
         assetAmount: "1000000",
         assetSenders: [],
         assetRecipients: [TEST_ADDRESS],
-        internal: true,
       });
     });
 
@@ -1656,7 +1682,7 @@ describe("listOperations", () => {
       expect(tokenOps[0].recipients).toEqual([TEST_RECIPIENT]);
     });
 
-    it("should include internal: true in token operation details", async () => {
+    it("should not flag token operations as internal", async () => {
       const blockTime = 1700000000;
       mockGetSignaturesForAddress.mockResolvedValue([
         { signature: "sig1", slot: 100, blockTime, err: null },
@@ -1681,7 +1707,7 @@ describe("listOperations", () => {
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
-      expect(tokenOps[0].details).toEqual(expect.objectContaining({ internal: true }));
+      expect(tokenOps[0].details).not.toHaveProperty("internal");
     });
 
     it("keeps each mint's counterparties to its own operation on a swap", async () => {

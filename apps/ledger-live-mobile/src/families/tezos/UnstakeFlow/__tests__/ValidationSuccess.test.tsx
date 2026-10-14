@@ -16,8 +16,6 @@ jest.mock("LLM/hooks/useAccountScreen", () => ({
   useAccountScreen: () => ({ account: { id: "tezos-acc-1", type: "Account" } }),
 }));
 
-jest.mock("~/analytics", () => ({ TrackScreen: () => null }));
-
 jest.mock("~/components/PreventNativeBack", () => () => null);
 
 jest.mock("~/components/ValidateSuccess", () => {

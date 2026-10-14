@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import ExternalLink from "~/components/ExternalLink";

@@ -87,7 +87,7 @@ const buildTasks = args => [
     skip: () => (args.mas ? "reusing existing .webpack bundle (--mas)" : false),
     task: async () => {
       // Matches mobile: prerelease (--pre) shares prod config with release,
-      // nightly uses staging.
+      // nightly uses staging services with the production Firebase project.
       if (args.release || args.pre) {
         require("dotenv").config({
           path: path.resolve(__dirname, rootFolder, ".env.production"),
@@ -113,8 +113,8 @@ const buildTasks = args => [
             }
           : args.nightly
             ? {
-                // Required for tools/rspack/utils.ts to pick .env.staging.
-                STAGING: "1",
+                // tools/rspack/utils.ts: .env.staging with the production FIREBASE_* keys.
+                NIGHTLY: "1",
                 DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
                 DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
                 DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,

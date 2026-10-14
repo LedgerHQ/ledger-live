@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
 
 type Props = {

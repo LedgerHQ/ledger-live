@@ -21,7 +21,10 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 }));
 
 // Analytics reads broad store state we don't seed; irrelevant to the warning.
-jest.mock("~/renderer/analytics/TrackPage", () => () => null);
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 
 // Body layout is irrelevant to the footer warning under test.
 jest.mock("../DelegationContainer", () => () => null);

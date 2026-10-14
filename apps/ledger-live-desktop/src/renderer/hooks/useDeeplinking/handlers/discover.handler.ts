@@ -1,5 +1,5 @@
 import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { DeeplinkHandler } from "../types";
 
 export const cardHandler: DeeplinkHandler<"card"> = (route, { navigate }) => {

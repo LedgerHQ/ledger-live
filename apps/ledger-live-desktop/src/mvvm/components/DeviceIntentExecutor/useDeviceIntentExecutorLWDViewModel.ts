@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type {
   DeviceConnectionResult,
   DeviceIntentExecutorProps,
@@ -6,6 +6,8 @@ import type {
 } from "@features/platform-device-intent";
 import {
   dmkToLedgerDeviceIdMap,
+  type DeviceFlowFailure,
+  type DeviceIntentTrackingContextValue,
   type DeviceIntentTrackingProperties,
   type DeviceIntentExecutorHeaderContextValue,
   type SourceFlow,
@@ -16,6 +18,8 @@ import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlock
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import {
+  acceptsScreenFailureReports,
+  getExecutorStateFailure,
   trackAppReady,
   trackDeviceflowCanceled,
   trackDeviceflowCompleted,
@@ -41,6 +45,7 @@ export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps, Result
   wrappedProps: Props<JobState, Input, ExtraProps, Result>;
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
+  trackingContextValue: DeviceIntentTrackingContextValue;
   onOpenChange: (open: boolean) => void;
   /**
    * Tracks the "Close" `button_clicked` event when the dialog header close button is pressed.
@@ -93,6 +98,8 @@ export function useDeviceIntentExecutorLWDViewModel<
   const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);
   const cancelTrackedRef = useRef(false);
+  const failureRef = useRef<DeviceFlowFailure | null>(null);
+  const acceptsScreenFailureReportsRef = useRef(true);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
   const isDeviceBlocked = useDeviceBlocked();
 
@@ -101,6 +108,8 @@ export function useDeviceIntentExecutorLWDViewModel<
       flowStartedRef.current = false;
       initializationCompletedRef.current = false;
       cancelTrackedRef.current = false;
+      failureRef.current = null;
+      acceptsScreenFailureReportsRef.current = true;
       return;
     }
 
@@ -112,6 +121,8 @@ export function useDeviceIntentExecutorLWDViewModel<
 
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
+      failureRef.current = getExecutorStateFailure(state);
+      acceptsScreenFailureReportsRef.current = acceptsScreenFailureReports(state);
       if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);
@@ -128,6 +139,15 @@ export function useDeviceIntentExecutorLWDViewModel<
     [enabled, onExecutorStateChanged, sourceFlow, analyticsProperties],
   );
 
+  const reportFailure = useCallback((failure: DeviceFlowFailure | null) => {
+    if (acceptsScreenFailureReportsRef.current) failureRef.current = failure;
+  }, []);
+
+  const trackingContextValue = useMemo<DeviceIntentTrackingContextValue>(
+    () => ({ sourceFlow, analyticsProperties, reportFailure }),
+    [sourceFlow, analyticsProperties, reportFailure],
+  );
+
   const trackClose = useCallback(() => {
     trackDrawerCloseButtonClicked({ sourceFlow, extraProperties: analyticsProperties });
   }, [sourceFlow, analyticsProperties]);
@@ -136,7 +156,11 @@ export function useDeviceIntentExecutorLWDViewModel<
     if (!cancelTrackedRef.current) {
       cancelTrackedRef.current = true;
       if (!initializationCompletedRef.current) {
-        trackDeviceflowCanceled({ sourceFlow, extraProperties: analyticsProperties });
+        trackDeviceflowCanceled({
+          sourceFlow,
+          extraProperties: analyticsProperties,
+          failure: failureRef.current,
+        });
       }
     }
     onUserCancel();
@@ -176,6 +200,7 @@ export function useDeviceIntentExecutorLWDViewModel<
   return {
     hasHeaderOverride,
     headerContextValue,
+    trackingContextValue,
     wrappedProps: {
       ...props,
       onExecutorStateChanged: wrappedOnExecutorStateChanged,

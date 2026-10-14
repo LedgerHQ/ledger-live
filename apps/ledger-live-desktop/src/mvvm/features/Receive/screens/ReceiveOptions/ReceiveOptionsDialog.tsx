@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { useReceiveOptionsViewModel } from "../../hooks/useReceiveOptionsViewModel";
 import { ReceiveOptionsView } from "./ReceiveOptionsView";
 import type { ReceiveOptionsDialogProps } from "../../types";

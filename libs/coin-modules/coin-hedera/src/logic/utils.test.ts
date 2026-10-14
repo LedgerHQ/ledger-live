@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { Transaction as SDKTransaction, TransactionId } from "@hashgraph/sdk";
+import { Transaction as SDKTransaction, TransactionId } from "@hiero-ledger/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
@@ -45,6 +45,7 @@ import {
   getBlockHash,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
+  mapMirrorNodesToValidators,
   sortValidators,
   getDefaultValidator,
   getDelegationStatus,
@@ -64,7 +65,6 @@ import {
   resolveConfig,
   base64ToUrlSafeBase64,
   getHederaTransactionBodyBytes,
-  mapMirrorNodesToValidators,
 } from "./utils";
 
 jest.mock("../config");
@@ -359,6 +359,27 @@ describe("logic utils", () => {
 
       const newUrl = getTransactionExplorer(explorerView, mockedOperation);
       expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/0.0.1234567-123-123");
+    });
+
+    it.each([
+      ["standard", Buffer.alloc(48, 0xfb).toString("base64")],
+      ["url-safe", base64ToUrlSafeBase64(Buffer.alloc(48, 0xfb).toString("base64"))],
+    ])(
+      "Tx explorer URL uses the hex hash (decoded from %s base64) if no id is available",
+      (_, hash) => {
+        const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+        const mockedOperation = getMockedOperation({ hash });
+
+        const newUrl = getTransactionExplorer(explorerView, mockedOperation);
+        expect(newUrl).toBe(`https://hashscan.io/mainnet/transaction/${"fb".repeat(48)}`);
+      },
+    );
+
+    it("Tx explorer URL is undefined if neither id nor a valid hash is available", () => {
+      const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+      const mockedOperation = getMockedOperation({ hash: "" });
+
+      expect(getTransactionExplorer(explorerView, mockedOperation)).toBeUndefined();
     });
   });
 

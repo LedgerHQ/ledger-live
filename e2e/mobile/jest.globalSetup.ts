@@ -1,22 +1,29 @@
 import "@shared/env";
+import {
+  CARD_SESSION_BOOTSTRAP_ENV,
+  resolveCardSessionBootstrap,
+} from "@ledgerhq/baanx-test-client";
 import { globalSetup } from "detox/runners/jest";
 import { log } from "detox";
 import { session as detoxSession, config as detoxConfig } from "detox/internals";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { exec } from "child_process";
-import { releaseSpeculosDeviceCI } from "@ledgerhq/live-e2e-shared/speculosCI";
+import { INTERVAL } from "@e2e/utils/timeouts";
 import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
 } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
-import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
-import { ARTIFACTS_DIR, SPECULOS_TRACKING_FILE_PATTERN } from "@e2e/utils/speculosUtils";
+import { runIncludesPaytabSpec } from "@e2e/utils/paytab";
+import { releaseTrackedSpeculos } from "@e2e/utils/speculosSweep";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import type { Config } from "@jest/types";
 import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
 
-export default async function setup(): Promise<void> {
+export default async function setup(
+  globalConfig: Config.GlobalConfig,
+  projectConfig: Config.ProjectConfig,
+): Promise<void> {
   const envFileName = process.env.ENV_FILE || ".env.mock";
   const envFile = path.join(__dirname, "../../apps/ledger-live-mobile", envFileName);
   try {
@@ -65,48 +72,17 @@ export default async function setup(): Promise<void> {
       `[globalSetup] Last retry detected (attempt ${testSessionIndex + 1}/${maxRetries + 1}), video recording enabled`,
     );
   }
-}
 
-async function cleanupAllSpeculos() {
-  // Workers each write their own artifacts/speculos-instances.<pid>.json. From the
-  // controller (this process) we sweep all of them on shutdown so nothing leaks
-  // when workers are killed without running their teardown.
-  try {
-    const files = await fs.readdir(ARTIFACTS_DIR).catch(() => [] as string[]);
-    const trackingFiles = files.filter(f => SPECULOS_TRACKING_FILE_PATTERN.test(f));
-    if (!trackingFiles.length) return;
-
-    const allInstances: { deviceId: string; file: string }[] = [];
-    const parsedFiles = new Set<string>();
-    for (const file of trackingFiles) {
-      const fullPath = path.join(ARTIFACTS_DIR, file);
-      const content = await fs.readFile(fullPath, "utf-8").catch(() => null);
-      if (!content) continue;
-      try {
-        const parsed: { deviceId: string }[] = JSON.parse(content);
-        for (const inst of parsed) allInstances.push({ ...inst, file: fullPath });
-        parsedFiles.add(fullPath);
-      } catch {
-        // ignore malformed tracking file
-        log.error(`Malformed Speculos tracking file ${fullPath}. Keeping file for recovery`);
-      }
+  if (process.env.CI && runIncludesPaytabSpec(globalConfig, projectConfig)) {
+    // Create a card session before workers start to avoid rate limiting errors.
+    // CI passes explicit spec paths; local name filters resolve after globalSetup instead and authenticate lazily in launchApp.
+    try {
+      log.warn("[globalSetup] Creating a card session for the run...");
+      process.env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
+      log.warn("[globalSetup] Card session created.");
+    } catch (error) {
+      log.warn("[globalSetup] Failed to create a card session:", sanitizeError(error));
     }
-
-    if (!allInstances.length) return;
-
-    log.info(
-      `Cleaning ${allInstances.length} Speculos instances across ${trackingFiles.length} worker file(s)`,
-    );
-
-    await Promise.allSettled(
-      allInstances.map(({ deviceId }) =>
-        isSpeculosRemote() ? releaseSpeculosDeviceCI(deviceId) : exec(`docker rm -f ${deviceId}`),
-      ),
-    );
-
-    await Promise.all([...parsedFiles].map(fullPath => fs.unlink(fullPath).catch(() => {})));
-  } catch (error) {
-    log.error("Speculos cleanup failed:", sanitizeError(error));
   }
 }
 
@@ -118,12 +94,12 @@ function setupSpeculosCleanupHandlers() {
     cleanupInProgress = true;
 
     try {
-      await cleanupAllSpeculos();
+      await releaseTrackedSpeculos({ orphansOnly: false });
     } catch (error) {
       log.error(`Cleanup failed (${signal}):`, sanitizeError(error));
     }
 
-    setTimeout(() => process.exit(0), 100);
+    setTimeout(() => process.exit(0), INTERVAL.instant);
   };
 
   const signals: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGHUP", "SIGQUIT"];

@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Box, Button, IconButton, Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-rnative/symbols";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { NotificationsOptInIllustration } from "./components/NotificationsOptInIllustration";
 import type { NotificationsOptInViewModel } from "./useNotificationsOptInViewModel";

@@ -31,6 +31,7 @@ describe("Tile (web)", () => {
   it("renders the freeze tile on an active card", () => {
     renderFreeze();
 
+    expect(screen.getByTestId("card-details-freeze-tile")).toBeVisible();
     expect(screen.getByRole("button", { name: CARD_COPY.freeze })).toBeVisible();
   });
 

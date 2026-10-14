@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -5,7 +6,7 @@ import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setAnalytics } from "~/actions/settings";
 import { analyticsEnabledSelector } from "~/reducers/settings";
-import { track, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 
 const AnalyticsRow = () => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const AnalyticsRow = () => {
           toggle: "Analytics",
           page: "Page Settings General",
         },
-        true,
+        { mandatory: true },
       );
     },
     [dispatch],

@@ -1,5 +1,53 @@
 # @features/flow-pay-card-auth
 
+## 0.10.0
+
+### Minor Changes
+
+- [#22793](https://github.com/LedgerHQ/ledger-live/pull/22793) [`e7996b4`](https://github.com/LedgerHQ/ledger-live/commit/e7996b4bb9f13726af09cc5202d26d1e471563ef) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the Card session tokens and the PKCE attempt on this device only. The keychain entries move from `AFTER_FIRST_UNLOCK` to `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY`, so an iOS backup restored onto another phone no longer carries a signed-in Card session. Background reads still work once the device has been unlocked after boot. Existing entries take the new level the next time they are written.
+
+- [#22879](https://github.com/LedgerHQ/ledger-live/pull/22879) [`77e7162`](https://github.com/LedgerHQ/ledger-live/commit/77e716257785645b79027b580fcef2dfbab7ad3b) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show the Card login on the desktop Pay tab when the `card_live_app` param of `lwdPayTab` is on. "Create an account" opens the card program live app and "Log in" opens the CL Card live app.
+
+- [#22919](https://github.com/LedgerHQ/ledger-live/pull/22919) [`57921f9`](https://github.com/LedgerHQ/ledger-live/commit/57921f955b6c07389cb78d4c087c881667858dc2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Restore the bottom padding of the desktop Card intro dialog
+
+- [#22869](https://github.com/LedgerHQ/ledger-live/pull/22869) [`eb65ce4`](https://github.com/LedgerHQ/ledger-live/commit/eb65ce49ea0fa2d2c44f79fd2b0f8de365ae5e53) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+- [#22659](https://github.com/LedgerHQ/ledger-live/pull/22659) [`bed3cf9`](https://github.com/LedgerHQ/ledger-live/commit/bed3cf9bd880e00d51fc90849dca3741b9ab779f) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Restore the Card sign-in state at app start so the Card history shows a stored session
+
+### Patch Changes
+
+- Updated dependencies [[`e7996b4`](https://github.com/LedgerHQ/ledger-live/commit/e7996b4bb9f13726af09cc5202d26d1e471563ef)]:
+  - @features/platform-card@0.8.0
+  - @domain/api-card-management@0.8.1
+  - @shared/i18n@0.2.0
+  - @shared/ui-info-state@0.4.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @features/platform-pay-analytics@0.3.0
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#22793](https://github.com/LedgerHQ/ledger-live/pull/22793) [`e7996b4`](https://github.com/LedgerHQ/ledger-live/commit/e7996b4bb9f13726af09cc5202d26d1e471563ef) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the Card session tokens and the PKCE attempt on this device only. The keychain entries move from `AFTER_FIRST_UNLOCK` to `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY`, so an iOS backup restored onto another phone no longer carries a signed-in Card session. Background reads still work once the device has been unlocked after boot. Existing entries take the new level the next time they are written.
+
+- [#22879](https://github.com/LedgerHQ/ledger-live/pull/22879) [`77e7162`](https://github.com/LedgerHQ/ledger-live/commit/77e716257785645b79027b580fcef2dfbab7ad3b) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show the Card login on the desktop Pay tab when the `card_live_app` param of `lwdPayTab` is on. "Create an account" opens the card program live app and "Log in" opens the CL Card live app.
+
+- [#22919](https://github.com/LedgerHQ/ledger-live/pull/22919) [`57921f9`](https://github.com/LedgerHQ/ledger-live/commit/57921f955b6c07389cb78d4c087c881667858dc2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Restore the bottom padding of the desktop Card intro dialog
+
+- [#22869](https://github.com/LedgerHQ/ledger-live/pull/22869) [`eb65ce4`](https://github.com/LedgerHQ/ledger-live/commit/eb65ce49ea0fa2d2c44f79fd2b0f8de365ae5e53) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+- [#22659](https://github.com/LedgerHQ/ledger-live/pull/22659) [`bed3cf9`](https://github.com/LedgerHQ/ledger-live/commit/bed3cf9bd880e00d51fc90849dca3741b9ab779f) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Restore the Card sign-in state at app start so the Card history shows a stored session
+
+### Patch Changes
+
+- Updated dependencies [[`e7996b4`](https://github.com/LedgerHQ/ledger-live/commit/e7996b4bb9f13726af09cc5202d26d1e471563ef)]:
+  - @features/platform-card@0.8.0-next.0
+  - @domain/api-card-management@0.8.1-next.0
+  - @shared/i18n@0.2.0
+  - @shared/ui-info-state@0.4.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @features/platform-pay-analytics@0.3.0
+
 ## 0.9.0
 
 ### Minor Changes

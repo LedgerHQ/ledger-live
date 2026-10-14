@@ -27,6 +27,9 @@ export function useStakingDrawer({
   const { getRouteParamsForPlatformApp } = useStake();
   const swapToEarnFlag = useFeature("swapToEarn");
   const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
+  const evmNativeStakingFeature = useFeature("evmNativeStaking");
+  const llmTezosStaking = useFeature("llmTezosStaking");
+  const llmIcpStaking = useFeature("llmIcpStaking");
 
   return useCallback(
     async (account: AccountLike, parentAccount?: Account, currencyId?: string) => {
@@ -81,6 +84,9 @@ export function useStakingDrawer({
             parentAccount,
             colors: {},
             parentRoute,
+            evmNativeStakingFeature,
+            llmTezosStaking,
+            llmIcpStaking,
             bridge,
           })) ||
         [];
@@ -124,6 +130,9 @@ export function useStakingDrawer({
       alwaysShowNoFunds,
       getRouteParamsForPlatformApp,
       isSwapToEarnEnabled,
+      evmNativeStakingFeature,
+      llmTezosStaking,
+      llmIcpStaking,
       walletState,
       parentRoute,
       navigation,

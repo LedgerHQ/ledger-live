@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { Trans } from "react-i18next";
 import { Operation } from "@ledgerhq/types-live";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";

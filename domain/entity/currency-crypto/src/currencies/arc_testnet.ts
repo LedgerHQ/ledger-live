@@ -37,9 +37,6 @@ export const arc_testnet = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 5042002,
-  },
   explorerViews: [
     {
       tx: "https://testnet.arcscan.app/tx/$hash",

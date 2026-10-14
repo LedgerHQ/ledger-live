@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import invariant from "invariant";
 import { withContextMenuContext, ContextMenuItemType, ContextType } from "./ContextMenuWrapper";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 const DISABLE_CONTEXT_MENU = Boolean(process.env.DISABLE_CONTEXT_MENU);
 
 type InnerProps = {

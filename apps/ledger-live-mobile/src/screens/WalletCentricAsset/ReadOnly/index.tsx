@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useState, useCallback } from "react";
 import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
 import Animated, {
@@ -11,7 +12,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { Loading } from "~/components/Loading";
 import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -30,7 +31,6 @@ import BuyDeviceBanner, {
 import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import { renderItem } from "LLM/utils/renderItem";
 import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
-import { TrackScreen } from "~/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { ScreenName } from "~/const";
@@ -56,7 +56,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
   const { data: assetData, isLoading: isLoadingAssetData } = useAssetsData({
     currencyIds: currencyId ? [currencyId] : undefined,
     product: "llm",
-    version: VersionNumber.appVersion,
+    version: appVersion,
     areCurrenciesFiltered: true,
     skip: !!preloadedCurrency,
   });

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Logos } from "@ledgerhq/react-ui";
 import { Button, Link } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft, SettingsAlt2 } from "@ledgerhq/lumen-ui-react/symbols";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import useTheme from "~/renderer/hooks/useTheme";
 import analyticsConsentIllustration from "LLD/features/AnalyticsOptInScreenV2/assets/analyticsConsentIllustrationDark.webp";
 import { ANALYTICS_OPT_IN_SCREEN_PAGES } from "LLD/features/AnalyticsOptInScreenV2/types";
@@ -73,10 +73,17 @@ export function AnalyticsConsentScreen({
             size="md"
             className="min-w-[248px]"
             onClick={onRefuseAll}
+            data-testid="analytics-opt-in-screen-refuse-all"
           >
             {t("analyticsOptInScreen.main.ctaRefuseAll")}
           </Button>
-          <Button appearance="base" size="md" className="min-w-[248px]" onClick={onAcceptAll}>
+          <Button
+            appearance="base"
+            size="md"
+            className="min-w-[248px]"
+            onClick={onAcceptAll}
+            data-testid="analytics-opt-in-screen-accept-all"
+          >
             {t("analyticsOptInScreen.main.ctaAcceptAll")}
           </Button>
         </div>

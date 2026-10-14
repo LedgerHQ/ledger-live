@@ -3,7 +3,6 @@ import {
   DeviceActionStatus,
   GenuineCheckDeviceAction,
   UserInteractionRequired,
-  type Command,
   type CommandResult,
   type DeviceActionIntermediateValue,
   type DeviceActionState,
@@ -12,11 +11,13 @@ import {
   type GetDeviceMetadataDAOutput,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
-import { concat, NEVER, of, Subject } from "rxjs";
+import { concat, NEVER, of } from "rxjs";
 import {
   ToggleEarlyCheckCommand,
   type ToggleEarlyCheckErrorCode,
 } from "../device/toggleEarlyCheckCommand";
+import { createDeviceManagementKit } from "./createDeviceManagementKit";
+import { createTestStream } from "./testStream";
 import { createOsVersionResponse } from "./osVersionResponse";
 
 export type ScriptedCommand<Data, ErrorCodes = void> =
@@ -37,17 +38,10 @@ export function createFakeCommandDmk<Data, ErrorCodes = void>(
 ): FakeCommandDmk {
   const commands = scriptQueue(script, "command");
 
-  const sendCommand = jest.fn(async () => {
-    const next = commands.next();
+  const sendCommand = jest.fn(() => played(commands.next()));
+  const dmk = createDeviceManagementKit({ sendCommand });
 
-    if ("throws" in next) {
-      throw next.throws;
-    }
-
-    return next;
-  });
-
-  return { dmk: { sendCommand } as unknown as DeviceManagementKit, sendCommand };
+  return { dmk, sendCommand };
 }
 
 function scriptQueue<Entry>(script: Entry[], what: string) {
@@ -71,7 +65,11 @@ export type FakeDeviceActionExecution<
   Error,
   IntermediateValue extends DeviceActionIntermediateValue,
 > = {
-  states: Subject<DeviceActionState<Output, Error, IntermediateValue>>;
+  complete(output: Output): void;
+  fail(error: Error): void;
+  pending(intermediateValue: IntermediateValue): void;
+  stop(): void;
+  readonly watched: boolean;
   cancel: jest.Mock;
 };
 
@@ -95,16 +93,15 @@ export function createFakeDeviceActionDmk<
   const executions: FakeDeviceActionExecution<Output, Error, IntermediateValue>[] = [];
 
   const executeDeviceAction = jest.fn(() => {
-    const states = new Subject<DeviceActionState<Output, Error, IntermediateValue>>();
-    const cancel = jest.fn();
+    const { execution, events } = createDeviceActionExecution<Output, Error, IntermediateValue>();
+    executions.push(execution);
 
-    executions.push({ states, cancel });
-
-    return { observable: states.asObservable(), cancel };
+    return { observable: events, cancel: execution.cancel };
   });
+  const dmk = createDeviceManagementKit({ executeDeviceAction });
 
   return {
-    dmk: { executeDeviceAction } as unknown as DeviceManagementKit,
+    dmk,
     executeDeviceAction,
     executions,
     lastExecution: () => {
@@ -117,6 +114,28 @@ export function createFakeDeviceActionDmk<
       return execution;
     },
   };
+}
+
+function createDeviceActionExecution<
+  Output,
+  Error,
+  IntermediateValue extends DeviceActionIntermediateValue,
+>() {
+  const states = createTestStream<DeviceActionState<Output, Error, IntermediateValue>>();
+  const cancel = jest.fn();
+  const execution: FakeDeviceActionExecution<Output, Error, IntermediateValue> = {
+    complete: output => states.push({ status: DeviceActionStatus.Completed, output }),
+    fail: error => states.push({ status: DeviceActionStatus.Error, error }),
+    pending: intermediateValue =>
+      states.push({ status: DeviceActionStatus.Pending, intermediateValue }),
+    stop: () => states.push({ status: DeviceActionStatus.Stopped }),
+    get watched() {
+      return states.watched;
+    },
+    cancel,
+  };
+
+  return { execution, events: states.events };
 }
 
 export type ScriptedDeviceAction<Output> =
@@ -154,47 +173,25 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
 
   const toggles: number[] = [];
 
-  const sendCommand = jest.fn(
-    async ({ command }: { command: Command<unknown, unknown, never> }) => {
-      if (command instanceof ToggleEarlyCheckCommand) {
-        toggles.push(command.getApdu().p2);
+  const sendCommand = jest.fn(({ command }) => {
+    if (command instanceof ToggleEarlyCheckCommand) {
+      toggles.push(command.getApdu().p2);
 
-        return earlyCheck.next();
-      }
+      return played(earlyCheck.next());
+    }
 
-      const next = osVersion.next();
-
-      if ("throws" in next) {
-        throw next.throws;
-      }
-
-      return next;
-    },
-  );
-
-  const executeDeviceAction = jest.fn(({ deviceAction }: { deviceAction: object }) => {
+    return played(osVersion.next());
+  });
+  const executeDeviceAction = jest.fn(({ deviceAction }) => {
     const isGenuineCheck = deviceAction instanceof GenuineCheckDeviceAction;
     const next = isGenuineCheck ? genuineCheck.next() : firmwareCheck.next();
 
-    if ("prompts" in next) {
-      const pending = {
-        status: DeviceActionStatus.Pending,
-        intermediateValue: { requiredUserInteraction: next.prompts },
-      };
-
-      return { observable: concat(of(pending), NEVER), cancel: jest.fn() };
-    }
-
-    const state =
-      "fails" in next
-        ? { status: DeviceActionStatus.Error, error: next.fails }
-        : { status: DeviceActionStatus.Completed, output: next.completes };
-
-    return { observable: of(state), cancel: jest.fn() };
+    return scriptedAction(next);
   });
+  const dmk = createDeviceManagementKit({ sendCommand, executeDeviceAction });
 
   return {
-    dmk: { sendCommand, executeDeviceAction } as unknown as DeviceManagementKit,
+    dmk,
     sendCommand,
     executeDeviceAction,
     earlyCheckToggles: () => [...toggles],
@@ -207,4 +204,31 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
       ([{ deviceAction }]) => deviceAction instanceof GenuineCheckDeviceAction === genuine,
     ).length;
   }
+}
+
+/** What the device answers: the scripted entry, or a rejection when the script says it throws. */
+function played<T>(entry: T | { throws: unknown }): Promise<T> {
+  if (typeof entry === "object" && entry !== null && "throws" in entry) {
+    return Promise.reject(entry.throws);
+  }
+
+  return Promise.resolve(entry as T);
+}
+
+function scriptedAction(next: ScriptedDeviceAction<unknown>) {
+  if ("prompts" in next) {
+    const pending = {
+      status: DeviceActionStatus.Pending,
+      intermediateValue: { requiredUserInteraction: next.prompts },
+    };
+
+    return { observable: concat(of(pending), NEVER), cancel: jest.fn() };
+  }
+
+  const state =
+    "fails" in next
+      ? { status: DeviceActionStatus.Error, error: next.fails }
+      : { status: DeviceActionStatus.Completed, output: next.completes };
+
+  return { observable: of(state), cancel: jest.fn() };
 }

@@ -1,13 +1,15 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
+import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   useCustomFeesViewModelCore,
+  type CustomFeeInputState,
+  type CustomFeesViewModel,
   type CustomFeesViewModelLabels,
 } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import {
@@ -20,10 +22,12 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 
-export type {
-  CustomFeeInputState,
-  CustomFeesViewModel,
-} from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+export type { CustomFeeInputState, CustomFeesViewModel };
+
+type TrackedCustomFeesViewModel = Omit<CustomFeesViewModel, "inputs"> &
+  Readonly<{
+    inputs: readonly (CustomFeeInputState & { errorId?: string | null })[];
+  }>;
 
 type CustomFeesViewModelProps = Readonly<{
   account: AccountLike;
@@ -37,7 +41,7 @@ type CustomFeesViewModelProps = Readonly<{
 
 export function useCustomFeesViewModel(
   props: CustomFeesViewModelProps,
-): ReturnType<typeof useCustomFeesViewModelCore> {
+): TrackedCustomFeesViewModel {
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
@@ -64,7 +68,7 @@ export function useCustomFeesViewModel(
     [t],
   );
 
-  return useCustomFeesViewModelCore({
+  const viewModel = useCustomFeesViewModelCore({
     ...props,
     locale,
     discreet,
@@ -72,4 +76,25 @@ export function useCustomFeesViewModel(
     calculateCountervalue,
     labels,
   });
+
+  return useMemo(
+    () => ({
+      ...viewModel,
+      inputs: viewModel.inputs.map(input => ({
+        ...input,
+        errorId: getErrorId(input.error, labels),
+      })),
+    }),
+    [labels, viewModel],
+  );
+}
+
+function getErrorId(error: string | null, labels: CustomFeesViewModelLabels): string | null {
+  if (!error) return null;
+  if (error === labels.invalidValue) return "newSendFlow.customFees.invalidValue";
+  if (error === labels.maxFeeBelowPriorityFee) {
+    return "newSendFlow.customFees.maxFeeBelowPriorityFee";
+  }
+  if (error === labels.insufficientBalanceFees) return "newSendFlow.insufficientBalanceFees";
+  return "newSendFlow.customFees.belowMinimum";
 }

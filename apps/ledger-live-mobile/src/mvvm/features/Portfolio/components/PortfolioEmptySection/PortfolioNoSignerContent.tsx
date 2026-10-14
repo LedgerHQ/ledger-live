@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
 import MarketBanner from "LLM/features/MarketBanner";
-import TrackScreen from "~/analytics/TrackScreen";
 import { TRACKING_LABEL_MAP } from "LLM/components/MainTabBar/constants";
 import { WalletAssetsView } from "LLM/features/WalletAssets";
 import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";

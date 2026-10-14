@@ -30,12 +30,8 @@ function UndelegationAmount({ navigation, route }: Props) {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "undelegate",
-        validators: [
-          {
-            address: validator ? validator.validatorAddress : "",
-            amount: BigNumber(0),
-          },
-        ],
+        valAddress: validator ? validator.validatorAddress : "",
+        amount: BigNumber(0),
         recipient: mainAccount.freshAddress,
       }),
     };

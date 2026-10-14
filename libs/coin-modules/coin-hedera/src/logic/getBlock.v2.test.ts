@@ -316,10 +316,17 @@ describe("getBlockV2", () => {
         amount: BigInt(-mockERC20Transfer.amount),
       },
     ]);
-    expect(result.transactions[0].details).toMatchObject({
-      gasUsed: mockContractCallResult.gas_used,
-      gasLimit: mockContractCallResult.gas_limit,
-      gasConsumed: mockContractCallResult.gas_consumed,
+    expect(result.transactions[0].details).toEqual({
+      memo: expect.any(String),
+      familyExtra: {
+        pagingToken: mockMirrorTransaction.consensus_timestamp,
+        consensusTimestamp: mockMirrorTransaction.consensus_timestamp,
+        transactionId: mockMirrorTransaction.transaction_id,
+        feesPayer: "0.0.12345",
+        gasConsumed: mockContractCallResult.gas_consumed,
+        gasLimit: mockContractCallResult.gas_limit,
+        gasUsed: mockContractCallResult.gas_used,
+      },
     });
   });
 
@@ -555,9 +562,16 @@ describe("getBlockV2", () => {
     expect(result.transactions[0].operations[0]).toEqual({
       type: "other",
       ledgerOpType: mockStakingAnalysis.operationType,
-      targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
-      previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
       stakedAmount: mockStakingAnalysis.stakedAmount,
+      familyExtra: {
+        pagingToken: mockTx.consensus_timestamp,
+        consensusTimestamp: mockTx.consensus_timestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
+        previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
+        targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
+        stakedAmount: "100",
+      },
     });
   });
 
@@ -589,9 +603,16 @@ describe("getBlockV2", () => {
     expect(result.transactions[0].operations[0]).toEqual({
       type: "other",
       ledgerOpType: mockStakingAnalysis.operationType,
-      targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
-      previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
       stakedAmount: mockStakingAnalysis.stakedAmount,
+      familyExtra: {
+        pagingToken: mockTx.consensus_timestamp,
+        consensusTimestamp: mockTx.consensus_timestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
+        previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
+        targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
+        stakedAmount: "100",
+      },
     });
   });
 
@@ -624,9 +645,12 @@ describe("getBlockV2", () => {
       {
         type: "other",
         ledgerOpType: mockStakingAnalysis.operationType,
-        targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
-        previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
         stakedAmount: mockStakingAnalysis.stakedAmount,
+        familyExtra: expect.objectContaining({
+          previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
+          targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
+          stakedAmount: "100",
+        }),
       },
     ]);
   });
@@ -771,22 +795,33 @@ describe("getBlockV2", () => {
       {
         type: "other",
         ledgerOpType: "ASSOCIATE_TOKEN",
-        associatedTokenId: mockToken.token_id,
+        familyExtra: {
+          pagingToken: consensusTimestamp,
+          consensusTimestamp,
+          transactionId: mockTx.transaction_id,
+          feesPayer: "0.0.999",
+          associatedTokenId: mockToken.token_id,
+        },
       },
     ]);
-    expect(result.transactions[0].details).toMatchObject({
-      consensusTimestamp,
-      transactionId: mockTx.transaction_id,
+    expect(result.transactions[0].details).toEqual({
+      familyExtra: {
+        pagingToken: consensusTimestamp,
+        consensusTimestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
+      },
     });
     expect(result.transactions[0].fees).toBe(BigInt(51871165));
     expect(result.transactions[0].feesPayer).toBe("0.0.999");
   });
 
-  it("should include consensusTimestamp and transactionId in tx.details", async () => {
+  it("nests consensusTimestamp and transactionId under tx.details.familyExtra, keeping memo flat", async () => {
     const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1704067210-123456789",
       transaction_hash: "hash_tx",
       name: "CRYPTOTRANSFER",
+      memo_base64: Buffer.from("hello").toString("base64"),
       consensus_timestamp: "1704067210.123456789",
       staking_reward_transfers: [],
       transfers: [],
@@ -798,9 +833,14 @@ describe("getBlockV2", () => {
 
     const result = await getBlockV2({ configOrCurrencyId, height: 100 });
 
-    expect(result.transactions[0].details).toMatchObject({
-      consensusTimestamp: mockTx.consensus_timestamp,
-      transactionId: mockTx.transaction_id,
+    expect(result.transactions[0].details).toEqual({
+      memo: "hello",
+      familyExtra: {
+        pagingToken: mockTx.consensus_timestamp,
+        consensusTimestamp: mockTx.consensus_timestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
+      },
     });
   });
 

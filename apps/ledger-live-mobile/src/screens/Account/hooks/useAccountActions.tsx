@@ -281,6 +281,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         evmNativeStakingFeature,
         llmTezosStaking,
         llmIcpStaking,
+        canStakeUsingLedgerLive,
         bridge,
       }) ?? [],
     [
@@ -293,6 +294,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       evmNativeStakingFeature,
       llmTezosStaking,
       llmIcpStaking,
+      canStakeUsingLedgerLive,
       bridge,
     ],
   );

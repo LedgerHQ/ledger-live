@@ -7,6 +7,11 @@ import {
   type PerpsDepositSignData,
 } from "../usePerpsDepositSignViewModel";
 
+const mockOpenPerpsDeposit = jest.fn();
+jest.mock("../../PerpsDeposit/PerpsDepositDialog", () => ({
+  openPerpsDeposit: (data: unknown) => mockOpenPerpsDeposit(data),
+}));
+
 const mockOpenPerpsReview = jest.fn();
 jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
   openPerpsReview: (data: unknown) => mockOpenPerpsReview(data),
@@ -58,6 +63,18 @@ describe("usePerpsDepositSignViewModel", () => {
 
     // The summary comes back exactly as it was left, so the amount survives the decline.
     expect(mockOpenPerpsReview).toHaveBeenCalledWith(data);
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("should reopen the deposit form, draft and all, when retrying after a shortfall", () => {
+    const onClose = jest.fn();
+    renderHook(() => usePerpsDepositSignViewModel(data, onClose));
+
+    capturedCallbacks?.onNotEnoughBalance();
+
+    // The form comes back with the amount the holder typed, ready to be lowered.
+    expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: data.draft });
+    expect(mockOpenPerpsReview).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
   });
 

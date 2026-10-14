@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
@@ -8,7 +9,6 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { TrackScreen } from "~/analytics";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Alert from "~/components/Alert";
@@ -40,7 +40,7 @@ export default function ReceiveConfirmation({ route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
 
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency = account && getAccountCurrency(account);
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
   const mainAccountName = useMaybeAccountName(mainAccount);
   const name = mainAccountName;
 
@@ -48,7 +48,7 @@ export default function ReceiveConfirmation({ route }: Props) {
     return mainAccount && getFreshAccountAddress(mainAccount);
   }, [mainAccount]);
 
-  if (!mainAccount || !account || !currency) return null;
+  if (!mainAccount || !account || !currency || currency.type === "FiatCurrency") return null;
 
   const address = mainAccount.freshAddress;
 
@@ -107,7 +107,11 @@ export default function ReceiveConfirmation({ route }: Props) {
                     bg="constant.white"
                     position="absolute"
                   >
-                    <CurrencyIcon currency={currency} size={48} />
+                    <CurrencyIcon
+                      currency={currency}
+                      size={48}
+                      testID={"receive-currency-icon-" + currency.id}
+                    />
                   </Flex>
                 </Flex>
                 <Text
@@ -155,7 +159,11 @@ export default function ReceiveConfirmation({ route }: Props) {
                 }}
               />
             </Alert>
-            <ReceiveConfirmationTokenAlert account={account} mainAccount={mainAccount} />
+            <ReceiveConfirmationTokenAlert
+              account={account}
+              mainAccount={mainAccount}
+              token={currency.type === "TokenCurrency" ? currency : undefined}
+            />
           </Flex>
         </Flex>
       </NavigationScrollView>

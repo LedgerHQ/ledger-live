@@ -132,6 +132,8 @@ export const scenarioMultiversx: Scenario<GenericTransaction, Account> = {
       type: "object" as const,
       default: {
         status: { type: "active" },
+        name: "MultiversX",
+        unit: { name: "EGLD", code: "EGLD", magnitude: 18 },
         apiEndpoint: MULTIVERSX_API_URL,
         delegationApiEndpoint: MULTIVERSX_DELEGATION_API_URL,
       },

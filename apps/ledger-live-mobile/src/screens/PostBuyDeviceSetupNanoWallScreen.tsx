@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Text, Box } from "@ledgerhq/native-ui";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -7,7 +8,6 @@ import { Pressable, StyleSheet } from "react-native";
 import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import Button from "~/components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,

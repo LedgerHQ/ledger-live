@@ -77,6 +77,10 @@ import type {
   TransactionStatusRaw as hederaTransactionStatusRaw,
 } from "@ledgerhq/coin-hedera/types/index";
 import type {
+  HederaGenericTransaction as hederaGenericTransaction,
+  HederaGenericTransactionRaw as hederaGenericTransactionRaw,
+} from "../families/hedera/types";
+import type {
   Transaction as iconTransaction,
   TransactionRaw as iconTransactionRaw,
   TransactionStatus as iconTransactionStatus,
@@ -123,7 +127,7 @@ import type {
   TransactionRaw as solanaTransactionRaw,
   TransactionStatus as solanaTransactionStatus,
   TransactionStatusRaw as solanaTransactionStatusRaw,
-} from "@ledgerhq/coin-solana/types";
+} from "../families/solana/types";
 import type {
   Transaction as stacksTransaction,
   TransactionRaw as stacksTransactionRaw,
@@ -187,6 +191,7 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | hederaGenericTransaction
   | iconTransaction
   | internet_computerTransaction
   | kaspaTransaction
@@ -218,6 +223,7 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | hederaGenericTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
   | kaspaTransactionRaw

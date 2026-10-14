@@ -16,7 +16,7 @@ shared  (10%)  — agnostic primitives
 ```
 
 ### `apps/`
-Platform-specific entry points: observability, analytics, routing, screens. Desktop and mobile do not necessarily share the same screens — each app assembles `features/flow` packages into its own screens.
+Platform-specific entry points: analytics host wiring, observability, routing, screens. Desktop and mobile do not necessarily share the same screens — each app assembles `features/flow` packages into its own screens.
 
 `apps/` is also the only place allowed to import both legacy and new code.
 
@@ -58,6 +58,10 @@ apps  →  features/flow  →  features/platform  →  domain  →  shared
 Each layer may only import from layers below it. `shared`, `domain`, and `features` must **not**
 import from `libs/` — the new-arch core stays legacy-free. Enforced by
 [`tools/nx-plugins/enforce-boundaries`](../tools/nx-plugins/enforce-boundaries).
+
+Third-party libraries follow the same direction (convention, not yet enforced by lint): apps do not declare new ones (framework singletons, the design system and tooling excepted), the lowest valid package
+wraps each one (e.g. `@shared/ui-qr-code`). See the
+[wrap-third-party-libs](../.agents/skills/wrap-third-party-libs/SKILL.md) skill.
 
 ---
 

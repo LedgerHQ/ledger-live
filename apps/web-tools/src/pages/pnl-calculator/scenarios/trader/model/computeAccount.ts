@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
 import {
-  buildCV,
-  dailyHistory,
   makeAccount,
   makeTokenAccount,
   resetOperationIdCounter,

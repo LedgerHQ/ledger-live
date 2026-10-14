@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { PaySuccess } from "@features/flow-pay-contact";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -5,7 +6,6 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { usePaySuccessViewModel } from "./usePaySuccessViewModel";
 import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "../../hooks/useSendFlowTrackingProperties";
-import { TrackScreen } from "~/analytics";
 
 export function PaySuccessScreen() {
   const viewModel = usePaySuccessViewModel();

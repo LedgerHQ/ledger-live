@@ -33,8 +33,8 @@ const extensions: AccountBridgeExtensions<BitcoinTransaction> = {
   getFormattedFeeFields,
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
-  isStrategyDisabled: ({ transaction, feeData }) =>
-    isStrategyDisabled({ transaction, feesStrategy: feeData as BigNumber }),
+  isStrategyDisabled: ({ mainAccount, transaction, feeData }) =>
+    isStrategyDisabled({ mainAccount, transaction, feesStrategy: feeData as BigNumber }),
   isTransactionConfirmed,
 };
 

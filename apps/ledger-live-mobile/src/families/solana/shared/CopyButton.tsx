@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, Link } from "@ledgerhq/native-ui";
 import { CopyMedium } from "@ledgerhq/native-ui/assets/icons";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 
 type Props = {
   copyString: string;
@@ -11,9 +11,9 @@ export default function CopyButton({ copyString }: Props) {
   const [copied, setCopied] = React.useState(false);
   const timerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const onPress = () => {
+  const onPress = async () => {
     if (copied) return;
-    Clipboard.setString(copyString);
+    if (!(await copyToClipboard(copyString))) return;
     setCopied(true);
     timerRef.current = setTimeout(() => {
       setCopied(false);

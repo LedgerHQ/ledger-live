@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { FlatList, ListRenderItem } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -7,7 +8,6 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import AccountRow from "../Accounts/AccountRow";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountsList from "LLM/features/Accounts/components/AccountsListView";

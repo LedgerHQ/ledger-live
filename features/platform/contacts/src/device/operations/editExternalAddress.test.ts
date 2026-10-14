@@ -16,6 +16,12 @@ describe("createEditExternalAddressOperation", () => {
   const updatedAddress = mockContactAddress({
     address: "0x2222222222222222222222222222222222222222",
   }).address;
+  const config = {
+    status: { type: "active" as const },
+    name: "Ethereum",
+    unit: { name: "ether", code: "ETH", magnitude: 18 },
+    chainId: 1,
+  };
   const intentDefinition = {} as IntentPlatformDefinition<
     EditExternalAddressJobState,
     EditExternalAddressIntentInput,
@@ -31,7 +37,13 @@ describe("createEditExternalAddressOperation", () => {
   ] as const)(
     "GIVEN the corresponding field changes WHEN creating an edit THEN it selects the expected operation",
     ({ label, value, expected }) => {
-      const input = { contact, address, updatedLabel: label, updatedAddress: value };
+      const input = {
+        contact,
+        address,
+        updatedLabel: label,
+        updatedAddress: value,
+        config,
+      };
 
       const edit = createEditExternalAddressOperation(input, intentDefinition);
 
@@ -46,6 +58,7 @@ describe("createEditExternalAddressOperation", () => {
         address,
         updatedLabel,
         updatedAddress,
+        config,
       },
       intentDefinition,
     );
@@ -106,6 +119,7 @@ describe("createEditExternalAddressOperation", () => {
         address,
         updatedLabel,
         updatedAddress,
+        config,
       },
       intentDefinition,
     );

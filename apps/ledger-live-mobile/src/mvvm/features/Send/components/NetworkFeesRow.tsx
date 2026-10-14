@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,7 +16,6 @@ import { useTranslation } from "~/context/Locale";
 import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
 import { InfoState } from "@shared/ui-info-state";
 import type { FeeSelectorOptionKind, NetworkFeesViewModel } from "../types";
-import { track } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
 type NetworkFeesRowProps = Readonly<{

@@ -116,7 +116,7 @@ const getAssetNameFromPostConditions = (tx: TransactionResponse): string | undef
 };
 
 // Determines token ID from contract ID and asset name
-const resolveTokenId = async (
+export const resolveTokenId = async (
   contractId: string,
   fetchTokenCached: (contractAddress: string) => Promise<FungibleTokenMetadataResponse>,
   assetName?: string,

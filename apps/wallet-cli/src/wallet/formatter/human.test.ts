@@ -5,7 +5,7 @@ import { JsonFormatter } from "./json";
 import type { DiscoveredAccount, AccountDescriptor } from "../models";
 import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
-import { USDT_TOKEN_INFO } from "../../test/helpers/cal-fixtures";
+import { USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
 
 const stubStore = {} as CryptoAssetsStore;
 

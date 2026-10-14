@@ -632,6 +632,10 @@
       "title": "Something went wrong (Error #17)",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
+    "CosmosMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
     "DeviceAppVerifyNotSupported": {
       "title": "Open My Ledger to update this app",
       "description": "The app verification is not supported."
@@ -1163,6 +1167,10 @@
       "title": "Transaction refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "TransferOfferExpiredError": {
+      "title": "This offer has expired",
+      "description": "The transfer offer expired before it was accepted. Ask the sender to send a new one."
+    },
     "TransportError": {
       "title": "Something went wrong. Please reconnect your device.",
       "description": "{{message}} Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -1449,6 +1457,10 @@
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
+    },
+    "StacksStakeInPreparePhase": {
+      "title": "Staking is paused until the next reward cycle",
+      "description": "The Stacks network doesn't accept new stakes while it prepares the next reward cycle. Staking reopens in {{blocksUntilReopen}} Bitcoin blocks."
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"
@@ -3546,8 +3558,6 @@
       "buy": "Buy",
       "connect": "Connect",
       "buyLedger": "Buy a Ledger",
-      "receive": "Receive",
-      "send": "Send",
       "transferDrawer": {
         "title": "Transfer",
         "receiveCrypto": "Receive via crypto address",
@@ -4238,7 +4248,7 @@
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
-        "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
+        "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Smart Chain, Avalanche and Ethereum Classic"
       },
       "totalMarketCap": {
         "title": "Total Market Cap",
@@ -4376,6 +4386,9 @@
       "featureFlagsRestoreAll": "Restore all flag values",
       "featureFlagsTabAll": "All",
       "featureFlagsTabGroups": "Groups",
+      "contentAbTests": {
+        "invalidPayload": "Invalid payload. \"enabled\" must be a boolean and \"copy\" must map keys to strings."
+      },
       "firebaseProject": "Firebase project targeted by this build:",
       "showBannerDesc": "Show banner when flags are overridden",
       "bannerTitle": "Flags overridden locally",
@@ -5345,6 +5358,35 @@
             "CUSTOM": "Custom coin selection"
           }
         }
+      },
+      "feePayment": {
+        "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
+      },
+      "sponsoredRentSignature": {
+        "crafting": "Preparing energy rental…",
+        "strategy": "Energy rental - {{provider}}",
+        "fee": "Rental fee: {{amount}}",
+        "cancelled": {
+          "title": "Energy rental canceled",
+          "description": "You rejected the rental fee payment. Your funds won't be affected."
+        }
+      },
+      "sponsoredPolling": {
+        "title": "Waiting for energy delivery",
+        "waiting": "{{provider}} is delivering the rented energy. This can take a moment.",
+        "elapsed": "Elapsed: {{time}}"
+      },
+      "sponsoredFailure": {
+        "rentPayment": "Fee payment failed — your funds were not moved.",
+        "rentPaymentReportedFailed": "{{provider}} reported the fee payment as failed, but it may still go through.",
+        "priceIncreased": "The energy rental price went up to {{fee}}. Your funds were not moved.",
+        "deliveryFailed": "Energy was not delivered. Your rental fee payment was sent — contact {{provider}} support for a refund{{txidSuffix}}.",
+        "transfer": "Your transfer failed, but the rented energy is still valid — you can retry the transfer.",
+        "retryLocked": "So you don't pay the rental twice, you can retry after {{time}}.",
+        "retry": "Retry",
+        "retryPaying": "Pay again and retry",
+        "acceptPrice": "Accept new price",
+        "cancel": "Cancel"
       }
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
@@ -5745,6 +5787,110 @@
       }
     },
     "chooseAccountToFund": "Choose an account to add funds"
+  },
+  "connectNewDevice": {
+    "discovering": {
+      "title": "Looking for your Ledger devices",
+      "description": {
+        "bluetooth": "Make sure your Ledger device is unlocked and close to the mobile phone you want to pair with.",
+        "bluetoothAndUsb": "Unlock your Ledger and connect it to your phone using Bluetooth or a USB cable.",
+        "usb": "Unlock your Ledger and connect it to your phone using a USB cable."
+      },
+      "select": "Connect",
+      "selectAccessibilityLabel": "Connect {{deviceName}}",
+      "deviceNotFound": "I don’t see my device"
+    },
+    "connecting": {
+      "bluetooth": {
+        "title": "Pairing with {{deviceName}}",
+        "description": "If prompted, confirm the code on your {{productName}}."
+      },
+      "usb": {
+        "title": "Connecting to {{deviceName}}"
+      }
+    },
+    "connected": {
+      "bluetooth": {
+        "title": "Your device is paired"
+      },
+      "usb": {
+        "title": "Your device is connected"
+      }
+    }
+  },
+  "osUpdates": {
+    "actions": {
+      "retry": "Retry",
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "closeConfirmation": {
+      "title": "OS update is in progress",
+      "description": "Your settings and apps may not be restored properly if you cancel the update now.",
+      "continue": "Continue OS update",
+      "cancel": "Cancel OS update"
+    },
+    "whatsNew": {
+      "productName": "LedgerOS™",
+      "version": "Version {{version}}",
+      "banner": "Ensure your 24 words Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.",
+      "title": "What’s in this OS update?",
+      "start": "Start update"
+    },
+    "preparing": {
+      "title": "Preparing for install"
+    },
+    "progress": {
+      "updatingTitle": "Updating your {{productName}}",
+      "restoringTitle": "Restoring your apps and settings",
+      "updateCount": "Update {{index}} of {{count}}",
+      "description": "Keep your device connected and nearby until the update is complete."
+    },
+    "applied": {
+      "title": "Update complete",
+      "description": "Your {{productName}} is up to date."
+    },
+    "restored": {
+      "title": "Backup restored",
+      "description": "Your apps and settings are back on your {{productName}}."
+    },
+    "continueOnDevice": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen."
+    },
+    "unlockDevice": {
+      "title": "Unlock your {{productName}}"
+    },
+    "deviceDisconnected": {
+      "title": "Device disconnected",
+      "description": "Reconnect your Ledger device to continue. The update will resume automatically."
+    },
+    "unexpectedError": {
+      "title": "Something went wrong",
+      "description": "The OS update could not continue. Contact Ledger support if the problem persists."
+    },
+    "batteryTooLow": {
+      "title": "Charge your {{productName}}",
+      "description": "Your device battery is at {{percentage}}%. Plug it in or charge it above 20% to continue."
+    },
+    "backupSelection": {
+      "title": "Use your existing backup?",
+      "description": "Your latest backup is more than 24 hours old. You can use it, or create a new one that will replace it. Security Key credentials are part of the backup.",
+      "useExisting": "Use existing backup",
+      "createNew": "Create a new backup"
+    },
+    "secureConnectionRefused": {
+      "title": "Secure connection refused",
+      "description": "You refused the secure connection on your device. Retry to continue."
+    },
+    "installFirmwareRefused": {
+      "title": "Installation refused",
+      "description": "The installation was refused on your device, so the update cannot continue."
+    },
+    "outOfMemory": {
+      "title": "Not enough space on your device",
+      "description": "Your device does not have enough memory to continue. Free some space and try again."
+    }
   },
   "deviceIntentExecutor": {
     "genericStates": {
@@ -8502,6 +8648,73 @@
       }
     }
   },
+  "stacks": {
+    "stake": {
+      "stepperHeader": {
+        "pool": "Pool",
+        "amount": "Amount",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "pool": {
+        "description": "Enter the address of the pool you want to delegate your STX to, and how many reward cycles to lock them for.",
+        "poolAddressLabel": "Pool address",
+        "poolAddressError": "Enter a pool contract address, such as SP….pool-name",
+        "numCyclesLabel": "Number of cycles",
+        "numCyclesError": "Enter a whole number of cycles between {{min}} and {{max}}"
+      },
+      "amount": {
+        "disclaimer": "Your STX will be locked until the staking pool releases them.",
+        "pool": "Pool",
+        "numCycles": "Number of cycles",
+        "available": "Available"
+      },
+      "validation": {
+        "success": {
+          "title": "You have successfully staked your assets",
+          "description": "Your account balance will be updated when the blockchain confirms the transaction."
+        }
+      }
+    },
+    "unstake": {
+      "title": "Unstake",
+      "stepperHeader": {
+        "summary": "Unstake",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "summary": {
+        "info": "Unstaking shortens your lock period. Your STX are released once that shortened period ends, not immediately.",
+        "pool": "Pool",
+        "noPosition": "This account has no active staking position to unstake."
+      },
+      "validation": {
+        "success": {
+          "title": "Unstake submitted",
+          "description": "Your STX undelegation was broadcast successfully."
+        }
+      }
+    },
+    "account": {
+      "staked": "Staked",
+      "unlockCycle": "Unlock cycle"
+    },
+    "info": {
+      "available": {
+        "title": "Available",
+        "description": "Amount of STX you can spend or stake."
+      },
+      "staked": {
+        "title": "Staked",
+        "description": "Amount of STX delegated to your staking pool and locked by pox-5."
+      },
+      "unlockCycle": {
+        "title": "Unlock cycle",
+        "description": "Reward cycle at which your staked STX are released."
+      }
+    }
+  },
   "sui": {
     "info": {
       "estimatedReward": "Earned rewards",
@@ -10343,6 +10556,7 @@
     }
   },
   "largeMover": {
+    "coinPosition": "{{position}} of {{total}}",
     "info": "Info",
     "marketCap": "Market cap",
     "volume": "Volume (24h)",
@@ -11238,13 +11452,16 @@
   "myWallet": {
     "quickActions": {
       "recover": "[L] Recover",
-      "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
     },
+    "walletBackups": {
+      "title": "Wallet backups",
+      "description": "Don't lose access to your assets."
+    },
     "contacts": {
       "title": "Contacts",
-      "description": "Manage your contacts"
+      "description": "Manage your contacts."
     },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",
@@ -11548,6 +11765,9 @@
         "unbondedAmount": "Unstaked amount"
       }
     },
+    "operationTypes": {
+      "WITHDRAW_UNBONDED": "Claim"
+    },
     "shared": {
       "sponsoredByProvable": "Sponsored by Provable"
     }
@@ -11593,7 +11813,8 @@
     "addAddress": "Add address",
     "addYourAddress": "Add your address",
     "searchPlaceholder": "Search by name",
-    "searchNoResults": "No contact found",
+    "searchNoResults": "No contacts found by that name",
+    "searchNoResultsDescription": "Try another name or spelling.",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",

@@ -2,12 +2,12 @@ import React from "react";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import i18n from "~/renderer/i18n/init";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 const mockNavigate = jest.fn();
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

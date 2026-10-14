@@ -2,23 +2,22 @@ import React from "react";
 import { IconButton, Tooltip, TooltipTrigger, TooltipContent } from "@ledgerhq/lumen-ui-react";
 import { PenEdit } from "@ledgerhq/lumen-ui-react/symbols";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useTranslation } from "react-i18next";
-import { EditName } from "../../EditName";
 
 type AccountRowActionCellProps = {
   readonly account: AccountLike;
   readonly editNameAriaLabel: string;
   readonly isSyncing: boolean;
+  readonly onEditName: (account: AccountLike) => void;
 };
 
 export function AccountRowActionCell({
   account,
   editNameAriaLabel,
   isSyncing,
+  onEditName,
 }: AccountRowActionCellProps) {
   const { t } = useTranslation();
-  const currency = getAccountCurrency(account);
 
   return (
     <div className="flex justify-end" onClick={e => e.stopPropagation()}>
@@ -40,14 +39,13 @@ export function AccountRowActionCell({
           </TooltipContent>
         </Tooltip>
       ) : (
-        <EditName account={account} asset={currency.name}>
-          <IconButton
-            appearance="transparent"
-            size="sm"
-            icon={PenEdit}
-            aria-label={editNameAriaLabel}
-          />
-        </EditName>
+        <IconButton
+          appearance="transparent"
+          size="sm"
+          icon={PenEdit}
+          aria-label={editNameAriaLabel}
+          onClick={() => onEditName(account)}
+        />
       )}
     </div>
   );

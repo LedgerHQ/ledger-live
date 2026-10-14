@@ -1,13 +1,13 @@
 import React, { useMemo, type ReactNode } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { shell } from "electron";
+import { shell } from "~/renderer/bridge";
 import {
   LinkingProvider,
   LEDGER_URL_LANGUAGES,
   DEFAULT_LANGUAGE,
   type LinkingConfig,
 } from "@shared/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { languageSelector } from "~/renderer/reducers/settings";
 
 export function LinkingProviderWrapper({

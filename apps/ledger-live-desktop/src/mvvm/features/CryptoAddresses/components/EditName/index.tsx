@@ -3,14 +3,21 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { EditNameView } from "./EditNameView";
 import { useEditNameViewModel } from "./useEditNameViewModel";
 
-export const EditName = ({
-  account,
-  asset,
-  children,
-}: {
+type EditNameProps = {
   account: AccountLike;
   asset: string;
-  children: React.ReactNode;
-}) => {
-  return <EditNameView {...useEditNameViewModel({ account, asset })}>{children}</EditNameView>;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isSyncing: boolean;
+};
+
+export const EditName = ({ account, asset, open, onOpenChange, isSyncing }: EditNameProps) => {
+  return (
+    <EditNameView
+      {...useEditNameViewModel({ account, asset })}
+      open={open}
+      onOpenChange={onOpenChange}
+      isSyncing={isSyncing}
+    />
+  );
 };

@@ -36,8 +36,8 @@ const INITIAL_STATE = {
   ),
 };
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculate: ({ value }: { value: number }) => value,
 }));
 
@@ -124,7 +124,7 @@ describe("AccountsList Screen", () => {
     });
 
     // check the rendered balance
-    // for a proprer check we should find a way to setup live-countervalues-react for jest
+    // for a proper check we should seed countervalues rates in the store instead of mocking useCalculate
     expect(getAllByTestId("account-balance").length).toBe(8);
     // check that we well display the full balance
     expect(getAllByText(/\$8,331,578.60/i).length).toBe(8);

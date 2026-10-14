@@ -3,7 +3,7 @@ import { MainBody } from "./components";
 import { HeaderTitle } from "LLD/features/AnalyticsOptInPrompt/screens/components";
 import { Flex } from "@ledgerhq/react-ui";
 import { useLocation } from "react-router";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 
 interface MainProps {
   shouldWeTrack: boolean;

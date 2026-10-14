@@ -99,12 +99,23 @@ async function enrichStakingResources(
 ): Promise<StakingResources> {
   // Fetch redelegations from the Cosmos REST API (may return empty for
   // EVM-precompile-originated redelegations on chains like Sei).
-  const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
-  const apiRedelegations = await fetchRedelegations(config, currency.id, address).catch(() => []);
+  const evmCtx = buildContext<EvmConfigInfo>(currency.id);
+  const config = await evmCtx.config();
+  const apiRedelegations = await fetchRedelegations(
+    config,
+    currency.id,
+    address,
+    evmCtx.logger,
+  ).catch(() => []);
 
   // Reconstruct active redelegations from the REDELEGATE operation history by
   // decoding the ABI-encoded calldata fetched directly from the RPC node.
-  const opsRedelegations = await buildRedelegationsFromOps(config, currency.id, operations);
+  const opsRedelegations = await buildRedelegationsFromOps(
+    config,
+    currency.id,
+    operations,
+    evmCtx.logger,
+  );
 
   // Merge both sources, deduplicating by (src, dst) validator pair.
   const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;

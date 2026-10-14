@@ -21,9 +21,15 @@ type UseOpenBuySellProps = {
    */
   currencyIds?: string[];
   sourceScreenName: string;
+  returnToPreviousScreenOnClose?: boolean;
 };
 
-export function useOpenBuySell({ currency, currencyIds, sourceScreenName }: UseOpenBuySellProps) {
+export function useOpenBuySell({
+  currency,
+  currencyIds,
+  sourceScreenName,
+  returnToPreviousScreenOnClose,
+}: UseOpenBuySellProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
@@ -53,14 +59,15 @@ export function useOpenBuySell({ currency, currencyIds, sourceScreenName }: UseO
           defaultCurrencyId,
           ...(defaultAccountId && { defaultAccountId }),
           ...(parentId && { parentId }),
-          ...(sourceScreenName === ASSET_DETAIL_SOURCE_SCREEN_NAME && {
+          ...((returnToPreviousScreenOnClose ||
+            sourceScreenName === ASSET_DETAIL_SOURCE_SCREEN_NAME) && {
             returnToPreviousScreenOnClose: true,
           }),
           ...(!account && { goBackOnAccountRequestCancel: true }),
         },
       });
     },
-    [currency, navigation, sourceScreenName],
+    [currency, navigation, sourceScreenName, returnToPreviousScreenOnClose],
   );
 
   const openAccountSelectionDrawer = useCallback(

@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
 import { Linking, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 import Button from "~/components/Button";
 import ExternalLink from "~/components/ExternalLink";

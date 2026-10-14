@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { BluetoothRequired } from "@ledgerhq/hw-transport/errors";
@@ -5,7 +6,6 @@ import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { findMatchingNewDevice } from "@ledgerhq/live-dmk-mobile";
 import { act, renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 import { useDeviceSectionViewModel, type DeviceSectionDevice } from "../useDeviceSectionViewModel";

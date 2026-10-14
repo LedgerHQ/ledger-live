@@ -20,7 +20,7 @@ export enum Network {
   COSMOS = "Cosmos",
   TEZOS = "Tezos",
   POLYGON = "Polygon",
-  BNB_CHAIN = "BNB Chain",
+  BNB_SMART_CHAIN = "BNB Smart Chain",
   TON = "Gram",
   ARBITRUM = "Arbitrum",
   OPTIMISM = "Optimism",

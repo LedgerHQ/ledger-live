@@ -27,15 +27,21 @@ if (parsed) {
 }
 
 /**
- * Determines which .env file to use based on environment
+ * Determines which .env file to use based on environment.
+ * NIGHTLY is checked first so a stray TESTING or STAGING cannot change how nightlies are built.
  */
-export const DOTENV_FILE = process.env.TESTING
-  ? ".env.testing"
-  : process.env.STAGING
-    ? ".env.staging"
-    : process.env.NODE_ENV === "production"
-      ? ".env.production"
-      : ".env";
+function getDotEnvFile(): string {
+  if (process.env.NIGHTLY) return ".env.staging";
+  if (process.env.TESTING) return ".env.testing";
+  if (process.env.STAGING) return ".env.staging";
+  if (process.env.NODE_ENV === "production") return ".env.production";
+  return ".env";
+}
+
+export const DOTENV_FILE = getDotEnvFile();
+
+// Nightlies use staging services with the production Firebase project, like mobile nightlies.
+const FIREBASE_OVERRIDE_FILE = process.env.NIGHTLY ? ".env.production" : null;
 
 // Load .env so DATADOG_* are available for local builds
 dotenv.config({ path: path.resolve(lldRoot, DOTENV_FILE) });
@@ -45,30 +51,39 @@ const DATADOG_CLIENT_TOKEN = process.env.DATADOG_CLIENT_TOKEN;
 const DATADOG_SITE = process.env.DATADOG_SITE ?? "datadoghq.eu";
 const DATADOG_ENV = process.env.DATADOG_ENV;
 
-/**
- * Reads and parses a dotenv file, returning define entries
- */
-export function buildDotEnvDefine(envPath: string): Record<string, string> {
-  const define: Record<string, string> = {};
+function readDotEnv(envPath: string): Record<string, string> {
   try {
     const envFile = path.resolve(lldRoot, envPath);
     if (fs.existsSync(envFile)) {
-      const buf = fs.readFileSync(envFile);
-      const config = dotenv.parse(buf);
-      Object.entries(config).forEach(([key, value]) => {
-        define[`process.env.${key}`] = JSON.stringify(value);
-      });
+      return dotenv.parse(fs.readFileSync(envFile));
     }
   } catch {
     // Ignore errors
   }
+  return {};
+}
+
+/**
+ * Reads and parses a dotenv file, returning define entries
+ */
+export function buildDotEnvDefine(envPath: string): Record<string, string> {
+  const config = readDotEnv(envPath);
+  if (FIREBASE_OVERRIDE_FILE) {
+    for (const [key, value] of Object.entries(readDotEnv(FIREBASE_OVERRIDE_FILE))) {
+      if (key.startsWith("FIREBASE_")) config[key] = value;
+    }
+  }
+  const define: Record<string, string> = {};
+  Object.entries(config).forEach(([key, value]) => {
+    define[`process.env.${key}`] = JSON.stringify(value);
+  });
   return define;
 }
 
 /**
  * Env vars the app reads through `@shared/env` (getEnv/useEnv) instead of as a literal
  * `process.env.X` expression. DefinePlugin cannot reach those, so they travel as one object
- * that src/renderer/env.ts merges into `process.env` at boot.
+ * that src/renderer/bootstrap/process.ts merges into the renderer environment at boot.
  */
 const BUILD_ENV_NAMES = [
   "CARD_BAANX_API_URL",
@@ -118,6 +133,27 @@ export function buildMainEnv(
   return env;
 }
 
+const FIREBASE_ENVS = ["production", "staging", "testing", "development"];
+
+function firebaseConfigsByEnv() {
+  return Object.fromEntries(
+    FIREBASE_ENVS.map(env => {
+      const vars = readDotEnv(`.env.${env}`);
+      const config = vars.FIREBASE_API_KEY
+        ? {
+            apiKey: vars.FIREBASE_API_KEY,
+            authDomain: vars.FIREBASE_AUTH_DOMAIN,
+            projectId: vars.FIREBASE_PROJECT_ID,
+            storageBucket: vars.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: vars.FIREBASE_MESSAGING_SENDER_ID,
+            appId: vars.FIREBASE_APP_ID,
+          }
+        : null;
+      return [env, config];
+    }),
+  );
+}
+
 /**
  * Build environment defines for renderer process
  */
@@ -133,6 +169,9 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
     __BUILD_ENVS__: buildEnvsDefine(),
+    __FIREBASE_ENV_CONFIGS__: JSON.stringify(
+      mode === "development" ? firebaseConfigsByEnv() : null,
+    ),
     "process.env.NODE_ENV": JSON.stringify(mode),
   };
 }

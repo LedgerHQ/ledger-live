@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { DdRum } from "@datadog/mobile-react-native";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
-import { track } from "~/analytics";
 import { navigationRef } from "~/rootnavigation";
 import { viewNamePredicate } from "~/datadog";
 import { ddAddViewLoadingTime } from "../ddAddViewLoadingTime";
@@ -20,7 +20,6 @@ jest.mock("@datadog/mobile-react-navigation", () => ({
 jest.mock("@datadog/mobile-react-native", () => ({
   DdRum: { addViewLoadingTime: jest.fn() },
 }));
-jest.mock("~/analytics", () => ({ track: jest.fn() }));
 jest.mock("~/rootnavigation", () => ({ navigationRef: { current: {} } }));
 jest.mock("~/datadog", () => ({ viewNamePredicate: jest.fn() }));
 

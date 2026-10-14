@@ -1,10 +1,10 @@
 import { renderHook } from "tests/testSetup";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import type { CurrencyPortfolio } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
@@ -17,8 +17,8 @@ import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { AssetTableItem } from "../../types";
 import { useAllCurrencyTrends } from "../useAllCurrencyTrends";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesState: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/portfolio/portfolio", () => ({

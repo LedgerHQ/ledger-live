@@ -46,6 +46,16 @@ jest.mock("../../analytics/useContactsAnalytics", () => ({
   }),
 }));
 
+jest.mock("@ledgerhq/live-common/config/index", () => ({
+  ...jest.requireActual<typeof import("@ledgerhq/live-common/config/index")>(
+    "@ledgerhq/live-common/config/index",
+  ),
+  getCurrencyConfiguration: jest.fn(() => ({
+    status: { type: "active" },
+    chainId: 1,
+  })),
+}));
+
 const mockedUseRoute = jest.mocked(useRoute);
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);

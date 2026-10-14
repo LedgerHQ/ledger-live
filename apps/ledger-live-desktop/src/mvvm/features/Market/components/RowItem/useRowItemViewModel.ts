@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -11,19 +11,26 @@ import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector } from "~/renderer/reducers/settings";
+import { useMarketCounterValueUnit } from "LLD/features/Market/hooks/useMarketCounterValueUnit";
 
 type UseRowItemViewModelProps = {
   currency?: MarketCurrencyData | null;
+  counterCurrency?: string;
   toggleStar: () => void;
   range?: string;
 };
 
-export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemViewModelProps) {
+export function useRowItemViewModel({
+  currency,
+  counterCurrency,
+  toggleStar,
+  range,
+}: UseRowItemViewModelProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
-  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
+  const counterValueUnit = useMarketCounterValueUnit(counterCurrency);
   const locale = useSelector(localeSelector);
 
   const {

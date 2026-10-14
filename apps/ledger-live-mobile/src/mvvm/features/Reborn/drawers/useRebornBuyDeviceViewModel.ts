@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useRebornBuyDeviceDrawerController } from "../hooks/useRebornBuyDeviceDrawerController";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { setOnboardingHasDevice } from "~/actions/settings";
-import { track } from "~/analytics";
 import { BuyDeviceNavigatorParamList } from "~/components/RootNavigator/types/BuyDeviceNavigator";
 import {
   BaseNavigationComposite,

@@ -1,6 +1,6 @@
 import React from "react";
 import PageHeader from "LLD/components/PageHeader";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import PortfolioBalanceSummary from "~/renderer/screens/dashboard/GlobalSummary";
 import { colors } from "~/renderer/styles/theme";
 import useAnalyticsViewModel from "./useAnalyticsViewModel";

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
@@ -10,7 +11,6 @@ import { Keyboard, StyleSheet, Switch, TouchableWithoutFeedback, View } from "re
 import SafeAreaView from "~/components/SafeAreaView";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
 import CancelButton from "~/components/CancelButton";

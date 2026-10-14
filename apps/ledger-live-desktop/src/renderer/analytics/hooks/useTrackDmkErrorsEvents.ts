@@ -1,4 +1,4 @@
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { isDmkError } from "@ledgerhq/live-dmk-desktop";
 
 const ErrorEvents = [
@@ -79,8 +79,12 @@ export const useTrackDmkErrorsEvents = ({
   const properties = { subError: error._tag };
   const groupedError = ErrorEvents.find(({ tags }) => tags.includes(error._tag));
 
-  track("Error:", groupedError ? groupedError.name : error._tag, {
-    ...properties,
-    error: groupedError ? groupedError.name : error._tag,
+  track({
+    category: "Error:",
+    name: groupedError ? groupedError.name : error._tag,
+    props: {
+      ...properties,
+      error: groupedError ? groupedError.name : error._tag,
+    },
   });
 };

@@ -1,3 +1,4 @@
+import { TEST_LOGGER } from "./__tests__/fixtures/coinConfig";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { ChainAdapter } from "./chain-adapters/types";
@@ -7,10 +8,6 @@ import resolver from "./hw-getFullViewingKey";
 
 jest.mock("./chain-adapters/registry", () => ({
   getChainAdapter: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/logs", () => ({
-  log: jest.fn(),
 }));
 
 const mockedGetChainAdapter = jest.mocked(getChainAdapter);
@@ -37,7 +34,7 @@ describe("hw-getFullViewingKey resolver", () => {
     };
     mockedGetChainAdapter.mockReturnValue(adapter);
 
-    const result = await resolver(signerContext)("device-id", {
+    const result = await resolver(signerContext, TEST_LOGGER)("device-id", {
       currency,
       path: "44'/133'/0'",
     });
@@ -53,7 +50,7 @@ describe("hw-getFullViewingKey resolver", () => {
       getFullViewingKey: adapterFn,
     });
 
-    await resolver(signerContext)("device-id", {
+    await resolver(signerContext, TEST_LOGGER)("device-id", {
       currency,
       path: "44'/133'/0'",
     });
@@ -70,7 +67,7 @@ describe("hw-getFullViewingKey resolver", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
 
     await expect(
-      resolver(signerContext)("device-id", { currency: bitcoin, path: "44'/0'/0'" }),
+      resolver(signerContext, TEST_LOGGER)("device-id", { currency: bitcoin, path: "44'/0'/0'" }),
     ).rejects.toThrow("bitcoin does not support full viewing key export");
   });
 
@@ -84,7 +81,7 @@ describe("hw-getFullViewingKey resolver", () => {
     });
 
     await expect(
-      resolver(signerContext)("device-id", { currency, path: "44'/133'/0'" }),
+      resolver(signerContext, TEST_LOGGER)("device-id", { currency, path: "44'/133'/0'" }),
     ).rejects.toThrow("zcash does not support full viewing key export");
   });
 
@@ -95,7 +92,7 @@ describe("hw-getFullViewingKey resolver", () => {
     });
 
     await expect(
-      resolver(signerContext)("device-id", { currency, path: "44'/133'/0'" }),
+      resolver(signerContext, TEST_LOGGER)("device-id", { currency, path: "44'/133'/0'" }),
     ).rejects.toThrow("device locked");
   });
 
@@ -105,7 +102,7 @@ describe("hw-getFullViewingKey resolver", () => {
       getFullViewingKey: jest.fn().mockResolvedValue("uview1key"),
     });
 
-    const result = await resolver(signerContext)("device-id", {
+    const result = await resolver(signerContext, TEST_LOGGER)("device-id", {
       currency,
       path: "m/44'/133'/0'",
     });

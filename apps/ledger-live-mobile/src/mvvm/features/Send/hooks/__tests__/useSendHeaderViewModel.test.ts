@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
@@ -15,7 +16,6 @@ import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
-import { track } from "~/analytics";
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
@@ -42,10 +42,6 @@ jest.mock("../../context/SendFlowTrackingContext");
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-  screen: jest.fn(),
-}));
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
@@ -124,6 +120,7 @@ describe("useSendHeaderViewModel", () => {
     });
     mockRecipientSearch.value = "";
     mockedUseSendFlowTracking.mockReturnValue({
+      flowSessionId: "flow-id",
       inputMethod: "manual",
       resultType: null,
       recipientType: "external address",
@@ -132,6 +129,11 @@ describe("useSendHeaderViewModel", () => {
       setRecipientResolution: jest.fn(),
       resetRecipientResolution: jest.fn(),
       markContactSaved: jest.fn(),
+      trackMessage: jest.fn(),
+      scheduleMessage: jest.fn(),
+      flushMessage: jest.fn(),
+      clearPendingMessage: jest.fn(),
+      endSession: jest.fn(),
     });
     mockedUseSendFlowData.mockReturnValue({
       uiConfig: {

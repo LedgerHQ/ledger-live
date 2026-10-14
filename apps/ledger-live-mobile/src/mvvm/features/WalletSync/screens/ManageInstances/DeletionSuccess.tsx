@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Success } from "../../components/Success";
 import { useTranslation } from "~/context/Locale";
@@ -6,7 +7,6 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 
 import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import { track } from "~/analytics";
 
 type Props = BaseComposite<
   StackNavigatorProps<

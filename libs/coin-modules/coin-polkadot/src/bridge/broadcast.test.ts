@@ -1,9 +1,8 @@
 import { Operation } from "@ledgerhq/types-live";
-import coinConfig, { type PolkadotCoinConfig } from "../config";
+import type { PolkadotCoinConfig } from "../config";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-import { broadcast } from "./broadcast";
-
-coinConfig.setCoinConfig(() => ({}) as unknown as PolkadotCoinConfig);
+import { buildBroadcast } from "./broadcast";
 
 const mockSubmitExtrinsic = jest.fn();
 
@@ -30,6 +29,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => {
 });
 
 const account = createFixtureAccount();
+const broadcast = buildBroadcast(createMockPolkadotContext());
 
 describe("broadcast", () => {
   it("should broadcast the signed operation and return an operation with the hash", async () => {

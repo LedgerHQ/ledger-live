@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import TrackScreen from "~/analytics/TrackScreen";
 
 type Props = {
   pinCode: string;

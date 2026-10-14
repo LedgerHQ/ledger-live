@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { resolveMaxSupplyDisplay } from "@ledgerhq/asset-detail";

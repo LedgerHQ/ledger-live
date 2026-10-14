@@ -14,6 +14,7 @@ export const RowItem = memo<RowItemContainerProps>(function RowItem({
 }: RowItemContainerProps) {
   const viewModel = useRowItemViewModel({
     currency,
+    counterCurrency,
     toggleStar,
     range,
   });

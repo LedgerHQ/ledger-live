@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { FlatList, ListRenderItemInfo, StyleSheet, View as RNView } from "react-native";
-import { TrackScreen } from "~/analytics";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import SafeAreaView from "~/components/SafeAreaView";
 import Circle from "~/components/Circle";

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { cardanoCoinConfig as config } from "../fixtures/config";
 import { submitTransaction } from "../api/submitTransaction";
 import { broadcast } from "./broadcast";
 
@@ -8,8 +8,6 @@ jest.mock("../api/submitTransaction", () => ({
 
 const mockSubmitTransaction = jest.mocked(submitTransaction);
 
-const currency = getCryptoCurrencyById("cardano");
-
 describe("broadcast function", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -18,19 +16,19 @@ describe("broadcast function", () => {
   it("should submit the signed transaction and return its hash", async () => {
     mockSubmitTransaction.mockResolvedValue({ hash: "mockedHash" });
 
-    const result = await broadcast(currency, { signature: "signedTxPayload" });
+    const result = await broadcast(config, { signature: "signedTxPayload" });
 
     expect(mockSubmitTransaction).toHaveBeenCalledWith({
       transaction: "signedTxPayload",
-      currency,
+      config,
     });
     expect(result).toBe("mockedHash");
   });
 
-  it("ignores broadcastConfig and submits only the signature and currency", async () => {
+  it("ignores broadcastConfig and submits only the signature and config", async () => {
     mockSubmitTransaction.mockResolvedValue({ hash: "mockedHash" });
 
-    await broadcast(currency, {
+    await broadcast(config, {
       signature: "signedTxPayload",
       broadcastConfig: { mevProtected: true },
     });
@@ -38,14 +36,14 @@ describe("broadcast function", () => {
     expect(mockSubmitTransaction).toHaveBeenCalledTimes(1);
     expect(mockSubmitTransaction).toHaveBeenCalledWith({
       transaction: "signedTxPayload",
-      currency,
+      config,
     });
   });
 
   it("should throw an error if submitTransaction fails", async () => {
     mockSubmitTransaction.mockRejectedValue(new Error("tx submission failed"));
 
-    await expect(broadcast(currency, { signature: "signedTxPayload" })).rejects.toThrow(
+    await expect(broadcast(config, { signature: "signedTxPayload" })).rejects.toThrow(
       "tx submission failed",
     );
   });
@@ -53,7 +51,7 @@ describe("broadcast function", () => {
   it("throws a clear error when a 2xx response is missing the transaction hash", async () => {
     mockSubmitTransaction.mockResolvedValue({} as { hash: string });
 
-    await expect(broadcast(currency, { signature: "signedTxPayload" })).rejects.toThrow(
+    await expect(broadcast(config, { signature: "signedTxPayload" })).rejects.toThrow(
       "missing the transaction hash",
     );
   });

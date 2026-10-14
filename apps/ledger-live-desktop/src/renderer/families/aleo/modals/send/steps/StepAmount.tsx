@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useState } from "react";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";

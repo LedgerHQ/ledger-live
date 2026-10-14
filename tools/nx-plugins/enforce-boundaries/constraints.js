@@ -67,8 +67,8 @@ const BOUNDARY_EXCEPTIONS = [
 /**
  * Packages no workspace manifest may declare, whatever the dependency field.
  *
- * `hoist=false` means a package can only resolve what it declares, so banning the
- * declaration is enough to ban the import too — an undeclared import fails to resolve.
+ * A workspace package does not resolve from the pnpm virtual store, so banning
+ * the declaration bans the import too — an undeclared import fails to resolve.
  */
 const BANNED_DEPENDENCIES = [];
 

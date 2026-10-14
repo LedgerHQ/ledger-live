@@ -38,7 +38,11 @@ export class ModularAssetDialog extends Dialog {
   async selectAssetByTicker(currency: Currency) {
     await expect(this.searchInput).toBeVisible();
     await this.searchInput.fill(currency.ticker);
-    await this.assetItemRow(currency.ticker).first().click();
+    const row = this.assetItemRow(currency.ticker).first();
+    await expect(row).toBeVisible();
+    await this.assetListContainer.hover();
+    await this.page.mouse.wheel(0, 1);
+    await row.click();
   }
 
   @step("Check asset $0 amount is masked in discreet mode")

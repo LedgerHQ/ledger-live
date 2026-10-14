@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { useSelector } from "~/context/hooks";
 import { useFeature } from "@features/platform-feature-flags";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/analytics";
 import { EntryPoint, EntryPointsData } from "../types";
 import CtaEntryPoint from "../components/CtaEntryPoint";
 import CardEntryPoint from "../components/CardEntryPoint";

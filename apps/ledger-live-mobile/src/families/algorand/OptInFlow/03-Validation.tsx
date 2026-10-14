@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch } from "~/context/hooks";
@@ -7,7 +8,6 @@ import { useTheme } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
 import { useSignWithDevice } from "~/logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { TrackScreen } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateOnDevice from "~/components/ValidateOnDevice";
 import SkipLock from "~/components/behaviour/SkipLock";

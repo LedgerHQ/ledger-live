@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Flex, Text } from "@ledgerhq/react-ui";
 import ExitIcon from "~/renderer/icons/ExitIcon";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import styled, { useTheme } from "styled-components";
 
 export type Props = {

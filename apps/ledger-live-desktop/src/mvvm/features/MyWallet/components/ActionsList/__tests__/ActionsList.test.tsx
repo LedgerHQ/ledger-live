@@ -1,7 +1,7 @@
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ActionsList } from "..";
 import ContextMenuContext from "../../ContextMenuContext";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";

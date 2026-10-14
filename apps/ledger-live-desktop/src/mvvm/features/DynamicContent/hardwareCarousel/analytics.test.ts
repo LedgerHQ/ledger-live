@@ -1,4 +1,4 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import {
   HARDWARE_CAROUSEL_PAGE,
   trackHardwareCarouselShown,
@@ -8,8 +8,8 @@ import {
   type HardwareCarouselSharedAnalyticsProps,
 } from "./analytics";
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -31,14 +31,14 @@ describe("hardware carousel analytics", () => {
       trackHardwareCarouselShown(mockSharedProps);
 
       expect(trackPage).toHaveBeenCalledWith(
-        HARDWARE_CAROUSEL_PAGE,
-        undefined,
         {
-          name: HARDWARE_CAROUSEL_PAGE,
-          ...mockSharedProps,
+          category: HARDWARE_CAROUSEL_PAGE,
+          props: {
+            name: HARDWARE_CAROUSEL_PAGE,
+            ...mockSharedProps,
+          },
         },
-        true,
-        false,
+        { updateRoutes: true },
       );
     });
   });

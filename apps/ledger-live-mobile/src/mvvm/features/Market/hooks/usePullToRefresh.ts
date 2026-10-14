@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { track } from "~/analytics";
 
 interface UsePullToRefreshProps {
   loading: boolean;

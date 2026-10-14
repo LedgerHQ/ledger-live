@@ -1,4 +1,4 @@
-import { KeepProtectionSheet } from "@features/flow-app-lock";
+import { KeepProtectionSheet } from "@features/flow-app-password-removal";
 import { Switch } from "@ledgerhq/native-ui";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

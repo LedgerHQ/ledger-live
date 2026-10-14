@@ -1,15 +1,16 @@
 import type { TransactionIntent, StringMemo } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import type { CardanoCoinConfig } from "../config";
+import { cardanoCoinConfig } from "../fixtures/config";
 import { estimateFees } from "../logic/estimateFees";
 
 jest.mock("../logic/estimateFees");
 const mockEstimateFees = jest.mocked(estimateFees);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config = cardanoCoinConfig;
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({ ...config, status: { type: "active" } }),
+  config: async () => config,
   logger: () => {},
 };
 
@@ -27,7 +28,7 @@ describe("estimateFees", () => {
     jest.clearAllMocks();
   });
 
-  it("delegates to logic estimateFees with the resolved currency and intent", async () => {
+  it("delegates to logic estimateFees with the resolved config and intent", async () => {
     const estimation = { value: 170_000n };
     mockEstimateFees.mockResolvedValue(estimation);
 
@@ -36,8 +37,9 @@ describe("estimateFees", () => {
 
     expect(result).toBe(estimation);
     expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-    expect(mockEstimateFees.mock.calls[0][0].id).toBe("cardano");
-    expect(mockEstimateFees.mock.calls[0][1]).toBe(intent);
+    expect(mockEstimateFees.mock.calls[0][0]).toBe(config);
+    expect(mockEstimateFees.mock.calls[0][1]).toBe("cardano");
+    expect(mockEstimateFees.mock.calls[0][2]).toBe(intent);
   });
 
   it("accepts but ignores customFeesParameters (no fee market on Cardano)", async () => {
@@ -49,8 +51,8 @@ describe("estimateFees", () => {
 
     expect(result).toBe(estimation);
     // The second positional arg (customFeesParameters) is not forwarded to the logic layer.
-    expect(mockEstimateFees.mock.calls[0]).toHaveLength(2);
-    expect(mockEstimateFees.mock.calls[0][1]).toBe(intent);
+    expect(mockEstimateFees.mock.calls[0]).toHaveLength(3);
+    expect(mockEstimateFees.mock.calls[0][2]).toBe(intent);
   });
 
   it("propagates errors from logic estimateFees", async () => {

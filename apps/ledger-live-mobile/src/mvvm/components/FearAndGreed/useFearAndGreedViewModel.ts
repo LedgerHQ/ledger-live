@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useState, useCallback } from "react";
 import { useGetFearAndGreedLatestQuery } from "@domain/api-market-index-fear-and-greed";
 import type { FearAndGreedViewModel } from "./types";
-import { track } from "~/analytics";
 import { FEAR_AND_GREED_REFRESH_INTERVAL_MS } from "./constants";
 
 const BUTTON_NAME = "mood_index_definition";

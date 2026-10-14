@@ -1,3 +1,4 @@
+import { flush, track } from "@shared/analytics";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCallback, useMemo, useRef } from "react";
@@ -20,7 +21,6 @@ import {
   LandingPageUseCase,
   WalletContentCard,
 } from "./types";
-import { flush, track } from "../analytics";
 import {
   finalizeContentCardEventProperties,
   ContentCardEvent,

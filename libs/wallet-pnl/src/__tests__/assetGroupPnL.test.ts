@@ -15,7 +15,7 @@ import {
   USDC_BSC_UNIT,
 } from "../scenarios/currencies";
 import { buy, resetOperationIdCounter } from "../scenarios/operations";
-import { buildMultiCV } from "../scenarios/countervalues";
+import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
 import { expectBN } from "./helpers/bn";
 
 const FIAT_MAJOR_TO_MINOR = new BigNumber(100);
@@ -159,7 +159,7 @@ describe("computeAssetGroupPnL", () => {
     });
 
     it("sums two funded accounts that use different magnitudes", () => {
-      // 1000 USDC @ $1 on Ethereum + 1000 USDC @ $1 on BNB Chain ⇒ $1 average.
+      // 1000 USDC @ $1 on Ethereum + 1000 USDC @ $1 on BNB Smart Chain ⇒ $1 average.
       const group = computeAssetGroupPnL([makeBscUsdc(1000), makeEthUsdc(1000)], buildCV(), USD)!;
 
       expectBN(group.averageEntryPrice).toBeCloseToBN(ONE_USD, 0);

@@ -4,7 +4,7 @@ import { cn } from "LLD/utils/cn";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { RecipientScannerProvider } from "../context/RecipientScannerContext";
-import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS, type StepRenderer } from "@ledgerhq/live-common/flows/wizard/types";
 import {
   SEND_FLOW_STEP,
   type SendFlowStep,
@@ -12,20 +12,37 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
-import { AnimatedHeight } from "./AnimatedHeight";
-import { track } from "~/renderer/analytics/segment";
+import { AnimatedHeight, useAnimatedHeightCapped } from "./AnimatedHeight";
+import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
 import { getSendFlowTrackingPage } from "../utils/contactTracking";
+import { useSponsoredPhaseNavigator } from "../hooks/useSponsoredPhaseNavigator";
 
 type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
 }>;
 
+function SendFlowAnimatedStep({ StepComponent }: { StepComponent: StepRenderer }) {
+  const isCapped = useAnimatedHeightCapped();
+
+  return (
+    <div
+      className={cn(
+        "flex animate-fade-in flex-col",
+        isCapped && "scrollbar-custom min-h-0 flex-1 overflow-y-auto",
+      )}
+    >
+      <StepComponent />
+    </div>
+  );
+}
+
 export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
+  useSponsoredPhaseNavigator();
   const { state } = useSendFlowData();
   const { recipientType } = useSendFlowTracking();
   const { selectedContact } = useRecipientContactSelection();
@@ -57,7 +74,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
     ],
   );
 
-  const dialogHeight = currentStepConfig?.height ?? "fixed";
+  const dialogHeight = currentStepConfig?.height ?? "fit";
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
@@ -65,7 +82,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogContent className="text-base">
+      <DialogContent className={cn("text-base", shouldAnimateHeight && "max-h-[calc(100vh-2rem)]")}>
         {shouldShowStatusGradient && (
           <div
             className={cn("pointer-events-none absolute inset-x-0 top-0 h-full", {
@@ -76,15 +93,10 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
         )}
         <RecipientScannerProvider>
           {shouldAnimateHeight ? (
-            <AnimatedHeight>
-              <div className="flex flex-col">
-                <SendHeader />
-                {StepComponent && (
-                  <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
-                    <StepComponent />
-                  </div>
-                )}
-              </div>
+            <AnimatedHeight header={<SendHeader />}>
+              {StepComponent ? (
+                <SendFlowAnimatedStep key={wizard.currentStep} StepComponent={StepComponent} />
+              ) : null}
             </AnimatedHeight>
           ) : (
             <>

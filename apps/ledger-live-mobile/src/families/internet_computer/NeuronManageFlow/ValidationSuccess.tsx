@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

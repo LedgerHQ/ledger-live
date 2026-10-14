@@ -12,6 +12,10 @@ New code goes in the [monorepo layers](./docs/monorepo-architecture.md) — `sha
 
 When creating a new package, follow [docs/new-library.md](./docs/new-library.md) guidelines.
 
+## Third-party libraries
+
+New runtime third-party libraries are not added to apps directly (framework singletons, the design system and tooling excepted). The lowest valid package of the [monorepo layers](./docs/monorepo-architecture.md) (`shared/`, `domain/`, `features/`) owns each one and exposes our own API. Before adding a dependency to `apps/*/package.json`, read the [wrap-third-party-libs](./.agents/skills/wrap-third-party-libs/SKILL.md) skill.
+
 ## Repo Commands
 
 Prefer commands given in local README files. For example appls like [Ledger Wallet Desktop](./apps/ledger-live-desktop/README.md) and [Ledger Wallet Mobile](./apps/ledger-live-mobile/README.md) have very specific commands for setup, dev and build commands.

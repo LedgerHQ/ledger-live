@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 import { useNavigation } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback } from "react";
-import { track } from "../../../analytics";
 import { NavigatorName, ScreenName } from "~/const";
 
 type Props = {

@@ -1,5 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useAssetChartDataInCounterValue } from "@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue";
 import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
 import { useCurrencyData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
@@ -9,7 +9,10 @@ import { createMarketCurrencyData, withMarketState } from "../../__tests__/helpe
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
 jest.mock("@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue");
 jest.mock("@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency");
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate");
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
+  useUsdToFiatRate: jest.fn(),
+}));
 
 const mockedUseCurrencyData = jest.mocked(useCurrencyData);
 const mockedUseAssetChartDataInCounterValue = jest.mocked(useAssetChartDataInCounterValue);

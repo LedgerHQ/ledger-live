@@ -12,7 +12,7 @@ import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Separator } from "./Separator";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ScreenId } from "../Tutorial";
 import { OnboardingContext } from "../../index";
 import { OnboardingUseCase } from "../../OnboardingUseCase";

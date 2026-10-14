@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { getAttachedWebview, useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewTag } from "./types";
 import type { RefObject } from "react";
@@ -18,8 +18,10 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
   useDAppManifestCurrencyIds: jest.fn(() => []),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 const mockManifest: LiveAppManifest = {

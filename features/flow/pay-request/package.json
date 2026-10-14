@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-request",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "Pay request flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -66,12 +66,6 @@
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

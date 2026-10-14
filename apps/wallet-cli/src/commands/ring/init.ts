@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import os from "node:os";
-import { Session } from "../../session/session-store";
+import { Session, withSessionLock } from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { savePrivateKey, hasStoredKey } from "../../key-ring/keychain";
 import { generatePasswordSalt, deriveWrappingKey } from "../../key-ring/crypto";
@@ -16,6 +16,23 @@ import { trackRingInitStarted, trackRingInitCompleted } from "../../analytics/ri
 function defaultMemberName(): string {
   const raw = `${os.hostname()} (${os.platform()})`;
   return raw.slice(0, MEMBER_NAME_MAX_LENGTH);
+}
+
+/** Checked once (fast) before the password prompts and device provisioning, and again
+ * (authoritative, against a fresh read) inside the lock right before writing. */
+function assertNotYetInitialized(session: Session): void {
+  if (session.trustchain) {
+    throw new Error("Ledger Key Ring already initialized. Run `wallet-cli ring destroy` to reset.");
+  }
+  // Refuse a stray keychain key with no ring metadata (e.g. after `session reset` on a corrupt
+  // file): overwriting it would orphan the previous remote member, whose only auth key it is.
+  if (hasStoredKey()) {
+    throw new Error(
+      "A member credential already exists in the OS keychain but this session has no Ledger Key " +
+        "Ring metadata. Run `wallet-cli ring destroy` (or remove the keychain entry) before " +
+        "re-initializing.",
+    );
+  }
 }
 
 export default defineCommand({
@@ -39,21 +56,7 @@ export default defineCommand({
       network: "all",
     });
     await out.run(async () => {
-      const session = await Session.read();
-      if (session.trustchain) {
-        throw new Error(
-          "Ledger Key Ring already initialized. Run `wallet-cli ring destroy` to reset.",
-        );
-      }
-      // Refuse a stray keychain key with no ring metadata (e.g. after `session reset` on a corrupt
-      // file): overwriting it would orphan the previous remote member, whose only auth key it is.
-      if (hasStoredKey()) {
-        throw new Error(
-          "A member credential already exists in the OS keychain but this session has no Ledger Key " +
-            "Ring metadata. Run `wallet-cli ring destroy` (or remove the keychain entry) before " +
-            "re-initializing.",
-        );
-      }
+      assertNotYetInitialized(await Session.read());
 
       trackRingInitStarted({
         passwordProtected: !flags["unsecure-no-password"],
@@ -89,13 +92,29 @@ export default defineCommand({
       );
       deviceSpin?.success("Ledger Key Ring ready");
 
-      await savePrivateKey(memberCredentials.privatekey, memberCredentials.pubkey, wrappingKey);
-      session.setTrustchain({
-        rootId: trustchain.rootId,
-        applicationPath: trustchain.applicationPath,
+      await withSessionLock(async () => {
+        const session = await Session.read();
+        if (session.trustchain || hasStoredKey()) {
+          // getOrCreateTrustchain above already registered this device as a member remotely — that
+          // side effect can't be undone here, so say so rather than reusing assertNotYetInitialized's
+          // plain "already initialized" (true, but silent about the orphaned remote registration).
+          throw new Error(
+            "Lost the race: another process initialized the Ledger Key Ring while this device was " +
+              "being provisioned remotely. This device was still registered as a member on Ledger " +
+              "Key Ring's side — remove it from another already-set-up device (or from Ledger Live) " +
+              "if you don't want it left there, then re-run `wallet-cli ring init` if you still need " +
+              "one on this machine.",
+          );
+        }
+
+        await savePrivateKey(memberCredentials.privatekey, memberCredentials.pubkey, wrappingKey);
+        session.setTrustchain({
+          rootId: trustchain.rootId,
+          applicationPath: trustchain.applicationPath,
+        });
+        if (passwordSalt) session.setPasswordSalt(passwordSalt);
+        session.write();
       });
-      if (passwordSalt) session.setPasswordSalt(passwordSalt);
-      session.write();
 
       out.ringInit({ memberName, rootId: trustchain.rootId });
       trackRingInitCompleted({ passwordProtected: !!passwordSalt });

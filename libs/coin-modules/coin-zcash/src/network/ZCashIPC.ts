@@ -261,24 +261,21 @@ export function createZCashIPCClient(
 
 let cachedIpcRenderer: IpcRendererLike | null = null;
 
+/** Call before `createZCashClient()`: a context-isolated host has no `require("electron")`. */
+export function setZCashIpcRenderer(ipcRenderer: IpcRendererLike): void {
+  cachedIpcRenderer = ipcRenderer;
+}
+
 function getIpcRenderer(): IpcRendererLike {
   if (cachedIpcRenderer) return cachedIpcRenderer;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const electron = require("electron") as { ipcRenderer?: IpcRendererLike };
-  if (!electron?.ipcRenderer) {
-    throw new Error("ZCashIPC: electron.ipcRenderer not available in this context");
-  }
-  cachedIpcRenderer = electron.ipcRenderer;
-  return cachedIpcRenderer;
+  throw new Error("ZCashIPC: no IPC channel configured — call setZCashIpcRenderer() first");
 }
 
 /**
- * Convenience factory for production — wires the real Electron IPC deps.
+ * Production factory: uses the IPC registered with `setZCashIpcRenderer()`, and throws if none was.
  *
- * Drop-in alias: the renderer bundle aliases
- * `@ledgerhq/coin-zcash/network/ZCash` to this module
- * (see `rspack.renderer.ts`). Callers destructure `{ createZCashClient }`,
- * so we export the IPC factory under that name to keep the public API stable.
+ * Exported under `ZCash`'s factory name so a host can alias `@ledgerhq/coin-zcash/network/ZCash`
+ * to a module that registers its IPC and delegates here (LLD: `src/renderer/zcash.ts`).
  */
 export function createZCashClient(args: ZCashIPCClientArgs): ZCashClient {
   return createZCashIPCClient(

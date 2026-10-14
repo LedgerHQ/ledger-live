@@ -3,6 +3,7 @@ import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { verifyTezosStakingOperationDetails } from "@e2e/models/stake";
+import { FF_TEZOS_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const TEZOS_STAKING_TAGS = [
   "@NanoSP",
@@ -15,13 +16,11 @@ const TEZOS_STAKING_TAGS = [
   "@family-tezos",
 ];
 
-const STAKING_FEATURE_FLAGS = { llmTezosStaking: { enabled: true } };
-
 async function initStakingAccount(delegation: DelegateType) {
   await app.init({
     speculosApp: delegation.account.currency.speculosApp,
     cliCommands: [liveDataWithAddressCommand(delegation.account)],
-    featureFlags: STAKING_FEATURE_FLAGS,
+    featureFlags: FF_TEZOS_STAKING_ENABLED,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }

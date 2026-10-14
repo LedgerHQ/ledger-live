@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useState, useMemo } from "react";
 import { useLargeMover } from "./hooks/useLargeMover";
@@ -16,7 +18,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { LoadingIndicator } from "./components/Loading";
 import { CardType } from "./types";
-import { track, TrackScreen } from "~/analytics";
 import { PAGE_NAME } from "./const";
 import { useLargeMoverChartData } from "@ledgerhq/live-common/market/hooks/useLargeMoverChartData";
 import { useLargeMoverCurrencies } from "@ledgerhq/live-common/market/hooks/useLargeMoverCurrencies";
@@ -107,7 +108,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
     currenciesIds,
     loadingChart,
   ]);
-  const renderCard = (card: CardType) => {
+  const renderCard = (card: CardType, moveBy?: (step: 1 | -1) => void) => {
     if (!card.data) return null;
 
     const cardIndex = currenciesWithId.findIndex(c => c.id === card.id);
@@ -129,6 +130,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
         range={range}
         setRange={setRange}
         currentIndex={currentIndex}
+        coinPicker={moveBy && { moveBy, position: cardIndex + 1, total: currenciesWithId.length }}
       />
     );
   };

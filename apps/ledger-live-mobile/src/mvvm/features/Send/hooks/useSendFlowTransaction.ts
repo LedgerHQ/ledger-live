@@ -34,6 +34,7 @@ export function useSendFlowTransaction({
     bridgeError,
     bridgePending,
     setAccount,
+    updateAccount,
   } = useBridgeTransaction(bridge, () => {
     if (!account) return {};
     return { account, parentAccount: parentAccount ?? undefined };
@@ -69,8 +70,9 @@ export function useSendFlowTransaction({
       updateTransaction,
       setRecipient,
       setAccount,
+      updateAccount,
     }),
-    [setTransaction, updateTransaction, setRecipient, setAccount],
+    [setTransaction, updateTransaction, setRecipient, setAccount, updateAccount],
   );
 
   return { state, actions };

@@ -10,6 +10,8 @@ const UpdaterButtonView = ({ label, appearance, isLoading, onClick }: UpdaterBut
     icon={Download}
     loading={isLoading}
     onClick={onClick}
+    title={label}
+    className="min-w-0 shrink [&>span]:block [&>span]:truncate"
     data-testid="updater-top-bar-button"
   >
     {label}

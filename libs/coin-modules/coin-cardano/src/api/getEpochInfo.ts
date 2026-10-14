@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "../config";
 import { CARDANO_EPOCH_PARAMS_ENDPOINT, CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT } from "../constants";
 import { isTestnet } from "../logic";
 import { APIEpochParams, EpochInfo } from "./api-types";
@@ -12,12 +12,10 @@ import { APIEpochParams, EpochInfo } from "./api-types";
  * activeStake exceeds 2^53 so JSON.parse rounds it, but it's only used in the APY
  * ratio (error ~1e-16, immaterial).
  */
-export async function fetchEpochInfo(currency: CryptoCurrency): Promise<EpochInfo> {
+export async function fetchEpochInfo(config: CardanoCoinConfig): Promise<EpochInfo> {
   const { data } = await network<APIEpochParams>({
     method: "GET",
-    url: isTestnet(currency)
-      ? CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT
-      : CARDANO_EPOCH_PARAMS_ENDPOINT,
+    url: isTestnet(config) ? CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT : CARDANO_EPOCH_PARAMS_ENDPOINT,
   });
 
   const epoch = data?.cardano?.[0]?.currentEpoch;

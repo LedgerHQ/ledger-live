@@ -47,6 +47,7 @@ export function useContactsPageViewModel(
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
+      searchNoResultsDescription: t("contacts.searchNoResultsDescription"),
       addContact: t("contacts.addContact"),
       ledgerSyncCheckingAccessibilityLabel: t(
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",

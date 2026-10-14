@@ -6,7 +6,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
 const MemoValueField = ({

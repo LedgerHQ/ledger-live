@@ -37,9 +37,6 @@ export const sei_evm = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1329,
-  },
   explorerViews: [
     {
       tx: "https://seistream.app/transactions/$hash",

@@ -37,9 +37,6 @@ export const rsk = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 30,
-  },
   explorerViews: [
     {
       tx: "https://rootstock.blockscout.com/tx/$hash",

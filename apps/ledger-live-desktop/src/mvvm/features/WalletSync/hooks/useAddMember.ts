@@ -9,7 +9,7 @@ import { Flow, Step, walletSyncOnboardingNewDeviceSelector } from "~/renderer/re
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   AnalyticsFlow,
   AnalyticsPage,

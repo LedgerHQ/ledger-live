@@ -2,7 +2,7 @@ import {
   useUnlockViewModel,
   type UnlockOutcome,
   type UnlockViewModel,
-} from "@features/flow-app-lock";
+} from "@features/flow-app-unlock";
 import {
   checkPassword,
   selectBiometricsEnabled,

@@ -1,4 +1,7 @@
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaGenericTransaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/hedera/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -16,14 +19,14 @@ export type HederaAssociateTokenFlowParamList = {
   [ScreenName.HederaAssociateTokenSelectDevice]: {
     accountId: string;
     parentId?: string;
-    transaction?: Transaction;
+    transaction?: HederaGenericTransaction;
     status?: TransactionStatus;
   };
   [ScreenName.HederaAssociateTokenConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
-    transaction: Transaction;
+    transaction: HederaGenericTransaction;
     status: TransactionStatus;
     appName?: string;
     selectDeviceLink?: boolean;
@@ -35,13 +38,13 @@ export type HederaAssociateTokenFlowParamList = {
   [ScreenName.HederaAssociateTokenValidationError]: {
     accountId: string;
     deviceId: string;
-    transaction: Transaction;
+    transaction: HederaGenericTransaction;
     error: Error;
   };
   [ScreenName.HederaAssociateTokenValidationSuccess]: {
     accountId: string;
     deviceId: string;
-    transaction: Transaction;
+    transaction: HederaGenericTransaction;
     result: Operation;
   };
 };

@@ -29,7 +29,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "uuid": "8.3.2"
+    "uuid": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",
@@ -61,7 +61,6 @@
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
-    "@types/uuid": "8.3.4",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "react": "catalog:",

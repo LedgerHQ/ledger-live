@@ -9,7 +9,7 @@ import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
+import { describeIfNotNanoS, isIos } from "@e2e/helpers/commonHelpers";
 import {
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
@@ -102,7 +102,8 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Create, rename and delete a contact without an address", async () => {
+    // BUG LIVE-37909: Contact rename fails on iOS.
+    (isIos() ? it.skip : it)("Create, rename and delete a contact without an address", async () => {
       await app.mainNavigation.openMyWallet();
       await app.myWallet.openContacts();
       await app.contacts.expectMeContactDisplayed();

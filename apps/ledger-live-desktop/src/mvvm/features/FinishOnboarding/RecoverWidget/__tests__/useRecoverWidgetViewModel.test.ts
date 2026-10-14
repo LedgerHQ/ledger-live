@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { getStoreValue } from "~/renderer/store";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useFeature } from "@features/platform-feature-flags";
@@ -8,6 +8,11 @@ import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useRecoverWidgetViewModel } from "LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),

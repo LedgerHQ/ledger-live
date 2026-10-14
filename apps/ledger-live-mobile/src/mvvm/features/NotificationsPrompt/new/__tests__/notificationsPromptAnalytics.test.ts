@@ -1,13 +1,9 @@
+import { track } from "@shared/analytics";
 import {
   resolveDrawerPromptTargetForAnalytics,
   trackAfterActionDecision,
   trackInactivityDecision,
 } from "../notificationsPromptAnalytics";
-import { track } from "~/analytics";
-
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-}));
 
 describe("notificationsPromptAnalytics", () => {
   beforeEach(() => {

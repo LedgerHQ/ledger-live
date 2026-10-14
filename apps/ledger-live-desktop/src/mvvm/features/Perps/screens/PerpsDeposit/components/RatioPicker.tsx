@@ -6,6 +6,7 @@ import { applyRatio } from "../utils/applyRatio";
 type RatioPickerProps = Readonly<{
   value: number;
   maxValue: number;
+  maxBuffer?: number;
   decimalPlaces: number;
   onChange: (value: number) => void;
   onMax: () => void;
@@ -15,6 +16,7 @@ type RatioPickerProps = Readonly<{
 export function RatioPicker({
   value,
   maxValue,
+  maxBuffer = 0,
   decimalPlaces,
   onChange,
   onMax,
@@ -27,7 +29,7 @@ export function RatioPicker({
   ];
 
   // MAX rounds down like the pills, so compare against the value it will actually set.
-  const maxOption = applyRatio(maxValue, 1, decimalPlaces);
+  const maxOption = applyRatio(maxValue, 1, decimalPlaces, maxBuffer);
 
   return (
     <div className={cn("flex items-center justify-center gap-16", className)}>

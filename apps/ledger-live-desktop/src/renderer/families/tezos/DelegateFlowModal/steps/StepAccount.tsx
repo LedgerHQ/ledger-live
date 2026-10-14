@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { delegatableAccountsSelector } from "~/renderer/actions/general";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

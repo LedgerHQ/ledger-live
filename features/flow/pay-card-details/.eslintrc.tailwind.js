@@ -15,7 +15,7 @@ module.exports = {
     ecmaFeatures: { jsx: true },
   },
   plugins: ["better-tailwindcss"],
-  extends: ["plugin:better-tailwindcss/recommended"],
+  extends: ["plugin:better-tailwindcss/legacy-recommended"],
   ignorePatterns: ["*.js", "*.cjs", "*.mjs", "node_modules"],
   rules: {
     "better-tailwindcss/enforce-consistent-line-wrapping": "off",
@@ -25,7 +25,7 @@ module.exports = {
   },
   settings: {
     "better-tailwindcss": {
-      entryPoint: path.join(__dirname, "../../../apps/ledger-live-desktop/src/renderer/global.css"),
+      entryPoint: path.join(__dirname, "../../platform/style/tailwind.css"),
       callees: ["cn"],
     },
   },

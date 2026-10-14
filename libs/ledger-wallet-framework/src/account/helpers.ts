@@ -157,7 +157,7 @@ export const isUpToDateAccount = (account: Account | null | undefined) => {
 
 export const makeEmptyTokenAccount = (account: Account, token: TokenCurrency): TokenAccount => ({
   type: "TokenAccount",
-  id: account.id + "+" + token.contractAddress,
+  id: encodeTokenAccountId(account.id, token),
   parentId: account.id,
   token,
   balance: new BigNumber(0),

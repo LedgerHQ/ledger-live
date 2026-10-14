@@ -37,7 +37,24 @@
     "custom.earn.isReady",
     "custom.getFunds",
     "custom.navigate",
-    "custom.getAccountIdFormats"
+    "custom.getAccountIdFormats",
+    "custom.bottomSheet.info",
+    "custom.bottomSheet.menu",
+    "custom.dialog.info",
+    "custom.dialog.confirmation",
+    "custom.liveApp.modal.open",
+    "custom.liveApp.modal.getInitialPayload",
+    "custom.liveApp.modal.close",
+    "custom.featureFlags.get"
   ],
-  "domains": ["http://localhost:3000", "https://*"]
+  "domains": ["http://localhost:3000", "https://*"],
+  "featureFlags": [
+    "swapToEarn",
+    "lwdWallet40",
+    "lwmWallet40",
+    "ptxEarnDrawerConfiguration",
+    "stableSavings",
+    "ptxEarnCtaOnMobile",
+    "llmWalletApiDeviceIntentSign"
+  ]
 }

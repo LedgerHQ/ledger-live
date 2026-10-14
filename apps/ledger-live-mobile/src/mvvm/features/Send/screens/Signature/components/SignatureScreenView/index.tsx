@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import {
@@ -8,7 +9,7 @@ import type {
   SignTransactionIntent,
   SignTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signTransactionIntent";
-import { track, usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };

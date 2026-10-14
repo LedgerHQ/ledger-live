@@ -6,7 +6,7 @@ import { closeAllModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 
 const BuyButton = ({ currency, account }: { currency: CryptoCurrency; account: Account }) => {

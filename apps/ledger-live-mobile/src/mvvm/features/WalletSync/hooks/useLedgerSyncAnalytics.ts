@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { CONTACTS_FLOW, type ContactsFlow } from "@features/flow-contacts";
-import { track } from "~/analytics";
 import { useSelector } from "~/context/hooks";
 import { returnsToEntryScreenSelector } from "~/reducers/walletSync";
 

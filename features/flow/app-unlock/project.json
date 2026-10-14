@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-app-unlock",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

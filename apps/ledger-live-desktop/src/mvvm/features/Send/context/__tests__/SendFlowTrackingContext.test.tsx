@@ -1,12 +1,28 @@
 import React, { type ReactNode } from "react";
 import { act, renderHook } from "tests/testSetup";
+import { track } from "@shared/analytics";
 import { SendFlowTrackingProvider, useSendFlowTracking } from "../SendFlowTrackingContext";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 function wrapper({ children }: Readonly<{ children: ReactNode }>) {
   return <SendFlowTrackingProvider>{children}</SendFlowTrackingProvider>;
 }
 
 describe("SendFlowTrackingContext", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it("keeps recipient resolution metadata for the whole Send flow", () => {
     const { result } = renderHook(() => useSendFlowTracking(), { wrapper });
 
@@ -29,5 +45,130 @@ describe("SendFlowTrackingContext", () => {
       recipientType: "contact",
       savedContactDuringFlow: true,
     });
+  });
+
+  it("tracks a settled message after 500 ms and deduplicates it in the flow", () => {
+    const { result } = renderHook(() => useSendFlowTracking(), { wrapper });
+    const request = {
+      account: null,
+      step: "AMOUNT" as const,
+      message: {
+        messageId: "NotEnoughGas",
+        messageType: "error" as const,
+      },
+    };
+
+    act(() => {
+      result.current.scheduleMessage(request);
+      jest.advanceTimersByTime(499);
+    });
+    expect(track).not.toHaveBeenCalled();
+
+    act(() => {
+      jest.advanceTimersByTime(1);
+    });
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith(
+      "error_displayed",
+      expect.objectContaining({
+        flow_session_id: result.current.flowSessionId,
+        step: "AMOUNT",
+        message_id: "NotEnoughGas",
+      }),
+    );
+
+    act(() => {
+      result.current.scheduleMessage(request);
+      jest.advanceTimersByTime(500);
+    });
+    expect(track).toHaveBeenCalledTimes(1);
+  });
+
+  it("flushes on blur without emitting again when the timer expires", () => {
+    const { result } = renderHook(() => useSendFlowTracking(), { wrapper });
+
+    act(() => {
+      result.current.scheduleMessage({
+        account: null,
+        step: "COIN_CONTROL",
+        message: {
+          messageId: "NotEnoughBalance",
+          messageType: "error",
+        },
+      });
+      document.dispatchEvent(new Event("focusout"));
+      jest.advanceTimersByTime(500);
+    });
+
+    expect(track).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps pending messages independent per step", () => {
+    const { result } = renderHook(() => useSendFlowTracking(), { wrapper });
+
+    act(() => {
+      result.current.scheduleMessage({
+        account: null,
+        step: "AMOUNT",
+        message: {
+          messageId: "NotEnoughBalance",
+          messageType: "error",
+        },
+      });
+      jest.advanceTimersByTime(200);
+      result.current.scheduleMessage({
+        account: null,
+        step: "RECIPIENT",
+        message: {
+          messageId: "InvalidAddress",
+          messageType: "error",
+        },
+      });
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith(
+      "error_displayed",
+      expect.objectContaining({
+        step: "AMOUNT",
+        message_id: "NotEnoughBalance",
+      }),
+    );
+
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
+
+    expect(track).toHaveBeenCalledTimes(2);
+    expect(track).toHaveBeenLastCalledWith(
+      "error_displayed",
+      expect.objectContaining({
+        step: "RECIPIENT",
+        message_id: "InvalidAddress",
+      }),
+    );
+  });
+
+  it("tracks immediate messages and keeps the session stable across rerenders", () => {
+    const { result, rerender } = renderHook(() => useSendFlowTracking(), {
+      wrapper,
+    });
+    const flowSessionId = result.current.flowSessionId;
+
+    act(() => {
+      result.current.trackMessage({
+        account: null,
+        step: "RECIPIENT",
+        message: {
+          messageId: "sanctioned",
+          messageType: "error",
+        },
+      });
+    });
+    rerender();
+
+    expect(result.current.flowSessionId).toBe(flowSessionId);
+    expect(track).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { TrackScreen } from "~/analytics";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { TransferDrawer } from "LLM/features/QuickActions";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";

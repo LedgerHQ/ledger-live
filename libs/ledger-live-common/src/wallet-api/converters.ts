@@ -160,3 +160,44 @@ export async function resolveWalletApiSpendableBalance(
     return account.spendableBalance;
   }
 }
+
+/**
+ * Heuristic single-transaction send-max for Wallet API accounts.
+ * Returns `undefined` when estimation fails so the field can be omitted —
+ * do not fall back to `spendableBalance`, which can exceed per-tx UTXO/input limits.
+ *
+ * Several bridges catch network/build failures and resolve `0` instead of rejecting
+ * (Cardano, Kaspa, Concordium). `0` is also a genuine estimate for an empty account.
+ * A zero result is kept only when the spendable balance exposed to Wallet API is already
+ * zero (see `getWalletApiSpendableBalance`: for Zcash that is the transparent pool only, so
+ * a shielded-only account legitimately estimates `0`); otherwise it is treated as an
+ * ambiguous failure and omitted. Send-flow callers still receive the raw `0` from those bridges.
+ */
+export async function resolveWalletApiMaxSpendable(
+  account: AccountLike,
+  parentAccount?: Account | null,
+): Promise<BigNumber | undefined> {
+  try {
+    const bridge = await getAccountBridge(account, parentAccount);
+    const maxSpendable = await bridge.estimateMaxSpendable({ account, parentAccount });
+
+    const walletApiSpendableBalance =
+      bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
+
+    if (maxSpendable.isZero() && !walletApiSpendableBalance.isZero()) {
+      log(
+        "wallet-api/converters",
+        "resolveWalletApiMaxSpendable: omitting ambiguous zero maxSpendable",
+        { walletApiSpendableBalance: walletApiSpendableBalance.toString() },
+      );
+      return undefined;
+    }
+
+    return maxSpendable;
+  } catch (error) {
+    log("wallet-api/converters", "resolveWalletApiMaxSpendable: omitting maxSpendable", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return undefined;
+  }
+}

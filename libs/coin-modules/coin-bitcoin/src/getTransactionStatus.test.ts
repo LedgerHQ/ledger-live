@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "./__tests__/fixtures/coinConfig";
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInput, Transaction } from "./types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
@@ -82,7 +83,7 @@ describe("getTransactionStatus on Bitcoin", () => {
       feePerByte: BigNumber(1),
     } as unknown as Transaction;
 
-    const status = await getTransactionStatus(account, transaction);
+    const status = await getTransactionStatus(TEST_CONFIG, TEST_LOGGER, account, transaction);
     expect(status.errors).toEqual({
       sender: new AddressesSanctionedError("AddressesSanctionedError", {
         addresses: sanctionedAddresses,
@@ -133,7 +134,7 @@ describe("getTransactionStatus on Bitcoin", () => {
       feePerByte: BigNumber(1),
     } as unknown as Transaction;
 
-    const status = await getTransactionStatus(account, transaction);
+    const status = await getTransactionStatus(TEST_CONFIG, TEST_LOGGER, account, transaction);
     expect(status.errors).toEqual({});
   });
 
@@ -167,7 +168,12 @@ describe("getTransactionStatus on Bitcoin", () => {
       const rbfError = new RbfBuildError("Failed to build RBF transaction: needs more fees");
       calculateFeesSpy.mockRejectedValue(rbfError);
 
-      const status = await getTransactionStatus(buildAccount(), buildTransaction());
+      const status = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(),
+      );
 
       expect(status.errors).toEqual({ replacement: rbfError });
       expect(status.errors.replacement).toBeInstanceOf(RbfBuildError);
@@ -177,9 +183,9 @@ describe("getTransactionStatus on Bitcoin", () => {
       const unknownError = new Error("network down");
       calculateFeesSpy.mockRejectedValue(unknownError);
 
-      await expect(getTransactionStatus(buildAccount(), buildTransaction())).rejects.toBe(
-        unknownError,
-      );
+      await expect(
+        getTransactionStatus(TEST_CONFIG, TEST_LOGGER, buildAccount(), buildTransaction()),
+      ).rejects.toBe(unknownError);
     });
   });
 
@@ -223,25 +229,50 @@ describe("getTransactionStatus on Bitcoin", () => {
       }) as unknown as Transaction;
 
     it("sets FeeTooLow when manual fee is below the relay floor", async () => {
-      const status = await getTransactionStatus(buildAccount(), buildTransaction(1, 3));
+      const status = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(1, 3),
+      );
       expect(status.errors.feePerByte).toBeInstanceOf(FeeTooLow);
     });
 
     it("accepts a manual fee equal to the relay floor", async () => {
-      const status = await getTransactionStatus(buildAccount(), buildTransaction(3, 3));
+      const status = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(3, 3),
+      );
       expect(status.errors.feePerByte).toBeUndefined();
     });
 
     it("applies the 1 sat/vB fallback for bitcoin when networkInfo is missing", async () => {
-      const tooLow = await getTransactionStatus(buildAccount(), buildTransaction(0.5));
+      const tooLow = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(0.5),
+      );
       expect(tooLow.errors.feePerByte).toBeInstanceOf(FeeTooLow);
 
-      const atFloor = await getTransactionStatus(buildAccount(), buildTransaction(1));
+      const atFloor = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(1),
+      );
       expect(atFloor.errors.feePerByte).toBeUndefined();
     });
 
     it("applies the 1 sat/vB fallback for bitcoin when relayFeePerByte is 0 (back-compat)", async () => {
-      const status = await getTransactionStatus(buildAccount(), buildTransaction(0.5, 0));
+      const status = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(0.5, 0),
+      );
       expect(status.errors.feePerByte).toBeInstanceOf(FeeTooLow);
     });
   });
@@ -288,18 +319,33 @@ describe("getTransactionStatus on Bitcoin", () => {
 
     it("raises DustLimit when amount is below the relay-aware dust", async () => {
       // dust = 3 * 68 * 10 = 2040 > amount 1000
-      const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 10, 10));
+      const status = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(1000, 10, 10),
+      );
       expect(status.errors.dustLimit).toBeInstanceOf(DustLimit);
     });
 
     it("does not raise DustLimit at a low relay fee for the same amount", async () => {
       // dust = 3 * 68 * 1 = 204 < amount 1000
-      const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 1, 1));
+      const status = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(1000, 1, 1),
+      );
       expect(status.errors.dustLimit).toBeUndefined();
     });
 
     it("does not compute dust (no DustLimit) when feePerByte is zero", async () => {
-      const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 0, 10));
+      const status = await getTransactionStatus(
+        TEST_CONFIG,
+        TEST_LOGGER,
+        buildAccount(),
+        buildTransaction(1000, 0, 10),
+      );
       expect(status.errors.dustLimit).toBeUndefined();
     });
   });

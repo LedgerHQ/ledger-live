@@ -1,5 +1,0 @@
-{
-  "entry": ["src/Algorand.ts"],
-  "ignoreUnused": ["jest-sonar"],
-  "ignoreUnimported": []
-}

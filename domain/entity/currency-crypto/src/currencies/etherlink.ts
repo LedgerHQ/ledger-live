@@ -37,9 +37,6 @@ export const etherlink = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 42793,
-  },
   explorerViews: [
     {
       tx: "https://explorer.etherlink.com/tx/$hash",

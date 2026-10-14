@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import Alert from "~/renderer/components/Alert";
 import { Account } from "@ledgerhq/types-live/account";

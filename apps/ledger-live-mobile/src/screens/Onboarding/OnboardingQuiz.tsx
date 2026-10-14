@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, useState } from "react";
 import { Flex, FlowStepper, Text, Button, Transitions } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
@@ -6,7 +7,6 @@ import { StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 
 import quizImage1 from "~/images/illustration/Light/_056.webp";

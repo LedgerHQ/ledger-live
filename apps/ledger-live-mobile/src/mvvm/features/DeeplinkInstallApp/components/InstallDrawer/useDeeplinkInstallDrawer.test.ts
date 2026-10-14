@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { useDeeplinkInstallDrawer } from "./useDeeplinkInstallDrawer";
 import { ScreenName, NavigatorName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/analytics";
 
 const TEST_APP_MAP: Record<string, object> = {
   Bitcoin: { appName: "Bitcoin", displayName: "Bitcoin", analyticsName: "bitcoin" },

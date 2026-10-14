@@ -27,7 +27,7 @@ import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIn
 import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 
 jest.mock("../useAddressValidation");
@@ -52,7 +52,8 @@ jest.mock("../../../../context/RecipientContinuationContext");
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
 jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -161,6 +162,12 @@ describe("useRecipientAddressModalViewModel", () => {
       setInputMethod: jest.fn(),
       setRecipientResolution,
       markContactSaved: jest.fn(),
+      flowSessionId: "flow-session-id",
+      trackMessage: jest.fn(),
+      scheduleMessage: jest.fn(),
+      flushMessage: jest.fn(),
+      clearPendingMessage: jest.fn(),
+      endSession: jest.fn(),
     });
     mockedUseSendFlowTrackingProperties.mockReturnValue({
       flow: "send",
@@ -266,19 +273,18 @@ describe("useRecipientAddressModalViewModel", () => {
       }),
     );
 
-    expect(mockedTrackPage).toHaveBeenCalledWith(
-      "Modal send - recipient result",
-      null,
-      expect.objectContaining({
+    expect(mockedTrackPage).toHaveBeenCalledWith({
+      category: "Modal send - recipient result",
+      props: expect.objectContaining({
         queryType: "address",
         resultType: "unknown address",
         inputMethod: "manual",
         queryLength: 5,
         addressAlreadyUsed: false,
       }),
-    );
+    });
     expect(setRecipientResolution).toHaveBeenCalledWith("unknown address", "external address");
-    expect(mockedTrackPage.mock.calls[0]?.[2]).not.toHaveProperty("query");
+    expect(mockedTrackPage.mock.calls[0]?.[0]?.props).not.toHaveProperty("query");
   });
 
   it("shows empty contacts state when the contacts feature is enabled and no contact matches the network", () => {
@@ -1000,7 +1006,10 @@ describe("useRecipientAddressModalViewModel", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: createAddressSearchResult({ status: "idle", hasBridgeValidationResult: false }),
+      result: createAddressSearchResult({
+        status: "idle",
+        hasBridgeValidationResult: false,
+      }),
       isLoading: true,
       validateAddress: jest.fn(),
     });
@@ -1029,7 +1038,10 @@ describe("useRecipientAddressModalViewModel", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: createAddressSearchResult({ status: "idle", hasBridgeValidationResult: false }),
+      result: createAddressSearchResult({
+        status: "idle",
+        hasBridgeValidationResult: false,
+      }),
       isLoading: true,
       validateAddress: jest.fn(),
     });
@@ -1089,6 +1101,56 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(result.current.showBridgeRecipientError).toBe(true);
     expect(result.current.bridgeRecipientError).toBe(selfTransferError);
     expect(result.current.isAddressValid).toBe(false);
+  });
+
+  it("tracks a generic recipient bridge error with a stable slot id", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "source_address" },
+      state: DEFAULT_STATE,
+      uiConfig: {} as never,
+      isRecipientAddressComplete: false,
+    });
+
+    mockedUseAddressValidation.mockReturnValue({
+      result: {
+        status: "valid",
+        error: null,
+        bridgeErrors: { recipient: new Error("Bridge recipient error") },
+        bridgeWarnings: {},
+        hasBridgeValidationResult: true,
+        matchedAccounts: [],
+        matchedContact: undefined,
+        resolvedAddress: undefined,
+        ensName: undefined,
+        isLedgerAccount: false,
+        accountName: undefined,
+        accountBalance: undefined,
+        accountBalanceFormatted: undefined,
+        isFirstInteraction: true,
+        matchedRecentAddress: undefined,
+      },
+      isLoading: false,
+      validateAddress: jest.fn(),
+    });
+
+    renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(mockedUseSendFlowTracking().scheduleMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        step: "RECIPIENT",
+        message: expect.objectContaining({
+          messageId: "error:recipient",
+          messageType: "error",
+        }),
+      }),
+    );
   });
 
   it("treats InvalidAddress as incorrect format for domain-like strings", () => {

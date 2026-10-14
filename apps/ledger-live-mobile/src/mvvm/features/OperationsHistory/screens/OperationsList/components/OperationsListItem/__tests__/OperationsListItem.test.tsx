@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -5,7 +6,6 @@ import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currenc
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { render } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import OperationsListItem from "..";
 

@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useDispatch } from "~/context/hooks";
 import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
 
@@ -30,7 +30,7 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
         flow,
         page: "Analytics Opt In Prompt Main",
       },
-      true,
+      { mandatory: true },
     );
   };
   const clickOnRefuseAll = () => {
@@ -42,7 +42,7 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
         flow,
         page: "Analytics Opt In Prompt Main",
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
   };
   const navigateToMoreOptions = () => {
@@ -59,7 +59,7 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
         flow,
         page: "Analytics Opt In Prompt Main",
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
   };
   const clickOnMoreOptionsConfirm = (
@@ -76,7 +76,7 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
         flow,
         page: "Analytics Opt In Prompt Preferences",
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
   };
 

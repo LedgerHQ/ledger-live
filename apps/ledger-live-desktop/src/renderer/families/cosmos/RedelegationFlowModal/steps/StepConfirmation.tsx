@@ -3,8 +3,8 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { track } from "~/renderer/analytics/segment";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -35,7 +35,7 @@ function StepConfirmation({
   source,
   account,
 }: StepProps) {
-  const voteAccAddress = transaction?.validators[0]?.address;
+  const voteAccAddress = transaction?.dstValAddress;
   const currencyId = account.currency.id;
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
 

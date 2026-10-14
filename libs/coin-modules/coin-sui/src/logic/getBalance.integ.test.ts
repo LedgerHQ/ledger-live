@@ -15,6 +15,8 @@ describe.skip("getBalance", () => {
         grpcUrl: "https://fullnode.testnet.sui.io:443",
       },
       features: { transport: "grpc" },
+      name: "Sui (Testnet)",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

@@ -11,7 +11,7 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { useSelector } from "LLD/hooks/redux";
 import { toLargeScreenUpsellDeviceModelAnalyticsValue } from "LLD/features/LargeScreenUpsell/analytics";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -110,14 +110,14 @@ export function useBackupHubViewModel({ onBack, onClose }: BackupHubParams): Bac
     }
 
     trackPage(
-      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-      undefined,
       {
-        name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-        ...upsellSharedAnalyticsProps,
+        category: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        props: {
+          name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+          ...upsellSharedAnalyticsProps,
+        },
       },
-      true,
-      false,
+      { updateRoutes: true },
     );
   }, [upsellSharedAnalyticsProps]);
 

@@ -1,9 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track, TrackScreen } from "~/analytics";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;

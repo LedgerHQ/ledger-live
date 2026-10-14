@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -11,9 +12,11 @@ import { ScreenName } from "~/const";
 import { getSendSuccessScreenName } from "../../../utils/getSendSuccessScreenName";
 import type { SendFlowNavigationProp } from "../../../types";
 import { useSendSignature } from "../../../context/SendSignatureContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
-import { screen, track } from "~/analytics";
+import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
+import { getActiveWarningIds } from "../../../utils/messageTracking";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 
 type AmountScreenViewModelBase = Readonly<{
@@ -43,8 +46,9 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { transaction: transactionActions, close } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
   const { startSigning } = useSendSignature();
-  const { recipientType } = useSendFlowTracking();
+  const { flowSessionId, recipientType } = useSendFlowTracking();
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const { reviewReady: sponsoredReviewReady } = useSponsoredSend();
 
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
@@ -62,19 +66,36 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   useEffect(() => {
-    void screen("Modal send - step amount", undefined, trackingProperties);
+    void trackPage({ category: "Modal send - step amount", props: trackingProperties });
   }, [trackingProperties]);
   const { displayMode: inputMode } = useSendAmountDisplayMode();
+  const activeWarningsTrackingProperties = useMemo(
+    () => getActiveWarningsTrackingProperties(status ? getActiveWarningIds(status) : []),
+    [status],
+  );
 
   const onReview = useCallback(() => {
+    // Wait: the rent screen would craft TX-A without an intent, or for a pick about to revert.
+    if (!sponsoredReviewReady) return;
     track("button_clicked", {
       ...trackingProperties,
       button: "review",
       page: "step amount",
       input_mode: inputMode,
+      flow_session_id: flowSessionId,
+      ...activeWarningsTrackingProperties,
     });
     startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
-  }, [startSigning, navigation, trackingProperties, inputMode, source]);
+  }, [
+    activeWarningsTrackingProperties,
+    flowSessionId,
+    startSigning,
+    navigation,
+    trackingProperties,
+    inputMode,
+    source,
+    sponsoredReviewReady,
+  ]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.navigate(ScreenName.SendFlowCoinControl);

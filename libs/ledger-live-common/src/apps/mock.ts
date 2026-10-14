@@ -3,7 +3,7 @@ import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "..
 import { getDependencies, getDependents, whitelistDependencies } from "./polyfill";
 import { findCryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
+import { getBTCValues } from "@domain/entity-market-countervalues/mock";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import { App, AppType, ApplicationV2, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 

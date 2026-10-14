@@ -41,7 +41,7 @@ export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax
 
 Consider adding these exports to your profile so they persist.
 
-Specs under `specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
+Specs under `specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md). CI mints one session before workers when its selected spec paths include `/paytab/`. Locally, login happens only when a selected Pay tab test reaches `launchApp`.
 
 ### 3. Build
 
@@ -191,3 +191,10 @@ export E2E_MOBILE_FEATURE_FLAGS="some-preset"
 ```
 
 Or use the "Choose a feature flag set" options dropdown on the Github workflow.
+
+### 9. Stall watchdog
+
+A forked jest worker whose event loop freezes is killed after 90 seconds, so Detox retries the spec
+instead of the shard hanging. Look for `[stall-watchdog]` in the log. Local runs are in-band and
+unwatched; to debug with `--maxWorkers=2` or more, `export E2E_STALL_WATCHDOG=0`. See
+[Stall watchdog](docs/stall-watchdog.md) for how it works.

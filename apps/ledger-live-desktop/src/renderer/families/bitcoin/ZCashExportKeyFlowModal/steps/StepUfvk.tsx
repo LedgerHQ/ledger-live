@@ -2,7 +2,7 @@ import React from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { Text, Alert } from "@ledgerhq/react-ui";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import type { StepProps } from "../types";
 import { Container } from "../shared/Container";
 

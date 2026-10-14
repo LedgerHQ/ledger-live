@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { getMessageProperties } from "@ledgerhq/live-common/families/evm/utils";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
@@ -6,7 +7,6 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { ScrollView, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import CurrencyIcon from "~/components/CurrencyIcon";

@@ -7,7 +7,7 @@ import {
   setMarketBannerRanking,
 } from "~/renderer/reducers/marketBanner";
 import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 const RANKINGS: readonly MarketBannerRanking[] = ["trending", "gainers", "losers", "favorites"];
 

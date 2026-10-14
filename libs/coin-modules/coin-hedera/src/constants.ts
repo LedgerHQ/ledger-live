@@ -135,6 +135,8 @@ export const STAKING_REWARD_HASH_SUFFIX = "-staking-reward";
  */
 export const STAKING_REWARD_ACCOUNT_ID = "0.0.800";
 
+export const CLAIM_REWARDS_TRIGGER_TINYBARS = 1;
+
 export const MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE: Record<string, OperationType> = {
   [HEDERA_TRANSACTION_NAMES.TokenAssociate]: "ASSOCIATE_TOKEN",
   [HEDERA_TRANSACTION_NAMES.ContractCall]: "CONTRACT_CALL",

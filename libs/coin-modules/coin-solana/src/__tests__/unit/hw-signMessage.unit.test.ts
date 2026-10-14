@@ -10,6 +10,8 @@ coinConfig.setCoinConfig(() => ({
   legacyOCMSMaxVersion: "1.8.0",
   token2022Enabled: false,
   status: { type: "active" },
+  name: "Solana",
+  unit: { name: "SOL", code: "SOL", magnitude: 9 },
 }));
 
 describe("Testing call to hardware off-chain sign message on Solana", () => {

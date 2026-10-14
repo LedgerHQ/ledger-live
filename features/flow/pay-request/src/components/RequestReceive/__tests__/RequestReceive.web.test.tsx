@@ -47,7 +47,7 @@ describe("RequestReceive (Web)", () => {
 
     expect(RequestReceiveView).toEqual(expect.any(Function));
     expect(screen.getByTestId("pay-request-receive")).toBeVisible();
-    expect(screen.getByText("Request USD Coin")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-title")).toHaveTextContent("Request USD Coin");
     expect(screen.getByText("Base network")).toBeVisible();
     expect(screen.getByTestId("pay-request-receive-address")).toHaveTextContent(
       REQUEST_RECEIVE_ADDRESS,

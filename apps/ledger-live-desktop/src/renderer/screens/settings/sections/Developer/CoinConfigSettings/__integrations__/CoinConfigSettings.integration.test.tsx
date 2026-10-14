@@ -199,11 +199,11 @@ describe("CoinConfigSettings integration", () => {
 
     it("clearing an override via Restore reverts LiveConfig to the default value", async () => {
       const { user, store } = renderSettings({
-        [SOLANA_KEY]: { token2022Enabled: true },
+        [SOLANA_KEY]: { token2022Enabled: false },
       });
 
       const overridden = LiveConfig.getValueByKey(SOLANA_KEY) as { token2022Enabled: boolean };
-      expect(overridden.token2022Enabled).toBe(true);
+      expect(overridden.token2022Enabled).toBe(false);
 
       await user.click(screen.getByRole("button", { name: /Show/i }));
       await user.click(await screen.findByText(SOLANA_KEY));
@@ -213,7 +213,7 @@ describe("CoinConfigSettings integration", () => {
         expect(coinConfigOverridesSelector(store.getState())[SOLANA_KEY]).toBeUndefined();
       });
       const restored = LiveConfig.getValueByKey(SOLANA_KEY) as { token2022Enabled: boolean };
-      expect(restored.token2022Enabled).toBe(false);
+      expect(restored.token2022Enabled).toBe(true);
     });
   });
 });

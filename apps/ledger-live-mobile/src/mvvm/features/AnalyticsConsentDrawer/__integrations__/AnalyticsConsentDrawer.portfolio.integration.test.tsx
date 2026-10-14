@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import * as analytics from "~/analytics";
-import { trackPage } from "@shared/analytics";
+import { trackPage, track } from "@shared/analytics";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
 import { ScreenName } from "~/const";
@@ -105,14 +105,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Accept all" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -141,14 +141,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Refuse all" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -177,7 +177,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
-        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+        expect(track).toHaveBeenCalledWith("button_clicked", {
           button: "analytics_consent_set_preferences",
           page: ANALYTICS_CONSENT_DRAWER_PAGE,
         });
@@ -207,14 +207,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Accept all" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -243,14 +243,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Refuse all" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -279,7 +279,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
-        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+        expect(track).toHaveBeenCalledWith("button_clicked", {
           button: "analytics_consent_set_preferences",
           page: ANALYTICS_CONSENT_DRAWER_PAGE,
         });
@@ -311,14 +311,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "Yes, continue" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -347,14 +347,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "No, stop" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -383,7 +383,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
-        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+        expect(track).toHaveBeenCalledWith("button_clicked", {
           button: "analytics_consent_set_preferences",
           page: ANALYTICS_CONSENT_DRAWER_PAGE,
         });
@@ -413,14 +413,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "Yes, continue" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -449,14 +449,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "No, stop" }));
-        expect(analytics.track).toHaveBeenCalledWith(
+        expect(track).toHaveBeenCalledWith(
           "button_clicked",
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -485,7 +485,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
-        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+        expect(track).toHaveBeenCalledWith("button_clicked", {
           button: "analytics_consent_set_preferences",
           page: ANALYTICS_CONSENT_DRAWER_PAGE,
         });
@@ -519,14 +519,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
       expectTrackedPhase("privacy");
 
       await user.press(screen.getByRole("button", { name: "Got it" }));
-      expect(analytics.track).toHaveBeenCalledWith(
+      expect(track).toHaveBeenCalledWith(
         "button_clicked",
         {
           button: "analytics_consent_privacy_got_it",
           page: ANALYTICS_CONSENT_DRAWER_PAGE,
           privacyPolicyVersion: "1.1",
         },
-        true,
+        { mandatory: true },
       );
 
       await waitFor(() => {

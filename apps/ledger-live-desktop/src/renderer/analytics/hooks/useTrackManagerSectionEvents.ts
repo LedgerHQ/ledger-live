@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { LedgerError } from "~/renderer/components/DeviceAction";
@@ -56,23 +56,23 @@ export const useTrackManagerSectionEvents = ({
       !error
     ) {
       // user accepted secure channel
-      track("Secure Channel approved", defaultPayload, isTrackingEnabled);
+      track("Secure Channel approved", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (clsImageRemoved) {
       // user removed CLS image
-      track("Deleted Custom Lock Screen", defaultPayload, isTrackingEnabled);
+      track("Deleted Custom Lock Screen", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
-      track("Secure Channel denied", defaultPayload, isTrackingEnabled);
+      track("Secure Channel denied", defaultPayload, { mandatory: isTrackingEnabled });
     } else if (error?.name === "UserRefusedDeviceNameChange") {
       // user refused device name change
-      track("Renamed Device cancelled", defaultPayload, isTrackingEnabled);
+      track("Renamed Device cancelled", defaultPayload, { mandatory: isTrackingEnabled });
     } else if (error?.name === "UserRefusedFirmwareUpdate") {
       // user refused OS update
-      track("User refused OS update via LL", defaultPayload, isTrackingEnabled);
+      track("User refused OS update via LL", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     previousAllowManagerRequested.current = allowManagerRequested;

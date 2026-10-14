@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackSendFlow, UseTrackSendFlow } from "./useTrackSendFlow";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import {
   TransportRaceCondition,
   LockedDeviceError,
@@ -10,9 +10,9 @@ import {
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 describe("useTrackSendFlow", () => {
@@ -49,7 +49,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -66,7 +66,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -94,7 +94,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -111,7 +111,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      false,
+      { mandatory: false },
     );
   });
 
@@ -130,7 +130,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -149,7 +149,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -168,7 +168,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -187,7 +187,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -204,7 +204,7 @@ describe("useTrackSendFlow", () => {
         platform: "LLD",
         page: "Send",
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

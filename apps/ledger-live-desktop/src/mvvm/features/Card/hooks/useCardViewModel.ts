@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { CARD_TRACKING_PAGE_NAME, CL_CARD_APP_ID } from "../constants";
 
 const CARD_APP_ID = "card-program";

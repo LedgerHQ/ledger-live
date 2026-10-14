@@ -1,5 +1,0 @@
-{
-  "entry": ["src/Cosmos.ts"],
-  "ignoreUnused": ["jest-sonar"],
-  "ignoreUnimported": []
-}

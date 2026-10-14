@@ -6,7 +6,7 @@ import {
 import type { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
 import React, { useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";

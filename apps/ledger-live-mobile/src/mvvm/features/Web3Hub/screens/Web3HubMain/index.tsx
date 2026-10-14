@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { View } from "react-native";
@@ -9,7 +10,6 @@ import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "~/components/TabBar/shared
 import Header, { ANIMATION_HEIGHT, TOTAL_HEADER_HEIGHT } from "./components/Header";
 import ManifestsCategoryList from "./components/ManifestsCategoryList";
 import { Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 
 const PADDING_BOTTOM = MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM;
 

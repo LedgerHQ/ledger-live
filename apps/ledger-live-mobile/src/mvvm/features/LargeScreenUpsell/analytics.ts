@@ -1,5 +1,5 @@
+import { trackPage, track } from "@shared/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { screen, track } from "~/analytics";
 
 export const LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME = "Modal - Upgrade";
 
@@ -39,11 +39,14 @@ export type LargeScreenUpsellSharedAnalyticsProps = Readonly<{
 export function trackLargeScreenUpsellModalViewed(
   sharedProps: LargeScreenUpsellSharedAnalyticsProps,
 ) {
-  screen(LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME, undefined, {
-    name: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
-    sourceFlow: "app start",
-    modalFrequencyState: "every start",
-    ...sharedProps,
+  trackPage({
+    category: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
+    props: {
+      name: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
+      sourceFlow: "app start",
+      modalFrequencyState: "every start",
+      ...sharedProps,
+    },
   });
 }
 

@@ -21,20 +21,37 @@ function setCosmosResources(
   unbondings: CosmosUnbonding[] | null | undefined,
   redelegations: CosmosRedelegation[] | null | undefined,
 ): CosmosAccount {
+  const resolvedUnbondingBalance = account.cosmosResources
+    ? account.cosmosResources.unbondingBalance.plus(unbondingBalance)
+    : unbondingBalance;
+  const resolvedUnbondings = unbondings ?? account.cosmosResources?.unbondings ?? [];
+  const resolvedRedelegations = redelegations ?? account.cosmosResources?.redelegations ?? [];
+  const delegatedBalance = delegations.reduce(
+    (sum, { amount }) => sum.plus(amount),
+    new BigNumber(0),
+  );
+  const pendingRewardsBalance = delegations.reduce(
+    (sum, { pendingRewards }) => sum.plus(pendingRewards),
+    new BigNumber(0),
+  );
+
   /** format cosmosResources given the new delegations */
   account.cosmosResources = {
     delegations,
-    delegatedBalance: delegations.reduce((sum, { amount }) => sum.plus(amount), new BigNumber(0)),
-    pendingRewardsBalance: delegations.reduce(
-      (sum, { pendingRewards }) => sum.plus(pendingRewards),
-      new BigNumber(0),
-    ),
-    unbondingBalance: account.cosmosResources
-      ? account.cosmosResources.unbondingBalance.plus(unbondingBalance)
-      : unbondingBalance,
-    unbondings: unbondings ?? account.cosmosResources?.unbondings ?? [],
-    redelegations: redelegations ?? account.cosmosResources?.redelegations ?? [],
+    delegatedBalance,
+    pendingRewardsBalance,
+    unbondingBalance: resolvedUnbondingBalance,
+    unbondings: resolvedUnbondings,
+    redelegations: resolvedRedelegations,
     sequence: (account.cosmosResources?.sequence ?? 0) + 1,
+  };
+  account.stakingResources = {
+    delegations,
+    redelegations: resolvedRedelegations,
+    unbondings: resolvedUnbondings,
+    delegatedBalance,
+    pendingRewardsBalance,
+    unbondingBalance: resolvedUnbondingBalance,
   };
   return account;
 }
@@ -380,6 +397,14 @@ function postScanAccount(
       unbondings: [],
       redelegations: [],
       sequence: 0,
+    };
+    account.stakingResources = {
+      delegations: [],
+      redelegations: [],
+      unbondings: [],
+      delegatedBalance: new BigNumber(0),
+      pendingRewardsBalance: new BigNumber(0),
+      unbondingBalance: new BigNumber(0),
     };
     account.operations = [];
   }

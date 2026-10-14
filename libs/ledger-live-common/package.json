@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "38.2.0",
+  "version": "38.3.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -225,7 +225,6 @@
     "test-bridge": "env-cmd -f .ci.bridge.env pnpm jest --ci --updateSnapshot --passWithNoTests --runInBand",
     "test-bridge-update": "UPDATE_BACKEND_MOCKS=1 env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
     "test-account-migration": "tsx src/__tests__/migration/account-migration.ts",
-    "unimported": "unimported",
     "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci"
   },
   "files": [
@@ -264,7 +263,9 @@
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^8.0.0",
     "@domain/api-aggregated-assets": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
+    "@domain/api-market-countervalues": "workspace:*",
     "@domain/api-swap-quotes": "workspace:^",
+    "@domain/entity-account-descriptor": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-client-identity": "workspace:^",
     "@domain/entity-currency": "workspace:^",
@@ -273,10 +274,14 @@
     "@domain/entity-currency-token": "workspace:^",
     "@domain/entity-currency-unit": "workspace:^",
     "@domain/entity-interest-rate": "workspace:^",
+    "@domain/entity-market-countervalues": "workspace:*",
     "@domain/entity-recent-addresses": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
+    "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-feature-flags-firebase": "workspace:^",
+    "@features/platform-market-countervalues": "workspace:*",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
@@ -312,7 +317,6 @@
     "@ledgerhq/coin-zcash": "workspace:^",
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/device-core": "workspace:^",
-    "@features/platform-device-intent": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/devices": "catalog:",
@@ -343,12 +347,9 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "catalog:",
-    "@ledgerhq/live-countervalues": "workspace:^",
-    "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-currency-format": "catalog:",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
-    "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-promise": "catalog:",
     "@ledgerhq/live-signer-aleo": "workspace:^",
@@ -449,7 +450,6 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "buffer": "catalog:",
     "camelcase": "^6.2.1",
@@ -475,13 +475,7 @@
     "ts-node": "^10.4.0",
     "typescript": "catalog:",
     "undici": "catalog:",
-    "uuid": "^8.3.2",
+    "uuid": "catalog:",
     "ws": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

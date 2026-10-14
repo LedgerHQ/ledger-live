@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useTransferDrawerViewModel } from "../useTransferDrawerViewModel";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { overrideStateWithFunds } from "LLM/features/QuickActions/__integrations__/shared";
 import { State } from "~/reducers/types";
 import type { Account } from "@ledgerhq/types-live";

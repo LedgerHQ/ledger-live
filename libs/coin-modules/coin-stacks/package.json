@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stacks",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
@@ -106,8 +106,8 @@
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@stacks/network": "^7.6.0",
-    "@stacks/transactions": "^7.6.0",
+    "@stacks/network": "catalog:",
+    "@stacks/transactions": "catalog:",
     "@zondax/ledger-stacks": "^1.0.2",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
@@ -145,7 +145,6 @@
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

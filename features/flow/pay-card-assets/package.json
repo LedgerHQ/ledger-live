@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-assets",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Pay Card linked-wallet assets list for Ledger Wallet",
   "main": "src/index.ts",
@@ -74,12 +74,6 @@
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
     "@dnd-kit/core": "catalog:",

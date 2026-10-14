@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useEffect, useCallback } from "react";
 import { Image, View, Animated } from "react-native";
 import { useChangeValidatorRotateAnim } from "~/families/shared/useChangeValidatorRotateAnim";
@@ -25,7 +26,6 @@ import Circle from "~/components/Circle";
 import Touchable from "~/components/Touchable";
 import LedgerLogo from "~/icons/LiveLogo";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 
 import { rgba } from "../../../../../../../colors";

@@ -27,6 +27,7 @@
     "undici": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "react": "catalog:"
   }
 }

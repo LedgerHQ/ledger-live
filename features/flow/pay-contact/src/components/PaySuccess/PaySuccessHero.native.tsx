@@ -38,7 +38,11 @@ export function PaySuccessHero({
         <Avatar size={AVATAR_SIZE} />
       )}
       <Box lx={{ alignItems: "center", gap: "s8" }}>
-        <Text typography="heading2SemiBold" lx={{ color: "base", textAlign: "center" }}>
+        <Text
+          typography="heading2SemiBold"
+          lx={{ color: "base", textAlign: "center" }}
+          testID="pay-success-title"
+        >
           {t("payTab.contacts.paySuccess.title", { recipient: recipientLabel })}
         </Text>
         <Text typography="heading2SemiBold" lx={{ color: "base", textAlign: "center" }}>

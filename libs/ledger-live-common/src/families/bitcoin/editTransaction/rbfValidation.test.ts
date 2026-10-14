@@ -1,27 +1,34 @@
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
+import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { getOriginalTxFeeContext } from "@ledgerhq/coin-bitcoin/rbfFees";
+import { getBoundWalletAccount } from "../coinConfig";
 import { getAdditionalFeeRequiredForRbf, getOriginalTxFeeRateSatVb } from "./rbfValidation";
 
-jest.mock("@ledgerhq/coin-bitcoin/getWalletAccount", () => ({
-  getWalletAccount: jest.fn(),
+jest.mock("../coinConfig", () => ({
+  getBoundWalletAccount: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/coin-bitcoin/rbfFees", () => ({
   getOriginalTxFeeContext: jest.fn(),
 }));
 
-const mockedGetWalletAccount = getWalletAccount as jest.Mock;
+const mockedGetBoundWalletAccount = getBoundWalletAccount as jest.Mock;
 const mockedGetOriginalTxFeeContext = getOriginalTxFeeContext as jest.Mock;
 
 const walletAccount = { xpub: { explorer: {} } } as any;
+const config: BitcoinCoinConfig = {
+  status: { type: "active" },
+  name: "Bitcoin",
+  unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+  explorer: { url: "https://explorer.test.invalid" },
+};
 
 describe("rbfValidation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetWalletAccount.mockReturnValue(walletAccount);
+    mockedGetBoundWalletAccount.mockReturnValue({ config, walletAccount });
   });
 
   describe("getAdditionalFeeRequiredForRbf", () => {
@@ -32,7 +39,7 @@ describe("rbfValidation", () => {
       });
 
       expect(result.toNumber()).toBe(0);
-      expect(mockedGetWalletAccount).not.toHaveBeenCalled();
+      expect(mockedGetBoundWalletAccount).not.toHaveBeenCalled();
       expect(mockedGetOriginalTxFeeContext).not.toHaveBeenCalled();
     });
 
@@ -45,7 +52,11 @@ describe("rbfValidation", () => {
       });
 
       expect(result.toNumber()).toBe(0);
-      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(walletAccount, "orig-txid");
+      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(
+        config,
+        walletAccount,
+        "orig-txid",
+      );
     });
 
     it("computes additional fee according to RBF policy", async () => {
@@ -66,7 +77,11 @@ describe("rbfValidation", () => {
       });
 
       expect(result.toNumber()).toBe(200);
-      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(walletAccount, "orig-txid");
+      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(
+        config,
+        walletAccount,
+        "orig-txid",
+      );
     });
   });
 
@@ -79,7 +94,11 @@ describe("rbfValidation", () => {
       const result = await getOriginalTxFeeRateSatVb({} as Account, "orig-txid");
 
       expect(result?.toNumber()).toBe(10);
-      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(walletAccount, "orig-txid");
+      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(
+        config,
+        walletAccount,
+        "orig-txid",
+      );
     });
 
     it("returns null when there is no fee context", async () => {

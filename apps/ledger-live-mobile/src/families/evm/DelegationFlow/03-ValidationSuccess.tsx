@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import React, { useCallback, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen, track } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import { Trans } from "~/context/Locale";

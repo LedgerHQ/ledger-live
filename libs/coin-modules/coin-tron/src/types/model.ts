@@ -22,7 +22,7 @@ export type NetworkInfo = {
 };
 // A disclosable energy-rental provider (LIVE-32776), named by the `logic/energyProviders` registry
 // so the front end can attribute a rental to the third party that served it.
-export type EnergyProvider = {
+export type EnergyProviderInfo = {
   id: string;
   name: string;
 };

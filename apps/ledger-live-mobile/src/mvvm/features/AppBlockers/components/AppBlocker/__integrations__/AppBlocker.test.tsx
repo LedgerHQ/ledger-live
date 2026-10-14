@@ -57,7 +57,7 @@ describe("AppBlocker", () => {
       </AppBlocker>,
     );
 
-    const renderedNode = screen.toJSON();
+    const renderedNode = JSON.stringify(screen.toJSON());
     expect(renderedNode.includes("TITLE_BLOCKED_SCREEN")).toBeTruthy();
     expect(renderedNode.includes("DESC_BLOCKED_SCREEN")).toBeTruthy();
   });

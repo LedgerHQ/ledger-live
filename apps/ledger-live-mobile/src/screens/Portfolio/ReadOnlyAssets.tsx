@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, memo } from "react";
 import { FlatList, type ListRenderItem } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useTranslation } from "~/context/Locale";
-import TrackScreen from "~/analytics/TrackScreen";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 import GradientContainer from "~/components/GradientContainer";

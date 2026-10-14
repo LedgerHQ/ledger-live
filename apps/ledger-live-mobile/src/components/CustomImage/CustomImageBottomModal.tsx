@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "~/context/Locale";
@@ -9,7 +10,6 @@ import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
-import { TrackScreen } from "~/analytics";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import styled from "styled-components/native";
 

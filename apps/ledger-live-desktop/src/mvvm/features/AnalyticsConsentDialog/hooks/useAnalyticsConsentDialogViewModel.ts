@@ -13,7 +13,8 @@ import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
-import { track, updateIdentify } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
+import { updateIdentify } from "~/renderer/analytics/segment";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
@@ -118,7 +119,7 @@ export function useAnalyticsConsentDialogViewModel() {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(setShareAnalytics(true));
     dispatch(setSharePersonalizedRecommendations(true));
@@ -134,7 +135,7 @@ export function useAnalyticsConsentDialogViewModel() {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
@@ -150,7 +151,7 @@ export function useAnalyticsConsentDialogViewModel() {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(
       setAnalyticsConsentInfo({
@@ -193,7 +194,7 @@ export function useAnalyticsConsentDialogViewModel() {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(setShareAnalytics(draftShareAnalytics));
     dispatch(setSharePersonalizedRecommendations(draftSharePersonalized));

@@ -1,11 +1,7 @@
 # @shared/analytics-react
 
-> [!CAUTION]
->
-> **Status: UNSTABLE** — New package for LIVE-37158; API may change before app wiring lands.
-
-React lifecycle adapters for the shared analytics pipeline. Use this package in React-based apps.
-For the React-free tracking core, see [`@shared/analytics`](../analytics/).
+> [!NOTE]
+> **Status: STABLE** — React lifecycle adapters. Call `track` and `trackPage` from [`@shared/analytics`](../analytics/README.md). Import the components below from this package.
 
 ## Exports
 
@@ -13,26 +9,23 @@ For the React-free tracking core, see [`@shared/analytics`](../analytics/).
 | ------------- | ------------ | ---------------------------------------------------------- |
 | `Track`       | web + native | Fire `track` on mount, unmount, or prop updates            |
 | `TrackPage`   | web          | Fire `trackPage` when category, name, or properties change |
-| `TrackScreen` | native       | Fire `trackPage` when the mobile screen gains focus        |
+| `TrackScreen` | native       | Fire `trackPage` when the screen gains focus               |
 
-`TrackPage` and `TrackScreen` stay distinct: web tracks page views on prop changes; native
-tracks only when focused and supports `avoidDuplicates`.
+`TrackPage` and `TrackScreen` stay distinct: web tracks page views on prop changes; native tracks only when focused and supports `avoidDuplicates`.
 
 ## Usage
 
 ```tsx
 import { Track, TrackPage } from "@shared/analytics-react";
 
-// React — page view tracking when props change
-<TrackPage category="Portfolio" flow="main" />
-
-// Lifecycle event
+<TrackPage category="Portfolio" name="Home" flow="main" />
 <Track onMount event="Drawer Opened" drawer="send" />
 ```
 
 ```tsx
-import { Track, TrackScreen } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
-// React Native — screen view when focused
-<TrackScreen category="Asset" name="Bitcoin" ticker="BTC" avoidDuplicates />;
+<TrackScreen category="Asset" name="Bitcoin" ticker="BTC" avoidDuplicates />
 ```
+
+Extra props on the component become event properties. `mandatory` sends the event even when consent is off. `TrackPage` and `TrackScreen` default `refreshSource` to true.

@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { useSendFlowBusinessLogic as useCommonBusinessLogic } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowBusinessLogic";
+import { useSelector } from "~/context/hooks";
+import { accountsSelector } from "~/reducers/accounts";
 import { useSendFlowTransaction } from "./useSendFlowTransaction";
 import { useSendFlowOperation } from "./useSendFlowOperation";
 import type {
@@ -20,8 +22,10 @@ export function useSendFlowBusinessLogic({
   initParams,
   onClose,
 }: UseSendFlowBusinessLogicParams): SendFlowBusinessContext {
+  const accounts = useSelector(accountsSelector);
   const businessLogic = useCommonBusinessLogic({
     initParams,
+    accounts,
     useOperationHook: useSendFlowOperation,
     useTransactionHook: useSendFlowTransaction,
   });

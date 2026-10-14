@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import type { AmountScreenQuickAction } from "../types";
-import { track } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 
 type QuickActionsRowProps = Readonly<{

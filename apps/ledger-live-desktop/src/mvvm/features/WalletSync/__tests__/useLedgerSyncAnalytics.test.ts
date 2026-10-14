@@ -12,9 +12,9 @@ import {
 import { Step } from "~/renderer/reducers/walletSync";
 
 const mockTrack = jest.fn();
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: (event: string, props?: Record<string, unknown>) => mockTrack(event, props),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 describe("useLedgerSyncAnalytics", () => {

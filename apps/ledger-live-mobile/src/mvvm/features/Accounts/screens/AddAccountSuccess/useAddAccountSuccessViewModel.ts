@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/core";
 import { useCallback } from "react";
 import { useTheme } from "styled-components/native";
@@ -7,7 +8,6 @@ import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { AddAccountContexts } from "../AddAccount/enums";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import useAnalytics from "LLM/hooks/useAnalytics";
-import { track } from "~/analytics";
 
 export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>

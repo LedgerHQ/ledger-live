@@ -27,7 +27,7 @@ export type TronifyEnergyOrderParams = {
   pledgeHour: string;
   /** Rental duration — minutes "0" | "10". Day, hour and minute may not all be "0". */
   pledgeMinute: string;
-  /** Extra TRX to bundle for bandwidth: "0" (none) or a value in [0.8, 500]. */
+  /** Extra TRX sent to the wallet: "0" (none) or a value in [0.8, 500]. Sending it selects Tronify's USDT payment. */
   extraTrxNum: string;
   /** Extra bandwidth to rent; "0" or omitted means none. */
   pledgeBandwidthNum?: string;
@@ -46,10 +46,12 @@ export type QueryPreorderInfoData = {
   pledgeTrxNum: string;
   /** Whether paying the rent in USDT (Flow 2) is currently available. */
   usdtModeAvailable: boolean;
-  /** Currency the buyer pays in, e.g. "USDT" or "TRX". */
-  payCoinCode: string;
-  /** Total amount to pay, decimal string in `payCoinCode` units. */
-  payCoinAmt: string;
+  /** Currency the buyer pays in; set on USDT-payment quotes, absent on TRX-payment ones. */
+  payCoinCode?: string;
+  /** Total amount to pay, decimal string in `payCoinCode` units; absent on TRX-payment quotes. */
+  payCoinAmt?: string;
+  /** Returned with USDT-payment quotes; not read by coin-tron. */
+  transferTrxFee?: number;
   extraTrxNum: string;
   pledgeBandwidthNum: string;
   activeAccountFee: string;

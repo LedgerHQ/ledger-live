@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@testing-library/react-native";
 import { useSelector } from "~/context/hooks";
 import { useTrackFundsReceived } from "../useTrackFundsReceived";
-import { track } from "~/analytics/segment";
 import { accountsSelector } from "~/reducers/accounts";
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";

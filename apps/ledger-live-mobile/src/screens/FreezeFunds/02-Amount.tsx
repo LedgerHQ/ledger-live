@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useMemo, useState, useEffect } from "react";
@@ -16,7 +17,6 @@ import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction, TronResource } from "@ledgerhq/live-common/families/tron/types";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";

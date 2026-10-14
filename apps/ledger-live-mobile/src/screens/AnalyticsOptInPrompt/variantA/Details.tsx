@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { memo, useState } from "react";
 import styled from "styled-components/native";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import Button from "~/components/Button";
 import Switch from "~/components/Switch";

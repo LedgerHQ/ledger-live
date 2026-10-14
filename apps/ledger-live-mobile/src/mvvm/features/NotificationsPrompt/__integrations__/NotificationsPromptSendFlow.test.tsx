@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { View } from "react-native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
@@ -13,7 +14,6 @@ import storage from "LLM/storage";
 import SendFundsNavigator from "~/components/RootNavigator/SendFundsNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import GlobalDrawers from "~/GlobalDrawers";
-import { track } from "~/analytics";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 import {
   createNotificationsPromptFeatureFlags,

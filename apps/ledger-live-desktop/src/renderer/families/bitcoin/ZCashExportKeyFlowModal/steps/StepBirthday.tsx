@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { Text, Alert } from "@ledgerhq/react-ui";
 import { Checkbox } from "@ledgerhq/lumen-ui-react";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import type { StepProps } from "../types";
 import { DatePicker } from "../shared/DatePicker";

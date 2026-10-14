@@ -7,6 +7,7 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import {
+  countervaluesTestUserSettings,
   createStore,
   render,
   renderWithReactQuery,
@@ -21,8 +22,7 @@ import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { NavigatorName, ScreenName } from "~/const";
@@ -182,7 +182,7 @@ function withUsdcHoldings(state: State): State {
         ...state.countervalues.countervalues,
         state: importCountervalues(
           { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
-          state.countervalues.userSettings,
+          countervaluesTestUserSettings,
         ),
       },
     },

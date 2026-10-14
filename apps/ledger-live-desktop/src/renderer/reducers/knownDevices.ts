@@ -1,9 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
+import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { getSpeculosModel } from "./devices";
 import type { State } from "./index";
 import type { SettingsState } from "./settings";
 
@@ -48,16 +50,31 @@ function mapToWebHidKnownDevice(
   };
 }
 
+function mapSpeculosKnownDevice(): KnownDevice | null {
+  if (!process.env.SPECULOS_API_PORT) return null;
+
+  return {
+    transport: speculosIdentifier,
+    deviceModelId: getSpeculosModel(),
+    id: "",
+    name: null,
+  };
+}
+
+function mapConnectedDevice(deviceModelId: DeviceModelId, name: string | null = null): KnownDevice {
+  return mapSpeculosKnownDevice() ?? mapToWebHidKnownDevice(deviceModelId, name);
+}
+
 export function mapLastSeenDeviceToKnownDevice(
   device: DeviceModelInfo | null | undefined,
 ): KnownDevice | null {
-  if (!device) return null;
-  return mapToWebHidKnownDevice(device.modelId);
+  if (!device) return mapSpeculosKnownDevice();
+  return mapConnectedDevice(device.modelId);
 }
 
 export function mapDeviceToKnownDevice(device: Device | null | undefined): KnownDevice | null {
-  if (!device) return null;
-  return mapToWebHidKnownDevice(device.modelId, device.deviceName ?? null);
+  if (!device) return mapSpeculosKnownDevice();
+  return mapConnectedDevice(device.modelId, device.deviceName ?? null);
 }
 
 /**
@@ -88,22 +105,29 @@ export function mapPersistedKnownDeviceToKnownDevice(
   return null;
 }
 
+function isMockServerDevice(device: KnownDevice): boolean {
+  return device.transport === mockserverIdentifier;
+}
+
 function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice | null) {
   if (!device) return;
 
-  const existingIndex = state.knownDevices.findIndex(d => d.deviceModelId === device.deviceModelId);
-
-  if (existingIndex === -1) {
-    state.knownDevices.push(device);
+  const physicalIndex = state.knownDevices.findIndex(
+    known => known.deviceModelId === device.deviceModelId && !isMockServerDevice(known),
+  );
+  if (physicalIndex >= 0) {
+    const existing = state.knownDevices[physicalIndex];
+    state.knownDevices[physicalIndex] = {
+      ...device,
+      name: device.name ?? existing.name,
+    };
     return;
   }
 
-  const existing = state.knownDevices[existingIndex];
-  state.knownDevices[existingIndex] = {
-    ...device,
-    // Keep a previously known name when the new source does not provide one.
-    name: device.name ?? existing.name,
-  };
+  const mockServerHasModel = state.knownDevices.some(
+    known => known.deviceModelId === device.deviceModelId && isMockServerDevice(known),
+  );
+  if (!mockServerHasModel) state.knownDevices.push(device);
 }
 
 const knownDevicesSlice = createSlice({
@@ -111,15 +135,23 @@ const knownDevicesSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) => action.payload,
+    seedMockServerKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
+      const savedDevices = state.knownDevices.filter(device => !isMockServerDevice(device));
+      state.knownDevices = [...savedDevices, action.payload];
+    },
   },
   extraReducers: builder => {
     builder
-      // On settings load, seed the store only when empty: prefer `lastSeenDevice`,
-      // fallback to `lastOnboardedDevice`.
       .addMatcher(
         (action): action is PayloadAction<Partial<SettingsState>> =>
           action.type === "FETCH_SETTINGS",
         (state, action) => {
+          const speculosDevice = mapSpeculosKnownDevice();
+          if (speculosDevice) {
+            state.knownDevices = [speculosDevice];
+            return;
+          }
+
           if (state.knownDevices.length > 0) return;
 
           const seed =
@@ -155,7 +187,7 @@ const knownDevicesSlice = createSlice({
   },
 });
 
-export const { importKnownDevices } = knownDevicesSlice.actions;
+export const { importKnownDevices, seedMockServerKnownDevice } = knownDevicesSlice.actions;
 
 export const knownDevicesSelector = (state: State): KnownDevice[] =>
   state.knownDevices.knownDevices;

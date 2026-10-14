@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Box, Button, IconButton, Link, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Lottie } from "LLM/components/Lottie";
 import { useAnalyticsConsentViewModel } from "./useAnalyticsConsentViewModel";
 import { ArrowLeft, SettingsAlt2 } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import PrivacyPolicyLink from "../../components/PrivacyPolicyLink";
 import { ANALYTICS_CONSENT_PAGE } from "../../const";

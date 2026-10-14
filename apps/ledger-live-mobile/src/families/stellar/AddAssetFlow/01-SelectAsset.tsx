@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
@@ -12,7 +13,6 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
-import { TrackScreen } from "~/analytics";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import KeyboardView from "~/components/KeyboardView";

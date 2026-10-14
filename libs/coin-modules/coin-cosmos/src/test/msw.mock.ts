@@ -1,4 +1,5 @@
 import { setupServer } from "msw/node";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import coinConfig, { CosmosCoinConfig } from "../config";
 import { CosmosAPI } from "../network/Cosmos";
 import type { CosmosCurrencyConfig } from "../types";
@@ -16,13 +17,21 @@ export const server = setupServer();
  * `version` defaults to v1beta1, so MSW handler URLs use `/v1beta1/`.
  */
 export function makeTestApi(currencyId: string, endpoint: string): CosmosAPI {
-  // Flat runtime shape (CosmosCurrencyConfig + status); the declared CosmosCoinConfig wraps every
+  // Flat runtime shape (CosmosCurrencyConfig + status/name/unit); the declared CosmosCoinConfig wraps every
   // field in ConfigInfo (LiveConfig's stored shape), so cast through unknown — mirrors coin-tester-cosmos.
+  const currency = getCryptoCurrencyById(currencyId);
+  const unit = currency.units[0];
   const config = {
     lcd: endpoint,
     minGasPrice: 0.025,
     status: { type: "active" as const },
-  } satisfies CosmosCurrencyConfig & { status: { type: "active" } };
+    name: currency.name,
+    unit,
+  } satisfies CosmosCurrencyConfig & {
+    status: { type: "active" };
+    name: string;
+    unit: typeof unit;
+  };
   coinConfig.setCoinConfig(() => config as unknown as CosmosCoinConfig);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors network/Cosmos.integ.test.ts
   return new CosmosAPI(currencyId, { endpoint } as any);

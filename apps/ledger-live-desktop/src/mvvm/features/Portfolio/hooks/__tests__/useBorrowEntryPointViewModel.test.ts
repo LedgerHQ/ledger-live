@@ -1,5 +1,5 @@
 import { act, renderHook } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useBorrowEntryPointViewModel } from "../useBorrowEntryPointViewModel";
 
 const mockNavigate = jest.fn();

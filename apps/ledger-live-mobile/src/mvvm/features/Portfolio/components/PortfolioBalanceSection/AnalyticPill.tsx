@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { Text, Pressable, Box } from "@ledgerhq/lumen-ui-rnative";
 import Delta from "LLM/components/Delta";
@@ -6,7 +7,6 @@ import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useNavigation } from "@react-navigation/native";
-import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { useTheme, LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 

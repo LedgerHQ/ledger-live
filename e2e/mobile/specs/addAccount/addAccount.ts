@@ -17,6 +17,8 @@ const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, { currencyBabylon: { enabled: true } }],
 ]);
 
+const PRUNED_HISTORY_CURRENCIES = new Set([Currency.BABY.id]);
+
 export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
   describe("Add account", () => {
     beforeAll(async () => {
@@ -34,7 +36,6 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     it(`[${currency.testLabel}] - Add account`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-      await app.modularDrawer.performSearchByTicker(currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
       await app.modularDrawer.selectNetworkIfAsked(currency.name);
 
@@ -52,7 +53,9 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
       await app.assetAccountsPage.expectAccountsBalanceVisible();
       await app.common.goToAccount(accountId, currency.id);
       await app.account.expectAccountBalanceVisible(accountId);
-      await app.account.expectOperationHistoryVisible(accountId);
+      if (!PRUNED_HISTORY_CURRENCIES.has(currency.id)) {
+        await app.account.expectOperationHistoryVisible(accountId);
+      }
       await app.account.expectAddressIndex(0);
     });
   });

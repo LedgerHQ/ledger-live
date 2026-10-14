@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
@@ -11,7 +12,6 @@ import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
-import { track } from "~/analytics";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";

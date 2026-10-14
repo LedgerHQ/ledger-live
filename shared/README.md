@@ -6,7 +6,7 @@ Cross-cutting concern packages that don't belong to a specific business domain. 
 
 ## Scope
 
-`@shared/<name>` (e.g. `@shared/feature-flags`, `@shared/observability`)
+`@shared/<name>` (e.g. `@shared/feature-flags`, `@shared/observability`, `@shared/analytics`)
 
 ## Responsibility
 

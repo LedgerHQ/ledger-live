@@ -4,12 +4,14 @@ import type {
   BalanceOptions,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { GetAddressResult } from "../derivation";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import type {
   Account,
   AccountReadiness,
   Operation as LiveOperation,
   OperationType,
+  SignRawOperationFnSignature,
   StakingResources,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
@@ -42,6 +44,18 @@ export type ChainSpecificRules = {
   getTransactionStatus: {
     throwIfPendingOperation?: boolean;
   };
+};
+
+export type AddressLookup = {
+  /**
+   * The addresses the device key `derived.publicKey` controls, in the order to offer them.
+   *
+   * `[]` ends the scan. If the wallet can create the account, return a placeholder instead: it
+   * comes back unused and is offered as the new account.
+   */
+  getAddresses: (derived: GetAddressResult) => Promise<string[]>;
+  /** Lets `receive()` verify the device offline. */
+  keyControlsAccount: (publicKey: string, account: Account) => boolean;
 };
 
 export type BridgeApi = {
@@ -85,6 +99,19 @@ export type BridgeApi = {
     account: Account,
   ) => Record<string, unknown> | undefined;
   /**
+   * Rewrites the crafted unsigned payload once the device has signed, for a family whose device
+   * options let it sign something other than what was crafted — Solana refreshes the blockhash after
+   * the review, so the user's time on the device never expires it. The result is what gets combined
+   * with the signature. `options` is the very object `getDeviceSignOptions` returned for this
+   * signature, not a copy, so a family can keep per-signature state keyed on it.
+   */
+  applyDeviceSignResult?: (
+    unsigned: string,
+    options: Record<string, unknown> | undefined,
+  ) => string;
+  /** Replaces the generic raw signing (craft, sign, combine) with the family's own. */
+  signRawOperation?: SignRawOperationFnSignature<Account>;
+  /**
    * Family-owned account fields with no generic equivalent — `stakingResources`, `stakingPositions`,
    * whatever the family names — passed through without the framework inspecting them, hence the index
    * signature. No field of `Account` may appear: pinning the ones the account shape sets is not
@@ -115,6 +142,7 @@ export type BridgeApi = {
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
+  adaptOperations?: (address: string, operations: LiveOperation[]) => LiveOperation[];
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
    * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
@@ -141,6 +169,11 @@ export type BridgeApi = {
    * distinguishes delegation vs staking vs unstaking via uid prefix).
    */
   usesStakingPositions?: boolean;
+  /**
+   * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos).
+   * Opt-in: Solana's stakes overlap the first native entry; EVM's are extra and carry no `locked`.
+   */
+  partitionsNativeBalance?: boolean;
   balanceOptions?: BalanceOptions;
   /**
    * Optional hook called after operations are merged, allowing a chain bridge to
@@ -170,4 +203,26 @@ export type BridgeApi = {
    * @returns The readiness of the account (ready flag + optional reason).
    */
   getAccountReadiness?: (currency: CryptoCurrency, address: string) => Promise<AccountReadiness>;
+  /**
+   * For chains whose address is handed out by the network, not derived from the path (ADR-055).
+   * When present, scan asks it for the addresses a device key controls, and `receive()` verifies the
+   * device through `keyControlsAccount`.
+   */
+  addressLookup?: AddressLookup;
+  /**
+   * Defaults to `true`. Set `false` when the account shape returns the whole operation list, or the
+   * merge puts back the operations the shape left out.
+   */
+  shouldMergeOps?: boolean;
+  /**
+   * Added to `syncHash`: an account stored under another hash resyncs from scratch, replacing its
+   * operations. For a bridge whose operation ids differ from those another bridge stored.
+   */
+  syncVersion?: string;
+  /**
+   * For a family whose legacy bridge keyed account ids on the public key rather than the address.
+   * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is
+   * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
+   */
+  accountIdFromPublicKey?: boolean;
 };

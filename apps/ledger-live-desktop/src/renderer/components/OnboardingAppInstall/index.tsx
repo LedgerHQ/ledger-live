@@ -10,9 +10,9 @@ import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
 import InstallSetOfApps from "./InstallSetOfApps";
 import LockedModal from "./LockedModal";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
+import { track, trackPage } from "@shared/analytics";
 import { analyticsFlowName } from "../SyncOnboarding/Manual/shared";
-import { track, trackPage } from "~/renderer/analytics/segment";
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
@@ -126,11 +126,11 @@ const OnboardingAppInstallStep = ({
 
   const handleInstallComplete = useCallback(() => {
     trackPage(
-      `Set up ${productName}: Step 5  Successful`,
-      undefined,
-      { flow: analyticsFlowName, seedConfiguration },
-      true,
-      true,
+      {
+        category: `Set up ${productName}: Step 5  Successful`,
+        props: { flow: analyticsFlowName, seedConfiguration },
+      },
+      { updateRoutes: true, refreshSource: true },
     );
     onComplete(true);
   }, [onComplete, productName, seedConfiguration]);

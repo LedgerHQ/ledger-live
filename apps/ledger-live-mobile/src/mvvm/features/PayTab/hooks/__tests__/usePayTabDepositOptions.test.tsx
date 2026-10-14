@@ -1,4 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
+import { useOpenBuySell } from "LLM/features/Buy";
 import { NavigatorName, ScreenName } from "~/const";
 import { usePayTabDepositOptions } from "../usePayTabDepositOptions";
 
@@ -92,6 +93,15 @@ describe("usePayTabDepositOptions", () => {
     act(() => result.current.depositOptions.onSelect("buy"));
 
     expect(mockHandleOpenBuySell).toHaveBeenCalledWith("buy");
+  });
+
+  it("returns to the Pay tab when the buy flow is closed", () => {
+    render();
+
+    expect(useOpenBuySell).toHaveBeenCalledWith({
+      sourceScreenName: "Pay",
+      returnToPreviousScreenOnClose: true,
+    });
   });
 
   it("opens the request flow for the crypto address option", () => {

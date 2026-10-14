@@ -108,7 +108,7 @@ async function operations(
 ): Promise<Page<Operation>> {
   const config = await context.config();
   // FIXME Options are ignored here
-  const [items, nextHeight] = await listOperations(config, address, {
+  const [items, nextHeight] = await listOperations(context.logger, config, address, {
     limit: 0,
     startAt: minHeight,
   });

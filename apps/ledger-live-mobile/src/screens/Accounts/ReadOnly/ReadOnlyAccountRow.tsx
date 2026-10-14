@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { BigNumber } from "bignumber.js";
 import { ScreenName } from "~/const";
 import AccountRowLayout from "~/components/AccountRowLayout";
-import { track } from "~/analytics";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 

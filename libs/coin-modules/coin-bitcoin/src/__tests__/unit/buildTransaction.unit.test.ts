@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 
 import { bitcoinPickingStrategy } from "../../types";
@@ -51,7 +52,9 @@ describe("buildTransaction", () => {
       },
     });
 
-    await expect(buildTransaction(mockAccount, transaction)).rejects.toThrow(FeeNotLoaded);
+    await expect(
+      buildTransaction(TEST_CONFIG, TEST_LOGGER, mockAccount, transaction),
+    ).rejects.toThrow(FeeNotLoaded);
   });
 
   it("should call getWalletAccount with the provided account", async () => {
@@ -68,7 +71,7 @@ describe("buildTransaction", () => {
       },
     });
 
-    const res = await buildTransaction(mockAccount, transaction);
+    const res = await buildTransaction(TEST_CONFIG, TEST_LOGGER, mockAccount, transaction);
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     expect(require("../../getWalletAccount").getWalletAccount).toHaveBeenCalledWith(mockAccount);

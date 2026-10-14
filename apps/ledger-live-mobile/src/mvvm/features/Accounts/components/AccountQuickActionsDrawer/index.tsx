@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { Box, Flex } from "@ledgerhq/native-ui";
@@ -8,7 +9,6 @@ import TransferButton from "~/components/TransferButton";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import CustomHeader from "./CustomHeader";
 import { useTheme } from "styled-components/native";
-import { TrackScreen } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 

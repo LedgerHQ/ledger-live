@@ -14,8 +14,8 @@ import { getChainAdapter } from "@ledgerhq/coin-bitcoin/chain-adapters/registry"
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
-import { getCurrencyConfiguration } from "../../config";
-import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/config";
+import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { SignMessage } from "../../hw/signMessage/types";
 
 const createSigner = (transport: Transport, currency: CryptoCurrency): BitcoinSigner => {
@@ -33,13 +33,13 @@ const signerContext: SignerContext = <T>(
     withDevice(deviceId)((transport: Transport) => from(fn(createSigner(transport, crypto)))),
   );
 
-const getCurrencyConfig = (currencyId: string) => {
-  return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currencyId) };
-};
+// One bridge serves every bitcoin-family currency: each call resolves the config of its own
+// currency (`context.config(currency.id)`), "bitcoin" is only the fallback id.
+const context = buildContext<BitcoinCoinConfig>("bitcoin");
 
 const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(
   signerContext,
-  getCurrencyConfig,
+  context,
 );
 
 export function createMessageSigner(): SignMessage {
@@ -58,7 +58,7 @@ const resolver: Resolver = (
   addressOpt: GetAddressOptions,
 ): ReturnType<GetAddressFn> => {
   const signerContext: SignerContext = (_, crypto, fn) => fn(createSigner(transport, crypto));
-  return bitcoinResolver(signerContext)("", addressOpt);
+  return bitcoinResolver(signerContext, context.logger)("", addressOpt);
 };
 
 export { bridge, resolver, messageSigner, signerContext };

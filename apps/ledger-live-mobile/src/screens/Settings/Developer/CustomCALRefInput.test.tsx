@@ -9,7 +9,7 @@ describe("CustomCALRefInput", () => {
     render(<CustomCALRefInput />);
 
     expect(screen.queryByTestId("custom-cal-ref-input")).toBeNull();
-    expect(screen.queryByTestId("custom-cal-ref-switch").props.value).toBe(false);
+    expect(screen.getByTestId("custom-cal-ref-switch").props.value).toBe(false);
     expect(screen.queryByText("Apply")).toBeNull();
   });
 
@@ -17,8 +17,8 @@ describe("CustomCALRefInput", () => {
     setEnv("CAL_REF", "branch:next");
     render(<CustomCALRefInput />);
 
-    expect(screen.queryByTestId("custom-cal-ref-input").props.value).toEqual("branch:next");
-    expect(screen.queryByTestId("custom-cal-ref-switch").props.value).toBe(true);
+    expect(screen.getByTestId("custom-cal-ref-input").props.value).toEqual("branch:next");
+    expect(screen.getByTestId("custom-cal-ref-switch").props.value).toBe(true);
     expect(screen.queryByText("Apply")).toBeDisabled();
   });
 });

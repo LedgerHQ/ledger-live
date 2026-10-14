@@ -11,6 +11,7 @@ export async function verifyAppValidationStakeInfo(
     Currency.CELO,
     Currency.INJ,
     Currency.OSMO,
+    Currency.BABY,
     Currency.MULTIVERS_X,
   ];
   const currenciesForValidationProvider = [
@@ -18,6 +19,7 @@ export async function verifyAppValidationStakeInfo(
     Currency.XTZ,
     Currency.INJ,
     Currency.OSMO,
+    Currency.BABY,
   ];
 
   const currency = delegation.account.currency;
@@ -43,7 +45,13 @@ export async function verifyStakeOperationDetailsInfo(
   fees?: string,
   operationType?: "VOTE",
 ) {
-  const currenciesForProvider = [Currency.ATOM, Currency.INJ, Currency.OSMO, Currency.MULTIVERS_X];
+  const currenciesForProvider = [
+    Currency.ATOM,
+    Currency.INJ,
+    Currency.OSMO,
+    Currency.BABY,
+    Currency.MULTIVERS_X,
+  ];
   const currenciesForRecipientAsProvider = [Currency.NEAR];
   const currenciesForSender = [Currency.NEAR, Currency.CELO, Currency.XTZ, Currency.MULTIVERS_X];
   const currenciesForAmount = [
@@ -51,6 +59,7 @@ export async function verifyStakeOperationDetailsInfo(
     Currency.NEAR,
     Currency.INJ,
     Currency.OSMO,
+    Currency.BABY,
     Currency.MULTIVERS_X,
   ];
   const currenciesForDelegateType = [
@@ -61,6 +70,7 @@ export async function verifyStakeOperationDetailsInfo(
     Currency.XTZ,
     Currency.INJ,
     Currency.OSMO,
+    Currency.BABY,
     Currency.ADA,
     Currency.MULTIVERS_X,
     Currency.SEI_EVM,

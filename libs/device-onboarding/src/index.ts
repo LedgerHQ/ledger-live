@@ -1,6 +1,7 @@
-export type { DeviceOnboardingPorts, DeviceOnboardingSession } from "./ports";
 export {
   OnboardingStep,
+  RecoveryKeyStatus,
+  isRecoveryKeyBackupInProgress,
   type AvailableFirmwareUpdate,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
@@ -29,6 +30,7 @@ export {
   type RetryPolicy,
 } from "./retry";
 export {
+  createSessionEventsActor,
   mapSession,
   sessionListener,
   type SessionEvent,
@@ -71,3 +73,16 @@ export {
   type SeedPollingEvent,
   type SeedPollingInput,
 } from "./actors/seedPolling";
+export {
+  createOnboardingEventLog,
+  flattenDeviceOnboardingContext,
+  recordOnboardingToolEvent,
+  stampSession,
+  stateValueToString,
+  toolEvent,
+  userEvents,
+  type HostOnboardingEvent,
+  type HostToolEvent,
+  type HostToolEventDetail,
+  type WatchedOnboardingContext,
+} from "./host";

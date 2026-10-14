@@ -41,7 +41,6 @@ export interface CryptoCurrency {
   isTestnetFor?: string;
   blockAvgTime?: number;
   explorerViews: ExplorerView[];
-  ethereumLikeInfo?: { chainId: number };
   symbol?: string;
   keywords?: string[];
   tokenTypes?: string[];

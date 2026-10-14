@@ -23,7 +23,7 @@ export async function getValidators({
       address: node.node_account_id,
       name: extractCompanyFromNodeDescription(node.description),
       description: node.description,
-      balance: BigInt(node.stake),
+      ...(typeof node.stake === "number" && { balance: BigInt(node.stake) }),
       apy: calculateAPY(node.reward_rate_start),
     })),
   };

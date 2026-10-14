@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "tests/testSetup";
 import i18n from "~/renderer/i18n/init";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { makeBondStepProps } from "../../__mocks__/stepProps.mock";
@@ -11,10 +11,10 @@ import { ALEO_MAIN_ACCOUNT } from "../../__mocks__/account.mock";
 import type { StepProps } from "../types";
 import StepConfirmation, { StepConfirmationFooter } from "./StepConfirmation";
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  __esModule: true,
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 jest.mock("~/renderer/drawers/Provider", () => ({
   __esModule: true,

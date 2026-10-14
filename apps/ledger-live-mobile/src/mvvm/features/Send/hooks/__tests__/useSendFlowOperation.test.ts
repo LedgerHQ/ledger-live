@@ -71,6 +71,24 @@ describe("useSendFlowOperation (mobile)", () => {
         signed: false,
       });
     });
+
+    it("should keep signed to true when the broadcast fails after signing", () => {
+      const { result } = renderHook(() => useSendFlowOperation());
+      const error = new Error("Broadcast failed");
+
+      act(() => {
+        result.current.actions.onSigned();
+      });
+      act(() => {
+        result.current.actions.onTransactionError(error);
+      });
+
+      expect(result.current.state).toEqual({
+        optimisticOperation: null,
+        transactionError: error,
+        signed: true,
+      });
+    });
   });
 
   describe("onSigned", () => {

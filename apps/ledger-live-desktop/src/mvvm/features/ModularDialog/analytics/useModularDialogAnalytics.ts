@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ModularDialogEventName, ModularDialogEventParams } from "./modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";

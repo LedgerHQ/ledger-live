@@ -13,9 +13,9 @@ jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: "en" } }),
 }));
 
-jest.mock("~/renderer/hooks/useNetworkStatus", () => ({
-  ...jest.requireActual("~/renderer/hooks/useNetworkStatus"),
-  useNetworkStatus: () => ({ networkStatus: "online" }),
+jest.mock("@shared/network-status", () => ({
+  ...jest.requireActual("@shared/network-status"),
+  useNetworkState: () => ({ isConnected: true, isInternetReachable: true }),
 }));
 
 jest.mock("~/renderer/hooks/useTheme", () => ({
@@ -80,6 +80,7 @@ const noAvailableFirmwareState = {
 
 const baseProps = {
   onComplete: jest.fn(),
+  onGenuineCheckPassed: jest.fn(),
   restartChecksAfterUpdate: jest.fn(),
   isInitialRunOfSecurityChecks: true,
   fwUpdateInterrupted: null,
@@ -138,5 +139,13 @@ describe("EarlySecurityChecks", () => {
 
     expect(resetGenuineCheckState).not.toHaveBeenCalled();
     expect(lastBodyProps().genuineCheckStatus).toBe(SoftwareCheckStatus.completed);
+  });
+
+  it("reports the device that passed the genuine check", () => {
+    mockGenuineCheck("genuine");
+
+    render(<EarlySecurityChecks device={deviceA} {...baseProps} />);
+
+    expect(baseProps.onGenuineCheckPassed).toHaveBeenCalledWith("device-a");
   });
 });

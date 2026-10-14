@@ -1,6 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { useLocation, useNavigate } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAccountBackNavigation } from "../useAccountBackNavigation";
 
 jest.mock("react-router", () => ({

@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo"
 
 jobs:
   is-affected:
@@ -122,7 +122,8 @@ jobs:
       - name: Login to Ledger Artifactory
         id: jfrog-login
         timeout-minutes: 10
-        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+        # Pinned to a commit SHA (not a branch or moving tag) to enable caching.
+        uses: LedgerHQ/actions-security/actions/jfrog-login@c927e3b6f81f35f3f11f54ff8df47b410186e7a3
 
       - name: Login to JFrog OCI Registry
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
@@ -139,7 +140,25 @@ jobs:
       - name: Setup environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
 
+      # coin-tester-stacks builds a patched clarinet from source (~13 min) when its binary is missing.
+      # The key hashes docker/clarinet/**, which holds the pinned commit, patches and toolchain.
+      # Restore and save are split so a successful build is kept even when the tests fail.
+      - name: Restore the patched clarinet binary
+        id: clarinet-cache
+        if: matrix.chain == 'stacks'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: libs/coin-tester-modules/coin-tester-stacks/.clarinet-cache
+          key: ${{ runner.os }}-${{ runner.arch }}-clarinet-${{ hashFiles('libs/coin-tester-modules/coin-tester-stacks/docker/clarinet/**') }}
+
       - name: Run Coin Tester
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
         with:
           chain: ${{ matrix.chain }}
+
+      - name: Save the patched clarinet binary
+        if: always() && matrix.chain == 'stacks' && steps.clarinet-cache.outputs.cache-hit != 'true' && hashFiles('libs/coin-tester-modules/coin-tester-stacks/.clarinet-cache/*/clarinet') != ''
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: libs/coin-tester-modules/coin-tester-stacks/.clarinet-cache
+          key: ${{ steps.clarinet-cache.outputs.cache-primary-key }}

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { isMinEarnUiVersion } from "@ledgerhq/live-common/domain/isMinEarnUiVersion";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -8,7 +9,6 @@ import { StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import type WebView from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { TrackScreen } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";

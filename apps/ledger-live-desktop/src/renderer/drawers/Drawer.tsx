@@ -3,7 +3,7 @@ import { analyticsDrawerContext, context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
-import { track } from "../analytics/segment";
+import { track } from "@shared/analytics";
 const transitionStyles = {
   entering: {},
   entered: {

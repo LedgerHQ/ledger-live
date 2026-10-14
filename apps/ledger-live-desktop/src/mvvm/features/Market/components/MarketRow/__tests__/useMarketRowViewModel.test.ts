@@ -3,6 +3,7 @@ import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fi
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketRowViewModel } from "../useMarketRowViewModel";
 import { useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
+import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const mockNavigate = jest.fn();
 const mockOnBuy = jest.fn();
@@ -105,6 +106,17 @@ describe("useMarketRowViewModel", () => {
     expect(result.current.formattedPrice.length).toBeGreaterThan(0);
     expect(result.current.formattedVolume.length).toBeGreaterThan(0);
     expect(result.current.formattedMarketCap.length).toBeGreaterThan(0);
+  });
+
+  it("should format values with the Market counter currency, not the Settings one", () => {
+    const { result } = renderViewModel(
+      { counterCurrency: "usd" },
+      { settings: { ...SETTINGS_INITIAL_STATE, counterValue: "EUR" } },
+    );
+
+    expect(result.current.formattedPrice).toMatch(/^\$/);
+    expect(result.current.formattedVolume).toMatch(/^\$/);
+    expect(result.current.formattedMarketCap).toMatch(/^\$/);
   });
 
   it("should navigate to /asset/ when shouldDisplayAggregatedAssets is true", () => {

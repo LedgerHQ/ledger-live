@@ -20,6 +20,8 @@ export function AmountScreenView({
   feesRowSecondaryValue,
   feesRowStrategyLabel,
   feeSelector,
+  sponsoredNudge,
+  sponsoredFee,
   quickActions,
   showQuickActions,
   amountMessage,
@@ -27,6 +29,7 @@ export function AmountScreenView({
   reviewShowIcon,
   reviewDisabled,
   reviewLoading,
+  sponsoredFeeError,
   onReview,
   onGetFunds,
   onMessageLinkPress,
@@ -59,10 +62,13 @@ export function AmountScreenView({
         feesRowSecondaryValue={feesRowSecondaryValue}
         feesRowStrategyLabel={feesRowStrategyLabel}
         feeSelector={feeSelector}
+        sponsoredNudge={sponsoredNudge}
+        sponsoredFee={sponsoredFee}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}
         reviewDisabled={reviewDisabled}
         reviewLoading={reviewLoading}
+        sponsoredFeeError={sponsoredFeeError}
         onReview={onReview}
         onGetFunds={onGetFunds}
       />

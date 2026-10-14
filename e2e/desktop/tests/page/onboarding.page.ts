@@ -1,23 +1,56 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const MAX_PEDAGOGY_SCREENS = 10;
+const SELECTABLE_DEVICES = [
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoSP,
+  DeviceModelId.nanoX,
+  DeviceModelId.apex,
+];
+
+type TutorialScreen =
+  | "how-to-get-started"
+  | "device-how-to"
+  | "pin-code"
+  | "pin-code-how-to"
+  | "new-recovery-phrase"
+  | "use-recovery-sheet"
+  | "recovery-how-to-3"
+  | "hide-recovery-phrase"
+  | "quiz-success"
+  | "pair-my-nano"
+  | "genuine-check"
+  | "enable-sync"
+  | "secure-your-crypto"
+  | "welcome-to-wallet-without-funds";
 
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
   private readonly welcomeTitle = this.page.getByTestId("onbording-welcome-title");
+  private readonly acceptAnalyticsButton = this.page.getByTestId(
+    "analytics-opt-in-screen-accept-all",
+  );
   private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
+  private readonly counterfeitWarningContinueButton = this.page.getByTestId(
+    "counterfeit-warning-continue-button",
+  );
   private readonly pedagogyModal = this.page.getByTestId("v3-onboarding-pedagogy-modal");
   private readonly stepperContinue = this.page.getByTestId("v3-modal-stepper-continue");
   private readonly stepperEnd = this.page.getByTestId("v3-modal-stepper-end");
-  private readonly tutorialContinue = this.page.getByTestId("v3-tutorial-continue");
-  private readonly tutorialContinueSecondary = this.page.getByTestId(
-    "v3-tutorial-continue-secondary",
+  private readonly tutorialContinueOnAnyScreen = this.page.getByTestId(
+    /^v3-tutorial-continue-(?!secondary-)/,
   );
+  private readonly tutorialContinueOn = (screen: TutorialScreen) =>
+    this.page.getByTestId(`v3-tutorial-continue-${screen}`);
+  private readonly tutorialContinueSecondaryOn = (screen: TutorialScreen) =>
+    this.page.getByTestId(`v3-tutorial-continue-secondary-${screen}`);
   private readonly pinCodeCheckbox = this.page.getByTestId("v3-private-pin-code-checkbox");
   private readonly pinCodeDrawerNext = this.page.getByTestId("v3-pin-code-drawer");
   private readonly recoveryPhraseCheckbox = this.page.getByTestId("v3-recovery-phrase-checkbox");
@@ -26,7 +59,6 @@ export class OnboardingPage extends AppPage {
   private readonly quizStartButton = this.page.getByTestId("v3-quiz-start-button");
   private readonly quizAnswerTop = this.page.getByTestId("v3-quiz-answer-0");
   private readonly quizAnswerBottom = this.page.getByTestId("v3-quiz-answer-1");
-  private readonly checkMyNanoButton = this.page.getByRole("button", { name: /^Check my/i });
   private readonly renderError = this.page.getByTestId("render-error");
   private readonly deviceContainer = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-container-device-${device}`);
@@ -42,9 +74,21 @@ export class OnboardingPage extends AppPage {
     await this.getStartedButton.click();
   }
 
+  @step("Accept analytics in the opt-in screen")
+  async acceptAnalytics() {
+    await this.acceptAnalyticsButton.click();
+  }
+
   @step("Expect the device selection screen")
   async expectDeviceSelectionScreen() {
     await expect(this.page).toHaveURL(/\/onboarding\/select-device$/);
+  }
+
+  @step("Expect a card for each selectable device")
+  async expectDeviceCards() {
+    await Promise.all(
+      SELECTABLE_DEVICES.map(device => expect(this.deviceContainer(device)).toBeVisible()),
+    );
   }
 
   @step("Expect the use case screen")
@@ -67,6 +111,12 @@ export class OnboardingPage extends AppPage {
     await this.setupNewDeviceOption.click();
   }
 
+  /** Nano S, Nano S Plus and Nano X get a "Before you start" warning before any use case runs. */
+  @step("Continue past the counterfeit warning")
+  async continuePastCounterfeitWarning() {
+    await this.counterfeitWarningContinueButton.click();
+  }
+
   @step("Complete the pedagogy screens")
   async completePedagogy() {
     await expect(this.pedagogyModal).toBeVisible();
@@ -84,9 +134,9 @@ export class OnboardingPage extends AppPage {
     );
   }
 
-  @step("Continue the tutorial")
-  async continueTutorial() {
-    await this.tutorialContinue.click();
+  @step("Continue the tutorial from $0")
+  async continueTutorial(screen: TutorialScreen) {
+    await this.tutorialContinueOn(screen).click();
   }
 
   @step("Acknowledge keeping the PIN private")
@@ -125,39 +175,39 @@ export class OnboardingPage extends AppPage {
     await this.stepperEnd.click();
   }
 
-  @step("Continue past the secondary tutorial action")
-  async continueTutorialSecondary() {
-    await this.tutorialContinueSecondary.click();
+  @step("Continue past the secondary tutorial action on $0")
+  async continueTutorialSecondary(screen: TutorialScreen) {
+    await this.tutorialContinueSecondaryOn(screen).click();
   }
 
   @step("Expect onboarding to be complete")
   async expectOnboardingComplete() {
-    await expect(this.tutorialContinue).toBeHidden();
+    await expect(this.tutorialContinueOnAnyScreen).toBeHidden();
   }
 
   @step("Work through the PIN and recovery phrase guides")
   async completeTutorialSteps() {
-    await this.continueTutorial(); // get started
-    await this.continueTutorial();
+    await this.continueTutorial("how-to-get-started");
+    await this.continueTutorial("device-how-to");
 
     await this.acceptPrivatePinCode();
-    await this.continueTutorial();
-    await this.continueTutorial();
+    await this.continueTutorial("pin-code");
+    await this.continueTutorial("pin-code-how-to");
     await this.continuePinDrawer();
 
     await this.acceptRecoveryPhrase();
-    await this.continueTutorial();
-    await this.continueTutorial();
-    await this.continueTutorial();
+    await this.continueTutorial("new-recovery-phrase");
+    await this.continueTutorial("use-recovery-sheet");
+    await this.continueTutorial("recovery-how-to-3");
     await this.continueRecoverySeedDrawer();
-    await this.continueTutorial();
+    await this.continueTutorial("hide-recovery-phrase");
     await this.continueHideSeedDrawer();
   }
 
   @step("Run the genuine check")
   async runGenuineCheck() {
-    await this.checkMyNanoButton.click();
+    await this.tutorialContinueOn("pair-my-nano").click();
     await expect(this.renderError).toBeHidden();
-    await expect(this.tutorialContinue).toBeEnabled();
+    await expect(this.tutorialContinueOn("genuine-check")).toBeEnabled();
   }
 }

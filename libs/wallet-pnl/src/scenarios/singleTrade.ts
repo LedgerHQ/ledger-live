@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import { BTC, EUR, SAT } from "./currencies";
 import { makeAccount } from "./accounts";
 import { buy, sell } from "./operations";
-import { buildCV, dailyHistory } from "./countervalues";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
 
 const QTY_BTC = new BigNumber("0.3");
 const QTY_SAT = SAT.times(QTY_BTC);

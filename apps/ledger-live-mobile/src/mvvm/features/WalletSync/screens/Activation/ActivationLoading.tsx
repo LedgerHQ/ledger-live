@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect } from "react";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useLoadingStep } from "../../hooks/useLoadingStep";
-import { TrackScreen } from "~/analytics";
 import { AnalyticsPage, useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import GradientContainer from "~/components/GradientContainer";
 import Animation from "~/components/Animation";

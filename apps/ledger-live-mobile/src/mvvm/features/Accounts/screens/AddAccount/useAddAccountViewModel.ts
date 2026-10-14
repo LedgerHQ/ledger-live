@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { track } from "~/analytics";
 import { useQRCodeHost } from "LLM/features/WalletSync/hooks/useQRCodeHost";
 import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import { NavigatorName, ScreenName } from "~/const";

@@ -13,7 +13,7 @@ import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import useTheme from "~/renderer/hooks/useTheme";
 import Box from "~/renderer/components/Box";
 import { renderVerifyUnwrapped, Title } from "~/renderer/components/DeviceAction/rendering";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
 import type { StepProps } from "../types";

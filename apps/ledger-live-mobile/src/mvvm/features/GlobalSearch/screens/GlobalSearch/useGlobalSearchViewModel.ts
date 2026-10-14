@@ -1,9 +1,8 @@
+import { track, setTrackingSource } from "@shared/analytics";
 import { useCallback, useEffect } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { StockSuggestion } from "@features/platform-aggregated-assets";
-import { track } from "~/analytics";
-import { setTrackingSource } from "~/analytics/screenRefs";
 import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";

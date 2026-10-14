@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-multiversx",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",
@@ -63,7 +63,7 @@
     "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "catalog:",
-    "protobufjs": "^7.2.6",
+    "protobufjs": "^8.4.1",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -79,7 +79,8 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -93,7 +94,6 @@
     "test": "jest",
     "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

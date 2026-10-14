@@ -18,7 +18,7 @@ import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import logger from "~/renderer/logger";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 import { Account, Operation } from "@ledgerhq/types-live";

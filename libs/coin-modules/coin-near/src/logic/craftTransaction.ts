@@ -90,13 +90,13 @@ export async function craftTransaction(
     useAllAmount: intent.useAllAmount ?? false,
   });
 
-  const transaction = nearAPI.transactions.createTransaction(
+  const transaction = nearAPI.createTransaction(
     intent.sender,
-    nearAPI.utils.PublicKey.fromString(intent.senderPublicKey),
+    nearAPI.PublicKey.fromString(intent.senderPublicKey),
     receiverId,
     nonce + 1,
     actions,
-    nearAPI.utils.serialize.base_decode(block_hash),
+    nearAPI.baseDecode(block_hash),
   );
 
   return {

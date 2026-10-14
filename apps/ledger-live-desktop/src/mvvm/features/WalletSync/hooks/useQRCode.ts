@@ -14,7 +14,7 @@ import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
 import {

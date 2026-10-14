@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { Flex } from "@ledgerhq/native-ui";
@@ -9,7 +10,6 @@ import { useTheme } from "styled-components/native";
 import getAccountListKeyExtractor from "../../utils/getAccountListKeyExtractor";
 import AccountListEmpty from "../AccountListEmpty";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 

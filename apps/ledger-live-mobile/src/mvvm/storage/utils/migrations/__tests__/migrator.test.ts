@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { migrator } from "../asyncStorageToMMKV";
 import { STORAGE_TYPE } from "LLM/storage/constants";
 import {
@@ -8,7 +9,6 @@ import {
 } from "../constants";
 import type { StorageState } from "LLM/storage/types";
 import mmkvStorage from "LLM/storage/mmkvStorageWrapper";
-import { track } from "~/analytics";
 
 describe("migrator", () => {
   let state: StorageState;

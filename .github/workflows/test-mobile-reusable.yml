@@ -57,7 +57,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-aws-public
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -76,9 +77,10 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
-          ruby-version: 3.3.0
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
@@ -109,9 +111,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ledger-live-linux-16CPU-64RAM
-      JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+      CI_OS: ledger-wallet-16cpu-aws-public
+      JEST_MAX_WORKERS: "12"
+      JEST_CACHE_DIRECTORY: /tmp/jest-cache
+    runs-on: [ledger-wallet-16cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
@@ -143,6 +146,29 @@ jobs:
       - name: Build dependencies
         run: pnpm exec nx run live-mobile:build-lib-deps
 
+      - name: Get Jest cache date
+        id: jest-cache-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Jest cache from S3
+        # Only PRs restore. Scheduled develop runs start cold and only save, so each saved
+        # cache is built fresh; main, release and hotfix stay uncached.
+        if: ${{ github.event_name == 'pull_request' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          path: ${{ env.JEST_CACHE_DIRECTORY }}
+          key: develop/jest-cache-mobile-${{ steps.jest-cache-meta.outputs.date }}
+          restore-keys: |
+            develop/jest-cache-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
       - name: Run unit tests
         shell: bash
         run: |
@@ -169,6 +195,21 @@ jobs:
           pnpm mobile test:jest:coverage
           END_TS=$(date +%s)
           echo "::notice::jest_ci_metrics app=live-mobile jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+
+      - name: Save Jest cache to S3
+        # Push-to-develop skips unit tests, so the hourly scheduled run seeds the cache.
+        if: ${{ success() && github.event_name == 'schedule' && github.ref_name == 'develop' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          path: ${{ env.JEST_CACHE_DIRECTORY }}
+          key: develop/jest-cache-mobile-${{ steps.jest-cache-meta.outputs.date }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: upload coverage
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

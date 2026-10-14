@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   closeCurrencyRegionRestrictedDialog,
   selectCurrencyRegionRestrictedDialogParams,
@@ -44,7 +44,9 @@ const useCurrencyRegionRestrictedDialogViewModel = (): CurrencyRegionRestrictedD
   return {
     isOpen,
     title: t("errors.CurrencyRegionRestrictedError.title", { currencyName }),
-    description: t("errors.CurrencyRegionRestrictedError.description", { currencyName }),
+    description: t("errors.CurrencyRegionRestrictedError.description", {
+      currencyName,
+    }),
     learnMoreLabel: t("common.learnMore"),
     closeLabel: t("common.close"),
     onClose,

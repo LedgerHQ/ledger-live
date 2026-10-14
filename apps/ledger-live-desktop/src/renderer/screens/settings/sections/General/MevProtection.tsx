@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Switch from "~/renderer/components/Switch";
-import Track from "~/renderer/analytics/Track";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
+import { Track } from "@shared/analytics-react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { setMevProtection } from "~/renderer/actions/settings";
@@ -23,7 +23,7 @@ const MevProtectionRow = () => {
           toggle: "MEV",
           page: "Page Settings General",
         },
-        true,
+        { mandatory: true },
       );
     },
     [dispatch],

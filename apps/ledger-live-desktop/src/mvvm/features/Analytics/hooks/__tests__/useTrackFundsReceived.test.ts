@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackFundsReceived } from "../useTrackFundsReceived";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { replaceAccounts } from "~/renderer/actions/accounts";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import BigNumber from "bignumber.js";
@@ -8,11 +8,10 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
-
 const eth = getCryptoCurrencyById("ethereum");
 const ethAccountId = "js:2:ethereum:0xabc:";
 
@@ -117,7 +116,7 @@ describe("useTrackFundsReceived", () => {
         asset: "Ethereum",
         network: "Ethereum",
       },
-      true,
+      { mandatory: true },
     );
   });
 
@@ -138,7 +137,7 @@ describe("useTrackFundsReceived", () => {
         asset: "Ethereum",
         network: "Ethereum",
       },
-      false,
+      { mandatory: false },
     );
   });
 });

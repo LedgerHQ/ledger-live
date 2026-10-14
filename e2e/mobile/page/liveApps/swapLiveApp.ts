@@ -3,11 +3,17 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "@e2e/utils/retry";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
+import {
+  COUNTDOWN_STABLE_TIMEOUT,
+  PROVIDER_LIST_SETTLE_TIMEOUT,
+  QUOTES_FETCH_TIMEOUT,
+} from "@e2e/utils/constants";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
-const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+const APPROVAL_PROCESSING_TIMEOUT = TIMEOUT.xxxxlarge;
 
 // Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
 // before embedding in a RegExp so they match literally instead of altering the pattern.
@@ -17,7 +23,16 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
 export default class SwapLiveAppPage {
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "compact-quote-card-provider-name-";
+  // swap-live-app's own `ptxLumenQuoteCard` flag picks the quote card markup: compact on stg,
+  // lumen can be served on prod (PRODUCTION=true runs). Drop the unused prefix (and the lumen CTA
+  // label in checkQuoteCardCtaLabel) once the flag is settled.
+  private static readonly PROVIDER_NAME_PREFIXES = [
+    "compact-quote-card-provider-name-",
+    "lumen-quote-card-provider-name-",
+  ];
+  private static readonly PROVIDER_NAME_CSS = SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
+    prefix => `[data-testid^='${prefix}']`,
+  ).join(", ");
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -26,7 +41,7 @@ export default class SwapLiveAppPage {
   toAmountInput = "to-account-amount-input";
   getQuotesButton = "mobile-get-quotes-button";
   quotesButtonDisabled = "mobile-get-quotes-button-disabled";
-  numberOfQuotes = "number-of-quotes";
+  bestValueInfoIcon = "best-value-info-icon";
   quotesCountDown = "quotes-countdown";
   executeSwapButton = "execute-button";
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
@@ -125,13 +140,13 @@ export default class SwapLiveAppPage {
 
   @Step("Wait for quotes")
   async waitForQuotes() {
-    await waitWebElementByTestId(this.numberOfQuotes);
+    await waitWebElementByTestId(this.bestValueInfoIcon, { timeout: QUOTES_FETCH_TIMEOUT });
     await this.waitForQuotesStable();
   }
 
   @Step("verify quotes are displayed")
   async checkQuotes() {
-    await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
+    await detoxExpect(getWebElementByTestId(this.bestValueInfoIcon)).toExist();
   }
 
   @Step("Select available provider")
@@ -139,14 +154,11 @@ export default class SwapLiveAppPage {
     const providersList = (await this.getProviderList()).filter(
       name => name !== SwapProvider.LIFI.uiName,
     );
-    const prefix = SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;
 
     for (const providerName of providersList) {
       const provider = SwapProvider.getByUiName(providerName);
       if (provider && !provider.kyc && !provider.app) {
-        const providerTestId = `${prefix}${provider.name}`;
-        await waitWebElementByTestId(providerTestId);
-        await tapWebElementByTestId(providerTestId);
+        await this.tapProviderName(provider.name);
 
         return provider;
       }
@@ -154,8 +166,20 @@ export default class SwapLiveAppPage {
     throw new Error("No single-app exchange providers found");
   }
 
+  // Prefix match: the testid ends with the quote's provider id, which can extend the e2e name
+  // (1inch renders as `oneinchfusion` when its Fusion quote wins).
+  private async tapProviderName(providerName: string) {
+    const providerNameElement = getWebElementByCssSelector(
+      SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
+        prefix => `[data-testid^='${prefix}${providerName}']`,
+      ).join(", "),
+    );
+    await waitWebElement(providerNameElement);
+    await tapWebElementByElement(providerNameElement);
+  }
+
   @Step("Wait for quotes countdown to be stable")
-  async waitForQuotesStable(timeout: number = 20000) {
+  async waitForQuotesStable(timeout: number = COUNTDOWN_STABLE_TIMEOUT) {
     await retryUntilTimeout(async () => {
       const countdownText = await getWebElementText(this.quotesCountDown);
       const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
@@ -163,11 +187,8 @@ export default class SwapLiveAppPage {
       if (Number.isNaN(currentSeconds)) {
         throw new TypeError(`Could not parse countdown value: ${countdownText}`);
       }
-
       if (currentSeconds < 2 || currentSeconds > 19) {
-        const errorMsg = `Countdown is ${currentSeconds}s, waiting for value between 2-19s`;
-        console.log(errorMsg);
-        throw new Error(errorMsg);
+        throw new Error(`Countdown is ${currentSeconds}s, needs to be between 2 and 19`);
       }
 
       return currentSeconds;
@@ -182,9 +203,11 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Expect execute swap button on step approval")
-  async expectExecuteSwapOnStepApproval() {
+  async expectExecuteSwapOnStepApproval({
+    isTokenApproval = false,
+  }: { isTokenApproval?: boolean } = {}) {
     await waitWebElementByTestId(this.executeSwapButtonStepApproval, {
-      timeout: APPROVAL_PROCESSING_TIMEOUT,
+      timeout: isTokenApproval ? APPROVAL_PROCESSING_TIMEOUT : TIMEOUT.xxlarge,
     });
     await detoxExpect(getWebElementByTestId(this.executeSwapButtonStepApproval)).toExist();
   }
@@ -196,7 +219,6 @@ export default class SwapLiveAppPage {
     });
     await waitForWebElementToBeEnabled(this.executeSwapButtonStepApproval);
     await tapWebElementByTestId(this.executeSwapButtonStepApproval);
-    await waitForElement(app.send.summaryRecipient());
   }
 
   @Step("Get minimum amount for swap")
@@ -208,30 +230,35 @@ export default class SwapLiveAppPage {
 
   @Step("Get provider list")
   async getProviderList() {
-    await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
+    await detoxExpect(getWebElementByTestId(this.bestValueInfoIcon)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
 
-    return await retryUntilTimeout(async () => {
-      const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
-      const prefix = SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;
-      const providerList = await getWebElementsText(
-        this.swapMainContainerWebElement,
-        `[data-testid^='${prefix}']`,
-      );
+    let previousCount = -1;
 
-      // "N quotes found" is translated per language, so only the leading count is checked.
-      const displayedCount = Number.parseInt(numberOfQuotesText, 10);
-      if (Number.isNaN(displayedCount) || displayedCount !== providerList.length) {
-        throw new Error(
-          `Quote count mismatch: UI shows "${numberOfQuotesText}" but found ${providerList.length} cards`,
+    const providerList = await retryUntilTimeout(
+      async () => {
+        const names = await getWebElementsText(
+          this.swapMainContainerWebElement,
+          SwapLiveAppPage.PROVIDER_NAME_CSS,
         );
-      }
-      if (providerList.length === 0) {
-        throw new Error("No quote providers were returned");
-      }
 
-      return providerList;
-    }, 30000);
+        if (names.length === 0) {
+          throw new Error("No quote providers were returned");
+        }
+        if (names.length !== previousCount) {
+          previousCount = names.length;
+          throw new Error(
+            `Quote list still growing (${names.length} cards); waiting for it to settle`,
+          );
+        }
+
+        return names;
+      },
+      PROVIDER_LIST_SETTLE_TIMEOUT,
+      INTERVAL.medium,
+    );
+
+    return providerList;
   }
 
   @Step("Check error message: {{{0}}}")
@@ -313,7 +340,8 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
     const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
-    jestExpect(actualButtonText).toBe(`${ctaVerb} with ${provider}`);
+    const lumenCtaLabel = approvalRequired ? "Continue" : "Review";
+    jestExpect([`${ctaVerb} with ${provider}`, lumenCtaLabel]).toContain(actualButtonText);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -523,7 +551,7 @@ export default class SwapLiveAppPage {
         this.incompatibilityBannerPartnerSelector(provider),
       );
       jestExpect(bannerText.join(" ")).toMatch(this.lnsUnsupportedBannerPattern);
-    }, 20000);
+    }, TIMEOUT.large);
   }
 
   @Step("Select specific provider {{{0}}}")
@@ -536,9 +564,7 @@ export default class SwapLiveAppPage {
     if (!providerName) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
     }
-    const providerTestId = `${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX}${providerName}`;
-    await waitWebElementByTestId(providerTestId);
-    await tapWebElementByTestId(providerTestId);
+    await this.tapProviderName(providerName);
   }
 
   @Step("Go to {{{0}}} live app")

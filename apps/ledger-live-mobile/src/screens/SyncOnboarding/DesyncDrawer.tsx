@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Button, Link, Text } from "@ledgerhq/native-ui";
@@ -7,7 +9,6 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { urls } from "~/utils/urls";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { TrackScreen, track } from "~/analytics";
 
 export type Props = {
   isOpen: boolean;

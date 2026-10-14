@@ -13,7 +13,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
+import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
 import { feeSelectorLabelKeySuffix } from "@ledgerhq/live-common/flows/send/utils/feeStrategyLabels";
@@ -22,6 +22,7 @@ import {
   feeStrategySublabel,
 } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import { FEE_PLACEHOLDER } from "../constants";
 import type { FeeSelectorOption } from "../screens/Amount/types";
 
 type UseNetworkFeesParams = Readonly<{
@@ -117,7 +118,7 @@ export function useNetworkFees({
   return useMemo(
     () => ({
       feesRowLabel: t("fees.networkFees"),
-      feesRowValue: core.feesRowValue === "-" ? "--" : core.feesRowValue,
+      feesRowValue: core.feesRowValue === "-" ? FEE_PLACEHOLDER : core.feesRowValue,
       feesRowSecondaryValue: core.feesRowSecondaryValue,
       feesRowStrategyLabel: t(`fees.${feeSelectorLabelKeySuffix(core.selectedFeeStrategyId)}`, {
         defaultValue: core.selectedFeeStrategyId.toUpperCase(),

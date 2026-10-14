@@ -5,7 +5,7 @@ import { logCardDismissal, logContentCardClick, ClassicCard } from "@braze/web-s
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
 import { fireEvent, render, screen } from "tests/testSetup";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { openURL } from "~/renderer/linking";
 import {
@@ -38,8 +38,8 @@ jest.mock("@braze/web-sdk", () => {
   };
 });
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -243,17 +243,17 @@ describe("ContentCardsLocation", () => {
     await screen.findByText("Discover our devices");
 
     expect(trackPage).toHaveBeenCalledWith(
-      "carousel hardware",
-      undefined,
       {
-        name: "carousel hardware",
-        deviceModel: "lnx",
-        personalRecoOptIn: true,
-        offerType: "discount",
-        platform: "lwd",
+        category: "carousel hardware",
+        props: {
+          name: "carousel hardware",
+          deviceModel: "lnx",
+          personalRecoOptIn: true,
+          offerType: "discount",
+          platform: "lwd",
+        },
       },
-      true,
-      false,
+      { updateRoutes: true },
     );
   });
 

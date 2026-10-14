@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackReceiveFlow, UseTrackReceiveFlow } from "./useTrackReceiveFlow";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import {
   LockedDeviceError,
@@ -10,9 +10,9 @@ import {
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { UserRefusedAddress } from "@ledgerhq/live-common/errors";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 describe("useTrackReceiveFlow", () => {
@@ -50,7 +50,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -69,7 +69,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -86,7 +86,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -119,7 +119,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -136,7 +136,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -153,7 +153,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -170,7 +170,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -187,7 +187,7 @@ describe("useTrackReceiveFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

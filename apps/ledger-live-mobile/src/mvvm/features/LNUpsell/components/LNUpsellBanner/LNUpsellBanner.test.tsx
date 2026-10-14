@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import merge from "lodash/merge";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
@@ -6,7 +7,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, renderHook } from "@tests/test-renderer";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell/utils/upsellCta";
-import { screen as analyticsScreen, track } from "~/analytics";
 import type { LNBannerLocation } from "../../types";
 import { LNUpsellBanner } from ".";
 
@@ -274,15 +274,13 @@ describe("LNUpsellBanner", () => {
 
       expect(screen.getByText("Ledger Nano S Upgrade Program")).toBeVisible();
       expect(screen.getByText("Unlock new OS and security features. Get 20% off.")).toBeVisible();
-      expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith(
-        "Profile",
-        undefined,
-        {
+      expect(jest.mocked(trackPage)).toHaveBeenCalledWith({
+        category: "Profile",
+        props: {
           name: "Profile",
           ...optedInAnalyticsProps,
         },
-        false,
-      );
+      });
     });
 
     it("should not fire a Profile page event during cooldown", () => {
@@ -378,7 +376,7 @@ describe("LNUpsellBanner", () => {
 });
 
 function expectNoProfilePageEvent() {
-  expect(jest.mocked(analyticsScreen)).not.toHaveBeenCalledWith(
+  expect(jest.mocked(trackPage)).not.toHaveBeenCalledWith(
     "Profile",
     undefined,
     expect.objectContaining({ name: "Profile" }),

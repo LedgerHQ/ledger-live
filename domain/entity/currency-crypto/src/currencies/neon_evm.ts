@@ -37,9 +37,6 @@ export const neon_evm = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 245022934,
-  },
   explorerViews: [
     {
       tx: "https://neon.blockscout.com/tx/$hash",

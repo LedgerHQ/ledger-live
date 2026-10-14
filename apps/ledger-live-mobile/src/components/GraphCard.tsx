@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useState, memo } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Currency } from "@domain/entity-currency";
@@ -16,7 +17,6 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 
 import { useTimeRange } from "~/actions/settings";
 import FormatDate from "./DateFormat/FormatDate";
-import { track } from "~/analytics";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Item } from "./Graph/types";
 import { GestureResponderEvent } from "react-native";

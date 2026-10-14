@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { Track } from "@shared/analytics-react";
 import React, { ReactNode, useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -5,8 +7,6 @@ import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setMevProtection } from "~/actions/settings";
 import { mevProtectionSelector } from "~/reducers/settings";
-import Track from "~/analytics/Track";
-import { track } from "~/analytics";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -37,7 +37,7 @@ const MevProtectionRow = () => {
           toggle: "MEV",
           page: "Page Settings General",
         },
-        true,
+        { mandatory: true },
       );
     },
     [dispatch],

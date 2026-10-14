@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import prepareTransaction from "./prepareTransaction";
+import { buildPrepareTransaction } from "./prepareTransaction";
 
 const mockCraftTransaction = jest.fn();
 const mockEstimateFees = jest.fn();
@@ -10,26 +10,8 @@ jest.mock("../logic", () => ({
   craftTransaction: () => mockCraftTransaction(),
 }));
 
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
-
 describe("prepareTransaction", () => {
-  beforeAll(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        status: {
-          type: "active",
-        },
-        sidecar: {
-          url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-          credentials: "",
-        },
-        staking: {
-          electionStatusThreshold: 25,
-        },
-      };
-    });
-  });
+  const prepareTransaction = buildPrepareTransaction(createMockPolkadotContext());
 
   afterEach(() => {
     mockCraftTransaction.mockClear();

@@ -1,10 +1,11 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
 import { Linking, Platform, TouchableOpacity } from "react-native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { urls } from "~/utils/urls";
-import { track, TrackScreen } from "~/analytics";
 import useRatings from "~/logic/ratings";
 import Love from "~/icons/Love";
 

@@ -1,9 +1,11 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track, TrackScreen, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 import useRatings from "~/logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`

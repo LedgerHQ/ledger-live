@@ -15,6 +15,8 @@ describe("signOperation", () => {
         grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
       },
       features: { transport: "grpc" },
+      name: "Sui",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

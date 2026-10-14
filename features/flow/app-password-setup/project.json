@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-app-password-setup",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

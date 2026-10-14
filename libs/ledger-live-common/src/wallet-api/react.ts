@@ -23,6 +23,7 @@ import {
   getAccountIdFromWalletAccountId,
   setWalletApiIdForAccountId,
   resolveWalletApiSpendableBalance,
+  resolveWalletApiMaxSpendable,
 } from "./converters";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { isWalletAPISupportedCurrency } from "./helpers";
@@ -57,6 +58,7 @@ import {
 } from "./logic";
 import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
+
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { Transaction } from "../coin-modules/transaction-types";
@@ -862,16 +864,13 @@ export function useWalletAPIServer({
     server.setHandler(
       "transaction.sign",
       async ({ accountId, tokenCurrency, transaction, options }) => {
-        let currency: string | undefined;
+        let family: string | undefined;
         const signedOperation = await signTransactionLogic(
           { manifest, accounts, tracking },
           accountId,
           transaction,
           (account, parentAccount, signFlowInfos) => {
-            currency =
-              account.type === "TokenAccount"
-                ? account.token.parentCurrencyId
-                : account.currency.id;
+            family = getMainAccount(account, parentAccount).currency.family;
             return new Promise((resolve, reject) => {
               let done = false;
               return uiTxSign({
@@ -897,8 +896,8 @@ export function useWalletAPIServer({
           tokenCurrency,
         );
 
-        return currency === "solana"
-          ? Buffer.from(signedOperation.signature, "hex")
+        return family === "solana"
+          ? Buffer.from(signedOperation.signature, "base64")
           : Buffer.from(signedOperation.signature);
       },
     );
@@ -910,12 +909,14 @@ export function useWalletAPIServer({
     server.setHandler(
       "transaction.signRaw",
       async ({ accountId, transaction, broadcast, options }) => {
+        let family: string | undefined;
         const signedOperation = await signRawTransactionLogic(
           { manifest, accounts, tracking },
           accountId,
           transaction,
           (account, parentAccount, tx) =>
             new Promise((resolve, reject) => {
+              family = getMainAccount(account, parentAccount).currency.family;
               let done = false;
               return uiTxSignRaw({
                 account,
@@ -988,7 +989,11 @@ export function useWalletAPIServer({
         }
 
         return {
-          signedTransactionHex: signedOperation.signature,
+          // Consumers decode `signedTransactionHex` as hex; `combine` returns base64.
+          signedTransactionHex:
+            family === "solana"
+              ? Buffer.from(signedOperation.signature, "base64").toString("hex")
+              : signedOperation.signature,
           transactionHash: hash,
         };
       },
@@ -1287,6 +1292,28 @@ export function useWalletAPIServer({
       );
     });
   }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    server.setHandler("account.getMaxSpendable", async ({ accountId }) => {
+      const localAccountId = getAccountIdFromWalletAccountId(accountId);
+      if (!localAccountId) {
+        throw new Error(`accountId ${accountId} unknown`);
+      }
+
+      const account = accounts.find(item => item.id === localAccountId);
+      if (!account) {
+        throw new Error("account not found");
+      }
+
+      const parentAccount = getParentAccount(account, accounts);
+      const maxSpendable = await resolveWalletApiMaxSpendable(account, parentAccount);
+      if (maxSpendable === undefined) {
+        throw new Error("account.getMaxSpendable failed");
+      }
+
+      return maxSpendable.toFixed(0);
+    });
+  }, [accounts, server]);
 
   useEffect(() => {
     server.setHandler("account.getPublicKey", async ({ accountId }) => {

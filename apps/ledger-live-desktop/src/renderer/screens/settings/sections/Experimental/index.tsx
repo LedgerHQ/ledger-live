@@ -5,7 +5,7 @@ import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experim
 import { useDispatch } from "LLD/hooks/redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import { openModal } from "~/renderer/actions/modals";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import useEnv from "@features/platform-env";
 import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
@@ -17,7 +17,6 @@ import ExperimentalFloat from "./ExperimentalFloat";
 import LottieTester from "../Developer/LottieTester";
 import PostOnboardingHubTester from "../Developer/PostOnboardingHubTester";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
-import { useFeature } from "@features/platform-feature-flags";
 
 const experimentalTypesMap = {
   toggle: ExperimentalSwitch,
@@ -81,19 +80,18 @@ const ForceProviderFeatureRow = ({
 }) => {
   const { dirty } = feature;
   const dmk = useDeviceManagementKit();
-  const ldmkFeatureFlag = useFeature("ldmkTransport");
 
   const onChange = useCallback(
     (name: EnvName, value: unknown) => {
       if (dirty) {
         onDirtyChange();
       }
-      if (dmk && ldmkFeatureFlag?.enabled && typeof value === "number") {
+      if (typeof value === "number") {
         dmk.setProvider(value);
       }
       setEnvOnAllThreads(name, value);
     },
-    [dirty, onDirtyChange, dmk, ldmkFeatureFlag],
+    [dirty, onDirtyChange, dmk],
   );
 
   return <BaseExperimentalFeatureRow feature={feature} onChange={onChange} />;

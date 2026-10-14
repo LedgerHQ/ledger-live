@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { View, Linking } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -13,7 +14,6 @@ import Alert from "~/components/Alert";
 import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 
 import { urls } from "~/utils/urls";
-import { TrackScreen } from "~/analytics";
 
 import type { EarnRewardsPropsType } from "./types";
 

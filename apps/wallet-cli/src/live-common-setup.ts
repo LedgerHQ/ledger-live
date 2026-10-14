@@ -4,7 +4,6 @@ import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
-import { setupStandaloneSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/standaloneStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv, getEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
@@ -20,7 +19,7 @@ import {
 } from "@domain/entity-currency-crypto";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import pkg from "../package.json" with { type: "json" };
+import { ledgerClientVersion } from "./shared/client-version";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -29,7 +28,6 @@ if (!process.env.USER_ID) {
   process.env.USER_ID = "wallet-cli";
 }
 
-const ledgerClientVersion = `wallet-cli/${pkg.version}`;
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 bridgeEnvToNetworkState();
@@ -89,14 +87,19 @@ const walletCliLoaders: CoinModuleLoader[] = [
         setup.setSolanaLdmkEnabled(true);
         return setup;
       }),
-    loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
+    loadTransaction: () =>
+      import("@ledgerhq/live-common/families/solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
+      import("@ledgerhq/live-common/families/solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>
       import("@ledgerhq/live-common/families/solana/walletApiAdapter").then(m => m.default),
     loadSigner: () => import("@ledgerhq/live-common/families/solana/signer").then(m => m.default),
     loadBridgeApi: () =>
       import("@ledgerhq/live-common/families/solana/bridge/api").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("@ledgerhq/live-common/families/solana/bridgeExtensions").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("@ledgerhq/live-common/families/solana/accountRawAssign").then(m => m.default),
     loadLocalApi: () =>
       import("@ledgerhq/live-common/families/solana/coinModuleApi").then(
         m => m.createLocalSolanaApi,
@@ -126,10 +129,4 @@ setFrameworkCryptoAssetsStore(
     ledgerClientVersion,
   }),
 );
-// `getQuotes` needs a store dispatch; wallet-cli has no app Redux store.
-setupStandaloneSwapQuotesStore({
-  // Read on every request, so the debug settings can change it without a restart.
-  getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE"),
-  ledgerClientVersion,
-});
 registerWalletCliDmkTransport();

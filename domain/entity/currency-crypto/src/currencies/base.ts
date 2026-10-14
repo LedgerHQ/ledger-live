@@ -37,9 +37,6 @@ export const base = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 8453,
-  },
   explorerViews: [
     {
       tx: "https://base.blockscout.com/tx/$hash",

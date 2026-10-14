@@ -9,7 +9,7 @@ import Button from "../ButtonV3";
 import { CircleWrapper } from "../CircleWrapper";
 import { ErrorBody } from "../ErrorBody";
 import ExportLogsButton from "../ExportLogsButton";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { Wrapper } from "./rendering";
 
 export function UnsupportedFeatureErrorComponent() {

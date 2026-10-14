@@ -2,7 +2,7 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";

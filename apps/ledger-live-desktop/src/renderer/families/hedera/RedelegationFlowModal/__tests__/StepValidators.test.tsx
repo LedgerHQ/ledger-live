@@ -2,7 +2,6 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import { makeHederaAccount } from "../../__mocks__/account.mock";
@@ -34,15 +33,16 @@ const makeAccount = (): HederaAccount =>
     delegation: { nodeId: 3, delegated: new BigNumber(0), pendingReward: new BigNumber(0) },
   });
 
-const makeProps = (): StepProps =>
+const makeProps = (overrides: Partial<StepProps> = {}): StepProps =>
   ({
     t: (key: string) => key,
     account: makeAccount(),
     parentAccount: null,
-    transaction: makeHederaTransaction({ mode: HEDERA_TRANSACTION_MODES.Redelegate }),
+    transaction: makeHederaTransaction({ mode: "redelegate" }),
     status: { errors: {}, warnings: {} },
     error: null,
     onUpdateTransaction: jest.fn(),
+    ...overrides,
   }) as unknown as StepProps;
 
 describe("RedelegationFlowModal/StepValidators", () => {
@@ -53,5 +53,28 @@ describe("RedelegationFlowModal/StepValidators", () => {
 
     await waitFor(() => expect(screen.getAllByText(/network down/i)).toHaveLength(1));
     expect(screen.getAllByText(/unable to load validators/i)).toHaveLength(2);
+  });
+
+  it("renders the stakingNodeId error under the new validator select", async () => {
+    mockValidatorsQuery = { validators: [], loading: false, error: null };
+
+    render(
+      <StepValidators
+        {...makeProps({
+          transaction: makeHederaTransaction({ mode: "redelegate", valId: "3" }),
+          status: {
+            errors: {
+              stakingNodeId: Object.assign(new Error(), {
+                name: "HederaRedundantStakingNodeIdError",
+              }),
+            },
+            warnings: {},
+          } as unknown as StepProps["status"],
+        })}
+      />,
+      { initialState: defaultState },
+    );
+
+    expect(await screen.findByText(/already delegating to this node/i)).toBeVisible();
   });
 });

@@ -26,7 +26,10 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useBridgeSync: () => syncDispatchMock,
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("~/renderer/components/CurrencyDownStatusAlert", () => ({
   __esModule: true,
   default: () => null,

@@ -39,6 +39,23 @@ const internalWallets = [
   },
 ];
 
+const ethereumLinkedWallet = {
+  id: "w-eth",
+  address: "0xcardethwallet",
+  currency: "eth",
+  network: "ethereum",
+  priority: 2,
+};
+
+const ethereumInternalWallet = {
+  id: "w-eth",
+  balance: "1.25",
+  currency: "eth",
+  address: "0xcardethwallet",
+  addressMemo: null,
+  addressId: "0x3333333333333333333333333333333333333333",
+};
+
 /** What CAL answers for the token: the coin comes from the local registry, so only this is served. */
 const usdcToken = {
   id: USDC_ID,
@@ -92,5 +109,24 @@ describe("Card assets", () => {
     await user.click(await screen.findByTestId("card-asset-w-btc"));
 
     expect(await screen.findByTestId("card-asset-details-amount")).toBeVisible();
+  });
+
+  it("lists a wallet linked on a Baanx page once the user comes back to Pay", async () => {
+    const { rerender } = render(<Card />, { initialState: signedIn });
+    expect(await screen.findByText("Bitcoin")).toBeVisible();
+
+    rerender(<></>);
+    server.use(
+      http.get(`${CARD_API}/v1/wallet/internal/card_linked`, () =>
+        HttpResponse.json([...linkedWallets, ethereumLinkedWallet]),
+      ),
+      http.get(`${CARD_API}/v1/wallet/internal`, () =>
+        HttpResponse.json([...internalWallets, ethereumInternalWallet]),
+      ),
+    );
+    rerender(<Card />);
+
+    expect(await screen.findByText("Ethereum")).toBeVisible();
+    expect(screen.getByText("1.25 ETH")).toBeVisible();
   });
 });

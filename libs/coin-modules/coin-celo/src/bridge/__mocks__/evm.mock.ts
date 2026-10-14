@@ -18,6 +18,8 @@ jest.mock("../../config", () => {
 mockCoinConfig.mockResolvedValue({
   info: {
     status: { type: "active" },
+    name: "Celo",
+    unit: { name: "CELO", code: "CELO", magnitude: 18 },
     node: { type: "external", uri: "https://celo.coin.ledger.com/archive" },
     explorer: { type: "blockscout", uri: "https://celo.blockscout.com/api" },
   },

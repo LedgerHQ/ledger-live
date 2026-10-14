@@ -1,5 +1,5 @@
 import { MAX_FOLLOWEES_PER_TOPIC } from "@ledgerhq/live-common/families/internet_computer/consts";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import type {
   ICPNeuron,
   Transaction,
@@ -23,6 +23,10 @@ const updateTransaction = jest.fn((updater: (tx: Partial<Transaction>) => Partia
 });
 
 const mockBackToList = jest.fn();
+
+jest.mock("@shared/clipboard", () => ({
+  copyToClipboard: jest.fn().mockResolvedValue(true),
+}));
 
 jest.mock("../NeuronManageFlow/useNeuronAction", () => ({
   useNeuronAction: () => ({
@@ -180,7 +184,7 @@ describe("Followees", () => {
     renderScreen();
     fireEvent.press(screen.getByTestId(`icp-copy-followee-${id}`));
 
-    expect(Clipboard.setString).toHaveBeenCalledWith(id);
+    expect(copyToClipboard).toHaveBeenCalledWith(id);
   });
 
   // One row per followee, so a fixed testID would collide and `getBy*` would throw on two.

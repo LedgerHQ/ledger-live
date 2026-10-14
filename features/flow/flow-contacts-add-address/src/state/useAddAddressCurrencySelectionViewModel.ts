@@ -3,6 +3,7 @@ import {
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
   type ContactsFeaturePlatform,
+  type ContactsConfigResolver,
 } from "@features/platform-contacts";
 import type { ContactsCurrencySelectionPort } from "./ports";
 import type { AddAddressCurrencySelection } from "./types";
@@ -10,6 +11,7 @@ import type { AddAddressCurrencySelection } from "./types";
 export type UseAddAddressCurrencySelectionViewModelOptions = Readonly<{
   platform: ContactsFeaturePlatform;
   currencySelection: ContactsCurrencySelectionPort;
+  getConfig: ContactsConfigResolver;
 }>;
 
 export type AddAddressCurrencySelectionResult =
@@ -29,12 +31,18 @@ export type AddAddressCurrencySelectionViewModel = Readonly<{
 export function useAddAddressCurrencySelectionViewModel({
   platform,
   currencySelection,
+  getConfig,
 }: UseAddAddressCurrencySelectionViewModelOptions): AddAddressCurrencySelectionViewModel {
   const { eligibleAddressFamilies, excludedCurrencyIds } = useContactsFeature(platform);
   const eligibleNetworkIds = useMemo(
     () =>
-      resolveEligibleAddressCurrencyIds(eligibleAddressFamilies, undefined, excludedCurrencyIds),
-    [eligibleAddressFamilies, excludedCurrencyIds],
+      resolveEligibleAddressCurrencyIds(
+        eligibleAddressFamilies,
+        undefined,
+        excludedCurrencyIds,
+        getConfig,
+      ),
+    [eligibleAddressFamilies, excludedCurrencyIds, getConfig],
   );
   const isSelectingRef = useRef(false);
   const [selectedCurrency, setSelectedCurrency] = useState<AddAddressCurrencySelection | null>(

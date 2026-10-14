@@ -12,8 +12,28 @@ export const cardanoConfig: CurrencyLiveConfigDefinition = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Cardano",
+      unit: { name: "ada", code: "ADA", magnitude: 6 },
       maxFeesWarning: 5e6,
       maxFeesError: 10e6,
+      testnet: false,
+    } as CardanoCoinConfig,
+  },
+  config_currency_cardano_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
+      },
+      name: "Cardano (Testnet)",
+      unit: { name: "ada", code: "tADA", magnitude: 6 },
+      maxFeesWarning: 5e6,
+      maxFeesError: 10e6,
+      testnet: true,
     } as CardanoCoinConfig,
   },
 };

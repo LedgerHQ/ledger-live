@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVariation";
@@ -12,7 +13,6 @@ import {
   selectedTimeRangeSelector,
 } from "~/reducers/settings";
 import { setSelectedTimeRange } from "~/actions/settings";
-import { track } from "~/analytics";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import { usePortfolioBalanceForDisplay } from "LLM/hooks/usePortfolioBalanceForDisplay";
 import {

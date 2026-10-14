@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useState, ReactNode, useMemo, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -6,7 +7,6 @@ import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState
 import { Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
-import { TrackScreen } from "~/analytics";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import BackgroundBlue from "../assets/BackgroundBlue";
 import BackgroundRed from "../assets/BackgroundRed";

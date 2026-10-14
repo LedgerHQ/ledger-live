@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { productTourCompletedSelector } from "~/reducers/settings";
 import { ProductTourControlsProvider } from "../../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../index";

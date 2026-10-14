@@ -18,6 +18,3 @@
 #import "RNCConfig.h"
 
 
-// Splashscreen
-#import "RNSplashScreen.h"
-

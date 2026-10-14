@@ -62,7 +62,13 @@ const CounterfeitWarningDialogView = ({
             </p>
           </div>
           <div className="flex w-full flex-col gap-16">
-            <Button appearance="base" isFull size="lg" onClick={onProceed}>
+            <Button
+              appearance="base"
+              isFull
+              size="lg"
+              onClick={onProceed}
+              data-testid="counterfeit-warning-continue-button"
+            >
               {primaryCtaLabel}
             </Button>
             <Button appearance="gray" isFull size="lg" onClick={onLearnMore}>

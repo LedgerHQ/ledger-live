@@ -11,11 +11,14 @@ import type {
   PolkadotPreloadData,
 } from "@ledgerhq/coin-polkadot";
 import polkadotAPI from "@ledgerhq/coin-polkadot/network";
-import coinConfig from "@ledgerhq/coin-polkadot/config";
+import type { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import { useBridgeSync } from "../../bridge/react";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 
 const SYNC_REFRESH_RATE = 6000; // 6s - block time
+
+const context = buildContext<PolkadotCoinConfig>("polkadot");
 
 // Render seeds (keyed by currency id) so a remount paints last-known data
 // instantly while the network-cache-backed fetch resolves. Not authoritative:
@@ -40,7 +43,7 @@ function usePolkadotData<T>(
     // reused component instance never shows the previous currency's data.
     setData(seeds[cur.id] ?? fallback);
     // Promise.resolve().then keeps a synchronous throw from fetcher (e.g.
-    // getCoinConfig when no config is registered) inside the promise chain so
+    // a missing currency config) inside the promise chain so
     // it is handled by the catch below instead of escaping the effect.
     Promise.resolve()
       .then(() => fetcher(cur))
@@ -62,8 +65,8 @@ function usePolkadotData<T>(
 
 /** Fetch the Polkadot validators list on demand (LRU-cached in the network layer). */
 export function usePolkadotValidators(currency?: CryptoCurrency): PolkadotValidator[] {
-  return usePolkadotData(currency, lastSeenValidators, [], cur =>
-    polkadotAPI.getValidators("all", cur),
+  return usePolkadotData(currency, lastSeenValidators, [], async cur =>
+    polkadotAPI.getValidators(await context.config(cur.id), "all", cur),
   );
 }
 
@@ -71,15 +74,15 @@ export function usePolkadotValidators(currency?: CryptoCurrency): PolkadotValida
 export function usePolkadotStakingProgress(
   currency?: CryptoCurrency,
 ): PolkadotStakingProgress | undefined {
-  return usePolkadotData(currency, lastSeenStaking, undefined, cur =>
-    polkadotAPI.getStakingProgress(coinConfig.getCoinConfig(cur.id), cur),
+  return usePolkadotData(currency, lastSeenStaking, undefined, async cur =>
+    polkadotAPI.getStakingProgress(context.logger, await context.config(cur.id), cur),
   );
 }
 
 /** Fetch the Polkadot minimum bond balance on demand. */
 export function usePolkadotMinimumBondBalance(currency?: CryptoCurrency): BigNumber {
-  return usePolkadotData(currency, lastSeenMinBond, new BigNumber(0), cur =>
-    polkadotAPI.getMinimumBondBalance(coinConfig.getCoinConfig(cur.id), cur),
+  return usePolkadotData(currency, lastSeenMinBond, new BigNumber(0), async cur =>
+    polkadotAPI.getMinimumBondBalance(await context.config(cur.id), cur),
   );
 }
 

@@ -1,11 +1,12 @@
 import invariant from "invariant";
-import { AccountBridge } from "@ledgerhq/types-live";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { BitcoinAccount, Transaction } from "./types";
 import { inferFeePerByte } from "./logic";
 import { getWalletAccount } from "./getWalletAccount";
 import { getChainAdapter } from "./chain-adapters/registry";
+import type { BitcoinCoinConfig } from "./config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 /**
  * Build a list of UTXOs to exclude because their transactions can't be fetched.
  * This includes UTXOs from pending operations that were replaced, and any other
@@ -68,10 +69,12 @@ export function sameExcludeUTXOs(
   return true;
 }
 
-export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
-  account,
-  transaction,
-) => {
+export const prepareTransaction = async (
+  config: BitcoinCoinConfig,
+  logger: Logger,
+  account: Account,
+  transaction: Transaction,
+): Promise<Transaction> => {
   const adapter = getChainAdapter(account.currency.id);
   const custom = adapter.prepareTransaction?.(account, transaction);
   if (custom) return custom;
@@ -109,7 +112,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   // repeated preparations settle at a fixed point instead of re-deriving a rate
   // that inferFeePerByte would discard.
   const feePerByte =
-    (await adapter.resolveFeePerByte?.(account, {
+    (await adapter.resolveFeePerByte?.(config, logger, account, {
       ...transaction,
       networkInfo,
       feePerByte: inferredFeePerByte,

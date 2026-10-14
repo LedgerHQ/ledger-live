@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -5,7 +6,6 @@ import { connect } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
 import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
-import { TrackScreen } from "~/analytics";
 import KeyboardBackgroundDismiss from "~/components/KeyboardBackgroundDismiss";
 import TextInput from "~/components/TextInput";
 import TranslatedError from "~/components/TranslatedError";

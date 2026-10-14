@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { MockDrawerComponent } from "./shared";
 import { REBORN_BUY_DRAWER_ANALYTICS_PAGE } from "../consts/analytics";
 

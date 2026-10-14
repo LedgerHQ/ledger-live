@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -14,7 +15,6 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Download, Information, LifeRing, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useMyWalletHelpViewModel } from "./useMyWalletHelpViewModel";
 import { HelpListItem } from "./components/HelpListItem";

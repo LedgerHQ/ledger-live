@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { log } from "@ledgerhq/logs";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export function useOnTrustchainRefreshNeeded(
   trustchainSdk: TrustchainSDK,

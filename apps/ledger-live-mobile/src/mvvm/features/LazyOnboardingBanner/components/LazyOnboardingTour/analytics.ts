@@ -1,4 +1,4 @@
-import { screen, track } from "~/analytics";
+import { trackPage, track } from "@shared/analytics";
 import {
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
@@ -20,16 +20,14 @@ export const trackLazyOnboardingTourOpened = (
     return false;
   }
 
-  screen(
-    LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
-    undefined,
-    {
+  trackPage({
+    category: LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+    props: {
       name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
       sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
       ...sharedProps,
     },
-    false,
-  );
+  });
 
   return true;
 };
@@ -112,9 +110,12 @@ export const trackLazyOnboardingTourDoneClicked = (
 export const trackLazyOnboardingTourShopReached = (
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
 ) => {
-  screen(LAZY_ONBOARDING_TOUR_SHOP_PAGE, undefined, {
-    name: "shop",
-    ...sharedProps,
-    source: "lazy onboarding tour",
+  trackPage({
+    category: LAZY_ONBOARDING_TOUR_SHOP_PAGE,
+    props: {
+      name: "shop",
+      ...sharedProps,
+      source: "lazy onboarding tour",
+    },
   });
 };

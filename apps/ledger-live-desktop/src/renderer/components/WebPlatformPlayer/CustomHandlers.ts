@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { ipcRenderer } from "electron";
+import { deeplink } from "~/renderer/bridge";
 import { useDispatch } from "LLD/hooks/redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { setLiveAppModal } from "~/renderer/reducers/liveAppModal";
 import { WebviewProps } from "../Web3AppWebview/types";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
@@ -20,7 +20,7 @@ type CreateDeeplinkOpenHandlerParams = {
 
 export function createDeeplinkOpenHandler({
   isDeeplinkOpenHardeningEnabled,
-  openDeepLink = url => ipcRenderer.send("deep-linking", url),
+  openDeepLink = url => deeplink.open(url),
 }: CreateDeeplinkOpenHandlerParams) {
   return (params?: DeeplinkOpenHandlerParams) => {
     if (!params) {

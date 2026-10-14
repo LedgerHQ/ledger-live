@@ -6,6 +6,7 @@ import { useLedgerSyncInfo } from "LLD/features/WalletSync/hooks/useLedgerSyncIn
 import { Button } from "@ledgerhq/lumen-ui-react";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
+import { copyToClipboard } from "@shared/clipboard";
 
 export function CheckerLedgerSync() {
   const { t } = useTranslation();
@@ -44,11 +45,9 @@ export function CheckerLedgerSync() {
     },
   ];
 
-  function copyToClipboard(text?: string) {
+  async function copyValue(text?: string) {
+    if (!text || !(await copyToClipboard(text))) return;
     setCopied(true);
-    if (navigator.clipboard && text) {
-      navigator.clipboard.writeText(text);
-    }
     setTimeout(() => {
       setCopied(false);
     }, 3000);
@@ -85,7 +84,7 @@ export function CheckerLedgerSync() {
           {element.tiny ? (
             <Ellipsis>
               <Text
-                onClick={() => copyToClipboard(element.value)}
+                onClick={() => copyValue(element.value)}
                 color={"primary.c80"}
                 key={0}
                 ml={2}
@@ -96,7 +95,7 @@ export function CheckerLedgerSync() {
             </Ellipsis>
           ) : (
             <Text
-              onClick={() => copyToClipboard(element.value)}
+              onClick={() => copyValue(element.value)}
               color={"primary.c80"}
               key={0}
               ml={2}
@@ -107,7 +106,7 @@ export function CheckerLedgerSync() {
           )}
 
           {element.copy && (
-            <FakeLink onClick={() => copyToClipboard(element.value)} color="neutral.c70">
+            <FakeLink onClick={() => copyValue(element.value)} color="neutral.c70">
               <Icons.Copy size={"S"} />
             </FakeLink>
           )}

@@ -18,7 +18,7 @@ import Button from "~/renderer/components/Button";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 const mapDispatchToProps = {

@@ -18,10 +18,11 @@ description: |
 1. **`toBeVisible()` over `toBeInTheDocument()`** — Always. `toBeInTheDocument` only checks DOM presence; elements can be hidden. Use `toBeInTheDocument` only when testing explicitly hidden elements.
 2. **Search before you create** — Before writing any mock, fixture, or helper, `rg` the codebase. If it exists, import it. If your new mock is reusable (2+ files), put it in a shared location.
 3. **Mock external deps only** — Never mock child components. Test integration.
-4. **One behavior per test** — Name: `it("should <behavior> when <condition>")`.
-5. **Query priority**: `getByRole` > `getByLabelText` > `getByText` > `getByTestId` (last resort).
-6. **Feature flags via store, never mocked** — Use `overriddenFeatureFlags` in `initialState.settings`.
-7. **Use existing factories** — `genAccount()` from `@ledgerhq/ledger-wallet-framework/mocks/account`, `getCryptoCurrencyById()` from `@ledgerhq/live-common/currencies`. Never recreate account/currency data from scratch.
+4. **Network requests via MSW, never `fetch`** — New test code must not mock `fetch`; use Mock Service Worker handlers instead.
+5. **One behavior per test** — Name: `it("should <behavior> when <condition>")`.
+6. **Query priority**: `getByRole` > `getByLabelText` > `getByText` > `getByTestId` (last resort).
+7. **Feature flags via store, never mocked** — Use `overriddenFeatureFlags` in `initialState.settings`.
+8. **Use existing factories** — `genAccount()` from `@ledgerhq/ledger-wallet-framework/mocks/account`, `getCryptoCurrencyById()` from `@ledgerhq/live-common/currencies`. Never recreate account/currency data from scratch.
 
 ---
 

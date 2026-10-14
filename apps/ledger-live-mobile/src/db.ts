@@ -5,7 +5,7 @@ import type {
   CounterValuesStateRaw,
   RateMapRaw,
   CounterValuesStatus,
-} from "@ledgerhq/live-countervalues/types";
+} from "@domain/entity-market-countervalues";
 import { StateDB, useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { useCallback } from "react";
 import storage from "LLM/storage";

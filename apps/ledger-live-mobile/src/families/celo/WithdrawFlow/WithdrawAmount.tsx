@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
@@ -16,7 +17,6 @@ import {
   Transaction as CeloTransaction,
 } from "@ledgerhq/live-common/families/celo/types";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Touchable from "~/components/Touchable";
 import SendRowsFee from "../SendRowsFee";

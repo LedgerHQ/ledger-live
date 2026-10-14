@@ -72,7 +72,7 @@ describe("OsUpdatesOrchestratorUseCase", () => {
       dmk: {} as DeviceManagementKit,
       connectedDevice: CONNECTED_DEVICE,
       osUpdates: [{} as OsUpdate],
-      storage: { getBackup: jest.fn(), saveBackup: jest.fn() },
+      storage: { getBackup: jest.fn(), saveBackup: jest.fn(), removeBackup: jest.fn() },
       onStop,
     });
 

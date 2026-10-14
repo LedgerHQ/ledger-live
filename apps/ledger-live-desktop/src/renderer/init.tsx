@@ -17,13 +17,15 @@ import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import i18n from "~/renderer/i18n/init";
-import { webFrame, ipcRenderer } from "electron";
+import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
+import { deeplink } from "~/renderer/bridge";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
-import { getMockServerSessionToken } from "@ledgerhq/live-dmk-desktop";
+import { seedMockServerKnownDevice } from "~/renderer/reducers/knownDevices";
+import { getMockServerSessionToken, setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -31,7 +33,7 @@ import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup"
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
-import logger, { enableDebugLogger } from "./logger";
+import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
@@ -39,7 +41,6 @@ import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { bootstrapCardSession } from "./bootstrapCardSession";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
@@ -50,7 +51,7 @@ import {
   filterTokenOperationsZeroAmountSelector,
   migrateLegacyCryptoCounterValue,
 } from "~/renderer/reducers/settings";
-import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { liveBlindSigningReporter, syncFirmwareDistributionSalt } from "@ledgerhq/live-dmk-shared";
 import { evmAddressBookProvider } from "@ledgerhq/live-signer-evm";
 import { tronAddressBookProvider } from "@ledgerhq/live-signer-tron";
 import { toEvmAddressBook, toTronAddressBook } from "@features/platform-contacts";
@@ -61,7 +62,6 @@ import { expectOperatingSystemSupportStatus } from "~/support/os";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
-import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
@@ -71,6 +71,7 @@ import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
+import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import {
   setAllOverrides,
   setBannerVisible,
@@ -115,7 +116,9 @@ async function init() {
         filters,
       })}`,
     );
-    enableDebugLogger((log: LogEntry) => everyLogs || (log?.type && filters.includes(log.type)));
+    enableDebugLogger(
+      (log: LogEntry) => everyLogs || Boolean(log?.type && filters.includes(log.type)),
+    );
   }
 
   checkLibs({
@@ -128,7 +131,7 @@ async function init() {
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {
-      global.localStorage.setItem(key, value);
+      window.localStorage.setItem(key, value);
     });
     const envs = getLocalStorageEnvs();
     for (const k in envs) setEnvOnAllThreads(k, envs[k]);
@@ -151,6 +154,8 @@ async function init() {
   setupCryptoAssetsStore(store);
   setupRateLookups();
   setSwapQuotesStore(store.dispatch);
+  syncFirmwareDistributionSalt(store, setFirmwareDistributionSalt);
+  setIdentitiesStore(store);
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the
@@ -202,7 +207,8 @@ async function init() {
     deepLinkUrl = process.env.LEDGER_LIVE_DEEPLINK;
     store.dispatch(setDeepLinkUrl(deepLinkUrl));
   }
-  ipcRenderer.once("deep-linking", (_, url: string) => {
+  const stopInitialDeepLinkListener = deeplink.onOpen((url: string) => {
+    stopInitialDeepLinkListener();
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
@@ -228,6 +234,9 @@ async function init() {
     settingsToLoad.crashReporting = Boolean(legacySettings.sentryLogs);
     delete legacySettings.sentryLogs;
   }
+
+  // The sidebar collapse is session-only: drop the persisted value so it always starts fully open.
+  delete (settingsToLoad as Record<string, unknown>).sidebarCollapsed;
 
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
@@ -375,8 +384,10 @@ async function init() {
     store.dispatch(restorePayCardOnboardingWidget(payCardState));
   }
 
-  // Seed the mock server session/device before the DMK is built (if enabled).
-  await bootstrapMockServerTransport();
+  // Seed the mock server session before the DMK is built, then record the device.
+  // Settings hydration has already run, so the known device cannot be seeded there.
+  const mockServerDevice = await bootstrapMockServerTransport();
+  if (mockServerDevice) store.dispatch(seedMockServerKnownDevice(mockServerDevice));
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
@@ -393,13 +404,10 @@ async function init() {
     store.dispatch(importMarketBannerState(marketBannerState));
   }
 
-  webFrame.setVisualZoomLevelLimits(1, 1);
+  setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
   matcher.addEventListener("change", updateOSTheme);
-  events({
-    store,
-  });
   window.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "Tab") {
       if (!isGlobalTabEnabled()) enableGlobalTab();
@@ -447,7 +455,7 @@ async function init() {
     });
   }
 
-  registerTransportModules(store);
+  registerTransportModules();
 
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {

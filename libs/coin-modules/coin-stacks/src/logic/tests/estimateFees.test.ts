@@ -63,7 +63,7 @@ describe("estimateFees", () => {
 
     const result = await estimateFees(intent);
 
-    expect(buildUnsignedTx).toHaveBeenCalledWith(intent, 0n, 5n);
+    expect(buildUnsignedTx).toHaveBeenCalledWith(intent, 0n, 5n, { forEstimation: true });
     expect(fetchFeeEstimateTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ payload: "0xpayload", estimatedLength: 180, network: "mainnet" }),
     );
@@ -80,6 +80,8 @@ describe("estimateFees", () => {
     await estimateFees({ ...intent, sequence: 99n });
 
     expect(getNextSequence).not.toHaveBeenCalled();
-    expect(buildUnsignedTx).toHaveBeenCalledWith(expect.anything(), 0n, 99n);
+    expect(buildUnsignedTx).toHaveBeenCalledWith(expect.anything(), 0n, 99n, {
+      forEstimation: true,
+    });
   });
 });

@@ -61,14 +61,15 @@ export default class ModularDrawer {
   }
 
   @Step("Perform search on modular drawer by ticker {{{0}}}")
-  async performSearchByTicker(ticker: string) {
-    await typeTextByElement(this.searchBar(), ticker);
+  async performSearchByTicker(ticker: string, closeKeyboard = true) {
+    await typeTextByElement(this.searchBar(), ticker, closeKeyboard);
   }
 
   @Step("Select currency in receive list by ticker {{{0}}}")
   async selectCurrencyByTicker(ticker: string): Promise<void> {
     const assetItemId = this.assetItemByTicker(ticker);
     if (!(await IsIdVisible(assetItemId))) {
+      await this.performSearchByTicker(ticker);
       await scrollToId(assetItemId, this.selectCryptoScrollViewId);
     }
     await tapById(assetItemId, 0);
@@ -128,7 +129,6 @@ export default class ModularDrawer {
   }
 
   private async selectAssetCurrencyAndNetwork(account: Account): Promise<void> {
-    await this.performSearchByTicker(account.currency.ticker);
     await this.selectCurrencyByTicker(account.currency.ticker);
     const networkName = this.getNetworkNameForAccount(account);
     await this.selectNetworkIfAsked(networkName);

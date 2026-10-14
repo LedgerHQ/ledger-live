@@ -1,5 +1,6 @@
 export * from "./broadcast";
 export * from "./combine";
+export * from "./craftRawTransaction";
 export * from "./craftTransaction";
 export * from "./energyRent";
 export * from "./estimateFees";

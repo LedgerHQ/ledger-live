@@ -1,6 +1,6 @@
+import { analyticsEvents$ } from "@shared/analytics";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { map } from "rxjs/operators";
-import { trackSubject } from "../../analytics/segment";
 import { LoggableEventRenderable } from "./types";
 
 export default function useAnalyticsEventsLog(limit = 40) {
@@ -13,7 +13,7 @@ export default function useAnalyticsEventsLog(limit = 40) {
     [limit],
   );
   useEffect(() => {
-    const subscription = trackSubject
+    const subscription = analyticsEvents$
       .pipe(map(item => ({ ...item, id: ++id.current })))
       // @ts-expect-error RXJS being stubborn
       .subscribe(addItem);

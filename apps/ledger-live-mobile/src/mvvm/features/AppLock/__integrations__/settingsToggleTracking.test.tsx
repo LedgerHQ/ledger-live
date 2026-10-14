@@ -1,7 +1,6 @@
 import { track } from "@shared/analytics";
-import { act, fireEvent, render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import React from "react";
-import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AuthSecurityToggle from "~/screens/Settings/General/AuthSecurityToggle";
 
@@ -43,28 +42,28 @@ describe("tracking the protection toggles", () => {
   it.each([
     { hasPassword: false, next: true },
     { hasPassword: true, next: false },
-  ])(
-    "reports the password toggle as it was before the tap, from $hasPassword",
-    async ({ hasPassword, next }) => {
-      render(<AuthSecurityToggle />, {
-        overrideInitialState: protectedBy({ hasPassword, biometricsEnabled: true }),
-      });
+  ])("reports the password switch as $next", async ({ hasPassword, next }) => {
+    render(<AuthSecurityToggle />, {
+      overrideInitialState: protectedBy({ hasPassword, biometricsEnabled: true }),
+    });
 
-      await flip("password-settings-switch", next);
+    await flip("password-settings-switch", next);
 
-      expect(track).toHaveBeenCalledWith("toggle_clicked", {
-        toggle: "Password Lock",
-        page: ScreenName.GeneralSettings,
-        enabled: hasPassword,
-      });
-    },
-  );
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: next ? "enable" : "disable",
+      type: "password",
+    });
+    expect(track).not.toHaveBeenCalledWith(
+      "encryption_updated",
+      expect.objectContaining({ type: "password" }),
+    );
+  });
 
   it.each([
     { biometricsEnabled: false, next: true },
     { biometricsEnabled: true, next: false },
   ])(
-    "reports the biometrics toggle as it was before the tap, from $biometricsEnabled",
+    "reports the biometrics switch as $next, and the outcome once it lands",
     async ({ biometricsEnabled, next }) => {
       render(<AuthSecurityToggle />, {
         overrideInitialState: protectedBy({ hasPassword: true, biometricsEnabled }),
@@ -72,11 +71,17 @@ describe("tracking the protection toggles", () => {
 
       await flip("biometrics-settings-switch", next);
 
-      expect(track).toHaveBeenCalledWith("toggle_clicked", {
-        toggle: "biometrics",
-        page: ScreenName.GeneralSettings,
-        enabled: biometricsEnabled,
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: next ? "enable" : "disable",
+        type: "biometrics",
       });
+      await waitFor(() =>
+        expect(track).toHaveBeenCalledWith("encryption_updated", {
+          status: next ? "activated" : "deactivated",
+          type: "biometrics",
+          source: "settings",
+        }),
+      );
     },
   );
 });

@@ -18,7 +18,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import Bar from "~/renderer/screens/dashboard/AssetDistribution/Bar";
 import ToolTip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";

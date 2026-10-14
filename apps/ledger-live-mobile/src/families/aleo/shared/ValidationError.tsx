@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
 import type { LedgerError } from "~/types/error";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

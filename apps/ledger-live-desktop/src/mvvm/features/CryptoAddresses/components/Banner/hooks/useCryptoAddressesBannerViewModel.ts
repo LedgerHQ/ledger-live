@@ -9,7 +9,7 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useNavigate } from "react-router";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";

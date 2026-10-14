@@ -1,10 +1,10 @@
+import { trackPage, track } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   mockEthCryptoCurrency,
   usdcToken,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { screen, track } from "~/analytics";
 import { NavigatorName } from "~/const";
 import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import { useEarnBannerViewModel } from "../hooks/useEarnBannerViewModel";
@@ -62,14 +62,17 @@ describe("useEarnBannerViewModel", () => {
     expect(result.current.title).toBe("Earn up to 5.00% APY");
     expect(result.current.description).toBe("Explore Earn opportunities");
     expect(result.current.buttonLabel).toBe("Explore");
-    expect(screen).toHaveBeenCalledWith("swap earn promoter", null, {
-      page: "swapTransactionSuccess",
-      flow: "swap",
-      sourceCurrency: "BTC",
-      targetCurrency: "ETH",
-      targetCurrencyID: ethereum.id,
-      provider,
-      promotedToken: "ETH",
+    expect(trackPage).toHaveBeenCalledWith({
+      category: "swap earn promoter",
+      props: {
+        page: "swapTransactionSuccess",
+        flow: "swap",
+        sourceCurrency: "BTC",
+        targetCurrency: "ETH",
+        targetCurrencyID: ethereum.id,
+        provider,
+        promotedToken: "ETH",
+      },
     });
   });
 
@@ -78,7 +81,7 @@ describe("useEarnBannerViewModel", () => {
 
     expect(result.current.isVisible).toBe(false);
     expect(result.current.title).toBeUndefined();
-    expect(screen).not.toHaveBeenCalled();
+    expect(trackPage).not.toHaveBeenCalled();
     expect(mockUseAssetsData).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
   });
 
@@ -100,7 +103,7 @@ describe("useEarnBannerViewModel", () => {
 
     expect(result.current.isVisible).toBe(false);
     expect(result.current.title).toBeUndefined();
-    expect(screen).not.toHaveBeenCalled();
+    expect(trackPage).not.toHaveBeenCalled();
   });
 
   it("should be visible when the flag params promote a non-default ticker", () => {
@@ -135,7 +138,7 @@ describe("useEarnBannerViewModel", () => {
 
     expect(result.current.isVisible).toBe(false);
     expect(result.current.title).toBeUndefined();
-    expect(screen).not.toHaveBeenCalled();
+    expect(trackPage).not.toHaveBeenCalled();
   });
 
   it("should be hidden when no interest rate is available", () => {

@@ -1,8 +1,12 @@
+import { type PolkadotCoinConfig } from "../../config";
 import { SidecarNominations } from "../types";
 import getApiPromise from "./apiPromise";
 
-export const fetchNominations = async (address: string): Promise<SidecarNominations> => {
-  const api = await getApiPromise();
+export const fetchNominations = async (
+  config: PolkadotCoinConfig,
+  address: string,
+): Promise<SidecarNominations> => {
+  const api = await getApiPromise(config);
   const hash = await api.rpc.chain.getFinalizedHead();
 
   const [activeEraOption, nominationsOpt] = await Promise.all([

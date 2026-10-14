@@ -6,7 +6,7 @@ import {
   takeScreenshot,
   setExchangeDependencies,
 } from "@ledgerhq/live-e2e-shared/speculos";
-import { setEnv } from "@shared/env";
+import { getEnv, setEnv } from "@shared/env";
 import { device, log } from "detox";
 import {
   waitForSpeculosReady,
@@ -23,6 +23,8 @@ import path from "path";
 
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { getCapturedStderr } from "@e2e/utils/loggingUtils";
+import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";
 const SPECULOS_STDERR_MARKER = "--- Speculos stderr ---";
@@ -65,14 +67,20 @@ type SpeculosId = { deviceId: string };
 
 export const ARTIFACTS_DIR = path.resolve("artifacts");
 const SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, `speculos-instances.${process.pid}.json`);
-export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.\d+\.json$/;
+export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.(?<ownerPid>\d+)\.json$/;
+
+let trackingFileQueue: Promise<void> = Promise.resolve();
+
+function updateTrackingFile(update: (instances: SpeculosId[]) => SpeculosId[]): Promise<void> {
+  const run = trackingFileQueue.then(async () => writeInstances(update(await readInstances())));
+  trackingFileQueue = run.catch(() => {});
+  return run;
+}
 
 // Register in tracking file for cross-process cleanup
 async function writeSpeculosInFile(deviceId: string) {
   try {
-    const instances = await readInstances();
-    instances.push({ deviceId });
-    await writeInstances(instances);
+    await updateTrackingFile(instances => [...instances, { deviceId }]);
   } catch (error) {
     log.warn("E2E", `⚠️ Failed to register Speculos instance ${deviceId}:`, sanitizeError(error));
   }
@@ -80,9 +88,7 @@ async function writeSpeculosInFile(deviceId: string) {
 
 async function removeSpeculosFromFile(deviceId: string) {
   try {
-    const instances = await readInstances();
-    const filtered = instances.filter(inst => inst.deviceId !== deviceId);
-    if (filtered.length !== instances.length) await writeInstances(filtered);
+    await updateTrackingFile(instances => instances.filter(inst => inst.deviceId !== deviceId));
   } catch (error) {
     log.warn("E2E", `⚠️ Failed to unregister Speculos instance ${deviceId}:`, sanitizeError(error));
   }
@@ -114,6 +120,10 @@ export async function launchSpeculos(appName: string) {
     const failedRunId = getSpeculinhoRunIdFromError(e);
     if (failedRunId) {
       (globalThis.speculosFailedRunIds ??= new Set()).add(failedRunId);
+    }
+    const mayHaveStarted = err.name === "SpeculinhoAcquireUnconfirmedError";
+    if (failedRunId && mayHaveStarted) {
+      await writeSpeculosInFile(failedRunId);
     }
     await attachSpeculosOutputToAllure(err.message);
     const message = ["[E2E Setup] Speculos failed to start.", err.message]
@@ -155,7 +165,7 @@ export async function launchSpeculos(appName: string) {
   if (device.dependencies?.length)
     info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
 
-  allure.description("SPECULOS\n" + info);
+  allure.descriptionHtml(`<p>SPECULOS<br>${escapeHtml(info).replaceAll("\n", "<br>")}</p>`);
 
   return device;
 }
@@ -163,7 +173,7 @@ export async function launchSpeculos(appName: string) {
 async function findPortByDeviceId(
   deviceId: string,
   maxAttempts = 3,
-  delay = 1000,
+  delay = INTERVAL.medium,
 ): Promise<number | undefined> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     log.info(
@@ -215,9 +225,12 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
   const port = await findPortByDeviceId(deviceId);
   let stopped = false;
   try {
-    await stopSpeculos(deviceId);
-    log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
-    stopped = true;
+    stopped = await stopSpeculos(deviceId);
+    if (stopped) {
+      log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
+    } else {
+      log.warn("E2E", `Release of Speculos ${deviceId} not confirmed; keeping it for cleanup`);
+    }
   } catch (error) {
     log.error("E2E", `Failed to stop Speculos ${deviceId}: ${sanitizeError(error)}`);
   } finally {
@@ -265,16 +278,17 @@ export async function cleanupAllSpeculos(): Promise<void> {
   if (!orphans.length) return;
 
   log.warn("E2E", `Releasing ${orphans.length} orphan Speculos instance(s) from tracking file`);
-  await Promise.all(
-    orphans.map(async ({ deviceId }) => {
+  const unreleased = await Promise.all(
+    orphans.map(async orphan => {
       try {
-        await stopSpeculos(deviceId);
+        if (await stopSpeculos(orphan.deviceId)) return [];
       } catch (error) {
-        log.warn("E2E", `Orphan release failed for ${deviceId}: ${sanitizeError(error)}`);
+        log.warn("E2E", `Orphan release failed for ${orphan.deviceId}: ${sanitizeError(error)}`);
       }
+      return [orphan];
     }),
   );
-  await writeInstances([]);
+  await writeInstances(unreleased.flat());
 }
 
 export async function takeSpeculosScreenshot() {
@@ -282,8 +296,8 @@ export async function takeSpeculosScreenshot() {
     if (isSpeculosRemote()) {
       try {
         await waitForSpeculosReady(deviceId, {
-          interval: 5_000,
-          timeout: 30_000,
+          interval: INTERVAL.slow,
+          timeout: TIMEOUT.xlarge,
         });
       } catch {
         log.warn("E2E", `Skipping screenshot: Speculos with ${deviceId} unreachable.`);
@@ -309,6 +323,48 @@ export async function registerSpeculos(speculosPort: number) {
   setEnv("SPECULOS_API_PORT", speculosPort);
 }
 
+/**
+ * Runs `work` on a Speculos of its own, then puts the caller's device back.
+ *
+ * `registerSpeculos` restores the port but reads SPECULOS_ADDRESS as it finds it, so a remote
+ * device — identified by URL, not port — needs its address restored here too.
+ */
+export async function withTemporarySpeculos<T>(
+  appName: string,
+  work: () => Promise<T>,
+): Promise<T> {
+  const previousPort = getEnv("SPECULOS_API_PORT");
+  const previousAddress = process.env.SPECULOS_ADDRESS;
+  const speculos = await launchSpeculos(appName);
+  try {
+    // A remote /acquire returns a sentinel port before the pod exists, and the readiness poll is
+    // what publishes this device's SPECULOS_ADDRESS; registering first sends the work to the
+    // caller's device instead.
+    if (isSpeculosRemote()) {
+      await waitForSpeculosReady(speculos.id);
+    }
+    await registerSpeculos(speculos.port);
+    return await work();
+  } finally {
+    // deleteSpeculos clears SPECULOS_API_PORT, so the caller's device is restored after it, and a
+    // failed release must neither skip that nor replace the error `work` threw.
+    await deleteSpeculos(speculos.id).catch(error =>
+      log.warn(
+        "E2E",
+        `Could not release temporary Speculos ${speculos.id}: ${sanitizeError(error)}`,
+      ),
+    );
+    if (previousAddress === undefined) {
+      delete process.env.SPECULOS_ADDRESS;
+    } else {
+      process.env.SPECULOS_ADDRESS = previousAddress;
+    }
+    if (previousPort > 0) {
+      await registerSpeculos(previousPort);
+    }
+  }
+}
+
 function getKnownSpeculosAddress(speculosPort: number): string {
   const configuredAddress = process.env.SPECULOS_ADDRESS?.trim();
   if (!configuredAddress) {
@@ -324,11 +380,14 @@ function getKnownSpeculosAddress(speculosPort: number): string {
     : `${withoutTrailingSlash}:${speculosPort}`;
 }
 
+/** How long the app may take to report an env value the test just pushed over the bridge. */
+const BRIDGE_ENV_SYNC_TIMEOUT = 15_000;
+
 async function waitForBridgeEnv(
   key: string,
   expectedValue: string,
-  timeout = 15_000,
-  interval = 500,
+  timeout = BRIDGE_ENV_SYNC_TIMEOUT,
+  interval = INTERVAL.short,
 ): Promise<void> {
   try {
     await retryUntilTimeout(

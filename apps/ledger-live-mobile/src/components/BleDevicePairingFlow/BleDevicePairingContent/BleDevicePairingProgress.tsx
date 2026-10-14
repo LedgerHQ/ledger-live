@@ -1,5 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import Animation from "~/components/Animation";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";

@@ -94,11 +94,11 @@ grep -rn -E "binaryPayload|payinAddress|fromAccountAddress|toAccountAddress" lib
   | grep -vE "\.test\.|/__tests__/|/tests/"
 ```
 
-**`confidentialityFilter` coverage on `trackPage()`:**
+**Props filter registration (the shared pipeline applies it to both `track()` and `trackPage()`):**
 ```bash
-find apps/ledger-live-desktop apps/ledger-live-mobile -name "segment.ts" -path "*/analytics/*" | \
-  xargs -I{} grep -n -E "confidentialityFilter|trackPage" {}
+grep -rn "setPropsFilter(" apps/ --include="*.ts" --include="*.tsx" | grep -v test
 ```
+Desktop registers `confidentialityFilter`; check whether any other app that sends analytics needs a filter.
 
 # Output format
 

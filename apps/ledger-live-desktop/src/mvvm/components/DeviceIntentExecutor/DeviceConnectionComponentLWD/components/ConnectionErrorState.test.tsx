@@ -12,7 +12,7 @@ import { ConnectionErrorState } from "./ConnectionErrorState";
 
 type ConnectionErrorUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.ConnectionError }
+  { type: typeof ConnectDeviceUIStateTypes.ConnectionError }
 >;
 
 function renderState(state: Partial<ConnectionErrorUIState> = {}) {

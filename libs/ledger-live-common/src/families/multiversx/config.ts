@@ -11,6 +11,8 @@ export const multiversxConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "MultiversX",
+      unit: { name: "EGLD", code: "EGLD", magnitude: 18 },
     },
   },
 };

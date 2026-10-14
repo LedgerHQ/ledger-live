@@ -8,6 +8,8 @@ export const fileCoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Filecoin",
+      unit: { name: "FIL", code: "FIL", magnitude: 18 },
     },
   },
 };

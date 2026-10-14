@@ -394,6 +394,53 @@ describe("Aptos API", () => {
       expect(accountInfo.transactions).toEqual([null]);
       expect(accountInfo.blockHeight).toEqual(999);
     });
+
+    it.each([
+      TransactionResponseType.BlockMetadata,
+      TransactionResponseType.StateCheckpoint,
+      TransactionResponseType.Genesis,
+    ])(
+      "returns a null transaction without fetching its block when the indexed version is a %s",
+      async type => {
+        const getBlockByVersion = jest.fn();
+        mockedAptos.mockImplementation(() => ({
+          view: jest.fn().mockReturnValue(["123"]),
+          getTransactionByVersion: jest.fn().mockReturnValue({ type, version: "1" }),
+          getBlockByVersion,
+          getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+            {
+              asset_type: APTOS_ASSET_ID,
+              amount: new BigNumber(123),
+            },
+          ]),
+        }));
+
+        mockedNetwork.mockResolvedValue({
+          data: { block_height: "999" },
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        });
+
+        mockedApolloClient.mockImplementation(() => ({
+          query: async () => ({
+            data: {
+              account_transactions: [{ transaction_version: 1 }],
+            },
+            loading: false,
+            networkStatus: 7,
+          }),
+        }));
+
+        const api = new AptosAPI("aptos");
+        const accountInfo = await api.getAccountInfo(APTOS_ASSET_ID, "1");
+        expect(accountInfo.transactions).toEqual([null]);
+        expect(getBlockByVersion).not.toHaveBeenCalled();
+      },
+    );
   });
 
   describe("estimateGasPrice", () => {

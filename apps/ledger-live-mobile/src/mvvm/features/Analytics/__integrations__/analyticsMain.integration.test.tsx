@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import {
@@ -8,7 +9,6 @@ import {
   mockCardanoCurrency,
 } from "./shared";
 import { State } from "~/reducers/types";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import type { Account } from "@ledgerhq/types-live";
 

@@ -1,8 +1,8 @@
 import {
   useConfirmPasswordViewModel,
-  usePasswordDraft,
   type ConfirmPasswordViewModel,
-} from "@features/flow-app-lock";
+} from "@features/flow-app-password-setup";
+import { usePasswordDraft } from "@features/platform-app-lock";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
@@ -31,7 +31,11 @@ function useConfirmPasswordScreenViewModel(): ConfirmPasswordScreenViewModel {
         return;
       }
 
-      track("encryption_activated", { type: "password", source: params.source });
+      track("encryption_updated", {
+        status: "activated",
+        type: "password",
+        source: params.source,
+      });
       updateIdentify();
       draft.clear();
       // The parent, not this stack: goBack() here would land on the enter-password step.

@@ -7,11 +7,11 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
 import { DeviceSelector } from "./DeviceSelector";
-import { track } from "~/renderer/analytics/segment";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { OnboardingContext } from "../../index";
-import TrackPage from "~/renderer/analytics/TrackPage";
 
 const SelectDeviceContainer = styled(Flex).attrs({
   height: "100%",

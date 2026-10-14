@@ -6,9 +6,8 @@ import {
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
-import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
-import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@ledgerhq/live-countervalues-react";
+import { type TrackingPair, pairId } from "@domain/entity-market-countervalues";
+import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@features/platform-market-countervalues";
 import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import {
@@ -16,7 +15,7 @@ import {
   type DistributionOpts,
   type DistributionResult,
 } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { BehaviorSubject } from "rxjs";
 import { replaceAccounts, reorderAccounts } from "./accounts";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -43,7 +42,7 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
     accounts,
     to,
     product: "llm",
-    version: VersionNumber.appVersion ?? "",
+    version: appVersion,
     skip: !isAssetMode,
     ...displayOpts,
   });

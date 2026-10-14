@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render, fireEvent } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
@@ -8,7 +9,6 @@ import TestNavigator, {
   MockedAccountsWithTokens,
   BLACKLISTED_TOKEN_IDS,
 } from "./shared";
-import { track } from "~/analytics";
 import type { Account } from "@ledgerhq/types-live";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({

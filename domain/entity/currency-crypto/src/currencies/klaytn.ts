@@ -37,9 +37,6 @@ export const klaytn = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 8217,
-  },
   explorerViews: [
     {
       tx: "https://www.klaytnfinder.io/tx/$hash",

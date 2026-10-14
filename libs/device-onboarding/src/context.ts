@@ -1,6 +1,8 @@
 import { assign } from "xstate";
 import {
+  isRecoveryKeyBackupInProgress,
   isSetupStep,
+  RecoveryKeyStatus,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
   type DeviceOnboardingInput,
@@ -14,25 +16,34 @@ export type ExitOutput = { reason: DeviceOnboardingExitReason };
 export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingContext {
   return {
     ...input,
+    hostsSeedSetup: input.hostsSeedSetup ?? false,
     lastDeviceState: null,
     firmwareVersion: null,
+    hasStarted: false,
     isOnboarded: false,
     onboardedOnEntry: null,
     genuineVerdict: null,
-    secureConnectionRequested: false,
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
-    firmwareChecked: false,
     checksPaused: false,
-    availableFirmwareUpdate: null,
+    firmware: null,
     currentSetupStep: null,
+    recoveryKeyBackupOpen: false,
   };
+}
+
+function recoveryKeyBackupStillOpen(open: boolean, status: RecoveryKeyStatus | null): boolean {
+  if (status === null || status === RecoveryKeyStatus.Unknown) {
+    return open;
+  }
+
+  return isRecoveryKeyBackupInProgress(status);
 }
 
 export function currentVerdict(context: DeviceOnboardingContext): GenuineVerdict | null {
   const { genuineVerdict } = context;
 
-  if (genuineVerdict === null || genuineVerdict.sessionId !== context.ports.currentSessionId()) {
+  if (genuineVerdict === null || genuineVerdict.sessionId !== context.sessionId) {
     return null;
   }
 
@@ -44,7 +55,7 @@ export function exitContract(
   output: unknown,
 ): DeviceOnboardingOutput {
   return {
-    sessionId: context.ports.currentSessionId(),
+    sessionId: context.sessionId,
     device: { id: context.deviceId, modelId: context.deviceModelId },
     reason: (output as ExitOutput).reason,
   };
@@ -63,6 +74,10 @@ export const contextActions = {
       isOnboarded: event.state.isOnboarded,
       onboardedOnEntry: context.onboardedOnEntry ?? event.state.isOnboarded,
       firmwareVersion: event.firmwareVersion,
+      recoveryKeyBackupOpen: recoveryKeyBackupStillOpen(
+        context.recoveryKeyBackupOpen,
+        event.state.recoveryKeyStatus,
+      ),
     };
   }),
   rememberUnreadableDeviceState: update(({ context, event }) => {
@@ -77,12 +92,11 @@ export const contextActions = {
       firmwareVersion: event.firmwareVersion,
     };
   }),
+  rememberStart: update({ hasStarted: true }),
   enterEarlyCheckScreen: update({ onEarlyCheckScreen: true }),
   leaveEarlyCheckScreen: update({ onEarlyCheckScreen: false }),
-  rememberSecureConnectionRequested: update({ secureConnectionRequested: true }),
-  forgetSecureConnectionRequested: update({ secureConnectionRequested: false }),
   rememberGenuineChecked: update(({ context }) => ({
-    genuineVerdict: { sessionId: context.ports.currentSessionId(), isGenuine: true },
+    genuineVerdict: { sessionId: context.sessionId, isGenuine: true },
     lastGenuineFailure: null,
   })),
   rememberGenuineFailure: update(({ context, event }) => {
@@ -92,7 +106,7 @@ export const contextActions = {
 
     const verdict =
       event.type === "DEVICE_NOT_GENUINE"
-        ? { sessionId: context.ports.currentSessionId(), isGenuine: false }
+        ? { sessionId: context.sessionId, isGenuine: false }
         : context.genuineVerdict;
 
     return {
@@ -101,23 +115,40 @@ export const contextActions = {
     };
   }),
   forgetGenuineFailure: update({ lastGenuineFailure: null }),
-  rememberFirmwareChecked: update({ firmwareChecked: true, availableFirmwareUpdate: null }),
+  rememberFirmwareChecked: update({ firmware: { kind: "checked" } }),
   rememberAvailableUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_AVAILABLE") {
       return {};
     }
 
-    return { availableFirmwareUpdate: event.update };
+    return { firmware: { kind: "offered", update: event.update } };
   }),
-  forgetFirmwareCheck: update({ firmwareChecked: false, availableFirmwareUpdate: null }),
-  carryAttestationThroughReboot: update(({ context }) => {
-    const { genuineVerdict } = context;
-
-    if (genuineVerdict === null) {
+  forgetFirmwareCheck: update({ firmware: null }),
+  // A new session starts the checks over: the old firmware answer and failure belong to the old one.
+  startNewSession: update(({ event }) => {
+    if (event.type !== "SESSION_READY" && event.type !== "SESSION_CHANGED") {
       return {};
     }
 
-    return { genuineVerdict: { ...genuineVerdict, sessionId: context.ports.currentSessionId() } };
+    return {
+      sessionId: event.sessionId,
+      firmware: null,
+      lastGenuineFailure: null,
+      checksPaused: false,
+    };
+  }),
+  // The update reboots the device onto a new session, but this app ran it: the verdict still holds.
+  carryAttestationThroughReboot: update(({ context, event }) => {
+    if (event.type !== "FIRMWARE_UPDATE_FLOW_CLOSED") {
+      return {};
+    }
+
+    const { genuineVerdict } = context;
+
+    return {
+      sessionId: event.sessionId,
+      genuineVerdict: genuineVerdict && { ...genuineVerdict, sessionId: event.sessionId },
+    };
   }),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),
@@ -131,7 +162,11 @@ export const contextActions = {
       currentSetupStep: isSetupStep(event.state.currentOnboardingStep)
         ? event.state.currentOnboardingStep
         : context.currentSetupStep,
+      recoveryKeyBackupOpen: recoveryKeyBackupStillOpen(
+        context.recoveryKeyBackupOpen,
+        event.state.recoveryKeyStatus,
+      ),
     };
   }),
-  forgetSetupProgress: update({ currentSetupStep: null }),
+  forgetSetupProgress: update({ currentSetupStep: null, recoveryKeyBackupOpen: false }),
 };

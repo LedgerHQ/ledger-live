@@ -4,7 +4,7 @@ import { DeleteBackupStepProps } from "./types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { useLedgerSyncAnalytics, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
 
 export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {

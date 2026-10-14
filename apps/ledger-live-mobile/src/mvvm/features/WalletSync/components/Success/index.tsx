@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import { TrackScreen } from "~/analytics";
 import { useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SafeAreaView from "~/components/SafeAreaView";

@@ -1,8 +1,10 @@
-import { CommandResultFactory, type DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { CommandResultFactory } from "@ledgerhq/device-management-kit";
 import { runActor } from "../tests/actorHarness";
+import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
-import { OnboardingStep } from "../types";
+import { OnboardingStep, RecoveryKeyStatus } from "../types";
 import { defaultSeedPollingIntervalMs, seedPolling, type SeedPollingEvent } from "./seedPolling";
 
 const restoringWord = (currentWordIndex: number): OsVersionResponseOptions => ({
@@ -36,6 +38,7 @@ describe("seedPolling", () => {
           currentOnboardingStep: OnboardingStep.RestoreSeed,
           seedWordIndex: 0,
           seedPhraseWordCount: 24,
+          recoveryKeyStatus: null,
         },
       },
     ]);
@@ -51,6 +54,29 @@ describe("seedPolling", () => {
 
     await jest.advanceTimersByTimeAsync(defaultSeedPollingIntervalMs);
     expect(sendCommand).toHaveBeenCalledTimes(2);
+    stop();
+  });
+
+  it("reports a Recovery Key flag change on a step that stays ready", async () => {
+    const ready = {
+      isOnboarded: true,
+      onboardingState: "device-is-ready",
+      numberOfWords: 24,
+      currentWordIndex: 0,
+    };
+    const { dmk } = createFakeCommandDmk([
+      reads({ ...ready, recoveryKeyStatus: RecoveryKeyStatus.Choice }),
+      reads({ ...ready, recoveryKeyStatus: RecoveryKeyStatus.Naming }),
+    ]);
+    const { received, stop } = start(dmk);
+
+    await jest.advanceTimersByTimeAsync(defaultSeedPollingIntervalMs);
+
+    expect(
+      received.flatMap(event =>
+        event.type === "STEP_CHANGED" ? [event.state.recoveryKeyStatus] : [],
+      ),
+    ).toEqual([RecoveryKeyStatus.Choice, RecoveryKeyStatus.Naming]);
     stop();
   });
 
@@ -143,8 +169,8 @@ describe("seedPolling", () => {
   });
 
   it("never has two commands in flight", async () => {
-    const sendCommand = jest.fn(() => new Promise(() => {}));
-    const dmk = { sendCommand } as unknown as DeviceManagementKit;
+    const sendCommand = jest.fn(() => new Promise(() => undefined));
+    const dmk = createDeviceManagementKit({ sendCommand });
     const { stop } = start(dmk);
 
     await jest.advanceTimersByTimeAsync(5 * defaultSeedPollingIntervalMs);

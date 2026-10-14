@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useState, useCallback } from "react";
 import { useDispatch } from "~/context/hooks";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -5,7 +6,6 @@ import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { deleteAccount } from "~/actions/accounts";
-import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import AccountNameRow from "./AccountNameRow";
 import DeleteAccountRow from "./DeleteAccountRow";

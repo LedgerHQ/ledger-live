@@ -1,5 +1,7 @@
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -24,13 +26,15 @@ import {
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useAddNewContactHeaderState } from "../context/AddNewContactHeaderContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
+import { useSponsoredSend } from "../context/SponsoredSendContext";
 import { getSendFlowTrackingPage } from "../utils/contactTracking";
+import { SPONSORED_TRANSFER_SIGNATURE_HEADER } from "../constants";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -45,6 +49,7 @@ type UseSendHeaderModelResult = Readonly<{
   handleRecipientInputChange: (value: string) => void;
   handleRecipientPaste: () => void;
   handleQrCodeClick: () => void;
+  handleQrScannerError: (error: Error) => void;
   handleScanPicked: (code: string) => void;
   isScannerOpen: boolean;
   recipientContact: RecipientHeaderContact | undefined;
@@ -114,8 +119,9 @@ export function useSendHeaderModel({
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
-  const { recipientType, setInputMethod } = useSendFlowTracking();
+  const { recipientType, setInputMethod, trackMessage } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
+  const { state: sponsoredState } = useSponsoredSend();
   const {
     isEnabled: isContactsFeatureEnabled,
     eligibleAddressFamilies,
@@ -129,7 +135,10 @@ export function useSendHeaderModel({
   const accountName = useMaybeAccountName(state.account.account ?? undefined);
 
   const { navigation, currentStep } = wizard;
-  const currentStepConfig = wizard.currentStepConfig;
+  const currentStepConfig =
+    currentStep === SEND_FLOW_STEP.SIGNATURE && sponsoredState.phase === SPONSORED_PHASE.TRANSFER
+      ? { ...wizard.currentStepConfig, ...SPONSORED_TRANSFER_SIGNATURE_HEADER }
+      : wizard.currentStepConfig;
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
   const isContactAddressFlowStep =
@@ -154,7 +163,10 @@ export function useSendHeaderModel({
   const hasFiredMemoPageViewRef = useRef(false);
   if (showMemoControls && !hasFiredMemoPageViewRef.current) {
     hasFiredMemoPageViewRef.current = true;
-    trackPage("Modal send - step memo", null, trackingProperties);
+    trackPage({
+      category: "Modal send - step memo",
+      props: trackingProperties,
+    });
   } else if (!showMemoControls) {
     hasFiredMemoPageViewRef.current = false;
   }
@@ -353,6 +365,31 @@ export function useSendHeaderModel({
     toggleScanner();
   }, [isScannerOpen, toggleScanner, trackingProperties]);
 
+  const handleQrScannerError = useCallback(
+    (error: Error) => {
+      trackMessage({
+        account: state.account.account,
+        parentAccount: state.account.parentAccount,
+        step: SEND_FLOW_STEP.RECIPIENT,
+        message: {
+          messageId: error.name,
+          messageType: "error",
+        },
+        metadata: {
+          recipientType,
+          recipientLength: recipientSearch.value.length,
+        },
+      });
+    },
+    [
+      recipientSearch.value.length,
+      recipientType,
+      state.account.account,
+      state.account.parentAccount,
+      trackMessage,
+    ],
+  );
+
   const pastedInputRef = useRef(false);
   const handleRecipientPaste = useCallback(() => {
     pastedInputRef.current = true;
@@ -399,12 +436,14 @@ export function useSendHeaderModel({
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
+  const config = resolveCurrencyConfig(state.account.currency?.id);
   const canSearchContacts =
     isContactsFeatureEnabled &&
     isEligibleAddressCurrency(
       eligibleAddressFamilies,
       state.account.currency ?? undefined,
       excludedCurrencyIds,
+      config,
     );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
@@ -422,6 +461,7 @@ export function useSendHeaderModel({
     handleRecipientInputChange,
     handleRecipientPaste,
     handleQrCodeClick,
+    handleQrScannerError,
     handleScanPicked,
     isScannerOpen: showScanner,
     recipientContact: recipientHeader.contact,

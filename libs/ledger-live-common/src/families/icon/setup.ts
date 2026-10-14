@@ -20,6 +20,8 @@ const getCurrencyConfig = (): IconCoinConfig => {
     status: {
       type: "active",
     },
+    name: "ICON",
+    unit: { name: "ICX", code: "ICX", magnitude: 18 },
     infra: {
       indexer: getEnv("ICON_INDEXER_ENDPOINT"),
       indexer_testnet: getEnv("ICON_TESTNET_INDEXER_ENDPOINT"),

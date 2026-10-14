@@ -3,8 +3,8 @@ import type { Account } from "@ledgerhq/types-live";
 import { ETH, USD, WEI } from "./currencies";
 import { makeAccount } from "./accounts";
 import { buy, reward } from "./operations";
-import { buildCV, dailyHistory } from "./countervalues";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 
 const INITIAL_BUY_DATE = new Date(Date.UTC(2025, 0, 10));
 const INITIAL_BUY_AMOUNT = WEI.times(10);

@@ -12,7 +12,7 @@ import {
   MultiversXAccount,
   MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";

@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigate, useLocation } from "react-router";
 import { stakeDefaultTrack } from "./constants";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { useStake } from "LLD/hooks/useStake";
@@ -109,10 +109,14 @@ const useStakeFlow = () => {
 
       const cryptoCurrencies = currencies || list;
 
-      trackPage("Stake", "Drawer - Choose Asset", {
-        ...stakeDefaultTrack,
-        page: location.pathname,
-        type: "drawer",
+      trackPage({
+        category: "Stake",
+        name: "Drawer - Choose Asset",
+        props: {
+          ...stakeDefaultTrack,
+          page: location.pathname,
+          type: "drawer",
+        },
       });
 
       const onSuccess = (account: AccountLike, parentAccount?: Account) => {

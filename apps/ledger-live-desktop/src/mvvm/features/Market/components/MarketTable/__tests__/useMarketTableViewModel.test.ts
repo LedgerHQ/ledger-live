@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { MarketTableData, useMarketTableViewModel } from "../useMarketTableViewModel";
 import { mockT } from "../../__tests__/shared";
 

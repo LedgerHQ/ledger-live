@@ -1,4 +1,4 @@
-import { screen, track } from "~/analytics";
+import { trackPage, track } from "@shared/analytics";
 import { BACKUP_HUB_TRACKING_PAGE_NAME } from "./constants";
 
 export const BACKUP_HUB_FEATURE_INTRO_PAGE = "Ledger Recover Bottomsheet";
@@ -21,9 +21,12 @@ export const trackBackupHubFeatureIntroViewed = () => {
   }
 
   hasTrackedBackupHubFeatureIntroView = true;
-  screen(BACKUP_HUB_FEATURE_INTRO_PAGE, undefined, {
-    name: BACKUP_HUB_FEATURE_INTRO_PAGE,
-    source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
+  trackPage({
+    category: BACKUP_HUB_FEATURE_INTRO_PAGE,
+    props: {
+      name: BACKUP_HUB_FEATURE_INTRO_PAGE,
+      source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
+    },
   });
 };
 

@@ -2,7 +2,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/i
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
-import { utils } from "near-api-js";
+import { NEAR_NOMINATION_EXP } from "near-api-js";
 import {
   FRACTIONAL_DIGITS,
   MIN_ACCOUNT_BALANCE_BUFFER,
@@ -92,7 +92,8 @@ export const getNearStakingPositions = (account: NearAccount): NearStakingPositi
 export const getMaxAmount = (
   account: NearAccount,
   transaction: Transaction,
-  fees?: BigNumber,
+  // `null` as well as `undefined`: a transaction carries `fees: null` until it is estimated.
+  fees?: BigNumber | null,
 ): BigNumber => {
   let maxAmount;
   const selectedValidator = getNearStakingPositions(account).find(
@@ -240,7 +241,7 @@ export const canWithdraw = (
  */
 export const getYoctoThreshold = (): BigNumber => {
   return new BigNumber(10)
-    .pow(new BigNumber(utils.format.NEAR_NOMINATION_EXP - FRACTIONAL_DIGITS))
+    .pow(new BigNumber(NEAR_NOMINATION_EXP - FRACTIONAL_DIGITS))
     .minus(YOCTO_THRESHOLD_VARIATION);
 };
 

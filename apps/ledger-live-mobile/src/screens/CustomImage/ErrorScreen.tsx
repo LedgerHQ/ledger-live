@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
 import GenericErrorView from "~/components/GenericErrorView";

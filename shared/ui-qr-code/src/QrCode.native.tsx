@@ -23,11 +23,13 @@ export function QrCode({
   return (
     <Box
       testID={testID}
+      collapsable={false}
       lx={{
         position: "relative",
         alignItems: "center",
         justifyContent: "center",
       }}
+      style={{ width: size, height: size }}
     >
       <Box
         lx={{

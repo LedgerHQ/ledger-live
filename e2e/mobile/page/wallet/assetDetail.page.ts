@@ -1,9 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { delay, normalizeText, parseTickerAmount } from "@e2e/helpers/commonHelpers";
-import {
-  QUICK_VISIBILITY_PROBE_TIMEOUT,
-  VISIBILITY_PROBE_TIMEOUT,
-} from "@e2e/helpers/elementHelpers";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 type HoldingAddressExpectation = {
   accountId: string;
@@ -17,7 +14,7 @@ const displayRoundingTolerance = (text: string) => {
   return 0.5 * 10 ** -decimals;
 };
 
-const OPERATION_DETAILS_OPEN_TIMEOUT = 5000;
+const OPERATION_DETAILS_OPEN_TIMEOUT = TIMEOUT.small;
 
 export default class AssetDetailPage {
   screenId = "asset-detail-screen";
@@ -74,7 +71,7 @@ export default class AssetDetailPage {
     for (let attempt = 0; attempt < 3; attempt++) {
       await tapById(this.operationsListItemId, 0);
       if (await IsIdVisible(this.operationDetailsTitleId, OPERATION_DETAILS_OPEN_TIMEOUT)) return;
-      await delay(500);
+      await delay(INTERVAL.short);
     }
     throw new Error("Operation details did not open after tapping the transaction");
   }
@@ -87,7 +84,7 @@ export default class AssetDetailPage {
   }
 
   private async openCoinOptions() {
-    if (await IsIdVisible(this.coinOptionsFavouriteRowId, QUICK_VISIBILITY_PROBE_TIMEOUT)) {
+    if (await IsIdVisible(this.coinOptionsFavouriteRowId, TIMEOUT.xxxsmall)) {
       return;
     }
 
@@ -119,12 +116,12 @@ export default class AssetDetailPage {
   }
 
   @Step("Check if Asset Detail page is visible")
-  async isAssetDetailPageVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
+  async isAssetDetailPageVisible(timeout = TIMEOUT.xxsmall) {
     return await IsIdVisible(this.scrollViewId, timeout);
   }
 
   @Step("Check if Asset Detail page for ticker is visible {{{0}}}")
-  async isAssetDetailPageForTickerVisible(ticker: string, timeout = VISIBILITY_PROBE_TIMEOUT) {
+  async isAssetDetailPageForTickerVisible(ticker: string, timeout = TIMEOUT.xxsmall) {
     return (
       (await IsIdVisible(this.scrollViewId, timeout)) &&
       (await IsIdVisible(this.coinCapsuleIconId(ticker), timeout))

@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import React, { useState } from "react";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { urls } from "~/utils/urls";
 import EmptyList from "../components";
-import { track } from "~/analytics";
 
 type Props = {
   sourceScreenName: string;

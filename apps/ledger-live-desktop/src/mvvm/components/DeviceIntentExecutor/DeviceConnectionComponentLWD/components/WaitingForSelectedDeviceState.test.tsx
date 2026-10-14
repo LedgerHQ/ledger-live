@@ -16,7 +16,7 @@ jest.mock("~/renderer/hooks/useTheme", () => () => ({ theme: "dark" }));
 
 type WaitingForSelectedDeviceUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
+  { type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
 >;
 
 function renderState(device: WaitingForSelectedDeviceUIState["device"]) {

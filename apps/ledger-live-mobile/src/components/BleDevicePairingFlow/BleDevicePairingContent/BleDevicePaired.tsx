@@ -1,4 +1,4 @@
-import { TrackScreen } from "~/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { BoxedIcon, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import Animation from "~/components/Animation";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";

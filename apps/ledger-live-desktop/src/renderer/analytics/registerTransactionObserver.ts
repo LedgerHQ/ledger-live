@@ -3,7 +3,7 @@ import {
   setTransactionObserver,
   toSegmentTrackEvent,
 } from "@ledgerhq/transaction-observability";
-import { track } from "./segment";
+import { track } from "@shared/analytics";
 
 /**
  * Forwards every transaction (sign/broadcast) log event from the bridge seam to

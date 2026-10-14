@@ -42,7 +42,7 @@ describe("useReleaseNotesViewModel", () => {
   });
 
   it("should track analytics when dialog opens", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { store } = renderHook(() => useReleaseNotesViewModel());
 
     act(() => {
@@ -53,7 +53,7 @@ describe("useReleaseNotesViewModel", () => {
   });
 
   it("should not track analytics when dismissed via onClose", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { result, store } = renderHook(() => useReleaseNotesViewModel());
 
     act(() => {
@@ -69,7 +69,7 @@ describe("useReleaseNotesViewModel", () => {
   });
 
   it("should track analytics when Got it button is clicked via onGotIt", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { result, store } = renderHook(() => useReleaseNotesViewModel());
 
     act(() => {

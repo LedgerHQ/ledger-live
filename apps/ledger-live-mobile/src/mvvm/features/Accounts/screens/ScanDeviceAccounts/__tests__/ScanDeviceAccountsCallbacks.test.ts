@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { setupScanDeviceTests } from "./shared";
 import BigNumber from "bignumber.js";
 import { Observable, of } from "rxjs";
 import type { Account, ScanAccountEvent } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { prepareCurrency } from "~/bridge/cache";
 import type { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";

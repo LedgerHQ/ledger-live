@@ -4,7 +4,12 @@ import type { Transaction } from "../types";
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignorePreloadFields: ["validators"],
   FIXME_ignoreOperationFields: ["gas"],
-  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
+  FIXME_ignoreAccountFields: [
+    "cosmosResources",
+    "stakingResources",
+    "operationsCount",
+    "operations",
+  ],
   scanAccounts: [
     {
       name: "coreum seed 1",

@@ -15,7 +15,7 @@ import {
   SubheaderTitle,
   Spot,
 } from "@ledgerhq/lumen-ui-react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 export const PerpsEntryPoint = () => {

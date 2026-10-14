@@ -37,6 +37,6 @@ export type ContactAddressDetailDialogNativeProps = Omit<
   Readonly<{
     labels: ContactAddressDetailDialogNativeLabels;
     bottomInset?: number;
-    onCopyAddress?: (address: string) => void;
+    onCopyAddress?: (address: string) => Promise<boolean>;
     onShareAddress?: (address: string) => void;
   }>;

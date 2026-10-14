@@ -4,12 +4,15 @@
 import { renderHook } from "@testing-library/react";
 import { useAssetChartDataInCounterValue } from "../useAssetChartDataInCounterValue";
 import { useAssetChartData } from "../useMarketDataProvider";
-import { useUsdToFiatRate } from "../../../counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useSupportedCounterCurrencies } from "../../../cg-client/hooks/useCoingeckoDataProvider";
 import type { MarketCoinDataChart } from "../../utils/types";
 
 jest.mock("../useMarketDataProvider", () => ({ useAssetChartData: jest.fn() }));
-jest.mock("../../../counterValues/hooks/useUsdToFiatRate", () => ({ useUsdToFiatRate: jest.fn() }));
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
+  useUsdToFiatRate: jest.fn(),
+}));
 jest.mock("../../../cg-client/hooks/useCoingeckoDataProvider", () => ({
   useSupportedCounterCurrencies: jest.fn(),
 }));

@@ -7,9 +7,9 @@ import styled, { useTheme } from "styled-components";
 import Box from "../Box";
 import { urls } from "~/config/urls";
 import { CircleWrapper } from "../CircleWrapper";
-import { track } from "~/renderer/analytics/segment";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
-import TrackPage from "~/renderer/analytics/TrackPage";
 
 const CtaContainer = styled(Box)`
   margin-top: 32px;

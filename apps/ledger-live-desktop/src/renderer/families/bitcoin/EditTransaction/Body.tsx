@@ -351,6 +351,7 @@ const Body = ({
   }, [editType]);
 
   const statusParams = {
+    mainAccount,
     editType,
     transaction,
     transactionToUpdate,

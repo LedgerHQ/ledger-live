@@ -2,8 +2,8 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BTC, ETH, USDC, USD, SAT, WEI, USDC_UNIT } from "./currencies";
 import { makeAccount, makeAccountWithTokens, makeTokenAccount } from "./accounts";
 import { buy, sell } from "./operations";
-import { buildMultiCV } from "./countervalues";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 
 export type MultiAssetScenario = {
   btcAccount: Account;
@@ -112,7 +112,7 @@ export function buildMultiAssetScenario(): MultiAssetScenario {
  * non-zero ops and balances.
  *
  * Used to assert that `computePortfolioPnL` flattens sub-accounts the same
- * way `getPortfolio` from `@ledgerhq/live-countervalues` does — i.e. an ETH
+ * way live-common's `getPortfolio` (`portfolio/portfolio.ts`) does — i.e. an ETH
  * account passed alone must contribute BOTH its own PnL AND its USDC
  * sub-account's PnL to the totals.
  */

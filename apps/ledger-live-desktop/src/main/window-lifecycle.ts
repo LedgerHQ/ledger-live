@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, app, WebPreferences } from "electron";
+import { BrowserWindow, screen, app, WebPreferences, OpenDevToolsOptions } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL, pathToFileURL } from "url";
@@ -9,7 +9,18 @@ import { closeTrackedWebviewDevTools } from "./webviewHandlers";
 export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 1024);
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
 export { MIN_HEIGHT, MIN_WIDTH };
-const { DEV_TOOLS, DISABLE_DEV_TOOLS, BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } = process.env;
+const { DEV_TOOLS, DEV_TOOLS_MODE, DISABLE_DEV_TOOLS, BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } =
+  process.env;
+
+const DEV_TOOLS_MODES: ReadonlySet<string> = new Set([
+  "detach",
+  "right",
+  "left",
+  "bottom",
+  "undocked",
+]);
+export const isDevToolsMode = (mode?: string): mode is OpenDevToolsOptions["mode"] =>
+  !!mode && DEV_TOOLS_MODES.has(mode);
 
 // Used for minirecover (recover local dev env)
 if (__DEV__ && IGNORE_CERTIFICATE_ERRORS) {
@@ -254,7 +265,9 @@ export async function applyWindowParams(
         mainWindow.webContents.once("devtools-opened", () => {
           if (mainWindow) mainWindow.focus();
         });
-        mainWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools(
+          isDevToolsMode(DEV_TOOLS_MODE) ? { mode: DEV_TOOLS_MODE } : undefined,
+        );
       }
     };
 

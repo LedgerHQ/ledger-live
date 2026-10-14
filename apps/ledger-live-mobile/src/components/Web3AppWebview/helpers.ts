@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
@@ -20,7 +21,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "~/context/hooks";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -30,7 +31,6 @@ import prepareSignTransaction from "./liveSDKLogic";
 import { closePlatformExchange } from "./closePlatformExchange";
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
-import { track } from "../../analytics";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { sendWalletAPIResponse } from "~/e2e/bridge/client";
 import Config from "react-native-config";
@@ -812,7 +812,7 @@ export function useUiHook({
 
 const wallet = {
   name: "ledger-live-mobile",
-  version: VersionNumber.appVersion,
+  version: appVersion,
 };
 
 function useGetUserId() {

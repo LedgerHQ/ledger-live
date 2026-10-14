@@ -1,9 +1,9 @@
 import { useSelector } from "LLD/hooks/redux";
 import { useGlobalMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export const useGlobalMarketCapViewModel = () => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);

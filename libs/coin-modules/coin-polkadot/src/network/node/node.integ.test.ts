@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { ApiPromise, HttpProvider } from "@polkadot/api";
+import { polkadotMainnetConfigValue } from "../../test/config.fixture";
 import getApiPromise from "./apiPromise";
 import { fetchValidators } from "./validators";
 
@@ -14,7 +14,7 @@ describe("fetchValidators", () => {
   });
 
   it("should not exceed 40 RPC API calls to fetch all validators", async () => {
-    const result = await fetchValidators(undefined, undefined, getCryptoCurrencyById("polkadot"));
+    const result = await fetchValidators(polkadotMainnetConfigValue);
     expect(result.length).toBeGreaterThan(300);
     const requestCount = provider.stats.total.requests;
     expect(requestCount).toBeGreaterThan(0); // should have made at least one request

@@ -5,6 +5,7 @@ import {
   setHasPassword,
   setNeedsLongerPassword,
 } from "@features/platform-app-lock";
+import { track } from "@shared/analytics";
 import { getRandomBytesAsync } from "expo-crypto";
 import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
@@ -65,6 +66,11 @@ export function useLegacyPasswordMigration(): void {
         dispatch(disablePrivacy());
         dispatch(setHasPassword(true));
         dispatch(setNeedsLongerPassword(result.needsLongerPassword));
+        track("encryption_updated", {
+          status: "migrated",
+          type: "password",
+          source: "migration",
+        });
       })
       .catch(() => {
         hasRun.current = false;

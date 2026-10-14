@@ -1,0 +1,71 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "enforce-i18n-keys",
+  "projectType": "library",
+  "implicitDependencies": [
+    "ledger-live-desktop",
+    "live-mobile"
+  ],
+  "targets": {
+    "lint:i18n-keys": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/tools/nx-plugins/enforce-i18n-keys/validate.js",
+        "{workspaceRoot}/tools/nx-plugins/enforce-i18n-keys/unverifiable-baseline.json",
+        "{workspaceRoot}/apps/ledger-live-desktop/static/i18n/en/app.json",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/locales/en/common.json",
+        "{workspaceRoot}/apps/**/package.json",
+        "!{workspaceRoot}/apps/**/node_modules/**",
+        "{workspaceRoot}/libs/**/package.json",
+        "!{workspaceRoot}/libs/**/node_modules/**",
+        "{workspaceRoot}/support/**/package.json",
+        "!{workspaceRoot}/support/**/node_modules/**",
+        "{workspaceRoot}/devtools/**/package.json",
+        "!{workspaceRoot}/devtools/**/node_modules/**",
+        "{workspaceRoot}/tools/**/package.json",
+        "!{workspaceRoot}/tools/**/node_modules/**",
+        "{workspaceRoot}/tests/**/package.json",
+        "!{workspaceRoot}/tests/**/node_modules/**",
+        "{workspaceRoot}/e2e/**/package.json",
+        "!{workspaceRoot}/e2e/**/node_modules/**",
+        "{workspaceRoot}/features/**/package.json",
+        "{workspaceRoot}/features/**/*.ts",
+        "{workspaceRoot}/features/**/*.tsx",
+        "!{workspaceRoot}/features/**/node_modules/**",
+        "!{workspaceRoot}/features/**/lib/**",
+        "!{workspaceRoot}/features/**/lib-es/**",
+        "!{workspaceRoot}/features/**/dist/**",
+        "{workspaceRoot}/domain/**/package.json",
+        "{workspaceRoot}/domain/**/*.ts",
+        "{workspaceRoot}/domain/**/*.tsx",
+        "!{workspaceRoot}/domain/**/node_modules/**",
+        "!{workspaceRoot}/domain/**/lib/**",
+        "!{workspaceRoot}/domain/**/lib-es/**",
+        "!{workspaceRoot}/domain/**/dist/**",
+        "{workspaceRoot}/shared/**/package.json",
+        "{workspaceRoot}/shared/**/*.ts",
+        "{workspaceRoot}/shared/**/*.tsx",
+        "!{workspaceRoot}/shared/**/node_modules/**",
+        "!{workspaceRoot}/shared/**/lib/**",
+        "!{workspaceRoot}/shared/**/lib-es/**",
+        "!{workspaceRoot}/shared/**/dist/**"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node tools/nx-plugins/enforce-i18n-keys/validate.js"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/tools/nx-plugins/enforce-i18n-keys/**/*"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test tools/nx-plugins/enforce-i18n-keys/validate.test.js"
+      }
+    }
+  }
+}

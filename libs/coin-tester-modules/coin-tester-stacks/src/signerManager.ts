@@ -1,17 +1,14 @@
-import { StacksMocknet } from "@stacks/network";
 import {
-  AnchorMode,
   broadcastTransaction,
   bufferCV,
-  callReadOnlyFunction,
   compressPublicKey,
   contractPrincipalCV,
   cvToJSON,
-  getPublicKey,
+  fetchCallReadOnlyFunction,
   makeContractCall,
-  makeRandomPrivKey,
   principalCV,
-  publicKeyToString,
+  privateKeyToPublic,
+  randomPrivateKey,
   signMessageHashRsv,
   uintCV,
   type TxBroadcastResult,
@@ -20,13 +17,17 @@ import { STACKS_DEVNET_URL } from "./devnet";
 
 const SIGNER_MANAGER_CONTRACT_NAME = "signer-manager-stub";
 const AUTH_ID = 0;
+// Clarinet's devnet uses testnet-versioned addresses; the client points at the local stacks-api.
+const NETWORK = { network: "devnet", client: { baseUrl: STACKS_DEVNET_URL } } as const;
+// Flat, like the scenarios' own fees: a fresh devnet has no fee-estimate history to price from.
+const SETUP_TX_FEE = 20_000;
 
 /** `broadcastTransaction` resolves to a rejection object (with `.error`/`.reason`), it does not
  * throw -- silently waiting on a rejected broadcast's `.txid` (present on every rejection variant
  * too) just times out with no diagnostic, which is exactly what happened before this check
  * existed. */
 function assertBroadcastOk(result: TxBroadcastResult, context: string): void {
-  if (result.error !== undefined) {
+  if ("error" in result) {
     throw new Error(
       `coin-tester-stacks: ${context} broadcast rejected: ${result.reason} - ${result.error}`,
     );
@@ -68,14 +69,6 @@ async function waitForTxSuccess(txid: string, timeoutMs: number): Promise<void> 
  * `POX5_SIGNER_MANAGER_SOURCE`) and mainnet's live `/v2/pox`. Hardcoding the name a second time,
  * separately from `buildStaking`'s own resolution, is exactly the kind of drift that already broke
  * this file once.
- *
- * Targets `@stacks/transactions@6.17.0`/`@stacks/network@6.17.0` (this package's own pinned
- * version, distinct from `coin-stacks`'s v7 -- verified against the installed `dist/*.d.ts`, not
- * assumed): `StacksPrivateKey`/`StacksPublicKey` are objects here, not the hex strings v7 uses,
- * and network/client plumbing is a single `StacksNetwork` instance, not a `{client: {baseUrl}}`
- * pair. `signer.ts`'s already-working legacy signer is the existing proof that v6-signed,
- * v6-broadcast transactions interoperate fine with `coin-stacks`'s v7-crafted transaction bytes
- * (the wire format is a protocol fact, not an SDK-version fact).
  */
 export async function setupSignerManager(
   deployerPrivateKey: string,
@@ -83,28 +76,22 @@ export async function setupSignerManager(
   poxContractId: string,
 ): Promise<{ valAddress: string }> {
   const valAddress = `${deployerAddress}.${SIGNER_MANAGER_CONTRACT_NAME}`;
-  const network = new StacksMocknet({ url: STACKS_DEVNET_URL });
   const [poxContractAddress, poxContractName] = poxContractId.split(".");
 
-  // `makeRandomPrivKey`'s underlying `@noble/secp256k1` key is a raw 32-byte value, not the
-  // 33-byte "compressed" Stacks private-key convention (`DEPLOYER_PRIVATE_KEY` has that trailing
-  // marker byte; this generated one doesn't) -- so `getPublicKey`'s own compression inference
-  // silently derives an *uncompressed* (65-byte) public key here. pox-5's `signer-key` parameter
-  // is `(buff 33)`; broadcasting the uncompressed one is a real `BadFunctionArgument` rejection,
-  // verified empirically. `compressPublicKey` sidesteps the private key's own convention entirely.
-  const signerKeyPrivate = makeRandomPrivKey();
-  const signerKeyHex = publicKeyToString(
-    compressPublicKey(getPublicKey(signerKeyPrivate).data),
-  ).replace(/^0x/, "");
+  // pox-5's `signer-key` parameter is `(buff 33)`, so the public key must be compressed: an
+  // uncompressed (65-byte) one is a `BadFunctionArgument` rejection. `randomPrivateKey` already
+  // returns a compressed-convention key; `compressPublicKey` makes the 33 bytes explicit anyway.
+  const signerKeyPrivate = randomPrivateKey();
+  const signerKeyHex = compressPublicKey(privateKeyToPublic(signerKeyPrivate)).replace(/^0x/, "");
   const signerKeyBuffer = Buffer.from(signerKeyHex, "hex");
 
-  const hashResult = await callReadOnlyFunction({
+  const hashResult = await fetchCallReadOnlyFunction({
     contractAddress: poxContractAddress,
     contractName: poxContractName,
     functionName: "get-signer-grant-message-hash",
     functionArgs: [principalCV(valAddress), uintCV(AUTH_ID)],
     senderAddress: deployerAddress,
-    network,
+    ...NETWORK,
   });
   const decodedHash = cvToJSON(hashResult);
   const messageHash = (decodedHash.value as string).replace(/^0x/, "");
@@ -112,7 +99,7 @@ export async function setupSignerManager(
   const signerSigHex = signMessageHashRsv({
     messageHash,
     privateKey: signerKeyPrivate,
-  }).data.replace(/^0x/, "");
+  }).replace(/^0x/, "");
 
   const grantTx = await makeContractCall({
     contractAddress: deployerAddress,
@@ -124,10 +111,10 @@ export async function setupSignerManager(
       bufferCV(Buffer.from(signerSigHex, "hex")),
     ],
     senderKey: deployerPrivateKey,
-    anchorMode: AnchorMode.Any,
-    network,
+    fee: SETUP_TX_FEE,
+    ...NETWORK,
   });
-  const grantResult = await broadcastTransaction(grantTx, network);
+  const grantResult = await broadcastTransaction({ transaction: grantTx, ...NETWORK });
   assertBroadcastOk(grantResult, "relay-grant-signer-key");
   await waitForTxSuccess(grantResult.txid, 5 * 60 * 1000);
 
@@ -143,10 +130,10 @@ export async function setupSignerManager(
       bufferCV(signerKeyBuffer),
     ],
     senderKey: deployerPrivateKey,
-    anchorMode: AnchorMode.Any,
-    network,
+    fee: SETUP_TX_FEE,
+    ...NETWORK,
   });
-  const registerResult = await broadcastTransaction(registerTx, network);
+  const registerResult = await broadcastTransaction({ transaction: registerTx, ...NETWORK });
   assertBroadcastOk(registerResult, "relay-register-signer");
   await waitForTxSuccess(registerResult.txid, 5 * 60 * 1000);
 

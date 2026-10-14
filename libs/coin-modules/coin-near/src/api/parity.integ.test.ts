@@ -26,7 +26,12 @@ const infra = {
   API_NEARBLOCKS_INDEXER: "https://near-indexer.coin.ledger.com",
 };
 
-const config = () => ({ status: { type: "active" as const }, infra });
+const config = () => ({
+  status: { type: "active" as const },
+  name: "NEAR",
+  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
+  infra,
+});
 
 const ACCOUNT = "nearkat.near";
 const NAMED_RECIPIENT = "recipient.near";

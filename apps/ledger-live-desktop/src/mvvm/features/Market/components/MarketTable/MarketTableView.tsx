@@ -3,7 +3,7 @@ import { TFunction } from "i18next";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { TableRoot, Table, TableBody } from "@ledgerhq/lumen-ui-react";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { MarketFavoritesEmptyState } from "../MarketFavoritesEmptyState";
 import { MarketNoAssetsEmptyState } from "../MarketNoAssetsEmptyState";
 import { MarketRow } from "../MarketRow";

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "26.6.0",
+  "version": "26.6.1",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -62,12 +62,6 @@
     "yaml": "2.8.1",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "publishConfig": {
     "directory": "dist"

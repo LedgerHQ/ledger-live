@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { AddAccountEventName, AddAccountEventParams } from "./addAccount.types";
 
 type TrackAddAccountEvent = <T extends AddAccountEventName>(

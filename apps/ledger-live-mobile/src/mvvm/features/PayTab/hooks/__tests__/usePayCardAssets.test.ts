@@ -1,6 +1,5 @@
-import { renderHook } from "@tests/test-renderer";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { countervaluesTestUserSettings, renderHook } from "@tests/test-renderer";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
@@ -56,7 +55,7 @@ function withRates(state: State): State {
             [pairId({ from: usdc, to: USD })]: { latest: 1 },
             [pairId({ from: BITCOIN, to: USD })]: { latest: 100_000 },
           },
-          state.countervalues.userSettings,
+          countervaluesTestUserSettings,
         ),
       },
     },

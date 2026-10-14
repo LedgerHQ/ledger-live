@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { allowDebugReactQuerySelector } from "~/renderer/reducers/settings";
 import { setAllowDebugReactQuery } from "~/renderer/actions/settings";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 const AllowDebugReactQueryToggle = () => {
   const dispatch = useDispatch();

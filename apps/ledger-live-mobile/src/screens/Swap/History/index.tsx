@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
@@ -22,7 +24,6 @@ import {
 import Share from "react-native-share";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { track, TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
 import LText from "~/components/LText";

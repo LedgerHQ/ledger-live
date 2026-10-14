@@ -6,7 +6,7 @@ import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   hasStakeRedirectParams,
   useDappLifecycleMonitoring,

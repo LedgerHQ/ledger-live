@@ -2,6 +2,7 @@ import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/he
 import type { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
+  CLAIM_REWARDS_TRIGGER_TINYBARS,
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
   MAP_STAKING_MODE_TO_MEMO,
@@ -77,7 +78,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   transaction.amount = calculatedAmount.amount;
 
-  // `maxFee` must be explicitly set to avoid the @hashgraph/sdk default fallback
+  // `maxFee` must be explicitly set to avoid the @hiero-ledger/sdk default fallback
   // this ensures device app validation passes (e.g. during swap flow)
   // it's applied via `tx.setMaxTransactionFee` when building the transaction
   transaction.maxFee = estimatedFees.tinybars;
@@ -94,7 +95,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     if (transaction.mode === HEDERA_TRANSACTION_MODES.ClaimRewards) {
       const config = resolveConfig(account.currency.id);
       transaction.recipient = config.claimRewardsRecipient;
-      transaction.amount = new BigNumber(1);
+      transaction.amount = new BigNumber(CLAIM_REWARDS_TRIGGER_TINYBARS);
     }
   }
 

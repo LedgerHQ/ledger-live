@@ -19,6 +19,7 @@ export const ConfirmationScreen = () => {
 
       <ConfirmationFooter
         status={status}
+        error={transactionError}
         onViewDetails={onViewDetails}
         onClose={onClose}
         onRetry={onRetry}

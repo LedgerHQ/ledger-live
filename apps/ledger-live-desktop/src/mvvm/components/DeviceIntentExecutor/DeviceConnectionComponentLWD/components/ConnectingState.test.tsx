@@ -8,7 +8,7 @@ import { ConnectingState } from "./ConnectingState";
 
 type ConnectingUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.Connecting }
+  { type: typeof ConnectDeviceUIStateTypes.Connecting }
 >;
 
 describe("ConnectingState", () => {

@@ -27,7 +27,8 @@ function renderContactsPage(
         labels={{
           title: "Contacts",
           searchPlaceholder: "Search contact",
-          searchNoResults: "No contact found",
+          searchNoResults: "No contacts found by that name",
+          searchNoResultsDescription: "Try another name or spelling.",
           addContact: "Add contact",
           ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
           formatAddressCount: count => `${count} address`,

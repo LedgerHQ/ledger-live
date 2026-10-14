@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useRef } from "react";
 import {
   useNotificationsData,
@@ -8,7 +9,6 @@ import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { resolveDrawerPromptTargetForAnalytics } from "LLM/features/NotificationsPrompt/new/notificationsPromptAnalytics";
 import type { NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
-import { TrackScreen } from "~/analytics";
 import type { NotificationsState } from "~/reducers/types";
 import { NotificationsPromptDrawerView } from "./NotificationsPromptDrawerView";
 

@@ -1,6 +1,6 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { BaseInput, Flex, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
-import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";

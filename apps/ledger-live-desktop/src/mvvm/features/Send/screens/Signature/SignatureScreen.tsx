@@ -33,6 +33,7 @@ export const SignatureScreen = () => {
     request,
     onDeviceActionResult,
     finishWithError,
+    onLockedDeviceShown,
     onDeviceConfirmationShown,
   } = useSignatureViewModel();
 
@@ -52,7 +53,13 @@ export const SignatureScreen = () => {
           analyticsPropertyFlow="send"
           renderLockedDevice={({ device, onRetry }) => {
             if (!device) return null;
-            return <LockedDevicePrompt deviceModelId={device.modelId} onRetry={onRetry} />;
+            return (
+              <LockedDevicePrompt
+                deviceModelId={device.modelId}
+                onRetry={onRetry}
+                onShown={onLockedDeviceShown}
+              />
+            );
           }}
           renderDeviceSignatureRequested={({ device }) => (
             <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />

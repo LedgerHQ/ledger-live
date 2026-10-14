@@ -1,8 +1,11 @@
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
-import { formatDefaultFeatures } from "@features/platform-feature-flags";
-import { parseFirebaseFeatures } from "@features/platform-feature-flags/firebase";
+import {
+  formatDefaultFeatures,
+  parseFirebaseFeatures,
+} from "@features/platform-feature-flags-firebase";
+import { setContentAbTestCopy } from "@features/platform-content-ab-tests";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
 
@@ -90,7 +93,7 @@ export function subscribeToRemoteFlags(callback: Subscriber): () => void {
 export async function readCachedFlags(): Promise<PartialFeatures> {
   try {
     await setup();
-    return parseFirebaseFeatures(rc.getAll());
+    return hydrateRemoteConfigValues(rc.getAll());
   } catch {
     return {};
   }
@@ -108,9 +111,16 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   await setup();
   await rc.fetchAndActivate();
-  const flags = parseFirebaseFeatures(rc.getAll());
+  const flags = hydrateRemoteConfigValues(rc.getAll());
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;
   subscribers.forEach(callback => callback({ fetchedAt }));
   return flags;
+}
+
+// One `getAll()` payload, two readers: the flag decoder and the copy experiments,
+// which are `feature_copy_*` keys in the same Remote Config template.
+function hydrateRemoteConfigValues(all: ReturnType<typeof rc.getAll>): PartialFeatures {
+  setContentAbTestCopy(all);
+  return parseFirebaseFeatures(all);
 }

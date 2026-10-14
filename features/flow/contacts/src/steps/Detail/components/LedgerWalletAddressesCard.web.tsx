@@ -23,7 +23,7 @@ export function LedgerWalletAddressesCard({
   return (
     <ListItem
       onClick={() => onPress(intent)}
-      className="bg-surface"
+      className="shrink-0 bg-surface"
       data-testid="contacts-detail-ledger-wallet-addresses"
     >
       <ListItemLeading>

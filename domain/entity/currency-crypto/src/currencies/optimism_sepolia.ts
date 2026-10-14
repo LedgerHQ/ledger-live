@@ -38,9 +38,6 @@ export const optimism_sepolia = currency({
     },
   ],
   isTestnetFor: "optimism",
-  ethereumLikeInfo: {
-    chainId: 11155420,
-  },
   explorerViews: [
     {
       tx: "https://optimism-sepolia.blockscout.com/tx/$hash",

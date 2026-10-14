@@ -3,8 +3,20 @@ import type {
   FeeSelectorOptionKind,
   FeeSelectorOption,
 } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import type { FeeAmountDisplay } from "LLD/features/Send/types";
+import type { SponsoredFeeNudgeProps } from "./components/Fees/SponsoredFeeNudge";
 
 export type { FeeSelectorOptionKind, FeeSelectorOption };
+
+export type SponsoredFeeDisplay = FeeAmountDisplay &
+  Readonly<{
+    /** The standard fee's fiat price, struck through before `value`; null when not comparable. */
+    originalValue: string | null;
+    /** The token the fee is paid in; null when the account holds none. */
+    feeAsset: Readonly<{ ledgerId: string; ticker: string }> | null;
+    /** Replaces the network fees tooltip, which describes the standard fee path. */
+    description: string;
+  }>;
 
 export type AmountScreenMessage = Readonly<{
   type: "error" | "warning" | "info";
@@ -59,6 +71,8 @@ type FeesProps = Readonly<{
     selectedId: string;
     canOpen: boolean;
   }>;
+  sponsoredNudge: SponsoredFeeNudgeProps;
+  sponsoredFee: SponsoredFeeDisplay | null;
 }>;
 
 type QuickActionsProps = Readonly<{
@@ -71,6 +85,7 @@ type ReviewProps = Readonly<{
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
   reviewLoading: boolean;
+  sponsoredFeeError: string | null;
   onReview: () => void;
   onGetFunds?: () => void;
 }>;

@@ -3,10 +3,24 @@ import { fileURLToPath } from "node:url";
 import baseConfig from "../../jest.config.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+// near-api-js v7 depends on ESM-only @noble/@scure packages, which have to be transpiled for Jest.
+const esmPackages = ["@noble", "@scure"];
 
 export default {
   ...baseConfig,
   rootDir: __dirname,
+  transform: {
+    ...baseConfig.transform,
+    [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.{ts,tsx}",

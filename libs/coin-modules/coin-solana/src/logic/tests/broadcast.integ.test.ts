@@ -6,6 +6,8 @@ const config: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
   status: { type: "active" },
+  name: "Solana",
+  unit: { name: "SOL", code: "SOL", magnitude: 9 },
 };
 const api = createApi("solana");
 const context: SolanaContext = {

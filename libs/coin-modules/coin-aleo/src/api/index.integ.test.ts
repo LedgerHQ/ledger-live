@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
 import { AleoApiConfigurationResetError } from "../errors";
@@ -9,8 +10,11 @@ import {
   referenceTransferPublicTx,
   TEST_TOKEN_PROGRAM_ID,
   testnetAddress,
+  testnetBondedMicrocredits,
+  testnetBondedValidator,
   testnetIncomingPrivateRecord1,
   testnetSelfConversionTx,
+  testnetSponsorAddress,
   testnetViewKey,
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
@@ -40,14 +44,20 @@ describe("createApi", () => {
     config: async () => getTestnetIntegConfig(),
     logger: () => {},
   };
+  const stakingContext: AleoContext = {
+    config: async () => getTestnetIntegConfig({ enableStaking: true }),
+    logger: () => {},
+  };
   let emptyAddress: string;
   let privacyContext: AleoContext;
+  let stakingPrivacyContext: AleoContext;
   let emptyAddressViewKey: string;
 
   beforeAll(async () => {
     setupCalStore();
     const pristineAccount = await getPristineAccount();
     privacyContext = await withPrivacyContext(context, testnetViewKey);
+    stakingPrivacyContext = await withPrivacyContext(stakingContext, testnetViewKey);
     emptyAddress = pristineAccount.address;
     emptyAddressViewKey = pristineAccount.viewKey;
   });
@@ -172,6 +182,82 @@ describe("createApi", () => {
 
       expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
     });
+
+    it("reports no stake entry and nothing locked for an address with no bond", async () => {
+      const emptyStakingPrivacyContext = await withPrivacyContext(
+        stakingContext,
+        emptyAddressViewKey,
+      );
+
+      const balance = await api.getBalance(emptyStakingPrivacyContext, emptyAddress);
+
+      expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
+    });
+
+    it("adds the bonded stake to the native total as locked, on top of the liquid balance", async () => {
+      const [[liquidNative], stakedBalance] = await Promise.all([
+        api.getBalance(privacyContext, testnetAddress),
+        api.getBalance(stakingPrivacyContext, testnetAddress),
+      ]);
+
+      expect(stakedBalance.filter(entry => entry.asset.type === "native")).toEqual([
+        {
+          value: liquidNative.value + testnetBondedMicrocredits,
+          locked: testnetBondedMicrocredits,
+          asset: { type: "native" },
+        },
+        {
+          value: testnetBondedMicrocredits,
+          asset: { type: "native" },
+          stake: expect.objectContaining({
+            address: testnetAddress,
+            state: "active",
+            delegate: testnetBondedValidator,
+          }),
+        },
+      ]);
+    });
+  });
+
+  describe("getStakes", () => {
+    it("returns an empty page for an address with no bond", async () => {
+      const page = await api.getStakes(stakingContext, emptyAddress);
+
+      expect(page).toEqual({ items: [] });
+    });
+
+    it("returns the bonded testnetAddress's active stake", async () => {
+      const page = await api.getStakes(stakingContext, testnetAddress);
+
+      expect(page.items).toEqual([
+        expect.objectContaining({
+          uid: testnetAddress,
+          address: testnetAddress,
+          state: "active",
+          actions: ["delegate", "undelegate"],
+          delegate: testnetBondedValidator,
+          asset: { type: "native" },
+          amount: testnetBondedMicrocredits,
+        }),
+      ]);
+    });
+  });
+
+  describe("getValidators", () => {
+    it("reads the validator committee", async () => {
+      const page = await api.getValidators(context);
+
+      expect(page.items.length).toBeGreaterThan(0);
+      page.items.forEach(validator => {
+        expect(validator.id).toBe(validator.address);
+        expect(validator.name.length).toBeGreaterThan(0);
+        expect(validator.balance).toBeGreaterThan(0n);
+        expect(Number(validator.commissionRate)).toBeGreaterThanOrEqual(0);
+        expect(Number(validator.commissionRate)).toBeLessThanOrEqual(100);
+        expect(validator.apy ?? 0).toBeGreaterThanOrEqual(0);
+        expect(validator.apy ?? 0).toBeLessThanOrEqual(1);
+      });
+    });
   });
 
   describe("listOperations", () => {
@@ -265,6 +351,79 @@ describe("createApi", () => {
           cursor: "not-a-height",
         }),
       ).rejects.toThrow(/malformed listOperations cursor/);
+    });
+
+    describe("fees", () => {
+      const operationsById = new Map<string, Operation>();
+
+      beforeAll(async () => {
+        let cursor: string | undefined;
+        do {
+          const page = await api.listOperations(stakingPrivacyContext, testnetAddress, {
+            minHeight: firstActivityBlock,
+            order: "desc",
+            limit: 50,
+            ...(cursor && { cursor }),
+          });
+          for (const op of page.items) operationsById.set(op.id, op);
+          cursor = page.next;
+        } while (cursor);
+      });
+
+      function getOperation(id: string): Operation {
+        const op = operationsById.get(id);
+        invariant(op, `guard: ${id} is missing from the account history`);
+        return op;
+      }
+
+      it.each([
+        ["at1dj2hj6pufrcrqfzuuetg26h2sntpecn7jfc3lddqkkr8n5w9nqfqpwj874", testnetAddress],
+        ["at19p0dlt05nv06dnvk2wymd2denkke8kgzc7k5w8x6tzjk9rsamvysglmznk", testnetAddress],
+        ["at1nt43e57g0nypf7h9saujnceyshtev56aqv69juqyxgmagv2qs5zqzcw7tt", testnetAddress],
+        ["at1jxfrgfn094jsj7qsqnn7acnzss0kj8avqa49uxwtkaexvj44cqxsnzrtfh", testnetAddress],
+        ["at10jt4v3glr9pkrpndqclgasqa8ed4hu0gj7r3qujmqhmaekrv05qq5a6tsx", testnetAddress],
+        ["at1v6ltk8nl59xygf47jkfzkky20jqcune2a8e9e7juw5ge4ksegg9sl92e4n", testnetAddress],
+        ["at1t76kdj3acv28n9x5x6fynpgcxe2jak060ne3cm9r9h4vkpffrg9s8uw7lt", testnetAddress],
+        ["at1jkllchgezse0hx5wkyxh3ljweqpyg47958wdcnrjcnj94ratzu8qls8ksn", testnetSponsorAddress],
+        ["at195ql6qgnjez6cmshd08axspr4wze8w3k93pydpml2qeqtrtf3ursn7aest", testnetSponsorAddress],
+        ["at1qsk9cnzh0wp3tu8qs7v97sydx0u7qakg7spd306tdq77feca0yxqr6mcqx", testnetSponsorAddress],
+        ["at1ru0pnp4djgdd4cxpmjsaqkzke9gcmx20ensxfk4pev6gylz4xs8spszpn6", testnetSponsorAddress],
+        [
+          "at193lqmmxlce4e5zhne9tlmurpa7s43e7pm0cq6a9gh6wvz8d40qpshvkh83",
+          "aleo10ju2x3ktenzaacscg9rreln4q99rehh7plsnk8r6t300pgn49c8qqdrkqy",
+        ],
+        [
+          "at1c92r7gpfdyraelghc4j4ntz3rkkpx4lkj49p4qsq2wrk468vavyq529wx0",
+          "aleo1dtadcxqsjp4fvvafv4ynlq9mp5vgwsap7djlzell8ngag7pj3uysdlhxjs",
+        ],
+        ["at1qfj30cc84vcfdfxpv7prxscs8sxejwa2lny3lsk97u6snm7qdyps4zn0zy", undefined],
+        ["at1tpm2ara52q2udq9adaga348wxsrvf8tukgg4mpk7hwm4rnm8l5yql3w8z9", undefined],
+      ])("sets the fees payer of %s to %s", (id, feesPayer) => {
+        expect(getOperation(id).tx.feesPayer).toBe(feesPayer);
+      });
+
+      it.each([
+        ["at144a06el45t8vd009u3pnmgyy5ks3r3ge38zpfrd3mdwezluf3vqs54gjkt", 2318n],
+        ["at1yh3ydeha8kujptnnwlx9u60rycwsh3wknevdgqxjq8wasmwpjq9sj2ljmt", 2304n],
+        ["at1gte28m0et2trw2xm2n9hjs28398h5pvke0x8ml7wtr5w8crcdvqsswpp70", 2304n],
+        ["at1kce4wgkyssz0ku9zrkdr448d7mcchgxx9g5mwch89r0x6hnqrvxsjwuqxc", 2825n],
+      ])("charges %s's fee of %s, priority fee included, to the account", (id, fees) => {
+        const op = getOperation(id);
+
+        expect(op.tx.feesPayer).toBe(testnetAddress);
+        expect(op.tx.fees).toBe(fees);
+      });
+
+      it("sets a bond's value to its fee and puts the bond in details.stake", () => {
+        const bond = getOperation("at12c59u57ehxv6utj0pl66d6a58ca8ml9uptttreqzx2jwv7d04q9qwjue6y");
+
+        expect(bond.value).toBe(5621n);
+        expect(bond.tx.feesPayer).toBe(testnetAddress);
+        expect(bond.tx.fees).toBe(5621n);
+        expect(bond.details).toMatchObject({
+          stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
+        });
+      });
     });
   });
 

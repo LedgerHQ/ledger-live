@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -12,7 +13,6 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { cryptoCurrenciesSelector } from "~/reducers/accounts";
 import LText from "~/components/LText";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import { TrackScreen } from "~/analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 import FilterTokenOperationsZeroAmountRow from "./FilterTokenOperationsZeroAmountRow";
 import Close from "~/icons/Close";

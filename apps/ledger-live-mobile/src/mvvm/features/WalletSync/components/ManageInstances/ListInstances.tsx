@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -6,7 +7,6 @@ import { useTranslation } from "~/context/Locale";
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { TinyCard } from "../TinyCard";
 import { Scene } from "../../screens/ManageInstances/useManageInstanceDrawer";
-import { TrackScreen } from "~/analytics";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 type Props = {

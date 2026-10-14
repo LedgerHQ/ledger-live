@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { MockComponent } from "./shared";
 
 describe("UpsellFlex", () => {

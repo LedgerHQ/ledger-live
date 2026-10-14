@@ -69,7 +69,7 @@ describe("AppVersionBlocker", () => {
       </AppVersionBlocker>,
     );
 
-    const renderedNode = screen.toJSON();
+    const renderedNode = JSON.stringify(screen.toJSON());
     expect(renderedNode.includes("Allowed")).toBeFalsy();
   });
 });

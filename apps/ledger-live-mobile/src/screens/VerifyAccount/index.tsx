@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -6,7 +7,6 @@ import { useTheme } from "@react-navigation/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 import SelectDevice2 from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import GenericErrorView from "~/components/GenericErrorView";

@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
-import { track } from "~/analytics";
 import { navigationRef } from "~/rootnavigation";
 import { viewNamePredicate } from "~/datadog";
 import { logStartupEvent, type StartupEvent, startupEvents } from "./logStartupTime";

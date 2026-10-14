@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { LedgerError } from "~/renderer/components/DeviceAction";
@@ -59,35 +59,36 @@ export const useTrackAddAccountModal = ({
       platform: "LLD",
       page: "Add account modal",
     };
+    const mandatory = isTrackingEnabled ?? undefined;
 
     if (error?.name === "CantOpenDevice") {
       // device disconnected during account creation
-      track("Connection failed", defaultPayload, isTrackingEnabled);
+      track("Connection failed", defaultPayload, { mandatory });
     }
 
     if (error?.name === "TransportRaceCondition") {
       // transport race condition during account creation
-      track("Transport race condition", defaultPayload, isTrackingEnabled);
+      track("Transport race condition", defaultPayload, { mandatory });
     }
 
     if (error?.name === "TransportError") {
       // transport error during account creation
-      track("Transport error", defaultPayload, isTrackingEnabled);
+      track("Transport error", defaultPayload, { mandatory });
     }
 
     if (previousOpenAppRequested.current && error?.name === "UserRefusedOnDevice") {
       // user refused to open app during account creation
-      track("Open app denied", defaultPayload, isTrackingEnabled);
+      track("Open app denied", defaultPayload, { mandatory });
     }
 
     if (userMustConnectDevice) {
       // device disconnected during account creation
-      track("Device connection lost", defaultPayload, isTrackingEnabled);
+      track("Device connection lost", defaultPayload, { mandatory });
     }
 
     if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during account creation
-      track("Device locked", defaultPayload, isTrackingEnabled);
+      track("Device locked", defaultPayload, { mandatory });
     }
 
     previousOpenAppRequested.current = requestOpenApp;

@@ -41,7 +41,7 @@ export function LineChartView<TRange extends string>({
       accessibilityLabel={accessibilityLabel}
     >
       {ranges.map(({ value, label }) => (
-        <SegmentedControlButton key={value} value={value}>
+        <SegmentedControlButton key={value} value={value} lx={rangeButtonStyle}>
           {label}
         </SegmentedControlButton>
       ))}
@@ -102,4 +102,8 @@ const rangeSelectorRowStyle: LumenViewStyle = {
 const rangeSelectorControlStyle: LumenViewStyle = {
   flex: 1,
   minWidth: "s0",
+};
+
+const rangeButtonStyle: LumenViewStyle = {
+  paddingHorizontal: "s8",
 };

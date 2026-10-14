@@ -90,7 +90,8 @@ export interface AleoPublicTransactionDetailsResponse {
   };
   global_state_root: string;
   proof: string;
-  fee: {
+  // Absent on a fee-free transaction (credits.aleo/split).
+  fee?: {
     transition: AleoTransition;
   };
   fee_value: number;

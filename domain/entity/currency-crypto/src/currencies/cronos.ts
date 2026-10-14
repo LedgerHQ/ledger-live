@@ -10,9 +10,6 @@ export const cronos = currency({
   scheme: "cro",
   color: "#002D74",
   family: "evm",
-  ethereumLikeInfo: {
-    chainId: 25,
-  },
   units: [
     {
       name: "CRO",

@@ -3,7 +3,7 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 import { useMarketByCurrencies } from "@features/platform-aggregated-assets";
 import counterValueFormatter from "../../../market/utils/countervalueFormatter";
-import { useUsdToFiatRate } from "../../../counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { AssetConfigurationOptions } from "../../utils/type";
 
 const createMarketPriceItem = ({

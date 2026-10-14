@@ -1,6 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { AccountList } from "@ledgerhq/react-ui/pre-ldls/index";
+import { VirtualList } from "LLD/components/VirtualList";
+import {
+  AccountRow,
+  type AccountRowAccount,
+} from "LLD/features/AddAccountDrawer/components/AccountRow";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDialogAnalytics } from "LLD/features/ModularDialog/analytics/useModularDialogAnalytics";
 import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
@@ -36,7 +40,7 @@ export const SelectAccountList = ({
   const discreet = useSelector(discreetModeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
-  const formattedAccounts = useMemo(() => {
+  const formattedAccounts = useMemo((): AccountRowAccount[] => {
     return detailedAccounts.map(account => ({
       ...account,
       balance:
@@ -59,38 +63,48 @@ export const SelectAccountList = ({
     }));
   }, [detailedAccounts, locale, discreet, counterValueCurrency]);
 
-  const trackAccountClick = (name: string) => {
-    trackModularDialogEvent("account_clicked", {
-      currency: name,
-      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
-    });
-  };
+  const onAccountClick = useCallback(
+    (accountId: string) => {
+      const trackAccountClick = (name: string) => {
+        trackModularDialogEvent("account_clicked", {
+          currency: name,
+          page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+        });
+      };
 
-  const onAccountClick = (accountId: string) => {
-    // First, check if the accountId matches a subAccount (token account)
-    const tupleWithSub = accounts.find(
-      ({ subAccount }) => subAccount && subAccount.id === accountId,
-    );
-    if (tupleWithSub?.subAccount) {
-      onAccountSelected(tupleWithSub.subAccount, tupleWithSub.account);
-      trackAccountClick(tupleWithSub.subAccount.token.ticker);
-      return;
-    }
+      const tupleWithSub = accounts.find(
+        ({ subAccount }) => subAccount && subAccount.id === accountId,
+      );
+      if (tupleWithSub?.subAccount) {
+        onAccountSelected(tupleWithSub.subAccount, tupleWithSub.account);
+        trackAccountClick(tupleWithSub.subAccount.token.ticker);
+        return;
+      }
 
-    // If not found as a subAccount, check if it's a parent account
-    const currencyAccount = accounts.find(({ account }) => account.id === accountId);
-    if (currencyAccount) {
-      onAccountSelected(currencyAccount.account);
-      trackAccountClick(currencyAccount.account.currency.name);
-    }
-  };
+      const currencyAccount = accounts.find(({ account }) => account.id === accountId);
+      if (currencyAccount) {
+        onAccountSelected(currencyAccount.account);
+        trackAccountClick(currencyAccount.account.currency.name);
+      }
+    },
+    [accounts, onAccountSelected, trackModularDialogEvent],
+  );
+
+  const renderAccount = useCallback(
+    (account: AccountRowAccount) => (
+      <AccountRow account={account} onClick={() => onAccountClick(account.id)} />
+    ),
+    [onAccountClick],
+  );
 
   return (
     <ListWrapper customHeight={LIST_HEIGHT}>
-      <AccountList
+      <VirtualList
+        items={formattedAccounts}
+        itemHeight={64}
         bottomComponent={bottomComponent}
-        accounts={formattedAccounts}
-        onClick={onAccountClick}
+        renderItem={renderAccount}
+        className="pb-40"
       />
     </ListWrapper>
   );

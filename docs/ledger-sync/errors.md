@@ -1,7 +1,7 @@
 # User-facing errors
 
 Errors a user can actually **see** during Ledger Sync, and where. Source of truth:
-[`libs/ledger-key-ring-protocol/src/errors.ts`](../../libs/ledger-key-ring-protocol/src/errors.ts);
+[`ts-libs/libs/ledger-key-ring-protocol/src/errors.ts`](https://github.com/LedgerHQ/ts-libs/blob/develop/libs/ledger-key-ring-protocol/src/errors.ts);
 the user-facing copy lives in the apps' i18n and is mapped to UI steps in the WalletSync hooks
 (LWD `useQRCode.ts` / `walletSync.hooks.ts`, LWM `useSyncWithQrCode.ts` / `useWatchWalletSync.ts`).
 

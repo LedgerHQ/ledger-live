@@ -3,7 +3,7 @@ import {
   type ContentCardEvent,
   type ContentCardEventProperties,
 } from "@ledgerhq/live-common/braze/contentCardExtras";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export const trackContentCard = (
   event: ContentCardEvent,

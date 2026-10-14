@@ -8,6 +8,8 @@ describe("Broadcast", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Aleo",
+      unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
       networkType: "mainnet",
       apiUrls: {
         node: "https://aleo.coin.ledger.com",

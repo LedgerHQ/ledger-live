@@ -11,7 +11,7 @@ import {
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { useAllCurrencyTrends } from "LLD/features/Assets/hooks/useAllCurrencyTrends";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource, track } from "@shared/analytics";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
@@ -28,7 +28,6 @@ import {
 } from "LLD/features/Assets/constants";
 import type { AssetTableItem } from "LLD/features/Assets/types";
 import type { CryptoAssetsViewModel } from "../types";
-import { track } from "~/renderer/analytics/segment";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
 
 const TITLE_I18N_KEY_BY_CATEGORY: Record<AssetsPageCategory, string> = {

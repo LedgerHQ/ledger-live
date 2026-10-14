@@ -9,7 +9,9 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "XRP",
+      unit: { name: "XRP", code: "XRP", magnitude: 6 },
       node: "https://xrp.coin.ledger.com",
-    } as XrpCoinConfig,
+    } satisfies XrpCoinConfig,
   },
 };

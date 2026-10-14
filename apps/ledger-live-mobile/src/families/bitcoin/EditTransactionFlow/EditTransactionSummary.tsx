@@ -81,6 +81,7 @@ function BitcoinEditTransactionSummaryContent({
   }, [mainAccount, transactionToUpdate]);
 
   const statusParams = {
+    mainAccount,
     editType,
     transaction: transaction as BtcTransaction,
     transactionToUpdate,

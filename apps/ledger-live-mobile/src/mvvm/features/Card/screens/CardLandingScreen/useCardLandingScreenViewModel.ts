@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { CreditCard, Screens } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
-import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import type { CardLandingCta } from "../../types";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";

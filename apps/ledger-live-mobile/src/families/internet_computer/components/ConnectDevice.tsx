@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import type {
@@ -11,7 +12,6 @@ import React, { useCallback, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
-import { TrackScreen } from "~/analytics";
 import DeviceAction from "~/components/DeviceAction";
 import { renderLoading } from "~/components/DeviceAction/rendering";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

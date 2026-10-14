@@ -32,7 +32,10 @@ const mockNavigate = jest.fn();
 const mockSetTrackingSource = jest.fn();
 const mockSearchParamsRef = { current: new URLSearchParams() };
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
   setTrackingSource: (...args: unknown[]) => mockSetTrackingSource(...args),
 }));
 
@@ -59,7 +62,8 @@ jest.mock("@features/platform-aggregated-assets", () => ({
 }));
 
 const mockUseUsdToFiatRate = jest.fn();
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: (...args: unknown[]) => mockUseUsdToFiatRate(...args),
 }));
 
@@ -684,7 +688,9 @@ describe("useCryptoAssetsViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/market/${encodeURIComponent(dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id))}`,
+      `/market/${encodeURIComponent(
+        dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id),
+      )}`,
     );
   });
 

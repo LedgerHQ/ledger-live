@@ -4,10 +4,13 @@ import { CurrencyRegionRestrictedError } from "../../../errors";
 import type { StakingResources } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   encodeAccountId: jest.fn(() => "accId"),
+  decodeAccountId: jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index")
+    .decodeAccountId,
   getSyncHash: (...args: any[]) => getSyncHashMock(...args),
 }));
 
@@ -24,12 +27,14 @@ const chainSpecificGetAccountShapeMock = jest.fn();
 const buildAccountShapeMock = jest.fn();
 const refreshOperationsMock = jest.fn();
 const getAccountInfoMock = jest.fn();
+const getValidatorsMock = jest.fn();
 jest.mock("../api", () => ({
   getCoinModuleApi: () => ({
     lastBlock: (...a: any[]) => lastBlockMock(...a),
     getBalance: (...a: any[]) => getBalanceMock(...a),
     listOperations: (...a: any[]) => listOperationsMock(...a),
     getAccountInfo: (...a: any[]) => getAccountInfoMock(...a),
+    getValidators: (...a: any[]) => getValidatorsMock(...a),
   }),
 }));
 let mockRegionRestricted = false;
@@ -1482,6 +1487,133 @@ describe("genericGetAccountShape", () => {
 
       expect(result.xpub).toBe("tz1address");
     });
+
+    describe("with an address lookup", () => {
+      const withLookup = () => ({
+        ...defaultBridgeApi(),
+        addressLookup: { getAddresses: jest.fn(), keyControlsAccount: jest.fn() },
+      });
+
+      test("stores no xpub when every account shares the seed key", async () => {
+        getBridgeApiMock.mockImplementationOnce(withLookup);
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "0.0.1",
+            initialAccount: { xpub: "shared", operations: [], pendingOperations: [] },
+            currency: { id: "hedera", name: "Hedera" },
+            derivationMode: "hederaBip44",
+            rest: { publicKey: "shared" },
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result.xpub).toBeUndefined();
+      });
+
+      test("stores the xpub when the derivation path is per account", async () => {
+        getBridgeApiMock.mockImplementationOnce(withLookup);
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "tz1address",
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+            rest: { publicKey: "edpkPUBLICKEY" },
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result.xpub).toBe("edpkPUBLICKEY");
+      });
+    });
+  });
+
+  describe("account id keyed on the public key (accountIdFromPublicKey)", () => {
+    const network = "mainnet";
+    const PUBLIC_KEY = "02aaaa";
+    const ADDRESS = "SP_ADDRESS";
+
+    beforeEach(() => {
+      (encodeAccountId as jest.Mock).mockImplementation(
+        jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index").encodeAccountId,
+      );
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    afterEach(() => {
+      (encodeAccountId as jest.Mock).mockImplementation(() => "accId");
+    });
+
+    const optedIn = () => ({ ...defaultBridgeApi(), accountIdFromPublicKey: true });
+
+    test("keys a scanned account on the device public key", async () => {
+      getBridgeApiMock.mockImplementationOnce(optedIn);
+
+      const getShape = genericGetAccountShape(network, "stacks");
+      const result = await getShape(
+        {
+          address: ADDRESS,
+          initialAccount: undefined,
+          currency: { id: "stacks", name: "Stacks" },
+          derivationMode: "",
+          rest: { publicKey: PUBLIC_KEY },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.id).toBe(`js:2:stacks:${PUBLIC_KEY}:`);
+    });
+
+    test("keeps the stored account id on sync, whatever public key the device reports", async () => {
+      getBridgeApiMock.mockImplementationOnce(optedIn);
+
+      const getShape = genericGetAccountShape(network, "stacks");
+      const result = await getShape(
+        {
+          address: ADDRESS,
+          initialAccount: {
+            id: `js:2:stacks:${ADDRESS}:`,
+            operations: [],
+            pendingOperations: [],
+            blockHeight: 0,
+          },
+          currency: { id: "stacks", name: "Stacks" },
+          derivationMode: "",
+          rest: { publicKey: PUBLIC_KEY },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.id).toBe(`js:2:stacks:${ADDRESS}:`);
+    });
+
+    test("keys a family that does not opt in on its address", async () => {
+      const getShape = genericGetAccountShape(network, "tezos");
+      const result = await getShape(
+        {
+          address: "tz1address",
+          initialAccount: undefined,
+          currency: { id: "tezos", name: "Tezos" },
+          derivationMode: "",
+          rest: { publicKey: "edpkPUBLICKEY" },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.id).toBe("js:2:tezos:tz1address:");
+    });
   });
 
   describe("evm", () => {
@@ -1817,6 +1949,124 @@ describe("genericGetAccountShape", () => {
       );
     });
 
+    test("derives delegation.status from stake.details.status, allow-listing only unbonding/unbonded", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 500n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 500n },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-bonded",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper1",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            details: { status: "bonded" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-unbonding",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper2",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            details: { status: "unbonding" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-unbonded",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper3",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            details: { status: "unbonded" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-unspecified",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper4",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            // runtime-only value from the chain's BOND_STATUS_UNSPECIFIED, must not reach status
+            details: { status: "unspecified" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-no-details",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper5",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-activating-unbonding",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper6",
+            state: "activating",
+            asset: { type: "native" },
+            amount: 100n,
+            // state precedes details.status: an activating stake stays "activating"
+            details: { status: "unbonding" },
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "cosmos");
+      const result = await getShape(
+        {
+          address: "cosmos1a",
+          initialAccount: undefined,
+          currency: { id: "cosmos", name: "Cosmos", family: "cosmos" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const statuses = (result as any).stakingResources?.delegations.map((d: any) => ({
+        validatorAddress: d.validatorAddress,
+        status: d.status,
+      }));
+      expect(statuses).toEqual([
+        { validatorAddress: "cosmosvaloper1", status: "bonded" },
+        { validatorAddress: "cosmosvaloper2", status: "unbonding" },
+        { validatorAddress: "cosmosvaloper3", status: "unbonded" },
+        { validatorAddress: "cosmosvaloper4", status: "bonded" },
+        { validatorAddress: "cosmosvaloper5", status: "bonded" },
+        { validatorAddress: "cosmosvaloper6", status: "activating" },
+      ]);
+    });
+
     test("maps stake.uid and the details bag onto StakingPositionDetails, and keeps undelegated stakes", async () => {
       getSyncHashMock.mockReturnValue("sync-hash");
       extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });
@@ -2001,6 +2251,70 @@ describe("genericGetAccountShape", () => {
           status: "bonded",
         },
       ]);
+    });
+
+    test("hedera: the staked node becomes one aggregate delegation carrying the pending reward", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      // Mirrors coin-hedera's getBalance: the stake rides on the native row itself.
+      getBalanceMock.mockResolvedValue([
+        {
+          asset: { type: "native" },
+          value: 1000n,
+          stake: {
+            uid: "0.0.1234",
+            address: "0.0.1234",
+            asset: { type: "native" },
+            state: "active",
+            amount: 1042n,
+            amountDeposited: 1000n,
+            amountRewarded: 42n,
+            delegate: "0.0.3",
+            actions: [],
+            details: { overstaked: false },
+          },
+        },
+      ]);
+      getValidatorsMock.mockResolvedValue({ items: [] });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        stakingSupported: true,
+      }));
+
+      const getShape = genericGetAccountShape("mainnet", "hedera");
+      const result = await getShape(
+        {
+          address: "0.0.1234",
+          initialAccount: undefined,
+          currency: { id: "hedera", name: "Hedera", family: "hedera" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const resources = (result as { stakingResources: StakingResources }).stakingResources;
+      expect(resources).toMatchObject({
+        delegatedBalance: new BigNumber(1042),
+        pendingRewardsBalance: new BigNumber(42),
+        unbondings: [],
+        delegations: [
+          {
+            validatorAddress: "0.0.3",
+            amount: new BigNumber(1042),
+            pendingRewards: new BigNumber(42),
+            status: "bonded",
+          },
+        ],
+      });
+      expect((result as any).stakingPositions).toBeUndefined();
     });
 
     test("usesStakingPositions: surfaces raw Stake[] preserving uid prefixes; no stakingResources", async () => {
@@ -3001,6 +3315,131 @@ describe("genericGetAccountShape", () => {
         ],
       });
     });
+
+    test("builds the parent operations from the operations the family adapted", async () => {
+      setupSpecTest();
+      const adaptOperationsMock = jest.fn((_address: string, operations: any[]) => [
+        ...operations,
+        { ...operations[0], id: "fees", type: "FEES", value: new BigNumber(1) },
+      ]);
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        adaptOperations: adaptOperationsMock,
+      }));
+      listOperationsMock.mockResolvedValue({
+        items: [
+          toCoreOp({
+            type: "REWARD",
+            senders: ["rewardAccount"],
+            recipients: ["address1"],
+            value: 5,
+            fee: 0,
+            feesPayer: "address1",
+          }),
+        ],
+        next: undefined,
+      });
+      mockNoSubAccounts();
+      mockNoInferSubOps();
+
+      const result = await runGetShape("address1");
+
+      expect(adaptOperationsMock).toHaveBeenCalledTimes(1);
+      expect(adaptOperationsMock).toHaveBeenCalledWith("address1", [
+        expect.objectContaining({ type: "REWARD" }),
+      ]);
+      expect(result.operations?.map(op => op.type)).toEqual(["REWARD", "FEES"]);
+    });
+  });
+
+  describe("partitionsNativeBalance", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const position = (uid: string, amount: bigint) => ({
+      uid,
+      address: "tz1partitioned",
+      state: "active" as const,
+      asset: { type: "native" as const },
+      amount,
+    });
+    const delegation = (amount: bigint) => ({
+      value: amount,
+      asset: { type: "native" },
+      stake: position("delegation-tz1partitioned", amount),
+    });
+    const frozen = (uid: string, amount: bigint) => ({
+      value: amount,
+      locked: amount,
+      asset: { type: "native" },
+      stake: position(uid, amount),
+    });
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    test.each([
+      {
+        name: "delegated and staked",
+        balances: [delegation(70n), frozen("stake-tz1partitioned", 30n)],
+        spendable: 70,
+      },
+      {
+        name: "delegated, staked and unstaking",
+        balances: [
+          delegation(60n),
+          frozen("stake-tz1partitioned", 30n),
+          frozen("unstaking-1", 10n),
+        ],
+        spendable: 60,
+      },
+      {
+        name: "delegated, unstaked funds without a position",
+        balances: [{ value: 10n, locked: 10n, asset: { type: "native" } }, delegation(90n)],
+        spendable: 90,
+      },
+      {
+        name: "undelegated and unstaking",
+        balances: [{ value: 90n, asset: { type: "native" } }, frozen("unstaking-1", 10n)],
+        spendable: 90,
+      },
+      {
+        name: "no stakes",
+        balances: [{ value: 100n, asset: { type: "native" } }],
+        spendable: 100,
+      },
+    ])(
+      "sums the native partitions of a 100 XTZ account: $name",
+      async ({ balances, spendable }) => {
+        getBalanceMock.mockResolvedValue(balances);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          usesStakingPositions: true,
+          partitionsNativeBalance: true,
+        }));
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "tz1partitioned",
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result.balance).toEqual(new BigNumber(100));
+        expect(result.spendableBalance).toEqual(new BigNumber(spendable));
+        expect(extractBalanceMock).not.toHaveBeenCalled();
+      },
+    );
   });
 
   describe("family token account shapes", () => {
@@ -3045,6 +3484,80 @@ describe("genericGetAccountShape", () => {
       );
 
       expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toBeUndefined();
+    });
+  });
+
+  describe("syncVersion", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const storedOperation = {
+      id: "accId-h1-OUT",
+      accountId: "accId",
+      hash: "h1",
+      type: "OUT",
+      blockHeight: 500,
+      extra: {},
+    };
+
+    const syncWith = (syncVersion: string | undefined, storedSyncHash: string) => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), syncVersion }));
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      lastBlockMock.mockResolvedValue({ height: 900 });
+      mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
+      buildSubAccountsMock.mockReturnValue([]);
+
+      return genericGetAccountShape(network, currency.id)(
+        {
+          address: "tz1sync",
+          currency,
+          derivationMode: "",
+          initialAccount: {
+            operations: [storedOperation],
+            pendingOperations: [],
+            blockHeight: 800,
+            syncHash: storedSyncHash,
+          },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("leaves the sync hash alone for a family that declares none", async () => {
+      const shape = await syncWith(undefined, "sync-hash");
+
+      expect(shape.syncHash).toBe("sync-hash");
+      expect(mergeOpsMock).toHaveBeenCalledTimes(1);
+      expect(mergeOpsMock).toHaveBeenCalledWith([storedOperation], expect.anything());
+    });
+
+    test("drops the stored operations of an account synced under another hash", async () => {
+      const shape = await syncWith("1", "sync-hash");
+
+      expect(shape.syncHash).toBe("sync-hash-1");
+      expect(mergeOpsMock).toHaveBeenCalledTimes(1);
+      expect(mergeOpsMock).toHaveBeenCalledWith([], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "tz1sync",
+        expect.objectContaining({ minHeight: 0 }),
+      );
+    });
+
+    test("keeps syncing incrementally once the account carries the versioned hash", async () => {
+      await syncWith("1", "sync-hash-1");
+
+      expect(mergeOpsMock).toHaveBeenCalledTimes(1);
+      expect(mergeOpsMock).toHaveBeenCalledWith([storedOperation], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "tz1sync",
+        expect.objectContaining({ minHeight: storedOperation.blockHeight + 1 }),
+      );
     });
   });
 });

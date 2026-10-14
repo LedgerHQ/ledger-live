@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@testing-library/react-native";
 import { useTrackOnboardingFlow, UseTrackOnboardingFlow } from "./useTrackOnboardingFlow";
-import { track } from "../segment";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 describe("useTrackOnboardingFlow", () => {

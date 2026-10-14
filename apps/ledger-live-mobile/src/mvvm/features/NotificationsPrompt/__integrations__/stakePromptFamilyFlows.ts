@@ -19,6 +19,7 @@ const familyModuleNameByAccountKey: Record<StakePromptCase["accountKey"], string
   near: "near",
   polkadot: "polkadot",
   solana: "solana",
+  stacks: "stacks",
   sui: "sui",
   tezos: "tezos",
 };

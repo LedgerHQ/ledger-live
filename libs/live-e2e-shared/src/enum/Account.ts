@@ -48,6 +48,9 @@ export class Account {
   static readonly ATOM_1 = new Account(Currency.ATOM, "Cosmos 1", 0, "44'/118'/0'/0/0");
   static readonly ATOM_2 = new Account(Currency.ATOM, "Cosmos 2", 1, "44'/118'/1'/0/0");
 
+  static readonly BABY_1 = new Account(Currency.BABY, "Babylon 1", 0, "44'/118'/0'/0/0");
+  static readonly BABY_2 = new Account(Currency.BABY, "Babylon 2", 1, "44'/118'/1'/0/0");
+
   static readonly BCH_1 = new Account(
     Currency.BCH,
     "Bitcoin Cash 1",
@@ -67,8 +70,8 @@ export class Account {
     "cashaddr",
   );
 
-  static readonly BSC_1 = new Account(Currency.BSC, "BNB Chain 1", 0, "44'/60'/0'/0/0");
-  static readonly BSC_2 = new Account(Currency.BSC, "BNB Chain 2", 1, "44'/60'/1'/0/0");
+  static readonly BSC_1 = new Account(Currency.BSC, "BNB Smart Chain 1", 0, "44'/60'/0'/0/0");
+  static readonly BSC_2 = new Account(Currency.BSC, "BNB Smart Chain 2", 1, "44'/60'/1'/0/0");
 
   static readonly BTC_LEGACY_1 = new Account(
     Currency.BTC,
@@ -423,6 +426,24 @@ export class TokenAccount extends Account {
     Account.ETH_3.accountPath,
     TokenType.ERC20,
     Account.ETH_3,
+  );
+
+  static readonly ETH_WBTC_4 = new TokenAccount(
+    Currency.ETH_WBTC,
+    "(Ethereum) Wrapped Bitcoin 4",
+    3,
+    Account.ETH_4.accountPath,
+    TokenType.ERC20,
+    Account.ETH_4,
+  );
+
+  static readonly ETH_USDT_4 = new TokenAccount(
+    Currency.ETH_USDT,
+    "(Ethereum) Tether USD 4",
+    3,
+    Account.ETH_4.accountPath,
+    TokenType.ERC20,
+    Account.ETH_4,
   );
 
   static readonly SOL_GIGA_1 = new TokenAccount(

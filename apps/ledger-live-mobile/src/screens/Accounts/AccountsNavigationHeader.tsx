@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { memo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Box, Flex, IconsLegacy } from "@ledgerhq/native-ui";
@@ -5,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 import AddAccount from "./AddAccount";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 
 type Props = {
   readOnly?: boolean;

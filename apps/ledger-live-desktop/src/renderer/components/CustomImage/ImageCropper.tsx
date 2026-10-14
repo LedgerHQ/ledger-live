@@ -5,7 +5,7 @@ import { Button, Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import Cropper, { Area, CropperProps } from "react-easy-crop";
 import { createCanvas, getRadianAngle, rotateSize } from "./imageUtils";
 import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { analyticsDrawerContext } from "~/renderer/drawers/Provider";
 import { useTranslation } from "react-i18next";
 

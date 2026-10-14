@@ -1,5 +1,6 @@
 import type { ContactAddress } from "@domain/entity-contact";
 import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { ContactsDeviceInitializationInput } from "./types";
 
 /**
@@ -40,6 +41,7 @@ type ContactDeviceCurrency = Readonly<{
 
 function findContactDeviceCurrency(
   currencyId: ContactAddress["currencyId"],
+  config?: CurrencyConfig,
 ): ContactDeviceCurrency | undefined {
   const currency =
     findCryptoCurrencyById(currencyId) ?? findCryptoCurrencyById(currencyId.split("/")[0]);
@@ -48,8 +50,8 @@ function findContactDeviceCurrency(
   }
 
   const appName = CONTACT_DEVICE_APP_BY_FAMILY[currency.family];
-  const chainId =
-    currency.family === "evm" ? currency.ethereumLikeInfo?.chainId : currency.coinType;
+  const configChainId = typeof config?.chainId === "number" ? config.chainId : undefined;
+  const chainId = currency.family === "evm" ? configChainId : currency.coinType;
 
   return appName === undefined || chainId === undefined
     ? undefined
@@ -58,14 +60,16 @@ function findContactDeviceCurrency(
 
 export function isContactDeviceCurrencySupported(
   currencyId: ContactAddress["currencyId"],
+  config?: CurrencyConfig,
 ): boolean {
-  return findContactDeviceCurrency(currencyId) !== undefined;
+  return findContactDeviceCurrency(currencyId, config) !== undefined;
 }
 
 export function resolveContactDeviceContext(
   currencyId: ContactAddress["currencyId"],
+  config?: CurrencyConfig,
 ): ContactDeviceContext {
-  const resolved = findContactDeviceCurrency(currencyId);
+  const resolved = findContactDeviceCurrency(currencyId, config);
 
   if (resolved === undefined) {
     throw new UnsupportedContactDeviceCurrencyError(currencyId);

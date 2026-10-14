@@ -1,8 +1,7 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
 import { useLocation } from "react-router";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { setTrackingSource, track } from "@shared/analytics";
 import { stakeDefaultTrack } from "../../../../renderer/screens/stake/constants";
 import useStakeFlow from "../../../../renderer/screens/stake";
 import { useGetSwapTrackingProperties } from "../../../../renderer/screens/exchange/Swap2/utils";
@@ -112,9 +111,22 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
       setTrackingSource(page);
 
-      navigateToSwap(ledgerCurrency);
+      navigateToSwap(ledgerCurrency, {
+        currencyIds: currency?.ledgerIds.filter(
+          id => currenciesForSwapAllSet.has(id) && !deactivatedCurrencyIds.has(id),
+        ),
+      });
     },
-    [getLedgerCurrency, currency?.ticker, page, swapDefaultTrack, navigateToSwap],
+    [
+      getLedgerCurrency,
+      currency?.ticker,
+      currency?.ledgerIds,
+      page,
+      swapDefaultTrack,
+      navigateToSwap,
+      currenciesForSwapAllSet,
+      deactivatedCurrencyIds,
+    ],
   );
 
   const onStake = useCallback(

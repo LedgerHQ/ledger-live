@@ -3,12 +3,10 @@
  * observer is registered as an import side effect, so a broken import or a mapping change
  * would otherwise fail silently in production rather than in CI.
  *
- * `./segment` is mocked rather than imported: it sits in a require cycle with `~/analytics`,
- * and this test needs only the `track` call it makes.
+ * `@shared/analytics` is mocked in Jest setup so this test can assert the `track` call without
+ * starting Segment.
  */
-const track = jest.fn();
-jest.mock("./segment", () => ({ track: (...args: unknown[]) => track(...args) }));
-
+import { track } from "@shared/analytics";
 import {
   clearPendingTxLifecycle,
   emitTransactionEvent,
@@ -22,6 +20,7 @@ import {
 
 import "./registerTransactionObserver";
 
+const mockedTrack = jest.mocked(track);
 const mockFetch = jest.fn().mockResolvedValue(undefined);
 let lifecycleEnabled = true;
 
@@ -48,7 +47,7 @@ const stakingEvent = (over: Partial<Record<string, unknown>> = {}) =>
 
 describe("mobile transaction observer", () => {
   beforeEach(() => {
-    track.mockClear();
+    mockedTrack.mockClear();
     mockFetch.mockClear();
     setTxLifecycleBaseUrl("https://earn.example.test");
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -65,8 +64,8 @@ describe("mobile transaction observer", () => {
   it("forwards a staking outcome to Segment", () => {
     emitTransactionEvent(stakingEvent());
 
-    expect(track).toHaveBeenCalledTimes(1);
-    const [event, properties] = track.mock.calls[0];
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+    const [event, properties] = mockedTrack.mock.calls[0];
     expect(event).toBe("earn_transaction_completed");
     expect(properties).toMatchObject({
       flow: "stake",
@@ -115,7 +114,7 @@ describe("mobile transaction observer", () => {
 
     emitTransactionEvent(stakingEvent());
 
-    expect(track).toHaveBeenCalledTimes(1);
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
     expect(mockFetch).not.toHaveBeenCalled();
   });
 
@@ -127,20 +126,20 @@ describe("mobile transaction observer", () => {
   it("never passes the consent-bypassing third argument", () => {
     emitTransactionEvent(stakingEvent());
 
-    expect(track.mock.calls[0]).toHaveLength(2);
+    expect(mockedTrack.mock.calls[0]).toHaveLength(2);
   });
 
   it("sends nothing for a transaction with no staking action", () => {
     emitTransactionEvent(stakingEvent({ earnTransactionType: undefined }));
 
-    expect(track).not.toHaveBeenCalled();
+    expect(mockedTrack).not.toHaveBeenCalled();
     expect(mockFetch).not.toHaveBeenCalled();
   });
 
   it("sends nothing for the Earn live-app, which emits these events itself", () => {
     emitTransactionEvent(stakingEvent({ manifestId: "earn" }));
 
-    expect(track).not.toHaveBeenCalled();
+    expect(mockedTrack).not.toHaveBeenCalled();
     expect(mockFetch).not.toHaveBeenCalled();
   });
 });

@@ -2,13 +2,10 @@ import React from "react";
 import { render, screen as rtlScreen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { trackPage } from "@shared/analytics";
 import { SigningBody } from "./SigningBody";
 
-const trackScreen = jest.fn();
-
-jest.mock("~/analytics", () => ({
-  screen: (...args: unknown[]) => trackScreen(...args),
-}));
+const mockedTrackPage = jest.mocked(trackPage);
 
 const device: Device = {
   deviceId: "device-1",
@@ -26,7 +23,7 @@ const trackingProperties = {
 
 type SigningBodyPropsForTest = React.ComponentProps<typeof SigningBody>;
 
-function renderSigningBody(status: Record<string, unknown>) {
+function renderSigningBody(status: Record<string, unknown>, onError = jest.fn()) {
   const action = {
     useHook: () => status,
     mapResult: () => null,
@@ -40,6 +37,7 @@ function renderSigningBody(status: Record<string, unknown>) {
       action={action}
       request={{} as SigningBodyPropsForTest["request"]}
       onResult={jest.fn()}
+      onError={onError}
       onClose={jest.fn()}
       trackingProperties={trackingProperties}
       recipientType="contact"
@@ -49,7 +47,7 @@ function renderSigningBody(status: Record<string, unknown>) {
 
 describe("SigningBody", () => {
   beforeEach(() => {
-    trackScreen.mockClear();
+    mockedTrackPage.mockClear();
   });
 
   it("renders without the send-flow providers in the tree", () => {
@@ -63,9 +61,21 @@ describe("SigningBody", () => {
       transactionSignError: { name: "UserRefusedOnDevice" },
     });
 
-    expect(trackScreen).toHaveBeenCalledWith("Modal send - action rejected", undefined, {
-      ...trackingProperties,
-      recipientType: "contact",
+    expect(mockedTrackPage).toHaveBeenCalledWith({
+      category: "Modal send - action rejected",
+      props: {
+        ...trackingProperties,
+        recipientType: "contact",
+      },
     });
+  });
+
+  it("reports the displayed signature error", () => {
+    const onError = jest.fn();
+    const error = { name: "LockedDeviceError" };
+
+    renderSigningBody({ deviceSignatureRequested: false, error }, onError);
+
+    expect(onError).toHaveBeenCalledWith(error);
   });
 });

@@ -19,7 +19,10 @@ import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@shared/env";
-import countervalues, { CountervaluesState } from "./countervalues";
+import {
+  countervaluesReducer,
+  type CountervaluesState,
+} from "@features/platform-market-countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
@@ -121,7 +124,7 @@ const appReducer = combineReducers({
   accountAliases: accountAliasSlice.reducer,
   accounts,
   application,
-  countervalues,
+  countervalues: countervaluesReducer,
   devices,
   dynamicContent,
   featureFlags,

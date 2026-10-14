@@ -1,5 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
-import { TrackScreen } from "~/analytics";
 import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 
 type TrackDIEScreenProps = React.ComponentProps<typeof TrackScreen> & {

@@ -2,8 +2,8 @@
 // this file loads: its exports would be read while still uninitialised.
 import "~/actions/settings";
 import type { Subscription } from "rxjs";
+import { analyticsEvents$, type LoggableEvent } from "@shared/analytics";
 import * as segment from "../segment";
-import type { LoggableEvent } from "../segment";
 
 jest.unmock("../segment");
 jest.unmock("@shared/analytics");
@@ -14,38 +14,15 @@ describe("segment before start()", () => {
 
   beforeEach(() => {
     logged = [];
-    subscription = segment.trackSubject.subscribe(event => logged.push(event));
-    logged.length = 0; // trackSubject is a ReplaySubject: drop what it replays from earlier tests
+    subscription = analyticsEvents$.subscribe(event => logged.push(event));
+    logged.length = 0; // analyticsEvents$ is a ReplaySubject: drop what it replays from earlier tests
   });
 
   afterEach(() => subscription.unsubscribe());
-
-  it("should log track as skipped_no_store when the store is not initialised", async () => {
-    await segment.track("TestEvent", { foo: "bar" });
-
-    expect(logged).toEqual([
-      expect.objectContaining({
-        eventName: "TestEvent",
-        eventProperties: { foo: "bar" },
-        deliveryStatus: "skipped_no_store",
-      }),
-    ]);
-  });
 
   it("should not log [Identify] when the store is not initialised", async () => {
     await segment.updateIdentify();
 
     expect(logged).toEqual([]);
-  });
-
-  it("should log screen as skipped_no_store when the store is not initialised", async () => {
-    await segment.screen("Portfolio", "Detail");
-
-    expect(logged).toEqual([
-      expect.objectContaining({
-        eventName: "Page Portfolio Detail",
-        deliveryStatus: "skipped_no_store",
-      }),
-    ]);
   });
 });

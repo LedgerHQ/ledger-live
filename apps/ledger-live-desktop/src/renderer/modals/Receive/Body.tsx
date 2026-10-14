@@ -6,7 +6,7 @@ import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";

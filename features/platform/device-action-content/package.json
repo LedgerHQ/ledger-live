@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-device-action-content",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Shared device-side action content (animation, copy, banner) for web and native",
   "main": "src/index.ts",
@@ -24,16 +24,14 @@
     "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json"
   },
   "dependencies": {
-    "@features/platform-style": "workspace:^"
+    "@features/platform-style": "workspace:^",
+    "@shared/lottie": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-native": ">=0.70.0",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "lottie-react-native": "7.3.6",
-    "react-lottie": "1.2.10",
-    "prop-types": "15.8.1",
     "react-native-config": "catalog:",
     "styled-components": ">=6"
   },
@@ -45,15 +43,6 @@
       "optional": true
     },
     "@ledgerhq/lumen-ui-rnative": {
-      "optional": true
-    },
-    "lottie-react-native": {
-      "optional": true
-    },
-    "react-lottie": {
-      "optional": true
-    },
-    "prop-types": {
       "optional": true
     },
     "react-native-config": {
@@ -72,15 +61,11 @@
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-lottie": "1.2.10",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "lottie-react-native": "7.3.6",
     "oxfmt": "catalog:",
-    "prop-types": "15.8.1",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-lottie": "1.2.10",
     "react-native": "catalog:",
     "react-native-config": "catalog:",
     "react-test-renderer": "catalog:",

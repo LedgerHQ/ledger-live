@@ -18,9 +18,6 @@ export const avalanche_c_chain_fuji = currency({
     },
   ],
   isTestnetFor: "avalanche_c_chain",
-  ethereumLikeInfo: {
-    chainId: 43113,
-  },
   explorerViews: [
     {
       tx: "https://testnet.snowtrace.io/tx/$hash",

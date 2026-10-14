@@ -5,7 +5,6 @@ export * from "./layout";
 export * from "./loaders";
 export * from "./message";
 export * from "./navigation";
-export { default as Table } from "./Table";
 export * from "./tabs";
 export { default as Tag } from "./Tag";
 export * from "./transitions";

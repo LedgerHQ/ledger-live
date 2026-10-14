@@ -3,7 +3,7 @@ import type {
   ContactsPageEventPayload,
   ContactsTrackEventPayload,
 } from "@features/flow-contacts";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { CONTACTS_ANALYTICS_PLATFORM } from "./constants";
 import { mapContactsPageEventToScreenCategory } from "./mapContactsPageEventToScreenCategory";
 
@@ -19,14 +19,15 @@ export function createContactsAnalyticsAdapter(): ContactsAnalyticsAdapter {
       const { category, name } = mapContactsPageEventToScreenCategory(payload.page);
 
       trackPage(
-        category,
-        name,
         {
-          ...payload.properties,
-          platform: CONTACTS_ANALYTICS_PLATFORM,
+          category,
+          name,
+          props: {
+            ...payload.properties,
+            platform: CONTACTS_ANALYTICS_PLATFORM,
+          },
         },
-        true,
-        true,
+        { updateRoutes: true, refreshSource: true },
       );
     },
   };

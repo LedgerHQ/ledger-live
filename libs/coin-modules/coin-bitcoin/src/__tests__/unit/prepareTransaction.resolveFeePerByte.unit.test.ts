@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import { createFixtureAccount, networkInfo } from "../../fixtures/common.fixtures";
 import { bitcoinPickingStrategy, BitcoinAccount, BitcoinOutput, Transaction } from "../../types";
@@ -86,19 +87,29 @@ describe("prepareTransaction — ChainAdapter.resolveFeePerByte", () => {
       xpub: { explorer: { getTxHex: jest.fn().mockRejectedValue(new Error("gone")) } },
     });
 
-    await prepareTransaction(accountWithUnfetchableUtxo(), makeTransaction());
+    await prepareTransaction(
+      TEST_CONFIG,
+      TEST_LOGGER,
+      accountWithUnfetchableUtxo(),
+      makeTransaction(),
+    );
 
     expect(resolveFeePerByte).toHaveBeenCalledTimes(1);
-    const [, handedOver] = resolveFeePerByte.mock.calls[0];
+    const [, , , handedOver] = resolveFeePerByte.mock.calls[0];
     expect(handedOver.utxoStrategy.excludeUTXOs).toEqual([AS_EXCLUSION]);
   });
 
   it("hands over the inferred rate and the resolved networkInfo", async () => {
     const account = createFixtureAccount({ bitcoinResources: { utxos: [] } }) as BitcoinAccount;
 
-    await prepareTransaction(account, makeTransaction({ feePerByte: new BigNumber(7) }));
+    await prepareTransaction(
+      TEST_CONFIG,
+      TEST_LOGGER,
+      account,
+      makeTransaction({ feePerByte: new BigNumber(7) }),
+    );
 
-    const [, handedOver] = resolveFeePerByte.mock.calls[0];
+    const [, , , handedOver] = resolveFeePerByte.mock.calls[0];
     expect(handedOver.feePerByte.toNumber()).toBe(7);
     expect(handedOver.networkInfo).toBe(mockNetworkInfo);
   });
@@ -107,7 +118,7 @@ describe("prepareTransaction — ChainAdapter.resolveFeePerByte", () => {
     const account = createFixtureAccount({ bitcoinResources: { utxos: [] } }) as BitcoinAccount;
     resolveFeePerByte.mockResolvedValue(new BigNumber(53));
 
-    const result = await prepareTransaction(account, makeTransaction());
+    const result = await prepareTransaction(TEST_CONFIG, TEST_LOGGER, account, makeTransaction());
 
     expect(result.feePerByte?.toNumber()).toBe(53);
   });
@@ -116,6 +127,8 @@ describe("prepareTransaction — ChainAdapter.resolveFeePerByte", () => {
     const account = createFixtureAccount({ bitcoinResources: { utxos: [] } }) as BitcoinAccount;
 
     const result = await prepareTransaction(
+      TEST_CONFIG,
+      TEST_LOGGER,
       account,
       makeTransaction({ feePerByte: new BigNumber(9) }),
     );
@@ -130,6 +143,8 @@ describe("prepareTransaction — ChainAdapter.resolveFeePerByte", () => {
     resolveFeePerByte.mockResolvedValue(new BigNumber(53));
 
     const result = await prepareTransaction(
+      TEST_CONFIG,
+      TEST_LOGGER,
       account,
       makeTransaction({ feesStrategy: "custom", feePerByte: new BigNumber(9) }),
     );
@@ -142,8 +157,8 @@ describe("prepareTransaction — ChainAdapter.resolveFeePerByte", () => {
     const account = createFixtureAccount({ bitcoinResources: { utxos: [] } }) as BitcoinAccount;
     resolveFeePerByte.mockResolvedValue(new BigNumber(53));
 
-    const first = await prepareTransaction(account, makeTransaction());
-    const second = await prepareTransaction(account, first);
+    const first = await prepareTransaction(TEST_CONFIG, TEST_LOGGER, account, makeTransaction());
+    const second = await prepareTransaction(TEST_CONFIG, TEST_LOGGER, account, first);
 
     expect(second).toBe(first);
   });

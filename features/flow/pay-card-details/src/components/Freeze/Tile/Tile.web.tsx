@@ -11,7 +11,13 @@ export function Tile({ isActionDisabled, onOpenConfirm, ...confirm }: FreezeView
 
   return (
     <>
-      <TileButton icon={Snow} onClick={onOpenConfirm} disabled={isActionDisabled} isFull>
+      <TileButton
+        icon={Snow}
+        onClick={onOpenConfirm}
+        disabled={isActionDisabled}
+        isFull
+        data-testid="card-details-freeze-tile"
+      >
         {t(freezeCopy(confirm.status).tile)}
       </TileButton>
 

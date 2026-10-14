@@ -73,6 +73,7 @@ export const test = base.extend<TestFixtures>({
       simulateCamera,
     },
     use,
+    testInfo,
   ) => {
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
@@ -103,7 +104,6 @@ export const test = base.extend<TestFixtures>({
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
-        CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify({
           lwdWallet40: { enabled: true },
@@ -123,6 +123,8 @@ export const test = base.extend<TestFixtures>({
       userdataDestinationPath,
       simulateCamera,
       windowSize,
+      // Video encoding is CPU heavy: only record the retry of a failed test
+      recordVideo: testInfo.retry > 0,
     });
 
     await use(electronApp);

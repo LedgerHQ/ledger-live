@@ -4,7 +4,7 @@ import { TrendingAssetsList } from "../components/TrendingAssetsList";
 import { useNavigate } from "react-router";
 import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtures";
 import { useHorizontalScroll } from "LLD/components/HorizontalScroll/hooks/useHorizontalScroll";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { MARKET_BANNER_TRACKING_SOURCE } from "../utils/constants";
 
 jest.mock("react-router", () => ({
@@ -12,7 +12,10 @@ jest.mock("react-router", () => ({
   useNavigate: jest.fn(),
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
   setTrackingSource: jest.fn(),
 }));
 

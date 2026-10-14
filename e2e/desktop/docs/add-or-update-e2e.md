@@ -116,11 +116,14 @@ case Currency.NEWCOIN.id:
   break;
 ```
 
-### Step 7: Add test case to spec
+### Step 7: Add test case to the New Send Flow spec
 
-[File](e2e/desktop/tests/specs/send.tx.spec.ts)
+[File](../tests/specs/newSendFlow.tx.spec.ts)
 
 **Ask user for:** a valid, unused `B2CQA-XXXX` test id
+
+Append one entry to the existing `nativeSendTransactions` array. Do not redeclare the array, and do
+not call `registerNewSendFlowTests` again — the spec already does.
 
 ```typescript
 {
@@ -128,6 +131,20 @@ case Currency.NEWCOIN.id:
   xrayTicket: "B2CQA-XXXX",
 },
 ```
+
+The tests read the family allow-list from `FF_NEW_SEND_FLOW_ENABLED` in
+`tests/utils/featureFlagUtils.ts`. If the new coin's family is not already listed, add its family
+id there:
+
+```typescript
+families: [
+  // ...existing families
+  "<family id>",
+],
+```
+
+That list mirrors the production rollout. A currency whose family is missing, or whose id is in
+`excludedCurrencyIds`, must stay in the legacy spec until it is enabled in production.
 
 ### Step 8: Rebuild dependencies
 
@@ -179,16 +196,10 @@ test.use({
 
 ### Pay tab
 
-Injection is opt-in on the Playwright fixture. The default is off, and the spec path does nothing.
-A Pay tab spec sets:
-
-```typescript
-test.use({
-  injectCardSession: true,
-});
-```
-
-Without that option, the spec launches signed out.
+A spec that needs an injected Card session must live under `specs/paytab/`. The card-session reporter
+mints once before workers when a selected spec path contains `/paytab/`. `--grep` is already applied,
+so a smoke run that does not select that spec does not log in. The fixture injects the session when
+the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
 
 ---
 
@@ -199,13 +210,14 @@ Without that option, the spec launches signed out.
 - **Build testing:** `pnpm desktop build:testing`
 - **Run test:** `DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts`
 - **Debug:** `PWDEBUG=1 DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts`
+- **DevTools:** `DEV_TOOLS=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts` opens detached DevTools and turns on developer mode and Live App DevTools (the "DevTools" button in the Live App top bar). Set `DEV_TOOLS_MODE` (`right`, `left`, `bottom`, `undocked`) to dock them instead.
 
 ---
 
 ## Best Practices
 
 - **Never use hardcoded timeouts** (e.g., `page.waitForTimeout(1000)`)
-- Use `@step` decorator in Page Objects
+- Do not use Playwright's `test.step()`; use the `@step` decorator in Page Objects instead for reusable, consistently reported steps
 - Access methods via `app` fixture (e.g., `app.layout`, `app.send`, `app.speculos`)
 - **MANDATORY:** Test on all 6 device models (LNS, LNSP, LNX, STAX, FLEX, NG5) before marking tests complete
 - **Every `test()` must include a TMS annotation** with a valid `B2CQA-XXXX` id. The `annotationLinks` auto

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { setProductTourCompleted } from "~/renderer/actions/settings";
 import { productTourCompletedSelector } from "~/renderer/reducers/settings";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../const";

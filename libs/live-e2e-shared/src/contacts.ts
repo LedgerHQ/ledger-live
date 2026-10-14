@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { ContactSchema, type Contact } from "@domain/entity-contact";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Addresses } from "./enum/Addresses";
 
@@ -44,16 +45,18 @@ export type ContactSeed = Readonly<{
 const NOT_A_PROOF = "e2e-seeded-contact";
 
 /** Contacts shaped for the `contacts/setContacts` reducer. */
-export function buildSeededContacts(seeds: readonly ContactSeed[]) {
-  return seeds.map(seed => ({
-    ...seed,
-    isMe: false,
-    deviceCredentials: { groupHandle: NOT_A_PROOF, hmacProof: NOT_A_PROOF },
-    addresses: seed.addresses.map(address => ({
-      ...address,
-      device: { blockchainFamily: "e2e", chainId: "0", hmacRest: NOT_A_PROOF },
-    })),
-  }));
+export function buildSeededContacts(seeds: readonly ContactSeed[]): Contact[] {
+  return seeds.map(seed =>
+    ContactSchema.parse({
+      ...seed,
+      isMe: false,
+      deviceCredentials: { groupHandle: NOT_A_PROOF, hmacProof: NOT_A_PROOF },
+      addresses: seed.addresses.map(address => ({
+        ...address,
+        device: { blockchainFamily: "e2e", chainId: "0", hmacRest: NOT_A_PROOF },
+      })),
+    }),
+  );
 }
 
 /** Ten distinct names in storage order, not UI order — the list must sort them alphabetically. */
@@ -99,15 +102,16 @@ export function createSeededContactsDocument(
   };
 }
 
-// Contacts intents need Ethereum 1.23.0. The catalog is still on 1.22.x, so runs pin
-// coin-apps' 1.23.0-dev and the rc OS it ships on. Stax rc stops at 1.19.3. Nano S is unsupported.
-export const CONTACTS_ETHEREUM_APP_VERSION = "1.23.0-dev";
+// Contacts intents need Ethereum 1.23.0. That build ships on the production OS.
+// The rc folders only have 1.23.0-dev, and rc2's dev app rejects address registration
+// with 6a80. Stax stops at 1.19.3. Nano S is unsupported.
+export const CONTACTS_ETHEREUM_APP_VERSION = "1.23.0";
 
 export const CONTACTS_OS_VERSION_BY_MODEL: Partial<Record<DeviceModelId, string>> = {
-  [DeviceModelId.nanoSP]: "1.7.0-rc2",
-  [DeviceModelId.nanoX]: "2.8.0-rc2",
-  [DeviceModelId.europa]: "1.7.0-rc2",
-  [DeviceModelId.apex]: "1.2.0-rc2",
+  [DeviceModelId.nanoSP]: "1.7.0",
+  [DeviceModelId.nanoX]: "2.8.0",
+  [DeviceModelId.europa]: "1.7.0",
+  [DeviceModelId.apex]: "1.2.0",
 };
 
 export type ContactAddressTestData = Readonly<{
@@ -145,11 +149,11 @@ export const CONTACT_ADDRESS_DATASET: readonly ContactAddressTestData[] = [
   {
     ticker: "BNB",
     networkId: "bsc",
-    networkName: "BNB Chain",
+    networkName: "BNB Smart Chain",
     addressInput: Addresses.SWAP_HISTORY_ETH_TO,
     savedValue: Addresses.SWAP_HISTORY_ETH_TO,
-    defaultAddressLabel: "BNB Chain",
-    addressLabel: "BNB Chain",
+    defaultAddressLabel: "BNB Smart Chain",
+    addressLabel: "BNB Smart Chain",
   },
   {
     ticker: "POL",

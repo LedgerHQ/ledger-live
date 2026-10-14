@@ -14,8 +14,9 @@ import { bitcoinPickingStrategy } from "./types";
 import { buildAccountTx } from "./buildAndSign";
 import wallet from "@ledgerhq/wallet-btc/index";
 import { getWalletAccount } from "./getWalletAccount";
-import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
+import type { BitcoinCoinConfig } from "./config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 const isBtcOperationExtra = (extra: unknown): extra is BtcOperationExtra => {
   if (extra === null || extra === undefined || typeof extra !== "object") return false;
@@ -93,6 +94,7 @@ const enrichPendingOperations = async (
 };
 
 const getPendingOperations = async (
+  logger: Logger,
   account: Account,
   walletAccount: WalletAccount,
   replaceTxId?: string,
@@ -104,12 +106,14 @@ const getPendingOperations = async (
     return await enrichPendingOperations(walletAccount, pendingOperations);
   } catch (error) {
     // Ignore explorer pending enrichment errors and fallback to account pending operations only.
-    log("btcwallet", "pending enrichment fallback", { error });
+    logger("btcwallet", "pending enrichment fallback", { error });
     return pendingOperations;
   }
 };
 
 export const buildTransaction = async (
+  config: BitcoinCoinConfig,
+  logger: Logger,
   account: Account,
   transaction: Transaction,
 ): Promise<WalletTxInfo> => {
@@ -133,9 +137,10 @@ export const buildTransaction = async (
     opReturnData,
   );
 
-  log("btcwallet", "building transaction", transaction);
+  logger("btcwallet", "building transaction", transaction);
 
   const pendingOperations = await getPendingOperations(
+    logger,
     account,
     walletAccount,
     transaction.replaceTxId,
@@ -147,7 +152,7 @@ export const buildTransaction = async (
     ? true
     : false;
 
-  const txInfo = await buildAccountTx({
+  const txInfo = await buildAccountTx(config, {
     fromAccount: walletAccount,
     dest: transaction.recipient,
     amount: transaction.useAllAmount ? maxSpendable : transaction.amount,
@@ -163,7 +168,7 @@ export const buildTransaction = async (
       ? {}
       : { relayFeePerByteSatVb: transaction.networkInfo.relayFeePerByte }),
   });
-  log("btcwallet", "txInfo", txInfo);
+  logger("btcwallet", "txInfo", txInfo);
 
   return txInfo;
 };

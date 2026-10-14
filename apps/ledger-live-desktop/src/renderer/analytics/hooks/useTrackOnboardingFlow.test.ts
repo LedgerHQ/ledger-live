@@ -1,11 +1,11 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackOnboardingFlow, UseTrackOnboardingFlow } from "./useTrackOnboardingFlow";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 describe("useTrackOnboardingFlow", () => {

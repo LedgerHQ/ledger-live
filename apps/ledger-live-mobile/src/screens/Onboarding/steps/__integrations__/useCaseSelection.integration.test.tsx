@@ -50,7 +50,9 @@ const renderUseCaseSelection = (
   return render(<IntegrationNavigator />, { overrideInitialState });
 };
 
-const pressProceed = async (user: { press: (element: unknown) => Promise<void> }) => {
+const pressProceed = async (user: {
+  press: (element: ReturnType<typeof screen.getByText>) => Promise<void>;
+}) => {
   await user.press(screen.getByText("Continue setup"));
 };
 

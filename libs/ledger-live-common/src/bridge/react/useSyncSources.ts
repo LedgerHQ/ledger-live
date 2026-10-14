@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useBridgeSync } from "./context";
 import { useGlobalSyncState } from "./useGlobalSyncState";
 import { useStablePending } from "./useStablePending";

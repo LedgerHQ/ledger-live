@@ -1,10 +1,11 @@
 import React from "react";
-import Lottie from "react-lottie";
+import { Lottie } from "@shared/lottie";
 import { getEnv } from "@shared/env";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTheme } from "styled-components";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
+import { useAnimationData } from "~/renderer/animations";
 import Europa from "../../assets/europa-success.png";
 
 const confettiLayerStyle: React.CSSProperties = {
@@ -16,7 +17,8 @@ const confettiLayerStyle: React.CSSProperties = {
 
 export default function EuropaCompletionView() {
   const { theme } = useTheme();
-  const animation = getDeviceAnimation(DeviceModelId.europa, theme, "onboardingSuccess");
+  const animationSource = getDeviceAnimation(DeviceModelId.europa, theme, "onboardingSuccess");
+  const animation = useAnimationData(animationSource);
   const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
   return (
@@ -24,17 +26,12 @@ export default function EuropaCompletionView() {
       <Flex style={confettiLayerStyle}>
         {animation ? (
           <Lottie
+            source={animation}
             style={{ width: "100%", height: "100%" }}
-            isClickToPauseDisabled
-            ariaRole="presentation"
-            options={{
-              loop: true,
-              autoplay: !isPlaywright,
-              animationData: animation,
-              rendererSettings: {
-                preserveAspectRatio: "xMidYMid slice",
-              },
-            }}
+            role="presentation"
+            loop
+            autoPlay={!isPlaywright}
+            fit="cover"
           />
         ) : null}
       </Flex>

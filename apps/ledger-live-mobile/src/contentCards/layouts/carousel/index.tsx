@@ -1,3 +1,4 @@
+import { track, getCurrentTrackingPage } from "@shared/analytics";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
@@ -16,8 +17,6 @@ import { ContentCardItem } from "~/contentCards/cards/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useInViewContext } from "LLM/contexts/InViewContext";
-import { track } from "~/analytics";
-import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 
 const CONTAINER_IMPRESSION_THRESHOLD = 0.8;

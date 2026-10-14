@@ -3,6 +3,6 @@ export const assetAvailableNetworks = {
     networks: ["Ethereum", "Base", "OP Mainnet", "Linea", "Scroll", "ZKsync"],
   },
   USDT: {
-    networks: ["Ethereum", "Solana", "BNB Chain", "Gram", "Tron", "Base"],
+    networks: ["Ethereum", "Solana", "BNB Smart Chain", "Gram", "Tron", "Base"],
   },
 };

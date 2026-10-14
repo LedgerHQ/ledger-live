@@ -1,14 +1,15 @@
+import { track } from "@shared/analytics";
 import { renderHook, act, withFlagOverrides } from "@tests/test-renderer";
 import { setEnv } from "@shared/env";
 import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useGlobalSearchResults } from "../useGlobalSearchResults";
 
 jest.mock("@ledgerhq/live-common/hooks/useDebounce", () => ({
   useDebounce: (value: string) => value,
 }));
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: () => ({ rate: 1, status: "ready" }),
 }));
 jest.mock("@features/platform-aggregated-assets", () => ({

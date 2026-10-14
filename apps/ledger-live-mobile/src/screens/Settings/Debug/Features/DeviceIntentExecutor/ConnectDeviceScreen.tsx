@@ -19,7 +19,7 @@ type DeviceConnectionResult = Parameters<ConnectDeviceInput["onConnected"]>[0];
 type StateHistoryEntry = {
   id: number;
   timestamp: string;
-  type: ConnectDeviceUIStateTypes;
+  type: ConnectDeviceUIState["type"];
   details: string;
 };
 

@@ -4,8 +4,7 @@ import * as reduxHooks from "LLD/hooks/redux";
 import { act, render, screen, waitFor } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { closeDialog } from "~/renderer/reducers/modularDialog";
-import { trackPage } from "@shared/analytics";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   ARB_ACCOUNT,

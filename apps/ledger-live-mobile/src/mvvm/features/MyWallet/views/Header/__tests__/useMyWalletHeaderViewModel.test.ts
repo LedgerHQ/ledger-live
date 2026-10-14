@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 import { useMyWalletHeaderViewModel } from "../useMyWalletHeaderViewModel";
 

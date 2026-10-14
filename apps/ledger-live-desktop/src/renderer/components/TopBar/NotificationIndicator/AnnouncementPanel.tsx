@@ -14,7 +14,7 @@ import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking/useDeepLinkH
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
 import { useMarkNotificationsAsReadOnOpen } from "~/renderer/hooks/useMarkNotificationsAsReadOnOpen";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";

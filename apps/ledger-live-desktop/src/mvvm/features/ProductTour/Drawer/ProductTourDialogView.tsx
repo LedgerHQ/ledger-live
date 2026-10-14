@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { Slides } from "LLD/components/Slides";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { ProductTourFooter } from "./components/ProductTourFooter";
 import { ProductTourProgressIndicator } from "./components/ProductTourProgressIndicator";
 import { ProductTourSlideItem } from "./components/ProductTourSlideItem";

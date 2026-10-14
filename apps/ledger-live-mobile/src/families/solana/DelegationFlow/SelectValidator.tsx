@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -8,7 +9,6 @@ import React, { useCallback, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { FlatList, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";

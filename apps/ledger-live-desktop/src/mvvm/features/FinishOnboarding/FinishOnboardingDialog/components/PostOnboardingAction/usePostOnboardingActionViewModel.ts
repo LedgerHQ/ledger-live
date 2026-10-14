@@ -6,7 +6,7 @@ import { closeFinishPostOnboarding } from "LLD/features/FinishOnboarding/FinishO
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { openModal } from "~/renderer/actions/modals";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { AllModalNames } from "~/renderer/modals/types";
 import type { PostOnboardingActionProps, PostOnboardingActionViewProps } from "./types";

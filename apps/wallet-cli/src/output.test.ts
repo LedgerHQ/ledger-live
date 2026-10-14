@@ -1,4 +1,5 @@
 import "./live-common-setup";
+import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import {
   getCryptoAssetsStore,
@@ -6,6 +7,8 @@ import {
   type FrameworkCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
+import { DEVICE_EXIT_CODES } from "./device/device-state";
+import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { installOutputCapture } from "./shared/ui";
 
 type MockSpinner = {
@@ -446,7 +449,7 @@ describe("HumanCommandOutput", () => {
 
   it("token() writes the formatted token info to stdout", async () => {
     const { installOutputCapture } = await import("./shared/ui");
-    const { USDT_TOKEN_INFO } = await import("./test/helpers/cal-fixtures");
+    const { USDT_TOKEN_INFO } = await import("./testing/cal-fixtures");
     const writes: string[] = [];
     const restore = installOutputCapture({
       stdout: chunk => {
@@ -466,6 +469,40 @@ describe("HumanCommandOutput", () => {
     expect(joined).toContain(USDT_TOKEN_INFO.id);
     expect(joined).toContain(USDT_TOKEN_INFO.ticker);
     expect(joined).toContain(USDT_TOKEN_INFO.contractAddress);
+  });
+
+  it("reconcileDiscoveredLabels() prints a correction only for labels that actually changed", async () => {
+    const { installOutputCapture } = await import("./shared/ui");
+    const writes: string[] = [];
+    const restore = installOutputCapture({
+      stdout: chunk => {
+        writes.push(chunk);
+      },
+    });
+    const descriptor = {
+      purpose: "account",
+      version: "1",
+      type: "utxo",
+      network: { name: "bitcoin", env: "main" },
+      xpub: "xpub6BosfCnifzxcA",
+      path: "m/84h/0h/0h",
+    } as const;
+    try {
+      const out = createCommandOutput("human", {
+        command: "account discover",
+        network: "bitcoin:main",
+      });
+      out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
+      out.discoveredAccount({ descriptor, freshAddress: "bc1qsecond", label: "bitcoin-native-2" });
+      writes.length = 0; // only assert on what reconcileDiscoveredLabels itself prints
+
+      out.reconcileDiscoveredLabels(["bitcoin-native-1", "bitcoin-native-3"]);
+    } finally {
+      restore();
+    }
+    const joined = writes.join("");
+    expect(joined).toContain("bitcoin-native-2 -> bitcoin-native-3");
+    expect(joined).not.toContain("bitcoin-native-1 -> bitcoin-native-1");
   });
 
   it("swapExecuteFullResult() prints the display-unit amount without the decoded-payload wording", async () => {
@@ -631,5 +668,215 @@ describe("HumanCommandOutput", () => {
       createCommandOutput("human", ctx).ringDecrypt({ dest: "/tmp/out.txt" });
       expect(writes.join("")).toContain("/tmp/out.txt");
     });
+  });
+
+  describe("agent-intent human output", () => {
+    let writes: string[] = [];
+    let restore: () => void;
+
+    beforeEach(() => {
+      writes = [];
+      restore = installOutputCapture({ stdout: chunk => writes.push(chunk) });
+    });
+
+    afterEach(() => restore());
+
+    const ctx = { command: "agent-intent", network: "all" };
+
+    const baseProfile = {
+      profileId: "test-agent",
+      displayName: "Test Agent",
+      description: "Remote agent that proposes intents for review.",
+      source: "openclaw" as const,
+      environment: "staging" as const,
+      bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+      publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+      enrollmentExpiresAt: "2026-09-22T11:28:46.999Z",
+      createdAt: "2026-09-22T10:58:47.007Z",
+    };
+
+    const accountAccess = {
+      mode: "direct-app16-key-reader" as const,
+      environment: "staging" as const,
+      trustchainId: "app16-root",
+      applicationPath: "m/0'/16'/0'",
+    };
+
+    it("agentIntentProfiles renders a table with profile/name/source/environment columns", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, trustchainId: "tc-1" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("test-agent");
+      expect(out).toContain("Test Agent");
+      expect(out).toContain("openclaw");
+      expect(out).toContain("staging");
+      expect(out).toContain("enrolled");
+    });
+
+    it("agentIntentProfiles reports pending status before completion", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, enrollmentExpiresAt: "2099-01-01T00:00:00.000Z" },
+      ]);
+      expect(writes.join("")).toContain("pending");
+    });
+
+    it("agentIntentProfiles reports expired status once enrollmentExpiresAt has passed", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, enrollmentExpiresAt: "2020-01-01T00:00:00.000Z" },
+      ]);
+      expect(writes.join("")).toContain("expired");
+    });
+
+    it("agentIntentProfiles renders dim message when there are no profiles", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([]);
+      expect(writes.join("")).toContain("No Agent Intent profiles");
+    });
+
+    it("agentIntentProfileShow includes a fingerprint derived from the public key", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        trustchainId: "tc-1",
+      });
+      const out = writes.join("");
+      expect(out).toContain("Fingerprint:");
+      expect(out).toContain(baseProfile.publicKey);
+    });
+
+    it("agentIntentProfileShow redacts credentials embedded in the BFF URL", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        bffBaseUrl: "https://user:secret@global.api.stg.ledger-test.com/agent-intent",
+        trustchainId: "tc-1",
+      });
+      expect(writes.join("")).not.toContain("secret");
+    });
+
+    it("agentIntentProfileShow omits the Trustchain ID line before completion", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow(baseProfile);
+      expect(writes.join("")).not.toContain("Trustchain ID:");
+    });
+
+    it("agentIntentProfiles shows the account access environment and path once enrolled", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, trustchainId: "tc-1", accountAccess },
+      ]);
+      expect(writes.join("")).toContain("staging m/0'/16'/0'");
+    });
+
+    it("agentIntentProfileShow shows the account access and redacts the Keycloak URL", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        keycloakBaseUrl: "https://user:secret@keycloak.example.com",
+        trustchainId: "tc-1",
+        accountAccess,
+      });
+      const out = writes.join("");
+      expect(out).toContain("Account access:");
+      expect(out).toContain("staging m/0'/16'/0'");
+      expect(out).toContain("Keycloak URL:");
+      expect(out).not.toContain("secret");
+    });
+
+    it("agentIntentEnrollmentPending prints the URL, fingerprint and the keep-running hint", () => {
+      createCommandOutput("human", ctx).agentIntentEnrollmentPending({
+        profileId: "test-agent",
+        enrollmentUrl: "https://example.com/enroll?x=1",
+        fingerprint: "Ez4f ubY2 TD8k Ve",
+        expiresAt: "2026-09-22T11:28:46.999Z",
+      });
+      const out = writes.join("");
+      expect(out).toContain("https://example.com/enroll?x=1");
+      expect(out).toContain("Ez4f ubY2 TD8k Ve");
+      expect(out).toContain("keep this process running");
+    });
+
+    it("agentIntentEnrolled confirms the profile, trustchain id and account access environment", () => {
+      createCommandOutput("human", ctx).agentIntentEnrolled({
+        profileId: "test-agent",
+        trustchainId: "tc-1",
+        accountAccessEnvironment: "staging",
+      });
+      const out = writes.join("");
+      expect(out).toContain("test-agent");
+      expect(out).toContain("tc-1");
+      expect(out).toContain("staging");
+    });
+
+    it("agentIntentRecoveryPending prints the URL, fingerprint and the keep-running hint", () => {
+      createCommandOutput("human", ctx).agentIntentRecoveryPending({
+        profileId: "test-agent",
+        recoveryUrl: "https://example.com/agents/new?recovery=true",
+        fingerprint: "Ez4f ubY2 TD8k Ve",
+        expiresAt: "2026-09-22T11:28:46.999Z",
+      });
+      const out = writes.join("");
+      expect(out).toContain("https://example.com/agents/new?recovery=true");
+      expect(out).toContain("Ez4f ubY2 TD8k Ve");
+      expect(out).toContain("keep this process running");
+    });
+
+    it("agentIntentRecovered confirms the profile and trustchain id", () => {
+      createCommandOutput("human", ctx).agentIntentRecovered({
+        profileId: "test-agent",
+        trustchainId: "tc-1",
+      });
+      const out = writes.join("");
+      expect(out).toContain('"test-agent" recovered');
+      expect(out).toContain("tc-1");
+    });
+
+    it("agentIntentSync reports imported, unchanged, skipped, and invalid entries", () => {
+      createCommandOutput("human", ctx).agentIntentSync({
+        imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+        unchanged: [{ status: "unchanged", label: "eth-2", network: "ethereum:main" }],
+        skipped: [
+          { status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" },
+        ],
+        invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+      });
+      const out = writes.join("");
+      expect(out).toContain("eth-1");
+      expect(out).toContain("eth-2");
+      expect(out).toContain("family unsupported");
+      expect(out).toContain("empty address");
+    });
+
+    it("agentIntentSync shows an up-to-date message when nothing changed", () => {
+      createCommandOutput("human", ctx).agentIntentSync({
+        imported: [],
+        unchanged: [],
+        skipped: [],
+        invalid: [],
+      });
+      expect(writes.join("")).toContain("Up to date");
+    });
+  });
+});
+
+describe("output command handling", () => {
+  const ROOT = path.resolve(import.meta.dir, "..");
+  const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
+    import.meta.dir,
+    "./testing/human-device-error-exit.ts",
+  );
+
+  it("human output exits with the WalletCliDeviceError exit code", async () => {
+    const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
+      env: {
+        ...process.env,
+        CLAUDECODE: "1",
+        NO_COLOR: "1",
+      },
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const exitCode = await proc.exited;
+    expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
+    expect(await new Response(proc.stderr).text()).toContain(
+      new WalletCliDeviceError({ code: "timeout" }).message,
+    );
   });
 });

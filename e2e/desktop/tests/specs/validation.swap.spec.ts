@@ -104,7 +104,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
             ? await app.swap.getMinimumAmount(accountToDebit, accountToCredit)
             : (swap.swap.amount ?? "0");
 
-        await performSwapUntilQuoteSelectionStep(app, swap.swap, swapAmount);
+        await performSwapUntilQuoteSelectionStep({ app, swap: swap.swap, minAmount: swapAmount });
         if (swap.quotesVisible) {
           await app.swap.checkQuotes();
           await app.swap.selectExchange();
@@ -183,11 +183,11 @@ test.describe("Swap - network fees above balance", () => {
     async ({ app }) => {
       const minAmount = await app.swap.getMinimumAmount(accountToDebit, accountToCredit);
 
-      await performSwapUntilQuoteSelectionStep(
+      await performSwapUntilQuoteSelectionStep({
         app,
-        swapNetworkFeesAboveAccountBalanceTestConfig.swap,
+        swap: swapNetworkFeesAboveAccountBalanceTestConfig.swap,
         minAmount,
-      );
+      });
       await app.swap.checkQuotes();
       await app.swap.selectExchange();
       await app.swap.checkFeeErrorMessage(
@@ -212,11 +212,11 @@ test.describe("Swap - network fees above balance", () => {
         swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit,
       );
 
-      await performSwapUntilQuoteSelectionStep(
+      await performSwapUntilQuoteSelectionStep({
         app,
-        swapEthNeededForNetworkFeesTestConfig.swap,
+        swap: swapEthNeededForNetworkFeesTestConfig.swap,
         minAmount,
-      );
+      });
       await app.swap.checkQuotes();
       await app.swap.selectExchange();
       await app.swap.checkFeeErrorMessage(swapEthNeededForNetworkFeesTestConfig.errorMessage);

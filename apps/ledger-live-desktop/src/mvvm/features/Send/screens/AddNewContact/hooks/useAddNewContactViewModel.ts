@@ -20,7 +20,7 @@ import {
   type SendPrefillAddAddressPhase,
 } from "LLD/features/Send/hooks/useSendPrefillAddAddressFlow";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 export type AddNewContactAddressPhase = SendPrefillAddAddressPhase;
 
@@ -80,7 +80,10 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const callbacks = useMemo(
     () => ({
       onOpen: () => {
-        trackPage("Add Contact", null, trackingProperties);
+        trackPage({
+          category: "Add Contact",
+          props: trackingProperties,
+        });
       },
       onConfirm: () => {
         track("button_clicked", {

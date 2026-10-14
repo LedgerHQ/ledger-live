@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import {
@@ -15,7 +16,6 @@ import {
 import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { getLabelKey, TRACKING_LABEL_MAP, TRACKING_MENUENTRY_EVENT } from "./constants";
 import { scrollToTopEvent } from "./scrollToTopEvent";
 

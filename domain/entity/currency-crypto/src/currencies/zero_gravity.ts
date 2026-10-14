@@ -37,9 +37,6 @@ export const zero_gravity = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 16661,
-  },
   explorerViews: [
     {
       tx: "https://chainscan.0g.ai/tx/$hash",

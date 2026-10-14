@@ -8,11 +8,13 @@ import {
   RemoteConfig,
 } from "firebase/remote-config";
 import isMatch from "lodash/isMatch";
-import * as fs from "fs";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
-import { formatDefaultFeatures } from "@features/platform-feature-flags";
-import { parseFirebaseFeatures } from "@features/platform-feature-flags/firebase";
+import {
+  formatDefaultFeatures,
+  parseFirebaseFeatures,
+} from "@features/platform-feature-flags-firebase";
+import { setContentAbTestCopy } from "@features/platform-content-ab-tests";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
@@ -83,7 +85,7 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
   try {
     const rc = getRemoteConfigSingleton();
     await ensureInitialized(rc);
-    return parseFirebaseFeatures(getAll(rc));
+    return hydrateRemoteConfigValues(getAll(rc));
   } catch {
     return {};
   }
@@ -101,52 +103,28 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   const rc = getRemoteConfigSingleton();
   await fetchAndActivate(rc);
-  const flags = parseFirebaseFeatures(getAll(rc));
+  const flags = hydrateRemoteConfigValues(getAll(rc));
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;
   subscribers.forEach(callback => callback({ fetchedAt }));
   return flags;
 }
 
-const parseEnvFile = (fileContent: string) => {
-  const lines = fileContent.split("\n");
-  const envVariables: { [key: string]: string } = {};
-  lines.forEach(line => {
-    const [key, value] = line.split("=");
-    if (key && value) {
-      envVariables[key.trim()] = value.trim().replace(/^"(.*)"$/, "$1");
-    }
-  });
-  return envVariables;
-};
+// One `getAll()` payload, two readers: the flag decoder and the copy experiments,
+// which are `feature_copy_*` keys in the same Remote Config template.
+function hydrateRemoteConfigValues(all: ReturnType<typeof getAll>): PartialFeatures {
+  setContentAbTestCopy(all);
+  return parseFirebaseFeatures(all);
+}
 
 // Spins up a parallel Firebase app per env, fetches its remote config, and warns when remote
 // `config_*` values diverge from the local defaults declared via LiveConfig. Dev-only.
 const warnOnConfigMismatch = async () => {
-  if (!__DEV__) {
+  if (!__DEV__ || !__FIREBASE_ENV_CONFIGS__) {
     return;
   }
-  const envs = ["production", "staging", "testing", "development"];
-  envs.forEach(async (env: string) => {
-    const envFilePath = `./.env.${env}`;
-    let apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, envVars;
-    try {
-      const fileContent = await fs.promises.readFile(envFilePath, "utf8");
-      envVars = parseEnvFile(fileContent);
-      apiKey = envVars["FIREBASE_API_KEY"];
-      authDomain = envVars["FIREBASE_AUTH_DOMAIN"];
-      projectId = envVars["FIREBASE_PROJECT_ID"];
-      storageBucket = envVars["FIREBASE_STORAGE_BUCKET"];
-      messagingSenderId = envVars["FIREBASE_MESSAGING_SENDER_ID"];
-      appId = envVars["FIREBASE_APP_ID"];
-    } catch {
-      apiKey = undefined;
-    }
-
-    const firebaseOptions = apiKey
-      ? { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId }
-      : getFirebaseConfig();
-    const firebaseApp = initializeApp(firebaseOptions, env);
+  Object.entries(__FIREBASE_ENV_CONFIGS__).forEach(async ([env, firebaseOptions]) => {
+    const firebaseApp = initializeApp(firebaseOptions ?? getFirebaseConfig(), env);
     const envRemoteConfig = getRemoteConfig(firebaseApp);
     envRemoteConfig.settings.minimumFetchIntervalMillis = 0;
     await fetchAndActivate(envRemoteConfig);

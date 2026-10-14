@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import NewSeedIllustration from "LLM/features/Onboarding/assets/NewSeedIllustration";
 import { Trans } from "~/context/Locale";
-import { track } from "~/analytics";
 
 type Props = {
   handlePress: (done: boolean) => void;

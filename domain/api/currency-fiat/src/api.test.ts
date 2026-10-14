@@ -67,7 +67,7 @@ describe("currencyFiatApi requests", () => {
         gdm({
           thunk: {
             extraArgument: cvsApiExtra({
-              countervaluesServiceUrl: "https://cvs.test",
+              getCountervaluesServiceUrl: () => "https://cvs.test",
             }),
           },
         }).concat(countervaluesApi.middleware),
@@ -119,7 +119,7 @@ describe("onQueryStarted", () => {
       middleware: gdm =>
         gdm({
           thunk: {
-            extraArgument: cvsApiExtra({ countervaluesServiceUrl: "https://cvs.test" }),
+            extraArgument: cvsApiExtra({ getCountervaluesServiceUrl: () => "https://cvs.test" }),
           },
         }).concat(countervaluesApi.middleware),
     });

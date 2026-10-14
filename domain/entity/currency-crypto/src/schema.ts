@@ -19,12 +19,6 @@ export const ExplorerViewSchema = z.object({
   stakePool: z.string().optional(),
 });
 
-/** EVM chain metadata, inferred from {@link EthereumLikeInfoSchema}. */
-export const EthereumLikeInfoSchema = z.object({
-  /** EIP-155 chain id (e.g. `1` for Ethereum mainnet, `137` for Polygon). */
-  chainId: z.number().int(),
-});
-
 /**
  * Canonical Zod-first schema for a crypto currency entity.
  *
@@ -75,8 +69,6 @@ export const CryptoCurrencySchema = z.object({
   supportsNativeSegwit: z.boolean().optional(),
   /** If set, this is a testnet for the currency with this id. */
   isTestnetFor: z.string().optional(),
-  /** EVM chain metadata. Present for `family: "ethereum"` and `family: "evm"`. */
-  ethereumLikeInfo: EthereumLikeInfoSchema.optional(),
   /** One or more blockchain explorer URL templates. */
   explorerViews: z.array(ExplorerViewSchema),
   /** Token standards supported by this chain (e.g. `["erc20"]`). */
@@ -89,5 +81,3 @@ export type CryptoCurrencyId = z.infer<typeof CryptoCurrencyIdSchema>;
 export type CryptoCurrency = z.infer<typeof CryptoCurrencySchema>;
 /** Explorer view value object, inferred from {@link ExplorerViewSchema}. */
 export type ExplorerView = z.infer<typeof ExplorerViewSchema>;
-/** EVM chain info value object, inferred from {@link EthereumLikeInfoSchema}. */
-export type EthereumLikeInfo = z.infer<typeof EthereumLikeInfoSchema>;

@@ -54,7 +54,7 @@ function createProps(
       formatNetworkTag: name => `${name} Network`,
     },
     onClose: jest.fn(),
-    onCopyAddress: jest.fn(),
+    onCopyAddress: jest.fn().mockResolvedValue(true),
     ...overrides,
   };
 }
@@ -83,7 +83,7 @@ describe("ContactAddressDetailDialog", () => {
   });
 
   it("should copy the address and show copied feedback", async () => {
-    const onCopyAddress = jest.fn();
+    const onCopyAddress = jest.fn().mockResolvedValue(true);
     render(<ContactAddressDetailDialog {...createProps({ onCopyAddress })} />);
 
     fireEvent.press(screen.getByTestId("contacts-address-detail-copy"));

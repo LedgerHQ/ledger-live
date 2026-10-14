@@ -1,6 +1,7 @@
 /**
  * Tests for lazyOnboardingBanner identify traits via extraProperties → track().
  */
+import { track } from "@shared/analytics";
 import { waitFor } from "@testing-library/react-native";
 import { configureStore } from "@reduxjs/toolkit";
 import type { FeatureId, Features } from "@shared/feature-flags";
@@ -54,7 +55,7 @@ describe("segment lazyOnboardingBanner traits", () => {
     await segment.start(store);
     mockTrack.mockClear();
 
-    segment.track("TestEvent", {});
+    track("TestEvent", {});
 
     await waitFor(() =>
       expect(mockTrack).toHaveBeenCalledWith(
@@ -81,7 +82,7 @@ describe("segment lazyOnboardingBanner traits", () => {
     await segment.start(store);
     mockTrack.mockClear();
 
-    segment.track("TestEvent", {});
+    track("TestEvent", {});
 
     await waitFor(() =>
       expect(mockTrack).toHaveBeenCalledWith(
@@ -108,7 +109,7 @@ describe("segment lazyOnboardingBanner traits", () => {
     await segment.start(store);
     mockTrack.mockClear();
 
-    segment.track("TestEvent", {});
+    track("TestEvent", {});
 
     await waitFor(() =>
       expect(mockTrack).toHaveBeenCalledWith(

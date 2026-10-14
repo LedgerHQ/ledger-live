@@ -1,8 +1,7 @@
 import { useCallback } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Currency } from "@domain/entity-currency";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { CounterValuesState, calculate } from "@domain/entity-market-countervalues";
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   BaseRawDetailedAccount,

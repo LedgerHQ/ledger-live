@@ -10,7 +10,7 @@ import {
   getMarketSortDirection,
   getMarketSortListAnalytics,
 } from "../../utils/marketPageAnalytics";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export type MarketTableData = {
   marketData: MarketCurrencyData[];

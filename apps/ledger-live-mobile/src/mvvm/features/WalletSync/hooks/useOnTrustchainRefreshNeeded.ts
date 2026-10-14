@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useDispatch } from "~/context/hooks";
 import {
@@ -8,7 +9,6 @@ import {
 import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { log } from "@ledgerhq/logs";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
-import { track } from "~/analytics";
 
 export function useOnTrustchainRefreshNeeded(
   trustchainSdk: TrustchainSDK,

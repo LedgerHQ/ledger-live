@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-wallets",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Card-linked custodial wallets for Ledger Wallet: joins Baanx linked wallets with their balances and totals them",
   "main": "src/index.ts",
@@ -48,12 +48,6 @@
     "react-dom": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
     "react": "catalog:",

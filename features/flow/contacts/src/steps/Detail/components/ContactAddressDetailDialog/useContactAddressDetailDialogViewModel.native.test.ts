@@ -53,7 +53,7 @@ describe("useContactAddressDetailDialogViewModel", () => {
 
   it("should copy the address and show copied feedback", async () => {
     const { row, network } = createSelection();
-    const onCopyAddress = jest.fn();
+    const onCopyAddress = jest.fn().mockResolvedValue(true);
     const { result } = renderHook(() =>
       useContactAddressDetailDialogViewModel({
         isOpen: true,
@@ -63,8 +63,8 @@ describe("useContactAddressDetailDialogViewModel", () => {
       }),
     );
 
-    act(() => {
-      result.current.onCopy();
+    await act(async () => {
+      await result.current.onCopy();
     });
 
     expect(onCopyAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
@@ -79,7 +79,27 @@ describe("useContactAddressDetailDialogViewModel", () => {
     });
   });
 
-  it("should not show copied feedback when no copy handler is provided", () => {
+  it("should not show copied feedback when the copy failed", async () => {
+    const { row, network } = createSelection();
+    const onCopyAddress = jest.fn().mockResolvedValue(false);
+    const { result } = renderHook(() =>
+      useContactAddressDetailDialogViewModel({
+        isOpen: true,
+        row,
+        network,
+        onCopyAddress,
+      }),
+    );
+
+    await act(async () => {
+      await result.current.onCopy();
+    });
+
+    expect(onCopyAddress).toHaveBeenCalledTimes(1);
+    expect(result.current.hasCopied).toBe(false);
+  });
+
+  it("should not show copied feedback when no copy handler is provided", async () => {
     const { row, network } = createSelection();
     const { result } = renderHook(() =>
       useContactAddressDetailDialogViewModel({
@@ -89,16 +109,16 @@ describe("useContactAddressDetailDialogViewModel", () => {
       }),
     );
 
-    act(() => {
-      result.current.onCopy();
+    await act(async () => {
+      await result.current.onCopy();
     });
 
     expect(result.current.hasCopied).toBe(false);
   });
 
-  it("should reset copied feedback when the dialog closes", () => {
+  it("should reset copied feedback when the dialog closes", async () => {
     const { row, network } = createSelection();
-    const onCopyAddress = jest.fn();
+    const onCopyAddress = jest.fn().mockResolvedValue(true);
     const { result, rerender } = renderHook(
       ({ isOpen }: { isOpen: boolean }) =>
         useContactAddressDetailDialogViewModel({
@@ -110,8 +130,8 @@ describe("useContactAddressDetailDialogViewModel", () => {
       { initialProps: { isOpen: true } },
     );
 
-    act(() => {
-      result.current.onCopy();
+    await act(async () => {
+      await result.current.onCopy();
     });
 
     expect(result.current.hasCopied).toBe(true);

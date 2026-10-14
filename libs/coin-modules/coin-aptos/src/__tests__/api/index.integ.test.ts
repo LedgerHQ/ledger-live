@@ -11,6 +11,8 @@ describe("createApi", () => {
   const api = createApi();
   const context = createMockAptosContext({
     status: { type: "active" },
+    name: "Aptos",
+    unit: { name: "APT", code: "APT", magnitude: 8 },
     aptosSettings: {
       network: Network.MAINNET,
       fullnode: getEnv("APTOS_API_ENDPOINT"),

@@ -13,7 +13,7 @@ import {
   CARD_SUBTITLE_MAX_WIDTH_PX,
   CARD_TRACKING_PAGE_NAME,
 } from "./constants";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 const imageStyle = {
   maxHeight: `min(${CARD_IMAGE_MAX_HEIGHT_PX}px, ${MIN_HEIGHT * CARD_IMAGE_HEIGHT_VIEWPORT_RATIO}px)`,

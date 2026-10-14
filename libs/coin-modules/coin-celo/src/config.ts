@@ -35,6 +35,7 @@ export const celoConfig: Record<string, ConfigInfo> = {
       },
       chainId: 42220,
       name: "Celo",
+      unit: { name: "CELO", code: "CELO", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://celo.coin.ledger.com/archive",

@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -6,7 +8,6 @@ import { PromisableButton } from "@ledgerhq/native-ui/components/cta/Button/inde
 import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { setTutorial } from "~/actions/largeMoverLandingPage";
-import { track, TrackScreen } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";

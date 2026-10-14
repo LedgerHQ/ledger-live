@@ -1,3 +1,8 @@
+import {
+  getTransactionMemo,
+  isTransferTransaction,
+  setTransactionMemo,
+} from "@ledgerhq/live-common/families/solana/transactions";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -27,17 +32,7 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
   const bridge = useAccountBridge<Transaction>(account);
   const onMemoValueChange = useCallback(
     (memo: string) => {
-      onChange(
-        bridge.updateTransaction(transaction, {
-          model: {
-            ...transaction.model,
-            uiState: {
-              ...transaction.model.uiState,
-              memo,
-            },
-          } as Transaction["model"],
-        }),
-      );
+      onChange(bridge.updateTransaction(transaction, setTransactionMemo(memo)));
     },
     [onChange, transaction, bridge],
   );
@@ -45,11 +40,11 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
   const InputField = lldMemoTag?.enabled ? MemoTagField : Input;
   const isRecipientMemoRequired = status?.errors?.memo?.name === "SolanaRecipientMemoIsRequired";
 
-  return transaction.model.kind === "transfer" || transaction.model.kind === "token.transfer" ? (
+  return isTransferTransaction(transaction) ? (
     <InputField
       warning={status.warnings.memo}
       error={status.errors.transaction ?? status.errors.memo}
-      value={transaction.model.uiState.memo || ""}
+      value={getTransactionMemo(transaction)}
       onChange={onMemoValueChange}
       placeholder={t(
         isRecipientMemoRequired

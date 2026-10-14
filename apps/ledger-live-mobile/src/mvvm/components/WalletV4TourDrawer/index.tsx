@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,7 +9,6 @@ import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Platform } from "react-native";
 import { ProgressIndicator } from "LLM/components/Slides";
-import { TrackScreen } from "~/analytics";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import type { WalletV4Tour, WalletV4TourDrawerViewModel } from "./types";

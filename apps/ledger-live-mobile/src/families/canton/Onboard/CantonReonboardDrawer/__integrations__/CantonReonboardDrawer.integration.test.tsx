@@ -77,6 +77,8 @@ describe("CantonReonboardDrawer integration", () => {
 
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Canton Network (Devnet)",
+      unit: { name: "cc", code: "CC", magnitude: 38 },
       networkType: "devnet",
       gatewayUrl: CANTON_DEVNET_GATEWAY,
       nodeId: CANTON_DEVNET_NODE_ID,

@@ -28,6 +28,7 @@ type ViewProps = PendingTransferProposalsDetailsViewModel & {
 
 export function View({
   timeRemaining,
+  isExpired,
   handleAction,
   handleCopy,
   proposal,
@@ -46,7 +47,7 @@ export function View({
     );
   }
 
-  const { isIncoming, isExpired } = proposal;
+  const { isIncoming } = proposal;
 
   return (
     <QueuedDrawer

@@ -4,7 +4,7 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/c
 import { Account } from "@ledgerhq/types-live";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 import React, { useCallback } from "react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 type Props = {
   account: Account;

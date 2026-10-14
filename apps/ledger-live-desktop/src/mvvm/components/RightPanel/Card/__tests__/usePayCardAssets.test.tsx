@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { pairId } from "@domain/entity-market-countervalues";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";

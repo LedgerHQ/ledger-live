@@ -2,6 +2,7 @@
  * Tests for readOnlyMode analytics: readOnlyMode is included in track()
  * extraProperties at runtime via getMandatoryProperties → readOnlyModeEnabledSelector(state).
  */
+import { track } from "@shared/analytics";
 import { waitFor } from "@testing-library/react-native";
 import { configureStore } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
@@ -53,7 +54,7 @@ describe("segment readOnlyMode", () => {
     await segment.start(store);
     mockTrack.mockClear();
 
-    segment.track("TestEvent", {});
+    track("TestEvent", {});
 
     await waitFor(() =>
       expect(mockTrack).toHaveBeenCalledWith(
@@ -68,7 +69,7 @@ describe("segment readOnlyMode", () => {
     store.dispatch(setReadOnlyMode(false));
     mockTrack.mockClear();
 
-    segment.track("TestEvent", {});
+    track("TestEvent", {});
 
     await waitFor(() =>
       expect(mockTrack).toHaveBeenCalledWith(
@@ -84,7 +85,7 @@ describe("segment readOnlyMode", () => {
     store.dispatch(setReadOnlyMode(true));
     mockTrack.mockClear();
 
-    segment.track("TestEvent", {});
+    track("TestEvent", {});
 
     await waitFor(() =>
       expect(mockTrack).toHaveBeenCalledWith(
@@ -98,7 +99,7 @@ describe("segment readOnlyMode", () => {
     await segment.start(store);
     mockTrack.mockClear();
 
-    segment.track("TestEvent", {});
+    track("TestEvent", {});
 
     await waitFor(() =>
       expect(mockTrack).toHaveBeenCalledWith(

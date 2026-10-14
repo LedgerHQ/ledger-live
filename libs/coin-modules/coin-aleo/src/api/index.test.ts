@@ -1,3 +1,4 @@
+import type { Page, Stake } from "@ledgerhq/coin-module-framework/api/index";
 import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
@@ -16,6 +17,8 @@ import {
   estimateFees,
   getAccountInfo,
   getBalance,
+  getStakes,
+  getValidators,
   lastBlock,
   register,
 } from "../logic";
@@ -49,6 +52,8 @@ describe("createApi", () => {
   const mockedGetAccountInfo = jest.mocked(getAccountInfo);
   const mockedListOperations = jest.mocked(listOperations);
   const mockedGetBalance = jest.mocked(getBalance);
+  const mockedGetStakes = jest.mocked(getStakes);
+  const mockedGetValidators = jest.mocked(getValidators);
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedRegister = jest.mocked(register);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
@@ -63,6 +68,8 @@ describe("createApi", () => {
     mockedCraftTransaction.mockResolvedValue({ transaction: "crafted_tx" });
     mockedEstimateFees.mockReturnValue({ value: BigInt(1234) });
     mockedGetBalance.mockResolvedValue([{ value: BigInt(10), asset: { type: "native" } }]);
+    mockedGetStakes.mockResolvedValue({ items: [] });
+    mockedGetValidators.mockResolvedValue([]);
     mockedLastBlock.mockResolvedValue({ hash: "blockHash", height: 42, time: new Date() });
     mockedGetTransactionType.mockReturnValue("transfer_public");
     mockedBuildFeeConfigurationForRootIntent.mockReturnValue({
@@ -87,8 +94,6 @@ describe("createApi", () => {
         "getBlockInfo",
         "getNextSequence",
         "getRewards",
-        "getStakes",
-        "getValidators",
         "validateIntent",
       ],
       inconsistent: [],
@@ -101,6 +106,8 @@ describe("createApi", () => {
     expect(api.craftTransaction).toBeInstanceOf(Function);
     expect(api.estimateFees).toBeInstanceOf(Function);
     expect(api.getBalance).toBeInstanceOf(Function);
+    expect(api.getStakes).toBeInstanceOf(Function);
+    expect(api.getValidators).toBeInstanceOf(Function);
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
     expect(api.craftTransactionData).toBeInstanceOf(Function);
@@ -383,6 +390,89 @@ describe("createApi", () => {
     });
   });
 
+  describe("getStakes", () => {
+    it("resolves config and delegates to logic/getStakes", async () => {
+      const page: Page<Stake> = {
+        items: [
+          {
+            uid: "aleo1test",
+            address: "aleo1test",
+            state: "active",
+            actions: ["delegate", "undelegate"],
+            asset: { type: "native" },
+            amount: 10n,
+          },
+        ],
+      };
+      mockedGetStakes.mockResolvedValue(page);
+
+      const result = await api.getStakes(context, "aleo1test");
+
+      expect(mockedGetStakes).toHaveBeenCalledTimes(1);
+      expect(mockedGetStakes).toHaveBeenCalledWith(mockConfig, "aleo1test");
+      expect(result).toBe(page);
+    });
+  });
+
+  describe("getValidators", () => {
+    it("maps the network's committee to the framework Validator shape", async () => {
+      mockedGetValidators.mockResolvedValue([
+        {
+          address: "aleo1validator",
+          name: "Some Validator",
+          stakeMicrocredits: 40_000_000_000_000,
+          isOpen: true,
+          isUnbonding: false,
+          commissionPercent: 10,
+          estimatedYearlyRewardsRate: 0.07,
+        },
+      ]);
+
+      const result = await api.getValidators(context);
+
+      expect(mockedGetValidators).toHaveBeenCalledTimes(1);
+      expect(mockedGetValidators).toHaveBeenCalledWith(mockConfig);
+      expect(result).toEqual({
+        items: [
+          {
+            id: "aleo1validator",
+            address: "aleo1validator",
+            name: "Some Validator",
+            balance: 40_000_000_000_000n,
+            commissionRate: "10",
+            apy: 0.07,
+          },
+        ],
+      });
+    });
+
+    it("falls back to the address when the validator has no name, and omits apy when it has none", async () => {
+      mockedGetValidators.mockResolvedValue([
+        {
+          address: "aleo1unnamed",
+          stakeMicrocredits: 1,
+          isOpen: true,
+          isUnbonding: false,
+          commissionPercent: 0,
+        },
+      ]);
+
+      const result = await api.getValidators(context);
+
+      expect(result).toEqual({
+        items: [
+          {
+            id: "aleo1unnamed",
+            address: "aleo1unnamed",
+            name: "aleo1unnamed",
+            balance: 1n,
+            commissionRate: "0",
+          },
+        ],
+      });
+    });
+  });
+
   describe("lastBlock", () => {
     it("should call lastBlock and return block info", async () => {
       const result = await api.lastBlock(context);
@@ -394,11 +484,15 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    it("should reject an order other than desc", async () => {
-      await expect(
-        api.listOperations(context, "aleo1test", { minHeight: 0, order: "asc" }),
-      ).rejects.toThrow('aleo: listOperations does not support order "asc"');
-      expect(mockedListOperations).not.toHaveBeenCalled();
+    it.each(["asc", "desc"] as const)("should pass order %s to the logic layer", async order => {
+      const api = createApi("aleo");
+      mockedListOperations.mockResolvedValue({ items: [], next: undefined });
+
+      await api.listOperations(context, "aleo1test", { minHeight: 0, order });
+
+      expect(mockedListOperations).toHaveBeenCalledWith(
+        expect.objectContaining({ options: { minHeight: 0, order } }),
+      );
     });
 
     it("should reject without touching the logic layer when the context carries no private pair", async () => {

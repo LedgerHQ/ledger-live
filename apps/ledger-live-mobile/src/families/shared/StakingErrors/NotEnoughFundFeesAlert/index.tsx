@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -6,7 +7,6 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { Alert, Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useSettings, useAccountUnit } from "~/hooks";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";

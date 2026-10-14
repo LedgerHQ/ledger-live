@@ -1,6 +1,6 @@
 import { getAllEnvs } from "@shared/env";
 import { userIdSelector } from "@domain/entity-client-identity";
-import { webFrame, ipcRenderer } from "electron";
+import { getResourceUsage } from "~/renderer/webFrame";
 import { useCallback, useState } from "react";
 import { useTechnicalDateTimeFn } from "~/renderer/hooks/useDateFormatter";
 import logger from "~/renderer/logger";
@@ -16,7 +16,7 @@ export function useExportLogs() {
 
   const exportLogs = useCallback(async () => {
     try {
-      const resourceUsage = webFrame.getResourceUsage();
+      const resourceUsage = getResourceUsage();
       logger.log("exportLogsMeta", {
         resourceUsage,
         release: __APP_VERSION__,
@@ -28,15 +28,14 @@ export function useExportLogs() {
         accountsIds: accounts.map(a => a.id),
       });
 
-      const path = await ipcRenderer.invoke("show-save-dialog", {
-        title: "Export logs",
-        defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
-        filters: [{ name: "All Files", extensions: ["txt"] }],
+      await saveLogs({
+        options: {
+          title: "Export logs",
+          defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
+          filters: [{ name: "All Files", extensions: ["txt"] }],
+        },
+        e2ePath: "./ledgerwallet-logs.txt",
       });
-
-      if (path) {
-        await saveLogs(path);
-      }
     } catch (error) {
       logger.critical(error as Error);
     }

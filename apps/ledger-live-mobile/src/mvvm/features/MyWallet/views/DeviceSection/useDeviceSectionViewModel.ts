@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -13,7 +14,6 @@ import { removeKnownBleDevice } from "~/actions/ble";
 import { removeKnownDevice } from "~/reducers/knownDevices";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
-import { track } from "~/analytics";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";

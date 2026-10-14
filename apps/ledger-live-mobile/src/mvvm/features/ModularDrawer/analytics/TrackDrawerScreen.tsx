@@ -1,5 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
-import { TrackScreen } from "~/analytics";
 import { ModularDrawerEventParams, ModularDrawerEventName } from "./modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";

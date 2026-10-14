@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer } from "react";
 import { useLocation } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
 import { useActivityIndicatorTooltip } from "./useActivityIndicatorTooltip";

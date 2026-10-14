@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import NewSeedStep from "./NewSeedStep";
 import ChoiceRestoreRecoverStep from "./ChoiceRestoreRecoverStep";
@@ -29,24 +29,21 @@ const SeedStep = ({
     if (seedPathStatus == "backup_charon" && charonSupported) {
       switch (charonStatus) {
         case CharonStatus.Choice:
-          trackPage(`Set up ${productName}: Step 3 Charon Start`, undefined, null, true, true);
+          trackPage(
+            { category: `Set up ${productName}: Step 3 Charon Start` },
+            { updateRoutes: true, refreshSource: true },
+          );
           return;
         case CharonStatus.Rejected:
           trackPage(
-            `Set up ${productName}: Step 3 Charon Backup Rejected`,
-            undefined,
-            null,
-            true,
-            true,
+            { category: `Set up ${productName}: Step 3 Charon Backup Rejected` },
+            { updateRoutes: true, refreshSource: true },
           );
           return;
         case CharonStatus.Ready:
           trackPage(
-            `Set up ${productName}: Step 3 Charon Backup Success`,
-            undefined,
-            null,
-            true,
-            true,
+            { category: `Set up ${productName}: Step 3 Charon Backup Success` },
+            { updateRoutes: true, refreshSource: true },
           );
           return;
         default:

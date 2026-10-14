@@ -1,5 +1,5 @@
 import type { GenericAwarenessModalFeatureIntro } from "@ledgerhq/live-common/genericAwarenessModal";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO } from "./const";
 
 type FeatureIntroAnalyticsContext = {
@@ -29,11 +29,11 @@ const getFeatureIntroInteractionProperties = (context: FeatureIntroAnalyticsCont
 export const trackFeatureIntroPage = (featureIntro: GenericAwarenessModalFeatureIntro): void => {
   const context = getFeatureIntroAnalyticsContext(featureIntro);
   trackPage(
-    PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO,
-    undefined,
-    getFeatureIntroPageProperties(context),
-    true,
-    false,
+    {
+      category: PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO,
+      props: getFeatureIntroPageProperties(context),
+    },
+    { updateRoutes: true },
   );
 };
 

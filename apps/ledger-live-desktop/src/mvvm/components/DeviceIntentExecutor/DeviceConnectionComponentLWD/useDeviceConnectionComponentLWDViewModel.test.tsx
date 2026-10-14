@@ -3,6 +3,7 @@ import type {
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import {
+  BaseConnectionErrorTypes,
   connectDevice,
   ConnectDeviceUIStateTypes,
   webHidTransportIdentifier,
@@ -15,17 +16,19 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import React from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
+import { getEnvDefault, setEnv } from "@shared/env";
 import type { State } from "~/renderer/reducers";
 import createStore, { type ReduxStore } from "~/state-manager/configureStore";
 
 import { useDeviceConnectionComponentLWDViewModel } from "./useDeviceConnectionComponentLWDViewModel";
 
 const mockHandleConnect = jest.fn();
+const mockReportFailure = jest.fn();
 const mockHandleBuyDevice = jest.fn();
 
 jest.mock("LLD/hooks/useLazyOnboardingActions", () => ({
@@ -35,7 +38,8 @@ jest.mock("LLD/hooks/useLazyOnboardingActions", () => ({
   }),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 
@@ -56,7 +60,7 @@ type ConnectDeviceObserver = {
 const mockedUseDeviceManagementKit = jest.mocked(useDeviceManagementKit);
 const mockedConnectDevice = jest.mocked(connectDevice);
 const mockedTrack = jest.mocked(track);
-const mockDmk = { id: "dmk" } as unknown as NonNullable<ReturnType<typeof useDeviceManagementKit>>;
+const mockDmk = { id: "dmk" } as unknown as ReturnType<typeof useDeviceManagementKit>;
 
 let connectDeviceObserver: ConnectDeviceObserver | undefined;
 let mockUnsubscribe: jest.Mock;
@@ -115,7 +119,9 @@ function TestWrapper({ children, store }: { children: React.ReactNode; store: Re
   return (
     <Provider store={store}>
       <MemoryRouter>
-        <DeviceIntentTrackingProvider value={{ sourceFlow: "swap" }}>
+        <DeviceIntentTrackingProvider
+          value={{ sourceFlow: "swap", reportFailure: mockReportFailure }}
+        >
           {children}
         </DeviceIntentTrackingProvider>
       </MemoryRouter>
@@ -163,7 +169,12 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     connectDeviceObserver = undefined;
     mockUnsubscribe = jest.fn();
     mockedUseDeviceManagementKit.mockReturnValue(mockDmk);
+    setEnv("MOCK_SERVER_TRANSPORT", false);
     mockConnectDeviceSubscription();
+  });
+
+  afterEach(() => {
+    setEnv("MOCK_SERVER_TRANSPORT", getEnvDefault("MOCK_SERVER_TRANSPORT"));
   });
 
   it("GIVEN known devices WHEN rendering the view model THEN it exposes loading state and subscribes to connect device", () => {
@@ -180,7 +191,18 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
       acceptedDeviceModelIds: [],
       dmk: mockDmk,
       onConnected: expect.any(Function),
+      mockServerTransportEnabled: false,
     });
+  });
+
+  it("GIVEN the mock server transport is enabled WHEN rendering THEN connect device receives that flag", () => {
+    setEnv("MOCK_SERVER_TRANSPORT", true);
+
+    renderViewModel();
+
+    expect(mockedConnectDevice).toHaveBeenCalledWith(
+      expect.objectContaining({ mockServerTransportEnabled: true }),
+    );
   });
 
   it("GIVEN accepted device model ids WHEN rendering the view model THEN it passes them to connect device", () => {
@@ -340,22 +362,49 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     expect(mockHandleBuyDevice).toHaveBeenCalledTimes(1);
   });
 
-  it("GIVEN Device Management Kit is unavailable WHEN rendering the view model THEN it exposes an unknown error state", async () => {
-    // GIVEN
-    mockedUseDeviceManagementKit.mockReturnValue(null);
+  describe("failure reporting", () => {
+    const unknownConnectionErrorState: ConnectDeviceUIState = {
+      type: ConnectDeviceUIStateTypes.ConnectionError,
+      error: {
+        type: BaseConnectionErrorTypes.Unknown,
+        error: { _tag: "OpeningConnectionError" },
+      },
+      device: makeKnownDevice(),
+      retry: jest.fn(),
+      ignore: jest.fn(),
+    };
 
-    // WHEN
-    const { result } = renderViewModel();
+    it("should report an unknown connection error as a failure when it is displayed", () => {
+      renderViewModel();
 
-    // THEN
-    await waitFor(() =>
-      expect(result.current.state).toEqual({
-        type: ConnectDeviceUIStateTypes.UnknownError,
-        error: expect.objectContaining({
-          message: "Device Management Kit is not available",
+      act(() => {
+        connectDeviceObserver?.next(unknownConnectionErrorState);
+      });
+
+      expect(mockReportFailure).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          failureType: "ConnectionError",
+          countsAsFailure: true,
+          subError: "OpeningConnectionError",
+          modelId: DeviceModelId.nanoX,
         }),
-      }),
-    );
-    expect(mockedConnectDevice).not.toHaveBeenCalled();
+      );
+    });
+
+    it("should clear the reported failure when the flow leaves the error state", () => {
+      renderViewModel();
+      act(() => {
+        connectDeviceObserver?.next(unknownConnectionErrorState);
+      });
+
+      act(() => {
+        connectDeviceObserver?.next({
+          type: ConnectDeviceUIStateTypes.Connecting,
+          device: makeKnownDevice(),
+        });
+      });
+
+      expect(mockReportFailure).toHaveBeenLastCalledWith(null);
+    });
   });
 });

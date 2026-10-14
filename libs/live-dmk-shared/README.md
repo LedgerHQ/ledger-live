@@ -22,9 +22,20 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
 
 ## Key exports / concepts
 
-- `DefaultDeviceDiscoveryService` — base discovery service both platforms extend
-- `ConnectDeviceUIState` / `DeviceDiscoveryService` — core interfaces for device connection
-- `DeviceDiscoveryStartArgs`, `MatchedDevice`, `KnownDevice` — discovery data types
+- `deviceConnectivity/` — code shared by the device connection flows:
+  - `DeviceDiscoveryService` / `DefaultDeviceDiscoveryService` — discovery service both platforms extend
+  - `Device`, `DeviceDiscoveryStartArgs`, `DeviceConnectionResult` — discovery and connection data types
+  - `ConnectivityUIStateTypes` and the discovery, connection and unknown error UI states
+- `connectDevice/` — the connect device state machine and use case:
+  - `ConnectDeviceUIState` / `ConnectDeviceUIStateTypes` — its UI states, including the shared error states
+  - `MatchedDevice`, `KnownDevice` (alias of `Device`) — data types for known devices
+- `connectNewDevice/` — the state machine and use case that connect a device the user has not connected before:
+  - `DefaultConnectNewDeviceStateMachine` — discovers devices, connects to the selected one, and owns the device not found and success delays
+  - `connectNewDeviceUseCase` — exposes the state machine as an `Observable` of UI states, started on subscribe and stopped on unsubscribe
+  - `ConnectNewDeviceUIState` / `ConnectNewDeviceUIStateTypes` — its UI states, including the shared error states
+  - `SelectableDevice` — a device of the `Discovering` list. Its `key` stays the same while the list shows it: use it as the row key. Check `isAvailable` before you call `onSelect`: an available device has `isAvailable: true` and an `onSelect` callback. A device that discovery no longer reports has `isAvailable: false` and no `onSelect`.
+  - `ConnectNewDeviceGetDiscoveredDeviceKey` — type of the `getDiscoveredDeviceKey` input. It returns the same key for the same device in every discovery update, so that the device list keeps its order.
+  - `ConnectNewDeviceFilterListedDevices` — type of the optional `filterListedDevices` input. It selects the `ListedDevice`s that `Discovering` shows. A hidden device keeps its position in the list.
 - `LedgerLiveLogger`, `LiveBlindSigningReporter`, `UserHashService` — shared services
 - `transport/` — shared transport interface definitions
 

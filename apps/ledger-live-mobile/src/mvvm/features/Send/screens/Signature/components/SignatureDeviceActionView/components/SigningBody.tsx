@@ -1,6 +1,6 @@
+import { trackPage } from "@shared/analytics";
 import React, { useEffect } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { screen } from "~/analytics";
 import type { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
 import type { RecipientType } from "../../../../../utils/contactTracking";
 import { SimplifiedTransactionConfirm } from "../../SimplifiedTransactionConfirm";
@@ -17,6 +17,7 @@ type SigningBodyProps = Readonly<{
   action: SignatureDeviceActionViewModel["action"];
   request: NonNullable<SignatureDeviceActionViewModel["request"]>;
   onResult: SignatureDeviceActionViewModel["onDeviceActionResultCompleted"];
+  onError: SignatureDeviceActionViewModel["onSignatureError"];
   onClose: () => void;
   trackingProperties: ReturnType<typeof getSendFlowTrackingProperties>;
   recipientType: RecipientType | null;
@@ -27,6 +28,7 @@ export function SigningBody({
   action,
   request,
   onResult,
+  onError,
   onClose,
   trackingProperties,
   recipientType,
@@ -51,11 +53,18 @@ export function SigningBody({
     if (!isUserRefused) {
       return;
     }
-    void screen("Modal send - action rejected", undefined, {
-      ...trackingProperties,
-      recipientType,
+    void trackPage({
+      category: "Modal send - action rejected",
+      props: {
+        ...trackingProperties,
+        recipientType,
+      },
     });
   }, [isUserRefused, recipientType, trackingProperties]);
+
+  useEffect(() => {
+    if (signError) onError(signError);
+  }, [onError, signError]);
 
   if (signError) {
     return isUserRefused ? (

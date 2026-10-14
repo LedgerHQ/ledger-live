@@ -1,5 +1,6 @@
 import type {
   DeviceOnboardingExitReason,
+  HostOnboardingEvent,
   OnboardingEvent,
   OnboardingStep,
 } from "@ledgerhq/device-onboarding";
@@ -40,7 +41,7 @@ export interface DeviceOnboardingToolEvent {
 
 /** Whole rather than by type: `snapshot.can` needs the payload, and the machine dereferences it. */
 export interface SendableOnboardingEvent {
-  readonly event: OnboardingEvent;
+  readonly event: HostOnboardingEvent;
   readonly label?: string;
 }
 
@@ -48,7 +49,7 @@ export interface SendableOnboardingEvent {
  * What the panel prints, in display order. Closed, so a host cannot put seed progress on a screen
  * that runs during seed entry — see the README for the rest of the boundary.
  *
- * A host flattens the machine onto these names. The device-state three come from `lastDeviceState`;
+ * A host flattens the machine onto these names. The device-state fields come from `lastDeviceState`;
  * `availableFirmwareVersion` from `availableFirmwareUpdate.final.version`; `isGenuine` and
  * `verdictMatchesSession` from the raw `genuineVerdict`; `genuineFailureKind` from
  * `lastGenuineFailure.kind`. The rest read straight off the context.
@@ -61,6 +62,7 @@ export const watchedContextFields = [
   "isInRecoveryMode",
   "managerAllowed",
   "currentOnboardingStep",
+  "recoveryKeyStatus",
   "currentSetupStep",
   "firmwareVersion",
   "availableFirmwareVersion",
@@ -95,6 +97,6 @@ export interface DeviceOnboardingToolProps {
   readonly error: string | null;
   /** Opens a session: the first one, or a replacement once the transport went away. */
   readonly connect: () => void;
-  readonly send: (event: OnboardingEvent) => void;
+  readonly send: (event: HostOnboardingEvent) => void;
   readonly reset: () => void;
 }

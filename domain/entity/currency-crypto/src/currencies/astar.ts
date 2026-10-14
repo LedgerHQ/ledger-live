@@ -37,9 +37,6 @@ export const astar = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 592,
-  },
   explorerViews: [
     {
       tx: "https://astar.blockscout.com/tx/$hash",

@@ -1,5 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
-import { TrackScreen } from "~/analytics";
 import { getOriginFlow } from "~/analytics/originFlow";
 import useRebornBuyDeviceViewModel from "./useRebornBuyDeviceViewModel";
 import {

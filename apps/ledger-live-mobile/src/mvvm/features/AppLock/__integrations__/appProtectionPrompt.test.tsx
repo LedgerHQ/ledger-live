@@ -153,6 +153,12 @@ describe("asking from anywhere for the app to be protected", () => {
     await user.press(screen.getByTestId(CONFIRM));
 
     expect(await screen.findByText("FaceID enabled")).toBeVisible();
+    expect(track).toHaveBeenCalledWith("button_clicked", { button: "enable", type: "biometrics" });
+    expect(track).toHaveBeenCalledWith("encryption_updated", {
+      status: "activated",
+      type: "biometrics",
+      source: "card",
+    });
     expect(screen.getByTestId(OUTCOME)).toHaveTextContent("idle");
 
     await user.press(screen.getByTestId(CONTINUE));
@@ -179,7 +185,8 @@ describe("asking from anywhere for the app to be protected", () => {
 
     await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
     expect(track).toHaveBeenCalledWith("button_clicked", { button: "enable", type: "password" });
-    expect(track).toHaveBeenCalledWith("encryption_activated", {
+    expect(track).toHaveBeenCalledWith("encryption_updated", {
+      status: "activated",
       type: "password",
       source: "card",
     });

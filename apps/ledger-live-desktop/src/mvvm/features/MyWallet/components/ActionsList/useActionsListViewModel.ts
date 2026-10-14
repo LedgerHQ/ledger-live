@@ -12,7 +12,7 @@ import { useRecoverEntry } from "LLD/hooks/useRecoverEntry";
 import { ShieldCheckNotificationIcon } from "LLD/features/BackupHub/components/ShieldCheckNotificationIcon";
 import { DEFAULT_PROTECT_ID, useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import type { Action } from "./types";
 import { useContextMenuClose } from "../ContextMenuContext";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";

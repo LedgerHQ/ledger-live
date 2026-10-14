@@ -43,7 +43,6 @@
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -57,6 +56,7 @@
     "@ledgerhq/speculos-device-controller": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

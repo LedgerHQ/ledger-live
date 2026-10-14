@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { createStakeAccountTransaction } from "@ledgerhq/live-common/families/solana/transactions";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -18,7 +20,6 @@ import {
 } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CancelButton from "~/components/CancelButton";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -58,12 +59,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         ...bridge.createTransaction(account),
         amount: new BigNumber(route.params.amount ?? 0),
         family: "solana",
-        model: {
-          kind: "stake.createAccount",
-          uiState: {
-            delegate: { voteAccAddress: "" },
-          },
-        },
+        ...createStakeAccountTransaction(""),
       } as SolanaTransaction,
     }));
 

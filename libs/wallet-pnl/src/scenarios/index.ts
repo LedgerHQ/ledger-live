@@ -6,9 +6,6 @@ export { makeAccount, makeTokenAccount, makeAccountWithTokens } from "./accounts
 export type { BNLike, OpOverrides } from "./operations";
 export { makeOp, buy, sell, reward, fail, resetOperationIdCounter } from "./operations";
 
-export type { Pair, BuildCVInput } from "./countervalues";
-export { buildCV, buildMultiCV, dailyHistory } from "./countervalues";
-
 export type { HodlerScenario } from "./hodler";
 export { buildHodlerScenario } from "./hodler";
 

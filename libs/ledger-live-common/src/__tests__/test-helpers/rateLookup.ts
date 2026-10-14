@@ -1,5 +1,5 @@
 import { setRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 
 // Import for its side effect from any suite that renders a balance through
 // asset-aggregation. Deliberately not in the global setup: `logic` reaches

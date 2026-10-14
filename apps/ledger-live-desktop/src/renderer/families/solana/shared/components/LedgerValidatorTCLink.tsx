@@ -1,3 +1,4 @@
+import { getTransactionValidator } from "@ledgerhq/live-common/families/solana/transactions";
 import React from "react";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { useTranslation } from "react-i18next";
@@ -29,19 +30,12 @@ export default function LedgerValidatorTCLink({ transaction }: Props) {
     />
   );
 }
-const shouldShowTC = ({ model }: Transaction) => {
-  switch (model.kind) {
-    case "stake.createAccount":
-      return LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(model.uiState.delegate.voteAccAddress);
-    case "stake.delegate":
-      return LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(model.uiState.voteAccAddr);
-    default:
-      break;
-  }
-  return false;
+const shouldShowTC = (transaction: Transaction) => {
+  const voteAccAddr = getTransactionValidator(transaction);
+  return voteAccAddr !== undefined && LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(voteAccAddr);
 };
 
-const getTCInfo = ({ model }: Transaction) => {
+const getTCInfo = (transaction: Transaction) => {
   const TC_INFO: Record<string, { label: string; url: string }> = {
     [LEDGER_VALIDATOR_BY_BITWISE.voteAccount]: {
       label: "solana.delegation.ledgerByBitwiseTC",
@@ -53,13 +47,9 @@ const getTCInfo = ({ model }: Transaction) => {
     },
   };
 
-  switch (model.kind) {
-    case "stake.createAccount":
-      return TC_INFO[model.uiState.delegate.voteAccAddress];
-    case "stake.delegate":
-      return TC_INFO[model.uiState.voteAccAddr];
-    default:
-      break;
+  const voteAccAddr = getTransactionValidator(transaction);
+  if (voteAccAddr) {
+    return TC_INFO[voteAccAddr];
   }
   return null;
 };

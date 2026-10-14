@@ -40,8 +40,8 @@ been productized as the **Ledger Key Ring Protocol (LKRP)** and the libraries we
 
 | Old name (Confluence) | Current code location |
 |---|---|
-| `hw-trustchain` | [`libs/hw-ledger-key-ring-protocol`](../../libs/hw-ledger-key-ring-protocol) |
-| `trustchain` | [`libs/ledger-key-ring-protocol`](../../libs/ledger-key-ring-protocol) |
+| `hw-trustchain` | [`ts-libs/libs/hw-ledger-key-ring-protocol`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/hw-ledger-key-ring-protocol) |
+| `trustchain` | [`ts-libs/libs/ledger-key-ring-protocol`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/ledger-key-ring-protocol) |
 
 The **domain types are unchanged** — the code still uses `Trustchain`, `MemberCredentials`,
 `TrustchainSDK`, `TrustchainOutdated`, etc. So throughout these docs "Trustchain" refers to
@@ -108,8 +108,8 @@ flowchart TB
 | Component | Code | What it does |
 |---|---|---|
 | Ledger Sync app | [app-ledger-sync](https://github.com/LedgerHQ/app-ledger-sync) | Hardware-wallet app that lets us create the Trustchain. |
-| hw-ledger-key-ring-protocol | [`libs/hw-ledger-key-ring-protocol`](../../libs/hw-ledger-key-ring-protocol) | Talks to the app over APDU; exposes `Crypto`, `Device`, `StreamTree`, `CommandStream`. |
-| ledger-key-ring-protocol | [`libs/ledger-key-ring-protocol`](../../libs/ledger-key-ring-protocol) | `TrustchainSDK`: create/modify/destroy the Trustchain, member management, QR-code sync, the encryption key. |
+| hw-ledger-key-ring-protocol | [`ts-libs/libs/hw-ledger-key-ring-protocol`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/hw-ledger-key-ring-protocol) | Talks to the app over APDU; exposes `Crypto`, `Device`, `StreamTree`, `CommandStream`. |
+| ledger-key-ring-protocol | [`ts-libs/libs/ledger-key-ring-protocol`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/ledger-key-ring-protocol) | `TrustchainSDK`: create/modify/destroy the Trustchain, member management, QR-code sync, the encryption key. |
 | Trustchain API | [trustchain-backend](https://github.com/LedgerHQ/trustchain-backend) | CRUD-like API for Trustchain operations + authentication. |
 | live-wallet / cloudsync | [`shared/cloud-sync`](../../shared/cloud-sync) | `CloudSyncSDK`: atomic pull / push / delete of the encrypted wallet-sync data. |
 | Cloud Sync API | [cloud-sync-backend](https://github.com/LedgerHQ/cloud-sync-backend) | Stores encrypted data, authenticated via the Trustchain API. |

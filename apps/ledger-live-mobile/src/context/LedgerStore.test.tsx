@@ -2,6 +2,9 @@ import React from "react";
 import { Text } from "react-native";
 import { act, render, screen } from "@testing-library/react-native";
 import { configureStore } from "@reduxjs/toolkit";
+import type { Store } from "redux";
+import { payCardAuthSlice, selectCardAuthStatus } from "@features/flow-pay-card-auth/state";
+import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
 import LedgerStoreProvider from "./LedgerStore";
 
@@ -45,11 +48,15 @@ jest.mock("~/bridge/cache", () => ({
   listCachedCurrencyIds: () => Promise.resolve([]),
   hydrateCurrency: () => Promise.resolve(),
 }));
+jest.mock("@features/platform-card", () => ({
+  ...jest.requireActual("@features/platform-card"),
+  getCardSessionToken: jest.fn(async () => null),
+}));
 
 // A store without the feature-flags middleware, so the test decides when the cache settles.
 const createStore = () => configureStore({ reducer: { featureFlags: featureFlagsReducer } });
 
-const renderProvider = (store: ReturnType<typeof createStore>) =>
+const renderProvider = (store: Store) =>
   render(
     <LedgerStoreProvider store={store} onInitFinished={() => {}}>
       {({ ready }) => <Text>{ready ? "ready" : "loading"}</Text>}
@@ -59,6 +66,8 @@ const renderProvider = (store: ReturnType<typeof createStore>) =>
 describe("LedgerStoreProvider", () => {
   beforeEach(() => {
     mockBootstrapCardSession.mockClear();
+    jest.mocked(getCardSessionToken).mockReset();
+    jest.mocked(getCardSessionToken).mockResolvedValue(null);
   });
 
   it("is not ready until the feature-flags cache has settled", async () => {
@@ -89,5 +98,32 @@ describe("LedgerStoreProvider", () => {
     await act(() => jest.runAllTimersAsync());
 
     expect(screen.getByText("ready")).toBeOnTheScreen();
+  });
+
+  it("should become ready and signed in when a stored card token resolves", async () => {
+    let resolveSessionRead!: (token: string) => void;
+    jest.mocked(getCardSessionToken).mockReturnValue(
+      new Promise(resolve => {
+        resolveSessionRead = resolve;
+      }),
+    );
+    const store = configureStore({
+      reducer: { featureFlags: featureFlagsReducer, payCardAuth: payCardAuthSlice.reducer },
+    });
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("loading")).toBeOnTheScreen();
+    expect(selectCardAuthStatus(store.getState())).toBe("unknown");
+
+    await act(async () => {
+      resolveSessionRead("at_token");
+      await jest.runAllTimersAsync();
+    });
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    expect(selectCardAuthStatus(store.getState())).toBe("signedIn");
   });
 });

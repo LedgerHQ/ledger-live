@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import React, { ReactNode } from "react";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import AccountsEmptyList from "../AccountsEmptyList/index";
-import { track } from "~/analytics";
 import { Linking } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 

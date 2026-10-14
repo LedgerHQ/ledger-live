@@ -6,7 +6,12 @@ import i18n from "~/renderer/i18n/init";
 import { getLumenSymbolForActionId } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/utils";
 import useFinishOnboardingDialogViewModel from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialogViewModel";
 import { useFinishOnboardingState } from "LLD/features/FinishOnboarding/hooks/useFinishOnboardingState";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("LLD/features/FinishOnboarding/hooks/useFinishOnboardingState");
 

@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import FirmwareUpdateBannerEntry from "../FirmwareUpdateBanner";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 const firmwareWithVersion = (name = "2.2.0") => ({
   osu: {},

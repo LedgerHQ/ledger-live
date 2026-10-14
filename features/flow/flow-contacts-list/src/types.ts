@@ -52,6 +52,7 @@ export type ContactsListViewLabels = Readonly<{
   title: string;
   searchPlaceholder: string;
   searchNoResults: string;
+  searchNoResultsDescription?: string;
   addContact: string;
   ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;

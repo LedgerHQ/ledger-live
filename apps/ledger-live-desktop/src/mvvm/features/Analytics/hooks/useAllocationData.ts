@@ -7,7 +7,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useDistribution } from "~/renderer/actions/general";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import type { AllocationTableItem, AllocationViewProps } from "../types";
 
 const PAGE_SIZE = 6;

@@ -1,0 +1,177 @@
+import React from "react";
+import BigNumber from "bignumber.js";
+import { render, screen } from "tests/testSetup";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type {
+  StacksAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/stacks/types";
+import type { Operation } from "@ledgerhq/types-live";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import StepConfirmation, { StepConfirmationFooter } from "../steps/StepConfirmation";
+import type { StepProps } from "../types";
+
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
+jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+  __esModule: true,
+  SyncOneAccountOnMount: () => null,
+}));
+jest.mock("~/renderer/drawers/OperationDetails", () => ({
+  __esModule: true,
+  OperationDetails: () => null,
+}));
+jest.mock("~/renderer/drawers/Provider", () => {
+  const React = require("react");
+  return {
+    __esModule: true,
+    setDrawer: jest.fn(),
+    default: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
+  };
+});
+
+const mockedSetDrawer = jest.mocked(setDrawer);
+
+const currency = getCryptoCurrencyById("stacks");
+const account = {
+  ...genAccount("stacks-unstake-stepconfirmation", { currency }),
+} as unknown as StacksAccount;
+
+const makeOp = (): Operation =>
+  ({
+    id: "op-1",
+    accountId: account.id,
+    hash: "ophash",
+    type: "UNDELEGATE",
+    senders: [],
+    recipients: [],
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    blockHash: null,
+    blockHeight: null,
+    date: new Date(),
+    extra: {},
+  }) as unknown as Operation;
+
+const baseProps: StepProps = {
+  t: ((k: string) => k) as unknown as StepProps["t"],
+  transitionTo: jest.fn(),
+  device: null,
+  account,
+  transaction: {
+    family: "stacks",
+    mode: "undelegate",
+    valAddress: "SP1pool.native-pool-signer-manager",
+    amount: new BigNumber(0),
+  } as unknown as Transaction,
+  status: {
+    amount: new BigNumber(0),
+    errors: {},
+    warnings: {},
+  } as unknown as TransactionStatus,
+  bridgePending: false,
+  signed: false,
+  optimisticOperation: null,
+  error: null,
+  onClose: jest.fn(),
+  onChangeTransaction: jest.fn(),
+  onOperationBroadcasted: jest.fn(),
+  onTransactionError: jest.fn(),
+  onRetry: jest.fn(),
+  setSigned: jest.fn(),
+};
+
+beforeEach(() => jest.clearAllMocks());
+
+describe("UnstakeFlowModal/StepConfirmation", () => {
+  it("shows success when an optimisticOperation is set", () => {
+    render(<StepConfirmation {...baseProps} optimisticOperation={makeOp()} />);
+    expect(screen.getByText(/Unstake submitted/i)).toBeInTheDocument();
+  });
+
+  it("shows broadcast disclaimer when signed and an error occurs", () => {
+    render(<StepConfirmation {...baseProps} signed error={new Error("broadcast failed")} />);
+    expect(
+      screen.getByText(/Your unstaking transaction couldn't be sent to the network/i),
+    ).toBeInTheDocument();
+  });
+
+  it("does not show the broadcast disclaimer when the tx was not signed", () => {
+    render(<StepConfirmation {...baseProps} error={new Error("aborted")} />);
+    expect(
+      screen.queryByText(/Your unstaking transaction couldn't be sent to the network/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders nothing when neither operation nor error", () => {
+    const { container } = render(<StepConfirmation {...baseProps} />);
+    expect(container).toBeEmptyDOMElement();
+  });
+});
+
+describe("UnstakeFlowModal/StepConfirmationFooter", () => {
+  it("always renders the Close button", () => {
+    render(<StepConfirmationFooter {...baseProps} />);
+    expect(screen.getByTestId("modal-close-button")).toBeInTheDocument();
+  });
+
+  it("closing calls onClose", async () => {
+    const onClose = jest.fn();
+    const { user } = render(<StepConfirmationFooter {...baseProps} onClose={onClose} />);
+    await user.click(screen.getByTestId("modal-close-button"));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders no action button when neither operation nor error is set", () => {
+    render(<StepConfirmationFooter {...baseProps} />);
+    expect(screen.queryByText(/View details/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Retry/i)).not.toBeInTheDocument();
+  });
+
+  it("renders the success CTA when an optimisticOperation is set", async () => {
+    const onClose = jest.fn();
+    const op = makeOp();
+    const { user } = render(
+      <StepConfirmationFooter {...baseProps} optimisticOperation={op} onClose={onClose} />,
+    );
+    const cta = screen.getByText(/View details/i);
+    await user.click(cta);
+    expect(onClose).toHaveBeenCalled();
+    expect(mockedSetDrawer).toHaveBeenCalledWith(expect.any(Function), {
+      operationId: op.id,
+      accountId: account.id,
+    });
+  });
+
+  it("does not open the drawer when there is no account to attach it to", async () => {
+    const onClose = jest.fn();
+    const op = makeOp();
+    const { user } = render(
+      <StepConfirmationFooter
+        {...baseProps}
+        optimisticOperation={op}
+        onClose={onClose}
+        account={null as unknown as StepProps["account"]}
+      />,
+    );
+    const cta = screen.getByText(/View details/i);
+    await user.click(cta);
+    expect(onClose).toHaveBeenCalled();
+    expect(mockedSetDrawer).not.toHaveBeenCalled();
+  });
+
+  it("renders a Retry button when an error is present and no operation", async () => {
+    const onRetry = jest.fn();
+    const { user } = render(
+      <StepConfirmationFooter {...baseProps} error={new Error("x")} onRetry={onRetry} />,
+    );
+    const retry = screen.getByText(/Retry/i);
+    await user.click(retry);
+    expect(onRetry).toHaveBeenCalled();
+  });
+});

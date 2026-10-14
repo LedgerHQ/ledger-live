@@ -5,7 +5,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -33,7 +33,9 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const validator = transaction && transaction.validators ? transaction.validators[0] : null;
+    const validator = transaction?.valAddress
+      ? { address: transaction.valAddress, amount: transaction.amount }
+      : null;
     const v =
       validator &&
       validators.find(({ validatorAddress }) => validatorAddress === validator.address);

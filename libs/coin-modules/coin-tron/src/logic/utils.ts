@@ -13,6 +13,13 @@ export function createTronWeb(trongridUrl: string): TronWeb {
   return new TronWeb(fullNode, solidityNode, eventServer);
 }
 
+// tronweb registers its protobuf classes on globalThis when it loads. Mobile inlines requires, so
+// the import above runs only on first use: touching `utils` here loads it before the read.
+function tronWebProto(): any {
+  if (!utils) throw new Error("tronweb is not loaded");
+  return (globalThis as unknown as any).TronWebProto;
+}
+
 /**
  * Convert `raw_data_hex` value from {@link https://developers.tron.network/reference/createtransaction|createTransaction API} to `raw_data` value.
  * The function try to find the correct Protobuf deserialization to use for inner (Contract)[] object.
@@ -24,16 +31,37 @@ export async function decodeTransaction(rawTx: string): Promise<{
   raw_data: Record<string, any>;
   raw_data_hex: string;
 }> {
-  const { Transaction } = (globalThis as unknown as any).TronWebProto;
+  const { Transaction } = tronWebProto();
   const transaction = Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex"));
 
   return {
-    txID: createHash("sha256")
-      .update(new Uint8Array(Buffer.from(rawTx, "hex")))
-      .digest("hex"),
+    txID: tronTxIdFromRawDataHex(rawTx),
     raw_data: convertTxFromRaw(transaction),
     raw_data_hex: rawTx,
   };
+}
+
+const sameBytes = (a: Uint8Array, b: Uint8Array): boolean => Buffer.from(a).equals(Buffer.from(b));
+
+/** Whether a transaction of TriggerSmartContract calls re-encodes to its own bytes: the decoder
+ * skips unknown and repeated fields, and whatever follows an end-group tag. */
+export function isCanonicalTriggerSmartContractTx(rawDataHex: string): boolean {
+  const { Transaction, TriggerSmartContract } = tronWebProto();
+  const bytes = Buffer.from(rawDataHex, "hex");
+  const raw = Transaction.raw.deserializeBinary(bytes);
+  return (
+    sameBytes(raw.serializeBinary(), bytes) &&
+    raw.getContractList().every((contract: { getParameter(): { getValue_asU8(): Uint8Array } }) => {
+      const value = contract.getParameter().getValue_asU8();
+      return sameBytes(TriggerSmartContract.deserializeBinary(value).serializeBinary(), value);
+    })
+  );
+}
+
+export function tronTxIdFromRawDataHex(rawDataHex: string): string {
+  return createHash("sha256")
+    .update(new Uint8Array(Buffer.from(rawDataHex, "hex")))
+    .digest("hex");
 }
 
 /**
@@ -77,6 +105,14 @@ function convertTxFromRaw(tx: any) {
     };
   }
 
+  const auths = tx.getAuthsList();
+  if (auths.length > 0) {
+    transactionRawData = {
+      ...transactionRawData,
+      auths: auths.map((auth: any) => auth.toObject()),
+    };
+  }
+
   return transactionRawData;
 }
 
@@ -99,6 +135,8 @@ function convertContractFromRaw(contract: any) {
       value,
       type_url: contract.getParameter().getTypeUrl(),
     },
+    // TronGrid's name; 0 (owner) is the default and stays off, as TronGrid leaves it.
+    ...(contract.getPermissionId() ? { Permission_id: contract.getPermissionId() } : {}),
   };
 }
 
@@ -108,7 +146,7 @@ type TrxTransferValue = TransferValue & {
   to_address: string;
 };
 function convertTransferContractFromRaw(contract: any): TrxTransferValue {
-  const { TransferContract } = (globalThis as unknown as any).TronWebProto;
+  const { TransferContract } = tronWebProto();
   const transferContract = TransferContract.deserializeBinary(contract.getParameter().getValue());
 
   // Expected address format in Contract are in Hex and not in Base58,
@@ -126,7 +164,7 @@ type Trc10TransferValue = TransferValue & {
   to_address: string;
 };
 function convertTransferAssetContractFromRaw(contract: any): Trc10TransferValue {
-  const { TransferAssetContract } = (globalThis as unknown as any).TronWebProto;
+  const { TransferAssetContract } = tronWebProto();
   const transferContract = TransferAssetContract.deserializeBinary(
     contract.getParameter().getValue(),
   );
@@ -144,9 +182,12 @@ function convertTransferAssetContractFromRaw(contract: any): Trc10TransferValue 
 type Trc20TransferValue = TransferValue & {
   data: string;
   contract_address: string;
+  call_value?: number;
+  call_token_value?: number;
+  token_id?: number;
 };
 function convertTriggerSmartContractFromRaw(contract: any): Trc20TransferValue {
-  const { TriggerSmartContract } = (globalThis as unknown as any).TronWebProto;
+  const { TriggerSmartContract } = tronWebProto();
   const transferContract = TriggerSmartContract.deserializeBinary(
     contract.getParameter().getValue(),
   );
@@ -157,6 +198,12 @@ function convertTriggerSmartContractFromRaw(contract: any): Trc20TransferValue {
     data: convertBufferToHex(transferContract.getData()),
     owner_address: convertBufferToHex(transferContract.getOwnerAddress()),
     contract_address: convertBufferToHex(transferContract.getContractAddress()),
+    // Omitted when zero, like fee_limit; a payment verifier must still see value riding on the call.
+    ...(transferContract.getCallValue() ? { call_value: transferContract.getCallValue() } : {}),
+    ...(transferContract.getCallTokenValue()
+      ? { call_token_value: transferContract.getCallTokenValue() }
+      : {}),
+    ...(transferContract.getTokenId() ? { token_id: transferContract.getTokenId() } : {}),
   };
 }
 

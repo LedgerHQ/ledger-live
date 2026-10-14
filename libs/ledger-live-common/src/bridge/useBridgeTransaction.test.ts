@@ -5,6 +5,7 @@ import "../__tests__/test-helpers/dom-polyfill";
 import React from "react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { renderHook, waitFor, act } from "@testing-library/react";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { genAccount } from "../mock/account";
 import { getAccountBridge } from ".";
 import useBridgeTransaction, {
@@ -199,6 +200,37 @@ describe("useBridgeTransaction", () => {
       expect(result!.current.account).not.toBe(mainAccount);
       // transaction must not be reset
       expect(result!.current.transaction).toBe(transactionBefore);
+    }, 30000);
+
+    test("updates the parent account when it matches the current one", async () => {
+      const parentAccount = genAccount("mocked-account-1", { currency: BTC });
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const tokenAccount = {
+        type: "TokenAccount",
+        id: "mocked-token-account-1",
+        parentId: parentAccount.id,
+      } as TokenAccount;
+      const bridge = await getAccountBridge(tokenAccount, parentAccount);
+      let result: ReturnType<
+        typeof renderHook<ReturnType<typeof useBridgeTransaction>, void>
+      >["result"];
+      await act(async () => {
+        ({ result } = renderHook(
+          () => useBridgeTransaction(bridge, () => ({ account: tokenAccount, parentAccount })),
+          { wrapper: suspenseWrapper },
+        ));
+      });
+
+      await waitFor(() => expect(result!.current.transaction).not.toBeFalsy(), { timeout: 10000 });
+
+      const updatedToken = { ...tokenAccount };
+      const updatedParent = { ...parentAccount, subAccounts: [updatedToken] };
+      act(() => {
+        result!.current.updateAccount(updatedToken, updatedParent);
+      });
+
+      expect(result!.current.account).toBe(updatedToken);
+      expect(result!.current.parentAccount).toBe(updatedParent);
     }, 30000);
 
     test("is a no-op when the account id does not match", async () => {

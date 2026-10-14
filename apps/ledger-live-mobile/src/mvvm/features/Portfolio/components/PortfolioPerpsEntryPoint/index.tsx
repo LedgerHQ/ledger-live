@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -18,7 +19,6 @@ import {
   Box,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, Infinite } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { track } from "~/analytics";
 
 export const PortfolioPerpsEntryPoint = () => {
   const { t } = useTranslation();

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useContext } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "~/context/hooks";
@@ -14,7 +15,6 @@ import BuyDeviceBanner, {
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
 import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { TrackScreen } from "~/analytics";
 
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";

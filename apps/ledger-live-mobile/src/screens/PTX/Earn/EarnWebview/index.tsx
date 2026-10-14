@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, StyleSheet, BackHandler, Platform } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -26,7 +27,6 @@ import {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const/navigation";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 

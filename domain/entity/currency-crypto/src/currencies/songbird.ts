@@ -10,9 +10,6 @@ export const songbird = currency({
   scheme: "songbird",
   color: "#61ACD4",
   family: "evm",
-  ethereumLikeInfo: {
-    chainId: 19,
-  },
   units: [
     {
       name: "SGB",

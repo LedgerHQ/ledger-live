@@ -1,14 +1,4 @@
-import { ipcRenderer } from "electron";
 import { setEnvUnsafe } from "@shared/env";
 
-export const setEnvOnAllThreads = (name: string, value: unknown): boolean => {
-  if (setEnvUnsafe(name, value)) {
-    const env = {
-      name,
-      value,
-    };
-    ipcRenderer.send("setEnv", env);
-    return true;
-  }
-  return false;
-};
+export const setEnvOnAllThreads = (name: string, value: unknown): boolean =>
+  setEnvUnsafe(name, value);

@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { calculate, type CounterValuesState } from "@domain/entity-market-countervalues";
 import { getAccountCurrency } from "../account";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatCurrencyUnit } from "../currencies";

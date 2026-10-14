@@ -1,11 +1,12 @@
 import {
-  GetOsVersionCommand,
   isSuccessCommandResult,
   type DeviceManagementKit,
   type DeviceSessionId,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import { OnboardingStep, type DeviceOnboardingState, type SeedPhraseWordCount } from "../types";
+import { ReadOnboardingVersionCommand } from "./onboardingVersionCommand";
+import { attachedRecoveryKeyStatus } from "./recoveryKeyStatus";
 
 export type SeedProgress = {
   seedWordIndex: number;
@@ -16,7 +17,10 @@ export async function sendOsVersionCommand(
   dmk: DeviceManagementKit,
   sessionId: DeviceSessionId,
 ): Promise<GetOsVersionResponse> {
-  const result = await dmk.sendCommand({ sessionId, command: new GetOsVersionCommand() });
+  const result = await dmk.sendCommand({
+    sessionId,
+    command: new ReadOnboardingVersionCommand(),
+  });
 
   if (!isSuccessCommandResult(result)) {
     throw result.error;
@@ -50,6 +54,7 @@ export function readOnboardingState(response: GetOsVersionResponse): DeviceOnboa
     isInRecoveryMode: flags.isInRecoveryMode,
     managerAllowed: flags.isSecureConnectionAllowed,
     currentOnboardingStep,
+    recoveryKeyStatus: attachedRecoveryKeyStatus(response),
     ...seedProgress,
   };
 }
@@ -65,7 +70,8 @@ export function isSameOnboardingState(
     previous.managerAllowed === next.managerAllowed &&
     previous.currentOnboardingStep === next.currentOnboardingStep &&
     previous.seedWordIndex === next.seedWordIndex &&
-    previous.seedPhraseWordCount === next.seedPhraseWordCount
+    previous.seedPhraseWordCount === next.seedPhraseWordCount &&
+    previous.recoveryKeyStatus === next.recoveryKeyStatus
   );
 }
 

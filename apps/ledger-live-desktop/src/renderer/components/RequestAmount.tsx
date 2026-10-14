@@ -1,9 +1,10 @@
 import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
-import { useSendAmount } from "@ledgerhq/live-countervalues-react";
+import { useSendAmount } from "@features/platform-market-countervalues";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import IconTransfer from "~/renderer/icons/Transfer";
@@ -74,7 +75,7 @@ export default function RequestAmount({
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const cryptoUnit = useAccountUnit(account);
   const { fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
-    account,
+    cryptoCurrency: getAccountCurrency(account),
     fiatCurrency,
     cryptoAmount,
   });

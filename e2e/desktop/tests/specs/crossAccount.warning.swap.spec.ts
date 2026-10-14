@@ -62,7 +62,7 @@ test.describe("Swap - cross account warning", () => {
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
         const errorMessage =
           "Cross-account swaps are not currently supported. Please ensure your sending and receiving accounts are the same.";
-        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         await app.swap.selectSpecificProvider(provider);
         await app.swap.verifySwapCrossAccountErrorMessageIsCorrect(errorMessage);
       },

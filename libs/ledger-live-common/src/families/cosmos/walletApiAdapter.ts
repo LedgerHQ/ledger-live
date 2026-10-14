@@ -6,6 +6,7 @@ import {
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
 import { Transaction } from "@ledgerhq/coin-cosmos/types/index";
+import { cosmosMemoPatch } from "../../bridge/descriptor/send/memo";
 
 const CAN_EDIT_FEES = true;
 
@@ -38,7 +39,7 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
   }
 
   if (walletApiTransaction.memo) {
-    liveTx.memo = walletApiTransaction.memo;
+    Object.assign(liveTx, cosmosMemoPatch(walletApiTransaction.memo));
   }
 
   if (walletApiTransaction.sourceValidator) {

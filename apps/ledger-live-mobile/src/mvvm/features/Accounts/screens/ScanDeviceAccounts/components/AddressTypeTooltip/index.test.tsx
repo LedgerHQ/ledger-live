@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { render, screen } from "@tests/test-renderer";
 import { i18n } from "~/context/Locale";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import AddressTypeTooltip from ".";
 

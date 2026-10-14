@@ -8,6 +8,7 @@ import { TokenCurrency } from "@domain/entity-currency-token";
 import { useCurrenciesUnderFeatureFlag } from "../useCurrenciesUnderFeatureFlag";
 import { isCurrencySupported } from "../../../coin-modules/registry";
 import { ModularDrawerLocation } from "../../enums";
+import { PERPS_UI_USE_CASE } from "../../../wallet-api/ModularDrawer/uiUseCase";
 
 // Mock dependencies
 jest.mock("../useCurrenciesUnderFeatureFlag");
@@ -192,6 +193,12 @@ describe("useAcceptedCurrency", () => {
       const { result } = renderHook(() => useAcceptedCurrency({ flow: "send" }));
 
       expect(result.current(hypercoreToken)).toBe(false);
+    });
+
+    it("should reject a family that cannot send, in the perps fund flow (hypercore)", () => {
+      const { result } = renderHook(() => useAcceptedCurrency({ flow: PERPS_UI_USE_CASE.fund }));
+
+      expect(result.current(hypercore)).toBe(false);
     });
 
     it("should reject a family that cannot receive, in the receive flow", () => {

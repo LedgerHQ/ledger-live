@@ -39,11 +39,21 @@ export async function resolveWrappingKey(session: Session): Promise<CryptoKey | 
   return deriveWrappingKey(password, session.passwordSalt);
 }
 
+export type LoadedDomainKey = {
+  session: Session;
+  domainKey: CryptoKey;
+  /** Set when the ring rotated (e.g. a member was removed) since this session's trustchain metadata
+   * was last persisted — the caller must persist this new applicationPath itself (under its own
+   * session lock, alongside whatever else it's about to write), since this function only detects
+   * the rotation and does not write. */
+  rotatedApplicationPath: string | undefined;
+};
+
 export async function loadDomainKey(
   domain: string,
   wrappingKey?: CryptoKey,
   preloadedSession?: Session,
-): Promise<{ session: Session; domainKey: CryptoKey }> {
+): Promise<LoadedDomainKey> {
   const { session, trustchainMeta, memberCredentials } = await loadKeyRing(
     wrappingKey,
     preloadedSession,
@@ -66,17 +76,18 @@ export async function loadDomainKey(
     }
     throw e;
   }
+  let rotatedApplicationPath: string | undefined;
   if (restored.applicationPath !== trustchainMeta.applicationPath) {
     // The ring rotated (e.g. a member was removed), changing the encryption key: warn loudly since
     // data encrypted before the rotation can no longer be decrypted from the new application path.
     writeStderr(
       "⚠ Ledger Key Ring rotated since last use — data encrypted before the rotation may no longer be decryptable.\n",
     );
-    session.setTrustchain({
-      rootId: trustchainMeta.rootId,
-      applicationPath: restored.applicationPath,
-    });
-    session.write();
+    rotatedApplicationPath = restored.applicationPath;
   }
-  return { session, domainKey: await deriveDomainKey(restored.walletSyncEncryptionKey, domain) };
+  return {
+    session,
+    domainKey: await deriveDomainKey(restored.walletSyncEncryptionKey, domain),
+    rotatedApplicationPath,
+  };
 }

@@ -107,7 +107,7 @@ export async function craftTransaction(
     gasLimit,
     gasPremium,
     method,
-    params,
+    ...(params !== undefined ? { params } : {}),
     version: 0,
   });
 

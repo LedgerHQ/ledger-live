@@ -8,16 +8,26 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "../types";
 import BigNumber from "bignumber.js";
-import { firstValueFrom, Observable, of, Subscription, throwError } from "rxjs";
+import {
+  firstValueFrom,
+  lastValueFrom,
+  Observable,
+  of,
+  Subscription,
+  throwError,
+  toArray,
+} from "rxjs";
 import {
   AccountShapeInfo,
   bip32asBuffer,
+  makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
   mergeOps,
   updateTransaction,
 } from "./jsHelpers";
 import { createEmptyHistoryCache } from "../account/balanceHistoryCache";
+import { WrongDeviceForAccount } from "../errors";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 describe("updateTransaction", () => {
@@ -359,6 +369,57 @@ describe("makeSync", () => {
         throwError(() => new Error("Observable shape error")),
     })(account, {} as SyncConfig);
     await expect(firstValueFrom(sync$)).rejects.toThrow("Observable shape error");
+  });
+
+  describe("shouldMergeOps", () => {
+    const op = (id: string, date: string) =>
+      ({ id, hash: id, type: "IN", date: new Date(date), value: new BigNumber(1) }) as Operation;
+
+    const syncedOperationIds = async (shouldMergeOps?: (account: Account) => Promise<boolean>) => {
+      const account = createAccount({
+        id: "js:2:bitcoin::",
+        operations: [op("stored", "2024-05-12T17:04:12")],
+      });
+      const sync$ = makeSync({
+        getAccountShape: () => Promise.resolve({ operations: [op("new", "2024-05-13T17:04:12")] }),
+        ...(shouldMergeOps && { shouldMergeOps }),
+      })(account, {} as SyncConfig);
+      const updater = await firstValueFrom(sync$);
+
+      return updater(account).operations.map(o => o.id);
+    };
+
+    it("merges the stored operations by default", async () => {
+      await expect(syncedOperationIds()).resolves.toEqual(["new", "stored"]);
+    });
+
+    it("keeps only the shape's operations when the account opts out", async () => {
+      const shouldMergeOps = jest.fn().mockResolvedValue(false);
+
+      await expect(syncedOperationIds(shouldMergeOps)).resolves.toEqual(["new"]);
+      expect(shouldMergeOps).toHaveBeenCalledTimes(1);
+      expect(shouldMergeOps).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "js:2:bitcoin::" }),
+      );
+    });
+
+    it("resolves the merge decision before starting the account shape", async () => {
+      const calls: string[] = [];
+      const sync$ = makeSync({
+        getAccountShape: () => {
+          calls.push("getAccountShape");
+          return Promise.resolve({});
+        },
+        shouldMergeOps: async () => {
+          calls.push("shouldMergeOps");
+          return false;
+        },
+      })(createAccount({ id: "js:2:bitcoin::" }), {} as SyncConfig);
+
+      await firstValueFrom(sync$);
+
+      expect(calls).toEqual(["shouldMergeOps", "getAccountShape"]);
+    });
   });
 });
 
@@ -970,6 +1031,210 @@ describe("makeScanAccounts", () => {
     });
     await new Promise(r => setImmediate(r));
     expect(completeSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("makeScanAccounts with getAddressLookup", () => {
+  const scan = (scanAccounts: ReturnType<typeof makeScanAccounts>, currency: CryptoCurrency) =>
+    lastValueFrom(
+      scanAccounts({ currency, deviceId: "deviceId", syncConfig: { paginationConfig: {} } }).pipe(
+        toArray(),
+      ),
+    );
+  const usedShape = (info: AccountShapeInfo) =>
+    Promise.resolve({
+      id: `acc-${info.address}`,
+      used: true,
+      balanceHistoryCache: createEmptyHistoryCache(),
+    });
+  const getAddressFn = (_deviceId: string, opts: { path: string }) =>
+    Promise.resolve({ address: `device-${opts.path}`, path: opts.path, publicKey: "pk" });
+
+  it("offers every address the key controls, then stops when the path repeats", async () => {
+    const currency = getCryptoCurrencyById("hedera") as unknown as CryptoCurrency;
+    const getAddresses = jest.fn().mockResolvedValue(["0.0.1", "0.0.2"]);
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: usedShape,
+      getAddressFn,
+      getAddressLookup: async () => ({ getAddresses, keyControlsAccount: () => true }),
+    });
+
+    const events = await scan(scanAccounts, currency);
+
+    expect(events.map(e => e.account.freshAddress)).toEqual(["0.0.1", "0.0.2"]);
+    expect(events.map(e => e.account.seedIdentifier)).toEqual(["pk", "pk"]);
+    expect(getAddresses).toHaveBeenCalledTimes(1);
+    expect(getAddresses).toHaveBeenCalledWith(expect.objectContaining({ publicKey: "pk" }));
+  });
+
+  it("offers the addresses queued after an empty one", async () => {
+    const currency = getCryptoCurrencyById("hedera") as unknown as CryptoCurrency;
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: info =>
+        Promise.resolve({
+          id: `acc-${info.address}`,
+          used: info.address !== "0.0.1",
+          balanceHistoryCache: createEmptyHistoryCache(),
+        }),
+      getAddressFn,
+      getAddressLookup: async () => ({
+        getAddresses: async () => ["0.0.1", "0.0.2"],
+        keyControlsAccount: () => true,
+      }),
+    });
+
+    const events = await scan(scanAccounts, currency);
+
+    expect(events.map(e => [e.account.freshAddress, e.account.used])).toEqual([
+      ["0.0.1", false],
+      ["0.0.2", true],
+    ]);
+  });
+
+  it("ends the scan when the key controls no address", async () => {
+    const currency = getCryptoCurrencyById("hedera") as unknown as CryptoCurrency;
+    const getAccountShape = jest.fn(usedShape);
+    const scanAccounts = makeScanAccounts({
+      getAccountShape,
+      getAddressFn,
+      getAddressLookup: async () => ({
+        getAddresses: async () => [],
+        keyControlsAccount: () => true,
+      }),
+    });
+
+    const events = await scan(scanAccounts, currency);
+
+    expect(events).toEqual([]);
+    expect(getAccountShape).not.toHaveBeenCalled();
+  });
+
+  it("looks up the next key when the derivation scheme iterates accounts", async () => {
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
+    const getAddresses = jest
+      .fn()
+      .mockResolvedValueOnce(["first"])
+      .mockResolvedValueOnce(["second"])
+      .mockResolvedValue([]);
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: usedShape,
+      getAddressFn,
+      getAddressLookup: async () => ({ getAddresses, keyControlsAccount: () => true }),
+    });
+
+    const events = await scan(scanAccounts, currency);
+
+    expect(events.map(e => e.account.freshAddress)).toEqual(["first", "second"]);
+    expect(getAddresses).toHaveBeenCalledTimes(3);
+    expect(getAddresses.mock.calls.map(([derived]) => derived.path)).toEqual([
+      "44'/283'/0'/0/0",
+      "44'/283'/1'/0/0",
+      "44'/283'/2'/0/0",
+    ]);
+  });
+
+  it("starts looking up keys at the derivation mode start index", async () => {
+    const currency = getCryptoCurrencyById("stacks") as unknown as CryptoCurrency;
+    const getAddresses = jest.fn().mockResolvedValueOnce(["first"]).mockResolvedValue([]);
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: usedShape,
+      getAddressFn,
+      getAddressLookup: async () => ({ getAddresses, keyControlsAccount: () => true }),
+    });
+
+    await scan(scanAccounts, currency);
+
+    expect(getAddresses.mock.calls[0][0].path).toBe("44'/5757'/0'/0/1");
+  });
+
+  it("uses the device address when the currency has no lookup", async () => {
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: info =>
+        Promise.resolve({
+          id: `acc-${info.index}`,
+          balanceHistoryCache: createEmptyHistoryCache(),
+        }),
+      getAddressFn,
+      getAddressLookup: async () => undefined,
+    });
+
+    const [first] = await scan(scanAccounts, currency);
+
+    expect(first.account.freshAddress).toBe(`device-${first.account.freshAddressPath}`);
+  });
+});
+
+describe("makeAccountBridgeReceive", () => {
+  const lookupAccount = () => createAccount({ freshAddress: "0.0.1" });
+  const deviceResult = { address: "device-address", path: "44/3030", publicKey: "pk" };
+  const getAddressFn = () => Promise.resolve(deviceResult);
+
+  describe("with an address lookup", () => {
+    it.each([true, false])(
+      "returns the account address, not the device one (verify: %s)",
+      async verify => {
+        const receive = makeAccountBridgeReceive(getAddressFn, {
+          getAddressLookup: async () => ({
+            getAddresses: async () => [],
+            keyControlsAccount: () => true,
+          }),
+        });
+
+        const result = await firstValueFrom(
+          receive(lookupAccount(), { verify, deviceId: "deviceId" }),
+        );
+
+        expect(result).toEqual({ ...deviceResult, address: "0.0.1" });
+      },
+    );
+
+    it("rejects a device whose key does not control the account", async () => {
+      const account = lookupAccount();
+      const keyControlsAccount = jest.fn(() => false);
+      const receive = makeAccountBridgeReceive(getAddressFn, {
+        getAddressLookup: async () => ({ getAddresses: async () => [], keyControlsAccount }),
+      });
+
+      await expect(
+        firstValueFrom(receive(account, { verify: true, deviceId: "deviceId" })),
+      ).rejects.toBeInstanceOf(WrongDeviceForAccount);
+      expect(keyControlsAccount).toHaveBeenCalledTimes(1);
+      expect(keyControlsAccount).toHaveBeenCalledWith("pk", account);
+    });
+
+    it("skips the key check without verify", async () => {
+      const keyControlsAccount = jest.fn(() => false);
+      const receive = makeAccountBridgeReceive(getAddressFn, {
+        getAddressLookup: async () => ({ getAddresses: async () => [], keyControlsAccount }),
+      });
+
+      await firstValueFrom(receive(lookupAccount(), { verify: false, deviceId: "deviceId" }));
+
+      expect(keyControlsAccount).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("without an address lookup", () => {
+    const receive = makeAccountBridgeReceive(getAddressFn, {
+      getAddressLookup: async () => undefined,
+    });
+
+    it("returns the device result when it matches the account address", async () => {
+      const matching = createAccount({ freshAddress: "device-address" });
+
+      const result = await firstValueFrom(
+        receive(matching, { verify: true, deviceId: "deviceId" }),
+      );
+
+      expect(result).toBe(deviceResult);
+    });
+
+    it("rejects a device address that differs from the account address", async () => {
+      await expect(
+        firstValueFrom(receive(lookupAccount(), { verify: true, deviceId: "deviceId" })),
+      ).rejects.toBeInstanceOf(WrongDeviceForAccount);
+    });
   });
 });
 

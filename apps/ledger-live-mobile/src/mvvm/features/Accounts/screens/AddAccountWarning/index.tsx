@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
@@ -11,7 +12,6 @@ import AddFundsButton from "../../components/AddFundsButton";
 import useAddAccountWarningViewModel, { type Props } from "./useAddAccountWarningViewModel";
 import AnimatedAccountItem from "../../components/AccountsListView/components/AnimatedAccountItem";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
-import { TrackScreen } from "~/analytics";
 
 type ViewProps = ReturnType<typeof useAddAccountWarningViewModel>;
 

@@ -34,7 +34,11 @@ export const SearchInputView = forwardRef<HTMLDivElement, SearchInputViewProps>(
     };
 
     return (
-      <div ref={ref} className={cn("min-w-0 max-w-[450px] flex-auto mr-24", className)} {...rest}>
+      <div
+        ref={ref}
+        className={cn("min-w-[240px] max-w-[450px] flex-auto mr-24", className)}
+        {...rest}
+      >
         <div
           className="relative"
           onClick={stopOverlayToggleWhenOpen}

@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@tests/test-renderer";
 import { useMarketStatsViewModel } from "../useMarketStatsViewModel";
-import { track } from "~/analytics";
 import { useAssetMarketData } from "../../../hooks/useAssetMarketData";
 import { mockBtcCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
@@ -15,6 +15,7 @@ function mockMarketData(overrides?: Partial<ReturnType<typeof useAssetMarketData
   mockUseAssetMarketData.mockReturnValue({
     marketCurrency: marketCurrencyData as any,
     marketId: "bitcoin",
+    ledgerCurrencyFromDada: undefined,
     counterCurrency: "usd",
     counterValueUnit: usdUnit,
     ledgerIds: ["bitcoin"],

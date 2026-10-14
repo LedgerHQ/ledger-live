@@ -1,10 +1,11 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect } from "react";
 import { BackHandler } from "react-native";
 import { Flex, Text, SlideIndicator, BoxedIcon, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
-import { TrackScreen, track } from "~/analytics";
 import Button from "~/components/PreventDoubleClickButton";
 import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
 import {

@@ -1,4 +1,4 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { carouselCampaignCard } from "../../testUtils/fixtures";
 import {
   getCarouselAnalyticsContext,
@@ -8,6 +8,12 @@ import {
   trackCarouselTourCompleted,
 } from "../carouselAnalytics";
 import { PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL } from "../const";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 describe("carouselAnalytics", () => {
   beforeEach(() => {
@@ -26,15 +32,15 @@ describe("carouselAnalytics", () => {
     trackCarouselInitialStep(carouselCampaignCard);
 
     expect(trackPage).toHaveBeenCalledWith(
-      PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
-      undefined,
-      expect.objectContaining({
-        contentId: carouselCampaignCard.id,
-        step: 1,
-        stepName: "Ledger Flex",
-      }),
-      true,
-      false,
+      {
+        category: PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
+        props: expect.objectContaining({
+          contentId: carouselCampaignCard.id,
+          step: 1,
+          stepName: "Ledger Flex",
+        }),
+      },
+      { updateRoutes: true },
     );
   });
 

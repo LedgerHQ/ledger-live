@@ -1,0 +1,3 @@
+export const DEFAULT_DEVICE_NOT_FOUND_DELAY = 5_000;
+
+export const DEFAULT_SUCCESS_DELAY = 1_500;

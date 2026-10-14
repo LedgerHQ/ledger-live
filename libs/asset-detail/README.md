@@ -20,4 +20,4 @@
 
 ## Usage context
 
-Imported by both `apps/ledger-live-desktop` and `apps/ledger-live-mobile` on their respective asset detail screens. Works alongside `@ledgerhq/live-countervalues` for fiat conversion and market data APIs.
+Imported by both `apps/ledger-live-desktop` and `apps/ledger-live-mobile` on their respective asset detail screens. Works alongside `@domain/entity-market-countervalues` for fiat conversion and market data APIs.

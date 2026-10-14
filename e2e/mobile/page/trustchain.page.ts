@@ -5,9 +5,10 @@ import {
   getTrustchainAccounts,
   type LedgerSyncAccountData,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/pulledData";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
-const DEFAULT_TIMEOUT = 60_000;
-const POLL_INTERVAL = 2_000;
+const DEFAULT_TIMEOUT = TIMEOUT.xxlarge;
+const POLL_INTERVAL = INTERVAL.long;
 
 const byName = (a: string, b: string) => a.localeCompare(b);
 

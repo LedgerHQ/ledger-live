@@ -18,6 +18,10 @@ jest.mock("@ledgerhq/live-common/families/aleo/config", () => ({
   getAleoCurrencyConfigById: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/live-common/config/index", () => ({
+  getCurrencyConfiguration: jest.fn(),
+}));
+
 // Mocked here and not at useAleoValidators, which useAleoStakingPosition calls as a same-module
 // closure jest.mock cannot intercept. Virtual because coin-aleo is live-common's dependency,
 // not live-mobile's, so it has no type declarations here. `isDelegatorBelowMinimum` is stubbed off rather than reimplemented.

@@ -8,6 +8,8 @@ export const kaspaConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "KASPA",
+      unit: { name: "KAS", code: "KAS", magnitude: 8 },
     },
   },
 };

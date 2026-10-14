@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Button as UiButton } from "@ledgerhq/native-ui";
-import { track } from "~/analytics";
 import { TouchableOpacityProps, GestureResponderEvent } from "react-native";
 
 export type WrappedButtonProps = ButtonProps & {

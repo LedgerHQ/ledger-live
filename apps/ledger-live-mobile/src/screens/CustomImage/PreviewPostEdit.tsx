@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
@@ -10,7 +11,6 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
-import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 
 type NavigationProps = BaseComposite<

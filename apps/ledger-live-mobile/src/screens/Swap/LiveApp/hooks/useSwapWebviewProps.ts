@@ -1,6 +1,8 @@
+import { getCurrentTrackingPage } from "@shared/analytics";
 import { useMemo } from "react";
 import { Platform } from "react-native";
 import useEnv from "@features/platform-env";
+import { getSwapAPIEnv } from "@ledgerhq/live-common/exchange/swap/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -21,7 +23,6 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useDeviceIntentSignAssignment } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useSwapCustomHandlers } from "../customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
-import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import { useTranslateToSwapAccount } from "./useTranslateToSwapAccount";
 import { DefaultAccountSwapParamList } from "../../types";
 
@@ -72,7 +73,7 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
   const inputs = useMemo(
     () => ({
       source: initialSource,
-      swapApiBase: SWAP_API_BASE,
+      swapApiEnv: getSwapAPIEnv(SWAP_API_BASE),
       swapUserIp: SWAP_USER_IP,
       devMode,
       theme,

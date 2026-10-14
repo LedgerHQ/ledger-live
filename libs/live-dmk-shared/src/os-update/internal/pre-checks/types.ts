@@ -48,7 +48,7 @@ export type PreChecksStateMachineEvent =
 export type PreChecksStateMachineOutput = PreChecksNextAction;
 
 export enum PreChecksStateMachineLastAction {
-  WaitForAppAndVersion = "waitForAppAndVersion",
+  GetOsVersion = "getOsVersion",
   GetBatteryStatus = "getBatteryStatus",
 }
 

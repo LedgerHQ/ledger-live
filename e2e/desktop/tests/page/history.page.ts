@@ -49,6 +49,18 @@ export class HistoryPage extends AppPage {
   private readonly exportSuccessTitle = this.page.getByTestId("history-export-success-title");
   private readonly exportDoneButton = this.page.getByRole("button", { name: /^done$/i });
 
+  private readonly cryptoHistoryTab = this.page.getByTestId("history-tab-crypto");
+  private readonly cardHistoryTab = this.page.getByTestId("history-tab-card");
+  private readonly cardHistoryList = this.page.getByTestId("card-history-table");
+  private readonly cardHistoryRows = this.page.locator("[data-testid^='card-history-row-']");
+  private readonly cardTransactionDetail = this.page.getByTestId("card-transaction-detail");
+  private readonly cardTransactionDetailAmount = this.page.getByTestId(
+    "card-transaction-detail-row-amount",
+  );
+  private readonly cardTransactionDetailStatus = this.page.getByTestId(
+    "card-transaction-detail-row-status",
+  );
+
   private async expectFirstHistoryRowRenders(options: {
     typeLabel: "Received" | "Sent";
     /** English UI (`history.address.from` / `to`) — default e2e fixture uses `en-US`. */
@@ -74,6 +86,36 @@ export class HistoryPage extends AppPage {
   async openFromTopBar() {
     await this.historyButton.click();
     await expect(this.page).toHaveURL(/\/history/);
+  }
+
+  @step("Expect the Crypto history tab")
+  async expectCryptoHistoryTab() {
+    await expect(this.cryptoHistoryTab).toBeVisible();
+  }
+
+  @step("Expect the Card history tab")
+  async expectCardHistoryTab() {
+    await expect(this.cardHistoryTab).toBeVisible();
+  }
+
+  @step("Open the Card history tab")
+  async openCardHistoryTab() {
+    await this.cardHistoryTab.click();
+    await expect(this.cardHistoryList).toBeVisible();
+  }
+
+  @step("Open the first card transaction")
+  async openFirstCardTransaction() {
+    await this.cardHistoryRows.first().click();
+  }
+
+  @step("Expect the card transaction detail")
+  async expectCardTransactionDetail() {
+    await expect(this.cardTransactionDetail).toBeVisible();
+    await expect(this.cardTransactionDetailAmount).toContainText(/\d/);
+    await expect(this.cardTransactionDetailStatus).toHaveText(
+      /Status\s*(Confirmed|Pending|Declined|Reverted)/,
+    );
   }
 
   @step("Expect history page to be visible")

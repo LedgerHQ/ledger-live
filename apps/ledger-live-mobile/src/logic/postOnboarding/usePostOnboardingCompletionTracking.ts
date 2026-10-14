@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useEffect, useRef } from "react";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { track } from "~/analytics";
 import { usePostOnboardingHubStepperDisplay } from "./usePostOnboardingHubStepperDisplay";
 
 export function usePostOnboardingCompletionTracking(): void {

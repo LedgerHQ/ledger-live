@@ -24,7 +24,7 @@ import {
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
 import { setSelectedTimeRange } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAssetChartDateFormatter } from "LLD/features/AssetDetail/hooks/useAssetChartDateFormatter";
 import {
   ANALYTICS_CHART_RANGES,

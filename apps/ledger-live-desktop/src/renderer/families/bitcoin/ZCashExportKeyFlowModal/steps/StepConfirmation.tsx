@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { Text, Alert } from "@ledgerhq/react-ui";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

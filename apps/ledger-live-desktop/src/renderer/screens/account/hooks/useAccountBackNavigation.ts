@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
 import { parseAccountBackPath } from "../utils/accountLocationState";
 

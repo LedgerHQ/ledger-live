@@ -37,9 +37,6 @@ export const telos_evm = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 40,
-  },
   explorerViews: [
     {
       tx: "https://www.teloscan.io/tx/$hash",

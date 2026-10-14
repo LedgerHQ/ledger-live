@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import React from "react";
 
 import NftEntryPoint from "..";
 import { Entry } from "../types";
-import { track } from "~/analytics";
 import { Account } from "@ledgerhq/types-live";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { INITIAL_STATE } from "~/reducers/settings";

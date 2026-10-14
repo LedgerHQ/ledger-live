@@ -38,9 +38,6 @@ export const unichain_sepolia = currency({
     },
   ],
   isTestnetFor: "unichain",
-  ethereumLikeInfo: {
-    chainId: 1301,
-  },
   explorerViews: [
     {
       tx: "https://sepolia.uniscan.xyz/tx/$hash",

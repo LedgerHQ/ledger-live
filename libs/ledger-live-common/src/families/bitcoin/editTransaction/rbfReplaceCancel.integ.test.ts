@@ -18,6 +18,7 @@ import { walletBtcCurrencyById } from "@ledgerhq/coin-bitcoin/walletBtcCurrency"
 import { DerivationModes } from "@ledgerhq/wallet-btc/index";
 import BitcoinLikeWallet from "@ledgerhq/wallet-btc/wallet";
 import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
+import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { buildTransaction } from "@ledgerhq/coin-bitcoin/buildTransaction";
@@ -35,6 +36,26 @@ import {
 } from "@ledgerhq/coin-bitcoin/fixtures/rbf.fixtures";
 
 jest.setTimeout(30000);
+
+const TEST_CONFIG: BitcoinCoinConfig = {
+  status: { type: "active" },
+  name: "Bitcoin",
+  unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+  explorer: { url: "https://explorers.api.live.ledger.com" },
+};
+
+// Keep the explorer mocked on the wallet-btc account instead of binding it from the coin config.
+jest.mock("../coinConfig", () => ({
+  getBoundWalletAccount: (account: BitcoinAccount) => ({
+    config: {
+      status: { type: "active" },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
+    },
+    walletAccount: account.bitcoinResources?.walletAccount,
+  }),
+}));
 
 const EXTERNAL_RECIPIENT = "1BKWjmA9swxRKMH9NgXpSz8YZfVMnWWU9D";
 const CHANGE_ADDRESS = "1FHa4cuKdea21ByTngP9vz3KYDqqQe9SsA";
@@ -145,7 +166,10 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
+      walletBtcCurrencyById("bitcoin", {
+        explorerId: "btc",
+        explorer: { url: "https://explorers.api.live.ledger.com" },
+      }),
     );
 
     walletAccount.xpub.explorer = mockExplorer as unknown as typeof walletAccount.xpub.explorer;
@@ -253,7 +277,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
     const cancelTx = await buildRbfCancelTx(bitcoinAccount, originalTxId);
     expect(cancelTx.replaceTxId).toBe(originalTxId);
     expect(cancelTx.recipient).toBe(cancelTx.changeAddress);
-    const txInfo = await buildTransaction(bitcoinAccount, {
+    const txInfo = await buildTransaction(TEST_CONFIG, () => {}, bitcoinAccount, {
       ...cancelTx,
       feePerByte: cancelTx.feePerByte!,
       utxoStrategy: cancelTx.utxoStrategy!,
@@ -325,7 +349,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
     const speedupTx = await buildRbfSpeedUpTx(bitcoinAccount, originalTxId);
     expect(speedupTx.replaceTxId).toBe(originalTxId);
     expect(speedupTx.recipient).toBe(EXTERNAL_RECIPIENT);
-    const txInfo = await buildTransaction(bitcoinAccount, {
+    const txInfo = await buildTransaction(TEST_CONFIG, () => {}, bitcoinAccount, {
       ...speedupTx,
       feePerByte: speedupTx.feePerByte!,
       utxoStrategy: speedupTx.utxoStrategy!,
@@ -477,7 +501,10 @@ describe("RBF replace and cancel integration (multiple UTXOs)", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
+      walletBtcCurrencyById("bitcoin", {
+        explorerId: "btc",
+        explorer: { url: "https://explorers.api.live.ledger.com" },
+      }),
     );
 
     walletAccount.xpub.explorer = mockExplorer as unknown as typeof walletAccount.xpub.explorer;

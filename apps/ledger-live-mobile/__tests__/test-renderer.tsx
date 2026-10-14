@@ -6,7 +6,13 @@ import { payRequestVerifyHintInitialState } from "@features/flow-pay-request/sta
 import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import {
+  CountervaluesBridge,
+  CountervaluesProvider,
+  countervaluesInitialState as COUNTERVALUES_INITIAL_STATE,
+} from "@features/platform-market-countervalues";
+import { createMockRateSource } from "@domain/api-market-countervalues/mock";
+import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
@@ -30,7 +36,6 @@ import { INITIAL_STATE as APP_STATE_INITIAL_STATE } from "~/reducers/appstate";
 import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
 import { INITIAL_STATE as BORROW_INITIAL_STATE } from "~/reducers/borrow";
 import { INITIAL_STATE as CURRENCY_REGION_RESTRICTED_DRAWER_INITIAL_STATE } from "~/reducers/currencyRegionRestrictedDrawer";
-import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynamicContent";
 import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
 import { INITIAL_STATE as IN_VIEW_INITIAL_STATE } from "~/reducers/inView";
@@ -159,7 +164,9 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
-              ...cvsApiExtra({ countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
+              ...cvsApiExtra({
+                getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
+              }),
               ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
             },
           },
@@ -235,6 +242,14 @@ function withFlagOverrides(
   };
 }
 
+// No tracking pairs and no polling: tests seed the rates they assert on.
+export const countervaluesTestUserSettings: CountervaluesSettings = {
+  trackingPairs: [],
+  autofillGaps: true,
+  refreshRate: 0,
+  marketCapBatchingAfterRank: 0,
+};
+
 function CountervaluesProviders({
   children,
   store,
@@ -248,6 +263,7 @@ function CountervaluesProviders({
   const bridge = useMemo((): CountervaluesBridge => {
     const state = store.getState();
     return {
+      rates: createMockRateSource(),
       setPollingIsPolling: () => {},
       setPollingTriggerLoad: () => {},
       setState: () => {},
@@ -259,7 +275,7 @@ function CountervaluesProviders({
       useState: () => state.countervalues.countervalues.state,
       useStateError: () => null,
       useStatePending: () => false,
-      useUserSettings: () => state.countervalues.userSettings,
+      useUserSettings: () => countervaluesTestUserSettings,
       wipe: () => {},
     };
   }, [store]);

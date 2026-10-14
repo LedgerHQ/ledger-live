@@ -1,5 +1,107 @@
 # @ledgerhq/wallet-cli
 
+## 2.10.0
+
+### Minor Changes
+
+- [#23033](https://github.com/LedgerHQ/ledger-live/pull/23033) [`c53df5b`](https://github.com/LedgerHQ/ledger-live/commit/c53df5b3975babf217153bf3d9a5029411a15097) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent intents to list an agent's own intents
+
+  `agent-intent intents --profile <id>` lists the intents an enrolled profile proposed, most recent first, with `--status` filters, `--page-size` and `--cursor` pagination, using the profile's own key. The service scopes the list to that agent. Human output is a table with a next-page hint; `--output json` has stable fields, exact base-unit amounts as strings and `nextCursor`.
+
+- [#22688](https://github.com/LedgerHQ/ledger-live/pull/22688) [`d7571c8`](https://github.com/LedgerHQ/ledger-live/commit/d7571c8da8ab4e5a4b4900d0d77c4ac645a477af) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): default agent-intent enroll --source to other and recover every source
+
+  `agent-intent enroll` used to default `--source` to `openclaw`, so every agent that didn't pass it
+  showed up as OpenClaw in the Agent Intent frontend. When `--source` is omitted it now defaults to
+  `other`; pass `--source openclaw` to keep the previous value. The accepted values are unchanged (the
+  SDK's controlled list), and the skill and README now tell agents to always pass the runtime they run
+  in. The value is self-declared and not verified. `agent-intent recover` now works for profiles of
+  every source, not only `openclaw` and `hermes`, using the updated vendored Agent Intent SDK.
+
+- [#23116](https://github.com/LedgerHQ/ledger-live/pull/23116) [`5f6f6cb`](https://github.com/LedgerHQ/ledger-live/commit/5f6f6cbceb9cd330e828532e614056fd031cb412) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Use the shared account descriptor package for the V1 schema, string form and network mapping
+
+- [#23083](https://github.com/LedgerHQ/ledger-live/pull/23083) [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/ledger-key-ring-protocol`, `@ledgerhq/hw-ledger-key-ring-protocol` to 1.0.0 and `@ledgerhq/evm-tools` to 2.0.0 (ts-libs). No API change.
+
+- [#22582](https://github.com/LedgerHQ/ledger-live/pull/22582) [`973a17c`](https://github.com/LedgerHQ/ledger-live/commit/973a17c0676d9b81ca7368c0ebfeab01b1a6e5e1) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Authenticate swap quote requests with a dedicated per-profile API key stored in the OS keychain
+
+- [#22980](https://github.com/LedgerHQ/ledger-live/pull/22980) [`a055b5e`](https://github.com/LedgerHQ/ledger-live/commit/a055b5e1d7b6b50d7fc3c73022707608c06b079e) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Fix `agent-intent sync` importing the seed public key instead of the account address for Ethereum and Solana accounts
+
+- [#22992](https://github.com/LedgerHQ/ledger-live/pull/22992) [`ba3682a`](https://github.com/LedgerHQ/ledger-live/commit/ba3682a915168083c073b57879bc57e80606c0b4) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Report Ledger Sync accounts that use a derivation mode this wallet-cli version doesn't know as skipped instead of invalid, so `agent-intent sync` doesn't re-pull every time
+
+## 2.10.0-next.0
+
+### Minor Changes
+
+- [#23033](https://github.com/LedgerHQ/ledger-live/pull/23033) [`c53df5b`](https://github.com/LedgerHQ/ledger-live/commit/c53df5b3975babf217153bf3d9a5029411a15097) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent intents to list an agent's own intents
+
+  `agent-intent intents --profile <id>` lists the intents an enrolled profile proposed, most recent first, with `--status` filters, `--page-size` and `--cursor` pagination, using the profile's own key. The service scopes the list to that agent. Human output is a table with a next-page hint; `--output json` has stable fields, exact base-unit amounts as strings and `nextCursor`.
+
+- [#22688](https://github.com/LedgerHQ/ledger-live/pull/22688) [`d7571c8`](https://github.com/LedgerHQ/ledger-live/commit/d7571c8da8ab4e5a4b4900d0d77c4ac645a477af) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): default agent-intent enroll --source to other and recover every source
+
+  `agent-intent enroll` used to default `--source` to `openclaw`, so every agent that didn't pass it
+  showed up as OpenClaw in the Agent Intent frontend. When `--source` is omitted it now defaults to
+  `other`; pass `--source openclaw` to keep the previous value. The accepted values are unchanged (the
+  SDK's controlled list), and the skill and README now tell agents to always pass the runtime they run
+  in. The value is self-declared and not verified. `agent-intent recover` now works for profiles of
+  every source, not only `openclaw` and `hermes`, using the updated vendored Agent Intent SDK.
+
+- [#23116](https://github.com/LedgerHQ/ledger-live/pull/23116) [`5f6f6cb`](https://github.com/LedgerHQ/ledger-live/commit/5f6f6cbceb9cd330e828532e614056fd031cb412) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Use the shared account descriptor package for the V1 schema, string form and network mapping
+
+- [#23083](https://github.com/LedgerHQ/ledger-live/pull/23083) [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/ledger-key-ring-protocol`, `@ledgerhq/hw-ledger-key-ring-protocol` to 1.0.0 and `@ledgerhq/evm-tools` to 2.0.0 (ts-libs). No API change.
+
+- [#22582](https://github.com/LedgerHQ/ledger-live/pull/22582) [`973a17c`](https://github.com/LedgerHQ/ledger-live/commit/973a17c0676d9b81ca7368c0ebfeab01b1a6e5e1) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Authenticate swap quote requests with a dedicated per-profile API key stored in the OS keychain
+
+- [#22980](https://github.com/LedgerHQ/ledger-live/pull/22980) [`a055b5e`](https://github.com/LedgerHQ/ledger-live/commit/a055b5e1d7b6b50d7fc3c73022707608c06b079e) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Fix `agent-intent sync` importing the seed public key instead of the account address for Ethereum and Solana accounts
+
+- [#22992](https://github.com/LedgerHQ/ledger-live/pull/22992) [`ba3682a`](https://github.com/LedgerHQ/ledger-live/commit/ba3682a915168083c073b57879bc57e80606c0b4) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Report Ledger Sync accounts that use a derivation mode this wallet-cli version doesn't know as skipped instead of invalid, so `agent-intent sync` doesn't re-pull every time
+
+## 2.9.0
+
+### Minor Changes
+
+- [#22400](https://github.com/LedgerHQ/ledger-live/pull/22400) [`508f932`](https://github.com/LedgerHQ/ledger-live/commit/508f932ae6c69945644f7a337853c738ec36f754) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent enroll/recover/list/show command group
+
+  `agent-intent enroll` (default environment: production) prints a relay-bound signed enrollment URL,
+  then blocks until the approval comes back over the encrypted Trustchain relay. The completion is
+  verified (App-18 token, App-16 permission) before the Trustchain ID and Ledger Sync account access are
+  saved; on timeout or interruption the profile stays pending. There is no manual completion command.
+  `agent-intent recover --profile <id>` re-enrolls an enrolled openclaw/hermes profile's existing key
+  into its previous Trustchain over the same relay, verifying App-18 membership before clearing the
+  profile's `recovering` marker.
+
+  Every command that reads and writes `session.yaml` (enroll/reset/account discover/ring
+  init/destroy/encrypt/decrypt) now serializes through one real cross-process file lock, closing a
+  concurrent-write corruption window. `account discover` reconciles the labels it prints against the
+  one the locked merge actually assigns, and a malformed `agentIntentProfiles` entry now survives a
+  later `write()` instead of being silently dropped and orphaning its OS-keychain secret.
+
+- [#22461](https://github.com/LedgerHQ/ledger-live/pull/22461) [`72c0f50`](https://github.com/LedgerHQ/ledger-live/commit/72c0f50d9a33a06876770f57863355f9a12df568) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add `agent-intent sync` to import Ledger Sync accounts with the agent's key
+
+  `agent-intent sync --profile <id>` restores the App-16 trustchain with the enrolled agent's own key
+  (no device) and merges the synchronized accounts into the session — additive and idempotent, with
+  unsupported currency families reported as skipped and malformed entries as invalid. The Cloud Sync
+  version is cached per profile, a rotated Ledger Sync key updates the profile's account access, and
+  an agent removed from Ledger Sync is reported without deleting anything.
+
+- [#22476](https://github.com/LedgerHQ/ledger-live/pull/22476) [`3b271c9`](https://github.com/LedgerHQ/ledger-live/commit/3b271c942266b360f7680bc6efe83fa000d6e03b) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent send to propose EVM payments for human review
+
+  `agent-intent send` lets an enrolled Agent Intent profile propose a native ETH or ERC-20 transfer on
+  Ethereum mainnet. It signs the proposal with the profile's key, submits it to the Agent Intent
+  service and prints the frontend review link; it never signs or broadcasts a transaction and needs
+  no device. Amounts are converted to exact base units (never rounded), addresses are checked against
+  EIP-55, and `--dry-run` validates a proposal without submitting it.
+
+### Patch Changes
+
+- [#22289](https://github.com/LedgerHQ/ledger-live/pull/22289) [`b6ce6ee`](https://github.com/LedgerHQ/ledger-live/commit/b6ce6ee5adc2036b0ccfcb6999c74965d3f55cdf) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Upgrade the embedded Bun runtime from 1.3.14 to 1.4.2
+
+- [#22405](https://github.com/LedgerHQ/ledger-live/pull/22405) [`42d96b1`](https://github.com/LedgerHQ/ledger-live/commit/42d96b113a754f3459917ad3b87378aad6e4fabd) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Colocate wallet-cli tests with the code they validate
+
+- [#22596](https://github.com/LedgerHQ/ledger-live/pull/22596) [`7ff8f5b`](https://github.com/LedgerHQ/ledger-live/commit/7ff8f5b518a19e73005ef974121ce21e593a8e99) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): read `chainId` from config
+
+- [#22740](https://github.com/LedgerHQ/ledger-live/pull/22740) [`8421e39`](https://github.com/LedgerHQ/ledger-live/commit/8421e39799b898b552dddeb5bbab94b022b29922) Thanks [@LL782](https://github.com/LL782)! - Import track directly from @shared/analytics
+
+- [#22811](https://github.com/LedgerHQ/ledger-live/pull/22811) [`3132a4a`](https://github.com/LedgerHQ/ledger-live/commit/3132a4aba419be9a91320295d8c0260f3509f9bd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/ledger-key-ring-protocol` and `@ledgerhq/hw-ledger-key-ring-protocol` from npm (they now live in `ts-libs`), and bump `axios` to 1.20.0. No API change.
+
 ## 2.8.0
 
 ### Minor Changes
@@ -277,88 +379,5 @@
 - [#17664](https://github.com/LedgerHQ/ledger-live/pull/17664) [`8056a28`](https://github.com/LedgerHQ/ledger-live/commit/8056a28b60e14ec6764343131364e2e82c54b188) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add /accepted and /cancelled to swap cli
 
 - Emit a plain greppable `hash: <txHash>` line to stdout on broadcast (human output) so scripts can capture the transaction hash without parsing ANSI-styled status lines.
-
-## 1.0.1
-
-### Patch Changes
-
-- Refresh README documentation for the stable v1 release and add agent guidance for wallet-cli command usage.
-
-## 1.0.0
-
-### Major Changes
-
-- Promote wallet-cli to its first stable `1.0.0` release.
-- Add npm binary publishing support for the wallet-cli wrapper and platform packages.
-- Add swap quote and execute flows, including session management, `from`/`to` execution inputs, provider filtering, Changelly mapping to `changelly_v2`, token-to-token swaps, and supported currency data in quotes.
-- `account discover` no longer exposes the raw V1 descriptor. Human output shows the session label in bold as the primary identifier; JSON output replaces descriptor strings with `{ label, freshAddress }` objects.
-- Reject raw account descriptors as CLI arguments, require session labels from `account discover`, and reject extended private keys in descriptor parsing.
-- Add token support for supported currencies.
-- Add status and genuine check commands.
-- Update wallet-cli for the `alpaca` to `coin-service` rename.
-- Rename `AlpacaApi` references to `CoinModuleApi`.
-- Await async operation serialization bridge calls.
-- Update the wallet-cli skill file with swap coverage.
-- Fix wallet CLI USB interruption and DMK teardown handling.
-
-### Patch Changes
-
-- Fix swap execution to keep the Exchange app session open across the full pipeline.
-- Harden swap execute flags and zero-amount rate output.
-- Fix `--no-verify` and other `--no-<flag>` negations being silently ignored.
-- Route human stderr messages through the shared writer for consistent capture.
-- Remove provider fee and network fee fields from swap CLI quotes.
-- Remove dry-run mode from swap execute.
-- Bundle `THIRD_PARTY_NOTICES.md` to satisfy upstream attribution.
-- Ship the Apache-2.0 `LICENSE` file in wrapper and platform tarballs.
-
-## 0.4.0
-
-### Minor Changes
-
-- [#17284](https://github.com/LedgerHQ/ledger-live/pull/17284) [`446020d`](https://github.com/LedgerHQ/ledger-live/commit/446020d273d19f761920b57cefec85b5dabe2921) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: async prep — toOperationRaw, toSignedOperationRaw and remaining bridge callers (LIVE-29186)
-
-  Make `toOperationRaw`, `toSignedOperationRaw` and `toSignOperationEventRaw` async in `@ledgerhq/live-common`,
-  widen `WalletSyncDataManagerResolutionContext.getAccountBridge` in `@ledgerhq/live-wallet` to accept a Promise,
-  and update remaining callers (apps/cli, apps/wallet-cli, apps/web-tools, mobile concordium, coin-tester-evm/solana,
-  coin-modules-monitoring) to `await` the bridge.
-
-- [#17087](https://github.com/LedgerHQ/ledger-live/pull/17087) [`f661909`](https://github.com/LedgerHQ/ledger-live/commit/f6619097fb95a83377d981b40031de555e2c1855) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add status command to cli
-
-- [#17280](https://github.com/LedgerHQ/ledger-live/pull/17280) [`37241be`](https://github.com/LedgerHQ/ledger-live/commit/37241be0225443a836511580ae64a1a3f68b90bd) Thanks [@Justkant](https://github.com/Justkant)! - Fix wallet-cli swap execution to keep the Exchange app session open across the full pipeline
-
-- [#17379](https://github.com/LedgerHQ/ledger-live/pull/17379) [`08e4ec2`](https://github.com/LedgerHQ/ledger-live/commit/08e4ec282be330d6c8ec378dfc7d75d7a69f8a5c) Thanks [@Justkant](https://github.com/Justkant)! - Fix wallet CLI USB interruption and DMK teardown handling
-
-- [#17441](https://github.com/LedgerHQ/ledger-live/pull/17441) [`24a6911`](https://github.com/LedgerHQ/ledger-live/commit/24a691176bd63bfb028d66ebedc5c0013d5c1c3a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - limit providers for swap execute and map changelly to changelly_v2
-
-- [#17259](https://github.com/LedgerHQ/ledger-live/pull/17259) [`0d39a62`](https://github.com/LedgerHQ/ledger-live/commit/0d39a621818651365f3a4a28681493b0104802c6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Reject raw account descriptors as CLI arguments (use session labels from `account discover`) and reject extended private keys (xprv/yprv/zprv/tprv/uprv/vprv) in descriptor parsing.
-
-- [#17370](https://github.com/LedgerHQ/ledger-live/pull/17370) [`b009632`](https://github.com/LedgerHQ/ledger-live/commit/b009632b52cf2c1a9e99122a89f1f7ee7e0737f2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add supported currency to quote
-
-- [#17435](https://github.com/LedgerHQ/ledger-live/pull/17435) [`5f3b163`](https://github.com/LedgerHQ/ledger-live/commit/5f3b16310ce7f6c2a34066ec8f24d252e0e7b13f) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove Provider fee and Network fee fields from quote in swap CLI
-
-- [#16952](https://github.com/LedgerHQ/ledger-live/pull/16952) [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(BACK-11212): update code base after `alpaca` -> `coin-service` renaming
-
-- [#17366](https://github.com/LedgerHQ/ledger-live/pull/17366) [`334c280`](https://github.com/LedgerHQ/ledger-live/commit/334c2804622f46d7ec536e937419217c07dea97d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add from and to to swap execute
-
-- [#17200](https://github.com/LedgerHQ/ledger-live/pull/17200) [`44f72d8`](https://github.com/LedgerHQ/ledger-live/commit/44f72d86c17234506dc2f7ef27377590d4bcee6f) Thanks [@Justkant](https://github.com/Justkant)! - Add genuine check command to wallet-cli
-
-- [#17281](https://github.com/LedgerHQ/ledger-live/pull/17281) [`24044ef`](https://github.com/LedgerHQ/ledger-live/commit/24044efdd32e46416a45ef522edfb98f3799858c) Thanks [@Justkant](https://github.com/Justkant)! - Harden wallet-cli swap execute flags and zero-amount rate output
-
-- [#17282](https://github.com/LedgerHQ/ledger-live/pull/17282) [`82045d4`](https://github.com/LedgerHQ/ledger-live/commit/82045d4e485b39fdedf7614929090b148e8b1d1f) Thanks [@Justkant](https://github.com/Justkant)! - Route human stderr messages through the shared writer for consistent capture.
-
-- [#17365](https://github.com/LedgerHQ/ledger-live/pull/17365) [`184d0f8`](https://github.com/LedgerHQ/ledger-live/commit/184d0f8c79ac7b0fe34257f3ff7b6c970cc2e876) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove dry run from swap execute
-
-- [#17311](https://github.com/LedgerHQ/ledger-live/pull/17311) [`7326427`](https://github.com/LedgerHQ/ledger-live/commit/7326427983098d96694f0decf9cc492cc1f12f10) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add session management with quote command
-
-- [#16948](https://github.com/LedgerHQ/ledger-live/pull/16948) [`aa545d0`](https://github.com/LedgerHQ/ledger-live/commit/aa545d07d60f68810b1aafcbf1621782f69363cf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add swap execute to cli
-
-- [#17434](https://github.com/LedgerHQ/ledger-live/pull/17434) [`9a9611a`](https://github.com/LedgerHQ/ledger-live/commit/9a9611ac9df3e37be86ee673d3619105f382746f) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - support tokens for supported currencies
-
-- [#17367](https://github.com/LedgerHQ/ledger-live/pull/17367) [`ae62d2d`](https://github.com/LedgerHQ/ledger-live/commit/ae62d2df1e995d195d844674c8e4c21234caa3ec) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix `--no-verify` (and other `--no-<flag>` negations) being silently ignored. bunli's parser drops unknown flags, so `--no-verify` was a no-op and the device verification screen still appeared. argv is now pre-processed to rewrite `--no-<flag>` to `--<flag>=false`.
-
-- [#17189](https://github.com/LedgerHQ/ledger-live/pull/17189) [`d4314da`](https://github.com/LedgerHQ/ledger-live/commit/d4314daa9177c526456e0583c4e445383d656c55) Thanks [@Justkant](https://github.com/Justkant)! - Add npm binary publishing support for wallet-cli
-
-- [#17317](https://github.com/LedgerHQ/ledger-live/pull/17317) [`6935e56`](https://github.com/LedgerHQ/ledger-live/commit/6935e56e7634523c10cc1e2ef935f7d6a68b7f79) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add swap skill to skill file
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

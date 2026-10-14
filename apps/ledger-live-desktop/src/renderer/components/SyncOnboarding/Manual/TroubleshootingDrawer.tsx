@@ -6,9 +6,9 @@ import { useTheme } from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { track } from "~/renderer/analytics/segment";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { analyticsFlowName } from "./shared";
-import TrackPage from "~/renderer/analytics/TrackPage";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 export type Props = {
@@ -45,9 +45,7 @@ const TroubleshootingDrawer: React.FC<Props> = ({ onClose, lastKnownDeviceId }) 
       <Flex flexDirection="column" height="100%" px={14}>
         <Flex flexDirection="column" flex={1} justifyContent={"center"}>
           <Animation
-            animation={
-              getDeviceAnimation(lastKnownDeviceId, theme.theme, "plugAndPinCode") as object
-            }
+            animation={getDeviceAnimation(lastKnownDeviceId, theme.theme, "plugAndPinCode")}
           />
           <Text mt={12} variant="h5Inter" textAlign="center" fontWeight="semiBold">
             {t("syncOnboarding.manual.troubleshootingDrawer.title")}

@@ -1,4 +1,6 @@
+import { trackPage } from "@shared/analytics";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -11,7 +13,6 @@ import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipi
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { screen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -56,10 +57,16 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     [state.account.currency, account],
   );
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const config = useMemo(() => resolveCurrencyConfig(currency?.id), [currency]);
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
-      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined, excludedCurrencyIds)
+      isEligibleAddressCurrency(
+        eligibleAddressFamilies,
+        currency ?? undefined,
+        excludedCurrencyIds,
+        config,
+      )
         ? filterContactsByNetwork(contacts, currency?.id ?? "")
         : [];
 
@@ -72,6 +79,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     sendFlowTrackingProperties,
     contacts,
     currency,
+    config,
     eligibleAddressFamilies,
     excludedCurrencyIds,
     isContactsFeatureEnabled,
@@ -83,7 +91,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
       return;
     }
     hasTrackedRef.current = true;
-    void screen("Modal send - step recipient", undefined, trackingProperties);
+    void trackPage({ category: "Modal send - step recipient", props: trackingProperties });
   }, [account, currency, trackingProperties]);
 
   const goToAmount = useCallback(() => {

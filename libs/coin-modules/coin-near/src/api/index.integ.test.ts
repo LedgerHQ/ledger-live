@@ -20,6 +20,8 @@ const INDEXER = "https://near-indexer.coin.ledger.com";
 
 const config = {
   status: { type: "active" as const },
+  name: "NEAR",
+  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
   infra: {
     API_NEAR_PRIVATE_NODE: NODE,
     API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
@@ -277,7 +279,7 @@ describe("CoinModuleApi (integration)", () => {
         sendIntent({ senderPublicKey: publicKey }),
       );
 
-      const decoded = nearAPI.transactions.Transaction.decode(Buffer.from(transaction, "base64"));
+      const decoded = nearAPI.Transaction.decode(Buffer.from(transaction, "base64"));
       expect(decoded.signerId).toBe(ACCOUNT_WITH_HISTORY);
       expect(decoded.receiverId).toBe(NAMED_RECIPIENT);
       expect(Number(decoded.nonce.toString())).toBeGreaterThan(nonce);
@@ -296,7 +298,7 @@ describe("CoinModuleApi (integration)", () => {
         valAddress: pool,
       } as StakingTransactionIntent);
 
-      const decoded = nearAPI.transactions.Transaction.decode(Buffer.from(transaction, "base64"));
+      const decoded = nearAPI.Transaction.decode(Buffer.from(transaction, "base64"));
       expect(decoded.receiverId).toBe(pool);
       expect(details).toMatchObject({ mode: "stake", receiverId: pool });
     });
@@ -310,10 +312,12 @@ describe("CoinModuleApi (integration)", () => {
 
       // Signed with a dummy signature and deliberately never broadcast.
       const signed = combine(transaction, [DUMMY_SIGNATURE]);
-      const decoded = nearAPI.transactions.SignedTransaction.decode(Buffer.from(signed, "base64"));
+      const decoded = nearAPI.SignedTransaction.decode(Buffer.from(signed, "base64"));
 
       expect(decoded.transaction.signerId).toBe(ACCOUNT_WITH_HISTORY);
-      expect(Buffer.from(decoded.signature.data).toString("hex")).toBe(DUMMY_SIGNATURE);
+      expect(Buffer.from(decoded.signature.ed25519Signature!.data).toString("hex")).toBe(
+        DUMMY_SIGNATURE,
+      );
     });
 
     it("fails clearly when the public key has no access key on the account", async () => {

@@ -4,15 +4,12 @@ export const bsc = currency({
   type: "CryptoCurrency",
   id: "bsc",
   coinType: 60,
-  name: "BNB Chain",
+  name: "BNB Smart Chain",
   managerAppName: "Ethereum",
   ticker: "BNB",
   scheme: "bsc",
   color: "#F0B90A",
   family: "evm",
-  ethereumLikeInfo: {
-    chainId: 56,
-  },
   units: [
     {
       name: "BNB",

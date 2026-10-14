@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useUsdToFiatRate } from "../../counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { scaleMarketChartData } from "../utils/scaleMarketChartData";
 import type { MarketAssetChartDataRequestParams, MarketCoinDataChart } from "../utils/types";
 import { useAssetChartData } from "./useMarketDataProvider";

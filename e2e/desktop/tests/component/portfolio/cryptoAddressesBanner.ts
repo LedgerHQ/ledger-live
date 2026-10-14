@@ -18,6 +18,12 @@ export class CryptoAddressesBanner extends Component {
     await expect(this.addAccountCTA).toBeVisible();
   }
 
+  /** The banner only renders its Add account CTA while the wallet holds no account. */
+  @step("Expect crypto addresses banner to report no accounts")
+  async expectNoAccounts() {
+    await this.expectAddAccountCTAVisible();
+  }
+
   @step("Expect 'Add account' CTA not to be visible in crypto addresses banner")
   async expectAddAccountCTANotVisible() {
     await expect(this.addAccountCTA).not.toBeVisible();

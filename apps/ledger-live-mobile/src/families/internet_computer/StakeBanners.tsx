@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import type { ICPBannerState } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import type { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback } from "react";
-import { track } from "~/analytics";
 import AccountBanner from "~/components/AccountBanner";
 import { NavigatorName, ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";

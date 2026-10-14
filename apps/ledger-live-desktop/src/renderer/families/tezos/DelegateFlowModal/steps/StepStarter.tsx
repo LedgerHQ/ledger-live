@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { openURL } from "~/renderer/linking";
 import CoinWallet from "~/renderer/icons/CoinWallet";
 import Check from "~/renderer/icons/CheckFull";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";

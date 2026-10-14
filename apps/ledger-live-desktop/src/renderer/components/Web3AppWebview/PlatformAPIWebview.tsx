@@ -29,7 +29,7 @@ import useEnv from "@features/platform-env";
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   requestAccountLogic,
   broadcastTransactionLogic,
@@ -81,7 +81,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 ...properties,
                 flowInitiatedFrom: getTrackingRouteLiveAppSource(),
               },
-              mandatory,
+              { mandatory: !!mandatory },
             ),
         ),
       [],

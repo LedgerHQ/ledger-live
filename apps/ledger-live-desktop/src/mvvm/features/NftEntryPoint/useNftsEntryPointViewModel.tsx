@@ -1,6 +1,6 @@
 import { useFeature } from "@features/platform-feature-flags";
 import { AnalyticsPage, Entry, EntryPointNft } from "./types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { Row } from "./components/Row";
 import React from "react";
 

@@ -1,3 +1,11 @@
+export class CosmosMemoTooLong extends Error {
+  override name = "CosmosMemoTooLong";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "CosmosMemoTooLong");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class CosmosRedelegationInProgress extends Error {
   override name = "CosmosRedelegationInProgress";
   constructor(message?: string, fields?: Record<string, unknown>) {

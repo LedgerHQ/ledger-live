@@ -1,15 +1,20 @@
 import { renderHook, act } from "tests/testSetup";
 import useBuyDeviceViewModel from "../useBuyDeviceViewModel";
 import * as originFlow from "~/renderer/analytics/originFlow";
-import * as segment from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { shouldResumeAddAccountAfterOnboardingSelector } from "~/renderer/reducers/onboarding";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("LLD/hooks/useLazyOnboardingActions", () => ({
   useLazyOnboardingActions: () => ({ handleConnect: jest.fn(), handleBuyDevice: jest.fn() }),
 }));
 
-const mockTrack = jest.mocked(segment.track);
+const mockTrack = jest.mocked(track);
 const mockGetOriginFlow = jest.mocked(originFlow.getOriginFlow);
 
 describe("useBuyDeviceViewModel", () => {

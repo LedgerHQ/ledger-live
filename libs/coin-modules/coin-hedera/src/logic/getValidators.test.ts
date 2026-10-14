@@ -39,6 +39,31 @@ describe("getValidators", () => {
     expect(result.items[0].apy).toBeCloseTo(0.01291, 5);
   });
 
+  it("should omit validator balance when stake is null", async () => {
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({
+      nodes: [
+        {
+          node_id: 1,
+          node_account_id: "0.0.3",
+          description: "Hosted by Ledger | Paris, France",
+          stake: null,
+          reward_rate_start: 3538,
+        },
+      ],
+      nextCursor: null,
+    });
+
+    const result = await getValidators({ configOrCurrencyId: mockCurrency.id, cursor: undefined });
+
+    expect(result.items).toEqual([
+      expect.objectContaining({
+        id: "1",
+        address: "0.0.3",
+      }),
+    ]);
+    expect(result.items[0]).not.toHaveProperty("balance");
+  });
+
   it("should handle pagination cursor", async () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({
       nodes: [],

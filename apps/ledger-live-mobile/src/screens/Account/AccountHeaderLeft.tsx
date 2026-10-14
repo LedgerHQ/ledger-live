@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
@@ -6,7 +7,6 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 
 import { Flex, Icons } from "@ledgerhq/native-ui";
-import { track } from "~/analytics";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 

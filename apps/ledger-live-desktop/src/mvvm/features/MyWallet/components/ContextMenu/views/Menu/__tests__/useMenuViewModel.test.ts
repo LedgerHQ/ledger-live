@@ -1,6 +1,6 @@
 import { act } from "react";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useRecoverEntry } from "LLD/hooks/useRecoverEntry";
 import { useContextMenu } from "../../../../ContextMenuContext";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../../../../constants";

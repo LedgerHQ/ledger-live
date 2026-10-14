@@ -12,7 +12,7 @@ import { DiscoveringState } from "./DiscoveringState";
 
 type DiscoveringUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.Discovering }
+  { type: typeof ConnectDeviceUIStateTypes.Discovering }
 >;
 
 function renderState(state: Partial<DiscoveringUIState> = {}) {

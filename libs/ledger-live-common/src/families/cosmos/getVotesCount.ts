@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
-import { getCosmosResources } from "@ledgerhq/coin-cosmos/types/index";
+import { isStakingAccount } from "@ledgerhq/types-live";
 
 export function getVotesCount(account: Account): number {
-  return getCosmosResources(account)?.delegations.length ?? 0;
+  return isStakingAccount(account) ? account.stakingResources.delegations.length : 0;
 }

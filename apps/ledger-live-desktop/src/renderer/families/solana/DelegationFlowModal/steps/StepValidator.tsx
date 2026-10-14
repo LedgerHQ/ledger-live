@@ -1,12 +1,13 @@
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
-  StakeCreateAccountTransaction,
-  Transaction,
-} from "@ledgerhq/live-common/families/solana/types";
+  createStakeAccountTransaction,
+  getTransactionValidator,
+} from "@ledgerhq/live-common/families/solana/transactions";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/solana/types";
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -23,26 +24,16 @@ export default function StepValidator({
   error,
 }: StepProps) {
   invariant(
-    account && account.stakingResources && transaction,
+    account?.stakingResources && transaction,
     "solana account, resources and transaction required",
   );
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidator = ({ address }: { address: string }) => {
     onUpdateTransaction(_tx => {
-      return bridge.updateTransaction(transaction, {
-        model: {
-          kind: "stake.createAccount",
-          uiState: {
-            delegate: {
-              voteAccAddress: address,
-            },
-          },
-        },
-      });
+      return bridge.updateTransaction(transaction, createStakeAccountTransaction(address));
     });
   };
-  const chosenVoteAccAddr = (transaction.model.uiState as StakeCreateAccountTransaction["uiState"])
-    .delegate?.voteAccAddress;
+  const chosenVoteAccAddr = getTransactionValidator(transaction);
   return (
     <Box flow={1}>
       <TrackPage

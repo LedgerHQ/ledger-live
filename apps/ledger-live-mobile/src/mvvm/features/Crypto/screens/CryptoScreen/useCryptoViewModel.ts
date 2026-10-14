@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";

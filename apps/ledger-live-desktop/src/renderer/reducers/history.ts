@@ -15,7 +15,7 @@ import {
   hideSmallValueTokenOperationsSelector,
   localeSelector,
 } from "./settings";
-import { countervaluesStateSelector } from "./countervalues";
+import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 
 export type HistoryState = {

@@ -37,7 +37,6 @@ export const useGasOptions = ({
     const getGasOptionsCallback = async () =>
       gasTracker
         .getGasOptions({
-          currencyId: currency.id,
           config,
           options: { useEIP1559: shouldUseEip1559 },
         })

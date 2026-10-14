@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 import { Flex } from "@ledgerhq/react-ui/index";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import NewSeedIllustration from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel/NewSeedIllustration";
 
 export function SecureYourCrypto(trackProps: Readonly<TrackTutorialProps>) {

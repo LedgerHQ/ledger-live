@@ -1,6 +1,6 @@
 import { EnvName } from "@shared/env";
 import React, { useCallback } from "react";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Switch from "~/renderer/components/Switch";
 type Props = {
   name: EnvName;

@@ -1,22 +1,20 @@
 import { FeeEstimationFailed } from "../../../errors";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { blockchainBaseURL } from "@ledgerhq/coin-bitcoin/explorer";
-import type { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/config";
-import { getCurrencyConfiguration } from "../../../config";
+import { makeLRUCacheWithTtlOf } from "@ledgerhq/coin-bitcoin/cache";
+import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
+import { DEFAULT_FEE_RATES_CACHE_TTL_MS } from "@ledgerhq/coin-bitcoin/constants";
+import { getBitcoinCoinConfig } from "../coinConfig";
 import type { FeeItems } from "../types";
 
 type Fees = Record<string, number>;
 
-const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> = makeLRUCache(
-  async currency => {
-    const baseURL = blockchainBaseURL(
-      currency,
-      getCurrencyConfiguration<BitcoinConfigInfo>(currency.id),
-    );
+const cachedEstimatedFees = makeLRUCacheWithTtlOf(
+  async (currency: CryptoCurrency, config: BitcoinCoinConfig): Promise<Fees> => {
+    const baseURL = blockchainBaseURL(currency, config);
     invariant(baseURL, `Fees for ${currency.id} are not supported`);
     const { data, status } = await network<Fees>({
       method: "GET",
@@ -31,8 +29,14 @@ const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> = makeLRUCac
       httpStatus: status,
     });
   },
-  c => c.id,
+  // Keyed by the explorer base URL (it carries the currency's explorer id), so a remote change of
+  // `explorer.url` or `explorerId` fetches from the new endpoint.
+  (currency, config) => blockchainBaseURL(currency, config),
+  (_currency, config) => config.fees?.feeRatesCacheTtlMs ?? DEFAULT_FEE_RATES_CACHE_TTL_MS,
 );
+
+const getEstimatedFees = (currency: CryptoCurrency): Promise<Fees> =>
+  cachedEstimatedFees(currency, getBitcoinCoinConfig(currency.id));
 
 export const speeds = new Map([
   [1, "fast"],

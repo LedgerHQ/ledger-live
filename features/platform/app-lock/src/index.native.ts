@@ -12,4 +12,6 @@ export * from "./promptError";
 export * from "./scheme";
 export * from "./staleProtection";
 export * from "./biometrics.native";
+export * from "./PasswordField";
+export * from "./passwordDraft";
 export * from "./verifier";

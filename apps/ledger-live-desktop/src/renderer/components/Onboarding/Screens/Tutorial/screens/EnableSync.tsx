@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/react-ui/index";
 import { useTheme } from "styled-components";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { LogoWrapper } from "LLD/features/WalletSync/components/LogoWrapper";
 import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 

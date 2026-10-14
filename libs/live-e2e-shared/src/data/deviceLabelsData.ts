@@ -37,7 +37,7 @@ type DeviceLabelsConfig = {
 
 const TOUCHSCREEN_DEVICE_CONFIG: LabelConfig = {
   receiveVerify: {
-    [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
+    [AppInfos.BNB_SMART_CHAIN.name]: DeviceLabels.VERIFY_BSC,
     [AppInfos.COSMOS.name]: DeviceLabels.VERIFY_COSMOS,
     [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
     [AppInfos.POLKADOT.name]: DeviceLabels.VERIFY_POLKADOT,
@@ -132,7 +132,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
   [DeviceModelId.apex]: TOUCHSCREEN_DEVICE_CONFIG,
   default: {
     receiveVerify: {
-      [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
+      [AppInfos.BNB_SMART_CHAIN.name]: DeviceLabels.VERIFY_BSC,
       [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
       [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
@@ -143,7 +143,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     },
     receiveConfirm: {
       [AppInfos.BITCOIN.name]: DeviceLabels.CONFIRM,
-      [AppInfos.BNB_CHAIN.name]: DeviceLabels.CONFIRM,
+      [AppInfos.BNB_SMART_CHAIN.name]: DeviceLabels.CONFIRM,
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.ETHEREUM.name]: DeviceLabels.CONFIRM,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
@@ -159,7 +159,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
       [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
-      [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
+      [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION,
       [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,
     },
@@ -177,7 +177,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       default: DeviceLabels.APPROVE,
     },
     sendVerify: {
-      [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
+      [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION,
       // The mina app opens a payment on the same screen as a delegation.
       [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,

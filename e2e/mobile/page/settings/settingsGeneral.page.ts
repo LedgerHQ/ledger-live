@@ -1,8 +1,9 @@
 import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
+import { INTERVAL } from "@e2e/utils/timeouts";
 
-const REVAMPED_LOCK_GRACE_MS = 2_000;
+const REVAMPED_LOCK_GRACE_MS = INTERVAL.long;
 
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
@@ -128,7 +129,7 @@ export default class SettingsGeneralPage {
        * permalink: https://github.com/LedgerHQ/ledger-live/blob/9a9d649c1175ecf1a884a0ae615dba96b208c374/apps/ledger-live-mobile/src/context/AuthPass/auth.hooks.ts#L54-L61
        * ticket reference: https://ledgerhq.atlassian.net/browse/LIVE-20822
        */
-      await delay(2000);
+      await delay(INTERVAL.long);
     }
     await device.launchApp({ newInstance: false }); // bring back from background
     await app.common.enableSynchronization();

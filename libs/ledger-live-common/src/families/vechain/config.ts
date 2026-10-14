@@ -9,6 +9,8 @@ const vechainConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: {
         url: getEnv("API_VECHAIN_THOREST"),
       },

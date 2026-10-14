@@ -5,6 +5,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
+import { SolanaTokenAccountHoldsAnotherToken } from "../errors";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { isSolanaStakingTransactionIntent } from "../logic";
@@ -132,10 +133,22 @@ export async function estimateFees(
   }
 
   const transferFee = mint && (await getMaybeTransferFee(api, intent, mint));
-  const ataRent = mint ? await recipientAtaRent(api, intent, mint) : 0n;
+  const destination = mint ? await recipientTokenDestination(api, intent, mint) : undefined;
+  const parameters = {
+    ...(transferFee ? { transferFee } : {}),
+    ...(destination
+      ? {
+          ...(destination.tokenAccount ? { recipientTokenAccount: destination.tokenAccount } : {}),
+          ...(destination.walletAddress
+            ? { recipientWalletAddress: destination.walletAddress }
+            : {}),
+          userInputType: destination.userInputType,
+        }
+      : {}),
+  };
   return {
-    value: BigInt(fee) + ataRent,
-    ...(transferFee ? { parameters: { transferFee } } : {}),
+    value: BigInt(fee) + (destination?.ataRent ?? 0n),
+    ...(Object.keys(parameters).length > 0 ? { parameters } : {}),
   };
 }
 
@@ -156,24 +169,50 @@ async function ownerAtaRent(api: ChainAPI, mint: ParsedOnChainMintWithInfo): Pro
   return BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mint)));
 }
 
-async function recipientAtaRent(
+/** The descriptor also feeds the device screen, so it is resolved once and returned whole. */
+async function recipientTokenDestination(
   api: ChainAPI,
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   mint: ParsedOnChainMintWithInfo,
-): Promise<bigint> {
-  if (!intent.recipient) return 0n;
+): Promise<
+  | {
+      tokenAccount?: string;
+      walletAddress?: string;
+      userInputType: string;
+      ataRent: bigint;
+    }
+  | undefined
+> {
+  if (!intent.recipient) return undefined;
   const mintAddress = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
-  if (!mintAddress) return 0n;
+  if (!mintAddress) return undefined;
 
-  const descriptor = await resolveRecipientDescriptor(
-    api,
-    intent.recipient,
-    mintAddress,
-    tokenProgramOfMint(mint),
-  );
-  if (!descriptor.shouldCreateAsAssociatedTokenAccount) return 0n;
+  let descriptor;
+  try {
+    descriptor = await resolveRecipientDescriptor(
+      api,
+      intent.recipient,
+      mintAddress,
+      tokenProgramOfMint(mint),
+    );
+  } catch (error) {
+    // A mismatched recipient is for `validateIntent` to report; throwing here would fail the whole
+    // preparation and surface as a crash instead of a field error.
+    if (error instanceof SolanaTokenAccountHoldsAnotherToken) return undefined;
+    throw error;
+  }
+  const ataRent = descriptor.shouldCreateAsAssociatedTokenAccount
+    ? BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mint)))
+    : 0n;
 
-  return BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mint)));
+  // Exclusive, as the device expects: an account that exists is named, one that does not is opened.
+  return descriptor.shouldCreateAsAssociatedTokenAccount
+    ? { walletAddress: descriptor.walletAddress, userInputType: descriptor.userInputType, ataRent }
+    : {
+        tokenAccount: descriptor.tokenAccAddress,
+        userInputType: descriptor.userInputType,
+        ataRent,
+      };
 }
 
 async function getMaybeMintOfIntent(

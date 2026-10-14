@@ -1,8 +1,9 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { getQ3TourStepName, PAGE_TRACKING_Q3_TOUR } from "../const";
 import { createQ3TourAnalytics } from "../q3TourCarouselAnalytics";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -29,16 +30,16 @@ describe("q3TourCarouselAnalytics", () => {
     analytics.trackInitialStep(analytics.getContext(0, "A quick tour of the latest"));
 
     expect(trackPage).toHaveBeenCalledWith(
-      PAGE_TRACKING_Q3_TOUR,
-      undefined,
-      expect.objectContaining({
-        contentId: "q3-tour",
-        variant: "q3_a",
-        step: 1,
-        stepName: "A quick tour of the latest",
-      }),
-      true,
-      false,
+      {
+        category: PAGE_TRACKING_Q3_TOUR,
+        props: expect.objectContaining({
+          contentId: "q3-tour",
+          variant: "q3_a",
+          step: 1,
+          stepName: "A quick tour of the latest",
+        }),
+      },
+      { updateRoutes: true },
     );
   });
 

@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account";
 import { computeAssetPnL } from "./assetPnL";
 import type { ComputePnLOptions, PortfolioPnL } from "./types";
@@ -10,7 +9,7 @@ const ZERO = new BigNumber(0);
 
 export function computePortfolioPnL(
   accounts: AccountLike[],
-  countervalues: CounterValuesState,
+  countervalues: unknown,
   fiat: Currency,
   options?: ComputePnLOptions,
 ): PortfolioPnL {

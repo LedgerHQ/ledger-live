@@ -3,7 +3,11 @@ import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
-import { dmkToLedgerDeviceIdMap, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import {
+  dmkToLedgerDeviceIdMap,
+  getConnectDeviceFailure,
+  useDeviceIntentTracking,
+} from "@ledgerhq/live-dmk-shared";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
@@ -11,17 +15,17 @@ import {
   webHidTransportIdentifier,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-desktop";
+import { getEnv } from "@shared/env";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { addNewDeviceModel } from "~/renderer/actions/settings";
 import { knownDevicesSelector } from "~/renderer/reducers/knownDevices";
 import {
+  getTrackingTransport,
   trackDeviceConnected,
   trackDeviceConnecting,
   trackDevicePrompted,
 } from "../utils/trackDeviceIntent";
-
-const missingDeviceManagementKitError = new Error("Device Management Kit is not available");
 
 type UseDeviceConnectionComponentLWDViewModelParams = {
   deviceConnectionParams: DeviceConnectionParams;
@@ -45,7 +49,7 @@ export function useDeviceConnectionComponentLWDViewModel({
   // the update cannot restart dmk.connect and race the active WebHID connection.
   const knownDevicesRef = useRef(knownDevices);
   const { handleConnect, handleBuyDevice } = useLazyOnboardingActions();
-  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
@@ -94,13 +98,10 @@ export function useDeviceConnectionComponentLWDViewModel({
   );
 
   useEffect(() => {
-    if (!dmk) {
-      setState({
-        type: ConnectDeviceUIStateTypes.UnknownError,
-        error: missingDeviceManagementKitError,
-      });
-      return;
-    }
+    const handleState = (nextState: ConnectDeviceUIState) => {
+      setState(nextState);
+      reportFailure(getConnectDeviceFailure(nextState, getTrackingTransport));
+    };
 
     const subscription = connectDevice({
       knownDevices: knownDevicesRef.current,
@@ -109,16 +110,13 @@ export function useDeviceConnectionComponentLWDViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
-    }).subscribe({
-      next: nextState => {
-        setState(nextState);
-      },
-    });
+      mockServerTransportEnabled: getEnv("MOCK_SERVER_TRANSPORT"),
+    }).subscribe({ next: handleState });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, wrappedOnConnected]);
+  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, reportFailure, wrappedOnConnected]);
 
   return {
     state,

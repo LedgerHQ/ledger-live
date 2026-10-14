@@ -9,7 +9,7 @@ import {
   onboardingReceiveSuccessSelector,
   setIsOnboardingReceiveFlow,
 } from "~/renderer/reducers/onboarding";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { analyticsFlowName } from "~/renderer/components/SyncOnboarding/Manual/shared";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";

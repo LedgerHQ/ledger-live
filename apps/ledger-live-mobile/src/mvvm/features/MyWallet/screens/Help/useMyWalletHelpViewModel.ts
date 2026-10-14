@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { Linking } from "react-native";
 import { useFeature } from "@features/platform-feature-flags";
@@ -7,7 +8,6 @@ import { reboot } from "~/actions/appstate";
 import { useDispatch } from "~/context/hooks";
 import useExportLogs from "~/components/useExportLogs";
 import { urls } from "~/utils/urls";
-import { track } from "~/analytics";
 import { MY_WALLET_HELP_TRACKING_PAGE_NAME } from "../../constants";
 
 export function useMyWalletHelpViewModel() {

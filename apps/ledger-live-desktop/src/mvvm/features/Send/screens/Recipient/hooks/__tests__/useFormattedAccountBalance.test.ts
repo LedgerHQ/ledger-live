@@ -3,7 +3,7 @@ import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
 import { useSelector } from "LLD/hooks/redux";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@features/platform-market-countervalues";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
 import { BigNumber } from "bignumber.js";
@@ -11,7 +11,7 @@ import { BigNumber } from "bignumber.js";
 jest.mock("LLD/hooks/redux");
 jest.mock("@ledgerhq/live-common/currencies/index");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("@ledgerhq/live-countervalues-react");
+jest.mock("@features/platform-market-countervalues");
 jest.mock("~/renderer/hooks/useAccountUnit");
 
 const mockedUseSelector = jest.mocked(useSelector);

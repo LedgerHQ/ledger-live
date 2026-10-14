@@ -124,7 +124,7 @@ function CardDetailsSheetContent({ scene }: Readonly<{ scene: CardDetailsScenePr
   const footerInset = useBottomSheetFooterInset();
 
   return (
-    <BottomSheetScrollView testID="card-details-sheet-content">
+    <BottomSheetScrollView collapsable={false} testID="card-details-sheet-content">
       <Box style={{ paddingBottom: bottomInset + footerInset + CONTENT_BOTTOM_SPACING }}>
         <BottomSheetHeader
           density="compact"

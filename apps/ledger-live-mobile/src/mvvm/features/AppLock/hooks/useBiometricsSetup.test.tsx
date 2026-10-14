@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { useBiometricsSetup } from "./useBiometricsSetup";
 
@@ -40,12 +41,20 @@ describe("setting biometrics up", () => {
 
     await act(async () => {
       await expect(
-        result.current.enable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" }),
+        result.current.enable(
+          { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+          "settings",
+        ),
       ).resolves.toBe(true);
     });
 
     expect(marker.stored).toBe(true);
     expect(store.getState().appLock.biometricsEnabled).toBe(true);
+    expect(track).toHaveBeenCalledWith("encryption_updated", {
+      status: "activated",
+      type: "biometrics",
+      source: "settings",
+    });
   });
 
   it("proves before it records, so a refusal leaves nothing behind", async () => {
@@ -55,12 +64,16 @@ describe("setting biometrics up", () => {
 
     await act(async () => {
       await expect(
-        result.current.enable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" }),
+        result.current.enable(
+          { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+          "settings",
+        ),
       ).resolves.toBe(false);
     });
 
     expect(storeBiometricsMarker).not.toHaveBeenCalled();
     expect(store.getState().appLock.biometricsEnabled).toBe(false);
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("records nothing when the keychain refuses to store the marker", async () => {
@@ -70,11 +83,15 @@ describe("setting biometrics up", () => {
 
     await act(async () => {
       await expect(
-        result.current.enable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" }),
+        result.current.enable(
+          { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+          "settings",
+        ),
       ).resolves.toBe(false);
     });
 
     expect(store.getState().appLock.biometricsEnabled).toBe(false);
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("refuses rather than throwing when the keychain fails", async () => {
@@ -84,27 +101,42 @@ describe("setting biometrics up", () => {
 
     await act(async () => {
       await expect(
-        result.current.enable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" }),
+        result.current.enable(
+          { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+          "settings",
+        ),
       ).resolves.toBe(false);
     });
 
     expect(store.getState().appLock.biometricsEnabled).toBe(false);
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("removes the marker once the owner has passed the prompt", async () => {
     const { store, result } = renderSetup();
 
     await act(async () => {
-      await result.current.enable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" });
+      await result.current.enable(
+        { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+        "settings",
+      );
     });
     await act(async () => {
       await expect(
-        result.current.disable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" }),
+        result.current.disable(
+          { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+          "settings",
+        ),
       ).resolves.toBe(true);
     });
 
     expect(marker.stored).toBe(false);
     expect(store.getState().appLock.biometricsEnabled).toBe(false);
+    expect(track).toHaveBeenCalledWith("encryption_updated", {
+      status: "deactivated",
+      type: "biometrics",
+      source: "settings",
+    });
   });
 
   it("reports a removal the keychain did not carry out", async () => {
@@ -113,34 +145,54 @@ describe("setting biometrics up", () => {
     const { store, result } = renderSetup();
 
     await act(async () => {
-      await result.current.enable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" });
+      await result.current.enable(
+        { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+        "settings",
+      );
     });
     await act(async () => {
       await expect(
-        result.current.disable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" }),
+        result.current.disable(
+          { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+          "settings",
+        ),
       ).resolves.toBe(false);
     });
 
     expect(store.getState().appLock.biometricsEnabled).toBe(true);
+    expect(track).not.toHaveBeenCalledWith(
+      "encryption_updated",
+      expect.objectContaining({ status: "deactivated" }),
+    );
   });
 
   it("keeps the protection when the owner cannot pass the prompt to remove it", async () => {
     const { store, result } = renderSetup();
 
     await act(async () => {
-      await result.current.enable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" });
+      await result.current.enable(
+        { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+        "settings",
+      );
     });
 
     promptBiometrics.mockResolvedValue({ status: "failed" });
 
     await act(async () => {
       await expect(
-        result.current.disable({ reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" }),
+        result.current.disable(
+          { reason: "Confirm", fallback: "Use PIN", cancel: "Cancel" },
+          "settings",
+        ),
       ).resolves.toBe(false);
     });
 
     expect(marker.stored).toBe(true);
     expect(clearBiometricsMarker).not.toHaveBeenCalled();
     expect(store.getState().appLock.biometricsEnabled).toBe(true);
+    expect(track).not.toHaveBeenCalledWith(
+      "encryption_updated",
+      expect.objectContaining({ status: "deactivated" }),
+    );
   });
 });

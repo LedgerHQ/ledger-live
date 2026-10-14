@@ -15,17 +15,16 @@ import {
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-mobile";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { setHasConnectedDevice } from "~/actions/appstate";
-import { setLastConnectedDevice } from "~/actions/settings";
-import { useDispatch, useSelector } from "~/context/hooks";
-import { knownDevicesSelector, updateKnownDevice } from "~/reducers/knownDevices";
-import { updateKnownBleDevice } from "~/actions/ble";
+import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import { useSelector } from "~/context/hooks";
+import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { urls } from "~/utils/urls";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap, getConnectDeviceFailure } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import {
+  getTrackingTransport,
   trackDeviceConnected,
   trackDeviceConnecting,
   trackDevicePrompted,
@@ -52,12 +51,12 @@ export function useDeviceConnectionComponentLWMViewModel({
 }: UseDeviceConnectionComponentLWMViewModelParams): DeviceConnectionComponentLWMViewModel {
   const platform = Platform.OS === "ios" ? "ios" : "android";
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const dispatch = useDispatch();
+  const saveConnectedDevice = useSaveConnectedDevice();
   const dmk = useDeviceManagementKit();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const knownDevices = useSelector(knownDevicesSelector);
-  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
@@ -140,42 +139,19 @@ export function useDeviceConnectionComponentLWMViewModel({
         extraProperties: analyticsProperties,
       });
 
-      dispatch(
-        setLastConnectedDevice({
-          deviceId: result.connectedDevice.id,
-          deviceName: result.connectedDevice.name,
-          modelId,
-          wired: result.connectedDevice.type === "USB",
-        }),
-      );
-
-      dispatch(setHasConnectedDevice(true));
-
-      dispatch(
-        updateKnownDevice({
-          id: result.connectedDevice.id,
-          name: result.connectedDevice.name,
-          deviceModelId: modelId,
-          transport: result.connectedDevice.transport,
-        }),
-      );
-
-      if (result.connectedDevice.type !== "USB") {
-        dispatch(
-          updateKnownBleDevice({
-            id: result.connectedDevice.id,
-            name: result.connectedDevice.name,
-            modelId,
-          }),
-        );
-      }
+      saveConnectedDevice(result.connectedDevice);
 
       onConnected(result);
     },
-    [analyticsProperties, dispatch, onConnected, sourceFlow],
+    [analyticsProperties, onConnected, saveConnectedDevice, sourceFlow],
   );
 
   useEffect(() => {
+    const handleState = (nextState: ConnectDeviceUIState) => {
+      setState(nextState);
+      reportFailure(getConnectDeviceFailure(nextState, getTrackingTransport));
+    };
+
     const subscription = connectDevice({
       knownDevices,
       acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
@@ -183,10 +159,16 @@ export function useDeviceConnectionComponentLWMViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
-    }).subscribe({ next: setState });
+    }).subscribe({ next: handleState });
 
     return () => subscription.unsubscribe();
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, knownDevices, wrappedOnConnected]);
+  }, [
+    deviceConnectionParams.acceptedDeviceModelIds,
+    dmk,
+    knownDevices,
+    reportFailure,
+    wrappedOnConnected,
+  ]);
 
   return {
     state,

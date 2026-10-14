@@ -179,7 +179,13 @@ export interface PoxInfoResponse {
     is_pox_active: boolean;
   };
   reward_cycle_length: number;
+  prepare_phase_block_length: number;
   first_burnchain_block_height: number;
+  next_cycle: {
+    /** Signed: zero or negative once the current cycle's prepare phase has started. */
+    blocks_until_prepare_phase: number;
+    blocks_until_reward_phase: number;
+  };
 }
 
 /** `POST /v2/contracts/call-read/...` response envelope (node RPC), before Clarity-value decoding. */

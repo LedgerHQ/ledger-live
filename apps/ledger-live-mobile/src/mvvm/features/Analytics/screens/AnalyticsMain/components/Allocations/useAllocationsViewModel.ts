@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { getCurrencyColor, ColorableCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "~/context/Locale";
@@ -8,7 +9,6 @@ import chunk from "lodash/chunk";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ensureContrast } from "~/colors";
 import { useDistribution } from "~/actions/general";
-import { track } from "~/analytics";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import type { ColorableDistributionItem } from "LLM/features/Analytics/components/RingChart/types";
 

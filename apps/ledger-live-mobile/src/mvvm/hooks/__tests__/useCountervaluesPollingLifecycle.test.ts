@@ -1,54 +1,27 @@
-import NetInfo, {
-  NetInfoStateType,
-  type NetInfoChangeHandler,
-  type NetInfoNoConnectionState,
-  type NetInfoOtherState,
-  type NetInfoState,
-  type NetInfoUnknownState,
-} from "@react-native-community/netinfo";
-import { type Polling, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { subscribeToNetworkState, type NetworkState } from "@shared/network-status";
+import { type Polling, useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { act, renderHook } from "@testing-library/react-native";
 import { AppState, type AppStateStatus } from "react-native";
 import { useCountervaluesPollingLifecycle } from "../useCountervaluesPollingLifecycle";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesPolling: jest.fn(),
 }));
 
 const mockedUseCountervaluesPolling = jest.mocked(useCountervaluesPolling);
 const originalAppStateDescriptor = Object.getOwnPropertyDescriptor(AppState, "currentState");
 
-function buildNetInfoState(status: "online" | "offline" | "unknown"): NetInfoState {
+function buildNetworkState(status: "online" | "offline" | "unknown"): NetworkState {
   if (status === "online") {
-    const state: NetInfoOtherState = {
-      type: NetInfoStateType.other,
-      isConnected: true,
-      isInternetReachable: true,
-      details: { isConnectionExpensive: false },
-    };
-
-    return state;
+    return { isConnected: true, isInternetReachable: true };
   }
 
   if (status === "offline") {
-    const state: NetInfoNoConnectionState = {
-      type: NetInfoStateType.none,
-      isConnected: false,
-      isInternetReachable: false,
-      details: null,
-    };
-
-    return state;
+    return { isConnected: false, isInternetReachable: false };
   }
 
-  const state: NetInfoUnknownState = {
-    type: NetInfoStateType.unknown,
-    isConnected: null,
-    isInternetReachable: null,
-    details: null,
-  };
-
-  return state;
+  return {};
 }
 
 function setCurrentAppState(state: AppStateStatus | null): void {
@@ -71,18 +44,18 @@ function createPolling(): Polling {
 
 describe("useCountervaluesPollingLifecycle", () => {
   let appStateListener: ((state: AppStateStatus) => void) | undefined;
-  let netInfoListener: NetInfoChangeHandler | undefined;
+  let networkListener: ((state: NetworkState) => void) | undefined;
   let removeAppStateListener: jest.Mock;
-  let unsubscribeNetInfo: jest.Mock;
+  let unsubscribeNetwork: jest.Mock;
   let appStateAddEventListenerSpy: jest.SpiedFunction<typeof AppState.addEventListener>;
   let polling: Polling;
 
   beforeEach(() => {
     jest.clearAllMocks();
     appStateListener = undefined;
-    netInfoListener = undefined;
+    networkListener = undefined;
     removeAppStateListener = jest.fn();
-    unsubscribeNetInfo = jest.fn();
+    unsubscribeNetwork = jest.fn();
     polling = createPolling();
     mockedUseCountervaluesPolling.mockReturnValue(polling);
 
@@ -93,9 +66,9 @@ describe("useCountervaluesPollingLifecycle", () => {
         return { remove: removeAppStateListener };
       });
 
-    jest.mocked(NetInfo.addEventListener).mockImplementation(listener => {
-      netInfoListener = listener;
-      return unsubscribeNetInfo;
+    jest.mocked(subscribeToNetworkState).mockImplementation(listener => {
+      networkListener = listener;
+      return unsubscribeNetwork;
     });
   });
 
@@ -177,7 +150,7 @@ describe("useCountervaluesPollingLifecycle", () => {
     jest.clearAllMocks();
 
     act(() => {
-      netInfoListener?.(buildNetInfoState("offline"));
+      networkListener?.(buildNetworkState("offline"));
     });
 
     expect(polling.poll).not.toHaveBeenCalled();
@@ -189,10 +162,10 @@ describe("useCountervaluesPollingLifecycle", () => {
     jest.clearAllMocks();
 
     act(() => {
-      netInfoListener?.(buildNetInfoState("offline"));
-      netInfoListener?.(buildNetInfoState("unknown"));
-      netInfoListener?.(buildNetInfoState("online"));
-      netInfoListener?.(buildNetInfoState("online"));
+      networkListener?.(buildNetworkState("offline"));
+      networkListener?.(buildNetworkState("unknown"));
+      networkListener?.(buildNetworkState("online"));
+      networkListener?.(buildNetworkState("online"));
     });
 
     expect(polling.poll).toHaveBeenCalledTimes(1);
@@ -206,9 +179,9 @@ describe("useCountervaluesPollingLifecycle", () => {
     jest.clearAllMocks();
 
     act(() => {
-      netInfoListener?.(buildNetInfoState("offline"));
+      networkListener?.(buildNetworkState("offline"));
       appStateListener?.("background");
-      netInfoListener?.(buildNetInfoState("online"));
+      networkListener?.(buildNetworkState("online"));
     });
 
     expect(polling.poll).not.toHaveBeenCalled();
@@ -231,7 +204,7 @@ describe("useCountervaluesPollingLifecycle", () => {
     });
 
     expect(appStateAddEventListenerSpy).toHaveBeenCalledTimes(1);
-    expect(NetInfo.addEventListener).toHaveBeenCalledTimes(1);
+    expect(subscribeToNetworkState).toHaveBeenCalledTimes(1);
     expect(polling.start).not.toHaveBeenCalled();
     expect(polling.stop).not.toHaveBeenCalled();
     expect(polling.poll).not.toHaveBeenCalled();
@@ -247,6 +220,6 @@ describe("useCountervaluesPollingLifecycle", () => {
     unmount();
 
     expect(removeAppStateListener).toHaveBeenCalledTimes(1);
-    expect(unsubscribeNetInfo).toHaveBeenCalledTimes(1);
+    expect(unsubscribeNetwork).toHaveBeenCalledTimes(1);
   });
 });

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";

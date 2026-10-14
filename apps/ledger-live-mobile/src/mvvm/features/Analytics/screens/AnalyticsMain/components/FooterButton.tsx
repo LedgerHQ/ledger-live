@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
-import { track } from "~/analytics";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { ANALYTICS_PAGE } from "../../../const";

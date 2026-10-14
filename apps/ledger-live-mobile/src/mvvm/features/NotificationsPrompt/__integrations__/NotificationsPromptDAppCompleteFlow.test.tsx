@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
@@ -11,21 +12,12 @@ import {
   withFlagOverrides,
 } from "@tests/test-renderer";
 import storage from "LLM/storage";
-import { track } from "~/analytics";
 import GlobalDrawers from "~/GlobalDrawers";
 import WebPlatformPlayer from "~/components/WebPlatformPlayer";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
-jest.mock("~/analytics", () => {
-  const track = jest.fn();
-
-  return {
-    track,
-    TrackScreen: () => null,
-    updateIdentify: jest.fn(),
-  };
-});
+jest.mock("~/analytics", () => ({ updateIdentify: jest.fn() }));
 
 // Mock WebView as View to avoid native setup in this dApp flow test.
 jest.mock("react-native-webview", () => {

@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   RootNavigationComposite,

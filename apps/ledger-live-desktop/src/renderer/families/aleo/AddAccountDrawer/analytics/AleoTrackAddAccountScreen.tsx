@@ -1,5 +1,5 @@
 import React from "react";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import type { AleoAddAccountPageName, AleoAddAccountEventsParams } from "./addAccount.types";
 
 type AleoTrackAddAccountScreenProps<T extends AleoAddAccountPageName> = {

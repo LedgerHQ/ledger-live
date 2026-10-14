@@ -6,7 +6,8 @@ import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currenc
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate, historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
+import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -34,13 +35,17 @@ setFrameworkCryptoAssetsStore({
 
 setAssetAggregationRateLookup({ calculate });
 setWalletAnalyticsRateLookup({ calculate });
+setWalletPnlRateLookup({ calculate, historyKey, currencyApiId: inferCurrencyAPIID });
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
 import { server } from "./server";
 import { NativeModules } from "react-native";
 import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
-import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js";
+import {
+  useNetworkState as mockUseNetworkState,
+  connectedNetworkState,
+} from "@shared/network-status";
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";
@@ -65,12 +70,7 @@ beforeAll(() =>
 afterEach(() => {
   server.resetHandlers();
   // Reset shared mocks to prevent state leaking between tests (mock cannibalization)
-  mockRNCNetInfo.useNetInfo.mockReturnValue({
-    type: "cellular",
-    isConnected: true,
-    isInternetReachable: true,
-    details: { isConnectionExpensive: true, cellularGeneration: "3g" },
-  });
+  mockUseNetworkState.mockReturnValue(connectedNetworkState);
   mockUseCameraPermission.mockReturnValue({
     hasPermission: true,
     requestPermission: jest.fn(() => Promise.resolve(true)),
@@ -144,6 +144,11 @@ jest.mock("expo-haptics", () => ({
 
 jest.mock("react-native-launch-arguments", () => ({}));
 
+// Dev-only tooling: its runtime loads ESM-only deps (nanoid) and opens a bridge client
+jest.mock("@rozenite/redux-devtools-plugin", () => ({
+  rozeniteDevToolsEnhancer: () => next => next,
+}));
+
 NativeModules.AppVisibilityModule = {
   isInForeground: () => true,
   addListener: () => {},
@@ -200,7 +205,7 @@ jest.mock("react-native-view-shot", () => ({
 }));
 
 // Global mocks for Lottie and env config (used by LaunchScreen and other components)
-jest.mock("lottie-react-native", () => {
+jest.mock("@shared/lottie", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
   const MockLottie = ({ source, testID }) =>
@@ -209,7 +214,7 @@ jest.mock("lottie-react-native", () => {
       { testID: testID ?? "lottie-mock" },
       React.createElement(Text, { testID: "lottie-source" }, JSON.stringify(source)),
     );
-  return MockLottie;
+  return { Lottie: MockLottie };
 });
 
 jest.mock("react-native-config");
@@ -244,9 +249,7 @@ jest.mock("react-native-vision-camera", () => {
 });
 
 jest.mock("~/analytics/segment", () => ({
-  track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
-  screen: jest.fn(),
   usePageNameFromRoute: jest.fn(() => "portfolio_navigator"),
 }));
 
@@ -255,6 +258,14 @@ jest.mock("@shared/analytics", () => ({
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
+
+jest.mock("@shared/analytics-react", () => {
+  const actual = jest.requireActual("@shared/analytics-react");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(props => actual.TrackScreen(props)),
+  };
+});
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
@@ -312,16 +323,14 @@ jest.mock("@gorhom/bottom-sheet", () => {
   };
 });
 
-jest.mock("react-native-version-number", () => ({
-  appVersion: "1.0.0",
-  buildVersion: "1",
+jest.mock("expo-application", () => ({
+  nativeApplicationVersion: "1.0.0",
+  nativeBuildVersion: "1",
 }));
 
 jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
-
-jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
 
 jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
@@ -345,7 +354,6 @@ jest.mock("LLM/components/Wallet40Background/useScrollOffset", () => {
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
-  track: jest.fn(),
   updateIdentify: jest.fn(),
 }));
 
@@ -418,22 +426,10 @@ jest.mock("@braze/react-native-sdk", () => ({
 
 jest.mock("react-native-webview", () => jest.fn());
 
-jest.mock("react-native-linear-gradient", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("react-native-device-info", () => ({
-  getDeviceNameSync: jest.fn(() => "Mocked Device"),
+jest.mock("expo-device", () => ({
+  deviceName: "Mocked Device",
+  isDevice: true,
 }));
-
-jest.mock("react-native-linear-gradient", () => {
-  const React = require("react");
-  return {
-    __esModule: true,
-    default: jest.fn(({ children, ...props }) => React.createElement("View", props, children)),
-  };
-});
 
 const originalError = console.error;
 const originalWarn = console.warn;

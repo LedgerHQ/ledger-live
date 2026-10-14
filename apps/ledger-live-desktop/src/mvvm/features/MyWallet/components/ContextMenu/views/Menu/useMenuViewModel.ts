@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import { useRecoverEntry } from "LLD/hooks/useRecoverEntry";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useContextMenu } from "../../../ContextMenuContext";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../../../constants";
 import { CONTEXT_MENU_VIEW } from "../../types";

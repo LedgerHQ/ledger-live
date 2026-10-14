@@ -1,6 +1,6 @@
 import { WebViewAppPage } from "tests/page/webViewApp.page";
 import { step } from "tests/misc/reporters/step";
-import { expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { sendDeepLink } from "tests/utils/deeplink";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
@@ -97,6 +97,16 @@ export class SwapPage extends WebViewAppPage {
   private selectSpecificOperationAmountTo = (swapId: string) =>
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
+
+  // Landing page (no active quote) panel
+  private readonly topGainersContainer = "top-gainers-container";
+  private readonly topGainersInfoIcon = "top-gainers-info-icon";
+  private readonly topGainersDateTrigger = "top-gainers-date-select-trigger";
+  private readonly topGainersItems = '[data-testid^="top-gainers-item-"]';
+  private readonly topGainersDateOptions = '[data-testid^="top-gainers-date-option-"]';
+  private readonly topStablecoinsContainer = "top-stablecoins-container";
+  private readonly topStablecoinsInfoIcon = "top-stablecoins-info-icon";
+  private readonly topStablecoinsItems = '[data-testid^="top-stablecoins-item-"]';
 
   private async waitForSelectorPopulated(webview: Page, testId: string, timeout: number) {
     await webview.waitForFunction(
@@ -601,6 +611,89 @@ export class SwapPage extends WebViewAppPage {
     // Quotes are confirmed loaded once the best-offer info icon (rendered next
     // to the "Best Offer" title in the quotes list) is visible.
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
+  }
+
+  // Non-critical panel: errors are caught and attached, not thrown.
+  @step("Soft-assert Trending Assets panel")
+  async softAssertTrendingAssetsPanel() {
+    try {
+      const webview = await this.getWebView();
+
+      const topGainersRows = webview.locator(this.topGainersItems);
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topGainersContainer)).toBeVisible();
+        await soft(webview.getByTestId(this.topGainersContainer)).toContainText("Trending Assets");
+        await soft(topGainersRows).toHaveCount(5);
+      });
+      const topGainersTexts = await topGainersRows.allTextContents();
+      await this.softExpect(async soft => {
+        for (const text of topGainersTexts) {
+          await soft(text).toMatch(/[-+]?\d{1,10}\.\d{2}%$/);
+        }
+      });
+
+      const dateTrigger = webview.getByTestId(this.topGainersDateTrigger);
+      const dateOptions = webview.locator(this.topGainersDateOptions);
+      await this.softExpect(async soft => {
+        await soft(dateTrigger).toBeVisible();
+      });
+      const initialDateLabel = await dateTrigger.textContent();
+      await dateTrigger.click();
+      await this.softExpect(async soft => {
+        await soft(dateOptions).toHaveCount(4);
+      });
+      const dateOptionTexts = await dateOptions.allTextContents();
+      await this.softExpect(async soft => {
+        for (const label of ["1D", "1W", "1M", "1Y"]) {
+          await soft(dateOptionTexts).toContain(label);
+        }
+      });
+      const nextDateOption = dateOptions.filter({ hasNotText: initialDateLabel ?? "" }).first();
+      await nextDateOption.click();
+      await this.softExpect(async soft => {
+        await soft(dateTrigger).not.toContainText(initialDateLabel ?? "");
+        await soft(topGainersRows).toHaveCount(5);
+      });
+
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topGainersInfoIcon)).toBeVisible();
+      });
+    } catch (error) {
+      await test.info().attach("Trending Assets panel check failed (non-blocking)", {
+        body: String(error),
+        contentType: "text/plain",
+      });
+    }
+  }
+
+  // Non-critical panel: errors are caught and attached, not thrown.
+  @step("Soft-assert Stablecoins panel")
+  async softAssertStablecoinsPanel() {
+    try {
+      const webview = await this.getWebView();
+
+      const topStablecoinsRows = webview.locator(this.topStablecoinsItems);
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topStablecoinsContainer)).toBeVisible();
+        await soft(webview.getByTestId(this.topStablecoinsContainer)).toContainText("Stablecoins");
+        await soft(topStablecoinsRows).toHaveCount(2);
+      });
+      const topStablecoinsTexts = await topStablecoinsRows.allTextContents();
+      await this.softExpect(async soft => {
+        for (const text of topStablecoinsTexts) {
+          await soft(text).toMatch(/\d{1,10}\.\d{2}% APY$/);
+        }
+      });
+
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topStablecoinsInfoIcon)).toBeVisible();
+      });
+    } catch (error) {
+      await test.info().attach("Stablecoins panel check failed (non-blocking)", {
+        body: String(error),
+        contentType: "text/plain",
+      });
+    }
   }
 
   @step("Go and wait for Swap app to be ready")

@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { track } from "~/analytics";
 import useCryptoViewModel from "../useCryptoViewModel";
 
 const mockNavigate = jest.fn();

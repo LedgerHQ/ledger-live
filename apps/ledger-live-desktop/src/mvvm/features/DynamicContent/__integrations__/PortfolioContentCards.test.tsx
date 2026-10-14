@@ -4,7 +4,7 @@ import { render, screen } from "tests/testSetup";
 import PortfolioContentCards from "../components/PortfolioContentCards";
 import { BottomCarouselContentCards } from "../components/BottomCarouselContentCards";
 import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "../components/ContentBannerActionCard/types";
@@ -114,8 +114,8 @@ jest.mock("@braze/web-sdk", () => {
   };
 });
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Subscription } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
@@ -12,7 +14,6 @@ import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import { track, TrackScreen } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SkipLock from "~/components/behaviour/SkipLock";
 import logger from "../../logger";

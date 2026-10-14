@@ -10,7 +10,7 @@ import {
   ETH_ACCOUNT,
   SOL_ACCOUNT,
 } from "LLD/features/__mocks__/accounts.mock";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 const mockOpenAssetFlow = jest.fn();

@@ -9,7 +9,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { TezosAccount, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import logger from "~/renderer/logger";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Stepper from "~/renderer/components/Stepper";

@@ -18,7 +18,10 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   __esModule: true,
   SyncSkipUnderPriority: () => null,
 }));
-jest.mock("~/renderer/analytics/Track", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  Track: () => null,
+}));
 jest.mock("~/renderer/logger", () => ({
   __esModule: true,
   default: {
@@ -33,7 +36,6 @@ jest.mock("~/renderer/logger", () => ({
     networkError: jest.fn(),
     networkDown: jest.fn(),
     analyticsStart: jest.fn(),
-    analyticsStop: jest.fn(),
     analyticsTrack: jest.fn(),
     debug: jest.fn(),
     info: jest.fn(),

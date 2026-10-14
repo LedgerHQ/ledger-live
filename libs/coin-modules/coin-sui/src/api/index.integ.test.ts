@@ -22,6 +22,8 @@ describe("Sui Api", () => {
     },
     features: { transport: "grpc" },
     status: { type: "active" },
+    name: "Sui",
+    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   };
 
   const context: SuiContext = {

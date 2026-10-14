@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { useFeature } from "@features/platform-feature-flags";
 
 export function usePerpsAccountBannerViewModel(currency: CryptoCurrency) {

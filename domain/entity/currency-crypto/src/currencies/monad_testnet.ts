@@ -37,9 +37,6 @@ export const monad_testnet = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 10143,
-  },
   explorerViews: [
     {
       tx: "https://testnet.monadexplorer.com/tx/$hash",

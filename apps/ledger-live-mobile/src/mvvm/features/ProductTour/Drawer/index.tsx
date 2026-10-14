@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState } from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
@@ -9,7 +10,6 @@ import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { ProgressIndicator } from "LLM/components/Slides";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { useProductTourControls } from "../context/ProductTourControlsContext";
 import { useProductTourDrawerViewModel } from "./hooks/useProductTourDrawerViewModel";
 import { SlideItem } from "./components/SlideItem";

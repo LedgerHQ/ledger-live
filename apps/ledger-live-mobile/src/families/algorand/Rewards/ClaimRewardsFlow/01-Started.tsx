@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
@@ -17,7 +18,6 @@ import { ScreenName } from "~/const";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import TranslatedError from "~/components/TranslatedError";
 import Illustration from "~/images/illustration/Illustration";

@@ -17,9 +17,6 @@ export const adi = currency({
       magnitude: 18,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 36900,
-  },
   explorerViews: [
     {
       tx: "https://explorer.adifoundation.ai/tx/$hash",

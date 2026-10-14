@@ -3,10 +3,15 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { urls } from "~/config/urls";
 import i18n from "~/renderer/i18n/init";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import CounterfeitWarningDialog from "..";
 import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "../analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),

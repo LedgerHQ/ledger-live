@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useStakingDrawer } from "./useStakingDrawer";
 import {
   customRenderHookWithLiveAppProvider as renderHook,
@@ -21,6 +21,9 @@ jest.mock("../../generated/accountActions", () => ({
   __esModule: true,
   default: {
     bitcoin: { getMainActions: (...args: unknown[]) => mockGetMainActions(...args) },
+    tezos: { getMainActions: (...args: unknown[]) => mockGetMainActions(...args) },
+    internet_computer: { getMainActions: (...args: unknown[]) => mockGetMainActions(...args) },
+    evm: jest.requireActual("~/families/evm/accountActions").default,
   },
 }));
 
@@ -37,6 +40,14 @@ const bitcoinAccount = {
   type: "Account" as const,
   id: "btc-1",
   currency: { family: "bitcoin", id: "bitcoin" },
+};
+
+const seiEvmAccount = {
+  type: "Account" as const,
+  id: "sei-1",
+  currency: { family: "evm", id: "sei_evm", ticker: "SEI" },
+  spendableBalance: new BigNumber(1_000_000),
+  stakingResources: { delegations: [] },
 };
 
 const navigation = { navigate: jest.fn() } as unknown as NavigationProp<ParamListBase>;
@@ -133,5 +144,53 @@ describe("useStakingDrawer", () => {
       undefined,
       undefined, // cryptoAssetId is suppressed when swapToEarn is disabled
     );
+  });
+
+  it.each([
+    { family: "tezos", currencyId: "tezos", flag: "llmTezosStaking" },
+    { family: "internet_computer", currencyId: "internet_computer", flag: "llmIcpStaking" },
+  ] as const)(
+    "passes the $flag feature to $family getMainActions",
+    async ({ family, currencyId, flag }) => {
+      mockGetMainActions.mockReturnValue([]);
+      const account = {
+        type: "Account" as const,
+        id: `${family}-1`,
+        currency: { family, id: currencyId },
+      };
+
+      const { result } = renderHook(
+        () => useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
+        { overrideInitialState: withFlagOverrides({ [flag]: { enabled: true } }) },
+      );
+
+      await result.current(account as never);
+
+      expect(mockGetMainActions).toHaveBeenCalledWith(
+        expect.objectContaining({ account, [flag]: expect.objectContaining({ enabled: true }) }),
+      );
+    },
+  );
+
+  it("navigates SEI EVM accounts to the validator selection when evmNativeStaking is enabled", async () => {
+    const { result } = renderHook(
+      () => useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
+      {
+        overrideInitialState: withFlagOverrides({
+          evmNativeStaking: { enabled: true, params: { supportedCurrencyIds: ["sei_evm"] } },
+        }),
+      },
+    );
+
+    await result.current(seiEvmAccount as never);
+
+    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: NavigatorName.EvmDelegationFlow,
+      drawer: undefined,
+      params: {
+        screen: ScreenName.EvmDelegationValidator,
+        params: { source: parentRoute, account: seiEvmAccount, parentAccount: undefined },
+      },
+    });
   });
 });

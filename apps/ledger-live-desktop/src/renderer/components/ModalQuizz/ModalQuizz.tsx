@@ -6,7 +6,7 @@ import Answer from "./Answer";
 import { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import CloseButton from "../ModalStepper/CloseButton";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 type QuizzChoice = {
   /**

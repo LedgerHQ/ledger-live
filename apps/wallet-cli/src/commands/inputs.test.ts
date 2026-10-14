@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { resolveAccountArg, resolveAccountInput, resolveOutputFormat } from "./inputs";
-import { makeSessionDir } from "../test/helpers/session-fixture";
-import { ETH_DESCRIPTOR } from "../test/helpers/constants";
+import { makeSessionDir } from "../testing/session-fixture";
+import { ETH_DESCRIPTOR } from "../testing/constants";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;

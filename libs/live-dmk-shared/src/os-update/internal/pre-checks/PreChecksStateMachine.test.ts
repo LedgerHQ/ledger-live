@@ -11,6 +11,7 @@ import {
   type ConnectedDevice,
   type DeviceManagementKit,
   type DeviceSessionState,
+  type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import type { Backup, OsUpdate } from "@ledgerhq/dmk-ledger-wallet";
 import { Subject } from "rxjs";
@@ -79,13 +80,13 @@ describe("PreChecksStateMachine", () => {
   let sendCommand: jest.Mock;
   let getBackup: jest.Mock;
   let saveBackup: jest.Mock;
+  let removeBackup: jest.Mock;
   let getDeviceSessionState: jest.Mock;
   let connect: jest.Mock;
   let disconnect: jest.Mock;
   let sessionState$: Subject<DeviceSessionState>;
-  let availableDevices$: Subject<Array<{ id: string }>>;
+  let availableDevices$: Subject<DiscoveredDevice[]>;
   let sessionStateUnsubscribe: jest.Mock;
-  let availableDevicesUnsubscribe: jest.Mock;
   let parentEvents: OsUpdatesOrchestratorStateMachineEvent[];
   let parentRef: OsUpdatesOrchestratorStateMachineActorRef;
   let dmk: DeviceManagementKit;
@@ -104,7 +105,7 @@ describe("PreChecksStateMachine", () => {
         dmk,
         connectedDevice: CONNECTED_DEVICE,
         osUpdates: [AN_OS_UPDATE],
-        storage: { getBackup, saveBackup },
+        storage: { getBackup, saveBackup, removeBackup },
         parentRef,
         ...overrides,
       },
@@ -157,15 +158,26 @@ describe("PreChecksStateMachine", () => {
   const batteryCommandCalls = () =>
     sendCommand.mock.calls.filter(([{ command }]) => command.name === "getBatteryStatus");
 
+  const stallNextOsVersion = () => {
+    responders.getOsVersion = () => new Promise(() => undefined);
+  };
+
   const emitSessionStatus = async (deviceStatus: DeviceStatus) => {
     sessionState$.next({ deviceStatus } as DeviceSessionState);
     await settle();
   };
 
-  /** The device accepts connections again, as it would once it is back within reach. */
-  const deviceComesBack = async (sessionId: string = SESSION_ID) => {
-    connect.mockResolvedValue(sessionId);
-    await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+  /** The device shows up again, and the session reopens on it under the id it already had. */
+  const deviceComesBack = async () => {
+    connect.mockResolvedValue(SESSION_ID);
+    availableDevices$.next([
+      {
+        id: DEVICE_ID,
+        name: "",
+        deviceModel: { id: DEVICE_ID, model: DeviceModelId.STAX, name: "Stax" },
+        transport: TRANSPORT,
+      } as DiscoveredDevice,
+    ]);
     await settle();
   };
 
@@ -194,8 +206,10 @@ describe("PreChecksStateMachine", () => {
     });
     getBackup = jest.fn(async () => undefined);
     saveBackup = jest.fn(async () => undefined);
+    removeBackup = jest.fn(async () => undefined);
     sessionState$ = new Subject<DeviceSessionState>();
     sessionStateUnsubscribe = jest.fn();
+    availableDevices$ = new Subject();
     // A device that just dropped refuses connections until it is back within reach.
     connect = jest.fn(async () => {
       throw new Error("device unavailable");
@@ -237,6 +251,9 @@ describe("PreChecksStateMachine", () => {
       getDeviceSessionState,
       connect,
       disconnect,
+      stopDiscovering: jest.fn(async () => undefined),
+      getConnectedDevice: jest.fn(() => CONNECTED_DEVICE),
+      listenToAvailableDevices: jest.fn(() => availableDevices$.asObservable()),
     } as unknown as DeviceManagementKit;
   });
 
@@ -271,9 +288,8 @@ describe("PreChecksStateMachine", () => {
 
     it("should resolve PerformOsUpdates when the device is in bootloader mode even without a pending update", async () => {
       responders.getOsVersion = () => success(osVersion({ isBootloader: true }));
-      await start({ osUpdates: [] });
 
-      await completeDeviceAction(DASHBOARD_APP);
+      await start({ osUpdates: [] });
 
       expect(actor.getSnapshot().output).toBe(PreChecksNextAction.PerformOsUpdates);
       expect(getBackup).not.toHaveBeenCalled();
@@ -281,9 +297,8 @@ describe("PreChecksStateMachine", () => {
 
     it("should resolve PerformOsUpdates when the device is in OSU mode even without a pending update", async () => {
       responders.getOsVersion = () => success(osVersion({ isOsu: true }));
-      await start({ osUpdates: [] });
 
-      await completeDeviceAction(DASHBOARD_APP);
+      await start({ osUpdates: [] });
 
       expect(actor.getSnapshot().output).toBe(PreChecksNextAction.PerformOsUpdates);
       expect(getBackup).not.toHaveBeenCalled();
@@ -307,7 +322,7 @@ describe("PreChecksStateMachine", () => {
       await completeDeviceAction(DASHBOARD_APP);
 
       expect(actor.getSnapshot().output).toBe(PreChecksNextAction.RestoreBackup);
-      expect(getBackup).toHaveBeenCalledWith(DEVICE_ID);
+      expect(getBackup).toHaveBeenCalledWith(DeviceModelId.STAX);
     });
 
     it("should resolve Completed when there is no update to perform and no backup exists", async () => {
@@ -422,16 +437,17 @@ describe("PreChecksStateMachine", () => {
       expect(actor.getSnapshot().value).toBe("CheckErrorCause");
     });
 
-    it("should emit LOADING and resume at WaitForAppAndVersion once the device is unlocked", async () => {
+    it("should emit LOADING and resume at GetOsVersion once the device is unlocked", async () => {
       responders.getAppAndVersion = () => failure(new DeviceLockedError());
       await start();
       await failDeviceAction(new DeviceLockedError());
 
+      stallNextOsVersion();
       responders.getAppAndVersion = () => success(DASHBOARD_APP);
       await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
       await settle();
 
-      expect(actor.getSnapshot().value).toBe("WaitingForAppAndVersion");
+      expect(actor.getSnapshot().value).toBe("GetOsVersion");
       expect(lastSentStateType()).toBe(PreChecksStateType.LOADING);
     });
 
@@ -457,9 +473,8 @@ describe("PreChecksStateMachine", () => {
     it("should emit UNEXPECTED_ERROR when a command fails with a generic error that is neither lock nor disconnect", async () => {
       responders.getOsVersion = () => failure(new UnknownDAError("boom"));
       responders.getAppAndVersion = () => failure(new UnknownDAError("boom"));
-      await start();
 
-      await completeDeviceAction(DASHBOARD_APP);
+      await start();
       await emitSessionStatus(DeviceStatus.CONNECTED);
 
       expect(actor.getSnapshot().value).toBe("CheckErrorCause");
@@ -491,9 +506,8 @@ describe("PreChecksStateMachine", () => {
 
     it("should emit DEVICE_DISCONNECTED when a command fails with a disconnect tag", async () => {
       responders.getOsVersion = () => failure(new DeviceDisconnectedWhileSendingError());
-      await start();
 
-      await completeDeviceAction(DASHBOARD_APP);
+      await start();
 
       expect(lastSentStateType()).toBe(PreChecksStateType.DEVICE_DISCONNECTED);
       expect(actor.getSnapshot().value).toBe("CheckErrorCause");
@@ -520,27 +534,29 @@ describe("PreChecksStateMachine", () => {
       expect(lastSentStateType()).toBe(PreChecksStateType.DEVICE_LOCKED);
     });
 
-    it("should resume the last action when the settle timeout probe succeeds", async () => {
+    it("should emit LOADING and resume at GetOsVersion when the settle timeout probe succeeds", async () => {
       await start();
 
       await failDeviceAction(new UnknownDAError("boom"));
       await emitSessionStatus(DeviceStatus.CONNECTED);
+      stallNextOsVersion();
       await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
       await settle();
 
-      expect(actor.getSnapshot().value).toBe("WaitingForAppAndVersion");
+      expect(actor.getSnapshot().value).toBe("GetOsVersion");
       expect(lastSentStateType()).toBe(PreChecksStateType.LOADING);
     });
 
-    it("should emit LOADING and resume the last action once the device is reconnected", async () => {
+    it("should emit LOADING and resume at GetOsVersion once the device is reconnected", async () => {
       await start();
       await failDeviceAction(new UnknownDAError("boom"));
       await emitSessionStatus(DeviceStatus.NOT_CONNECTED);
       expect(lastSentStateType()).toBe(PreChecksStateType.DEVICE_DISCONNECTED);
 
+      stallNextOsVersion();
       await deviceComesBack();
 
-      expect(actor.getSnapshot().value).toBe("WaitingForAppAndVersion");
+      expect(actor.getSnapshot().value).toBe("GetOsVersion");
       expect(lastSentStateType()).toBe(PreChecksStateType.LOADING);
     });
 
@@ -549,7 +565,7 @@ describe("PreChecksStateMachine", () => {
       await failDeviceAction(new UnknownDAError("boom"));
       await emitSessionStatus(DeviceStatus.NOT_CONNECTED);
 
-      await deviceComesBack("ignored-new-session-id");
+      await deviceComesBack();
 
       expect(actor.getSnapshot().context.connectedDevice.sessionId).toBe(SESSION_ID);
     });

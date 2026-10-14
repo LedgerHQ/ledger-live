@@ -20,12 +20,6 @@ COINGECKO_API_URL: {
 
 ## Available Endpoints
 
-### Supported Coins List
-
-Fetches the list of all coins supported by the CoinGecko proxy.
-
-**Cache duration**: 1 day
-
 ### Supported Counter Currencies
 
 Fetches the list of supported fiat/counter currencies.
@@ -55,30 +49,20 @@ const store = configureStore({
 import {
   useMarketDataProvider,
   useSupportedCounterCurrencies,
-  useSupportedCurrencies,
 } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 
 function MarketOverview() {
-  const { supportedCounterCurrencies, supportedCurrencies } = useMarketDataProvider();
+  const { supportedCounterCurrencies } = useMarketDataProvider();
 
-  return (
-    <div>
-      <p>Supported currencies: {supportedCurrencies?.length}</p>
-      <p>Counter currencies: {supportedCounterCurrencies?.length}</p>
-    </div>
-  );
+  return <p>Counter currencies: {supportedCounterCurrencies?.length}</p>;
 }
 ```
 
 ### RTK Query Hooks
 
 ```typescript
-import {
-  useGetSupportedCoinsListQuery,
-  useGetSupportedCounterCurrenciesQuery,
-} from "@ledgerhq/live-common/cg-client/state-manager/api";
+import { useGetSupportedCounterCurrenciesQuery } from "@ledgerhq/live-common/cg-client/state-manager/api";
 
-const { data: coins } = useGetSupportedCoinsListQuery();
 const { data: currencies } = useGetSupportedCounterCurrenciesQuery();
 ```
 

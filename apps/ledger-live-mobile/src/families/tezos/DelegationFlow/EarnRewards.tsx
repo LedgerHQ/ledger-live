@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Linking, ScrollView } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -5,7 +6,6 @@ import { Flex, Text, IconsLegacy, List } from "@ledgerhq/native-ui";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { NavigatorName, ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import { urls } from "~/utils/urls";
 import Alert from "~/components/Alert";
 import Button from "~/components/wrappedUi/Button";

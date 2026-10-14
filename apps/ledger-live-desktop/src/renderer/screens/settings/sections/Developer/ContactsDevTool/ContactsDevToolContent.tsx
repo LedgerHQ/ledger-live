@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Divider, Switch, TextInput } from "@ledgerhq/lumen-ui-react";
+import { cn } from "LLD/utils/cn";
 import {
   FeatureFlagPreview,
   FeatureParamRow,
@@ -63,7 +64,7 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
                 <FeatureParamRow
                   paramKey="newBadge"
                   switchName="contacts-newBadge"
-                  label="New badge"
+                  label={t("settings.developer.contactsDevTool.newBadge")}
                   isEnabled={isEnabled}
                   isSelected={isEnabled && params.newBadge}
                   onToggle={handleToggleNewBadge}
@@ -78,17 +79,22 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
                 onApplyCustomFamilies={handleApplyCustomFamilies}
               />
               <div
-                className={`flex flex-col gap-4 rounded-md bg-surface p-10 transition-opacity ${
-                  isEnabled ? "opacity-100" : "opacity-50"
-                }`}
+                className={cn(
+                  "flex flex-col gap-4 rounded-md bg-surface p-10 transition-opacity",
+                  !isEnabled && "opacity-50",
+                )}
               >
-                <span className="body-3">Excluded currency IDs</span>
+                <span className="body-3">
+                  {t("settings.developer.contactsDevTool.excludedCurrencyIds")}
+                </span>
                 <div className="flex flex-wrap items-center gap-2">
                   <TextInput
-                    aria-label="Excluded currency IDs"
+                    aria-label={t("settings.developer.contactsDevTool.excludedCurrencyIds")}
                     value={excludedCurrencyIdsInput}
                     onChange={event => setExcludedCurrencyIdsInput(event.target.value)}
-                    placeholder="e.g. ethereum, bitcoin"
+                    placeholder={t(
+                      "settings.developer.contactsDevTool.excludedCurrencyIdsPlaceholder",
+                    )}
                     disabled={!isEnabled}
                   />
                   <Button
@@ -97,7 +103,7 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
                     onClick={handleApplyExcludedCurrencyIds}
                     disabled={!isEnabled}
                   >
-                    Apply
+                    {t("settings.developer.contactsDevTool.apply")}
                   </Button>
                 </div>
               </div>

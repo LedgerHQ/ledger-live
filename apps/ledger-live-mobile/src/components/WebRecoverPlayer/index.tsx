@@ -1,9 +1,12 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, BackHandler, Platform } from "react-native";
+import Animated, { FadeOut } from "react-native-reanimated";
+import { useTheme } from "styled-components/native";
 import { useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
+import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
@@ -16,6 +19,8 @@ import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/action
 import SafeAreaView from "../SafeAreaView";
 import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 import useRecoverStateSync from "./useRecoverStateSync";
+
+const LOADER_FADE_OUT_DURATION_MS = 250;
 
 type Props = {
   manifest: LiveAppManifest;
@@ -36,6 +41,9 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
   const dispatch = useDispatch();
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const { theme, colors } = useTheme();
+  const backgroundColor = theme === "dark" ? colors.constant.black : colors.background.main;
   useRecoverStateSync(manifest.id);
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -85,6 +93,11 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
     );
   }, [headerShown, manifest, navigation, webviewState]);
 
+  const handleWebviewStateChange = useCallback((state: WebviewState) => {
+    setWebviewState(state);
+    if (!state.loading && (state.url !== "" || state.isAppUnavailable)) setIsLoaded(true);
+  }, []);
+
   const handleBypassOnboarding = useCallback(() => {
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(false));
@@ -101,15 +114,25 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   }, [handleBypassOnboarding, webviewState]);
 
   return (
-    <SafeAreaView style={[styles.root]} isFlex>
+    <SafeAreaView style={[styles.root, { backgroundColor }]} isFlex edges={["top"]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
         inputs={inputs}
-        onStateChange={setWebviewState}
+        onStateChange={handleWebviewStateChange}
         allowsBackForwardNavigationGestures={false}
         customHandlers={customDeeplinkHandlers}
       />
+      {isLoaded ? null : (
+        <Animated.View
+          exiting={FadeOut.duration(LOADER_FADE_OUT_DURATION_MS)}
+          style={[styles.loaderOverlay, { backgroundColor }]}
+        >
+          <Box lx={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Spinner />
+          </Box>
+        </Animated.View>
+      )}
       <InfoPanel
         name={manifest.name}
         icon={manifest.icon}
@@ -127,7 +150,10 @@ export default WebRecoverPlayer;
 
 const styles = StyleSheet.create({
   root: {
-    flexGrow: 1,
+    flex: 1,
+  },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
   },
   headerRight: {
     display: "flex",

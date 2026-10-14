@@ -5,7 +5,9 @@ import { Transaction } from "./types";
 export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] = (tx, patch) => {
   if (
     ("mode" in patch && patch.mode !== tx.mode) ||
-    ("validators" in patch && patch.validators?.length !== tx.validators.length)
+    ("validators" in patch && patch.validators?.length !== tx.validators.length) ||
+    ("valAddress" in patch && patch.valAddress !== tx.valAddress) ||
+    ("dstValAddress" in patch && patch.dstValAddress !== tx.dstValAddress)
   ) {
     patch = { ...patch, gas: null, fees: null };
   }

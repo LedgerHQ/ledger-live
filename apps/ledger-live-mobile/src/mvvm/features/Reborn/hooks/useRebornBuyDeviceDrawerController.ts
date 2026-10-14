@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
-import { track } from "~/analytics";
 import { useSelector, useDispatch } from "~/context/hooks";
 
 import {

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import {
@@ -16,7 +17,6 @@ import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBri
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ScreenName, NavigatorName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
-import { TrackScreen } from "~/analytics";
 import AccountSelector from "~/components/AccountSelector";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";

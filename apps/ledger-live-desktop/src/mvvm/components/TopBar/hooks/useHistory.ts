@@ -2,8 +2,7 @@ import { useCallback } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Clock } from "@ledgerhq/lumen-ui-react/symbols";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { setTrackingSource, track } from "@shared/analytics";
 import { useSelector } from "LLD/hooks/redux";
 import { hasUnreadOperationsSelector } from "~/renderer/reducers/history";
 

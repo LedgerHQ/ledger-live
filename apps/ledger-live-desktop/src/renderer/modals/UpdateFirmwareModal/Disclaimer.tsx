@@ -3,7 +3,7 @@ import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 

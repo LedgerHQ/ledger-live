@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { renderHook, withReadOnlyDisabled, act } from "@tests/test-renderer";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
-import { track } from "~/analytics";
 import { expectedNavigationParams } from "../const";
 import { useTopBarViewModel } from "../useTopBarViewModel";
 import { useSyncIndicator } from "../hooks/useSyncIndicator";

@@ -45,6 +45,7 @@ import {
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
   useContactDisplayName,
   useContacts,
@@ -103,6 +104,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "desktop",
     currencySelection,
+    getConfig: resolveCurrencyConfig,
   });
   const {
     state: addAddressFlowState,
@@ -152,11 +154,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
           flow: CONTACTS_FLOW.CONTACTS,
         });
 
+        const config = resolveCurrencyConfig(flowState.selectedCurrencyId);
+
         const signedAddress = await deviceIntents.registerExternalAddress({
           contact: selectedContact,
           currencyId: flowState.selectedCurrencyId,
           label: flowState.addressLabel.label,
           address: flowState.addressEntry.resolvedAddress,
+          config,
         });
 
         const address = contactAddress({

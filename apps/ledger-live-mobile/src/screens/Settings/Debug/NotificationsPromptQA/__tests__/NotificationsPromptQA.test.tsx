@@ -9,10 +9,6 @@ jest.mock("../useNotificationsPromptQaViewModel", () => ({
   useNotificationsPromptQaViewModel: jest.fn(),
 }));
 
-jest.mock("~/analytics", () => ({
-  TrackScreen: () => null,
-}));
-
 jest.mock("../../../SettingsNavigationScrollView", () => {
   const { View } = require("react-native");
   return ({ children }: { children: React.ReactNode }) => <View>{children}</View>;

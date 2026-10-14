@@ -7,7 +7,7 @@ import { setFlow } from "~/renderer/actions/walletSync";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 const Container = styled(Box)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};

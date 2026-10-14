@@ -1,8 +1,8 @@
+import { trackPage } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { screen as trackScreen } from "~/analytics";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
@@ -12,10 +12,6 @@ import { useRecipientScreenViewModel } from "../useRecipientScreenViewModel";
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@react-navigation/native");
 jest.mock("../../../../context/SendFlowContext");
-jest.mock("~/analytics", () => ({
-  screen: jest.fn(),
-  track: jest.fn(),
-}));
 jest.mock("@features/platform-contacts", () => ({
   useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
@@ -82,14 +78,13 @@ describe("useRecipientScreenViewModel", () => {
       transaction: null,
     });
     expect(mockedGetAccountCurrency).toHaveBeenCalledWith(account);
-    expect(jest.mocked(trackScreen)).toHaveBeenCalledWith(
-      "Modal send - step recipient",
-      undefined,
-      expect.objectContaining({
+    expect(jest.mocked(trackPage)).toHaveBeenCalledWith({
+      category: "Modal send - step recipient",
+      props: expect.objectContaining({
         hasContacts: false,
         contactsCount: 0,
       }),
-    );
+    });
   });
 
   it("counts the contacts reachable on the network once the feature is enabled", () => {
@@ -124,14 +119,13 @@ describe("useRecipientScreenViewModel", () => {
 
     renderHook(() => useRecipientScreenViewModel());
 
-    expect(jest.mocked(trackScreen)).toHaveBeenCalledWith(
-      "Modal send - step recipient",
-      undefined,
-      expect.objectContaining({
+    expect(jest.mocked(trackPage)).toHaveBeenCalledWith({
+      category: "Modal send - step recipient",
+      props: expect.objectContaining({
         hasContacts: true,
         contactsCount: 2,
       }),
-    );
+    });
   });
 
   it("updates the recipient and navigates to amount", () => {

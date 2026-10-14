@@ -21,4 +21,4 @@
 
 ## Usage context
 
-Used in both `apps/ledger-live-desktop` and `apps/ledger-live-mobile` on the portfolio and asset list screens. Typically consumed alongside `@ledgerhq/live-countervalues` to enrich aggregated assets with fiat values.
+Used in both `apps/ledger-live-desktop` and `apps/ledger-live-mobile` on the portfolio and asset list screens. Typically consumed alongside `@domain/entity-market-countervalues` to enrich aggregated assets with fiat values.

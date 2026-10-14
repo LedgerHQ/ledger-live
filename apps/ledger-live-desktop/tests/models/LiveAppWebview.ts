@@ -177,34 +177,51 @@ export class LiveAppWebview {
     const input = webview.getByTestId("currency-ids-input");
     await input.waitFor({ state: "visible", timeout: 10000 });
 
-    // Set currency IDs using click + keyboard (more reliable than fill())
+    // Focus then insert the whole text in one go: keyboard.type() sends one CDP round trip
+    // per character, which takes ~15s for the full supported currencies list.
     await input.click();
-    await webview.keyboard.type(currencies.join(","));
+    await webview.keyboard.insertText(currencies.join(","));
+  }
+
+  /**
+   * fill() right after the live app opens can leave the dummy app's React state empty, so use
+   * the same click + keyboard path as setCurrencyIds and retry until the value sticks.
+   */
+  private async fillInput(testId: string, value: string) {
+    const webview = await this.getWebView();
+    const input = webview.getByTestId(testId);
+    await input.waitFor({ state: "visible", timeout: 10000 });
+    await expect(async () => {
+      await input.click();
+      await webview.keyboard.press("ControlOrMeta+a");
+      await webview.keyboard.insertText(value);
+      await expect(input).toHaveValue(value, { timeout: 1000 });
+    }).toPass({ timeout: 10000 });
+  }
+
+  async waitUntilReady() {
+    const webview = await this.getWebView();
+    await webview.waitForLoadState("load", { timeout: this.defaultWebViewTimeout });
   }
 
   async setAccountId(accountId: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("account-id-input").fill(accountId);
+    return this.fillInput("account-id-input", accountId);
   }
 
   async setRecipient(recipient: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("recipient-input").fill(recipient);
+    return this.fillInput("recipient-input", recipient);
   }
 
   async setAmount(amount: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("amount-input").fill(amount);
+    return this.fillInput("amount-input", amount);
   }
 
   async setData(data: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("data-input").fill(data);
+    return this.fillInput("data-input", data);
   }
 
   async setDeeplinkUrl(url: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("deeplink-url-input").fill(url);
+    return this.fillInput("deeplink-url-input", url);
   }
 
   async accountRequest() {

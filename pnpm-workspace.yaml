@@ -36,8 +36,8 @@ catalog:
   "@ledgerhq/context-module": 2.6.0
   "@ledgerhq/crypto-icons": "2.0.6"
   "@ledgerhq/device-contacts-kit": 0.5.0
-  "@ledgerhq/device-management-kit": 1.10.0
-  "@ledgerhq/dmk-ledger-wallet": 0.6.0
+  "@ledgerhq/device-management-kit": 1.11.0
+  "@ledgerhq/dmk-ledger-wallet": 0.7.1
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.5.0
   "@ledgerhq/device-signer-kit-ethereum": 1.18.1
@@ -51,34 +51,37 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
   "@ledgerhq/device-mockserver-client": 1.3.0
+  "@ledgerhq/device-mockserver-react": 0.1.0
   "@ledgerhq/device-transport-kit-mockserver": 1.1.2
-  "@ledgerhq/device-transport-kit-speculos": 1.2.1
+  "@ledgerhq/device-transport-kit-speculos": 1.3.0
   "@ledgerhq/signer-utils": 1.3.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
-  "@ledgerhq/speculos-device-controller": 0.3.0
+  "@ledgerhq/speculos-device-controller": 0.4.0
   "@ledgerhq/logs": 6.19.0
   "@ledgerhq/auth": 0.1.0
   "@ledgerhq/devices": 8.18.0
   "@ledgerhq/hw-transport": 6.36.0
   "@ledgerhq/hw-transport-mocker": 6.35.0
-  "@ledgerhq/live-network": 3.1.0
+  "@ledgerhq/live-network": 3.2.0
   "@ledgerhq/live-promise": 0.4.0
   "@ledgerhq/psbtv2": 0.6.0
+  "@ledgerhq/hw-ledger-key-ring-protocol": 1.0.0
+  "@ledgerhq/ledger-key-ring-protocol": 1.0.0
   "@ledgerhq/live-config": 3.9.0
   "@ledgerhq/live-env": 4.1.0
   "@ledgerhq/live-currency-format": 0.16.0
-  "@ledgerhq/domain-service": 1.9.0
-  "@ledgerhq/evm-tools": 1.15.0
+  "@ledgerhq/domain-service": 1.9.1
+  "@ledgerhq/evm-tools": 2.0.0
   "@ledgerhq/lumen-design-core": 0.1.30
-  "@ledgerhq/lumen-ui-react": 0.1.60
-  "@ledgerhq/lumen-ui-rnative": 0.1.63
+  "@ledgerhq/lumen-ui-react": 0.1.61
+  "@ledgerhq/lumen-ui-rnative": 0.1.64
   "@ledgerhq/lumen-utils-shared": 0.1.14
   # Wallet API
-  "@ledgerhq/wallet-api-client": 1.15.3
-  "@ledgerhq/wallet-api-client-react": 1.4.34
-  "@ledgerhq/wallet-api-core": 2.0.0
-  "@ledgerhq/wallet-api-server": 3.4.3
-  "@ledgerhq/wallet-api-simulator": 2.3.3
+  "@ledgerhq/wallet-api-client": 1.16.0
+  "@ledgerhq/wallet-api-client-react": 1.4.35
+  "@ledgerhq/wallet-api-core": 2.1.0
+  "@ledgerhq/wallet-api-server": 3.5.0
+  "@ledgerhq/wallet-api-simulator": 2.4.0
   "@ledgerhq/zcash-utils": 2.5.0
   # React Native
   react-native: 0.81.6
@@ -97,19 +100,24 @@ catalog:
   "@react-native-community/cli": 18.0.1
   "@react-native-community/cli-platform-android": 18.0.1
   "@react-native-community/cli-platform-ios": 18.0.1
-  "@react-native-clipboard/clipboard": 1.16.2
   # Expo
   expo: 54.0.33
   expo-constants: 18.0.13
   expo-asset: 12.0.12
+  expo-application: 7.0.8
+  expo-clipboard: 8.0.8
   expo-font: 14.0.11
   expo-crypto: 15.0.8
+  expo-device: 8.0.10
   expo-document-picker: 13.1.6
   expo-file-system: 19.0.21
   expo-image-loader: 6.0.0
   expo-image-manipulator: 14.0.8
+  expo-image-picker: 17.0.11
   expo-haptics: 15.0.8
   expo-keep-awake: 15.0.8
+  expo-network: 8.0.8
+  expo-splash-screen: 31.0.13
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
   "@jest/reporters": 30.5.0
@@ -126,6 +134,8 @@ catalog:
   "@rspack/plugin-react-refresh": 2.0.2
   "@rslib/core": 0.23.2
   react-refresh: 0.18.0
+  "@stacks/network": 7.6.0
+  "@stacks/transactions": 7.6.0
   "@swc/core": 1.15.11
   "@swc/helpers": 0.5.23
   "@swc/jest": 0.2.39
@@ -144,7 +154,7 @@ catalog:
   "@typescript/native": "npm:typescript@^7.0.2"
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
-  axios: 1.13.5
+  axios: 1.20.0
   babel-jest: 30.5.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
@@ -152,7 +162,7 @@ catalog:
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   electron: 43.1.1
-  eslint-plugin-better-tailwindcss: 4.0.0-beta.3
+  eslint-plugin-better-tailwindcss: 4.7.0
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 1.9.7
@@ -188,7 +198,7 @@ catalog:
   react-native-fast-crypto: "3"
   react-native-gesture-handler: 2.28.0
   react-native-keychain: 10.0.0
-  react-native-reanimated: 4.3.0
+  react-native-reanimated: 4.3.4
   react-native-worklets: 0.8.1
   react-native-safe-area-context: 5.6.1
   react-native-svg: 15.15.1
@@ -204,7 +214,7 @@ catalog:
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
   tsx: 4.20.6
-  ws: 8.18.3
+  ws: 8.22.0
   qrcode: 1.5.4
   "@types/qrcode": 1.5.5
   otpauth: 9.5.1
@@ -213,6 +223,7 @@ catalog:
   "@types/semver": 7.7.1
   "@types/ws": ^8.5.10
   undici: 7.18.2
+  uuid: 11.1.0
   "styled-components": 6.1.19
   "styled-system": 5.1.5
   "stylis": 4.0.0
@@ -225,25 +236,25 @@ catalog:
   "@radix-ui/react-switch": 1.2.6
   "@radix-ui/react-tooltip": 1.2.8
   "@tanstack/react-table": 8.5.11
-  "@playwright/test": 1.60.0
-  playwright: 1.60.0
-  allure-playwright: 3.9.0
-  allure-js-commons: 3.9.0
-  nx: 22.7.8
-  "@nx/devkit": 22.7.8
+  "@playwright/test": 1.63.0
+  playwright: 1.63.0
+  allure-playwright: 3.13.0
+  allure-js-commons: 3.13.0
+  nx: 22.7.12
+  "@nx/devkit": 22.7.12
   detox: 20.51.3
   # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
-  "@nx/nx-linux-x64-gnu": 22.7.8
+  "@nx/nx-linux-x64-gnu": 22.7.12
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
   oxfmt: 0.67.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 7.0.0
-  "@ledgerhq/coin-hypercore": 3.0.0
-  "@ledgerhq/coin-module-framework": 9.2.0
-  "@ledgerhq/coin-stellar": 10.0.1
-  "@ledgerhq/coin-tezos": 12.0.2
-  "@ledgerhq/coin-xrp": 11.0.0
+  "@ledgerhq/coin-evm": 10.1.0
+  "@ledgerhq/coin-hypercore": 4.0.1
+  "@ledgerhq/coin-module-framework": 10.0.0
+  "@ledgerhq/coin-stellar": 12.0.0
+  "@ledgerhq/coin-tezos": 13.0.2
+  "@ledgerhq/coin-xrp": 12.0.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:

@@ -4,7 +4,7 @@ import { invalidatePnLCache } from "../costBasisCache";
 import { ETH, USD, WEI } from "../scenarios/currencies";
 import { makeAccount } from "../scenarios/accounts";
 import { buy, resetOperationIdCounter } from "../scenarios/operations";
-import { buildCV, dailyHistory } from "../scenarios/countervalues";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
 import { expectBN } from "./helpers/bn";
 
 beforeEach(() => {

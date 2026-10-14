@@ -3,8 +3,14 @@ import { render, screen } from "tests/testSetup";
 import { Flex } from "@ledgerhq/react-ui/index";
 import SeedStep from "../components/SeedStep";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { trackPage, track } from "~/renderer/analytics/segment";
+import { trackPage, track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  trackPage: jest.fn(),
+  track: jest.fn(),
+}));
 
 jest.mock("~/renderer/linking", () => ({
   ...jest.requireActual("~/renderer/linking"),

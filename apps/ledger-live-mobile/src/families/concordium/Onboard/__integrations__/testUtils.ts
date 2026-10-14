@@ -15,6 +15,8 @@ export const WC_FORMATTED_URI = `concordiumidapp://wallet-connect?encodedUri=${W
 
 export const COIN_CONFIG = () => ({
   status: { type: "active" } as const,
+  name: "Concordium",
+  unit: { name: "ccd", code: "CCD", magnitude: 6 },
   networkType: "mainnet" as const,
   grpcUrl: "https://ccd-node-mainnet.coin.ledger.com",
   grpcPort: 443,

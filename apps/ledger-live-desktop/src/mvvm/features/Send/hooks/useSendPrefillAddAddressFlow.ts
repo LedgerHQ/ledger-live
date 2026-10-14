@@ -12,6 +12,7 @@ import {
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,
@@ -47,7 +48,7 @@ import {
 } from "../context/AddNewContactHeaderContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 export type SendPrefillAddAddressPhase = Readonly<{
   state: PrefillAddAddressFlowVisibleState;
@@ -140,10 +141,13 @@ export function useSendPrefillAddAddressFlow({
     }
     trackedAddressPhaseRef.current = phaseKey;
 
-    trackPage("Modal send - name address", null, {
-      ...trackingProperties,
-      network: addressFlowState.displayContext.network.networkId,
-      asset: addressFlowState.selectedCurrencyId,
+    trackPage({
+      category: "Modal send - name address",
+      props: {
+        ...trackingProperties,
+        network: addressFlowState.displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+      },
     });
   }, [addressFlowState, isAddressPhase, trackingProperties]);
 
@@ -201,11 +205,14 @@ export function useSendPrefillAddAddressFlow({
     isSaving.current = true;
 
     try {
+      const config = resolveCurrencyConfig(displayContext.network.networkId);
+
       const signedAddress = await deviceIntents.registerExternalAddress({
         contact: selectedContact,
         currencyId: addressFlowState.selectedCurrencyId,
         label: addressFlowState.addressLabel.label,
         address: addressFlowState.addressEntry.resolvedAddress,
+        config,
       });
 
       if (saveRequestId.current !== requestId) {
@@ -240,10 +247,13 @@ export function useSendPrefillAddAddressFlow({
       close();
       navigation.resetToStep(SEND_FLOW_STEP.RECIPIENT);
     } catch {
-      trackPage("Modal send - address signing rejected", null, {
-        ...trackingProperties,
-        network: displayContext.network.networkId,
-        asset: addressFlowState.selectedCurrencyId,
+      trackPage({
+        category: "Modal send - address signing rejected",
+        props: {
+          ...trackingProperties,
+          network: displayContext.network.networkId,
+          asset: addressFlowState.selectedCurrencyId,
+        },
       });
       return;
     } finally {
@@ -384,10 +394,13 @@ export function useSendPrefillAddAddressFlow({
               inputMethod,
             }),
           );
-          trackPage("Modal send - address signing device", null, {
-            ...trackingProperties,
-            network: addressFlowState.displayContext.network.networkId,
-            asset: addressFlowState.selectedCurrencyId,
+          trackPage({
+            category: "Modal send - address signing device",
+            props: {
+              ...trackingProperties,
+              network: addressFlowState.displayContext.network.networkId,
+              asset: addressFlowState.selectedCurrencyId,
+            },
           });
           void saveFromReview();
         },

@@ -1,13 +1,13 @@
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 
 import {
-  type BaseDiscoveryError,
   ConnectDeviceStateMachineEventTypes,
   type ConnectDeviceStateMachineEvent,
   type DisplayedDevice,
   type KnownDevice,
   type MatchedDevice,
 } from "./types";
+import type { BaseDiscoveryError } from "../deviceConnectivity/types";
 
 export const filterKnownDevicesByAcceptedModels = (
   knownDevices: Array<KnownDevice>,

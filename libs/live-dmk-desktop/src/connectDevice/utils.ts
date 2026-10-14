@@ -1,4 +1,6 @@
 import type { DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
 import {
   dmkToLedgerDeviceIdMap,
@@ -8,13 +10,19 @@ import {
 
 import { BaseConnectionErrorTypes, type DesktopConnectionError } from "./types";
 
+const MATCHABLE_TRANSPORTS = new Set<string>([
+  webHidTransportIdentifier,
+  speculosIdentifier,
+  mockserverIdentifier,
+]);
+
 export const filterMatchedDevices = (
   discoveredDevices: DiscoveredDevice[],
   knownDevices: KnownDevice[],
 ): MatchedDevice[] => {
   return discoveredDevices
     .map(device => {
-      if (device.transport !== webHidTransportIdentifier) {
+      if (!MATCHABLE_TRANSPORTS.has(device.transport)) {
         return null;
       }
 
@@ -23,18 +31,14 @@ export const filterMatchedDevices = (
           return false;
         }
 
-        if (knownDevice.transport === webHidTransportIdentifier) {
-          return dmkToLedgerDeviceIdMap[device.deviceModel.model] === knownDevice.deviceModelId;
-        }
-
-        return false;
+        return dmkToLedgerDeviceIdMap[device.deviceModel.model] === knownDevice.deviceModelId;
       });
 
       if (!matchedDevice) {
         return null;
       }
 
-      return matchedDevice ? { knownDevice: matchedDevice, discoveredDevice: device } : null;
+      return { knownDevice: matchedDevice, discoveredDevice: device };
     })
     .filter((matchedDevice): matchedDevice is MatchedDevice => matchedDevice !== null);
 };

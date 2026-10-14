@@ -14,6 +14,7 @@ import type {
   LedgerExplorerOperation,
 } from "@ledgerhq/coin-evm/types";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
+import { contextLogger as logger } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
 
 type TraceTransaction = {
   action: {
@@ -178,8 +179,8 @@ const handleERC20Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider)
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
-  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
+  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0], logger);
+  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0], logger);
   const amount = BigInt(log.data === "0x" ? 0 : log.data).toString();
 
   const etherscanErc20Event: EtherscanERC20Event = {
@@ -282,8 +283,8 @@ const handleERC721Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
-  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
+  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0], logger);
+  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0], logger);
   const tokenID = abiCoder.decode(["uint256"], log.topics[3])[0].toString();
 
   const erc721Event: EtherscanERC721Event = {
@@ -387,9 +388,9 @@ const handleERC1155Log = async (log: ethers.Log, provider: ethers.JsonRpcProvide
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
-  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[3])[0]);
-  const operator = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
+  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0], logger);
+  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[3])[0], logger);
+  const operator = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0], logger);
 
   const transfersMap: [string, string][] = abiCoder
     .decode(["uint256", "uint256"], log.data)
@@ -507,8 +508,8 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
     ]);
 
     const code = tx?.to ? await provider.getCode(tx?.to) : false;
-    const from = safeEncodeEIP55(tx?.from || "");
-    const to = safeEncodeEIP55(tx?.to || "");
+    const from = safeEncodeEIP55(tx?.from || "", logger);
+    const to = safeEncodeEIP55(tx?.to || "", logger);
     const etherscanOperation: EtherscanOperation = {
       blockNumber: block?.number.toString() || "0",
       timeStamp: block?.timestamp.toString() || "0",
@@ -594,8 +595,8 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
        */
       if (!traceAddress.length) continue;
       const code = action.to ? await provider.getCode(action.to) : false;
-      const from = safeEncodeEIP55(action.from || "");
-      const to = safeEncodeEIP55(action.to || "");
+      const from = safeEncodeEIP55(action.from || "", logger);
+      const to = safeEncodeEIP55(action.to || "", logger);
       const etherscanInternalTransaction: EtherscanInternalTransaction = {
         blockNumber: blockNumber.toString(),
         timeStamp: block?.timestamp.toString() || "0",

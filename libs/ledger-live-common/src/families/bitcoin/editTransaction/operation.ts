@@ -1,7 +1,8 @@
-import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getEnv } from "@shared/env";
+import { decodeAccountId, getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS } from "@ledgerhq/coin-bitcoin/constants";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { getBitcoinCoinConfig } from "../coinConfig";
 
 /**
  * Return whether an operation is editable or not for Bitcoin.
@@ -25,12 +26,14 @@ export const isEditableOperation = (_account: Account, operation: Operation): bo
  */
 export const isStuckOperation = (operation: Operation): boolean => {
   /**
-   * Pending operations that exceed the BITCOIN_STUCK_TRANSACTION_TIMEOUT
-   * threshold are considered as stuck.
+   * Pending operations older than the `fees.stuckTransactionTimeoutMs` of their currency
+   * are considered as stuck.
    */
-  return (
-    new Date().getTime() - operation.date.getTime() > getEnv("BITCOIN_STUCK_TRANSACTION_TIMEOUT")
-  );
+  const { currencyId } = decodeAccountId(operation.accountId);
+  const timeoutMs =
+    getBitcoinCoinConfig(currencyId).fees?.stuckTransactionTimeoutMs ??
+    DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS;
+  return new Date().getTime() - operation.date.getTime() > timeoutMs;
 };
 
 /**

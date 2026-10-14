@@ -15,6 +15,7 @@ import bunliConfig from "../bunli.config";
 import { disposeAnalytics, startAnalytics } from "./analytics/segment";
 import { withCommandLifecycleAnalytics } from "./analytics/lifecycle-analytics";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import { setupWalletCliStore } from "./state-manager/configureStore";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
 import SessionGroup from "./commands/session/index";
@@ -27,6 +28,7 @@ import EarnGroup from "./commands/earn/index";
 import GenuineCheckCommand from "./commands/genuine-check";
 import RingGroup from "./commands/ring/index";
 import SkillGroup from "./commands/skill/index";
+import AgentIntentGroup from "./commands/agent-intent/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -38,6 +40,7 @@ emitTestingBuildBannerIfNeeded();
  * is caught here so the caller gets a clean numeric code back.
  */
 export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
+  setupWalletCliStore();
   const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
   cli.command(AccountGroup);
   cli.command(AssetsGroup);
@@ -51,6 +54,7 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(GenuineCheckCommand);
   cli.command(RingGroup);
   cli.command(SkillGroup);
+  cli.command(AgentIntentGroup);
   maybeShowFirstRunNudge(argv);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;

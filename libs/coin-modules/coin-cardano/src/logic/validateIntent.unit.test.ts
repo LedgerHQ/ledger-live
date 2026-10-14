@@ -3,7 +3,7 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { cardanoCoinConfig as config } from "../fixtures/config";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { validateIntent } from "./validateIntent";
 
@@ -12,7 +12,6 @@ jest.mock("../api/getNetworkInfo", () => ({
   fetchNetworkInfo: jest.fn().mockResolvedValue({ protocolParams: { utxoCostPerByte: "4310" } }),
 }));
 
-const currency = getCryptoCurrencyById("cardano");
 const SENDER =
   "addr1q8mgw8geggkl2hs0m6rq3pgt69uxttpqcgu6euxje5tt6plxjtjrnskhhtt03g6l3sr98p9t8mtlajr26vmwjzep77pqxn8cms";
 const RECIPIENT =
@@ -44,7 +43,7 @@ function intent(over: Partial<TransactionIntent<StringMemo>> = {}): TransactionI
 
 describe("validateIntent", () => {
   it("validates a fundable native transfer and computes amount + totalSpent", async () => {
-    const res = await validateIntent(currency, intent(), balances(10_000_000n), {
+    const res = await validateIntent(config, intent(), balances(10_000_000n), {
       value: 1_000_000n,
     });
 
@@ -58,32 +57,27 @@ describe("validateIntent", () => {
     ["", "RecipientRequired"],
     ["not-an-address", "InvalidAddress"],
   ])("flags recipient %p", async (recipient, name) => {
-    const res = await validateIntent(currency, intent({ recipient }), balances(10_000_000n));
+    const res = await validateIntent(config, intent({ recipient }), balances(10_000_000n));
     expect(res.errors.recipient?.name).toBe(name);
   });
 
   it("warns (without blocking) on a self-send (sender === recipient)", async () => {
-    const res = await validateIntent(
-      currency,
-      intent({ recipient: SENDER }),
-      balances(10_000_000n),
-      {
-        value: 200_000n,
-      },
-    );
+    const res = await validateIntent(config, intent({ recipient: SENDER }), balances(10_000_000n), {
+      value: 200_000n,
+    });
     // Self-send is a non-blocking warning, reusing the shared already-localized error. LIVE-33176.
     expect(res.errors.recipient).toBeUndefined();
     expect(res.warnings.recipient?.name).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
   });
 
   it("flags a zero amount", async () => {
-    const res = await validateIntent(currency, intent({ amount: 0n }), balances(10_000_000n));
+    const res = await validateIntent(config, intent({ amount: 0n }), balances(10_000_000n));
     expect(res.errors.amount?.name).toBe("AmountRequired");
   });
 
   it("flags amount + fees exceeding the spendable balance", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ amount: 10_000_000n }),
       balances(10_000_000n),
       {
@@ -95,7 +89,7 @@ describe("validateIntent", () => {
 
   it("computes max spendable for useAllAmount (balance − fees)", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ useAllAmount: true, amount: 0n }),
       balances(10_000_000n),
       { value: 1_000_000n },
@@ -107,7 +101,7 @@ describe("validateIntent", () => {
 
   it("validates a token transfer against the token balance, with fees excluded from totalSpent", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ asset: tokenAsset, amount: 500n }),
       tokenBalances(1_000n),
       { value: 1_000_000n },
@@ -121,7 +115,7 @@ describe("validateIntent", () => {
 
   it("flags a token transfer the native balance cannot cover the fee for", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ asset: tokenAsset, amount: 500n }),
       tokenBalances(1_000n, 0n),
       { value: 1_000_000n },
@@ -131,7 +125,7 @@ describe("validateIntent", () => {
 
   it("flags a token transfer exceeding the token balance (not the native balance)", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ asset: tokenAsset, amount: 2_000n }),
       tokenBalances(1_000n),
       { value: 1_000_000n },
@@ -152,7 +146,7 @@ describe("validateIntent", () => {
       { asset: nativeTypedToken, value: 1_000n },
     ];
     const res = await validateIntent(
-      currency,
+      config,
       intent({ asset: nativeTypedToken, amount: 500n }),
       balances,
       { value: 1_000_000n },
@@ -165,7 +159,7 @@ describe("validateIntent", () => {
 
   it("computes max spendable for a useAllAmount token transfer (full token balance)", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ asset: tokenAsset, useAllAmount: true, amount: 0n }),
       tokenBalances(1_000n),
       { value: 1_000_000n },
@@ -177,7 +171,7 @@ describe("validateIntent", () => {
 
   it("warns feeTooHigh on a native transfer whose fee exceeds 10% of the amount", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ amount: 5_000_000n }),
       balances(10_000_000n),
       {
@@ -189,34 +183,24 @@ describe("validateIntent", () => {
   });
 
   it("flags a native amount below the min-UTXO floor", async () => {
-    const res = await validateIntent(
-      currency,
-      intent({ amount: 100_000n }),
-      balances(10_000_000n),
-      {
-        value: 200_000n,
-      },
-    );
+    const res = await validateIntent(config, intent({ amount: 100_000n }), balances(10_000_000n), {
+      value: 200_000n,
+    });
     expect(res.errors.amount?.name).toBe("CardanoMinAmountError");
   });
 
   it("stays resilient when network info is unavailable (skips the min-UTXO pre-check)", async () => {
     (fetchNetworkInfo as jest.Mock).mockRejectedValueOnce(new Error("network down"));
     // Below the floor, but the params fetch failed → skip the best-effort check (craft still enforces it).
-    const res = await validateIntent(
-      currency,
-      intent({ amount: 100_000n }),
-      balances(10_000_000n),
-      {
-        value: 200_000n,
-      },
-    );
+    const res = await validateIntent(config, intent({ amount: 100_000n }), balances(10_000_000n), {
+      value: 200_000n,
+    });
     expect(res.errors.amount).toBeUndefined();
   });
 
   it("flags a memo longer than the Cardano metadata limit", async () => {
     const res = await validateIntent(
-      currency,
+      config,
       intent({ memo: { type: "string", kind: "text", value: "a".repeat(65) } }),
       balances(10_000_000n),
     );
@@ -241,7 +225,7 @@ describe("validateIntent", () => {
     }
 
     it("validates a fundable delegation (no ADA moved, only fees)", async () => {
-      const res = await validateIntent(currency, stakeIntent(), balances(10_000_000n), {
+      const res = await validateIntent(config, stakeIntent(), balances(10_000_000n), {
         value: 200_000n,
       });
       expect(res.errors).toEqual({});
@@ -252,7 +236,7 @@ describe("validateIntent", () => {
 
     it("does not run the native recipient check for a delegation (empty recipient is fine)", async () => {
       const res = await validateIntent(
-        currency,
+        config,
         stakeIntent({ recipient: "" }),
         balances(10_000_000n),
         {
@@ -264,7 +248,7 @@ describe("validateIntent", () => {
 
     it("flags a delegation missing its pool id", async () => {
       const res = await validateIntent(
-        currency,
+        config,
         stakeIntent({ valAddress: "" } as Partial<TransactionIntent<StringMemo>>),
         balances(10_000_000n),
         {
@@ -275,7 +259,7 @@ describe("validateIntent", () => {
     });
 
     it("flags a delegation whose fee the balance cannot cover", async () => {
-      const res = await validateIntent(currency, stakeIntent(), balances(100_000n), {
+      const res = await validateIntent(config, stakeIntent(), balances(100_000n), {
         value: 200_000n,
       });
       expect(res.errors.amount?.name).toBe("NotEnoughBalance");
@@ -283,7 +267,7 @@ describe("validateIntent", () => {
 
     it("validates an undelegation without requiring a pool id", async () => {
       const res = await validateIntent(
-        currency,
+        config,
         stakeIntent({ mode: "undelegate", valAddress: "" } as Partial<
           TransactionIntent<StringMemo>
         >),
@@ -296,7 +280,7 @@ describe("validateIntent", () => {
 
     it("flags an oversized memo on a delegation (craft applies it for staking too)", async () => {
       const res = await validateIntent(
-        currency,
+        config,
         stakeIntent({ memo: { type: "string", kind: "text", value: "a".repeat(65) } }),
         balances(10_000_000n),
         { value: 200_000n },

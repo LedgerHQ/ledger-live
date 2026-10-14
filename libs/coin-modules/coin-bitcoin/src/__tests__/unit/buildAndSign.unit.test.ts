@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/types";
 import { buildAccountTx, signAccountTx } from "../../buildAndSign";
@@ -71,7 +72,7 @@ beforeEach(() => jest.clearAllMocks());
 describe("buildAccountTx", () => {
   it("resolves change address and forwards the params to xpub.buildTx", async () => {
     const account = makeAccount();
-    const txInfo = await buildAccountTx(baseBuildParams(account));
+    const txInfo = await buildAccountTx(TEST_CONFIG, baseBuildParams(account));
 
     expect(account.xpub.getNewAddress).toHaveBeenCalledWith(1, 1);
     expect(account.xpub.buildTx).toHaveBeenCalledWith(
@@ -89,7 +90,7 @@ describe("buildAccountTx", () => {
   it("throws when a mismatching change address is provided", async () => {
     const account = makeAccount();
     await expect(
-      buildAccountTx({ ...baseBuildParams(account), changeAddress: "wrong-addr" }),
+      buildAccountTx(TEST_CONFIG, { ...baseBuildParams(account), changeAddress: "wrong-addr" }),
     ).rejects.toThrow("Invalid change address");
   });
 
@@ -98,7 +99,7 @@ describe("buildAccountTx", () => {
     mockedGetTxInputOutpoints.mockResolvedValue(new Set(["hash-in:0"]));
     mockedGetMinReplacementFeeSat.mockResolvedValue(new BigNumber(1234));
 
-    await buildAccountTx({ ...baseBuildParams(account), originalTxId: "orig-tx" });
+    await buildAccountTx(TEST_CONFIG, { ...baseBuildParams(account), originalTxId: "orig-tx" });
 
     expect(account.xpub.buildTx).toHaveBeenCalledWith(
       expect.objectContaining({ originalTxId: "orig-tx", minReplacementFeeSat: 1234 }),
@@ -110,7 +111,7 @@ describe("buildAccountTx", () => {
     mockedGetTxInputOutpoints.mockResolvedValue(new Set<string>());
     mockedGetMinReplacementFeeSat.mockResolvedValue(new BigNumber(0));
 
-    await buildAccountTx({ ...baseBuildParams(account), originalTxId: "orig-tx" });
+    await buildAccountTx(TEST_CONFIG, { ...baseBuildParams(account), originalTxId: "orig-tx" });
 
     const call = account.xpub.buildTx.mock.calls[0][0];
     expect(call.originalTxId).toBe("orig-tx");
@@ -119,7 +120,7 @@ describe("buildAccountTx", () => {
 
   it("forwards a relay fee floor when provided", async () => {
     const account = makeAccount();
-    await buildAccountTx({
+    await buildAccountTx(TEST_CONFIG, {
       ...baseBuildParams(account),
       relayFeePerByteSatVb: new BigNumber(2),
     });
@@ -134,7 +135,7 @@ describe("signAccountTx", () => {
     const account = makeAccount();
     const btc = makeSigner();
 
-    const tx = await signAccountTx({
+    const tx = await signAccountTx(TEST_LOGGER, {
       btc: btc as unknown as BitcoinSigner,
       fromAccount: account,
       txInfo: makeTxInfo(),
@@ -155,7 +156,7 @@ describe("signAccountTx", () => {
   it("sets changePath when the last output is change", async () => {
     const account = makeAccount();
     const btc = makeSigner();
-    await signAccountTx({
+    await signAccountTx(TEST_LOGGER, {
       btc: btc as unknown as BitcoinSigner,
       fromAccount: account,
       txInfo: makeTxInfo(),
@@ -172,7 +173,11 @@ describe("signAccountTx", () => {
         { script: p2wpkhScript, value: new BigNumber(15000), address: "dest", isChange: false },
       ] as any,
     });
-    await signAccountTx({ btc: btc as unknown as BitcoinSigner, fromAccount: account, txInfo });
+    await signAccountTx(TEST_LOGGER, {
+      btc: btc as unknown as BitcoinSigner,
+      fromAccount: account,
+      txInfo,
+    });
     expect(btc.createPaymentTransaction.mock.calls[0][0]).not.toHaveProperty("changePath");
   });
 
@@ -183,7 +188,7 @@ describe("signAccountTx", () => {
     const onDeviceSignatureGranted = jest.fn();
     const onDeviceStreaming = jest.fn();
 
-    await signAccountTx({
+    await signAccountTx(TEST_LOGGER, {
       btc: btc as unknown as BitcoinSigner,
       fromAccount: account,
       txInfo: makeTxInfo(),
@@ -205,7 +210,7 @@ describe("signAccountTx", () => {
   it("adds decred-specific output serialization when the additional is set", async () => {
     const account = makeAccount();
     const btc = makeSigner();
-    await signAccountTx({
+    await signAccountTx(TEST_LOGGER, {
       btc: btc as unknown as BitcoinSigner,
       fromAccount: account,
       txInfo: makeTxInfo(),

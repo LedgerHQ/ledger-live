@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Box, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import StyledStatusBar from "~/components/StyledStatusBar";
 

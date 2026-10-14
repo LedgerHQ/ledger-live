@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { LumenTextStyle, LumenViewStyle, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useDetailedAllocationViewModel } from "./hooks/useDetailedAllocationViewModel";
-import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";

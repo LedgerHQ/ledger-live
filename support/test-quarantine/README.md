@@ -41,8 +41,8 @@ reporters: [
 ],
 ```
 
-and add the dependency, which is required rather than optional — the repo sets
-`hoist=false`, so an undeclared import only resolves by accident:
+and add the dependency, which is required rather than optional — a workspace
+package does not resolve from the pnpm virtual store, so an undeclared import fails:
 
 ```json
 "devDependencies": { "@ledgerhq/test-quarantine": "workspace:*" }

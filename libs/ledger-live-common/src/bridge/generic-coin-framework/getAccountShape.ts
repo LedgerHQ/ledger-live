@@ -1,5 +1,10 @@
-import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
+import {
+  decodeAccountId,
+  encodeAccountId,
+  getSyncHash,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -21,6 +26,7 @@ import {
   cleanedOperation,
   extractBalance,
   optionalNumeric,
+  sumBalance,
 } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
@@ -29,8 +35,10 @@ import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/
 import type { OperationCommon } from "./types";
 import type {
   Account,
+  AccountIdParams,
   AccountReadiness,
   StakingDelegation,
+  StakingDelegationStatus,
   StakingPositionDetails,
   StakingResources,
   StakingUnbonding,
@@ -80,6 +88,15 @@ function hasDeactivatingStake(balance: Balance): balance is Balance & {
 
 function delegatedAmountForStakingResources(b: Balance): bigint {
   return b.stake?.amount ?? 0n;
+}
+
+function deriveDelegationStatus(
+  stakeState: Stake["state"],
+  detailStatus: unknown,
+): StakingDelegationStatus {
+  if (stakeState === "activating") return "activating";
+  if (detailStatus === "unbonding" || detailStatus === "unbonded") return detailStatus;
+  return "bonded";
 }
 
 function stakingPositionDetails(stake: Stake): StakingPositionDetails {
@@ -417,6 +434,28 @@ function logReadDecisionOnce(chain: string, decision: string, message: string): 
   logA4({ level: "info", message, decision, chain });
 }
 
+/**
+ * The `xpubOrAddress` (and any `customData`) of a family keyed on the public key
+ * (`BridgeApi.accountIdFromPublicKey`). The stored id wins over the live public key, so a sync never
+ * re-keys an account, including one a legacy bridge once keyed on its address. Only a scan, which
+ * has no stored id, uses the key.
+ */
+export function publicKeyAccountIdBasis(
+  initialAccount: Account | undefined,
+  publicKey: string | undefined,
+  address: string,
+): Pick<AccountIdParams, "xpubOrAddress" | "customData"> {
+  if (initialAccount) {
+    try {
+      const { xpubOrAddress, customData } = decodeAccountId(initialAccount.id);
+      return { xpubOrAddress, ...(customData && { customData }) };
+    } catch {
+      // A malformed stored id falls through to the scan rule.
+    }
+  }
+  return { xpubOrAddress: publicKey || address };
+}
+
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode, rest } = info;
@@ -449,8 +488,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       type: "js",
       version: "2",
       currencyId: currency.id,
-      xpubOrAddress: address,
       derivationMode,
+      ...(bridgeApi.accountIdFromPublicKey
+        ? publicKeyAccountIdBasis(initialAccount, rest?.publicKey, address)
+        : { xpubOrAddress: address }),
     });
 
     void registerWithA4(currency.id, address);
@@ -498,7 +539,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       chainSpecificShapePromise,
     ]);
 
-    const nativeAsset = extractBalance(balanceRes, "native");
+    const nativeAsset = bridgeApi.partitionsNativeBalance
+      ? sumBalance(balanceRes, "native")
+      : extractBalance(balanceRes, "native");
     const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
 
     // A token account fully swept to zero can disappear entirely from the balance response
@@ -553,9 +596,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const nativeBalance = nativeAsset?.value ?? 0n;
     const nativeLocked = nativeAsset?.locked ?? 0n;
-
-    // balance reflects only the native available balance.
-    // Staked/unbonding amounts are tracked separately (stakingResources or stakingPositions).
     const spendableBalance = nativeBalance - nativeLocked;
 
     let stakingResources: StakingResources | undefined;
@@ -591,12 +631,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const sharesRaw = b.stake.details?.shares;
+        const detailStatus = b.stake.details?.status;
         return {
           ...stakingPositionDetails(b.stake),
           validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           pendingRewards: new BigNumber(rewarded.toString()),
-          status: b.stake.state === "activating" ? "activating" : "bonded",
+          status: deriveDelegationStatus(b.stake.state, detailStatus),
           ...(typeof validatorId === "string" ? { validatorId } : {}),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
           ...(typeof sharesRaw === "bigint" ? { shares: new BigNumber(sharesRaw.toString()) } : {}),
@@ -615,8 +656,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
           // `inactive` also covers an idle stake, so trust `actions` rather than the state.
           status:
-            b.stake.state === "withdrawable" ||
-            b.stake.actions?.some(action => action === "withdraw")
+            b.stake.state === "withdrawable" || b.stake.actions?.includes("withdraw")
               ? "withdrawable"
               : "deactivating",
           ...(typeof validatorId === "string" ? { validatorId } : {}),
@@ -643,7 +683,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? op
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
-    const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const tokensSyncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const syncHash = bridgeApi.syncVersion
+      ? `${tokensSyncHash}-${bridgeApi.syncVersion}`
+      : tokensSyncHash;
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
     // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
     // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
@@ -709,6 +752,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         );
       }
       newOps = await delegateNewOps();
+    }
+
+    if (bridgeApi.adaptOperations) {
+      newOps = bridgeApi.adaptOperations(address, newOps) as OperationCommon[];
     }
 
     const newAssetOperations = newOps.filter(
@@ -785,6 +832,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingShape = { stakingResources: enrichedStakingResources };
     }
 
+    // A shared xpub makes `sameAccountIdentity` merge the accounts.
+    const isXpubShared =
+      bridgeApi.addressLookup !== undefined &&
+      !getDerivationScheme({ derivationMode, currency }).includes("<account>");
+
     const res: Partial<Account> & {
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
@@ -793,7 +845,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       id: accountId,
       // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
       // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.
-      xpub: rest?.publicKey || initialAccount?.xpub || address,
+      xpub: isXpubShared ? undefined : rest?.publicKey || initialAccount?.xpub || address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),

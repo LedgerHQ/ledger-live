@@ -106,6 +106,8 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
 
     const localConfig = {
       status: { type: "active" as const },
+      name: "XRP",
+      unit: { name: "XRP", code: "XRP", magnitude: 6 },
       node: XRP_LOCAL_RPC,
     };
     LiveConfig.setConfig({

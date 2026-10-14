@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { v4 as uuid } from "uuid";
@@ -21,7 +22,6 @@ import {
 } from "LLM/features/Send/hooks/useSendPrefillAddAddressFlow";
 import { useAddToExistingContactViewModel } from "LLM/features/Send/screens/AddToExistingContact/hooks/useAddToExistingContactViewModel";
 import { useSendFlowTrackingProperties } from "LLM/features/Send/hooks/useSendFlowTrackingProperties";
-import { screen, track } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useTranslation } from "~/context/Locale";
@@ -173,7 +173,7 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const callbacks = useMemo(
     () => ({
       onOpen: () => {
-        void screen("Add Contact", undefined, trackingProperties);
+        void trackPage({ category: "Add Contact", props: trackingProperties });
       },
       onConfirm: () => {
         track("button_clicked", {
@@ -211,7 +211,7 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
 
   const onOpen = useCallback(() => {
     setDrawerOrigin("chooser");
-    void screen("Modal send - add contact options", undefined, trackingProperties);
+    void trackPage({ category: "Modal send - add contact options", props: trackingProperties });
   }, [trackingProperties]);
 
   const onAddNewContact = useCallback(() => {
@@ -231,7 +231,7 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
       ...trackingProperties,
     });
     setDrawerOrigin("select");
-    void screen("Modal send - select existing contact", undefined, trackingProperties);
+    void trackPage({ category: "Modal send - select existing contact", props: trackingProperties });
   }, [trackingProperties]);
 
   const goBackToChooser = useCallback(() => {

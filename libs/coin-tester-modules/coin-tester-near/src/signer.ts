@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto";
-import { utils } from "near-api-js";
-import type { KeyPair } from "near-api-js/lib/utils/key_pair";
+import { KeyPair } from "near-api-js";
 import type { NearSigner } from "@ledgerhq/coin-near/signer";
 
 // Same Borsh-serialized transaction, different shape per caller: base64 in / hex out for the framework, raw bytes / Buffer for the account bridge.
@@ -45,5 +44,5 @@ export function buildSigners(accountId: string, keyPair: KeyPair): Signers {
 
 /** A fresh key per run; account ids stay fixed, so scenarios remain reproducible. */
 export function randomKeyPair(): KeyPair {
-  return utils.KeyPair.fromRandom("ed25519");
+  return KeyPair.fromRandom("ed25519");
 }

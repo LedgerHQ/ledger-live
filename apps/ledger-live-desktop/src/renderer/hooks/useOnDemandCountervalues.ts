@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import type { Currency } from "@domain/entity-currency";
-import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { type TrackingPair, pairId } from "@domain/entity-market-countervalues";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   addExtraTrackingPairs,

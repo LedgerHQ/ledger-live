@@ -15,6 +15,7 @@ import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
 import { Resolver } from "../../hw/getAddress/types";
+import { withGenericTransactionSupport } from "./legacyBridgeAdapter";
 
 const createSigner: CreateSigner<Hedera> = (transport: Transport) => {
   return new Hedera(transport);
@@ -25,10 +26,15 @@ const getCurrencyConfig = (currencyId?: string) => {
   return getCurrencyConfiguration<HederaCoinConfig>(currencyId);
 };
 
-const bridge: Bridge<Transaction, HederaAccount, TransactionStatus> = createBridges(
+const legacyBridge: Bridge<Transaction, HederaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
   getCurrencyConfig,
 );
+
+const bridge: Bridge<Transaction, HederaAccount, TransactionStatus> = {
+  ...legacyBridge,
+  accountBridge: withGenericTransactionSupport(legacyBridge.accountBridge),
+};
 
 const resolver: Resolver = createResolver(createSigner, hederaResolver);
 

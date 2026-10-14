@@ -164,6 +164,8 @@ describe("OnboardModal Integration", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Concordium",
+      unit: { name: "ccd", code: "CCD", magnitude: 6 },
       networkType: "mainnet",
       grpcUrl: "https://ccd-node-mainnet.coin.ledger.com",
       grpcPort: 443,

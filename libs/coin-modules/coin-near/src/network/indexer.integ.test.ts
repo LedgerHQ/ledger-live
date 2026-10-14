@@ -7,6 +7,8 @@ const DELEGATOR = "81afe80a9d91c82f66122c35ef400da709bde01eada5aae8d7a63bbf68f42
 
 const integConfig: NearConfig = {
   status: { type: "active" },
+  name: "NEAR",
+  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
   infra: {
     API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",
     API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",

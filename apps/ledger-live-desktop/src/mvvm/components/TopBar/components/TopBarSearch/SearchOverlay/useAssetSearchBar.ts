@@ -4,8 +4,7 @@ import { useStocksSectionViewModel } from "LLD/features/Stocks/hooks/useStocksSe
 import { useAssetSuggestionsViewModel } from "LLD/features/SearchAssets/hooks/useAssetSuggestionsViewModel";
 import { useAssetSearchResultsViewModel } from "LLD/features/SearchAssets/hooks/useAssetSearchResultsViewModel";
 import { SearchMode, SearchResults, SearchSuggestions } from "./types";
-import { track } from "~/renderer/analytics/segment";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 
 export const STOCKS_SUGGESTION_LIMIT = 20;
 export const CRYPTOS_SUGGESTION_LIMIT = 3;

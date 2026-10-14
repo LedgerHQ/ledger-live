@@ -12,8 +12,14 @@ import {
 import type { State } from "~/renderer/reducers";
 import { closeDialog, openDialog } from "~/renderer/reducers/dialogs";
 import { openURL } from "~/renderer/linking";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { LargeScreenUpsellModalMount } from "..";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 /** Mimics Portfolio scoping: Mount unmounts when leaving portfolio. */
 function LargeScreenUpsellModalMountOnPortfolio() {
@@ -159,7 +165,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await expectModalNotOpen();
 
     expect(
-      jest.mocked(trackPage).mock.calls.filter(([page]) => page === "Modal - Upgrade"),
+      jest.mocked(trackPage).mock.calls.filter(([page]) => page.category === "Modal - Upgrade"),
     ).toHaveLength(1);
   });
 
@@ -178,16 +184,16 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
     expect(trackPage).toHaveBeenCalledWith(
-      "Modal - Upgrade",
-      undefined,
       {
-        name: "Modal - Upgrade",
-        sourceFlow: "app start",
-        modalFrequencyState: "every start",
-        ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+        category: "Modal - Upgrade",
+        props: {
+          name: "Modal - Upgrade",
+          sourceFlow: "app start",
+          modalFrequencyState: "every start",
+          ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+        },
       },
-      true,
-      false,
+      { updateRoutes: true },
     );
   });
 
@@ -209,16 +215,16 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       ),
     ).toBeVisible();
     expect(trackPage).toHaveBeenCalledWith(
-      "Modal - Upgrade",
-      undefined,
       {
-        name: "Modal - Upgrade",
-        sourceFlow: "app start",
-        modalFrequencyState: "every start",
-        ...NANO_S_OPTED_IN_ANALYTICS_PROPS,
+        category: "Modal - Upgrade",
+        props: {
+          name: "Modal - Upgrade",
+          sourceFlow: "app start",
+          modalFrequencyState: "every start",
+          ...NANO_S_OPTED_IN_ANALYTICS_PROPS,
+        },
       },
-      true,
-      false,
+      { updateRoutes: true },
     );
   });
 
@@ -438,14 +444,14 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     expect(trackPage).toHaveBeenCalledWith(
-      "Modal - Upgrade",
-      undefined,
-      expect.objectContaining({
-        retriesUpsellModal: 2,
-        throttled: false,
-      }),
-      true,
-      false,
+      {
+        category: "Modal - Upgrade",
+        props: expect.objectContaining({
+          retriesUpsellModal: 2,
+          throttled: false,
+        }),
+      },
+      { updateRoutes: true },
     );
   });
 
@@ -666,14 +672,14 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     expect(trackPage).toHaveBeenCalledWith(
-      "Modal - Upgrade",
-      undefined,
-      expect.objectContaining({
-        retriesUpsellModal: 3,
-        throttled: true,
-      }),
-      true,
-      false,
+      {
+        category: "Modal - Upgrade",
+        props: expect.objectContaining({
+          retriesUpsellModal: 3,
+          throttled: true,
+        }),
+      },
+      { updateRoutes: true },
     );
   });
 

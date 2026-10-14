@@ -4,6 +4,7 @@ import {
   type PerpsDepositDeviceStep,
 } from "LLD/features/Perps/hooks/usePerpsDepositExecution";
 import { isUserRefusal } from "LLD/features/Perps/utils/isUserRefusal";
+import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import { openPerpsReview } from "../PerpsReview/PerpsReviewDialog";
 import type { PerpsReviewData } from "../PerpsReview/usePerpsReviewViewModel";
 
@@ -26,9 +27,15 @@ export function usePerpsDepositSignViewModel(
     onClose();
   }, [data, onClose]);
 
+  const returnToDeposit = useCallback(() => {
+    openPerpsDeposit({ receiverAccount: data.receiverAccount, draft: data.draft });
+    onClose();
+  }, [data.draft, data.receiverAccount, onClose]);
+
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(data, {
     onDone: onClose,
     onRefused: handleRefused,
+    onNotEnoughBalance: returnToDeposit,
   });
 
   const onDeviceError = useCallback(

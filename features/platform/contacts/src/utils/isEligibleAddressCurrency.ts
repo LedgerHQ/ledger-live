@@ -1,5 +1,6 @@
 import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { isContactDeviceCurrencySupported } from "../device/resolveContactDeviceContext";
 
 /** Mirrors `resolveEligibleAddressCurrencyIds` for a single currency, so the send flow only
@@ -8,6 +9,7 @@ export function isEligibleAddressCurrency(
   eligibleFamilies: readonly string[],
   currency: CryptoCurrency | TokenCurrency | null | undefined,
   excludedCurrencyIds: readonly string[] = [],
+  config?: CurrencyConfig,
 ): boolean {
   if (!currency) {
     return false;
@@ -21,7 +23,7 @@ export function isEligibleAddressCurrency(
   return (
     network !== undefined &&
     eligibleFamilies.includes(network.family) &&
-    isContactDeviceCurrencySupported(network.id) &&
+    isContactDeviceCurrencySupported(network.id, config) &&
     !excludedCurrencyIds.includes(network.id)
   );
 }

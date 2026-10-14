@@ -64,7 +64,7 @@ test.describe("Swap - amount formatting by language", () => {
         }
 
         const swap = new Swap(fromAccount, toAccount, TEST_AMOUNT);
-        await performSwapUntilQuoteSelectionStep(app, swap, TEST_AMOUNT);
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: TEST_AMOUNT });
 
         const separators = getExpectedSeparators(languageId);
 

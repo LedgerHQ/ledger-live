@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
@@ -41,7 +42,6 @@ import useCenteredImage, {
   CenteredResult,
 } from "~/components/CustomImage/useCenteredImage";
 import Button from "~/components/wrappedUi/Button";
-import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 import {
   getAvailableDitheringConfigKeys,

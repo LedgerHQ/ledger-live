@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "styled-components/native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { RestoreWithProtect, PinCodeInstructions } from "./setupDevice/scenes";
-import { TrackScreen } from "~/analytics";
 
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import { completeOnboarding } from "~/actions/settings";

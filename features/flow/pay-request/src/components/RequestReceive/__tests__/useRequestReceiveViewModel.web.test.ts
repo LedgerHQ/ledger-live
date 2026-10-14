@@ -17,7 +17,7 @@ function setup(overrides: Partial<RequestReceiveViewModelParams> = {}) {
     network: "Ethereum",
     page: "Pay",
     onShare: jest.fn(),
-    onCopy: jest.fn(),
+    onCopy: jest.fn().mockResolvedValue(true),
     onSave: jest.fn(),
     onVerify: jest.fn(),
     ...overrides,

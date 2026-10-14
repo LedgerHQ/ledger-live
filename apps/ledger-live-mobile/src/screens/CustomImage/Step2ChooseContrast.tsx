@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import styled from "styled-components/native";
@@ -32,7 +33,6 @@ import ContrastChoice from "~/components/CustomImage/ContrastChoice";
 import { ScreenName } from "~/const";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { TrackScreen } from "~/analytics";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",

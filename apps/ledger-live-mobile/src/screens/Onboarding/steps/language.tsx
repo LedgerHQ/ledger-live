@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useState } from "react";
 import { I18nManager, ScrollView } from "react-native";
 import { Trans, useLocale } from "~/context/Locale";
@@ -19,7 +20,7 @@ import { setLanguage, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
-import { track, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";

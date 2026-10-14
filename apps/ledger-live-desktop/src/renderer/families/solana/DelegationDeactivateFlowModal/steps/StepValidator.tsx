@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -20,7 +20,7 @@ export default function StepValidator({
   t: _t,
   onClose,
 }: StepProps) {
-  const { unit, validator } = useStakeValidatorStep(account, transaction, "stake.undelegate");
+  const { unit, validator } = useStakeValidatorStep(account, transaction, "undelegate");
   if (validator === undefined) {
     return null;
   }

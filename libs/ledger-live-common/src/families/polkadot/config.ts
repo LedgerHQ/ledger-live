@@ -9,21 +9,20 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [
           { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
+          { id: "staking_txs", status: "inactive" },
         ],
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: {
-        url: getEnv("API_POLKADOT_SIDECAR"),
+        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc",
         credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
       },
       indexer: {
-        url: getEnv("API_POLKADOT_INDEXER"),
+        url: "https://polkadot.coin.ledger.com",
       },
       node: {
-        url: getEnv("API_POLKADOT_NODE"),
-      },
-      staking: {
-        electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
+        url: "https://polkadot-fullnodes.api.live.ledger.com",
       },
     },
   },
@@ -37,14 +36,13 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: {
         url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
       },
       node: {
         url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
-      },
-      staking: {
-        electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       },
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
@@ -59,9 +57,11 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [
           { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
+          { id: "staking_txs", status: "inactive" },
         ],
       },
+      name: "Westend",
+      unit: { name: "WND", code: "WND", magnitude: 12 },
       sidecar: {
         url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc",
       },
@@ -83,6 +83,8 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Assethub Westend",
+      unit: { name: "WND", code: "WND", magnitude: 12 },
       sidecar: {
         url: "https://polkadot-westend-rest-api.coin.ledger.com/v1",
       },

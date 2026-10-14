@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import * as bech32 from "bech32";
+import bs58check from "bs58check";
 import { bech32m } from "../crypto/bech32m";
 
 import * as utils from "../utils";
@@ -347,5 +348,64 @@ describe("scriptToAddress", () => {
     const script = Buffer.concat([Buffer.from([0x00, 0x14]), Buffer.alloc(20, 1)]);
     const address = utils.scriptToAddress(script, bitcoinTestnet as any);
     expect(address).toMatch(/^tb1q/);
+  });
+});
+
+describe("zcash_testnet addresses", () => {
+  const hash = Buffer.alloc(20, 0x2a);
+  const p2pkh = bs58check.encode(Buffer.concat([Buffer.from([0x1d, 0x25]), hash]));
+  const p2sh = bs58check.encode(Buffer.concat([Buffer.from([0x1c, 0xba]), hash]));
+  const mainnetP2pkh = bs58check.encode(Buffer.concat([Buffer.from([0x1c, 0xb8]), hash]));
+  const mainnetP2sh = bs58check.encode(Buffer.concat([Buffer.from([0x1c, 0xbd]), hash]));
+  const flipLast = (address: string) => address.slice(0, -1) + (address.endsWith("a") ? "b" : "a");
+
+  it("encodes the testnet version bytes as tm and t2", () => {
+    expect(p2pkh.startsWith("tm")).toBe(true);
+    expect(p2sh.startsWith("t2")).toBe(true);
+  });
+
+  it("validates tm and t2 addresses for zcash_testnet", () => {
+    validateAddrs([p2pkh, p2sh], "zcash_testnet", true);
+  });
+
+  it("rejects a tm or t2 address with a bad checksum", () => {
+    validateAddrs([flipLast(p2pkh), flipLast(p2sh)], "zcash_testnet", false);
+  });
+
+  it("rejects mainnet addresses for zcash_testnet and testnet addresses for zcash", () => {
+    validateAddrs([mainnetP2pkh, mainnetP2sh], "zcash_testnet", false);
+    validateAddrs([p2pkh, p2sh], "zcash", false);
+    validateAddrs([p2pkh, p2sh], "zcash_regtest", false);
+  });
+
+  it("turns a tm and a t2 address into p2pkh and p2sh scripts carrying the same hash", () => {
+    const crypto = cryptoFactory("zcash_testnet");
+    const p2pkhScript = crypto.toOutputScript(p2pkh);
+    const p2shScript = crypto.toOutputScript(p2sh);
+
+    // OP_DUP OP_HASH160 <20> hash OP_EQUALVERIFY OP_CHECKSIG
+    expect(p2pkhScript.toString("hex")).toBe(`76a914${hash.toString("hex")}88ac`);
+    // OP_HASH160 <20> hash OP_EQUAL
+    expect(p2shScript.toString("hex")).toBe(`a914${hash.toString("hex")}87`);
+  });
+
+  it("derives a tm address from a testnet xpub", async () => {
+    const payload = Buffer.concat([
+      Buffer.from([0x04, 0x35, 0x87, 0xcf]), // testnet xpub version
+      Buffer.alloc(9), // depth, parent fingerprint, child index
+      Buffer.alloc(32, 0x11), // chain code
+      Buffer.from("0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "hex"),
+    ]);
+    const xpub = bs58check.encode(payload);
+
+    const address = await cryptoFactory("zcash_testnet").getAddress(
+      DerivationModes.LEGACY,
+      xpub,
+      0,
+      0,
+    );
+
+    expect(address.startsWith("tm")).toBe(true);
+    expect(utils.isValidAddress(address, "zcash_testnet")).toBe(true);
   });
 });

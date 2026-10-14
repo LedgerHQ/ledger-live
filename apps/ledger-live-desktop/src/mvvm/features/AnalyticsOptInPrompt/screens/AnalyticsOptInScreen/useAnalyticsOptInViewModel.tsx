@@ -8,7 +8,7 @@ import {
   EntryPoint,
   FieldKeySwitch,
 } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAnalyticsOptInPrompt } from "../../hooks/useCommonLogic";
 import { steps } from "../../const/steps";
 
@@ -74,7 +74,7 @@ const useAnalyticsOptInViewModel = ({
         flow,
         page,
       },
-      shouldWeTrack,
+      { mandatory: shouldWeTrack },
     );
   };
 
@@ -88,7 +88,7 @@ const useAnalyticsOptInViewModel = ({
         flow,
         page: steps.preferences,
       },
-      shouldWeTrack,
+      { mandatory: shouldWeTrack },
     );
   };
 

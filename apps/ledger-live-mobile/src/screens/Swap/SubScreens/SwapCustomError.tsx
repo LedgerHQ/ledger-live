@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
@@ -12,7 +13,6 @@ import times from "lodash/times";
 import Button from "~/components/Button";
 import useExportLogs from "~/components/useExportLogs";
 import { sharedSwapTracking } from "../utils";
-import { TrackScreen } from "~/analytics";
 import { SwapCustomErrorProps } from "../types";
 
 const generateRandomString = (numberOfChars: number = 4): string => {

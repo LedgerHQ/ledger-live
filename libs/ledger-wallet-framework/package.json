@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -115,14 +115,13 @@
     "lodash": "catalog:",
     "prando": "^6.0.1",
     "rxjs": "catalog:",
-    "uuid": "11.1.0",
+    "uuid": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/imurmurhash": "^0.1.4",
@@ -151,7 +150,6 @@
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "cross-env TZ=America/Paris jest",
     "test-integ": "jest --config=jest.integ.config.js",
-    "test:debug": "cross-env TZ=America/Paris node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "unimported": "unimported"
+    "test:debug": "cross-env TZ=America/Paris node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   }
 }

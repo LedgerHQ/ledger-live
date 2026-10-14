@@ -2,7 +2,7 @@ import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/co
 
 /** Settings for the Tronify energy-rent provider. */
 export type TronifyProviderConfig = {
-  /** Base URL of the Tronify REST API (e.g. https://open.tronify.io). */
+  /** Base URL of the Tronify REST API; defaults to the Ledger proxy (https://tronify.api.live.ledger.com). */
   url: string;
   /**
    * Channel name agreed with Tronify, sent as `sourceFlag` on every request that takes it
@@ -16,9 +16,19 @@ export type TronifyProviderConfig = {
   rentalDurationSeconds?: number;
   /**
    * Bandwidth top-up in TRX bundled with each rental to cover the transaction's bandwidth cost.
-   * Optional — falls back to 0.8 when the remote coin-config omits it.
+   * Optional — falls back to 0.8 when the remote coin-config omits it or sets it outside
+   * [0.8, 500]; 0 is rejected because a rental without a top-up is priced in TRX, not USDT.
    */
   rentalExtraTrx?: number;
+  /**
+   * Base58 addresses the rent payment may go to; Tronify rotates through the list in its API docs.
+   * Remote coin-config only: missing, empty or any invalid entry disables the option.
+   */
+  paymentAddresses?: string[];
+  /** Most one rental may cost, in USDT, whatever Tronify quotes. Optional — defaults to 10. */
+  maxRentAmount?: number;
+  /** How far the order may exceed the fee approved on Review, as a fraction. Optional — defaults to 0.05. */
+  rentPriceMargin?: number;
 };
 
 /**

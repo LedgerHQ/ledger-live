@@ -20,7 +20,7 @@
   "dependencies": {
     "@domain/entity-account": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
-    "uuid": "^9.0.0",
+    "uuid": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -28,7 +28,6 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "typescript": "catalog:"
   }

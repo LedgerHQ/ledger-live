@@ -1,3 +1,4 @@
+import { TransferOfferExpiredError } from "@ledgerhq/coin-canton";
 import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { View } from "../DeviceAppModal";
@@ -74,6 +75,14 @@ describe("DeviceAppModal View", () => {
 
       expect(screen.getByText(/test failure/i)).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /retry/i })).toBeInTheDocument();
+    });
+
+    it("should render the expired message without a retry option when the offer has expired", () => {
+      const error = new TransferOfferExpiredError();
+      render(<View {...buildViewModel({ confirmationState: "error", error })} />);
+
+      expect(screen.getByText("This offer has expired")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /retry/i })).not.toBeInTheDocument();
     });
 
     it("should render processing text when confirming", () => {

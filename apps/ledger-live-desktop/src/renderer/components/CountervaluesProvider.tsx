@@ -1,19 +1,33 @@
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { getEnv } from "@shared/env";
+import { subscribeToNetworkState, type NetworkState } from "@shared/network-status";
+import {
+  createRateSource,
+  marketCountervaluesApi,
+  type RateSource,
+} from "@domain/api-market-countervalues";
+import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import {
   exportCountervalues,
   hasNewCountervaluesToExport,
-} from "@ledgerhq/live-countervalues/logic";
+  type CounterValuesStateRaw,
+} from "@domain/entity-market-countervalues";
 import {
   CountervaluesBridge,
   CountervaluesProvider,
+  setCountervaluesPollingIsPolling,
+  setCountervaluesPollingTriggerLoad,
+  setCountervaluesState,
+  setCountervaluesStateError,
+  setCountervaluesStatePending,
   useCountervaluesPolling,
-} from "@ledgerhq/live-countervalues-react";
-import type { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import { useGetCounterValueIdsPolling } from "@ledgerhq/live-common/counterValues/state-manager/useGetCounterValueIdsPolling";
+  useGetCounterValueIdsPolling,
+  wipeCountervalues,
+} from "@features/platform-market-countervalues";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
 import { setKey } from "~/renderer/storage";
-import { countervaluesActions } from "../actions/countervalues";
 import { useCalculateCountervaluesUserSettings } from "../actions/general";
 import {
   useCountervaluesPollingIsPolling,
@@ -21,22 +35,50 @@ import {
   useCountervaluesState,
   useCountervaluesStateError,
   useCountervaluesStatePending,
-  useCountervaluesUserSettings,
 } from "../reducers/countervalues";
+
+/**
+ * Builds the rate source the countervalues provider fetches through.
+ *
+ * The choice between real and mocked rates is made here, at composition time, rather than inside
+ * the fetch path: `@domain/api-market-countervalues` reads no environment, so what used to be a
+ * hidden `MOCK_COUNTERVALUES` dispatcher two layers down is now one visible branch.
+ */
+function useRateSource(dispatch: ThunkDispatch<unknown, unknown, UnknownAction>): RateSource {
+  return useMemo(() => {
+    if (getEnv("MOCK_COUNTERVALUES")) return createMockRateSource(getEnv("MOCK"));
+
+    return createRateSource({
+      // Dispatch with `forceRefetch` and without `subscribe: false`; see the RateFetchers docs.
+      fetchHistoricalWindow: args =>
+        dispatch(
+          marketCountervaluesApi.endpoints.getHistoricalRates.initiate(args, {
+            forceRefetch: true,
+          }),
+        ),
+      fetchSpotBatch: args =>
+        dispatch(
+          marketCountervaluesApi.endpoints.getSpotRates.initiate(args, { forceRefetch: true }),
+        ),
+    });
+  }, [dispatch]);
+}
 
 export function useCountervaluesBridge() {
   const dispatch = useDispatch();
+  const rates = useRateSource(dispatch);
 
   return useMemo(
     (): CountervaluesBridge => ({
+      rates,
       ...bindActionCreators(
         {
-          setPollingIsPolling: countervaluesActions.COUNTERVALUES_POLLING_SET_IS_POLLING,
-          setPollingTriggerLoad: countervaluesActions.COUNTERVALUES_POLLING_SET_TRIGGER_LOAD,
-          setState: countervaluesActions.COUNTERVALUES_STATE_SET,
-          setStateError: countervaluesActions.COUNTERVALUES_STATE_SET_ERROR,
-          setStatePending: countervaluesActions.COUNTERVALUES_STATE_SET_PENDING,
-          wipe: countervaluesActions.COUNTERVALUES_WIPE,
+          setPollingIsPolling: setCountervaluesPollingIsPolling,
+          setPollingTriggerLoad: setCountervaluesPollingTriggerLoad,
+          setState: setCountervaluesState,
+          setStateError: setCountervaluesStateError,
+          setStatePending: setCountervaluesStatePending,
+          wipe: wipeCountervalues,
         },
         dispatch,
       ),
@@ -46,9 +88,11 @@ export function useCountervaluesBridge() {
       useState: useCountervaluesState,
       useStateError: useCountervaluesStateError,
       useStatePending: useCountervaluesStatePending,
-      useUserSettings: useCountervaluesUserSettings,
+      // The hook itself, not a value: settings changes then leave the bridge, and so the context,
+      // untouched.
+      useUserSettings: useCalculateCountervaluesUserSettings,
     }),
-    [dispatch],
+    [dispatch, rates],
   );
 }
 
@@ -56,7 +100,6 @@ export function useCountervaluesBridge() {
  * Call side effects outside of the primary render tree, avoiding costly child re-renders
  */
 function Effect() {
-  useCalculateCountervaluesUserSettings();
   useCacheManager();
   usePollingManager();
 
@@ -81,7 +124,7 @@ export function CountervaluesBridgedProvider({
 }
 
 function useCacheManager() {
-  const userSettings = useCountervaluesUserSettings();
+  const userSettings = useCalculateCountervaluesUserSettings();
   const state = useCountervaluesState();
   const lastStateRef = useRef(state);
 
@@ -100,19 +143,24 @@ function usePollingManager() {
       start();
       poll();
     };
-    const handleOnline = () => {
-      if (document.hasFocus()) {
+    let isInitialNetworkState = true;
+    const handleNetworkChange = ({ isConnected }: NetworkState) => {
+      if (isInitialNetworkState) {
+        isInitialNetworkState = false;
+        return;
+      }
+      if (isConnected && document.hasFocus()) {
         poll();
       }
     };
 
     window.addEventListener("blur", stop);
     window.addEventListener("focus", handleFocus);
-    window.addEventListener("online", handleOnline);
+    const unsubscribeNetwork = subscribeToNetworkState(handleNetworkChange);
     return () => {
       window.removeEventListener("blur", stop);
       window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("online", handleOnline);
+      unsubscribeNetwork();
     };
   }, [poll, start, stop]);
 }

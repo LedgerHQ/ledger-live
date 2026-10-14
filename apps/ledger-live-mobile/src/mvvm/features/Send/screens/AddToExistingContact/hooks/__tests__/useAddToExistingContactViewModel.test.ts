@@ -18,10 +18,6 @@ jest.mock("LLM/features/Send/context/SendFlowContext", () => ({
   }),
 }));
 
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-}));
-
 describe("useAddToExistingContactViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();

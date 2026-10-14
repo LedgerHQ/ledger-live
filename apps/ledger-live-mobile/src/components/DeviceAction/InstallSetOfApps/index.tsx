@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
@@ -9,7 +11,6 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo, SeedOriginType } from "@ledgerhq/types-live";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { TrackScreen, track } from "~/analytics";
 import { DeviceActionDefaultRendering } from "..";
 import QueuedDrawer from "../../QueuedDrawer";
 

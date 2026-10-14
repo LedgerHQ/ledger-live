@@ -2,7 +2,7 @@ import React from "react";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import type { Row, Table } from "@tanstack/react-table";
 import PageHeader from "LLD/components/PageHeader";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import type { AssetTableItem } from "LLD/features/Assets/types";
 import { PlainCryptoTable } from "./components/PlainCryptoTable";
 import { ASSETS_TRACKING_PAGE_NAME } from "./constants";

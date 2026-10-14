@@ -30,8 +30,8 @@ jest.mock("~/context/Locale", () => ({
   }),
   useLocale: () => ({ locale: "en" }),
 }));
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => () => new BigNumber(100),
 }));
 
@@ -92,6 +92,7 @@ function createTransactionActions(): SendFlowTransactionActions {
     setTransaction: jest.fn(),
     setRecipient: jest.fn(),
     setAccount: jest.fn(),
+    updateAccount: jest.fn(),
   };
 }
 

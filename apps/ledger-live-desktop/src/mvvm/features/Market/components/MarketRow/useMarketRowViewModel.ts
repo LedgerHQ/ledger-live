@@ -3,23 +3,22 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { getCurrentTrackingPage, setTrackingSource, track } from "@shared/analytics";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { getMarketPageCategoryAnalytics } from "LLD/features/Market/utils/marketPageAnalytics";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { track } from "~/renderer/analytics/segment";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 import { useSelector } from "LLD/hooks/redux";
 import { marketCategorySelector } from "~/renderer/reducers/market";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import { useMarketCounterValueUnit } from "LLD/features/Market/hooks/useMarketCounterValueUnit";
 
 type UseMarketRowViewModelProps = {
   size: number;
   start: number;
   currency: MarketCurrencyData;
+  counterCurrency?: string;
   locale: string;
   range?: string;
   isStarred: boolean;
@@ -30,6 +29,7 @@ export function useMarketRowViewModel({
   size,
   start,
   currency,
+  counterCurrency,
   locale,
   range,
   isStarred,
@@ -41,7 +41,7 @@ export function useMarketRowViewModel({
 
   const selectedCategory = useSelector(marketCategorySelector);
   const category = getMarketPageCategoryAnalytics(selectedCategory);
-  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
+  const counterValueUnit = useMarketCounterValueUnit(counterCurrency);
   const {
     onBuy,
     onSell,

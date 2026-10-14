@@ -14,6 +14,7 @@ import {
   mergeExtra,
   nextSequenceWithPending,
   optionalNumeric,
+  sumBalance,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
@@ -265,6 +266,17 @@ describe("coin-framework utils", () => {
         {},
         {
           parentType: "OPT_IN",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
+        "tokenAssociate",
+        {},
+        {
+          parentType: "ASSOCIATE_TOKEN",
           subType: undefined,
           parentValue: new BigNumber(50),
           parentRecipient: "recipient-address",
@@ -1519,6 +1531,30 @@ describe("coin-framework utils", () => {
     });
   });
 
+  describe("sumBalance", () => {
+    it("sums value and locked over every entry of the type", () => {
+      expect(
+        sumBalance(
+          [
+            { value: 60n, asset: { type: "native" } },
+            { value: 30n, locked: 30n, asset: { type: "native" } },
+            { value: 10n, locked: 10n, asset: { type: "native" } },
+            { value: 500n, asset: { type: "fa2", assetReference: "KT1:0" } },
+          ],
+          "native",
+        ),
+      ).toEqual({ value: 100n, locked: 40n, asset: { type: "native" } });
+    });
+
+    it("generates an empty balance for a missing type", () => {
+      expect(sumBalance([{ value: 4n, asset: { type: "type1" } }], "type2")).toEqual({
+        value: 0n,
+        locked: 0n,
+        asset: { type: "type2" },
+      });
+    });
+  });
+
   // No module mock needed: encodeOperationId is deterministic in @ledgerhq/ledger-wallet-framework/operation.
 
   describe("adaptCoreOperationToLiveOperation", () => {
@@ -1583,6 +1619,12 @@ describe("coin-framework utils", () => {
         transactionSequenceNumber: undefined,
         hasFailed: false,
       });
+    });
+
+    it.each(["CONTRACT_CALL", "UPDATE_ACCOUNT"])("includes fees in native %s value", type => {
+      const result = adaptCoreOperationToLiveOperation(accountId, { ...baseOp, type });
+
+      expect(result.value).toEqual(new BigNumber(110));
     });
 
     it("adapts a basic OUT operation", () => {

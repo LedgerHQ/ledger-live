@@ -5,6 +5,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { serializeAccount } from "@ledgerhq/wallet-api-core";
 import aleoExtensions from "../families/aleo/bridgeExtensions";
+import zcashExtensions from "../families/zcash/bridgeExtensions";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
@@ -15,6 +16,7 @@ import {
   accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,
   resolveWalletApiSpendableBalance,
+  resolveWalletApiMaxSpendable,
 } from "./converters";
 import type { WalletAPITransaction } from "./types";
 
@@ -181,6 +183,139 @@ describe("resolveWalletApiSpendableBalance", () => {
       expect.stringContaining("falling back to account.spendableBalance"),
       { error: "unsupported family" },
     );
+  });
+});
+
+// `spendableBalance` is the transparent + private total the coin module writes, so a
+// shielded-only account (no UTXOs) still has a positive one.
+const makeZcashAccount = (utxoValues: number[]): AccountLike =>
+  ({
+    type: "Account",
+    currency: { id: "zcash" },
+    spendableBalance: new BigNumber(5_000_000),
+    bitcoinResources: { utxos: utxoValues.map(value => ({ value: new BigNumber(value) })) },
+  }) as unknown as AccountLike;
+
+describe("resolveWalletApiMaxSpendable", () => {
+  const account = { spendableBalance: new BigNumber(100) } as AccountLike;
+
+  const mockEstimateBridge = (
+    maxSpendable: BigNumber,
+    getWalletApiSpendableBalance: (account: AccountLike) => BigNumber | undefined = ({
+      spendableBalance,
+    }) => spendableBalance,
+  ) => {
+    mockGetAccountBridge.mockResolvedValue({
+      estimateMaxSpendable: jest.fn().mockResolvedValue(maxSpendable),
+      getWalletApiSpendableBalance,
+    } as never);
+  };
+
+  beforeEach(() => {
+    mockGetAccountBridge.mockReset();
+    mockLog.mockClear();
+  });
+
+  it("returns the bridge's estimateMaxSpendable result", async () => {
+    const maxSpendable = new BigNumber(42);
+
+    mockEstimateBridge(maxSpendable);
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toEqual(maxSpendable);
+  });
+
+  it("returns undefined and logs when the bridge lookup fails", async () => {
+    mockGetAccountBridge.mockRejectedValue(new Error("unsupported family"));
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toBeUndefined();
+    expect(mockLog).toHaveBeenCalledTimes(1);
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("omitting maxSpendable"),
+      { error: "unsupported family" },
+    );
+  });
+
+  it("returns undefined and logs when estimateMaxSpendable rejects", async () => {
+    mockGetAccountBridge.mockResolvedValue({
+      estimateMaxSpendable: jest.fn().mockRejectedValue(new Error("estimation failed")),
+    } as never);
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toBeUndefined();
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("omitting maxSpendable"),
+      { error: "estimation failed" },
+    );
+  });
+
+  it("keeps a zero estimate when the account spendable balance is already zero", async () => {
+    const emptyAccount = { spendableBalance: new BigNumber(0) } as AccountLike;
+
+    mockEstimateBridge(new BigNumber(0));
+
+    const result = await resolveWalletApiMaxSpendable(emptyAccount);
+
+    expect(result).toEqual(new BigNumber(0));
+    expect(mockLog).not.toHaveBeenCalled();
+  });
+
+  it("omits a zero estimate when the account still has a spendable balance", async () => {
+    mockEstimateBridge(new BigNumber(0));
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toBeUndefined();
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("omitting ambiguous zero maxSpendable"),
+      { walletApiSpendableBalance: "100" },
+    );
+  });
+
+  it("falls back to the account spendable balance when the bridge reports none", async () => {
+    mockEstimateBridge(new BigNumber(0), () => undefined);
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toBeUndefined();
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("omitting ambiguous zero maxSpendable"),
+      { walletApiSpendableBalance: "100" },
+    );
+  });
+
+  describe("zcash", () => {
+    beforeEach(() => {
+      mockEstimateBridge(new BigNumber(0), account =>
+        zcashExtensions.getWalletApiSpendableBalance?.(account),
+      );
+    });
+
+    it("keeps a zero estimate when every fund is shielded", async () => {
+      const result = await resolveWalletApiMaxSpendable(makeZcashAccount([]));
+
+      expect(result).toEqual(new BigNumber(0));
+      expect(mockLog).not.toHaveBeenCalled();
+    });
+
+    it("omits a zero estimate when transparent funds remain", async () => {
+      const result = await resolveWalletApiMaxSpendable(makeZcashAccount([500]));
+
+      expect(result).toBeUndefined();
+      expect(mockLog).toHaveBeenCalledWith(
+        "wallet-api/converters",
+        expect.stringContaining("omitting ambiguous zero maxSpendable"),
+        { walletApiSpendableBalance: "500" },
+      );
+    });
   });
 });
 

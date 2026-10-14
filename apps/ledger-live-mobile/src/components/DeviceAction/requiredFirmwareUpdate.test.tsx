@@ -5,11 +5,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { State } from "~/reducers/types";
 
-jest.mock("~/analytics", () => ({
-  TrackScreen: () => null,
-  track: jest.fn(),
-}));
-
 const nanoX = {
   modelId: DeviceModelId.nanoX,
   deviceId: "nanoX",

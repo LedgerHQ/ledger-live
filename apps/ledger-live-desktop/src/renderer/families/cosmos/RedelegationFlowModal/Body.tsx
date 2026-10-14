@@ -8,7 +8,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepId, StepProps, St } from "./types";
@@ -25,10 +25,11 @@ import StepDestinationValidators from "./steps/StepDestinationValidators";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import {
+import type {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
+
 export type Data = {
   account: CosmosAccount;
   validatorAddress: string | undefined | null;
@@ -107,20 +108,16 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
-    invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
-    const source = account.cosmosResources?.delegations.find(
+    invariant(account, "cosmos: account required");
+    const source = account.stakingResources.delegations.find(
       d => d.validatorAddress === validatorAddress,
     );
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "redelegate",
-      validators: [
-        {
-          address: validatorDstAddress ?? "",
-          amount: source?.amount ?? BigNumber(0),
-        },
-      ],
-      sourceValidator: validatorAddress,
+      valAddress: validatorAddress ?? "",
+      dstValAddress: validatorDstAddress ?? "",
+      amount: source?.amount ?? BigNumber(0),
     });
     return {
       account,

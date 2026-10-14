@@ -1,6 +1,6 @@
 import type {
   HederaEnrichedDelegation,
-  Transaction,
+  HederaGenericTransaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/hedera/types";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";
@@ -25,7 +25,7 @@ export type HederaClaimRewardsFlowParamList = {
     device?: Device;
     accountId: string;
     parentId?: string;
-    transaction: Transaction;
+    transaction: HederaGenericTransaction;
     status: TransactionStatus;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
@@ -33,7 +33,7 @@ export type HederaClaimRewardsFlowParamList = {
     device: Device;
     accountId: string;
     parentId?: string;
-    transaction?: Transaction;
+    transaction?: HederaGenericTransaction;
     status?: TransactionStatus;
     appName?: string;
     selectDeviceLink?: boolean;
@@ -46,7 +46,7 @@ export type HederaClaimRewardsFlowParamList = {
     accountId: string;
     parentId?: string;
     deviceId: string;
-    transaction: Transaction;
+    transaction: HederaGenericTransaction;
     error: Error;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
@@ -54,7 +54,7 @@ export type HederaClaimRewardsFlowParamList = {
     accountId: string;
     parentId?: string;
     deviceId: string;
-    transaction: Transaction;
+    transaction: HederaGenericTransaction;
     result: Operation;
     source?: RouteProp<ParamListBase, ScreenName>;
   };

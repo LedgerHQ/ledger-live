@@ -9,7 +9,7 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import {
   HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE,
   HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,

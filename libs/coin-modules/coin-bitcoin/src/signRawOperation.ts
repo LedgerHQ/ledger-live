@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { getAddressFormatDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -11,6 +10,7 @@ import { getWalletAccount } from "./getWalletAccount";
 import { AddressFormat, SignerContext } from "./signer";
 import { feeFromPsbt } from "./psbtFees";
 import { fromAsyncOperation } from "./observable";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import {
   buildKnownAddressDerivationsMap,
   type KnownAddressDerivationsMap,
@@ -51,13 +51,13 @@ const signPsbtWithDevice = async (
   });
 
 export const buildSignRawOperation =
-  (signerContext: SignerContext): AccountBridge<Transaction>["signRawOperation"] =>
+  (signerContext: SignerContext, logger: Logger): AccountBridge<Transaction>["signRawOperation"] =>
   ({ account, deviceId, transaction: psbt, broadcast }) =>
     fromAsyncOperation(async o => {
       const { currency } = account;
       const walletAccount = getWalletAccount(account);
 
-      log("hw", `signRawTransaction ${currency.id} for account ${account.id}`);
+      logger("hw", `signRawTransaction ${currency.id} for account ${account.id}`);
 
       const networkParams = getNetworkParameters(currency.id);
       const sigHashType = networkParams.sigHash;
@@ -91,7 +91,7 @@ export const buildSignRawOperation =
 
       const parsedPsbtFee = feeFromPsbt(psbtBuffer);
       if (!parsedPsbtFee) {
-        log(
+        logger(
           "hw",
           `Failed to extract fee from PSBT for account ${account.id} (${currency.id}); falling back to fee=0`,
         );

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "~/context/Locale";
@@ -7,7 +8,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import ChangeDeviceLanguageActionModal from "~/components/ChangeDeviceLanguageActionModal";
-import { track } from "~/analytics";
 import DeviceOptionRow from "./DeviceOptionRow";
 
 type Props = {

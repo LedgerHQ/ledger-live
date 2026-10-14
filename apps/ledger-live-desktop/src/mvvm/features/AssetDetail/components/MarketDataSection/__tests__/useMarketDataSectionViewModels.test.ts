@@ -1,6 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { createMockMarketCurrencyData } from "@ledgerhq/live-common/market/utils/fixtures";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import type { MarketDataSectionCurrencyData } from "../hooks/useMarketDataSectionCurrencyData";
 import { useMarketStatsViewModel } from "../MarketStats/hooks/useMarketStatsViewModel";

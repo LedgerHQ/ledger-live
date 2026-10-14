@@ -21,3 +21,4 @@ export { computePortfolioPnL } from "./portfolioPnL";
 export { pnlPercentage } from "./percentage";
 export { trendFromSign } from "./trend";
 export type { PnlTrend } from "./trend";
+export { resetRateLookup, setRateLookup, type RateLookup, type RateQuery } from "./rateLookup";

@@ -1,9 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { setContacts } from "@domain/entity-contact";
-import { mockEmptyContacts, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
+import {
+  mockContactsFromSendHistory,
+  mockEmptyContacts,
+  mockPopulatedContacts,
+} from "@domain/entity-contact/schema.mock";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   parseEligibleAddressFamiliesInput,
+  parseExcludedCurrencyIdsInput,
   resolveContactsFeatureParams,
   updateContactsFeatureValue,
   type ContactsFeatureValuePatch,
@@ -14,7 +19,6 @@ import { setHasDismissedContactsFeatureIntroduction } from "~/renderer/actions/s
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { hasDismissedContactsFeatureIntroductionSelector } from "~/renderer/reducers/settings";
 import { CONTACTS_FLAG } from "../constants";
-import { createContactsFromSendHistory } from "../createContactsFromSendHistory";
 import { ContactsDevToolViewModel } from "../types";
 
 export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
@@ -24,24 +28,17 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   const hasDismissedFeatureIntroduction = useSelector(
     hasDismissedContactsFeatureIntroductionSelector,
   );
-  const [customFamiliesInput, setCustomFamiliesInput] = useState("");
-  const [excludedCurrencyIdsInput, setExcludedCurrencyIdsInput] = useState("");
+  const [customFamiliesDraft, setCustomFamiliesDraft] = useState<string | null>(null);
+  const [excludedCurrencyIdsDraft, setExcludedCurrencyIdsDraft] = useState<string | null>(null);
 
   const isEnabled = featureFlag?.enabled === true;
   const params = useMemo(
     () => resolveContactsFeatureParams(featureFlag?.params),
     [featureFlag?.params],
   );
-  const familiesInput = params.eligibleAddressFamilies.join(", ");
-  const excludedCurrencyIdsString = params.excludedCurrencyIds.join(", ");
-
-  useEffect(() => {
-    setCustomFamiliesInput(familiesInput);
-  }, [familiesInput]);
-
-  useEffect(() => {
-    setExcludedCurrencyIdsInput(excludedCurrencyIdsString);
-  }, [excludedCurrencyIdsString]);
+  const customFamiliesInput = customFamiliesDraft ?? params.eligibleAddressFamilies.join(", ");
+  const excludedCurrencyIdsInput =
+    excludedCurrencyIdsDraft ?? params.excludedCurrencyIds.join(", ");
 
   const setContactsOverride = useCallback(
     (patch: ContactsFeatureValuePatch) =>
@@ -65,6 +62,7 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   const handleSetEligibleAddressFamilies = useCallback(
     (families: readonly string[]) => {
       setContactsOverride({ params: { eligibleAddressFamilies: [...families] } });
+      setCustomFamiliesDraft(null);
     },
     [setContactsOverride],
   );
@@ -74,11 +72,10 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   }, [customFamiliesInput, handleSetEligibleAddressFamilies]);
 
   const handleApplyExcludedCurrencyIds = useCallback(() => {
-    const ids = excludedCurrencyIdsInput
-      .split(",")
-      .map(id => id.trim())
-      .filter(Boolean);
-    setContactsOverride({ params: { excludedCurrencyIds: ids } });
+    setContactsOverride({
+      params: { excludedCurrencyIds: parseExcludedCurrencyIdsInput(excludedCurrencyIdsInput) },
+    });
+    setExcludedCurrencyIdsDraft(null);
   }, [excludedCurrencyIdsInput, setContactsOverride]);
 
   const handleLoadPopulatedContacts = useCallback(() => {
@@ -86,7 +83,7 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   }, [dispatch]);
 
   const handleLoadFromSendHistory = useCallback(() => {
-    dispatch(setContacts(createContactsFromSendHistory(accounts)));
+    dispatch(setContacts(mockContactsFromSendHistory(accounts)));
   }, [dispatch, accounts]);
 
   const handleResetContacts = useCallback(() => {
@@ -95,6 +92,8 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
 
   const handleResetOverride = useCallback(() => {
     dispatch(setOverride({ key: CONTACTS_FLAG, value: undefined }));
+    setCustomFamiliesDraft(null);
+    setExcludedCurrencyIdsDraft(null);
   }, [dispatch]);
 
   const handleToggleFeatureIntroductionDismissed = useCallback(() => {
@@ -111,10 +110,10 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     handleToggleNewBadge,
     handleToggleFeatureIntroductionDismissed,
     handleSetEligibleAddressFamilies,
-    setCustomFamiliesInput,
+    setCustomFamiliesInput: setCustomFamiliesDraft,
     handleApplyCustomFamilies,
     excludedCurrencyIdsInput,
-    setExcludedCurrencyIdsInput,
+    setExcludedCurrencyIdsInput: setExcludedCurrencyIdsDraft,
     handleApplyExcludedCurrencyIds,
     handleLoadPopulatedContacts,
     handleLoadFromSendHistory,

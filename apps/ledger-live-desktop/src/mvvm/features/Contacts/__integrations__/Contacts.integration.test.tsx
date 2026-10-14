@@ -3,6 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { resolveEligibleAddressCurrencyIds } from "@features/platform-contacts";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import {
   mockContact,
@@ -501,7 +502,7 @@ describe("Contacts integration", () => {
 
     expect(store.getState().modularDialog.isOpen).toBe(true);
     expect(store.getState().modularDialog.dialogParams?.selectableNetworkIds).toEqual(
-      resolveEligibleAddressCurrencyIds(["evm"]),
+      resolveEligibleAddressCurrencyIds(["evm"], undefined, [], resolveCurrencyConfig),
     );
     expect(store.getState().modularDialog.dialogParams?.presentation).toBe("embedded");
     expect(store.getState().modularDialog.dialogParams?.onAccountSelected).toBeUndefined();

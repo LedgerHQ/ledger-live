@@ -1,8 +1,11 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { Account } from "@ledgerhq/types-live";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
+import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
 import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
 
 const mockOpenAssetAndAccount = jest.fn();
@@ -20,8 +23,8 @@ jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
 // Countervalues are priced 1:1 in both directions, so the form ceiling is predictable:
 // a balance of 10_000 (2 decimals for USD) means a $100 maximum.
 const mockCalculateCountervalue = jest.fn((_currency: unknown, value: BigNumber) => value);
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
     mockCalculateCountervalue(currency, value),
   useCountervaluesState: () => ({}),
@@ -29,8 +32,8 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
 
 // Prices the typed amount back into the funding currency, in its smallest unit.
 const mockCalculate = jest.fn();
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
   calculate: (...args: unknown[]) => mockCalculate(...args),
 }));
 
@@ -51,19 +54,59 @@ const receiverAccount = createAccount("receiver-1", "ethereum", 0);
 const fundingAccount = createAccount("funding-1", "ethereum", 10000);
 const fundedAccount = createAccount("funding-2", "ethereum", 1e18);
 
+const arbitrumUsdcToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: TokenCurrencyIdSchema.parse(PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID),
+  contractAddress: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("arbitrum"),
+  tokenType: "erc20",
+  name: "USD Coin",
+  ticker: "USDC",
+  units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+};
+
+const usdcParent = createAccount("usdc-parent", "arbitrum", 0);
+
+/** A USDC-on-Arbitrum token account with a fixed spendable balance (atomic units). */
+function createUsdcTokenAccount(id: string, spendableBalance: number): TokenAccount {
+  return {
+    ...genTokenAccount(0, usdcParent, arbitrumUsdcToken),
+    id,
+    spendableBalance: new BigNumber(spendableBalance),
+    balance: new BigNumber(spendableBalance),
+  };
+}
+
+/** Bundles token accounts under their parent so `flattenAccountsSelector` exposes them. */
+function withUsdcAccounts(...tokenAccounts: TokenAccount[]): Account[] {
+  return [{ ...usdcParent, subAccounts: tokenAccounts }, fundedAccount];
+}
+
 function renderViewModel(
   data: Partial<PerpsDepositData> = {},
   onClose = jest.fn(),
   discreetMode = false,
+  accounts: Account[] = [fundingAccount, fundedAccount],
+  maxConstants?: Record<string, string>,
 ) {
   const props: PerpsDepositData = { receiverAccount, ...data };
-  const { result } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
+  const tradeMaxConstant = maxConstants && {
+    ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
+  };
+  const { result, store } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
     initialState: {
-      accounts: [fundingAccount, fundedAccount],
+      accounts,
       settings: { discreetMode },
+      ...(tradeMaxConstant && {
+        featureFlags: {
+          ...FEATURE_FLAGS_INITIAL_STATE,
+          overrides: { ...FEATURE_FLAGS_INITIAL_STATE.overrides, ...tradeMaxConstant },
+          resolved: { ...FEATURE_FLAGS_DEFAULTS, ...tradeMaxConstant },
+        },
+      }),
     },
   });
-  return { result, onClose };
+  return { result, onClose, store };
 }
 
 /** The display-unit amount the form settled on and sent to the provider. */
@@ -120,7 +163,7 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("adopts the funding account picked in the asset drawer", async () => {
-    const { result } = renderViewModel();
+    const { result, store } = renderViewModel();
 
     act(() => result.current.changeDepositAmount("42"));
     await pickFundingAccount(result);
@@ -128,6 +171,8 @@ describe("usePerpsDepositViewModel", () => {
     expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
       expect.objectContaining({ uiUseCase: "perpetuals:fund" }),
     );
+    // The fund flow keeps accounts that cannot send (e.g. HyperCore) out of the picker.
+    expect(store.getState().modularDialog.flow).toBe("perpetuals:fund");
 
     expect(result.current.depositCurrencyTicker).toBe("ETH");
     expect(result.current.depositAccountName).not.toBeNull();
@@ -174,6 +219,21 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.depositAmount).toBe(100);
     expect(result.current.exceedsBalance).toBe(false);
     expect(result.current.canReview).toBe(true);
+  });
+
+  // Countervalues are 1:1 in smallest units: 25 wei of ETH is worth $0.25.
+  it("holds the configured fee buffer back from max for a native coin", async () => {
+    const { result } = renderViewModel({}, jest.fn(), false, undefined, {
+      ethereum: "0.000000000000000025",
+    });
+
+    await pickFundingAccount(result);
+    act(() => result.current.selectMax());
+
+    expect(result.current.maxBuffer).toBe(0.25);
+    expect(result.current.depositAmount).toBe(99.75);
+    // The balance itself is still the ceiling for a typed amount.
+    expect(result.current.maxAmount).toBe(100);
   });
 
   it("restores the draft it was reopened with", () => {
@@ -312,5 +372,36 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(mockOpenPerpsReview).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("defaults to the USDC funding account with the highest balance", () => {
+    const { result } = renderViewModel(
+      {},
+      jest.fn(),
+      false,
+      withUsdcAccounts(
+        createUsdcTokenAccount("usdc-zero", 0),
+        createUsdcTokenAccount("usdc-low", 5000),
+        createUsdcTokenAccount("usdc-high", 20000),
+      ),
+    );
+
+    // The 20_000-atomic account wins; priced 1:1 into USD (2 decimals) that is a $200 ceiling.
+    expect(result.current.maxAmount).toBe(200);
+    expect(result.current.depositCurrencyTicker).toBe("USDC");
+    expect(result.current.depositAccountName).not.toBeNull();
+  });
+
+  it("ignores zero-balance USDC accounts when choosing the default", () => {
+    const { result } = renderViewModel(
+      {},
+      jest.fn(),
+      false,
+      withUsdcAccounts(createUsdcTokenAccount("usdc-zero", 0)),
+    );
+
+    // A null account name means nothing was defaulted; maxAmount only falls back to 0.
+    expect(result.current.depositAccountName).toBeNull();
+    expect(result.current.maxAmount).toBe(0);
   });
 });

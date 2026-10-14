@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
 import React from "react";
 import { DeactivatePasswordScreen } from "../screens/DeactivatePassword";
@@ -35,6 +36,7 @@ describe("deactivating a password", () => {
 
     expect(await screen.findByText("Incorrect password")).toBeVisible();
     expect(store.getState().appLock.hasPassword).toBe(true);
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("destroys the verifier once the password is proven", async () => {
@@ -48,6 +50,11 @@ describe("deactivating a password", () => {
 
     await waitFor(() => expect(clearPasswordIfCorrect).toHaveBeenCalledWith(PASSWORD));
     await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(false));
+    expect(track).toHaveBeenCalledWith("encryption_updated", {
+      status: "deactivated",
+      type: "password",
+      source: "settings",
+    });
   });
 
   it("asks for focus on mount, so the keyboard comes up with the screen", async () => {

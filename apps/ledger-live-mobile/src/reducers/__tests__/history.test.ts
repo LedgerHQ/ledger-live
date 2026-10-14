@@ -11,7 +11,7 @@ import historyReducer, {
   lastSeenOperationDateSelector,
   hasUnreadOperationsSelector,
 } from "../history";
-import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "../countervalues";
+import { countervaluesInitialState as COUNTERVALUES_INITIAL_STATE } from "@features/platform-market-countervalues";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "../settings";
 import type { State } from "../types";
 

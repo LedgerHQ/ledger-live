@@ -80,6 +80,7 @@ function DepositForm({
   depositAccountName,
   depositAccountCounterValue,
   maxAmount,
+  maxBuffer,
   statusError,
   canReview,
   exceedsBalance,
@@ -128,6 +129,7 @@ function DepositForm({
 
         <RatioPicker
           maxValue={maxAmount}
+          maxBuffer={maxBuffer}
           value={depositAmount}
           decimalPlaces={maxDecimalLength}
           onChange={selectAmountRatio}
@@ -159,7 +161,8 @@ function DepositForm({
 
 export function PerpsDepositView(viewModel: Readonly<PerpsDepositViewModel>) {
   const { isReviewOpen, reviewParams, closeReview, isSignOpen, handOverToDevice } = viewModel;
-  const { signingDevice, selectSigningDevice, returnToReview, endSigning } = viewModel;
+  const { signingDevice, selectSigningDevice, returnToReview, returnToForm, endSigning } =
+    viewModel;
   const styles = useStyleSheet(
     theme => ({
       root: {
@@ -181,6 +184,7 @@ export function PerpsDepositView(viewModel: Readonly<PerpsDepositViewModel>) {
           onSelectDevice={selectSigningDevice}
           onDone={endSigning}
           onRefused={returnToReview}
+          onNotEnoughBalance={returnToForm}
         />
       ) : null}
 

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -9,7 +10,6 @@ import { ScreenName } from "~/const";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import SettingsCard from "~/components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
-import { TrackScreen } from "~/analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "~/logic/ratings";

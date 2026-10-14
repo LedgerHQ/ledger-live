@@ -12,8 +12,7 @@ import {
   modularDialogUiUseCaseSelector,
   resetModularDialogState,
 } from "~/renderer/reducers/modularDialog";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
-import { track } from "~/renderer/analytics/segment";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 import { getModularDialogStepHeading } from "./hooks/getModularDialogStepHeading";
 import { shouldAwaitAccountAutoSkip } from "./hooks/shouldAwaitAccountAutoSkip";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";

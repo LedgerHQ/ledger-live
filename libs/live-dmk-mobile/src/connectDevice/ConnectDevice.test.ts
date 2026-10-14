@@ -8,8 +8,8 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
 import { connectDevice } from "./connectDevice";
-import { RnBleDeviceDiscoverySource } from "./discoveryService/sources/RnBleDeviceDiscoverySource";
-import { RnHidDeviceDiscoverySource } from "./discoveryService/sources/RnHidDeviceDiscoverySource";
+import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
+import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
@@ -21,14 +21,14 @@ jest.mock("@ledgerhq/live-dmk-shared", () => {
   };
 });
 
-jest.mock("./discoveryService/sources/RnBleDeviceDiscoverySource", () => ({
+jest.mock("../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource", () => ({
   RnBleDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
     listen: jest.fn(),
     transportId: "ble",
   })),
 }));
 
-jest.mock("./discoveryService/sources/RnHidDeviceDiscoverySource", () => ({
+jest.mock("../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource", () => ({
   RnHidDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
     listen: jest.fn(),
     transportId: "hid",

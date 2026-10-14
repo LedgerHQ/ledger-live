@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -8,7 +9,6 @@ import Button from "../wrappedUi/Button";
 import Animation from "../Animation";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import Link from "../wrappedUi/Link";
-import { TrackScreen } from "~/analytics";
 import { ArrowRight } from "@ledgerhq/native-ui/assets/icons";
 
 // NEW DEVICE ACTION UX

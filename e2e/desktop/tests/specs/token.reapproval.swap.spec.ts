@@ -74,7 +74,7 @@ test.describe("Swap - token reapproval", () => {
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
       await ensureTokenApproval(fromAccount, provider, smallAmount);
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);
-      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
       await app.swap.selectSpecificProvider(provider);
       await app.swap.checkQuoteCardCtaPresence(provider.uiName);
       await app.swap.clickExchangeButton(provider.name);

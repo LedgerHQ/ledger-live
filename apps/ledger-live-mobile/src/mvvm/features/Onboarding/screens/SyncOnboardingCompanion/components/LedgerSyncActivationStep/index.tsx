@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import IconsHeader from "LLM/features/WalletSync/components/Activation/IconsHeader";
 import SkipLedgerSyncDrawer from "./SkipLedgerSyncDrawer";
 import {

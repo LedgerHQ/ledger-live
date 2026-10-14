@@ -37,9 +37,6 @@ export const syscoin = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 57,
-  },
   explorerViews: [
     {
       tx: "https://explorer.syscoin.org/tx/$hash",

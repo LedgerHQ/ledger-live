@@ -7,7 +7,7 @@ import { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { urls } from "~/config/urls";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";

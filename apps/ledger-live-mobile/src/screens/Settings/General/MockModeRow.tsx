@@ -1,7 +1,7 @@
+import { Track } from "@shared/analytics-react";
 import React, { memo, useCallback } from "react";
 import { getEnv, setEnvUnsafe } from "@shared/env";
 import SettingsRow from "~/components/SettingsRow";
-import Track from "~/analytics/Track";
 import { reboot } from "~/actions/appstate";
 import { useDispatch } from "~/context/hooks";
 import Switch from "~/components/Switch";

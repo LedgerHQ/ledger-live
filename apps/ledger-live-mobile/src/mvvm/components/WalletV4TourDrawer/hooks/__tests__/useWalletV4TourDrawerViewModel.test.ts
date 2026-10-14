@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { useWalletV4TourDrawerViewModel } from "../useWalletV4TourDrawerViewModel";
 
 const PAGE = "Q3 Wallet V4 Tour";

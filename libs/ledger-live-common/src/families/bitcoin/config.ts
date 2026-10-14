@@ -9,6 +9,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_bitcoin_cash: {
@@ -19,6 +22,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin Cash",
+      unit: { name: "bitcoin cash", code: "BCH", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_bitcoin_gold: {
@@ -29,24 +35,22 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-    },
-  },
-  config_currency_bitcoin_private: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
+      name: "Bitcoin Gold",
+      unit: { name: "bitcoin gold", code: "BTG", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_bitcoin_regtest: {
     type: "object",
     default: {
+      explorerId: "btc_regtest",
       status: {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin Regtest",
+      unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
+      explorer: { url: "http://localhost:9876" },
     },
   },
   config_currency_bitcoin_testnet: {
@@ -57,6 +61,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin Testnet",
+      unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_dash: {
@@ -66,6 +73,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Dash",
+      unit: { name: "dash", code: "DASH", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_decred: {
@@ -76,6 +86,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Decred",
+      unit: { name: "decred", code: "DCR", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_digibyte: {
@@ -86,6 +99,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "DigiByte",
+      unit: { name: "digibyte", code: "DGB", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_dogecoin: {
@@ -96,24 +112,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-    },
-  },
-  config_currency_game_credits: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    },
-  },
-  config_currency_gochain: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
+      name: "Dogecoin",
+      unit: { name: "dogecoin", code: "DOGE", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_komodo: {
@@ -124,15 +125,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-    },
-  },
-  config_currency_lbry: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
+      name: "Komodo",
+      unit: { name: "komodo", code: "KMD", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_litecoin: {
@@ -143,15 +138,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-    },
-  },
-  config_currency_nix: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
+      name: "Litecoin",
+      unit: { name: "litecoin", code: "LTC", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_qtum: {
@@ -161,24 +150,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-    },
-  },
-  config_currency_ravencoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    },
-  },
-  config_currency_resistance: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
+      name: "Qtum",
+      unit: { name: "qtum", code: "QTUM", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_zcash: {
@@ -189,6 +163,8 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Zcash",
+      unit: { name: "zcash", code: "ZEC", magnitude: 8 },
       zaino: { url: "https://zec-indexer.coin.ledger.com" },
       explorer: { url: "https://explorers.api.live.ledger.com" },
     },
@@ -200,24 +176,22 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Zcash Regtest",
+      unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
     },
   },
-  config_currency_zclassic: {
+  config_currency_zcash_testnet: {
     type: "object",
     default: {
+      explorerId: "zec_testnet",
       status: {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-    },
-  },
-  config_currency_zcoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
+      name: "Zcash Testnet",
+      unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
+      zaino: { url: "https://testnet.zec.rocks:443" },
+      explorer: { url: "https://explorers.api.live.ledger-test.com" },
     },
   },
   config_currency_zencash: {
@@ -228,6 +202,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Horizen",
+      unit: { name: "zencash", code: "ZEN", magnitude: 8 },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
 };

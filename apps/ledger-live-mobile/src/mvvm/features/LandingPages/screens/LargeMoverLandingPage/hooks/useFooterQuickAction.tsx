@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useMemo } from "react";
 import { QuickActionButtonProps } from "@ledgerhq/native-ui";
 import { EntryOf } from "~/types/helpers";
 import { useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

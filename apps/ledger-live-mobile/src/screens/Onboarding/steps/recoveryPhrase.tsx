@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
@@ -12,7 +13,6 @@ import BaseStepperView, {
   ExistingRecoveryStep1,
   ExistingRecoveryStep2,
 } from "./setupDevice/scenes";
-import { TrackScreen } from "~/analytics";
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import SeedWarning from "../shared/SeedWarning";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { getRateLookup } from "./rateLookup";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { classifyOperation } from "./classifyOperation";
 import type { ComputePnLOptions, CostBasisAcc, CostBasisState, OperationFlow } from "./types";
@@ -75,11 +74,11 @@ function applyOperation(
   flow: Exclude<OperationFlow, "ignored">,
   asset: Currency,
   fiat: Currency,
-  countervalues: CounterValuesState,
+  countervalues: unknown,
 ): CostBasisAcc {
   if (op.value.isZero() || op.value.isNegative()) return acc;
 
-  const cvAtDate = calculate(countervalues, {
+  const cvAtDate = getRateLookup().calculate(countervalues, {
     value: op.value.toNumber(),
     from: asset,
     to: fiat,
@@ -104,7 +103,7 @@ export function reduceCostBasis(
   prev: CostBasisState,
   newOps: Operation[],
   account: AccountLike,
-  countervalues: CounterValuesState,
+  countervalues: unknown,
   fiat: Currency,
   options?: ComputePnLOptions,
 ): CostBasisState {

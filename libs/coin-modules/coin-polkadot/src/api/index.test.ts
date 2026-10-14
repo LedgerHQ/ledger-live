@@ -153,6 +153,20 @@ describe("index", () => {
       const result = await api.listOperations(context, "some random address", { minHeight: 0 });
       expect(result).toEqual({ items: [], next: "2" });
     });
+
+    it("passes the context logger to the logic layer", async () => {
+      const api = generateApi();
+      const logger = jest.fn();
+      mockListOperations.mockResolvedValue([[], 2]);
+
+      await api.listOperations(
+        createMockPolkadotContext(polkadotMainnetConfigValue, logger),
+        "some random address",
+        { minHeight: 0 },
+      );
+
+      expect(mockListOperations.mock.lastCall[0]).toBe(logger);
+    });
   });
 
   describe("getBalance", () => {

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import {
   BottomSheetHeader,
   BottomSheetView,
@@ -14,7 +15,6 @@ import React from "react";
 import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
-import { track } from "~/analytics";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { AnalyticEvents } from "LLM/hooks/useAnalytics/enums";
 import { NavigatorName, ScreenName } from "~/const";

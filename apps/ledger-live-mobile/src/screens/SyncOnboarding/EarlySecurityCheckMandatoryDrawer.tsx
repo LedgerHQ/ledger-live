@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Icons, Button, Flex, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 
 export type Props = {

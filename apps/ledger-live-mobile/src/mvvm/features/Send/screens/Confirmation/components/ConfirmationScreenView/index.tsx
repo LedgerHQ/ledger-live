@@ -1,7 +1,8 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect } from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { ConfirmationStatusLayout } from "../ConfirmationStatusLayout";
-import { track, usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics";
 
 export type ConfirmationScreenViewProps = Readonly<{
   title: string;

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { buildAssetDistribution } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { flattenAccounts, getAccountCurrency } from "../account/helpers";
 import { useChunkedAssetsData } from "@features/platform-aggregated-assets";
@@ -38,9 +38,6 @@ const emptyDistribution: AssetsDistribution = {
 
 /**
  * Fetches DADA-powered asset data and builds a cross-network asset distribution.
- *
- * Designed to be composed with `useDistribution` from `live-countervalues-react`
- * by passing the result as the `assetDistribution` parameter.
  */
 export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistributionResult {
   const { accounts, to, product, version, skip = false, ...displayOpts } = opts;

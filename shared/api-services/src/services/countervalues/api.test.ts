@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { countervaluesApi, cvsApiExtra, getCvsExtra } from "./api";
 import type { CvsApiExtra } from "./types";
 
-const valid = { countervaluesServiceUrl: "https://cvs.test" };
+const valid = { getCountervaluesServiceUrl: () => "https://cvs.test" };
 
 // Captured at import time: the base query tests below inject into this same api object.
 const OWN_ENDPOINT_NAMES = Object.keys(countervaluesApi.endpoints);
@@ -22,10 +22,12 @@ describe("cvsApiExtra", () => {
     expect(cvsApiExtra(valid)).toEqual(valid);
   });
 
-  it("throws when the url is missing or empty", () => {
-    // @ts-expect-error — countervaluesServiceUrl is required
+  it("throws when the url getter is missing, or resolves to an empty url", () => {
+    // @ts-expect-error: getCountervaluesServiceUrl is required
     expect(() => cvsApiExtra({})).toThrow();
-    expect(() => cvsApiExtra({ countervaluesServiceUrl: "" })).toThrow();
+    // @ts-expect-error: a url string is no longer accepted, only a getter
+    expect(() => cvsApiExtra({ getCountervaluesServiceUrl: "https://cvs.test" })).toThrow();
+    expect(() => cvsApiExtra({ getCountervaluesServiceUrl: () => "" })).toThrow();
   });
 });
 
@@ -74,6 +76,23 @@ describe("cvsBaseQuery", () => {
 
     expect(request(fetchSpy).headers.get("Accept")).toBe("application/json");
   });
+
+  it("reads the service url again on every request", async () => {
+    // The developer settings switch the env to staging while the app runs. The store holds the
+    // getter, so the next request must go to the new url without a restart.
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(() => Promise.resolve(jsonResponse({})));
+    let url = "https://cvs.production";
+
+    const { api, store } = probeStore(cvsApiExtra({ getCountervaluesServiceUrl: () => url }));
+    await store.dispatch(api.endpoints.probe.initiate());
+    url = "https://cvs.staging";
+    await store.dispatch(api.endpoints.probe.initiate(undefined, { forceRefetch: true }));
+
+    expect(request(fetchSpy, 0).url).toBe("https://cvs.production/probe");
+    expect(request(fetchSpy, 1).url).toBe("https://cvs.staging/probe");
+  });
 });
 
 function jsonResponse(body: unknown): Response {
@@ -83,6 +102,6 @@ function jsonResponse(body: unknown): Response {
   });
 }
 
-function request(spy: jest.SpyInstance): Request {
-  return spy.mock.calls[0][0] as Request;
+function request(spy: jest.SpyInstance, call = 0): Request {
+  return spy.mock.calls[call][0] as Request;
 }

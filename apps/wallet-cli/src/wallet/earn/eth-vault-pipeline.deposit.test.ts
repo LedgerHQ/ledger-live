@@ -1,4 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock } from "bun:test";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { walletCliConfig } from "../../config";
 import type { AccountDescriptor } from "../models";
 import type { CommandOutput } from "../../output";
 import type { WalletAdapter } from "../index";
@@ -76,6 +78,9 @@ const signAndBroadcastIntent = mock(async (params: { intent: { recipient: string
 // Scope these earn-api + sign-and-broadcast fakes to this file's tests only (see the mock helpers for
 // the why — Bun's mock.module is process-global, so we gate the overrides behind an active flag).
 beforeAll(() => {
+  // depositEvm's chain guard reads chainId via getCurrencyConfiguration (LiveConfig); seed the real
+  // wallet-cli config so it resolves deterministically when this file runs in isolation.
+  LiveConfig.setConfig(walletCliConfig);
   activateEarnApiMock({
     getDefiProducts: async () => [PRODUCT],
     postDefiApprove,

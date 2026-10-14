@@ -414,6 +414,7 @@ export default function Content({
           <DataList
             testID="operationDetails-sender"
             data={uniqueSenders}
+            currencyId={mainAccount.currency.id}
             title={<Trans i18nKey="operationDetails.from" />}
           />
         </View>
@@ -423,6 +424,7 @@ export default function Content({
         <View style={sectionStyles.wrapper}>
           <DataList
             data={uniqueRecipients}
+            currencyId={mainAccount.currency.id}
             title={<Trans i18nKey="operationDetails.to" />}
             testID="operationDetails-recipient"
             rightComp={

@@ -164,6 +164,10 @@ export const loadLocalApiForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadLocalApi?.(),
 );
 
+export const loadSponsoredApiForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadSponsoredApi?.(),
+);
+
 const cachedLoadBridgeExtensions = makeLoaderCache(family =>
   loaders.get(family)?.loadBridgeExtensions?.(),
 );

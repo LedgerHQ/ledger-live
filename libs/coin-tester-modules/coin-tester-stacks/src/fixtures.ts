@@ -20,22 +20,35 @@ export const STACKS = getCryptoCurrencyById("stacks");
 // https://github.com/stx-labs/clarinet) — public, deterministic, devnet-only keys, not a secret
 // specific to this package. See `settings/Devnet.toml` for the matching mnemonics/balances.
 //
-// The deployer account doubles as the scenario's funder: `contracts/sip-010-test-token.clar` mints
-// the whole test-token supply to `tx-sender` at deploy time, i.e. to whichever account the
-// Clarinet deployment plan uses to publish the contract — the manifest's `deployer` account, since
-// `Clarinet.toml`'s `[contracts.sip-010-test-token]` entry sets no `deployer` override. Reusing it
-// as the funder avoids a separate on-chain token-funding transaction before the scenario starts.
+// The deployer publishes both contracts (`Clarinet.toml` sets no per-contract `deployer` override)
+// and pays for the staking scenario's signer-manager setup, but is never a scenario's sender. It
+// must not send anything before `signer-manager-stub` is deployed: Clarinet signs its deployment
+// plan up front with pre-assigned deployer nonces, so an earlier deployer transaction takes the
+// stub's nonce and the stub silently never deploys. That is why the send scenarios' test tokens are
+// minted straight to their senders by `contracts/sip-010-test-token.clar`, not transferred.
 export const DEPLOYER_PRIVATE_KEY =
   "753b7cc01a1a2e86221266a154af739463fce51219d97e4f856cd7200c3bd2a601";
 export const DEPLOYER_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
 export const RECIPIENT_PRIVATE_KEY =
   "530d9f61984c888536871c6573073bdfc0058896dc1adfe9a6a10dfacadc209101";
 
+// One sender per scenario. All scenarios share one devnet (`scenarii.test.ts`), so a scenario that
+// reused another's account would start on its leftover history and balances -- e.g. the send
+// scenario's "send max" draining it. Separate accounts keep the chain shared and each account's
+// state fresh. These are Clarinet's `wallet_4`..`wallet_6`: unlike `wallet_1`..`wallet_3`, they
+// are not in `Devnet.toml`'s `pox_stacking_orders`, so none of their STX is locked.
+export const SENDER_PRIVATE_KEYS = {
+  legacy: "f9d7206a47f14d2870c163ebab4bf3e70d18f5d14ce1031f3902fbbc894fe4c701", // wallet_4
+  "generic-adapter": "3eccc5dac8056590432db6a35d52b9896876a3d5cbdea53b72400bc9c2099fe801", // wallet_5
+} as const;
+export const STAKER_PRIVATE_KEY =
+  "7036b29cb5e235e5fd9b09ae3e8eec4404e44906814d5d01cbca968a60ed4bfb01"; // wallet_6
+
 export const TOKEN_CONTRACT_NAME = "sip-010-test-token";
 const TOKEN_ASSET_NAME = "test-token";
 
 /**
- * The SIP-010 test token deployed at devnet genesis by `contracts/sip-010-test-token.clar`
+ * The SIP-010 test token deployed when the devnet boots by `contracts/sip-010-test-token.clar`
  * (`Clarinet.toml`'s `[contracts.sip-010-test-token]` entry, deployed by the manifest's own
  * `deployer` account since no per-contract `deployer` override is set there). Composite id format
  * ("ADDRESS.CONTRACT::ASSET") verified against `parseSip010AssetReference`-equivalent logic in

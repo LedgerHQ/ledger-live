@@ -32,7 +32,6 @@ const NETWORK_NOISE_HOSTS = [
   "firebaseremoteconfig.googleapis.com",
   "firebase.googleapis.com",
   "firebaselogging-pa.googleapis.com",
-  "sentry.io",
   "segment.io",
   "cdn.segment.com",
   "google-analytics.com",

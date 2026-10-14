@@ -1,7 +1,7 @@
 # @domain/entity-market-countervalues
 
 > [!CAUTION]
-> **Status: UNSTABLE** — Being migrated out of `@ledgerhq/live-countervalues`; API may change.
+> **Status: UNSTABLE** — API may change.
 
 Domain entity for **countervalues**: the rate state the apps hold, and the pure logic over it.
 
@@ -13,11 +13,12 @@ turning accounts into pairs to track lives in the app layer.
 - `schema.ts` — the Zod schemas. `CounterValuesState` and its serialized twin
   `CounterValuesStateRaw`, `RateMap`, `TrackingPair`, `CountervaluesSettings`,
   `PairRateMapCache` and `RateMapStats`.
-- `types.ts` — the types inferred from them, plus `BatchStrategySolver`.
+- `types.ts` — the types inferred from them.
 - `helpers.ts` — `pairId`, the `YYYY-MM-DD` / `YYYY-MM-DDTHH` date keys the rate maps are keyed by,
   `magFromTo` and `inferCurrencyAPIID`.
 - `logic.ts` — `calculate` and `calculateMany`, the `lenseRate*` lookups, `initialState`,
-  `importCountervalues` / `exportCountervalues` and the tracking-pair resolution.
+  `importCountervalues` / `exportCountervalues`, the tracking-pair resolution, and `applyRatePatches`,
+  which folds freshly fetched rates into the state.
 
 Currencies come from `@domain/entity-currency`; only `type`, `id`, `ticker` and
 `units[0].magnitude` are ever read.

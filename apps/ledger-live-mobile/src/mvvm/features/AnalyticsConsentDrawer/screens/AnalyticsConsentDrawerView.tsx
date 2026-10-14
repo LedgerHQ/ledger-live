@@ -1,6 +1,6 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";

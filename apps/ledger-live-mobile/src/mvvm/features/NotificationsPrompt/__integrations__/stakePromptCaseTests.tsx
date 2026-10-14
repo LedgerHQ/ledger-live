@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { act, screen, waitFor } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import type { StakePromptCase } from "./stakePromptFixtures";
 import { renderStakeFlow, setupStakePromptTestSuite } from "./stakePromptTestHarness";
 

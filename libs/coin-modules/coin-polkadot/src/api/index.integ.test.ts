@@ -1,6 +1,6 @@
 import type { CoinModuleApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import coinConfig, { type PolkadotCoinConfig } from "../config";
+import type { PolkadotCoinConfig } from "../config";
 import { createMockPolkadotContext } from "../test/config.fixture";
 import { createApi } from ".";
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
@@ -11,6 +11,8 @@ describe("Polkadot Api", () => {
   let module: CoinModuleApi<PolkadotCoinConfig>;
   const mainnetConfig: PolkadotCoinConfig = {
     status: { type: "active" },
+    name: "Polkadot",
+    unit: { name: "DOT", code: "DOT", magnitude: 10 },
     node: {
       url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
     },
@@ -25,8 +27,6 @@ describe("Polkadot Api", () => {
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
-    // The api/logic layers still resolve config through the getCoinConfig() singleton, so seed it.
-    coinConfig.setCoinConfig(() => mainnetConfig);
     module = withDefaults(createApi());
   });
 

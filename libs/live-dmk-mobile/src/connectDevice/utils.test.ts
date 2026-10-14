@@ -13,7 +13,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PeerRemovedPairing } from "../errors";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 
-import { BaseConnectionErrorTypes, ConnectionErrorTypes } from "./types";
+import { BaseConnectionErrorTypes, ConnectionErrorTypes } from "../deviceConnectivity/types";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 import {

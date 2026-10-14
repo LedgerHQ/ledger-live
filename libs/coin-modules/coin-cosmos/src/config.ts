@@ -21,6 +21,8 @@ export const cosmosConfig: CosmosConfig = {
           { id: "staking_txs", type: "active" },
         ],
       },
+      name: "Axelar",
+      unit: { name: "Axelar", code: "AXL", magnitude: 6 },
     },
   },
   config_currency_cosmos: {
@@ -36,6 +38,8 @@ export const cosmosConfig: CosmosConfig = {
           { id: "staking_txs", type: "active" },
         ],
       },
+      name: "Cosmos",
+      unit: { name: "Atom", code: "ATOM", magnitude: 6 },
     },
   },
   config_currency_desmos: {
@@ -43,6 +47,8 @@ export const cosmosConfig: CosmosConfig = {
     default: {
       lcd: "https://api.mainnet.desmos.network",
       minGasPrice: 0.0025,
+      name: "Desmos",
+      unit: { name: "Desmos", code: "DSM", magnitude: 6 },
     },
   },
   config_currency_dydx: {
@@ -54,6 +60,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "dYdX",
+      unit: { name: "dYdX", code: "dydx", magnitude: 18 },
     },
   },
   config_currency_nyx: {
@@ -64,6 +72,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Nyx",
+      unit: { name: "Nyx", code: "NYX", magnitude: 6 },
     },
   },
   config_currency_osmo: {
@@ -74,6 +84,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Osmosis",
+      unit: { name: "Osmosis", code: "OSMO", magnitude: 6 },
     },
   },
   config_currency_persistence: {
@@ -84,6 +96,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Persistence",
+      unit: { name: "Persistence", code: "XPRT", magnitude: 6 },
     },
   },
   config_currency_quicksilver: {
@@ -94,6 +108,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Quicksilver",
+      unit: { name: "Quicksilver", code: "QCK", magnitude: 6 },
     },
   },
   config_currency_secret_network: {
@@ -104,6 +120,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "SecretNetwork",
+      unit: { name: "Secret", code: "SCRT", magnitude: 6 },
     },
   },
   config_currency_stargaze: {
@@ -114,6 +132,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Stargaze",
+      unit: { name: "Stargaze", code: "STARS", magnitude: 6 },
     },
   },
   config_currency_coreum: {
@@ -124,6 +144,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "TX",
+      unit: { name: "TX", code: "TX", magnitude: 6 },
     },
   },
   config_currency_injective: {
@@ -135,6 +157,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Injective",
+      unit: { name: "Injective", code: "INJ", magnitude: 18 },
     },
   },
   config_currency_mantra: {
@@ -146,6 +170,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Mantra",
+      unit: { name: "Mantra", code: "MANTRA", magnitude: 18 },
     },
   },
   config_currency_crypto_org: {
@@ -156,6 +182,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Cronos POS Chain",
+      unit: { name: "CRO", code: "CRO", magnitude: 8 },
     },
   },
   config_currency_xion: {
@@ -167,6 +195,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Verona",
+      unit: { name: "Verona", code: "VERONA", magnitude: 6 },
     },
   },
   config_currency_zenrock: {
@@ -177,6 +207,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+      name: "Zenrock",
+      unit: { name: "Zenrock", code: "ROCK", magnitude: 6 },
     },
   },
   config_currency_babylon: {
@@ -187,7 +219,8 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
-      disableDelegation: true,
+      name: "Babylon",
+      unit: { name: "Babylon", code: "BABY", magnitude: 6 },
     },
   },
   config_currency_gonka: {
@@ -204,6 +237,8 @@ export const cosmosConfig: CosmosConfig = {
         features: [{ id: "blockchain_txs", type: "active" }],
       },
       disableDelegation: true,
+      name: "Gonka",
+      unit: { name: "GNK", code: "GNK", magnitude: 9 },
     },
   },
 };

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import BigNumber from "bignumber.js";
@@ -15,7 +16,6 @@ import InfiniteLoader from "~/components/InfiniteLoader";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { TrackScreen } from "~/analytics";
 import Touchable from "~/components/Touchable";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { ScreenName } from "~/const";

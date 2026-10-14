@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-      "noEmit": true,
-      "esModuleInterop": true,
-      "lib": ["es2020"],
-      "types": ["jest"]
-  }
-}

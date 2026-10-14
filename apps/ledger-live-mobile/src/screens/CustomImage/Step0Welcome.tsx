@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/core";
@@ -9,7 +10,6 @@ import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContai
 import Button from "~/components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "~/const";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
-import { TrackScreen } from "~/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import Animation from "~/components/Animation";
 import STAX_CLS_PREVIEW from "~/animations/device/customLockScreen/stax.json";

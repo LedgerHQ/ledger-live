@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "LLD/features/MyWallet/constants";
 
 export type SettingsTrackingSource = "topbar" | typeof MY_WALLET_TRACKING_PAGE_NAME;

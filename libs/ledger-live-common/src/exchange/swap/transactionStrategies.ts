@@ -204,7 +204,7 @@ export function solanaTransaction(
     family: "solana",
     amount,
     recipient,
-    model: { kind: "transfer", uiState: {} },
+    mode: "send",
     ...(raw && { raw }),
     ...(templateId && { templateId }),
   };
@@ -264,10 +264,12 @@ export function hederaTransaction({
 }: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "hedera" }>> {
   return {
     family: "hedera",
+    mode: "send",
     amount,
     recipient,
     ...customFeeConfig,
-    memo: payinExtraId ?? undefined,
+    memoType: "string",
+    memoValue: payinExtraId ?? undefined,
   };
 }
 

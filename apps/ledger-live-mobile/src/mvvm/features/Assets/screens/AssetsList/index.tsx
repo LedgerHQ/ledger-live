@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import AssetsListView from "LLM/features/Assets/components/AssetsListView";
 import { ScreenName } from "~/const";
@@ -7,7 +8,6 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AssetsListNavigator } from "./types";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { useSelector } from "~/context/hooks";
 import { hasNoAccountsSelector, isUpToDateSelector } from "~/reducers/accounts";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";

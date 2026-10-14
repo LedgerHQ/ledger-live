@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import type {
   EditType,
   Transaction as BtcTransaction,
@@ -13,7 +14,6 @@ import { getEnv } from "@shared/env";
 import { Flex } from "@ledgerhq/native-ui";
 import { urls } from "~/utils/urls";
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { TrackScreen } from "~/analytics";
 import MethodSelectionList from "~/components/EditTransaction/MethodSelectionList";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";

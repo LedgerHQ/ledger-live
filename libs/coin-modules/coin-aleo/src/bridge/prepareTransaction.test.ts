@@ -525,6 +525,7 @@ describe("prepareTransaction", () => {
     expect(result).toMatchObject({
       properties: {
         amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+        feeRecordCommitment: null,
       },
     });
   });

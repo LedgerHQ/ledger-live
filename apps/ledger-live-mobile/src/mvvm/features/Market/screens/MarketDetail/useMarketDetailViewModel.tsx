@@ -1,8 +1,8 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
-import { screen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -11,7 +11,7 @@ import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { useMarket } from "LLM/features/Market/hooks/useMarket";
 import { useMarketCoinDataWithChart } from "LLM/features/Market/hooks/useMarketCoinData";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { selectCurrency } from "@features/platform-aggregated-assets";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
 
@@ -32,7 +32,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     {
       currencyIds: currency?.ledgerIds,
       product: "llm",
-      version: VersionNumber.appVersion,
+      version: appVersion,
       isStaging: false,
       includeTestNetworks: false,
     },
@@ -67,7 +67,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
 
   useEffect(() => {
     if (readOnlyModeEnabled) {
-      screen("ReadOnly", "Market Coin");
+      trackPage({ category: "ReadOnly", name: "Market Coin" });
     }
   }, [readOnlyModeEnabled]);
 

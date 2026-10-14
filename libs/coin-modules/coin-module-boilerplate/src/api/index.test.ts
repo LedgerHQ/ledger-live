@@ -1,12 +1,12 @@
 import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
+import { getLastBlock } from "../network/node";
 import { createApi } from ".";
-import { type BoilerplateContext } from "../config";
+import { createBoilerplateContext } from "../config.fixture";
 
-const context: BoilerplateContext = {
-  config: async () => ({ nodeUrl: "", minReserve: 0, status: { type: "active" } }),
-  logger: () => {},
-};
+jest.mock("../network/node");
+
+const context = createBoilerplateContext();
 
 const intent: TransactionIntent = {
   intentType: "transaction",
@@ -67,6 +67,16 @@ describe("createApi", () => {
       await expect(
         api.getBalance(context, "random address", {} as unknown as BalanceOptions),
       ).rejects.toMatchObject({ name: "InvalidParameterError" });
+    });
+  });
+
+  describe("lastBlock", () => {
+    it("reads the config from the context and passes it to the node", async () => {
+      jest.mocked(getLastBlock).mockResolvedValue({ blockHeight: 1, blockHash: "h", timestamp: 0 });
+
+      await createApi().lastBlock(context);
+
+      expect(getLastBlock).toHaveBeenCalledWith(await context.config());
     });
   });
 });

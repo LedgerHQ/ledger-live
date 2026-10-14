@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useState, useCallback, useRef } from "react";
 import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
 import Animated, {
@@ -11,7 +12,7 @@ import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/curren
 import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTheme } from "styled-components/native";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { Loading } from "~/components/Loading";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -31,7 +32,6 @@ import { ScreenName } from "~/const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
 import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { TrackScreen } from "~/analytics";
 import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -60,7 +60,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
   const { data: assetData, isLoading: isLoadingAssetData } = useAssetsData({
     currencyIds: currencyId ? [currencyId] : undefined,
     product: "llm",
-    version: VersionNumber.appVersion,
+    version: appVersion,
     areCurrenciesFiltered: true,
     skip: !!preloadedCurrency,
   });

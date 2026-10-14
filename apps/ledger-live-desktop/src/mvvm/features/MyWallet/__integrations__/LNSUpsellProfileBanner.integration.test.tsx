@@ -3,9 +3,15 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import { ContextMenu } from "../components/ContextMenu";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
@@ -157,17 +163,17 @@ describe("My Wallet LNS upsell profile banner", () => {
     await renderMyWalletProfile();
 
     expect(trackPage).toHaveBeenCalledWith(
-      "Profile",
-      undefined,
       {
-        name: "Profile",
-        deviceModel: "lns",
-        personalRecoOptIn: true,
-        offerType: "discount",
-        platform: "lwd",
+        category: "Profile",
+        props: {
+          name: "Profile",
+          deviceModel: "lns",
+          personalRecoOptIn: true,
+          offerType: "discount",
+          platform: "lwd",
+        },
       },
-      true,
-      false,
+      { updateRoutes: true },
     );
   });
 

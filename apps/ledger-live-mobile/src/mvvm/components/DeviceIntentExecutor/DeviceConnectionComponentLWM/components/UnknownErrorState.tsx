@@ -1,25 +1,23 @@
 import React from "react";
-import { InfoState } from "@shared/ui-info-state";
-import { useTranslation } from "~/context/Locale";
+import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
+import { getErrorName } from "@ledgerhq/live-dmk-shared";
+import { UnknownErrorState as UnknownErrorStateView } from "LLM/components/DeviceConnection";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 
-/**
- * Rendered when the connect device use case escalates an unexpected error
- * (i.e. anything that escaped the inner state machine and was funneled into
- * the terminal `UnknownError` UI state). Wording is shared with the
- * executor's `IntentError` fallback because both represent the same
- * "this shouldn't have happened" category. No retry: the host chrome
- * provides the dismiss affordance.
- */
-export function UnknownErrorState(): React.ReactNode {
-  const { t } = useTranslation();
+type UnknownErrorStateProps = {
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.UnknownError }>;
+};
 
+export function UnknownErrorState({ state }: Readonly<UnknownErrorStateProps>): React.ReactNode {
   return (
-    <InfoState
-      preset="error"
-      size="hug"
-      title={t("deviceIntentExecutor.errors.intentError.title")}
-      description={t("deviceIntentExecutor.errors.intentError.description")}
-      testID="device-intent-executor-connect-device-unknown-error"
-    />
+    <>
+      <TrackDIEScreen
+        category={PAGE_CONNECT_DEVICE.UnknownError}
+        subError={getErrorName(state.error)}
+        refreshSource
+      />
+      <UnknownErrorStateView />
+    </>
   );
 }

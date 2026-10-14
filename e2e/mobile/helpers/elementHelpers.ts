@@ -5,6 +5,7 @@ import { delay, isAndroid, isIos } from "@e2e/helpers/commonHelpers";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { PageScroller } from "@e2e/helpers/pageScroller";
 import { checkForErrorElement } from "@e2e/helpers/errorHelpers";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 interface IndexedWebElement extends WebElement {
@@ -28,13 +29,57 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
   );
 }
 
+/**
+ * Bounds a single Detox action so a stuck native/JS bridge call can't ride the outer test
+ * timeout. Unlike retryUntilTimeout, this never re-invokes actionPromise - there is no way to
+ * cancel a Detox action, so retrying after abandoning one risks two invocations landing at once
+ * (e.g. a double tap). Use this where the caller wants "bounded, single attempt, throw loudly on
+ * timeout" instead of "keep retrying until it succeeds."
+ *
+ * @param actionPromise The Detox action to bound.
+ * @param timeoutMs     Timeout budget in milliseconds.
+ * @throws              If the timeout elapses first, or if actionPromise itself rejects.
+ */
+async function withHardTimeout<T>(
+  actionPromise: Promise<T>,
+  timeoutMs = TIMEOUT.xxxlarge,
+): Promise<T> {
+  // actionPromise can't actually be cancelled if the deadline fires first; a no-op catch here
+  // stops its eventual settlement from surfacing as an unhandled rejection later.
+  actionPromise.catch(() => {});
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      actionPromise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () =>
+            reject(new Error(`Detox action timed out after ${timeoutMs}ms (possible bridge hang)`)),
+          timeoutMs,
+        );
+      }),
+    ]);
+  } catch (err) {
+    // Not swallowed: the rejected action never happened, so the caller must still fail.
+    if (err instanceof Error && err.message.includes("multiple interactions taking place")) {
+      log.warn(
+        `${err.message}\nMay be caused by an earlier abandoned timeout - check for a preceding "possible bridge hang" warning.`,
+      );
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function unwrapScriptResult(raw: unknown): unknown {
+  return raw != null && typeof raw === "object" && "result" in raw ? raw.result : raw;
+}
+
 const scroller = new PageScroller();
 
-export const DEFAULT_TIMEOUT = 60000;
-export const VISIBILITY_PROBE_TIMEOUT = 1000;
-export const QUICK_VISIBILITY_PROBE_TIMEOUT = 500;
-
-const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
+const DEFAULT_WEB_ELEMENT_INTERVAL = INTERVAL.long;
 
 /** How far past the viewport edge revealForTap pushes a target so an overlay cannot intercept it. */
 const EDGE_CLEARANCE_PIXELS = 200;
@@ -53,10 +98,51 @@ type WaitForElementOptions = {
   visibilityPercentage?: number;
 };
 
+async function awaitNativeElement(
+  nativeElement: NativeElement,
+  timeout: number,
+  options?: WaitForElementOptions,
+): Promise<void> {
+  const errorCheckTimeout = options?.errorCheckTimeout ?? TIMEOUT.xxxsmall;
+  const checkVisibility = options?.checkVisibility ?? true;
+  const waitCondition = checkVisibility
+    ? waitFor(nativeElement).toBeVisible(options?.visibilityPercentage)
+    : waitFor(nativeElement).toExist();
+  if (!options?.errorElementId) {
+    return waitCondition.withTimeout(timeout);
+  }
+
+  const errorElementId = options.errorElementId;
+  const startTime = Date.now();
+  let lastWaitError: Error | null = null;
+
+  const poll = async (): Promise<void> => {
+    if (Date.now() - startTime >= timeout) {
+      throw new Error(
+        lastWaitError
+          ? `Timeout waiting for element after ${timeout}ms. Wait error: ${lastWaitError.message}`
+          : `Timeout waiting for element after ${timeout}ms`,
+      );
+    }
+    try {
+      await waitCondition.withTimeout(errorCheckTimeout);
+      return;
+    } catch (error) {
+      lastWaitError = error instanceof Error ? error : new Error(String(error));
+    }
+
+    await checkForErrorElement(errorElementId, errorCheckTimeout);
+    await delay(INTERVAL.tick);
+    return poll();
+  };
+
+  return poll();
+}
+
 export const NativeElementHelpers = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  expect(element: any) {
-    return detoxExpect(element);
+  expect(webElement: any) {
+    return detoxExpect(webElement);
   },
 
   /**
@@ -80,69 +166,40 @@ export const NativeElementHelpers = {
    *
    * @example
    * // With error checking
-   * await waitForElement(myElement, 60000, {
+   * await waitForElement(myElement, TIMEOUT.xxlarge, {
    *   errorElementId: "error-description-deviceAction"
    * });
    */
   async waitForElement(
     nativeElement: NativeElement,
-    timeout: number = DEFAULT_TIMEOUT,
+    timeout: number = TIMEOUT.xxlarge,
     options?: WaitForElementOptions,
   ) {
-    const errorCheckTimeout = options?.errorCheckTimeout ?? 500;
-    const checkVisibility = options?.checkVisibility ?? true;
-    const waitCondition = checkVisibility
-      ? waitFor(nativeElement).toBeVisible(options?.visibilityPercentage)
-      : waitFor(nativeElement).toExist();
-    if (!options?.errorElementId) {
-      return waitCondition.withTimeout(timeout);
-    }
-
-    const startTime = Date.now();
-    let lastWaitError: Error | null = null;
-
-    while (Date.now() - startTime < timeout) {
-      try {
-        await waitCondition.withTimeout(errorCheckTimeout);
-        return;
-      } catch (error) {
-        lastWaitError = error instanceof Error ? error : new Error(String(error));
-      }
-
-      await checkForErrorElement(options.errorElementId, errorCheckTimeout);
-
-      await delay(200);
-    }
-
-    throw new Error(
-      lastWaitError
-        ? `Timeout waiting for element after ${timeout}ms. Wait error: ${lastWaitError.message}`
-        : `Timeout waiting for element after ${timeout}ms`,
-    );
+    return withHardTimeout(awaitNativeElement(nativeElement, timeout, options));
   },
 
   async waitForElementById(
     id: string | RegExp,
-    timeout: number = DEFAULT_TIMEOUT,
+    timeout: number = TIMEOUT.xxlarge,
     options?: WaitForElementOptions,
   ) {
     return NativeElementHelpers.waitForElement(element(by.id(id)), timeout, options);
   },
 
   /** Detox's default is 75%, which a sliding bottom sheet satisfies before it settles. */
-  async waitForFullyVisibleById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+  async waitForFullyVisibleById(id: string | RegExp, timeout: number = TIMEOUT.xxlarge) {
     return NativeElementHelpers.waitForElementById(id, timeout, { visibilityPercentage: 100 });
   },
 
   async waitForElementByText(
     text: string | RegExp,
-    timeout: number = DEFAULT_TIMEOUT,
+    timeout: number = TIMEOUT.xxlarge,
     options?: WaitForElementOptions,
   ) {
     return NativeElementHelpers.waitForElement(element(by.text(text)), timeout, options);
   },
 
-  async waitForElementNotVisible(id: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
+  async waitForElementNotVisible(id: string | RegExp, timeout = TIMEOUT.xxlarge): Promise<boolean> {
     const el = element(by.id(id));
 
     try {
@@ -167,9 +224,9 @@ export const NativeElementHelpers = {
     }
   },
 
-  async countElements(element: NativeElement): Promise<number> {
+  async countElements(webElement: NativeElement): Promise<number> {
     try {
-      const attributes = await element.getAttributes();
+      const attributes = await webElement.getAttributes();
       return "elements" in attributes ? attributes.elements.length : 1;
     } catch {
       return 0;
@@ -228,7 +285,7 @@ export const NativeElementHelpers = {
     return element(matcher);
   },
 
-  async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
+  async isIdVisible(id: string | RegExp, timeout: number = TIMEOUT.xxsmall): Promise<boolean> {
     try {
       await waitFor(NativeElementHelpers.getElementById(id)).toBeVisible().withTimeout(timeout);
       return true;
@@ -237,7 +294,7 @@ export const NativeElementHelpers = {
     }
   },
 
-  async isIdPresent(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
+  async isIdPresent(id: string | RegExp, timeout: number = TIMEOUT.xxsmall): Promise<boolean> {
     try {
       await waitFor(NativeElementHelpers.getElementById(id)).toExist().withTimeout(timeout);
       return true;
@@ -247,30 +304,30 @@ export const NativeElementHelpers = {
   },
 
   async tapById(id: string | RegExp, index = 0) {
-    return await NativeElementHelpers.getElementById(id, index).tap();
+    return await withHardTimeout(NativeElementHelpers.getElementById(id, index).tap());
   },
 
   async tapByText(text: string | RegExp, index = 0) {
-    return await NativeElementHelpers.getElementByText(text, index).tap();
+    return await withHardTimeout(NativeElementHelpers.getElementByText(text, index).tap());
   },
 
   async tapByElement(elem: Detox.NativeElement) {
-    await elem.tap();
+    await withHardTimeout(elem.tap());
   },
 
   async tapByIdAndExpectToDisappear(
     id: string | RegExp,
     opts: { index?: number; timeout?: number; disappearTimeout?: number } = {},
   ) {
-    const { index = 0, timeout = 60000, disappearTimeout = 1000 } = opts;
+    const { index = 0, timeout = TIMEOUT.xxlarge, disappearTimeout = TIMEOUT.xxsmall } = opts;
     let tapped = false;
     await retryUntilTimeout(async () => {
       if (tapped) {
         const visible = await NativeElementHelpers.isIdVisible(id);
         if (!visible) return;
       }
-      await NativeElementHelpers.tapById(id, index);
       tapped = true;
+      await NativeElementHelpers.tapById(id, index);
       const stillVisible = await NativeElementHelpers.isIdVisible(id, disappearTimeout);
       if (stillVisible) throw new Error(`Element "${id}" is still visible after tap`);
     }, timeout);
@@ -296,13 +353,13 @@ export const NativeElementHelpers = {
     closeKeyboard = true,
     focus = true,
   ): Promise<void> {
-    if (focus) await retryUntilTimeout(async () => elem.tap());
-    await retryUntilTimeout(async () => elem.replaceText(text));
-    if (closeKeyboard) await retryUntilTimeout(async () => elem.typeText("\n"));
+    if (focus) await withHardTimeout(elem.tap());
+    await withHardTimeout(elem.replaceText(text));
+    if (closeKeyboard) await withHardTimeout(elem.typeText("\n"));
   },
 
   async clearTextByElement(elem: NativeElement): Promise<void> {
-    await retryUntilTimeout(async () => elem.clearText());
+    await withHardTimeout(elem.clearText());
   },
 
   async scrollToText(
@@ -310,9 +367,15 @@ export const NativeElementHelpers = {
     scrollViewId?: string | RegExp,
     pixels?: number,
     direction?: Direction,
-    androidDelay?: number,
+    visibilityProbeTimeout?: number,
   ): Promise<void> {
-    await scroller.performScroll(by.text(text), scrollViewId, pixels, direction, androidDelay);
+    await scroller.performScroll(
+      by.text(text),
+      scrollViewId,
+      pixels,
+      direction,
+      visibilityProbeTimeout,
+    );
   },
 
   async scrollToId(
@@ -320,9 +383,15 @@ export const NativeElementHelpers = {
     scrollViewId?: string | RegExp,
     pixels?: number,
     direction?: Direction,
-    androidDelay?: number,
+    visibilityProbeTimeout?: number,
   ): Promise<void> {
-    await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
+    await scroller.performScroll(
+      by.id(id),
+      scrollViewId,
+      pixels,
+      direction,
+      visibilityProbeTimeout,
+    );
   },
 
   async scrollByPixels(
@@ -438,7 +507,7 @@ export const WebElementHelpers = {
         ),
       [childrenCssSelector],
     );
-    const texts: string[] = JSON.parse(raw);
+    const texts: string[] = JSON.parse(String(unwrapScriptResult(raw)));
     return texts.filter(Boolean);
   },
 
@@ -457,7 +526,7 @@ export const WebElementHelpers = {
 
   async waitWebElement(
     webElement: WebElement,
-    timeout = DEFAULT_TIMEOUT,
+    timeout = TIMEOUT.xxlarge,
     throwOnTimeout = true,
   ): Promise<WebElement | undefined> {
     try {
@@ -481,7 +550,7 @@ export const WebElementHelpers = {
     id: string,
     options?: { timeout?: number; throwOnTimeout?: boolean; index?: number; testIdSuffix?: string },
   ): Promise<WebElement | undefined> {
-    const timeout = options?.timeout ?? DEFAULT_TIMEOUT;
+    const timeout = options?.timeout ?? TIMEOUT.xxlarge;
     const webElement = WebElementHelpers.getWebElementByTestId(id, {
       testIdSuffix: options?.testIdSuffix,
       index: options?.index,
@@ -491,7 +560,7 @@ export const WebElementHelpers = {
     } catch (e) {
       const message = `Web element '${id}' not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`;
       if (options?.throwOnTimeout ?? true) {
-        throw new Error(message);
+        throw new Error(message, { cause: e });
       }
       log.warn(message);
     }
@@ -505,30 +574,36 @@ export const WebElementHelpers = {
     id: string,
     options?: { index?: number; testIdSuffix?: string },
   ): Promise<void> {
-    await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, options).tap());
+    const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
+      index: options?.index,
+      testIdSuffix: options?.testIdSuffix,
+      throwOnTimeout: true,
+    });
+    await WebElementHelpers.tapWebElementByElement(webElement!);
   },
 
-  async tapWebElementByElement(element: WebElement, timeout = DEFAULT_TIMEOUT / 10): Promise<void> {
-    await retryUntilTimeout(async () => element.tap(), timeout);
+  async tapWebElementByElement(webElement: WebElement): Promise<void> {
+    await withHardTimeout(webElement.tap(), TIMEOUT.medium);
   },
 
   async typeTextByWebTestId(id: string, text: string): Promise<void> {
-    await retryUntilTimeout(
-      async () =>
-        WebElementHelpers.getWebElementByTestId(id).runScript(
-          (el: HTMLInputElement, val: string) => {
-            const setValue = Object.getOwnPropertyDescriptor(
-              HTMLInputElement.prototype,
-              "value",
-            )?.set;
-            if (setValue) setValue.call(el, val);
-            else el.value = val;
-            el.dispatchEvent(new Event("input", { bubbles: true }));
-          },
-          [text],
-        ),
-      DEFAULT_TIMEOUT,
-      DEFAULT_WEB_ELEMENT_INTERVAL,
+    const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
+      throwOnTimeout: true,
+    });
+    await withHardTimeout(
+      webElement!.runScript(
+        (el: HTMLInputElement, val: string) => {
+          const setValue = Object.getOwnPropertyDescriptor(
+            HTMLInputElement.prototype,
+            "value",
+          )?.set;
+          if (setValue) setValue.call(el, val);
+          else el.value = val;
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+        },
+        [text],
+      ),
+      TIMEOUT.medium,
     );
   },
 
@@ -536,31 +611,29 @@ export const WebElementHelpers = {
     const raw = await retryUntilTimeout(
       () =>
         WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
-      DEFAULT_TIMEOUT,
+      TIMEOUT.xxlarge,
       DEFAULT_WEB_ELEMENT_INTERVAL,
     );
 
-    if (raw != null && typeof raw === "object" && "result" in raw) {
-      return String(raw["result"]);
-    }
-    return String(raw);
+    return String(unwrapScriptResult(raw));
   },
 
-  async scrollToWebElement(element: WebElement) {
-    const matcher = WebElementHelpers.getWebElementMatcher(element);
+  async scrollToWebElement(webElement: WebElement) {
+    const matcher = WebElementHelpers.getWebElementMatcher(webElement);
     try {
       await retryUntilTimeout(
         async () =>
-          element.runScript((el: HTMLElement | null) => {
+          webElement.runScript((el: HTMLElement | null) => {
             if (!el?.isConnected) throw new Error("element not ready");
             el.scrollIntoView({ behavior: "smooth" });
           }),
-        DEFAULT_TIMEOUT,
+        TIMEOUT.xxlarge,
         DEFAULT_WEB_ELEMENT_INTERVAL,
       );
     } catch (error) {
       throw new Error(
         `Failed to scroll to web element using matcher: ${matcher}\nError: ${sanitizeError(error)}`,
+        { cause: error },
       );
     }
   },
@@ -583,7 +656,10 @@ export const WebElementHelpers = {
     return String(url);
   },
 
-  async waitForCurrentWebviewUrlToContain(substring: string, timeout = 10000): Promise<string> {
+  async waitForCurrentWebviewUrlToContain(
+    substring: string,
+    timeout = TIMEOUT.medium,
+  ): Promise<string> {
     let currentUrl = "";
     await retryUntilTimeout(
       async () => {
@@ -606,7 +682,7 @@ export const WebElementHelpers = {
    * button, form, image, link). Throws if it stays blank until `timeout`.
    */
   async waitForWebviewContentToRender(
-    timeout = DEFAULT_TIMEOUT,
+    timeout = TIMEOUT.xxlarge,
   ): Promise<{ height: number; textLength: number; contentElements: number }> {
     let snapshot = { height: 0, textLength: 0, contentElements: 0 };
     await retryUntilTimeout(
@@ -621,8 +697,7 @@ export const WebElementHelpers = {
           ).length;
           return JSON.stringify({ height, textLength, contentElements });
         });
-        const json =
-          raw != null && typeof raw === "object" && "result" in raw ? raw["result"] : raw;
+        const json = unwrapScriptResult(raw);
         try {
           snapshot = JSON.parse(String(json));
         } catch {
@@ -644,7 +719,7 @@ export const WebElementHelpers = {
   async waitForWebElementToMatchRegex(
     webElementId: string,
     regexPattern: RegExp,
-    timeout = 10000,
+    timeout = TIMEOUT.medium,
   ): Promise<string> {
     let webElementText = "";
     await retryUntilTimeout(
@@ -663,10 +738,17 @@ export const WebElementHelpers = {
     return webElementText;
   },
 
-  async isWebElementPresent(id: string, options?: { index?: number }): Promise<boolean> {
+  async isWebElementPresent(
+    id: string,
+    options?: { index?: number },
+    timeout = TIMEOUT.medium,
+  ): Promise<boolean> {
     try {
-      await WebElementHelpers.getWebElementByTestId(id, { index: options?.index }).runScript(
-        el => el.innerText,
+      await withHardTimeout(
+        WebElementHelpers.getWebElementByTestId(id, { index: options?.index }).runScript(
+          el => el.innerText,
+        ),
+        timeout,
       );
       return true;
     } catch {
@@ -674,39 +756,39 @@ export const WebElementHelpers = {
     }
   },
 
-  async isWebElementEnabled(element: WebElement) {
-    const isEnabled = await element.runScript(
-      (el: HTMLButtonElement | HTMLInputElement, android: boolean) => {
-        return android ? el.ariaDisabled !== "true" : el.getAttributeNames().toString();
-      },
-      [isAndroid()],
+  async isWebElementEnabled(webElement: WebElement, timeout = TIMEOUT.medium) {
+    const isEnabled = await withHardTimeout(
+      webElement.runScript(
+        (el: HTMLButtonElement | HTMLInputElement, android: boolean) => {
+          return android ? el.ariaDisabled !== "true" : el.getAttributeNames().toString();
+        },
+        [isAndroid()],
+      ),
+      timeout,
     );
     return typeof isEnabled === "string" ? !isEnabled.includes("disabled") : isEnabled;
   },
 
   async waitForWebElementToBeEnabled(
     id: string,
-    timeout = DEFAULT_TIMEOUT,
+    timeout = TIMEOUT.xxlarge,
     options?: { index?: number },
   ): Promise<void> {
-    const start = Date.now();
-    let lastErr: Error | undefined;
-
-    while (Date.now() - start < timeout) {
-      try {
-        const element = WebElementHelpers.getWebElementByTestId(id, options);
-        const isEnabled = await WebElementHelpers.isWebElementEnabled(element);
-        if (isEnabled) {
-          return;
+    const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
+      index: options?.index,
+      timeout,
+      throwOnTimeout: true,
+    });
+    return retryUntilTimeout(
+      async () => {
+        const isEnabled = await WebElementHelpers.isWebElementEnabled(webElement!, timeout);
+        if (!isEnabled) {
+          throw new Error(`Web element '${id}' is not enabled yet`);
         }
-      } catch (e) {
-        lastErr = e instanceof Error ? e : new Error(String(e));
-      }
-      await delay(1000);
-    }
-
-    throw new Error(
-      `Web element '${id}' did not become enabled within ${timeout}ms: ${lastErr?.message}`,
+      },
+      timeout,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+      { messageOnError: `Web element '${id}' did not become enabled within ${timeout}ms` },
     );
   },
 };

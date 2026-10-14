@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Routes, Route } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { userIdSelector } from "@domain/entity-client-identity";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
 import AllowDebugAppsToggle from "./AllowDebugAppsToggle";

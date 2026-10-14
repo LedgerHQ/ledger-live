@@ -1,9 +1,9 @@
-import { ipcRenderer } from "electron";
+import { app, files } from "~/renderer/bridge";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-common/promise";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { resetAll, cleanCache } from "~/renderer/storage";
 import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
@@ -11,7 +11,7 @@ import { disable as disableDBMiddleware } from "./middlewares/db";
 import { clearBridgeCache } from "./bridge/cache";
 
 function reload() {
-  ipcRenderer.send("app-reload");
+  app.reload();
 }
 export async function hardReset() {
   log("clear-cache", "clearBridgeCache()");
@@ -25,7 +25,7 @@ export async function hardReset() {
 export function useHardReset() {
   return async () => {
     await hardReset();
-    ipcRenderer.send("app-relaunch");
+    app.relaunch();
   };
 }
 export function useSoftReset() {
@@ -45,6 +45,6 @@ export function useSoftReset() {
   }, [dispatch, wipe]);
 }
 export async function openUserDataFolderAndQuit() {
-  await ipcRenderer.invoke("openUserDataDirectory");
-  ipcRenderer.send("app-quit");
+  await files.openUserDataDirectory();
+  app.quit();
 }

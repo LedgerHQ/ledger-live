@@ -2,7 +2,7 @@ import { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import releaseNotes from "../../../../../release-notes.json";
 import { selectIsReleaseNotesOpen, closeReleaseNotes } from "../releaseNotesDialog";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import type { ReleaseNotesViewProps } from "../types";
 
 const useReleaseNotesViewModel = (): ReleaseNotesViewProps => {

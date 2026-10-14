@@ -4,8 +4,8 @@ import { render, screen } from "tests/testSetup";
 import Tutorial, { ScreenId } from "../index";
 import { OnboardingUseCase } from "../../../OnboardingUseCase";
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -36,14 +36,20 @@ describe("Tutorial onboarding steps", () => {
   it("should include the secure-your-crypto step when the use case is setup-device", () => {
     renderTutorial(OnboardingUseCase.setupDevice, ScreenId.secureYourCrypto);
 
-    expect(screen.getByTestId("v3-tutorial-continue")).toBeVisible();
+    expect(screen.getByTestId("v3-tutorial-continue-secure-your-crypto")).toBeVisible();
     expect(screen.getAllByText(SECURE_YOUR_CRYPTO_STEP)[0]).toBeVisible();
   });
 
   it("should not include the secure-your-crypto step when the use case is recovery-phrase", () => {
     renderTutorial(OnboardingUseCase.recoveryPhrase, ScreenId.pinCode);
 
-    expect(screen.getByTestId("v3-tutorial-continue")).toBeVisible();
+    expect(screen.getByTestId("v3-tutorial-continue-pin-code")).toBeVisible();
     expect(screen.queryByText(SECURE_YOUR_CRYPTO_STEP)).not.toBeInTheDocument();
+  });
+
+  it("should name the secondary continue button after its screen", () => {
+    renderTutorial(OnboardingUseCase.setupDevice, ScreenId.secureYourCrypto);
+
+    expect(screen.getByTestId("v3-tutorial-continue-secondary-secure-your-crypto")).toBeVisible();
   });
 });

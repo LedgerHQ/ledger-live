@@ -61,8 +61,6 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
   InvalidOperationComponent: InvalidOperation,
 };
 
-const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
-
 /**
  * LWM wrapper around `@features/platform-device-intent`'s `DeviceIntentExecutor`.
  */
@@ -74,18 +72,13 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = un
   // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
   const maxDynamicContentSize = Platform.OS === "ios" ? "fullWithOffset" : windowHeight - topInset;
   const {
-    sourceFlow,
     wrappedProps,
     hasHeaderOverride,
     headerContextValue,
+    trackingContextValue,
     onHeaderClosePressed,
     onBackdropPress,
   } = useDeviceIntentExecutorLWMViewModel(props);
-  const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
-  const trackingContextValue = React.useMemo(
-    () => ({ sourceFlow, analyticsProperties }),
-    [sourceFlow, analyticsProperties],
-  );
 
   return (
     <QueuedBottomSheet

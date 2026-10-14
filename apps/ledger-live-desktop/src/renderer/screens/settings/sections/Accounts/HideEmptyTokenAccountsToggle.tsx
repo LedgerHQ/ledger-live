@@ -1,6 +1,6 @@
 import React from "react";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Switch from "~/renderer/components/Switch";
 export default function HideEmptyTokenAccountsToggle() {
   const [hideEmptyTokenAccounts, setHideEmptyTokenAccounts] = useHideEmptyTokenAccounts();

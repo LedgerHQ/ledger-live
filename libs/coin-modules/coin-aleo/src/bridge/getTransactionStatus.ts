@@ -239,9 +239,11 @@ async function validateRecipient({
 async function validateBondRecipient({
   account,
   recipient,
+  config,
 }: {
   account: AleoAccount;
   recipient: string;
+  config: AleoCoinConfig;
 }): Promise<Error | null> {
   // credits.aleo rejects a bond to any validator other than the one already bonded.
   const bondedValidator = account.aleoResources?.bondedValidator;
@@ -250,7 +252,7 @@ async function validateBondRecipient({
   }
 
   try {
-    const validators = await getValidators(account.currency.id);
+    const validators = await getValidators(config);
     const validator = validators.find(({ address }) => address === recipient);
 
     if (!validator) return null;
@@ -382,6 +384,7 @@ async function handleTransferTransaction({
       const bondRecipientError = await validateBondRecipient({
         account,
         recipient: transaction.recipient,
+        config,
       });
       if (bondRecipientError) {
         errors.recipient = bondRecipientError;
@@ -422,12 +425,18 @@ async function handleTransferTransaction({
 
   Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
+  const hasMoreSpecificAmountError = Boolean(errors.amount || errors.amountRecord);
+  const sendMaxLeavesNothing = transaction.useAllAmount && calculatedAmount.amount.lte(0);
+
   if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
     // Nothing to compare against — only whether anything has matured.
     if (availableBalance.lte(0)) {
       errors.amount = new AleoNoClaimableUnbondedFunds();
     }
-  } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  } else if (
+    availableBalance.isLessThan(calculatedAmount.totalSpent) ||
+    (sendMaxLeavesNothing && !hasMoreSpecificAmountError)
+  ) {
     errors.amount = new NotEnoughBalance();
   }
 

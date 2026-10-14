@@ -30,8 +30,8 @@ jest.mock("firebase/remote-config", () => ({
 jest.mock("~/firebase-setup", () => ({
   getFirebaseConfig: () => ({ projectId: "test" }),
 }));
-jest.mock("@features/platform-feature-flags", () => ({
-  DEFAULT_FEATURES: { mockFeature: { enabled: false } },
+jest.mock("@features/platform-feature-flags-firebase", () => ({
+  ...jest.requireActual("@features/platform-feature-flags-firebase"),
   formatDefaultFeatures: () => ({ feature_mock_feature: JSON.stringify({ enabled: false }) }),
 }));
 
@@ -64,6 +64,9 @@ describe("readCachedFlags", () => {
           params: { environment: "PROD", watchConfig: {}, learnMoreLink: "" },
         }),
       ),
+      feature_copy_upgrade_banner: value(
+        JSON.stringify({ enabled: true, copy: { "upgrade.banner.title": "Cached title" } }),
+      ),
     });
 
     const { readCachedFlags } = await loadModule();
@@ -76,6 +79,9 @@ describe("readCachedFlags", () => {
     });
     expect(mockEnsureInitialized).toHaveBeenCalled();
     expect(mockFetchAndActivate).not.toHaveBeenCalled();
+    const { getContentAbTestCopy } = await import("@features/platform-content-ab-tests");
+    expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Cached title" });
+    expect(mockGetAll).toHaveBeenCalledTimes(1);
   });
 
   it("excludes entries served from the compiled defaults", async () => {

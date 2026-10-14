@@ -1,9 +1,5 @@
+import { track } from "@shared/analytics";
 import { createDeeplinkOpenHandler } from "../CustomHandlers";
-import { track } from "~/analytics";
-
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-}));
 
 const mockTrack = jest.mocked(track);
 

@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
 import { useNavigate } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { TokenAccount } from "@ledgerhq/types-live";

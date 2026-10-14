@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, memo, useMemo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { Button } from "@ledgerhq/native-ui";
 import type { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
-import { track } from "~/analytics";
 
 const inferType = (type?: string): ButtonProps["type"] => {
   switch (type) {

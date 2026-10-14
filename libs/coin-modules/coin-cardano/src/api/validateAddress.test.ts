@@ -1,14 +1,15 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import type { CardanoCoinConfig } from "../config";
+import { cardanoCoinConfig } from "../fixtures/config";
 import { validateAddress } from "../logic/validateAddress";
 
 jest.mock("../logic/validateAddress");
 const mockValidateAddress = jest.mocked(validateAddress);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config = cardanoCoinConfig;
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({ ...config, status: { type: "active" } }),
+  config: async () => config,
   logger: () => {},
 };
 

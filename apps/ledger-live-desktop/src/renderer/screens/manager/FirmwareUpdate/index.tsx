@@ -9,7 +9,7 @@ import UpdateModal, { Props as UpdateModalProps } from "~/renderer/modals/Update
 import { StepId } from "~/renderer/modals/UpdateFirmwareModal/types";
 import { urls } from "~/config/urls";
 import { context } from "~/renderer/drawers/Provider";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";

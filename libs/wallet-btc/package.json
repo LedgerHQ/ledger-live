@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-btc",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Ledger shared UTXO wallet engine (Bitcoin & forks): xpub scanning, coin-selection, storage, address crypto",
   "keywords": [
     "Ledger",
@@ -86,7 +86,8 @@
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -101,7 +102,6 @@
     "test-integ": "jest --config=jest.integ.config.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

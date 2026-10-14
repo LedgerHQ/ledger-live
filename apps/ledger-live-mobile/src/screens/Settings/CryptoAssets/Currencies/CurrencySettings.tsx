@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -11,7 +12,6 @@ import { confirmationsNbForCurrencySelector } from "~/reducers/settings";
 import { State } from "~/reducers/types";
 import { updateCurrencySettings } from "~/actions/settings";
 import { withTheme } from "../../../../colors";
-import { TrackScreen } from "~/analytics";
 import { currencySettingsDefaults } from "~/helpers/CurrencySettingsDefaults";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { ScreenName } from "~/const";

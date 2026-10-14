@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-client-identity",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain entity for client identities: DeviceId, UserId, DatadogId value objects and Redux state",
   "main": "src/index.ts",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
-    "uuid": "^9.0.0"
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
@@ -29,7 +29,6 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "typescript": "catalog:"
   }

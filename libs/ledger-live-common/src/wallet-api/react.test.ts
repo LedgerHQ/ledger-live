@@ -10,7 +10,11 @@ import type { TrackingAPI } from "./tracking";
 import type { useWalletAPIServerOptions } from "./react";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { accountGetPublicKeyLogic } from "./logic";
-import { getAccountIdFromWalletAccountId, resolveWalletApiSpendableBalance } from "./converters";
+import {
+  getAccountIdFromWalletAccountId,
+  resolveWalletApiSpendableBalance,
+  resolveWalletApiMaxSpendable,
+} from "./converters";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const walletState: AccountNamesState = new Map();
@@ -52,6 +56,7 @@ jest.mock("./converters", () => ({
   setWalletApiIdForAccountId: jest.fn(),
   getAccountIdFromWalletAccountId: jest.fn(),
   resolveWalletApiSpendableBalance: jest.fn(),
+  resolveWalletApiMaxSpendable: jest.fn(),
 }));
 
 jest.mock("./logic", () => ({
@@ -338,6 +343,7 @@ describe("account.list handler", () => {
     expect(result).toEqual([expect.objectContaining({ spendableBalance })]);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, account);
+    expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
   });
 });
 
@@ -427,6 +433,73 @@ describe("account.request handler", () => {
     expect(result).toEqual(expect.objectContaining({ spendableBalance }));
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, undefined);
+    expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
+  });
+});
+
+describe("account.getMaxSpendable handler", () => {
+  const getHandler = () => {
+    const call = mockSetHandler.mock.calls.find(([name]) => name === "account.getMaxSpendable");
+    if (!call) {
+      throw new Error("account.getMaxSpendable was not registered");
+    }
+    return call[1] as (params: { accountId: string }) => Promise<string>;
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("returns the estimate for the requested account", async () => {
+    const account = createFixtureAccount("01");
+    const maxSpendable = new BigNumber(800);
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(maxSpendable);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await expect(getHandler()({ accountId: "wallet-account-id" })).resolves.toBe("800");
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account);
+  });
+
+  it("serializes a large estimate as a decimal integer string", async () => {
+    const account = createFixtureAccount("01");
+    const maxSpendable = new BigNumber("1e+21");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(maxSpendable);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    expect(maxSpendable.toString()).toBe("1e+21");
+    await expect(getHandler()({ accountId: "wallet-account-id" })).resolves.toBe(
+      "1000000000000000000000",
+    );
+  });
+
+  it("rejects when the estimate cannot be computed", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(undefined);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await expect(getHandler()({ accountId: "wallet-account-id" })).rejects.toThrow(
+      "account.getMaxSpendable failed",
+    );
+  });
+
+  it("rejects when the wallet account id is unknown", async () => {
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(undefined);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+
+    await expect(getHandler()({ accountId: "missing" })).rejects.toThrow(
+      "accountId missing unknown",
+    );
   });
 });
 

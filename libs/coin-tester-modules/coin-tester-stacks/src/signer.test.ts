@@ -1,4 +1,4 @@
-import { makeUnsignedSTXTokenTransfer, transactionToHex } from "@stacks/transactions-v7";
+import { makeUnsignedSTXTokenTransfer, transactionToHex } from "@stacks/transactions";
 import { DEPLOYER_ADDRESS, DEPLOYER_PRIVATE_KEY } from "./fixtures";
 import { buildStacksTestSigner } from "./signer";
 

@@ -5,7 +5,6 @@ import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { useTheme } from "styled-components";
 import { urls } from "~/config/urls";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -22,7 +21,6 @@ export const useWarningConfig = (
   emptyAccount?: Account,
 ) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const navigate = useNavigate();
 
   const formatter = useAccountFormatter();
@@ -59,11 +57,8 @@ export const useWarningConfig = (
         <FormattedAccountItem
           account={formattedAccount}
           onClick={() => handleAccountClick(formattedAccount.id)}
-          backgroundColor={colors.opacityDefault.c05}
-          rightElement={{
-            type: isAccountSelectionFlow ? "arrow" : "edit",
-            onClick: () => navigateToEditAccountName(emptyAccount),
-          }}
+          onEdit={() => navigateToEditAccountName(emptyAccount)}
+          trailing={isAccountSelectionFlow ? "arrow" : "edit"}
         />
       ) : null,
     primaryAction: {

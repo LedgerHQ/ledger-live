@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Success } from "../../components/Success";
 import { useTranslation } from "~/context/Locale";
@@ -9,7 +10,6 @@ import {
   AnalyticsPage,
   useWalletSyncTrackingFlow,
 } from "../../hooks/useLedgerSyncAnalytics";
-import { track } from "~/analytics";
 import { useClose } from "../../hooks/useClose";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";

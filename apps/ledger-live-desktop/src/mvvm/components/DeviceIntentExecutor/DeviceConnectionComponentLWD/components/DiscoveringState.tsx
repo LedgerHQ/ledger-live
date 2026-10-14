@@ -11,7 +11,7 @@ import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DeviceListItem } from "./DeviceListItem";
 
 type DiscoveringStateProps = {
-  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.Discovering }>;
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.Discovering }>;
 };
 
 function getDeviceKey(device: DisplayedDevice, index: number): string {

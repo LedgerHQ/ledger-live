@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
 import { Linking } from "react-native";
@@ -23,7 +23,7 @@ const usePrivacyPolicyPress = ({ flow, shouldWeTrack }: UsePrivacyPolicyPressPro
         button: "Privacy policy",
         flow,
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
   }, [privacyPolicyUrl, shouldWeTrack, flow]);
 

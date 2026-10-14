@@ -64,6 +64,14 @@ describe("removeReplaced", () => {
     expect(removeReplaced([stale], now)).toEqual([]);
   });
 
+  it("drops unconfirmed txs past a caller-provided expiry", () => {
+    const pending = op({ hash: "pending", blockHeight: null, date: "2024-01-01T00:00:00Z" });
+    // now = 30min after the tx date: kept with the 2h default, dropped with a 10min expiry
+    const now = Date.parse("2024-01-01T00:30:00Z");
+    expect(removeReplaced([pending], now)).toHaveLength(1);
+    expect(removeReplaced([pending], now, false, 10 * 60 * 1000)).toEqual([]);
+  });
+
   it("keeps both txs sharing an input at the same height (flag off)", () => {
     const a = op({ hash: "a", blockHeight: 100, extra: { inputs: ["in1"] } });
     const b = op({ hash: "b", blockHeight: 100, extra: { inputs: ["in1"] } });

@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import { EarnMenuBottomSheet } from "../EarnMenuBottomSheet";
 import { State } from "~/reducers/types";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();

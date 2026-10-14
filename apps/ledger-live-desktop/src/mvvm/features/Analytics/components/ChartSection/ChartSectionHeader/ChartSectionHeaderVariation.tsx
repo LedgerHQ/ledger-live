@@ -17,7 +17,10 @@ export function ChartSectionHeaderVariation({
   isScrubbing,
 }: ChartSectionHeaderVariationProps) {
   return (
-    <div className="flex items-center gap-4" data-testid="analytics-balance-trend">
+    <div
+      className="flex items-center gap-4 whitespace-nowrap"
+      data-testid="analytics-balance-trend"
+    >
       {!discreet && (
         <Trend value={percentageValue} size="md" data-testid="analytics-balance-trend-percentage" />
       )}

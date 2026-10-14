@@ -9,6 +9,7 @@ import {
   RecentPrioritizationFees,
   VersionedTransaction,
 } from "@solana/web3.js";
+import { SolanaTokenAccountHoldsAnotherToken } from "../../errors";
 import { transaction } from "../../__tests__/fixtures/helpers.fixture";
 import type { ChainAPI } from "../../network";
 import {
@@ -1278,7 +1279,7 @@ describe("craftTransaction – token edge cases", () => {
         amount: 1000n,
         asset: { type: "spl-token", assetReference: "SomeMint11111111111111111111111111111111111" },
       }),
-    ).rejects.toThrow("holds another token");
+    ).rejects.toBeInstanceOf(SolanaTokenAccountHoldsAnotherToken);
   });
 
   it("surfaces a recipient account whose data cannot be parsed", async () => {

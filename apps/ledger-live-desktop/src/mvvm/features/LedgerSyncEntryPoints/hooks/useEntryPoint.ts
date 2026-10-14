@@ -4,7 +4,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector, lastOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { EntryPoint, EntryPointsData } from "../types";
 import OnboardingEntryPoint from "../components/OnboardingEntryPoint";
 import ManagerEntryPoint from "../components/ManagerEntryPoint";

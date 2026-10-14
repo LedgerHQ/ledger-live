@@ -4,11 +4,11 @@ import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/featu
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
+import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
@@ -71,7 +71,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   useEffect(() => {
     if (hasTrackedRef.current || !isReady) return;
     hasTrackedRef.current = true;
-    trackPage("Modal send - step balance type", null, trackingProperties);
+    trackPage({ category: "Modal send - step balance type", props: trackingProperties });
   }, [isReady, trackingProperties]);
 
   const onSelect = useCallback(

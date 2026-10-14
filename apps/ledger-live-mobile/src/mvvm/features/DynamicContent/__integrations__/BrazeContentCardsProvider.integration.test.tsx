@@ -135,7 +135,7 @@ describe("BrazeContentCardsProvider", () => {
       return timeoutId as ReturnType<typeof setTimeout>;
     }) as unknown as typeof setTimeout);
     const clearTimeoutSpy = jest.spyOn(global, "clearTimeout").mockImplementation(timeoutId => {
-      if (refreshTimeouts.delete(timeoutId as object)) {
+      if (refreshTimeouts.delete(timeoutId as unknown as object)) {
         return;
       }
       nativeClearTimeout(timeoutId);

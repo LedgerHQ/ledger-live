@@ -4,6 +4,7 @@ export { craftTransaction } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getAccountInfo } from "./getAccountInfo";
 export { getBalance } from "./getBalance";
+export { getStakes } from "./getStakes";
 export { getValidators } from "./getValidators";
 export { estimateNetRate } from "./utils";
 export { lastBlock } from "./lastBlock";

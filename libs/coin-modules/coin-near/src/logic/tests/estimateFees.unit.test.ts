@@ -52,9 +52,10 @@ describe("estimateFees", () => {
   });
 
   it("returns a non-zero fee without any preload having run", async () => {
-    // The account bridge fills these in via preload(); nothing does on this path, so the defaults
-    // are zeros. A fee sourced from them would be zero and every transaction would fail on chain.
-    expect(getCurrentNearPreloadData().gasPrice.isZero()).toBe(true);
+    // The account bridge fills the action costs in via preload(); nothing does on this path, so
+    // they stay zero. A fee sourced from them would be zero and every transaction would fail on
+    // chain. (gasPrice is no longer asserted here: it now defaults to the protocol minimum rather
+    // than zero, so that the fee-based UI gating in `canStake` still works on this route.)
     expect(getCurrentNearPreloadData().transferCostSend.isZero()).toBe(true);
 
     const { value } = await estimateFees(mockNearContext, intent());

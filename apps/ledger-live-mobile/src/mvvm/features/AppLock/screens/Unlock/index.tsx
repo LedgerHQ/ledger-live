@@ -1,4 +1,4 @@
-import { ForgotPasswordSheet, isShowingSplash, UnlockView } from "@features/flow-app-lock";
+import { ForgotPasswordSheet, isShowingSplash, UnlockView } from "@features/flow-app-unlock";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Logos } from "@ledgerhq/native-ui";

@@ -1,4 +1,4 @@
-import { useGetCounterValueIdsSortedByMarketCapQuery } from "../counterValues/state-manager/api";
+import { useGetCounterValueIdsSortedByMarketCapQuery } from "@domain/api-market-countervalues";
 import { sortCurrenciesByIds } from "./sortByMarketcap";
 import type { Currency } from "@domain/entity-currency";
 

@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { render, screen, waitFor } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import CounterfeitWarningDrawer from "..";
 import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "../analytics";

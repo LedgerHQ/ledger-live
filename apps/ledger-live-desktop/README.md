@@ -23,7 +23,7 @@ Main source areas:
 | `src/renderer`          | React UI, screens, modals, bridges, analytics, i18n, and renderer setup |
 | `src/renderer/families` | Per coin modules family UI logic                                        |
 
-Details of related apps and code sharing are in the root level readme.
+Product events are documented in [docs/analytics.md](docs/analytics.md). Details of related apps and code sharing are in the root level readme.
 
 ## Prerequisite
 
@@ -83,6 +83,8 @@ e.g.
 ```bash
 ANALYTICS_CONSOLE=TRUE pnpm dev:lld
 ```
+
+That flag shows the analytics debug overlay. What the app still owns is in [docs/analytics.md](docs/analytics.md).
 
 ## Translations and localisation
 

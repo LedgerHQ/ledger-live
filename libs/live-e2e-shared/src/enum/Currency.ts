@@ -106,8 +106,8 @@ export class Currency {
   static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON, [
     Network.POLYGON,
   ]);
-  static readonly BSC = new Currency("BNB Chain", "BNB", "bsc", AppInfos.BNB_CHAIN, [
-    Network.BNB_CHAIN,
+  static readonly BSC = new Currency("BNB Smart Chain", "BNB", "bsc", AppInfos.BNB_SMART_CHAIN, [
+    Network.BNB_SMART_CHAIN,
   ]);
   static readonly GRAM = new Currency("Gram", "GRAM", "ton", AppInfos.TON, [Network.TON]);
   static readonly ETH_USDT = new Currency(
@@ -142,6 +142,14 @@ export class Currency {
     ],
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   );
+  static readonly ETH_WBTC = new Currency(
+    "Wrapped Bitcoin",
+    "WBTC",
+    "ethereum/erc20/wrapped_bitcoin",
+    AppInfos.ETHEREUM,
+    [Network.ETHEREUM],
+    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+  );
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",
     "STETH",
@@ -173,8 +181,8 @@ export class Currency {
     "Binance-Peg BUSD Token",
     "BUSD",
     "bsc",
-    AppInfos.BNB_CHAIN,
-    [Network.BNB_CHAIN, Network.POLYGON],
+    AppInfos.BNB_SMART_CHAIN,
+    [Network.BNB_SMART_CHAIN, Network.POLYGON],
   );
   static readonly POL_DAI = new Currency(
     "(PoS) Dai Stablecoin",
@@ -278,13 +286,14 @@ const CURRENCY_TEST_LABELS = new Map<Currency, string>([
   [Currency.BASE, "ETH (Base)"],
   [Currency.ETH_USDT, "USDT (Ethereum)"],
   [Currency.ETH_USDC, "USDC (Ethereum)"],
+  [Currency.ETH_WBTC, "WBTC (Ethereum)"],
   [Currency.ETH_LIDO, "STETH (Ethereum)"],
   [Currency.ETH_WGNK, "WGNK (Ethereum)"],
   [Currency.XLM_USDC, "USDC (Stellar)"],
   [Currency.ALGO_USDT, "USDT (Algorand)"],
   [Currency.TRX_USDT, "USDT (Tron)"],
   [Currency.TRX_BTT, "BTT (Tron)"],
-  [Currency.BSC_BUSD, "BUSD (BNB Chain)"],
+  [Currency.BSC_BUSD, "BUSD (BNB Smart Chain)"],
   [Currency.POL_DAI, "DAI (Polygon)"],
   [Currency.POL_UNI, "UNI (Polygon)"],
   [Currency.SOL_GIGA, "GIGA (Solana)"],

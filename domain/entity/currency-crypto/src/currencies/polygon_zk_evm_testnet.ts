@@ -38,9 +38,6 @@ export const polygon_zk_evm_testnet = currency({
     },
   ],
   isTestnetFor: "polygon_zk_evm",
-  ethereumLikeInfo: {
-    chainId: 1442,
-  },
   explorerViews: [
     {
       tx: "https://explorer-ui.cardona.zkevm-rpc.com/tx/$hash",

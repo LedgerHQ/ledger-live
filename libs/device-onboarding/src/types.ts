@@ -4,7 +4,6 @@ import type {
   DeviceSessionId,
   FirmwareUpdateContext,
 } from "@ledgerhq/device-management-kit";
-import type { DeviceOnboardingPorts } from "./ports";
 
 /** Named with the values DMK's decoding returns, so reading one is a membership check and not a translation. */
 export const OnboardingStep = {
@@ -28,6 +27,38 @@ export const OnboardingStep = {
 } as const;
 
 export type OnboardingStep = (typeof OnboardingStep)[keyof typeof OnboardingStep];
+
+export const RecoveryKeyStatus = {
+  None: "none",
+  Unknown: "unknown",
+  Rejected: "rejected",
+  Choice: "choice",
+  Running: "running",
+  Naming: "naming",
+  Ready: "ready",
+} as const;
+
+export type RecoveryKeyStatus = (typeof RecoveryKeyStatus)[keyof typeof RecoveryKeyStatus];
+
+const recoveryKeyBackupInProgress = new Set<RecoveryKeyStatus>([
+  RecoveryKeyStatus.Choice,
+  RecoveryKeyStatus.Running,
+  RecoveryKeyStatus.Naming,
+]);
+
+export function isRecoveryKeyBackupInProgress(status: RecoveryKeyStatus | null): boolean {
+  return status !== null && recoveryKeyBackupInProgress.has(status);
+}
+
+const recoveryKeyBackupFinished = new Set<RecoveryKeyStatus>([
+  RecoveryKeyStatus.None,
+  RecoveryKeyStatus.Rejected,
+  RecoveryKeyStatus.Ready,
+]);
+
+export function isRecoveryKeyBackupFinished(status: RecoveryKeyStatus | null): boolean {
+  return status !== null && recoveryKeyBackupFinished.has(status);
+}
 
 const welcomeSteps = new Set<OnboardingStep>([
   OnboardingStep.WelcomeScreen1,
@@ -73,10 +104,26 @@ export type DeviceOnboardingState = {
   currentOnboardingStep: OnboardingStep;
   seedWordIndex: number;
   seedPhraseWordCount: SeedPhraseWordCount;
+  recoveryKeyStatus: RecoveryKeyStatus | null;
 };
 
+const recoveryKeyScreenSteps = new Set<OnboardingStep>([
+  OnboardingStep.Ready,
+  OnboardingStep.WelcomeScreen1,
+]);
+
+export function isOnRecoveryKeyScreen(state: DeviceOnboardingState): boolean {
+  return (
+    state.isOnboarded &&
+    state.recoveryKeyStatus !== null &&
+    recoveryKeyScreenSteps.has(state.currentOnboardingStep)
+  );
+}
+
 export type OnboardingEvent =
-  | { type: "SESSION_READY" }
+  | { type: "SESSION_READY"; sessionId: DeviceSessionId }
+  /** The host moved to a new session mid-run, before the flow reached SESSION_READY. */
+  | { type: "SESSION_CHANGED"; sessionId: DeviceSessionId }
   | { type: "LOCKED" }
   | { type: "UNLOCKED" }
   | { type: "TRANSPORT_LOST" }
@@ -94,6 +141,7 @@ export type OnboardingEvent =
   | { type: "EARLY_CHECK_TOGGLED" }
   | { type: "EARLY_CHECK_UNAVAILABLE" }
   | { type: "ALLOW_SECURE_CONNECTION_REQUESTED" }
+  | { type: "SECURE_CONNECTION_ALLOWED" }
   | { type: "GENUINE_CHECK_PASSED" }
   | { type: "GENUINE_CHECK_REFUSED"; failure: GenuineCheckFailure }
   | { type: "GENUINE_CHECK_FAILED"; failure: GenuineCheckFailure }
@@ -102,8 +150,7 @@ export type OnboardingEvent =
   | { type: "FIRMWARE_UP_TO_DATE" }
   | { type: "FIRMWARE_UPDATE_AVAILABLE"; update: AvailableFirmwareUpdate }
   | { type: "FIRMWARE_CHECK_FAILED" }
-  | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
-  | { type: "START" }
+  | { type: "FIRMWARE_UPDATE_FLOW_CLOSED"; sessionId: DeviceSessionId }
   | { type: "RETRY" }
   | { type: "SKIP" }
   | { type: "CLOSE" }
@@ -135,27 +182,38 @@ export type GenuineVerdict = {
 
 export type DeviceOnboardingInput = {
   dmk: DeviceManagementKit;
-  ports: DeviceOnboardingPorts;
+  /**
+   * The session the machine talks to. It changes only through SESSION_READY, SESSION_CHANGED or
+   * FIRMWARE_UPDATE_FLOW_CLOSED.
+   */
+  sessionId: DeviceSessionId;
   deviceId: string;
   deviceModelId: DeviceModelId;
   offerSync: boolean;
+  hostsSeedSetup?: boolean;
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
 
-export type DeviceOnboardingContext = DeviceOnboardingInput & {
+/** Null until the firmware check answers. "checked" once nothing is left to do with the firmware. */
+export type FirmwareCheck =
+  | { kind: "checked" }
+  | { kind: "offered"; update: AvailableFirmwareUpdate };
+
+export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetup"> & {
+  hostsSeedSetup: boolean;
   lastDeviceState: DeviceOnboardingState | null;
   firmwareVersion: string | null;
+  hasStarted: boolean;
   isOnboarded: boolean;
   onboardedOnEntry: boolean | null;
   genuineVerdict: GenuineVerdict | null;
-  secureConnectionRequested: boolean;
   lastGenuineFailure: GenuineFailureReport | null;
   onEarlyCheckScreen: boolean;
-  firmwareChecked: boolean;
   checksPaused: boolean;
-  availableFirmwareUpdate: AvailableFirmwareUpdate | null;
+  firmware: FirmwareCheck | null;
   currentSetupStep: OnboardingStep | null;
+  recoveryKeyBackupOpen: boolean;
 };
 
 export type DeviceOnboardingExitReason =

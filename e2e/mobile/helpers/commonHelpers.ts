@@ -6,6 +6,7 @@ import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
+import { isPaytabSpec } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import {
@@ -73,12 +74,7 @@ function createDetoxURLBlacklistRegex(): string {
 }
 
 export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) {
-  let specPath = "";
-  if (typeof expect !== "undefined") {
-    specPath = expect.getState().testPath ?? "";
-  }
-  const isPayTabSpec = specPath.replaceAll("\\", "/").toLowerCase().includes("/paytab/");
-  const cardSession = isPayTabSpec
+  const cardSession = isPaytabSpec()
     ? { [CARD_SESSION_BOOTSTRAP_ENV]: await resolveCardSessionBootstrap() }
     : {};
 
@@ -98,9 +94,6 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
     languageAndLocale: {
       language: "en-US",
       locale: "en-US",
-    },
-    permissions: {
-      camera: "YES",
     },
     ...customConfig,
   });
@@ -159,12 +152,17 @@ export async function captureNativeViewHierarchy(
   label = "Native View Hierarchy at failure",
 ): Promise<void> {
   try {
+    await app.common.disableSynchronization();
     const xml = await device.generateViewHierarchyXml();
     if (xml) {
       await allure.attachment(label, xml, "text/xml");
     }
   } catch (error) {
     log.warn(`Could not capture native view hierarchy: ${sanitizeError(error)}`);
+  } finally {
+    await app.common.enableSynchronization().catch(error => {
+      log.warn(`Could not re-enable synchronization: ${sanitizeError(error)}`);
+    });
   }
 }
 

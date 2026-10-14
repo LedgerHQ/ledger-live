@@ -40,9 +40,13 @@ export const buildSignOperation =
           signer.signTransaction(unsigned.encode(), account.freshAddressPath),
         );
 
-        const signedTransaction = new nearAPI.transactions.SignedTransaction({
+        if (!response) {
+          throw new Error("Near: device returned no signature");
+        }
+
+        const signedTransaction = new nearAPI.SignedTransaction({
           transaction: unsigned,
-          signature: new nearAPI.transactions.Signature({
+          signature: new nearAPI.Signature({
             keyType: unsigned.publicKey.keyType,
             data: response,
           }),

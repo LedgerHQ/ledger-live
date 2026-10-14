@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";

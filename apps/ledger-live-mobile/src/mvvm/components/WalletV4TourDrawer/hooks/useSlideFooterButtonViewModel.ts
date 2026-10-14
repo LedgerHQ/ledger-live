@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useSlidesContext } from "@ledgerhq/native-ui";
 import { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { withOptionalVariant } from "../analytics";
 import type { WalletV4Tour } from "../types";
 

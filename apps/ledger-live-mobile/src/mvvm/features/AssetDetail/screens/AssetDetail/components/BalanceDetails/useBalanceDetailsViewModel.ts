@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
@@ -11,7 +12,6 @@ import { useInterestRatesByCurrencies } from "@features/platform-aggregated-asse
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { track } from "~/analytics";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenStakeDrawer } from "LLM/features/Stake";

@@ -29,6 +29,7 @@ import {
 } from "../types";
 import { getResourceAddress } from "./getResourceAddress";
 import { isWriteSetChangeWriteResource } from "./isWriteSetChangeWriteResource";
+import { getEntryFunctionPayload, getFundsOwner, isMultisigPayload } from "./transactionPayload";
 
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
 
@@ -116,10 +117,15 @@ const checkPayloadType = (
   address: string,
   shouldFindAddress: boolean = false,
 ): boolean => {
-  let txPayload = null;
-  if (tx.payload && "function" in tx.payload) {
-    txPayload = tx.payload;
-  } else {
+  const txPayload = getEntryFunctionPayload(tx.payload);
+  if (!txPayload) {
+    return false;
+  }
+  if (
+    shouldFindAddress &&
+    isMultisigPayload(tx.payload) &&
+    !compareAddress(tx.payload.multisig_address, address)
+  ) {
     return false;
   }
 
@@ -187,36 +193,25 @@ function getCoinAndAmountsFromEvents(tx: AptosTransaction, address: string): Coi
   const stakingTx = tx.events.some(event => STAKING_EVENTS.has(event.type));
 
   if (stakingTx) {
+    const isFundsOwner = compareAddress(getFundsOwner(tx), address);
     tx.events.forEach(event => {
-      if (
-        ADD_STAKE_EVENTS.includes(event.type) &&
-        compareAddress(tx.sender, address) &&
-        amount_out.isZero()
-      ) {
+      if (ADD_STAKE_EVENTS.includes(event.type) && isFundsOwner && amount_out.isZero()) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
         amount_out = amount_out.plus(event.data.amount_added || event.data.amount);
       } else if (
         REACTIVATE_STAKE_EVENTS.includes(event.type) &&
-        compareAddress(tx.sender, address) &&
+        isFundsOwner &&
         amount_out.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
         amount_out = amount_out.plus(event.data.amount_reactivated || event.data.amount);
-      } else if (
-        UNLOCK_STAKE_EVENTS.includes(event.type) &&
-        compareAddress(tx.sender, address) &&
-        amount_in.isZero()
-      ) {
+      } else if (UNLOCK_STAKE_EVENTS.includes(event.type) && isFundsOwner && amount_in.isZero()) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.UNSTAKE;
         amount_in = amount_in.plus(event.data.amount_unlocked || event.data.amount);
-      } else if (
-        WITHDRAW_STAKE_EVENTS.includes(event.type) &&
-        compareAddress(tx.sender, address) &&
-        amount_in.isZero()
-      ) {
+      } else if (WITHDRAW_STAKE_EVENTS.includes(event.type) && isFundsOwner && amount_in.isZero()) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.WITHDRAW;
         amount_in = amount_in.plus(event.data.amount_withdrawn || event.data.amount);
@@ -263,13 +258,14 @@ function getCoinAndAmountsFromPayload(
   tx: AptosTransaction,
   address: string,
 ): CoinAndAmounts | null {
-  const payload = tx.payload;
-  if (!payload || !("function" in payload)) {
+  const payload = getEntryFunctionPayload(tx.payload);
+  if (!payload) {
     return null;
   }
+  const fundsOwner = getFundsOwner(tx);
   return (
-    getNativeTransferFromPayload(payload, tx.sender, address) ??
-    getStakingFromPayload(payload, tx.sender, address)
+    getNativeTransferFromPayload(payload, fundsOwner, address) ??
+    getStakingFromPayload(payload, fundsOwner, address)
   );
 }
 

@@ -37,9 +37,6 @@ export const mantle = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 5000,
-  },
   explorerViews: [
     {
       tx: "https://explorer.mantle.xyz/tx/$hash",

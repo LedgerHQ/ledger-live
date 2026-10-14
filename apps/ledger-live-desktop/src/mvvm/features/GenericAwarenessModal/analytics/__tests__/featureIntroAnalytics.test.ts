@@ -1,4 +1,4 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { appStartFeatureIntroCard } from "../../testUtils/fixtures";
 import {
   getFeatureIntroAnalyticsContext,
@@ -7,6 +7,12 @@ import {
   trackFeatureIntroSecondaryClick,
 } from "../featureIntroAnalytics";
 import { PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO } from "../const";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 describe("featureIntroAnalytics", () => {
   beforeEach(() => {
@@ -22,11 +28,11 @@ describe("featureIntroAnalytics", () => {
     trackFeatureIntroPage(appStartFeatureIntroCard);
 
     expect(trackPage).toHaveBeenCalledWith(
-      PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO,
-      undefined,
-      expect.objectContaining({ contentId: appStartFeatureIntroCard.id }),
-      true,
-      false,
+      {
+        category: PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO,
+        props: expect.objectContaining({ contentId: appStartFeatureIntroCard.id }),
+      },
+      { updateRoutes: true },
     );
   });
 

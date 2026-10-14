@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "~/context/Locale";
 import {
@@ -17,7 +18,6 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import CheckBox from "./CheckBox";
 import swipedAccountSubject from "~/types/subject";
 import TouchHintCircle from "./TouchHintCircle";

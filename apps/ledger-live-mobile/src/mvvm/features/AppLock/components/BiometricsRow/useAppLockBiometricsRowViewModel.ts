@@ -1,7 +1,6 @@
 import { selectBiometricsEnabled, type BiometricsAvailability } from "@features/platform-app-lock";
 import { useCallback, useRef } from "react";
 import { track } from "@shared/analytics";
-import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useBiometricsAvailability } from "../../hooks/useBiometricsAvailability";
@@ -40,10 +39,9 @@ function useAppLockBiometricsRowViewModel(): AppLockBiometricsRowViewModel {
 
   const onValueChange = useCallback(
     async (enabled: boolean) => {
-      track("toggle_clicked", {
-        toggle: "biometrics",
-        page: ScreenName.GeneralSettings,
-        enabled: isEnabled,
+      track("button_clicked", {
+        button: enabled ? "enable" : "disable",
+        type: "biometrics",
       });
 
       // The prompt takes as long as the user does, and a second tap meanwhile would race it. Claimed
@@ -59,20 +57,22 @@ function useAppLockBiometricsRowViewModel(): AppLockBiometricsRowViewModel {
           return;
         }
 
+        const labels = promptLabels(
+          t(enabled ? "appLock.biometrics.prompt" : "appLock.biometrics.disablePrompt", {
+            biometricsType: biometricsName,
+          }),
+        );
+
         if (enabled) {
-          await enable(
-            promptLabels(t("appLock.biometrics.prompt", { biometricsType: biometricsName })),
-          );
+          await enable(labels, "settings");
         } else {
-          await disable(
-            promptLabels(t("appLock.biometrics.disablePrompt", { biometricsType: biometricsName })),
-          );
+          await disable(labels, "settings");
         }
       } finally {
         isPendingRef.current = false;
       }
     },
-    [allowRemoval, biometricsName, disable, enable, isEnabled, promptLabels, t],
+    [allowRemoval, biometricsName, disable, enable, promptLabels, t],
   );
 
   return { availability, isEnabled, biometricsName, onValueChange, isRefusing, onRefusalClose };

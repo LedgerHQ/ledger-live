@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -12,7 +12,7 @@ import ValidatorRow from "../../shared/components/ValidatorRow";
 import { useStakeValidatorStep } from "../../shared/hooks/useStakeValidatorStep";
 
 export default function StepValidator({ account, transaction, status, error }: StepProps) {
-  const { unit, validator } = useStakeValidatorStep(account, transaction, "stake.delegate");
+  const { unit, validator } = useStakeValidatorStep(account, transaction, "delegate");
   if (validator === undefined) {
     return null;
   }

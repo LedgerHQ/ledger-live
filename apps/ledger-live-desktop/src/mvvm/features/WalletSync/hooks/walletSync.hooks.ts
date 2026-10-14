@@ -1,4 +1,4 @@
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "LLD/hooks/redux";
 import { ErrorType } from "./type.hooks";

@@ -1,10 +1,9 @@
+import { track, getCurrentTrackingPage } from "@shared/analytics";
 import React, { useRef } from "react";
 import { View } from "react-native";
 
 import { useInViewContext } from "LLM/contexts/InViewContext";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { track } from "~/analytics";
-import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 
 const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
 

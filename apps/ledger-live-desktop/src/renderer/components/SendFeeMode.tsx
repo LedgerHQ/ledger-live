@@ -6,7 +6,7 @@ import Text from "~/renderer/components/Text";
 import Tabbable from "~/renderer/components/Box/Tabbable";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { useLocalizedUrl } from "../hooks/useLocalizedUrls";
 

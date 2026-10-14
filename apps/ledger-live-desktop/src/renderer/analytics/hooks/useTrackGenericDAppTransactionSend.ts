@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
@@ -72,44 +72,44 @@ export const useTrackGenericDAppTransactionSend = ({
       !error
     ) {
       // user accepted secure channel
-      track("Secure Channel approved", defaultPayload, isTrackingEnabled);
+      track("Secure Channel approved", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
-      track("Secure Channel refused", defaultPayload, isTrackingEnabled);
+      track("Secure Channel refused", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (inWrongDeviceForAccount) {
       // device used is not associated with the account
-      track("Wrong device association", defaultPayload, isTrackingEnabled);
+      track("Wrong device association", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (openedAppName && previousOpenAppRequested.current.has(openedAppName)) {
       // Check if the opened app name is in the set of requested apps.
-      track("User opened app", defaultPayload, isTrackingEnabled);
+      track("User opened app", defaultPayload, { mandatory: isTrackingEnabled });
       // Clear the set after tracking the event.
       previousOpenAppRequested.current.clear();
     }
 
     if (previousOpenAppRequested.current.size && error?.name === "UserRefusedOnDevice") {
       // user refused to open add during generic DApp transaction flow (send)
-      track("User refused to open app", defaultPayload, isTrackingEnabled);
+      track("User refused to open app", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "CantOpenDevice") {
       // device disconnected during generic DApp transaction flow (send)
-      track("Connection failed", defaultPayload, isTrackingEnabled);
+      track("Connection failed", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "TransportError") {
       // transport error during generic DApp transaction flow (send)
-      track("Transport error", defaultPayload, isTrackingEnabled);
+      track("Transport error", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during generic DApp transaction flow (send)
-      track("Device locked", defaultPayload, isTrackingEnabled);
+      track("Device locked", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     // When requestOpenApp is present, add it to our Set.

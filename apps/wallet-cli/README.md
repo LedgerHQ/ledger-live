@@ -1,10 +1,10 @@
 # wallet-cli (`@ledgerhq/wallet-cli`)
 
-Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.1.0**.
+Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.9.0**.
 
 ## Status (v2)
 
-wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups. The `2.1.0` release adds the **`skill`** command group, which installs the Ledger wallet-cli agent skill — embedded in the compiled binary — into your coding agent.
+wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups. The `2.1.0` release adds the **`skill`** command group, which installs the Ledger wallet-cli agent skill — embedded in the compiled binary — into your coding agent. The `2.9.0` release adds the **`agent-intent`** command group, which enrolls a remote agent's software identity, imports the Ledger Sync accounts it was granted and proposes EVM payments for human review — no device required, never broadcasts.
 
 **Supported networks** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). Token flows are supported for tokens on those networks.
 
@@ -28,6 +28,12 @@ wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is int
 | `ring init`                           | One-time provisioning of your Ledger Key Ring (LKRP) via the device. Prompts for a password unless `--unsecure-no-password`.                                                                                     |
 | `ring encrypt` / `ring decrypt`       | AES-256-GCM encrypt/decrypt of files (`-i`/`-o`) or text (stdin/stdout) under a named key (`--key`). **No device** after `init`; requires network to restore the trustchain.                                     |
 | `ring keys` / `ring destroy`          | List the keys this machine has used, or tear down the ring (local credentials + remote LKRP application).                                                                                                        |
+| `agent-intent enroll`                 | Create a pending Agent Intent profile (`--source` names the agent runtime; defaults to `other`), print its signed enrollment URL + public-key fingerprint, then **block** until the approval is relayed back over an encrypted Trustchain channel; the completion is verified (App-18 token + App-16 permission) before the Trustchain ID and account access are saved. Defaults to `--environment production`. On timeout or Ctrl+C the profile stays pending — enroll a fresh profile. **No device** required, but a working OS keychain is (on Linux: a Secret Service provider such as gnome-keyring). **Separate trust model from `ring`** — see the [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/SKILL.md#agent-intent). |
+| `agent-intent recover`                | Re-enroll an enrolled profile's existing key into its previous Trustchain: prints a signed recovery URL + fingerprint, marks the profile `recovering`, then **blocks** until the approval is relayed back and the App-18 token check passes. Account access is kept. On timeout or Ctrl+C the profile stays enrolled with its previous data. **No device** required. |
+| `agent-intent list` / `agent-intent show` | List local Agent Intent profiles, or show one profile's detail (fingerprint, status, environment, account access). Never reveals the secret key. **No device** required.                                                    |
+| `agent-intent sync`                   | Import the Ledger Sync accounts an enrolled agent was granted into the session, authenticating with the agent's own key (additive, idempotent; unsupported currency families are reported as skipped). Explicit — never runs automatically. **No device** required. |
+| `agent-intent send`                   | Propose an Ethereum send (ETH or ERC-20) from an enrolled profile for **human review** in the Agent Intent frontend; prints the review link. **Never signs or broadcasts** and needs **no device**; `--dry-run` validates without submitting. |
+| `agent-intent intents`                | List the intents an enrolled profile proposed, most recent first, one page at a time (`--status`, `--page-size`, `--cursor` from the previous page). The service scopes the list to the agent, so it never shows another agent's intents. JSON keeps amounts as exact base-unit strings. **No device** required. |
 | `skill list` / `skill retrieve`       | List the agent skills shipped inside the binary, or print one to stdout. **No device** required.                                                                                                                |
 | `skill install`                       | Install the embedded agent skill for `--agent` (`claude`, `cursor`, `codex`, or generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides. **No device** required.                             |
 | `skill doctor`                        | Detect drift between installed skills and those shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`); `--fix` self-heals, `--force` also overwrites local edits.              |
@@ -57,6 +63,13 @@ pnpm wallet-cli start -- ring encrypt --help
 pnpm wallet-cli start -- ring decrypt --help
 pnpm wallet-cli start -- skill install --help
 pnpm wallet-cli start -- skill doctor --help
+pnpm wallet-cli start -- agent-intent enroll --help
+pnpm wallet-cli start -- agent-intent recover --help
+pnpm wallet-cli start -- agent-intent list --help
+pnpm wallet-cli start -- agent-intent show --help
+pnpm wallet-cli start -- agent-intent sync --help
+pnpm wallet-cli start -- agent-intent send --help
+pnpm wallet-cli start -- agent-intent intents --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).
@@ -101,9 +114,26 @@ pnpm start -- <command> [args]
 - In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
 - From repo root: `pnpm build:wallet-cli`
 
+Locally, `pnpm build` compiles your own platform only. On CI (`CI` set), it compiles every release target, which needs the OpenTUI runtime packages of every platform: CI declares `supportedArchitectures` through the `pnpm-cross-platform-optional-deps` composite.
+
+## Tests
+
+`pnpm test` in `apps/wallet-cli`. Tests sit next to the code they validate; the naming convention and the shared helpers are described in [`src/testing/README.md`](src/testing/README.md).
+
 ## Environment
 
-If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
+If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`live-common-setup.ts`).
+
+## API authentication
+
+`swap quote` and `swap execute` authenticate their quote requests against the production Ledger API with a key used for nothing else:
+
+- One key per profile (state directory). It is created on the first swap request and stored unencrypted in the OS keychain as `api-auth-key-<hash>` under the `ledger-wallet-cli` service, so it never asks for the Ledger Key Ring password.
+- It is not the Ledger Key Ring member key and carries no trustchain, so its tokens are unattested. `session reset` and `ring destroy` leave it in place.
+- The access token lives in memory for a single command.
+- Without a usable OS keychain, a one-off key authenticates that run.
+- If authentication fails or does not finish within 10 seconds, the shared authenticated base query sends the request without a token for now. If the swap API rejects a refreshed token, the command fails with `No quotes available: noQuotes`.
+- For development, `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults (`configureStore.ts`). They do not change the swap API, which stays on production.
 
 ## Relation to `ledger-live` CLI
 

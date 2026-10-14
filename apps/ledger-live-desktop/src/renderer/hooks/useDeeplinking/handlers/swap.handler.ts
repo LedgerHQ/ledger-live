@@ -12,7 +12,14 @@ export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
     fromCurrency,
     toCurrency,
     toAccountId,
+    history,
+    swapId,
   } = route;
+
+  if (history) {
+    navigate("/swap/history", swapId ? { swapId } : undefined);
+    return;
+  }
 
   const state: {
     defaultToken?: { fromTokenId?: string; toTokenId?: string };

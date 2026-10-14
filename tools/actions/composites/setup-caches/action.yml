@@ -57,8 +57,24 @@ runs:
       shell: bash
       run: echo "NX_SKIP_NX_CACHE=true" >> "$GITHUB_ENV"
 
+    # Self-hosted runner images ship mise and every tool pinned in mise.toml - only run when not applicable
+    - name: Detect preinstalled mise tools
+      id: mise-preinstalled
+      if: inputs.use-mise == 'true' && runner.environment == 'self-hosted' && runner.os == 'Linux'
+      shell: bash
+      env:
+        MISE_EXPERIMENTAL: "1"
+      run: |
+        # Assigning in the condition keeps mise's exit status: a failing `mise ls` (e.g. a mise too
+        # old for mise.toml) must fall back to mise-action, not look like "nothing missing".
+        if command -v mise >/dev/null 2>&1 && missing="$(mise ls --missing --local 2>/dev/null)" && [ -z "$missing" ]; then
+          echo "found=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "found=false" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Install mise and tools
-      if: inputs.use-mise == 'true'
+      if: inputs.use-mise == 'true' && steps.mise-preinstalled.outputs.found != 'true'
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
         # pinned: following latest mise once broke plugin installs (TSDINT-1644)
@@ -70,7 +86,7 @@ runs:
         github_token: ${{ inputs['gh-token'] }}
 
     - name: Force reshim
-      if: inputs.use-mise == 'true'
+      if: inputs.use-mise == 'true' && steps.mise-preinstalled.outputs.found != 'true'
       shell: bash
       run: |
         mise reshim

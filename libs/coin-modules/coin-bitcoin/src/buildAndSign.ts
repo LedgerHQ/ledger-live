@@ -2,7 +2,6 @@
 // wallet engine stays a lean read/accounting layer (scan + coin-selection + storage); the
 // device signer (BitcoinSigner) and RBF fee logic live in coin-bitcoin.
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/wallet-btc/account";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/types";
 import type { Address } from "@ledgerhq/wallet-btc/storage/types";
@@ -10,6 +9,8 @@ import type { PickingStrategy } from "@ledgerhq/wallet-btc/pickingstrategies/typ
 import * as utils from "@ledgerhq/wallet-btc/utils";
 import { getMinReplacementFeeSat, getTxInputOutpoints } from "./rbfFees";
 import { BitcoinSigner, SignerTransaction } from "./signer";
+import type { BitcoinCoinConfig } from "./config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 export type BuildAccountTxParams = {
   fromAccount: Account;
@@ -52,13 +53,14 @@ async function getConflictingTxIds(
 }
 
 async function getMaxMinReplacementFeeSat(
+  config: BitcoinCoinConfig,
   fromAccount: Account,
   txIds: Set<string>,
 ): Promise<number> {
   let maxMinFee = 0;
   for (const txId of txIds) {
     try {
-      const minFee = await getMinReplacementFeeSat(fromAccount, txId);
+      const minFee = await getMinReplacementFeeSat(config, fromAccount, txId);
       const n = minFee.integerValue().toNumber();
       if (n > maxMinFee) maxMinFee = n;
     } catch {
@@ -69,6 +71,7 @@ async function getMaxMinReplacementFeeSat(
 }
 
 async function getMinReplacementFeeSatFromOriginalTx(
+  config: BitcoinCoinConfig,
   fromAccount: Account,
   originalTxId?: string,
   pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }>,
@@ -81,7 +84,7 @@ async function getMinReplacementFeeSatFromOriginalTx(
       originalTxId,
       pendingOperations,
     );
-    const maxMinFee = await getMaxMinReplacementFeeSat(fromAccount, conflictingTxIds);
+    const maxMinFee = await getMaxMinReplacementFeeSat(config, fromAccount, conflictingTxIds);
     return maxMinFee > 0 ? maxMinFee : undefined;
   } catch {
     // Continue with best-effort replacement building.
@@ -90,9 +93,13 @@ async function getMinReplacementFeeSatFromOriginalTx(
   }
 }
 
-export async function buildAccountTx(params: BuildAccountTxParams): Promise<TransactionInfo> {
+export async function buildAccountTx(
+  config: BitcoinCoinConfig,
+  params: BuildAccountTxParams,
+): Promise<TransactionInfo> {
   const changeAddress = await validateAndGetChangeAddress(params);
   const minReplacementFeeSat = await getMinReplacementFeeSatFromOriginalTx(
+    config,
     params.fromAccount,
     params.originalTxId,
     params.pendingOperations,
@@ -116,20 +123,23 @@ export async function buildAccountTx(params: BuildAccountTxParams): Promise<Tran
   return txInfo;
 }
 
-export async function signAccountTx(params: {
-  btc: BitcoinSigner;
-  fromAccount: Account;
-  txInfo: TransactionInfo;
-  lockTime?: number | undefined;
-  sigHashType?: number | undefined;
-  segwit?: boolean | undefined;
-  additionals?: Array<string> | undefined;
-  expiryHeight?: Buffer | undefined;
-  hasExtraData?: boolean | undefined;
-  onDeviceSignatureRequested?: () => void;
-  onDeviceSignatureGranted?: () => void;
-  onDeviceStreaming?: (arg0: { progress: number; total: number; index: number }) => void;
-}): Promise<string> {
+export async function signAccountTx(
+  logger: Logger,
+  params: {
+    btc: BitcoinSigner;
+    fromAccount: Account;
+    txInfo: TransactionInfo;
+    lockTime?: number | undefined;
+    sigHashType?: number | undefined;
+    segwit?: boolean | undefined;
+    additionals?: Array<string> | undefined;
+    expiryHeight?: Buffer | undefined;
+    hasExtraData?: boolean | undefined;
+    onDeviceSignatureRequested?: () => void;
+    onDeviceSignatureGranted?: () => void;
+    onDeviceStreaming?: (arg0: { progress: number; total: number; index: number }) => void;
+  },
+): Promise<string> {
   const {
     btc,
     fromAccount,
@@ -180,7 +190,7 @@ export async function signAccountTx(params: {
     number | null | undefined, // NOTE: blockheight
   ][];
   const inputs: Inputs = txInfo.inputs.map(i => {
-    log("hw", `splitTransaction`, {
+    logger("hw", `splitTransaction`, {
       transactionHex: i.txHex,
       isSegwitSupported: true,
       hasExtraData,
@@ -197,7 +207,7 @@ export async function signAccountTx(params: {
 
   const lastOutputIndex = txInfo.outputs.length - 1;
 
-  log("hw", `createPaymentTransaction`, {
+  logger("hw", `createPaymentTransaction`, {
     inputs,
     associatedKeysets,
     outputScriptHex,

@@ -9,9 +9,12 @@ import {
 } from "../../fixtures/common.fixtures";
 import type { SignerContext } from "../../signer";
 import { BitcoinAccount } from "../../types";
-import type { CoinConfig } from "../../config";
+import { contextWith } from "../fixtures/coinConfig";
 
-const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" }, explorerId: "btc" } });
+const coinConfig = contextWith({
+  explorerId: "btc",
+  explorer: { url: "https://explorers.api.live.ledger.com" },
+});
 
 jest.setTimeout(10000);
 

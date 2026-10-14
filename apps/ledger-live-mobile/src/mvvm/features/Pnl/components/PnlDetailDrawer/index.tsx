@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetHeader, BottomSheetView, Text } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "~/analytics";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { PnlDetailDrawerProps } from "./types";
 import { PnlDetailRow } from "./PnlDetailRow";

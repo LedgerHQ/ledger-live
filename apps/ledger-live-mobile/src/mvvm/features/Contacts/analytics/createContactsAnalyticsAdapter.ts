@@ -1,5 +1,5 @@
+import { trackPage, track } from "@shared/analytics";
 import type { ContactsAnalyticsAdapter } from "@features/flow-contacts";
-import { screen, track } from "~/analytics";
 import { CONTACTS_ANALYTICS_PLATFORM } from "./constants";
 import { mapContactsPageEventToScreenCategory } from "./mapContactsPageEventToScreenCategory";
 
@@ -12,15 +12,15 @@ export function createContactsAnalyticsAdapter(): ContactsAnalyticsAdapter {
       });
     },
     trackPage: ({ page, properties }) => {
-      void screen(
-        mapContactsPageEventToScreenCategory(page),
-        undefined,
+      void trackPage(
         {
-          ...properties,
-          platform: CONTACTS_ANALYTICS_PLATFORM,
+          category: mapContactsPageEventToScreenCategory(page),
+          props: {
+            ...properties,
+            platform: CONTACTS_ANALYTICS_PLATFORM,
+          },
         },
-        true,
-        true,
+        { updateRoutes: true, refreshSource: true },
       );
     },
   };

@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@ledgerhq/logs": "catalog:",
-    "uuid": "^9.0.0"
+    "uuid": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
@@ -39,7 +39,6 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
-    "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

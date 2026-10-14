@@ -11,7 +11,11 @@ import {
   type MatchedDevice,
 } from "@ledgerhq/live-dmk-shared";
 import { isPeerRemovedPairingError } from "../errors";
-import { BaseConnectionErrorTypes, ConnectionErrorTypes, MobileConnectionError } from "./types";
+import {
+  BaseConnectionErrorTypes,
+  ConnectionErrorTypes,
+  type MobileConnectionError,
+} from "../deviceConnectivity/types";
 import { findMatchingNewDevice } from "../utils/matchDevicesByNameOrId";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 import {

@@ -58,6 +58,8 @@ import type { PolkadotSimpleOperationFlowParamList } from "../../../families/pol
 import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
+import type { StacksStakingFlowParamList } from "../../../families/stacks/StakingFlow/types";
+import type { StacksUnstakingFlowParamList } from "../../../families/stacks/UnstakingFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TezosStakeFlowParamList } from "../../../families/tezos/StakeFlow/types";
 import type { TezosUnstakeFlowParamList } from "../../../families/tezos/UnstakeFlow/types";
@@ -279,6 +281,10 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.AleoBondPublicFlow]: NavigatorScreenParams<AleoBondPublicFlowParamList>;
   [NavigatorName.AleoClaimUnbondFlow]: NavigatorScreenParams<AleoClaimUnbondFlowParamList>;
   [NavigatorName.AleoUnbondFlow]: NavigatorScreenParams<AleoUnbondFlowParamList>;
+
+  // Stacks
+  [NavigatorName.StacksStakingFlow]: NavigatorScreenParams<StacksStakingFlowParamList>;
+  [NavigatorName.StacksUnstakingFlow]: NavigatorScreenParams<StacksUnstakingFlowParamList>;
 
   // Polkadot
   [NavigatorName.PolkadotSimpleOperationFlow]: NavigatorScreenParams<PolkadotSimpleOperationFlowParamList>;

@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

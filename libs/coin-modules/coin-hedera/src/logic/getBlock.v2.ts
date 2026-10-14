@@ -244,16 +244,36 @@ export async function getBlockV2({
     const payerAccount = extractFeesPayer(mirrorTx);
     const stakingAnalysis = stakingAnalysisMap.get(mirrorTx.transaction_hash);
 
+    // same keys and nesting as `listOperations` puts in `details.familyExtra`, so an indexer gets one
+    // shape whether it reads a transaction from account history or from a block
+    const familyExtra = {
+      pagingToken: mirrorTx.consensus_timestamp,
+      consensusTimestamp: mirrorTx.consensus_timestamp,
+      transactionId: mirrorTx.transaction_id,
+      feesPayer: payerAccount,
+      ...(item.type === "erc20" && {
+        gasConsumed: item.data.contractCallResult.gas_consumed,
+        gasLimit: item.data.contractCallResult.gas_limit,
+        gasUsed: item.data.contractCallResult.gas_used,
+      }),
+    };
+
     let operations: BlockOperation[];
 
+    // "other" operations carry the transaction's familyExtra plus their own keys, so they hold the
+    // whole bag the matching `listOperations` operation has
     if (stakingAnalysis) {
       operations = [
         {
           type: "other",
           ledgerOpType: stakingAnalysis.operationType,
-          targetStakingNodeId: stakingAnalysis.targetStakingNodeId,
-          previousStakingNodeId: stakingAnalysis.previousStakingNodeId,
           stakedAmount: stakingAnalysis.stakedAmount,
+          familyExtra: {
+            ...familyExtra,
+            previousStakingNodeId: stakingAnalysis.previousStakingNodeId,
+            targetStakingNodeId: stakingAnalysis.targetStakingNodeId,
+            stakedAmount: stakingAnalysis.stakedAmount.toString(),
+          },
         },
       ];
     } else if (isTokenAssociateTransactionType(item)) {
@@ -263,7 +283,10 @@ export async function getBlockV2({
         {
           type: "other",
           ledgerOpType: "ASSOCIATE_TOKEN",
-          ...(associatedTokenId && { associatedTokenId }),
+          familyExtra: {
+            ...familyExtra,
+            ...(associatedTokenId && { associatedTokenId }),
+          },
         },
       ];
     } else {
@@ -304,14 +327,8 @@ export async function getBlockV2({
       fees: BigInt(mirrorTx.charged_tx_fee),
       feesPayer: payerAccount,
       details: {
-        consensusTimestamp: mirrorTx.consensus_timestamp,
-        transactionId: mirrorTx.transaction_id,
         ...(memo && { memo }),
-        ...(item.type === "erc20" && {
-          gasUsed: item.data.contractCallResult.gas_used,
-          gasLimit: item.data.contractCallResult.gas_limit,
-          gasConsumed: item.data.contractCallResult.gas_consumed,
-        }),
+        familyExtra,
       },
     };
   });

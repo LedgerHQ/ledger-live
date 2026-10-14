@@ -5,7 +5,7 @@ import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import SelectFeeStrategy, { OnClickType } from "~/renderer/components/SelectFeeStrategy";

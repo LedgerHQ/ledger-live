@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import storage from "LLM/storage";
@@ -15,7 +16,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import InfiniteLoader from "~/components/InfiniteLoader";
-import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
 import { BackConfig, WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { PtxNavigatorParamList } from "~/components/RootNavigator/types/PtxNavigator";

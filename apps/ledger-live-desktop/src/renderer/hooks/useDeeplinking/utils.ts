@@ -1,7 +1,7 @@
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,

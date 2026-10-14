@@ -81,6 +81,7 @@
     "styled-components": "catalog:",
     "styled-system": "catalog:",
     "stylis": "catalog:",
-    "tiny-glob": "^0.2.9"
+    "tiny-glob": "^0.2.9",
+    "typescript": "catalog:"
   }
 }

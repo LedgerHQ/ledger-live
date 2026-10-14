@@ -1,6 +1,6 @@
 import React from "react";
 import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 type TrackDIEScreenProps = React.ComponentProps<typeof TrackPage> & {
   sourceFlow?: never;

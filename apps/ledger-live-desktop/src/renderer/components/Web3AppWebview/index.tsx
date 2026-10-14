@@ -3,7 +3,7 @@
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import React, { forwardRef } from "react";
 import semver from "semver";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { WalletAPIWebview } from "./WalletAPIWebview";
 import { WebviewAPI, WebviewProps } from "./types";

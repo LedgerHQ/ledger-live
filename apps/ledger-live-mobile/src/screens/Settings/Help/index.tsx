@@ -1,5 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
-import { TrackScreen } from "~/analytics";
 import LedgerSupportRow from "./LedgerSupportRow";
 import ClearCacheRow from "./ClearCacheRow";
 import ExportLogsRow from "./ExportLogsRow";

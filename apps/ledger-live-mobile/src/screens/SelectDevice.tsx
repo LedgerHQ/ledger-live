@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,7 +7,6 @@ import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { TrackScreen } from "~/analytics";
 import SelectDevice from "~/components/SelectDevice2";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import { useDispatch } from "~/context/hooks";

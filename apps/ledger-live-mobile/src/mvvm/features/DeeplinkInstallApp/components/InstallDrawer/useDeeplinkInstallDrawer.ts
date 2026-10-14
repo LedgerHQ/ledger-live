@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import VersionNumber from "react-native-version-number";
-import { track } from "~/analytics";
+import { appVersion } from "LLM/utils/appVersion";
 import { ScreenName, NavigatorName } from "~/const";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import {
@@ -65,7 +65,7 @@ export function useDeeplinkInstallDrawer() {
       button: `Install ${appConfig?.displayName}`,
       source: "Universal Link",
       equipmentOS: Platform.OS,
-      LLVersion: VersionNumber.appVersion,
+      LLVersion: appVersion,
     });
 
     dispatch(closeDeeplinkInstallAppDrawer());

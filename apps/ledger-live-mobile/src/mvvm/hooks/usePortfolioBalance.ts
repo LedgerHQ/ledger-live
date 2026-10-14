@@ -1,6 +1,7 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "@shared/network-status";
 import { accountsWithUpToDateCheckSelector, hasNoAccountsSelector } from "~/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
 import { getDefaultAccountName } from "@domain/entity-account-name";
@@ -17,7 +18,6 @@ import {
   setHasCompletedInitialSync,
   setLastUserSyncClickTimestamp,
 } from "~/reducers/portfolioRefresh";
-import { track } from "~/analytics";
 import { useSyncSources } from "./useSyncSources";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 
@@ -33,7 +33,7 @@ const DEFAULT_RANGE = "day" as const;
  */
 export function usePortfolioBalance() {
   const dispatch = useDispatch();
-  const { isConnected, isInternetReachable } = useNetInfo();
+  const { isConnected, isInternetReachable } = useNetworkState();
 
   const hasAccounts = !useSelector(hasNoAccountsSelector);
   const portfolio = usePortfolioAllAccounts({ range: DEFAULT_RANGE });

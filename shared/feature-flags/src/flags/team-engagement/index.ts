@@ -1,6 +1,7 @@
 export * from "./brazeOptOutIdentityCleanup";
 export * from "./brazePushNotifications";
 export * from "./buyDeviceFromLive";
+export * from "./deviceOnboarding";
 export * from "./lwdBackupHub";
 export * from "./lwdGenericAwarenessModal";
 export * from "./lwdOnboardingCounterfeitWarning";

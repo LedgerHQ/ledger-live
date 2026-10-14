@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
@@ -12,7 +13,6 @@ import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";

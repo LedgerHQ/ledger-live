@@ -1,11 +1,12 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
-import VersionNumber from "react-native-version-number";
+import { appVersion as nativeAppVersion, buildVersion } from "LLM/utils/appVersion";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
 import { useSelector } from "~/context/hooks";
-import { track, TrackScreen } from "~/analytics";
 import useRatings from "~/logic/ratings";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { lastSeenDeviceSelector, notificationsSelector } from "~/reducers/settings";
@@ -14,7 +15,7 @@ import { useSettings } from "~/hooks";
 
 const { height } = getWindowDimensions();
 
-const appVersion = `${VersionNumber.appVersion} (${VersionNumber.buildVersion})`;
+const appVersion = `${nativeAppVersion} (${buildVersion})`;
 
 const INTERNAL_FORM_COMPLETED_EVENT = "internal-form-completed";
 const TYPEFORM_COMPLETE_SUBMISSION_REQUEST_ENDPOINT = "/complete-submission";

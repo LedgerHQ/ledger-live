@@ -7,7 +7,8 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import StepAmount from "./Amount";
 import type { StepProps } from "../types";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));

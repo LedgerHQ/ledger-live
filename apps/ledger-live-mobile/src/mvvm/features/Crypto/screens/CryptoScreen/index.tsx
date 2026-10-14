@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { CryptoContent } from "../../components/CryptoContent";
 import { CryptoScreenNavigator, CryptoScreenViewData, CryptoVariant } from "./types";

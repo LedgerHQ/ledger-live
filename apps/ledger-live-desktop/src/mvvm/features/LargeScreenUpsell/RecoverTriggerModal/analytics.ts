@@ -1,5 +1,5 @@
 import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 export const RECOVER_TRIGGER_PAGE_NAME = "Upsell trigger - recover";
 export const RECOVER_TRIGGER_CTA_BUTTON = "learn more";
@@ -21,15 +21,15 @@ export type RecoverTriggerSharedAnalyticsProps = Readonly<{
 
 export function trackRecoverTriggerModalViewed(sharedProps: RecoverTriggerSharedAnalyticsProps) {
   trackPage(
-    RECOVER_TRIGGER_PAGE_NAME,
-    undefined,
     {
-      name: RECOVER_TRIGGER_PAGE_NAME,
-      sourceFlow: "recover",
-      ...sharedProps,
+      category: RECOVER_TRIGGER_PAGE_NAME,
+      props: {
+        name: RECOVER_TRIGGER_PAGE_NAME,
+        sourceFlow: "recover",
+        ...sharedProps,
+      },
     },
-    true,
-    false,
+    { updateRoutes: true },
   );
 }
 

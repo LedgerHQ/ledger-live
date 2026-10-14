@@ -7,6 +7,7 @@ import { BitcoinInfrastructureError } from "./errors";
 import { getRelayFeeFloorSatVb } from "@ledgerhq/wallet-btc/utils";
 import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
 import { zcashSafeFeePerByte } from "./chain-adapters/zcash/transparent-fee-rate";
+import { isZcashCurrencyId } from "./chain-adapters/zcash/currency";
 const speeds = ["fast", "medium", "slow"];
 
 /**
@@ -60,7 +61,7 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
   const floorSatPerVB = await getRelayFeeFloorSatVb(walletAccount.xpub.explorer);
 
   // Zcash: price with ZIP-317 instead of the explorer's (Bitcoin-scale) fee data.
-  if (account.currency.id === "zcash") {
+  if (isZcashCurrencyId(account.currency.id)) {
     return getZcashNetworkInfo(walletAccount, floorSatPerVB);
   }
 

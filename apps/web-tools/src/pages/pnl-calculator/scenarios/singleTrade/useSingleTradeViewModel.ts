@@ -1,10 +1,9 @@
 import { useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { FiatCurrency } from "@domain/entity-currency-fiat";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
 import {
-  buildCV,
   buy,
-  dailyHistory,
   makeAccount,
   resetOperationIdCounter,
   sell,

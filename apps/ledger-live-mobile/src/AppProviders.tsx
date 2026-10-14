@@ -1,5 +1,5 @@
 import { BottomSheetModalProvider, GlobalTooltipBottomSheet } from "@ledgerhq/lumen-ui-rnative";
-import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppLockProvider } from "LLM/features/AppLock/AppLockProvider";

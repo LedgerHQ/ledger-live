@@ -13,12 +13,20 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import { validateAddress as isValidStacksAddress } from "../common-logic";
+import {
+  validateAddress as isValidStacksAddress,
+  isPoolAddress,
+  isValidNumCycles,
+  MAX_NUM_CYCLES,
+  MIN_NUM_CYCLES,
+} from "../common-logic";
+import { StacksStakeInPreparePhase } from "../errors";
+import { fetchPoxInfo } from "../network/pox";
 import type { StacksTxData } from "../types";
 
-/** pox-5's `MAX_NUM_CYCLES` (`pox-5.clar:78`). Client-side check only -- the contract's own
- * `ERR_INVALID_NUM_CYCLES` guard is the ground truth, this just avoids a wasted-fee on-chain abort. */
-const MAX_NUM_CYCLES = 96;
+// Kept for consumers of this module's public subpath, which exported it before the staking bounds
+// moved to `common-logic/staking`.
+export { MAX_NUM_CYCLES } from "../common-logic";
 
 function spendable(balances: Balance[], isToken: boolean, assetReference?: string): bigint {
   // Case-insensitive: same reasoning as `buildUnsignedTx.ts`'s `resolveAmount` -- `getBalance`'s
@@ -58,9 +66,10 @@ function validateStaking(
     return { amount: 0n, totalSpent: estimatedFees };
   }
 
-  // buildUnsignedTx's delegate branch requires both, splitting valAddress on "." -- flag their
-  // absence/shape here too, so a caller doesn't get a false "valid" result that throws at craft time.
-  if (!intent.valAddress.includes(".")) {
+  // buildUnsignedTx's delegate branch requires both, splitting valAddress on "." and passing the
+  // parts to `contractPrincipalCV` -- flag their absence/shape here with the same check the staking
+  // forms use, so a caller doesn't get a false "valid" result that throws at craft time.
+  if (!isPoolAddress(intent.valAddress)) {
     errors.valAddress = new Error(
       "valAddress must be a contract principal (address.contract-name)",
     );
@@ -69,17 +78,46 @@ function validateStaking(
   const { numCycles, startBurnHt } = intent.data;
   if (numCycles === undefined || startBurnHt === undefined) {
     errors.data = new Error("numCycles and startBurnHt are required for a delegate intent");
-  } else if (numCycles < 1 || numCycles > MAX_NUM_CYCLES) {
-    errors.data = new Error(`numCycles must be between 1 and ${MAX_NUM_CYCLES}`);
+  } else if (!isValidNumCycles(numCycles)) {
+    // Client-side only: pox-5's own ERR_INVALID_NUM_CYCLES is the ground truth; this just avoids
+    // paying a fee for an on-chain abort.
+    errors.data = new Error(
+      `numCycles must be an integer between ${MIN_NUM_CYCLES} and ${MAX_NUM_CYCLES}`,
+    );
   }
 
   // The fee is paid from the unlocked balance, separately from the amount being locked -- so the
-  // amount check must reserve room for it, same as the transfer path below.
-  if (intent.amount > maxSpendableAfterFees(availableNative, estimatedFees)) {
+  // amount check must reserve room for it, same as the transfer path below. A zero/negative amount
+  // is checked explicitly first: buildUnsignedTx's delegate branch crafts `uintCV(intent.amount)`
+  // directly with no floor, so an unchecked 0 would reach the chain as a fee-paying `stake(..., 0,
+  // ...)` abort instead of being caught client-side, same as validateTransfer's `amount <= 0n` check.
+  if (intent.amount <= 0n) {
+    errors.amount = new AmountRequired();
+  } else if (intent.amount > maxSpendableAfterFees(availableNative, estimatedFees)) {
     errors.amount = new NotEnoughBalance();
   }
 
   return { amount: intent.amount, totalSpent: intent.amount + estimatedFees };
+}
+
+/** pox-5's `stake` opens with `verify-not-prepare-phase` (`pox-5.clar:1002`): signed during the
+ * prepare phase, it is mined as an abort that still charges the fee. `/v2/pox` counts the blocks
+ * left before the prepare phase, and that count drops to zero or below once it has started.
+ * Checking this also covers a `startBurnHt` resolved just before a cycle boundary, since the chain
+ * has to pass through the prepare phase to reach it. */
+async function validateNotInPreparePhase(
+  intent: StakingTransactionIntent<MemoNotSupported, StacksTxData>,
+  errors: Record<string, Error>,
+): Promise<void> {
+  // Only a delegate intent that is otherwise ready to craft is worth the network round trip.
+  if (intent.mode !== "delegate" || intent.data.startBurnHt === undefined || errors.data) return;
+
+  const { next_cycle } = await fetchPoxInfo();
+  if (next_cycle.blocks_until_prepare_phase <= 0) {
+    errors.data = new StacksStakeInPreparePhase(undefined, {
+      blocksUntilReopen: next_cycle.blocks_until_reward_phase,
+    });
+  }
 }
 
 function validateTransfer(
@@ -119,7 +157,8 @@ function validateTransfer(
 }
 
 /** Ports the legacy bridge's `getTransactionStatus` amount/balance/fee/recipient checks, plus
- * pox-5 staking-specific checks (client-side `num-cycles` bounds; no amount check for undelegate). */
+ * pox-5 staking-specific checks (client-side `num-cycles` bounds, no stake during the prepare
+ * phase; no amount check for undelegate). */
 export async function validateIntent(
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   balances: Balance[],
@@ -129,15 +168,14 @@ export async function validateIntent(
   const warnings: Record<string, Error> = {};
   const estimatedFees = customFees?.value ?? 0n;
 
-  const { amount, totalSpent } =
-    intent.intentType === "staking"
-      ? validateStaking(
-          intent as StakingTransactionIntent<MemoNotSupported, StacksTxData>,
-          balances,
-          estimatedFees,
-          errors,
-        )
-      : validateTransfer(intent, balances, estimatedFees, errors);
+  if (intent.intentType !== "staking") {
+    const { amount, totalSpent } = validateTransfer(intent, balances, estimatedFees, errors);
+    return { errors, warnings, estimatedFees, amount, totalSpent };
+  }
+
+  const stakingIntent = intent as StakingTransactionIntent<MemoNotSupported, StacksTxData>;
+  const { amount, totalSpent } = validateStaking(stakingIntent, balances, estimatedFees, errors);
+  await validateNotInPreparePhase(stakingIntent, errors);
 
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }

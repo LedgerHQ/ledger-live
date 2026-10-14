@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
 import { useSelector } from "~/context/hooks";
@@ -14,7 +15,6 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { accountsSelector, isUpToDateSelector } from "~/reducers/accounts";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
-import TrackScreen from "~/analytics/TrackScreen";
 
 import AccountRow from "./AccountRow";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";

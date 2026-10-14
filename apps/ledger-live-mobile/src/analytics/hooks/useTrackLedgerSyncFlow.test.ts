@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@testing-library/react-native";
 import { useTrackLedgerSyncFlow, UseTrackLedgerSyncFlow } from "./useTrackLedgerSyncFlow";
-import { track } from "../segment";
 import { LockedDeviceError, CantOpenDevice, TransportError } from "@ledgerhq/hw-transport/errors";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { UserRefusedAllowManager } from "@ledgerhq/live-common/errors";

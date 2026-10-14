@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
@@ -10,7 +11,6 @@ import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import VerticalGradientBackground from "LLM/features/Accounts/components/VerticalGradientBackground";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Trans, useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import type { AleoViewKeyFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoNoAccountsAdded>;

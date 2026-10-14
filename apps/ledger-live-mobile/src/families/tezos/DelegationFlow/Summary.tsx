@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet, Animated, TextStyle, StyleProp } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -25,7 +26,6 @@ import { useTheme } from "@react-navigation/native";
 import { Alert, Icons } from "@ledgerhq/native-ui";
 import { rgba } from "../../../colors";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
 import Button from "~/components/Button";
 import LText from "~/components/LText";

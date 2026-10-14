@@ -15,9 +15,14 @@ jest.mock("@features/flow-contacts", () => {
     ...actual,
     useContactsAddressDetailActionsPorts: (
       deviceIntents: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[0],
-      signerValidation?: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[1],
+      getConfig: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[1],
+      signerValidation?: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[2],
     ) =>
-      actual.useContactsAddressDetailActionsPorts(deviceIntents, signerValidation ?? mismatchPort),
+      actual.useContactsAddressDetailActionsPorts(
+        deviceIntents,
+        getConfig,
+        signerValidation ?? mismatchPort,
+      ),
     useContactsEditDeletePorts: (
       deviceIntents: Parameters<typeof actual.useContactsEditDeletePorts>[0],
       signerValidation?: Parameters<typeof actual.useContactsEditDeletePorts>[1],

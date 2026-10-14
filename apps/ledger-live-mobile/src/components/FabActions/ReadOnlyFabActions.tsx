@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { memo, useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
@@ -7,7 +8,6 @@ import Button from "../wrappedUi/Button";
 
 import { ScreenName } from "~/const";
 import useCurrency from "~/helpers/useCurrency";
-import { track } from "~/analytics";
 
 const iconBuy = IconsLegacy.PlusMedium;
 const iconReceive = IconsLegacy.ArrowBottomMedium;

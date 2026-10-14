@@ -1,4 +1,3 @@
-import { log } from "@ledgerhq/logs";
 import {
   getAddressFormatDerivationMode,
   type GetAddressOptions,
@@ -7,8 +6,9 @@ import { UnsupportedDerivation } from "@ledgerhq/ledger-wallet-framework/errors"
 import { AddressFormat, BitcoinAddress, SignerContext } from "./signer";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { getChainAdapter } from "./chain-adapters/registry";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
-const resolver = (signerContext: SignerContext): GetAddressFn => {
+const resolver = (signerContext: SignerContext, logger: Logger): GetAddressFn => {
   return async (deviceId: string, options: GetAddressOptions) => {
     const { currency, path, verify, derivationMode, forceFormat } = options;
     const format = (forceFormat as AddressFormat) || getAddressFormatDerivationMode(derivationMode);
@@ -39,7 +39,7 @@ const resolver = (signerContext: SignerContext): GetAddressFn => {
 
     const { bitcoinAddress, publicKey, chainCode } = result;
 
-    log(
+    logger(
       "hw",
       `getAddress ${currency.id} path=${path} address=${bitcoinAddress} publicKey=${publicKey} chainCode=${chainCode}`,
     );

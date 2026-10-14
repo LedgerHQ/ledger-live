@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
@@ -10,7 +11,6 @@ import {
 } from "@ledgerhq/live-common/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { fallbackValidatorGroup, revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";

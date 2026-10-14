@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 import { Flex, Icons } from "@ledgerhq/react-ui/index";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 export function WelcomeToWalletWithoutFunds(trackProps: Readonly<TrackTutorialProps>) {
   const { t } = useTranslation();

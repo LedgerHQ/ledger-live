@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect, useMemo } from "react";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import {
@@ -5,10 +6,10 @@ import {
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
 import { useLocale } from "~/context/Locale";
 import WebRecoverPlayer from "~/components/WebRecoverPlayer";
@@ -49,6 +50,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const hasConnectedNanoS = knownDeviceModelIds.nanoS;
   const userLocale = useSelector(localeSelector);
   const countryCode = useMemo(() => getCountryCodeFromLocale(userLocale), [userLocale]);
+  const insets = useSafeAreaInsets();
 
   const { onboardingState } = useOnboardingStatePolling({
     device: device || null,
@@ -88,6 +90,10 @@ export function RecoverPlayer({ navigation, route }: Props) {
     }
   }, [device, fromOnboarding, navigation, onboardingState]);
 
+  useEffect(() => {
+    if (!manifest) navigation.setOptions({ headerShown: true });
+  }, [manifest, navigation]);
+
   return manifest ? (
     <>
       <TrackScreen category="Platform" name="App" />
@@ -103,6 +109,9 @@ export function RecoverPlayer({ navigation, route }: Props) {
           hasConnectedNanoS: hasConnectedNanoS.toString(),
           countryCode,
           ...params,
+          safeAreaBottom: insets.bottom.toString(),
+          safeAreaLeft: insets.left.toString(),
+          safeAreaRight: insets.right.toString(),
         }}
       />
     </>

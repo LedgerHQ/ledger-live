@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { act } from "@testing-library/react-native";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import {
@@ -5,7 +6,6 @@ import {
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { Asset } from "~/types/asset";
 import { usePortfolioSectionActions } from "../usePortfolioSectionActions";
 

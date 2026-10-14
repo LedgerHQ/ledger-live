@@ -1,11 +1,17 @@
 import React from "react";
+import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
 import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import ReceiveWithAssociationModal from "../index";
 import { HEDERA_ACCOUNT_1 } from "../../__mocks__/account.mock";
-import { subjectRefs } from "../../__mocks__/bridge.mock";
+import {
+  getTransactionStatusSpy,
+  prepareTransactionSpy,
+  subjectRefs,
+} from "../../__mocks__/bridge.mock";
 import { mockSignedOperation } from "../../__mocks__/signedOperation.mock";
 import {
+  DEFAULT_TX_STATUS,
   createModalsContainer,
   setupHederaModalTest,
   cleanupHederaModalTest,
@@ -24,6 +30,8 @@ const mockHtsToken = {
   disableCountervalue: false,
 };
 
+const mockOtherAccount = { ...HEDERA_ACCOUNT_1, id: "hedera-2", freshAddress: "0.0.2222222" };
+
 jest.mock("@ledgerhq/live-common/families/hedera/utils", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/hedera/utils"),
   isTokenAssociationRequired: jest.fn(() => true),
@@ -34,20 +42,37 @@ jest.mock("~/renderer/modals/Receive/steps/StepAccount", () => {
   const React = require("react");
   return {
     __esModule: true,
-    default: ({ onChangeToken }: { onChangeToken?: (t: unknown) => void }) => {
+    default: ({
+      onChangeToken,
+      onChangeAccount,
+    }: {
+      onChangeToken?: (t: unknown) => void;
+      onChangeAccount?: (a: unknown) => void;
+    }) => {
+      // Picks the token once, like a user would; re-firing on a new callback identity would
+      // re-run the association decision and hide stale-closure bugs on account switch.
+      const tokenPicked = React.useRef(false);
       React.useEffect(() => {
-        if (onChangeToken) {
-          onChangeToken({
-            id: "hedera/hts/0.0.123456",
-            name: "Mock HTS Token",
-            ticker: "MHT",
-            contractAddress: "0.0.123456",
-            decimals: 8,
-            type: "TokenCurrency",
-          });
-        }
+        if (!onChangeToken || tokenPicked.current) return;
+
+        tokenPicked.current = true;
+        onChangeToken({
+          id: "hedera/hts/0.0.123456",
+          name: "Mock HTS Token",
+          ticker: "MHT",
+          contractAddress: "0.0.123456",
+          decimals: 8,
+          type: "TokenCurrency",
+        });
       }, [onChangeToken]);
-      return <div data-testid="step-account">Select Account</div>;
+      return (
+        <div data-testid="step-account">
+          Select Account
+          <button type="button" onClick={() => onChangeAccount?.(mockOtherAccount)}>
+            Switch account
+          </button>
+        </div>
+      );
     },
   };
 });
@@ -106,6 +131,7 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
   getCurrencyBridge: () => require("../../__mocks__/bridge.mock").resolvedCurrencyBridge,
 }));
 beforeEach(async () => {
+  jest.mocked(isTokenAssociationRequired).mockReturnValue(true);
   await setupHederaModalTest();
 });
 
@@ -155,5 +181,60 @@ describe("Hedera ReceiveWithAssociationModal (integration)", () => {
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeVisible(), {
       timeout: 5000,
     });
+  });
+
+  it("emits a tokenAssociate transaction without the legacy properties bag", async () => {
+    setupModal({ receiveTokenMode: true, token: mockHtsToken });
+
+    await waitFor(() =>
+      expect(prepareTransactionSpy).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          mode: "tokenAssociate",
+          assetReference: mockHtsToken.contractAddress,
+          assetOwner: HEDERA_ACCOUNT_1.freshAddress,
+        }),
+      ),
+    );
+    expect(prepareTransactionSpy.mock.calls.at(-1)?.[1]).not.toHaveProperty("properties");
+  });
+
+  it("lets an ERC-20 token continue without an association transaction", async () => {
+    jest.mocked(isTokenAssociationRequired).mockReturnValue(false);
+    getTransactionStatusSpy.mockResolvedValue({
+      ...DEFAULT_TX_STATUS,
+      errors: { recipient: new Error("RecipientRequired") },
+    });
+    setupModal({ receiveTokenMode: true });
+
+    await waitFor(() => expect(getTransactionStatusSpy).toHaveBeenCalled());
+    await act(async () => {});
+
+    expect(screen.getByRole("button", { name: "Continue" })).not.toBeDisabled();
+    expect(prepareTransactionSpy).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ mode: "tokenAssociate" }),
+    );
+  });
+
+  it("associates the token for the newly selected account", async () => {
+    jest
+      .mocked(isTokenAssociationRequired)
+      .mockImplementation(account => account?.id === mockOtherAccount.id);
+    setupModal({ receiveTokenMode: true });
+
+    await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
+    await userEvent.click(screen.getByRole("button", { name: "Switch account" }));
+
+    await waitFor(() =>
+      expect(prepareTransactionSpy).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          mode: "tokenAssociate",
+          assetReference: mockHtsToken.contractAddress,
+          assetOwner: mockOtherAccount.freshAddress,
+        }),
+      ),
+    );
   });
 });

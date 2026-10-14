@@ -37,9 +37,6 @@ export const bitlayer = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 200901,
-  },
   explorerViews: [
     {
       tx: "https://www.btrscan.com/tx/$hash",

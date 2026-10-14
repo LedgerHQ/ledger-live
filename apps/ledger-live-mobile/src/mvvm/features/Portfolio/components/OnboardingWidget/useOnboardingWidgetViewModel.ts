@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
-import { track } from "~/analytics";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { usePostOnboardingHubStepperDisplay } from "~/logic/postOnboarding/usePostOnboardingHubStepperDisplay";
 import { usePostOnboardingHubDrawer } from "LLM/features/PostOnboardingHubDrawer";

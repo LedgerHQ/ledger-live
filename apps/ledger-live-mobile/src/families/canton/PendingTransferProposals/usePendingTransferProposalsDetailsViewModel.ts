@@ -1,7 +1,7 @@
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import type { Unit } from "@domain/entity-currency-unit";
 import { Account } from "@ledgerhq/types-live";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useCallback } from "react";
 import { type ProcessedProposal, type TransferProposalAction } from "./types";
@@ -15,6 +15,7 @@ type Input = {
 export type PendingTransferProposalsDetailsViewModel = {
   unit: Unit;
   timeRemaining: string;
+  isExpired: boolean;
   handleAction: (action: TransferProposalAction) => void;
   handleCopy: (text: string) => void;
 };
@@ -25,7 +26,10 @@ export function usePendingTransferProposalsDetailsViewModel({
   onOpenModal,
 }: Input): PendingTransferProposalsDetailsViewModel {
   const unit = useAccountUnit(account);
-  const timeRemaining = useTimeRemaining(proposal?.expiresAtMicros, proposal?.isExpired);
+  const { timeRemaining, isExpired } = useTimeRemaining(
+    proposal?.expiresAtMicros,
+    proposal?.isExpired,
+  );
 
   const handleAction = useCallback(
     (action: TransferProposalAction) => {
@@ -34,13 +38,14 @@ export function usePendingTransferProposalsDetailsViewModel({
     [onOpenModal, proposal],
   );
 
-  const handleCopy = useCallback((text: string) => {
-    Clipboard.setString(text);
+  const handleCopy = useCallback(async (text: string) => {
+    await copyToClipboard(text);
   }, []);
 
   return {
     unit,
     timeRemaining,
+    isExpired,
     handleAction,
     handleCopy,
   };

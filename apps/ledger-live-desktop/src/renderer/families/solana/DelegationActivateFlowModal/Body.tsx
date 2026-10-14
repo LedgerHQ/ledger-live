@@ -1,3 +1,4 @@
+import { delegateTransaction } from "@ledgerhq/live-common/families/solana/transactions";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { requireStakePositionId } from "@ledgerhq/live-common/families/solana/logic";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -21,7 +22,7 @@ import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
 
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -92,13 +93,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     const { account, stakeWithMeta } = params;
     assertStakingResources(account);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      model: {
-        kind: "stake.delegate",
-        uiState: {
-          stakeAccAddr: requireStakePositionId(stakeWithMeta.stake),
-          voteAccAddr: stakeWithMeta.stake.validatorAddress,
-        },
-      },
+      ...delegateTransaction(
+        requireStakePositionId(stakeWithMeta.stake),
+        stakeWithMeta.stake.validatorAddress,
+      ),
     });
     return {
       account,

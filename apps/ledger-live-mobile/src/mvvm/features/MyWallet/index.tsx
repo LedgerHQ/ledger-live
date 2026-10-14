@@ -1,10 +1,11 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "~/analytics";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ProfileSection } from "./views/ProfileSection";
 import { QuickActionsRow } from "./views/QuickActionsRow";
+import { BackupsButton } from "./views/BackupsButton";
 import { ContactsButton } from "LLM/features/Contacts";
 import { DeviceSection } from "./views/DeviceSection";
 import { MyLedgerSection } from "./views/MyLedgerSection";
@@ -24,6 +25,7 @@ export function MyWalletScreen() {
             <ProfileSection />
             <QuickActionsRow />
           </Box>
+          <BackupsButton />
           <ContactsButton />
         </Box>
       )}

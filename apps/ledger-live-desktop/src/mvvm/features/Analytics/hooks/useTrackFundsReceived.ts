@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/analytics/fundsReceived";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export function useTrackFundsReceived(): void {
   const accounts = useSelector(accountsSelector);
@@ -20,7 +20,7 @@ export function useTrackFundsReceived(): void {
 
     for (const { account } of newlyReceivedOperations) {
       const { asset, network } = getFundsReceivedTrackingProperties(account);
-      track("Funds received", { asset, network }, isTrackingEnabled);
+      track("Funds received", { asset, network }, { mandatory: !!isTrackingEnabled });
     }
 
     previousSnapshotRef.current = buildReceiveOperationsSnapshot(accounts);

@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { Linking } from "react-native";
-import { track } from "~/analytics";
 
 const CHARON_LEARN_MORE_URL = "https://shop.ledger.com/products/ledger-recovery-key";
 

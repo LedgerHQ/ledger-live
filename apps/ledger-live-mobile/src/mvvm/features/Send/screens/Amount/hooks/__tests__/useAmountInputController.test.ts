@@ -5,7 +5,7 @@ import { useSelector } from "~/context/hooks";
 import {
   useSendAmount,
   useCalculateCountervalueCallback,
-} from "@ledgerhq/live-countervalues-react";
+} from "@features/platform-market-countervalues";
 import { useLocale } from "~/context/Locale";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import {
@@ -16,7 +16,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 jest.mock("~/context/hooks");
-jest.mock("@ledgerhq/live-countervalues-react");
+jest.mock("@features/platform-market-countervalues");
 jest.mock("~/context/Locale");
 jest.mock("LLM/hooks/useAccountUnit");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
@@ -151,6 +151,18 @@ describe("useAmountInputController", () => {
       const { result } = renderHook(() => useAmountInputController(defaultParams));
 
       expect(result.current.maxDecimalLength).toBe(2);
+    });
+
+    it("converts with the currency of the account it was given", () => {
+      renderHook(() => useAmountInputController(defaultParams));
+
+      expect(getAccountCurrency).toHaveBeenCalledWith(mockAccount);
+      expect(useSendAmount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          cryptoCurrency: mockCurrency,
+          fiatCurrency: mockCounterValueCurrency,
+        }),
+      );
     });
 
     it("uses countervalue unit magnitude for maxDecimalLength in fiat mode", () => {

@@ -51,28 +51,6 @@ function overridesDefaultsWithEnv(
 }
 
 const evmCurrencies: CurrencyLiveConfigDefinition = {
-  config_currency_akroma: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 200625,
-      name: "Akroma",
-    },
-  },
-  config_currency_atheios: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1620,
-      name: "Atheios",
-    },
-  },
   config_currency_avalanche_c_chain: {
     type: "object",
     default: {
@@ -82,6 +60,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 43114,
       name: "Avalanche C-Chain",
+      unit: { name: "AVAX", code: "AVAX", magnitude: 18 },
       node: {
         type: "ledger",
         explorerId: "avax",
@@ -105,6 +84,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 43113,
       name: "Avalanche C-Chain Fuji",
+      unit: { name: "AVAX", code: "AVAX", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://api.avax-test.network/ext/bc/C/rpc",
@@ -124,6 +104,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 200901,
       name: "Bitlayer",
+      unit: { name: "BTC", code: "BTC", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://rpc.bitlayer.org",
@@ -141,7 +122,8 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         features: [{ id: "blockchain_txs", status: "active" }],
       },
       chainId: 56,
-      name: "BNB Chain",
+      name: "BNB Smart Chain",
+      unit: { name: "BNB", code: "BNB", magnitude: 18 },
       node: {
         type: "ledger",
         explorerId: "bnb",
@@ -156,39 +138,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_callisto: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 820,
-      name: "Callisto",
-    },
-  },
-  config_currency_dexon: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 237,
-      name: "DEXON",
-    },
-  },
-  config_currency_ellaism: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 64,
-      name: "Ellaism",
-    },
-  },
   config_currency_ethereum: {
     type: "object",
     default: {
@@ -198,6 +147,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1,
       name: "Ethereum",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       gasTracker: {
         type: "ledger",
         explorerId: "eth",
@@ -218,6 +168,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       status: "active",
       chainId: 146,
       name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://sonic.coin.ledger.com",
@@ -237,6 +188,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 61,
       name: "Ethereum Classic",
+      unit: { name: "ETC", code: "ETC", magnitude: 18 },
       node: {
         type: "ledger",
         explorerId: "etc",
@@ -251,116 +203,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_ether1: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1313114,
-      name: "Ether1",
-    },
-  },
-  config_currency_ethergem: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1987,
-      name: "EtherGem",
-    },
-  },
-  config_currency_ethersocial: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 31102,
-      name: "Ethersocial",
-    },
-  },
-  config_currency_expanse: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 2,
-      name: "Expanse",
-    },
-  },
-  config_currency_gochain: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 60,
-      name: "GoChain",
-    },
-  },
-  config_currency_hpb: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 269,
-      name: "High Performance Blockchain",
-    },
-  },
-  config_currency_mix: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 76,
-      name: "MIX Blockchain",
-    },
-  },
-  config_currency_musicoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 7762959,
-      name: "Musicoin",
-    },
-  },
-  config_currency_pirl: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 3125659152,
-      name: "Pirl",
-    },
-  },
-  config_currency_poa: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 99,
-      name: "POA",
-    },
-  },
   config_currency_polygon: {
     type: "object",
     default: {
@@ -370,6 +212,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 137,
       name: "Polygon",
+      unit: { name: "POL", code: "POL", magnitude: 18 },
       node: {
         type: "ledger",
         explorerId: "matic",
@@ -386,61 +229,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       minGasPrice: "25000000000",
     },
   },
-  config_currency_reosc: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 2894,
-      name: "REOSC",
-    },
-  },
-  config_currency_thundercore: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 108,
-      name: "Thundercore",
-    },
-  },
-  config_currency_tomo: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 88,
-      name: "TomoChain",
-    },
-  },
-  config_currency_ubiq: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 8,
-      name: "Ubiq",
-    },
-  },
-  config_currency_wanchain: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 888,
-      name: "Wanchain",
-    },
-  },
   config_currency_arbitrum: {
     type: "object",
     default: {
@@ -450,6 +238,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 42161,
       name: "Arbitrum",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://arbitrum.coin.ledger.com",
@@ -469,6 +258,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 25,
       name: "Cronos",
+      unit: { name: "CRO", code: "CRO", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://cronos.coin.ledger.com",
@@ -488,6 +278,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1116,
       name: "Core",
+      unit: { name: "CORE", code: "CORE", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://core.coin.ledger.com",
@@ -506,6 +297,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 250,
       name: "Fantom",
+      unit: { name: "FTM", code: "FTM", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://fantom.coin.ledger.com",
@@ -524,6 +316,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 14,
       name: "Flare",
+      unit: { name: "FLR", code: "FLR", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://flare.coin.ledger.com/ext/bc/C/rpc",
@@ -543,6 +336,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 19,
       name: "Songbird",
+      unit: { name: "SGB", code: "SGB", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://songbird-api.flare.network/ext/C/rpc",
@@ -562,6 +356,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1284,
       name: "Moonbeam",
+      unit: { name: "GLMR", code: "GLMR", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://moonbeam.coin.ledger.com",
@@ -581,6 +376,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 30,
       name: "Rootstock",
+      unit: { name: "RBTC", code: "RBTC", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://rsk.coin.ledger.com",
@@ -600,6 +396,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 199,
       name: "Bittorent Chain",
+      unit: { name: "BTT", code: "BTT", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://bittorrent.coin.ledger.com",
@@ -619,6 +416,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 10,
       name: "OP Mainnet",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://optimism.coin.ledger.com",
@@ -638,6 +436,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 11155420,
       name: "OP Sepolia",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://optimism-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://optimism-sepolia.blockscout.com/api" },
     },
@@ -651,6 +450,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 246,
       name: "Energy Web",
+      unit: { name: "EWT", code: "EWT", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://rpc.energyweb.org",
@@ -670,6 +470,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 592,
       name: "Astar",
+      unit: { name: "ASTR", code: "ASTR", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://astar.coin.ledger.com",
@@ -689,6 +490,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1088,
       name: "Metis",
+      unit: { name: "METIS", code: "METIS", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://metis.coin.ledger.com",
@@ -707,6 +509,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 5000,
       name: "Mantle",
+      unit: { name: "MNT", code: "MNT", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://rpc.mantle.xyz",
@@ -726,6 +529,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 5003,
       name: "Mantle Sepolia",
+      unit: { name: "MNT", code: "MNT", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://rpc.sepolia.mantle.xyz",
@@ -745,6 +549,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 288,
       name: "Boba",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://boba.coin.ledger.com",
@@ -764,6 +569,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1285,
       name: "Moonriver",
+      unit: { name: "MOVR", code: "MOVR", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://moonriver.coin.ledger.com",
@@ -783,6 +589,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 106,
       name: "Velas EVM",
+      unit: { name: "VLX", code: "VLX", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://evmexplorer.velas.com/rpc",
@@ -802,6 +609,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 57,
       name: "Syscoin",
+      unit: { name: "SYS", code: "SYS", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://syscoin.coin.ledger.com",
@@ -821,6 +629,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 40,
       name: "Telos",
+      unit: { name: "TLOS", code: "TLOS", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://telos-evm.coin.ledger.com",
@@ -840,6 +649,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1329,
       name: "SEI Network (EVM)",
+      unit: { name: "SEI", code: "SEI", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://sei-evm.coin.ledger.com",
@@ -859,6 +669,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 80094,
       name: "Berachain",
+      unit: { name: "BERA", code: "BERA", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://berachain.coin.ledger.com",
@@ -878,6 +689,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 999,
       name: "HyperEVM",
+      unit: { name: "HYPE", code: "HYPE", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://hyperliquid.coin.ledger.com",
@@ -897,6 +709,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1101,
       name: "Polygon zkEVM",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://polygon-zkevm.coin.ledger.com",
@@ -916,6 +729,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 8453,
       name: "Base",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://base.coin.ledger.com",
@@ -935,6 +749,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 8217,
       name: "Klaytn",
+      unit: { name: "KLAY", code: "KLAY", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://kaia.coin.ledger.com",
@@ -954,6 +769,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1001,
       name: "Klaytn Baobab",
+      unit: { name: "KLAY", code: "KLAY", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://api.baobab.klaytn.net:8651",
@@ -973,6 +789,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 245022934,
       name: "Neon EVM",
+      unit: { name: "NEON", code: "NEON", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://neon-evm.coin.ledger.com",
@@ -992,6 +809,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 42,
       name: "Lukso",
+      unit: { name: "LYX", code: "LYX", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://lukso.coin.ledger.com",
@@ -1011,6 +829,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 59144,
       name: "Linea",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://linea.coin.ledger.com",
@@ -1031,6 +850,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 11155111,
       name: "Ethereum Sepolia",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "ledger", explorerId: "eth_sepolia" },
       explorer: { type: "ledger", explorerId: "eth_sepolia" },
       gasTracker: { type: "ledger", explorerId: "eth_sepolia" },
@@ -1045,6 +865,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 560048,
       name: "Ethereum Hoodi",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "ledger", explorerId: "eth_hoodi" },
       explorer: { type: "ledger", explorerId: "eth_hoodi" },
       gasTracker: { type: "ledger", explorerId: "eth_hoodi" },
@@ -1059,6 +880,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 80002,
       name: "Polygon Amoy",
+      unit: { name: "POL", code: "POL", magnitude: 18 },
       node: { type: "ledger", explorerId: "matic_amoy" },
       explorer: { type: "ledger", explorerId: "matic_amoy" },
       gasTracker: { type: "ledger", explorerId: "matic_amoy" },
@@ -1070,6 +892,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       status: { type: "active" },
       chainId: 421614,
       name: "Arbitrum Sepolia",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://arbitrum-sepolia.coin.ledger.com" },
       explorer: {
         type: "etherscan",
@@ -1086,6 +909,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1442,
       name: "Polygon zkEVM Testnet",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://polygon-zkevm-cardona.coin.ledger.com" },
       explorer: {
         type: "etherscan",
@@ -1102,6 +926,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 84532,
       name: "Base Sepolia",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://base-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://base-sepolia.blockscout.com/api" },
     },
@@ -1115,6 +940,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 59141,
       name: "Linea Sepolia",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://linea-sepolia.coin.ledger.com" },
       explorer: {
         type: "etherscan",
@@ -1131,6 +957,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 81457,
       name: "Blast",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://blast.coin.ledger.com" },
       explorer: {
         type: "etherscan",
@@ -1147,6 +974,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 168587773,
       name: "Blast Sepolia",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://blast-sepolia.coin.ledger.com" },
       explorer: {
         type: "etherscan",
@@ -1163,6 +991,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 534352,
       name: "Scroll",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://scroll.coin.ledger.com" },
       explorer: {
         type: "blockscout",
@@ -1179,6 +1008,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 360,
       name: "Shape",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://mainnet.shape.network" },
       explorer: { type: "blockscout", uri: "https://shapescan.xyz/api" },
     },
@@ -1192,6 +1022,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1514,
       name: "Story",
+      unit: { name: "IP", code: "IP", magnitude: 18 },
       node: { type: "external", uri: "https://story.coin.ledger.com" },
       explorer: {
         type: "blockscout",
@@ -1208,6 +1039,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 42793,
       name: "Etherlink",
+      unit: { name: "XTZ", code: "XTZ", magnitude: 18 },
       node: { type: "external", uri: "https://node.mainnet.etherlink.com" },
       explorer: { type: "blockscout", uri: "https://explorer.etherlink.com/api" },
     },
@@ -1221,8 +1053,9 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 324,
       name: "ZKsync",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://zksync.coin.ledger.com" },
-      explorer: { type: "blockscout", uri: "https://zksync.blockscout.com/api" },
+      explorer: { type: "blockscout", uri: "https://proxyblockscout.api.live.ledger.com/324/api" },
     },
   },
   config_currency_zksync_sepolia: {
@@ -1234,6 +1067,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 300,
       name: "ZKsync Sepolia",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://zksync-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
     },
@@ -1247,6 +1081,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 143,
       name: "Monad",
+      unit: { name: "MON", code: "MON", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://monad.coin.ledger.com",
@@ -1266,6 +1101,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 10143,
       name: "Monad Testnet",
+      unit: { name: "MON", code: "MON", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://monad-testnet.coin.ledger.com",
@@ -1285,6 +1121,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 5031,
       name: "Somnia",
+      unit: { name: "SOMI", code: "SOMI", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://somnia-rpc.publicnode.com",
@@ -1304,6 +1141,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 16661,
       name: "0G",
+      unit: { name: "0G", code: "0G", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://zero-gravity.coin.ledger.com",
@@ -1324,6 +1162,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 36900,
       name: "Adi",
+      unit: { name: "ADI", code: "ADI", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://rpc.adifoundation.ai",
@@ -1343,13 +1182,14 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 130,
       name: "Unichain",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://unichain-rpc.publicnode.com",
       },
       explorer: {
         type: "blockscout",
-        uri: "https://unichain.blockscout.com/api",
+        uri: "https://proxyblockscout.api.live.ledger.com/130/api",
       },
     },
   },
@@ -1362,6 +1202,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1301,
       name: "Unichain Sepolia",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://unichain-sepolia-rpc.publicnode.com" },
       explorer: { type: "blockscout", uri: "https://unichain-sepolia.blockscout.com/api" },
     },
@@ -1375,6 +1216,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 5042,
       name: "Arc",
+      unit: { name: "USDC", code: "USDC", magnitude: 18 },
       node: {
         type: "external",
         uri: "https://arc.coin.ledger.com",
@@ -1397,6 +1239,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 5042002,
       name: "Arc Testnet",
+      unit: { name: "USDC", code: "USDC", magnitude: 18 },
       node: { type: "external", uri: "https://rpc.testnet.arc.network" },
       explorer: {
         type: "blockscout",
@@ -1416,6 +1259,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 4663,
       name: "Robinhood Chain",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://robinhood.coin.ledger.com" },
       explorer: {
         type: "none",
@@ -1431,6 +1275,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 46630,
       name: "Robinhood Chain Testnet",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://rpc.testnet.chain.robinhood.com" },
       explorer: {
         type: "none",

@@ -48,7 +48,11 @@ export function RequestReceiveSummary({
       testID="pay-request-receive-summary"
     >
       <Box lx={{ alignItems: "center", gap: "s8" }}>
-        <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+        <Text
+          typography="heading3SemiBold"
+          lx={{ color: "base", textAlign: "center" }}
+          testID="pay-request-receive-title"
+        >
           {title}
         </Text>
         <Box

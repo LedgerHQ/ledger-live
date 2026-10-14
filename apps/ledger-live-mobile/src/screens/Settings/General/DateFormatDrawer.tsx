@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
 import React, { useCallback } from "react";
@@ -6,7 +8,6 @@ import { TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
 import { setDateFormat } from "~/actions/settings";
-import { track, TrackScreen } from "~/analytics";
 import { Format } from "~/components/DateFormat/formatter.util";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { ScreenName } from "~/const";

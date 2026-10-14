@@ -1,4 +1,7 @@
-import { useSetupPasswordViewModel, type SetupPasswordViewModel } from "@features/flow-app-lock";
+import {
+  useSetupPasswordViewModel,
+  type SetupPasswordViewModel,
+} from "@features/flow-app-password-setup";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useCallback } from "react";
 import { ScreenName } from "~/const";

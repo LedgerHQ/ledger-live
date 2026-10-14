@@ -65,7 +65,7 @@ test.describe("Swap - feedback link", () => {
       const minAmount = await app.swap.getMinimumAmount(kycFromAccount, kycToAccount);
       const initialSwap = new Swap(kycFromAccount, kycToAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, initialSwap, minAmount);
+      await performSwapUntilQuoteSelectionStep({ app, swap: initialSwap, minAmount });
       const provider = await app.swap.selectExchangeWithoutKyc();
       const amountToSend = await app.swap.getAmountToSend();
       const swap = new Swap(kycFromAccount, kycToAccount, amountToSend);

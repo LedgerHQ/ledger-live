@@ -1,6 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { calculate } from "@domain/entity-market-countervalues";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
@@ -12,13 +12,13 @@ import { Asset } from "~/types/asset";
 import { usePrecomputedAssetListData } from "../usePrecomputedAssetListData";
 import { bitcoin, ethereum, createCryptoAsset } from "./shared";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesState: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
   calculate: jest.fn(),
 }));
 

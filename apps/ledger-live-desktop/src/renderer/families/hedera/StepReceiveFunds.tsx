@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import Text from "~/renderer/components/Text";

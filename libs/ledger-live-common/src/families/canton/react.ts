@@ -75,30 +75,43 @@ export const getRemainingTime = (diff: number): string => {
     .join(" ");
 };
 
-export const useTimeRemaining = (expiresAtMicros = 0, isExpired = false): string => {
-  const [timeRemaining, setTimeRemaining] = useState<string>("");
+export type TimeRemaining = {
+  timeRemaining: string;
+  isExpired: boolean;
+};
+
+const EXPIRED: TimeRemaining = { timeRemaining: "", isExpired: true };
+
+const computeTimeRemaining = (expiresAtMicros: number, isExpired: boolean): TimeRemaining => {
+  const diff = expiresAtMicros / 1000 - Date.now();
+  if (isExpired || diff <= 0) return EXPIRED;
+  return { timeRemaining: getRemainingTime(diff), isExpired: false };
+};
+
+/**
+ * Live countdown to an offer's expiry. `isExpired` flips on the tick that crosses the deadline,
+ * so a screen left open never keeps offering an action the gateway will refuse.
+ * @param expiresAtMicros expiry as epoch microseconds; 0 (unknown) counts as expired, as on the gateway
+ * @param isExpired expiry already known to the caller
+ */
+export const useTimeRemaining = (expiresAtMicros = 0, isExpired = false): TimeRemaining => {
+  const [state, setState] = useState(() => computeTimeRemaining(expiresAtMicros, isExpired));
 
   useEffect(() => {
-    if (expiresAtMicros <= 0 || isExpired) {
-      setTimeRemaining("");
-      return;
-    }
+    const initial = computeTimeRemaining(expiresAtMicros, isExpired);
+    setState(initial);
+    if (initial.isExpired) return;
 
-    const updateTimeRemaining = () => {
-      const now = Date.now();
-      const expiresAt = expiresAtMicros / 1000;
-      const diff = expiresAt - now;
-
-      setTimeRemaining(getRemainingTime(diff));
-    };
-
-    updateTimeRemaining();
-    const interval = setInterval(updateTimeRemaining, 1000);
+    const interval = setInterval(() => {
+      const next = computeTimeRemaining(expiresAtMicros, isExpired);
+      setState(next);
+      if (next.isExpired) clearInterval(interval);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [expiresAtMicros, isExpired]);
 
-  return timeRemaining;
+  return state;
 };
 
 type TransferProposal = {

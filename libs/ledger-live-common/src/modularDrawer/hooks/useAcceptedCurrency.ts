@@ -3,25 +3,28 @@ import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-c
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { isCurrencySupported } from "../../currencies";
 import { isSendDisabledForFamily, isReceiveDisabledForFamily } from "../../account/support";
+import { PERPS_UI_USE_CASE } from "../../wallet-api/ModularDrawer/uiUseCase";
 import { ModularDrawerLocation } from "../enums";
 import { useCurrenciesUnderFeatureFlag } from "./useCurrenciesUnderFeatureFlag";
 
 type Options = {
   /**
-   * Flow the drawer was opened for. In the send flow, families that cannot send (e.g. hypercore)
-   * are rejected; in the receive flow, those that cannot receive. Everywhere else (add account,
-   * live apps, market) nothing is filtered out.
+   * Flow the drawer was opened for. In the send and perps fund flows, families that cannot send
+   * (e.g. hypercore) are rejected; in the receive flow, those that cannot receive. Everywhere else
+   * (add account, live apps, market) nothing is filtered out.
    */
   flow?: string;
 };
 
 // Per-flow capability check. The send flow dispatches a bare "send" while receive uses the enum;
 // SEND_FLOW is mapped too so that aligning the send opener on the enum later keeps working.
+// A perps deposit is funded by sending from the picked account, so it must be able to send.
 // Any other flow (add account, live apps, market) has no direction and filters nothing.
 const DISABLED_FOR_FLOW: Record<string, (family: CryptoCurrency["family"]) => boolean> = {
   send: isSendDisabledForFamily,
   [ModularDrawerLocation.SEND_FLOW]: isSendDisabledForFamily,
   [ModularDrawerLocation.RECEIVE_FLOW]: isReceiveDisabledForFamily,
+  [PERPS_UI_USE_CASE.fund]: isSendDisabledForFamily,
 };
 
 /**

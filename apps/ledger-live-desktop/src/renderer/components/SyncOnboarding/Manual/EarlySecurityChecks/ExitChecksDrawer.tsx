@@ -4,8 +4,8 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { getDeviceModel } from "@ledgerhq/devices";
 

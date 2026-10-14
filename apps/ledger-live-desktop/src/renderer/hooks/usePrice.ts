@@ -1,4 +1,4 @@
-import { useCalculate } from "@ledgerhq/live-countervalues-react/index";
+import { useCalculate } from "@features/platform-market-countervalues";
 import { Currency } from "@domain/entity-currency";
 import { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";

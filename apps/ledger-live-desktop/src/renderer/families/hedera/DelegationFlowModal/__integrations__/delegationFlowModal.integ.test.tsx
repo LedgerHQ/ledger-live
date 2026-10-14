@@ -6,7 +6,7 @@ import DelegationModal from "../index";
 import { HEDERA_ACCOUNT_1 } from "../../__mocks__/account.mock";
 import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import { mockSignedOperation } from "../../__mocks__/signedOperation.mock";
-import { subjectRefs } from "../../__mocks__/bridge.mock";
+import { signOperationSpy, subjectRefs } from "../../__mocks__/bridge.mock";
 import {
   createModalsContainer,
   setupHederaModalTest,
@@ -96,6 +96,21 @@ describe("Hedera DelegationFlowModal (integration)", () => {
     );
   }, 20_000);
 
+  it("signs with the default validator's node id as valId", async () => {
+    setupModal();
+
+    await clickContinueWhenEnabled();
+    await clickContinueWhenEnabled();
+
+    await waitFor(() =>
+      expect(signOperationSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          transaction: expect.objectContaining({ mode: "delegate", valId: "0" }),
+        }),
+      ),
+    );
+  }, 20_000);
+
   it("shows the device error state and allows retry when signing fails", async () => {
     setupModal();
 
@@ -119,6 +134,15 @@ describe("Hedera DelegationFlowModal (integration)", () => {
     setupModal();
 
     await waitFor(() => expect(screen.getByText(/network down/i)).toBeVisible());
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
+
+  it("keeps Continue disabled while no validator is selected", async () => {
+    mockValidatorsQuery = { validators: [], loading: false, error: null };
+
+    setupModal();
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Continue" })).toBeVisible());
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
   });
 });

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import invariant from "invariant";
@@ -13,7 +14,6 @@ import LText from "~/components/LText";
 import ExternalLink from "~/components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { TrackScreen } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";

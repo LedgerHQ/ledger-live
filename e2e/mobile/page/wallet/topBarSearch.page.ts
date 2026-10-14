@@ -1,5 +1,4 @@
 import { Step } from "jest-allure2-reporter/api";
-import { retryUntilTimeout } from "@e2e/utils/retry";
 
 export default class TopBarSearchPage {
   private readonly topBarSearchButtonId = "topbar-search";
@@ -17,12 +16,8 @@ export default class TopBarSearchPage {
 
   @Step("Open the global search screen from the portfolio top bar")
   async open() {
-    await waitForElementById(this.topBarSearchButtonId);
-    await retryUntilTimeout(async () => {
-      if (await IsIdPresent(this.screenId)) return;
-      await tapById(this.topBarSearchButtonId);
-      await waitForElementById(this.screenId, 5000);
-    });
+    await tapById(this.topBarSearchButtonId);
+    await waitForElementById(this.searchInputId);
     await waitForElementById(this.defaultSectionsId, undefined, {
       errorElementId: this.defaultsErrorId,
       checkVisibility: false,

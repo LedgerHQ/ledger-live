@@ -1,7 +1,7 @@
+import { trackPage, track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
 import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { screen as analyticsScreen, track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import {
   openBackupHubFeatureIntro,
@@ -64,14 +64,13 @@ describe("RecoverIntroDrawer", () => {
     act(() => jest.runOnlyPendingTimers());
 
     expect(await screen.findByText("Create a backup you can't lose")).toBeOnTheScreen();
-    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith(
-      BACKUP_HUB_FEATURE_INTRO_PAGE,
-      undefined,
-      {
+    expect(jest.mocked(trackPage)).toHaveBeenCalledWith({
+      category: BACKUP_HUB_FEATURE_INTRO_PAGE,
+      props: {
         name: BACKUP_HUB_FEATURE_INTRO_PAGE,
         source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
       },
-    );
+    });
   });
 
   it("should track the feature intro screen view only once when mounted multiple times", async () => {
@@ -95,8 +94,8 @@ describe("RecoverIntroDrawer", () => {
 
     expect(
       jest
-        .mocked(analyticsScreen)
-        .mock.calls.filter(([page]) => page === BACKUP_HUB_FEATURE_INTRO_PAGE),
+        .mocked(trackPage)
+        .mock.calls.filter(([page]) => page.category === BACKUP_HUB_FEATURE_INTRO_PAGE),
     ).toHaveLength(1);
   });
 

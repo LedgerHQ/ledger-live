@@ -218,17 +218,26 @@ export function extractBalance(balances: Balance[], type: string): Balance {
   );
 }
 
+export function sumBalance(balances: Balance[], type: string): Balance {
+  const matching = balances.filter(balance => balance.asset.type === type);
+  return {
+    asset: { type },
+    value: matching.reduce((sum, balance) => sum + balance.value, 0n),
+    locked: matching.reduce((sum, balance) => sum + (balance.locked ?? 0n), 0n),
+  };
+}
+
 /**
  * Default `getTokenFromAsset` strategy for chains whose token registry is keyed by a bare,
  * chain-specific reference string (VeChain's VTHO address, Stacks' SIP-010 composite key, etc.):
  * guard native assets and an absent/empty reference, then look up by that reference directly.
  */
-export async function defaultGetTokenFromAssetByAddress(
+export function defaultGetTokenFromAssetByAddress(
   currency: CryptoCurrency,
   asset: AssetInfo,
 ): Promise<TokenCurrency | undefined> {
   if (asset.type === "native" || !("assetReference" in asset) || !asset.assetReference) {
-    return undefined;
+    return Promise.resolve(undefined);
   }
   return getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }
@@ -793,7 +802,15 @@ function computeOperationValue(
   if (hasFailed) return bnFees;
   if (
     op.asset.type === "native" &&
-    ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
+    [
+      "OUT",
+      "FEES",
+      "DELEGATE",
+      "UNDELEGATE",
+      "REDELEGATE",
+      "CONTRACT_CALL",
+      "UPDATE_ACCOUNT",
+    ].includes(opType)
   ) {
     return new BigNumber(op.value.toString()).plus(bnFees);
   }
@@ -1107,6 +1124,8 @@ function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
   switch (mode) {
     case "changeTrust":
       return "OPT_IN";
+    case "tokenAssociate":
+      return "ASSOCIATE_TOKEN";
     case "delegate":
       return "DELEGATE";
     case "redelegate":
@@ -1136,6 +1155,11 @@ function memoExtraFields(
   if (!memoType || !memoValue) return {};
   const extraKey = MEMO_TYPE_TO_EXTRA_KEY[memoType] ?? "memo";
   return { [extraKey]: memoValue };
+}
+
+function grossOutgoingTokenAmount(transaction: GenericTransaction): BigNumber {
+  const including = transaction.transferFee?.transferAmountIncludingFee;
+  return including === undefined ? transaction.amount : new BigNumber(including);
 }
 
 export const buildOptimisticOperation = (
@@ -1202,7 +1226,10 @@ export const buildOptimisticOperation = (
         id: `${subAccountId}--${type}`,
         hash: "",
         type,
-        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
+        // A Token-2022 transfer fee is debited on top, so the lock covers the gross amount.
+        value: transaction.useAllAmount
+          ? tokenAccount.balance
+          : grossOutgoingTokenAmount(transaction),
         fee: new BigNumber(fees.toString()),
         blockHash: null,
         blockHeight: null,

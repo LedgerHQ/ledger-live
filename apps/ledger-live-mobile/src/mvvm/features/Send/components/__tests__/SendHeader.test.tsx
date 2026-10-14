@@ -13,11 +13,7 @@ jest.mock("../../context/SendFlowContext");
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
-jest.mock("~/analytics", () => ({
-  useAnalytics: () => ({ track: jest.fn() }),
-  usePageNameFromRoute: () => "step amount",
-  track: jest.fn(),
-}));
+
 jest.mock("../AddressDisclaimer", () => ({
   AddressDisclaimer: () => {
     const { View } = jest.requireActual<typeof import("react-native")>("react-native");

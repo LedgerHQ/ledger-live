@@ -46,8 +46,11 @@ jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
   getFeature: jest.fn(),
 }));
 
-jest.mock("@features/platform-feature-flags", () => ({
+jest.mock("@features/platform-feature-flags-firebase", () => ({
   formatToFirebaseFeatureId: (featureId: string) => featureId,
+}));
+
+jest.mock("@features/platform-feature-flags", () => ({
   useFeature: jest.fn(),
   useFeatureFlags: jest.fn(() => ({})),
 }));
@@ -62,6 +65,11 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => ({
 
 jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
   useSendFlowTrackingProperties: jest.fn(() => ({ flow: "send" })),
+}));
+
+let mockSponsoredPhase = "IDLE";
+jest.mock("../../../context/SponsoredSendContext", () => ({
+  useSponsoredSend: () => ({ state: { phase: mockSponsoredPhase } }),
 }));
 
 jest.mock("../hooks/useSignatureViewModel", () => ({
@@ -115,6 +123,7 @@ function buildDeviceActionViewModel(
     selectedDevice: null,
     setSelectedDevice: jest.fn(),
     onDeviceActionResultCompleted: jest.fn(),
+    onSignatureError: jest.fn(),
     onUserCancel: jest.fn(),
     ...overrides,
   };
@@ -123,6 +132,7 @@ function buildDeviceActionViewModel(
 describe("SignatureScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSponsoredPhase = "IDLE";
     jest.mocked(useFeature).mockReturnValue({ enabled: false });
     jest
       .mocked(UseSignatureViewModelModule.useSignatureViewModel)
@@ -211,8 +221,23 @@ describe("SignatureScreen", () => {
         selectedDevice: viewModel.selectedDevice,
         setSelectedDevice: viewModel.setSelectedDevice,
         onDeviceActionResultCompleted: viewModel.onDeviceActionResultCompleted,
+        onSignatureError: viewModel.onSignatureError,
         onUserCancel: viewModel.onUserCancel,
       }),
     );
+  });
+
+  // Only the executor path reports the transfer's outcome to the sponsored orchestration.
+  it("should keep a sponsored transfer on DeviceIntentExecutorLWM even with the flag on", () => {
+    mockSponsoredPhase = "TRANSFER";
+    jest.mocked(useFeature).mockReturnValue({ enabled: true });
+    jest
+      .mocked(UseSignatureViewModelModule.useSignatureViewModel)
+      .mockReturnValue(buildViewModel());
+
+    render(<SignatureScreen />);
+
+    expect(screen.getByTestId("send-signature-step")).toBeOnTheScreen();
+    expect(mockSignatureDeviceActionView).not.toHaveBeenCalled();
   });
 });

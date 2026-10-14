@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import React from "react";
 import { Linking, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -12,7 +13,6 @@ import {
   LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM,
 } from "@features/flow-large-screen-upsell/utils/upsellCta";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { screen as analyticsScreen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
@@ -302,15 +302,13 @@ describe("BackupHub screen (mobile)", () => {
       offerType: "none",
       platform: "lwm",
     };
-    expect(analyticsScreen).toHaveBeenCalledWith(
-      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-      undefined,
-      {
+    expect(trackPage).toHaveBeenCalledWith({
+      category: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      props: {
         name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         ...upsellAnalyticsProps,
       },
-      false,
-    );
+    });
 
     await user.press(await screen.findByTestId("backup-hub-physical-row-recovery-key"));
 
@@ -356,15 +354,13 @@ describe("BackupHub screen (mobile)", () => {
         offerType: "none",
         platform: "lwm",
       };
-      expect(analyticsScreen).toHaveBeenCalledWith(
-        BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-        undefined,
-        {
+      expect(trackPage).toHaveBeenCalledWith({
+        category: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        props: {
           name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
           ...upsellAnalyticsProps,
         },
-        false,
-      );
+      });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
         page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,

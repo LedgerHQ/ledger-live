@@ -7,6 +7,8 @@
     "@commitlint/lint": "catalog:",
     "@commitlint/load": "catalog:",
     "@commitlint/types": "catalog:",
-    "danger": "13.0.10"
+    "@types/node": "catalog:",
+    "danger": "13.0.10",
+    "yaml": "2.8.3"
   }
 }

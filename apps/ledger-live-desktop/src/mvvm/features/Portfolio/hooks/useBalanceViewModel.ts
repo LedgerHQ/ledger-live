@@ -13,9 +13,8 @@ import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/ind
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
-import { track } from "~/renderer/analytics/segment";
+import { setTrackingSource, track } from "@shared/analytics";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 
 interface UseBalanceViewModelOptions {
   readonly legacyRange?: boolean;

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
@@ -5,7 +6,6 @@ import type { AppProps } from "LLM/features/Web3Hub/types";
 import WebPlatformPlayer from "./components/Web3Player";
 import GenericErrorView from "~/components/GenericErrorView";
 import useWeb3HubAppViewModel from "./useWeb3HubAppViewModel";
-import { TrackScreen } from "~/analytics";
 
 const appManifestNotFoundError = new Error("App not found");
 

@@ -5,7 +5,7 @@ import {
   Operation,
   ListOperationsOptions,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "../config";
 import { OperationType } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";
@@ -160,7 +160,7 @@ function determineOperationType(
 }
 
 function toNativeOperation(
-  currency: CryptoCurrency,
+  currencyId: string,
   paymentKey: string,
   tx: APITransaction,
   parties: TransactionParties,
@@ -168,7 +168,7 @@ function toNativeOperation(
   stakeKeyDeposit: string,
 ): Operation<MemoNotSupported> {
   const { senders, recipients } = parties;
-  const networkParams = getNetworkParameters(currency.id);
+  const networkParams = getNetworkParameters(currencyId);
 
   const details: Record<string, unknown> = {};
 
@@ -212,7 +212,7 @@ function toNativeOperation(
 
   const ownedDelegation = stakeKey ? findOwnedStakeDelegation(tx, stakeKey) : undefined;
   if (ownedDelegation) {
-    details.poolId = getBech32PoolId(ownedDelegation.poolKeyHash, currency.id);
+    details.poolId = getBech32PoolId(ownedDelegation.poolKeyHash, currencyId);
   }
 
   if (tx.metadata?.hash) {
@@ -242,7 +242,7 @@ function toNativeOperation(
   const assetInfo: AssetInfo = { type: "native" };
 
   return {
-    id: `${currency.id}-${tx.hash}`,
+    id: `${currencyId}-${tx.hash}`,
     type,
     senders,
     recipients,
@@ -282,7 +282,7 @@ function processTokenItems(
 }
 
 function extractTokenOperations(
-  currency: CryptoCurrency,
+  currencyId: string,
   address: string,
   paymentKey: string,
   tx: APITransaction,
@@ -342,7 +342,7 @@ function extractTokenOperations(
     }
 
     tokenOperations.push({
-      id: `${currency.id}-${tx.hash}-${assetReference}`,
+      id: `${currencyId}-${tx.hash}-${assetReference}`,
       type: tokenType,
       senders,
       recipients,
@@ -359,8 +359,8 @@ function extractTokenOperations(
 // We don't send a limit to this endpoint; the server dictates the page size and
 // returns it as `limit`, which the caller uses only to detect a full page.
 async function fetchTransactionsByPaymentKey(
+  config: CardanoCoinConfig,
   paymentKey: string,
-  currency: CryptoCurrency,
   blockHeight: number = 0,
   pageNo: number = 1,
 ): Promise<{
@@ -369,7 +369,7 @@ async function fetchTransactionsByPaymentKey(
   limit: number;
   blockHeight: number;
 }> {
-  const endpoint = isTestnet(currency) ? CARDANO_TESTNET_API_ENDPOINT : CARDANO_API_ENDPOINT;
+  const endpoint = isTestnet(config) ? CARDANO_TESTNET_API_ENDPOINT : CARDANO_API_ENDPOINT;
 
   const res = await network({
     method: "POST",
@@ -404,13 +404,15 @@ async function fetchTransactionsByPaymentKey(
  * is whatever the server returns (used only to detect a full page). The
  * `options.minHeight` and `options.order` options are applied.
  *
- * @param currency - The Cardano currency object
+ * @param config - The Cardano coin config
+ * @param currencyId - The Cardano currency id (mainnet or testnet), used to build operation ids
  * @param address - Cardano address string (bech32 format)
  * @param options - Pagination and filtering options (note: `limit` is not sent and has no effect)
  * @returns Paginated list of operations (native ADA + tokens)
  */
 export async function listOperations(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
+  currencyId: string,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
@@ -460,7 +462,7 @@ export async function listOperations(
     transactions,
     limit,
     pageNo: servedPageNo,
-  } = await fetchTransactionsByPaymentKey(paymentKey, currency, blockHeight, pageNo);
+  } = await fetchTransactionsByPaymentKey(config, paymentKey, blockHeight, pageNo);
 
   // Pre-Conway registration/de-registration amounts aren't carried on the
   // certificate — they come from the protocol params (as the rest of the Cardano
@@ -470,7 +472,7 @@ export async function listOperations(
     tx => tx.certificate.stakeRegistrations?.length || tx.certificate.stakeDeRegistrations?.length,
   );
   const stakeKeyDeposit = hasPreConwayStakeCerts
-    ? (await fetchNetworkInfo(currency)).protocolParams.stakeKeyDeposit
+    ? (await fetchNetworkInfo(config)).protocolParams.stakeKeyDeposit
     : "";
 
   const allOperations: Operation<MemoNotSupported>[] = [];
@@ -483,7 +485,7 @@ export async function listOperations(
     const parties = extractParties(tx);
 
     const nativeOp = toNativeOperation(
-      currency,
+      currencyId,
       paymentKey,
       tx,
       parties,
@@ -492,7 +494,7 @@ export async function listOperations(
     );
     allOperations.push(nativeOp);
 
-    const tokenOps = extractTokenOperations(currency, address, paymentKey, tx, parties);
+    const tokenOps = extractTokenOperations(currencyId, address, paymentKey, tx, parties);
     allOperations.push(...tokenOps);
   }
 

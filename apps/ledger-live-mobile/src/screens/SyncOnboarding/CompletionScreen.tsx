@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -22,7 +24,6 @@ import { useIsFocused, useNavigation } from "@react-navigation/core";
 import Button from "~/components/Button";
 import styled from "styled-components/native";
 import { Trans } from "~/context/Locale";
-import { TrackScreen, track } from "~/analytics";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 
 const CTAWrapper = styled(Box)`

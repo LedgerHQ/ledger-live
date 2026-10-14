@@ -1,6 +1,6 @@
 import { Analytics } from "@segment/analytics-node";
 import os from "node:os";
-import { closeAndFlush, setAnalytics, setEnabledFn, track as sharedTrack } from "@shared/analytics";
+import { closeAndFlush, setAnalytics, setEnabledFn } from "@shared/analytics";
 import pkg from "../../package.json" with { type: "json" };
 
 export const WALLET_CLI_USER_ID = "f3c373cd-c661-46bb-8577-3bc2bce98b5b";
@@ -58,10 +58,6 @@ export const startAnalytics = (): void => {
   } catch {
     unregisterAnalytics();
   }
-};
-
-export const track = (eventName: string, properties?: Record<string, unknown> | null): void => {
-  void sharedTrack(eventName, properties);
 };
 
 export async function disposeAnalytics(): Promise<void> {

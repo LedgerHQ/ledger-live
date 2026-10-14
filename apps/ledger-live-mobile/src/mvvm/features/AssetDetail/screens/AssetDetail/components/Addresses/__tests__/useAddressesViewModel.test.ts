@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -9,7 +10,6 @@ import {
   mockEthCryptoCurrency,
   usdcToken,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import { useAddressesViewModel } from "../useAddressesViewModel";

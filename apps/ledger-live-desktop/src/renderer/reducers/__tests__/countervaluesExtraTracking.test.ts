@@ -1,13 +1,11 @@
-import { createAction } from "@reduxjs/toolkit";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { wipeCountervalues } from "@features/platform-market-countervalues";
 import reducer, {
   addExtraTrackingPairs,
   selectExtraTrackingPairs,
   type CountervaluesExtraTrackingState,
 } from "../countervaluesExtraTracking";
-
-const countervaluesWipe = createAction("COUNTERVALUES_WIPE");
 
 const btc = getCryptoCurrencyById("bitcoin");
 const usd = getFiatCurrencyByTicker("USD");
@@ -68,12 +66,12 @@ describe("countervaluesExtraTracking reducer", () => {
     expect(selectExtraTrackingPairs(wrap(state))).toHaveLength(2);
   });
 
-  it("should reset on COUNTERVALUES_WIPE", () => {
+  it("should reset on the countervalues wipe action", () => {
     const populated = reducer(
       initial,
       addExtraTrackingPairs([{ from: btc, to: usd, startDate: new Date() }]),
     );
-    const wiped = reducer(populated, countervaluesWipe());
+    const wiped = reducer(populated, wipeCountervalues());
 
     expect(selectExtraTrackingPairs(wrap(wiped))).toHaveLength(0);
   });

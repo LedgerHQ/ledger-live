@@ -24,7 +24,6 @@ describe("Add account", () => {
   it(`[${Currency.ALEO.testLabel}] - Add account`, async () => {
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
-    await app.modularDrawer.performSearchByTicker(Currency.ALEO.ticker);
     await app.modularDrawer.selectCurrencyByTicker(Currency.ALEO.ticker);
     await app.modularDrawer.selectNetworkIfAsked(Currency.ALEO.name);
 

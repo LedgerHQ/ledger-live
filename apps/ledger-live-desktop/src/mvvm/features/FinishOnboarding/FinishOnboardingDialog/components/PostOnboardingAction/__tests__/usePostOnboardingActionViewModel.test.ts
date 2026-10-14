@@ -3,7 +3,12 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook } from "tests/testSetup";
 import { getLumenSymbolForActionId } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/utils";
 import { usePostOnboardingActionViewModel } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/components/PostOnboardingAction/usePostOnboardingActionViewModel";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const completeActionMock = jest.fn();
 const openActivationDrawerMock = jest.fn();

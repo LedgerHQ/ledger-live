@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-contacts",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
@@ -68,6 +68,7 @@
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@types/semver": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

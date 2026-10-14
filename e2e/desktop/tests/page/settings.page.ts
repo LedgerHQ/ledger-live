@@ -40,6 +40,11 @@ export class SettingsPage extends AppPage {
   readonly themeRow = this.page.getByTestId("setting-theme-dropDown");
   readonly hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
 
+  @step("Expect the Settings page to be visible")
+  async expectSettingsPageVisible() {
+    await expect(this.generalTab).toBeVisible();
+  }
+
   @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
     await this.accountsTab.click();

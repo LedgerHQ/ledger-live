@@ -136,6 +136,8 @@ export const scenarioVechain: Scenario<GenericTransaction, Account> = {
 
     const localConfig = {
       status: { type: "active" as const },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       chainTag,
       // The module reads its Thor endpoint from the coin config, so the solo node has to be
       // declared here rather than through the environment.

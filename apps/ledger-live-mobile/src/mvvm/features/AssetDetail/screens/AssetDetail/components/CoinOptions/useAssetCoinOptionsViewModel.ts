@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
@@ -7,7 +8,6 @@ import {
   showToken,
 } from "~/actions/settings";
 import { blacklistedTokenIdsSelector, starredMarketCoinsSelector } from "~/reducers/settings";
-import { track } from "~/analytics";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useTranslation } from "~/context/Locale";

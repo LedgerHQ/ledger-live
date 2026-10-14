@@ -78,6 +78,30 @@ describe("useProposalRowViewModel", () => {
     });
   });
 
+  describe("isExpired", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("should flip to true when the deadline passes while the row is mounted", () => {
+      const { result } = renderViewModel({
+        expiresAtMicros: (Date.now() + 2000) * 1000,
+        isExpired: false,
+      });
+      expect(result.current.isExpired).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(2000);
+      });
+      expect(result.current.isExpired).toBe(true);
+      expect(result.current.timeRemaining).toBe("");
+    });
+  });
+
   describe("handleRowPress", () => {
     it("should call onRowClick with the proposal contractId", () => {
       const { result } = renderViewModel({ contractId: "contract-abc" });

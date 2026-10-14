@@ -1,7 +1,17 @@
 import { BigNumber } from "bignumber.js";
+import { DEFAULT_FEES_SAFETY_BUFFER } from "../constants";
+import { polkadotMainnetConfigValue } from "../test/config.fixture";
 import { PolkadotAccount, PolkadotResources } from "../types";
-import { createFixtureAccount } from "../types/bridge.fixture";
-import { canUnbond, isController, isFirstBond, isStash, MAX_UNLOCKINGS } from "./utils";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import {
+  calculateAmount,
+  canUnbond,
+  getFeesSafetyBuffer,
+  isController,
+  isFirstBond,
+  isStash,
+  MAX_UNLOCKINGS,
+} from "./utils";
 
 describe("isController", () => {
   const polkadotAccount: PolkadotAccount = createFixtureAccount();
@@ -133,5 +143,41 @@ describe("isFirstBond", () => {
 
     // Then
     expect(result).toBe(true);
+  });
+});
+
+describe("getFeesSafetyBuffer", () => {
+  it("falls back to the module default when the config has no fees section", () => {
+    expect(getFeesSafetyBuffer(polkadotMainnetConfigValue)).toEqual(
+      new BigNumber(DEFAULT_FEES_SAFETY_BUFFER),
+    );
+  });
+
+  it("uses the configured safety buffer", () => {
+    const config = { ...polkadotMainnetConfigValue, fees: { safetyBuffer: 42 } };
+
+    expect(getFeesSafetyBuffer(config)).toEqual(new BigNumber(42));
+  });
+});
+
+describe("calculateAmount", () => {
+  const account = createFixtureAccount({ spendableBalance: new BigNumber(10_000_000_000) });
+  const transaction = {
+    ...createFixtureTransaction({ mode: "bond", fees: new BigNumber(1_000_000) }),
+    useAllAmount: true,
+  };
+
+  it("keeps the default safety buffer when bonding all the amount", () => {
+    const amount = calculateAmount({ config: polkadotMainnetConfigValue, account, transaction });
+
+    expect(amount).toEqual(new BigNumber(10_000_000_000 - 1_000_000 - DEFAULT_FEES_SAFETY_BUFFER));
+  });
+
+  it("keeps the configured safety buffer when bonding all the amount", () => {
+    const config = { ...polkadotMainnetConfigValue, fees: { safetyBuffer: 5_000_000_000 } };
+
+    const amount = calculateAmount({ config, account, transaction });
+
+    expect(amount).toEqual(new BigNumber(10_000_000_000 - 1_000_000 - 5_000_000_000));
   });
 });

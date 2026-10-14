@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -5,7 +6,6 @@ import { Text, Button, Icons, Flex, Link } from "@ledgerhq/native-ui";
 import forgetDeviceIllustration from "../assets/forget-device.webp";
 import { useTheme } from "styled-components/native";
 import { useForgetDeviceCta } from "./hooks/useForgetDeviceCta";
-import { TrackScreen } from "~/analytics";
 
 type BleForgetDeviceIllustrationProps = {
   productName: string;

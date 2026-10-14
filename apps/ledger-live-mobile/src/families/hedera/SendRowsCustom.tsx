@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
@@ -25,7 +25,7 @@ type Props = {
 } & Navigation;
 export default function HederaSendRowsCustom(props: Props) {
   const { account } = props;
-  const transaction = props.transaction as HederaTransaction;
+  const transaction = props.transaction as HederaGenericTransaction;
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<Navigation["navigation"]>();
@@ -42,7 +42,7 @@ export default function HederaSendRowsCustom(props: Props) {
   return (
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
-        {transaction.memo ? (
+        {transaction.memoValue ? (
           <LText
             semiBold
             style={styles.tagText}
@@ -50,7 +50,7 @@ export default function HederaSendRowsCustom(props: Props) {
             numberOfLines={1}
             testID="summary-memo-tag"
           >
-            {transaction.memo}
+            {transaction.memoValue}
           </LText>
         ) : (
           <LText

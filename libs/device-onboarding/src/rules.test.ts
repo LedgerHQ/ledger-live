@@ -9,11 +9,11 @@ describe("requiresLegacyFlow", () => {
     },
   );
 
-  it.each(["1.6.1", "2.1.0", "9.9.9"])("sends a nano s running %s to legacy", currentVersion => {
-    expect(requiresLegacyFlow({ currentVersion, deviceModelId: DeviceModelId.NANO_S })).toBe(true);
+  it.each(["1.6.1", "2.1.0", "9.9.9"])("drives a nano s running %s", currentVersion => {
+    expect(requiresLegacyFlow({ currentVersion, deviceModelId: DeviceModelId.NANO_S })).toBe(false);
   });
 
-  it("holds no floor for the nano s, which no version gets past", () => {
+  it("holds no floor for the nano s, which every version gets past", () => {
     expect(minimumNanoVersions.has(DeviceModelId.NANO_S)).toBe(false);
   });
 

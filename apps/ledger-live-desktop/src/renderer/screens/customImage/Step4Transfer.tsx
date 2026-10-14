@@ -11,7 +11,7 @@ import { useSelector } from "LLD/hooks/redux";
 import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { analyticsDrawerName, analyticsFlowName, analyticsPageNames } from "./shared";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 type Props = StepProps & {
   result?: ProcessorResult;

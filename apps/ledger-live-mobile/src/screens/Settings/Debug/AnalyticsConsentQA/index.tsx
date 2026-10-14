@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect, useState } from "react";
 import { Alert, TouchableOpacity } from "react-native";
 import {
@@ -55,7 +56,6 @@ import {
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import { QaInspectorRow, type QaInspectorField } from "LLM/components/QaInspectorRow";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { TrackScreen } from "~/analytics";
 
 const FLAG_KEY = "analyticsOptIn";
 

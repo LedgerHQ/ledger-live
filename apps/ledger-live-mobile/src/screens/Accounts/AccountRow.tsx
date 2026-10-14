@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import useEnv from "@features/platform-env";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -9,7 +10,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import AccountRowLayout from "~/components/AccountRowLayout";
 import { useParentAccount } from "LLM/hooks/useParentAccount";
-import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";

@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-feature-tour",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "First-time Pay tab feature tour for Ledger Wallet (native bottom sheet, web dialog)",
   "main": "src/index.ts",
@@ -65,12 +65,6 @@
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

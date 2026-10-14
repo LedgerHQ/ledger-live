@@ -1,4 +1,5 @@
 import { setEnv } from "@shared/env";
+import { TEST_TIMEOUT } from "@e2e/utils/timeouts";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import type { Account as AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
@@ -13,10 +14,18 @@ import {
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { BroadcastFlow } from "@e2e/helpers/broadcastRotation";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
-import { FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
+import {
+  FF_BABYLON_STAKING_ENABLED,
+  FF_MINA_STAKING_ENABLED,
+  FF_TEZOS_STAKING_ENABLED,
+} from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+
+const DELEGATE_FEATURE_FLAGS = new Map<string, PartialFeatures>([
+  [Currency.BABY.id, FF_BABYLON_STAKING_ENABLED],
+]);
 
 const beforeAllFunction = async (delegation: DelegateType, featureFlags?: PartialFeatures) => {
   await app.init({
@@ -34,7 +43,10 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
     beforeAll(async () => {
-      await beforeAllFunction(delegation);
+      await beforeAllFunction(
+        delegation,
+        DELEGATE_FEATURE_FLAGS.get(delegation.account.currency.id),
+      );
     });
 
     it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
@@ -53,10 +65,11 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
       await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
-      // Osmosis, like MultiversX, has no pre-selected validator: pick it after the amount.
+      // Osmosis, Babylon and MultiversX have no pre-selected validator: pick it after the amount.
       if (
         delegation.account.currency.name === Currency.MULTIVERS_X.name ||
-        delegation.account.currency.name === Currency.OSMO.name
+        delegation.account.currency.name === Currency.OSMO.name ||
+        delegation.account.currency.name === Currency.BABY.name
       ) {
         await app.stake.setAmount(currencyId, delegation.amount);
         await app.stake.validateAmount(currencyId);
@@ -146,7 +159,7 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
  * The delegate and undelegate pickers can wait for the pair to settle, which the default per-test
  * budget cannot absorb on top of the flow itself.
  */
-const MINA_PAIR_TEST_TIMEOUT_MS = MINA_PAIR_SETTLE_TIMEOUT_MS + 6 * 60 * 1000;
+const MINA_PAIR_TEST_TIMEOUT_MS = MINA_PAIR_SETTLE_TIMEOUT_MS + TEST_TIMEOUT;
 
 const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.init({
@@ -354,12 +367,11 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Delegate", () => {
     beforeAll(async () => {
-      await beforeAllFunction(delegation);
+      await beforeAllFunction(delegation, FF_TEZOS_STAKING_ENABLED);
     });
 
     it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
-      const currencyId = delegation.account.currency.id;
 
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
@@ -369,14 +381,13 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
 
-      await app.stake.dismissDelegationStart(currencyId);
-      await app.stake.summaryContinue(currencyId);
+      await app.tezosStake.startEarning();
+      await app.tezosStake.continueFromDelegationSummary();
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
       await app.speculos.signDelegationTransaction(delegation);
 
-      await app.common.successViewDetails();
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      await app.tezosStake.verifyDelegationSuccess();
     });
   });
 }

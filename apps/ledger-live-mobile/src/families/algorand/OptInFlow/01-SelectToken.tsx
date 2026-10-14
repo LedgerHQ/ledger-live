@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
@@ -17,7 +18,6 @@ import {
 } from "@ledgerhq/live-common/families/algorand/types";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
-import { TrackScreen } from "~/analytics";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import KeyboardView from "~/components/KeyboardView";

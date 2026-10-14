@@ -37,9 +37,6 @@ export const berachain = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 80094,
-  },
   explorerViews: [
     {
       tx: "https://berascan.com/tx/$hash",

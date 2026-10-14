@@ -4,7 +4,10 @@
  * would otherwise fail silently in production rather than in CI.
  */
 const track = jest.fn();
-jest.mock("./segment", () => ({ track: (...args: unknown[]) => track(...args) }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: (...args: unknown[]) => track(...args),
+}));
 
 import {
   clearPendingTxLifecycle,

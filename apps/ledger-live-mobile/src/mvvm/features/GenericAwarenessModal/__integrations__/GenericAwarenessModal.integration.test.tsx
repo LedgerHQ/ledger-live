@@ -1,7 +1,7 @@
+import { trackPage, track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
 import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { screen as analyticsScreen, track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { carouselMockData, featureIntroMockData, promptMockData } from "../mockData";
 import { GenericAwarenessModalDrawer } from "../screens/GenericAwarenessModalDrawer";
@@ -124,14 +124,13 @@ describe("GenericAwarenessModalDrawer", () => {
       expect(screen.getByText(featureIntroContent.subtitle)).toBeOnTheScreen();
       expect(screen.getByText("Full ownership")).toBeOnTheScreen();
       expect(screen.getByText("Your private keys never leave the device.")).toBeOnTheScreen();
-      expect(analyticsScreen).toHaveBeenCalledWith(
-        GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE,
-        undefined,
-        {
+      expect(trackPage).toHaveBeenCalledWith({
+        category: GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE,
+        props: {
           name: GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE,
           contentId: featureIntroMockData.id,
         },
-      );
+      });
 
       await user.press(screen.getByText("Buy your Ledger device"));
       act(() => jest.runOnlyPendingTimers());
@@ -201,17 +200,16 @@ describe("GenericAwarenessModalDrawer", () => {
       expect(await screen.findByText(carouselSlides[0].title)).toBeOnTheScreen();
       expect(screen.getByText(carouselSlides[0].subtitle)).toBeOnTheScreen();
       expect(screen.getByText("Continue")).toBeOnTheScreen();
-      expect(analyticsScreen).toHaveBeenCalledWith(
-        GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE,
-        undefined,
-        {
+      expect(trackPage).toHaveBeenCalledWith({
+        category: GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE,
+        props: {
           name: GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE,
           contentId: carouselContent.id,
           step: 1,
           stepName: carouselSlides[0].title,
           totalSteps: carouselSlides.length,
         },
-      );
+      });
 
       const continueButton = screen.getByText("Continue");
       await user.press(continueButton);
@@ -335,9 +333,12 @@ describe("GenericAwarenessModalDrawer", () => {
       expect(await screen.findByText(promptMockData.title)).toBeOnTheScreen();
       expect(screen.getByText(promptMockData.subtitle)).toBeOnTheScreen();
       expect(screen.getByText("Close")).toBeOnTheScreen();
-      expect(analyticsScreen).toHaveBeenCalledWith(GENERIC_AWARENESS_MODAL_PROMPT_PAGE, undefined, {
-        name: GENERIC_AWARENESS_MODAL_PROMPT_PAGE,
-        contentId: promptMockData.id,
+      expect(trackPage).toHaveBeenCalledWith({
+        category: GENERIC_AWARENESS_MODAL_PROMPT_PAGE,
+        props: {
+          name: GENERIC_AWARENESS_MODAL_PROMPT_PAGE,
+          contentId: promptMockData.id,
+        },
       });
 
       await user.press(screen.getByText(promptMockData.primaryButtonLabel));

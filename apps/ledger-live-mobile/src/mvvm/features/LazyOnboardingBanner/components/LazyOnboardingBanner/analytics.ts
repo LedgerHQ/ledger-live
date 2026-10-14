@@ -1,5 +1,5 @@
+import { trackPage, track } from "@shared/analytics";
 import type { LazyOnboardingBannerMode } from "@features/flow-lazy-onboarding-banner";
-import { screen, track } from "~/analytics";
 import {
   buildLazyOnboardingSharedAnalyticsProps,
   LAZY_ONBOARDING_BANNER_BUTTON,
@@ -9,15 +9,13 @@ import {
 } from "../../analyticsConstants";
 
 export const trackLazyOnboardingBannerShown = (sharedProps: LazyOnboardingSharedAnalyticsProps) => {
-  screen(
-    LAZY_ONBOARDING_BANNER_PAGE,
-    undefined,
-    {
+  trackPage({
+    category: LAZY_ONBOARDING_BANNER_PAGE,
+    props: {
       name: LAZY_ONBOARDING_BANNER_PAGE_NAME,
       ...sharedProps,
     },
-    false,
-  );
+  });
 };
 
 export const trackLazyOnboardingBannerPressed = (

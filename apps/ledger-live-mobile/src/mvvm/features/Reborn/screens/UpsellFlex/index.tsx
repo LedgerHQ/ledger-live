@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import useUpsellFlexModel from "./useUpsellFlexModel";
 import { Box, Flex, Icons } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 
-import { TrackScreen } from "~/analytics";
 import BuyDeviceView from "../../components/BuyDeviceView";
 
 const hitSlop = {

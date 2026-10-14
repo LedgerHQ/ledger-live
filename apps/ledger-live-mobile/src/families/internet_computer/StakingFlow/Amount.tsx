@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { MIN_NEURON_STAKE } from "@ledgerhq/live-common/families/internet_computer/consts";
@@ -9,7 +10,6 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";

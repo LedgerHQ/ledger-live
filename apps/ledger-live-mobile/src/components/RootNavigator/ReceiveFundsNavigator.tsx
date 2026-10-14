@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -13,11 +14,11 @@ import ReceiveVerifyAddress from "~/screens/ReceiveFunds/03b-VerifyAddress";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
-import { track } from "~/analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "~/screens/ReceiveFunds/HelpButton";
+import { CONFIRMATION_HEADER_SIDE_WIDTH } from "~/screens/ReceiveFunds/ConfirmationHeaderTitle";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { hasClosedWithdrawBannerSelector, isOnboardingFlowSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
@@ -130,9 +131,19 @@ export default function ReceiveFundsNavigator() {
           // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
           header: undefined,
-          headerLeft: () => (route.params?.hideBackButton ? null : <NavigationHeaderBackButton />),
+          headerLeft: () => (
+            <Flex width={CONFIRMATION_HEADER_SIDE_WIDTH} alignItems="flex-start">
+              {route.params?.hideBackButton ? null : <NavigationHeaderBackButton />}
+            </Flex>
+          ),
           headerRight: () => (
-            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+            <Flex
+              width={CONFIRMATION_HEADER_SIDE_WIDTH}
+              alignItems="center"
+              justifyContent="flex-end"
+              flexDirection="row"
+              columnGap={8}
+            >
               {hasClosedWithdrawBanner && (
                 <HelpButton
                   url={localizedWithdrawCryptoUrl}
@@ -145,6 +156,7 @@ export default function ReceiveFundsNavigator() {
                 }
                 disablePostOnboardingRedirect={isOnboardingFlow}
                 popToTop={isOnboardingFlow}
+                compact
               />
             </Flex>
           ),

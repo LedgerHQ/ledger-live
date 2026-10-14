@@ -1,6 +1,28 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceActionAnimation } from "@features/platform-device-action-content";
-import { getDeviceAnimation } from "./animations";
+import type { AnimationLoader } from "~/renderer/animations";
+import { getDeviceAnimation, type AnimationKey } from "./animations";
+
+const isLoader = (source: unknown): source is AnimationLoader => typeof source === "function";
+
+const ALL_KEYS = Object.keys({
+  plugAndPinCode: true,
+  enterPinCode: true,
+  quitApp: true,
+  allowManager: true,
+  openApp: true,
+  verify: true,
+  sign: true,
+  firmwareUpdating: true,
+  installLoading: true,
+  confirmLockscreen: true,
+  recoverWithProtect: true,
+  connectionSuccess: true,
+  onboardingSuccess: true,
+} satisfies Record<AnimationKey | "onboardingSuccess", true>) as (
+  | AnimationKey
+  | "onboardingSuccess"
+)[];
 
 // This module is mocked by most of its consumers' tests, so it is only exercised here. The
 // enterPinCode/openApp assets are owned by @features/platform-device-action-content: asserting
@@ -38,6 +60,26 @@ describe("getDeviceAnimation", () => {
       }
     },
   );
+
+  it("GIVEN every model, theme and key WHEN loading each code-split animation THEN it resolves to Lottie data", async () => {
+    // GIVEN
+    const loaders = new Set<AnimationLoader>();
+    for (const modelId of Object.values(DeviceModelId)) {
+      for (const theme of ["light", "dark"] as const) {
+        for (const key of ALL_KEYS) {
+          const source = getDeviceAnimation(modelId, theme, key);
+          if (isLoader(source)) loaders.add(source);
+        }
+      }
+    }
+
+    // WHEN / THEN
+    expect(loaders.size).toBeGreaterThan(0);
+    for (const load of loaders) {
+      const { default: data } = await load();
+      expect(data).toEqual(expect.objectContaining({ layers: expect.any(Array) }));
+    }
+  });
 
   it("GIVEN a model without the requested key WHEN resolving THEN it returns null", () => {
     // GIVEN / WHEN / THEN

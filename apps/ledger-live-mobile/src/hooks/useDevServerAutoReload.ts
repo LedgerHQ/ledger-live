@@ -1,12 +1,12 @@
 import { DevSettings, NativeModules, Platform } from "react-native";
-import DeviceInfo from "react-native-device-info";
+import { isDevice } from "expo-device";
 import { createMMKV, type MMKV } from "react-native-mmkv";
 
 const STORAGE_KEY = "__dev_server_connected";
 const MAX_POLL_RETRIES = 30;
 
 /** Only for iOS physical devices on debug builds, to ensure dev-server pairing on first load */
-const shouldActivate = __DEV__ && Platform.OS === "ios" && !DeviceInfo.isEmulatorSync();
+const shouldActivate = __DEV__ && Platform.OS === "ios" && isDevice;
 
 /** Dedicated storage for debug */
 let storage: MMKV | null = null;

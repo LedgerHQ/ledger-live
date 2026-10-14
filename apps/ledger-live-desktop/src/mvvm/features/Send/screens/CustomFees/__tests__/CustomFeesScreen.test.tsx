@@ -32,7 +32,15 @@ jest.mock("@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions
 }));
 
 jest.mock("@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects", () => ({
-  useFlowEffects: jest.fn(),
+  useFlowEffects: jest.fn(() => ({ loading: false, error: null })),
+}));
+
+jest.mock("../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: jest.fn(() => ({
+    clearPendingMessage: jest.fn(),
+    scheduleMessage: jest.fn(),
+    trackMessage: jest.fn(),
+  })),
 }));
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({

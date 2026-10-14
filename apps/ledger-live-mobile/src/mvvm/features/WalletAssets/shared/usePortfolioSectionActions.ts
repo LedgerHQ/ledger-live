@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNavigation } from "@react-navigation/native";
@@ -5,7 +6,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { track } from "~/analytics";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 interface PortfolioSectionActions {

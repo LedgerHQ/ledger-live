@@ -47,6 +47,8 @@ function mockBuildTransactionBody() {
 
 const DEFAULT_CONFIG: VechainCurrencyConfig = {
   status: { type: "active" },
+  name: "Vechain",
+  unit: { name: "VET", code: "VET", magnitude: 18 },
   node: { url: "https://vechain.coin.ledger.com" },
 };
 

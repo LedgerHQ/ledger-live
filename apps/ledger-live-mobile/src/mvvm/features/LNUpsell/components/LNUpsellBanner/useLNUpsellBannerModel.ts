@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { Image, Linking } from "react-native";
 import {
@@ -10,7 +11,6 @@ import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
   type LargeScreenUpsellDeviceModelAnalyticsValue,
 } from "LLM/features/LargeScreenUpsell/analytics";
-import { screen, track } from "~/analytics";
 import type { LNBannerLocation, LNBannerModel } from "../../types";
 import { useLNUpsellBannerState } from "../../hooks/useLNUpsellBannerState";
 
@@ -114,11 +114,11 @@ export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerMode
 }
 
 function trackProfilePageViewed(sharedProps: ProfileSharedAnalyticsProps) {
-  screen(PROFILE_PAGE, undefined, { name: PROFILE_PAGE, ...sharedProps }, false);
+  trackPage({ category: PROFILE_PAGE, props: { name: PROFILE_PAGE, ...sharedProps } });
 }
 
 function trackBannerPageViewed(pageName: string, sharedProps: SharedAnalyticsProps) {
-  screen(pageName, undefined, { name: pageName, ...sharedProps }, false);
+  trackPage({ category: pageName, props: { name: pageName, ...sharedProps } });
 }
 
 const AnalyticsPageMap = {

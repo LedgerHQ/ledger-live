@@ -10,7 +10,7 @@ import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 type WaitingForSelectedDeviceStateProps = {
   state: Extract<
     ConnectDeviceUIState,
-    { type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
+    { type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
   >;
 };
 

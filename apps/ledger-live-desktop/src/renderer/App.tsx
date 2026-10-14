@@ -26,7 +26,7 @@ import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { BrazeProvider } from "LLD/features/DynamicContent/components/BrazeProvider";
 import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
-import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
@@ -37,6 +37,7 @@ import { I18nProvider } from "@shared/i18n";
 import i18n from "~/renderer/i18n/init";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
 import { LinkingProviderWrapper } from "~/renderer/components/LinkingProviderWrapper";
+import { MockServerDeviceWindow } from "LLD/components/MockServerDeviceWindow";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -67,7 +68,6 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   }, [reloadEnabled]);
 
   const selectedPalette = useSelector(themeSelector) || "light";
-  const ldmkTransport = useFeature("ldmkTransport");
   const zcashShielded = useFeature("zcashShielded");
 
   // Mirror the `zcashShielded` feature flag: neither a coin module nor the bridge
@@ -94,7 +94,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             <ConnectEnvsToDatadog />
             <UpdaterProvider>
               <AppDataStorageProvider>
-                <DeviceManagementKitProvider ldmkTransportEnabled={ldmkTransport?.enabled ?? false}>
+                <DeviceManagementKitProvider>
                   <CountervaluesBridgedProvider initialState={initialCountervalues}>
                     <ToastProvider>
                       <ServiceStatusProviderWrapper>
@@ -104,6 +104,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                               <DrawerProvider>
                                 <QueryClientProvider client={queryClient}>
                                   <Default />
+                                  <MockServerDeviceWindow />
                                   <ReactQueryDevtoolsProvider />
                                 </QueryClientProvider>
                               </DrawerProvider>

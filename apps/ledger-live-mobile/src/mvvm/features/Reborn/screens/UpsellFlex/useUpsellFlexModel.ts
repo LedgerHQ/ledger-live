@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
-import { track } from "~/analytics";
 import { BuyDeviceNavigatorParamList } from "~/components/RootNavigator/types/BuyDeviceNavigator";
 import {
   BaseNavigationComposite,

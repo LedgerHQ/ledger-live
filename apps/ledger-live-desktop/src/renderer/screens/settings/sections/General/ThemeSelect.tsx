@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { setTheme } from "~/renderer/actions/settings";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 
 type ThemeSelectOption = {
   value: string | null;

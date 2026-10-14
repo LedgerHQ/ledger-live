@@ -39,9 +39,6 @@ export const ethereum = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
   explorerViews: [
     {
       tx: "https://etherscan.io/tx/$hash",

@@ -1,7 +1,7 @@
 import type {
   HederaAccount,
+  HederaGenericTransaction,
   HederaOperation,
-  Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/hedera/types";
 import type { Account } from "@ledgerhq/types-live";
@@ -9,16 +9,16 @@ import type { LLDCoinFamily } from "../types";
 
 export type HederaFamily = LLDCoinFamily<
   HederaAccount,
-  Transaction,
+  HederaGenericTransaction,
   TransactionStatus,
   HederaOperation
 >;
 
 export type SendAmountProps = {
   account: Account;
-  transaction: Transaction;
+  transaction: HederaGenericTransaction;
   status: TransactionStatus;
-  onChange: (a: Transaction) => void;
+  onChange: (a: HederaGenericTransaction) => void;
   trackProperties?: object;
   autoFocus?: boolean;
 };

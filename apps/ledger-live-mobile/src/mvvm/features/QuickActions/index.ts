@@ -9,5 +9,4 @@ export type {
   TransferAction,
   TransferActionId,
   TransferDrawerProps,
-  UserQuickActionsState,
 } from "./types";

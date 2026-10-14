@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { Track } from "@shared/analytics-react";
 import { useFeature } from "@features/platform-feature-flags";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
@@ -5,7 +7,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Linking, Pressable, View } from "react-native";
 import { useTheme } from "styled-components/native";
-import { Track, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { useRootDrawerContext } from "~/context/RootDrawerContext";
 import { urls } from "~/utils/urls";

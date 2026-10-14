@@ -14,6 +14,7 @@ import { broadcastLogger } from "~/datadog";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
+import { useSignatureTracking } from "./useSignatureTracking";
 
 /**
  * DeviceAction-based signature step view model (used when `useDeviceActionSignatureSend` is enabled).
@@ -24,6 +25,7 @@ export function useSignatureDeviceActionViewModel() {
   const { state } = useSendFlowData();
   const { finishSigning, stopSigning } = useSendSignature();
   const reduxDispatch = useDispatch();
+  const { trackDeviceConfirmation, trackSignatureError } = useSignatureTracking();
 
   const { account, parentAccount, currency } = state.account;
   const transaction = state.transaction.transaction;
@@ -105,10 +107,11 @@ export function useSignatureDeviceActionViewModel() {
 
       if ("signedOperation" in result && result.signedOperation) {
         isSigningCompletedRef.current = true;
+        trackDeviceConfirmation();
         onDeviceActionResult(result);
       }
     },
-    [onDeviceActionResult],
+    [onDeviceActionResult, trackDeviceConfirmation],
   );
 
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
@@ -129,6 +132,7 @@ export function useSignatureDeviceActionViewModel() {
     selectedDevice,
     setSelectedDevice,
     onDeviceActionResultCompleted,
+    onSignatureError: trackSignatureError,
     onUserCancel,
   };
 }

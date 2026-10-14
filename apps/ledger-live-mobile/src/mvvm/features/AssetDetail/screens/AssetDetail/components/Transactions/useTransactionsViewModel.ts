@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
@@ -10,7 +11,6 @@ import { lastSeenOperationDateSelector } from "~/reducers/history";
 import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOperations";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 export const MAX_PREVIEW_OPERATIONS = 3;

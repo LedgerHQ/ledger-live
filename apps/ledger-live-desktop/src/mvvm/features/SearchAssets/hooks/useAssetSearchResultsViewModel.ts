@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import useEnv from "@features/platform-env";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";

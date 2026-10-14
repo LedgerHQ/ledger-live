@@ -71,7 +71,7 @@ describe("ReleaseNotes Integration", () => {
   });
 
   it("should track analytics on dialog open", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { store } = renderReleaseNotes();
 
     act(() => {
@@ -82,7 +82,7 @@ describe("ReleaseNotes Integration", () => {
   });
 
   it("should track analytics when Got it is clicked", async () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { store, user } = renderReleaseNotes();
 
     act(() => {

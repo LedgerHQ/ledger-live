@@ -1,7 +1,7 @@
 # 3 · QR-code sync protocol
 
 > Part of [TrustchainSDK](./02-trustchain-sdk.md). Code:
-> [`libs/ledger-key-ring-protocol/src/qrcode`](../../libs/ledger-key-ring-protocol/src/qrcode) ·
+> [`ts-libs/libs/ledger-key-ring-protocol/src/qrcode`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/ledger-key-ring-protocol/src/qrcode) ·
 > see also [the product flow](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4652957708).
 
 The QR-code protocol lets a user add a **second instance** to their Trustchain **without a
@@ -80,7 +80,7 @@ Either way the outcome is the same: the newcomer ends up as a member and receive
 ## Sequence enforcement
 
 Each side runs its messages through a single-use state machine
-([`protocol.ts`](../../libs/ledger-key-ring-protocol/src/qrcode/protocol.ts)) covering both what
+([`protocol.ts`](https://github.com/LedgerHQ/ts-libs/blob/develop/libs/ledger-key-ring-protocol/src/qrcode/protocol.ts)) covering both what
 it receives and what it sends. A message is only accepted at the one point of the sequence where
 it is expected:
 

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   CompleteExchangeUiRequest,
@@ -13,7 +14,6 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { getTrackingRouteLiveAppSource } from "../Web3AppWebview/analytics";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
@@ -33,6 +33,7 @@ import {
   decodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { getIsSwapRetryPending } from "@ledgerhq/live-common/exchange/error";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
@@ -494,7 +495,9 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     safeOnCancel(result.error);
                     navigation.pop();
-                    onCompleteError?.(result.error);
+                    if (!getIsSwapRetryPending(exchangeParams, result.error)) {
+                      onCompleteError?.(result.error);
+                    }
                   }
                   if (result.operation && exchangeParams.swapId) {
                     syncAccountById(exchangeParams.exchange.fromAccount.id);

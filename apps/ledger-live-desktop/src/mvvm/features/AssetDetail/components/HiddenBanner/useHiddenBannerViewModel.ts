@@ -4,7 +4,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { showToken } from "~/renderer/actions/settings";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 
 export type UseHiddenBannerViewModelProps = Readonly<{

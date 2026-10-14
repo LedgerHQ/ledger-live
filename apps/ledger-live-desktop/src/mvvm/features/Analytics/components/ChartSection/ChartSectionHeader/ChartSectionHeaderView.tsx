@@ -28,7 +28,7 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
       <span className="body-2 text-muted" data-testid="analytics-total-balance-label">
         {totalBalanceLabel}
       </span>
-      <div className="flex items-end gap-12">
+      <div className="flex flex-wrap items-end gap-x-12 gap-y-8">
         {balanceAvailable ? (
           <AmountDisplay
             value={balance}

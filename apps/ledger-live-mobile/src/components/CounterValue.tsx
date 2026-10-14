@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import type { Currency } from "@domain/entity-currency";
-import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { useCalculate, useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
@@ -75,7 +75,7 @@ export default function CounterValue({
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
-    let t: NodeJS.Timeout | undefined;
+    let t: ReturnType<typeof setTimeout> | undefined;
 
     if (!hasTrackingPair) {
       addExtraSessionTrackingPair({

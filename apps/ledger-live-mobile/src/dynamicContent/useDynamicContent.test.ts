@@ -1,8 +1,8 @@
+import { flush, track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import type { ContentCard } from "@braze/react-native-sdk";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import useDynamicContent from "./useDynamicContent";
-import { flush, track } from "../analytics";
 
 jest.mock("./brazeContentCard", () => ({
   useBrazeContentCard: jest.fn(() => ({
@@ -13,7 +13,8 @@ jest.mock("./brazeContentCard", () => ({
   })),
 }));
 
-jest.mock("../analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   flush: jest.fn(() => Promise.resolve()),
   track: jest.fn(() => Promise.resolve()),
 }));

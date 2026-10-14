@@ -1,5 +1,5 @@
 import type { GenericAwarenessModalCarousel } from "@ledgerhq/live-common/genericAwarenessModal";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL } from "./const";
 
 type CarouselAnalyticsContext = {
@@ -41,11 +41,8 @@ const getCarouselInteractionProperties = (context: CarouselAnalyticsContext) => 
 
 const trackCarouselStepPage = (context: CarouselAnalyticsContext): void => {
   trackPage(
-    PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
-    undefined,
-    getCarouselPageProperties(context),
-    true,
-    false,
+    { category: PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL, props: getCarouselPageProperties(context) },
+    { updateRoutes: true },
   );
 };
 

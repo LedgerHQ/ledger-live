@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ViewProps } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
@@ -8,19 +8,46 @@ import { useTheme } from "styled-components/native";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";
+import { useTranslation } from "~/context/Locale";
+
+export type CoinPicker = {
+  moveBy: (step: 1 | -1) => void;
+  position: number;
+  total: number;
+};
 
 type TickerProps = {
   currency: CryptoOrTokenCurrency;
   width: number;
+  coinPicker?: CoinPicker;
 };
 
-export const Ticker: React.FC<TickerProps> = ({ currency, width }) => {
+export const Ticker: React.FC<TickerProps> = ({ currency, width, coinPicker }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const reduceTransparencyEnabled = useReduceTransparencyEnabled();
   const midColor = getCurrencyColor(currency);
 
+  // Screen reader users can't swipe the cards: swiping up/down on the coin changes it instead.
+  const coinPickerProps: ViewProps = coinPicker
+    ? {
+        accessible: true,
+        accessibilityRole: "adjustable",
+        accessibilityLabel: currency.name,
+        accessibilityValue: {
+          text: t("largeMover.coinPosition", {
+            position: coinPicker.position,
+            total: coinPicker.total,
+          }),
+        },
+        accessibilityActions: [{ name: "increment" }, { name: "decrement" }],
+        onAccessibilityAction: e =>
+          coinPicker.moveBy(e.nativeEvent.actionName === "decrement" ? -1 : 1),
+      }
+    : {};
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} {...coinPickerProps}>
       <Svg style={[styles.gradientTop, { width: width }]}>
         <Defs>
           <LinearGradient id="midGlow" x1="0" y1="0" x2="0" y2="1">

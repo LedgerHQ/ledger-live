@@ -9,7 +9,7 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
 
 import { useTheme } from "styled-components";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
 import SeedStep from "../components/SeedStep";

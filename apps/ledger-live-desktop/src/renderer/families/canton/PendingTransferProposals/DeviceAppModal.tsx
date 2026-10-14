@@ -84,7 +84,11 @@ export function View({
               </Box>
             ) : confirmationState === "error" && error ? (
               <Box alignItems="center" py={4}>
-                <ErrorDisplay error={error} onRetry={handleRetry} withExportLogs />
+                {error.name === "TransferOfferExpiredError" ? (
+                  <ErrorDisplay error={error} />
+                ) : (
+                  <ErrorDisplay error={error} onRetry={handleRetry} withExportLogs />
+                )}
               </Box>
             ) : confirmationState === "confirming" ? (
               <Box alignItems="center" py={6}>

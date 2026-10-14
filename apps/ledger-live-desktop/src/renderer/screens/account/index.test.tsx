@@ -34,7 +34,10 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
 }));
 
 // Heavy children unrelated to the family-slot logic under test.
-jest.mock("~/renderer/analytics/TrackPage", () => () => null);
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("./AccountHeaderRow", () => () => <div data-testid="account-header-row" />);
 jest.mock("./AccountHeaderActions", () => () => null);
 jest.mock("./AccountWarningBanner", () => ({

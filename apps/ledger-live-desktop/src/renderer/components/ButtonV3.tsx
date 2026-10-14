@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Button as BaseButton, InvertTheme } from "@ledgerhq/react-ui";
 import { ButtonProps as BaseButtonProps } from "@ledgerhq/react-ui/components/cta/Button/index";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { analyticsDrawerContext } from "~/renderer/drawers/Provider";
 import styled from "styled-components";
 

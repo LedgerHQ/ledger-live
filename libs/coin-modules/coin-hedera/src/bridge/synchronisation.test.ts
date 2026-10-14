@@ -185,6 +185,19 @@ describe("getAccountShape", () => {
       expect.not.objectContaining({ cursor: expect.any(String) }),
     );
   });
+
+  it("drops the stored operations of an account synced under another syncHash", async () => {
+    const initialAccount = {
+      syncHash: `${mockSyncHash}-1`,
+      operations: [{ id: "generic-op", date: new Date() }],
+      pendingOperations: [{ id: "generic-pending-op", date: new Date() }],
+    } as Account;
+
+    const result = await getAccountShape({ ...mockInfo, initialAccount }, { paginationConfig: {} });
+
+    expect(result.operations).toEqual([]);
+    expect(result.syncHash).toBe(mockSyncHash);
+  });
 });
 
 describe("buildIterateResult", () => {

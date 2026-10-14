@@ -31,9 +31,9 @@ jest.mock("~/renderer/actions/walletSync", () => ({
   setFlow: (payload: unknown) => ({ type: "WALLET_SYNC_CHANGE_FLOW", payload }),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: (event: string) => Mocks.track(event),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 jest.mock("../hooks/useTrustchainSdk", () => ({

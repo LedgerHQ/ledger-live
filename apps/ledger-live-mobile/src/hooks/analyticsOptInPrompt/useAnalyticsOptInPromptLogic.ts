@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
-import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsConsentLogic from "./useAnalyticsConsentLogic";
 
@@ -32,7 +32,7 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint }: Props) => {
         button: "Learn More",
         flow,
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
   };
 

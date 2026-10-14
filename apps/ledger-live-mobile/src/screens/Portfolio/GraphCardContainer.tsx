@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { Currency } from "@domain/entity-currency";
 import { SharedValue } from "react-native-reanimated";
 import { Portfolio } from "@ledgerhq/types-live";
 import GraphCard from "~/components/GraphCard";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { track } from "~/analytics";
 
 const GraphCardContainer = ({
   portfolio,

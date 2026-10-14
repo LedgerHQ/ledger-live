@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-balance",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Shared Pay balance hero (empty and funded states) for Ledger Wallet",
   "main": "src/index.ts",
@@ -65,12 +65,6 @@
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

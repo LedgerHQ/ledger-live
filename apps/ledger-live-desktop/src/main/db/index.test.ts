@@ -21,6 +21,8 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     db.init(testDir);
   });
 
+  const wrongPassword = { name: "DBWrongPassword" };
+
   function appJson(data: Record<string, unknown>) {
     return Buffer.from(JSON.stringify({ data }), "utf-8");
   }
@@ -150,6 +152,78 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(typeof (await db.getKey("app", "wallet", undefined))).toBe("object");
   });
 
+  it("rolls back a wrong password so it neither passes the check nor re-encrypts the data", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+    await db.setEncryptionKey("test-password");
+    const persisted = getWrittenData();
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+
+    await expect(db.setEncryptionKey("wrong-password")).rejects.toThrow();
+    expect(db.isEncryptionKeyCorrect("wrong-password")).toBe(false);
+    expect(db.hasEncryptionKey()).toBe(false);
+
+    await db.setKey("app", "settings", { loaded: true, touched: true });
+    readFileMock.mockResolvedValueOnce(appJson(getWrittenData()));
+    db.init(testDir);
+    await db.load("app");
+
+    await db.setEncryptionKey("test-password");
+    expect(await db.hasBeenDecrypted()).toBe(true);
+    expect(typeof (await db.getKey("app", "wallet", undefined))).toBe("object");
+  });
+
+  it("keeps every path encrypted when a later path fails to decrypt", async () => {
+    readFileMock.mockResolvedValueOnce(
+      appJson({ settings: { loaded: true }, accounts: [{ id: "account-1" }] }),
+    );
+    await db.setEncryptionKey("test-password");
+    const persisted: Record<string, unknown> = { ...getWrittenData(), trustchain: "corrupted" };
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+
+    await expect(db.setEncryptionKey("test-password")).rejects.toMatchObject(wrongPassword);
+    expect(await db.getKey("app", "accounts", undefined)).toBe(persisted.accounts);
+    expect(db.hasEncryptionKey()).toBe(false);
+
+    await db.setKey("app", "settings", { loaded: true, touched: true });
+    expect(getWrittenData().accounts).toBe(persisted.accounts);
+  });
+
+  it("rejects an empty ciphertext instead of committing the key", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+    await db.setEncryptionKey("test-password");
+    const persisted: Record<string, unknown> = { ...getWrittenData(), trustchain: "" };
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+
+    await expect(db.setEncryptionKey("test-password")).rejects.toMatchObject(wrongPassword);
+    expect(db.hasEncryptionKey()).toBe(false);
+    expect(await db.getKey("app", "accounts", undefined)).toBe(persisted.accounts);
+  });
+
+  it("rejects a missing or empty key, even after a failed unlock", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+    await db.setEncryptionKey("test-password");
+    const persisted = getWrittenData();
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+    await expect(db.setEncryptionKey("wrong-password")).rejects.toMatchObject(wrongPassword);
+
+    const missingKey = undefined as unknown as string;
+    expect(db.isEncryptionKeyCorrect(missingKey)).toBe(false);
+    expect(db.isEncryptionKeyCorrect("")).toBe(false);
+    await expect(db.setEncryptionKey(missingKey)).rejects.toMatchObject(wrongPassword);
+  });
+
   it("uses in-memory values when encrypting paths that are already set", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({
@@ -171,8 +245,39 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     await db.setEncryptionKey("test-password");
     expectEncryptedAttributes(getWrittenData());
 
-    await db.removeEncryptionKey();
+    await db.removeEncryptionKey("test-password");
 
     expectUnencryptedAttributes(getWrittenData());
+  });
+
+  it("resolves true only when it checked a password", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+    await expect(db.setEncryptionKey("test-password")).resolves.toBe(false);
+    const persisted = getWrittenData();
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+
+    await expect(db.removeEncryptionKey()).resolves.toBe(false);
+    await expect(db.setEncryptionKey("test-password")).resolves.toBe(true);
+  });
+
+  it("requires the held key to replace or remove it while the db is decrypted", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+    await db.setEncryptionKey("test-password");
+
+    await expect(db.setEncryptionKey("other-password")).rejects.toMatchObject(wrongPassword);
+    await expect(db.setEncryptionKey("other-password", "wrong-password")).rejects.toMatchObject(
+      wrongPassword,
+    );
+    await expect(db.removeEncryptionKey()).rejects.toMatchObject(wrongPassword);
+    await expect(db.removeEncryptionKey("wrong-password")).rejects.toMatchObject(wrongPassword);
+    expect(db.isEncryptionKeyCorrect("test-password")).toBe(true);
+
+    await expect(db.setEncryptionKey("new-password", "test-password")).resolves.toBe(true);
+    expect(db.isEncryptionKeyCorrect("new-password")).toBe(true);
+    await expect(db.removeEncryptionKey("new-password")).resolves.toBe(true);
+    expect(db.hasEncryptionKey()).toBe(false);
   });
 });

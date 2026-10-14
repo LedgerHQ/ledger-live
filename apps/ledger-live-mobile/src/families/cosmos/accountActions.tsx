@@ -34,10 +34,9 @@ const getMainActions = ({
   }
   if (configDisablesDelegation) return [];
 
-  const delegationDisabled = !canDelegate(account) || !account.cosmosResources;
+  const delegationDisabled = !canDelegate(account);
   const label = getStakeLabelLocaleBased();
-  const startWithValidator =
-    account.cosmosResources && account.cosmosResources?.delegations.length > 0;
+  const startWithValidator = account.stakingResources.delegations.length > 0;
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
 
   const getNavParams = (): NavigationParamsType =>

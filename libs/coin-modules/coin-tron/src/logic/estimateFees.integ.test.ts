@@ -134,7 +134,7 @@ describe("estimateFees [integ]", () => {
 // which is not available in standard CI. The Tronify code path is fully covered by unit tests in
 // estimateFees.test.ts. Enable this block locally by pointing `mockConfig.energyRent` at a real provider.
 describe.skip("estimateTronifyFees [integ — requires live Tronify provider]", () => {
-  it("returns value < originalValue for a USDT TRC-20 transfer with a cheap energy window", async () => {
+  it("returns the rent in USDT base units and the standard burn in sun for a USDT TRC-20 transfer", async () => {
     const intent = sendIntent({ asset: { type: "trc20", assetReference: USDT_CONTRACT } });
 
     const result = await estimateTronifyFees(mockLogger, mockConfig, intent);
@@ -143,7 +143,5 @@ describe.skip("estimateTronifyFees [integ — requires live Tronify provider]", 
     expect(typeof result.originalValue).toBe("bigint");
     expect(result.value).toBeGreaterThan(0n);
     expect(result.originalValue).toBeGreaterThan(0n);
-    // savings may be 0 if Tronify is currently not cheaper — just assert it's non-negative
-    expect(result.savings).toBeGreaterThanOrEqual(0n);
   });
 });

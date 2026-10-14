@@ -4,7 +4,7 @@ import {
   SupportedCountervaluesData,
 } from "~/renderer/reducers/settings";
 import Dropdown from "./DropDown";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { useTranslation } from "react-i18next";
 import { Currency } from "@domain/entity-currency";
 import { useSelector } from "LLD/hooks/redux";

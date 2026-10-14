@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useEnv from "@features/platform-env";
 import { setEnv } from "@shared/env";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Input from "~/renderer/components/Input";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box";

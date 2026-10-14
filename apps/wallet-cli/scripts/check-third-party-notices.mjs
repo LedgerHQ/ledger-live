@@ -10,12 +10,9 @@ const root = path.resolve(__dirname, "..");
 // Anything else listed in apps/wallet-cli/package.json must appear in
 // THIRD_PARTY_NOTICES.md so its upstream attribution clauses are honored.
 const NON_REDISTRIBUTED = new Set([
-  "@oxlint/binding-darwin-arm64",
-  "@oxlint/binding-darwin-x64",
-  "@oxlint/binding-linux-x64-gnu",
-  "@oxlint/binding-win32-x64-msvc",
   "@types/debug",
   "@types/node",
+  "@types/react",
   "@types/w3c-web-usb",
   "bun-types",
   "bunli",

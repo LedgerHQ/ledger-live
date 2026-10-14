@@ -37,6 +37,12 @@ import { RawPlatformTransaction } from "./rawTypes";
 import * as serializers from "./serializers";
 import { LiveAppManifest } from "./types";
 import { TrackingAPI } from "./tracking";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { evmConfig } from "../families/evm/config";
+
+// completeExchangeLogic's EVM path reads chainId via getCurrencyConfiguration (LiveConfig); seed the
+// real EVM config so the "ethereum" fixture account/token resolve deterministically.
+LiveConfig.setConfig(evmConfig);
 
 describe("receiveOnAccountLogic", () => {
   const walletState: AccountNamesState = new Map();

@@ -5,7 +5,7 @@ import { invalidatePnLCache } from "../costBasisCache";
 import { ETH, USD, WEI } from "../scenarios/currencies";
 import { makeAccount } from "../scenarios/accounts";
 import { buy, resetOperationIdCounter } from "../scenarios/operations";
-import { buildCV, dailyHistory } from "../scenarios/countervalues";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
 import { expectBN } from "./helpers/bn";
 
 beforeEach(() => {
@@ -13,7 +13,7 @@ beforeEach(() => {
   resetOperationIdCounter();
 });
 
-// `calculate()` in @ledgerhq/live-countervalues computes
+// `calculate()` in @domain/entity-market-countervalues computes
 // `value * rate * mult`. With an `Infinity` latest rate it returns `Infinity`;
 // `new BigNumber(Infinity)` coerces to an internal NaN that then poisons every
 // downstream arithmetic op in the reducer. These tests pin the guard that

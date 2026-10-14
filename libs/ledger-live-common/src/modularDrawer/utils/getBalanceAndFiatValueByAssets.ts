@@ -6,7 +6,7 @@ import {
 import { AssetType } from "./type";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 
 export interface ExtendedAssetType extends AssetType {
   currency: CryptoOrTokenCurrency;

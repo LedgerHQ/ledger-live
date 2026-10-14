@@ -2,16 +2,15 @@ import React from "react";
 import { Text } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
-import { render, screen, waitFor, act } from "@tests/test-renderer";
+import { render, screen, waitFor, act, countervaluesTestUserSettings } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { ScreenName } from "~/const";
 import { track, trackPage } from "@shared/analytics";
 import type { State } from "~/reducers/types";
@@ -28,10 +27,8 @@ const VERIFY_INTRO = "Verify your address";
 const DIE_LABEL = "Ledger Secure Screen";
 const PAY_DEPOSIT = "Add stablecoin";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
+jest.mock("@shared/clipboard", () => ({
+  copyToClipboard: jest.fn().mockResolvedValue(true),
 }));
 
 jest.mock("@features/flow-pay-card", () => ({
@@ -69,7 +66,7 @@ function withUsdcHoldings(state: State): State {
         ...state.countervalues.countervalues,
         state: importCountervalues(
           { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
-          state.countervalues.userSettings,
+          countervaluesTestUserSettings,
         ),
       },
     },
@@ -134,7 +131,9 @@ function renderRequestReceiveFromPayTab(payRequestVerifyHint?: {
   );
 }
 
-async function startVerify(user: { press: (element: unknown) => Promise<unknown> }): Promise<void> {
+async function startVerify(user: {
+  press: (element: ReturnType<typeof screen.getByText>) => Promise<unknown>;
+}): Promise<void> {
   await user.press(await screen.findByRole("button", { name: VERIFY }));
   await user.press(await screen.findByRole("button", { name: VERIFY_ADDRESS }));
   expect(await screen.findByText(DIE_LABEL)).toBeVisible();
@@ -230,7 +229,7 @@ describe("PayTab RequestReceive integration", () => {
 
     await user.press(await screen.findByRole("button", { name: "Copy" }));
 
-    expect(Clipboard.setString).toHaveBeenCalledWith(payTabEthAccount.freshAddress);
+    expect(copyToClipboard).toHaveBeenCalledWith(payTabEthAccount.freshAddress);
   });
 
   it("should render the request receive card for the selected account", async () => {

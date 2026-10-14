@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -19,7 +20,6 @@ import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
@@ -58,7 +58,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     if (validator !== undefined) {
       return validator;
     }
-    if (["persistence", "quicksilver", "osmo"].includes(mainAccount.currency.id)) {
+    if (["persistence", "quicksilver", "osmo", "babylon"].includes(mainAccount.currency.id)) {
       return undefined;
     }
     return validators[0];
@@ -75,7 +75,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "delegate",
-            validators: [],
           }),
         };
       }
@@ -96,15 +95,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
       updateTransaction(_ => tmpTransaction);
     }
 
-    if (chosenValidator && chosenValidator.validatorAddress !== transaction.validators[0].address) {
+    if (chosenValidator && chosenValidator.validatorAddress !== transaction.valAddress) {
       setTransaction(
         bridge.updateTransaction(transaction, {
-          validators: [
-            {
-              address: chosenValidator.validatorAddress,
-              amount: transaction.amount,
-            },
-          ],
+          valAddress: chosenValidator.validatorAddress,
         }),
       );
     }

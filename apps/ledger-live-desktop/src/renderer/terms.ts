@@ -18,11 +18,11 @@ function isAcceptedVersionUpToDate(acceptedVersion: string | null, currentVersio
 
 export function isAcceptedTerms() {
   return isAcceptedVersionUpToDate(
-    global.localStorage.getItem("acceptedTermsVersion"),
+    window.localStorage.getItem("acceptedTermsVersion"),
     currentTermsRequired,
   );
 }
 
 export function acceptTerms() {
-  return global.localStorage.setItem("acceptedTermsVersion", currentTermsRequired);
+  return window.localStorage.setItem("acceptedTermsVersion", currentTermsRequired);
 }

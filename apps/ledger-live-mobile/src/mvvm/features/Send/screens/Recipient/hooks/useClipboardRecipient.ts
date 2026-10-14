@@ -1,4 +1,4 @@
-import Clipboard from "@react-native-clipboard/clipboard";
+import { readClipboard } from "@shared/clipboard";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -60,31 +60,27 @@ export function useClipboardRecipient({
 }: UseClipboardRecipientProps): UseClipboardRecipientResult {
   const [clipboardValue, setClipboardValue] = useState("");
 
-  const readClipboard = useCallback(async () => {
-    try {
-      const text = (await Clipboard.getString())?.trim() ?? "";
-      setClipboardValue(isPlausibleRecipientCandidate(text) ? text : "");
-    } catch {
-      setClipboardValue("");
-    }
+  const refreshClipboardValue = useCallback(async () => {
+    const text = (await readClipboard()).trim();
+    setClipboardValue(isPlausibleRecipientCandidate(text) ? text : "");
   }, []);
 
   useFocusEffect(
     useCallback(() => {
       if (enabled) {
-        readClipboard();
+        void refreshClipboardValue();
       }
-    }, [enabled, readClipboard]),
+    }, [enabled, refreshClipboardValue]),
   );
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", state => {
       if (state === "active" && enabled) {
-        readClipboard();
+        void refreshClipboardValue();
       }
     });
     return () => subscription.remove();
-  }, [enabled, readClipboard]);
+  }, [enabled, refreshClipboardValue]);
 
   const candidate = enabled ? clipboardValue : "";
 

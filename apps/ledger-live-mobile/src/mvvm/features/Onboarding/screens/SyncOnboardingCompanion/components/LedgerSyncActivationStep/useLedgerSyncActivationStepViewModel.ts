@@ -1,3 +1,4 @@
+import { track, trackPage } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { setFromLedgerSyncOnboarding, setOnboardingType } from "~/actions/settings";
@@ -6,7 +7,6 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
-import { track, screen } from "~/analytics";
 import type { LedgerSyncActivationStepProps } from "./types";
 
 type NavigationProps = BaseComposite<
@@ -71,15 +71,15 @@ export const useLedgerSyncActivationStepViewModel = ({
       seedConfiguration: analyticsSeedConfiguration.current,
       flow: "onboarding",
     });
-    screen(
-      "Set up device: Step 4 Ledger Sync Reject",
-      undefined,
+    trackPage(
       {
-        seedConfiguration: analyticsSeedConfiguration.current,
-        flow: "onboarding",
+        category: "Set up device: Step 4 Ledger Sync Reject",
+        props: {
+          seedConfiguration: analyticsSeedConfiguration.current,
+          flow: "onboarding",
+        },
       },
-      true,
-      true,
+      { updateRoutes: true, refreshSource: true },
     );
     handleDrawerClose();
     handleContinue();

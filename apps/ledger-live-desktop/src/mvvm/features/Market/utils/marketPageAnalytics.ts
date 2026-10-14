@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { KeysPriceChange, Order } from "@ledgerhq/live-common/market/utils/types";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 
 export type MarketSortDirection = "asc" | "desc";
 
@@ -99,12 +99,11 @@ export function useTrackMarketDiscoverabilityPage(
     if (!enabled) return;
 
     trackPage(
-      "Market",
-      undefined,
-      getMarketDiscoverabilityPageAnalytics({ order, range, category }),
-      true,
-      true,
-      false,
+      {
+        category: "Market",
+        props: getMarketDiscoverabilityPageAnalytics({ order, range, category }),
+      },
+      { updateRoutes: true, refreshSource: true },
     );
   }, [enabled, order, range, category]);
 }
