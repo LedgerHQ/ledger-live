@@ -19,7 +19,9 @@ import { useTranslation } from "~/context/Locale";
 import { getLabelKey, TRACKING_LABEL_MAP, TRACKING_MENUENTRY_EVENT } from "./constants";
 import { scrollToTopEvent } from "./scrollToTopEvent";
 
-type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation">;
+type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation"> & {
+  isPayTabEnabled?: boolean;
+};
 
 type UseMainTabBarViewModelReturn = Pick<
   MainTabBarViewProps,
@@ -59,19 +61,26 @@ function handleScrollToTop(value: string, activeRouteName: string) {
 export const useMainTabBarViewModel = ({
   state,
   navigation,
+  isPayTabEnabled,
 }: UseMainTabBarViewModelParams): UseMainTabBarViewModelReturn => {
   const activeRouteName = state.routes[state.index].name;
   const { t } = useTranslation();
 
   const tabItems: readonly TabItemConfig[] = useMemo(
     () =>
-      state.routes.map(route => ({
-        value: route.name,
-        label: t(getLabelKey(route.name)),
-        testID: TAB_TEST_IDS[route.name],
-        ...TAB_ICONS[route.name],
-      })),
-    [state.routes, t],
+      state.routes
+        .filter(
+          route =>
+            (isPayTabEnabled || route.name !== NavigatorName.PayTab) &&
+            (!isPayTabEnabled || route.name !== NavigatorName.CardTab),
+        )
+        .map(route => ({
+          value: route.name,
+          label: t(getLabelKey(route.name)),
+          testID: TAB_TEST_IDS[route.name],
+          ...TAB_ICONS[route.name],
+        })),
+    [isPayTabEnabled, state.routes, t],
   );
 
   const navigateToTab = useCallback(

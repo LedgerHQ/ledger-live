@@ -14,17 +14,12 @@ export default function MainNavigator() {
 
   const tabBar = useTabBar({
     isMainNavigatorVisible,
+    isPayTabEnabled,
   });
 
   const screenOptions = useScreenOptions({
     colors,
   });
 
-  return (
-    <Wallet40TabNavigator
-      tabBar={tabBar}
-      screenOptions={screenOptions}
-      isPayTabEnabled={isPayTabEnabled}
-    />
-  );
+  return <Wallet40TabNavigator tabBar={tabBar} screenOptions={screenOptions} />;
 }

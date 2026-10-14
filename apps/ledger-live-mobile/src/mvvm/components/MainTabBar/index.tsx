@@ -10,10 +10,11 @@ export function MainTabBar({
   state,
   navigation,
   hideTabBar = false,
+  isPayTabEnabled,
 }: MainTabBarProps): React.JSX.Element {
   const { bottom } = useSafeAreaInsets();
   const { keyboardHeight } = useKeyboardVisible();
-  const viewModel = useMainTabBarViewModel({ state, navigation });
+  const viewModel = useMainTabBarViewModel({ state, navigation, isPayTabEnabled });
 
   // On Android 35+ the keyboard overlaps the tab bar because it is absolutely
   // positioned. Shift the whole bar upward by the keyboard height so it stays

@@ -17,4 +17,5 @@ export interface MainTabBarViewProps {
 
 export interface MainTabBarProps extends BottomTabBarProps {
   readonly hideTabBar?: boolean;
+  readonly isPayTabEnabled?: boolean;
 }

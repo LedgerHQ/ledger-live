@@ -8,10 +8,12 @@ import { useSwapWallet40HeaderState } from "~/screens/Swap/LiveApp/navigationHan
 
 type Params = {
   isMainNavigatorVisible: boolean;
+  isPayTabEnabled: boolean;
 };
 
 export function useTabBar({
   isMainNavigatorVisible,
+  isPayTabEnabled,
 }: Params): (props: BottomTabBarProps) => React.JSX.Element {
   const swapWallet40HeaderState = useSwapWallet40HeaderState();
   const { isKeyboardVisible } = useKeyboardVisible();
@@ -26,8 +28,19 @@ export function useTabBar({
           isSwapTabFocused && swapWallet40HeaderState.headerStyle !== "transparent";
         const hideTabBar = !isMainNavigatorVisible || hideSwapWallet40TabBar;
 
-        return <MainTabBar {...props} hideTabBar={hideTabBar || hideTabBarOnAndroid} />;
+        return (
+          <MainTabBar
+            {...props}
+            hideTabBar={hideTabBar || hideTabBarOnAndroid}
+            isPayTabEnabled={isPayTabEnabled}
+          />
+        );
       },
-    [isMainNavigatorVisible, isKeyboardVisible, swapWallet40HeaderState.headerStyle],
+    [
+      isMainNavigatorVisible,
+      isKeyboardVisible,
+      isPayTabEnabled,
+      swapWallet40HeaderState.headerStyle,
+    ],
   );
 }
