@@ -113,6 +113,21 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     },
   );
 
+  it("should resume a paused check with RETRY", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.checksIdle",
+        context: { checksPaused: true } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    checksOf(result.current).onStart();
+
+    expect(send).toHaveBeenCalledWith({ type: "RETRY" });
+  });
+
   it("should forward each checks action as the event the machine already understands", () => {
     useSession.mockReturnValue(
       session({

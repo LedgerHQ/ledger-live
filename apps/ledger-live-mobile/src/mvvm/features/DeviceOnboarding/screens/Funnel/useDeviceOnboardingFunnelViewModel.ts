@@ -93,7 +93,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         readString(onboarding.context?.firmwareVersion),
         readString(onboarding.context?.availableFirmwareVersion),
       ),
-      onStart: () => send({ type: "CONTINUE" }),
+      onStart: () =>
+        send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
       onContinue: () => send({ type: "CONTINUE" }),
       onRetry: () => send({ type: "RETRY" }),
       onCloseSheet: () => send({ type: "CLOSE" }),
