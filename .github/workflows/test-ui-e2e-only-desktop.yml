@@ -2,13 +2,21 @@ name: "[Desktop] - E2E Only - Scheduled/Manual"
 run-name: >
   @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
+# Broadcast runs never overlap: a new one waits for the running one. GitHub keeps one waiting run
+# per group, so a newer broadcast run replaces the one already waiting. Other runs never wait.
+concurrency:
+  group: >-
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 1 * * 1') && 'desktop-e2e-broadcast' || format('desktop-e2e-{0}-{1}', github.run_id, inputs.speculos_device || 'nanoSP') }}
+  cancel-in-progress: false
+
 on:
   schedule:
     # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
     # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
     # broadcast from the shared QAA accounts on the same day.
     # The device rotates per weekday (see WEEKDAY_DEVICE in prepare-devices).
-    # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
+    # The cron expression below is matched verbatim in the concurrency group and the 
+    # E2E_BROADCAST_ENABLED env — keep all three in sync.
     - cron: "0 1 * * 1"
     - cron: "0 1 * * 2-5"
   workflow_dispatch:

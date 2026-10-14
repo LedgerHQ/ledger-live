@@ -19,7 +19,8 @@ export const deferralMarkerName = (testFilePath: string) =>
 export const SPEC_BROADCAST_LOCK = Symbol.for("@ledgerhq/e2e-mobile/specBroadcastLock");
 
 export type SpecBroadcastLock = {
-  readonly tryLock: () => Promise<"none" | "held" | "busy">;
+  /** Resolves to false when the spec's targets are busy. */
+  readonly tryLock: () => Promise<boolean>;
   readonly release: () => Promise<void>;
   readonly takeWaitedMs: () => number;
 };

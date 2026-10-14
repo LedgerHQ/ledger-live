@@ -1,5 +1,6 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
+import { withoutBroadcastLockEnv } from "tests/utils/broadcastLock";
 
 export async function launchApp({
   env,
@@ -41,7 +42,7 @@ export async function launchApp({
         size: windowSize,
       },
     }),
-    env,
+    env: withoutBroadcastLockEnv(env),
     colorScheme: theme,
     locale: lang,
     executablePath: require("electron/index.js"),
