@@ -1,16 +1,18 @@
 import React from "react";
 import { Text } from "react-native";
 import { act, render, screen } from "@tests/test-renderer";
-import { useAppAvailability } from "@features/flow-app-availability";
+import { useAppAvailability, useCalCheck } from "@features/flow-app-availability";
 import { State } from "~/reducers/types";
 import { WaitForAppReady } from "../WaitForAppReady";
 
 jest.mock("@features/flow-app-availability", () => ({
   ...jest.requireActual("@features/flow-app-availability"),
   useAppAvailability: jest.fn(() => ({ status: "available" })),
+  useCalCheck: jest.fn(() => ({ status: "available" })),
 }));
 
 const mockedUseAppAvailability = jest.mocked(useAppAvailability);
+const mockedUseCalCheck = jest.mocked(useCalCheck);
 
 function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: State) => State) {
   return render(
@@ -24,6 +26,7 @@ function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: 
 describe("WaitForAppReady", () => {
   beforeEach(() => {
     mockedUseAppAvailability.mockReturnValue({ status: "available" });
+    mockedUseCalCheck.mockReturnValue({ status: "available" });
   });
 
   afterEach(() => {
@@ -67,9 +70,26 @@ describe("WaitForAppReady", () => {
     expect(screen.getByText("App is Ready")).toBeTruthy();
   });
 
+  it("renders children after one second when CAL is healthy and another check is still pending", () => {
+    jest.useFakeTimers();
+    mockedUseAppAvailability.mockReturnValue({ status: "pending" });
+    mockedUseCalCheck.mockReturnValue({ status: "available" });
+
+    renderApp(true);
+    expect(screen.queryByText("App is Ready")).toBeNull();
+
+    act(() => {
+      jest.advanceTimersByTime(1_000);
+    });
+
+    expect(screen.getByText("App is Ready")).toBeTruthy();
+    expect(screen.queryByText("Ledger Wallet is currently unavailable")).toBeNull();
+  });
+
   it("shows the unavailable screen after one second while the check is still pending", () => {
     jest.useFakeTimers();
     mockedUseAppAvailability.mockReturnValue({ status: "pending" });
+    mockedUseCalCheck.mockReturnValue({ status: "pending" });
 
     renderApp(false);
     expect(screen.queryByText("App is Ready")).toBeNull();

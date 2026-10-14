@@ -78,4 +78,27 @@ describe("useLiftSplashOnAppAvailabilityViewModel", () => {
     ).toBeVisible();
     expect(screen.queryByText("App")).toBeNull();
   });
+
+  it("should keep a resolved geo-block when CAL is still pending at the cap", () => {
+    mockedUseAppAvailability.mockReturnValue({ status: "unavailable", reason: "geoBlocked" });
+    mockedUseCalCheck.mockReturnValue({ status: "pending" });
+
+    render(
+      <I18nTestProvider resources={COPY}>
+        <LiftSplashOnAppAvailability>
+          <div>App</div>
+        </LiftSplashOnAppAvailability>
+      </I18nTestProvider>,
+    );
+
+    act(() => {
+      jest.advanceTimersByTime(3_000);
+    });
+
+    expect(windowApi.appLoaded).toHaveBeenCalled();
+    expect(screen.getByText("App")).toBeVisible();
+    expect(
+      screen.queryByRole("heading", { name: "Ledger Wallet is currently unavailable" }),
+    ).toBeNull();
+  });
 });

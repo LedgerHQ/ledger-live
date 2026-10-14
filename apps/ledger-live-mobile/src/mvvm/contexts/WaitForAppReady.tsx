@@ -1,5 +1,9 @@
 import React from "react";
-import { ServiceUnavailable, useAppAvailability } from "@features/flow-app-availability";
+import {
+  ServiceUnavailable,
+  useAppAvailability,
+  useCalCheck,
+} from "@features/flow-app-availability";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
 import { useSelector } from "~/context/hooks";
 import LoadingApp from "~/components/LoadingApp";
@@ -15,6 +19,7 @@ export function WaitForAppReady({
   logStartupEvent("WaitForAppReady render");
 
   const availability = useAppAvailability();
+  const cal = useCalCheck();
   const pendingAvailabilityCheck = availability.status === "pending";
   const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
   const isLoaded = currencyInitialized && !pendingAvailabilityCheck && remoteFlagsReady;
@@ -25,7 +30,7 @@ export function WaitForAppReady({
     return children;
   }
 
-  if (timedOut && pendingAvailabilityCheck) {
+  if (timedOut && cal.status === "pending") {
     return <ServiceUnavailable />;
   }
 

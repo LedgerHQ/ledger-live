@@ -17,7 +17,7 @@ export function useLiftSplashOnAppAvailabilityViewModel(): {
   }, []);
 
   const calPending = cal.status === "pending";
-  const showServiceUnavailable = capReached && calPending;
+  const showServiceUnavailable = capReached && calPending && availability.status === "pending";
   const holdSplash = calPending && !capReached;
 
   useEffect(() => {
