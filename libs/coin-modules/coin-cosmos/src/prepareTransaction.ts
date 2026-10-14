@@ -9,7 +9,8 @@ import {
   messageParamsFromTransaction,
   txToMessages,
 } from "./buildTransaction";
-import cryptoFactory from "./chain/chain";
+import cryptoFactory, { resolveChainCurrencyId } from "./chain/chain";
+import cosmosCoinConfig, { type CosmosCoinConfig } from "./config";
 import { getMaxEstimatedBalance } from "./logic";
 import { CosmosAPI } from "./network/Cosmos";
 import { CosmosAccount, Transaction } from "./types";
@@ -31,7 +32,10 @@ export const calculateFees: CacheRes<
     gasWanted: BigNumber;
     gasWantedFees: BigNumber;
   }> => {
-    return await getEstimatedFees(messageParamsFromTransaction(account, transaction));
+    return await getEstimatedFees(
+      cosmosCoinConfig.getCoinConfig(resolveChainCurrencyId(account.currency.id)),
+      messageParamsFromTransaction(account, transaction),
+    );
   },
   ({ account, transaction }) =>
     `${account.id}_${account.currency.id}_${transaction.amount.toFixed()}_${
@@ -49,15 +53,16 @@ export const calculateFees: CacheRes<
 );
 
 export const getEstimatedFees = async (
+  config: CosmosCoinConfig,
   params: CosmosTransactionParams,
 ): Promise<{
   gasWanted: BigNumber;
   gasWantedFees: BigNumber;
 }> => {
-  const chainInstance = cryptoFactory(params.currencyId);
+  const chainInstance = cryptoFactory(params.currencyId, config);
   let gasUsed = new BigNumber(chainInstance.defaultGas);
 
-  const cosmosAPI = new CosmosAPI(params.currencyId);
+  const cosmosAPI = new CosmosAPI(params.currencyId, undefined, config);
   const { protoMsgs } = txToMessages(params, chainInstance);
   const { sequence, pubKey, pubKeyType } = await cosmosAPI.getAccount(params.senderAddress);
 

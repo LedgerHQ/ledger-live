@@ -18,7 +18,7 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
   });
 
   const { accountInfo, balances, blockHeight, txs, delegations, redelegations, unbondings } =
-    await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+    await new CosmosAPI(currency.id).getAccountInfo(address, currency.units[1].code);
 
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps({ address, unitCode: currency.units[1].code }, accountId, txs);
