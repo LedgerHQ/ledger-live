@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 import {
   LEGACY_MARGINAL_FEE,
   ZIP2009_MARGINAL_FEE,
@@ -11,6 +11,9 @@ import {
   ZCASH_MAX_TRANSPARENT_INPUTS,
   ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
 } from "../constants";
+import { contextWithZip2009, testContext } from "../test/coinConfig";
+
+const estimateMaxSpendable = buildEstimateMaxSpendable(testContext);
 
 const U_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
@@ -292,4 +295,53 @@ describe("estimateMaxSpendable, marginal fee by height", () => {
       expect(expected).toEqual(new BigNumber(100_000 - 2 * marginalFee));
     },
   );
+});
+
+describe("estimateMaxSpendable, zip2009 coin config", () => {
+  const at = (acc: ZcashAccount, blockHeight: number): ZcashAccount =>
+    ({ ...acc, blockHeight }) as unknown as ZcashAccount;
+  const transparent = {
+    family: "zcash",
+    transferType: "transparent",
+    amount: new BigNumber(0),
+    recipient: T_ADDRESS,
+    useAllAmount: true,
+  } as Transaction;
+
+  it.each([
+    ["absent", undefined, 3_600_000, 300_000 - 2_000],
+    ["delayed past the account height", { mainnetHeight: 3_700_000 }, 3_600_000, 300_000 - 10_000],
+    [
+      "delayed, account past the new switch",
+      { mainnetHeight: 3_700_000 },
+      3_700_099,
+      300_000 - 2_000,
+    ],
+    ["disabled", { mainnetHeight: null }, 4_500_000, 300_000 - 10_000],
+    ["below the builder's switch", { mainnetHeight: 3_500_000 }, 3_590_098, 300_000 - 10_000],
+  ])(
+    "leaves a transparent balance minus the fee of the setting %s",
+    async (_l, zip2009, h, max) => {
+      const estimate = buildEstimateMaxSpendable(contextWithZip2009(zip2009));
+      const acc = at(accountWithUtxos([100_000, 200_000]), h);
+
+      expect(await estimate({ account: acc, transaction: transparent } as never)).toEqual(
+        new BigNumber(max),
+      );
+      expect(await estimate({ account: acc } as never)).toEqual(new BigNumber(max));
+    },
+  );
+
+  it("leaves a shielded balance minus the fee of the setting", async () => {
+    const acc = at(
+      accountWithIronwoodNotes([{ amount: 100_000, blockHeight: MATURE_BLOCK }]),
+      3_600_000,
+    );
+    const delayed = buildEstimateMaxSpendable(contextWithZip2009({ mainnetHeight: 3_700_000 }));
+
+    expect(await delayed({ account: acc, transaction: shieldedTransaction } as never)).toEqual(
+      new BigNumber(100_000 - 2 * LEGACY_MARGINAL_FEE),
+    );
+    expect(await max(acc)).toEqual(new BigNumber(100_000 - 2 * ZIP2009_MARGINAL_FEE));
+  });
 });

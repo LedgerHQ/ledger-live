@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { TM_ADDRESS, UTEST_ORCHARD } from "../__tests__/fixtures/testnetAddresses";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { prepareTransaction } from "./prepareTransaction";
+import { buildGetTransactionStatus } from "./getTransactionStatus";
+import { buildPrepareTransaction } from "./prepareTransaction";
 import {
   computeAmountError,
   computeRecipientError,
@@ -26,6 +26,10 @@ import {
   ZCASH_MAX_TRANSPARENT_INPUTS,
   ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
 } from "../constants";
+import { contextWithZip2009, testContext } from "../test/coinConfig";
+
+const getTransactionStatus = buildGetTransactionStatus(testContext);
+const prepareTransaction = buildPrepareTransaction(testContext);
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =
@@ -1036,4 +1040,43 @@ describe("getTransactionStatus, fallback fee by height", () => {
 
     expect(status.estimatedFees).toEqual(new BigNumber(15_000));
   });
+});
+
+describe("getTransactionStatus, zip2009 coin config", () => {
+  const at = (currencyId: string, blockHeight: number): ZcashAccount =>
+    ({
+      ...account(),
+      currency: { id: currencyId, name: "Zcash" },
+      blockHeight,
+    }) as unknown as ZcashAccount;
+
+  it.each([
+    ["transparent", "absent", undefined, 3_600_000, ZIP2009_MARGINAL_FEE],
+    ["transparent", "delayed", { mainnetHeight: 3_700_000 }, 3_600_000, LEGACY_MARGINAL_FEE],
+    [
+      "transparent",
+      "delayed, past it",
+      { mainnetHeight: 3_700_000 },
+      3_700_099,
+      ZIP2009_MARGINAL_FEE,
+    ],
+    ["transparent", "disabled", { mainnetHeight: null }, 4_500_000, LEGACY_MARGINAL_FEE],
+    ["shielded", "absent", undefined, 3_600_000, ZIP2009_MARGINAL_FEE],
+    ["shielded", "delayed", { mainnetHeight: 3_700_000 }, 3_600_000, LEGACY_MARGINAL_FEE],
+    ["shielded", "disabled", { mainnetHeight: null }, 4_500_000, LEGACY_MARGINAL_FEE],
+  ] as [ZcashTransferType, string, { mainnetHeight: number | null } | undefined, number, number][])(
+    "falls back to the fee of the setting for a %s send (%s)",
+    async (transferType, _label, zip2009, height, marginalFee) => {
+      const status = await buildGetTransactionStatus(contextWithZip2009(zip2009))(
+        at("zcash", height),
+        transaction({
+          transferType,
+          recipient: transferType === "shielded" ? UTEST_ORCHARD : T_ADDRESS,
+          amount: new BigNumber(10_000),
+        }),
+      );
+
+      expect(status.estimatedFees).toEqual(new BigNumber(2 * marginalFee));
+    },
+  );
 });

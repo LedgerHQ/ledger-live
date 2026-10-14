@@ -681,31 +681,61 @@ describe("marginalFeeAt", () => {
   });
 
   it("keeps the legacy fee far below the switch on mainnet", () => {
-    expect(marginalFeeAt("mainnet", 0)).toBe(5_000);
-    expect(marginalFeeAt("mainnet", 3_000_000)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", 0, ZIP2009_MAINNET_HEIGHT)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", 3_000_000, ZIP2009_MAINNET_HEIGHT)).toBe(5_000);
   });
 
   it("keeps the legacy fee between the switch height and the end of the margin", () => {
-    expect(marginalFeeAt("mainnet", ZIP2009_MAINNET_HEIGHT)).toBe(5_000);
-    expect(marginalFeeAt("mainnet", ZIP2009_MAINNET_HEIGHT + 1)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", ZIP2009_MAINNET_HEIGHT, ZIP2009_MAINNET_HEIGHT)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", ZIP2009_MAINNET_HEIGHT + 1, ZIP2009_MAINNET_HEIGHT)).toBe(
+      5_000,
+    );
   });
 
   it("stays on the legacy fee just below the margin edge and leaves it at the edge", () => {
     // The target is the synced height + 1, so the edge is at switchHeight - 1.
-    expect(marginalFeeAt("mainnet", switchHeight - 2)).toBe(5_000); // 3_590_098
-    expect(marginalFeeAt("mainnet", switchHeight - 1)).toBe(1_000); // 3_590_099
-    expect(marginalFeeAt("mainnet", switchHeight)).toBe(1_000);
+    expect(marginalFeeAt("mainnet", switchHeight - 2, ZIP2009_MAINNET_HEIGHT)).toBe(5_000); // 3_590_098
+    expect(marginalFeeAt("mainnet", switchHeight - 1, ZIP2009_MAINNET_HEIGHT)).toBe(1_000); // 3_590_099
+    expect(marginalFeeAt("mainnet", switchHeight, ZIP2009_MAINNET_HEIGHT)).toBe(1_000);
   });
 
   it("uses the ZIP 2009 fee far past the switch", () => {
-    expect(marginalFeeAt("mainnet", 4_500_000)).toBe(1_000);
+    expect(marginalFeeAt("mainnet", 4_500_000, ZIP2009_MAINNET_HEIGHT)).toBe(1_000);
   });
 
   it("uses the ZIP 2009 fee on a test network at every height", () => {
-    expect(marginalFeeAt("testnet", 0)).toBe(1_000);
-    expect(marginalFeeAt("testnet", 1_000_000)).toBe(1_000);
-    expect(marginalFeeAt("testnet", 3_590_098)).toBe(1_000);
-    expect(marginalFeeAt("testnet", 5_000_000)).toBe(1_000);
+    expect(marginalFeeAt("testnet", 0, ZIP2009_MAINNET_HEIGHT)).toBe(1_000);
+    expect(marginalFeeAt("testnet", 1_000_000, ZIP2009_MAINNET_HEIGHT)).toBe(1_000);
+    expect(marginalFeeAt("testnet", 3_590_098, ZIP2009_MAINNET_HEIGHT)).toBe(1_000);
+    expect(marginalFeeAt("testnet", 5_000_000, ZIP2009_MAINNET_HEIGHT)).toBe(1_000);
+  });
+});
+
+describe("marginalFeeAt, configured switch height", () => {
+  const DELAYED = 3_700_000;
+
+  it("delays the switch to the configured height, plus the margin", () => {
+    expect(marginalFeeAt("mainnet", 3_600_000, DELAYED)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", DELAYED + ZIP2009_SWITCH_MARGIN - 2, DELAYED)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", DELAYED + ZIP2009_SWITCH_MARGIN - 1, DELAYED)).toBe(1_000);
+    expect(marginalFeeAt("mainnet", 4_500_000, DELAYED)).toBe(1_000);
+  });
+
+  it("never switches when the config disables it", () => {
+    expect(marginalFeeAt("mainnet", 0, null)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", 3_600_000, null)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", 50_000_000, null)).toBe(5_000);
+  });
+
+  it("raises a height below the builder's own switch to it", () => {
+    expect(marginalFeeAt("mainnet", 3_500_000, 3_500_000)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", 3_590_098, 3_500_000)).toBe(5_000);
+    expect(marginalFeeAt("mainnet", 3_590_099, 3_500_000)).toBe(1_000);
+  });
+
+  it("is ignored on a test network", () => {
+    expect(marginalFeeAt("testnet", 0, DELAYED)).toBe(1_000);
+    expect(marginalFeeAt("testnet", 0, null)).toBe(1_000);
   });
 });
 
@@ -714,17 +744,27 @@ const accountOf = (currencyId: string, blockHeight: number | undefined): ZcashAc
 
 describe("marginalFeeFor", () => {
   it("reads the network from the currency and the height from the account", () => {
-    expect(marginalFeeFor(accountOf("zcash", 3_590_098))).toBe(5_000);
-    expect(marginalFeeFor(accountOf("zcash", 3_590_099))).toBe(1_000);
-    expect(marginalFeeFor(accountOf("zcash_testnet", 0))).toBe(1_000);
+    expect(marginalFeeFor(accountOf("zcash", 3_590_098), undefined)).toBe(5_000);
+    expect(marginalFeeFor(accountOf("zcash", 3_590_099), undefined)).toBe(1_000);
+    expect(marginalFeeFor(accountOf("zcash_testnet", 0), undefined)).toBe(1_000);
   });
 
   it("prices regtest as mainnet, at the legacy fee for its low heights", () => {
-    expect(marginalFeeFor(accountOf("zcash_regtest", 120))).toBe(5_000);
+    expect(marginalFeeFor(accountOf("zcash_regtest", 120), undefined)).toBe(5_000);
+  });
+
+  it("takes the switch height from the zip2009 setting, and the default when it is absent", () => {
+    const delayed = { mainnetHeight: 3_700_000 };
+    expect(marginalFeeFor(accountOf("zcash", 3_600_000), undefined)).toBe(1_000);
+    expect(marginalFeeFor(accountOf("zcash", 3_600_000), delayed)).toBe(5_000);
+    expect(marginalFeeFor(accountOf("zcash", 3_700_099), delayed)).toBe(1_000);
+    expect(marginalFeeFor(accountOf("zcash", 4_500_000), { mainnetHeight: null })).toBe(5_000);
+    expect(marginalFeeFor(accountOf("zcash", 3_590_099), { mainnetHeight: 3_500_000 })).toBe(1_000);
+    expect(marginalFeeFor(accountOf("zcash_testnet", 0), delayed)).toBe(1_000);
   });
 
   it("prices an account that has not synced a height at the legacy fee", () => {
-    expect(marginalFeeFor(accountOf("zcash", undefined))).toBe(5_000);
+    expect(marginalFeeFor(accountOf("zcash", undefined), undefined)).toBe(5_000);
   });
 });
 

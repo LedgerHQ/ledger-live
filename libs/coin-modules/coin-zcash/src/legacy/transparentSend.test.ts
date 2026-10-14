@@ -4,7 +4,7 @@ import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 import { TM_ADDRESS } from "../__tests__/fixtures/testnetAddresses";
-import { testContext } from "../test/coinConfig";
+import { contextWithZip2009, testContext } from "../test/coinConfig";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
 import { buildLegacyPrepareTransaction } from "./prepareTransaction";
 import { buildLegacyGetTransactionStatus } from "./getTransactionStatus";
@@ -195,6 +195,53 @@ describe("legacy pricing follows the account's marginal fee", () => {
       );
     },
   );
+});
+
+describe("legacy pricing follows the zip2009 coin config", () => {
+  const delayed = contextWithZip2009({ mainnetHeight: 3_700_000 });
+  const disabled = contextWithZip2009({ mainnetHeight: null });
+  const past = accountAt("zcash", 3_600_000);
+
+  it("prepares at the fee of the setting", async () => {
+    await buildLegacyPrepareTransaction(delayed)(past, tx({}));
+    expect(mockBuild).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      5_000,
+    );
+
+    await buildLegacyPrepareTransaction(testContext)(past, tx({}));
+    expect(mockBuild).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      1_000,
+    );
+  });
+
+  it("prices the status at the fee of the setting", async () => {
+    await buildLegacyGetTransactionStatus(disabled)(past, tx({}));
+
+    expect(mockBuild).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      5_000,
+    );
+  });
+
+  it("derives the safe rate from the fee of the setting", async () => {
+    estimateAccountMaxSpendable.mockResolvedValue(new BigNumber(1));
+
+    await buildLegacyEstimateMaxSpendable(delayed)({ account: past });
+
+    expect(zcashSafeFeePerByte).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      5_000,
+    );
+  });
 });
 
 describe("buildLegacyGetTransactionStatus", () => {

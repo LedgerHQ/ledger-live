@@ -39,12 +39,13 @@ export const buildLegacyPrepareTransaction =
     }
 
     const walletAccount = await resolveWalletAccount(context, account);
+    const { zip2009 } = await context.config(account.currency.id);
     try {
       const { txInfo } = await buildLegacyTransaction(
         context.logger,
         walletAccount,
         transaction,
-        marginalFeeFor(account),
+        marginalFeeFor(account, zip2009),
       );
       const change = txInfo.outputs.filter(output => output.isChange);
       const recipientOutput = txInfo.outputs.find(output => !output.isChange);

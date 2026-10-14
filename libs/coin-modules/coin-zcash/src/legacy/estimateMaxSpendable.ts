@@ -17,10 +17,11 @@ export const buildLegacyEstimateMaxSpendable =
   async ({ account, parentAccount, transaction }) => {
     const mainAccount = getMainAccount(account, parentAccount) as ZcashAccount;
     const walletAccount = await resolveWalletAccount(context, mainAccount);
+    const { zip2009 } = await context.config(mainAccount.currency.id);
     const feePerByte = zcashSafeFeePerByte(
       walletAccount.xpub.crypto,
       walletAccount.xpub.derivationMode,
-      marginalFeeFor(mainAccount),
+      marginalFeeFor(mainAccount, zip2009),
     );
 
     const maxSpendable = await wallet.estimateAccountMaxSpendable(

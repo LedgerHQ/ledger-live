@@ -1,4 +1,4 @@
-import type { ZcashCoinConfig, ZcashContext } from "../config";
+import type { ZcashCoinConfig, ZcashConfig, ZcashContext } from "../config";
 import { zainoEndpoint } from "../constants";
 
 // `.invalid` hosts never resolve: a test that forgets to mock the network fails fast.
@@ -21,4 +21,10 @@ export const TEST_ZAINO_ENDPOINT = zainoEndpoint(TEST_CONFIG.zaino.url);
 export const contextWithZaino = (url: string): ZcashContext => ({
   ...testContext,
   config: async () => ({ ...TEST_CONFIG, zaino: { url } }),
+});
+
+/** A {@link testContext} whose coin config carries the given `zip2009` setting. */
+export const contextWithZip2009 = (zip2009: ZcashConfig["zip2009"]): ZcashContext => ({
+  ...testContext,
+  config: async () => ({ ...TEST_CONFIG, ...(zip2009 !== undefined && { zip2009 }) }),
 });

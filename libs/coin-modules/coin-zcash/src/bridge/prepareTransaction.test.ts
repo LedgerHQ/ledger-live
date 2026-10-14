@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { prepareTransaction } from "./prepareTransaction";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { buildPrepareTransaction } from "./prepareTransaction";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 import { reserveNotes, _resetReservationsForTest } from "./note-reservation";
 import {
   LEGACY_MARGINAL_FEE,
@@ -13,6 +13,10 @@ import {
 const ZIP317_MINIMUM_FEE = zip317MinimumFee(LEGACY_MARGINAL_FEE);
 import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
+import { contextWithZip2009, TEST_CONFIG, testContext } from "../test/coinConfig";
+
+const prepareTransaction = buildPrepareTransaction(testContext);
+const estimateMaxSpendable = buildEstimateMaxSpendable(testContext);
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =
@@ -677,5 +681,61 @@ describe("prepareTransaction, marginal fee by height", () => {
     const prepared = await prepareTransaction(account(), transaction());
 
     expect(prepared.zcashFee).toEqual(new BigNumber(10_000));
+  });
+});
+
+describe("prepareTransaction, zip2009 coin config", () => {
+  const tx = transaction({ transferType: "transparent", amount: new BigNumber(30_000) });
+  const synced = (currencyId: string, blockHeight: number): ZcashAccount =>
+    ({
+      ...account({ utxos: [100_000] }),
+      currency: { id: currencyId, name: "Zcash" },
+      blockHeight,
+    }) as unknown as ZcashAccount;
+
+  it.each([
+    ["absent", undefined, "zcash", 3_600_000, 2_000],
+    ["delayed past the account height", { mainnetHeight: 3_700_000 }, "zcash", 3_600_000, 10_000],
+    [
+      "delayed, account past the new switch",
+      { mainnetHeight: 3_700_000 },
+      "zcash",
+      3_700_099,
+      2_000,
+    ],
+    ["disabled", { mainnetHeight: null }, "zcash", 4_500_000, 10_000],
+    ["below the builder's switch", { mainnetHeight: 3_500_000 }, "zcash", 3_590_098, 10_000],
+    ["set, on a test network", { mainnetHeight: null }, "zcash_testnet", 0, 2_000],
+  ])("prices the send with the setting %s", async (_label, zip2009, id, height, fee) => {
+    const prepare = buildPrepareTransaction(contextWithZip2009(zip2009));
+
+    const prepared = await prepare(synced(id, height), tx);
+
+    expect(prepared.zcashFee).toEqual(new BigNumber(fee));
+  });
+
+  it("prices a shielded send with the setting", async () => {
+    const acc = {
+      ...account({ ironwoodNotes: [100_000] }),
+      blockHeight: 3_600_000,
+    } as unknown as ZcashAccount;
+    const shieldedTx = transaction({
+      transferType: "shielded",
+      recipient: U_ADDRESS,
+      amount: new BigNumber(30_000),
+    });
+
+    const delayed = buildPrepareTransaction(contextWithZip2009({ mainnetHeight: 3_700_000 }));
+
+    expect((await delayed(acc, shieldedTx)).zcashFee).toEqual(new BigNumber(10_000));
+    expect((await prepareTransaction(acc, shieldedTx)).zcashFee).toEqual(new BigNumber(2_000));
+  });
+
+  it("reads the config of the account's currency", async () => {
+    const config = jest.fn(async () => ({ ...TEST_CONFIG, zip2009: { mainnetHeight: null } }));
+
+    await buildPrepareTransaction({ ...testContext, config })(synced("zcash_testnet", 0), tx);
+
+    expect(config).toHaveBeenCalledWith("zcash_testnet");
   });
 });

@@ -18,9 +18,9 @@ import { getSerializedAddressParameters } from "./exchange";
 import { validateAddress } from "../logic/validateAddress";
 import { buildBroadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { prepareTransaction } from "./prepareTransaction";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
+import { buildGetTransactionStatus } from "./getTransactionStatus";
+import { buildPrepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 import { makeGetAccountShape, postSync } from "./sync";
 import { updateTransaction } from "./updateTransaction";
@@ -110,9 +110,18 @@ export function createBridges(
   const accountBridge: ZcashAccountBridge = {
     createTransaction,
     updateTransaction,
-    prepareTransaction: byMode(prepareTransaction, buildLegacyPrepareTransaction(context)),
-    getTransactionStatus: byMode(getTransactionStatus, buildLegacyGetTransactionStatus(context)),
-    estimateMaxSpendable: byMode(estimateMaxSpendable, buildLegacyEstimateMaxSpendable(context)),
+    prepareTransaction: byMode(
+      buildPrepareTransaction(context),
+      buildLegacyPrepareTransaction(context),
+    ),
+    getTransactionStatus: byMode(
+      buildGetTransactionStatus(context),
+      buildLegacyGetTransactionStatus(context),
+    ),
+    estimateMaxSpendable: byMode(
+      buildEstimateMaxSpendable(context),
+      buildLegacyEstimateMaxSpendable(context),
+    ),
     sync,
     receive,
     signOperation: byMode(

@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
 import type { ZcashAccount } from "../types/bridge";
+import type { ZcashConfig } from "../config";
 import { zcashNetworkOf, type ZcashNetwork } from "./network";
 
 // ── ZIP-317 fee model ──────────────────────────────────────────────────────
@@ -19,7 +20,8 @@ import { zcashNetworkOf, type ZcashNetwork } from "./network";
 export const LEGACY_MARGINAL_FEE = 5_000;
 /** Marginal fee per logical action once ZIP 2009 is active (and on test networks). */
 export const ZIP2009_MARGINAL_FEE = 1_000;
-/** Mainnet height from which the builder prices at the ZIP 2009 marginal fee. */
+/** Mainnet height from which the builder prices at the ZIP 2009 marginal fee; the
+ * lowest switch height the coin config can set. */
 export const ZIP2009_MAINNET_HEIGHT = 3_590_000;
 /** Blocks past the switch height before the wallet prices at the ZIP 2009 fee.
  * The builder targets the node's tip + 1, accepts the legacy fee past the
@@ -46,17 +48,34 @@ export const TRANSPARENT_OUTPUT_DUST_THRESHOLD = 54;
  * after `syncedHeight`: 1_000 on test networks at every height, and on mainnet
  * from the ZIP 2009 switch height; 5_000 before it. The switch is applied
  * `ZIP2009_SWITCH_MARGIN` blocks late (see its comment).
+ *
+ * `mainnetSwitchHeight` is the configured mainnet switch: `null` never switches, and a
+ * height below `ZIP2009_MAINNET_HEIGHT` is raised to it, since the builder refuses the
+ * lower fee earlier. Test networks ignore it.
  */
-export function marginalFeeAt(network: ZcashNetwork, syncedHeight: number): number {
+export function marginalFeeAt(
+  network: ZcashNetwork,
+  syncedHeight: number,
+  mainnetSwitchHeight: number | null,
+): number {
   if (network === "testnet") return ZIP2009_MARGINAL_FEE;
-  return syncedHeight + 1 >= ZIP2009_MAINNET_HEIGHT + ZIP2009_SWITCH_MARGIN
+  if (mainnetSwitchHeight === null) return LEGACY_MARGINAL_FEE;
+  const switchHeight = Math.max(mainnetSwitchHeight, ZIP2009_MAINNET_HEIGHT);
+  return syncedHeight + 1 >= switchHeight + ZIP2009_SWITCH_MARGIN
     ? ZIP2009_MARGINAL_FEE
     : LEGACY_MARGINAL_FEE;
 }
 
-/** The marginal fee to price a send from `account` at, from its synced height. */
-export function marginalFeeFor(account: ZcashAccount): number {
-  return marginalFeeAt(zcashNetworkOf(account.currency.id), account.blockHeight ?? 0);
+/**
+ * The marginal fee to price a send from `account` at, from its synced height and the
+ * coin config's `zip2009` setting (`undefined`: the module default switch height).
+ */
+export function marginalFeeFor(account: ZcashAccount, zip2009: ZcashConfig["zip2009"]): number {
+  return marginalFeeAt(
+    zcashNetworkOf(account.currency.id),
+    account.blockHeight ?? 0,
+    zip2009 === undefined ? ZIP2009_MAINNET_HEIGHT : zip2009.mainnetHeight,
+  );
 }
 
 /**

@@ -1,5 +1,6 @@
 import type { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import type { ZcashContext } from "../config";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
 import {
@@ -79,17 +80,17 @@ function prepareNoteTransaction(
  * transparent UTXOs -- no note selection; shielded-input flows ("shielded",
  * "shielded-to-transparent") spend Ironwood notes.
  */
-export const prepareTransaction: AccountBridge<
-  Transaction,
-  ZcashAccount
->["prepareTransaction"] = async (account, transaction) => {
-  const tx = transaction;
-  const marginalFee = marginalFeeFor(account);
+export const buildPrepareTransaction =
+  (context: ZcashContext): AccountBridge<Transaction, ZcashAccount>["prepareTransaction"] =>
+  async (account, transaction) => {
+    const tx = transaction;
+    const { zip2009 } = await context.config(account.currency.id);
+    const marginalFee = marginalFeeFor(account, zip2009);
 
-  if (isTransparentInputTransfer(tx.transferType)) {
-    return prepareTransparentTransaction(account, tx, marginalFee);
-  }
+    if (isTransparentInputTransfer(tx.transferType)) {
+      return prepareTransparentTransaction(account, tx, marginalFee);
+    }
 
-  const notes = collectSelectableIronwoodNotes(account, getReservedNullifiers(account));
-  return prepareNoteTransaction(notes, tx, marginalFee);
-};
+    const notes = collectSelectableIronwoodNotes(account, getReservedNullifiers(account));
+    return prepareNoteTransaction(notes, tx, marginalFee);
+  };
