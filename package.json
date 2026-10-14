@@ -261,7 +261,11 @@
       "@jest/create-cache-key-function": "30.5.0",
       "@jest/types": "30.5.0",
       "expect": "30.5.0",
-      "pretty-format@^30.0.0": "30.5.0"
+      "pretty-format@^30.0.0": "30.5.0",
+      "@ledgerhq/wallet-api-core": "file:../wallet-api-hashi-poc/poc-artifacts/ledgerhq-wallet-api-core-2.1.0.tgz",
+      "@ledgerhq/wallet-api-server": "file:../wallet-api-hashi-poc/poc-artifacts/ledgerhq-wallet-api-server-3.5.0.tgz",
+      "@ledgerhq/wallet-api-client": "file:../wallet-api-hashi-poc/poc-artifacts/ledgerhq-wallet-api-client-1.16.0.tgz",
+      "@ledgerhq/psbtv2": "file:../ts-libs-hashi-poc/poc-artifacts/ledgerhq-psbtv2-0.6.0.tgz"
     },
     "patchedDependencies": {
       "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch",
