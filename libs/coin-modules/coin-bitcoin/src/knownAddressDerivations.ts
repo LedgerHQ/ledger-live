@@ -2,6 +2,27 @@ import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHe
 import { extractHashFromScriptPubKey } from "@ledgerhq/psbtv2";
 import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
 
+type WalletAddress = Awaited<ReturnType<WalletAccount["xpub"]["getAccountAddresses"]>>[number];
+
+export const FRESH_ADDRESS_WINDOW = 20;
+
+async function nextUnusedAddresses(
+  walletAccount: WalletAccount,
+  chain: number,
+  stored: WalletAddress[],
+): Promise<WalletAddress[]> {
+  const { xpub, crypto, derivationMode } = walletAccount.xpub;
+  const start = stored.reduce((max, addr) => Math.max(max, addr.index), -1) + 1;
+  const indexes = Array.from({ length: FRESH_ADDRESS_WINDOW }, (_, i) => start + i);
+  return Promise.all(
+    indexes.map(async index => ({
+      address: await crypto.getAddress(derivationMode, xpub, chain, index),
+      account: chain,
+      index,
+    })),
+  );
+}
+
 export type KnownAddressDerivationsMap = Map<string, { pubkey: Buffer; path: number[] }>;
 
 /**
@@ -14,32 +35,23 @@ export async function buildKnownAddressDerivationsMap(
 ): Promise<KnownAddressDerivationsMap> {
   const map: KnownAddressDerivationsMap = new Map();
   const basePath = pathStringToArray(accountPath);
-  const [
-    receiveAddresses,
-    changeAddresses,
-    nextReceiveAddress1,
-    nextChangeAddress1,
-    nextReceiveAddress2,
-    nextChangeAddress2,
-  ] = await Promise.all([
+  const [receiveAddresses, changeAddresses] = await Promise.all([
     walletAccount.xpub.getAccountAddresses(0),
     walletAccount.xpub.getAccountAddresses(1),
-    // Include the next 2 unused receive/change addresses so PSBTs that send to a
-    // fresh address (not yet in storage) can still be recognized and have their
-    // BIP32 derivation populated correctly. 2 addresses ahead covers WalletConnect
-    // and similar live-app flows that may use consecutive fresh addresses.
-    walletAccount.xpub.getNewAddress(0, 1),
-    walletAccount.xpub.getNewAddress(1, 1),
-    walletAccount.xpub.getNewAddress(0, 2),
-    walletAccount.xpub.getNewAddress(1, 2),
+  ]);
+  // Also include the next unused receive/change addresses, so that a PSBT built by a live app or a
+  // WalletConnect dApp that pays to a fresh address (not yet in storage) still has its BIP32
+  // derivation populated. The window starts right after the highest stored index, at 0 when the
+  // chain has none, and spans the usual address gap limit.
+  const [nextReceiveAddresses, nextChangeAddresses] = await Promise.all([
+    nextUnusedAddresses(walletAccount, 0, receiveAddresses),
+    nextUnusedAddresses(walletAccount, 1, changeAddresses),
   ]);
   const addresses = [
     ...receiveAddresses,
     ...changeAddresses,
-    nextReceiveAddress1,
-    nextChangeAddress1,
-    nextReceiveAddress2,
-    nextChangeAddress2,
+    ...nextReceiveAddresses,
+    ...nextChangeAddresses,
   ];
   const { xpub, crypto } = walletAccount.xpub;
 
