@@ -34,7 +34,11 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI } from "@e2e/utils/cliUtils";
 import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { NativeElementHelpers, WebElementHelpers } from "@e2e/helpers/elementHelpers";
+import {
+  NativeElementHelpers,
+  WebElementHelpers,
+  isUnansweredDetoxRequestError,
+} from "@e2e/helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "@e2e/page/index";
 import type { ServerData } from "~/e2e/bridge/types";
@@ -84,7 +88,22 @@ const skipToRetrySet = (
   return kept;
 };
 
-async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap): Promise<void> {
+const JEST_TIMEOUT_PATTERN = /Exceeded timeout of .+ for a (test|hook)/;
+
+/**
+ * A Jest timeout leaves the test body running, and an unanswered Detox request stays in flight.
+ * Either way the next atomic Detox call (disableSynchronization) makes Detox reject what is in
+ * flight, which resumes the body and reports its next action's error instead of the real failure.
+ */
+function failureLeavesDetoxBusy(failure: unknown): boolean {
+  const message = failure instanceof Error ? failure.message : String(failure);
+  return JEST_TIMEOUT_PATTERN.test(message) || isUnansweredDetoxRequestError(failure);
+}
+
+async function captureFailureDiagnostics(
+  mergedFeatureFlags: OptionalFeatureMap | undefined,
+  failure: unknown,
+): Promise<void> {
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),
@@ -126,11 +145,15 @@ async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap
     );
   logs = "";
 
-  await withTimeout(
-    captureNativeViewHierarchy(),
-    SLOW_DIAGNOSTIC_TIMEOUT_MS,
-    "captureNativeViewHierarchy",
-  );
+  if (failureLeavesDetoxBusy(failure)) {
+    console.info("Skipping native view hierarchy capture: Detox may still be busy with the test");
+  } else {
+    await withTimeout(
+      captureNativeViewHierarchy(),
+      SLOW_DIAGNOSTIC_TIMEOUT_MS,
+      "captureNativeViewHierarchy",
+    );
+  }
   console.info("Failure diagnostics capture completed");
 }
 
@@ -358,14 +381,14 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags, event.error);
     }
 
     await super.handleTestEvent(event, state);
 
     if (event.name === "test_fn_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags, event.error);
     }
 
     if (event.name === "run_start") {
