@@ -15,7 +15,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
-import { UnsupportedFirmwareVersionView } from "LLM/components/UnsupportedFirmwareVersion";
+import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailableDrawer";
+import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
 import darkLoadingAnimation from "./animations/dark/loading.lottie";
@@ -75,7 +76,8 @@ export function ChecksView({
   onQuit,
   closeLabel,
   allowSheet,
-  updateSheet,
+  firmwareUpdate,
+  unsupportedUpdate,
 }: ChecksViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -142,25 +144,8 @@ export function ChecksView({
           </BottomSheetView>
         </QueuedBottomSheet>
       ) : null}
-      {updateSheet ? (
-        <QueuedBottomSheet
-          isRequestingToBeOpened
-          onHeaderClosePressed={updateSheet.onClose}
-          preventBackdropClick
-          enablePanDownToClose={false}
-          testID={checksTestIds.updateSheet}
-          enableDynamicSizing
-          contentHasBottomSpace
-        >
-          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-            <BottomSheetHeader />
-            <UnsupportedFirmwareVersionView
-              onUpdateLedgerOs={updateSheet.onUpdate}
-              onCancel={updateSheet.onCancel}
-            />
-          </BottomSheetView>
-        </QueuedBottomSheet>
-      ) : null}
+      {firmwareUpdate.isOpen ? <FirmwareUpdateAvailableDrawer {...firmwareUpdate} /> : null}
+      {unsupportedUpdate.isOpen ? <UnsupportedUpdateDrawer {...unsupportedUpdate} /> : null}
     </Box>
   );
 }

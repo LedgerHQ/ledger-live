@@ -24,7 +24,7 @@ export function useDeviceOnboardingDebugViewModel() {
     device: previewDevice,
     state: preview === "offer" ? "idle" : preview,
     error: null,
-    update: null,
+    update: preview === "updating" ? { current: "1.0.0", available: "1.1.0" } : null,
     onStart: () => setPreview("checking"),
     onRetry: () => undefined,
     onAcceptUpdate: () => setPreview("checking"),
