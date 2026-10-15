@@ -71,11 +71,13 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: node tools/scripts/renovate-changeset.mjs "$BASE" "${HEAD_REF//\//-}" "$PR_TITLE"
 
-      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-          working-directory: apps/ledger-live-mobile
+      # setup-ruby's prebuilt rubies need a writable /opt/hostedtoolcache, which these runners lack.
+      - name: Set up Ruby
+        working-directory: apps/ledger-live-mobile
+        run: |
+          mise install ruby@3.3
+          echo "$(mise where ruby@3.3)/bin" >> "$GITHUB_PATH"
+          "$(mise where ruby@3.3)/bin/bundle" install --jobs 4
 
       - name: Regenerate Podfile.lock
         working-directory: apps/ledger-live-mobile
