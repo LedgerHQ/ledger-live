@@ -2,6 +2,7 @@ import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { Account } from "@ledgerhq/types-live";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Same mapping as Stellar: issuer = contractAddress / assetOwner, currency code or MPT issuance id =
@@ -32,9 +33,21 @@ export function getAssetFromToken(token: TokenCurrency): AssetInfo | undefined {
   };
 }
 
+// TEMP prototype: sends MPT transactions to the MPT signer (families/xrp/signer.ts). An opt-in has
+// no token account: its MPT issuance id is 48 hex characters, an IOU currency code 3 or 40.
+function getDeviceSignOptions(transaction: Record<string, unknown>, account: Account) {
+  const subAccount = account.subAccounts?.find(sub => sub.id === transaction.subAccountId);
+  const isMpt = subAccount
+    ? subAccount.token.tokenType === "mpt"
+    : typeof transaction.assetReference === "string" &&
+      /^[0-9A-F]{48}$/i.test(transaction.assetReference);
+  return isMpt ? { mptSigner: true } : undefined;
+}
+
 export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken,
+    getDeviceSignOptions,
   };
 }

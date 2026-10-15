@@ -2112,6 +2112,14 @@
       "link": "Learn more about Stellar assets",
       "seeTokens": "Show assets ({{tokenCount}})",
       "hideTokens": "Hide assets ({{tokenCount}})"
+    },
+    "xrp": {
+      "title": "Tokens",
+      "cta": "Add token",
+      "placeholder": "You can add tokens to your {{currencyName}} account.",
+      "link": "Learn more",
+      "seeTokens": "Show tokens ({{tokenCount}})",
+      "hideTokens": "Hide tokens ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -11170,5 +11178,29 @@
     "dialogTitle": "Transaction detail",
     "title": "Fund Perpetuals",
     "currencies": "{{sendTicker}} → {{receiveTicker}}"
+  },
+  "xrp": {
+    "addToken": {
+      "title": "Add token",
+      "steps": {
+        "token": {
+          "title": "Token",
+          "selectLabel": "Choose a token",
+          "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "{{token}} token successfully added",
+            "text": "You can now receive <0>{{token}}</0> on your XRP account.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    }
   }
 }

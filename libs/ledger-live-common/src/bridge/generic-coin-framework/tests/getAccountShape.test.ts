@@ -1002,6 +1002,52 @@ describe("genericGetAccountShape", () => {
       expect(topOp?.subOperations?.[0]?.value?.toFixed()).toBe("8000000");
     });
 
+    test.each(["OPT_IN", "OPT_OUT"])(
+      "buildOneParentOpPerHash: a token %s stays the parent operation, not a synthetic FEES",
+      async type => {
+        const txHash = `opt-hash-${type}`;
+        getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+        extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+        listOperationsMock.mockResolvedValue({ items: [{ hash: txHash, type, height: 20 }] });
+        lastBlockMock.mockResolvedValue({ height: 100 });
+        adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
+          id: `accId-${op.hash}-${op.type}`,
+          hash: op.hash,
+          type: op.type,
+          blockHeight: op.height,
+          fee: new BigNumber(12),
+          value: new BigNumber(12),
+          extra: {
+            assetReference: "BDI",
+            assetOwner: "issuer",
+            feePayer: `${currency.id}_addr_opt`,
+          },
+        }));
+        buildSubAccountsMock.mockReturnValue([]);
+        inferSubOperationsMock.mockReturnValue([]);
+        cleanedOperationMock.mockImplementation((op: any) => op);
+        mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: `${currency.id}_addr_opt`,
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result.operations).toHaveLength(1);
+        expect(result.operations?.[0]).toMatchObject({
+          id: `accId-${txHash}-${type}`,
+          type,
+          value: new BigNumber(12),
+        });
+      },
+    );
+
     test("buildOneParentOpPerHash: native op with same hash as token uses native as parent with subOperations", async () => {
       const txHash = "native-and-token-hash";
       const nativeOpFromList = { hash: txHash, type: "OUT", height: 18, tx: { failed: false } };

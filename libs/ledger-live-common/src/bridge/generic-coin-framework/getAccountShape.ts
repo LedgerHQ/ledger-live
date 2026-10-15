@@ -288,7 +288,11 @@ function parentOpsForTxWithNonInternalOperations(
   accountId: string,
   address: string,
 ): OperationCommon[] {
-  const nativeOps = transactionOps.filter(isNativeLiveOp);
+  // An opt-in names its token but stays on the parent account (never routed to a token account, see
+  // newAssetOperations): kept as the parent so it keeps the OPT_IN type of its pending operation
+  const nativeOps = transactionOps.filter(
+    op => isNativeLiveOp(op) || op.type === "OPT_IN" || op.type === "OPT_OUT",
+  );
   // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
   const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
