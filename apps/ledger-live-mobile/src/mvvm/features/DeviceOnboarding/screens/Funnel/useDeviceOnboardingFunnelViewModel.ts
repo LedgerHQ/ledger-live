@@ -48,10 +48,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const sessionReady = onboarding.sendableEvents.some(
     ({ event }) => event.type === "SESSION_READY",
   );
+  const send = onboarding.send;
+
   useEffect(() => {
     if (!sessionReady) return;
-    onboarding.send({ type: "SESSION_READY" });
-  }, [onboarding.send, sessionReady]);
+    send({ type: "SESSION_READY" });
+  }, [send, sessionReady]);
 
   const leave = useCallback(() => {
     onboarding.reset();
@@ -88,8 +90,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onQuit: leave,
     };
   }
-
-  const send = onboarding.send;
 
   return {
     status: "checks",

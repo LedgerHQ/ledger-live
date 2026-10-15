@@ -11,7 +11,12 @@ const mockGoBack = jest.fn();
 const mockCurrentPush = jest.fn();
 let mockFocusCallback: (() => void) | null = null;
 
-const mockGetParent = jest.fn((_id?: string) => ({
+type ParentNavigation = {
+  push: typeof mockPush;
+  goBack: typeof mockGoBack;
+};
+
+const mockGetParent = jest.fn((_id?: string): ParentNavigation | undefined => ({
   push: mockPush,
   goBack: mockGoBack,
 }));
