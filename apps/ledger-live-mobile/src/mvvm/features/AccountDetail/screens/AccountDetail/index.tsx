@@ -1,9 +1,42 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
+import type { ScreenName } from "~/const";
+import type { AccountDetailNavigatorParamsList } from "../../types";
 import { AccountDetailView } from "./AccountDetailView";
+import { AccountDetailNavBarCenter } from "./components/AccountDetailNavBarCenter";
+import { AccountDetailSettingsButton } from "./components/AccountDetailSettingsButton";
 import { useAccountDetailViewModel } from "./useAccountDetailViewModel";
 
+type NavigationProps = NativeStackNavigationProp<
+  AccountDetailNavigatorParamsList,
+  ScreenName.AccountDetail
+>;
+
 export default function AccountDetail() {
-  const { account } = useAccountDetailViewModel();
+  const { account, header, onOpenSettings } = useAccountDetailViewModel();
+  const navigation = useNavigation<NavigationProps>();
+
+  useLayoutEffect(() => {
+    if (!header) return;
+
+    const options: Partial<LumenNativeStackNavigationOptions> = {
+      title: header.title,
+      lumenNavBar: {
+        renderCenter: ({ title }) => (
+          <AccountDetailNavBarCenter
+            title={title}
+            address={header.address}
+            ledgerId={header.ledgerId}
+            ticker={header.ticker}
+          />
+        ),
+        renderTrailing: () => <AccountDetailSettingsButton onPress={onOpenSettings} />,
+      },
+    };
+    navigation.setOptions(options);
+  }, [navigation, header, onOpenSettings]);
 
   if (!account) return null;
 
