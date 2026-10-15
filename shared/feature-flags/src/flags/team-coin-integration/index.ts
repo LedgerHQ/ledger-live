@@ -87,7 +87,6 @@ export * from "./currencyTon";
 export * from "./currencyUnichain";
 export * from "./currencyUnichainSepolia";
 export * from "./currencyVechain";
-export * from "./currencyVelasEvm";
 export * from "./currencyWestend";
 export * from "./currencyXion";
 export * from "./currencyZenrock";

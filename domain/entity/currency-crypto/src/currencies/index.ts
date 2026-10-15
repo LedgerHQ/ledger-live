@@ -169,7 +169,6 @@ export * from "./tron";
 export * from "./unichain";
 export * from "./unichain_sepolia";
 export * from "./vechain";
-export * from "./velas_evm";
 export * from "./waves";
 export * from "./westend";
 export * from "./xion";

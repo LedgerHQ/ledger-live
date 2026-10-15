@@ -34,7 +34,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const mantleSepolia = useFeature("currencyMantleSepolia");
   const boba = useFeature("currencyBoba");
   const moonriver = useFeature("currencyMoonriver");
-  const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
@@ -131,7 +130,6 @@ export function useCurrenciesUnderFeatureFlag() {
       mantle_sepolia: mantleSepolia,
       boba,
       moonriver,
-      velas_evm: velasEvm,
       syscoin,
       internet_computer: internetComputer,
       telos_evm: telosEvm,
@@ -226,7 +224,6 @@ export function useCurrenciesUnderFeatureFlag() {
       mantleSepolia,
       boba,
       moonriver,
-      velasEvm,
       syscoin,
       internetComputer,
       telosEvm,
