@@ -8,30 +8,32 @@ import {
   TableBody,
   TableRoot,
 } from "@ledgerhq/lumen-ui-react";
-import { OperationRow } from "LLD/features/History/components/OperationRow";
-import { HistoryTableHeader } from "LLD/features/History/components/HistoryTableHeader";
-import type { HistoryTable, OperationRow as OperationRowType } from "LLD/features/History/types";
+import { OperationRow } from "../OperationRow";
+import { HistoryTableHeader } from "../HistoryTableHeader";
+import type { HistoryTable, OperationRow as OperationRowType } from "../../types";
 
-export type TransactionsSectionViewProps = Readonly<{
-  historyLabel: string;
+export type RecentTransactionsViewProps = Readonly<{
+  title: string;
+  testIdPrefix: string;
   table: HistoryTable;
   onRowClick: (row: OperationRowType) => void;
   onSeeAll: () => void;
 }>;
 
-export function TransactionsSectionView({
-  historyLabel,
+export function RecentTransactionsView({
+  title,
+  testIdPrefix,
   table,
   onRowClick,
   onSeeAll,
-}: TransactionsSectionViewProps) {
+}: RecentTransactionsViewProps) {
   const rows = table.getRowModel().rows;
 
   return (
-    <div className="flex flex-col gap-12" data-testid="asset-detail-transactions-section">
+    <div className="flex flex-col gap-12" data-testid={`${testIdPrefix}-section`}>
       <Subheader>
-        <SubheaderRow onClick={onSeeAll} data-testid="asset-detail-transactions-header">
-          <SubheaderTitle>{historyLabel}</SubheaderTitle>
+        <SubheaderRow onClick={onSeeAll} data-testid={`${testIdPrefix}-header`}>
+          <SubheaderTitle>{title}</SubheaderTitle>
           <SubheaderShowMore />
         </SubheaderRow>
       </Subheader>

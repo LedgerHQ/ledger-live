@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useLocation } from "react-router";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { TransactionsSectionView } from "./TransactionsSectionView";
-import { useTransactionsSectionViewModel } from "./useTransactionsSectionViewModel";
+import { RecentTransactions } from "LLD/features/History/components/RecentTransactions";
+import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { TransactionsSectionSkeleton } from "./TransactionsSectionSkeleton";
-import { shouldShowAssetDetailSectionSkeleton } from "../../utils/shouldShowAssetDetailSectionSkeleton";
 
 type TransactionsSectionProps = Readonly<{
   distributionItem: DistributionItem;
@@ -16,23 +16,21 @@ export function TransactionsSection({
   isLoading,
   historyLabel,
 }: TransactionsSectionProps) {
-  const { visible, table, onRowClick, onSeeAll } =
-    useTransactionsSectionViewModel(distributionItem);
-
-  if (shouldShowAssetDetailSectionSkeleton(isLoading, visible)) {
-    return <TransactionsSectionSkeleton />;
-  }
-
-  if (!visible) {
-    return null;
-  }
+  const { pathname } = useLocation();
+  const accountIds = useMemo(
+    () => distributionItem.accounts.map(account => account.id),
+    [distributionItem.accounts],
+  );
 
   return (
-    <TransactionsSectionView
-      historyLabel={historyLabel}
-      table={table}
-      onRowClick={onRowClick}
-      onSeeAll={onSeeAll}
+    <RecentTransactions
+      accountIds={accountIds}
+      trackingPage={ASSET_DETAIL_TRACKING_PAGE_NAME}
+      trackingCurrencyId={distributionItem.currency.id}
+      backPath={pathname}
+      title={historyLabel}
+      testIdPrefix="asset-detail-transactions"
+      fallback={isLoading ? <TransactionsSectionSkeleton /> : null}
     />
   );
 }
