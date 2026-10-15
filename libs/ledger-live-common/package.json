@@ -232,7 +232,6 @@
     "src"
   ],
   "peerDependencies": {
-    "@tanstack/react-query": ">=5",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
@@ -440,7 +439,6 @@
     "@solana/web3.js": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@tanstack/react-query": "^5.28.9",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/bs58": "catalog:",
