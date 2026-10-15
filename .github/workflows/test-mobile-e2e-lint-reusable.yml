@@ -23,7 +23,7 @@ permissions:
 jobs:
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"
-    runs-on: ledger-wallet-2cpu-aws-public
+    runs-on: ledger-wallet-8cpu-aws-public
     timeout-minutes: 4
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
