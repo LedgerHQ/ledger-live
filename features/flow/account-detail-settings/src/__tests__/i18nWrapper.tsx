@@ -5,6 +5,7 @@ const resources = {
   en: {
     translation: {
       accountDetailSettings: {
+        title: "Account settings",
         menu: {
           changeName: "Change name",
           viewAdvancedLogs: "View advanced logs",

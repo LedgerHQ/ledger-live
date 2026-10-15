@@ -3,7 +3,7 @@ import { Link, Route, Routes } from "react-router";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { parseAnyAccountId } from "@domain/entity-account";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
+import { render, screen, within, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";
 
@@ -60,5 +60,29 @@ describe("AccountDetail header", () => {
 
     expect(await screen.findByText("Open account")).toBeVisible();
     expect(screen.queryByTestId("account-detail-layout")).not.toBeInTheDocument();
+  });
+
+  it("opens the account settings from the settings button", async () => {
+    const { user } = renderFromPreviousPage();
+    await user.click(screen.getByText("Open account"));
+    expect(await screen.findByTestId("account-detail-layout")).toBeVisible();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Account settings" }));
+
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByText("Ethereum 1")).toBeVisible();
+    expect(within(dialog).getByText("Remove account from portfolio")).toBeVisible();
+  });
+
+  it("keeps the dialog name on the remove confirmation", async () => {
+    const { user } = renderFromPreviousPage();
+    await user.click(screen.getByText("Open account"));
+    await user.click(await screen.findByRole("button", { name: "Account settings" }));
+
+    await user.click(await screen.findByText("Remove account from portfolio"));
+
+    const dialog = await screen.findByRole("dialog", { name: "Account settings" });
+    expect(within(dialog).getByText("Remove account?")).toBeVisible();
   });
 });

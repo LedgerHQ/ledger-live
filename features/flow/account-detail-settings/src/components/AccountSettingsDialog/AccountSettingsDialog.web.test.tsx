@@ -1,0 +1,72 @@
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { I18nWrapper } from "../../__tests__/i18nWrapper";
+import { AccountSettingsDialog } from "./AccountSettingsDialog.web";
+import type { AccountSettingsDialogProps } from "./types.web";
+
+function renderDialog(overrides: Partial<AccountSettingsDialogProps> = {}) {
+  const props: AccountSettingsDialogProps = {
+    isOpen: true,
+    accountName: "Bitcoin 1",
+    onClose: jest.fn(),
+    onChangeName: jest.fn(),
+    onViewAdvancedLogs: jest.fn(),
+    onConfirmRemove: jest.fn(),
+    ...overrides,
+  };
+  render(<AccountSettingsDialog {...props} testID="settings-dialog" />, { wrapper: I18nWrapper });
+  return { props, user: userEvent.setup() };
+}
+
+describe("AccountSettingsDialog (Web)", () => {
+  it("renders nothing while closed", () => {
+    renderDialog({ isOpen: false });
+
+    expect(screen.queryByTestId("settings-dialog")).toBeNull();
+  });
+
+  it("opens on the settings menu", () => {
+    renderDialog();
+
+    expect(screen.getByTestId("settings-dialog")).toBeVisible();
+    expect(screen.getByText("Account settings")).toBeVisible();
+    expect(screen.getByText("Bitcoin 1")).toBeVisible();
+    expect(screen.queryByTestId("dialog-status-gradient-error")).toBeNull();
+  });
+
+  it("forwards the menu actions", async () => {
+    const { props, user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-change-name"));
+    await user.click(screen.getByTestId("account-settings-advanced-logs"));
+
+    expect(props.onChangeName).toHaveBeenCalledTimes(1);
+    expect(props.onViewAdvancedLogs).toHaveBeenCalledTimes(1);
+  });
+
+  it("asks for confirmation before removing the account", async () => {
+    const { props, user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-remove-account"));
+
+    expect(screen.getByText("Remove account?")).toBeVisible();
+    expect(screen.getByTestId("dialog-status-gradient-error")).toBeInTheDocument();
+    expect(screen.queryByTestId("account-settings-menu")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Yes, remove." }));
+    await user.click(screen.getByRole("button", { name: "Keep" }));
+
+    expect(props.onConfirmRemove).toHaveBeenCalledTimes(1);
+    expect(props.onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("goes back to the menu from the remove confirmation", async () => {
+    const { user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-remove-account"));
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+
+    expect(screen.getByTestId("account-settings-menu")).toBeVisible();
+  });
+});
