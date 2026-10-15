@@ -10419,6 +10419,11 @@
       }
     }
   },
+  "accountDetail": {
+    "transactions": {
+      "title": "Transactions"
+    }
+  },
   "assetDetail": {
     "balanceGraph": {
       "marketPrice": "Market price",
