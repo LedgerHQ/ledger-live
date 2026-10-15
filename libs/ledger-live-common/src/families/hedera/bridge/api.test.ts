@@ -490,6 +490,32 @@ describe("hedera bridge", () => {
       expect(adaptOperations(address, [sponsored])).toEqual([sponsored]);
     });
 
+    it("takes the fee the account paid out of a native IN value", () => {
+      const selfPaid = operation({
+        type: "IN",
+        hash: "tx1",
+        fee: 1056079,
+        feePayer: address,
+        value: 1066079,
+      });
+
+      expect(adaptOperations(address, [selfPaid])).toEqual([
+        { ...selfPaid, value: new BigNumber(10000) },
+      ]);
+    });
+
+    it("leaves a native IN another account paid for unchanged", () => {
+      const received = operation({
+        type: "IN",
+        hash: "tx1",
+        fee: 1056079,
+        feePayer: "0.0.5678",
+        value: 10000,
+      });
+
+      expect(adaptOperations(address, [received])).toEqual([received]);
+    });
+
     it("keeps the fee in a native OUT value the account paid for", () => {
       const selfPaid = operation({
         type: "OUT",
