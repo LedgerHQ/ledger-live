@@ -27,7 +27,6 @@ import {
 import { coinModuleLoaders } from "../coin-modules/loaders";
 import { registerAllCoins } from "../coin-modules/load-all-coins";
 import { CurrencyNotSupported } from "../errors";
-import { resolveFamily } from "../bridge/zcashRouting";
 
 const XPUB =
   "xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSE1S2G4UrqdKFNvJx3bR7MNfYTc4FXnAFzBVNMcJYHx5ENKnG9WNzh";
@@ -35,11 +34,11 @@ const BTC_ADDR = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";
 const ETH_ADDR = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
 
 const descriptorTypeOf = (currencyId: string) =>
-  getAccountDescriptorType(resolveFamily(getCryptoCurrencyById(currencyId)));
+  getAccountDescriptorType(getCryptoCurrencyById(currencyId).family);
 
 // a currency without a registered coin module cannot hold an account
 const ACCOUNT_CURRENCY_IDS = listCryptoCurrencies(true)
-  .filter(c => isCoinModuleRegistered(resolveFamily(c)))
+  .filter(c => isCoinModuleRegistered(c.family))
   .map(c => c.id);
 
 const account = (

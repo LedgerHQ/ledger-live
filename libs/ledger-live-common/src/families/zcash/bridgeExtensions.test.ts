@@ -9,7 +9,7 @@ import extensions from "./bridgeExtensions";
 const makeAccount = (patch: Record<string, unknown> = {}): AccountLike =>
   ({
     type: "Account",
-    currency: { id: "zcash" },
+    currency: { id: "zcash", family: "zcash" },
     balance: new BigNumber(4_976_022),
     spendableBalance: new BigNumber(4_976_022),
     bitcoinResources: {
@@ -53,14 +53,14 @@ describe("zcash bridgeExtensions", () => {
 
     it("answers for a zcash testnet account", () => {
       const result = extensions.getWalletApiSpendableBalance?.(
-        makeAccount({ currency: { id: "zcash_testnet" } }),
+        makeAccount({ currency: { id: "zcash_testnet", family: "zcash" } }),
       );
 
       expect(result).toEqual(new BigNumber(4_590_920));
     });
 
     it("throws when the account is not a zcash account", () => {
-      const account = makeAccount({ currency: { id: "bitcoin" } });
+      const account = makeAccount({ currency: { id: "bitcoin", family: "bitcoin" } });
 
       expect(() => extensions.getWalletApiSpendableBalance?.(account)).toThrow(
         "zcash: invalid account in bridgeExtensions",

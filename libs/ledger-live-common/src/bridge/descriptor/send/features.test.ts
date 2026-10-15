@@ -41,8 +41,8 @@ describe("sendFeatures.hasDefaultStrategy / getDefaultStrategyPatch", () => {
 });
 
 describe("sendFeatures.getTrackingAttributes", () => {
-  // `resolveFamily` (bridge/zcashRouting) only resolves Zcash to its own descriptor when
-  // this flag is on; otherwise it falls back to the Bitcoin chain-adapter's descriptor.
+  // The registry hands Zcash its full descriptor only when this flag is on; otherwise it
+  // hands the transparent-only one (bridge/descriptor/registry.ts).
   const previousShieldedEnabled = isZcashShieldedEnabled();
 
   beforeEach(() => {

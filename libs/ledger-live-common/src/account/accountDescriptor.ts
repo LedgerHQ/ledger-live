@@ -16,7 +16,6 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { getAccountDescriptorType } from "../coin-modules/registry";
-import { resolveFamily } from "../bridge/zcashRouting";
 
 /** The fields of a legacy `Account` that a descriptor can express. */
 export type LegacyAccountIdentity = Pick<Account, "derivationMode" | "index" | "xpub"> & {
@@ -86,7 +85,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const derivationMode = asDerivationMode(account.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
 
-  if (getAccountDescriptorType(resolveFamily(currency)) === "utxo") {
+  if (getAccountDescriptorType(currency.family) === "utxo") {
     if (!account.xpub) {
       throw new MissingAccountXpubError(`${currency.id} account has no xpub to identify it`);
     }
@@ -118,7 +117,7 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
   const descriptor = AccountDescriptorSchema.parse(input);
   const currencyId = currencyIdFromNetwork(descriptor.network);
   const currency = getCryptoCurrencyById(currencyId);
-  const expectedType = getAccountDescriptorType(resolveFamily(currency));
+  const expectedType = getAccountDescriptorType(currency.family);
   if (descriptor.type !== expectedType) {
     throw new UnsupportedDescriptorPathError(
       `${currencyId} accounts use ${expectedType} descriptors, got ${descriptor.type}`,

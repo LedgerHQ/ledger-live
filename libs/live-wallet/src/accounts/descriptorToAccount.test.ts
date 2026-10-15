@@ -24,3 +24,24 @@ test("descriptorToAccount preserves the descriptor identity for every currency a
     });
   });
 });
+
+// A Zcash account id carries the account's xpub, like a bitcoin one: restoring it as
+// a fresh address would derive nothing the account owns.
+test.each(["zcash", "zcash_testnet"])(
+  "descriptorToAccount restores a %s account's xpub, not a fresh address",
+  currencyId => {
+    const xpub =
+      "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz";
+    const restored = descriptorToAccount({
+      id: `js:2:${currencyId}:${xpub}:`,
+      currencyId,
+      freshAddress: "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8",
+      seedIdentifier: "seed",
+      derivationMode: "",
+      index: 0,
+    });
+
+    expect(restored.xpub).toBe(xpub);
+    expect(restored.freshAddress).toBe("t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8");
+  },
+);

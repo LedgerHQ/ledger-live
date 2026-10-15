@@ -230,7 +230,7 @@ describe("resolveWalletApiSpendableBalance", () => {
 const makeZcashAccount = (utxoValues: number[]): AccountLike =>
   ({
     type: "Account",
-    currency: { id: "zcash" },
+    currency: { id: "zcash", family: "zcash" },
     spendableBalance: new BigNumber(5_000_000),
     bitcoinResources: { utxos: utxoValues.map(value => ({ value: new BigNumber(value) })) },
   }) as unknown as AccountLike;

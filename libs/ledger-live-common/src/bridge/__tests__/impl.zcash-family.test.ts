@@ -49,9 +49,9 @@ const signArg = (account: Account): SignOperationArg0<TransactionCommon, Account
   deviceId: "",
 });
 
-// Every Zcash account is served by coin-zcash; the `zcashShielded` flag the host
-// mirrors here only selects, inside coin-zcash, whether the shielded engine runs.
-describe("bridge/impl -- zcash routing", () => {
+// The Zcash currencies are the `zcash` family, served by coin-zcash; the `zcashShielded`
+// flag the host mirrors here only selects, inside coin-zcash, whether the shielded engine runs.
+describe("bridge/impl -- zcash family", () => {
   beforeEach(() => {
     resetCoinModulesForTests();
     registerCoinModules(loadersFor("bitcoin", "zcash"));
@@ -82,12 +82,12 @@ describe("bridge/impl -- zcash routing", () => {
     expect(await getCurrencyBridge(BITCOIN)).toBe((await coinBitcoin()).bridge.currencyBridge);
   });
 
-  it("keeps zcash on its currency family when the host registers no zcash module", async () => {
+  it("does not serve zcash on a host that registers no zcash module", async () => {
     resetCoinModulesForTests();
     registerCoinModules(loadersFor("bitcoin"));
     clearBridgeCache();
 
-    expect(await getCurrencyBridge(ZCASH)).toBe((await coinBitcoin()).bridge.currencyBridge);
+    await expect(getCurrencyBridge(ZCASH)).rejects.toThrow(/zcash/);
   });
 
   it("evicts the zcash entry on clearBridgeCache('zcash')", async () => {

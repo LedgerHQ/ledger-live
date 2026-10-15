@@ -493,9 +493,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
-    // added to genericCoinFrameworkFamilies.json). Every Zcash account is served
-    // by it (bridge/zcashRouting.ts), although the currencies keep
-    // `family: "bitcoin"`.
+    // added to genericCoinFrameworkFamilies.json).
     family: "zcash",
     supportedCoins: ["zcash", "zcash_testnet"],
     accountDescriptorType: "utxo",

@@ -2,14 +2,13 @@ import invariant from "invariant";
 import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
 import type { AccountBridgeExtensions, AccountLike } from "@ledgerhq/types-live";
-import { isZcashCurrencyId } from "../../bridge/zcashRouting";
 
 // Deliberately not `isZcashAccount` from the coin module: that guard requires a
 // `privateInfo` key, which an account whose shielded sync was never activated
 // does not carry -- and such an account is exactly the one this extension must
 // still answer for.
 const isZcashMainAccount = (account: AccountLike): account is ZcashAccount =>
-  account.type === "Account" && isZcashCurrencyId(account.currency.id);
+  account.type === "Account" && account.currency.family === "zcash";
 
 const extensions: AccountBridgeExtensions = {
   // A live app (swap, buy/sell, a dApp) can only ever move transparent funds:
