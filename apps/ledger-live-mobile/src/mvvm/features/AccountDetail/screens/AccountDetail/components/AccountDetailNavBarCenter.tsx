@@ -23,6 +23,7 @@ export function AccountDetailNavBarCenter({ title, address, ledgerId, ticker }: 
           ledgerId={ledgerId}
           ticker={ticker}
           size={20}
+          shape="square"
           testID={ACCOUNT_DETAIL_TEST_IDS.navBarNetworkIcon}
         />
       </Box>
