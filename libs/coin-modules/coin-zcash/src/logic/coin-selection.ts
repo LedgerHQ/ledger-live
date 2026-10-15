@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import type { ZcashTransferType } from "../types/bridge";
+import type { ZcashAccount, ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
-import type { ZcashAccount } from "../types/bridge";
 import type { ZcashConfig } from "../config";
 import { zcashNetworkOf, type ZcashNetwork } from "./network";
 

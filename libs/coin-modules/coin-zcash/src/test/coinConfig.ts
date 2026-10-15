@@ -26,5 +26,5 @@ export const contextWithZaino = (url: string): ZcashContext => ({
 /** A {@link testContext} whose coin config carries the given `zip2009` setting. */
 export const contextWithZip2009 = (zip2009: ZcashConfig["zip2009"]): ZcashContext => ({
   ...testContext,
-  config: async () => ({ ...TEST_CONFIG, ...(zip2009 !== undefined && { zip2009 }) }),
+  config: () => Promise.resolve({ ...TEST_CONFIG, ...(zip2009 !== undefined && { zip2009 }) }),
 });
