@@ -61,6 +61,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it.each([
     ["the paired device", "paired-id", ["paired-id"]],
+    ["the USB device stored without its compatibility prefix", "usb|paired-id", ["paired-id"]],
     ["every known device when the paired one is unknown", "other-id", ["paired-id", "nearby-id"]],
   ])("should connect to %s", (_, pairedDeviceId, expectedIds) => {
     mockRouteParams = { pairedDeviceId, wasReadOnlyAtEntry: false };

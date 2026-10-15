@@ -6,7 +6,11 @@ import {
   type ParamListBase,
   type RouteProp,
 } from "@react-navigation/native";
-import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import {
+  USB_COMPAT_DEVICE_ID_PREFIX,
+  isUsbCompatDeviceId,
+  useDeviceManagementKit,
+} from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
@@ -36,7 +40,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const allKnownDevices = useSelector(knownDevicesSelector);
   const { pairedDeviceId, wasReadOnlyAtEntry } = useRoute<FunnelRoute>().params;
   const knownDevices = useMemo(() => {
-    const paired = allKnownDevices.filter(known => known.id === pairedDeviceId);
+    const paired = allKnownDevices.filter(known => matchesPairedDevice(known.id, pairedDeviceId));
     return paired.length > 0 ? paired : allKnownDevices;
   }, [allKnownDevices, pairedDeviceId]);
   const offerSync = useOfferSync();
@@ -123,6 +127,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onQuit: () => send({ type: "QUIT" }),
     },
   };
+}
+
+function matchesPairedDevice(knownId: string, pairedDeviceId: string | undefined) {
+  if (!pairedDeviceId) return false;
+  if (knownId === pairedDeviceId) return true;
+  const discoveryId = isUsbCompatDeviceId(pairedDeviceId)
+    ? pairedDeviceId.slice(USB_COMPAT_DEVICE_ID_PREFIX.length)
+    : pairedDeviceId;
+  return knownId === discoveryId;
 }
 
 function readString(value: unknown): string | null {

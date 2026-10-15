@@ -51,8 +51,8 @@ import LandingPagesNavigator from "./LandingPagesNavigator";
 import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 import NotificationsOptIn from "LLM/features/NotificationsOptIn";
 
-function FirmwareUpdateBackButton() {
-  return <NavigationHeaderBackButton />;
+function FirmwareUpdateHeaderLeft() {
+  return null;
 }
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
@@ -233,7 +233,7 @@ export default function OnboardingNavigator() {
           headerShown: true,
           headerTitle: () => null,
           title: "",
-          headerLeft: FirmwareUpdateBackButton,
+          headerLeft: FirmwareUpdateHeaderLeft,
           headerRight: () => null,
         }}
       />
