@@ -12,10 +12,14 @@ import type { AccountDetailNavigatorParamsList } from "../../types";
 
 export type AccountDetailViewModel = Readonly<{ account: Account | undefined }>;
 
+type AccountDetailRoute = RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>;
+type AccountDetailNavigation = RootNavigationComposite<
+  StackNavigatorNavigation<BaseNavigatorStackParamList>
+>;
+
 export function useAccountDetailViewModel(): AccountDetailViewModel {
-  const route = useRoute<RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>>();
-  const navigation =
-    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+  const route = useRoute<AccountDetailRoute>();
+  const navigation = useNavigation<AccountDetailNavigation>();
   const { account } = useAccountScreen(route);
   const mainAccount = account?.type === "Account" ? account : undefined;
 

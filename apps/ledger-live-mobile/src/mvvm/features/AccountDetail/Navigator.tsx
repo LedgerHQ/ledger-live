@@ -28,6 +28,7 @@ export default function AccountDetailNavigator({ accountId }: Props) {
       <Stack.Screen
         name={ScreenName.AccountDetail}
         component={AccountDetail}
+        navigationKey={accountId}
         initialParams={{ accountId }}
         options={{ title: "" }}
       />

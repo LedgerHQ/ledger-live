@@ -1,4 +1,5 @@
 import React from "react";
+import { Pressable } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -6,6 +7,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AccountScreen from "../AccountScreen";
@@ -17,6 +19,16 @@ jest.mock("~/screens/Account", () => {
     __esModule: true,
     default: ({ route }: { route: { params?: { accountId?: string } } }) => (
       <Text testID="legacy-account-screen">{route.params?.accountId}</Text>
+    ),
+  };
+});
+
+jest.mock("@shared/analytics-react", () => {
+  const { Text } = jest.requireActual("react-native");
+  return {
+    ...jest.requireActual("@shared/analytics-react"),
+    TrackScreen: ({ currency }: { currency?: string }) => (
+      <Text testID="account-detail-tracked-currency">{currency}</Text>
     ),
   };
 });
@@ -37,6 +49,20 @@ const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BAS
 
 type AccountDetailFlag = { enabled: boolean; params?: { excludedCurrencyIds: string[] } };
 
+type AccountScreenProps = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
+
+function AccountScreenWithAccountSwitch(props: AccountScreenProps) {
+  return (
+    <>
+      <AccountScreen {...props} />
+      <Pressable
+        testID="switch-to-eth-account"
+        onPress={() => props.navigation.setParams({ accountId: ethAccountWithToken.id })}
+      />
+    </>
+  );
+}
+
 function renderAccountScreen(
   params: BaseNavigatorStackParamList[ScreenName.Account],
   accountDetail: AccountDetailFlag,
@@ -45,7 +71,7 @@ function renderAccountScreen(
     <Stack.Navigator id={BASE_NAVIGATOR_ID}>
       <Stack.Screen
         name={ScreenName.Account}
-        component={AccountScreen}
+        component={AccountScreenWithAccountSwitch}
         initialParams={params}
         options={{ headerShown: false }}
       />
@@ -109,5 +135,14 @@ describe("AccountDetail entry", () => {
     );
 
     expect(screen.getByTestId("legacy-account-screen")).toHaveTextContent(usdcAccount.id);
+  });
+
+  it("follows the new account when the mounted entry screen receives another account", async () => {
+    const { user } = renderAccountScreen({ accountId: btcAccount.id }, { enabled: true });
+    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("Bitcoin");
+
+    await user.press(screen.getByTestId("switch-to-eth-account"));
+
+    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("Ethereum");
   });
 });
