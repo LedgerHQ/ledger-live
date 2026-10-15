@@ -27,7 +27,7 @@ export function HeaderView({ viewModel }: Props) {
         <Tooltip>
           <TooltipTrigger asChild>
             <IconButton
-              appearance="gray"
+              appearance="transparent"
               size="sm"
               icon={Settings}
               aria-label={settingsLabel}
