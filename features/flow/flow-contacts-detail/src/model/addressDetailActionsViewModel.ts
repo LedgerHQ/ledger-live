@@ -1,11 +1,6 @@
-import type { ContactAddress, ContactAddressId, ContactId } from "@domain/entity-contact";
+import type { ContactAddress, ContactId } from "@domain/entity-contact";
 import { CONTACT_ADDRESS_EDIT_REQUIREMENT } from "./editRequirement";
-import type {
-  ContactAddressDeleteLifecycle,
-  ContactAddressDetailDeleteIntent,
-  ContactAddressDetailEditIntent,
-  ContactAddressDetailSendIntent,
-} from "../types";
+import type { ContactAddressDetailEditIntent, ContactAddressDetailSendIntent } from "../types";
 
 export function createContactAddressDetailSendIntent(
   contactId: ContactId,
@@ -30,40 +25,4 @@ export function createContactAddressDetailEditIntent(
     addressId: contactAddress.id,
     editRequirement: CONTACT_ADDRESS_EDIT_REQUIREMENT,
   };
-}
-
-export function createContactAddressDetailDeleteIntent(
-  contactId: ContactId,
-  addressId: ContactAddressId,
-): ContactAddressDetailDeleteIntent {
-  return {
-    type: "delete-address",
-    contactId,
-    addressId,
-  };
-}
-
-export function createIdleContactAddressDeleteLifecycle(): ContactAddressDeleteLifecycle {
-  return { status: "idle" };
-}
-
-export function createOpenContactAddressDeleteLifecycle(
-  contactId: ContactId,
-  addressId: ContactAddressId,
-): ContactAddressDeleteLifecycle {
-  return { status: "open", contactId, addressId };
-}
-
-export function createSuccessContactAddressDeleteLifecycle(
-  contactId: ContactId,
-  addressId: ContactAddressId,
-): ContactAddressDeleteLifecycle {
-  return { status: "success", contactId, addressId };
-}
-
-export function createErrorContactAddressDeleteLifecycle(
-  contactId: ContactId,
-  addressId: ContactAddressId,
-): ContactAddressDeleteLifecycle {
-  return { status: "error", contactId, addressId };
 }

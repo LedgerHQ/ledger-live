@@ -1,7 +1,5 @@
-import {
-  deleteAddress as deleteAddressAction,
-  selectContactAddressById,
-} from "@domain/entity-contact";
+import { selectContactAddressById } from "@domain/entity-contact";
+import { createContactAddressDeletePort } from "@features/flow-contacts-delete-address";
 import {
   createContactAddressEditPort,
   type ContactDeviceIntentsPort,
@@ -24,10 +22,6 @@ export function createContactAddressDetailActionsPorts({
 }: ContactAddressDetailActionsPortsDeps): ContactAddressDetailActionsDataPorts {
   return {
     edit: createContactAddressEditPort({ dispatch, getState, deviceIntents, getConfig }),
-    deletion: {
-      deleteAddress: async input => {
-        dispatch(deleteAddressAction(input));
-      },
-    },
+    deletion: createContactAddressDeletePort({ dispatch }),
   };
 }

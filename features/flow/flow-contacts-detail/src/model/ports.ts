@@ -1,7 +1,8 @@
-import type { ContactAddress, ContactAddressId, ContactId } from "@domain/entity-contact";
-import type { ContactAddressEditPort, ContactEditPort } from "@features/platform-contacts";
-import type { ContactDeletionPort } from "@features/flow-contacts-delete-contact";
+import type { ContactAddress } from "@domain/entity-contact";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { ContactAddressDeletionPort } from "@features/flow-contacts-delete-address";
+import type { ContactDeletionPort } from "@features/flow-contacts-delete-contact";
+import type { ContactAddressEditPort, ContactEditPort } from "@features/platform-contacts";
 import type { ContactSignerValidationPort } from "../platform/contactSignerValidationPort";
 import type { ContactAddressDetailAsset, ContactAddressDetailNetwork } from "../types";
 
@@ -18,15 +19,6 @@ export type ContactDetailActionsPorts = ContactDetailActionsDataPorts &
   Readonly<{
     signerValidation: ContactSignerValidationPort;
   }>;
-
-export type ContactAddressDeletionInput = Readonly<{
-  contactId: ContactId;
-  addressId: ContactAddressId;
-}>;
-
-export type ContactAddressDeletionPort = Readonly<{
-  deleteAddress(input: ContactAddressDeletionInput): Promise<void>;
-}>;
 
 export type ContactAddressDetailActionsDataPorts = Readonly<{
   edit: ContactAddressEditPort;

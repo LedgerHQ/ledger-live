@@ -11,8 +11,8 @@ import {
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
+import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
 import {
-  type ContactsDeleteAddressDialogProps,
   type ContactsEditSignerMismatchDialogProps,
   type ContactAddressDetailDialogProps,
   type ContactAddressDetailSendIntent,

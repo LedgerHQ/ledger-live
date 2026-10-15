@@ -3,7 +3,7 @@ import {
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
-import type { ContactsDeleteAddressDialogLabels } from "../components/ContactsDeleteAddressDialog/types";
+import type { ContactsDeleteAddressDialogLabels } from "@features/flow-contacts-delete-address";
 import type { ContactsRenameAddressLabels } from "@features/flow-contacts-edit-address";
 import { resolveContactEditSignerActionLabels } from "./resolveContactEditSignerActionLabels";
 

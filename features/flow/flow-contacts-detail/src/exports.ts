@@ -18,7 +18,6 @@ export * from "./model/contactDetailSharedState";
 export * from "./model/contactActionsViewModel";
 export * from "./model/addressDetailViewModel";
 export * from "./model/addressDetailActionsViewModel";
-export * from "./model/addressDetailActionsController";
 export * from "./model/sortContactAddressesByNetwork";
 export * from "./model/resolveContactAddressDetailActionsLabels";
 export * from "./model/mapContactAddressDetailActionsUiState";

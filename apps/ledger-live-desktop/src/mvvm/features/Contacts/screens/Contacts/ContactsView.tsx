@@ -6,13 +6,13 @@ import {
 } from "@features/flow-contacts";
 import {
   ContactAddressDetailDialog,
-  ContactsDeleteAddressDialog,
   ContactsEditSignerMismatchDialog,
   type ContactAddressDetailDialogProps,
 } from "@features/flow-contacts-detail";
 import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
+import { ContactsDeleteAddressDialog } from "@features/flow-contacts-delete-address";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import {
   ContactsAddAddressFlowDialog,
