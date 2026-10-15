@@ -15123,9 +15123,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@tanstack/react-query':
-        specifier: ^5.28.9
-        version: 5.28.9(react@19.1.4)
       '@testing-library/dom':
         specifier: 'catalog:'
         version: 10.4.1
