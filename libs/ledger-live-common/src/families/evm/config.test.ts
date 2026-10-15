@@ -58,8 +58,6 @@ describe("evmConfig", () => {
   });
 
   it("should configure alpen testnet with an external node and a blockscout explorer", () => {
-    setEnv("EXPLORER", "http://some-random-url.url");
-
     const config = getCurrencyConfiguration("alpen_testnet");
 
     expect(config).toMatchObject({
