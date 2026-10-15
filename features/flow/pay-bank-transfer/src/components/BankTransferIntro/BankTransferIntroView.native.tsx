@@ -70,6 +70,7 @@ export function BankTransferIntroView({
       onClose={handleDismiss}
       onHeaderClosePressed={handleClosePress}
       enableDynamicSizing
+      enableContentPanningGesture={false}
       testID="pay-bank-transfer-intro-sheet"
     >
       {isOpen ? (
