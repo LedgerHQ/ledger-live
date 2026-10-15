@@ -1,0 +1,33 @@
+import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
+
+export default createDualPlatformKnipConfig({
+  packagePath: "features/flow/fear-and-greed",
+  platform: "native",
+  entry: [],
+  additionalIgnoreDependencies: [
+    "@domain/api-market-index-fear-and-greed",
+    "@domain/entity-market-index-fear-and-greed",
+    "@ledgerhq/lumen-ui-react",
+    "@ledgerhq/lumen-ui-rnative",
+    "@shared/analytics",
+    "@shared/i18n",
+    "@shared/ui-queued-bottom-sheet",
+    "@support/jest-features-flow",
+    "@testing-library/dom",
+    "@testing-library/jest-dom",
+    "@testing-library/react",
+    "@testing-library/react-native",
+    "@types/node",
+    "@types/react",
+    "@types/react-dom",
+    "jest-environment-jsdom",
+    "oxfmt",
+    "oxlint",
+    "react",
+    "react-dom",
+    "react-native",
+    "react-native-safe-area-context",
+    "react-redux",
+    "react-test-renderer",
+  ],
+});
