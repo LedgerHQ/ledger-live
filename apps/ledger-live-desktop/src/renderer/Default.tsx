@@ -25,6 +25,7 @@ import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdat
 import Page from "LLD/components/Page";
 import NightlyLayer from "LLD/components/NightlyLayer";
 import { isFullscreenOverlayRoute, isWallet40Page } from "LLD/components/Page/utils";
+import { useIsAccountDetailPage } from "LLD/features/AccountDetail/hooks/useIsAccountDetailPage";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -112,7 +113,7 @@ const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboar
 const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshooting"));
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const AssetDetails = lazy(() => import("LLD/features/AssetDetail"));
-const Account = lazy(() => import("~/renderer/screens/account"));
+const AccountDetailRoute = lazy(() => import("LLD/features/AccountDetail/AccountDetailRoute"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
 const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
 const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
@@ -255,8 +256,11 @@ function MainAppContent({
               <Route path="/borrow/*" element={withSuspense(Borrow)({})} />
               <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
               <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
-              <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
-              <Route path="/account/:id/*" element={withSuspense(Account)({})} />
+              <Route
+                path="/account/:parentId/:id/*"
+                element={withSuspense(AccountDetailRoute)({})}
+              />
+              <Route path="/account/:id/*" element={withSuspense(AccountDetailRoute)({})} />
               <Route
                 path="/asset/*"
                 element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
@@ -298,9 +302,9 @@ export const MainAppLayout = () => {
 
   const backgroundImage = getPageBackground(pathname, theme);
 
-  const useWallet40Layout = isWallet40Page(pathname, {
-    shouldDisplayAggregatedAssets,
-  });
+  const isAccountDetailPage = useIsAccountDetailPage(pathname);
+  const useWallet40Layout =
+    isAccountDetailPage || isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
     preloadBackgrounds();
