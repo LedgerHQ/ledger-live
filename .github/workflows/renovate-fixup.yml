@@ -36,9 +36,18 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          filter: blob:none
           persist-credentials: false
+
+      - name: Fetch the merge base
+        id: base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          sha=$(gh api "repos/$GITHUB_REPOSITORY/compare/$BASE_SHA...$HEAD_SHA" --jq .merge_base_commit.sha)
+          git fetch --no-tags --depth=1 "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git" "$sha"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
@@ -57,10 +66,10 @@ jobs:
       - name: Generate changeset
         if: github.head_ref != 'renovate/lock-file-maintenance'
         env:
-          BASE_REF: ${{ github.base_ref }}
+          BASE: ${{ steps.base.outputs.sha }}
           HEAD_REF: ${{ github.head_ref }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-        run: node tools/scripts/renovate-changeset.mjs "$(git merge-base "origin/$BASE_REF" HEAD)" "${HEAD_REF//\//-}" "$PR_TITLE"
+        run: node tools/scripts/renovate-changeset.mjs "$BASE" "${HEAD_REF//\//-}" "$PR_TITLE"
 
       - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
