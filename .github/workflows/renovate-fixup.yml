@@ -26,7 +26,7 @@ jobs:
       startsWith(github.head_ref, 'renovate/') &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.sender.login != 'live-github-bot[bot]'
-    runs-on: ledger-wallet-8cpu-aws-public
+    runs-on: ledger-wallet-2cpu-aws-public
     permissions:
       contents: read
       id-token: write
