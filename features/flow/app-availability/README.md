@@ -17,7 +17,7 @@ service). The first unavailable check wins.
 | Export | Description |
 | --- | --- |
 | `AppAvailability` | Gate component. Available or pending renders children; unavailable renders the blocked view. |
-| `ServiceUnavailable` | Service-unavailable copy. Hosts render it when their splash cap wins while the CAL check is still pending. |
+| `ServiceUnavailable` | Service-unavailable copy. `AppAvailability` renders it when the check is unavailable. Hosts only cap the splash. |
 | `useAppAvailability` | Shared result for splash gates (`pending`, `available`, or `unavailable`). |
 | `useOfacGeoBlockCheck` | OFAC check mapped to the availability vocabulary. |
 | `useCalCheck` | CAL healthcheck mapped to the availability vocabulary. |

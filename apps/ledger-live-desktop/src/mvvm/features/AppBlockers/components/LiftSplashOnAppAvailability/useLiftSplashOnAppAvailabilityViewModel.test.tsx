@@ -75,7 +75,7 @@ describe("useLiftSplashOnAppAvailabilityViewModel", () => {
     expect(screen.getByText("App")).toBeVisible();
   });
 
-  it("should show the unavailable screen when the CAL check is still pending at the cap", () => {
+  it("should lift the splash onto the app when the CAL check is still pending at the cap", () => {
     render(
       <I18nTestProvider resources={COPY}>
         <LiftSplashOnAppAvailability>
@@ -89,10 +89,10 @@ describe("useLiftSplashOnAppAvailabilityViewModel", () => {
     });
 
     expect(windowApi.appLoaded).toHaveBeenCalled();
+    expect(screen.getByText("App")).toBeVisible();
     expect(
-      screen.getByRole("heading", { name: "Ledger Wallet is currently unavailable" }),
-    ).toBeVisible();
-    expect(screen.queryByText("App")).toBeNull();
+      screen.queryByRole("heading", { name: "Ledger Wallet is currently unavailable" }),
+    ).toBeNull();
   });
 
   it("should keep a resolved geo-block when CAL is still pending at the cap", () => {
