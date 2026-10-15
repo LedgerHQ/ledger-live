@@ -242,7 +242,9 @@ export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
     adaptOperations,
     stakingSupported: true,
     shouldMergeOps: false,
-    // Legacy stores other operation ids, so each bridge flag flip must resync from scratch.
-    syncVersion: "1",
+    // Bumped whenever stored operations go stale, so they are rebuilt from scratch:
+    // 1: legacy stores other operation ids, so each bridge flag flip resyncs.
+    // 2: native HBAR values and contract call types now follow getBlock.
+    syncVersion: "2",
   };
 }
