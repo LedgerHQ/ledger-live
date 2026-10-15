@@ -72,6 +72,13 @@ jobs:
       - name: Enforce package structure
         run: pnpm exec nx run-many -t lint:structure
 
+      - name: Test the tool-config conformance check
+        # run-many is a no-op when the project is absent: older branches (e.g. release) call this workflow from develop.
+        run: pnpm exec nx run-many -t test -p enforce-tool-config
+
+      - name: Check tool configs conform to the support/ presets
+        run: pnpm exec nx run-many -t lint:tool-config
+
       - name: Test the i18n key check
         # run-many is a no-op when the project is absent: older branches (e.g. release) call this workflow from develop.
         run: pnpm exec nx run-many -t test -p enforce-i18n-keys
