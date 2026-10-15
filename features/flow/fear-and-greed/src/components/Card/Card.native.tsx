@@ -7,11 +7,11 @@ import { getFearAndGreedColorKey, getFearAndGreedTranslationKey } from "../../ut
 import { Indicator } from "../Indicator";
 import type { GaugeComponent } from "../../types";
 
-type CardProps = {
+type CardProps = Readonly<{
   data: FearAndGreedIndex;
   Gauge: GaugeComponent;
   onPress: () => void;
-};
+}>;
 
 function CardComponent({ data, Gauge, onPress }: CardProps) {
   const { t } = useTranslation();

@@ -14,11 +14,11 @@ import { getFearAndGreedTranslationKey } from "../../utils/fearAndGreed";
 import { Indicator } from "../Indicator";
 import type { GaugeComponent } from "../../types";
 
-type ExpandedCardProps = {
+type ExpandedCardProps = Readonly<{
   data: FearAndGreedIndex;
   Gauge: GaugeComponent;
   onPress: () => void;
-};
+}>;
 
 function ExpandedCardComponent({ data, Gauge, onPress }: ExpandedCardProps) {
   const { t } = useTranslation();

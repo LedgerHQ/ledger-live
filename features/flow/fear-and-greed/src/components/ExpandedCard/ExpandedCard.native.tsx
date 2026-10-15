@@ -8,12 +8,12 @@ import { Indicator } from "../Indicator";
 import type { GaugeComponent } from "../../types";
 import { EXPANDED_CARD_HEIGHT } from "./constants";
 
-type ExpandedCardProps = {
+type ExpandedCardProps = Readonly<{
   data: FearAndGreedIndex;
   Gauge: GaugeComponent;
   width?: number;
   onPress?: () => void;
-};
+}>;
 
 function ExpandedCardComponent({ data, Gauge, width, onPress }: ExpandedCardProps) {
   const { t } = useTranslation();

@@ -10,11 +10,11 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
 
-type DefinitionProps = {
+type DefinitionProps = Readonly<{
   children: ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-};
+}>;
 
 export function Definition({ children, open, onOpenChange }: DefinitionProps) {
   const { t } = useTranslation();

@@ -4,10 +4,10 @@ import { BottomSheetHeader, BottomSheetView, Text } from "@ledgerhq/lumen-ui-rna
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useTranslation } from "@shared/i18n";
 
-type DefinitionProps = {
+type DefinitionProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
-};
+}>;
 
 function DefinitionComponent({ isOpen, onClose }: DefinitionProps) {
   const { t } = useTranslation();
