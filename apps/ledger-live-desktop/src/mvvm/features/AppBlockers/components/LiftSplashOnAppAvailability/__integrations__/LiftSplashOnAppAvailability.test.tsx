@@ -1,5 +1,5 @@
 import React from "react";
-import { AppAvailability } from "@features/flow-app-availability";
+import { AppAvailability, startCalHealthCheck } from "@features/flow-app-availability";
 import { http, HttpResponse } from "msw";
 import { server } from "tests/server";
 import { screen, waitFor, render, cleanup } from "tests/testSetup";
@@ -34,6 +34,15 @@ describe("LiftSplashOnAppAvailability", () => {
   it("should call appLoaded when the availability check settles available", async () => {
     const store = createStore({});
     render(<LiftSplashOnAppAvailability />, { store });
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+  });
+
+  it("should call appLoaded without waiting when the CAL probe is already fulfilled", async () => {
+    const store = createStore({});
+    await startCalHealthCheck(store.dispatch);
+
+    render(<LiftSplashOnAppAvailability />, { store });
+
     await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
   });
 

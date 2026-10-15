@@ -21,6 +21,7 @@ service). The first unavailable check wins.
 | `useAppAvailability` | Shared result for splash gates (`pending`, `available`, or `unavailable`). |
 | `useOfacGeoBlockCheck` | OFAC check mapped to the availability vocabulary. |
 | `useCalCheck` | CAL healthcheck mapped to the availability vocabulary. |
+| `startCalHealthCheck` | Dispatches the CAL probe so hosts can overlap it with boot before splash gates mount. |
 | `AppAvailabilityStatus` | Discriminated union: `pending`, `available`, `unavailable` with reason. |
 
 ## Usage
@@ -49,7 +50,8 @@ flow (`urls.geoBlockLearnMore`) and opens through `@shared/linking`, so the host
 `AppAvailability` under `LinkingProvider`. The flow does not own the loading splash.
 
 The CAL probe calls `GET {calServiceUrl}/v1/currencies?output=id&limit=1` with a 1s timeout
-(aligned with the app splash wait) and sends `X-Ledger-Client-Version`.
+(aligned with the app splash wait) and sends `X-Ledger-Client-Version`. Hosts should call
+`startCalHealthCheck` as soon as the store exists so the probe overlaps boot.
 
 Desktop Playwright sets `PLAYWRIGHT_RUN` before the renderer boots. The health query then returns
 `ok` and does not fetch, unless `CAL_HEALTHCHECK` is `failed`, which returns `failed`. Both are

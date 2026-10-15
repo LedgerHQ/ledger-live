@@ -2,5 +2,6 @@ export * from "./types";
 export * from "./hooks/useOfacGeoBlockCheck";
 export * from "./hooks/useCalCheck";
 export * from "./hooks/useAppAvailability";
+export * from "./hooks/startCalHealthCheck";
 export * from "./components/AppAvailability";
 export * from "./components/ServiceUnavailable";

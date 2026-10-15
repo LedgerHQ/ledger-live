@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@shared/env";
+import { startCalHealthCheck } from "@features/flow-app-availability";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
@@ -152,6 +153,7 @@ async function init() {
     countervalues: appCountervaluesSources,
   });
   const dispatch: AppDispatch = store.dispatch;
+  void startCalHealthCheck(dispatch);
 
   setupListeners(store.dispatch);
   connectRecentAddressesStore(store, recentAddressesSelector);

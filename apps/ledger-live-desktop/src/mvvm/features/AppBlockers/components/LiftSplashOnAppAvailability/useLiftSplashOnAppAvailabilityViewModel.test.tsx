@@ -59,6 +59,22 @@ describe("useLiftSplashOnAppAvailabilityViewModel", () => {
     expect(screen.getByText("App")).toBeVisible();
   });
 
+  it("should call appLoaded immediately when CAL is already available", () => {
+    mockedUseAppAvailability.mockReturnValue({ status: "available" });
+    mockedUseCalCheck.mockReturnValue({ status: "available" });
+
+    render(
+      <I18nTestProvider resources={COPY}>
+        <LiftSplashOnAppAvailability>
+          <div>App</div>
+        </LiftSplashOnAppAvailability>
+      </I18nTestProvider>,
+    );
+
+    expect(windowApi.appLoaded).toHaveBeenCalled();
+    expect(screen.getByText("App")).toBeVisible();
+  });
+
   it("should show the unavailable screen when the CAL check is still pending at the cap", () => {
     render(
       <I18nTestProvider resources={COPY}>
