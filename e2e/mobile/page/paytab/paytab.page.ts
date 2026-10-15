@@ -109,49 +109,59 @@ export default class PayTabPage {
     ).toBeVisible();
   }
 
+  // @Step("Close the bank transfer intro")
+  // async closeBankTransferIntro() {
+  //   const maxAttempts = 5;
+  //   const attempts: string[] = [];
+
+  //   try {
+  //     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+  //       const closeButton = getElementById(this.bankTransferCloseId);
+  //       const insideButton = { x: 1, y: 1 };
+
+  //       await closeButton.tap(insideButton);
+  //       if (await this.bankTransferIntroDismissed()) {
+  //         attempts.push(
+  //           `attempt ${attempt}: element tap 1dp inside the close button closed the sheet`,
+  //         );
+  //         return;
+  //       }
+  //       attempts.push(
+  //         `attempt ${attempt}: element tap 1dp inside the close button left ${this.bankTransferContentId} visible`,
+  //       );
+
+  //       await closeButton.longPress(insideButton);
+  //       if (await this.bankTransferIntroDismissed()) {
+  //         attempts.push(
+  //           `attempt ${attempt}: element long press 1dp inside the close button closed the sheet`,
+  //         );
+  //         return;
+  //       }
+  //       attempts.push(
+  //         `attempt ${attempt}: element long press 1dp inside the close button left ${this.bankTransferContentId} visible`,
+  //       );
+  //     }
+
+  //     throw new Error(
+  //       `${this.bankTransferContentId} stayed visible after ${maxAttempts} close attempts. ${attempts.join("; ")}`,
+  //     );
+  //   } finally {
+  //     await allure.attachment(
+  //       "Bank transfer intro close attempts",
+  //       attempts.join("\n"),
+  //       "text/plain",
+  //     );
+  //     await allure.attachment("Queued drawer logs", await queuedDrawerLogText(), "text/plain");
+  //   }
+  // }
+
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
-    const maxAttempts = 5;
-    const attempts: string[] = [];
-
-    try {
-      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const closeButton = getElementById(this.bankTransferCloseId);
-        const insideButton = { x: 1, y: 1 };
-
-        await closeButton.tap(insideButton);
-        if (await this.bankTransferIntroDismissed()) {
-          attempts.push(
-            `attempt ${attempt}: element tap 1dp inside the close button closed the sheet`,
-          );
-          return;
-        }
-        attempts.push(
-          `attempt ${attempt}: element tap 1dp inside the close button left ${this.bankTransferContentId} visible`,
-        );
-
-        await closeButton.longPress(insideButton);
-        if (await this.bankTransferIntroDismissed()) {
-          attempts.push(
-            `attempt ${attempt}: element long press 1dp inside the close button closed the sheet`,
-          );
-          return;
-        }
-        attempts.push(
-          `attempt ${attempt}: element long press 1dp inside the close button left ${this.bankTransferContentId} visible`,
-        );
-      }
-
-      throw new Error(
-        `${this.bankTransferContentId} stayed visible after ${maxAttempts} close attempts. ${attempts.join("; ")}`,
-      );
-    } finally {
-      await allure.attachment(
-        "Bank transfer intro close attempts",
-        attempts.join("\n"),
-        "text/plain",
-      );
-      await allure.attachment("Queued drawer logs", await queuedDrawerLogText(), "text/plain");
+    // await tapById(this.bankTransferCloseId);
+    const contentElement = getElementById(this.bankTransferContentId);
+    await contentElement.swipe("down");
+    if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
+      throw new Error(`${this.bankTransferContentId} stayed visible`);
     }
   }
 
