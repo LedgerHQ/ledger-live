@@ -207,6 +207,20 @@ describe("useAssetChartDataInCounterValue", () => {
       expect(result.current.isLoading).toBe(true);
     });
 
+    it("forwards a polling interval to the chart request", () => {
+      renderHook(() =>
+        useAssetChartDataInCounterValue(
+          { id: "bitcoin", counterCurrency: "usd", range: "1d", isCryptoCountervalue: false },
+          { skip: false, pollingInterval: 180_000 },
+        ),
+      );
+
+      expect(mockUseAssetChartData).toHaveBeenCalledWith(
+        { id: "bitcoin", counterCurrency: "usd", range: "1d" },
+        { skip: false, pollingInterval: 180_000 },
+      );
+    });
+
     it("skips the USD rate request when the chart request is skipped", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
 

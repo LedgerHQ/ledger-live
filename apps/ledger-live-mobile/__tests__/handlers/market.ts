@@ -56,6 +56,11 @@ const marketsResolver = ({ request }: { request: Request }) => {
     filteredData = marketsMock.filter(({ name, ticker }) =>
       coins.some(coin => ticker.toLowerCase().includes(coin) || name.toLowerCase().includes(coin)),
     );
+  } else if (searchParams.get("ledgerIds")) {
+    const requestedLedgerIds = new Set(searchParams.get("ledgerIds")?.split(",") ?? []);
+    filteredData = marketsMock.filter(({ ledgerIds }) =>
+      ledgerIds.some(ledgerId => requestedLedgerIds.has(ledgerId)),
+    );
   }
   // When we perform starred / trending hydration by ids
   else if (searchParams.get("ids")) {
