@@ -46,10 +46,10 @@ describe("createApi (integration)", () => {
     );
   });
 
-  // getBlockInfo / getBlock have no live test: they read /blocks-from-bluescore, which Ledger Live
-  // never calls, which the endpoint operators ask us not to use, and which is throttled hard. Their
-  // response mapping is covered by logic/history/getBlock*.msw.test.ts, the createApi delegation by
-  // api/index.unit.test.ts.
+  // getBlockInfo / getBlock are not repeated here: their live checks are
+  // logic/history/getBlockInfo.integ.test.ts and getBlock.integ.test.ts, currently skipped because the
+  // upstream provider throttles /blocks-from-bluescore hard. Their response mapping is covered by
+  // logic/history/getBlock*.msw.test.ts, the createApi delegation by api/index.unit.test.ts.
 
   // Smoke tests through the createApi() surface — deep coverage lives in the logic/*.integ.test.ts;
   // these verify the factory exposes and delegates each method correctly. Depend on FUNDED_SENDER
