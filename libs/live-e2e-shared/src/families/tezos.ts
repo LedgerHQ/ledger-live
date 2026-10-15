@@ -1,7 +1,8 @@
+import { getEnv } from "@shared/env";
 import {
   expectSpeculosEventsContain,
+  fetchCurrentScreenTexts,
   getDelegateEvents,
-  getDeviceLabels,
   pressUntilTextFound,
 } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
@@ -15,22 +16,26 @@ export const delegateTezos = withDeviceController(
     async (delegatingAccount: Delegate) => {
       const buttons = getButtonsController();
 
-      const { delegateConfirmLabel } = getDeviceLabels(
-        delegatingAccount.account.currency.speculosApp,
-      );
-
       const events = await getDelegateEvents(delegatingAccount);
       // Stake/unstake reviews show the amount on-device; a pure delegation (amount "N/A") shows the
       // baker address + fee but no amount, so only assert when an amount is expected.
       if (delegatingAccount.amount !== "N/A") {
         expectSpeculosEventsContain(delegatingAccount.amount, events);
       }
-      await pressUntilTextFound(delegateConfirmLabel);
 
       if (isTouchDevice()) {
         await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-      } else {
+        return;
+      }
+
+      // Tezos 3.0.6 on the Nano S cannot parse a reveal batched with a delegation.
+      const fellBackToBlindSigning = (
+        await fetchCurrentScreenTexts(getEnv("SPECULOS_API_PORT"))
+      ).includes(DeviceLabels.ACCEPT_RISK);
+      await buttons.both();
+      if (fellBackToBlindSigning) {
+        await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND);
         await buttons.both();
       }
     },

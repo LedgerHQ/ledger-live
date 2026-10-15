@@ -96,7 +96,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
       [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.SIGN,
-      [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT_AND_SEND,
+      [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT,
       default: DeviceLabels.CAPS_APPROVE,
     },
     sendVerify: {
