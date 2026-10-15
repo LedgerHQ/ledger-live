@@ -1,30 +1,26 @@
 // Zcash keeps wallet-btc's transparent account model, and with it the secp256k1 workers the
 // bitcoin family sets up for address derivation.
 import "../bitcoin/live-common-setup";
-import sendAmountFields from "../bitcoin/SendAmountFields";
-import sendRecipientFields from "../bitcoin/SendRecipientFields";
-import StepReceiveFundsPostAlert from "../bitcoin/StepReceiveFundsPostAlert";
-import StepReceiveFundsDeviceAnimation from "../bitcoin/ZcashReceiveDeviceAnimation";
-import SendStepRecipientFromSelector from "../bitcoin/ZcashTransferFromSelector";
-import SendStepAboveRecipientInput from "../bitcoin/ZcashSelfTransferToggle";
-import SendModalTitle from "../bitcoin/SendModalTitle";
-import AccountBalanceSummaryFooter from "../bitcoin/AccountBalanceSummaryFooter";
-import operationDetails from "../bitcoin/operationDetails";
-import PostBroadcastEffect from "../bitcoin/ZcashPostBroadcastSync";
-import { ZcashAmountStepSync } from "../bitcoin/ZcashAmountStepSync";
-import { ZcashSyncNotice } from "../bitcoin/ZcashSyncNotice";
-import { getAccountRecipientAddresses } from "../bitcoin/getAccountRecipientAddresses";
-import type { BitcoinFamily } from "../bitcoin/types";
-import type { ZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
+import sendAmountFields from "./SendAmountFields";
+import sendRecipientFields from "./SendRecipientFields";
+import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
+import StepReceiveFundsDeviceAnimation from "./ZcashReceiveDeviceAnimation";
+import SendStepRecipientFromSelector from "./ZcashTransferFromSelector";
+import SendStepAboveRecipientInput from "./ZcashSelfTransferToggle";
+import SendModalTitle from "./SendModalTitle";
+import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import operationDetails from "./operationDetails";
+import PostBroadcastEffect from "./ZcashPostBroadcastSync";
+import { ZcashAmountStepSync } from "./ZcashAmountStepSync";
+import { ZcashSyncNotice } from "./ZcashSyncNotice";
+import { getAccountRecipientAddresses } from "./getAccountRecipientAddresses";
+import type { ZcashFamily } from "./types";
 
 /**
- * The Zcash currencies' own family. Zcash has no fee market, no RBF and no coin control,
- * so none of the bitcoin family's fee, edit-transaction or staking pieces apply.
- *
- * Typed as the bitcoin family for now: the components it reuses are typed for bitcoin
- * accounts, which a Zcash account extends.
+ * The Zcash currencies' family. Zcash has no fee market, no RBF and no coin control, so it
+ * has none of the bitcoin family's fee, edit-transaction or staking pieces.
  */
-const family: BitcoinFamily = {
+const family: ZcashFamily = {
   sendAmountFields,
   sendRecipientFields,
   StepReceiveFundsPostAlert,
@@ -34,8 +30,7 @@ const family: BitcoinFamily = {
   // also run the standard transparent-only confirmation. Anything else — no
   // shielded address yet, or the feature turned off — keeps the standard path.
   useCustomConfirmAddress: (account, featureFlags) =>
-    !!featureFlags.zcashShielded?.enabled &&
-    !!(account as ZcashAccount).privateInfo?.shieldedAddress,
+    !!featureFlags.zcashShielded?.enabled && !!account.privateInfo?.shieldedAddress,
   SendStepRecipientFromSelector,
   SendStepAboveRecipientInput,
   SendModalTitle,

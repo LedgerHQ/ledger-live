@@ -1,8 +1,7 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { track } from "@shared/analytics";
@@ -16,8 +15,6 @@ import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
 import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
-import { useZcashShieldedSync } from "./useZcashShieldedSync";
-import ZcashSyncStateBanner from "./ZcashSyncStateBanner";
 
 type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 
@@ -39,21 +36,6 @@ const Fields: Props = ({
   const bridge = useAccountBridge<Transaction>(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
-  // Zcash prices fees with ZIP-317 (deterministic, action-based): there is no
-  // sat/vByte fee market, so the whole fee selector — the strategy list AND the
-  // advanced/custom controls — is removed. The ZIP-317 fee is applied
-  // automatically (see getAccountNetworkInfo).
-  const hideFeeSelection = account.currency.id === "zcash";
-  const zcashTx = transaction as unknown as ZcashTransaction;
-  const { startShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
-
-  useEffect(() => {
-    if (hideFeeSelection && zcashTx.sender === "private") startShieldedSync();
-    // Re-fire only when the source account or the chosen pool changes, not on
-    // every amount keystroke.
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [account.id, zcashTx.sender]);
-
   const [advanceMode, setAdvanceMode] = useState(
     !transaction.feesStrategy || transaction.feesStrategy === "custom",
   );
@@ -61,8 +43,6 @@ const Fields: Props = ({
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
-  // Hooks run before the `hideFeeSelection` return below, so this is reached even
-  // for zcash, whose coin-zcash transaction carries no utxo strategy.
   const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy?.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
@@ -104,12 +84,6 @@ const Fields: Props = ({
     },
     [onChange, trackProperties],
   );
-  if (hideFeeSelection) {
-    return zcashTx.sender === "private" ? (
-      <ZcashSyncStateBanner account={account as ZcashAccount} sender={zcashTx.sender} />
-    ) : null;
-  }
-
   return (
     <>
       <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceModeAndTrack} />
