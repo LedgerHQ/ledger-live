@@ -1,4 +1,9 @@
-import { toChecksScreenState, toFirmwareUpdate, toGenuineError } from "./checksPhase";
+import {
+  toChecksError,
+  toChecksScreenState,
+  toFirmwareUpdate,
+  toGenuineError,
+} from "./checksPhase";
 
 describe("toChecksScreenState", () => {
   it("should hide the checks screen before the checks phase", () => {
@@ -32,6 +37,26 @@ describe("toGenuineError", () => {
   it("should ignore a failure kind the screen does not show", () => {
     expect(toGenuineError(null)).toBeNull();
     expect(toGenuineError("OTHER")).toBeNull();
+  });
+});
+
+describe("toChecksError", () => {
+  it("should report a stopped genuine check", () => {
+    expect(toChecksError("checks.genuineFailed", "SECURE_CHANNEL_LOST")).toEqual({
+      kind: "network",
+    });
+    expect(toChecksError("checks.notGenuineSupport", "DEVICE_NOT_GENUINE")).toEqual({
+      kind: "notGenuine",
+    });
+  });
+
+  it("should report a failed firmware check as retryable", () => {
+    expect(toChecksError("checks.firmwareCheckFailed", null)).toEqual({ kind: "unknown" });
+  });
+
+  it("should drop a remembered failure once the checks moved on", () => {
+    expect(toChecksError("checks.checksIdle", "GENUINE_CHECK_REFUSED")).toBeNull();
+    expect(toChecksError("checks.genuineCheck.running", "GENUINE_CHECK_REFUSED")).toBeNull();
   });
 });
 

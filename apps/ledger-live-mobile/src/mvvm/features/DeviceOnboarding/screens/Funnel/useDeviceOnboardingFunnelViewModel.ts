@@ -1,14 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  useNavigation,
+  useRoute,
+  type NavigationProp,
+  type ParamListBase,
+  type RouteProp,
+} from "@react-navigation/native";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import type { ScreenName } from "~/const";
+import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import { useDeviceOnboarding } from "../../hooks/useDeviceOnboarding";
 import { useOfferSync } from "../../hooks/useOfferSync";
-import { toChecksScreenState, toFirmwareUpdate, toGenuineError } from "../../utils/checksPhase";
+import { toChecksError, toChecksScreenState, toFirmwareUpdate } from "../../utils/checksPhase";
+
+type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
 export type DeviceOnboardingFunnelModel =
   | { status: "checks"; checks: ChecksScreenProps }
@@ -24,10 +33,13 @@ export type DeviceOnboardingFunnelModel =
 
 export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelModel {
   const dmk = useDeviceManagementKit();
-  const knownDevices = useSelector(knownDevicesSelector);
+  const allKnownDevices = useSelector(knownDevicesSelector);
+  const { pairedDeviceId, wasReadOnlyAtEntry } = useRoute<FunnelRoute>().params;
+  const knownDevices = useMemo(() => {
+    const paired = allKnownDevices.filter(known => known.id === pairedDeviceId);
+    return paired.length > 0 ? paired : allKnownDevices;
+  }, [allKnownDevices, pairedDeviceId]);
   const offerSync = useOfferSync();
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const [wasReadOnlyAtEntry] = useState(readOnlyModeEnabled);
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { t } = useTranslation();
   const onboarding = useDeviceOnboarding({
@@ -96,7 +108,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     checks: {
       device,
       state: screenState,
-      error: toGenuineError(readString(onboarding.context?.genuineFailureKind)),
+      error: toChecksError(onboarding.state, readString(onboarding.context?.genuineFailureKind)),
       update: toFirmwareUpdate(
         readString(onboarding.context?.firmwareVersion),
         readString(onboarding.context?.availableFirmwareVersion),

@@ -17,6 +17,7 @@ describe("useCompleteSeededOnboarding", () => {
       readOnlyModeEnabled: true,
       hasCompletedOnboarding: false,
       hasBeenRedirectedToPostOnboarding: true,
+      hasBeenUpsoldProtect: true,
     });
 
     act(() => result.current());
@@ -24,6 +25,7 @@ describe("useCompleteSeededOnboarding", () => {
 
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
+    expect(store.getState().settings.hasBeenUpsoldProtect).toBe(false);
     expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(false);
   });
 

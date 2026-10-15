@@ -5,6 +5,7 @@ import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import type { State } from "~/reducers/types";
 import PairNew from "./PairNew";
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
@@ -15,11 +16,20 @@ jest.mock("./setupDevice/scenes", () => {
   const ReactActual = require("react") as typeof import("react");
   const { Pressable, Text: Label } = require("react-native") as typeof import("react-native");
   return {
-    ConnectDevice: ({ onSuccess }: { onSuccess: () => void }) =>
+    ConnectDevice: ({
+      onSuccess,
+      keepReadOnlyMode,
+    }: {
+      onSuccess: (device?: { deviceId: string }) => void;
+      keepReadOnlyMode?: boolean;
+    }) =>
       ReactActual.createElement(
         Pressable,
-        { accessibilityLabel: "finish pairing", onPress: onSuccess },
-        ReactActual.createElement(Label, null, "finish"),
+        {
+          accessibilityLabel: "finish pairing",
+          onPress: () => onSuccess({ deviceId: "paired-id" }),
+        },
+        ReactActual.createElement(Label, null, `keeps read-only: ${String(keepReadOnlyMode)}`),
       ),
   };
 });
@@ -34,7 +44,11 @@ type TestStackParamList = OnboardingNavigatorParamList & {
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
 
-function renderPairNew(connectSeededDevice: boolean | undefined, deviceOnboardingEnabled: boolean) {
+function renderPairNew(
+  connectSeededDevice: boolean | undefined,
+  deviceOnboardingEnabled: boolean,
+  readOnlyModeEnabled = false,
+) {
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen
@@ -47,7 +61,11 @@ function renderPairNew(connectSeededDevice: boolean | undefined, deviceOnboardin
         }}
       />
       <Stack.Screen name={ScreenName.DeviceOnboardingFunnel}>
-        {() => <Placeholder label="seeded funnel" />}
+        {({ route }) => (
+          <Placeholder
+            label={`seeded funnel ${route.params.pairedDeviceId} ${String(route.params.wasReadOnlyAtEntry)}`}
+          />
+        )}
       </Stack.Screen>
       <Stack.Screen name={ScreenName.OnboardingBluetoothInformation}>
         {() => <Placeholder label="bluetooth" />}
@@ -57,12 +75,18 @@ function renderPairNew(connectSeededDevice: boolean | undefined, deviceOnboardin
       </Stack.Screen>
     </Stack.Navigator>,
     {
-      overrideInitialState: withFlagOverrides({
-        deviceOnboarding: {
-          enabled: deviceOnboardingEnabled,
-          params: { connectSeededDevice: true },
+      overrideInitialState: withFlagOverrides(
+        {
+          deviceOnboarding: {
+            enabled: deviceOnboardingEnabled,
+            params: { connectSeededDevice: true },
+          },
         },
-      }),
+        (state: State) => ({
+          ...state,
+          settings: { ...state.settings, readOnlyModeEnabled },
+        }),
+      ),
     },
   );
 }
@@ -77,16 +101,24 @@ describe("PairNew", () => {
     await user.press(screen.getByLabelText("finish pairing"));
 
     expect(await screen.findByText("portfolio")).toBeVisible();
-    expect(screen.queryByText("seeded funnel")).toBeNull();
+    expect(screen.queryByText(/seeded funnel/)).toBeNull();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
   });
 
-  it("should open the seeded funnel without completing when the funnel is on", async () => {
-    const { user, store } = renderPairNew(true, true);
+  it("should hand the paired device to the seeded funnel without completing", async () => {
+    const { user, store } = renderPairNew(true, true, true);
 
+    expect(screen.getByText("keeps read-only: true")).toBeVisible();
     await user.press(screen.getByLabelText("finish pairing"));
 
-    expect(await screen.findByText("seeded funnel")).toBeVisible();
+    expect(await screen.findByText("seeded funnel paired-id true")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
+  });
+
+  it("should let pairing clear read-only mode when the funnel is off", () => {
+    renderPairNew(true, false, true);
+
+    expect(screen.getByText("keeps read-only: false")).toBeVisible();
   });
 });

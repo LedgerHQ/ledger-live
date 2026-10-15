@@ -1,13 +1,19 @@
 import { renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import type { State } from "~/reducers/types";
 import { useDeviceOnboarding, type DeviceOnboardingSession } from "../../hooks/useDeviceOnboarding";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
 const goBack = jest.fn();
+let mockRouteParams: { pairedDeviceId?: string; wasReadOnlyAtEntry: boolean } = {
+  wasReadOnlyAtEntry: true,
+};
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({ goBack }),
+  useRoute: () => ({ params: mockRouteParams }),
 }));
 
 jest.mock("../../hooks/useDeviceOnboarding", () => ({
@@ -50,6 +56,48 @@ function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) 
 describe("useDeviceOnboardingFunnelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockRouteParams = { wasReadOnlyAtEntry: true };
+  });
+
+  it.each([
+    ["the paired device", "paired-id", ["paired-id"]],
+    ["every known device when the paired one is unknown", "other-id", ["paired-id", "nearby-id"]],
+  ])("should connect to %s", (_, pairedDeviceId, expectedIds) => {
+    mockRouteParams = { pairedDeviceId, wasReadOnlyAtEntry: false };
+    useSession.mockReturnValue(session());
+
+    renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        knownDevices: {
+          knownDevices: [
+            { id: "paired-id", name: "Paired Stax" },
+            { id: "nearby-id", name: "Nearby Stax" },
+          ] as KnownDevice[],
+        },
+      }),
+    });
+
+    const input = useSession.mock.calls[0][0];
+    expect(input.knownDevices.map(known => known.id)).toEqual(expectedIds);
+    expect(input.wasReadOnlyAtEntry).toBe(false);
+  });
+
+  it.each([
+    ["checks.genuineFailed", "GENUINE_CHECK_FAILED", { kind: "unknown" }],
+    ["checks.notGenuineSupport", "DEVICE_NOT_GENUINE", { kind: "notGenuine" }],
+    ["checks.firmwareCheckFailed", null, { kind: "unknown" }],
+  ])("should surface the stopped check in %s", (state, genuineFailureKind, error) => {
+    useSession.mockReturnValue(
+      session({
+        state,
+        context: { genuineFailureKind, checksPaused: false } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).error).toEqual(error);
   });
 
   it.each(["readingState", "legacyFallback", "done", "syncOffer"])(
@@ -174,7 +222,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       [{ type: "USER_DECLINE" }],
     ]);
     expect(checks.state).toBe("awaitingAllow");
-    expect(checks.error).toEqual({ kind: "declined" });
+    expect(checks.error).toBeNull();
     expect(useSession).toHaveBeenCalledWith(
       expect.objectContaining({ navigateOnExit: true, wasReadOnlyAtEntry: true }),
     );

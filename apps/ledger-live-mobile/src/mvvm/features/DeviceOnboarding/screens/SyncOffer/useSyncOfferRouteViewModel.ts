@@ -10,7 +10,9 @@ import {
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
-import { useSelector } from "~/context/hooks";
+import { setOnboardingType } from "~/actions/settings";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { OnboardingType } from "~/reducers/types";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { useCompleteSeededOnboarding } from "../../hooks/useCompleteSeededOnboarding";
 import { resetToPortfolio } from "../../utils/exitActions";
@@ -20,6 +22,7 @@ type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboa
 
 export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const dispatch = useDispatch();
   const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const [handoverStarted, setHandoverStarted] = useState(false);
@@ -52,11 +55,13 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
+    // Ledger Sync only creates a trustchain for a new setup or a completed onboarding.
+    dispatch(setOnboardingType(OnboardingType.setupNew));
     navigation.getParent()?.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
       params: { device },
     });
-  }, [device, navigation]);
+  }, [device, dispatch, navigation]);
 
   const onLearnMore = useCallback(() => {
     if (learnMoreLink) Linking.openURL(learnMoreLink);

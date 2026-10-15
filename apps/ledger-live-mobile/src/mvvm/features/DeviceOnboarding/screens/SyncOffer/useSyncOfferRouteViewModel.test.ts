@@ -2,7 +2,7 @@ import { Linking } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
-import type { State } from "~/reducers/types";
+import { OnboardingType, type State } from "~/reducers/types";
 import { seededFunnelEntrySource } from "LLM/features/DeviceOnboarding/types";
 import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
 
@@ -79,6 +79,7 @@ describe("useSyncOfferRouteViewModel", () => {
       params: { device },
     });
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
     expect(reset).not.toHaveBeenCalled();
   });
 

@@ -298,6 +298,7 @@ export function useDeviceOnboarding({
 
   useFirmwareUpdateHandover({
     device: liveDevice,
+    isDeviceOnboarded: context?.isOnboarded ?? false,
     machineState: state,
     send,
   });
