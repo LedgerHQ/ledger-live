@@ -100,7 +100,7 @@ implementation behind this thunk contract.
 
 ## Scope
 
-This package owns the RTK Query adapter and auth environment state. Concrete provider
+This package owns the RTK Query adapter. Concrete provider
 construction, feature selection, credentials, and platform cryptography remain in each
 app's composition root.
 
