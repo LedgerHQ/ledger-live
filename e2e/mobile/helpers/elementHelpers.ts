@@ -22,6 +22,18 @@ interface WebElementWithMatcher extends WebElement {
   };
 }
 
+const HARD_TIMEOUT_MARKER = "possible bridge hang";
+const CONCURRENT_INTERACTION_MARKER = "multiple interactions taking place";
+
+/**
+ * True when a Detox request was abandoned or rejected before the app answered it, so the check
+ * it carried never ran. Detox keeps such a request in flight and rejects every later atomic one.
+ */
+export function isUnansweredDetoxRequestError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(HARD_TIMEOUT_MARKER) || message.includes(CONCURRENT_INTERACTION_MARKER);
+}
+
 function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
   return (
     (isIos() && typeof obj === "object" && obj !== null && "matcher" in obj) ||
@@ -55,21 +67,38 @@ async function withHardTimeout<T>(
       new Promise<never>((_, reject) => {
         timer = setTimeout(
           () =>
-            reject(new Error(`Detox action timed out after ${timeoutMs}ms (possible bridge hang)`)),
+            reject(
+              new Error(`Detox action timed out after ${timeoutMs}ms (${HARD_TIMEOUT_MARKER})`),
+            ),
           timeoutMs,
         );
       }),
     ]);
   } catch (err) {
     // Not swallowed: the rejected action never happened, so the caller must still fail.
-    if (err instanceof Error && err.message.includes("multiple interactions taking place")) {
+    if (err instanceof Error && err.message.includes(CONCURRENT_INTERACTION_MARKER)) {
       log.warn(
-        `${err.message}\nMay be caused by an earlier abandoned timeout - check for a preceding "possible bridge hang" warning.`,
+        `${err.message}\nMay be caused by an earlier abandoned timeout - check for a preceding "${HARD_TIMEOUT_MARKER}" warning.`,
       );
     }
     throw err;
   } finally {
     clearTimeout(timer);
+  }
+}
+
+/**
+ * Resolves a Detox wait to true when it matches, false when it does not. Rethrows when the app
+ * never answered: Detox starts the wait's own timeout only once the app is idle, so an app that
+ * never idles would otherwise hold the probe until the Jest test timeout.
+ */
+async function probeNativeElement(wait: Promise<unknown>, timeout: number): Promise<boolean> {
+  try {
+    await withHardTimeout(wait, timeout + TIMEOUT.xxxlarge);
+    return true;
+  } catch (error) {
+    if (isUnansweredDetoxRequestError(error)) throw error;
+    return false;
   }
 }
 
@@ -286,21 +315,17 @@ export const NativeElementHelpers = {
   },
 
   async isIdVisible(id: string | RegExp, timeout: number = TIMEOUT.xxsmall): Promise<boolean> {
-    try {
-      await waitFor(NativeElementHelpers.getElementById(id)).toBeVisible().withTimeout(timeout);
-      return true;
-    } catch {
-      return false;
-    }
+    return probeNativeElement(
+      waitFor(NativeElementHelpers.getElementById(id)).toBeVisible().withTimeout(timeout),
+      timeout,
+    );
   },
 
   async isIdPresent(id: string | RegExp, timeout: number = TIMEOUT.xxsmall): Promise<boolean> {
-    try {
-      await waitFor(NativeElementHelpers.getElementById(id)).toExist().withTimeout(timeout);
-      return true;
-    } catch {
-      return false;
-    }
+    return probeNativeElement(
+      waitFor(NativeElementHelpers.getElementById(id)).toExist().withTimeout(timeout),
+      timeout,
+    );
   },
 
   async tapById(id: string | RegExp, index = 0) {
