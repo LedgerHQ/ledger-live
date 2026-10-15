@@ -17,11 +17,11 @@ const COLOR_CLASS_MAP: Record<FearAndGreedColorKey, string> = {
   muted: "text-muted",
 };
 
-type CardProps = {
+type CardProps = Readonly<{
   data: FearAndGreedIndex;
   Gauge: GaugeComponent;
   onPress: () => void;
-};
+}>;
 
 export function Card({ data, Gauge, onPress }: CardProps) {
   const { t } = useTranslation();

@@ -5,10 +5,10 @@ import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "@shared/i18n";
 import { EXPANDED_CARD_HEIGHT } from "./constants";
 
-type ErrorCardProps = {
+type ErrorCardProps = Readonly<{
   width?: number;
   testID?: string;
-};
+}>;
 
 export function ErrorCard({ width, testID }: ErrorCardProps) {
   const { t } = useTranslation();
