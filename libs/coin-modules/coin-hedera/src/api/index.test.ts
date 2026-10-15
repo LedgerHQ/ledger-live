@@ -21,7 +21,7 @@ jest.mock("../network/utils");
 jest.mock("../network/api");
 
 const mockExtractInitiator = jest.mocked(logicUtils.extractInitiator);
-const mockGetOperationValue = jest.mocked(logicUtils.getOperationValue);
+const mockGetOperationFields = jest.mocked(logicUtils.getOperationFields);
 const mockGetDateRangeFromBlockHeight = jest.mocked(logicUtils.getDateRangeFromBlockHeight);
 const mockMapIntentToSDKOperation = jest.mocked(mapIntentToSDKOperation);
 const mockGetAccount = jest.mocked(apiClient.getAccount);
@@ -366,7 +366,12 @@ describe("createApi", () => {
 
     beforeEach(() => {
       mockExtractInitiator.mockReturnValue(mockFeesPayer);
-      mockGetOperationValue.mockReturnValue(100n);
+      mockGetOperationFields.mockImplementation(({ operation }) => ({
+        type: operation.type,
+        value: 100n,
+        senders: operation.senders,
+        recipients: operation.recipients,
+      }));
       mockGetAccount.mockResolvedValue(getMockedMirrorAccount({ evm_address: "0xabc" }));
       mockGetAccountTokens.mockResolvedValue([]);
       mockGetERC20BalancesForAccountV2.mockResolvedValue([]);
@@ -678,7 +683,7 @@ describe("createApi", () => {
 
       await api.listOperations(mockContext, accountAddress, mockOptions);
 
-      expect(mockGetOperationValue).toHaveBeenCalledWith({
+      expect(mockGetOperationFields).toHaveBeenCalledWith({
         asset: { type: "native" },
         operation,
         accountAddress,
