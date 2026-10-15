@@ -1,5 +1,4 @@
 import React from "react";
-import { getEnv } from "@shared/env";
 import { AppAvailability } from "@features/flow-app-availability";
 import { http, HttpResponse } from "msw";
 import { server } from "tests/server";
@@ -8,7 +7,7 @@ import { mockMarket } from "tests/utils/assetDetailMocks";
 import createStore from "~/state-manager/configureStore";
 import { LiftSplashOnAppAvailability } from "../index";
 
-const CAL_CURRENCIES = `${getEnv("CAL_SERVICE_URL")}/v1/currencies`;
+const CAL_CURRENCIES = "*/v1/currencies";
 
 function hangCal() {
   server.use(http.get(CAL_CURRENCIES, () => new Promise(() => {})));
