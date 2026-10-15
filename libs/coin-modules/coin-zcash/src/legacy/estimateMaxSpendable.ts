@@ -4,6 +4,7 @@ import wallet from "@ledgerhq/wallet-btc/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { ZcashContext } from "../config";
 import type { Transaction, ZcashAccount } from "../types/bridge";
+import { marginalFeeFor } from "../logic/coin-selection";
 import { zcashSafeFeePerByte } from "./fees";
 import { resolveWalletAccount } from "./buildTransaction";
 
@@ -16,9 +17,11 @@ export const buildLegacyEstimateMaxSpendable =
   async ({ account, parentAccount, transaction }) => {
     const mainAccount = getMainAccount(account, parentAccount) as ZcashAccount;
     const walletAccount = await resolveWalletAccount(context, mainAccount);
+    const { zip2009 } = await context.config(mainAccount.currency.id);
     const feePerByte = zcashSafeFeePerByte(
       walletAccount.xpub.crypto,
       walletAccount.xpub.derivationMode,
+      marginalFeeFor(mainAccount, zip2009),
     );
 
     const maxSpendable = await wallet.estimateAccountMaxSpendable(

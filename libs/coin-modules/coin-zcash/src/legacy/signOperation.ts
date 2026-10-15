@@ -9,6 +9,7 @@ import type { BitcoinCreateTransactionLike } from "@ledgerhq/live-signer-zcash";
 import type { ZcashContext } from "../config";
 import type { BtcInputRef, Transaction, ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
+import { marginalFeeFor } from "../logic/coin-selection";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
 
 // The signer recognises Zcash by the "zcash" marker alone (both networks), and "sapling"
@@ -94,7 +95,13 @@ export const buildLegacySignOperation =
     new Observable<SignOperationEvent>(subscriber => {
       (async () => {
         const walletAccount = await resolveWalletAccount(context, account);
-        const { txInfo } = await buildLegacyTransaction(context.logger, walletAccount, transaction);
+        const { zip2009 } = await context.config(account.currency.id);
+        const { txInfo } = await buildLegacyTransaction(
+          context.logger,
+          walletAccount,
+          transaction,
+          marginalFeeFor(account, zip2009),
+        );
 
         const signature = await signerContext(deviceId, signer =>
           signer.createPaymentTransaction(

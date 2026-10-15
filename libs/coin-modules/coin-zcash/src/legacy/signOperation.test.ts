@@ -81,6 +81,32 @@ beforeEach(() => {
 });
 
 describe("buildLegacySignOperation", () => {
+  it.each([
+    [3_590_098, "zcash", 5_000],
+    [3_590_099, "zcash", 1_000],
+    [0, "zcash_testnet", 1_000],
+  ])(
+    "builds an account at height %i on %s at %i per action",
+    async (blockHeight, id, marginalFee) => {
+      const { signerContext } = makeSigner();
+      const acc = { ...account, currency: { id }, blockHeight } as unknown as ZcashAccount;
+
+      await firstValueFrom(
+        buildLegacySignOperation(
+          signerContext,
+          testContext,
+        )({ account: acc, deviceId: "d", transaction }).pipe(toArray()),
+      );
+
+      expect(mockBuild).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        transaction,
+        marginalFee,
+      );
+    },
+  );
+
   it("asks the device to sign the built transaction as a Zcash transparent payment", async () => {
     const { createPaymentTransaction, signerContext } = makeSigner();
 

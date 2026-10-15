@@ -61,9 +61,11 @@ export function buildLegacyTransaction(
   logger: Logger,
   walletAccount: WalletAccount,
   transaction: Transaction,
+  marginalFee: number,
 ): Promise<PricedBuild> {
   return buildAtZip317Rate(
-    zcashSafeFeePerByte(walletAccount.xpub.crypto, walletAccount.xpub.derivationMode),
+    zcashSafeFeePerByte(walletAccount.xpub.crypto, walletAccount.xpub.derivationMode, marginalFee),
+    marginalFee,
     feePerByte => buildAtRate(logger, walletAccount, transaction, feePerByte),
   );
 }

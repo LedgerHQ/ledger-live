@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { ICrypto } from "@ledgerhq/wallet-btc/crypto/types";
 import { maxTxVBytesCeil } from "@ledgerhq/wallet-btc/utils";
-import { ZIP317_MINIMUM_FEE, computeZip317Fee } from "../logic/coin-selection";
+import { computeZip317Fee, zip317MinimumFee } from "../logic/coin-selection";
 
 /**
  * ZIP-317 pricing on top of wallet-btc's sat/vByte model.
@@ -17,16 +17,20 @@ import { ZIP317_MINIMUM_FEE, computeZip317Fee } from "../logic/coin-selection";
 /**
  * Rate that covers ZIP-317 for every layout. The binding case is the smallest
  * transaction that can be built, one input and one output, because the two-action
- * floor applies to it in full: 10_000 zats over its vBytes.
+ * floor applies to it in full: two actions' worth of zats over its vBytes.
  */
-export function zcashSafeFeePerByte(crypto: ICrypto, derivationMode: string): BigNumber {
+export function zcashSafeFeePerByte(
+  crypto: ICrypto,
+  derivationMode: string,
+  marginalFee: number,
+): BigNumber {
   const smallestTxVBytes = maxTxVBytesCeil(1, [], true, crypto, derivationMode);
-  return new BigNumber(Math.ceil(ZIP317_MINIMUM_FEE / Math.max(1, smallestTxVBytes)));
+  return new BigNumber(Math.ceil(zip317MinimumFee(marginalFee) / Math.max(1, smallestTxVBytes)));
 }
 
 /** What ZIP-317 requires for the layout a build resolved to. */
-export const requiredFee = (txInfo: TransactionInfo): BigNumber =>
-  computeZip317Fee(0, 0, txInfo.inputs.length, txInfo.outputs.length);
+export const requiredFee = (txInfo: TransactionInfo, marginalFee: number): BigNumber =>
+  computeZip317Fee(0, 0, txInfo.inputs.length, txInfo.outputs.length, marginalFee);
 
 export type PricedBuild = { txInfo: TransactionInfo; feePerByte: BigNumber };
 
@@ -38,6 +42,7 @@ export type PricedBuild = { txInfo: TransactionInfo; feePerByte: BigNumber };
  */
 export async function buildAtZip317Rate(
   safeFeePerByte: BigNumber,
+  marginalFee: number,
   build: (feePerByte: BigNumber) => Promise<TransactionInfo>,
 ): Promise<PricedBuild> {
   const atSafeRate = await build(safeFeePerByte);
@@ -46,7 +51,7 @@ export async function buildAtZip317Rate(
   if (!charged.isFinite() || charged.lte(0)) return safe;
 
   const tightened = safeFeePerByte
-    .times(requiredFee(atSafeRate))
+    .times(requiredFee(atSafeRate, marginalFee))
     .div(charged)
     .integerValue(BigNumber.ROUND_CEIL);
   // Nothing to gain when the safe rate is already at or below what this layout owes.
@@ -54,7 +59,7 @@ export async function buildAtZip317Rate(
 
   try {
     const atTightenedRate = await build(tightened);
-    return new BigNumber(atTightenedRate.fee).gte(requiredFee(atTightenedRate))
+    return new BigNumber(atTightenedRate.fee).gte(requiredFee(atTightenedRate, marginalFee))
       ? { txInfo: atTightenedRate, feePerByte: tightened }
       : safe;
   } catch {

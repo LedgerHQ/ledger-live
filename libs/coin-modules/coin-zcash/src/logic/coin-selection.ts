@@ -1,6 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import type { ZcashTransferType } from "../types/bridge";
+import type { ZcashAccount, ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
+import type { ZcashConfig } from "../config";
+import { zcashNetworkOf, type ZcashNetwork } from "./network";
 
 // ── ZIP-317 fee model ──────────────────────────────────────────────────────
 //
@@ -8,18 +10,30 @@ import type { SpendableNote } from "../network/types";
 // (ledger-zcash-utils, crates/zcash-crypto/src/craft.rs). `buildTransaction`
 // rejects any fee that is not exactly the ZIP-317 fee for the final action
 // layout (`fee != required_fee`), so the wallet has to price a transaction the
-// same way the builder does. In particular the Orchard pool is floored to
+// same way the builder does, at the marginal fee the builder accepts for the
+// target height (see `marginalFeeAt`). In particular the Orchard pool is floored to
 // ORCHARD_MIN_ACTIONS *independently* of the transparent pool before the two
 // are summed — a single collapsed `max(grace, in + out)` does not capture that
 // and underprices the mixed-pool (Public↔Private) flows.
-export const ZIP317_MARGINAL_FEE = 5_000; // per logical action
+/** Marginal fee per logical action before ZIP 2009. */
+export const LEGACY_MARGINAL_FEE = 5_000;
+/** Marginal fee per logical action once ZIP 2009 is active (and on test networks). */
+export const ZIP2009_MARGINAL_FEE = 1_000;
+/** Mainnet height from which the builder prices at the ZIP 2009 marginal fee; the
+ * lowest switch height the coin config can set. */
+export const ZIP2009_MAINNET_HEIGHT = 3_590_000;
+/** Blocks past the switch height before the wallet prices at the ZIP 2009 fee.
+ * The builder targets the node's tip + 1, accepts the legacy fee past the
+ * switch and refuses the lower one before it, so under-estimating the height is
+ * safe and over-estimating is not; the synced height can lead the node's. */
+export const ZIP2009_SWITCH_MARGIN = 100;
 export const ZIP317_GRACE_ACTIONS = 2;
 /** Orchard `BundleType::DEFAULT` pads to at least this many actions (mirrors
  * `ORCHARD_MIN_ACTIONS` / orchard's `MIN_ACTIONS`). Applied only when the
  * Orchard bundle is non-empty. */
 export const ORCHARD_MIN_ACTIONS = 2;
-/** Minimum fee (grace actions * marginal fee). */
-export const ZIP317_MINIMUM_FEE = ZIP317_GRACE_ACTIONS * ZIP317_MARGINAL_FEE; // 10_000
+/** Minimum fee (grace actions * marginal fee): 10_000 at the legacy fee. */
+export const zip317MinimumFee = (marginalFee: number): number => ZIP317_GRACE_ACTIONS * marginalFee;
 /** Maximum fee iteration rounds before giving up. */
 const MAX_ITERATIONS = 5;
 
@@ -29,9 +43,58 @@ const MAX_ITERATIONS = 5;
 export const TRANSPARENT_OUTPUT_DUST_THRESHOLD = 54;
 
 /**
+ * Marginal fee per logical action the builder accepts for a transaction mined
+ * after `syncedHeight`: 1_000 on test networks at every height, and on mainnet
+ * from the ZIP 2009 switch height; 5_000 before it. The switch is applied
+ * `ZIP2009_SWITCH_MARGIN` blocks late (see its comment).
+ *
+ * `mainnetSwitchHeight` is the configured mainnet switch: `null` never switches, and a
+ * height below `ZIP2009_MAINNET_HEIGHT` is raised to it, since the builder refuses the
+ * lower fee earlier. Test networks ignore it.
+ */
+export function marginalFeeAt(
+  network: ZcashNetwork,
+  syncedHeight: number,
+  mainnetSwitchHeight: number | null,
+): number {
+  if (network === "testnet") return ZIP2009_MARGINAL_FEE;
+  if (mainnetSwitchHeight === null) return LEGACY_MARGINAL_FEE;
+  const switchHeight = Math.max(mainnetSwitchHeight, ZIP2009_MAINNET_HEIGHT);
+  return syncedHeight + 1 >= switchHeight + ZIP2009_SWITCH_MARGIN
+    ? ZIP2009_MARGINAL_FEE
+    : LEGACY_MARGINAL_FEE;
+}
+
+/**
+ * The configured mainnet switch height: a finite height as is, `null` (disabled) as is,
+ * and the module default for anything else. The setting comes from the remote coin
+ * config, so an absent, `null` or malformed `zip2009` must not break or disable fees.
+ */
+function configuredSwitchHeight(zip2009: ZcashConfig["zip2009"]): number | null {
+  const mainnetHeight: unknown = zip2009?.mainnetHeight;
+  if (mainnetHeight === null) return null;
+  return typeof mainnetHeight === "number" && Number.isFinite(mainnetHeight)
+    ? mainnetHeight
+    : ZIP2009_MAINNET_HEIGHT;
+}
+
+/**
+ * The marginal fee to price a send from `account` at, from its synced height and the
+ * coin config's `zip2009` setting (see {@link configuredSwitchHeight}).
+ */
+export function marginalFeeFor(account: ZcashAccount, zip2009: ZcashConfig["zip2009"]): number {
+  return marginalFeeAt(
+    zcashNetworkOf(account.currency.id),
+    account.blockHeight ?? 0,
+    configuredSwitchHeight(zip2009),
+  );
+}
+
+/**
  * ZIP-317 fee in zatoshis for a per-pool action layout. Mirror of
  * `zip317_fee(n_spends, n_orchard_outputs, n_transparent_inputs,
- * n_transparent_outputs)` in the native builder (craft.rs):
+ * n_transparent_outputs)` in the native builder (craft.rs), at `marginalFee`
+ * zatoshis per logical action:
  *
  *   orchard_actions     = (n_spends == 0 && n_orchard_outputs == 0)
  *                           ? 0
@@ -50,6 +113,7 @@ export function computeZip317Fee(
   nOrchardOutputs: number,
   nTransparentInputs: number,
   nTransparentOutputs: number,
+  marginalFee: number,
 ): BigNumber {
   const orchardActions =
     nSpends === 0 && nOrchardOutputs === 0
@@ -57,7 +121,7 @@ export function computeZip317Fee(
       : Math.max(ORCHARD_MIN_ACTIONS, Math.max(nSpends, nOrchardOutputs));
   const transparentActions = Math.max(nTransparentInputs, nTransparentOutputs);
   const logicalActions = transparentActions + orchardActions;
-  return new BigNumber(ZIP317_MARGINAL_FEE * Math.max(ZIP317_GRACE_ACTIONS, logicalActions));
+  return new BigNumber(marginalFee * Math.max(ZIP317_GRACE_ACTIONS, logicalActions));
 }
 
 /**
@@ -77,13 +141,14 @@ export function computeShieldedSpendFee(
   spendCount: number,
   hasChange: boolean,
   transferType: ZcashTransferType,
+  marginalFee: number,
 ): BigNumber {
   const changeOutputs = hasChange ? 1 : 0;
   return transferType === "shielded-to-transparent"
     ? // transparent recipient (1 t-out) + optional shielded change (Ironwood out)
-      computeZip317Fee(spendCount, changeOutputs, 0, 1)
+      computeZip317Fee(spendCount, changeOutputs, 0, 1, marginalFee)
     : // recipient + optional change, both shielded outputs
-      computeZip317Fee(spendCount, 1 + changeOutputs, 0, 0);
+      computeZip317Fee(spendCount, 1 + changeOutputs, 0, 0, marginalFee);
 }
 
 /**
@@ -93,14 +158,15 @@ export function computeShieldedSpendFee(
  * plus an optional shielded change note). No transparent change output is
  * created (`transparent_outputs = 0`); any surplus is taken as an Orchard
  * change note. The Orchard bundle is floored to ORCHARD_MIN_ACTIONS, so the fee
- * is `MARGINAL_FEE * max(GRACE, transparent_in + max(2, orchard_out))` — the
+ * is `marginalFee * max(GRACE, transparent_in + max(2, orchard_out))` — the
  * per-pool Orchard floor the old `transparent_in + orchard_out` sum omitted.
  */
 export function computeShieldingFee(
   transparentInputCount: number,
   orchardOutputCount: number,
+  marginalFee: number,
 ): BigNumber {
-  return computeZip317Fee(0, orchardOutputCount, transparentInputCount, 0);
+  return computeZip317Fee(0, orchardOutputCount, transparentInputCount, 0, marginalFee);
 }
 
 /**
@@ -121,10 +187,11 @@ export function computeTransparentSelectionFee(
   inputCount: number,
   outputCount: number,
   transferType: ZcashTransferType,
+  marginalFee: number,
 ): BigNumber {
   return transferType === "transparent-to-shielded"
-    ? computeShieldingFee(inputCount, outputCount)
-    : computeZip317Fee(0, 0, inputCount, outputCount);
+    ? computeShieldingFee(inputCount, outputCount, marginalFee)
+    : computeZip317Fee(0, 0, inputCount, outputCount, marginalFee);
 }
 
 export type TransparentSelectionResult = {
@@ -147,6 +214,7 @@ export function selectTransparentInputs(
   amount: BigNumber,
   useAllAmount: boolean,
   transferType: ZcashTransferType,
+  marginalFee: number,
 ): TransparentSelectionResult | undefined {
   if (utxoValues.length === 0) return undefined;
   const totalInput = utxoValues.reduce((sum, v) => sum.plus(v), new BigNumber(0));
@@ -154,13 +222,13 @@ export function selectTransparentInputs(
 
   if (useAllAmount) {
     // Single recipient output, no change.
-    const fee = computeTransparentSelectionFee(inputCount, 1, transferType);
+    const fee = computeTransparentSelectionFee(inputCount, 1, transferType, marginalFee);
     if (totalInput.minus(fee).lte(0)) return undefined;
     return { totalInput, fee, changeAmount: new BigNumber(0) };
   }
 
   // Assume a change output (recipient + change = 2 outputs).
-  const fee = computeTransparentSelectionFee(inputCount, 2, transferType);
+  const fee = computeTransparentSelectionFee(inputCount, 2, transferType, marginalFee);
   const changeAmount = totalInput.minus(amount).minus(fee);
 
   // Dropping the change output would not make an unaffordable amount affordable:
@@ -189,10 +257,11 @@ export function selectTransparentInputs(
 export function estimateMaxSpendableTransparent(
   utxoValues: BigNumber[],
   transferType: ZcashTransferType,
+  marginalFee: number,
 ): BigNumber {
   if (utxoValues.length === 0) return new BigNumber(0);
   const total = utxoValues.reduce((sum, v) => sum.plus(v), new BigNumber(0));
-  const fee = computeTransparentSelectionFee(utxoValues.length, 1, transferType);
+  const fee = computeTransparentSelectionFee(utxoValues.length, 1, transferType, marginalFee);
   return BigNumber.max(total.minus(fee), 0);
 }
 
@@ -213,12 +282,13 @@ export function selectNotes(
   spendableNotes: SpendableNote[],
   amount: BigNumber,
   transferType: ZcashTransferType,
+  marginalFee: number,
 ): CoinSelectionResult | undefined {
   // Sort largest-first to minimize action count
   const sorted = [...spendableNotes].sort((a, b) => b.amount.comparedTo(a.amount));
 
   // Iterative fee resolution (converges in <= 3 rounds for practical sizes)
-  let fee = new BigNumber(ZIP317_MINIMUM_FEE); // initial estimate: 2-action minimum
+  let fee = new BigNumber(zip317MinimumFee(marginalFee)); // initial estimate: 2-action minimum
 
   for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
     const target = amount.plus(fee);
@@ -242,7 +312,7 @@ export function selectNotes(
 
     const hasChange = changeAmount.gt(0);
     const spendCount = selected.length;
-    const newFee = computeShieldedSpendFee(spendCount, hasChange, transferType);
+    const newFee = computeShieldedSpendFee(spendCount, hasChange, transferType, marginalFee);
 
     if (newFee.lte(fee)) {
       // Fee converged: the layout priced at `fee` needs no more than `fee`.
@@ -266,13 +336,14 @@ export function selectNotes(
 export function estimateMaxSpendableAmount(
   spendableNotes: SpendableNote[],
   transferType: ZcashTransferType,
+  marginalFee: number,
 ): BigNumber {
   if (spendableNotes.length === 0) return new BigNumber(0);
 
   const totalBalance = spendableNotes.reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
 
   // Fee for spending ALL notes into a single recipient output (no change).
-  const fee = computeShieldedSpendFee(spendableNotes.length, false, transferType);
+  const fee = computeShieldedSpendFee(spendableNotes.length, false, transferType, marginalFee);
 
   return BigNumber.max(totalBalance.minus(fee), 0);
 }
