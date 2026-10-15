@@ -1,10 +1,10 @@
 import { renderHook } from "tests/testSetup";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
-import type { CounterValuesState } from "@domain/entity-market-countervalues";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import type { CurrencyPortfolio } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
@@ -19,23 +19,19 @@ import { useAllCurrencyTrends } from "../useAllCurrencyTrends";
 
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  useCountervaluesState: jest.fn(),
+  useCountervaluesCache: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/portfolio/portfolio", () => ({
   getCurrencyPortfolio: jest.fn(),
   getCurrentBalanceCountervalueChange: jest.fn(),
 }));
 
-const mockedUseCountervaluesState = jest.mocked(useCountervaluesState);
+const mockedUseCountervaluesCache = jest.mocked(useCountervaluesCache);
 const mockedGetCurrencyPortfolio = jest.mocked(getCurrencyPortfolio);
 const mockedGetCurrentBalanceCountervalueChange = jest.mocked(getCurrentBalanceCountervalueChange);
 
 const mockCounterValueCurrency = getFiatCurrencyByTicker("USD");
-const mockCountervaluesState: CounterValuesState = {
-  data: {},
-  status: {},
-  cache: {},
-};
+const mockCountervaluesState: CounterValuesCacheView = { cache: {} };
 
 const makePortfolio = (percentage?: number): CurrencyPortfolio => ({
   history: [],
@@ -64,7 +60,7 @@ function makeAssetItem(overrides: Partial<AssetTableItem>): AssetTableItem {
 describe("useAllCurrencyTrends", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseCountervaluesState.mockReturnValue(mockCountervaluesState);
+    mockedUseCountervaluesCache.mockReturnValue(mockCountervaluesState);
     mockedGetCurrentBalanceCountervalueChange.mockReturnValue({ value: 0, percentage: null });
   });
 
@@ -104,7 +100,7 @@ describe("useAllCurrencyTrends", () => {
     const range = "week" as const;
     const { result } = renderHook(() => useAllCurrencyTrends(items, range), { initialState });
 
-    expect(mockedUseCountervaluesState).toHaveBeenCalledTimes(1);
+    expect(mockedUseCountervaluesCache).toHaveBeenCalledTimes(1);
     expect(mockedGetCurrencyPortfolio).toHaveBeenCalledTimes(2);
     expect(mockedGetCurrencyPortfolio).toHaveBeenNthCalledWith(
       1,

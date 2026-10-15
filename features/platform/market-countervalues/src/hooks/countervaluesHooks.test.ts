@@ -3,13 +3,14 @@ import { act, renderHook } from "@testing-library/react";
 import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import { wipeCountervalues } from "@domain/entity-market-countervalues";
+import { setCountervaluesState, wipeCountervalues } from "@domain/entity-market-countervalues";
 import { buildCV } from "@domain/entity-market-countervalues/mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   useCalculate,
   useCalculateCountervalueCallback,
+  useCountervaluesCache,
   useCountervaluesLoadStatus,
   useCountervaluesPolling,
   useCountervaluesState,
@@ -75,6 +76,43 @@ describe("countervalues hooks", () => {
 
     expect(result.current.state).toBe(state);
     expect(result.current.loadStatus).toEqual({ pending: true, error: loadError });
+  });
+
+  it("re-render the cache view only when the rates' cache changes", () => {
+    const { store } = createTestStore();
+    const renders = { cache: 0, state: 0 };
+    const wrapper = wrapperFor(store);
+    const cacheView = renderHook(
+      () => {
+        renders.cache++;
+        return useCountervaluesCache();
+      },
+      { wrapper },
+    );
+    renderHook(
+      () => {
+        renders.state++;
+        return useCountervaluesState();
+      },
+      { wrapper },
+    );
+    const initial = cacheView.result.current;
+    expect(initial).toEqual({ cache: state.cache });
+
+    // A load that only stamps the status.
+    act(() => {
+      store.dispatch(setCountervaluesState({ ...state, status: { stamped: { timestamp: 1 } } }));
+    });
+    expect(renders.cache).toBe(1);
+    expect(cacheView.result.current).toBe(initial);
+    // Control: the full state did see the load.
+    expect(renders.state).toBe(2);
+
+    act(() => {
+      store.dispatch(wipeCountervalues());
+    });
+    expect(renders.cache).toBe(2);
+    expect(cacheView.result.current).toEqual({ cache: {} });
   });
 
   it("keep the polling controls stable through a load cycle, without re-rendering", () => {

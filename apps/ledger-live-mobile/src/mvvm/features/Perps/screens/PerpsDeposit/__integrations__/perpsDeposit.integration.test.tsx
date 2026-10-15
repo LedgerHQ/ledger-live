@@ -16,7 +16,7 @@ jest.mock("LLM/features/ModularDrawer", () => ({
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
-  useCountervaluesState: () => ({}),
+  useCountervaluesCache: () => ({}),
 }));
 
 jest.mock("@domain/entity-market-countervalues", () => ({

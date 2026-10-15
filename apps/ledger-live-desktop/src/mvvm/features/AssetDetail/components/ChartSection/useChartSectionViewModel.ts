@@ -11,7 +11,7 @@ import type { DistributionItem } from "@ledgerhq/types-live";
 import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import {
@@ -96,7 +96,7 @@ export function useChartSectionViewModel({
   const discreet = useSelector(discreetModeSelector);
   const hideTransactionsOnChart = useSelector(hideTransactionsOnChartSelector);
   const allAccounts = useSelector(accountsSelector);
-  const countervaluesState = useCountervaluesState();
+  const countervaluesState = useCountervaluesCache();
 
   const id =
     ledgerId ?? marketData.marketCurrencyData?.ledgerIds?.[0] ?? marketData.marketCurrencyData?.id;

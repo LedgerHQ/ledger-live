@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from "@testing-library/react";
-import type { CounterValuesState } from "@domain/entity-market-countervalues";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import type {
   Account,
   AccountLike,
@@ -21,10 +21,10 @@ import {
   useDistribution,
 } from "../portfolioReact";
 
-const mockCvState = {} as CounterValuesState;
+const mockCvState: CounterValuesCacheView = { cache: {} };
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  useCountervaluesState: () => mockCvState,
+  useCountervaluesCache: () => mockCvState,
 }));
 
 const mockThrottledValues = jest.fn();
@@ -196,7 +196,7 @@ describe("usePortfolioThrottled", () => {
     };
     mockGetPortfolio.mockReturnValue(portfolioWithBalance);
 
-    const newState = { data: { btc: new Map() }, status: {}, cache: {} } as CounterValuesState;
+    const newState: CounterValuesCacheView = { cache: {} };
     mockThrottledValues.mockReturnValue([newState, accounts]);
 
     act(() => {
