@@ -602,7 +602,7 @@ jobs:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos_runner_label || 'general-pool' }}
       disable-nx-cache: false
-      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
+      build-ios-js: true
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -631,7 +631,7 @@ jobs:
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-nx-cache: false
-      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
+      build-android-js: true
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
