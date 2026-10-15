@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { Image, Pressable, type ImageSourcePropType } from "react-native";
-import { createNativeWrapper } from "react-native-gesture-handler";
+import { Image, type ImageSourcePropType } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import {
   BottomSheetView,
   Box,
@@ -18,10 +18,13 @@ import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analyti
 import { BANK_TRANSFER_INTRO_FLOW } from "./useBankTransferIntroViewModel";
 import type { BankTransferIntroViewProps } from "../../types";
 
-const GesturePressable = createNativeWrapper(Pressable, {
-  disallowInterruption: true,
-  shouldCancelWhenOutside: false,
-});
+const closeButtonStyle = {
+  alignItems: "center" as const,
+  justifyContent: "center" as const,
+  width: 44,
+  height: 44,
+  backgroundColor: "transparent",
+};
 
 export function BankTransferIntroView({
   isOpen,
@@ -87,14 +90,15 @@ export function BankTransferIntroView({
             flow={BANK_TRANSFER_INTRO_FLOW}
           />
           <Box lx={{ alignItems: "flex-end" }}>
-            <GesturePressable
+            <TouchableOpacity
               accessibilityRole="button"
               accessibilityLabel={closeLabel}
               onPress={handleClosePress}
+              style={closeButtonStyle}
               testID="bottom-sheet-header-close-button"
             >
               <Icons.Close size={16} />
-            </GesturePressable>
+            </TouchableOpacity>
           </Box>
           <Box lx={{ gap: "s16" }}>
             {heroImage ? (

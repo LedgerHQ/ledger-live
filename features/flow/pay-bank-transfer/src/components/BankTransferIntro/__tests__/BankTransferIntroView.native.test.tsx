@@ -4,9 +4,10 @@ import { trackedPages } from "@features/platform-pay-analytics/testing/module-mo
 import { BankTransferIntroView } from "../BankTransferIntroView.native";
 import type { BankTransferIntroViewProps } from "../../../types";
 
-jest.mock("react-native-gesture-handler", () => ({
-  createNativeWrapper: (Component: React.ComponentType) => Component,
-}));
+jest.mock("react-native-gesture-handler", () => {
+  const { Pressable } = jest.requireActual("react-native");
+  return { TouchableOpacity: Pressable };
+});
 
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
