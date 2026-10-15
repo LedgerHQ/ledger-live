@@ -324,6 +324,7 @@ describe("useBalanceTypeScreenViewModel", () => {
         vm.onSelect(optionId);
       }
 
+      expect(mockGoToStep).toHaveBeenCalledTimes(1);
       expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
     },
   );
@@ -340,6 +341,7 @@ describe("useBalanceTypeScreenViewModel", () => {
     }
 
     expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
+    expect(mockGoToStep).toHaveBeenCalledTimes(1);
     expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
   });
 

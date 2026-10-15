@@ -94,5 +94,5 @@ export default function SendBalanceTypeSync(props: Props) {
     return <SkipSync onComplete={props.onComplete} />;
   }
 
-  return <PrivateSync key={props.account.id} {...props} />;
+  return <PrivateSync {...props} />;
 }

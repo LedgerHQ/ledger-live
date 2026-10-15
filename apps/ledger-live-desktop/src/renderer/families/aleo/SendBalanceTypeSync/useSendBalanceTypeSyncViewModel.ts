@@ -53,7 +53,7 @@ function getSendingAccount(
   return sendingAccount && isAleoAccount(sendingAccount) ? sendingAccount : null;
 }
 
-export function getRecordLimitedAmount(account: AleoAccount | AleoTokenAccount): BigNumber | null {
+function getRecordLimitedAmount(account: AleoAccount | AleoTokenAccount): BigNumber | null {
   const unspentRecords =
     (account.type === "TokenAccount"
       ? account.unspentPrivateRecords
@@ -87,6 +87,7 @@ export function useSendBalanceTypeSyncViewModel({
 
   const onAccountUpdated = useCallback(
     (syncedAccount: Account) => {
+      if (!isAleoAccount(syncedAccount) || !syncedAccount.aleoResources?.provableApi) return;
       const sendingAccount = getSendingAccount(syncedAccount, transaction);
       const amount = sendingAccount ? getRecordLimitedAmount(sendingAccount) : null;
       if (sendingAccount && amount) {

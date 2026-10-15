@@ -58,7 +58,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   const { account, parentAccount } = state.account;
   const { transaction } = state.transaction;
 
-  const mainAccount = account ? getMainAccount(account, parentAccount ?? undefined) : undefined;
+  const mainAccount = account ? getMainAccount(account, parentAccount) : undefined;
   const hasBalanceTypeSync = Boolean(
     useLLDCoinFamily(mainAccount?.currency.family).SendBalanceTypeSync,
   );

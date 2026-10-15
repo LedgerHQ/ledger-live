@@ -43,6 +43,7 @@ function withRecords(microcredits: number[]): AleoAccount {
     aleoResources: {
       ...ALEO_MAIN_ACCOUNT.aleoResources!,
       unspentPrivateRecords: microcredits.map(makeRecord),
+      provableApi: { scannerStatus: { synced: true, percentage: 100 } },
     },
   };
 }
@@ -124,6 +125,19 @@ describe("SendBalanceTypeSync", () => {
     expect(mockOnComplete).toHaveBeenCalledTimes(1);
   });
 
+  it("waits for the sync error instead of moving on with the records a scanner reset keeps", () => {
+    const syncedAccount = withRecords([ONE_ALEO]);
+    const resetAccount: AleoAccount = {
+      ...syncedAccount,
+      aleoResources: { ...syncedAccount.aleoResources!, provableApi: null },
+    };
+    renderSync(privateTransaction);
+
+    completeSync(resetAccount);
+
+    expect(mockOnComplete).not.toHaveBeenCalled();
+  });
+
   it("warns how much one transaction can send when the records exceed the limit", async () => {
     const { user } = renderSync(privateTransaction);
 
@@ -146,7 +160,7 @@ describe("SendBalanceTypeSync", () => {
 
     renderSync(tokenTransaction, { ...ALEO_MAIN_ACCOUNT, subAccounts: [] });
 
-    completeSync({ ...ALEO_MAIN_ACCOUNT, subAccounts: [tokenAccount] });
+    completeSync({ ...withRecords([]), subAccounts: [tokenAccount] });
 
     expect(screen.getByText("You can send up to 13 TAT")).toBeVisible();
     expect(screen.getByText(/one transaction can use a maximum of 13\./)).toBeVisible();
