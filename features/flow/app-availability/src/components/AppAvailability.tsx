@@ -11,8 +11,7 @@ export type AppAvailabilityProps = Readonly<{
   testID?: string;
 }>;
 
-export function AppAvailability({ children, testID }: AppAvailabilityProps): React.JSX.Element {
-  const availability = useAppAvailability();
+function GeoBlocked({ testID }: Readonly<{ testID?: string }>) {
   const { t } = useTranslation();
   const openLink = useOpenLink();
   const learnMoreUrl = useLocalizedUrl(urls.geoBlockLearnMore);
@@ -20,19 +19,25 @@ export function AppAvailability({ children, testID }: AppAvailabilityProps): Rea
     openLink(learnMoreUrl);
   }, [learnMoreUrl, openLink]);
 
+  return (
+    <AppUnavailable
+      title={t("geoBlocking.title")}
+      description={t("geoBlocking.description")}
+      action={{
+        label: t("geoBlocking.learnMore"),
+        onPress: openLearnMore,
+        testID: "app-availability-learn-more",
+      }}
+      testID={testID}
+    />
+  );
+}
+
+export function AppAvailability({ children, testID }: AppAvailabilityProps): React.JSX.Element {
+  const availability = useAppAvailability();
+
   if (availability.status === "unavailable" && availability.reason === "geoBlocked") {
-    return (
-      <AppUnavailable
-        title={t("geoBlocking.title")}
-        description={t("geoBlocking.description")}
-        action={{
-          label: t("geoBlocking.learnMore"),
-          onPress: openLearnMore,
-          testID: "app-availability-learn-more",
-        }}
-        testID={testID}
-      />
-    );
+    return <GeoBlocked testID={testID} />;
   }
 
   if (availability.status === "unavailable" && availability.reason === "serviceUnavailable") {
