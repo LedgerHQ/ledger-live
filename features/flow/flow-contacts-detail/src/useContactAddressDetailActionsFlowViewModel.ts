@@ -5,7 +5,8 @@ import {
   type ContactAddressId,
   type ContactId,
 } from "@domain/entity-contact";
-import { useCallback, useEffect, useState } from "react";
+import { useDeleteAddressFlowViewModel } from "@features/flow-contacts-delete-address";
+import { useCallback, useEffect } from "react";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import type { ContactAddressDetailSendIntent } from "./types";
 import { useContactAddressDetailActionsViewModel } from "./useContactAddressDetailActionsViewModel";
@@ -30,7 +31,7 @@ export type UseContactAddressDetailActionsFlowViewModelResult = Readonly<{
   editUiState: ReturnType<typeof useContactEditSignerUiState>["editUiState"];
   isEditSessionActive: boolean;
   isDeleting: boolean;
-  deleteLifecycle: ReturnType<typeof useContactAddressDetailActionsViewModel>["deleteLifecycle"];
+  deleteLifecycle: ReturnType<typeof useDeleteAddressFlowViewModel>["deleteLifecycle"];
   onSendPress: () => void;
   onEditPress: () => void;
   onDeletePress: () => void;
@@ -51,15 +52,19 @@ export function useContactAddressDetailActionsFlowViewModel({
   onCloseAddressDetail,
 }: UseContactAddressDetailActionsFlowViewModelOptions): UseContactAddressDetailActionsFlowViewModelResult {
   const resolvedAddressId = addressId ?? PLACEHOLDER_ADDRESS_ID;
-  const {
-    sendIntent,
-    editIntent,
-    deleteLifecycle,
-    openDelete,
-    cancelDelete,
-    confirmDelete: confirmDeleteAction,
-    isSignerRequiredForEdit,
-  } = useContactAddressDetailActionsViewModel(contactId, resolvedAddressId, ports);
+  const { sendIntent, editIntent, isSignerRequiredForEdit } =
+    useContactAddressDetailActionsViewModel(contactId, resolvedAddressId);
+  const onAddressDeleted = useCallback(() => {
+    onDeleteSuccess?.();
+    onCloseAddressDetail?.();
+  }, [onCloseAddressDetail, onDeleteSuccess]);
+  const { canDelete, deleteLifecycle, isDeleting, openDelete, cancelDelete, confirmDelete } =
+    useDeleteAddressFlowViewModel({
+      contactId,
+      addressId,
+      deletionPort: ports.deletion,
+      onSuccess: onAddressDeleted,
+    });
   const {
     editUiState,
     isEditSessionActive,
@@ -70,11 +75,8 @@ export function useContactAddressDetailActionsFlowViewModel({
     onEditClose: closeEditUiState,
     resetEditUiState,
   } = useContactEditSignerUiState();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const isSelectionActive = addressId !== undefined;
-  const canSend = isSelectionActive && sendIntent !== undefined;
-  const canEdit = isSelectionActive && editIntent !== undefined;
-  const canDelete = isSelectionActive;
+  const canSend = addressId !== undefined && sendIntent !== undefined;
+  const canEdit = addressId !== undefined && editIntent !== undefined;
 
   const onSendPress = useCallback(() => {
     if (sendIntent === undefined) {
@@ -119,36 +121,8 @@ export function useContactAddressDetailActionsFlowViewModel({
   }, [closeEditUiState]);
 
   const onDeletePress = useCallback(() => {
-    if (!canDelete) {
-      return;
-    }
-
     openDelete();
-  }, [canDelete, openDelete]);
-
-  const confirmDelete = useCallback(async () => {
-    if (!canDelete) {
-      return;
-    }
-
-    setIsDeleting(true);
-
-    try {
-      await confirmDeleteAction();
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [canDelete, confirmDeleteAction]);
-
-  useEffect(() => {
-    if (deleteLifecycle.status !== "success") {
-      return;
-    }
-
-    onDeleteSuccess?.();
-    onCloseAddressDetail?.();
-    cancelDelete();
-  }, [cancelDelete, deleteLifecycle.status, onCloseAddressDetail, onDeleteSuccess]);
+  }, [openDelete]);
 
   useEffect(() => {
     if (addressId === undefined) {

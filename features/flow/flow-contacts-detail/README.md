@@ -9,7 +9,8 @@ Reusable Contact Detail leaf flow for Desktop and Mobile.
 
 - Empty and populated contact detail, including address rows and open-detail intents
 - Contact detail edit and delete scenario state
-- Contact address detail, including the selected address, QR payload, and quick actions
+- Contact address detail, including the selected address, QR payload, and quick actions.
+  Address deletion itself lives in `@features/flow-contacts-delete-address`.
 - Platform variants colocated with their UI concept (`*.web.tsx` / `*.native.tsx`)
 
 This package does not import `@features/flow-contacts`. Desktop `ContactsView` composes this leaf

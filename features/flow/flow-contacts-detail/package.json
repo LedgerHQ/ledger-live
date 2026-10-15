@@ -27,6 +27,7 @@
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@features/flow-contacts-delete-address": "workspace:^",
     "@features/flow-contacts-delete-contact": "workspace:^",
     "@features/flow-contacts-edit-address": "workspace:^",
     "@features/flow-contacts-edit-contact": "workspace:^",
