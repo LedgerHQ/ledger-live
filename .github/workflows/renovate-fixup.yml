@@ -141,6 +141,7 @@ jobs:
           # The artifact and the checkout are both untrusted: copy only the expected files, never
           # through a symlink, and run git without hooks.
           for file in apps/ledger-live-mobile/ios/Podfile.lock ".changeset/${HEAD_REF//\//-}.md"; do
+            [ "$(realpath -m -- "$file")" = "$(pwd -P)/$file" ] || { echo "::error::$file goes through a symlink"; exit 1; }
             if [ -f "$RUNNER_TEMP/fixup/$file" ]; then cp --remove-destination "$RUNNER_TEMP/fixup/$file" "$file"; else rm -f "$file"; fi
           done
           git add -A -- apps/ledger-live-mobile/ios/Podfile.lock .changeset/
