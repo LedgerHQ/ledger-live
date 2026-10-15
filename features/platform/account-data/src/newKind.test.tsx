@@ -3,7 +3,11 @@ import { Provider, useSelector } from "react-redux";
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { renderHook, waitFor } from "@testing-library/react";
 import { accountDataExtra } from "@domain/api-account-data";
-import { accountDataSlice, isAccountDataReceived } from "@domain/entity-account-data";
+import {
+  AccountDataSourceIdSchema,
+  accountDataSlice,
+  isAccountDataReceived,
+} from "@domain/entity-account-data";
 import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
 import { useAccountData } from "./useAccountData";
 
@@ -51,9 +55,9 @@ describe("a kind added from outside the framework packages", () => {
         getDefault({
           thunk: {
             extraArgument: accountDataExtra([
-              { id: "serves-nothing", supports: () => true },
+              { id: AccountDataSourceIdSchema.parse("serves-nothing"), supports: () => true },
               {
-                id: "staking-api",
+                id: AccountDataSourceIdSchema.parse("staking-api"),
                 supports: (_descriptor, kind) => kind === "staking",
                 read: { staking: async () => ({ staked: "42" }) },
               },

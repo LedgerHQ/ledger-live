@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "@domain/entity-account-descriptor": "workspace:*",
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",

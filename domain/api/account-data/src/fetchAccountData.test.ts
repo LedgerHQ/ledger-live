@@ -8,6 +8,7 @@ import {
   descriptorOf,
   indexOf,
   makeStore,
+  sourceIdOf,
   type FeedPage,
   type FeedQuery,
 } from "./testing";
@@ -23,14 +24,14 @@ function deferred<T>() {
 }
 
 const counterSource = (counter: (target: AccountTarget) => Promise<number>): AccountDataSource => ({
-  id: "s",
+  id: sourceIdOf("s"),
   supports: () => true,
   read: { counter },
 });
 
 const feedSource = (
   feed: (target: AccountTarget, query: FeedQuery | undefined) => Promise<FeedPage>,
-  id = "s",
+  id = sourceIdOf("s"),
 ): AccountDataSource => ({ id, supports: () => true, read: { feed } });
 
 /** Pages of `items` one item each, chained by cursors `c1`, `c2`… */
@@ -49,7 +50,7 @@ describe("fetchAccountData", () => {
     await store.dispatch(fetchAccountData("counter", descriptor));
     expect(store.getState().counter[accountUUID]).toBe(7);
     expect(store.getState().accountData.counter?.[accountUUID]).toEqual({
-      sourceId: "s",
+      sourceId: sourceIdOf("s"),
       queryKey: "",
       readAt: expect.any(Number),
     });
@@ -68,7 +69,7 @@ describe("fetchAccountData", () => {
   });
 
   it("names NoAccountDataSourceError when no source serves the account", async () => {
-    const store = makeStore([{ id: "nothing", supports: () => false }]);
+    const store = makeStore([{ id: sourceIdOf("nothing"), supports: () => false }]);
     await store.dispatch(fetchAccountData("counter", descriptor));
     expect(store.getState().accountData.counter?.[accountUUID]?.error?.name).toBe(
       "NoAccountDataSourceError",
@@ -227,7 +228,7 @@ describe("fetchAccountData", () => {
     const gate = deferred<number>();
     const store = makeStore([
       {
-        id: "s",
+        id: sourceIdOf("s"),
         supports: () => true,
         read: { counter: () => gate.promise, feed: async () => ({ items: ["a"] }) },
       },
@@ -245,7 +246,7 @@ describe("fetchAccountData", () => {
     const calls: number[][] = [];
     const store = makeStore([
       {
-        id: "batch",
+        id: sourceIdOf("batch"),
         supports: () => true,
         maxBatchSize: 2,
         readBatch: {
@@ -284,7 +285,9 @@ describe("fetchMoreAccountData", () => {
   it("does nothing at the end of the pages, nor on a kind without pages", async () => {
     const feed = pages(["a"]);
     const counter = jest.fn(async () => 1);
-    const store = makeStore([{ id: "s", supports: () => true, read: { feed, counter } }]);
+    const store = makeStore([
+      { id: sourceIdOf("s"), supports: () => true, read: { feed, counter } },
+    ]);
     await store.dispatch(fetchAccountData("feed", descriptor));
     await store.dispatch(fetchMoreAccountData("feed", descriptor));
     await store.dispatch(fetchAccountData("counter", descriptor));
@@ -337,12 +340,12 @@ describe("fetchMoreAccountData", () => {
     const head = pages(["a", "b"]);
     const store = makeStore([
       {
-        id: "preferred",
+        id: sourceIdOf("preferred"),
         // Becomes the first choice once the head is read, so only pinning keeps the next page away.
         supports: (_d, kind) => kind === "feed" && head.mock.calls.length > 0,
         read: { feed: preferred },
       },
-      feedSource(head, "answered"),
+      feedSource(head, sourceIdOf("answered")),
     ]);
     await store.dispatch(fetchAccountData("feed", descriptor));
     await store.dispatch(fetchMoreAccountData("feed", descriptor));

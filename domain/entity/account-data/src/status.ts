@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction, type UnknownAction } from "@reduxjs/toolkit";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { AccountDataKind, AccountDataResult } from "./registry";
+import type { AccountDataSourceId } from "./sourceId";
 
 export type AccountDataError = { name: string; message: string };
 
@@ -13,7 +14,7 @@ export type AccountDataStatus = {
   /** Of the last read, cleared by the next answer. */
   error?: AccountDataError;
   /** The source that answered the stored data: only it can serve its next page. */
-  sourceId?: string;
+  sourceId?: AccountDataSourceId;
   /** The query of the stored head, as `accountDataQueryKey` writes it. */
   queryKey?: string;
   /** When the stored head was read, in ms since epoch. */
@@ -40,7 +41,7 @@ export type AccountDataReceived<K extends AccountDataKind> = {
   accountUUID: AccountUUID;
   requestId: string;
   data: AccountDataResult<K>;
-  sourceId: string;
+  sourceId: AccountDataSourceId;
   /** `true` for a next page, which the entity merges into what it stores; `false` for a head read, which replaces it. */
   append: boolean;
   readAt: number;

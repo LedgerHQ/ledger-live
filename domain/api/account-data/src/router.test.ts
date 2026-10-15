@@ -6,7 +6,7 @@ import {
   type AccountDataRouter,
 } from "./router";
 import type { AccountDataSource, AccountTarget } from "./source";
-import { accountUUID, descriptor, descriptorOf, indexOf } from "./testing";
+import { accountUUID, descriptor, descriptorOf, indexOf, sourceIdOf } from "./testing";
 
 const descriptors = (count: number, network?: string) =>
   Array.from({ length: count }, (_, index) => descriptorOf(index, network));
@@ -30,7 +30,7 @@ function gate() {
 function batchSource(over: Partial<AccountDataSource> = {}) {
   const calls: AccountDescriptor[][] = [];
   const source: AccountDataSource = {
-    id: "batch",
+    id: sourceIdOf("batch"),
     supports: () => true,
     readBatch: {
       counter: async targets => {
@@ -55,7 +55,12 @@ function singleSource(id = "single", over: Partial<AccountDataSource> = {}) {
     active--;
     return indexOf(target);
   });
-  const source: AccountDataSource = { id, supports: () => true, read: { counter }, ...over };
+  const source: AccountDataSource = {
+    id: sourceIdOf(id),
+    supports: () => true,
+    read: { counter },
+    ...over,
+  };
   return { source, counter, peak: () => peak, release: open };
 }
 
@@ -63,45 +68,54 @@ describe("createAccountDataRouter", () => {
   describe("ranking", () => {
     it("asks the first source that has a reader and supports the account", async () => {
       const router = createAccountDataRouter([
-        { id: "a", supports: () => false, read: { counter: async () => 1 } },
-        { id: "b", supports: () => true, read: { counter: async () => 2 } },
-        { id: "c", supports: () => true, read: { counter: async () => 3 } },
+        { id: sourceIdOf("a"), supports: () => false, read: { counter: async () => 1 } },
+        { id: sourceIdOf("b"), supports: () => true, read: { counter: async () => 2 } },
+        { id: sourceIdOf("c"), supports: () => true, read: { counter: async () => 3 } },
       ]);
-      expect(await router.read("counter", descriptor)).toEqual({ data: 2, sourceId: "b" });
+      expect(await router.read("counter", descriptor)).toEqual({
+        data: 2,
+        sourceId: sourceIdOf("b"),
+      });
     });
 
     it("skips a source without a reader for the kind, without asking it", async () => {
       const supports = jest.fn(() => true);
       const router = createAccountDataRouter([
-        { id: "feed-only", supports, read: { feed: async () => ({ items: [] }) } },
-        { id: "full", supports: () => true, read: { counter: async () => 1 } },
+        { id: sourceIdOf("feed-only"), supports, read: { feed: async () => ({ items: [] }) } },
+        { id: sourceIdOf("full"), supports: () => true, read: { counter: async () => 1 } },
       ]);
-      expect((await router.read("counter", descriptor)).sourceId).toBe("full");
+      expect((await router.read("counter", descriptor)).sourceId).toBe(sourceIdOf("full"));
       expect(supports).not.toHaveBeenCalled();
     });
 
     it("lets a source support one kind and not another for the same account", async () => {
       const router = createAccountDataRouter([
         {
-          id: "granular",
+          id: sourceIdOf("granular"),
           supports: (_descriptor, kind) => kind === "counter",
           read: { counter: async () => 1, feed: async () => ({ items: ["granular"] }) },
         },
-        { id: "fallback", supports: () => true, read: { feed: async () => ({ items: [] }) } },
+        {
+          id: sourceIdOf("fallback"),
+          supports: () => true,
+          read: { feed: async () => ({ items: [] }) },
+        },
       ]);
-      expect((await router.read("counter", descriptor)).sourceId).toBe("granular");
-      expect((await router.read("feed", descriptor)).sourceId).toBe("fallback");
+      expect((await router.read("counter", descriptor)).sourceId).toBe(sourceIdOf("granular"));
+      expect((await router.read("feed", descriptor)).sourceId).toBe(sourceIdOf("fallback"));
     });
 
     it("hands the reader the account UUID, the descriptor and the query", async () => {
       const feed = jest.fn(async () => ({ items: [] }));
-      const router = createAccountDataRouter([{ id: "a", supports: () => true, read: { feed } }]);
+      const router = createAccountDataRouter([
+        { id: sourceIdOf("a"), supports: () => true, read: { feed } },
+      ]);
       await router.read("feed", descriptor, { query: { limit: 10 } });
       expect(feed).toHaveBeenCalledWith({ accountUUID, descriptor }, { limit: 10 });
     });
 
     it("rejects with NoAccountDataSourceError when no source can answer", async () => {
-      const router = createAccountDataRouter([{ id: "a", supports: () => false }]);
+      const router = createAccountDataRouter([{ id: sourceIdOf("a"), supports: () => false }]);
       await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
         NoAccountDataSourceError,
       );
@@ -110,7 +124,7 @@ describe("createAccountDataRouter", () => {
     it("never prefers a lower-ranked source because it can batch", async () => {
       const single = singleSource("first");
       single.release();
-      const { source: batch, calls } = batchSource({ id: "second" });
+      const { source: batch, calls } = batchSource({ id: sourceIdOf("second") });
       const router = createAccountDataRouter([single.source, batch]);
       await readAll(router, descriptors(3));
       expect(single.counter).toHaveBeenCalledTimes(3);
@@ -119,7 +133,7 @@ describe("createAccountDataRouter", () => {
 
     it("splits the accounts between the sources first for each", async () => {
       const { source: evm, calls } = batchSource({
-        id: "evm",
+        id: sourceIdOf("evm"),
         supports: account => account.network.name === "ethereum",
       });
       const fallback = singleSource("fallback");
@@ -164,23 +178,23 @@ describe("createAccountDataRouter", () => {
   describe("pagination affinity", () => {
     it("only asks the pinned source, even when a higher-ranked one could answer", async () => {
       const router = createAccountDataRouter([
-        { id: "first", supports: () => true, read: { counter: async () => 1 } },
-        { id: "second", supports: () => true, read: { counter: async () => 2 } },
+        { id: sourceIdOf("first"), supports: () => true, read: { counter: async () => 1 } },
+        { id: sourceIdOf("second"), supports: () => true, read: { counter: async () => 2 } },
       ]);
-      expect(await router.read("counter", descriptor, { sourceId: "second" })).toEqual({
+      expect(await router.read("counter", descriptor, { sourceId: sourceIdOf("second") })).toEqual({
         data: 2,
-        sourceId: "second",
+        sourceId: sourceIdOf("second"),
       });
     });
 
     it("fails rather than falling back when the pinned source no longer serves the account", async () => {
       const router = createAccountDataRouter([
-        { id: "first", supports: () => true, read: { counter: async () => 1 } },
-        { id: "gone", supports: () => false, read: { counter: async () => 2 } },
+        { id: sourceIdOf("first"), supports: () => true, read: { counter: async () => 1 } },
+        { id: sourceIdOf("gone"), supports: () => false, read: { counter: async () => 2 } },
       ]);
-      await expect(router.read("counter", descriptor, { sourceId: "gone" })).rejects.toBeInstanceOf(
-        NoAccountDataSourceError,
-      );
+      await expect(
+        router.read("counter", descriptor, { sourceId: sourceIdOf("gone") }),
+      ).rejects.toBeInstanceOf(NoAccountDataSourceError);
     });
   });
 
@@ -191,20 +205,20 @@ describe("createAccountDataRouter", () => {
       });
       const router = createAccountDataRouter([
         slow.source,
-        { id: "fast", supports: () => true, read: { counter: async () => 1 } },
+        { id: sourceIdOf("fast"), supports: () => true, read: { counter: async () => 1 } },
       ]);
       const fast = router.read("counter", descriptorOf(0));
       const blocked = router.read("counter", descriptorOf(1, "bitcoin"));
-      await expect(fast).resolves.toEqual({ data: 1, sourceId: "fast" });
+      await expect(fast).resolves.toEqual({ data: 1, sourceId: sourceIdOf("fast") });
       slow.release();
-      await expect(blocked).resolves.toEqual({ data: 1, sourceId: "slow" });
+      await expect(blocked).resolves.toEqual({ data: 1, sourceId: sourceIdOf("slow") });
     });
 
     it("answers the accounts of one chunk without waiting for the other chunks", async () => {
       const { opened, open } = gate();
       const router = createAccountDataRouter([
         {
-          id: "s",
+          id: sourceIdOf("s"),
           supports: () => true,
           maxBatchSize: 1,
           readBatch: {
@@ -218,9 +232,9 @@ describe("createAccountDataRouter", () => {
       const [first, second] = [descriptorOf(0), descriptorOf(1)].map(each =>
         router.read("counter", each),
       );
-      await expect(first).resolves.toEqual({ data: 0, sourceId: "s" });
+      await expect(first).resolves.toEqual({ data: 0, sourceId: sourceIdOf("s") });
       open();
-      await expect(second).resolves.toEqual({ data: 1, sourceId: "s" });
+      await expect(second).resolves.toEqual({ data: 1, sourceId: sourceIdOf("s") });
     });
 
     it("reads the reads of one tick together, in one batch call", async () => {
@@ -245,7 +259,7 @@ describe("createAccountDataRouter", () => {
         targets.map(() => ({ status: "fulfilled" as const, value: { items: [] } })),
       );
       const router = createAccountDataRouter([
-        { id: "s", supports: () => true, readBatch: { feed } },
+        { id: sourceIdOf("s"), supports: () => true, readBatch: { feed } },
       ]);
       await Promise.all([
         router.read("feed", descriptorOf(0), { query: { limit: 10, filter: "in" } }),
@@ -270,7 +284,10 @@ describe("createAccountDataRouter", () => {
     it("answers a single read on a source that only batches", async () => {
       const { source, calls } = batchSource();
       const router = createAccountDataRouter([source]);
-      expect(await router.read("counter", descriptorOf(3))).toEqual({ data: 3, sourceId: "batch" });
+      expect(await router.read("counter", descriptorOf(3))).toEqual({
+        data: 3,
+        sourceId: sourceIdOf("batch"),
+      });
       expect(calls).toEqual([[descriptorOf(3)]]);
     });
   });
@@ -304,7 +321,7 @@ describe("createAccountDataRouter", () => {
     it("lets one account fail without failing the others", async () => {
       const router = createAccountDataRouter([
         {
-          id: "s",
+          id: sourceIdOf("s"),
           supports: () => true,
           read: {
             counter: async target => {
@@ -324,8 +341,8 @@ describe("createAccountDataRouter", () => {
       const { source } = batchSource();
       const router = createAccountDataRouter([source]);
       expect(await readAll(router, [descriptorOf(2), descriptorOf(0)])).toEqual([
-        { status: "fulfilled", value: { data: 2, sourceId: "batch" } },
-        { status: "fulfilled", value: { data: 0, sourceId: "batch" } },
+        { status: "fulfilled", value: { data: 2, sourceId: sourceIdOf("batch") } },
+        { status: "fulfilled", value: { data: 0, sourceId: sourceIdOf("batch") } },
       ]);
     });
 
@@ -339,7 +356,7 @@ describe("createAccountDataRouter", () => {
     it("keeps one account's failure to that account", async () => {
       const router = createAccountDataRouter([
         {
-          id: "s",
+          id: sourceIdOf("s"),
           supports: () => true,
           readBatch: {
             counter: async targets =>
@@ -361,7 +378,7 @@ describe("createAccountDataRouter", () => {
         return targets.map(target => ({ status: "fulfilled" as const, value: indexOf(target) }));
       });
       const router = createAccountDataRouter([
-        { id: "s", supports: () => true, maxBatchSize: 2, readBatch: { counter } },
+        { id: sourceIdOf("s"), supports: () => true, maxBatchSize: 2, readBatch: { counter } },
       ]);
       const answers = await readAll(router, descriptors(4));
       expect(answers.map(answer => answer.status)).toEqual([
@@ -376,7 +393,7 @@ describe("createAccountDataRouter", () => {
     it("fails the chunk when the source answers the wrong number of results", async () => {
       const router = createAccountDataRouter([
         {
-          id: "s",
+          id: sourceIdOf("s"),
           supports: () => true,
           readBatch: { counter: async () => [{ status: "fulfilled", value: 1 }] },
         },
@@ -398,11 +415,11 @@ describe("createAccountDataRouter", () => {
         })),
       );
       const router = createAccountDataRouter([
-        { id: "s", supports: () => true, readBatch: { feed } },
+        { id: sourceIdOf("s"), supports: () => true, readBatch: { feed } },
       ]);
       const answers = await Promise.all([
-        router.read("feed", descriptorOf(0), { sourceId: "s", cursor: "a" }),
-        router.read("feed", descriptorOf(1), { sourceId: "s", cursor: "b" }),
+        router.read("feed", descriptorOf(0), { sourceId: sourceIdOf("s"), cursor: "a" }),
+        router.read("feed", descriptorOf(1), { sourceId: sourceIdOf("s"), cursor: "b" }),
       ]);
       expect(feed).toHaveBeenCalledTimes(1);
       expect(answers.map(answer => answer.data.items)).toEqual([["a"], ["b"]]);
@@ -412,7 +429,9 @@ describe("createAccountDataRouter", () => {
       const feed = jest.fn(async (target: AccountTarget) => ({
         items: [target.cursor === undefined ? "head" : `after:${target.cursor}`],
       }));
-      const router = createAccountDataRouter([{ id: "s", supports: () => true, read: { feed } }]);
+      const router = createAccountDataRouter([
+        { id: sourceIdOf("s"), supports: () => true, read: { feed } },
+      ]);
       const [head, next] = await Promise.all([
         router.read("feed", descriptor),
         router.read("feed", descriptor, { cursor: "" }),
@@ -423,7 +442,9 @@ describe("createAccountDataRouter", () => {
 
     it("reads two pages of one account asked in the same tick apart", async () => {
       const feed = jest.fn(async (target: AccountTarget) => ({ items: [target.cursor ?? "head"] }));
-      const router = createAccountDataRouter([{ id: "s", supports: () => true, read: { feed } }]);
+      const router = createAccountDataRouter([
+        { id: sourceIdOf("s"), supports: () => true, read: { feed } },
+      ]);
       const [head, next] = await Promise.all([
         router.read("feed", descriptor),
         router.read("feed", descriptor, { cursor: "c1" }),

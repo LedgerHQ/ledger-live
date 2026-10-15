@@ -1,5 +1,9 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { accountDataSlice, isAccountDataReceived } from "@domain/entity-account-data";
+import {
+  AccountDataSourceIdSchema,
+  accountDataSlice,
+  isAccountDataReceived,
+} from "@domain/entity-account-data";
 import {
   computeAccountUUID,
   type AccountDescriptor,
@@ -46,6 +50,9 @@ const feedSlice = createSlice({
     });
   },
 });
+
+/** A source id, for sources declared in tests. */
+export const sourceIdOf = (id: string) => AccountDataSourceIdSchema.parse(id);
 
 /** The `index`th toy account: address `0x<index>`, on `network` (ethereum by default). */
 export const descriptorOf = (index: number, network = "ethereum"): AccountDescriptor => ({

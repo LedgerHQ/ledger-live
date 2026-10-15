@@ -2,6 +2,7 @@ import type {
   AccountDataKind,
   AccountDataQuery,
   AccountDataResult,
+  AccountDataSourceId,
 } from "@domain/entity-account-data";
 import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
 
@@ -25,7 +26,7 @@ export type AccountDataBatchReader<K extends AccountDataKind> = (
 
 /** Per kind, a single reader or a batch reader (only for a real multi-account call); with both, `readBatch` wins. */
 export type AccountDataSource = {
-  readonly id: string;
+  readonly id: AccountDataSourceId;
   /** Pure and synchronous, decided from the descriptor alone. Only asked when the source has a reader for `kind`. */
   supports(descriptor: AccountDescriptor, kind: AccountDataKind): boolean;
   readonly read?: { readonly [K in AccountDataKind]?: AccountDataReader<K> };

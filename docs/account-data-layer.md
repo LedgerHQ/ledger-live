@@ -84,7 +84,7 @@ A single reader, for an API that takes one account. The router calls it once per
 
 ```ts
 export const explorerSource: AccountDataSource = {
-  id: "explorer",
+  id: AccountDataSourceIdSchema.parse("explorer"),
   supports: (descriptor, kind) => kind === "balance",
   concurrency: 2,
   read: {
@@ -97,7 +97,7 @@ A batch reader, only for a real multi-account call. The router answers a single 
 
 ```ts
 export const portfolioSource: AccountDataSource = {
-  id: "portfolio",
+  id: AccountDataSourceIdSchema.parse("portfolio"),
   supports: (descriptor, kind) => kind === "balance" && isEvm(descriptor.network),
   maxBatchSize: 100,
   readBatch: {
@@ -106,6 +106,7 @@ export const portfolioSource: AccountDataSource = {
 };
 ```
 
+- `id` is an `AccountDataSourceId` (`AccountDataSourceIdSchema` in `@domain/entity-account-data`): the answering source is stored with the data, and only it serves the next page.
 - `supports` is pure and synchronous, decided from the descriptor alone.
 - On a next page, each target carries the `cursor` the source wrote in the previous page's `nextCursor`.
 - A source with both readers for a kind is always read through `readBatch`: its `read` is never called.

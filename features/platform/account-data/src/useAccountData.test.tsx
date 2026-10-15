@@ -8,12 +8,13 @@ import {
   descriptorOf,
   indexOf,
   makeStore,
+  sourceIdOf,
 } from "@domain/api-account-data/testing";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { useAccountData } from "./useAccountData";
 
 function setup(read: AccountDataSource["read"]) {
-  const store = makeStore([{ id: "s", supports: () => true, read }]);
+  const store = makeStore([{ id: sourceIdOf("s"), supports: () => true, read }]);
   const wrapper = ({ children }: { children: ReactNode }) => (
     <Provider store={store}>{children}</Provider>
   );

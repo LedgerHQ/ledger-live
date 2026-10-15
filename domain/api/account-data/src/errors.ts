@@ -1,12 +1,12 @@
-import type { AccountDataKind } from "@domain/entity-account-data";
+import type { AccountDataKind, AccountDataSourceId } from "@domain/entity-account-data";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
 
 export class NoAccountDataSourceError extends Error {
   override name = "NoAccountDataSourceError";
   readonly accountUUID: AccountUUID;
   readonly kind: AccountDataKind;
-  readonly sourceId: string | undefined;
-  constructor(accountUUID: AccountUUID, kind: AccountDataKind, sourceId?: string) {
+  readonly sourceId: AccountDataSourceId | undefined;
+  constructor(accountUUID: AccountUUID, kind: AccountDataKind, sourceId?: AccountDataSourceId) {
     super(
       sourceId === undefined
         ? `No account data source serves ${kind} for ${accountUUID}`

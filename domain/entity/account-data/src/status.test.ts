@@ -1,4 +1,5 @@
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { AccountDataSourceIdSchema } from "./sourceId";
 import {
   accountDataFailed,
   accountDataReceived,
@@ -25,6 +26,8 @@ const uuid = computeAccountUUID({
   path: "m/44h/60h/0h/0/0",
 });
 
+const sourceId = AccountDataSourceIdSchema.parse("s");
+
 const reduce = (...actions: Parameters<typeof accountDataSlice.reducer>[1][]) =>
   actions.reduce<AccountDataState>(accountDataSlice.reducer, {});
 
@@ -40,7 +43,7 @@ const received = (requestId: string, append = false, nextCursor?: string) =>
     accountUUID: uuid,
     requestId,
     data: { items: ["a"], nextCursor },
-    sourceId: "s",
+    sourceId,
     append,
     readAt: 1000,
     nextCursor,
@@ -54,7 +57,7 @@ describe("accountDataSlice", () => {
       append: false,
     });
     expect(status(reduce(requested("r1"), received("r1", false, "c1")))).toEqual({
-      sourceId: "s",
+      sourceId,
       queryKey: '{"limit":1}',
       readAt: 1000,
       nextCursor: "c1",
@@ -84,7 +87,7 @@ describe("accountDataSlice", () => {
       }),
     );
     expect(status(state)).toEqual({
-      sourceId: "s",
+      sourceId,
       queryKey: '{"limit":1}',
       readAt: 1000,
       nextCursor: "c1",
@@ -135,7 +138,7 @@ describe("isAccountDataReceived", () => {
       accountUUID: uuid,
       requestId: "r",
       data: 3,
-      sourceId: "s",
+      sourceId,
       append: false,
       readAt: 0,
     });

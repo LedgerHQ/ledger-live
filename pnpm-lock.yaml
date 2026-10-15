@@ -5239,6 +5239,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
