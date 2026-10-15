@@ -203,7 +203,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: ledger-wallet-8cpu-aws-public
+    runs-on: ledger-wallet-8cpu-aws-public-cached
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
     outputs:
