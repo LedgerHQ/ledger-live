@@ -24,7 +24,7 @@ permissions:
 jobs:
   test-e2e-tooling:
     name: "E2E Tooling Checks"
-    runs-on: ledger-wallet-4cpu-aws-public
+    runs-on: ledger-wallet-4cpu-aws-public-cached
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
