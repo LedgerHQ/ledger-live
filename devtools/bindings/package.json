@@ -23,9 +23,15 @@
   "dependencies": {
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
+    "@domain/api-account-data": "workspace:*",
     "@domain/api-card-management": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-operations": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
     "@domain/entity-currency": "workspace:^",
+    "@domain/entity-market-countervalues": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
@@ -34,6 +40,7 @@
     "@features/platform-card": "workspace:*",
     "@features/platform-device-onboarding": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@features/platform-market-countervalues": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
@@ -44,6 +51,8 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",

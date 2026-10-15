@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
@@ -16,9 +16,12 @@ import {
   useProdToggle,
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
+  useAccountDataToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
+import { useAccountDataToolInputs } from "./useAccountDataToolInputs";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
 
 const APPLICATION_ID = 16;
@@ -82,6 +85,12 @@ export function useDevToolsScreenViewModel() {
     prodToggle.trustchainApiBaseUrl,
   );
   const deviceOnboardingProps = useDeviceOnboarding();
+  const accountDataInputs = useAccountDataToolInputs();
+  const accountDataToolProps = useAccountDataToolProps(
+    accountDataInputs.inputs,
+    useSelector(counterValueCurrencySelector),
+    accountDataInputs.currencyOf,
+  );
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -91,6 +100,7 @@ export function useDevToolsScreenViewModel() {
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
+      { id: "account-data", config: accountDataToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -99,6 +109,7 @@ export function useDevToolsScreenViewModel() {
       trustchainToolProps,
       cloudSyncToolProps,
       deviceOnboardingProps,
+      accountDataToolProps,
     ],
   );
 
