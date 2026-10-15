@@ -10618,6 +10618,11 @@
       }
     }
   },
+  "accountDetail": {
+    "header": {
+      "settings": "Account settings"
+    }
+  },
   "assetDetails": {
     "header": {
       "optionsMenu": "Asset options",
