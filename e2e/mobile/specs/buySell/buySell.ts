@@ -8,6 +8,9 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
+/** The Buy screen alone can take ~3.5 min to load on CI (see BuySellPage.cryptoCurrencySelectorTimeout). */
+const BUY_TEST_TIMEOUT = 600_000;
+
 export async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
     userdata: options.userdata,
@@ -37,10 +40,14 @@ export async function runNavigateToBuyFromPortfolioPageTest(
     setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test(`[${buySell.crypto.currency.testLabel}] - Buy from portfolio page`, async () => {
-      await app.portfolio.pressQuickActionBuyButton();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
-    });
+    test(
+      `[${buySell.crypto.currency.testLabel}] - Buy from portfolio page`,
+      async () => {
+        await app.buySell.pressPortfolioQuickActionBuy();
+        await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      },
+      BUY_TEST_TIMEOUT,
+    );
   });
 }
 
@@ -62,15 +69,19 @@ export async function runNavigateToBuyFromAccountPageTest(
     setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test(`[${buySell.crypto.currency.testLabel}] - Buy entry point from account page`, async () => {
-      await app.accounts.openViaDeeplink();
-      await app.common.goToAccountByName(getParentAccountName(buySell.crypto));
-      if (buySell.crypto.tokenType) {
-        await app.account.navigateToTokenInAccount(buySell.crypto);
-      }
-      await app.account.tapBuy();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
-    });
+    test(
+      `[${buySell.crypto.currency.testLabel}] - Buy entry point from account page`,
+      async () => {
+        await app.accounts.openViaDeeplink();
+        await app.common.goToAccountByName(getParentAccountName(buySell.crypto));
+        if (buySell.crypto.tokenType) {
+          await app.account.navigateToTokenInAccount(buySell.crypto);
+        }
+        await app.buySell.tapAccountBuy();
+        await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      },
+      BUY_TEST_TIMEOUT,
+    );
   });
 }
 
@@ -92,18 +103,22 @@ export async function runNavigateToBuyFromMarketPageTest(
     setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test(`[${buySell.crypto.currency.testLabel}] - Buy entry point from market page`, async () => {
-      await app.portfolio.tapMarketBannerTitle();
-      await app.market.searchAsset(buySell.crypto.currency.ticker);
-      await app.market.expectMarketRowTitle(buySell.crypto.currency);
-      await app.market.openAssetPage(buySell.crypto.currency);
-      await app.market.tapOnMarketQuickActionButton("buy");
-      await app.modularDrawer.selectNetworkIfAsked(
-        app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
-      );
-      await app.modularDrawer.selectFirstAccountIfAsked();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
-    });
+    test(
+      `[${buySell.crypto.currency.testLabel}] - Buy entry point from market page`,
+      async () => {
+        await app.portfolio.tapMarketBannerTitle();
+        await app.market.searchAsset(buySell.crypto.currency.ticker);
+        await app.market.expectMarketRowTitle(buySell.crypto.currency);
+        await app.market.openAssetPage(buySell.crypto.currency);
+        await app.market.tapOnMarketQuickActionButton("buy");
+        await app.modularDrawer.selectNetworkIfAsked(
+          app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
+        );
+        await app.buySell.selectFirstDrawerAccountIfAsked();
+        await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      },
+      BUY_TEST_TIMEOUT,
+    );
   });
 }
 
@@ -125,19 +140,23 @@ export async function runNavigateToBuyFromAssetPageTest(
     setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test(`[${buySell.crypto.currency.testLabel}] - Buy entry point from asset page`, async () => {
-      await app.portfolio.goToSpecificAsset(buySell.crypto.currency.name);
-      await app.assetAccountsPage.waitForAccountPageToLoad(
-        buySell.crypto.currency.name,
-        buySell.crypto.currency.id,
-      );
-      await app.assetAccountsPage.tapOnAssetQuickActionButton("buy");
-      await app.modularDrawer.selectNetworkIfAsked(
-        app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
-      );
-      await app.modularDrawer.selectFirstAccountIfAsked();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
-    });
+    test(
+      `[${buySell.crypto.currency.testLabel}] - Buy entry point from asset page`,
+      async () => {
+        await app.portfolio.goToSpecificAsset(buySell.crypto.currency.name);
+        await app.assetAccountsPage.waitForAccountPageToLoad(
+          buySell.crypto.currency.name,
+          buySell.crypto.currency.id,
+        );
+        await app.assetAccountsPage.tapOnAssetQuickActionButton("buy");
+        await app.modularDrawer.selectNetworkIfAsked(
+          app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
+        );
+        await app.buySell.selectFirstDrawerAccountIfAsked();
+        await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      },
+      BUY_TEST_TIMEOUT,
+    );
   });
 }
 
@@ -185,9 +204,13 @@ export async function runQueryParametersTest(
     setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test(`[${buySell.crypto.currency.testLabel}] - Buy and sell query parameters`, async () => {
-      await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleBuyFlow(buySell, paymentMethod, true);
-    });
+    test(
+      `[${buySell.crypto.currency.testLabel}] - Buy and sell query parameters`,
+      async () => {
+        await app.buySell.openViaDeeplink(buySell.operation);
+        await app.buySell.handleBuyFlow(buySell, paymentMethod, true);
+      },
+      BUY_TEST_TIMEOUT,
+    );
   });
 }
