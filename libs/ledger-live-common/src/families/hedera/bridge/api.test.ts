@@ -3,6 +3,7 @@ import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import hederaBridge, {
@@ -14,6 +15,7 @@ import hederaBridge, {
   getAddressesForPublicKey,
   keyControlsAccount,
 } from "./api";
+import { adaptA4OperationToLiveOperation } from "../../../bridge/generic-coin-framework/a4/client/operations";
 
 const getAccountsForPublicKeyMock = jest.fn();
 jest.mock("@ledgerhq/coin-hedera/network/api", () => ({
@@ -526,6 +528,31 @@ describe("hedera bridge", () => {
       });
 
       expect(adaptOperations(address, [selfPaid])).toEqual([selfPaid]);
+    });
+
+    it("credits the account for an A4 contract call that paid it back more than its fee", () => {
+      // coin-hedera's value -500,000 becomes a +500,000 transfer part, next to a -100,000 fee part
+      const [contractCall] = adaptA4OperationToLiveOperation(accountId, address, {
+        block: { hash: "block_hash", height: 1000, time: "2024-01-01T00:00:00Z" },
+        tx: { hash: "tx1", details: { ledgerOpType: "CONTRACT_CALL" } },
+        assets: {},
+        events: {},
+        failed: false,
+        fees: "100000",
+        feeAsset: "native",
+        feePayer: address,
+        senders: [address],
+        recipients: ["0.0.1077627"],
+        parts: [
+          { type: "transfer", address, asset: "native", amount: "500000" },
+          { type: "fee", address, asset: "native", amount: "-100000" },
+        ],
+      });
+
+      const [adapted] = adaptOperations(address, [contractCall]);
+
+      expect(adapted.type).toBe("CONTRACT_CALL");
+      expect(getOperationAmountNumber(adapted)).toEqual(new BigNumber(400000));
     });
 
     it("only adds the FEES operation to the transaction that needs it", () => {
