@@ -1,0 +1,33 @@
+import React from "react";
+import { I18nTestProvider } from "@shared/i18n/testing";
+
+const resources = {
+  en: {
+    translation: {
+      accountDetailSettings: {
+        menu: {
+          changeName: "Change name",
+          viewAdvancedLogs: "View advanced logs",
+          removeAccount: "Remove account from portfolio",
+        },
+        advancedLogs: {
+          derivationTip:
+            "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
+          synchronised: "Synchronised {{date}}",
+          copy: "Copy logs",
+        },
+        remove: {
+          title: "Remove account?",
+          description:
+            "The assets linked to this account will no longer be visible in your portfolio. Your assets on the blockchain remain unaffected.",
+          confirm: "Yes, remove.",
+          cancel: "Keep",
+        },
+      },
+    },
+  },
+};
+
+export function I18nWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <I18nTestProvider resources={resources}>{children}</I18nTestProvider>;
+}
