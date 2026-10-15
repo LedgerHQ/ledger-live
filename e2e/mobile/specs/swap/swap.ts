@@ -10,6 +10,7 @@ import {
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -40,7 +41,11 @@ export function runSwapTest(
   // The amount is resolved at runtime from the provider minimum and set on `swap` inside the test.
   const swap = new Swap(accountToDebit, accountToCredit, "", undefined, fee);
 
-  describe("Swap - accepted", () => {
+  const describeOnDevice = describeIfNanoSSupports(
+    (accountToDebit.parentAccount ?? accountToDebit).currency.id,
+    (accountToCredit.parentAccount ?? accountToCredit).currency.id,
+  );
+  describeOnDevice("Swap - accepted", () => {
     beforeAll(async () => {
       await beforeAllFunction(swap);
     });
