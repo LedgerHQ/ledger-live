@@ -182,6 +182,25 @@ describe("quote command — API auth key", () => {
       rejectingServer.stop();
     }
   });
+
+  it("does not count the time the keychain dialog waits for the user against the auth timeout", async () => {
+    // Generous for a slow runner: the rest of the token fetch must fit in it.
+    _setTestAuthRequestTimeoutMs(500);
+    // The macOS keychain dialog blocks the read until the user answers.
+    useApiAuthKeychain({
+      getPassword: () => {
+        Bun.sleepSync(1_000);
+        return null;
+      },
+      setPassword: () => {},
+    });
+    try {
+      await runQuoteAndGetAuthSignature(fixture.env);
+    } finally {
+      useApiAuthKeychain(null);
+      _setTestAuthRequestTimeoutMs(null);
+    }
+  });
 });
 
 /**
