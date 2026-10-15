@@ -44,7 +44,9 @@ export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
 
 /** `describeIfNotNanoS` when one of the currencies is not supported on LNS, `describe` otherwise. */
 export const describeIfNanoSSupports = (...currencyIds: string[]) =>
-  currencyIds.some(isCurrencyUnsupportedOnLNS) ? describeIfNotNanoS : describe;
+  currencyIds.some(currencyId => isCurrencyUnsupportedOnLNS(currencyId))
+    ? describeIfNotNanoS
+    : describe;
 
 export function isAndroid(): boolean {
   return device.getPlatform() === "android";
