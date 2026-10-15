@@ -1,23 +1,37 @@
-import React from "react";
+import React, { useState, type ReactNode } from "react";
 import {
-  Dialog,
-  DialogTrigger,
-  DialogHeader,
-  DialogFooter,
-  DialogContent,
-  DialogBody,
   Button,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@shared/i18n";
 
-export const FearAndGreedDialog = ({ children }: { children: React.ReactNode }) => {
+type DefinitionProps = {
+  children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export function Definition({ children, open, onOpenChange }: DefinitionProps) {
   const { t } = useTranslation();
-  const [open, setOpen] = React.useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isControlled = open !== undefined;
+  const isOpen = isControlled ? open : uncontrolledOpen;
+
+  const setOpen = (next: boolean) => {
+    if (!isControlled) {
+      setUncontrolledOpen(next);
+    }
+    onOpenChange?.(next);
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-
       <DialogContent data-testid="fear-and-greed-dialog-content">
         <DialogHeader
           density="expanded"
@@ -42,4 +56,4 @@ export const FearAndGreedDialog = ({ children }: { children: React.ReactNode }) 
       </DialogContent>
     </Dialog>
   );
-};
+}

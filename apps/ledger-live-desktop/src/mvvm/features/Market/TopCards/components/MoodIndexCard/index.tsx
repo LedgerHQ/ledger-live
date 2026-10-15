@@ -1,32 +1,14 @@
 import React from "react";
-import { useMoodIndexAvailability } from "LLD/features/FearAndGreed/hooks/useMoodIndexAvailability";
-import { MarketTopCardError } from "../MarketTopCardError";
-import { MarketTopCardPlaceholder } from "../MarketTopCardPlaceholder";
-import { MoodIndexCardView } from "./MoodIndexCardView";
-import { useMoodIndexCardViewModel } from "./hooks/useMoodIndexCardViewModel";
-
-function MoodIndexCardContent() {
-  const { data, isError, isLoading, onClick } = useMoodIndexCardViewModel();
-
-  if (isLoading) {
-    return <MarketTopCardPlaceholder testId="market-top-card-2" />;
-  }
-
-  if (isError || !data) {
-    return (
-      <MarketTopCardError testId="market-top-card-2" titleKey="market.topCards.moodIndex.title" />
-    );
-  }
-
-  return <MoodIndexCardView data={data} onClick={onClick} />;
-}
+import { FearAndGreed } from "@features/flow-fear-and-greed";
+import { ArcGaugeIndicator } from "LLD/components/ArcGaugeIndicator";
+import { useMoodIndexCardViewModel } from "./useMoodIndexCardViewModel";
 
 export function MoodIndexCard() {
-  const isMoodIndexAvailable = useMoodIndexAvailability();
+  const { moodIndexAvailable } = useMoodIndexCardViewModel();
 
-  if (!isMoodIndexAvailable) {
+  if (!moodIndexAvailable) {
     return null;
   }
 
-  return <MoodIndexCardContent />;
+  return <FearAndGreed appearance="expanded" Gauge={ArcGaugeIndicator} />;
 }
