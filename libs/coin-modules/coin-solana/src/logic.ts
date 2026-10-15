@@ -36,21 +36,6 @@ export const isEd25519Address = (address: string): boolean => {
   return PublicKey.isOnCurve(new PublicKey(address).toBytes());
 };
 
-export function encodeAccountIdWithTokenAccountAddress(accountId: string, address: string): string {
-  return `${accountId}+${address}`;
-}
-
-export function decodeAccountIdWithTokenAccountAddress(accountIdWithTokenAccountAddress: string): {
-  accountId: string;
-  address: string;
-} {
-  const lastColonIndex = accountIdWithTokenAccountAddress.lastIndexOf("+");
-  return {
-    accountId: accountIdWithTokenAccountAddress.slice(0, lastColonIndex),
-    address: accountIdWithTokenAccountAddress.slice(lastColonIndex + 1),
-  };
-}
-
 export function withdrawableFromStake({
   stakeAccBalance,
   activation,

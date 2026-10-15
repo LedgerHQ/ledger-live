@@ -15,7 +15,6 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
-import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatusProviderWrapper";
@@ -26,7 +25,6 @@ import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { BrazeProvider } from "LLD/features/DynamicContent/components/BrazeProvider";
 import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
-import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
@@ -47,12 +45,11 @@ const reloadApp = (event: KeyboardEvent) => {
 
 type Props = {
   store: Store<State>;
-  initialCountervalues: CounterValuesStateRaw;
 };
 
 const queryClient = new QueryClient();
 
-const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
+const InnerApp = () => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
   useResetTimeRangeOnGraphRework();
@@ -95,25 +92,23 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             <UpdaterProvider>
               <AppDataStorageProvider>
                 <DeviceManagementKitProvider>
-                  <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                    <ToastProvider>
-                      <ServiceStatusProviderWrapper>
-                        <Router>
-                          <PostOnboardingProviderWrapped>
-                            <PlatformAppProviderWrapper>
-                              <DrawerProvider>
-                                <QueryClientProvider client={queryClient}>
-                                  <Default />
-                                  <MockServerDeviceWindow />
-                                  <ReactQueryDevtoolsProvider />
-                                </QueryClientProvider>
-                              </DrawerProvider>
-                            </PlatformAppProviderWrapper>
-                          </PostOnboardingProviderWrapped>
-                        </Router>
-                      </ServiceStatusProviderWrapper>
-                    </ToastProvider>
-                  </CountervaluesBridgedProvider>
+                  <ToastProvider>
+                    <ServiceStatusProviderWrapper>
+                      <Router>
+                        <PostOnboardingProviderWrapped>
+                          <PlatformAppProviderWrapper>
+                            <DrawerProvider>
+                              <QueryClientProvider client={queryClient}>
+                                <Default />
+                                <MockServerDeviceWindow />
+                                <ReactQueryDevtoolsProvider />
+                              </QueryClientProvider>
+                            </DrawerProvider>
+                          </PlatformAppProviderWrapper>
+                        </PostOnboardingProviderWrapped>
+                      </Router>
+                    </ServiceStatusProviderWrapper>
+                  </ToastProvider>
                 </DeviceManagementKitProvider>
               </AppDataStorageProvider>
             </UpdaterProvider>
@@ -124,7 +119,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   );
 };
 
-const App = ({ store, initialCountervalues }: Props) => {
+const App = ({ store }: Props) => {
   return (
     <LiveStyleSheetManager>
       {/* Two providers, one instance: `I18nextProvider` serves the app's own react-i18next call
@@ -133,7 +128,7 @@ const App = ({ store, initialCountervalues }: Props) => {
         <I18nProvider i18n={i18n}>
           <Provider store={store}>
             <LinkingProviderWrapper>
-              <InnerApp initialCountervalues={initialCountervalues} />
+              <InnerApp />
             </LinkingProviderWrapper>
           </Provider>
         </I18nProvider>

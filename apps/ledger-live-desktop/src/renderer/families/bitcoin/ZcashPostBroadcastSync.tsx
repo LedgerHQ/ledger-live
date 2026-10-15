@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import type { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import {
   isShieldedTransfer,
   type Transaction as ZcashTransaction,
+  type ZcashAccount,
 } from "@ledgerhq/coin-zcash/types";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 

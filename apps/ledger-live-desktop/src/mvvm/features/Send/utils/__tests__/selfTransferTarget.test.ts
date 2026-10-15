@@ -1,6 +1,9 @@
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountSelfTransferTarget } from "../selfTransferTarget";
+import {
+  applyRecipientSelfTransferState,
+  getAccountSelfTransferTarget,
+} from "../selfTransferTarget";
 
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: { getBalanceTypeConfig: jest.fn() },
@@ -39,5 +42,50 @@ describe("getAccountSelfTransferTarget", () => {
     } as never);
 
     expect(getAccountSelfTransferTarget(account, {})).toBeNull();
+  });
+});
+
+describe("applyRecipientSelfTransferState", () => {
+  const target = {
+    address: "aleo1self",
+    translationKey: "recipient.selfTransfer.toPrivate",
+    isDestinationPublic: false,
+  };
+
+  function stubConfig() {
+    const buildSelfTransferPatch = jest.fn(({ isSelfTransfer }: { isSelfTransfer: boolean }) => ({
+      selfTransfer: isSelfTransfer,
+    }));
+    mockedGetBalanceTypeConfig.mockReturnValue({
+      getSelfTransferTarget: () => target,
+      buildSelfTransferPatch,
+    } as never);
+    return buildSelfTransferPatch;
+  }
+
+  it("puts the transaction in self-transfer state for the account's own target address", () => {
+    const buildSelfTransferPatch = stubConfig();
+    const transaction = { mode: "transfer_public" };
+
+    expect(applyRecipientSelfTransferState(account, transaction, "ALEO1SELF")).toEqual({
+      mode: "transfer_public",
+      selfTransfer: true,
+    });
+    expect(buildSelfTransferPatch).toHaveBeenCalledWith({ isSelfTransfer: true, transaction });
+  });
+
+  it("takes the transaction out of self-transfer state for any other address", () => {
+    stubConfig();
+
+    expect(
+      applyRecipientSelfTransferState(account, { selfTransfer: true }, "aleo1someoneelse"),
+    ).toEqual({ selfTransfer: false });
+  });
+
+  it("returns the transaction untouched when the currency declares no balanceType config", () => {
+    mockedGetBalanceTypeConfig.mockReturnValue(null);
+    const transaction = { mode: "transfer_public" };
+
+    expect(applyRecipientSelfTransferState(account, transaction, "aleo1self")).toBe(transaction);
   });
 });

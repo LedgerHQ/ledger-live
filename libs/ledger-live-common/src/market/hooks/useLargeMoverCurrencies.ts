@@ -1,30 +1,60 @@
-import { useQueries } from "@tanstack/react-query";
-import { fetchCurrency } from "../api";
-import { QUERY_KEY } from "../utils/queryKeys";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
+import { useMemo } from "react";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
+import {
+  pairMarketsWithRequestedLedgerIds,
+  useGetMarketsByLedgerIdsQuery,
+} from "../state-manager/api";
+import { applyUsdRateToMarketItem } from "../utils/applyUsdRateToMarket";
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
+import { useResolveMarketCounterCurrency } from "./useResolveMarketCounterCurrency";
 
 type UseLargeMoverCurrenciesParams = {
-  ids: string[];
+  ledgerIds: string[];
   counterCurrency: string;
+  isCryptoCountervalue: boolean;
 };
 
 export const useLargeMoverCurrencies = ({
-  ids,
+  ledgerIds,
   counterCurrency,
+  isCryptoCountervalue,
 }: UseLargeMoverCurrenciesParams) => {
-  const currencyQueries = useQueries({
-    queries: ids.map(id => ({
-      queryKey: [QUERY_KEY.CurrencyDataRaw, id, counterCurrency],
-      queryFn: () => fetchCurrency({ id, counterCurrency }),
-      refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    })),
+  const {
+    requestCounterCurrency,
+    displayCounterCurrency = counterCurrency,
+    needsUsdFallback,
+    isResolutionLoading,
+  } = useResolveMarketCounterCurrency({
+    counterCurrency,
+    fallbackForCryptoCountervalues: true,
+    isCryptoCountervalue,
   });
+  const skip = ledgerIds.length === 0 || isResolutionLoading || !requestCounterCurrency;
 
-  return ids.map((id, index) => ({
-    id,
-    data: currencyQueries[index]?.data,
-    isLoading: currencyQueries[index]?.isLoading || false,
-    isError: currencyQueries[index]?.isError || false,
-  }));
+  const { currentData, isLoading, isError } = useGetMarketsByLedgerIdsQuery(
+    { ledgerIds, counterCurrency: requestCounterCurrency ?? counterCurrency },
+    {
+      skip,
+      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    },
+  );
+  const { rate: usdToCounterValueRate, status: rateStatus } = useUsdToFiatRate(
+    needsUsdFallback ? displayCounterCurrency : "usd",
+    { skip },
+  );
+
+  const rate = needsUsdFallback ? usdToCounterValueRate : 1;
+  const markets = useMemo(() => {
+    if (rate == null || !currentData) return [];
+    return pairMarketsWithRequestedLedgerIds(
+      currentData.map(market => applyUsdRateToMarketItem(market, rate)),
+      ledgerIds,
+    );
+  }, [currentData, ledgerIds, rate]);
+
+  return {
+    markets,
+    isLoading: isLoading || isResolutionLoading || (needsUsdFallback && rateStatus === "loading"),
+    isError: isError || (needsUsdFallback && rateStatus === "error"),
+  };
 };

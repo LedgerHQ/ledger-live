@@ -49,7 +49,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/psbtv2": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",

@@ -8,11 +8,10 @@ export type ContactNameDrawerPrefix = typeof RENAME_CONTACT_PREFIX;
 export default class ContactNameDrawer {
   constructor(private readonly testIDPrefix: ContactNameDrawerPrefix) {}
 
-  contentId = () => `${this.testIDPrefix}-content`;
+  private readonly contentId = () => `${this.testIDPrefix}-content`;
 
-  content = () => getElementById(this.contentId());
-  nameInput = () => getElementById(`${this.testIDPrefix}-name-input`);
-  confirmButton = () => getElementById(`${this.testIDPrefix}-confirm`);
+  private readonly nameInput = () => getElementById(`${this.testIDPrefix}-name-input`);
+  private readonly confirmButton = () => getElementById(`${this.testIDPrefix}-confirm`);
 
   @Step("Expect the contact name drawer visible")
   async expectVisible() {

@@ -353,6 +353,7 @@ const extraProperties = (store: ReduxStore) => {
     "lwd",
   );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
+  const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   const payAttributes = getPayAttributes(
     state,
@@ -408,6 +409,7 @@ const extraProperties = (store: ReduxStore) => {
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
+    accountDetail,
     ...remoteABTestingAttributes,
   };
 };

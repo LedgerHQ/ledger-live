@@ -53,7 +53,7 @@ describe("BitcoinLikeWallet", () => {
   test("syncAccount", async () => {
     mockAccount.xpub.sync = jest.fn().mockResolvedValue(undefined);
 
-    await wallet.syncAccount(mockAccount, 1000);
+    await wallet.syncAccount(jest.fn(), mockAccount, 1000);
 
     expect(mockAccount.xpub.sync).toHaveBeenCalled();
     expect(mockAccount.xpub.currentBlockHeight).toBe(1000);
@@ -186,7 +186,7 @@ describe("BitcoinLikeWallet", () => {
         return Promise.resolve({ txs: [], nextPageToken: null });
       });
 
-    await xpub.sync();
+    await xpub.sync(jest.fn());
 
     // ✅ Ensure wallet returns only that one deduplicated transaction
     const transactions = await wallet.getAccountTransactions(mockAccount);
@@ -254,13 +254,13 @@ describe("BitcoinLikeWallet", () => {
     const appendSpy = jest.spyOn(xpub.storage, "appendTxs");
 
     // First sync with pending only
-    await xpub.sync();
+    await xpub.sync(jest.fn());
     expect(appendSpy).toHaveBeenCalled();
 
     // Clear calls and simulate next sync with both versions
     appendSpy.mockClear();
     syncRound = 1;
-    await xpub.sync();
+    await xpub.sync(jest.fn());
 
     // Optional: check wallet.getAccountTransactions reflects correct result
     const transactions = await wallet.getAccountTransactions(mockAccount);
@@ -324,14 +324,15 @@ describe("BitcoinLikeWallet", () => {
     const appendSpy = jest.spyOn(xpub.storage, "appendTxs");
 
     // First sync with only pending
-    await xpub.sync();
+    await xpub.sync(jest.fn());
     expect(appendSpy).toHaveBeenCalledWith(
+      expect.any(Function),
       expect.arrayContaining([expect.objectContaining({ block: null })]),
     );
 
     // Second sync, simulate confirmed coming in
     syncRound = 1;
-    await xpub.sync();
+    await xpub.sync(jest.fn());
 
     // Check that storage doesn't hold both
     const storedTxs = xpub.storage.getTxs();
@@ -377,8 +378,8 @@ describe("BitcoinLikeWallet", () => {
       },
     );
 
-    await xpub.sync(); // fetch pending
-    await xpub.sync(); // fetch confirmed
+    await xpub.sync(jest.fn()); // fetch pending
+    await xpub.sync(jest.fn()); // fetch confirmed
 
     const transactions = await wallet.getAccountTransactions(mockAccount);
     expect(transactions.txs).toHaveLength(1);
@@ -416,7 +417,7 @@ describe("BitcoinLikeWallet", () => {
       received_at: new Date().toISOString(),
     };
 
-    mockAccount.xpub.storage.appendTxs([pendingTx]);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [pendingTx]);
 
     let unspentUtxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
       address,
@@ -433,7 +434,7 @@ describe("BitcoinLikeWallet", () => {
       outputs: pendingTx.outputs.map(output => ({ ...output, block_height: 456, rbf: false })),
     };
 
-    mockAccount.xpub.storage.appendTxs([confirmedTx]);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [confirmedTx]);
 
     unspentUtxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
       address,
@@ -472,7 +473,7 @@ describe("BitcoinLikeWallet", () => {
       received_at: new Date().toISOString(),
     };
 
-    mockAccount.xpub.storage.appendTxs([spendTx]);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [spendTx]);
 
     unspentUtxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
       address,
@@ -516,7 +517,7 @@ describe("BitcoinLikeWallet", () => {
       address,
     };
 
-    mockAccount.xpub.storage.appendTxs([pendingTx]);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [pendingTx]);
 
     let unspentUtxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
       address,
@@ -536,7 +537,7 @@ describe("BitcoinLikeWallet", () => {
       outputs: pendingTx.outputs.map(output => ({ ...output, block_height: 4577959, rbf: false })),
     };
 
-    mockAccount.xpub.storage.appendTxs([confirmedTx]);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [confirmedTx]);
 
     unspentUtxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
       address,
@@ -574,7 +575,7 @@ describe("BitcoinLikeWallet", () => {
       received_at: new Date().toISOString(),
     };
 
-    mockAccount.xpub.storage.appendTxs([spendTx]);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [spendTx]);
 
     unspentUtxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
       address,
@@ -613,7 +614,7 @@ describe("BitcoinLikeWallet", () => {
       });
     }
 
-    mockAccount.xpub.storage.appendTxs(pendingTxs);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), pendingTxs);
 
     // Spend every 10th UTXO
     for (let i = 0; i < UTXO_COUNT; i += 10) {
@@ -647,7 +648,7 @@ describe("BitcoinLikeWallet", () => {
       });
     }
 
-    mockAccount.xpub.storage.appendTxs(spendTxs);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), spendTxs);
 
     for (let i = 0; i < UTXO_COUNT; i++) {
       const utxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
@@ -685,9 +686,9 @@ describe("BitcoinLikeWallet", () => {
       received_at: new Date().toISOString(),
     };
 
-    mockAccount.xpub.storage.appendTxs([initialTx]);
-    mockAccount.xpub.storage.removeTxs({ account: 0, index: 0 });
-    mockAccount.xpub.storage.appendTxs([initialTx]);
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [initialTx]);
+    mockAccount.xpub.storage.removeTxs(jest.fn(), { account: 0, index: 0 });
+    mockAccount.xpub.storage.appendTxs(jest.fn(), [initialTx]);
 
     const utxos = mockAccount.xpub.storage.getAddressUnspentUtxos({
       address: "race-address",
@@ -733,7 +734,12 @@ describe("BitcoinLikeWallet", () => {
 
     it("estimate fees for one utxo", async () => {
       const feePerByte = 1;
-      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, feePerByte, []);
+      const maxSpendable = await wallet.estimateAccountMaxSpendable(
+        jest.fn(),
+        mockAccount,
+        feePerByte,
+        [],
+      );
       const expectedFees =
         feePerByte *
         utils.maxTxSizeCeil(1, [], true, mockAccount.xpub.crypto, mockAccount.xpub.derivationMode);
@@ -761,6 +767,7 @@ describe("BitcoinLikeWallet", () => {
         .mockResolvedValue(utxosWithChangeAddress);
       const feePerByte = 1;
       const maxSpendableWithChangeAddressUtxo = await wallet.estimateAccountMaxSpendable(
+        jest.fn(),
         mockAccount,
         feePerByte,
         [],
@@ -789,6 +796,7 @@ describe("BitcoinLikeWallet", () => {
         .mockResolvedValue(utxosWithUnconfirmedTx);
       const feePerByte = 1;
       const maxSpendableWithUnconfirmedTx = await wallet.estimateAccountMaxSpendable(
+        jest.fn(),
         mockAccount,
         feePerByte,
         [],
@@ -831,7 +839,7 @@ describe("BitcoinLikeWallet", () => {
         .fn()
         .mockResolvedValue(utxosWithIneffectiveValue);
 
-      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 1, []);
+      const maxSpendable = await wallet.estimateAccountMaxSpendable(jest.fn(), mockAccount, 1, []);
       const expectedFees = utils.maxTxSizeCeil(
         1,
         [],
@@ -844,7 +852,12 @@ describe("BitcoinLikeWallet", () => {
     });
 
     it("rounds feePerByte up like the real build", async () => {
-      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 1.2, []);
+      const maxSpendable = await wallet.estimateAccountMaxSpendable(
+        jest.fn(),
+        mockAccount,
+        1.2,
+        [],
+      );
       const expectedFees =
         2 *
         utils.maxTxSizeCeil(1, [], true, mockAccount.xpub.crypto, mockAccount.xpub.derivationMode);

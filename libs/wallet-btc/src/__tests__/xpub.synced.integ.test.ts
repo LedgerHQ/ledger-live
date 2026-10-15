@@ -31,7 +31,7 @@ describe("synced xpub utilites functions", () => {
     });
 
     beforeAll(async () => {
-      await xpub.sync();
+      await xpub.sync(jest.fn());
     }, 120000);
 
     it("should compute accounts/addresses/balances correctly", async () => {

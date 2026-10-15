@@ -1,5 +1,49 @@
 # @ledgerhq/wallet-cli
 
+## 2.11.2
+
+### Patch Changes
+
+- [#23334](https://github.com/LedgerHQ/ledger-live/pull/23334) [`ba7dd9c`](https://github.com/LedgerHQ/ledger-live/commit/ba7dd9c7d5dfcd87c922835ceaa4c1fc90dd403e) Thanks [@Justkant](https://github.com/Justkant)! - Send the wallet-cli User-Agent on fetch requests so swap quotes are no longer blocked
+
+- [#23306](https://github.com/LedgerHQ/ledger-live/pull/23306) [`b641da8`](https://github.com/LedgerHQ/ledger-live/commit/b641da86d889e6e81278c5af70b16da216a19f92) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Coin modules declare their AccountDescriptor type; the legacy account converters read it instead of the bitcoin family, so Cardano, Kaspa and Zcash map to utxo descriptors
+
+## 2.11.1
+
+### Patch Changes
+
+- [#23282](https://github.com/LedgerHQ/ledger-live/pull/23282) [`2313b36`](https://github.com/LedgerHQ/ledger-live/commit/2313b36146cf2cc04eee1dabdfb9697b6c0da8fd) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-cli): keep agent-intent enrollment sessions open past 5 minutes
+
+  Re-vendor `@ledgerhq/agent-intent-sdk` from `main` `00d6830`. `agent-intent enroll` and `recover` no longer lose the session when the user takes more than 5 minutes to open the link or approve on the device.
+
+- [#22437](https://github.com/LedgerHQ/ledger-live/pull/22437) [`58c1bd3`](https://github.com/LedgerHQ/ledger-live/commit/58c1bd3c42d7698822c7308b8a9cfb06a28744f0) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Fail `swap status` when `--provider` does not own the swap id.
+
+  The swap API answers `unknown` for a swap id queried under the wrong provider, and the command used to print that as a successful `UNKNOWN` status. It now exits with code 1, and the error names the other allowed provider(s) that know the swap id, so the command can be re-run with the right `--provider`.
+
+  A swap that its own provider still reports as `unknown` (for example, not yet registered by the partner) now also exits with code 1 instead of printing `UNKNOWN`. Callers that poll `swap status` should treat exit code 1 as "maybe not registered yet, retry" rather than a permanent failure.
+
+## 2.11.0
+
+### Minor Changes
+
+- [#23045](https://github.com/LedgerHQ/ledger-live/pull/23045) [`1b2216c`](https://github.com/LedgerHQ/ledger-live/commit/1b2216cfa6763f92595e71b3f7d61bdf1436981d) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent swap to propose a swap for human review
+
+  `agent-intent swap --profile <id> --from <currency id> --to <currency id> --amount <amount>` quotes the swap with the Swap API, then signs and submits the best quote the Agent Intent frontend can prepare (oneinch, velora, okx or lifi, with no pending token approval or Permit2) as a Swap intent, and prints the review link. `--provider` narrows the quote, `--to-amount` replaces the quoted amount, and `--dry-run` quotes and validates without submitting. Ethereum mainnet ETH and ERC-20 only; amounts are human units and stay exact.
+
+- [#23105](https://github.com/LedgerHQ/ledger-live/pull/23105) [`4bd9273`](https://github.com/LedgerHQ/ledger-live/commit/4bd9273844b2a964baef76f1a193f405966a3e90) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` proposes Solana sends of SOL or an SPL token (a base58 `--token` mint; Token-2022 is refused) from a Solana mainnet account to a base58 `--to`, with an optional on-chain `--memo` and no fee strategy (NTTVS-953).
+
+- [#23037](https://github.com/LedgerHQ/ledger-live/pull/23037) [`59a6452`](https://github.com/LedgerHQ/ledger-live/commit/59a64522a3f735da61fcea113a178e22faa3de19) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent status to read one intent's current state
+
+  `agent-intent status --profile <id> --intent <id>` shows the current status and details of one intent the profile proposed, using its own key. JSON adds `terminal` (true once the state is final, null for a state this version does not know) for shell polling. An unknown id and another agent's intent get the same not-found answer.
+
+- [#23174](https://github.com/LedgerHQ/ledger-live/pull/23174) [`ae6dff8`](https://github.com/LedgerHQ/ledger-live/commit/ae6dff8d85871d230dbbf4af7cd57f2ad7b53303) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent cancel to withdraw an intent before the user signs it
+
+  `agent-intent cancel --profile <id> --intent <id>` cancels a `created` or `crafted` intent, after confirmation or with `--yes`. Other known states are refused; a state this version doesn't know is left to the service.
+
+### Patch Changes
+
+- [#23273](https://github.com/LedgerHQ/ledger-live/pull/23273) [`a5e458f`](https://github.com/LedgerHQ/ledger-live/commit/a5e458f5fc1fcc33a1c36efb6995e94730daa552) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-cli): point agent-intent enrollment, recovery and intent links at app.agents.ledger(-test).com
+
 ## 2.10.0
 
 ### Minor Changes

@@ -49,7 +49,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/logs": "catalog:",
     "@noble/curves": "catalog:",
     "@noble/hashes": "catalog:",
     "axios": "catalog:",

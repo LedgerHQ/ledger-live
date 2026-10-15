@@ -1,4 +1,4 @@
-import { fireEvent, renderWithReactQuery, screen } from "@tests/test-renderer";
+import { fireEvent, renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
 import React from "react";
 import { ScreenName } from "~/const";
@@ -11,7 +11,6 @@ import { RouteProp } from "@react-navigation/core";
 import * as navigationModule from "@react-navigation/native";
 import { mockNavigation } from "../screens/LargeMoverLandingPage/fixtures/navigation";
 import { MockedLargeMoverLandingPage } from "./shared";
-import { mappingServiceHandlers } from "../__tests__/mappingServiceHandlers";
 import { i18n } from "~/context/Locale";
 
 jest.mock("@react-navigation/native", () => {
@@ -66,6 +65,28 @@ const bitcoinMarket = (overrides: Record<string, unknown> = {}) => [
   },
 ];
 
+const renderLargeMover = ({
+  params = {},
+  counterValue = "USD",
+}: {
+  params?: Partial<typeof mockRoute.params>;
+  counterValue?: string;
+} = {}) =>
+  renderWithReactQuery(
+    <MockedLargeMoverLandingPage
+      key={mockRoute.key}
+      name={mockRoute.name}
+      params={{ ...mockRoute.params, ...params }}
+    />,
+    {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: { ...state.settings, counterValue },
+        largeMover: { tutorial: false },
+      }),
+    },
+  );
+
 const adjustCoin = (name: string, actionName: "increment" | "decrement") =>
   fireEvent(screen.getByRole("adjustable", { name }), "accessibilityAction", {
     nativeEvent: { actionName },
@@ -75,7 +96,6 @@ describe("LargeMoverLandingPage Integration Tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.mocked(navigationModule.useNavigation).mockReturnValue(mockNavigation);
-    server.use(...mappingServiceHandlers);
   });
 
   afterEach(async () => {
@@ -83,49 +103,47 @@ describe("LargeMoverLandingPage Integration Tests", () => {
   });
 
   it("displays the ticker of the first currency", async () => {
-    renderWithReactQuery(
-      <MockedLargeMoverLandingPage
-        key={mockRoute.key}
-        name={mockRoute.name}
-        params={mockRoute.params}
-      />,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            counterValue: "USD",
-          },
-          largeMover: {
-            tutorial: false,
-          },
-        }),
-      },
-    );
+    renderLargeMover();
 
     expect(await screen.findAllByText(/BTC/i)).toBeDefined();
   });
 
-  it("displays the close button in the header and handles navigation", async () => {
-    const { user } = renderWithReactQuery(
-      <MockedLargeMoverLandingPage
-        key={mockRoute.key}
-        name={mockRoute.name}
-        params={mockRoute.params}
-      />,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            counterValue: "USD",
-          },
-          largeMover: {
-            tutorial: false,
-          },
-        }),
-      },
+  it("navigates to the market list when assets fail", async () => {
+    server.use(
+      http.get("https://dada.api.ledger.com/v1/assets", () => HttpResponse.error()),
+      http.get("https://dada.api.ledger-test.com/v1/assets", () => HttpResponse.error()),
     );
+
+    renderLargeMover();
+
+    await waitFor(() => {
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(ScreenName.MarketList, { top100: true });
+    });
+  });
+
+  it("stays on the page when markets fail", async () => {
+    const markets = { failed: false };
+    server.use(
+      http.get("https://countervalues.live.ledger.com/v3/markets", () => {
+        markets.failed = true;
+        return HttpResponse.json(null, { status: 500 });
+      }),
+    );
+
+    renderLargeMover();
+
+    await waitFor(() => {
+      expect(markets.failed).toBe(true);
+    });
+    expect(screen.getByTestId("NavigationHeaderCloseButton")).toBeOnTheScreen();
+    expect(mockNavigation.navigate).not.toHaveBeenCalledWith(
+      ScreenName.MarketList,
+      expect.anything(),
+    );
+  });
+
+  it("displays the close button in the header and handles navigation", async () => {
+    const { user } = renderLargeMover();
 
     const closeButton = await screen.findByTestId("NavigationHeaderCloseButton");
     expect(closeButton).toBeOnTheScreen();
@@ -139,33 +157,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
   });
 
   it("can change between different cryptocurrency cards", async () => {
-    const multiCurrencyRoute = {
-      ...mockRoute,
-      params: {
-        ledgerIds: "bitcoin,ethereum,solana",
-        initialRange: InitialRange.Day,
-      },
-    };
-
-    renderWithReactQuery(
-      <MockedLargeMoverLandingPage
-        key={multiCurrencyRoute.key}
-        name={multiCurrencyRoute.name}
-        params={multiCurrencyRoute.params}
-      />,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            counterValue: "USD",
-          },
-          largeMover: {
-            tutorial: false,
-          },
-        }),
-      },
-    );
+    renderLargeMover({ params: { ledgerIds: "bitcoin,ethereum,solana" } });
 
     expect(await screen.findByText("BTC")).toBeOnTheScreen();
     expect(screen.queryByText("ETH")).toBeNull();
@@ -182,26 +174,19 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     expect(screen.queryByText("ETH")).toBeNull();
   });
 
+  it("keeps Optimism's price when Ethereum also lists that ledger id", async () => {
+    renderLargeMover({ params: { ledgerIds: "optimism,ethereum" } });
+
+    expect(await screen.findByText("$2.81")).toBeOnTheScreen();
+    expect(screen.queryByText("$2,966.26")).toBeNull();
+
+    adjustCoin("OP Mainnet", "increment");
+    expect(await screen.findByText("$2,966.26")).toBeOnTheScreen();
+    expect(screen.queryByText("$2.81")).toBeNull();
+  });
+
   it("handles time range changes via Card component", async () => {
-    const { user } = renderWithReactQuery(
-      <MockedLargeMoverLandingPage
-        key={mockRoute.key}
-        name={mockRoute.name}
-        params={mockRoute.params}
-      />,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            counterValue: "USD",
-          },
-          largeMover: {
-            tutorial: false,
-          },
-        }),
-      },
-    );
+    const { user } = renderLargeMover();
 
     expect(await screen.findByText("BTC")).toBeOnTheScreen();
 
@@ -263,25 +248,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
       }),
     );
 
-    renderWithReactQuery(
-      <MockedLargeMoverLandingPage
-        key={mockRoute.key}
-        name={mockRoute.name}
-        params={{ ledgerIds: "bitcoin", initialRange: InitialRange.Day }}
-      />,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            counterValue: "GBP",
-          },
-          largeMover: {
-            tutorial: false,
-          },
-        }),
-      },
-    );
+    renderLargeMover({ params: { ledgerIds: "bitcoin" }, counterValue: "GBP" });
 
     const gbpPrices = await screen.findAllByText("£47,123.00");
     expect(gbpPrices.length).toBeGreaterThan(0);
@@ -307,25 +274,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
         ),
       );
 
-      renderWithReactQuery(
-        <MockedLargeMoverLandingPage
-          key={mockRoute.key}
-          name={mockRoute.name}
-          params={{ ledgerIds: "bitcoin", initialRange: InitialRange.Day }}
-        />,
-        {
-          overrideInitialState: (state: State) => ({
-            ...state,
-            settings: {
-              ...state.settings,
-              counterValue: "USD",
-            },
-            largeMover: {
-              tutorial: false,
-            },
-          }),
-        },
-      );
+      renderLargeMover({ params: { ledgerIds: "bitcoin" } });
 
       expect(await screen.findByText(circulating)).toBeOnTheScreen();
       expect(await screen.findByText(total)).toBeOnTheScreen();
@@ -345,60 +294,14 @@ describe("LargeMoverLandingPage Integration Tests", () => {
         ),
       );
 
-      renderWithReactQuery(
-        <MockedLargeMoverLandingPage
-          key={mockRoute.key}
-          name={mockRoute.name}
-          params={{ ledgerIds: "bitcoin", initialRange: InitialRange.Day }}
-        />,
-        {
-          overrideInitialState: (state: State) => ({
-            ...state,
-            settings: {
-              ...state.settings,
-              counterValue,
-            },
-            largeMover: {
-              tutorial: false,
-            },
-          }),
-        },
-      );
+      renderLargeMover({ params: { ledgerIds: "bitcoin" }, counterValue });
 
       expect((await screen.findAllByText(marketCap)).length).toBeGreaterThan(0);
     },
   );
 
   it("displays token data when using ledgerIds parameter", async () => {
-    const tokenRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage> =
-      {
-        key: "LargeMoverTokenRouteKey",
-        name: ScreenName.LargeMoverLandingPage,
-        params: {
-          ledgerIds: "ethereum/erc20/usd__coin",
-          initialRange: InitialRange.Day,
-        },
-      };
-
-    renderWithReactQuery(
-      <MockedLargeMoverLandingPage
-        key={tokenRoute.key}
-        name={tokenRoute.name}
-        params={tokenRoute.params}
-      />,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            counterValue: "USD",
-          },
-          largeMover: {
-            tutorial: false,
-          },
-        }),
-      },
-    );
+    renderLargeMover({ params: { ledgerIds: "ethereum/erc20/usd__coin" } });
 
     expect(await screen.findByText("USDC")).toBeOnTheScreen();
     // A single coin has no next card to show.

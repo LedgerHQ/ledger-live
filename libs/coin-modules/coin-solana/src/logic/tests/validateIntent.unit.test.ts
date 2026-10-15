@@ -98,6 +98,7 @@ function makeStakeBalances(
     {
       value: 1_000_000_000n,
       asset: { type: "native" },
+      locked: 1_000_000_000n,
       stake: {
         uid: RECIPIENT,
         address: RECIPIENT,
@@ -680,10 +681,11 @@ describe("validateIntent", () => {
       it("does not let a deactivated stake's lamports pay the fee", async () => {
         const staked = 10_000_000_000n;
         const balances: Balance[] = [
-          { value: staked, asset: { type: "native" }, locked: staked },
+          { value: 0n, asset: { type: "native" }, locked: 0n },
           {
             value: staked,
             asset: { type: "native" },
+            locked: staked,
             stake: {
               uid: RECIPIENT,
               address: RECIPIENT,
@@ -701,7 +703,7 @@ describe("validateIntent", () => {
       });
 
       it("does not let staked lamports pay the fee", async () => {
-        const balances = makeStakeBalances({}, 1_000_003_000n);
+        const balances = makeStakeBalances({}, 3000n);
 
         const result = await validateIntent(makeUndelegateIntent(), balances, { value: 5000n });
 

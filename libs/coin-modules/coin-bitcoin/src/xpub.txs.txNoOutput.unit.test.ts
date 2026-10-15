@@ -1,7 +1,7 @@
 import { mapTxToOperations } from "./logic";
 
 describe("testing transaction without output", () => {
-  it("Parse zcash transaction without output", async () => {
+  it("Parse a transaction without output", async () => {
     const tx = {
       id: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
       inputs: [
@@ -24,7 +24,13 @@ describe("testing transaction without output", () => {
       address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
       received_at: "2021-07-28T13:34:38Z",
     };
-    const out = mapTxToOperations(tx, "zcash", "zcash 1", new Set<string>(), new Set<string>());
+    const out = mapTxToOperations(
+      tx,
+      "bitcoin_testnet",
+      "bitcoin_testnet 1",
+      new Set<string>(),
+      new Set<string>(),
+    );
     expect(out.length).toEqual(0);
   }, 30000);
 });

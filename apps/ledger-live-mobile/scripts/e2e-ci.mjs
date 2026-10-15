@@ -70,7 +70,7 @@ const test_ios = async () => {
       --take-screenshots failing \
       --forceExit \
       --headless \
-      --retries ${testType === "mock" ? 1 : 2} \
+      --retries 1 \
       --cleanup \
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;
@@ -88,7 +88,7 @@ const test_android = async () => {
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
-      --retries ${testType === "mock" ? 1 : 2} \\
+      --retries 1 \\
       --cleanup \\
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;

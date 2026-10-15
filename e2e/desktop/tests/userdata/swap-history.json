@@ -15734,7 +15734,7 @@
             {
               "status": "finished",
               "provider": "exodus",
-              "operationId": "js:2:solana:21kh76PRK8k6UFgd7uwpmkCq1V5q9B8WNKHvwYNgTNub:solanaSub-2TMEfuyzsFFsWJof4uRpjiodJKUMjChAXPUx5ro69TVyfMPNbCMqjqB7JE2Hiek22sg7gLYzhEoWMZrGr9z3A4Ny-OUT",
+              "operationId": "js:2:solana:21kh76PRK8k6UFgd7uwpmkCq1V5q9B8WNKHvwYNgTNub:solanaSub-3t7n1UyE41L4tP8M1MDX24NhV44nDrSnLBHdQoUDN73PNMYq3juSs5GEeLeEopVjQqxpF5NMTEUf7B6GmAmt6DH6-OUT",
               "swapId": "wQ90NrWdvJz5dA4",
               "receiverAccountId": "js:2:ethereum:0x8526F50A2FA870B1B7b91cc054aa06799dAc0110:",
               "fromAmount": "70000000",
@@ -15743,7 +15743,7 @@
             {
               "status": "finished",
               "provider": "exodus",
-              "operationId": "js:2:solana:21kh76PRK8k6UFgd7uwpmkCq1V5q9B8WNKHvwYNgTNub:solanaSub-2TMEfuyzsFFsWJof4uRpjiodJKUMjChAXPUx5ro69TVyfMPNbCMqjqB7JE2Hiek22sg7gLYzhEoWMZrGr9z3A4Ny-OUT",
+              "operationId": "js:2:solana:21kh76PRK8k6UFgd7uwpmkCq1V5q9B8WNKHvwYNgTNub:solanaSub-3t7n1UyE41L4tP8M1MDX24NhV44nDrSnLBHdQoUDN73PNMYq3juSs5GEeLeEopVjQqxpF5NMTEUf7B6GmAmt6DH6-OUT",
               "swapId": "wQ90NrWdvJz5dA4",
               "receiverAccountId": "js:2:ethereum:0x8526F50A2FA870B1B7b91cc054aa06799dAc0110:",
               "tokenId": "js:2:ethereum:0x8526F50A2FA870B1B7b91cc054aa06799dAc0110:",

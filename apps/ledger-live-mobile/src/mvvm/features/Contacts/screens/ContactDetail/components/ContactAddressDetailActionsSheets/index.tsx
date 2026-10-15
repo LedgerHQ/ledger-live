@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import {
   ContactsDeleteAddressDialog,
   ContactsEditSignerMismatchDialog,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";

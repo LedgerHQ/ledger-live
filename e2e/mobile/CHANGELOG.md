@@ -286,8 +286,10 @@ match one or more of the following constraints` — or before the button had
   mounted at all. 3/5 nightlies, still failing in the latest.
 
   Each of the three sheet taps now waits for the sheet's own container
-  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
-  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  (`transfer-drawer`) at 100% visibility, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
 - [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
@@ -314,7 +316,9 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
-  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+  timeout or adding a retry, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -358,8 +362,10 @@ match one or more of the following constraints` — or before the button had
   mounted at all. 3/5 nightlies, still failing in the latest.
 
   Each of the three sheet taps now waits for the sheet's own container
-  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
-  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  (`transfer-drawer`) at 100% visibility, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
 - [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
@@ -386,7 +392,9 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
-  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+  timeout or adding a retry, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile

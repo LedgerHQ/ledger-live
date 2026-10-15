@@ -786,15 +786,21 @@ describe("zcash descriptor resolution", () => {
     expect(descriptor?.send.fees.coinControl).toBeUndefined();
   });
 
-  it("returns the Bitcoin descriptor when zcashShielded is off", () => {
-    // Deliberate: with the flag off, the account is served by coin-bitcoin's
-    // Zcash chain-adapter, so the Bitcoin descriptor is the consistent answer.
+  it("returns the transparent-only Zcash descriptor when zcashShielded is off", () => {
+    // coin-zcash serves the account either way; without its shielded engine the send is
+    // transparent only: no pool to pick, no memo, and ZIP-317 fees nobody edits.
     setZcashShieldedEnabled(false);
     const zcash = getCryptoCurrencyById("zcash");
 
     const descriptor = getDescriptor(zcash);
 
-    expect(descriptor?.send.fees.hasCoinControl).toBe(true);
+    expect(descriptor?.send.balanceType).toBeUndefined();
+    expect(descriptor?.send.inputs.memo).toBeUndefined();
+    expect(descriptor?.send.fees).toEqual({
+      hasPresets: false,
+      hasCustom: false,
+      hasCoinControl: false,
+    });
   });
 
   it("resolves memo and fee-preset features for Zcash when the flag is on", () => {

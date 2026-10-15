@@ -97,7 +97,7 @@ describe("AnalyticsMain Integration Tests", () => {
       page: "Analytics",
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, swapTabRoute);
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, swapTabRoute, { pop: true });
   });
 
   it("should track and navigate to detailed allocation when allocation component is pressed", async () => {

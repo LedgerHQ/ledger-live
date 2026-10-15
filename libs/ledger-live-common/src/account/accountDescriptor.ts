@@ -15,6 +15,8 @@ import {
   runAccountDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { getAccountDescriptorType } from "../coin-modules/registry";
+import { resolveFamily } from "../bridge/zcashRouting";
 
 /** The fields of a legacy `Account` that a descriptor can express. */
 export type LegacyAccountIdentity = Pick<Account, "derivationMode" | "index" | "xpub"> & {
@@ -32,6 +34,10 @@ export type LegacyAccountFields = {
 
 export class UnsupportedDescriptorPathError extends Error {
   override name = "UnsupportedDescriptorPathError";
+}
+
+export class MissingAccountXpubError extends Error {
+  override name = "MissingAccountXpubError";
 }
 
 const toDescriptorPath = (schemePath: string) => `m/${schemePath.replaceAll("'", "h")}`;
@@ -80,7 +86,10 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const derivationMode = asDerivationMode(account.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
 
-  if (currency.family === "bitcoin" && account.xpub) {
+  if (getAccountDescriptorType(resolveFamily(currency)) === "utxo") {
+    if (!account.xpub) {
+      throw new MissingAccountXpubError(`${currency.id} account has no xpub to identify it`);
+    }
     return {
       purpose: "account",
       version: "1",
@@ -109,8 +118,11 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
   const descriptor = AccountDescriptorSchema.parse(input);
   const currencyId = currencyIdFromNetwork(descriptor.network);
   const currency = getCryptoCurrencyById(currencyId);
-  if (descriptor.type === "utxo" && currency.family !== "bitcoin") {
-    throw new UnsupportedDescriptorPathError(`${currencyId} does not support utxo descriptors`);
+  const expectedType = getAccountDescriptorType(resolveFamily(currency));
+  if (descriptor.type !== expectedType) {
+    throw new UnsupportedDescriptorPathError(
+      `${currencyId} accounts use ${expectedType} descriptors, got ${descriptor.type}`,
+    );
   }
   const path = fromDescriptorPath(descriptor.path);
 

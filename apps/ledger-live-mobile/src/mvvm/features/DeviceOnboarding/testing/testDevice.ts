@@ -9,7 +9,7 @@ import {
   createSessionStream,
   createTestStream,
   type SessionStream,
-} from "@ledgerhq/device-onboarding/testing";
+} from "@features/platform-device-onboarding/testing";
 import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";

@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { PortfolioRange } from "@ledgerhq/types-live";
+import type {
+  MarketListRequestParams,
+  MarketPerformersParams,
+  TrendingPerformersParams,
+} from "../utils/types";
 
 export enum MarketDataTags {
   Performers = "Performers",
@@ -8,18 +12,27 @@ export enum MarketDataTags {
   GlobalData = "GlobalData",
   TrendingCategories = "TrendingCategories",
   TrendingPerformers = "TrendingPerformers",
+  MarketList = "MarketList",
 }
 
-export interface MarketPerformersQueryParams {
-  counterCurrency: string;
-  range: PortfolioRange;
+export const MARKET_LIST_PAGE_SIZES = [1, 5, 20, 50] as const;
+
+export const MARKET_LIST_MIN_SEARCH_LENGTH = 2;
+
+export type MarketListPageSize = (typeof MARKET_LIST_PAGE_SIZES)[number];
+
+export type MarketListQueryArg = Omit<MarketListRequestParams, "limit"> & {
+  pageSize: MarketListPageSize;
+  /** Max number of results across pages. A page size stays on `pageSize`. */
   limit?: number;
-  top?: number;
-  sort: "asc" | "desc";
-  supported: boolean;
-}
+};
 
-export interface TrendingPerformersQueryParams {
+export type MarketPerformersQueryParams = Omit<MarketPerformersParams, "refreshRate">;
+
+export type TrendingPerformersQueryParams = Omit<TrendingPerformersParams, "refreshRate">;
+
+export interface MarketsByLedgerIdsQueryParams {
+  ledgerIds: string[];
   counterCurrency: string;
 }
 

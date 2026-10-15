@@ -10,7 +10,7 @@ import {
   selectShieldedSubscriptions,
   upsertShieldedSubscription,
 } from "~/renderer/reducers/shieldedSyncSubscriptions";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import type { Currency } from "@ledgerhq/wallet-btc/index";
 import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";

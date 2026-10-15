@@ -1,6 +1,7 @@
 import React from "react";
 import { renderHook } from "@testing-library/react-native";
 import { BigNumber } from "bignumber.js";
+import { track } from "@shared/analytics";
 import {
   SPONSORED_PHASE,
   type SponsoredPhase,
@@ -52,6 +53,17 @@ jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession", 
 }));
 jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote", () => ({
   useSponsoredFeeQuote: (...args: unknown[]) => mockUseSponsoredFeeQuote(...args),
+}));
+const mockUseSponsoredSendFunnelTracking = jest.fn();
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking", () => ({
+  useSponsoredSendFunnelTracking: (...args: unknown[]) =>
+    mockUseSponsoredSendFunnelTracking(...args),
+}));
+jest.mock("../SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
+}));
+jest.mock("../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send" }),
 }));
 
 const { useSponsoredSendSession } = jest.requireMock(
@@ -325,5 +337,28 @@ describe("SponsoredSendProvider", () => {
     expect(action.payload.accountId).toBe("tron");
     const updated = action.payload.updater({ id: "tron", pendingOperations: [] });
     expect(updated.pendingOperations).toEqual([op]);
+  });
+});
+
+describe("sponsored send funnel tracking", () => {
+  it("tracks the funnel with the send flow's properties", () => {
+    mockQuoteResult = {
+      ...mockQuoteResult,
+      standardFeeFiat: new BigNumber(170),
+      sponsoredFeeFiat: new BigNumber(113),
+    };
+    renderContext();
+
+    expect(mockUseSponsoredSendFunnelTracking).toHaveBeenLastCalledWith({
+      state: { phase: SPONSORED_PHASE.IDLE },
+      provider: "sponsored",
+      quote: QUOTE,
+      standardFeeFiat: new BigNumber(170),
+      sponsoredFeeFiat: new BigNumber(113),
+      fiatCurrency: { units: [{ name: "Euro", code: "EUR", magnitude: 2 }] },
+      flowSessionId: "session-1",
+      properties: { flow: "send" },
+      track,
+    });
   });
 });

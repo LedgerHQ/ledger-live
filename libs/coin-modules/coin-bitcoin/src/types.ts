@@ -203,8 +203,5 @@ export type BtcOperationExtra = {
 
 export type BtcOperation = Operation<BtcOperationExtra>;
 
-/** @deprecated Import from "./chain-adapters/zcash/types" */
-export type { ZcashAccount, ZcashAccountRaw } from "./chain-adapters/zcash/types";
-
 // Possible types of "replace by fee" (aka "edit transaction") operations:
 export type EditType = "cancel" | "speedup";

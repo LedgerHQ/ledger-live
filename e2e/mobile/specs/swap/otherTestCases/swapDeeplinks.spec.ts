@@ -33,6 +33,7 @@ describe("Swap - deeplinks", () => {
   const btcAccount = Account.BTC_NATIVE_SEGWIT_2;
   const ethAccount = Account.ETH_3;
   const usdtAccount = TokenAccount.ETH_USDT_1;
+  const usdtOnEthAccount = TokenAccount.ETH_USDT_3;
 
   beforeAll(async () => {
     await app.init({
@@ -169,7 +170,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.checkAssetToMatchesAccount(ethAccount);
   });
 
-  it("Swap deeplink - accountId wins over a mismatching token param", async () => {
+  it("Swap deeplink - fromAccountId wins, toToken received on toAccountId", async () => {
     await app.swap.openViaDeeplink(
       `fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
         `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
@@ -177,7 +178,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.expectSwapLiveAppForm();
     // fromAccountId takes precedence over conflicting fromToken
     await app.swapLiveApp.checkAssetFromMatchesAccount(btcAccount);
-    // toAccountId takes precedence over conflicting toToken
-    await app.swapLiveApp.checkAssetToMatchesAccount(ethAccount);
+    // toToken on the toAccountId network is received on that account
+    await app.swapLiveApp.checkAssetToMatchesAccount(usdtOnEthAccount);
   });
 });

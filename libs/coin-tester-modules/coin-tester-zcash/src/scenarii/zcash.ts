@@ -354,10 +354,15 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
       },
     });
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext, {
-      config: async () => coinConfig,
-      logger: () => {},
-    });
+    // The scenarios exercise the shielded engine, so the bridge runs it.
+    const { accountBridge, currencyBridge } = createBridges(
+      signerContext,
+      {
+        config: async () => coinConfig,
+        logger: () => {},
+      },
+      { isShieldedEnabled: () => true },
+    );
     const ZCASH_REGTEST = getCryptoCurrencyById("zcash_regtest");
 
     const getAddress = resolver(signerContext);

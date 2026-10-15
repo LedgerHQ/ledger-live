@@ -4,6 +4,7 @@ import { MockServer, type Route } from "../../testing/mock-server";
 import { runCli, storedApiAuthPubkey, useApiAuthKeychain } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
+import { ledgerClientVersion } from "../../shared/client-version";
 import { KEYCLOAK_TOKEN, makeAuthRoutes } from "../../testing/auth-routes";
 import { SWAP_QUOTE_ARGS, makeSwapQuoteRoutes } from "../../testing/swap-quote-routes";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
@@ -30,6 +31,7 @@ describe("quote command", () => {
   beforeEach(() => {
     challengeCookie = null;
     quote.quoteAuthorizations.length = 0;
+    quote.quoteUserAgents.length = 0;
     fixture = makeSessionDir(ACCOUNTS);
   });
   afterEach(() => {
@@ -91,6 +93,16 @@ describe("quote command", () => {
     expect(Array.isArray(data.quotes)).toBe(true);
     expect(data.quotes.length).toBeGreaterThanOrEqual(1);
     expect(data.quotes[0].provider).toBe("paraswap");
+  });
+
+  it("sends the wallet-cli User-Agent to the swap quote API", async () => {
+    const { exitCode, stdout, stderr } = await runCli(JSON_QUOTE_ARGS, {
+      WALLET_CLI_MOCK_PORT: String(server.port),
+      ...fixture.env,
+    });
+
+    expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
+    expect(quote.quoteUserAgents).toEqual([ledgerClientVersion]);
   });
 
   it("rejects swap currencies outside wallet-cli supported list", async () => {

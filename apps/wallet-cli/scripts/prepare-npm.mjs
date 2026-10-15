@@ -1,4 +1,4 @@
-import { chmod, copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { access, chmod, copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -69,6 +69,20 @@ async function assertPackageVersions() {
         `${platform.packageName} version ${platformPackage.version} does not match @ledgerhq/wallet-cli ${mainPackage.version}`,
       );
     }
+  }
+}
+
+async function assertPlatformBinaries() {
+  const missing = [];
+
+  for (const platform of platforms) {
+    await access(path.join(root, platform.source)).catch(() => missing.push(platform.source));
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing ${missing.join(", ")}. prepare:npm packages every target: build with CI=true and every platform's optional deps installed (see README).`,
+    );
   }
 }
 
@@ -156,6 +170,7 @@ async function preparePlatformBinaries() {
 }
 
 await assertPackageVersions();
+await assertPlatformBinaries();
 await prepareMainPackage();
 await prepareShim();
 await preparePlatformBinaries();

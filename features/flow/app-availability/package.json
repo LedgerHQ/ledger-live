@@ -23,6 +23,7 @@
   "dependencies": {
     "@domain/api-ofac": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/linking": "workspace:*",
     "@shared/ui-app-unavailable": "workspace:*"
   },
   "peerDependencies": {

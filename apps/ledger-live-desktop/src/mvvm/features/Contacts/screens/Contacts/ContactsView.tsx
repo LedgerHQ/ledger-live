@@ -1,13 +1,15 @@
 import React from "react";
 import {
-  ContactAddressDetailDialog,
-  ContactsDeleteAddressDialog,
-  ContactsEditSignerMismatchDialog,
   ContactsView as ContactsFlowView,
-  type ContactAddressDetailDialogProps,
   type AddContactAppAdapterResult,
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
+import {
+  ContactAddressDetailDialog,
+  ContactsDeleteAddressDialog,
+  ContactsEditSignerMismatchDialog,
+  type ContactAddressDetailDialogProps,
+} from "@features/flow-contacts-detail";
 import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
@@ -17,7 +19,7 @@ import {
   type ContactsAddAddressFlowDialogProps,
 } from "./components/ContactsAddAddressFlowDialog";
 import type { ContactsDeviceIntentExecutorProps } from "@features/platform-contacts/device";
-import { DeviceIntentExecutorLWD } from "LLD/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLD/components/DeviceIntentExecutor";
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import type { ContactDetailEditDeleteDialogProps } from "./useContactDetailEditDeleteAdapter";
 
@@ -59,7 +61,7 @@ export function ContactsView({
         </>
       )}
       {dieProps?.enabled === true ? (
-        <DeviceIntentExecutorLWD sourceFlow="contacts" {...dieProps} />
+        <DeviceIntentExecutor sourceFlow="contacts" {...dieProps} />
       ) : null}
     </>
   );

@@ -16,7 +16,6 @@ import {
 import {
   createContactsListViewModel,
   createContactsSearchViewModel,
-  type ContactAddressDetailDialogProps,
   type ContactsListViewLabels,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
@@ -27,8 +26,11 @@ import {
   useContactsListPageAnalytics,
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncDismiss,
-  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
+import {
+  type ContactAddressDetailDialogProps,
+  resolveContactAddressSupportsDomain,
+} from "@features/flow-contacts-detail";
 import {
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,

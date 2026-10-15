@@ -1,7 +1,7 @@
 import React from "react";
 import type { ReactTestInstance } from "react-test-renderer";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import { ContactDetailActionsMenu } from "@features/flow-contacts";
+import { ContactDetailActionsMenu } from "@features/flow-contacts-detail";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 

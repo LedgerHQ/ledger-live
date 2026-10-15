@@ -9,8 +9,9 @@ import { CosmosRedelegation } from "../../types";
  */
 export async function getRedelegations(
   currencyId: string,
+  denom: string,
   address: string,
 ): Promise<CosmosRedelegation[]> {
   const api = new CosmosAPI(currencyId);
-  return api.getRedelegationsWithQueued(address, api.getCurrency());
+  return api.getRedelegationsWithQueued(address, denom);
 }

@@ -64,6 +64,15 @@ export function useSwapLiveAppState(params: unknown) {
   // its initial URL regardless of where it has navigated internally.
   const [webviewResetKey, setWebviewResetKey] = useState(0);
 
+  // Swap params reach the live app through its URL, so new params on the same webview
+  // load a new page on top of the old one and pile up back/forward history. A new swap
+  // entry (new route params) remounts the webview instead, on a fresh history.
+  const [lastParams, setLastParams] = useState(params);
+  if (params !== lastParams) {
+    setLastParams(params);
+    setWebviewResetKey(k => k + 1);
+  }
+
   // Latest webview URL, mirrored in a ref so ensureWebviewReset can read it without
   // being re-created on every navigation inside the live app.
   const webviewUrlRef = useRef(initialWebviewState.url);

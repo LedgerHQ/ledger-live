@@ -207,7 +207,7 @@ export function runSendValidAddressTest(
   tags.forEach(tag => $Tag(tag));
   describe("Send - valid address input", () => {
     beforeAll(async () => {
-      await beforeAllLegacyFunction(transaction);
+      await beforeAllLegacyFunction(transaction, { liveDataOptions: { useScheme: true } });
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send valid address input - ${testName}`, async () => {

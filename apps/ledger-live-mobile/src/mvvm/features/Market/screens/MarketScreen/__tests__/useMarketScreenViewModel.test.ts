@@ -42,6 +42,7 @@ function mockMarketAssets(overrides: Partial<ReturnType<typeof useMarketAssets>>
     isError: false,
     emptyState: undefined,
     onEndReached: jest.fn(),
+    resetToFirstPage: jest.fn(),
     ...overrides,
   });
 }
@@ -72,6 +73,15 @@ describe("useMarketScreenViewModel", () => {
 
   afterEach(() => {
     jest.useRealTimers();
+  });
+
+  it("resets the asset list to its first page when the screen mounts", () => {
+    const resetToFirstPage = jest.fn();
+    mockMarketAssets({ resetToFirstPage });
+
+    renderHook(() => useMarketScreenViewModel());
+
+    expect(resetToFirstPage).toHaveBeenCalledTimes(1);
   });
 
   it("exposes the highlight card layout", () => {

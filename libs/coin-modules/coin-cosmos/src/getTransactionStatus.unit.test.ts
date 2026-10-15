@@ -98,6 +98,21 @@ describe("getTransactionStatus negative cases", () => {
     expect(status.errors.recipient?.name).toBe("InvalidAddress");
   });
 
+  // "Osmosis" resolves to `osmo` through the legacy `osmosis` alias, so its prefix is enforced.
+  it("rejects a recipient without the osmo prefix on Osmosis with InvalidAddress", async () => {
+    const account = makeAccount(BABY(1), getCryptoCurrencyById("osmo"));
+    const transaction = {
+      mode: "send",
+      recipient: bech32.encode("cosmos", bech32.toWords(Buffer.alloc(20, 1))),
+      amount: BABY("0.1"),
+      fees: new BigNumber(5000),
+      validators: [],
+      useAllAmount: false,
+    } as unknown as Transaction;
+    const status = await getTransactionStatus(account, transaction);
+    expect(status.errors.recipient?.name).toBe("InvalidAddress");
+  });
+
   it("rejects a zero-amount delegate with AmountRequired", async () => {
     const account = makeAccount(BABY(1));
     const transaction = {

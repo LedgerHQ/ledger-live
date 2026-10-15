@@ -1,5 +1,5 @@
 import React from "react";
-import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
+import { useAppAvailability } from "@features/flow-app-availability";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
 import { useSelector } from "~/context/hooks";
 import LoadingApp from "~/components/LoadingApp";
@@ -14,9 +14,10 @@ export function WaitForAppReady({
 }: React.PropsWithChildren<{ currencyInitialized: boolean }>) {
   logStartupEvent("WaitForAppReady render");
 
-  const { isLoading: ofacLoading } = ofacGeoBlockApi.useCheckQuery();
+  const availability = useAppAvailability();
+  const pendingAvailabilityCheck = availability.status === "pending";
   const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
-  const isLoaded = currencyInitialized && !ofacLoading && remoteFlagsReady;
+  const isLoaded = currencyInitialized && !pendingAvailabilityCheck && remoteFlagsReady;
 
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
 

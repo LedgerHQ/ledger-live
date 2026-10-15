@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   useNavigation,
   useRoute,
@@ -108,6 +108,12 @@ export function usePayTabViewModel() {
         : null,
     [params?.code, params?.app_id],
   );
+
+  useEffect(() => {
+    if (callback) {
+      navigation.setParams({ code: undefined, app_id: undefined });
+    }
+  }, [callback, navigation]);
 
   const refreshCardWallets = useRefreshCardWalletsOnReturn();
 

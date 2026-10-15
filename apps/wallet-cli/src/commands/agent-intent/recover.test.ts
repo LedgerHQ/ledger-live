@@ -296,7 +296,7 @@ describe("agent-intent recover", () => {
         previousTrustchainId: "app18-root",
         channel: { environment: "production", hostPublicKey: HOST_PUBLIC_KEY },
       });
-      expect(recoveryUrlInputs).toEqual(["https://agent-intent.ledger.com/"]);
+      expect(recoveryUrlInputs).toEqual(["https://app.agents.ledger.com/"]);
     });
 
     it.each(["hermes", "claude-code", "codex", "other"] as const)(

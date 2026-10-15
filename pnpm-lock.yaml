@@ -1013,9 +1013,15 @@ importers:
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
+      '@features/flow-account-detail':
+        specifier: workspace:^
+        version: link:../../features/flow/account-detail
       '@features/flow-analytics-consent':
         specifier: workspace:*
         version: link:../../features/flow/analytics-consent
+      '@features/flow-app-availability':
+        specifier: workspace:^
+        version: link:../../features/flow/app-availability
       '@features/flow-contacts':
         specifier: workspace:^
         version: link:../../features/flow/contacts
@@ -1028,6 +1034,9 @@ importers:
       '@features/flow-contacts-delete-contact':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-delete-contact
+      '@features/flow-contacts-detail':
+        specifier: workspace:^
+        version: link:../../features/flow/flow-contacts-detail
       '@features/flow-contacts-edit-address':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-edit-address
@@ -1106,6 +1115,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@features/platform-device-onboarding':
+        specifier: workspace:^
+        version: link:../../features/platform/device-onboarding
       '@features/platform-env':
         specifier: workspace:*
         version: link:../../features/platform/env
@@ -1184,9 +1196,6 @@ importers:
       '@ledgerhq/device-mockserver-react':
         specifier: 'catalog:'
         version: 0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/device-onboarding':
-        specifier: workspace:^
-        version: link:../../libs/device-onboarding
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.1(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -1866,6 +1875,9 @@ importers:
       '@features/flow-analytics-consent':
         specifier: workspace:*
         version: link:../../features/flow/analytics-consent
+      '@features/flow-app-availability':
+        specifier: workspace:*
+        version: link:../../features/flow/app-availability
       '@features/flow-app-longer-password':
         specifier: workspace:*
         version: link:../../features/flow/app-longer-password
@@ -1893,6 +1905,9 @@ importers:
       '@features/flow-contacts-delete-contact':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-delete-contact
+      '@features/flow-contacts-detail':
+        specifier: workspace:^
+        version: link:../../features/flow/flow-contacts-detail
       '@features/flow-contacts-edit-address':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-edit-address
@@ -1974,6 +1989,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@features/platform-device-onboarding':
+        specifier: workspace:^
+        version: link:../../features/platform/device-onboarding
       '@features/platform-env':
         specifier: workspace:*
         version: link:../../features/platform/env
@@ -2055,9 +2073,6 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
-      '@ledgerhq/device-onboarding':
-        specifier: workspace:^
-        version: link:../../libs/device-onboarding
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.1(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -2151,6 +2166,9 @@ importers:
       '@ledgerhq/wallet-pnl':
         specifier: workspace:^
         version: link:../../libs/wallet-pnl
+      '@lottiefiles/dotlottie-react':
+        specifier: 0.17.13
+        version: 0.17.13(react@19.1.4)
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
         version: 2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
@@ -2354,7 +2372,7 @@ importers:
         version: 4.17.21
       lottie-react-native:
         specifier: 7.3.6
-        version: 7.3.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+        version: 7.3.6(@lottiefiles/dotlottie-react@0.17.13(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       node-libs-react-native:
         specifier: 1.2.1
         version: 1.2.1
@@ -3383,12 +3401,12 @@ importers:
       '@features/platform-card':
         specifier: workspace:*
         version: link:../../features/platform/card
+      '@features/platform-device-onboarding':
+        specifier: workspace:*
+        version: link:../../features/platform/device-onboarding
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
-      '@ledgerhq/device-onboarding':
-        specifier: workspace:*
-        version: link:../../libs/device-onboarding
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
@@ -3571,9 +3589,9 @@ importers:
 
   devtools/device-onboarding:
     dependencies:
-      '@ledgerhq/device-onboarding':
+      '@features/platform-device-onboarding':
         specifier: workspace:*
-        version: link:../../libs/device-onboarding
+        version: link:../../features/platform/device-onboarding
     devDependencies:
       '@babel/plugin-transform-export-namespace-from':
         specifier: 7.27.1
@@ -5601,6 +5619,9 @@ importers:
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../currency
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -6085,6 +6106,193 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  features/flow/account-detail:
+    dependencies:
+      '@features/flow-account-detail-hero':
+        specifier: workspace:^
+        version: link:../account-detail-hero
+      '@features/flow-account-detail-settings':
+        specifier: workspace:^
+        version: link:../account-detail-settings
+      '@features/platform-feature-flags':
+        specifier: workspace:*
+        version: link:../../platform/feature-flags
+      '@shared/feature-flags':
+        specifier: workspace:^
+        version: link:../../../shared/feature-flags
+    devDependencies:
+      '@features/platform-style':
+        specifier: workspace:*
+        version: link:../../platform/style
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.30
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@typescript-eslint/parser':
+        specifier: 'catalog:'
+        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
+      eslint:
+        specifier: 8.57.0
+        version: 8.57.0
+      eslint-plugin-better-tailwindcss:
+        specifier: 'catalog:'
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.2.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/flow/account-detail-hero:
+    devDependencies:
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/flow/account-detail-settings:
+    devDependencies:
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/flow/analytics-consent:
     dependencies:
       '@domain/entity-analytics-consent':
@@ -6127,6 +6335,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/linking':
+        specifier: workspace:*
+        version: link:../../../shared/linking
       '@shared/ui-app-unavailable':
         specifier: workspace:*
         version: link:../../../shared/ui-app-unavailable
@@ -6505,21 +6716,15 @@ importers:
       '@domain/entity-contact':
         specifier: workspace:*
         version: link:../../../domain/entity/contact
-      '@domain/entity-currency-crypto':
-        specifier: workspace:*
-        version: link:../../../domain/entity/currency-crypto
       '@features/flow-contacts-add-contact':
         specifier: workspace:^
         version: link:../flow-contacts-add-contact
       '@features/flow-contacts-delete-contact':
         specifier: workspace:^
         version: link:../flow-contacts-delete-contact
-      '@features/flow-contacts-edit-address':
+      '@features/flow-contacts-detail':
         specifier: workspace:^
-        version: link:../flow-contacts-edit-address
-      '@features/flow-contacts-edit-contact':
-        specifier: workspace:^
-        version: link:../flow-contacts-edit-contact
+        version: link:../flow-contacts-detail
       '@features/flow-contacts-introduction':
         specifier: workspace:^
         version: link:../flow-contacts-introduction
@@ -6529,15 +6734,6 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
-      '@ledgerhq/crypto-icons':
-        specifier: 'catalog:'
-        version: 2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0))(@ledgerhq/lumen-ui-rnative@0.1.64(2a913cbbde5f2bcb62faa89a61ee3507))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      '@shared/clipboard':
-        specifier: workspace:*
-        version: link:../../../shared/clipboard
-      '@shared/ui-qr-code':
-        specifier: workspace:*
-        version: link:../../../shared/ui-qr-code
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -6649,25 +6845,92 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/flow/fear-and-greed:
-    devDependencies:
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.5.0
-      '@ledgerhq/test-quarantine':
+    dependencies:
+      '@domain/api-market-index-fear-and-greed':
         specifier: workspace:*
-        version: link:../../../support/test-quarantine
+        version: link:../../../domain/api/market-index-fear-and-greed
+      '@domain/entity-market-index-fear-and-greed':
+        specifier: workspace:*
+        version: link:../../../domain/entity/market-index-fear-and-greed
+      '@shared/analytics':
+        specifier: workspace:*
+        version: link:../../../shared/analytics
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
+    devDependencies:
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@types/react-dom':
+        specifier: 19.0.0
+        version: 19.0.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
+      react-native-safe-area-context:
+        specifier: 'catalog:'
+        version: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -6908,6 +7171,109 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/flow/flow-contacts-detail:
+    dependencies:
+      '@domain/entity-contact':
+        specifier: workspace:*
+        version: link:../../../domain/entity/contact
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-crypto
+      '@features/flow-contacts-delete-contact':
+        specifier: workspace:^
+        version: link:../flow-contacts-delete-contact
+      '@features/flow-contacts-edit-address':
+        specifier: workspace:^
+        version: link:../flow-contacts-edit-address
+      '@features/flow-contacts-edit-contact':
+        specifier: workspace:^
+        version: link:../flow-contacts-edit-contact
+      '@features/platform-contacts':
+        specifier: workspace:^
+        version: link:../../platform/contacts
+      '@ledgerhq/crypto-icons':
+        specifier: 'catalog:'
+        version: 2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a))(@ledgerhq/lumen-ui-rnative@0.1.64(2a913cbbde5f2bcb62faa89a61ee3507))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+      '@shared/clipboard':
+        specifier: workspace:*
+        version: link:../../../shared/clipboard
+      '@shared/ui-qr-code':
+        specifier: workspace:*
+        version: link:../../../shared/ui-qr-code
+    devDependencies:
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@types/react-dom':
+        specifier: 19.0.0
+        version: 19.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
+      react-native-safe-area-context:
+        specifier: 'catalog:'
+        version: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
@@ -8425,12 +8791,12 @@ importers:
       '@domain/entity-contact':
         specifier: workspace:*
         version: link:../../../domain/entity/contact
-      '@features/flow-contacts':
-        specifier: workspace:^
-        version: link:../contacts
       '@features/flow-contacts-add-contact':
         specifier: workspace:^
         version: link:../flow-contacts-add-contact
+      '@features/flow-contacts-detail':
+        specifier: workspace:^
+        version: link:../flow-contacts-detail
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
@@ -9438,6 +9804,52 @@ importers:
         specifier: 'catalog:'
         version: 5.19.2
 
+  features/platform/device-onboarding:
+    dependencies:
+      semver:
+        specifier: 'catalog:'
+        version: 7.7.3
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
+    devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.7.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/platform/env:
     dependencies:
       '@shared/env':
@@ -9609,6 +10021,9 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -10246,9 +10661,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
-      '@ledgerhq/live-signer-zcash':
-        specifier: workspace:^
-        version: link:../../live-signer-zcash
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.0
@@ -11865,9 +12277,6 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
       semver:
         specifier: 'catalog:'
         version: 7.7.3
@@ -12360,6 +12769,9 @@ importers:
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
+      '@ledgerhq/hw-app-btc':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-btc
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -13952,52 +14364,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.82.0
-
-  libs/device-onboarding:
-    dependencies:
-      semver:
-        specifier: 'catalog:'
-        version: 7.7.3
-      xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
-    devDependencies:
-      '@ledgerhq/device-management-kit':
-        specifier: 'catalog:'
-        version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.67.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.82.0
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
 
   libs/device-react:
     dependencies:
@@ -18081,9 +18447,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
       '@noble/curves':
         specifier: 'catalog:'
         version: 1.9.7
@@ -23352,7 +23715,7 @@ packages:
     engines: {node: '>= 8.0.0'}
 
   '@ledgerhq/agent-intent-sdk@file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz':
-    resolution: {integrity: sha512-6XSLjWfaby7HgFf3+WkufkSSsQat1cI+M6K0dNTrNESmkyp6hSDqy/H3eEu62f3vTqBoleWVQTOt5wZqilVpNg==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
+    resolution: {integrity: sha512-a0KEtyOFw0yOx1o2nTN/e9XurIDo/Evf815LzNBUC52htOPr4ElAHgnM2udrmrA3zncnNqxxg6VDKhpO6SubZg==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
     version: 0.0.0
     engines: {node: '>=24.0.0'}
 
@@ -53780,8 +54143,6 @@ snapshots:
 
   core-js-pure@3.36.1: {}
 
-  core-js@2.6.12: {}
-
   core-js@3.36.1: {}
 
   core-js@3.47.0: {}
@@ -58323,13 +58684,6 @@ snapshots:
     optionalDependencies:
       '@lottiefiles/dotlottie-react': 0.17.13(react@19.1.4)
 
-  lottie-react-native@7.3.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  lottie-web@5.12.2: {}
-
   loupe@2.3.7:
     dependencies:
       get-func-name: 2.0.2
@@ -60899,13 +61253,6 @@ snapshots:
 
   react-lifecycles-compat@3.0.4: {}
 
-  react-lottie@1.2.10(react@19.1.4):
-    dependencies:
-      babel-runtime: 6.26.0
-      lottie-web: 5.12.2
-      prop-types: 15.8.1
-      react: 19.1.4
-
   react-markdown@4.3.1(react@19.1.4):
     dependencies:
       html-to-react: 1.7.0(react@19.1.4)
@@ -61460,8 +61807,6 @@ snapshots:
       regenerate: 1.4.2
 
   regenerate@1.4.2: {}
-
-  regenerator-runtime@0.11.1: {}
 
   regenerator-runtime@0.13.11: {}
 

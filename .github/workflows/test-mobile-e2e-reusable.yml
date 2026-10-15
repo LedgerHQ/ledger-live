@@ -256,8 +256,7 @@ env:
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-  SPECULOS_IMAGE_TAG_ANDROID: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
-  SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
+  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
   SMOKE_SPECULOS_FIRMWARE_VERSION: 2.8.0
   NIGHTLY_RUN: ${{ github.event_name == 'schedule' && !inputs.ci_smoke }}
   ANDROID_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
@@ -903,7 +902,6 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           NX_SKIP_NX_CACHE: true
-          SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
@@ -1156,7 +1154,6 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
-          SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
           SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           REMOTE_SPECULOS: "true"
