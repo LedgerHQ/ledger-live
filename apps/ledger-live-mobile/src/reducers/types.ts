@@ -35,6 +35,7 @@ import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
 import type { ContactsState } from "@domain/entity-contact";
+import type { AccountDataState } from "@domain/entity-account-data";
 import type { AppLockState } from "@features/platform-app-lock";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
@@ -503,5 +504,6 @@ export type State = LLMRTKApiState & {
   liveAppModal: LiveAppModalState;
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
+  accountData: AccountDataState;
   appLock: AppLockState;
 };

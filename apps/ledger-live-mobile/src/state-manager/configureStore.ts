@@ -18,6 +18,8 @@ import { setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-mobile";
 import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
+import { accountDataExtra } from "@domain/api-account-data";
+import { accountDataSources } from "~/config/account-data-setup";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
@@ -61,6 +63,7 @@ export const store = configureStore({
         immutableCheck: false,
         thunk: {
           extraArgument: {
+            ...accountDataExtra(accountDataSources),
             ...calApiExtra({
               calServiceUrl: getEnv("CAL_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
