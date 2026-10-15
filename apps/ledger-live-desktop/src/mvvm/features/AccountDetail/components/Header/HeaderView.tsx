@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-react";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
-import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import PageHeader from "LLD/components/PageHeader";
 import type { HeaderViewModel } from "./useHeaderViewModel";
 
@@ -20,7 +20,7 @@ export function HeaderView({ viewModel }: Props) {
       extra={
         <span className="flex items-center gap-4">
           <span data-testid="account-detail-header-address">{address}</span>
-          <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={20} />
+          <SquaredCryptoIcon ledgerId={ledgerId} ticker={ticker} size={24} />
         </span>
       }
       trailing={
