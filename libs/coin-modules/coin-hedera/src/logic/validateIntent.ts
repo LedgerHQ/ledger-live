@@ -5,7 +5,6 @@ import type {
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -134,10 +133,8 @@ async function validateTokenAssociate({
   invariant(intent.asset.type !== "native", "hedera: association requires token asset");
   const errors: Errors = {};
   const tokenId = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
-  const currency = findCryptoCurrencyById(currencyId);
-  invariant(currency, `hedera: currency with id ${currencyId} not found`);
   const [usdRate, estimatedFees, isAlreadyAssociated, token] = await Promise.all([
-    getCurrencyToUSDRate(currency),
+    getCurrencyToUSDRate(currencyId),
     resolveEstimatedFees({ config, currencyId, intent, customFees }),
     tokenId
       ? checkAccountTokenAssociationStatus({
@@ -146,7 +143,7 @@ async function validateTokenAssociate({
           tokenId,
         }).catch(() => false)
       : false,
-    intent.asset.type === "token" ? getTokenFromAsset(currency, intent.asset) : undefined,
+    intent.asset.type === "token" ? getTokenFromAsset(currencyId, intent.asset) : undefined,
   ]);
 
   const tokenType = token?.tokenType ?? intent.asset.type;

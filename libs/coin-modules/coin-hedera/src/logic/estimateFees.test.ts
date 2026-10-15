@@ -28,7 +28,7 @@ describe("getEstimatedFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // reset LRU cache to make sure all tests receive correct mocks from mockedFetchLatest
-    getCurrencyToUSDRate.clear(mockedAccount.currency.ticker);
+    getCurrencyToUSDRate.clear(mockedAccount.currency.id);
   });
 
   it("returns estimated fee based on USD rate for CryptoTransfer", async () => {
@@ -349,11 +349,11 @@ describe("getEstimatedFees", () => {
   it("getCurrencyToUSDRate resolves to null (not throws) when fetch rejects — degraded path still selects DEFAULT_TINYBAR_FEE", async () => {
     (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
-    const rate = await getCurrencyToUSDRate(mockedAccount.currency);
+    const rate = await getCurrencyToUSDRate(mockedAccount.currency.id);
     expect(rate).toBeNull();
 
     // Clear the LRU cache so the second fetch actually runs (not served from the cached null above)
-    getCurrencyToUSDRate.clear(mockedAccount.currency.ticker);
+    getCurrencyToUSDRate.clear(mockedAccount.currency.id);
     (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
     const result = await estimateFees({
       currencyId: mockedAccount.currency.id,
