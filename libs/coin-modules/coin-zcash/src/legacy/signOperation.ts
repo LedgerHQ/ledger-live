@@ -10,7 +10,11 @@ import type { ZcashContext } from "../config";
 import type { BtcInputRef, Transaction, ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import { marginalFeeFor } from "../logic/coin-selection";
-import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
+import {
+  buildLegacyTransaction,
+  buildPreparedLegacyTransaction,
+  resolveWalletAccount,
+} from "./buildTransaction";
 import { zcashNetworkOf, type ZcashNetwork } from "../logic/network";
 
 // The signer recognises Zcash by the "zcash" marker alone (both networks), and "sapling"
@@ -84,27 +88,23 @@ function toPaymentArg(
   };
 }
 
-/**
- * Builds the transparent transaction with wallet-btc and has the device sign it
- * (`createPaymentTransaction`), the way coin-bitcoin did for Zcash. No PCZT, no
- * engine.
- */
-export const buildLegacySignOperation =
+type BuildStep = (
+  walletAccount: WalletAccount,
+  account: ZcashAccount,
+  transaction: Transaction,
+) => Promise<TransactionInfo>;
+
+const makeLegacySignOperation =
   (
     signerContext: SignerContext,
     context: ZcashContext,
+    build: BuildStep,
   ): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable<SignOperationEvent>(subscriber => {
       (async () => {
         const walletAccount = await resolveWalletAccount(context, account);
-        const { zip2009 } = await context.config(account.currency.id);
-        const { txInfo } = await buildLegacyTransaction(
-          context.logger,
-          walletAccount,
-          transaction,
-          marginalFeeFor(account, zip2009),
-        );
+        const txInfo = await build(walletAccount, account, transaction);
 
         const signature = await signerContext(deviceId, signer =>
           signer.createPaymentTransaction(
@@ -146,3 +146,37 @@ export const buildLegacySignOperation =
         subscriber.complete();
       })().catch(error => subscriber.error(error));
     });
+
+/**
+ * Builds the transparent transaction with wallet-btc and has the device sign it
+ * (`createPaymentTransaction`), the way coin-bitcoin did for Zcash. No PCZT, no
+ * engine.
+ */
+export const buildLegacySignOperation = (
+  signerContext: SignerContext,
+  context: ZcashContext,
+): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
+  makeLegacySignOperation(signerContext, context, async (walletAccount, account, transaction) => {
+    const { zip2009 } = await context.config(account.currency.id);
+    const { txInfo } = await buildLegacyTransaction(
+      context.logger,
+      walletAccount,
+      transaction,
+      marginalFeeFor(account, zip2009),
+    );
+    return txInfo;
+  });
+
+/**
+ * The same legacy signature, built from the selection the prepare step priced
+ * (inputs, fee, change) so the device signs what the user reviewed. For devices
+ * whose Zcash app only speaks the legacy protocol while the host runs the
+ * shielded engine.
+ */
+export const buildPreparedLegacySignOperation = (
+  signerContext: SignerContext,
+  context: ZcashContext,
+): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
+  makeLegacySignOperation(signerContext, context, (walletAccount, account, transaction) =>
+    buildPreparedLegacyTransaction(context.logger, walletAccount, account, transaction),
+  );

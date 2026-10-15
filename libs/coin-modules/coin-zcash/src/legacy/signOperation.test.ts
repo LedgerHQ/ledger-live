@@ -5,8 +5,12 @@ import type { BitcoinCreateTransactionLike } from "@ledgerhq/live-signer-zcash";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 import type { BitcoinSigner, SignerContext } from "../types/signer";
 import { testContext } from "../test/coinConfig";
-import { buildLegacySignOperation } from "./signOperation";
-import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
+import { buildLegacySignOperation, buildPreparedLegacySignOperation } from "./signOperation";
+import {
+  buildLegacyTransaction,
+  buildPreparedLegacyTransaction,
+  resolveWalletAccount,
+} from "./buildTransaction";
 
 jest.mock("./buildTransaction");
 // Parsing is hw-app-btc's job; here the parsed shape only has to reach the signer.
@@ -16,6 +20,9 @@ jest.mock("@ledgerhq/hw-app-btc/splitTransaction", () => ({
 
 const mockResolveWalletAccount = resolveWalletAccount as jest.MockedFunction<
   typeof resolveWalletAccount
+>;
+const mockBuildPrepared = buildPreparedLegacyTransaction as jest.MockedFunction<
+  typeof buildPreparedLegacyTransaction
 >;
 const mockBuild = buildLegacyTransaction as jest.MockedFunction<typeof buildLegacyTransaction>;
 
@@ -189,5 +196,54 @@ describe("buildLegacySignOperation", () => {
         )({ account, deviceId: "d", transaction }),
       ),
     ).rejects.toThrow("NotEnoughBalance");
+  });
+});
+
+describe("buildPreparedLegacySignOperation", () => {
+  it("signs the prepared build, not the wallet-btc selection", async () => {
+    mockBuildPrepared.mockResolvedValue(txInfo);
+    const { createPaymentTransaction, signerContext } = makeSigner();
+
+    const events = await firstValueFrom(
+      buildPreparedLegacySignOperation(
+        signerContext,
+        testContext,
+      )({ account, deviceId: "d", transaction }).pipe(toArray()),
+    );
+
+    expect(mockBuildPrepared).toHaveBeenCalledWith(
+      testContext.logger,
+      expect.anything(),
+      account,
+      transaction,
+    );
+    expect(mockBuild).not.toHaveBeenCalled();
+    expect(createPaymentTransaction.mock.calls[0][0].additionals).toEqual(["zcash", "sapling"]);
+    expect(events.map(e => e.type)).toEqual([
+      "device-signature-requested",
+      "device-signature-granted",
+      "signed",
+    ]);
+    const signed = events[2];
+    if (signed.type !== "signed") throw new Error("expected a signed event");
+    expect(signed.signedOperation.operation.extra).toEqual({
+      inputs: [`${PREV_HASH}-1`],
+      inputRefs: [{ hash: PREV_HASH, outputIndex: 1, address: "t1sender" }],
+    });
+  });
+
+  it("surfaces a build refusal as the observable error, without reaching the device", async () => {
+    mockBuildPrepared.mockRejectedValue(new Error("mismatch"));
+    const { createPaymentTransaction, signerContext } = makeSigner();
+
+    await expect(
+      firstValueFrom(
+        buildPreparedLegacySignOperation(
+          signerContext,
+          testContext,
+        )({ account, deviceId: "d", transaction }),
+      ),
+    ).rejects.toThrow("mismatch");
+    expect(createPaymentTransaction).not.toHaveBeenCalled();
   });
 });

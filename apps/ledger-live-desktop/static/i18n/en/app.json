@@ -7841,6 +7841,14 @@
       "title": "These funds are not spendable yet",
       "description": "Please try again in a few minutes"
     },
+    "ZcashShieldedNotSupportedOnDevice": {
+      "title": "This device can only send between transparent addresses",
+      "description": "Use a Ledger Nano S Plus, Nano X, Flex or Stax to send to or from a private address."
+    },
+    "ZcashPreparedBuildMismatch": {
+      "title": "The transaction changed since it was reviewed",
+      "description": "Your balance or fees changed. Please review the transaction again."
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },

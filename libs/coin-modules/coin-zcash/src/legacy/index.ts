@@ -5,11 +5,13 @@
  * through the explorer and the wallet-btc UTXO engine, and never reaches
  * `logic/engineClient`.
  *
- * Removed once the mobile app runs the shielded engine: delete this folder and
- * the mode switch in `bridge/index.ts`.
+ * It also signs for the Nano S on a shielded host: that device's Zcash app only
+ * speaks this legacy protocol (`buildPreparedLegacySignOperation`). The folder
+ * stays while that device is supported, even once the mobile app runs the
+ * shielded engine.
  */
 export { buildLegacyBroadcast } from "./broadcast";
 export { buildLegacyEstimateMaxSpendable } from "./estimateMaxSpendable";
 export { buildLegacyGetTransactionStatus } from "./getTransactionStatus";
 export { buildLegacyPrepareTransaction } from "./prepareTransaction";
-export { buildLegacySignOperation } from "./signOperation";
+export { buildLegacySignOperation, buildPreparedLegacySignOperation } from "./signOperation";

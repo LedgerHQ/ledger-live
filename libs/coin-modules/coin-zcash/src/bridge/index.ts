@@ -4,6 +4,8 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { throwError } from "rxjs";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { ZcashContext } from "../config";
 import type { SignerContext } from "../types/signer";
@@ -26,6 +28,7 @@ import { makeGetAccountShape, postSync } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import formatters from "./transaction";
+import { ZcashShieldedNotSupportedOnDevice } from "../types/errors";
 import { getZCashClient } from "../logic/engineClient";
 import {
   buildLegacyBroadcast,
@@ -33,6 +36,7 @@ import {
   buildLegacyGetTransactionStatus,
   buildLegacyPrepareTransaction,
   buildLegacySignOperation,
+  buildPreparedLegacySignOperation,
 } from "../legacy";
 
 /**
@@ -84,6 +88,9 @@ export function createBridges(
     ): ((...args: A) => R) =>
     (...args) =>
       (isShieldedEnabled() ? shielded : transparentOnly)(...args);
+  const shieldedSign = buildSignOperation(signerContext, context);
+  const legacySign = buildLegacySignOperation(signerContext, context);
+  const nanoSLegacySign = buildPreparedLegacySignOperation(signerContext, context);
   const getAddressFn = getAddress(signerContext);
   const getFullViewingKeyFn = getFullViewingKeyResolver(signerContext);
   const getShieldedAddressFn = getShieldedAddressResolver(signerContext);
@@ -124,10 +131,14 @@ export function createBridges(
     ),
     sync,
     receive,
-    signOperation: byMode(
-      buildSignOperation(signerContext, context),
-      buildLegacySignOperation(signerContext, context),
-    ),
+    signOperation: args => {
+      if (!isShieldedEnabled()) return legacySign(args);
+      // The Nano S Zcash app predates PCZT signing: it only speaks the legacy transparent protocol.
+      if (args.deviceModelId !== DeviceModelId.nanoS) return shieldedSign(args);
+      return args.transaction.transferType === "transparent"
+        ? nanoSLegacySign(args)
+        : throwError(() => new ZcashShieldedNotSupportedOnDevice());
+    },
     signRawOperation: () => {
       throw new Error("signRawOperation is not supported");
     },

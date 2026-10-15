@@ -5,9 +5,17 @@ import { TEST_CONFIG, testContext } from "../test/coinConfig";
 import { bindExplorer } from "../bridge/explorer";
 import { getWalletAccount } from "../bridge/getWalletAccount";
 import { LEGACY_MARGINAL_FEE } from "../logic/coin-selection";
-import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
+import { buildPrepareTransaction } from "../bridge/prepareTransaction";
+import { ZcashPreparedBuildMismatch } from "../types/errors";
+import { FixedSelection } from "./fixedSelection";
+import {
+  buildLegacyTransaction,
+  buildPreparedLegacyTransaction,
+  resolveWalletAccount,
+} from "./buildTransaction";
 
 const logger = jest.fn();
+const prepareTransaction = buildPrepareTransaction(testContext);
 const estimateAccountMaxSpendable = jest.fn();
 
 jest.mock("../bridge/explorer", () => ({
@@ -114,5 +122,154 @@ describe("buildLegacyTransaction", () => {
       logger,
       expect.objectContaining({ amount: new BigNumber(140_000) }),
     );
+  });
+});
+
+const utxo = (hash: string, value: number) => ({
+  hash,
+  outputIndex: 0,
+  blockHeight: 1,
+  address: `addr-${hash}`,
+  value: new BigNumber(value),
+  rbf: false,
+  isChange: false,
+});
+const zcashAccount = (utxos: ReturnType<typeof utxo>[]) =>
+  ({
+    id: "js:2:zcash:xpub:",
+    currency: { id: "zcash" },
+    bitcoinResources: { utxos },
+  }) as unknown as ZcashAccount;
+const prepared = (fields: Partial<Transaction>) =>
+  tx({
+    transferType: "transparent",
+    zcashFee: new BigNumber(10_000),
+    changeAmount: new BigNumber(20_000),
+    ...fields,
+  });
+const built = (fee: number, sent: number, change = 0) =>
+  ({
+    fee,
+    outputs: [
+      { value: new BigNumber(sent), isChange: false },
+      ...(change ? [{ value: new BigNumber(change), isChange: true }] : []),
+    ],
+  }) as unknown as TransactionInfo;
+
+describe("buildPreparedLegacyTransaction", () => {
+  it("pins the reviewed inputs, fee and amount, without recomputing the max spendable", async () => {
+    buildTx.mockResolvedValueOnce(built(10_000, 70_000, 20_000));
+    const preparedAccount = zcashAccount([utxo("small", 20_000), utxo("big", 80_000)]);
+
+    await buildPreparedLegacyTransaction(
+      logger,
+      walletAccount,
+      preparedAccount,
+      prepared({ amount: new BigNumber(70_000), useAllAmount: true }),
+    );
+
+    const params = (buildTx.mock.calls[0] as unknown[])[1] as {
+      amount: BigNumber;
+      utxoPickingStrategy: FixedSelection;
+      changeAddress: unknown;
+    };
+    expect(params.amount).toEqual(new BigNumber(70_000));
+    expect(params.changeAddress).toBe(CHANGE);
+    expect(params.utxoPickingStrategy).toBeInstanceOf(FixedSelection);
+    // Largest first: the order the prepare step used.
+    expect(params.utxoPickingStrategy).toMatchObject({
+      outpoints: [
+        { hash: "big", outputIndex: 0 },
+        { hash: "small", outputIndex: 0 },
+      ],
+      needChangeOutput: true,
+    });
+    expect((params.utxoPickingStrategy as unknown as { fee: BigNumber }).fee).toEqual(
+      new BigNumber(10_000),
+    );
+    expect(estimateAccountMaxSpendable).not.toHaveBeenCalled();
+  });
+
+  it("refuses a send that was not prepared", async () => {
+    await expect(
+      buildPreparedLegacyTransaction(
+        logger,
+        walletAccount,
+        zcashAccount([]),
+        tx({ transferType: "transparent" }),
+      ),
+    ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
+    expect(buildTx).not.toHaveBeenCalled();
+  });
+
+  it("refuses when the built fee is not the reviewed one (change folded into the fee)", async () => {
+    buildTx.mockResolvedValueOnce(built(30_000, 50_000));
+
+    await expect(
+      buildPreparedLegacyTransaction(
+        logger,
+        walletAccount,
+        zcashAccount([utxo("a", 80_000)]),
+        prepared({ amount: new BigNumber(50_000) }),
+      ),
+    ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
+  });
+
+  it("refuses when the recipient output is not the reviewed amount", async () => {
+    buildTx.mockResolvedValueOnce(built(10_000, 49_000, 21_000));
+
+    await expect(
+      buildPreparedLegacyTransaction(
+        logger,
+        walletAccount,
+        zcashAccount([utxo("a", 80_000)]),
+        prepared({ amount: new BigNumber(50_000) }),
+      ),
+    ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
+  });
+
+  it("builds what prepareTransaction priced over several UTXOs, where Merge would pick fewer", async () => {
+    const utxos = [utxo("u1", 100_000), utxo("u2", 100_000), utxo("u3", 100_000)];
+    const preparedAccount = zcashAccount(utxos);
+    const reviewed = await prepareTransaction(
+      preparedAccount,
+      tx({ transferType: "transparent", amount: new BigNumber(50_000) }),
+    );
+    // A single 100_000 UTXO would cover 50_000 (Merge); the review spent all three.
+    expect(reviewed.zcashFee?.gt(0)).toBe(true);
+
+    const storage = utxos.map(u => ({
+      output_hash: u.hash,
+      output_index: u.outputIndex,
+      value: u.value.toString(),
+    }));
+    buildTx.mockImplementationOnce((async (_l: unknown, params: any) => {
+      const xpub = {
+        getXpubAddresses: async () => ["a"],
+        storage: { getAddressUnspentUtxos: () => storage },
+      };
+      const picked = await params.utxoPickingStrategy.selectUnspentUtxosToUse(logger, xpub, [], 1);
+      const change = picked.totalValue.minus(params.amount).minus(picked.fee);
+      return {
+        fee: picked.fee,
+        outputs: [
+          { value: params.amount, isChange: false },
+          ...(picked.needChangeoutput ? [{ value: change, isChange: true }] : []),
+        ],
+        inputs: picked.unspentUtxos,
+      };
+    }) as never);
+
+    const txInfo = await buildPreparedLegacyTransaction(
+      logger,
+      walletAccount,
+      preparedAccount,
+      reviewed,
+    );
+
+    expect(txInfo.inputs).toHaveLength(3);
+    expect(txInfo.fee).toBe(reviewed.zcashFee!.toNumber());
+    expect(txInfo.outputs[0].value).toEqual(reviewed.amount);
+    expect(txInfo.outputs[1].value).toEqual(reviewed.changeAmount);
   });
 });
