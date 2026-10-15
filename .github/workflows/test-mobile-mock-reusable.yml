@@ -73,6 +73,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      runner:
+        description: "EVALUATION: runner label for the Android UI E2E job (default keeps the current runner)."
+        type: string
+        required: false
+        default: ""
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -322,6 +327,7 @@ jobs:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
   build-ios:
+    if: ${{ github.event_name != 'workflow_dispatch' }} # EVALUATION ONLY: run Android alone on dispatch
     name: "iOS Build"
     needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
@@ -382,7 +388,7 @@ jobs:
       contents: read
     needs: [build-android, determine-builds, setup-android-avd]
     if: ${{ !cancelled() && needs.build-android.result == 'success' && needs.determine-builds.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: ${{ inputs.runner || 'ledger-live-linux-8CPU-32RAM' }}
     timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -404,8 +410,29 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
+      - name: "EVALUATION: runner diagnostics and GitHub-hosted SDK layout"
+        if: ${{ inputs.runner != '' }}
+        run: |
+          echo "::notice::android_e2e_runner_metrics runner=$RUNNER_NAME nproc=$(nproc) cpu.max=$(cat /sys/fs/cgroup/cpu.max 2>/dev/null) memory.max=$(cat /sys/fs/cgroup/memory.max 2>/dev/null)"
+          id
+          echo "HOME=$HOME ANDROID_HOME=${ANDROID_HOME:-} ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-}"
+          echo "cpu virtualization flags: $(grep -cE 'vmx|svm' /proc/cpuinfo || true)"
+          ls -l /dev/kvm || true
+          if [ ! -e /dev/kvm ]; then
+            echo "::error::/dev/kvm is not available on $RUNNER_NAME; the x86_64 Android emulator needs hardware acceleration."
+            exit 1
+          fi
+          # The image ships its SDK in ~/.android/sdk, but the cached emulator/system image and the
+          # Prepare APK step use the GitHub-hosted path, so point the job at that path instead.
+          sudo mkdir -p /usr/local/lib/android/sdk
+          sudo chown -R "$(id -u):$(id -g)" /usr/local/lib/android
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+
       - name: Setup Android Environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        uses: ./tools/actions/composites/setup-android-env
+        with:
+          android_packages: ${{ inputs.runner != '' && 'platform-tools build-tools;34.0.0' || 'platform-tools' }}
 
       - name: Install scrcpy
         timeout-minutes: 10
