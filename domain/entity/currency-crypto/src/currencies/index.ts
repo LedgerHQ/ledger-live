@@ -4,6 +4,7 @@ export * from "./aion";
 export * from "./aleo";
 export * from "./aleo_testnet";
 export * from "./algorand";
+export * from "./alpen_testnet";
 export * from "./aptos";
 export * from "./aptos_testnet";
 export * from "./arbitrum";
