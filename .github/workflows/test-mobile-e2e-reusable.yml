@@ -295,7 +295,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public-cached
     outputs:
       ios_device: ${{ steps.devices.outputs.ios_device }}
       android_device: ${{ steps.devices.outputs.android_device }}
@@ -594,7 +594,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@chore/ci-cached-aws-runners
     permissions:
       id-token: write
       contents: read
@@ -602,7 +602,7 @@ jobs:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos_runner_label || 'general-pool' }}
       disable-nx-cache: false
-      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
+      build-ios-js: true
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -624,14 +624,14 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@chore/ci-cached-aws-runners
     permissions:
       id-token: write
       contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-nx-cache: false
-      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
+      build-android-js: true
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
@@ -1318,7 +1318,7 @@ jobs:
 
   allure-report-ios:
     name: Allure Report iOS
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     continue-on-error: ${{ inputs.ci_smoke == true }}
     needs: [determine-builds, detox-tests-ios]
@@ -1399,7 +1399,7 @@ jobs:
 
   allure-report-android:
     name: Allure Report Android
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     continue-on-error: ${{ inputs.ci_smoke == true }}
     outputs:
@@ -1480,7 +1480,7 @@ jobs:
 
   qaa-allure-upload-ios:
     name: "QAA Allure Upload - iOS (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     continue-on-error: true
     needs: [detox-tests-ios]
@@ -1506,7 +1506,7 @@ jobs:
 
   qaa-allure-upload-android:
     name: "QAA Allure Upload - Android (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     continue-on-error: true
     needs: [detox-tests-android]
