@@ -13,12 +13,10 @@ import Mantra from "./Mantra";
 import Nyx from "./Nyx";
 import Osmosis from "./Osmosis";
 import Persistence from "./Persistence";
-import Quicksilver from "./Quicksilver";
 import SecretNetwork from "./SecretNetwork";
 import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Xion from "./Xion";
-import Zenrock from "./Zenrock";
 import CosmosBase from "./cosmosBase";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
@@ -49,8 +47,6 @@ function createChain(currencyId: string): CosmosBase {
       return new Nyx();
     case "persistence":
       return new Persistence();
-    case "quicksilver":
-      return new Quicksilver();
     case "secret_network":
       return new SecretNetwork();
     case "stargaze":
@@ -67,8 +63,6 @@ function createChain(currencyId: string): CosmosBase {
       return new CryptoOrg();
     case "xion":
       return new Xion();
-    case "zenrock":
-      return new Zenrock();
     case "babylon":
       return new Babylon();
     case "gonka":

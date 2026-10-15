@@ -105,19 +105,6 @@ export const cosmosConfig: Record<string, ConfigInfo> = {
       denom: "uxprt",
     },
   },
-  config_currency_quicksilver: {
-    type: "object",
-    default: {
-      lcd: "https://lcd.quicksilver.zone",
-      minGasPrice: 0.0025,
-      status: {
-        type: "active",
-      },
-      name: "Quicksilver",
-      unit: { name: "Quicksilver", code: "QCK", magnitude: 6 },
-      denom: "uqck",
-    },
-  },
   config_currency_secret_network: {
     type: "object",
     default: {
@@ -210,19 +197,6 @@ export const cosmosConfig: Record<string, ConfigInfo> = {
       name: "Verona",
       unit: { name: "Verona", code: "VERONA", magnitude: 6 },
       denom: "uxion",
-    },
-  },
-  config_currency_zenrock: {
-    type: "object",
-    default: {
-      lcd: "https://zenrock.api.m.anode.team",
-      minGasPrice: 2.5,
-      status: {
-        type: "active",
-      },
-      name: "Zenrock",
-      unit: { name: "Zenrock", code: "ROCK", magnitude: 6 },
-      denom: "urock",
     },
   },
   config_currency_babylon: {

@@ -37,7 +37,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const secretNetwork = useFeature("currencySecretNetwork");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
-  const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const avaxCChainFuji = useFeature("currencyAvalancheCChainFuji");
@@ -86,7 +85,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const zksyncSepolia = useFeature("currencyZkSyncSepolia");
   const mantra = useFeature("currencyMantra");
   const xion = useFeature("currencyXion");
-  const zenrock = useFeature("currencyZenrock");
   const sonic = useFeature("currencySonic");
   const sui = useFeature("currencySui");
   const suiTestnet = useFeature("currencySuiTestnet");
@@ -132,7 +130,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       secret_network: secretNetwork,
       desmos,
       dydx,
-      quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
       avalanche_c_chain_fuji: avaxCChainFuji,
@@ -185,7 +182,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       zksync_sepolia: zksyncSepolia,
       mantra,
       xion,
-      zenrock,
       sonic,
       sui,
       sui_testnet: suiTestnet,
@@ -226,7 +222,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       secretNetwork,
       desmos,
       dydx,
-      quicksilver,
       persistence,
       avaxCChain,
       avaxCChainFuji,
@@ -279,7 +274,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       zksyncSepolia,
       mantra,
       xion,
-      zenrock,
       sonic,
       sui,
       suiTestnet,

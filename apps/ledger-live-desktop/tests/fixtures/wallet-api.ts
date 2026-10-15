@@ -404,15 +404,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "quicksilver",
-    ticker: "QCK",
-    name: "Quicksilver",
-    family: "cosmos",
-    color: "#9b9b9b",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
     id: "persistence",
     ticker: "XPRT",
     name: "Persistence",
@@ -490,15 +481,6 @@ export const expectedCurrencyList = [
     name: "Verona",
     family: "cosmos",
     color: "#000000",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
-    id: "zenrock",
-    ticker: "ROCK",
-    name: "Zenrock",
-    family: "cosmos",
-    color: "#080c44",
     decimals: 6,
   },
   {

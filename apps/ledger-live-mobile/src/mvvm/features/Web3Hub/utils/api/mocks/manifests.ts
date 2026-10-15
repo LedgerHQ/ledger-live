@@ -61,7 +61,6 @@ export const mocks: AppManifest[] = [
       "umee",
       "desmos",
       "dydx",
-      "quicksilver",
       "persistence",
       "avalanche_c_chain",
       "bsc/**",
