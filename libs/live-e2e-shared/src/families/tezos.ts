@@ -1,9 +1,8 @@
-import { getEnv } from "@shared/env";
 import {
   expectSpeculosEventsContain,
-  fetchCurrentScreenTexts,
   getDelegateEvents,
   pressUntilTextFound,
+  waitFor,
 } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
 import { Delegate } from "../models/Delegate";
@@ -30,9 +29,9 @@ export const delegateTezos = withDeviceController(
       }
 
       // Tezos 3.0.6 on the Nano S cannot parse a reveal batched with a delegation.
-      const fellBackToBlindSigning = (
-        await fetchCurrentScreenTexts(getEnv("SPECULOS_API_PORT"))
-      ).includes(DeviceLabels.ACCEPT_RISK);
+      const fellBackToBlindSigning = (await waitFor(DeviceLabels.ACCEPT)).includes(
+        DeviceLabels.ACCEPT_RISK,
+      );
       await buttons.both();
       if (fellBackToBlindSigning) {
         await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND);
