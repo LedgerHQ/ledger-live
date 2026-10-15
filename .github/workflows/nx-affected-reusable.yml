@@ -35,7 +35,7 @@ permissions:
 jobs:
   nx-affected:
     name: "Determine Affected (Nx)"
-    runs-on: ledger-wallet-2cpu-aws-public
+    runs-on: ledger-wallet-2cpu-aws-public-cached
     permissions:
       contents: read
       id-token: write # needed for the OIDC login to JFrog
