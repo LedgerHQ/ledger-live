@@ -21,6 +21,11 @@ const trustchain = {
 
 const reset = jest.fn();
 const parentNavigate = jest.fn();
+const mockNotifyFlowCompleted = jest.fn();
+
+jest.mock("LLM/features/NotificationsPrompt", () => ({
+  useNotificationsPrompt: () => ({ notifyFlowCompleted: mockNotifyFlowCompleted }),
+}));
 const listeners = new Map<string, (event: { preventDefault: () => void }) => void>();
 
 jest.mock("@react-navigation/native", () => ({
@@ -81,6 +86,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
     expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
     expect(reset).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
   });
 
   it("should complete when the trustchain lands after the handover", () => {
@@ -94,6 +100,8 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(false);
     expect(reset).toHaveBeenCalledTimes(1);
+    expect(mockNotifyFlowCompleted).toHaveBeenCalledTimes(1);
+    expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 
   it("should keep the offer in place when Ledger Sync is abandoned", () => {
@@ -116,6 +124,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(reset).toHaveBeenCalledTimes(1);
     expect(parentNavigate).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 
   it("should complete and open the portfolio when skip is confirmed", () => {
@@ -126,6 +135,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(reset).toHaveBeenCalledTimes(1);
     expect(parentNavigate).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 
   it("should let Ledger Sync leave once the trustchain has landed", () => {

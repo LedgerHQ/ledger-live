@@ -9,6 +9,7 @@ import {
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { NavigatorName, ScreenName } from "~/const";
 import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -29,6 +30,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const completedOnSync = useRef(false);
   const allowLeave = useRef(false);
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const learnMoreLink = useFeature("llmWalletSync")?.params?.learnMoreLink;
 
   useEffect(
@@ -39,19 +41,23 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     [navigation],
   );
 
-  useEffect(() => {
-    if (!handoverStarted || !hasTrustchain || completedOnSync.current) return;
+  const finishOnboarding = useCallback(() => {
+    if (completedOnSync.current) return;
     completedOnSync.current = true;
     allowLeave.current = true;
     complete();
+    notifyFlowCompleted("onboarding");
     resetToPortfolio(navigation);
-  }, [complete, handoverStarted, hasTrustchain, navigation]);
+  }, [complete, navigation, notifyFlowCompleted]);
+
+  useEffect(() => {
+    if (!handoverStarted || !hasTrustchain) return;
+    finishOnboarding();
+  }, [finishOnboarding, handoverStarted, hasTrustchain]);
 
   const leaveToPortfolio = useCallback(() => {
-    complete();
-    allowLeave.current = true;
-    resetToPortfolio(navigation);
-  }, [complete, navigation]);
+    finishOnboarding();
+  }, [finishOnboarding]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);

@@ -54,6 +54,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     wasReadOnlyAtEntry,
   });
   const started = useRef(false);
+  const allowLeave = useRef(false);
 
   useEffect(() => {
     if (started.current) return;
@@ -72,14 +73,40 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   }, [send, sessionReady]);
 
   const leave = useCallback(() => {
+    allowLeave.current = true;
     onboarding.reset();
     navigation.goBack();
   }, [navigation, onboarding]);
+
+  const quitMachine = useCallback(() => {
+    allowLeave.current = true;
+    send({ type: "QUIT" });
+  }, [send]);
 
   const retry = useCallback(() => {
     onboarding.reset();
     onboarding.connect();
   }, [onboarding]);
+
+  const reconnect = useCallback(() => {
+    onboarding.connect();
+  }, [onboarding]);
+
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", event => {
+        if (allowLeave.current) return;
+        const action = event.data.action.type;
+        if (action !== "GO_BACK" && action !== "POP") return;
+        event.preventDefault();
+        if (onboarding.status === "running" && onboarding.state) {
+          quitMachine();
+          return;
+        }
+        leave();
+      }),
+    [leave, navigation, onboarding.state, onboarding.status, quitMachine],
+  );
 
   const screenState = toChecksScreenState(
     onboarding.state,
@@ -87,6 +114,17 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
+
+  if (onboarding.state === "awaitingSession") {
+    return {
+      status: "failed",
+      title: t("deviceOnboarding.connection.failed"),
+      retryLabel: t("common.retry"),
+      closeLabel,
+      onRetry: reconnect,
+      onQuit: quitMachine,
+    };
+  }
 
   if (!device || !screenState) {
     if (onboarding.error) {
@@ -124,7 +162,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onCloseSheet: () => send({ type: "CLOSE" }),
       onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
-      onQuit: () => send({ type: "QUIT" }),
+      onQuit: quitMachine,
     },
   };
 }

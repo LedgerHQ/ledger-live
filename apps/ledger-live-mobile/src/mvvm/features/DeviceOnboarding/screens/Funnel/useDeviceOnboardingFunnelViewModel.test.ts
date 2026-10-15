@@ -6,13 +6,24 @@ import { useDeviceOnboarding, type DeviceOnboardingSession } from "../../hooks/u
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
 const goBack = jest.fn();
+type RemovalEvent = {
+  preventDefault: () => void;
+  data: { action: { type: string } };
+};
+const listeners = new Map<string, (event: RemovalEvent) => void>();
 let mockRouteParams: { pairedDeviceId?: string; wasReadOnlyAtEntry: boolean } = {
   wasReadOnlyAtEntry: true,
 };
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
-  useNavigation: () => ({ goBack }),
+  useNavigation: () => ({
+    goBack,
+    addListener: (event: string, handler: (event: RemovalEvent) => void) => {
+      listeners.set(event, handler);
+      return jest.fn();
+    },
+  }),
   useRoute: () => ({ params: mockRouteParams }),
 }));
 
@@ -56,6 +67,7 @@ function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) 
 describe("useDeviceOnboardingFunnelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    listeners.clear();
     mockRouteParams = { wasReadOnlyAtEntry: true };
   });
 
@@ -118,6 +130,62 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     expect(result.current.status).toBe("connecting");
+  });
+
+  it("should reconnect a lost session without restarting onboarding", () => {
+    const connect = jest.fn();
+    const reset = jest.fn();
+    useSession.mockReturnValue(
+      session({ state: "awaitingSession", liveDevice: null, connect, reset }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    if (result.current.status !== "failed") throw new Error(result.current.status);
+
+    result.current.onRetry();
+
+    expect(connect).toHaveBeenCalledTimes(2);
+    expect(reset).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should quit the machine when Android back leaves a running check", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck" }));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    expect(goBack).not.toHaveBeenCalled();
+  });
+
+  it("should leave the funnel when Android back happens before the machine starts", () => {
+    const reset = jest.fn();
+    useSession.mockReturnValue(
+      session({ status: "connecting", state: null, liveDevice: null, reset }),
+    );
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "POP" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(reset).toHaveBeenCalledTimes(1);
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should let the machine reset the navigation when onboarding completes", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck" }));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "RESET" } } });
+
+    expect(preventDefault).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
   });
 
   it("should offer a way out when the connection fails", () => {
