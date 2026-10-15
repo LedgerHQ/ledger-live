@@ -18,6 +18,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
@@ -591,6 +600,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -1170,6 +1188,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
@@ -1743,6 +1770,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -2322,6 +2358,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ETH",
@@ -2895,6 +2940,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -3474,6 +3528,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
@@ -4047,6 +4110,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -4626,6 +4698,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
@@ -5199,6 +5280,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 BTC",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -5778,6 +5868,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
@@ -6351,6 +6450,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -6930,6 +7038,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
@@ -7503,6 +7620,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -8082,6 +8208,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ETH",
@@ -8655,6 +8790,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -9234,6 +9378,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
@@ -9807,6 +9960,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -10386,6 +10548,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Arbitrum Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
@@ -10959,6 +11130,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
   "formattedGasPrice": "0 ADI",
   "formattedMaxFeePerGas": "0 ADI",
   "formattedMaxPriorityFeePerGas": "0 ADI",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Alpen Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 BTC",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
