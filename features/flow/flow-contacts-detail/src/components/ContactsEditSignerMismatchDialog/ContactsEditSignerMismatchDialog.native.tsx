@@ -1,7 +1,12 @@
 import React from "react";
 import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { ContactConfirmationBottomSheet } from "@features/platform-contacts/native";
-import type { ContactsEditSignerMismatchDrawerProps } from "./types";
+import type { ContactsEditSignerMismatchDialogProps } from "./types";
+
+export type ContactsEditSignerMismatchDrawerProps = ContactsEditSignerMismatchDialogProps &
+  Readonly<{
+    bottomInset?: number;
+  }>;
 
 export function ContactsEditSignerMismatchDialog({
   isOpen,

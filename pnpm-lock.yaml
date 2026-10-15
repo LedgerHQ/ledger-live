@@ -1031,6 +1031,9 @@ importers:
       '@features/flow-contacts-delete-contact':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-delete-contact
+      '@features/flow-contacts-detail':
+        specifier: workspace:^
+        version: link:../../features/flow/flow-contacts-detail
       '@features/flow-contacts-edit-address':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-edit-address
@@ -1899,6 +1902,9 @@ importers:
       '@features/flow-contacts-delete-contact':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-delete-contact
+      '@features/flow-contacts-detail':
+        specifier: workspace:^
+        version: link:../../features/flow/flow-contacts-detail
       '@features/flow-contacts-edit-address':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-edit-address
@@ -6707,21 +6713,15 @@ importers:
       '@domain/entity-contact':
         specifier: workspace:*
         version: link:../../../domain/entity/contact
-      '@domain/entity-currency-crypto':
-        specifier: workspace:*
-        version: link:../../../domain/entity/currency-crypto
       '@features/flow-contacts-add-contact':
         specifier: workspace:^
         version: link:../flow-contacts-add-contact
       '@features/flow-contacts-delete-contact':
         specifier: workspace:^
         version: link:../flow-contacts-delete-contact
-      '@features/flow-contacts-edit-address':
+      '@features/flow-contacts-detail':
         specifier: workspace:^
-        version: link:../flow-contacts-edit-address
-      '@features/flow-contacts-edit-contact':
-        specifier: workspace:^
-        version: link:../flow-contacts-edit-contact
+        version: link:../flow-contacts-detail
       '@features/flow-contacts-introduction':
         specifier: workspace:^
         version: link:../flow-contacts-introduction
@@ -6731,15 +6731,6 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
-      '@ledgerhq/crypto-icons':
-        specifier: 'catalog:'
-        version: 2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0))(@ledgerhq/lumen-ui-rnative@0.1.64(2a913cbbde5f2bcb62faa89a61ee3507))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      '@shared/clipboard':
-        specifier: workspace:*
-        version: link:../../../shared/clipboard
-      '@shared/ui-qr-code':
-        specifier: workspace:*
-        version: link:../../../shared/ui-qr-code
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -7110,6 +7101,109 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/flow/flow-contacts-detail:
+    dependencies:
+      '@domain/entity-contact':
+        specifier: workspace:*
+        version: link:../../../domain/entity/contact
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-crypto
+      '@features/flow-contacts-delete-contact':
+        specifier: workspace:^
+        version: link:../flow-contacts-delete-contact
+      '@features/flow-contacts-edit-address':
+        specifier: workspace:^
+        version: link:../flow-contacts-edit-address
+      '@features/flow-contacts-edit-contact':
+        specifier: workspace:^
+        version: link:../flow-contacts-edit-contact
+      '@features/platform-contacts':
+        specifier: workspace:^
+        version: link:../../platform/contacts
+      '@ledgerhq/crypto-icons':
+        specifier: 'catalog:'
+        version: 2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a))(@ledgerhq/lumen-ui-rnative@0.1.64(2a913cbbde5f2bcb62faa89a61ee3507))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+      '@shared/clipboard':
+        specifier: workspace:*
+        version: link:../../../shared/clipboard
+      '@shared/ui-qr-code':
+        specifier: workspace:*
+        version: link:../../../shared/ui-qr-code
+    devDependencies:
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@types/react-dom':
+        specifier: 19.0.0
+        version: 19.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
+      react-native-safe-area-context:
+        specifier: 'catalog:'
+        version: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
@@ -8627,12 +8721,12 @@ importers:
       '@domain/entity-contact':
         specifier: workspace:*
         version: link:../../../domain/entity/contact
-      '@features/flow-contacts':
-        specifier: workspace:^
-        version: link:../contacts
       '@features/flow-contacts-add-contact':
         specifier: workspace:^
         version: link:../flow-contacts-add-contact
+      '@features/flow-contacts-detail':
+        specifier: workspace:^
+        version: link:../flow-contacts-detail
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts

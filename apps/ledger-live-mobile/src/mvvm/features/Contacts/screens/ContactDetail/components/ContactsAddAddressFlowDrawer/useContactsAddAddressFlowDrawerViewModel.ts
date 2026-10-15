@@ -11,7 +11,7 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { useContactsMeContact } from "@features/platform-contacts";
 import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
-import { resolveContactAddressSupportsDomain } from "@features/flow-contacts";
+import { resolveContactAddressSupportsDomain } from "@features/flow-contacts-detail";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 

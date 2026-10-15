@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactDetailView } from "@features/flow-contacts";
+import { ContactDetailView } from "@features/flow-contacts-detail";
 import { ContactsAddAddressFlowDrawer } from "./components/ContactsAddAddressFlowDrawer";
 import { ContactAddressDetailActionsSheets } from "./components/ContactAddressDetailActionsSheets";
 import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDetailDialogSheet";

@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { mockContactWithAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import type { RenameContactDialogViewModel } from "@features/flow-contacts-edit-contact";
-import { createMockContactSignerValidationPort } from "../../../platform/contactSignerValidationPort";
+import { createMockContactSignerValidationPort } from "../platform/contactSignerValidationPort";
 import { makeContactsWrapper } from "../__tests__/contactsStoreTestUtils";
 import type { ContactDetailActionsPorts } from "../model/ports";
 import { createContactDetailEditDeleteUiState } from "./mapContactDetailEditDeleteUiState";
