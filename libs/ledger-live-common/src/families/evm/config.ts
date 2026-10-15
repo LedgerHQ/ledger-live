@@ -1262,6 +1262,23 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
+  config_currency_alpen_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      chainId: 20310,
+      name: "Alpen Testnet",
+      unit: { name: "BTC", code: "BTC", magnitude: 18 },
+      node: { type: "external", uri: "https://alpen.testnet.alpen.org" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.testnet.alpen.org/api",
+      },
+    },
+  },
 };
 
 export const evmConfig = overridesDefaultsWithEnv(evmCurrencies);
