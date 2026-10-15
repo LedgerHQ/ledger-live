@@ -1,5 +1,23 @@
 # @devtools/registry
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [[`1b78e74`](https://github.com/LedgerHQ/ledger-live/commit/1b78e7406cc6b871ebf50590a03f47848c1718a9), [`eb65ce4`](https://github.com/LedgerHQ/ledger-live/commit/eb65ce49ea0fa2d2c44f79fd2b0f8de365ae5e53), [`4dec481`](https://github.com/LedgerHQ/ledger-live/commit/4dec481cf274c6db74c334e5a74df574a8d04f54), [`69284e8`](https://github.com/LedgerHQ/ledger-live/commit/69284e8fff6db3afdf4b0c05254214baa8e4762b)]:
+  - @devtools/pay-card@0.9.0
+  - @devtools/device-onboarding@0.3.0
+  - @devtools/feature-flags@0.10.2
+
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1b78e74`](https://github.com/LedgerHQ/ledger-live/commit/1b78e7406cc6b871ebf50590a03f47848c1718a9), [`eb65ce4`](https://github.com/LedgerHQ/ledger-live/commit/eb65ce49ea0fa2d2c44f79fd2b0f8de365ae5e53), [`4dec481`](https://github.com/LedgerHQ/ledger-live/commit/4dec481cf274c6db74c334e5a74df574a8d04f54), [`69284e8`](https://github.com/LedgerHQ/ledger-live/commit/69284e8fff6db3afdf4b0c05254214baa8e4762b)]:
+  - @devtools/pay-card@0.9.0-next.0
+  - @devtools/device-onboarding@0.3.0-next.0
+  - @devtools/feature-flags@0.10.2-next.0
+
 ## 0.5.1
 
 ### Patch Changes
@@ -218,26 +236,5 @@
 
 - Updated dependencies []:
   - @devtools/feature-flags@0.6.4
-
-## 0.1.9-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.4-next.0
-
-## 0.1.8
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.3
-
-## 0.1.8-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.3-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

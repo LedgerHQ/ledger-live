@@ -1,5 +1,29 @@
 # @features/platform-card
 
+## 0.8.0
+
+### Minor Changes
+
+- [#22793](https://github.com/LedgerHQ/ledger-live/pull/22793) [`e7996b4`](https://github.com/LedgerHQ/ledger-live/commit/e7996b4bb9f13726af09cc5202d26d1e471563ef) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the Card session tokens and the PKCE attempt on this device only. The keychain entries move from `AFTER_FIRST_UNLOCK` to `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY`, so an iOS backup restored onto another phone no longer carries a signed-in Card session. Background reads still work once the device has been unlocked after boot. Existing entries take the new level the next time they are written.
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0
+  - @domain/api-card-management@0.8.1
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#22793](https://github.com/LedgerHQ/ledger-live/pull/22793) [`e7996b4`](https://github.com/LedgerHQ/ledger-live/commit/e7996b4bb9f13726af09cc5202d26d1e471563ef) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the Card session tokens and the PKCE attempt on this device only. The keychain entries move from `AFTER_FIRST_UNLOCK` to `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY`, so an iOS backup restored onto another phone no longer carries a signed-in Card session. Background reads still work once the device has been unlocked after boot. Existing entries take the new level the next time they are written.
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0-next.0
+  - @domain/api-card-management@0.8.1-next.0
+
 ## 0.7.0
 
 ### Minor Changes

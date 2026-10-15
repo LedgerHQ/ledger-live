@@ -1,5 +1,17 @@
 # @shared/qr-code
 
+## 0.5.0
+
+### Minor Changes
+
+- [#22752](https://github.com/LedgerHQ/ledger-live/pull/22752) [`d31fbca`](https://github.com/LedgerHQ/ledger-live/commit/d31fbca35991fc58c8e61156761c5004393fe1cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover requesting a payment from the mobile Pay tab
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#22752](https://github.com/LedgerHQ/ledger-live/pull/22752) [`d31fbca`](https://github.com/LedgerHQ/ledger-live/commit/d31fbca35991fc58c8e61156761c5004393fe1cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover requesting a payment from the mobile Pay tab
+
 ## 0.4.0
 
 ### Minor Changes

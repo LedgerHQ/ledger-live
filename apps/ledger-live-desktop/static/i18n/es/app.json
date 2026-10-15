@@ -2989,6 +2989,46 @@
       "feesAmount" : "Monto de la tarifa ({{unit}})",
       "payFeesIn" : "Pagar tarifas en"
     },
+    "feePayment" : {
+      "title" : "Selecciona el pago de la tarifa",
+      "regular" : "Transferencia estándar",
+      "sponsored" : "Pagar con {{provider}}",
+      "payIn" : "Pagar la tarifa de red en {{feeCurrency}}",
+      "paidIn" : "Pagado en {{currency}}",
+      "nudge" : "Podrías ahorrar {{amount}} con {{provider}}",
+      "saved" : "Ahorrado con {{provider}}",
+      "confirm" : "Confirmar",
+      "disclaimer" : "Con {{provider}}, un proveedor externo de energía, las tarifas se pagan en {{feeCurrency}}.",
+      "insufficientFunds" : "No tienes suficiente {{feeCurrency}} para cubrir la cantidad y la tarifa de alquiler de energía de {{provider}}."
+    },
+    "sponsoredRentSignature" : {
+      "title" : "Paso 1 de 2",
+      "strategy" : "Alquiler de energía - {{provider}}",
+      "crafting" : "Preparando el alquiler de energía...",
+      "submitting" : "Enviando el pago del alquiler de energía…",
+      "feeLabel" : "Tarifa de alquiler"
+    },
+    "sponsoredTransferSignature" : {
+      "title" : "Paso 2 de 2"
+    },
+    "sponsoredPolling" : {
+      "title" : "Esperando la entrega de energía",
+      "waiting" : "{{provider}} está entregando la energía alquilada. Esto puede tardar unos momentos.",
+      "elapsed" : "Tiempo transcurrido: {{time}}"
+    },
+    "sponsoredFailure" : {
+      "title" : "Algo ha salido mal",
+      "rentPayment" : "Error en el pago de la tarifa. Tus fondos no se han movido.",
+      "rentPaymentReportedFailed" : "{{provider}} informó de que el pago de la tarifa ha fallado, pero es posible que aún se procese.",
+      "priceIncreased" : "El precio del alquiler de energía ha subido a {{fee}}. Tus fondos no se han movido.",
+      "deliveryFailed" : "No se entregó la energía. Se envió el pago de la tarifa de alquiler. Ponte en contacto con el soporte de {{provider}} para solicitar un reembolso{{txidSuffix}}.",
+      "transfer" : "La transferencia falló, pero la energía alquilada sigue siendo válida. Puedes volver a intentar la transferencia.",
+      "retryLocked" : "Para no pagar el alquiler dos veces, puedes volver a intentarlo después de {{time}}.",
+      "retry" : "Reintentar",
+      "retryPaying" : "Paga de nuevo y vuelve a intentarlo",
+      "acceptPrice" : "Aceptar nuevo precio",
+      "cancel" : "Cancelar"
+    },
     "coinControl" : {
       "title" : "Control de monedas",
       "strategy" : "La estrategia ",
@@ -5127,6 +5167,62 @@
       "OUT" : "Retirar"
     }
   },
+  "stacks" : {
+    "stake" : {
+      "flow" : {
+        "title" : "Poner en participación",
+        "preparingTransaction" : "Preparando transacción…",
+        "steps" : {
+          "validator" : {
+            "title" : "Pool",
+            "description" : "Elige un pool en el que delegar tus STX para la puesta en participación.",
+            "poolAddressLabel" : "Dirección del pool",
+            "numCyclesLabel" : "Cantidad de ciclos"
+          },
+          "amount" : {
+            "title" : "Importe",
+            "disclaimer" : "Tus STX quedarán bloqueados hasta que el pool de participación los libere."
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "Has puesto en participación {{amount}}. El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ir al dashboard de cuenta"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "Cancelar la puesta en participación",
+        "preparingTransaction" : "Preparando transacción…",
+        "steps" : {
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "broadcastError" : "No fue posible enviar tu transacción de quita de participación a la red. Inténtalo de nuevo.",
+            "success" : {
+              "title" : "Quita de participación enviada",
+              "text" : "La desdelegación de tus STX se ha transmitido correctamente.",
+              "cta" : "Ver detalles"
+            }
+          }
+        }
+      }
+    },
+    "account" : {
+      "staked" : "En participación",
+      "unlockCycle" : "Ciclo de desbloqueo"
+    }
+  },
   "tezos" : {
     "operationTypes" : {
       "UNSTAKE" : "Quitando de participación",
@@ -5642,7 +5738,10 @@
         "eligibleAddressFamilies" : "Familias de direcciones elegibles",
         "customFamiliesHint" : "Familias separadas por comas para pruebas multifamilia personalizadas.",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
-        "applyFamilies" : "Aplicar",
+        "apply" : "Aplicar",
+        "newBadge" : "Nueva insignia",
+        "excludedCurrencyIds" : "IDs de divisas excluidas",
+        "excludedCurrencyIdsPlaceholder" : "por ejemplo, ethereum, bitcoin",
         "contactsData" : "Datos de contactos",
         "loadPopulatedContacts" : "Cargar contactos completados",
         "loadFromSendHistory" : "Cargar contactos desde el historial de envíos",
@@ -5751,6 +5850,9 @@
       "featureFlagsOverride" : "Forzar",
       "featureFlagsRestoreAll" : "Restaurar los valores de todos los Indicadores",
       "flagHint" : "Si una marca de opción está definida en el entorno Firebase de destino \npero falta de la siguiente lista, puedes escribir su nombre **exacto** en \nla entrada de la búsqueda y aparecerá en la lista. Escribe el \nnombre de la opción combinando mayúsculasMinúsculas sin el prefijo \"feature\".",
+      "contentAbTests" : {
+        "invalidPayload" : "Carga útil no válida. \"enabled\" debe ser un booleano y \"copy\" debe asociar claves a cadenas."
+      },
       "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
       "buttonTitle" : "Señales de alarma anuladas localmente",
       "overridden" : {
@@ -6770,6 +6872,7 @@
       "undelegate" : "Confirma en tu dispositivo para finalizar la operación",
       "redelegate" : "Confirma en tu dispositivo para finalizar la operación",
       "claimRewardCompound" : "Confirma en tu dispositivo para finalizar la operación",
+      "compoundReward" : "Confirma en tu dispositivo para finalizar la operación",
       "nominate" : "Confirma en tu dispositivo para finalizar la operación",
       "chill" : "Confirma en tu dispositivo para finalizar la operación",
       "bond" : "Confirma en tu dispositivo para finalizar la operación",
@@ -6796,7 +6899,9 @@
       "undelegate" : "validador",
       "claimReward" : "receptor de recompensas",
       "claimRewardCompound" : "validador que recibirá las recompensas",
+      "compoundReward" : "validador que recibirá las recompensas",
       "optIn" : "receptor",
+      "tokenAssociate" : "receptor",
       "nominate" : "validador",
       "stake" : "validador",
       "unstake" : "validador",
@@ -7248,6 +7353,10 @@
     "CosmosDelegateAllFundsWarning" : {
       "title" : "Asegúrate de que tu saldo restante es suficiente para cubrir las tarifas de transacciones futuras"
     },
+    "CosmosMemoTooLong" : {
+      "title" : "La nota memo supera la longitud máxima",
+      "description" : "Tu memo está compuesta por {{memoLength}} bytes, pero el máximo permitido es de {{maxLength}} bytes. Reduce el tamaño de la nota memo."
+    },
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} no es compatible",
       "description" : "Todavía no se admite este activo cripto. contacta al Soporte de Ledger."
@@ -7606,6 +7715,10 @@
     "TransactionRefusedOnDevice" : {
       "title" : "Operación denegada en el dispositivo",
       "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "TransferOfferExpiredError" : {
+      "title" : "Esta oferta ha expirado",
+      "description" : "La oferta de transferencia expiró antes de ser aceptada. Solicita al remitente que envíe una nueva."
     },
     "UserRefusedAddress" : {
       "title" : "Dirección de recepción rechazada.",
@@ -8133,6 +8246,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "La puesta en participación está en pausa hasta el próximo ciclo de recompensas",
+      "description" : "La red Stacks no acepta nuevas puestas en participación mientras prepara el próximo ciclo de recompensas. La puesta en participación se reanuda en {{blocksUntilReopen}} bloques de Bitcoin."
     },
     "StellarWrongMemoFormat" : {
       "title" : "El formato de Memo es incorrecto"
@@ -9528,7 +9645,7 @@
   "marketBanner" : {
     "title" : "Mercado",
     "genericError" : "La conexión ha fallado",
-    "cta" : "Ver todo",
+    "cta" : "Más",
     "ranking" : {
       "trending" : "Tendencias",
       "gainers" : "Ganadores",
