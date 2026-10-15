@@ -112,6 +112,7 @@
     "@domain/entity-recent-addresses": "workspace:^",
     "@domain/entity-starred-account": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
+    "@features/flow-account-detail": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-app-availability": "workspace:*",
     "@features/flow-app-longer-password": "workspace:*",

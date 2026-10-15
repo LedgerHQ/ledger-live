@@ -12,6 +12,7 @@ export enum ScreenName {
   Account = "Account",
   Accounts = "Accounts",
   AccountSettingsMain = "AccountSettingsMain",
+  AccountDetail = "AccountDetail",
   AccountsSettings = "AccountsSettings",
   AddAccountsAccounts = "AddAccountsAccounts",
   AddAccountsSelectDevice = "AddAccountsSelectDevice",
