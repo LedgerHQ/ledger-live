@@ -1,4 +1,8 @@
-import { CAL_HEALTHCHECK_TIMEOUT_MS, checkCalHealth } from "./calHealth.internals";
+import {
+  CAL_HEALTHCHECK_TIMEOUT_MS,
+  checkCalHealth,
+  playwrightCalHealth,
+} from "./calHealth.internals";
 
 const CLIENT_VERSION = "1.2.3";
 
@@ -120,5 +124,43 @@ describe("checkCalHealth", () => {
     await expect(probe({ calServiceUrl: "file:///tmp/cal", fetchImpl })).resolves.toBe("failed");
 
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+});
+
+describe("playwrightCalHealth", () => {
+  const playwrightRun = process.env.PLAYWRIGHT_RUN;
+  const calHealthcheck = process.env.CAL_HEALTHCHECK;
+
+  afterEach(() => {
+    if (playwrightRun === undefined) delete process.env.PLAYWRIGHT_RUN;
+    else process.env.PLAYWRIGHT_RUN = playwrightRun;
+
+    if (calHealthcheck === undefined) delete process.env.CAL_HEALTHCHECK;
+    else process.env.CAL_HEALTHCHECK = calHealthcheck;
+  });
+
+  it("should leave the decision to the HTTP probe when Playwright is off", async () => {
+    delete process.env.PLAYWRIGHT_RUN;
+    process.env.CAL_HEALTHCHECK = "failed";
+
+    expect(playwrightCalHealth()).toBeUndefined();
+
+    const fetchImpl = jest.fn().mockResolvedValue({ ok: true, status: 200 });
+    await expect(probe({ fetchImpl })).resolves.toBe("ok");
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return ok when Playwright is on", () => {
+    process.env.PLAYWRIGHT_RUN = "true";
+    delete process.env.CAL_HEALTHCHECK;
+
+    expect(playwrightCalHealth()).toBe("ok");
+  });
+
+  it("should return failed when CAL_HEALTHCHECK is failed", () => {
+    process.env.PLAYWRIGHT_RUN = "true";
+    process.env.CAL_HEALTHCHECK = "failed";
+
+    expect(playwrightCalHealth()).toBe("failed");
   });
 });

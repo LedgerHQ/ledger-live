@@ -50,3 +50,8 @@ flow (`urls.geoBlockLearnMore`) and opens through `@shared/linking`, so the host
 
 The CAL probe calls `GET {calServiceUrl}/v1/currencies?output=id&limit=1` with a 1s timeout
 (aligned with the app splash wait) and sends `X-Ledger-Client-Version`.
+
+Desktop Playwright sets `PLAYWRIGHT_RUN` before the renderer boots. The health query then returns
+`ok` and does not fetch, unless `CAL_HEALTHCHECK` is `failed`, which returns `failed`. Both are
+read from `process.env` on that call. Jest does not set `PLAYWRIGHT_RUN`, so its handlers still
+answer the probe.

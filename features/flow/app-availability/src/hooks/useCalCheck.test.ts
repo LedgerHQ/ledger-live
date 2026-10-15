@@ -32,6 +32,9 @@ function renderUseCalCheck(
 }
 
 describe("useCalCheck", () => {
+  const playwrightRun = process.env.PLAYWRIGHT_RUN;
+  const calHealthcheck = process.env.CAL_HEALTHCHECK;
+
   beforeAll(() => {
     server.listen({ onUnhandledRequest: "error" });
   });
@@ -42,6 +45,10 @@ describe("useCalCheck", () => {
 
   afterEach(() => {
     jest.useRealTimers();
+    if (playwrightRun === undefined) delete process.env.PLAYWRIGHT_RUN;
+    else process.env.PLAYWRIGHT_RUN = playwrightRun;
+    if (calHealthcheck === undefined) delete process.env.CAL_HEALTHCHECK;
+    else process.env.CAL_HEALTHCHECK = calHealthcheck;
   });
 
   afterAll(() => {
@@ -112,6 +119,31 @@ describe("useCalCheck", () => {
 
   it("should return unavailable with serviceUnavailable when CAL fails", async () => {
     server.use(http.get(`${CAL_URL}/v1/currencies`, () => new HttpResponse(null, { status: 503 })));
+
+    const { result } = renderUseCalCheck();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({
+        status: "unavailable",
+        reason: "serviceUnavailable",
+      });
+    });
+  });
+
+  it("should return available without fetching when Playwright is on", async () => {
+    process.env.PLAYWRIGHT_RUN = "true";
+    delete process.env.CAL_HEALTHCHECK;
+
+    const { result } = renderUseCalCheck();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ status: "available" });
+    });
+  });
+
+  it("should return serviceUnavailable without fetching when CAL_HEALTHCHECK is failed", async () => {
+    process.env.PLAYWRIGHT_RUN = "true";
+    process.env.CAL_HEALTHCHECK = "failed";
 
     const { result } = renderUseCalCheck();
 

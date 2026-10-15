@@ -37,6 +37,21 @@ function isHttpUrl(url: URL): boolean {
   return url.protocol === "http:" || url.protocol === "https:";
 }
 
+function playwrightRunIsOn(): boolean {
+  const value = process.env.PLAYWRIGHT_RUN;
+  return !!value && value !== "0" && value !== "false";
+}
+
+export function playwrightCalHealth(): CalHealthResult | undefined {
+  if (!playwrightRunIsOn()) {
+    return undefined;
+  }
+  if (process.env.CAL_HEALTHCHECK === "failed") {
+    return "failed";
+  }
+  return "ok";
+}
+
 export async function checkCalHealth({
   calServiceUrl,
   ledgerClientVersion,
