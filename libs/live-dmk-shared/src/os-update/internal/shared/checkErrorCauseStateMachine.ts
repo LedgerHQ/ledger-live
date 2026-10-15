@@ -7,6 +7,7 @@ import {
   type DeviceSessionId,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
+import { log } from "@ledgerhq/logs";
 import { assign, enqueueActions, fromCallback, fromPromise, setup } from "xstate";
 import {
   DEVICE_CALL_TIMEOUT_MS,
@@ -29,6 +30,8 @@ import {
 import { isDeviceDisconnectedError } from "./utils/isDeviceDisconnectedError";
 import { isDeviceLockedError } from "./utils/isDeviceLockedError";
 import { matchesRebootedDevice } from "./utils/matchesRebootedDevice";
+
+const LOG_TYPE = "OsUpdatesCheckErrorCause";
 
 /** The device to reopen the session on, which discovery replaced when the link moved it. */
 const deviceToConnect = (context: CheckErrorCauseStateMachineContext) => ({
@@ -174,6 +177,12 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
         situation: params,
       });
     }),
+    logState: (_, name: string) => {
+      log(LOG_TYPE, `state: ${name}`);
+    },
+    logError: ({ context }, name: string) => {
+      log(LOG_TYPE, `state: ${name}`, { error: context.error });
+    },
   },
   guards: {
     isDeviceLocked: ({ context }) => isDeviceLockedError(context.error),
@@ -198,6 +207,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     // Only a tagged error can be routed straight away. Everything else is treated as unclassified,
     // whatever its message says.
     CheckErrorCause: {
+      entry: { type: "logError", params: "CheckErrorCause" },
       always: [
         {
           guard: "isDeviceLocked",
@@ -218,6 +228,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     // flip to NOT_CONNECTED. Wait the window out instead of guessing, and leave the host on the
     // state it was showing.
     IdentifyConnectionLoss: {
+      entry: { type: "logState", params: "IdentifyConnectionLoss" },
       invoke: {
         src: "listenUntilDisconnected",
         input: ({ context }) => ({
@@ -241,6 +252,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     // error, which is unrecoverable. It never loops back to IdentifyConnectionLoss: the host stays
     // on its last state until this probe reaches a verdict.
     ProbeUnknownError: {
+      entry: { type: "logState", params: "ProbeUnknownError" },
       invoke: {
         src: "getAppAndVersion",
         input: ({ context }) => ({
@@ -257,6 +269,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
       },
     },
     CheckProbedErrorCause: {
+      entry: { type: "logError", params: "CheckProbedErrorCause" },
       always: [
         {
           guard: "isDeviceLocked",
@@ -274,10 +287,10 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     // Nothing to do but probe until the user enters the PIN. A probe that fails on something else
     // goes back through classification, since the device may have dropped in the meantime.
     AwaitingDeviceUnlock: {
-      entry: {
-        type: "sendDeviceSituation",
-        params: DeviceSituation.LOCKED,
-      },
+      entry: [
+        { type: "logState", params: "AwaitingDeviceUnlock" },
+        { type: "sendDeviceSituation", params: DeviceSituation.LOCKED },
+      ],
       initial: "Waiting",
       states: {
         Waiting: {
@@ -307,10 +320,10 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     // it does not, start the cycle over, since the transport may have handed back a link that is
     // already dead.
     AwaitingDeviceReconnection: {
-      entry: {
-        type: "sendDeviceSituation",
-        params: DeviceSituation.DISCONNECTED,
-      },
+      entry: [
+        { type: "logState", params: "AwaitingDeviceReconnection" },
+        { type: "sendDeviceSituation", params: DeviceSituation.DISCONNECTED },
+      ],
       initial: "TearDownSession",
       states: {
         // Bounded by a timeout because the React Native HID transport hops the native bridge and
@@ -348,6 +361,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
           },
         },
         AwaitingDiscoveryRetry: {
+          entry: { type: "logState", params: "AwaitingDiscoveryRetry" },
           after: {
             poll: "Discovering",
           },
@@ -398,6 +412,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
         // Back through the teardown, so the session we could not use is dropped before we open the
         // next one.
         Retrying: {
+          entry: { type: "logState", params: "Retrying" },
           after: {
             poll: "TearDownSession",
           },
@@ -406,11 +421,17 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     },
     Recovered: {
       type: "final",
-      entry: assign({ result: CheckErrorCauseResult.Recovered }),
+      entry: [
+        { type: "logState", params: "Recovered" },
+        assign({ result: CheckErrorCauseResult.Recovered }),
+      ],
     },
     Unrecoverable: {
       type: "final",
-      entry: assign({ result: CheckErrorCauseResult.Unrecoverable }),
+      entry: [
+        { type: "logError", params: "Unrecoverable" },
+        assign({ result: CheckErrorCauseResult.Unrecoverable }),
+      ],
     },
   },
   output: ({ context }): CheckErrorCauseStateMachineOutput =>
