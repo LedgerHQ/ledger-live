@@ -5,6 +5,7 @@ import type { BitcoinCreateTransactionLike } from "@ledgerhq/live-signer-zcash";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 import type { BitcoinSigner, SignerContext } from "../types/signer";
 import { testContext } from "../test/coinConfig";
+import { LEGACY_MARGINAL_FEE } from "../logic/coin-selection";
 import { buildLegacySignOperation, buildPreparedLegacySignOperation } from "./signOperation";
 import {
   buildLegacyTransaction,
@@ -216,6 +217,7 @@ describe("buildPreparedLegacySignOperation", () => {
       expect.anything(),
       account,
       transaction,
+      LEGACY_MARGINAL_FEE,
     );
     expect(mockBuild).not.toHaveBeenCalled();
     expect(createPaymentTransaction.mock.calls[0][0].additionals).toEqual(["zcash", "sapling"]);

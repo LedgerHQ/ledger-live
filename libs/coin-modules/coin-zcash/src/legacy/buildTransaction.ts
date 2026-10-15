@@ -9,7 +9,7 @@ import { bindExplorer } from "../bridge/explorer";
 import { getWalletAccount } from "../bridge/getWalletAccount";
 import { resolveTransparentUtxos } from "../bridge/statusHelpers";
 import { ZcashPreparedBuildMismatch } from "../types/errors";
-import { LEGACY_MARGINAL_FEE } from "../logic/coin-selection";
+import { selectTransparentInputs } from "../logic/coin-selection";
 import { FixedSelection } from "./fixedSelection";
 import { buildAtZip317Rate, zcashSafeFeePerByte, type PricedBuild } from "./fees";
 
@@ -78,24 +78,46 @@ export function buildLegacyTransaction(
  * Builds the transaction the prepare step priced: the same inputs, fee, amount
  * and change, instead of wallet-btc's own selection. The device then signs what
  * the user reviewed. Refuses (rather than sign something else) when the build
- * cannot reproduce it.
+ * cannot reproduce it. `marginalFee` is the ZIP-317 marginal fee the prepare
+ * step priced at.
  */
 export async function buildPreparedLegacyTransaction(
   logger: Logger,
   walletAccount: WalletAccount,
   account: ZcashAccount,
   transaction: Transaction,
+  marginalFee: number,
 ): Promise<TransactionInfo> {
-  const { zcashFee, changeAmount, recipient, amount } = transaction;
+  const { zcashFee, recipient, amount } = transaction;
   if (!zcashFee) throw new ZcashPreparedBuildMismatch();
+  const changeAmount = transaction.changeAmount ?? new BigNumber(0);
 
-  const outpoints = resolveTransparentUtxos(account, transaction).map(utxo => ({
+  // The inputs are read from the account as it is now, and a sync may have
+  // changed them since the review. Re-price them: a different input count calls
+  // for a different ZIP-317 fee, and a different total for a different change.
+  const utxos = resolveTransparentUtxos(account, transaction);
+  const repriced = selectTransparentInputs(
+    utxos.map(utxo => utxo.value),
+    amount,
+    !!transaction.useAllAmount,
+    transaction.transferType,
+    marginalFee,
+  );
+  if (
+    !repriced ||
+    !repriced.fee.eq(zcashFee) ||
+    !repriced.totalInput.minus(amount).minus(zcashFee).eq(changeAmount)
+  ) {
+    throw new ZcashPreparedBuildMismatch();
+  }
+
+  const outpoints = utxos.map(utxo => ({
     hash: utxo.hash,
     outputIndex: utxo.outputIndex,
   }));
   const { crypto, derivationMode } = walletAccount.xpub;
   // The strategy ignores the rate; the type still asks for one.
-  const feePerByte = zcashSafeFeePerByte(crypto, derivationMode, LEGACY_MARGINAL_FEE).toNumber();
+  const feePerByte = zcashSafeFeePerByte(crypto, derivationMode, marginalFee).toNumber();
 
   const txInfo = await walletAccount.xpub.buildTx(logger, {
     destAddress: recipient,
@@ -107,17 +129,22 @@ export async function buildPreparedLegacyTransaction(
       derivationMode,
       outpoints,
       zcashFee,
-      !!changeAmount && changeAmount.gt(0),
+      changeAmount.gt(0),
     ),
     sequence: SEQUENCE_FINAL,
   });
 
   // wallet-btc folds a below-dust change into the fee, where the reviewed
   // selection kept it as change: the fee on screen would not be the one signed.
-  const sent = txInfo.outputs
-    .filter(output => !output.isChange)
-    .reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
-  if (!new BigNumber(txInfo.fee).eq(zcashFee) || !sent.eq(amount)) {
+  const sum = (isChange: boolean) =>
+    txInfo.outputs
+      .filter(output => !!output.isChange === isChange)
+      .reduce((total, output) => total.plus(output.value), new BigNumber(0));
+  if (
+    !new BigNumber(txInfo.fee).eq(zcashFee) ||
+    !sum(false).eq(amount) ||
+    !sum(true).eq(changeAmount)
+  ) {
     throw new ZcashPreparedBuildMismatch();
   }
   return txInfo;

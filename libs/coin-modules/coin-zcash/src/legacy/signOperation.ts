@@ -177,6 +177,13 @@ export const buildPreparedLegacySignOperation = (
   signerContext: SignerContext,
   context: ZcashContext,
 ): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
-  makeLegacySignOperation(signerContext, context, (walletAccount, account, transaction) =>
-    buildPreparedLegacyTransaction(context.logger, walletAccount, account, transaction),
-  );
+  makeLegacySignOperation(signerContext, context, async (walletAccount, account, transaction) => {
+    const { zip2009 } = await context.config(account.currency.id);
+    return buildPreparedLegacyTransaction(
+      context.logger,
+      walletAccount,
+      account,
+      transaction,
+      marginalFeeFor(account, zip2009),
+    );
+  });

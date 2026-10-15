@@ -158,14 +158,19 @@ const built = (fee: number, sent: number, change = 0) =>
 
 describe("buildPreparedLegacyTransaction", () => {
   it("pins the reviewed inputs, fee and amount, without recomputing the max spendable", async () => {
-    buildTx.mockResolvedValueOnce(built(10_000, 70_000, 20_000));
+    buildTx.mockResolvedValueOnce(built(10_000, 90_000));
     const preparedAccount = zcashAccount([utxo("small", 20_000), utxo("big", 80_000)]);
 
     await buildPreparedLegacyTransaction(
       logger,
       walletAccount,
       preparedAccount,
-      prepared({ amount: new BigNumber(70_000), useAllAmount: true }),
+      prepared({
+        amount: new BigNumber(90_000),
+        useAllAmount: true,
+        changeAmount: new BigNumber(0),
+      }),
+      LEGACY_MARGINAL_FEE,
     );
 
     const params = (buildTx.mock.calls[0] as unknown[])[1] as {
@@ -173,7 +178,7 @@ describe("buildPreparedLegacyTransaction", () => {
       utxoPickingStrategy: FixedSelection;
       changeAddress: unknown;
     };
-    expect(params.amount).toEqual(new BigNumber(70_000));
+    expect(params.amount).toEqual(new BigNumber(90_000));
     expect(params.changeAddress).toBe(CHANGE);
     expect(params.utxoPickingStrategy).toBeInstanceOf(FixedSelection);
     // Largest first: the order the prepare step used.
@@ -182,7 +187,7 @@ describe("buildPreparedLegacyTransaction", () => {
         { hash: "big", outputIndex: 0 },
         { hash: "small", outputIndex: 0 },
       ],
-      needChangeOutput: true,
+      needChangeOutput: false,
     });
     expect((params.utxoPickingStrategy as unknown as { fee: BigNumber }).fee).toEqual(
       new BigNumber(10_000),
@@ -197,6 +202,7 @@ describe("buildPreparedLegacyTransaction", () => {
         walletAccount,
         zcashAccount([]),
         tx({ transferType: "transparent" }),
+        LEGACY_MARGINAL_FEE,
       ),
     ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
     expect(buildTx).not.toHaveBeenCalled();
@@ -211,6 +217,7 @@ describe("buildPreparedLegacyTransaction", () => {
         walletAccount,
         zcashAccount([utxo("a", 80_000)]),
         prepared({ amount: new BigNumber(50_000) }),
+        LEGACY_MARGINAL_FEE,
       ),
     ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
   });
@@ -224,8 +231,68 @@ describe("buildPreparedLegacyTransaction", () => {
         walletAccount,
         zcashAccount([utxo("a", 80_000)]),
         prepared({ amount: new BigNumber(50_000) }),
+        LEGACY_MARGINAL_FEE,
       ),
     ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
+  });
+
+  it("refuses when the built change is not the reviewed one", async () => {
+    buildTx.mockResolvedValueOnce(built(10_000, 50_000, 25_000));
+
+    await expect(
+      buildPreparedLegacyTransaction(
+        logger,
+        walletAccount,
+        zcashAccount([utxo("a", 80_000)]),
+        prepared({ amount: new BigNumber(50_000) }),
+        LEGACY_MARGINAL_FEE,
+      ),
+    ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
+  });
+
+  describe("when the account changed between review and signing", () => {
+    const review = () =>
+      prepareTransaction(
+        zcashAccount([utxo("u1", 100_000), utxo("u2", 100_000)]),
+        tx({ transferType: "transparent", amount: new BigNumber(50_000) }),
+      );
+
+    it.each([
+      ["a UTXO arrived", [utxo("u1", 100_000), utxo("u2", 100_000), utxo("u3", 100_000)]],
+      ["a UTXO was spent", [utxo("u1", 100_000)]],
+      [
+        "the inputs were replaced by more of the same total",
+        [utxo("u1", 100_000), utxo("u3", 50_000), utxo("u4", 50_000)],
+      ],
+    ])("refuses to sign when %s", async (_case, signingUtxos) => {
+      const reviewed = await review();
+
+      await expect(
+        buildPreparedLegacyTransaction(
+          logger,
+          walletAccount,
+          zcashAccount(signingUtxos),
+          reviewed,
+          LEGACY_MARGINAL_FEE,
+        ),
+      ).rejects.toBeInstanceOf(ZcashPreparedBuildMismatch);
+      expect(buildTx).not.toHaveBeenCalled();
+    });
+
+    it("signs when other inputs carry the reviewed fee, amount and change", async () => {
+      const reviewed = await review();
+      buildTx.mockResolvedValueOnce(built(10_000, 50_000, 140_000));
+
+      await buildPreparedLegacyTransaction(
+        logger,
+        walletAccount,
+        zcashAccount([utxo("u3", 100_000), utxo("u4", 100_000)]),
+        reviewed,
+        LEGACY_MARGINAL_FEE,
+      );
+
+      expect(buildTx).toHaveBeenCalledTimes(1);
+    });
   });
 
   it("builds what prepareTransaction priced over several UTXOs, where Merge would pick fewer", async () => {
@@ -265,6 +332,7 @@ describe("buildPreparedLegacyTransaction", () => {
       walletAccount,
       preparedAccount,
       reviewed,
+      LEGACY_MARGINAL_FEE,
     );
 
     expect(txInfo.inputs).toHaveLength(3);
