@@ -1,11 +1,5 @@
 import { useCallback } from "react";
 import { Linking, Platform } from "react-native";
-import {
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-} from "@domain/entity-contact";
-import { useTranslation } from "~/context/Locale";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
@@ -45,7 +39,6 @@ export function useContactsAddAddressFlowDrawerViewModel({
   onCurrencySelected,
   onQrCodeClick,
 }: ContactsAddAddressFlowDrawerProps) {
-  const { t } = useTranslation();
   const helpCenterUrl = useLocalizedUrl(urls.resources.helpCenter);
   const meContact = useContactsMeContact();
   const isMeContact =
@@ -75,33 +68,11 @@ export function useContactsAddAddressFlowDrawerViewModel({
       state.status === "enteringAddress"
         ? {
             addressEntry: state.addressEntry,
-            labels: {
-              title: t("contacts.addAddressEntry.title"),
-              addressPlaceholder: t(
-                resolveContactAddressSupportsDomain(
-                  state.selectedCurrencyId,
-                  sendFeatures.supportsDomain,
-                )
-                  ? "contacts.addAddressEntry.addressPlaceholder"
-                  : "contacts.addAddressEntry.addressPlaceholderNoENS",
-              ),
-              confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
-              validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
-              validAddress: t("contacts.addAddressEntry.validAddress"),
-              invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
-              domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
-              sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
-              validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
-              ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
-              ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
-              duplicateAddress: (contactName: string) =>
-                t("contacts.addAddressEntry.duplicateAddress", { contactName }),
-            },
-            sanctionedAddressBanner: {
-              description: t("contacts.addAddressEntry.sanctioned.description"),
-              actionLabel: t("contacts.addAddressEntry.sanctioned.learnMore"),
-              onAction: handleSanctionedAddressLearnMore,
-            },
+            supportsDomain: resolveContactAddressSupportsDomain(
+              state.selectedCurrencyId,
+              sendFeatures.supportsDomain,
+            ),
+            onSanctionedAddressLearnMore: handleSanctionedAddressLearnMore,
             bottomOffset,
             onChangeText: onAddressChange,
             onConfirm: onAddressConfirm,
@@ -112,24 +83,8 @@ export function useContactsAddAddressFlowDrawerViewModel({
       state.status === "namingAddress" || state.status === "confirmationRequired"
         ? {
             addressLabel: state.addressLabel,
-            labels: {
-              title: t("contacts.addAddressName.title"),
-              inputLabel: t("contacts.addAddressName.inputLabel"),
-              namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
-              continueToReview: t("common.continue"),
-              validationErrors: {
-                [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
-                  "contacts.addAddressName.invalidLabel",
-                ),
-                [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
-                  "contacts.addAddressName.duplicateLabel",
-                ),
-                [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t(
-                  "contacts.addAddressName.labelTooLong",
-                ),
-              },
-              privacyPolicy: isMeContact ? t("contacts.addAddressName.privacyPolicy") : undefined,
-            },
+            showPrivacyPolicy: isMeContact,
+            continueAction: "proceed",
             bottomOffset,
             onChangeText: onAddressNameChange,
             onContinue: onContinueFromName,

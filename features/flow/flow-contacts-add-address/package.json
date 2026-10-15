@@ -28,6 +28,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@features/platform-contacts": "workspace:^",
+    "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*"
   },
   "peerDependencies": {
