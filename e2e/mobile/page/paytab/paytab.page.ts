@@ -157,9 +157,9 @@ export default class PayTabPage {
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
-    // await tapById(this.bankTransferCloseId);
-    const contentElement = getElementById(this.bankTransferContentId);
-    await contentElement.swipe("down");
+    await tapById(this.bankTransferCloseId);
+    // const contentElement = getElementById(this.bankTransferContentId);
+    // await contentElement.swipe("down");
     if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
       throw new Error(`${this.bankTransferContentId} stayed visible`);
     }
