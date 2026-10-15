@@ -6,9 +6,10 @@ import { FearAndGreedView } from "./view";
 type FearAndGreedProps = {
   Gauge: GaugeComponent;
   appearance?: FearAndGreedAppearance;
+  width?: number;
 };
 
-export function FearAndGreed({ Gauge, appearance }: FearAndGreedProps) {
+export function FearAndGreed({ appearance = "compact", width, Gauge }: FearAndGreedProps) {
   const viewModel = useFearAndGreedViewModel();
-  return <FearAndGreedView {...viewModel} Gauge={Gauge} appearance={appearance} />;
+  return <FearAndGreedView {...viewModel} appearance={appearance} width={width} Gauge={Gauge} />;
 }

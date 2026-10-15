@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { AltcoinSeason } from "LLM/components/AltcoinSeason";
-import { FearAndGreed } from "LLM/components/FearAndGreed";
+import { FearAndGreed } from "@features/flow-fear-and-greed";
+import ArcGaugeIndicator from "LLM/components/ArcGaugeIndicator";
 import { MarketCapCard } from "LLM/components/MarketCapCard";
 import type { MarketHighlightCard } from "../../useMarketHighlights";
 import { MARKET_SCREEN_TEST_IDS } from "../../testIds";
@@ -25,7 +26,7 @@ export function MarketHighlights({ cardWidth, snapToInterval, highlightCards }: 
     ({ item }: ListRenderItemInfo<MarketHighlightCard>) => (
       <Box testID={MARKET_SCREEN_TEST_IDS.highlightCard} style={{ width: cardWidth }}>
         {item.type === "fearAndGreed" ? (
-          <FearAndGreed appearance="expanded" width={cardWidth} />
+          <FearAndGreed appearance="expanded" width={cardWidth} Gauge={ArcGaugeIndicator} />
         ) : null}
         {item.type === "altcoinSeason" ? <AltcoinSeason width={cardWidth} /> : null}
         {item.type === "marketCap" ? <MarketCapCard width={cardWidth} /> : null}

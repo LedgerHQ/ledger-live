@@ -1857,9 +1857,6 @@ importers:
       '@domain/entity-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/entity/market-index-altcoin-season
-      '@domain/entity-market-index-fear-and-greed':
-        specifier: workspace:^
-        version: link:../../domain/entity/market-index-fear-and-greed
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses

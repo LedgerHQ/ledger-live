@@ -1,14 +1,21 @@
 import React, { memo } from "react";
-import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme, type LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { getFearAndGreedTranslationKey } from "@features/flow-fear-and-greed";
-import { useTranslation } from "~/context/Locale";
-import FearAndGreedArc from "../FearAndGreedArc";
-import type { FearAndGreedExpandedCardProps, FearAndGreedExpandedCardSkeletonProps } from "./types";
+import type { FearAndGreedIndex } from "@domain/entity-market-index-fear-and-greed";
+import { useTranslation } from "@shared/i18n";
+import { getFearAndGreedTranslationKey } from "../../utils/fearAndGreed";
+import { Indicator } from "../Indicator";
+import type { GaugeComponent } from "../../types";
+import { EXPANDED_CARD_HEIGHT } from "./constants";
 
-export const FEAR_AND_GREED_CARD_HEIGHT = 68;
+type ExpandedCardProps = {
+  data: FearAndGreedIndex;
+  Gauge: GaugeComponent;
+  width?: number;
+  onPress?: () => void;
+};
 
-function FearAndGreedExpandedCard({ data, width, onPress }: FearAndGreedExpandedCardProps) {
+function ExpandedCardComponent({ data, Gauge, width, onPress }: ExpandedCardProps) {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { value } = data;
@@ -21,7 +28,7 @@ function FearAndGreedExpandedCard({ data, width, onPress }: FearAndGreedExpanded
       lx={cardStyle}
       style={({ pressed }) => ({
         width,
-        height: FEAR_AND_GREED_CARD_HEIGHT,
+        height: EXPANDED_CARD_HEIGHT,
         backgroundColor: pressed ? theme.colors.bg.mutedPressed : theme.colors.bg.muted,
       })}
     >
@@ -35,27 +42,15 @@ function FearAndGreedExpandedCard({ data, width, onPress }: FearAndGreedExpanded
           </Text>
         </Box>
         <Box lx={{ flexShrink: 0 }}>
-          <FearAndGreedArc value={value} />
+          <Indicator value={value} Gauge={Gauge} />
         </Box>
       </Box>
     </Pressable>
   );
 }
 
-export function FearAndGreedExpandedCardSkeleton({
-  width,
-  testID,
-}: FearAndGreedExpandedCardSkeletonProps) {
-  return (
-    <Skeleton
-      testID={testID}
-      lx={skeletonStyle}
-      style={{ width, height: FEAR_AND_GREED_CARD_HEIGHT }}
-    />
-  );
-}
-
 const cardStyle: LumenViewStyle = {
+  backgroundColor: "muted",
   borderRadius: "md",
   padding: "s12",
   justifyContent: "center",
@@ -68,8 +63,4 @@ const contentStyle: LumenViewStyle = {
   gap: "s12",
 };
 
-const skeletonStyle: LumenViewStyle = {
-  borderRadius: "md",
-};
-
-export default memo(FearAndGreedExpandedCard);
+export const ExpandedCard = memo(ExpandedCardComponent);
