@@ -1,4 +1,4 @@
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -235,6 +235,15 @@ const makeZcashAccount = (utxoValues: number[]): AccountLike =>
     bitcoinResources: { utxos: utxoValues.map(value => ({ value: new BigNumber(value) })) },
   }) as unknown as AccountLike;
 
+const pendingOut = (value: number, fee: number) =>
+  ({ type: "OUT", value: new BigNumber(value), fee: new BigNumber(fee) }) as Operation;
+
+const makeAccountWithPending = (
+  type: AccountLike["type"],
+  pendingOperations: Operation[],
+): AccountLike =>
+  ({ type, spendableBalance: new BigNumber(100), pendingOperations }) as AccountLike;
+
 describe("resolveWalletApiMaxSpendable", () => {
   const account = { spendableBalance: new BigNumber(100) } as AccountLike;
 
@@ -314,7 +323,7 @@ describe("resolveWalletApiMaxSpendable", () => {
     expect(mockLog).toHaveBeenCalledWith(
       "wallet-api/converters",
       expect.stringContaining("omitting ambiguous zero maxSpendable"),
-      { walletApiSpendableBalance: "100" },
+      { walletApiSpendableBalance: "100", pendingSpent: "0" },
     );
   });
 
@@ -327,8 +336,45 @@ describe("resolveWalletApiMaxSpendable", () => {
     expect(mockLog).toHaveBeenCalledWith(
       "wallet-api/converters",
       expect.stringContaining("omitting ambiguous zero maxSpendable"),
-      { walletApiSpendableBalance: "100" },
+      { walletApiSpendableBalance: "100", pendingSpent: "0" },
     );
+  });
+
+  describe("pending operations", () => {
+    beforeEach(() => {
+      mockEstimateBridge(new BigNumber(0));
+    });
+
+    it("keeps a zero estimate when pending sends commit the whole token balance", async () => {
+      const tokenAccount = makeAccountWithPending("TokenAccount", [pendingOut(100, 5)]);
+
+      const result = await resolveWalletApiMaxSpendable(tokenAccount);
+
+      expect(result).toEqual(new BigNumber(0));
+      expect(mockLog).not.toHaveBeenCalled();
+    });
+
+    it("keeps a zero estimate when pending sends and fees commit the whole native balance", async () => {
+      const mainAccount = makeAccountWithPending("Account", [pendingOut(90, 10)]);
+
+      const result = await resolveWalletApiMaxSpendable(mainAccount);
+
+      expect(result).toEqual(new BigNumber(0));
+      expect(mockLog).not.toHaveBeenCalled();
+    });
+
+    it("omits a zero estimate when pending sends leave part of the token balance", async () => {
+      const tokenAccount = makeAccountWithPending("TokenAccount", [pendingOut(60, 5)]);
+
+      const result = await resolveWalletApiMaxSpendable(tokenAccount);
+
+      expect(result).toBeUndefined();
+      expect(mockLog).toHaveBeenCalledWith(
+        "wallet-api/converters",
+        expect.stringContaining("omitting ambiguous zero maxSpendable"),
+        { walletApiSpendableBalance: "100", pendingSpent: "60" },
+      );
+    });
   });
 
   describe("zcash", () => {
@@ -352,7 +398,7 @@ describe("resolveWalletApiMaxSpendable", () => {
       expect(mockLog).toHaveBeenCalledWith(
         "wallet-api/converters",
         expect.stringContaining("omitting ambiguous zero maxSpendable"),
-        { walletApiSpendableBalance: "500" },
+        { walletApiSpendableBalance: "500", pendingSpent: "0" },
       );
     });
   });
