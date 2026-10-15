@@ -30,7 +30,8 @@
   "dependencies": {
     "@shared/clipboard": "workspace:*",
     "@shared/i18n": "workspace:*",
-    "@shared/ui-info-state": "workspace:*"
+    "@shared/ui-info-state": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@features/platform-style": "workspace:*",

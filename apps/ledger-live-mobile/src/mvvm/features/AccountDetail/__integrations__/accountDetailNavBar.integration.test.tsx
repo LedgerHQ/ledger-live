@@ -1,10 +1,11 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { parseAnyAccountId } from "@domain/entity-account";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { render, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
@@ -79,5 +80,25 @@ describe("AccountDetail nav bar", () => {
 
     expect(screen.getByText("Previous screen")).toBeVisible();
     expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.screen)).toBeNull();
+  });
+
+  it("opens the account settings from the settings button", async () => {
+    const present = jest.spyOn(BottomSheetModal.prototype, "present");
+    try {
+      const { user } = renderFromPreviousScreen();
+      await user.press(screen.getByTestId("open-account"));
+      expect(present).not.toHaveBeenCalled();
+
+      await user.press(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.settingsButton));
+
+      expect(present).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId("account-settings-menu")).toBeVisible();
+      expect(
+        within(screen.getByTestId("account-settings-change-name")).getByText("Ethereum 1"),
+      ).toBeVisible();
+      expect(screen.getByText("Remove account from portfolio")).toBeVisible();
+    } finally {
+      present.mockRestore();
+    }
   });
 });

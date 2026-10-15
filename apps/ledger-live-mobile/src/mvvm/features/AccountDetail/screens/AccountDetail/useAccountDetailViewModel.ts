@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -21,8 +21,11 @@ export type AccountDetailHeader = Readonly<{
 
 export type AccountDetailViewModel = Readonly<{
   account: Account | undefined;
+  accountName: string;
   header: AccountDetailHeader | undefined;
   onOpenSettings: () => void;
+  isSettingsOpen: boolean;
+  onCloseSettings: () => void;
 }>;
 
 type AccountDetailRoute = RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>;
@@ -58,7 +61,16 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     [mainAccount, accountName],
   );
 
-  const onOpenSettings = useCallback(() => undefined, []);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const onOpenSettings = useCallback(() => setIsSettingsOpen(true), []);
+  const onCloseSettings = useCallback(() => setIsSettingsOpen(false), []);
 
-  return { account: mainAccount, header, onOpenSettings };
+  return {
+    account: mainAccount,
+    accountName: accountName ?? "",
+    header,
+    onOpenSettings,
+    isSettingsOpen,
+    onCloseSettings,
+  };
 }
