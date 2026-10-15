@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { act, render, screen } from "@tests/test-renderer";
-import { useAppAvailability, useCalCheck } from "@features/flow-app-availability";
+import { useAppAvailability } from "@features/flow-app-availability";
 import { State } from "~/reducers/types";
 import { WaitForAppReady } from "../WaitForAppReady";
 
@@ -13,11 +13,9 @@ jest.mock("expo-splash-screen", () => ({
 jest.mock("@features/flow-app-availability", () => ({
   ...jest.requireActual("@features/flow-app-availability"),
   useAppAvailability: jest.fn(() => ({ status: "available" })),
-  useCalCheck: jest.fn(() => ({ status: "available" })),
 }));
 
 const mockedUseAppAvailability = jest.mocked(useAppAvailability);
-const mockedUseCalCheck = jest.mocked(useCalCheck);
 
 function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: State) => State) {
   return render(
@@ -31,7 +29,6 @@ function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: 
 describe("WaitForAppReady", () => {
   beforeEach(() => {
     mockedUseAppAvailability.mockReturnValue({ status: "available" });
-    mockedUseCalCheck.mockReturnValue({ status: "available" });
     jest.mocked(SplashScreen.hide).mockClear();
   });
 
@@ -80,7 +77,6 @@ describe("WaitForAppReady", () => {
   it("renders children after one second when CAL is healthy and another check is still pending", () => {
     jest.useFakeTimers();
     mockedUseAppAvailability.mockReturnValue({ status: "pending" });
-    mockedUseCalCheck.mockReturnValue({ status: "available" });
 
     renderApp(true);
     expect(screen.queryByText("App is Ready")).toBeNull();
@@ -94,10 +90,9 @@ describe("WaitForAppReady", () => {
     expect(SplashScreen.hide).not.toHaveBeenCalled();
   });
 
-  it("shows the unavailable screen after one second while the check is still pending", () => {
+  it("renders children after one second while the check is still pending", () => {
     jest.useFakeTimers();
     mockedUseAppAvailability.mockReturnValue({ status: "pending" });
-    mockedUseCalCheck.mockReturnValue({ status: "pending" });
 
     renderApp(false);
     expect(screen.queryByText("App is Ready")).toBeNull();
@@ -107,8 +102,8 @@ describe("WaitForAppReady", () => {
       jest.advanceTimersByTime(1_000);
     });
 
-    expect(screen.queryByText("App is Ready")).toBeNull();
-    expect(screen.getByText("Ledger Wallet is currently unavailable")).toBeTruthy();
-    expect(SplashScreen.hide).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("App is Ready")).toBeTruthy();
+    expect(screen.queryByText("Ledger Wallet is currently unavailable")).toBeNull();
+    expect(SplashScreen.hide).not.toHaveBeenCalled();
   });
 });
