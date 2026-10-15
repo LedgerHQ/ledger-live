@@ -19,7 +19,7 @@ const AccountDetail = () => {
         operationsLength={account.operations.length}
       />
       <SyncOneAccountOnMount reason="view-account" priority={10} accountId={account.id} />
-      <AccountDetailView key={account.id} />
+      <AccountDetailView key={account.id} account={account} />
     </>
   );
 };
