@@ -18,6 +18,7 @@ import {
 } from "./coin-selection";
 import type { SpendableNote } from "../network/types";
 import type { ZcashAccount, ZcashTransferType } from "../types/bridge";
+import type { ZcashConfig } from "../config";
 
 // ── Helpers ────────────────────────────────────────────────────────────
 
@@ -761,6 +762,17 @@ describe("marginalFeeFor", () => {
     expect(marginalFeeFor(accountOf("zcash", 4_500_000), { mainnetHeight: null })).toBe(5_000);
     expect(marginalFeeFor(accountOf("zcash", 3_590_099), { mainnetHeight: 3_500_000 })).toBe(1_000);
     expect(marginalFeeFor(accountOf("zcash_testnet", 0), delayed)).toBe(1_000);
+  });
+
+  it.each([
+    ["null", null],
+    ["without a height", {}],
+    ["with a non-numeric height", { mainnetHeight: "3700000" }],
+    ["with a non-finite height", { mainnetHeight: Number.NaN }],
+  ])("falls back to the default switch height for a zip2009 setting %s", (_label, zip2009) => {
+    const setting = zip2009 as unknown as ZcashConfig["zip2009"];
+    expect(marginalFeeFor(accountOf("zcash", 3_590_098), setting)).toBe(5_000);
+    expect(marginalFeeFor(accountOf("zcash", 3_590_099), setting)).toBe(1_000);
   });
 
   it("prices an account that has not synced a height at the legacy fee", () => {

@@ -23,7 +23,8 @@ export type ZcashConfig = {
   /**
    * ZIP 2009 (marginal fee cut from 5,000 to 1,000 zatoshis per logical action) on mainnet.
    * The bundled builder only accepts the lower fee from its own switch height, so this can
-   * delay or disable the switch, never advance it. Test networks ignore it.
+   * delay or disable the switch, never advance it. Test networks ignore it. Absent, `null`
+   * or malformed, it falls back to the default switch height.
    */
   zip2009?: {
     /**
@@ -32,7 +33,7 @@ export type ZcashConfig = {
      * @default ZIP2009_MAINNET_HEIGHT (3590000)
      */
     mainnetHeight: number | null;
-  };
+  } | null;
 };
 
 export type ZcashCoinConfig = CurrencyConfig & ZcashConfig;

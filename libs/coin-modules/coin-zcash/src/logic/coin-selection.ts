@@ -66,14 +66,27 @@ export function marginalFeeAt(
 }
 
 /**
+ * The configured mainnet switch height: a finite height as is, `null` (disabled) as is,
+ * and the module default for anything else. The setting comes from the remote coin
+ * config, so an absent, `null` or malformed `zip2009` must not break or disable fees.
+ */
+function configuredSwitchHeight(zip2009: ZcashConfig["zip2009"]): number | null {
+  const mainnetHeight: unknown = zip2009?.mainnetHeight;
+  if (mainnetHeight === null) return null;
+  return typeof mainnetHeight === "number" && Number.isFinite(mainnetHeight)
+    ? mainnetHeight
+    : ZIP2009_MAINNET_HEIGHT;
+}
+
+/**
  * The marginal fee to price a send from `account` at, from its synced height and the
- * coin config's `zip2009` setting (`undefined`: the module default switch height).
+ * coin config's `zip2009` setting (see {@link configuredSwitchHeight}).
  */
 export function marginalFeeFor(account: ZcashAccount, zip2009: ZcashConfig["zip2009"]): number {
   return marginalFeeAt(
     zcashNetworkOf(account.currency.id),
     account.blockHeight ?? 0,
-    zip2009 === undefined ? ZIP2009_MAINNET_HEIGHT : zip2009.mainnetHeight,
+    configuredSwitchHeight(zip2009),
   );
 }
 

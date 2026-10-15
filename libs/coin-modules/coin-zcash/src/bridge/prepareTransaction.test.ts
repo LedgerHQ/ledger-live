@@ -706,6 +706,7 @@ describe("prepareTransaction, zip2009 coin config", () => {
     ["disabled", { mainnetHeight: null }, "zcash", 4_500_000, 10_000],
     ["below the builder's switch", { mainnetHeight: 3_500_000 }, "zcash", 3_590_098, 10_000],
     ["set, on a test network", { mainnetHeight: null }, "zcash_testnet", 0, 2_000],
+    ["null", null, "zcash", 3_600_000, 2_000],
   ])("prices the send with the setting %s", async (_label, zip2009, id, height, fee) => {
     const prepare = buildPrepareTransaction(contextWithZip2009(zip2009));
 
