@@ -194,6 +194,14 @@ report("All stored loads", stored);
 if (steady.length !== stored.length)
   report("Steady state (no pair added, no first hole check)", steady);
 // Step 2: the same steady loads, with the prototype and without it (every other load).
+const stepTwo = stored.some(e => e.prototype !== undefined);
+if (stepTwo) {
+  console.log(
+    "\nNOT COMPARABLE WITH STEP 1: the hook counts now include 4 mobile consumers step 1 did not" +
+      " count (AssetDetail PnL and BalanceGraph, Analytics ChartSection and PnlSection). Compare ON" +
+      " vs OFF within this run only.",
+  );
+}
 if (steady.some(e => e.prototype === true) && steady.some(e => e.prototype === false)) {
   report(
     "Steady state, prototype OFF",
@@ -203,6 +211,55 @@ if (steady.some(e => e.prototype === true) && steady.some(e => e.prototype === f
     "Steady state, prototype ON",
     steady.filter(e => e.prototype === true),
   );
+  compareByContent(steady);
+}
+
+// Odd/even alternation could alias with a period-2 pattern in what the loads bring: ON and OFF are
+// also compared within each class of load content.
+function loadClass(e) {
+  if (e.historyChanged > 0) return "history changed";
+  if (e.latestMoved > 0) return "latest only";
+  return "status only or no-op";
+}
+
+function compareByContent(list) {
+  const MIN_LOADS = 5;
+  const classes = ["latest only", "history changed", "status only or no-op"];
+  const stats = side => {
+    const renderMs = side.map(e => e.renderMs).sort((a, b) => a - b);
+    const mean = f => sum(side, f) / side.length;
+    return {
+      n: side.length,
+      meanMs: mean(e => e.renderMs),
+      medianMs: renderMs[Math.floor(renderMs.length / 2)],
+      commits: mean(e => e.commits),
+      driven: mean(e => sum(RATE_HOOKS, name => hook(e, name, "storeDriven"))),
+    };
+  };
+  console.log("\n## ON vs OFF by load content (steady loads; per load: mean, median render ms)");
+  for (const cls of classes) {
+    const of = on => list.filter(e => loadClass(e) === cls && e.prototype === on);
+    const off = of(false);
+    const on = of(true);
+    console.log(`  ${cls}: OFF n=${off.length}, ON n=${on.length}`);
+    if (off.length < MIN_LOADS || on.length < MIN_LOADS) {
+      console.log(`    not enough data (fewer than ${MIN_LOADS} loads on a side)`);
+      continue;
+    }
+    for (const [label, side] of [
+      ["OFF", stats(off)],
+      ["ON ", stats(on)],
+    ]) {
+      console.log(
+        `    ${label} render ms mean ${side.meanMs.toFixed(1)}, median ${side.medianMs}; commits ${side.commits.toFixed(1)}; rate-driven hook renders ${side.driven.toFixed(1)}`,
+      );
+    }
+    const a = stats(off);
+    const b = stats(on);
+    console.log(
+      `    ON - OFF: render ms mean ${(b.meanMs - a.meanMs).toFixed(1)} (${pct(b.meanMs - a.meanMs, a.meanMs)}), median ${(b.medianMs - a.medianMs).toFixed(1)}; rate-driven hook renders ${(b.driven - a.driven).toFixed(1)}`,
+    );
+  }
 }
 const dropped = effects.length - stored.length;
 if (dropped) console.log(`\n${dropped} load(s) resolved without being stored`);
