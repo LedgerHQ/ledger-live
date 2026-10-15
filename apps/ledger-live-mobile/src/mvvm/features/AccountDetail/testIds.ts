@@ -5,4 +5,8 @@ export const ACCOUNT_DETAIL_TEST_IDS = {
   customPlace: "account-detail-custom-place",
   assets: "account-detail-assets",
   transactions: "account-detail-transactions",
+  navBarTitle: "account-detail-nav-bar-title",
+  navBarAddress: "account-detail-nav-bar-address",
+  navBarNetworkIcon: "account-detail-nav-bar-network-icon",
+  settingsButton: "account-detail-settings-button",
 } as const;

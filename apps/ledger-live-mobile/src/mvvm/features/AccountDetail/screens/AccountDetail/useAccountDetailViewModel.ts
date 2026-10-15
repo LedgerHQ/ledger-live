@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useMaybeAccountName } from "~/reducers/wallet";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
@@ -10,7 +12,18 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { AccountDetailNavigatorParamsList } from "../../types";
 
-export type AccountDetailViewModel = Readonly<{ account: Account | undefined }>;
+export type AccountDetailHeader = Readonly<{
+  title: string;
+  address: string;
+  ledgerId: string;
+  ticker: string;
+}>;
+
+export type AccountDetailViewModel = Readonly<{
+  account: Account | undefined;
+  header: AccountDetailHeader | undefined;
+  onOpenSettings: () => void;
+}>;
 
 type AccountDetailRoute = RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>;
 type AccountDetailNavigation = RootNavigationComposite<
@@ -31,5 +44,21 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     });
   }, [mainAccount, navigation]);
 
-  return { account: mainAccount };
+  const accountName = useMaybeAccountName(mainAccount);
+  const header = useMemo(
+    () =>
+      mainAccount && accountName
+        ? {
+            title: accountName,
+            address: formatAddress(mainAccount.freshAddress, { prefixLength: 4, suffixLength: 4 }),
+            ledgerId: mainAccount.currency.id,
+            ticker: mainAccount.currency.ticker,
+          }
+        : undefined,
+    [mainAccount, accountName],
+  );
+
+  const onOpenSettings = useCallback(() => undefined, []);
+
+  return { account: mainAccount, header, onOpenSettings };
 }
