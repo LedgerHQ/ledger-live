@@ -105,7 +105,7 @@ class Base implements ICrypto {
   // derive legacy address at account and index positions
   protected async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
     const publicKeyBuffer: Buffer = await this.getPubkeyAt(xpub, account, index);
-    const publicKeyHash160: Buffer = bjs.crypto.hash160(publicKeyBuffer);
+    const publicKeyHash160 = bjs.crypto.hash160(publicKeyBuffer);
     return bjs.address.toBase58Check(publicKeyHash160, this.network.pubKeyHash);
   }
 
@@ -116,7 +116,7 @@ class Base implements ICrypto {
     index: number,
   ): Promise<string> {
     const publicKeyBuffer: Buffer = await this.getPubkeyAt(xpub, account, index);
-    const publicKeyHash160: Buffer = bjs.crypto.hash160(publicKeyBuffer);
+    const publicKeyHash160 = bjs.crypto.hash160(publicKeyBuffer);
     const words: number[] = bech32.toWords(publicKeyHash160);
     words.unshift(0x00);
     return bech32.encode(this.network.bech32, words);
@@ -125,11 +125,11 @@ class Base implements ICrypto {
   // derive SegWit at account and index positions
   private async getSegWitAddress(xpub: string, account: number, index: number): Promise<string> {
     const publicKeyBuffer: Buffer = await this.getPubkeyAt(xpub, account, index);
-    const redeemOutput: Buffer = bjs.script.compile([0, bjs.crypto.hash160(publicKeyBuffer)]);
-    const publicKeyHash160: Buffer = bjs.crypto.hash160(redeemOutput);
+    const redeemOutput = bjs.script.compile([0, bjs.crypto.hash160(publicKeyBuffer)]);
+    const publicKeyHash160 = bjs.crypto.hash160(redeemOutput);
     const payload: Buffer = Buffer.allocUnsafe(21);
     payload.writeUInt8(this.network.scriptHash, 0);
-    publicKeyHash160.copy(payload, 1);
+    payload.set(publicKeyHash160, 1);
     return bs58check.encode(payload);
   }
 
@@ -174,7 +174,7 @@ class Base implements ICrypto {
    * see https://developer.bitcoin.org/devguide/transactions.html for more details
    */
   toOutputScript(address: string): Buffer {
-    return btcAddress.toOutputScript(address, this.network);
+    return Buffer.from(btcAddress.toOutputScript(address, this.network));
   }
 
   /**
@@ -183,7 +183,7 @@ class Base implements ICrypto {
    */
   toOpReturnOutputScript(data: Buffer): Buffer {
     const script = bjs.payments.embed({ data: [data] });
-    return script.output!;
+    return Buffer.from(script.output!);
   }
 
   validateAddress(address: string): boolean {

@@ -64,7 +64,7 @@ catalog:
   "@ledgerhq/hw-transport-mocker": 6.35.0
   "@ledgerhq/live-network": 3.2.0
   "@ledgerhq/live-promise": 0.4.0
-  "@ledgerhq/psbtv2": 0.6.0
+  "@ledgerhq/psbtv2": 0.6.1
   "@ledgerhq/hw-ledger-key-ring-protocol": 1.0.0
   "@ledgerhq/ledger-key-ring-protocol": 1.0.0
   "@ledgerhq/live-config": 3.9.0

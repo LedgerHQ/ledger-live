@@ -19,7 +19,7 @@ import * as utils from "../utils";
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
-const verifyEcdsa = (pubkey: Buffer, msghash: Buffer, signature: Buffer) =>
+const verifyEcdsa = (pubkey: Uint8Array, msghash: Uint8Array, signature: Uint8Array) =>
   ecc.verify(msghash, pubkey, signature);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -107,16 +107,16 @@ describe.skip("testing xpub native segwit transactions", () => {
     inputs.forEach((input, i) => {
       const tx = bitcoin.Transaction.fromHex(input.txHex);
       const keyPair = xpubs[0].signer(associatedDerivations[i][0], associatedDerivations[i][1]);
-      const publickeyHash = bitcoin.crypto
-        .ripemd160(bitcoin.crypto.sha256(keyPair.publicKey))
-        .toString("hex");
+      const publickeyHash = Buffer.from(
+        bitcoin.crypto.ripemd160(bitcoin.crypto.sha256(keyPair.publicKey)),
+      ).toString("hex");
 
       psbt.addInput({
         hash: tx.getId(),
         index: input.output_index,
         witnessUtxo: {
           script: Buffer.from(`0014${publickeyHash}`, "hex"),
-          value: Number(input.value),
+          value: BigInt(input.value),
         },
       });
     });
@@ -124,7 +124,7 @@ describe.skip("testing xpub native segwit transactions", () => {
     outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
     expect(outputs.length).toEqual(2);

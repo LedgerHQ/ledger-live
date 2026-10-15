@@ -409,7 +409,7 @@ class Xpub {
           throw new Error("Previous output not found");
         }
 
-        const address = scriptToAddress(prevOut.script, this.crypto);
+        const address = scriptToAddress(Buffer.from(prevOut.script), this.crypto);
 
         // Look up the derivation path for this address from storage
         const storedTx = this.storage.getTx(address, prevTxId);
@@ -595,11 +595,11 @@ class Xpub {
         const txid = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
         const prevTxHex = await this.explorer.getTxHex(txid);
         const prevTx = Transaction.fromHex(prevTxHex);
-        return prevTx.outs[input.index].value;
+        return Number(prevTx.outs[input.index].value);
       }),
     );
     const originalTotalInput = originalInputValues.reduce((a, b) => a + b, 0);
-    const originalTotalOutput = originalTxObj.outs.reduce((a, o) => a + o.value, 0);
+    const originalTotalOutput = originalTxObj.outs.reduce((a, o) => a + Number(o.value), 0);
     const originalFee = originalTotalInput - originalTotalOutput;
 
     const incrementalFeeRateSatVb = await getIncrementalFeeFloorSatVb(this.explorer);
