@@ -57,6 +57,7 @@ export type NewSendFlowEntry = {
    * entry, on entries that have actually been run.
    */
   verifyOperationAmount?: boolean;
+  disableBroadcast?: boolean;
 };
 
 function currencyRequiresMemoStep(currencyId: string): boolean {
@@ -117,6 +118,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           ...FF_NEW_SEND_FLOW_ENABLED,
         },
+        ...(entry.disableBroadcast && { env: { DISABLE_TRANSACTION_BROADCAST: "1" } }),
       });
 
       test(
