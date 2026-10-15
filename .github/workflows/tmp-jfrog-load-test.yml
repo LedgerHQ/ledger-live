@@ -1,0 +1,141 @@
+name: "[Tmp] JFrog npm load test"
+# Throwaway: replays peak `pnpm i` traffic against JFrog, then exits. No build, no tests.
+#
+# Peak over Oct 1-15 2026 (Datadog, step "Install dependencies"):
+#   - busiest day:     Mon Oct 12, 4,577 installs
+#   - busiest hour:    08:00-09:00 UTC, 670 installs (~11/min)
+#   - busiest 10 min:  08:50-09:00 UTC, 192 installs (~19/min)
+# Defaults below replay the busiest 10 minutes. For the busiest hour, set
+# TARGET_PER_MIN=11 and DURATION_MINUTES=60.
+#
+# Each runner loops: wipe node_modules + pnpm store + metadata cache, full install, sleep
+# until its next slot. The target rate is spread across RUNNERS, so each runner installs
+# every RUNNERS*60/TARGET_PER_MIN seconds. A slot that overruns is logged as "late".
+#
+# Re-run: push an empty commit to this branch.
+
+on:
+  push:
+    branches:
+      - chore/jfrog-load-test
+
+permissions:
+  contents: read
+
+env:
+  TARGET_PER_MIN: 19
+  DURATION_MINUTES: 10
+  RUNNERS: 40
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+    steps:
+      - id: plan
+        run: echo "shards=$(jq -nc "[range($RUNNERS)]")" >> "$GITHUB_OUTPUT"
+
+  install:
+    name: "Install loop (${{ matrix.shard }})"
+    needs: plan
+    runs-on: ledger-wallet-4cpu-aws-public
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      id-token: write # needed for the OIDC login to JFrog
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install loop
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: |
+          store="$(pnpm store path)"
+          echo "Store at start: $store ($(du -sh "$store" 2>/dev/null | cut -f1 || echo empty))"
+
+          interval=$(( RUNNERS * 60 / TARGET_PER_MIN ))
+          # Spread the runners' first installs across one interval so they don't all start together.
+          sleep $(( SHARD * interval / RUNNERS ))
+          end=$(( $(date +%s) + DURATION_MINUTES * 60 ))
+
+          echo "shard,iteration,start,status,seconds,late" > "results-$SHARD.csv"
+          i=0
+          while [ "$(date +%s)" -lt "$end" ]; do
+            i=$(( i + 1 ))
+            rm -rf "$store" "$HOME/.cache/pnpm"
+            find . -name node_modules -type d -prune -exec rm -rf {} +
+
+            t0=$(date +%s)
+            if pnpm i --frozen-lockfile --ignore-scripts --reporter=append-only > "install-$i.log" 2>&1; then
+              status=ok
+            else
+              status=fail
+              echo "::warning::shard $SHARD iteration $i failed"
+              tail -n 40 "install-$i.log"
+            fi
+            dt=$(( $(date +%s) - t0 ))
+            late=$(( dt > interval ? 1 : 0 ))
+            echo "$SHARD,$i,$(date -u -d "@$t0" +%FT%TZ),$status,$dt,$late" >> "results-$SHARD.csv"
+            echo "iteration $i: $status in ${dt}s"
+
+            remaining=$(( interval - dt ))
+            [ "$remaining" -gt 0 ] && sleep "$remaining"
+          done
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: results-${{ matrix.shard }}
+          path: |
+            results-*.csv
+            install-*.log
+          retention-days: 7
+
+  summary:
+    needs: install
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: results-*
+          merge-multiple: true
+      - name: Summarise
+        run: |
+          tail -q -n +2 results-*.csv | sort -t, -k3 > all.csv
+          {
+            echo "## JFrog load test"
+            echo "Target: $TARGET_PER_MIN installs/min for $DURATION_MINUTES min on $RUNNERS runners"
+            echo
+            n=$(wc -l < all.csv)
+            ok=$(grep -c ',ok,' all.csv || true)
+            late=$(awk -F, '{l+=$6} END {print l+0}' all.csv)
+            cut -d, -f5 all.csv | sort -n > durations
+            pct() { sed -n "$(( (n * $1 + 99) / 100 ))p" durations; }
+            avg=$(awk '{s+=$1} END {printf "%.0f", s/NR}' durations)
+            echo "| installs | ok | failed | late | avg s | p50 s | p95 s | max s |"
+            echo "|---|---|---|---|---|---|---|---|"
+            echo "| $n | $ok | $(( n - ok )) | $late | $avg | $(pct 50) | $(pct 95) | $(tail -1 durations) |"
+            echo
+            echo "Installs started per minute:"
+            echo '```'
+            cut -d, -f3 all.csv | cut -c1-16 | uniq -c
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
