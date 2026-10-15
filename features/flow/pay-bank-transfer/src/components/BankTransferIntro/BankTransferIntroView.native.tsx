@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { Image, type ImageSourcePropType } from "react-native";
+import { Image, Pressable, type ImageSourcePropType } from "react-native";
+import { createNativeWrapper } from "react-native-gesture-handler";
 import {
-  BottomSheetHeader,
   BottomSheetView,
   Box,
   Button,
@@ -18,12 +18,18 @@ import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analyti
 import { BANK_TRANSFER_INTRO_FLOW } from "./useBankTransferIntroViewModel";
 import type { BankTransferIntroViewProps } from "../../types";
 
+const GesturePressable = createNativeWrapper(Pressable, {
+  disallowInterruption: true,
+  shouldCancelWhenOutside: false,
+});
+
 export function BankTransferIntroView({
   isOpen,
   title,
   description,
   createAccountLabel,
   logInLabel,
+  closeLabel,
   providedBy,
   heroImage,
   rows,
@@ -80,7 +86,16 @@ export function BankTransferIntroView({
             name={BANK_TRANSFER_INTRO_FLOW}
             flow={BANK_TRANSFER_INTRO_FLOW}
           />
-          <BottomSheetHeader density="expanded" />
+          <Box lx={{ alignItems: "flex-end" }}>
+            <GesturePressable
+              accessibilityRole="button"
+              accessibilityLabel={closeLabel}
+              onPress={handleClosePress}
+              testID="bottom-sheet-header-close-button"
+            >
+              <Icons.Close size={16} />
+            </GesturePressable>
+          </Box>
           <Box lx={{ gap: "s16" }}>
             {heroImage ? (
               <Image

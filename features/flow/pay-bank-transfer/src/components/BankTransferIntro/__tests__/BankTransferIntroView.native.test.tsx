@@ -4,6 +4,10 @@ import { trackedPages } from "@features/platform-pay-analytics/testing/module-mo
 import { BankTransferIntroView } from "../BankTransferIntroView.native";
 import type { BankTransferIntroViewProps } from "../../../types";
 
+jest.mock("react-native-gesture-handler", () => ({
+  createNativeWrapper: (Component: React.ComponentType) => Component,
+}));
+
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
 );
@@ -14,6 +18,7 @@ const defaultProps: BankTransferIntroViewProps = {
   description: "Transfer USD or EUR from your bank.",
   createAccountLabel: "Create an account",
   logInLabel: "Log in",
+  closeLabel: "Close",
   providedBy: "Provided by Noah",
   rows: [{ icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." }],
   onCreateAccountPress: jest.fn(),
@@ -96,6 +101,14 @@ describe("BankTransferIntroView (Native)", () => {
     render({ onClosePress });
 
     fireEvent.press(screen.getByTestId("pay-bank-transfer-intro-sheet-header-close"));
+    expect(onClosePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes from the gesture close button", () => {
+    const onClosePress = jest.fn();
+    render({ onClosePress });
+
+    fireEvent.press(screen.getByTestId("bottom-sheet-header-close-button"));
     expect(onClosePress).toHaveBeenCalledTimes(1);
   });
 });

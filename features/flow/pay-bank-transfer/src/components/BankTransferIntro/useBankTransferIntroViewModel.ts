@@ -83,6 +83,7 @@ export function useBankTransferIntroViewModel({
     description: t(`${KEY_PREFIX}.description`),
     createAccountLabel: t(`${KEY_PREFIX}.createAccount`),
     logInLabel: t(`${KEY_PREFIX}.logIn`),
+    closeLabel: t("common.close"),
     providedBy: t(`${KEY_PREFIX}.providedBy`),
     heroImage,
     rows,
