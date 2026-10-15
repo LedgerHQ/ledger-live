@@ -1318,7 +1318,7 @@ jobs:
 
   allure-report-ios:
     name: Allure Report iOS
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     continue-on-error: ${{ inputs.ci_smoke == true }}
     needs: [determine-builds, detox-tests-ios]
@@ -1399,7 +1399,7 @@ jobs:
 
   allure-report-android:
     name: Allure Report Android
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     continue-on-error: ${{ inputs.ci_smoke == true }}
     outputs:
@@ -1480,7 +1480,7 @@ jobs:
 
   qaa-allure-upload-ios:
     name: "QAA Allure Upload - iOS (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     continue-on-error: true
     needs: [detox-tests-ios]
@@ -1506,7 +1506,7 @@ jobs:
 
   qaa-allure-upload-android:
     name: "QAA Allure Upload - Android (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     continue-on-error: true
     needs: [detox-tests-android]
