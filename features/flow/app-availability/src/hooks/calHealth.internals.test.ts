@@ -63,6 +63,34 @@ describe("checkCalHealth", () => {
     jest.useRealTimers();
   });
 
+  it("should return offline when connectivity drops while the request is hanging", async () => {
+    jest.useFakeTimers();
+    let offline = false;
+    const fetchImpl = jest.fn(
+      (_input: RequestInfo | URL, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            offline = true;
+            const error = new Error("Aborted");
+            error.name = "AbortError";
+            reject(error);
+          });
+        }),
+    );
+
+    const pending = probe({
+      fetchImpl,
+      timeoutMs: CAL_HEALTHCHECK_TIMEOUT_MS,
+      isOffline: () => offline,
+    });
+
+    await jest.advanceTimersByTimeAsync(CAL_HEALTHCHECK_TIMEOUT_MS);
+
+    await expect(pending).resolves.toBe("offline");
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    jest.useRealTimers();
+  });
+
   it("should return offline when the OS reports no connectivity", async () => {
     const fetchImpl = jest.fn();
 

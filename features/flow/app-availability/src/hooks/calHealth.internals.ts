@@ -5,27 +5,32 @@ const LEDGER_CLIENT_VERSION_HEADER = "X-Ledger-Client-Version";
 
 export type CalHealthResult = "ok" | "failed" | "offline";
 
+type IsOffline = () => boolean | Promise<boolean>;
+
 export type CheckCalHealthOptions = Readonly<{
   calServiceUrl: string;
   ledgerClientVersion: string;
   timeoutMs?: number;
   fetchImpl?: typeof fetch;
-  isOffline?: () => boolean;
+  isOffline?: IsOffline;
 }>;
-
-function isAbortError(error: unknown): boolean {
-  return error instanceof Error && error.name === "AbortError";
-}
 
 function isNetworkError(error: unknown): boolean {
   return error instanceof TypeError;
 }
 
-function reportOsOffline(isOffline: (() => boolean) | undefined): boolean {
+async function reportOsOffline(isOffline: IsOffline | undefined): Promise<boolean> {
   if (isOffline !== undefined) {
     return isOffline();
   }
   return typeof navigator !== "undefined" && navigator.onLine === false;
+}
+
+async function failedUnlessOffline(isOffline: IsOffline | undefined): Promise<CalHealthResult> {
+  if (await reportOsOffline(isOffline)) {
+    return "offline";
+  }
+  return "failed";
 }
 
 function isHttpUrl(url: URL): boolean {
@@ -39,7 +44,7 @@ export async function checkCalHealth({
   fetchImpl = fetch,
   isOffline,
 }: CheckCalHealthOptions): Promise<CalHealthResult> {
-  if (reportOsOffline(isOffline)) {
+  if (await reportOsOffline(isOffline)) {
     return "offline";
   }
 
@@ -76,13 +81,10 @@ export async function checkCalHealth({
     }
     return "ok";
   } catch (error) {
-    if (isAbortError(error)) {
-      return "failed";
-    }
     if (isNetworkError(error)) {
       return "offline";
     }
-    return "failed";
+    return await failedUnlessOffline(isOffline);
   } finally {
     clearTimeout(timeoutId);
   }

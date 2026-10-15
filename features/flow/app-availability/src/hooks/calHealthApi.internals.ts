@@ -17,14 +17,16 @@ export const calHealthApi = calApi.injectEndpoints({
       async queryFn(_arg, queryApi) {
         try {
           const { calServiceUrl, ledgerClientVersion } = getCalExtra(queryApi);
-          const offline = await deviceIsOffline();
           const data = await checkCalHealth({
             calServiceUrl,
             ledgerClientVersion,
-            isOffline: () => offline,
+            isOffline: deviceIsOffline,
           });
           return { data };
         } catch {
+          if (await deviceIsOffline()) {
+            return { data: "offline" };
+          }
           return { data: "failed" };
         }
       },
