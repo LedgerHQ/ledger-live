@@ -354,13 +354,17 @@ describe("resolveWalletApiMaxSpendable", () => {
       expect(mockLog).not.toHaveBeenCalled();
     });
 
-    it("keeps a zero estimate when pending sends and fees commit the whole native balance", async () => {
-      const mainAccount = makeAccountWithPending("Account", [pendingOut(90, 10)]);
+    it("omits a zero estimate for a native pending debit that includes its fee", async () => {
+      const mainAccount = makeAccountWithPending("Account", [pendingOut(95, 10)]);
 
       const result = await resolveWalletApiMaxSpendable(mainAccount);
 
-      expect(result).toEqual(new BigNumber(0));
-      expect(mockLog).not.toHaveBeenCalled();
+      expect(result).toBeUndefined();
+      expect(mockLog).toHaveBeenCalledWith(
+        "wallet-api/converters",
+        expect.stringContaining("omitting ambiguous zero maxSpendable"),
+        { walletApiSpendableBalance: "100", pendingSpent: "0" },
+      );
     });
 
     it("omits a zero estimate when pending sends leave part of the token balance", async () => {

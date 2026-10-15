@@ -12,10 +12,7 @@ import { resolveFamily } from "../bridge/zcashRouting";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
 import { getAccountBridge } from "../bridge";
-import {
-  getPendingNativeSpent,
-  getPendingTokenSpent,
-} from "../bridge/generic-coin-framework/utils";
+import { getPendingTokenSpent } from "../bridge/generic-coin-framework/utils";
 import {
   WalletAPIAccount,
   WalletAPICurrency,
@@ -181,13 +178,12 @@ export async function resolveWalletApiSpendableBalance(
  *
  * Several bridges catch network/build failures and resolve `0` instead of rejecting
  * (Cardano, Kaspa, Concordium). `0` is also a genuine estimate for an empty account.
- * A zero result is kept only when the spendable balance exposed to Wallet API, minus what
- * pending operations already commit, is zero (see `getWalletApiSpendableBalance`: for Zcash
- * that is the transparent pool only, so a shielded-only account legitimately estimates `0`;
- * pending operations are not reflected in `spendableBalance` until the next sync, so an
- * account whose funds are all committed by a pending send also estimates `0`); otherwise it
- * is treated as an ambiguous failure and omitted. Send-flow callers still receive the raw `0`
- * from those bridges.
+ * A zero result is kept only when the spendable balance exposed to Wallet API is zero (see
+ * `getWalletApiSpendableBalance`: for Zcash that is the transparent pool only, so a
+ * shielded-only account legitimately estimates `0`) or when pending token operations commit
+ * the whole token balance. Native pending-operation values have family-specific fee semantics,
+ * so they are deliberately excluded from this check. Otherwise, zero is treated as an
+ * ambiguous failure and omitted. Send-flow callers still receive the raw `0` from those bridges.
  */
 export async function resolveWalletApiMaxSpendable(
   account: AccountLike,
@@ -199,11 +195,10 @@ export async function resolveWalletApiMaxSpendable(
 
     const walletApiSpendableBalance =
       bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
-    const pendingOperations = account.pendingOperations ?? [];
     const pendingSpent =
       account.type === "TokenAccount"
-        ? getPendingTokenSpent(pendingOperations)
-        : getPendingNativeSpent(pendingOperations);
+        ? getPendingTokenSpent(account.pendingOperations ?? [])
+        : new BigNumber(0);
     const availableBalance = BigNumber.max(0, walletApiSpendableBalance.minus(pendingSpent));
 
     if (maxSpendable.isZero() && !availableBalance.isZero()) {

@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-Return 0 from account.getMaxSpendable when pending operations already commit the whole balance
+Return 0 from account.getMaxSpendable when pending operations already commit the whole token balance
