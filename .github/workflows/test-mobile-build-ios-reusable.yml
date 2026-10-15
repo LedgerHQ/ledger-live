@@ -212,7 +212,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: ledger-wallet-8cpu-aws-public
+    runs-on: ledger-wallet-8cpu-aws-public-cached
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
@@ -236,7 +236,7 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
