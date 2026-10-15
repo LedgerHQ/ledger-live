@@ -44,7 +44,7 @@ Shared E2E test support lives in `libs/live-e2e-shared`. Consider declaring shar
 
 ### Selectors are stored on the relevant page object
 
-Selectors and test ids live on the page object that renders the screen. Specs do not repeat those string literals.
+Selectors and test ids live on the page object that renders the screen. Element IDs on page objects must always be strings. Specs do not repeat those string literals.
 
 ### Selectors are non-public readonly
 
