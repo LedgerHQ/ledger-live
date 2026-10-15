@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
+import { boundTransparentUtxos } from "@ledgerhq/coin-zcash/bridge/statusHelpers";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
 import type { AccountBridgeExtensions, AccountLike } from "@ledgerhq/types-live";
 import { isZcashCurrencyId } from "../../bridge/zcashRouting";
@@ -20,13 +21,20 @@ const extensions: AccountBridgeExtensions = {
   // flow legitimately offers -- would let those apps display, and offer as MAX,
   // funds they cannot spend, failing only once an amount is entered.
   //
-  // Summed from the UTXO set rather than derived from `balance`, so it stays the
-  // same figure as the account page's "Transparent" label and as the transparent
-  // branch of `estimateMaxSpendable`, whichever module last wrote `balance`.
+  // A live app also sends in a single transaction, and one PCZT spends at most
+  // the device's transparent-input ceiling. Summing the whole UTXO set would
+  // offer an amount `getTransactionStatus` then rejects with ZcashSendTooLarge,
+  // so the sum is bounded the same way a real send bounds its inputs
+  // (`boundTransparentUtxos`, the largest ones). Up to the ceiling this is the
+  // account page's "Transparent" figure; past it, the funds beyond it stay on
+  // that page and in the send flow, they just cannot reach a live app at once.
+  //
+  // Summed from the UTXO set rather than derived from `balance`, whichever
+  // module last wrote `balance`.
   getWalletApiSpendableBalance: account => {
     invariant(isZcashMainAccount(account), "zcash: invalid account in bridgeExtensions");
 
-    return getTransparentBalance(account.bitcoinResources?.utxos);
+    return getTransparentBalance(boundTransparentUtxos(account.bitcoinResources?.utxos ?? []));
   },
 };
 
