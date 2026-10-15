@@ -83,10 +83,6 @@ export const migrationAddresses: MigrationAddress[] = [
     currencyId: "persistence",
     address: "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
   },
-  {
-    currencyId: "quicksilver",
-    address: "quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km",
-  },
   // {
   //   currencyId: "secret_network",
   //   address: "secret1gyauvl44q2apn3u3aujm36q8zrj74vryha27j4",

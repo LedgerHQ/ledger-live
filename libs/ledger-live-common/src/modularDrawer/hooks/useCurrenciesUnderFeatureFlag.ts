@@ -16,7 +16,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const secretNetwork = useFeature("currencySecretNetwork");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
-  const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const avaxCChainFuji = useFeature("currencyAvalancheCChainFuji");
@@ -65,7 +64,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const zksyncSepolia = useFeature("currencyZkSyncSepolia");
   const mantra = useFeature("currencyMantra");
   const xion = useFeature("currencyXion");
-  const zenrock = useFeature("currencyZenrock");
   const sonic = useFeature("currencySonic");
   const sui = useFeature("currencySui");
   const suiTestnet = useFeature("currencySuiTestnet");
@@ -112,7 +110,6 @@ export function useCurrenciesUnderFeatureFlag() {
       secret_network: secretNetwork,
       desmos,
       dydx,
-      quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
       avalanche_c_chain_fuji: avaxCChainFuji,
@@ -165,7 +162,6 @@ export function useCurrenciesUnderFeatureFlag() {
       zksync_sepolia: zksyncSepolia,
       mantra,
       xion,
-      zenrock,
       sonic,
       sui,
       sui_testnet: suiTestnet,
@@ -206,7 +202,6 @@ export function useCurrenciesUnderFeatureFlag() {
       secretNetwork,
       desmos,
       dydx,
-      quicksilver,
       persistence,
       avaxCChain,
       avaxCChainFuji,
@@ -259,7 +254,6 @@ export function useCurrenciesUnderFeatureFlag() {
       zksyncSepolia,
       mantra,
       xion,
-      zenrock,
       sonic,
       sui,
       suiTestnet,
