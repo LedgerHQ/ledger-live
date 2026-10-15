@@ -122,8 +122,11 @@ export const initialState: CounterValuesState = {
   cache: {},
 };
 
+// MEASUREMENT BUILD ONLY, NEVER MERGE. Prototype B: what the conversions read.
+export type CounterValuesCacheView = Pick<CounterValuesState, "cache">;
+
 export function lenseRateMap(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   pair: {
     from: Currency;
     to: Currency;
@@ -157,7 +160,7 @@ export function lenseRate(
  * compare keys only within one process.
  */
 export function historyKey(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   from: Currency,
   to: Currency,
   lastOpDate: Date | null,
@@ -172,7 +175,7 @@ export function historyKey(
 }
 
 export function calculate(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   initialQuery: {
     value: number;
     from: Currency;
@@ -207,7 +210,7 @@ export function calculate(
 }
 
 export function calculateMany(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   dataPoints: Array<{
     value: number;
     date: Date | null | undefined;
@@ -256,7 +259,7 @@ export function calculateMany(
  * Copy-on-write: no argument is mutated. A patched pair gets a new `Map`, the others keep theirs,
  * so the result can be stored in a frozen (immer) store and fed back on the next load.
  */
-export function applyRatePatches(
+function applyRatePatchesCopying(
   previous: CounterValuesState,
   next: Pick<CounterValuesState, "data" | "cache" | "status">,
   patches: Array<Record<string, Record<string, unknown>>>,
@@ -291,6 +294,78 @@ export function applyRatePatches(
   return {
     data,
     cache,
+    status,
+    checkHolesOnNextLoad: false,
+  };
+}
+
+// MEASUREMENT BUILD ONLY, NEVER MERGE. Prototype A: a pair whose values a load leaves as they were
+// keeps its Map and, unless holes are checked, its cache entry; when no pair changed, `data` and
+// `cache` keep their identity too. Off unless setKeepUnchangedRates turns it on.
+let keepUnchangedRates = false;
+
+export function setKeepUnchangedRates(on: boolean): void {
+  keepUnchangedRates = on;
+}
+
+export function applyRatePatches(
+  previous: CounterValuesState,
+  next: Pick<CounterValuesState, "data" | "cache" | "status">,
+  patches: Array<Record<string, Record<string, unknown>>>,
+  settings: CountervaluesSettings,
+): CounterValuesState {
+  return keepUnchangedRates
+    ? applyRatePatchesKeepingUnchanged(previous, next, patches, settings)
+    : applyRatePatchesCopying(previous, next, patches, settings);
+}
+
+function sameEntries<T>(a: Record<string, T>, b: Record<string, T>): boolean {
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every(key => a[key] === b[key]);
+}
+
+function applyRatePatchesKeepingUnchanged(
+  previous: CounterValuesState,
+  next: Pick<CounterValuesState, "data" | "cache" | "status">,
+  patches: Array<Record<string, Record<string, unknown>>>,
+  settings: CountervaluesSettings,
+): CounterValuesState {
+  const data = { ...next.data };
+  const cache = { ...next.cache };
+  const { status } = next;
+  const touched = new Set<string>();
+  const copied = new Set<string>();
+  for (const patch of patches) {
+    for (const key of Object.keys(patch)) {
+      touched.add(key);
+      for (const [k, v] of Object.entries(patch[key])) {
+        if (typeof v !== "number") continue;
+        if (!copied.has(key)) {
+          if (data[key]?.has(k) && Object.is(data[key].get(k), v)) continue;
+          data[key] = new Map(data[key]);
+          copied.add(key);
+        }
+        data[key].set(k, v);
+      }
+      // A new pair gets a Map even from an empty patch, as before.
+      if (!data[key]) {
+        data[key] = new Map();
+        copied.add(key);
+      }
+    }
+  }
+
+  const checkHolesOnNextLoad = previous.checkHolesOnNextLoad === true;
+  for (const pair of touched) {
+    const checkHoles = checkHolesOnNextLoad || !status[pair];
+    if (!copied.has(pair) && !checkHoles && cache[pair]) continue;
+    const previousStats = previous.cache[pair]?.stats;
+    cache[pair] = generateCache(pair, data[pair], settings, checkHoles, previousStats);
+  }
+
+  return {
+    data: sameEntries(data, previous.data) ? previous.data : data,
+    cache: sameEntries(cache, previous.cache) ? previous.cache : cache,
     status,
     checkHolesOnNextLoad: false,
   };

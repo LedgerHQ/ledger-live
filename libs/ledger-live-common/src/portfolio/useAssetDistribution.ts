@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { probeAssetValues, useCountervaluesCache } from "@features/platform-market-countervalues";
 import { buildAssetDistribution } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { flattenAccounts, getAccountCurrency } from "../account/helpers";
 import { useChunkedAssetsData } from "@features/platform-aggregated-assets";
@@ -42,7 +42,7 @@ const emptyDistribution: AssetsDistribution = {
 export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistributionResult {
   const { accounts, to, product, version, skip = false, ...displayOpts } = opts;
 
-  const cvState = useCountervaluesState();
+  const cvState = useCountervaluesCache();
 
   const accountCurrencyIds = useMemo(() => {
     if (skip) return [];
@@ -66,10 +66,16 @@ export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistr
       return emptyDistribution;
     }
 
-    return buildAssetDistribution(accounts, cvState, to, assetsData, {
+    const built = buildAssetDistribution(accounts, cvState, to, assetsData, {
       showEmptyAccounts: !!displayOpts.showEmptyAccounts,
       hideEmptyTokenAccount: !!displayOpts.hideEmptyTokenAccount,
     });
+    // MEASUREMENT BUILD ONLY, NEVER MERGE.
+    probeAssetValues("distribution", {
+      sum: built.sum,
+      rows: built.list.map(item => [item.currency.id, item.countervalue]),
+    });
+    return built;
   }, [
     skip,
     isChunkedSuccess,

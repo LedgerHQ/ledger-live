@@ -1,7 +1,11 @@
 import { useMemo, useRef } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import {
+  probeAssetValues,
+  useCountervaluesCache,
+  useProbeInstance,
+} from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import {
   getCurrencyPortfolio,
@@ -28,7 +32,7 @@ export interface AssetListItemViewModelResult {
 const CV_THROTTLE_MS = 5_000;
 
 interface SharedState {
-  cvState: ReturnType<typeof useCountervaluesState>;
+  cvState: ReturnType<typeof useCountervaluesCache>;
   counterValueCurrency: ReturnType<typeof counterValueCurrencySelector>;
   range: "day";
   locale: string;
@@ -150,10 +154,13 @@ export function usePrecomputedAssetListData(
   const discreet = useSelector(discreetModeSelector);
   const range = "day" as const;
 
-  const rawCvState = useCountervaluesState();
+  const rawCvState = useCountervaluesCache();
   const [cvState] = useThrottledValues([rawCvState], CV_THROTTLE_MS);
 
   const cacheRef = useRef(new Map<string, AssetListItemViewModelResult>());
+  const probeInstance = useProbeInstance();
+  // MEASUREMENT BUILD ONLY, NEVER MERGE. Whether the rows still read an older (throttled) state.
+  probeAssetValues(`rows-throttle#${probeInstance}`, { behind: cvState !== rawCvState });
 
   return useMemo(() => {
     const state: SharedState = {
@@ -179,8 +186,18 @@ export function usePrecomputedAssetListData(
       }
     }
 
+    // MEASUREMENT BUILD ONLY, NEVER MERGE. rows: [currency id, raw countervalue (from the
+    // distribution or computed here), string shown]; the raw value is recomputed for the log only.
+    probeAssetValues(`rows#${probeInstance}`, {
+      discreet,
+      rows: assets.map(asset => [
+        asset.currency.id,
+        getCounterValue(asset, BigNumber(asset.amount), state.cvState, state.counterValueCurrency),
+        (changed ? next : prev).get(asset.currency.id)?.formattedCounterValue ?? null,
+      ]),
+    });
     if (!changed) return prev;
     cacheRef.current = next;
     return next;
-  }, [assets, cvState, counterValueCurrency, range, locale, discreet]);
+  }, [assets, cvState, counterValueCurrency, range, locale, discreet, probeInstance]);
 }

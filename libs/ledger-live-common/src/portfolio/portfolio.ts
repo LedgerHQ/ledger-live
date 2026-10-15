@@ -1,5 +1,5 @@
 import {
-  type CounterValuesState,
+  type CounterValuesCacheView,
   calculate,
   calculateMany,
 } from "@domain/entity-market-countervalues";
@@ -81,7 +81,7 @@ function getBalanceHistoryWithChanges(
   account: AccountLike,
   range: PortfolioRange,
   count: number,
-  cvState: CounterValuesState,
+  cvState: CounterValuesCacheView,
   cvCurrency: Currency,
 ) {
   const balanceHistory = getBalanceHistory(account, range, count);
@@ -169,7 +169,7 @@ export type GetPortfolioOptionsType = {
 export function getPortfolio(
   topAccounts: AccountLike[],
   range: PortfolioRange,
-  cvState: CounterValuesState,
+  cvState: CounterValuesCacheView,
   cvCurrency: Currency,
   options?: GetPortfolioOptionsType,
 ): Portfolio {
@@ -252,7 +252,7 @@ export function getPortfolio(
 export function getCurrencyPortfolio(
   accounts: AccountLike[],
   range: PortfolioRange,
-  cvState: CounterValuesState,
+  cvState: CounterValuesCacheView,
   cvCurrency: Currency,
 ): CurrencyPortfolio {
   const count = getPortfolioCount(accounts, range);
@@ -305,7 +305,7 @@ export function getCurrencyPortfolio(
 export function getCurrentBalanceCountervalueChange(
   accounts: AccountLike[],
   range: PortfolioRange,
-  cvState: CounterValuesState,
+  cvState: CounterValuesCacheView,
   cvCurrency: Currency,
 ): ValueChange {
   if (accounts.length === 0) return { value: 0, percentage: null };
@@ -344,7 +344,7 @@ export function getCurrentBalanceCountervalueChange(
 
 export function getAssetsDistribution(
   topAccounts: Account[],
-  cvState: CounterValuesState,
+  cvState: CounterValuesCacheView,
   cvCurrency: Currency,
   opts?: AssetsDistributionOpts,
 ): AssetsDistribution {
@@ -456,7 +456,7 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
 
 export const orderAccountsByFiatValue = (
   accounts: AccountLike[],
-  counterValueState: CounterValuesState,
+  counterValueState: CounterValuesCacheView,
   to: Currency,
   fullBalance: boolean = true,
 ) => {

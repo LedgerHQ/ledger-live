@@ -6,7 +6,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { shallowAccountsSelector } from "~/reducers/accounts";
-import { useCountervaluesState } from "~/reducers/countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { buildReturnCard } from "LLM/features/Pnl/builders/buildReturnCard";
 import { buildPnlDetail } from "LLM/features/Pnl/builders/buildPnlDetail";
@@ -23,7 +23,7 @@ export function usePnlSectionViewModel(): PnlSectionViewModel {
   const { locale } = useLocale();
   const shouldDisplayPnl = useShouldDisplayAnalyticsPnl();
   const accounts = useSelector(shallowAccountsSelector);
-  const countervalues = useCountervaluesState();
+  const countervalues = useCountervaluesCache();
   const fiat = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
 

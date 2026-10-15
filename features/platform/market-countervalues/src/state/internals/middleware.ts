@@ -298,7 +298,9 @@ export function persistNewRates<S>(context: SyncContext<S>, session: Session): v
   const state = countervaluesStateSelector(context.getState());
   if (state === session.lastPersisted) return;
   if (!hasNewCountervaluesToExport(session.lastPersisted, state)) return;
-  persist(exportCountervalues(state, readSettings(context, session).trackingPairs));
+  probeTimed("persistExportAndWrite", () =>
+    persist(exportCountervalues(state, readSettings(context, session).trackingPairs)),
+  );
   session.lastPersisted = state;
 }
 
@@ -445,7 +447,7 @@ function reconcileSessionWithStore<S>(context: SyncContext<S>, session: Session)
   }
 
   syncPollingTimer(context, session);
-  persistNewRates(context, session);
+  probeTimed("persistNewRates", () => persistNewRates(context, session));
 }
 
 /**

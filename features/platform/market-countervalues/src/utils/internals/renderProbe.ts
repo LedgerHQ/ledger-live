@@ -17,6 +17,7 @@ import {
   type ReactNode,
 } from "react";
 import type { RateSource } from "@domain/api-market-countervalues";
+import { setKeepUnchangedRates } from "@domain/entity-market-countervalues";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
@@ -34,6 +35,9 @@ const AFTER_SETTINGS_MS = 15_000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 // How long after a load is stored its renders are attributed to it. Loads are 32 s apart on staging.
 const LOAD_EFFECT_MS = 1_000;
+// When the step 2 prototype runs: "alternate" turns it on for even loads only, so one run compares
+// the same tree with and without it, load after load.
+const PROTOTYPE_MODE: "alternate" | "on" | "off" = "alternate";
 const now: () => number =
   typeof performance !== "undefined" && typeof performance.now === "function"
     ? () => performance.now()
@@ -203,9 +207,7 @@ export function probeHook<Args extends unknown[], Result>(
         if (unchanged) stats.storeDrivenSame++;
         attributeRender(
           name,
-          rates === ratesProduced
-            ? (lastRatesChange ?? "unknown")
-            : "not from countervaluesReducer",
+          isProducedRates(rates) ? (lastRatesChange ?? "unknown") : "not from countervaluesReducer",
         );
       } else if (last.arg !== args[0]) {
         stats.newArgSameRates++;
@@ -283,6 +285,10 @@ export function probeLoad<T>(settings: CountervaluesSettings, run: () => Promise
     spotPairs: 0,
   };
   currentLoad = stats;
+  const prototype =
+    PROTOTYPE_MODE === "on" || (PROTOTYPE_MODE === "alternate" && stats.load % 2 === 0);
+  prototypeOfLoad.set(stats.load, prototype);
+  setKeepUnchangedRates(prototype);
   const done = (outcome: string) => {
     if (currentLoad === stats) currentLoad = null;
     const { startedAt: loadStartedAt, ...fields } = stats;
@@ -292,6 +298,7 @@ export function probeLoad<T>(settings: CountervaluesSettings, run: () => Promise
       windowDaysMax: Math.round(fields.windowDaysMax * 10) / 10,
       durationMs: Date.now() - loadStartedAt,
       outcome,
+      prototype: prototypeOfLoad.get(fields.load),
     });
   };
   return run().then(
@@ -477,6 +484,8 @@ function diffRates(previous: CounterValuesState | undefined, next: CounterValues
     dataReplaced: 0,
     dataReplacedSameContent: 0,
     cacheReplaced: 0,
+    dataObjectReplaced: before.data !== next.data,
+    cacheObjectReplaced: before.cache !== next.cache,
     statusChanged: JSON.stringify(before.status) !== JSON.stringify(next.status),
     checkHolesChanged: previous?.checkHolesOnNextLoad !== next.checkHolesOnNextLoad,
     noop: false,
@@ -539,6 +548,7 @@ function onRatesSet(previous: CounterValuesState | undefined, next: CounterValue
   if (loadAwaitingSet === null) return;
   const load = loadAwaitingSet;
   loadAwaitingSet = null;
+  lastStoredLoad = load;
   const diff = diffRates(previous, next);
   const before = snapshotHooks();
   const { commits, renderMs } = loop;
@@ -546,6 +556,7 @@ function onRatesSet(previous: CounterValuesState | undefined, next: CounterValue
     emitProbeEvent("load-effect", {
       load,
       stored: true,
+      prototype: prototypeOfLoad.get(load),
       ...diff,
       windowMs: LOAD_EFFECT_MS,
       commits: loop.commits - commits,
@@ -553,4 +564,47 @@ function onRatesSet(previous: CounterValuesState | undefined, next: CounterValue
       hooks: hookDeltas(before, snapshotHooks()),
     });
   }, LOAD_EFFECT_MS);
+}
+
+// Step 2. Whether the prototype ran for each load, and the last load whose result was stored.
+const prototypeOfLoad = new Map<number, boolean>();
+let lastStoredLoad: number | null = null;
+
+// A cache view is a fresh object per hook instance: it comes from the reducer when its cache does.
+function isProducedRates(rates: unknown): boolean {
+  if (rates === ratesProduced) return true;
+  const produced = ratesProduced as { cache?: unknown } | undefined;
+  return (
+    typeof rates === "object" &&
+    rates !== null &&
+    "cache" in rates &&
+    rates.cache === produced?.cache
+  );
+}
+
+let nextProbeInstance = 0;
+
+/** A number that tells the mounted instances of one hook apart in the logs. */
+export function useProbeInstance(): number {
+  const instance = useRef<number | null>(null);
+  instance.current ??= ++nextProbeInstance;
+  return instance.current;
+}
+
+const lastAssetValues = new Map<string, string>();
+
+/**
+ * Logs what a Portfolio surface computed or shows, when it differs from what that same source
+ * logged last, with the last load stored before it.
+ */
+export function probeAssetValues(source: string, values: Record<string, unknown>): void {
+  const key = JSON.stringify(values);
+  if (lastAssetValues.get(source) === key) return;
+  lastAssetValues.set(source, key);
+  emitProbeEvent("asset-values", {
+    source,
+    afterLoad: lastStoredLoad,
+    prototype: lastStoredLoad === null ? null : prototypeOfLoad.get(lastStoredLoad),
+    ...values,
+  });
 }

@@ -12,7 +12,11 @@ export * from "./utils/setCountervaluesLogger";
 import * as Hooks from "./hooks/countervaluesHooks";
 import { probeHook } from "./utils/internals/renderProbe";
 
-export { CountervaluesProbeProfiler } from "./utils/internals/renderProbe";
+export {
+  CountervaluesProbeProfiler,
+  probeAssetValues,
+  useProbeInstance,
+} from "./utils/internals/renderProbe";
 
 type SendAmount = ReturnType<typeof Hooks.useSendAmount>;
 
@@ -31,6 +35,12 @@ export const useCountervaluesState = probeHook(
   Object.is,
   Hooks.useCountervaluesState,
 );
+export const useCountervaluesCache = probeHook(
+  "useCountervaluesCache",
+  Hooks.useCountervaluesCache,
+  Object.is,
+  Hooks.useCountervaluesCache,
+);
 export const useCountervaluesPolling = probeHook(
   "useCountervaluesPolling",
   Hooks.useCountervaluesPolling,
@@ -43,17 +53,17 @@ export const useCalculate = probeHook(
   "useCalculate",
   Hooks.useCalculate,
   Object.is,
-  Hooks.useCountervaluesState,
+  Hooks.useCountervaluesCache,
 );
 export const useCalculateCountervalueCallback = probeHook(
   "useCalculateCountervalueCallback",
   Hooks.useCalculateCountervalueCallback,
   Object.is,
-  Hooks.useCountervaluesState,
+  Hooks.useCountervaluesCache,
 );
 export const useSendAmount = probeHook(
   "useSendAmount",
   Hooks.useSendAmount,
   sameSendAmount,
-  Hooks.useCountervaluesState,
+  Hooks.useCountervaluesCache,
 );

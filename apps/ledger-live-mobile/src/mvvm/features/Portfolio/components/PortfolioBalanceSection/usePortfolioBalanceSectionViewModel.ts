@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { probeAssetValues } from "@features/platform-market-countervalues";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
@@ -51,6 +52,8 @@ export const usePortfolioBalanceSectionViewModel = ({
     shouldFreezeOnSync: true,
     cvPending: isCvPending,
   });
+  // MEASUREMENT BUILD ONLY, NEVER MERGE. The header total: computed, and shown.
+  probeAssetValues("header", { latestBalance, displayedBalance, syncPhase });
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {

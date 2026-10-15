@@ -2,7 +2,9 @@
 # MEASUREMENT BUILD ONLY, NEVER MERGE.
 # Applies the countervalues probe to a tree where the loop is the Redux middleware in
 # state/internals/middleware.ts and the store slice is split into rates and sync.
-# Usage: cv-probe-apply.py <repo> <sha the tree was cut from>
+# Usage: cv-probe-apply.py <repo> <sha the tree was cut from> [alternate|on|off]
+# The third argument says when the step 2 prototype runs: on every other load (default, so one run
+# compares the same tree with and without it), on every load, or never.
 # Needs the commits e2e7d2bd2c6 and 742ca707c5f (origin/measure/countervalues-rerender-probe-head):
 # the probe module, the parser and the React profiling hunks are taken from there.
 import re
@@ -10,6 +12,8 @@ import subprocess
 import sys
 
 repo, sha = sys.argv[1:3]
+prototype_mode = sys.argv[3] if len(sys.argv) > 3 else "alternate"
+assert prototype_mode in ("alternate", "on", "off"), prototype_mode
 PKG = "features/platform/market-countervalues"
 PROBE_HEAD = "742ca707c5f"
 
@@ -360,6 +364,87 @@ function onRatesSet(previous: CounterValuesState | undefined, next: CounterValue
   }, LOAD_EFFECT_MS);
 }
 '''
+# 1c. Step 2: the prototype switch, per load; renders driven by the cache view; Portfolio values.
+probe = sub(probe, 'import type { RateSource } from "@domain/api-market-countervalues";\n',
+            'import type { RateSource } from "@domain/api-market-countervalues";\n'
+            'import { setKeepUnchangedRates } from "@domain/entity-market-countervalues";\n')
+probe = sub(probe, "const LOAD_EFFECT_MS = 1_000;\n", f"""const LOAD_EFFECT_MS = 1_000;
+// When the step 2 prototype runs: "alternate" turns it on for even loads only, so one run compares
+// the same tree with and without it, load after load.
+const PROTOTYPE_MODE: "alternate" | "on" | "off" = "{prototype_mode}";
+""")
+probe = sub(probe, """  currentLoad = stats;
+  const done = (outcome: string) => {""", """  currentLoad = stats;
+  const prototype =
+    PROTOTYPE_MODE === "on" || (PROTOTYPE_MODE === "alternate" && stats.load % 2 === 0);
+  prototypeOfLoad.set(stats.load, prototype);
+  setKeepUnchangedRates(prototype);
+  const done = (outcome: string) => {""")
+probe = sub(probe, """      durationMs: Date.now() - loadStartedAt,
+      outcome,""", """      durationMs: Date.now() - loadStartedAt,
+      outcome,
+      prototype: prototypeOfLoad.get(fields.load),""")
+probe = sub(probe, """          rates === ratesProduced ? (lastRatesChange ?? "unknown") : "not from countervaluesReducer",""",
+            """          isProducedRates(rates)
+            ? (lastRatesChange ?? "unknown")
+            : "not from countervaluesReducer",""")
+probe = sub(probe, """    statusChanged: JSON.stringify(before.status) !== JSON.stringify(next.status),""",
+            """    dataObjectReplaced: before.data !== next.data,
+    cacheObjectReplaced: before.cache !== next.cache,
+    statusChanged: JSON.stringify(before.status) !== JSON.stringify(next.status),""")
+probe = sub(probe, """  if (loadAwaitingSet === null) return;
+  const load = loadAwaitingSet;
+  loadAwaitingSet = null;""", """  if (loadAwaitingSet === null) return;
+  const load = loadAwaitingSet;
+  loadAwaitingSet = null;
+  lastStoredLoad = load;""")
+probe = sub(probe, """      load,
+      stored: true,
+      ...diff,""", """      load,
+      stored: true,
+      prototype: prototypeOfLoad.get(load),
+      ...diff,""")
+probe += '''
+// Step 2. Whether the prototype ran for each load, and the last load whose result was stored.
+const prototypeOfLoad = new Map<number, boolean>();
+let lastStoredLoad: number | null = null;
+
+// A cache view is a fresh object per hook instance: it comes from the reducer when its cache does.
+function isProducedRates(rates: unknown): boolean {
+  if (rates === ratesProduced) return true;
+  const produced = ratesProduced as { cache?: unknown } | undefined;
+  return (
+    typeof rates === "object" && rates !== null && "cache" in rates && rates.cache === produced?.cache
+  );
+}
+
+let nextProbeInstance = 0;
+
+/** A number that tells the mounted instances of one hook apart in the logs. */
+export function useProbeInstance(): number {
+  const instance = useRef<number | null>(null);
+  instance.current ??= ++nextProbeInstance;
+  return instance.current;
+}
+
+const lastAssetValues = new Map<string, string>();
+
+/**
+ * Logs what a Portfolio surface computed or shows, when it differs from what that same source
+ * logged last, with the last load stored before it.
+ */
+export function probeAssetValues(source: string, values: Record<string, unknown>): void {
+  const key = JSON.stringify(values);
+  if (lastAssetValues.get(source) === key) return;
+  lastAssetValues.set(source, key);
+  emitProbeEvent("asset-values", {
+    source,
+    afterLoad: lastStoredLoad,
+    prototype: lastStoredLoad === null ? null : prototypeOfLoad.get(lastStoredLoad),
+    ...values,
+  });
+}
+'''
 write(f"{PKG}/src/utils/internals/renderProbe.ts", probe)
 write(f"{PKG}/cv-probe-parse.mjs", git("show", f"{PROBE_HEAD}:{PKG}/cv-probe-parse.mjs"))
 
@@ -371,7 +456,11 @@ s += """
 import * as Hooks from "./hooks/countervaluesHooks";
 import { probeHook } from "./utils/internals/renderProbe";
 
-export { CountervaluesProbeProfiler } from "./utils/internals/renderProbe";
+export {
+  CountervaluesProbeProfiler,
+  probeAssetValues,
+  useProbeInstance,
+} from "./utils/internals/renderProbe";
 
 type SendAmount = ReturnType<typeof Hooks.useSendAmount>;
 
@@ -390,6 +479,12 @@ export const useCountervaluesState = probeHook(
   Object.is,
   Hooks.useCountervaluesState,
 );
+export const useCountervaluesCache = probeHook(
+  "useCountervaluesCache",
+  Hooks.useCountervaluesCache,
+  Object.is,
+  Hooks.useCountervaluesCache,
+);
 export const useCountervaluesPolling = probeHook(
   "useCountervaluesPolling",
   Hooks.useCountervaluesPolling,
@@ -402,19 +497,19 @@ export const useCalculate = probeHook(
   "useCalculate",
   Hooks.useCalculate,
   Object.is,
-  Hooks.useCountervaluesState,
+  Hooks.useCountervaluesCache,
 );
 export const useCalculateCountervalueCallback = probeHook(
   "useCalculateCountervalueCallback",
   Hooks.useCalculateCountervalueCallback,
   Object.is,
-  Hooks.useCountervaluesState,
+  Hooks.useCountervaluesCache,
 );
 export const useSendAmount = probeHook(
   "useSendAmount",
   Hooks.useSendAmount,
   sameSendAmount,
-  Hooks.useCountervaluesState,
+  Hooks.useCountervaluesCache,
 );
 """
 write(f"{PKG}/src/index.ts", s)
@@ -457,6 +552,11 @@ const syncSelectors = countervaluesSyncSlice.getSelectors((s: RootState) => s.co
 
 // MEASUREMENT BUILD ONLY, NEVER MERGE. Timed selectors.
 export const countervaluesStateSelector = probeSelector("countervaluesStateSelector", readRates);
+/** The rates' cache alone: what the conversions read. */
+export const countervaluesCacheSelector = probeSelector(
+  "countervaluesCacheSelector",
+  (s: RootState): CounterValuesState["cache"] => s.countervalues.rates.cache,
+);
 /** The sync selectors, read from the root state. */
 export const countervaluesSyncPendingSelector = probeSelector(
   "countervaluesSyncPendingSelector",
@@ -487,6 +587,13 @@ rep(p, "  const selectSettings = settings ? () => settings : config.createSettin
     "    settings ? () => settings : config.createSettingsSelector(),\n  );\n")
 rep(p, '    tryStep("reconcile", () => reconcileSessionWithStore(context, session));\n',
     '    tryStep("reconcile", () =>\n      probeTimed("reconcileTick", () => reconcileSessionWithStore(context, session)),\n    );\n')
+# Step 2: persistence timed apart from the rest of the tick, and its export and write apart again.
+rep(p, "  syncPollingTimer(context, session);\n  persistNewRates(context, session);\n}\n",
+    "  syncPollingTimer(context, session);\n"
+    '  probeTimed("persistNewRates", () => persistNewRates(context, session));\n}\n')
+rep(p, "  persist(exportCountervalues(state, readSettings(context, session).trackingPairs));\n",
+    '  probeTimed("persistExportAndWrite", () =>\n'
+    "    persist(exportCountervalues(state, readSettings(context, session).trackingPairs)),\n  );\n")
 rep(p, "  const rates = config.createRates(dispatch);\n",
     "  const rates = probeRates(config.createRates(dispatch));\n")
 rep(p, """  session.lastSupportedSettings = readSupportedSettings(context, session);
@@ -554,4 +661,217 @@ patch = git("diff", "e2e7d2bd2c6", PROBE_HEAD, "--",
             "apps/ledger-live-desktop/tools/rspack/rspack.renderer.ts",
             "apps/ledger-live-mobile/rspack.config.mjs")
 git("apply", "-", stdin=patch)
-print("applied probe on", sha)
+# 7. Step 2, prototype A, in the entity: applyRatePatches keeps what a load left as it was. Off
+# unless the probe turns it on for a load (PROTOTYPE_MODE).
+p = "domain/entity/market-countervalues/src/logic.ts"
+rep(p, "export function applyRatePatches(\n", "function applyRatePatchesCopying(\n")
+rep(p, "\nfunction generateCache(\n", """
+// MEASUREMENT BUILD ONLY, NEVER MERGE. Prototype A: a pair whose values a load leaves as they were
+// keeps its Map and, unless holes are checked, its cache entry; when no pair changed, `data` and
+// `cache` keep their identity too. Off unless setKeepUnchangedRates turns it on.
+let keepUnchangedRates = false;
+
+export function setKeepUnchangedRates(on: boolean): void {
+  keepUnchangedRates = on;
+}
+
+export function applyRatePatches(
+  previous: CounterValuesState,
+  next: Pick<CounterValuesState, "data" | "cache" | "status">,
+  patches: Array<Record<string, Record<string, unknown>>>,
+  settings: CountervaluesSettings,
+): CounterValuesState {
+  return keepUnchangedRates
+    ? applyRatePatchesKeepingUnchanged(previous, next, patches, settings)
+    : applyRatePatchesCopying(previous, next, patches, settings);
+}
+
+function sameEntries<T>(a: Record<string, T>, b: Record<string, T>): boolean {
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every(key => a[key] === b[key]);
+}
+
+function applyRatePatchesKeepingUnchanged(
+  previous: CounterValuesState,
+  next: Pick<CounterValuesState, "data" | "cache" | "status">,
+  patches: Array<Record<string, Record<string, unknown>>>,
+  settings: CountervaluesSettings,
+): CounterValuesState {
+  const data = { ...next.data };
+  const cache = { ...next.cache };
+  const { status } = next;
+  const touched = new Set<string>();
+  const copied = new Set<string>();
+  for (const patch of patches) {
+    for (const key of Object.keys(patch)) {
+      touched.add(key);
+      for (const [k, v] of Object.entries(patch[key])) {
+        if (typeof v !== "number") continue;
+        if (!copied.has(key)) {
+          if (data[key]?.has(k) && Object.is(data[key].get(k), v)) continue;
+          data[key] = new Map(data[key]);
+          copied.add(key);
+        }
+        data[key].set(k, v);
+      }
+      // A new pair gets a Map even from an empty patch, as before.
+      if (!data[key]) {
+        data[key] = new Map();
+        copied.add(key);
+      }
+    }
+  }
+
+  const checkHolesOnNextLoad = previous.checkHolesOnNextLoad === true;
+  for (const pair of touched) {
+    const checkHoles = checkHolesOnNextLoad || !status[pair];
+    if (!copied.has(pair) && !checkHoles && cache[pair]) continue;
+    const previousStats = previous.cache[pair]?.stats;
+    cache[pair] = generateCache(pair, data[pair], settings, checkHoles, previousStats);
+  }
+
+  return {
+    data: sameEntries(data, previous.data) ? previous.data : data,
+    cache: sameEntries(cache, previous.cache) ? previous.cache : cache,
+    status,
+    checkHolesOnNextLoad: false,
+  };
+}
+
+function generateCache(
+""")
+
+# 8. Step 2, prototype B: the conversions take the cache alone, and a hook returns a view of it that
+# changes only when the cache does.
+rep(p, "export function lenseRateMap(\n  state: CounterValuesState,",
+    "// MEASUREMENT BUILD ONLY, NEVER MERGE. Prototype B: what the conversions read.\n"
+    'export type CounterValuesCacheView = Pick<CounterValuesState, "cache">;\n\n'
+    "export function lenseRateMap(\n  state: CounterValuesCacheView,")
+for fn in ("historyKey", "calculate", "calculateMany"):
+    rep(p, f"export function {fn}(\n  state: CounterValuesState,",
+        f"export function {fn}(\n  state: CounterValuesCacheView,")
+
+p = f"{PKG}/src/hooks/countervaluesHooks.ts"
+rep(p, "  type CounterValuesState,\n} from \"@domain/entity-market-countervalues\";",
+    "  type CounterValuesCacheView,\n  type CounterValuesState,\n} from \"@domain/entity-market-countervalues\";")
+rep(p, "import {\n  countervaluesStateSelector,", "import {\n  countervaluesCacheSelector,\n  countervaluesStateSelector,")
+rep(p, """/** The countervalues polling controls.""", """/**
+ * MEASUREMENT BUILD ONLY, NEVER MERGE. The rates the conversions read: a new object only when the
+ * cache changes, not when a load changes the status alone.
+ */
+export function useCountervaluesCache(): CounterValuesCacheView {
+  const cache = useSelector(countervaluesCacheSelector);
+  return useMemo(() => ({ cache }), [cache]);
+}
+
+/** The countervalues polling controls.""")
+s = read(p)
+assert s.count("  const state = useCountervaluesState();\n") == 3
+write(p, s.replace("  const state = useCountervaluesState();\n", "  const state = useCountervaluesCache();\n"))
+
+# 9. Step 2, Portfolio values per load: each asset row's raw countervalue and the string it shows,
+# the distribution they come from, and the header total.
+p = "libs/ledger-live-common/src/portfolio/useAssetDistribution.ts"
+rep(p, """    return buildAssetDistribution(accounts, cvState, to, assetsData, {
+      showEmptyAccounts: !!displayOpts.showEmptyAccounts,
+      hideEmptyTokenAccount: !!displayOpts.hideEmptyTokenAccount,
+    });
+""", """    const built = buildAssetDistribution(accounts, cvState, to, assetsData, {
+      showEmptyAccounts: !!displayOpts.showEmptyAccounts,
+      hideEmptyTokenAccount: !!displayOpts.hideEmptyTokenAccount,
+    });
+    // MEASUREMENT BUILD ONLY, NEVER MERGE.
+    probeAssetValues("distribution", {
+      sum: built.sum,
+      rows: built.list.map(item => [item.currency.id, item.countervalue]),
+    });
+    return built;
+""")
+rep(p, 'import { useCountervaluesState } from "@features/platform-market-countervalues";\n',
+    'import {\n  probeAssetValues,\n  useCountervaluesState,\n} from "@features/platform-market-countervalues";\n')
+
+p = "apps/ledger-live-mobile/src/mvvm/components/AssetListItem/usePrecomputedAssetListData.ts"
+rep(p, 'import { useCountervaluesState } from "@features/platform-market-countervalues";\n',
+    'import {\n  probeAssetValues,\n  useCountervaluesState,\n  useProbeInstance,\n} from "@features/platform-market-countervalues";\n')
+rep(p, """  const cacheRef = useRef(new Map<string, AssetListItemViewModelResult>());
+""", """  const cacheRef = useRef(new Map<string, AssetListItemViewModelResult>());
+  const probeInstance = useProbeInstance();
+  // MEASUREMENT BUILD ONLY, NEVER MERGE. Whether the rows still read an older (throttled) state.
+  probeAssetValues(`rows-throttle#${probeInstance}`, { behind: cvState !== rawCvState });
+""")
+rep(p, """    if (!changed) return prev;
+    cacheRef.current = next;
+    return next;
+  }, [assets, cvState, counterValueCurrency, range, locale, discreet]);""", """    // MEASUREMENT BUILD ONLY, NEVER MERGE. rows: [currency id, raw countervalue (from the
+    // distribution or computed here), string shown]; the raw value is recomputed for the log only.
+    probeAssetValues(`rows#${probeInstance}`, {
+      discreet,
+      rows: assets.map(asset => [
+        asset.currency.id,
+        getCounterValue(
+          asset,
+          BigNumber(asset.amount),
+          state.cvState,
+          state.counterValueCurrency,
+        ),
+        (changed ? next : prev).get(asset.currency.id)?.formattedCounterValue ?? null,
+      ]),
+    });
+    if (!changed) return prev;
+    cacheRef.current = next;
+    return next;
+  }, [assets, cvState, counterValueCurrency, range, locale, discreet, probeInstance]);""")
+
+p = ("apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBalanceSection/"
+     "usePortfolioBalanceSectionViewModel.ts")
+rep(p, 'import { useMemo } from "react";\n',
+    'import { useMemo } from "react";\n'
+    'import { probeAssetValues } from "@features/platform-market-countervalues";\n')
+rep(p, """    cvPending: isCvPending,
+  });
+""", """    cvPending: isCvPending,
+  });
+  // MEASUREMENT BUILD ONLY, NEVER MERGE. The header total: computed, and shown.
+  probeAssetValues("header", { latestBalance, displayedBalance, syncPhase });
+""")
+
+# 10. Step 2, prototype B: the consumers the mobile app runs move to the cache view. All of them
+# read the state only through calculate, calculateMany, lenseRateMap or historyKey. Desktop ones are
+# left as they are: not in the run.
+def rename_all(p, old, new, expected):
+    s = read(p)
+    assert s.count(old) == expected, (p, old, s.count(old))
+    write(p, s.replace(old, new))
+
+
+MOBILE = "apps/ledger-live-mobile/src/mvvm"
+for p, n in (
+    ("libs/ledger-live-common/src/portfolio/portfolioReact.tsx", 6),
+    ("libs/ledger-live-common/src/portfolio/useAssetDistribution.ts", 2),
+    (f"{MOBILE}/components/AssetListItem/usePrecomputedAssetListData.ts", 3),
+    (f"{MOBILE}/features/CryptoAddresses/screens/CryptoAddressesScreen/useCryptoAddressesViewModel.ts", 2),
+    (f"{MOBILE}/features/ModularDrawer/hooks/useBalanceDeps.ts", 2),
+    (f"{MOBILE}/features/ModularDrawer/hooks/useDetailedAccounts.ts", 2),
+    (f"{MOBILE}/features/Accounts/hooks/useAccountsListViewModel.ts", 2),
+    (f"{MOBILE}/features/Perps/screens/PerpsDeposit/usePerpsDepositViewModel.ts", 2),
+):
+    rename_all(p, "useCountervaluesState", "useCountervaluesCache", n)
+# Through the app's own full-state hook until now: the package's view, which the probe counts.
+for p in (
+    f"{MOBILE}/features/AssetDetail/screens/AssetDetail/components/PnLSection/useAssetPnlViewModel.ts",
+    f"{MOBILE}/features/AssetDetail/screens/AssetDetail/components/BalanceGraph/useBalanceGraphViewModel.ts",
+    f"{MOBILE}/features/Analytics/screens/AnalyticsMain/components/ChartSection/useChartSectionViewModel.ts",
+    f"{MOBILE}/features/Analytics/screens/AnalyticsMain/components/PnlSection/usePnlSectionViewModel.ts",
+):
+    rep(p, 'import { useCountervaluesState } from "~/reducers/countervalues";\n',
+        'import { useCountervaluesCache } from "@features/platform-market-countervalues";\n')
+    rename_all(p, "useCountervaluesState()", "useCountervaluesCache()", 1)
+for p, n in (
+    ("libs/ledger-live-common/src/portfolio/portfolio.ts", 7),
+    ("libs/ledger-live-common/src/modularDrawer/utils/type.ts", 2),
+    ("libs/ledger-live-common/src/modularDrawer/utils/getBalanceAndFiatValueByAssets.ts", 2),
+    ("libs/ledger-live-common/src/modularDrawer/hooks/useDetailedAccountsCore.ts", 2),
+):
+    rename_all(p, "CounterValuesState", "CounterValuesCacheView", n)
+
+print("applied probe on", sha, "prototype", prototype_mode)

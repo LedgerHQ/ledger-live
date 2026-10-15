@@ -1,6 +1,7 @@
 import {
   calculate,
   wipeCountervalues,
+  type CounterValuesCacheView,
   type CounterValuesState,
 } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
@@ -9,6 +10,7 @@ import { BigNumber } from "bignumber.js";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  countervaluesCacheSelector,
   countervaluesStateSelector,
   countervaluesSyncErrorSelector,
   countervaluesSyncPendingSelector,
@@ -38,6 +40,15 @@ export type CountervaluesLoadStatus = {
 /** Returns the full countervalues state. */
 export function useCountervaluesState(): CounterValuesState {
   return useSelector(countervaluesStateSelector);
+}
+
+/**
+ * MEASUREMENT BUILD ONLY, NEVER MERGE. The rates the conversions read: a new object only when the
+ * cache changes, not when a load changes the status alone.
+ */
+export function useCountervaluesCache(): CounterValuesCacheView {
+  const cache = useSelector(countervaluesCacheSelector);
+  return useMemo(() => ({ cache }), [cache]);
 }
 
 /** The countervalues polling controls. Stable, and selects nothing: it never re-renders its caller. */
@@ -73,7 +84,7 @@ export function useCalculate(query: {
   date?: Date | null;
   reverse?: boolean;
 }): number | null | undefined {
-  const state = useCountervaluesState();
+  const state = useCountervaluesCache();
   return useMemo(() => calculate(state, query), [state, query]);
 }
 
@@ -83,7 +94,7 @@ export function useCalculateCountervalueCallback({
 }: {
   to: Currency;
 }): (from: Currency, value: BigNumber) => BigNumber | null | undefined {
-  const state = useCountervaluesState();
+  const state = useCountervaluesCache();
   return useCallback(
     (from: Currency, value: BigNumber) => {
       const countervalue = calculate(state, {
@@ -120,7 +131,7 @@ export function useSendAmount({
   });
   const fiatAmount = new BigNumber(fiatCountervalue ?? 0);
   const fiatUnit = fiatCurrency.units[0];
-  const state = useCountervaluesState();
+  const state = useCountervaluesCache();
   const calculateCryptoAmount = useCallback(
     (fiatAmount: BigNumber) =>
       new BigNumber(

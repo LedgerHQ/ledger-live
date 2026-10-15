@@ -47,6 +47,11 @@ const syncSelectors = countervaluesSyncSlice.getSelectors((s: RootState) => s.co
 
 // MEASUREMENT BUILD ONLY, NEVER MERGE. Timed selectors.
 export const countervaluesStateSelector = probeSelector("countervaluesStateSelector", readRates);
+/** The rates' cache alone: what the conversions read. */
+export const countervaluesCacheSelector = probeSelector(
+  "countervaluesCacheSelector",
+  (s: RootState): CounterValuesState["cache"] => s.countervalues.rates.cache,
+);
 /** The sync selectors, read from the root state. */
 export const countervaluesSyncPendingSelector = probeSelector(
   "countervaluesSyncPendingSelector",
