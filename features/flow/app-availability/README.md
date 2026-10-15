@@ -53,7 +53,6 @@ The CAL probe calls `GET {calServiceUrl}/v1/currencies?output=id&limit=1` with a
 (aligned with the app splash wait) and sends `X-Ledger-Client-Version`. Hosts should call
 `startCalHealthCheck` as soon as the store exists so the probe overlaps boot.
 
-Desktop Playwright sets `PLAYWRIGHT_RUN` before the renderer boots. The health query then returns
-`ok` and does not fetch, unless `CAL_HEALTHCHECK` is `failed`, which returns `failed`. Both are
-read from `process.env` on that call. Jest does not set `PLAYWRIGHT_RUN`, so its handlers still
-answer the probe.
+`CAL_HEALTHCHECK=ok` returns `ok` and does not fetch. `CAL_HEALTHCHECK=failed` returns `failed`
+and does not fetch. Any other value, including unset, leaves the result to the HTTP probe. The
+value is read from `process.env` on that call.

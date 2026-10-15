@@ -1,8 +1,4 @@
-import {
-  CAL_HEALTHCHECK_TIMEOUT_MS,
-  checkCalHealth,
-  playwrightCalHealth,
-} from "./calHealth.internals";
+import { CAL_HEALTHCHECK_TIMEOUT_MS, checkCalHealth, forcedCalHealth } from "./calHealth.internals";
 
 const CLIENT_VERSION = "1.2.3";
 
@@ -127,40 +123,39 @@ describe("checkCalHealth", () => {
   });
 });
 
-describe("playwrightCalHealth", () => {
-  const playwrightRun = process.env.PLAYWRIGHT_RUN;
+describe("forcedCalHealth", () => {
   const calHealthcheck = process.env.CAL_HEALTHCHECK;
 
   afterEach(() => {
-    if (playwrightRun === undefined) delete process.env.PLAYWRIGHT_RUN;
-    else process.env.PLAYWRIGHT_RUN = playwrightRun;
-
     if (calHealthcheck === undefined) delete process.env.CAL_HEALTHCHECK;
     else process.env.CAL_HEALTHCHECK = calHealthcheck;
   });
 
-  it("should leave the decision to the HTTP probe when Playwright is off", async () => {
-    delete process.env.PLAYWRIGHT_RUN;
-    process.env.CAL_HEALTHCHECK = "failed";
+  it("should leave the decision to the HTTP probe when CAL_HEALTHCHECK is unset", async () => {
+    delete process.env.CAL_HEALTHCHECK;
 
-    expect(playwrightCalHealth()).toBeUndefined();
+    expect(forcedCalHealth()).toBeUndefined();
 
     const fetchImpl = jest.fn().mockResolvedValue({ ok: true, status: 200 });
     await expect(probe({ fetchImpl })).resolves.toBe("ok");
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
-  it("should return ok when Playwright is on", () => {
-    process.env.PLAYWRIGHT_RUN = "true";
-    delete process.env.CAL_HEALTHCHECK;
+  it("should leave the decision to the HTTP probe when CAL_HEALTHCHECK is not ok or failed", () => {
+    process.env.CAL_HEALTHCHECK = "offline";
 
-    expect(playwrightCalHealth()).toBe("ok");
+    expect(forcedCalHealth()).toBeUndefined();
+  });
+
+  it("should return ok when CAL_HEALTHCHECK is ok", () => {
+    process.env.CAL_HEALTHCHECK = "ok";
+
+    expect(forcedCalHealth()).toBe("ok");
   });
 
   it("should return failed when CAL_HEALTHCHECK is failed", () => {
-    process.env.PLAYWRIGHT_RUN = "true";
     process.env.CAL_HEALTHCHECK = "failed";
 
-    expect(playwrightCalHealth()).toBe("failed");
+    expect(forcedCalHealth()).toBe("failed");
   });
 });

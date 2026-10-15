@@ -1,6 +1,6 @@
 import { calApi, getCalExtra } from "@shared/api-services";
 import { getNetworkState } from "@shared/network-status";
-import { checkCalHealth, playwrightCalHealth, type CalHealthResult } from "./calHealth.internals";
+import { checkCalHealth, forcedCalHealth, type CalHealthResult } from "./calHealth.internals";
 
 async function deviceIsOffline(): Promise<boolean> {
   try {
@@ -15,9 +15,9 @@ export const calHealthApi = calApi.injectEndpoints({
   endpoints: build => ({
     checkCalHealth: build.query<CalHealthResult, void>({
       async queryFn(_arg, queryApi) {
-        const playwrightResult = playwrightCalHealth();
-        if (playwrightResult !== undefined) {
-          return { data: playwrightResult };
+        const forcedResult = forcedCalHealth();
+        if (forcedResult !== undefined) {
+          return { data: forcedResult };
         }
 
         try {

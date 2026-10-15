@@ -32,7 +32,6 @@ function renderUseCalCheck(
 }
 
 describe("useCalCheck", () => {
-  const playwrightRun = process.env.PLAYWRIGHT_RUN;
   const calHealthcheck = process.env.CAL_HEALTHCHECK;
 
   beforeAll(() => {
@@ -45,8 +44,6 @@ describe("useCalCheck", () => {
 
   afterEach(() => {
     jest.useRealTimers();
-    if (playwrightRun === undefined) delete process.env.PLAYWRIGHT_RUN;
-    else process.env.PLAYWRIGHT_RUN = playwrightRun;
     if (calHealthcheck === undefined) delete process.env.CAL_HEALTHCHECK;
     else process.env.CAL_HEALTHCHECK = calHealthcheck;
   });
@@ -130,9 +127,8 @@ describe("useCalCheck", () => {
     });
   });
 
-  it("should return available without fetching when Playwright is on", async () => {
-    process.env.PLAYWRIGHT_RUN = "true";
-    delete process.env.CAL_HEALTHCHECK;
+  it("should return available without fetching when CAL_HEALTHCHECK is ok", async () => {
+    process.env.CAL_HEALTHCHECK = "ok";
 
     const { result } = renderUseCalCheck();
 
@@ -142,7 +138,6 @@ describe("useCalCheck", () => {
   });
 
   it("should return serviceUnavailable without fetching when CAL_HEALTHCHECK is failed", async () => {
-    process.env.PLAYWRIGHT_RUN = "true";
     process.env.CAL_HEALTHCHECK = "failed";
 
     const { result } = renderUseCalCheck();
