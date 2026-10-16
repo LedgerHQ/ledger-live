@@ -153,20 +153,23 @@ export const CRAFTED_OPERATION = accountOperation({
  */
 export function fakeAccountModule(): jest.Mocked<AccountModuleApi> {
   return {
-    sync: jest.fn(async function* (_context: unknown, { history }: AccountData) {
+    sync: jest.fn(async function* (_context: unknown, { history, state }: AccountData) {
       await history.upsert([accountOperation()]);
-      yield { state: { version: 1, data: { balance: "900", locked: "100" } }, progress: {} };
+      await state.put({ version: 1, data: { balance: "900", locked: "100" } });
+      yield { progress: {} };
     }),
     // Answered from the state its sync wrote; none from a state it did not (a persisted one).
     getBalances: jest.fn(async (_context: unknown, { state }: AccountData) => {
-      const data = state?.data as { balance?: string; locked?: string } | undefined;
-      return data?.balance === undefined
-        ? []
-        : [{ value: BigInt(data.balance), locked: BigInt(data.locked ?? "0"), asset: native }];
+      const data = (await state.get())?.data as { balance?: string; locked?: string } | undefined;
+      return {
+        value:
+          data?.balance === undefined
+            ? []
+            : [{ value: BigInt(data.balance), locked: BigInt(data.locked ?? "0"), asset: native }],
+      };
     }),
     getFreshAddress: jest.fn(async () => ({
-      address: "bc1qfresh",
-      derivationPath: "84'/0'/0'/0/5",
+      value: { address: "bc1qfresh", derivationPath: "84'/0'/0'/0/5" },
     })),
     estimateFees: jest.fn(async () => ({ value: 1_000n, parameters: { amount: 49_000n } })),
     validateIntent: jest.fn(),

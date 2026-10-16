@@ -1,4 +1,7 @@
-import { createMemoryHistoryStore } from "@ledgerhq/account-module-framework";
+import {
+  createMemoryHistoryStore,
+  createMemoryStateStore,
+} from "@ledgerhq/account-module-framework";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { createPortfolioServiceClient } from "@ledgerhq/portfolio-module-portfolio-service";
 import {
@@ -140,7 +143,7 @@ describe("accountModuleOf", () => {
         key: ADDRESS,
         derivationPath: "",
       },
-      state: undefined,
+      state: createMemoryStateStore(),
       history: createMemoryHistoryStore([]),
     };
 
@@ -168,7 +171,7 @@ describe("accountModuleOf", () => {
         key: ADDRESS,
         derivationPath: "",
       },
-      state: undefined,
+      state: createMemoryStateStore(),
       history: createMemoryHistoryStore([]),
     };
 

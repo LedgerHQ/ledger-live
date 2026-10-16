@@ -9,7 +9,7 @@ import {
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { deriverOf, displayOf } from "./addresses";
 import { inputsOf, txToOperations } from "./interpret";
-import { emptyState, readState, versioned } from "./state";
+import { emptyState, storedState, versioned } from "./state";
 import type {
   UtxoAccountModuleOptions,
   UtxoAccountState,
@@ -91,18 +91,19 @@ function mergeById(previous: AccountOperation[], fresh: AccountOperation[]): Acc
 /**
  * Walks the address chains of the account key up to a gap of unused addresses, reads the history
  * of each address from the coin module, and interprets every transaction once against the whole
- * address set. Resumes `rewindBlocks` below the last synced tip; starts over on a reorg.
+ * address set. Resumes `rewindBlocks` below the last synced tip; starts over on a reorg. Puts the
+ * state the walk completes into `account.state`: a failed walk keeps the stored one.
  */
 export async function* syncAccount(
   api: UtxoCoinModuleApi,
   settings: SyncSettings,
   context: Context<any>,
-  { descriptor, state: persisted, history }: AccountData<UtxoAccountState>,
+  { descriptor, state: store, history }: AccountData<UtxoAccountState>,
   signal?: AbortSignal,
-): AsyncIterable<SyncEvent<UtxoAccountState>> {
+): AsyncIterable<SyncEvent> {
   const derive = deriverOf(api, context, descriptor);
   const display = displayOf(api);
-  let state = readState(persisted) ?? emptyState();
+  let state = (await storedState(store)) ?? emptyState();
 
   const tip = await api.lastBlock(context);
   if (state.anchor && (await isReorged(api, context, state.anchor))) {
@@ -142,7 +143,7 @@ export async function* syncAccount(
   const confirmed = transactions.filter(tx => tx.block);
   const pending = transactions.filter(tx => !tx.block);
   const counters = { addressesScanned: addresses.length, transactions: transactions.length };
-  yield { state: versioned(state), progress: { counters } };
+  yield { progress: { counters } };
 
   const previous = (await readHistory(history)).filter(op => !op.optimistic);
   const fresh = transactions.flatMap(tx => txToOperations(tx, own, change, display));
@@ -170,12 +171,15 @@ export async function* syncAccount(
     },
   });
 
-  const next: UtxoAccountState = {
-    syncedHeight: tip.height,
-    anchor: highestBlock(state.anchor, confirmed),
-    addresses,
-    confirmedUtxos,
-    utxos: reconciled.utxos,
-  };
-  yield { state: versioned(next), progress: { blockHeight: tip.height, counters } };
+  await store.put(
+    versioned({
+      syncedHeight: tip.height,
+      anchor: highestBlock(state.anchor, confirmed),
+      addresses,
+      confirmedUtxos,
+      utxos: reconciled.utxos,
+      refreshedAt: now,
+    }),
+  );
+  yield { progress: { blockHeight: tip.height, counters } };
 }

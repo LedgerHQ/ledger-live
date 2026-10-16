@@ -1,16 +1,21 @@
 import {
+  drain,
   readHistory,
+  readScope,
   type AccountData,
+  type AccountDescriptor,
   type AccountIntent,
   type AccountOperation,
+  type AccountRead,
   type CraftedAccountTransaction,
+  type ReadOptions,
 } from "@ledgerhq/account-module-framework";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { addressPath, deriverOf, displayOf, nextAddress } from "./addresses";
 import { completeIntent, selectableUtxos } from "./intent";
 import type { UtxoOperationDetails } from "./interpret";
-import { UtxoAccountNotSyncedError, readState } from "./state";
+import { UtxoAccountNotSyncedError, storedState } from "./state";
 import { syncAccount, type SyncSettings } from "./sync";
 import type {
   Utxo,
@@ -56,8 +61,7 @@ export function createUtxoAccountModule(
   };
   const display = displayOf(api);
 
-  const utxosOf = (account: AccountData<UtxoAccountState>): Utxo[] => {
-    const state = readState(account.state);
+  const utxosOf = (descriptor: AccountDescriptor, state: UtxoAccountState | undefined): Utxo[] => {
     if (!state) return [];
     const byAddress = new Map(state.addresses.map(a => [a.address, a]));
     return state.utxos.flatMap(utxo => {
@@ -69,7 +73,7 @@ export function createUtxoAccountModule(
           vout: utxo.vout,
           value: BigInt(utxo.value),
           address: display(utxo.address),
-          derivationPath: addressPath(account.descriptor.derivationPath, owner.chain, owner.index),
+          derivationPath: addressPath(descriptor.derivationPath, owner.chain, owner.index),
           height: utxo.height,
           replaceable: utxo.replaceable,
           change: owner.chain === settings.changeChain,
@@ -78,21 +82,37 @@ export function createUtxoAccountModule(
     });
   };
 
-  const balancesOf = (account: AccountData<UtxoAccountState>): Balance[] => {
-    const state = readState(account.state);
-    return state ? [{ value: sumOf(state.utxos.map(u => BigInt(u.value))), asset: NATIVE }] : [];
-  };
+  const balancesOf = (state: UtxoAccountState | undefined): Balance[] =>
+    state ? [{ value: sumOf(state.utxos.map(u => BigInt(u.value))), asset: NATIVE }] : [];
 
   const addressOnChain = async (
     context: Context<any>,
-    account: AccountData<UtxoAccountState>,
+    descriptor: AccountDescriptor,
+    state: UtxoAccountState | undefined,
     chain: number,
   ) => {
-    const derive = deriverOf(api, context, account.descriptor);
-    const addresses = readState(account.state)?.addresses ?? [];
-    const next = await nextAddress(derive, account.descriptor, addresses, chain);
+    const derive = deriverOf(api, context, descriptor);
+    const next = await nextAddress(derive, descriptor, state?.addresses ?? [], chain);
     return { address: display(next.address), derivationPath: next.derivationPath };
   };
+
+  /**
+   * A read: every one derives from the walk of the addresses, so a refresh runs the whole sync;
+   * `updatedAt` is the time of the last walk.
+   */
+  const read = <T>(
+    context: Context<any>,
+    account: AccountData<UtxoAccountState>,
+    readOptions: ReadOptions | undefined,
+    valueOf: (state: UtxoAccountState | undefined) => T | Promise<T>,
+  ): Promise<AccountRead<T>> =>
+    readScope(readOptions, {
+      refresh: () => drain(syncAccount(api, settings, context, account)),
+      read: async () => {
+        const state = await storedState(account.state);
+        return { value: await valueOf(state), updatedAt: state?.refreshedAt ?? 0 };
+      },
+    });
 
   const complete = (
     context: Context<any>,
@@ -105,22 +125,40 @@ export function createUtxoAccountModule(
     sync: (context, account, syncOptions) =>
       syncAccount(api, settings, context, account, syncOptions?.signal),
 
-    getBalances: async (_context, account) => balancesOf(account),
-    listOperations: (_context, account, listOptions) => account.history.list(listOptions),
-    getPendingOperations: async (_context, account) =>
-      (await readHistory(account.history)).filter(op => op.block === null),
-    getStakes: async () => [],
-    getUTXOs: async (_context, account, filter) => utxosOf(account).filter(filter ?? (() => true)),
-    getAddresses: async (_context, account) => {
-      const state = readState(account.state);
-      return (state?.addresses ?? []).map(a => ({
-        address: display(a.address),
-        derivationPath: addressPath(account.descriptor.derivationPath, a.chain, a.index),
-        used: true,
-      }));
+    getBalances: (context, account, readOptions) => read(context, account, readOptions, balancesOf),
+    listOperations: (context, account, listOptions) => {
+      const { refresh: _refresh, ...page } = listOptions ?? {};
+      return read(context, account, listOptions, () => account.history.list(page));
     },
-    getFreshAddress: (context, account) => addressOnChain(context, account, settings.receiveChain),
-    getChangeAddress: (context, account) => addressOnChain(context, account, settings.changeChain),
+    getPendingOperations: (context, account, readOptions) =>
+      read(context, account, readOptions, async () =>
+        (await readHistory(account.history)).filter(op => op.block === null),
+      ),
+    // No stakes on a UTXO chain: no network, always fresh.
+    getStakes: async () => ({ value: [] }),
+    getUTXOs: (context, account, { filter = () => true, ...readOptions } = {}) =>
+      read(context, account, readOptions, state =>
+        utxosOf(account.descriptor, state).filter(filter),
+      ),
+    getAddresses: (context, account, readOptions) =>
+      read(context, account, readOptions, state =>
+        (state?.addresses ?? []).map(a => ({
+          address: display(a.address),
+          derivationPath: addressPath(account.descriptor.derivationPath, a.chain, a.index),
+          used: true,
+        })),
+      ),
+    getFreshAddress: (context, account, readOptions) =>
+      read(context, account, readOptions, state =>
+        addressOnChain(context, account.descriptor, state, settings.receiveChain),
+      ),
+    getChangeAddress: async (context, account) =>
+      addressOnChain(
+        context,
+        account.descriptor,
+        await storedState(account.state),
+        settings.changeChain,
+      ),
 
     estimateFees: async (context, account, intent, feeOptions) =>
       api.estimateFees(
@@ -132,11 +170,11 @@ export function createUtxoAccountModule(
       api.validateIntent(
         context,
         await complete(context, account, intent, validateOptions?.customFees?.parameters),
-        balancesOf(account),
+        balancesOf(await storedState(account.state)),
         validateOptions,
       ),
     estimateMaxSpendable: async (context, account, intent, feeOptions) => {
-      const state = readState(account.state);
+      const state = await storedState(account.state);
       if (!state) throw new UtxoAccountNotSyncedError();
       const sendMax = { ...intent, useAllAmount: true };
       const completed = await complete(context, account, sendMax, feeOptions?.customFeesParameters);

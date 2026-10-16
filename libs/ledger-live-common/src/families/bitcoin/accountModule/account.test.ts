@@ -66,7 +66,7 @@ describe("bitcoin account helpers", () => {
       key: XPUB,
       derivationPath: "44'/0'/0'",
     });
-    expect(data.state?.data.addresses).toHaveLength(2);
+    expect((await data.state.get())?.data.addresses).toHaveLength(2);
   });
 
   it("give the next change address, and the addresses of the account", async () => {

@@ -1,14 +1,15 @@
 import {
   createMemoryHistoryStore,
-  type AccountData,
+  createMemoryStateStore,
   type AccountOperation,
   type SyncEvent,
+  type Versioned,
 } from "@ledgerhq/account-module-framework";
 import { anOperation, testContext } from "@ledgerhq/account-module-framework/test-utils";
 import { createUtxoAccountModule } from "./module";
 import { emptyState, versioned } from "./state";
 import { addressAt, fakeChain, tx } from "./test/fakeChain";
-import type { UtxoAccountState } from "./types";
+import { UTXO_ACCOUNT_STATE_VERSION, type UtxoAccountState } from "./types";
 
 const context = testContext();
 const descriptor = {
@@ -25,17 +26,18 @@ const block = (height: number) => ({
 });
 const NOW = Date.parse("2026-01-01T00:30:00.000Z");
 
-const account = (
-  state?: UtxoAccountState,
-  operations: AccountOperation[] = [],
-): AccountData<UtxoAccountState> & { history: ReturnType<typeof createMemoryHistoryStore> } => ({
+const account = (state?: UtxoAccountState, operations: AccountOperation[] = []) => ({
   descriptor,
-  state: state ? versioned(state) : undefined,
+  state: createMemoryStateStore<UtxoAccountState>(state ? versioned(state) : undefined),
   history: createMemoryHistoryStore(operations),
 });
 
-async function drain(events: AsyncIterable<SyncEvent<UtxoAccountState>>) {
-  const all: SyncEvent<UtxoAccountState>[] = [];
+/** The state the account holds. */
+const stateOf = (data: ReturnType<typeof account>): UtxoAccountState | undefined =>
+  data.state.snapshot()?.data;
+
+async function drain(events: AsyncIterable<SyncEvent>) {
+  const all: SyncEvent[] = [];
   for await (const event of events) all.push(event);
   return all;
 }
@@ -65,14 +67,19 @@ describe("sync", () => {
     const module = createUtxoAccountModule(api, { gapLimit: 2, now: () => NOW });
     const data = account();
 
+    const put = jest.spyOn(data.state, "put");
+
     const events = await drain(module.sync(context, data));
 
-    expect(events).toHaveLength(2);
-    expect(events[0]?.progress).toEqual({ counters: { addressesScanned: 3, transactions: 3 } });
-    const last = events[1];
-    expect(last?.progress.blockHeight).toBe(100);
-    expect(last?.state.data).toMatchObject({
+    expect(events).toEqual([
+      { progress: { counters: { addressesScanned: 3, transactions: 3 } } },
+      { progress: { blockHeight: 100, counters: { addressesScanned: 3, transactions: 3 } } },
+    ]);
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(data.state.snapshot()?.version).toBe(UTXO_ACCOUNT_STATE_VERSION);
+    expect(stateOf(data)).toMatchObject({
       syncedHeight: 100,
+      refreshedAt: NOW,
       anchor: { height: 12, hash: "h12" },
       addresses: expect.arrayContaining([
         { address: addressAt(0, 0), chain: 0, index: 0 },
@@ -80,7 +87,11 @@ describe("sync", () => {
         { address: addressAt(1, 0), chain: 1, index: 0 },
       ]),
     });
-    expect(last?.state.data.utxos.map(u => [u.txid, u.value]).sort()).toEqual([
+    expect(
+      stateOf(data)
+        ?.utxos.map(u => [u.txid, u.value])
+        .sort(),
+    ).toEqual([
       ["late", "300"],
       ["spend", "250"],
     ]);
@@ -145,10 +156,12 @@ describe("sync", () => {
       date: new Date(NOW),
     });
     const data = account(state, [anOperation({ id: "gone-IN", hash: "gone" }), optimistic]);
+    const put = jest.spyOn(data.state, "put");
 
-    const [, last] = await drain(module.sync(context, data));
+    await drain(module.sync(context, data));
 
-    expect(last?.state.data.utxos.map(u => u.txid)).toEqual(["fund"]);
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(stateOf(data)?.utxos.map(u => u.txid)).toEqual(["fund"]);
     expect(
       data.history
         .snapshot()
@@ -159,6 +172,25 @@ describe("sync", () => {
       minHeight: 0,
       order: "asc",
     });
+  });
+
+  it("keeps the stored state when the walk fails after a reorg", async () => {
+    const { api, chain } = fakeChain([funding]);
+    chain.blockHashes.set(10, "replaced");
+    api.listAddressTransactions.mockRejectedValue(new Error("timeout"));
+    const module = createUtxoAccountModule(api, { gapLimit: 1 });
+    const state = {
+      ...emptyState(),
+      syncedHeight: 90,
+      anchor: { height: 10, hash: "h10" },
+      addresses: [{ address: addressAt(0, 0), chain: 0, index: 0 }],
+    };
+    const data = account(state);
+    const stored = data.state.snapshot();
+
+    await expect(drain(module.sync(context, data))).rejects.toThrow("timeout");
+
+    expect(data.state.snapshot()).toBe(stored);
   });
 
   it("does not take a failing anchor check for a reorg", async () => {
@@ -182,10 +214,11 @@ describe("sync", () => {
         : { items: [{ ...funding, block: null }], next: "1" };
     });
     const module = createUtxoAccountModule(api, { gapLimit: 1 });
+    const data = account();
 
-    const [, last] = await drain(module.sync(context, account()));
+    await drain(module.sync(context, data));
 
-    expect(last?.state.data.confirmedUtxos.map(u => [u.txid, u.height])).toEqual([["fund", 10]]);
+    expect(stateOf(data)?.confirmedUtxos.map(u => [u.txid, u.height])).toEqual([["fund", 10]]);
     const firstAddressCalls = api.listAddressTransactions.mock.calls.filter(
       ([, address]) => address === addressAt(0, 0),
     );
@@ -214,10 +247,10 @@ describe("sync", () => {
     });
     const data = account();
 
-    const [, last] = await drain(module.sync(context, data));
+    await drain(module.sync(context, data));
 
     expect(expiry).toHaveBeenCalledWith(context);
-    expect(last?.state.data.utxos.map(u => u.txid)).toEqual(["replacement"]);
+    expect(stateOf(data)?.utxos.map(u => u.txid)).toEqual(["replacement"]);
     expect(data.history.snapshot().map(op => op.id)).toEqual(["replacement-OUT", "fund-IN"]);
   });
 
@@ -254,9 +287,34 @@ describe("sync", () => {
     const controller = new AbortController();
     controller.abort();
     const module = createUtxoAccountModule(api);
+    const data = account();
 
     await expect(
-      drain(module.sync(context, account(), { signal: controller.signal })),
+      drain(module.sync(context, data, { signal: controller.signal })),
     ).rejects.toThrow();
+    expect(data.state.snapshot()).toBeUndefined();
+  });
+
+  it("migrates a version 1 state, resuming below its tip as before", async () => {
+    const { api } = fakeChain([funding]);
+    const module = createUtxoAccountModule(api, { gapLimit: 1, rewindBlocks: 3, now: () => NOW });
+    const { refreshedAt: _time, ...v1 } = {
+      ...emptyState(),
+      syncedHeight: 50,
+      addresses: [{ address: addressAt(0, 0), chain: 0, index: 0 }],
+    };
+    const data = account();
+    await data.state.put({ version: 1, data: v1 } as Versioned<UtxoAccountState>);
+
+    await drain(module.sync(context, data));
+
+    expect(api.listAddressTransactions).toHaveBeenCalledWith(context, addressAt(0, 0), {
+      minHeight: 47,
+      order: "asc",
+    });
+    expect(data.state.snapshot()).toMatchObject({
+      version: UTXO_ACCOUNT_STATE_VERSION,
+      data: { syncedHeight: 100, refreshedAt: NOW },
+    });
   });
 });

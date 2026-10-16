@@ -112,6 +112,7 @@ function entriesOf(
 
 async function balancesOf(
   deps: LocalPortfolioDeps,
+  portfolioId: string,
   account: StoredAccount,
   asset: string | undefined,
 ): Promise<AccountBalances> {
@@ -119,12 +120,12 @@ async function balancesOf(
   if (account.status === "registration_failure") {
     return { type: "failure", ...ids, error: account.error ?? "Registration failure" };
   }
-  const local = localAccountOf(deps, account);
+  const local = localAccountOf(deps, portfolioId, account);
   if (!local) {
     return { type: "failure", ...ids, error: `${account.network} is not served locally` };
   }
   const { network, data } = local;
-  const balances = await network.accountModule.getBalances(network.context, data);
+  const { value: balances } = await network.accountModule.getBalances(network.context, data);
   const resolve = assetResolver(network);
   const entries = await Promise.all(
     balances.map(async (balance, index) =>
@@ -147,7 +148,7 @@ export async function getPortfolioBalance(
     query.order ?? "ASC",
   );
   const balances = await Promise.all(
-    accounts.map(account => balancesOf(deps, account, query.asset)),
+    accounts.map(account => balancesOf(deps, portfolioId, account, query.asset)),
   );
   return pageFrom(balances, query, DEFAULT_SIZE);
 }

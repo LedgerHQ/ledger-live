@@ -234,6 +234,8 @@ describe("moduleStateOf", () => {
         syncedHeight: 100,
         balances: [{ value: "1000", asset: { type: "native" }, locked: "310" }],
         stakes: [],
+        // Seeded by Ledger Wallet: never refreshed by the module.
+        refreshedAt: { balances: 0, stakes: 0, operations: 0 },
       },
     });
   });
@@ -284,7 +286,12 @@ describe("moduleStateOf", () => {
     for (const resumable of [true, false]) {
       expect(moduleStateOf(undefined, undefined, { ...noLookup, resumable })).toEqual({
         version: SINGLE_ADDRESS_ACCOUNT_STATE_VERSION,
-        data: { syncedHeight: 0, balances: [], stakes: [] },
+        data: {
+          syncedHeight: 0,
+          balances: [],
+          stakes: [],
+          refreshedAt: { balances: 0, stakes: 0, operations: 0 },
+        },
       });
     }
   });
@@ -565,6 +572,12 @@ describe("openAccountPortfolio in local mode", () => {
       ["older", undefined],
     ]);
 
+    const syncing = module.sync.getMockImplementation();
+    const resumedFrom: unknown[] = [];
+    module.sync.mockImplementation(async function* (moduleContext, data, options) {
+      resumedFrom.push(await data.state.get());
+      yield* syncing?.(moduleContext, data, options) ?? [];
+    });
     await opened.portfolio.sync(BITCOIN_PORTFOLIO);
 
     expect(module.sync).toHaveBeenCalledWith(
@@ -577,10 +590,11 @@ describe("openAccountPortfolio in local mode", () => {
           key: XPUB,
           derivationPath: "84'/0'/0'",
         },
-        state: { version: 1, data: { persisted: BITCOIN_ACCOUNT_ID } },
       }),
       {},
     );
+    // The module resumes from the state the account persisted, and puts its own into the store.
+    expect(resumedFrom).toEqual([{ version: 1, data: { persisted: BITCOIN_ACCOUNT_ID } }]);
     await expect(opened.store.get(BITCOIN_PORTFOLIO)).resolves.toMatchObject({
       accounts: [{ state: { version: 1, data: { balance: "900", locked: "100" } } }],
     });

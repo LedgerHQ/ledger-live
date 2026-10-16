@@ -83,13 +83,38 @@ export interface HistoryStore {
   list(options?: { cursor?: Cursor; limit?: number }): Promise<Page<AccountOperation>>;
 }
 
-/** What a function knows about one account. */
+/**
+ * The account state as the client persists it, provided by the client. One per account: the module
+ * reads it, and writes it back when it refreshes the account.
+ */
+export interface StateStore<State extends JsonValue = JsonValue> {
+  /** `undefined` for an account never synced. */
+  get(): Promise<Versioned<State> | undefined>;
+  put(state: Versioned<State>): Promise<void>;
+}
+
+/** What a function knows about one account: what identifies it, and the stores of the client. */
 export type AccountData<State extends JsonValue = JsonValue> = {
   descriptor: AccountDescriptor;
-  /** Last persisted state; `undefined` for an account never synced. */
-  state: Versioned<State> | undefined;
+  state: StateStore<State>;
   history: HistoryStore;
 };
+
+/** Options of a read. */
+export type ReadOptions = {
+  /**
+   * Refreshes the scope the value comes from first: network calls, and the refreshed scope written
+   * to `account.state` / `account.history`. Without it, a read makes no network call.
+   */
+  refresh?: boolean;
+};
+
+/**
+ * A value read from the account. No `updatedAt`: the value is fresh, the read refreshed its scope
+ * (or it needs no network at all). Otherwise `updatedAt` is the epoch-ms time of the last refresh
+ * of its scope, by a sync or a read; 0 when the scope was never refreshed.
+ */
+export type AccountRead<T> = { value: T; updatedAt?: number };
 
 /** An address of the account. */
 export type AccountAddress = {
@@ -107,13 +132,10 @@ export type SyncProgress = {
 };
 
 /**
- * One step of a sync. It carries the new state: the client persists it, so that an interrupted
- * sync resumes from there.
+ * One step of a sync. The state is not carried: the sync puts each new one into `account.state`,
+ * the one source of it, so that an interrupted sync resumes from there.
  */
-export type SyncEvent<State extends JsonValue = JsonValue> = {
-  state: Versioned<State>;
-  progress: SyncProgress;
-};
+export type SyncEvent = { progress: SyncProgress };
 
 /**
  * A `TransactionIntent` whose sender is the account. `sender` and `senderPublicKey` are optional:
@@ -156,51 +178,69 @@ export interface AccountTypes {
 }
 
 /**
- * Account level API (ADR-064 Option 1). Stateless functions: the state is passed in and returned,
- * the history goes through a store the client provides, nothing is kept between calls. Every
- * implementation delegates the chain to a `CoinModuleApi`, so it holds no blockchain specific code.
+ * Account level API (ADR-064 Option 1). Stateless functions: the state and the history go through
+ * stores the client provides, nothing is kept between calls. Every implementation delegates the
+ * chain to a `CoinModuleApi`, so it holds no blockchain specific code.
+ *
+ * A call that refreshes the state (a sync, a read with `refresh`) does a read-modify-write of
+ * `account.state`: the client serialises those calls on one account. A read without `refresh` only
+ * reads it.
  */
 export type AccountModuleApi<T extends AccountTypes = AccountTypes> = {
-  /** Brings the account up to date. Writes new operations to `account.history`. */
+  /**
+   * Brings the account up to date: refreshes every scope, puts each new state into
+   * `account.state`, writes new operations to `account.history`.
+   */
   sync: (
     context: Context<any>,
     account: AccountData<T["state"]>,
     options?: { signal?: AbortSignal },
-  ) => AsyncIterable<SyncEvent<T["state"]>>;
+  ) => AsyncIterable<SyncEvent>;
 
-  // reads: from the state and the history, no network call
+  // reads: from the stored state and history, no network call unless `refresh` is set
 
   /** Aggregated per asset, never per address or per UTXO. */
-  getBalances: (context: Context<any>, account: AccountData<T["state"]>) => Promise<Balance[]>;
+  getBalances: (
+    context: Context<any>,
+    account: AccountData<T["state"]>,
+    options?: ReadOptions,
+  ) => Promise<AccountRead<Balance[]>>;
   /** Newest first, pending ones included. */
   listOperations: (
     context: Context<any>,
     account: AccountData<T["state"]>,
-    options?: { cursor?: Cursor; limit?: number },
-  ) => Promise<Page<AccountOperation>>;
+    options?: { cursor?: Cursor; limit?: number } & ReadOptions,
+  ) => Promise<AccountRead<Page<AccountOperation>>>;
   /** Operations not in a block yet: in the mempool, or broadcast and not seen. */
   getPendingOperations: (
     context: Context<any>,
     account: AccountData<T["state"]>,
-  ) => Promise<AccountOperation[]>;
-  getStakes: (context: Context<any>, account: AccountData<T["state"]>) => Promise<Stake[]>;
+    options?: ReadOptions,
+  ) => Promise<AccountRead<AccountOperation[]>>;
+  getStakes: (
+    context: Context<any>,
+    account: AccountData<T["state"]>,
+    options?: ReadOptions,
+  ) => Promise<AccountRead<Stake[]>>;
   /** UTXO models only. */
   getUTXOs?: (
     context: Context<any>,
     account: AccountData<T["state"]>,
-    filter?: (utxo: T["utxo"]) => boolean,
-  ) => Promise<T["utxo"][]>;
+    options?: { filter?: (utxo: T["utxo"]) => boolean } & ReadOptions,
+  ) => Promise<AccountRead<T["utxo"][]>>;
   getAddresses: (
     context: Context<any>,
     account: AccountData<T["state"]>,
-  ) => Promise<AccountAddress[]>;
+    options?: ReadOptions,
+  ) => Promise<AccountRead<AccountAddress[]>>;
   /** Where to receive. */
   getFreshAddress: (
     context: Context<any>,
     account: AccountData<T["state"]>,
-  ) => Promise<{ address: string; derivationPath: string }>;
+    options?: ReadOptions,
+  ) => Promise<AccountRead<{ address: string; derivationPath: string }>>;
 
-  // write path
+  // write path: from the stored state, which it does not refresh
 
   estimateFees: (
     context: Context<any>,

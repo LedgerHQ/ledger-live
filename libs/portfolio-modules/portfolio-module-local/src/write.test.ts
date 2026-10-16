@@ -6,6 +6,7 @@ import {
   aLocalNetwork,
   aStoredAccount,
   aStoredPortfolio,
+  anAccountData,
   someDeps,
   type FakeNetwork,
 } from "./test-utils";
@@ -37,11 +38,7 @@ const setUp = async (
   const ethereum: FakeNetwork = aLocalNetwork({ currencyId: "ethereum" });
   const { store, ...rest } = someDeps({ networks: { bitcoin, ethereum }, ...deps });
   await store.put(aStoredPortfolio({ accounts: [aStoredAccount({ state })] }));
-  const accountData = {
-    descriptor: aStoredAccount().descriptor,
-    state,
-    history: store.history("account"),
-  };
+  const accountData = anAccountData(store);
   bitcoin.accountModule.craftTransaction.mockResolvedValue(crafted);
   bitcoin.accountModule.combine.mockResolvedValue("signed-account");
   bitcoin.accountModule.broadcast.mockResolvedValue(anOperation({ hash: "account-hash" }));
@@ -84,7 +81,7 @@ describe("writeEndpoints", () => {
 
     it("finds the asset of an account intent among the account's balances", async () => {
       const { bitcoin, accountData, estimateTransactionFee } = await setUp();
-      bitcoin.accountModule.getBalances.mockResolvedValue([{ asset: usdc, value: 5n }]);
+      bitcoin.accountModule.getBalances.mockResolvedValue({ value: [{ asset: usdc, value: 5n }] });
       bitcoin.accountModule.estimateFees.mockResolvedValue({ value: 150n });
 
       await estimateTransactionFee("bitcoin", { intent: { ...accountIntent, asset: "0xusdc" } });
@@ -173,7 +170,10 @@ describe("writeEndpoints", () => {
   describe("validateTransaction", () => {
     it("validates through the account module against the account's balances", async () => {
       const { bitcoin, accountData, validateTransaction } = await setUp();
-      bitcoin.accountModule.getBalances.mockResolvedValue([{ asset: usdc, value: 500n }]);
+      bitcoin.accountModule.getBalances.mockResolvedValue({
+        value: [{ asset: usdc, value: 500n }],
+        updatedAt: 1,
+      });
       bitcoin.accountModule.validateIntent.mockResolvedValue({
         ...validation,
         errors: { amount: new Error("Not enough") },

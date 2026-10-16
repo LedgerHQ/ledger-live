@@ -21,23 +21,23 @@ blockchain specific code. Implementations: `@ledgerhq/account-module-single-addr
 
 ## Interface
 
-Stateless functions: the state is passed in and returned, the history goes through a store the client provides, nothing
-is kept between calls. Full declarations: [src/types.ts](src/types.ts).
+Stateless functions: the state and the history go through stores the client provides, nothing is kept between calls.
+Full declarations: [src/types.ts](src/types.ts).
 
 ```ts
 type AccountModuleApi<T extends AccountTypes = AccountTypes> = {
-  sync(context, account, options?: { signal?: AbortSignal }): AsyncIterable<SyncEvent<T["state"]>>;
+  sync(context, account, options?: { signal?: AbortSignal }): AsyncIterable<SyncEvent>; // refreshes every scope
 
-  // reads: state and history only, no network call
-  getBalances(context, account): Promise<Balance[]>; // per asset, never per address or UTXO
-  listOperations(context, account, options?: { cursor?: Cursor; limit?: number }): Promise<Page<AccountOperation>>;
-  getPendingOperations(context, account): Promise<AccountOperation[]>;
-  getStakes(context, account): Promise<Stake[]>;
-  getUTXOs?(context, account, filter?: (utxo: T["utxo"]) => boolean): Promise<T["utxo"][]>;
-  getAddresses(context, account): Promise<AccountAddress[]>;
-  getFreshAddress(context, account): Promise<{ address: string; derivationPath: string }>;
+  // reads: the stored state and history, no network call unless refresh is set
+  getBalances(context, account, options?: ReadOptions): Promise<AccountRead<Balance[]>>; // per asset, never per address or UTXO
+  listOperations(context, account, options?: { cursor?: Cursor; limit?: number } & ReadOptions): Promise<AccountRead<Page<AccountOperation>>>;
+  getPendingOperations(context, account, options?: ReadOptions): Promise<AccountRead<AccountOperation[]>>;
+  getStakes(context, account, options?: ReadOptions): Promise<AccountRead<Stake[]>>;
+  getUTXOs?(context, account, options?: { filter?: (utxo: T["utxo"]) => boolean } & ReadOptions): Promise<AccountRead<T["utxo"][]>>;
+  getAddresses(context, account, options?: ReadOptions): Promise<AccountRead<AccountAddress[]>>;
+  getFreshAddress(context, account, options?: ReadOptions): Promise<AccountRead<{ address: string; derivationPath: string }>>;
 
-  // write path
+  // write path: the stored state, not refreshed
   estimateFees(context, account, intent: AccountIntent<T["options"]>, options?: AccountFeeOptions): Promise<FeeEstimation>;
   validateIntent(context, account, intent, options?: { customFees?: FeeEstimation }): Promise<TransactionValidation>;
   estimateMaxSpendable(context, account, intent, options?: AccountFeeOptions): Promise<bigint>;
@@ -52,9 +52,17 @@ interface AccountTypes { state: JsonValue; options: unknown; utxo: unknown }
 
 type AccountData<State extends JsonValue = JsonValue> = {
   descriptor: AccountDescriptor;
-  state: Versioned<State> | undefined; // undefined: never synced
-  history: HistoryStore;               // provided by the client
+  state: StateStore<State>; // provided by the client
+  history: HistoryStore;    // provided by the client
 };
+
+type ReadOptions = { refresh?: boolean };
+type AccountRead<T> = { value: T; updatedAt?: number }; // no updatedAt: fresh
+
+interface StateStore<State extends JsonValue = JsonValue> {
+  get(): Promise<Versioned<State> | undefined>; // undefined: never synced
+  put(state: Versioned<State>): Promise<void>;
+}
 
 type AccountDescriptor = {
   currencyId: string;
@@ -89,14 +97,38 @@ type AccountIntent<Options = unknown> = Omit<TransactionIntent, "sender" | "send
 } & Record<string, unknown>;
 
 type CraftedAccountTransaction = CraftedTransaction & { operation: AccountOperation };
-type SyncEvent<State extends JsonValue = JsonValue> = { state: Versioned<State>; progress: { blockHeight?: number; counters?: Record<string, number> } };
+type SyncEvent = { progress: { blockHeight?: number; counters?: Record<string, number> } }; // the state goes to account.state
 type Versioned<T extends JsonValue = JsonValue> = { version: number; data: T };
 ```
+
+### Fresh or stored reads
+
+The state of an account is split in scopes, each refreshed at once from the network: what a scope is belongs to the
+implementation (single-address: the balances, the stakes, the operations; UTXO: one walk of the addresses brings all of
+them). `sync` refreshes every scope, puts each new state into `account.state` and writes the operations to
+`account.history`; its events carry the progress only, the store is the one source of the state.
+
+A read answers from the stored scope, without any network call, unless it is passed `refresh: true`:
+
+| read                | network calls | writes                                       | `updatedAt`                                                      |
+| ------------------- | ------------- | -------------------------------------------- | ---------------------------------------------------------------- |
+| `{ refresh: true }` | yes           | the scope, to `account.state` / `history`    | `undefined`: fresh, refreshed by this call                       |
+| otherwise           | none          | none                                         | epoch-ms time of the scope's last refresh (sync or read); 0: never |
+
+A value that needs no network (an address derived from the descriptor, the stakes of a chain without any) is always
+fresh: no `updatedAt`, and `refresh` does nothing. The write path reads the stored state and never refreshes it.
+
+A refresh is a read-modify-write of the state: it reads the stored state, replaces its scope and puts it back. The
+client serialises the calls on one account (a sync, a refreshing read), or a put of one may overwrite the other's.
 
 ## Helpers
 
 - `discoverAccounts(module, context, request)`: the add-account scan, account index after account index, each account
-  synced, up to and including the first empty account (yielded with `empty: true`).
+  synced, up to and including the first empty account (yielded with `empty: true`). Each one's state and history go to
+  the stores `createState` / `createHistory` give, in memory by default.
+- `createMemoryStateStore(initial?)`: a `StateStore` in memory, with a synchronous `snapshot()`.
+- `readScope(options, { refresh, read })`: answers a read as the contract says (refresh first, then the value without
+  `updatedAt`; or the stored value and its time). `drain(events)`: runs a sync to its end.
 - `createMemoryHistoryStore`, `readHistory`, `paginate`, `compareNewestFirst`: history helpers.
 - `toJsonOperation` / `fromJsonOperation`, `toJsonBalance` / `fromJsonBalance`, `toJsonStake` / `fromJsonStake`:
   JSON forms (`JsonOperation`, `JsonBalance`, `JsonStake`) for persistence. `JsonOperation` is structurally

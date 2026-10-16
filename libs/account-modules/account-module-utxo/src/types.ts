@@ -176,7 +176,7 @@ export type UtxoState = {
   replaceable: boolean;
 };
 
-export const UTXO_ACCOUNT_STATE_VERSION = 1;
+export const UTXO_ACCOUNT_STATE_VERSION = 2;
 
 /** Small, versioned and rebuildable from the network. Addresses as the coin module derives them. */
 export type UtxoAccountState = {
@@ -190,6 +190,11 @@ export type UtxoAccountState = {
   confirmedUtxos: UtxoState[];
   /** Unspent outputs, mempool applied, replaced transactions removed. */
   utxos: UtxoState[];
+  /**
+   * Epoch-ms time of the last walk of the addresses (a sync, or a refreshing read), which every
+   * read derives from; 0: never.
+   */
+  refreshedAt: number;
 };
 
 export type Utxo = {

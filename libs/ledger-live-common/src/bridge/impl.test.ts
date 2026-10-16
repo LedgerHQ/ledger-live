@@ -38,6 +38,7 @@ describe("wrapAccountBridge — extension routing", () => {
           addresses: [{ address: "bc1qtest", chain: 0, index: 0 }],
           confirmedUtxos: [],
           utxos: [],
+          refreshedAt: 0,
         },
       },
       walletAccount: {

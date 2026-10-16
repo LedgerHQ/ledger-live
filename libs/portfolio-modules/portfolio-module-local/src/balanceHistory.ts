@@ -37,7 +37,7 @@ async function pointsOf(
   query: BalanceHistoryQuery,
   now: number,
 ): Promise<BalanceHistoryPoint[]> {
-  const [balances, operations] = await Promise.all([
+  const [{ value: balances }, operations] = await Promise.all([
     network.accountModule.getBalances(network.context, data),
     readHistory(data.history),
   ]);
@@ -79,7 +79,7 @@ export async function getPortfolioBalanceHistory(
   const perAccount = await Promise.all(
     accountsMatching(portfolio.accounts, query).map(account => {
       const failed = account.status === "registration_failure";
-      const local = failed ? undefined : localAccountOf(deps, account);
+      const local = failed ? undefined : localAccountOf(deps, portfolioId, account);
       return local ? pointsOf(account, local, query, now) : [];
     }),
   );

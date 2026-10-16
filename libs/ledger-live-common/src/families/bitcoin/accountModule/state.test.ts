@@ -1,5 +1,10 @@
 import type { SerializedAccount } from "@ledgerhq/wallet-btc/account";
-import { emptyState, versioned } from "@ledgerhq/account-module-utxo";
+import {
+  UTXO_ACCOUNT_STATE_VERSION,
+  emptyState,
+  readState,
+  versioned,
+} from "@ledgerhq/account-module-utxo";
 import { migrateWalletAccount, readAccountState, readBitcoinState } from "./state";
 
 const emptyAccountState = () => versioned(emptyState());
@@ -33,8 +38,22 @@ describe("readAccountState", () => {
   it("accepts a state the UTXO account module trusts only", () => {
     expect(readAccountState(emptyAccountState())).toEqual(emptyAccountState());
     expect(readAccountState(undefined)).toBeUndefined();
-    expect(readAccountState({ ...emptyAccountState(), version: 2 })).toBeUndefined();
+    expect(
+      readAccountState({ ...emptyAccountState(), version: UTXO_ACCOUNT_STATE_VERSION + 1 }),
+    ).toBeUndefined();
     expect(readAccountState({ version: 1, syncedHeight: 1, addresses: [] })).toBeUndefined();
+  });
+
+  it("keeps a state Ledger Wallet persisted in version 1: the module reads it, never refreshed", () => {
+    const { refreshedAt: _, ...data } = { ...emptyState(), syncedHeight: 120 };
+    const persisted = { version: 1, data };
+
+    expect(readAccountState(persisted)).toBe(persisted);
+    expect(readState(readAccountState(persisted))).toEqual({
+      ...emptyState(),
+      syncedHeight: 120,
+      refreshedAt: 0,
+    });
   });
 });
 
@@ -131,8 +150,10 @@ describe("migrateWalletAccount", () => {
       130,
     );
 
-    expect(state.version).toBe(1);
+    expect(state.version).toBe(UTXO_ACCOUNT_STATE_VERSION);
     expect(state.data.syncedHeight).toBe(130);
+    // Never refreshed by the account module: its next sync is.
+    expect(state.data.refreshedAt).toBe(0);
     expect(state.data.anchor).toEqual({ height: 120, hash: "h120" });
     expect(state.data.addresses).toEqual([
       { address: "me0", chain: 0, index: 0 },

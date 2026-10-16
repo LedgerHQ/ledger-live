@@ -37,7 +37,7 @@ const usdt = {
 /** The entries the local side answers for `balances`, as an account module reports them. */
 async function localEntries(balances: Balance[]): Promise<BalanceEntry[]> {
   const accountModule = fakeAccountModule();
-  accountModule.getBalances.mockResolvedValue(balances);
+  accountModule.getBalances.mockResolvedValue({ value: balances });
   const local = createLocalPortfolio({
     networks: { xrp: standInNetwork(ripple, fakeCoinModule(), accountModule, "static") },
     store: createMemoryPortfolioStore(),

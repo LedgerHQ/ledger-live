@@ -14,11 +14,12 @@ import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
 import { isFailedIncoming, isSequenceTaken, nextHeight, toAccountOperation } from "./operations";
 import { walkPages } from "./pages";
-import { emptyState, readState, versioned } from "./state";
+import { storedState, versioned } from "./state";
 import type {
   SingleAddressAccountModuleOptions,
   SingleAddressAccountState,
   SingleAddressCoinModule,
+  SingleAddressScope,
 } from "./types";
 
 type SyncCoinModule = Pick<
@@ -38,10 +39,13 @@ async function removeUnlisted(
 }
 
 /**
- * The operations are written once every page is read: the next sync resumes above the highest
- * one written, so the rest of an interrupted listing would be skipped for good.
+ * Refreshes the scopes of an account, then puts the new state into `account.state`: the balances
+ * and the stakes are read again whole; the operations are listed above the highest block of the
+ * history (from height 0 when no refresh of them completed) and written once every page is read:
+ * the next refresh resumes above the highest one written, so the rest of an interrupted listing
+ * would be skipped for good. A sync is the refresh of every scope.
  */
-export function createSync(
+export function createRefresh(
   coinModule: SyncCoinModule,
   {
     includeStakes = false,
@@ -50,6 +54,11 @@ export function createSync(
     balanceOptions,
   }: SingleAddressAccountModuleOptions = {},
 ) {
+  /** The scopes of the module: the stakes with `includeStakes` only. */
+  const scopes: readonly SingleAddressScope[] = includeStakes
+    ? ["balances", "stakes", "operations"]
+    : ["balances", "operations"];
+
   /** A failure is wrapped as the bridge's legacy path wraps it, its cause kept. */
   async function readBalances(context: Context<any>, address: string): Promise<Balance[]> {
     try {
@@ -70,52 +79,66 @@ export function createSync(
     return stakes;
   }
 
-  return async function* sync(
+  async function* refresh(
     context: Context<any>,
     { descriptor, state, history }: AccountData<SingleAddressAccountState>,
-    { signal }: { signal?: AbortSignal } = {},
-  ): AsyncIterable<SyncEvent<SingleAddressAccountState>> {
+    refreshed: readonly SingleAddressScope[],
+    signal?: AbortSignal,
+  ): AsyncIterable<SyncEvent> {
     signal?.throwIfAborted();
-    const previous = readState(state);
-    const unchanged = versioned(previous ?? emptyState());
-    const known = await readHistory(history);
-    const resumable = previous !== undefined && previous.syncedHeight > 0;
-    const minHeight = resumable ? nextHeight(known) : 0;
+    const has = (scope: SingleAddressScope) => refreshed.includes(scope);
+    const previous = await storedState(state);
+    const known = has("operations") ? await readHistory(history) : [];
+    const minHeight = previous.syncedHeight > 0 ? nextHeight(known) : 0;
     // The tip and the balances first, together, as the bridge reads them: a balance read the
     // region refuses fails the sync before any listing does.
     const [tip, balances, stakes] = await Promise.all([
-      coinModule.lastBlock(context),
-      readBalances(context, descriptor.key),
-      includeStakes ? readStakes(context, descriptor.key) : [],
+      has("operations") ? coinModule.lastBlock(context) : undefined,
+      has("balances") ? readBalances(context, descriptor.key) : undefined,
+      has("stakes") ? readStakes(context, descriptor.key) : undefined,
     ]);
     signal?.throwIfAborted();
 
     const operations: AccountOperation[] = [];
-    const pages = walkPages(cursor =>
-      coinModule.listOperations(context, descriptor.key, { minHeight, cursor, order: "desc" }),
-    );
-    for await (const page of pages) {
+    if (tip) {
+      const pages = walkPages(cursor =>
+        coinModule.listOperations(context, descriptor.key, { minHeight, cursor, order: "desc" }),
+      );
+      for await (const page of pages) {
+        signal?.throwIfAborted();
+        operations.push(...page.items.filter(op => !isFailedIncoming(op)).map(toAccountOperation));
+        yield { progress: { counters: { operations: operations.length } } };
+      }
       signal?.throwIfAborted();
-      operations.push(...page.items.filter(op => !isFailedIncoming(op)).map(toAccountOperation));
-      yield { state: unchanged, progress: { counters: { operations: operations.length } } };
+
+      if (operations.length > 0) await history.upsert(operations);
+      if (minHeight === 0) await removeUnlisted(history, known, operations);
     }
-    signal?.throwIfAborted();
+    const at = now();
+    if (tip) {
+      await settleOptimisticOperations(history, {
+        now: at,
+        expiryMs: optimisticExpiryMs,
+        isSettled: isSequenceTaken,
+      });
+    }
 
-    if (operations.length > 0) await history.upsert(operations);
-    if (minHeight === 0) await removeUnlisted(history, known, operations);
-    await settleOptimisticOperations(history, {
-      now: now(),
-      expiryMs: optimisticExpiryMs,
-      isSettled: isSequenceTaken,
-    });
-
-    yield {
-      state: versioned({
-        syncedHeight: tip.height,
-        balances: balances.map(toJsonBalance),
-        stakes: stakes.map(toJsonStake),
+    await state.put(
+      versioned({
+        syncedHeight: tip?.height ?? previous.syncedHeight,
+        balances: balances?.map(toJsonBalance) ?? previous.balances,
+        stakes: stakes?.map(toJsonStake) ?? previous.stakes,
+        refreshedAt: {
+          balances: balances ? at : previous.refreshedAt.balances,
+          stakes: stakes ? at : previous.refreshedAt.stakes,
+          operations: tip ? at : previous.refreshedAt.operations,
+        },
       }),
-      progress: { blockHeight: tip.height, counters: { operations: operations.length } },
+    );
+    yield {
+      progress: tip ? { blockHeight: tip.height, counters: { operations: operations.length } } : {},
     };
-  };
+  }
+
+  return { scopes, refresh };
 }

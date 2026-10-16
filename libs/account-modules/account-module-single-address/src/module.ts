@@ -1,23 +1,28 @@
 import {
+  drain,
   fromJsonBalance,
   fromJsonStake,
   readHistory,
+  readScope,
   type AccountData,
   type AccountIntent,
   type AccountModuleApi,
   type AccountOperation,
+  type AccountRead,
   type CoinIntent,
+  type ReadOptions,
 } from "@ledgerhq/account-module-framework";
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { nextSequence } from "./operations";
-import { readState } from "./state";
-import { createSync } from "./sync";
+import { storedState } from "./state";
+import { createRefresh } from "./sync";
 import type {
   SingleAddressAccountModuleOptions,
   SingleAddressAccountState,
   SingleAddressAccountTypes,
   SingleAddressCoinModule,
+  SingleAddressScope,
 } from "./types";
 
 type Account = AccountData<SingleAddressAccountState>;
@@ -33,8 +38,8 @@ const isBalanceOf =
 
 const atLeastZero = (value: bigint): bigint => (value > 0n ? value : 0n);
 
-const balancesOf = ({ state }: Account): Balance[] =>
-  readState(state)?.balances.map(fromJsonBalance) ?? [];
+const balancesOf = (state: SingleAddressAccountState): Balance[] =>
+  state.balances.map(fromJsonBalance);
 
 /**
  * The account module of the families whose account is one address (`descriptor.key`). Every chain
@@ -45,6 +50,23 @@ export function createSingleAddressAccountModule(
   options: SingleAddressAccountModuleOptions = {},
 ): AccountModuleApi<SingleAddressAccountTypes> {
   const { now = Date.now, addressPath = descriptor => descriptor.derivationPath } = options;
+  const { scopes, refresh } = createRefresh(coinModule, options);
+
+  /** A read of one scope: refreshed first when asked, from the stored state and history. */
+  const read = <T>(
+    context: Context<any>,
+    account: Account,
+    scope: SingleAddressScope,
+    readOptions: ReadOptions | undefined,
+    valueOf: (state: SingleAddressAccountState) => T | Promise<T>,
+  ): Promise<AccountRead<T>> =>
+    readScope(readOptions, {
+      refresh: () => drain(refresh(context, account, [scope])),
+      read: async () => {
+        const state = await storedState(account.state);
+        return { value: await valueOf(state), updatedAt: state.refreshedAt[scope] };
+      },
+    });
 
   /**
    * The account's intent as the coin module takes it: sent by the account, its `data` crafted by
@@ -74,39 +96,50 @@ export function createSingleAddressAccountModule(
   }
 
   return {
-    sync: createSync(coinModule, options),
+    sync: (context, account, syncOptions) => refresh(context, account, scopes, syncOptions?.signal),
 
-    getBalances: async (_context, account) => balancesOf(account),
-    listOperations: (_context, { history }, listOptions) => history.list(listOptions),
-    getPendingOperations: async (_context, { history }) =>
-      (await readHistory(history)).filter(op => op.block === null || op.optimistic),
-    getStakes: async (_context, { state }) => readState(state)?.stakes.map(fromJsonStake) ?? [],
-    getAddresses: async (_context, { descriptor, history }) => {
-      const { items } = await history.list({ limit: 1 });
-      return [
-        {
-          address: descriptor.key,
-          derivationPath: addressPath(descriptor),
-          used: items.length > 0,
-        },
-      ];
+    getBalances: (context, account, readOptions) =>
+      read(context, account, "balances", readOptions, balancesOf),
+    listOperations: (context, account, listOptions) => {
+      const { refresh: _refresh, ...page } = listOptions ?? {};
+      return read(context, account, "operations", listOptions, () => account.history.list(page));
     },
+    getPendingOperations: (context, account, readOptions) =>
+      read(context, account, "operations", readOptions, async () =>
+        (await readHistory(account.history)).filter(op => op.block === null || op.optimistic),
+      ),
+    getStakes: async (context, account, readOptions) =>
+      scopes.includes("stakes")
+        ? read(context, account, "stakes", readOptions, state => state.stakes.map(fromJsonStake))
+        : { value: [] },
+    // The address is the account key; whether it is used comes from the operations.
+    getAddresses: (context, account, readOptions) =>
+      read(context, account, "operations", readOptions, async () => {
+        const { items } = await account.history.list({ limit: 1 });
+        return [
+          {
+            address: account.descriptor.key,
+            derivationPath: addressPath(account.descriptor),
+            used: items.length > 0,
+          },
+        ];
+      }),
+    // The address is the account key: no network, always fresh.
     getFreshAddress: async (_context, { descriptor }) => ({
-      address: descriptor.key,
-      derivationPath: addressPath(descriptor),
+      value: { address: descriptor.key, derivationPath: addressPath(descriptor) },
     }),
 
     estimateFees: (context, account, intent, feeOptions) =>
       coinModule.estimateFees(context, toCoinIntent(context, account, intent), feeOptions),
-    validateIntent: (context, account, intent, validateOptions) =>
+    validateIntent: async (context, account, intent, validateOptions) =>
       coinModule.validateIntent(
         context,
         toCoinIntent(context, account, intent),
-        balancesOf(account),
+        balancesOf(await storedState(account.state)),
         validateOptions,
       ),
     estimateMaxSpendable: async (context, account, intent, feeOptions) => {
-      const balance = balancesOf(account).find(isBalanceOf(intent.asset));
+      const balance = balancesOf(await storedState(account.state)).find(isBalanceOf(intent.asset));
       const available = balance ? atLeastZero(balance.value - (balance.locked ?? 0n)) : 0n;
       if (intent.asset.type !== "native") return available;
       const sendMax = {

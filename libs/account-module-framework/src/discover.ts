@@ -1,23 +1,24 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { accountDerivationPath } from "./accountId";
 import { createMemoryHistoryStore, readHistory } from "./history";
+import { drain } from "./read";
+import { createMemoryStateStore } from "./state";
 import type {
+  AccountData,
   AccountDescriptor,
   AccountModuleApi,
   AccountTypes,
   HistoryStore,
-  Versioned,
+  JsonValue,
+  StateStore,
 } from "./types";
 
-export type DiscoveredAccount<T extends AccountTypes = AccountTypes> = {
-  descriptor: AccountDescriptor;
-  state: Versioned<T["state"]> | undefined;
-  history: HistoryStore;
+export type DiscoveredAccount<T extends AccountTypes = AccountTypes> = AccountData<T["state"]> & {
   /** No operation and no balance: the scan stops at the first empty account. */
   empty: boolean;
 };
 
-export type DiscoveryRequest = {
+export type DiscoveryRequest<State extends JsonValue = JsonValue> = {
   currencyId: string;
   derivationMode: string;
   /** Root of the account paths, e.g. "84'/0'". */
@@ -26,6 +27,8 @@ export type DiscoveryRequest = {
   getAccountKey: (derivationPath: string) => Promise<string>;
   /** Where the history of a discovered account goes; in memory by default. */
   createHistory?: (descriptor: AccountDescriptor) => HistoryStore;
+  /** Where the state of a discovered account goes; in memory by default. */
+  createState?: (descriptor: AccountDescriptor) => StateStore<State>;
   startIndex?: number;
   maxAccounts?: number;
   signal?: AbortSignal;
@@ -45,10 +48,11 @@ export async function* discoverAccounts<T extends AccountTypes>(
     derivationScheme,
     getAccountKey,
     createHistory = () => createMemoryHistoryStore(),
+    createState = () => createMemoryStateStore(),
     startIndex = 0,
     maxAccounts = Number.POSITIVE_INFINITY,
     signal,
-  }: DiscoveryRequest,
+  }: DiscoveryRequest<T["state"]>,
 ): AsyncIterable<DiscoveredAccount<T>> {
   for (let index = startIndex; index - startIndex < maxAccounts; index++) {
     signal?.throwIfAborted();
@@ -60,19 +64,18 @@ export async function* discoverAccounts<T extends AccountTypes>(
       key: await getAccountKey(derivationPath),
       derivationPath,
     };
-    const history = createHistory(descriptor);
-    let state: Versioned<T["state"]> | undefined;
-    const options = signal ? { signal } : {};
-    for await (const event of module.sync(context, { descriptor, state, history }, options)) {
-      state = event.state;
-    }
-    const account = { descriptor, state, history };
+    const account: AccountData<T["state"]> = {
+      descriptor,
+      state: createState(descriptor),
+      history: createHistory(descriptor),
+    };
+    await drain(module.sync(context, account, signal ? { signal } : {}));
     const [operations, balances] = await Promise.all([
-      readHistory(history),
+      readHistory(account.history),
       module.getBalances(context, account),
     ]);
-    const empty = operations.length === 0 && balances.every(balance => balance.value === 0n);
-    yield { descriptor, state, history, empty };
+    const empty = operations.length === 0 && balances.value.every(balance => balance.value === 0n);
+    yield { ...account, empty };
     if (empty) return;
   }
 }

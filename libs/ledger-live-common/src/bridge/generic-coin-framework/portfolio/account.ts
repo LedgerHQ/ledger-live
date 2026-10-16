@@ -4,7 +4,7 @@ import {
   type AccountOperation,
   type Versioned,
 } from "@ledgerhq/account-module-framework";
-import { SINGLE_ADDRESS_ACCOUNT_STATE_VERSION } from "@ledgerhq/account-module-single-address";
+import { emptyState, versioned } from "@ledgerhq/account-module-single-address";
 import type { AccountModuleBinding } from "@ledgerhq/ledger-wallet-framework/api/types";
 import {
   isPortfolioApiError,
@@ -134,7 +134,8 @@ export const portfolioSyncHash = (mode: PortfolioMode, tokensHash: string): stri
  * listed from scratch), and the balances the legacy path validates with: the reserve and the pending
  * spends locked, the staking positions (carved out of the native balance of a family that
  * partitions it), the tokens and their pending spends. Ledger Wallet, as the store provider, writes
- * its pending locks into the state; a read's sync replaces them.
+ * its pending locks into the state; a read's sync replaces them. Its scopes are never refreshed
+ * (time 0): only the module's own refreshes date them.
  */
 export function moduleStateOf(
   binding: AccountModuleBinding | undefined,
@@ -150,21 +151,18 @@ export function moduleStateOf(
   >,
 ): Versioned | undefined {
   if (binding) return binding.readState(account);
-  return {
-    version: SINGLE_ADDRESS_ACCOUNT_STATE_VERSION,
-    data: {
-      syncedHeight: resumable ? (account?.blockHeight ?? 0) : 0,
-      balances: account
-        ? extractBalances(
-            account,
-            getAssetFromToken,
-            partitionsNativeBalance,
-            getHeldNativeAmount,
-          ).map(toJsonBalance)
-        : [],
-      stakes: [],
-    },
-  };
+  return versioned({
+    ...emptyState(),
+    syncedHeight: resumable ? (account?.blockHeight ?? 0) : 0,
+    balances: account
+      ? extractBalances(
+          account,
+          getAssetFromToken,
+          partitionsNativeBalance,
+          getHeldNativeAmount,
+        ).map(toJsonBalance)
+      : [],
+  });
 }
 
 /**

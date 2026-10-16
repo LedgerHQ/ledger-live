@@ -22,15 +22,24 @@ export type SingleAddressCoinModule = Pick<
   | "craftTransactionData"
 >;
 
-export const SINGLE_ADDRESS_ACCOUNT_STATE_VERSION = 1;
+export const SINGLE_ADDRESS_ACCOUNT_STATE_VERSION = 2;
+
+/**
+ * What one refresh brings up to date: the balances (`getBalances`), the stakes (`getStakes`, with
+ * `includeStakes`), the operations (`listOperations`, `getPendingOperations`). A sync refreshes
+ * them all.
+ */
+export type SingleAddressScope = "balances" | "stakes" | "operations";
 
 /** Small, versioned and rebuildable from the network. */
 export type SingleAddressAccountState = {
-  /** Chain tip at the last completed sync; 0 until one completes. */
+  /** Chain tip at the last completed refresh of the operations; 0 until one completes. */
   syncedHeight: number;
   balances: JsonBalance[];
   /** Empty unless the module is created with `includeStakes`. */
   stakes: JsonStake[];
+  /** Epoch-ms time of the last refresh of each scope, by a sync or a read; 0: never. */
+  refreshedAt: Record<SingleAddressScope, number>;
 };
 
 export interface SingleAddressAccountTypes extends AccountTypes {
@@ -48,8 +57,8 @@ export type SingleAddressAccountModuleOptions = {
   /** Derivation path of the address; the account path by default. */
   addressPath?: (descriptor: AccountDescriptor) => string;
   /**
-   * Handed to `getBalance` on every sync (the CAL filter `includeAssets` of EVM chains: one RPC
-   * call per spam contract otherwise).
+   * Handed to `getBalance` on every refresh of the balances (the CAL filter `includeAssets` of EVM
+   * chains: one RPC call per spam contract otherwise).
    */
   balanceOptions?: BalanceOptions;
 };

@@ -7,6 +7,7 @@ import {
   aLocalNetwork,
   aStoredAccount,
   aStoredPortfolio,
+  anAccountData,
   someDeps,
   type FakeNetwork,
 } from "./test-utils";
@@ -17,8 +18,10 @@ const stateAt = (height: number) => ({ version: 1, data: { height } });
 const syncingTo = (height: number) =>
   async function* (_context: unknown, account: AccountData): AsyncIterable<SyncEvent> {
     await account.history.upsert([anOperation({ id: `op-${account.descriptor.key}` })]);
-    yield { state: stateAt(height - 1), progress: {} };
-    yield { state: stateAt(height), progress: { blockHeight: height } };
+    await account.state.put(stateAt(height - 1));
+    yield { progress: {} };
+    await account.state.put(stateAt(height));
+    yield { progress: { blockHeight: height } };
   };
 
 const setUp = async (accounts: StoredAccount[]) => {
@@ -32,7 +35,7 @@ const storedAccounts = async ({ store }: ReturnType<typeof someDeps>) =>
   (await store.get("portfolio"))?.accounts;
 
 describe("syncPortfolio", () => {
-  it("syncs each account to completion through its account module and persists its state", async () => {
+  it("syncs each account to completion through its account module, which persists its state", async () => {
     const { deps, bitcoin, sync } = await setUp([
       aStoredAccount({ id: "a", status: "uninitialized" }),
       aStoredAccount({ id: "b", status: "uninitialized" }),
@@ -50,28 +53,40 @@ describe("syncPortfolio", () => {
       aStoredAccount({ id: "b", state: stateAt(10) }),
     ]);
     expect((await deps.store.history("b").list()).items).toEqual([anOperation({ id: "op-key-b" })]);
-    expect(sync).toHaveBeenCalledWith(
-      bitcoin.context,
-      {
-        descriptor: aStoredAccount({ id: "a" }).descriptor,
-        state: undefined,
-        history: deps.store.history("a"),
-      },
-      {},
-    );
+    expect(sync).toHaveBeenCalledWith(bitcoin.context, anAccountData(deps.store, "a"), {});
   });
 
   it("resumes an account from its persisted state", async () => {
     const { deps, sync } = await setUp([aStoredAccount({ state: stateAt(5) })]);
-    sync.mockImplementation(syncingTo(10));
+    const resumedFrom: unknown[] = [];
+    sync.mockImplementation(async function* (context, account: AccountData) {
+      resumedFrom.push(await account.state.get());
+      yield* syncingTo(10)(context, account);
+    });
 
     await syncPortfolio(deps, "portfolio");
 
-    expect(sync).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ state: stateAt(5) }),
-      {},
-    );
+    expect(resumedFrom).toEqual([stateAt(5)]);
+    expect(await storedAccounts(deps)).toEqual([aStoredAccount({ state: stateAt(10) })]);
+  });
+
+  it("keeps the last state the module put before it failed", async () => {
+    const { deps, sync } = await setUp([aStoredAccount({ state: stateAt(5) })]);
+    sync.mockImplementation(async function* (_context, account: AccountData) {
+      await account.state.put(stateAt(7));
+      yield { progress: {} };
+      throw new Error("explorer down");
+    });
+
+    await syncPortfolio(deps, "portfolio");
+
+    expect(await storedAccounts(deps)).toEqual([
+      aStoredAccount({
+        state: stateAt(7),
+        error: "explorer down",
+        failure: { name: "Error", message: "explorer down" },
+      }),
+    ]);
   });
 
   it("marks an account synchronized even when its sync yields no state", async () => {

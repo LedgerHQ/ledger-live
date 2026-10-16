@@ -35,6 +35,7 @@ const accountState = (addresses: UtxoAddressState[], unspentOn: string[] = []) =
       height: 1,
       replaceable: false,
     })),
+    refreshedAt: 0,
   } satisfies UtxoAccountState,
 });
 

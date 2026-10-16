@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { lastValueFrom, toArray } from "rxjs";
-import type { AccountModuleApi } from "@ledgerhq/account-module-framework";
+import type { AccountData, AccountModuleApi } from "@ledgerhq/account-module-framework";
 import type { AccountModuleBinding } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { Account } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
@@ -62,13 +62,13 @@ const craftedOperation = {
 
 function fakeModule(): jest.Mocked<AccountModuleApi> {
   return {
-    sync: jest.fn(async function* () {
-      yield { state: { version: 1, data: {} }, progress: { blockHeight: 7 } };
+    sync: jest.fn(async function* (_context: unknown, { state }: AccountData) {
+      await state.put({ version: 1, data: {} });
+      yield { progress: { blockHeight: 7 } };
     }),
-    getBalances: jest.fn(async () => [{ value: 100_000n, asset: { type: "native" } }]),
+    getBalances: jest.fn(async () => ({ value: [{ value: 100_000n, asset: { type: "native" } }] })),
     getFreshAddress: jest.fn(async () => ({
-      address: "bc1qnext",
-      derivationPath: "84'/0'/0'/0/4",
+      value: { address: "bc1qnext", derivationPath: "84'/0'/0'/0/4" },
     })),
     estimateFees: jest.fn(async () => ({ value: 1_000n, parameters: { amount: 49_000n } })),
     validateIntent: jest.fn(async () => ({

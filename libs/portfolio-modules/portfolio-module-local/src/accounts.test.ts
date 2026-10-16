@@ -5,6 +5,7 @@ import {
   aLocalNetwork,
   aStoredAccount,
   aStoredPortfolio,
+  anAccountData,
   someDeps,
   type FakeNetwork,
 } from "./test-utils";
@@ -23,11 +24,7 @@ const setUp = async () => {
       ],
     }),
   );
-  const accountData = {
-    descriptor: aStoredAccount().descriptor,
-    state,
-    history: deps.store.history("account"),
-  };
+  const accountData = anAccountData(deps.store);
   return { bitcoin, accountData, ...accountEndpoints(deps) };
 };
 
@@ -42,8 +39,8 @@ describe("accountEndpoints", () => {
   it("answers where the account receives", async () => {
     const { bitcoin, accountData, getFreshAddress } = await setUp();
     bitcoin.accountModule.getFreshAddress.mockResolvedValue({
-      address: "bc1fresh",
-      derivationPath: "84'/0'/0'/0/3",
+      value: { address: "bc1fresh", derivationPath: "84'/0'/0'/0/3" },
+      updatedAt: 1,
     });
 
     expect(await getFreshAddress("portfolio", "account")).toEqual({
@@ -73,10 +70,12 @@ describe("accountEndpoints", () => {
 
   it("answers every address of the account and whether it holds history", async () => {
     const { bitcoin, accountData, getAccountAddresses } = await setUp();
-    bitcoin.accountModule.getAddresses.mockResolvedValue([
-      { address: "bc1a", derivationPath: "84'/0'/0'/0/0", used: true },
-      { address: "bc1b", derivationPath: "84'/0'/0'/0/1", used: false },
-    ]);
+    bitcoin.accountModule.getAddresses.mockResolvedValue({
+      value: [
+        { address: "bc1a", derivationPath: "84'/0'/0'/0/0", used: true },
+        { address: "bc1b", derivationPath: "84'/0'/0'/0/1", used: false },
+      ],
+    });
 
     expect(await getAccountAddresses("portfolio", "account")).toEqual({
       items: [
@@ -90,18 +89,21 @@ describe("accountEndpoints", () => {
   it("answers the unspent outputs of a UTXO account in JSON form", async () => {
     const { bitcoin, accountData, getAccountUtxos } = await setUp();
     const accountModule = utxoModule(bitcoin);
-    accountModule.getUTXOs = jest.fn(async () => [
-      {
-        txid: "tx",
-        vout: 1,
-        value: 5000n,
-        address: "bc1a",
-        derivationPath: "84'/0'/0'/0/0",
-        height: null,
-        replaceable: true,
-        change: false,
-      },
-    ]);
+    accountModule.getUTXOs = jest.fn(async () => ({
+      value: [
+        {
+          txid: "tx",
+          vout: 1,
+          value: 5000n,
+          address: "bc1a",
+          derivationPath: "84'/0'/0'/0/0",
+          height: null,
+          replaceable: true,
+          change: false,
+        },
+      ],
+      updatedAt: 1,
+    }));
 
     expect(await getAccountUtxos("portfolio", "account")).toEqual({
       items: [

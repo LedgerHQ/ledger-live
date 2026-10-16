@@ -1,17 +1,23 @@
 import {
   createMemoryHistoryStore,
+  createMemoryStateStore,
   discoverAccounts,
   type AccountDescriptor,
   type AccountIntent,
   type AccountOperation,
   type CraftedAccountTransaction,
   type DiscoveredAccount,
+  type Versioned,
 } from "@ledgerhq/account-module-framework";
 import { anOperation, testContext } from "@ledgerhq/account-module-framework/test-utils";
 import type { TransactionValidation } from "@ledgerhq/coin-module-framework/api/types";
 import { createSingleAddressAccountModule } from "./module";
 import { emptyState, versioned } from "./state";
-import type { SingleAddressAccountTypes, SingleAddressCoinModule } from "./types";
+import type {
+  SingleAddressAccountState,
+  SingleAddressAccountTypes,
+  SingleAddressCoinModule,
+} from "./types";
 
 const context = testContext();
 const date = new Date("2026-01-01T00:00:00.000Z");
@@ -62,6 +68,8 @@ function aCoinModule(): SingleAddressCoinModule {
   };
 }
 
+const refreshedAt = { balances: now - 3, stakes: now - 2, operations: now - 1 };
+
 const syncedState = versioned({
   syncedHeight: 100,
   balances: [
@@ -78,19 +86,21 @@ const syncedState = versioned({
       amount: "7",
     },
   ],
+  refreshedAt,
 });
 
-const aSyncedAccount = (operations: AccountOperation[] = []) => ({
+const anAccount = (
+  state: Versioned<SingleAddressAccountState> | undefined,
+  operations: AccountOperation[] = [],
+) => ({
   descriptor,
-  state: syncedState,
+  state: createMemoryStateStore<SingleAddressAccountState>(state),
   history: createMemoryHistoryStore(operations),
 });
 
-const aNewAccount = () => ({
-  descriptor,
-  state: undefined,
-  history: createMemoryHistoryStore(),
-});
+const aSyncedAccount = (operations: AccountOperation[] = []) => anAccount(syncedState, operations);
+
+const aNewAccount = () => anAccount(undefined);
 
 function expectNoNetworkCall(coinModule: SingleAddressCoinModule) {
   for (const method of Object.values(coinModule)) expect(method).not.toHaveBeenCalled();
@@ -127,7 +137,7 @@ describe("createSingleAddressAccountModule", () => {
         .mockImplementation(async (_context, address) =>
           address === "used" ? [{ value: 50n, asset: native }] : [],
         );
-      const module = createSingleAddressAccountModule(coinModule);
+      const module = createSingleAddressAccountModule(coinModule, { now: () => now });
 
       const discovered: DiscoveredAccount<SingleAddressAccountTypes>[] = [];
       for await (const account of discoverAccounts(module, context, {
@@ -143,44 +153,65 @@ describe("createSingleAddressAccountModule", () => {
         { key: "used", empty: false },
         { key: "fresh", empty: true },
       ]);
-      expect(discovered[0]!.state?.data.syncedHeight).toBe(100);
-      expect(await module.getBalances(context, discovered[0]!)).toEqual([
-        { value: 50n, asset: native },
-      ]);
+      expect((await discovered[0]!.state.get())?.data.syncedHeight).toBe(100);
+      expect(await module.getBalances(context, discovered[0]!)).toEqual({
+        value: [{ value: 50n, asset: native }],
+        updatedAt: now,
+      });
     });
   });
 
   describe("reads", () => {
-    it("reads balances and stakes from the state, without any network call", async () => {
+    it("reads balances and stakes from the state, with their refresh times, without any network call", async () => {
       const coinModule = aCoinModule();
-      const module = createSingleAddressAccountModule(coinModule);
+      const module = createSingleAddressAccountModule(coinModule, { includeStakes: true });
 
-      expect(await module.getBalances(context, aSyncedAccount())).toEqual([
-        { value: 100n, asset: native, locked: 10n },
-        { value: 30n, asset: token },
-      ]);
-      expect(await module.getStakes(context, aSyncedAccount())).toEqual([
-        {
-          uid: "stake",
-          address: "address",
-          state: "active",
-          actions: [],
-          asset: native,
-          amount: 7n,
-        },
-      ]);
+      expect(await module.getBalances(context, aSyncedAccount())).toEqual({
+        value: [
+          { value: 100n, asset: native, locked: 10n },
+          { value: 30n, asset: token },
+        ],
+        updatedAt: refreshedAt.balances,
+      });
+      expect(await module.getStakes(context, aSyncedAccount(), { refresh: false })).toEqual({
+        value: [
+          {
+            uid: "stake",
+            address: "address",
+            state: "active",
+            actions: [],
+            asset: native,
+            amount: 7n,
+          },
+        ],
+        updatedAt: refreshedAt.stakes,
+      });
       expectNoNetworkCall(coinModule);
     });
 
     it.each([
       ["never synced", undefined],
       ["of another version", { version: 0, data: emptyState() }],
-    ])("has no balance nor stake for an account %s", async (_, state) => {
-      const module = createSingleAddressAccountModule(aCoinModule());
-      const account = { ...aNewAccount(), state };
+    ])("has no balance nor stake, never refreshed, for an account %s", async (_, state) => {
+      const module = createSingleAddressAccountModule(aCoinModule(), { includeStakes: true });
+      const account = anAccount(state);
 
-      expect(await module.getBalances(context, account)).toEqual([]);
-      expect(await module.getStakes(context, account)).toEqual([]);
+      expect(await module.getBalances(context, account)).toEqual({ value: [], updatedAt: 0 });
+      expect(await module.getStakes(context, account)).toEqual({ value: [], updatedAt: 0 });
+    });
+
+    it("reads a version 1 state, its refresh times unknown", async () => {
+      const module = createSingleAddressAccountModule(aCoinModule());
+      const { refreshedAt: _times, ...v1 } = syncedState.data;
+      const account = anAccount({ version: 1, data: v1 as never });
+
+      expect(await module.getBalances(context, account)).toEqual({
+        value: [
+          { value: 100n, asset: native, locked: 10n },
+          { value: 30n, asset: token },
+        ],
+        updatedAt: 0,
+      });
     });
 
     it("lists the operations of the history, page by page", async () => {
@@ -189,12 +220,19 @@ describe("createSingleAddressAccountModule", () => {
         anOperation({ id: "new", date: new Date(now + 1) }),
         anOperation({ id: "old", date: new Date(now) }),
       ]);
+      const list = jest.spyOn(account.history, "list");
 
       const first = await module.listOperations(context, account, { limit: 1 });
-      const second = await module.listOperations(context, account, { cursor: first.next! });
+      const second = await module.listOperations(context, account, { cursor: first.value.next! });
+      await module.listOperations(context, account);
 
-      expect([...first.items, ...second.items].map(op => op.id)).toEqual(["new", "old"]);
-      expect(second.next).toBeUndefined();
+      expect([...first.value.items, ...second.value.items].map(op => op.id)).toEqual([
+        "new",
+        "old",
+      ]);
+      expect(second).toMatchObject({ updatedAt: refreshedAt.operations });
+      expect(second.value.next).toBeUndefined();
+      expect(list.mock.calls).toEqual([[{ limit: 1 }], [{ cursor: "1" }], [{}]]);
     });
 
     it("tells the pending operations: optimistic, or not in a block", async () => {
@@ -207,22 +245,41 @@ describe("createSingleAddressAccountModule", () => {
 
       const pending = await module.getPendingOperations(context, account);
 
-      expect(pending.map(op => op.id).sort()).toEqual(["broadcast", "mempool"]);
+      expect(pending.value.map(op => op.id).sort()).toEqual(["broadcast", "mempool"]);
+      expect(pending.updatedAt).toBe(refreshedAt.operations);
     });
 
-    it("has one address, the account key, used once it holds history", async () => {
+    it("has one address, the account key, used once its stored operations hold one", async () => {
       const coinModule = aCoinModule();
       const module = createSingleAddressAccountModule(coinModule);
 
-      expect(await module.getAddresses(context, aNewAccount())).toEqual([
-        { address: "address", derivationPath: "44'/60'/0'", used: false },
-      ]);
-      expect(await module.getAddresses(context, aSyncedAccount([anOperation()]))).toEqual([
-        { address: "address", derivationPath: "44'/60'/0'", used: true },
-      ]);
-      expect(await module.getFreshAddress(context, aNewAccount())).toEqual({
-        address: "address",
-        derivationPath: "44'/60'/0'",
+      expect(await module.getAddresses(context, aNewAccount())).toEqual({
+        value: [{ address: "address", derivationPath: "44'/60'/0'", used: false }],
+        updatedAt: 0,
+      });
+      expect(await module.getAddresses(context, aSyncedAccount([anOperation()]))).toEqual({
+        value: [{ address: "address", derivationPath: "44'/60'/0'", used: true }],
+        updatedAt: refreshedAt.operations,
+      });
+      expectNoNetworkCall(coinModule);
+    });
+
+    it("derives the fresh address from the descriptor: always fresh", async () => {
+      const coinModule = aCoinModule();
+      const module = createSingleAddressAccountModule(coinModule);
+
+      expect(await module.getFreshAddress(context, aNewAccount(), { refresh: true })).toEqual({
+        value: { address: "address", derivationPath: "44'/60'/0'" },
+      });
+      expectNoNetworkCall(coinModule);
+    });
+
+    it("has no stakes, always fresh, without includeStakes", async () => {
+      const coinModule = aCoinModule();
+      const module = createSingleAddressAccountModule(coinModule);
+
+      expect(await module.getStakes(context, aSyncedAccount(), { refresh: true })).toEqual({
+        value: [],
       });
       expectNoNetworkCall(coinModule);
     });
@@ -233,12 +290,138 @@ describe("createSingleAddressAccountModule", () => {
       });
 
       expect(await module.getFreshAddress(context, aNewAccount())).toEqual({
-        address: "address",
-        derivationPath: "44'/60'/0'/0/0",
+        value: { address: "address", derivationPath: "44'/60'/0'/0/0" },
       });
-      expect((await module.getAddresses(context, aNewAccount()))[0]!.derivationPath).toBe(
+      expect((await module.getAddresses(context, aNewAccount())).value[0]!.derivationPath).toBe(
         "44'/60'/0'/0/0",
       );
+    });
+  });
+
+  describe("refreshing reads", () => {
+    const refreshedState = (fields: Partial<SingleAddressAccountState>) =>
+      versioned({ ...syncedState.data, ...fields });
+
+    it("refreshes the balances, stores them, and answers them fresh", async () => {
+      const coinModule = aCoinModule();
+      jest.mocked(coinModule.getBalance).mockResolvedValue([{ value: 60n, asset: native }]);
+      const module = createSingleAddressAccountModule(coinModule, { now: () => now + 10 });
+      const account = aSyncedAccount();
+
+      expect(await module.getBalances(context, account, { refresh: true })).toEqual({
+        value: [{ value: 60n, asset: native }],
+      });
+      expect(coinModule.getBalance).toHaveBeenCalledWith(context, "address");
+      expect(coinModule.lastBlock).not.toHaveBeenCalled();
+      expect(coinModule.listOperations).not.toHaveBeenCalled();
+      expect(account.state.snapshot()).toEqual(
+        refreshedState({
+          balances: [{ value: "60", asset: native }],
+          refreshedAt: { ...refreshedAt, balances: now + 10 },
+        }),
+      );
+      expect(await module.getBalances(context, account)).toMatchObject({ updatedAt: now + 10 });
+    });
+
+    it("refreshes the stakes with includeStakes", async () => {
+      const coinModule = aCoinModule();
+      const module = createSingleAddressAccountModule(coinModule, {
+        includeStakes: true,
+        now: () => now + 10,
+      });
+      const account = aSyncedAccount();
+
+      expect(await module.getStakes(context, account, { refresh: true })).toEqual({ value: [] });
+      expect(coinModule.getStakes).toHaveBeenCalledTimes(1);
+      expect(coinModule.getBalance).not.toHaveBeenCalled();
+      expect(account.state.snapshot()?.data.refreshedAt).toEqual({
+        ...refreshedAt,
+        stakes: now + 10,
+      });
+    });
+
+    it("refreshes the operations before listing them, or the pending ones", async () => {
+      const coinModule = aCoinModule();
+      jest.mocked(coinModule.listOperations).mockResolvedValue({
+        items: [
+          {
+            id: "op",
+            type: "IN",
+            senders: ["sender"],
+            recipients: ["address"],
+            value: 5n,
+            asset: native,
+            tx: {
+              hash: "hash",
+              block: { height: 100, hash: "b100", time: date },
+              fees: 1n,
+              date,
+              failed: false,
+            },
+          },
+        ],
+      });
+      const module = createSingleAddressAccountModule(coinModule, { now: () => now + 10 });
+      const account = aSyncedAccount([anOperation({ id: "mempool", block: null })]);
+      const list = jest.spyOn(account.history, "list");
+
+      const page = await module.listOperations(context, account, { refresh: true, limit: 1 });
+
+      expect(page).toEqual({ value: { items: [expect.objectContaining({ id: "op" })] } });
+      expect(list).toHaveBeenLastCalledWith({ limit: 1 });
+      expect(coinModule.getBalance).not.toHaveBeenCalled();
+      expect(account.state.snapshot()?.data).toMatchObject({
+        syncedHeight: 100,
+        refreshedAt: { ...refreshedAt, operations: now + 10 },
+      });
+      expect(await module.getPendingOperations(context, account, { refresh: true })).toEqual({
+        value: [],
+      });
+      expect(coinModule.listOperations).toHaveBeenCalledTimes(2);
+    });
+
+    it("refreshes the operations before telling whether the address is used", async () => {
+      const coinModule = aCoinModule();
+      jest.mocked(coinModule.listOperations).mockResolvedValue({
+        items: [
+          {
+            id: "op",
+            type: "IN",
+            senders: ["sender"],
+            recipients: ["address"],
+            value: 5n,
+            asset: native,
+            tx: {
+              hash: "hash",
+              block: { height: 100, hash: "b100", time: date },
+              fees: 1n,
+              date,
+              failed: false,
+            },
+          },
+        ],
+      });
+      const module = createSingleAddressAccountModule(coinModule, { now: () => now + 10 });
+      const account = aNewAccount();
+
+      expect(await module.getAddresses(context, account, { refresh: true })).toEqual({
+        value: [{ address: "address", derivationPath: "44'/60'/0'", used: true }],
+      });
+      expect(coinModule.lastBlock).toHaveBeenCalledTimes(1);
+      expect(coinModule.listOperations).toHaveBeenCalledTimes(1);
+      expect(coinModule.getBalance).not.toHaveBeenCalled();
+      expect(account.history.snapshot().map(op => op.id)).toEqual(["op"]);
+      expect(account.state.snapshot()?.data.refreshedAt.operations).toBe(now + 10);
+    });
+
+    it("fails as the refresh fails, the stored state untouched", async () => {
+      const coinModule = aCoinModule();
+      jest.mocked(coinModule.getBalance).mockRejectedValue(new Error("down"));
+      const module = createSingleAddressAccountModule(coinModule);
+      const account = aSyncedAccount();
+
+      await expect(module.getBalances(context, account, { refresh: true })).rejects.toThrow();
+      expect(account.state.snapshot()).toBe(syncedState);
     });
   });
 
@@ -536,7 +719,7 @@ describe("createSingleAddressAccountModule", () => {
       expect(coinModule.broadcast).toHaveBeenCalledWith(context, "signed", broadcastOptions);
       expect(operation).toEqual({ ...crafted.operation, hash: "tx-hash", id: "tx-hash-OUT" });
       expect(account.history.snapshot()).toEqual([operation]);
-      expect(await module.getPendingOperations(context, account)).toEqual([operation]);
+      expect((await module.getPendingOperations(context, account)).value).toEqual([operation]);
     });
   });
 });

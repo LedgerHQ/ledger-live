@@ -36,10 +36,12 @@ const valuesOf = (points: BalanceHistoryPoint[] | undefined, asset = "native") =
 describe("getPortfolioBalanceHistory", () => {
   it("samples the last day of each asset balance, computed back from the current one", async () => {
     const { deps, getBalances } = await setUp();
-    getBalances.mockResolvedValue([
-      { asset: { type: "native" }, value: 6n },
-      { asset: { type: "native" }, value: 4n, locked: 4n },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: { type: "native" }, value: 6n },
+        { asset: { type: "native" }, value: 4n, locked: 4n },
+      ],
+    });
     await deps.store
       .history("account")
       .upsert([
@@ -92,10 +94,12 @@ describe("getPortfolioBalanceHistory", () => {
       decimals: 6,
     }));
     const { deps, getBalances } = await setUp([aStoredAccount()], { resolveAsset });
-    getBalances.mockResolvedValue([
-      { asset: { type: "native" }, value: 1n },
-      { asset: usdc, value: 2n },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: { type: "native" }, value: 1n },
+        { asset: usdc, value: 2n },
+      ],
+    });
 
     const page = await getPortfolioBalanceHistory(deps, "portfolio", { size: 100 });
 
@@ -113,10 +117,12 @@ describe("getPortfolioBalanceHistory", () => {
       aStoredAccount({ id: "b" }),
       aStoredAccount({ id: "a" }),
     ]);
-    getBalances.mockResolvedValue([
-      { asset: usdc, value: 1n },
-      { asset: { type: "native" }, value: 1n },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: usdc, value: 1n },
+        { asset: { type: "native" }, value: 1n },
+      ],
+    });
     const keysOf = (points: BalanceHistoryPoint[] | undefined) =>
       points?.map(({ account_id, asset }) => `${account_id}/${asset}`);
 
@@ -137,7 +143,7 @@ describe("getPortfolioBalanceHistory", () => {
       aStoredAccount({ id: "a" }),
       aStoredAccount({ id: "b" }),
     ]);
-    getBalances.mockResolvedValue([{ asset: { type: "native" }, value: 1n }]);
+    getBalances.mockResolvedValue({ value: [{ asset: { type: "native" }, value: 1n }] });
 
     const page = await getPortfolioBalanceHistory(deps, "portfolio", {
       network: "bitcoin",

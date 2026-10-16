@@ -5,6 +5,7 @@ import {
   aLocalNetwork,
   aStoredAccount,
   aStoredPortfolio,
+  anAccountData,
   someDeps,
   type FakeNetwork,
 } from "./test-utils";
@@ -57,10 +58,12 @@ const aStake = (fields: Partial<Stake> = {}): Stake => ({
 describe("getPortfolioBalance", () => {
   it("returns the account module balances of each account, spendable and locked", async () => {
     const { deps, bitcoin, getBalances } = await setUp([aStoredAccount({ state })]);
-    getBalances.mockResolvedValue([
-      { asset: native, value: 100n, locked: 30n },
-      { asset: usdc, value: 7n },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: native, value: 100n, locked: 30n },
+        { asset: usdc, value: 7n },
+      ],
+    });
 
     expect(await getPortfolioBalance(deps, "portfolio")).toEqual({
       items: [
@@ -84,20 +87,18 @@ describe("getPortfolioBalance", () => {
         },
       ],
     });
-    expect(getBalances).toHaveBeenCalledWith(bitcoin.context, {
-      descriptor: aStoredAccount().descriptor,
-      state,
-      history: deps.store.history("account"),
-    });
+    expect(getBalances).toHaveBeenCalledWith(bitcoin.context, anAccountData(deps.store));
   });
 
   it("puts the stake of a balance on its spendable entry only", async () => {
     const { deps, getBalances } = await setUp([aStoredAccount()]);
     const stake = aStake({ delegate: "validator", amount: 40n });
-    getBalances.mockResolvedValue([
-      { asset: native, value: 100n, locked: 40n },
-      { asset: native, value: 40n, locked: 10n, stake },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: native, value: 100n, locked: 40n },
+        { asset: native, value: 40n, locked: 10n, stake },
+      ],
+    });
 
     const page = await getPortfolioBalance(deps, "portfolio");
 
@@ -115,12 +116,14 @@ describe("getPortfolioBalance", () => {
 
   it("names an asset as its chain does: type, reference and issuer", async () => {
     const { deps, getBalances } = await setUp([aStoredAccount()]);
-    getBalances.mockResolvedValue([
-      { asset: native, value: 1n },
-      { asset: { type: "credit", assetReference: "USDC", assetOwner: "issuer" }, value: 2n },
-      { asset: { type: "native", assetReference: "policy.token" }, value: 3n },
-      { asset: { type: "trc10", assetReference: "", assetOwner: "" }, value: 4n },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: native, value: 1n },
+        { asset: { type: "credit", assetReference: "USDC", assetOwner: "issuer" }, value: 2n },
+        { asset: { type: "native", assetReference: "policy.token" }, value: 3n },
+        { asset: { type: "trc10", assetReference: "", assetOwner: "" }, value: 4n },
+      ],
+    });
 
     const page = await getPortfolioBalance(deps, "portfolio");
 
@@ -143,10 +146,12 @@ describe("getPortfolioBalance", () => {
       decimals: 6,
     }));
     const { deps, getBalances } = await setUp([aStoredAccount()], { resolveAsset });
-    getBalances.mockResolvedValue([
-      { asset: native, value: 1n },
-      { asset: usdc, value: 7n, locked: 2n },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: native, value: 1n },
+        { asset: usdc, value: 7n, locked: 2n },
+      ],
+    });
 
     const page = await getPortfolioBalance(deps, "portfolio");
 
@@ -164,10 +169,12 @@ describe("getPortfolioBalance", () => {
 
   it("keeps the entries of the asset asked for, at their place in the network's list", async () => {
     const { deps, getBalances } = await setUp([aStoredAccount()]);
-    getBalances.mockResolvedValue([
-      { asset: native, value: 100n },
-      { asset: usdc, value: 7n },
-    ]);
+    getBalances.mockResolvedValue({
+      value: [
+        { asset: native, value: 100n },
+        { asset: usdc, value: 7n },
+      ],
+    });
 
     const page = await getPortfolioBalance(deps, "portfolio", { asset: "0xusdc" });
 

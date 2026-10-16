@@ -102,8 +102,8 @@ export function writeEndpoints({ networks, store }: LocalPortfolioDeps): WriteEn
     return ref && data && { ref, data };
   };
 
-  const balancesOf = ({ accountModule, context }: LocalNetwork, { data }: SenderAccount) =>
-    accountModule.getBalances(context, data);
+  const balancesOf = async ({ accountModule, context }: LocalNetwork, { data }: SenderAccount) =>
+    (await accountModule.getBalances(context, data)).value;
 
   const accountTransactionOf = async (name: Network, transaction: string) => {
     const pending = accountTransactions.get(transaction);

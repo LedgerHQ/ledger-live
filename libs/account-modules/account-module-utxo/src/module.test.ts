@@ -1,6 +1,6 @@
 import {
   createMemoryHistoryStore,
-  type AccountData,
+  createMemoryStateStore,
   type AccountIntent,
   type AccountOperation,
 } from "@ledgerhq/account-module-framework";
@@ -30,8 +30,11 @@ const utxo = (txid: string, fields: Partial<UtxoState> = {}): UtxoState => ({
   ...fields,
 });
 
+const REFRESHED_AT = NOW - 60_000;
+
 const syncedState = (utxos: UtxoState[]): UtxoAccountState => ({
   ...emptyState(),
+  refreshedAt: REFRESHED_AT,
   syncedHeight: 100,
   addresses: [
     { address: addressAt(0, 0), chain: 0, index: 0 },
@@ -41,14 +44,14 @@ const syncedState = (utxos: UtxoState[]): UtxoAccountState => ({
   utxos,
 });
 
-const account = (
-  state?: UtxoAccountState,
-  operations: AccountOperation[] = [],
-): AccountData<UtxoAccountState> & { history: ReturnType<typeof createMemoryHistoryStore> } => ({
+const account = (state?: UtxoAccountState, operations: AccountOperation[] = []) => ({
   descriptor,
-  state: state ? versioned(state) : undefined,
+  state: createMemoryStateStore<UtxoAccountState>(state ? versioned(state) : undefined),
   history: createMemoryHistoryStore(operations),
 });
+
+type Module = ReturnType<typeof createUtxoAccountModule>;
+type Data = ReturnType<typeof account>;
 
 const intent = (
   fields: Partial<AccountIntent<UtxoAccountOptions>> = {},
@@ -77,13 +80,13 @@ describe("reads", () => {
     const module = createUtxoAccountModule(api);
     const data = account();
 
-    expect(await module.getBalances(context, data)).toEqual([]);
-    expect(await module.getUTXOs(context, data)).toEqual([]);
-    expect(await module.getAddresses(context, data)).toEqual([]);
-    expect(await module.getStakes(context, data)).toEqual([]);
+    expect(await module.getBalances(context, data)).toEqual({ value: [], updatedAt: 0 });
+    expect(await module.getUTXOs(context, data)).toEqual({ value: [], updatedAt: 0 });
+    expect(await module.getAddresses(context, data)).toEqual({ value: [], updatedAt: 0 });
+    expect(await module.getStakes(context, data)).toEqual({ value: [] });
     expect(await module.getFreshAddress(context, data)).toEqual({
-      address: "ADDR-0-0",
-      derivationPath: "84'/0'/0'/0/0",
+      value: { address: "ADDR-0-0", derivationPath: "84'/0'/0'/0/0" },
+      updatedAt: 0,
     });
     expect(await module.getChangeAddress(context, data)).toEqual({
       address: "ADDR-1-0",
@@ -91,7 +94,7 @@ describe("reads", () => {
     });
   });
 
-  it("reads balances, outputs and addresses from the state", async () => {
+  it("reads balances, outputs and addresses from the state, stamped with the last walk, without any network call", async () => {
     const { api } = fakeChain();
     const module = createUtxoAccountModule(api);
     const state = syncedState([
@@ -101,39 +104,48 @@ describe("reads", () => {
     ]);
     const data = account(state);
 
-    expect(await module.getBalances(context, data)).toEqual([
-      { value: 1250n + 1000n, asset: { type: "native" } },
-    ]);
-    expect(await module.getUTXOs(context, data)).toEqual([
-      {
-        txid: "a",
-        vout: 0,
-        value: 1000n,
-        address: "ADDR-0-0",
-        derivationPath: "84'/0'/0'/0/0",
-        height: 5,
-        replaceable: false,
-        change: false,
-      },
-      {
-        txid: "b",
-        vout: 0,
-        value: 250n,
-        address: "ADDR-1-0",
-        derivationPath: "84'/0'/0'/1/0",
-        height: null,
-        replaceable: true,
-        change: true,
-      },
-    ]);
-    expect(await module.getUTXOs(context, data, u => u.change)).toHaveLength(1);
-    expect(await module.getAddresses(context, data)).toContainEqual({
+    expect(await module.getBalances(context, data, { refresh: false })).toEqual({
+      value: [{ value: 1250n + 1000n, asset: { type: "native" } }],
+      updatedAt: REFRESHED_AT,
+    });
+    expect(await module.getUTXOs(context, data)).toEqual({
+      value: [
+        {
+          txid: "a",
+          vout: 0,
+          value: 1000n,
+          address: "ADDR-0-0",
+          derivationPath: "84'/0'/0'/0/0",
+          height: 5,
+          replaceable: false,
+          change: false,
+        },
+        {
+          txid: "b",
+          vout: 0,
+          value: 250n,
+          address: "ADDR-1-0",
+          derivationPath: "84'/0'/0'/1/0",
+          height: null,
+          replaceable: true,
+          change: true,
+        },
+      ],
+      updatedAt: REFRESHED_AT,
+    });
+    expect((await module.getUTXOs(context, data, { filter: u => u.change })).value).toHaveLength(1);
+    expect((await module.getAddresses(context, data)).value).toContainEqual({
       address: "ADDR-1-0",
       derivationPath: "84'/0'/0'/1/0",
       used: true,
     });
-    expect(await module.getFreshAddress(context, data)).toMatchObject({ address: "ADDR-0-2" });
+    expect(await module.getFreshAddress(context, data)).toMatchObject({
+      value: { address: "ADDR-0-2" },
+      updatedAt: REFRESHED_AT,
+    });
     expect(await module.getChangeAddress(context, data)).toMatchObject({ address: "ADDR-1-1" });
+    expect(api.lastBlock).not.toHaveBeenCalled();
+    expect(api.listAddressTransactions).not.toHaveBeenCalled();
   });
 
   it("lists operations from the history, pending ones apart", async () => {
@@ -142,9 +154,31 @@ describe("reads", () => {
     const confirmed = anOperation({ id: "c", hash: "c" });
     const pending = anOperation({ id: "p", hash: "p", block: null, date: new Date(NOW + 1) });
     const data = account(syncedState([]), [confirmed, pending]);
+    const list = jest.spyOn(data.history, "list");
 
-    expect((await module.listOperations(context, data, { limit: 1 })).items).toEqual([pending]);
-    expect(await module.getPendingOperations(context, data)).toEqual([pending]);
+    expect(await module.listOperations(context, data, { limit: 1 })).toEqual({
+      value: { items: [pending], next: "1" },
+      updatedAt: REFRESHED_AT,
+    });
+    expect((await module.listOperations(context, data)).value.items).toEqual([pending, confirmed]);
+    expect(list.mock.calls).toEqual([[{ limit: 1 }], [{}]]);
+    expect(await module.getPendingOperations(context, data)).toEqual({
+      value: [pending],
+      updatedAt: REFRESHED_AT,
+    });
+  });
+
+  it("reads a version 1 state, the time of its last walk unknown", async () => {
+    const { api } = fakeChain();
+    const module = createUtxoAccountModule(api);
+    const { refreshedAt: _time, ...v1 } = syncedState([utxo("a")]);
+    const data = account();
+    await data.state.put({ version: 1, data: v1 } as never);
+
+    expect(await module.getBalances(context, data)).toEqual({
+      value: [{ value: 1000n, asset: { type: "native" } }],
+      updatedAt: 0,
+    });
   });
 
   it("shows addresses unchanged when the coin module does not display them", async () => {
@@ -152,10 +186,104 @@ describe("reads", () => {
     const { displayAddress: _display, ...withoutDisplay } = api;
     const module = createUtxoAccountModule(withoutDisplay, { receiveChain: 2, changeChain: 3 });
 
-    expect(await module.getFreshAddress(context, account())).toEqual({
+    expect((await module.getFreshAddress(context, account())).value).toEqual({
       address: addressAt(2, 0),
       derivationPath: "84'/0'/0'/2/0",
     });
+  });
+});
+
+describe("refreshing reads", () => {
+  const funding = tx("fund", {
+    block: { height: 10, hash: "h10", time: "2026-01-01T00:00:00.000Z" },
+    inputs: [{ txid: "ext", vout: 0, address: "stranger", value: "2000" }],
+    outputs: [{ index: 0, address: addressAt(0, 0), value: "1000" }],
+  });
+
+  it("walks the addresses as a sync does, stores the state, then answers fresh", async () => {
+    const { api } = fakeChain([funding]);
+    const module = createUtxoAccountModule(api, { gapLimit: 1, now: () => NOW });
+    const data = account();
+
+    expect(await module.getBalances(context, data, { refresh: true })).toEqual({
+      value: [{ value: 1000n, asset: { type: "native" } }],
+    });
+    expect(api.lastBlock).toHaveBeenCalledTimes(1);
+    expect(data.state.snapshot()?.data).toMatchObject({ syncedHeight: 100, refreshedAt: NOW });
+    expect(data.history.snapshot().map(op => op.id)).toEqual(["fund-IN"]);
+    expect(await module.getBalances(context, data)).toMatchObject({ updatedAt: NOW });
+  });
+
+  it.each([
+    [
+      "listOperations",
+      (module: Module, data: Data) =>
+        module.listOperations(context, data, { refresh: true, limit: 1 }),
+    ],
+    [
+      "getPendingOperations",
+      (module: Module, data: Data) => module.getPendingOperations(context, data, { refresh: true }),
+    ],
+    [
+      "getUTXOs",
+      (module: Module, data: Data) =>
+        module.getUTXOs(context, data, { refresh: true, filter: u => !u.change }),
+    ],
+    [
+      "getAddresses",
+      (module: Module, data: Data) => module.getAddresses(context, data, { refresh: true }),
+    ],
+    [
+      "getFreshAddress",
+      (module: Module, data: Data) => module.getFreshAddress(context, data, { refresh: true }),
+    ],
+  ])("refreshes before %s", async (_, call) => {
+    const { api } = fakeChain([funding]);
+    const module = createUtxoAccountModule(api, { gapLimit: 1, now: () => NOW });
+    const data = account();
+
+    const answer = await call(module, data);
+
+    expect(answer).not.toHaveProperty("updatedAt");
+    expect(api.lastBlock).toHaveBeenCalledTimes(1);
+    expect(data.state.snapshot()?.data.refreshedAt).toBe(NOW);
+  });
+
+  it("answers what the walk found", async () => {
+    const { api } = fakeChain([funding]);
+    const module = createUtxoAccountModule(api, { gapLimit: 1, now: () => NOW });
+
+    expect(
+      (await module.listOperations(context, account(), { refresh: true })).value.items.map(
+        op => op.id,
+      ),
+    ).toEqual(["fund-IN"]);
+    expect((await module.getUTXOs(context, account(), { refresh: true })).value).toEqual([
+      expect.objectContaining({ txid: "fund", value: 1000n }),
+    ]);
+    expect((await module.getFreshAddress(context, account(), { refresh: true })).value).toEqual({
+      address: "ADDR-0-1",
+      derivationPath: "84'/0'/0'/0/1",
+    });
+  });
+
+  it("has no stakes to refresh", async () => {
+    const { api } = fakeChain();
+    const module = createUtxoAccountModule(api);
+
+    expect(await module.getStakes(context, account(), { refresh: true })).toEqual({ value: [] });
+    expect(api.lastBlock).not.toHaveBeenCalled();
+  });
+
+  it("fails as the walk fails, the stored state untouched", async () => {
+    const { api } = fakeChain();
+    api.lastBlock.mockRejectedValueOnce(new Error("down"));
+    const module = createUtxoAccountModule(api);
+    const data = account(syncedState([]));
+    const stored = data.state.snapshot();
+
+    await expect(module.getBalances(context, data, { refresh: true })).rejects.toThrow("down");
+    expect(data.state.snapshot()).toBe(stored);
   });
 });
 

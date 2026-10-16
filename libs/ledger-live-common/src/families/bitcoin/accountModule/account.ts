@@ -112,7 +112,7 @@ export async function getOwnDisplayAddresses(
     buildContext(currencyId),
     bitcoinAccountData(account),
   );
-  return new Set(addresses.map(a => a.address));
+  return new Set(addresses.value.map(a => a.address));
 }
 
 /** Pending transactions of the account, other than `txid`, spending one of `outpoints`. */

@@ -13,9 +13,12 @@ const setUp = () => {
   const { accountModule } = bitcoin;
   accountModule.sync.mockImplementation(async function* (_context, account: AccountData) {
     await account.history.upsert([anOperation({ id: "received", hash: "tx-1", value: 50n })]);
-    yield { state: { version: 1, data: { height: 1 } }, progress: {} };
+    await account.state.put({ version: 1, data: { height: 1 } });
+    yield { progress: {} };
   });
-  accountModule.getBalances.mockResolvedValue([{ asset: { type: "native" }, value: 50n }]);
+  accountModule.getBalances.mockResolvedValue({
+    value: [{ asset: { type: "native" }, value: 50n }],
+  });
   accountModule.craftTransaction.mockImplementation(
     async (): Promise<CraftedAccountTransaction> => ({
       transaction: "raw",
@@ -100,8 +103,7 @@ describe("createLocalPortfolio", () => {
   it("serves the account reads of an account", async () => {
     const { api, bitcoin } = setUp();
     bitcoin.accountModule.getFreshAddress.mockResolvedValue({
-      address: "bc1fresh",
-      derivationPath: "84'/0'/0'/0/0",
+      value: { address: "bc1fresh", derivationPath: "84'/0'/0'/0/0" },
     });
     await api.createPortfolio("portfolio");
     await api.addRegistrations("portfolio", [

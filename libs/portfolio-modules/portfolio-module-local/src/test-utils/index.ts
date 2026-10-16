@@ -3,7 +3,13 @@ import type { AccountDescriptor, AccountModuleApi } from "@ledgerhq/account-modu
 import { testContext } from "@ledgerhq/account-module-framework/test-utils";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import { createMemoryPortfolioStore } from "../store";
-import type { LocalNetwork, LocalPortfolioDeps, StoredAccount, StoredPortfolio } from "../types";
+import type {
+  LocalNetwork,
+  LocalPortfolioDeps,
+  PortfolioStore,
+  StoredAccount,
+  StoredPortfolio,
+} from "../types";
 
 export type FakeAccountModule = jest.Mocked<AccountModuleApi<any>>;
 export type FakeCoinModule = jest.Mocked<CoinModuleApi<any, any, any>>;
@@ -17,11 +23,11 @@ const unexpected = (name: string) =>
     throw new Error(`Unexpected call to ${name}`);
   });
 
-/** Every method throws until a test mocks it; sync yields nothing, getBalances returns []. */
+/** Every method throws until a test mocks it; sync yields nothing, getBalances reads []. */
 export const fakeAccountModule = (): FakeAccountModule =>
   ({
     sync: jest.fn(async function* () {}),
-    getBalances: jest.fn(async () => []),
+    getBalances: jest.fn(async () => ({ value: [] })),
     listOperations: unexpected("listOperations"),
     getPendingOperations: unexpected("getPendingOperations"),
     getStakes: unexpected("getStakes"),
@@ -112,6 +118,16 @@ export const aStoredAccount = (fields: Partial<StoredAccount> = {}): StoredAccou
     ...fields,
   };
 };
+
+/**
+ * The account data local hands the account module for the account `id` (`aStoredAccount`): its
+ * descriptor, its history, and a state store (`stateStoreOf`, tested on its own).
+ */
+export const anAccountData = (store: PortfolioStore, id = "account") => ({
+  descriptor: aDescriptor(`key-${id}`),
+  state: { get: expect.any(Function), put: expect.any(Function) },
+  history: store.history(id),
+});
 
 /** The same account as an account not served locally. */
 export const aFailedAccount = (fields: Partial<StoredAccount> = {}): StoredAccount => {

@@ -37,7 +37,9 @@ type UtxoAccountModuleOptions = {
 };
 
 type UtxoAccountModuleApi = AccountModuleApi<UtxoAccountTypes> & {
+  // (context, account, options?: { filter?: (utxo: Utxo) => boolean; refresh?: boolean }) => Promise<AccountRead<Utxo[]>>
   getUTXOs: NonNullable<AccountModuleApi<UtxoAccountTypes>["getUTXOs"]>;
+  /** Write path: from the stored state, never refreshed. */
   getChangeAddress(context, account): Promise<{ address: string; derivationPath: string }>;
 };
 
@@ -89,9 +91,33 @@ amount, senders, recipients, and optionally replaceable).
 
 ## State
 
-`UtxoAccountState` (version `UTXO_ACCOUNT_STATE_VERSION`) is small and rebuildable: the synced height, the reorg anchor,
-the addresses holding history, the confirmed outputs and the unspent outputs. A state of another version, or malformed,
-is not trusted: the account syncs from scratch. The write path of an account without state rejects with
-`UtxoAccountNotSyncedError`. The pure pieces are exported too: `completeIntent`, `txToOperations`, `removeReplaced`
+`UtxoAccountState` (version `UTXO_ACCOUNT_STATE_VERSION`, 2) is small and rebuildable: the synced height, the reorg
+anchor, the addresses holding history, the confirmed outputs, the unspent outputs, and `refreshedAt`, the epoch-ms time
+of the last walk of the addresses (0: never). It lives in the client's `StateStore` (`account.state`): `sync` puts the
+state its walk completes; a failed walk keeps the stored one. A version 1 state (no `refreshedAt`) is migrated as it is
+read, with `refreshedAt` 0: never known; a state of another version, or malformed, is not trusted: the account syncs
+from scratch. The write path of an account without state rejects with `UtxoAccountNotSyncedError`.
+
+```ts
+type UtxoAccountState = {  // UTXO_ACCOUNT_STATE_VERSION = 2
+  syncedHeight: number;                              // tip of the last walk; the next one resumes rewindBlocks below
+  anchor: { height: number; hash: string } | null;   // highest block holding a transaction of the account
+  addresses: UtxoAddressState[];                     // every address holding history
+  confirmedUtxos: UtxoState[];
+  utxos: UtxoState[];                                // mempool applied, replaced transactions removed
+  refreshedAt: number;                               // epoch ms of the last walk; 0: never (v1 migrates with 0)
+};
+```
+
+### Reads
+
+Every read derives from the walk of the addresses: the account has one scope. A read answers from the stored state and
+history, without any network call (`getFreshAddress` derives the next address, with no network), and `updatedAt` is the
+time of the last walk. With `refresh: true`, it walks the addresses first exactly as `sync` does (the whole account is
+refreshed and stored) and answers fresh, without `updatedAt`. `getStakes` answers no stake, always fresh: `refresh` does
+nothing. The write path (`getChangeAddress` included) reads the stored state and never refreshes it.
+
+The pure pieces are exported too: `completeIntent`, `txToOperations`, `removeReplaced`
 (`DEFAULT_REPLACED_OPERATION_EXPIRY_MS`, 2 hours), `applyTransactions`, `reconcile`, `selectableUtxos`,
-`conflictingTransactions`, `outpointOf`, `inputsOf`, `readState`, `emptyState`, `versioned`.
+`conflictingTransactions`, `outpointOf`, `inputsOf`, `readState` (the state in the current version, a version 1 one
+migrated; `undefined` when not trusted), `storedState`, `emptyState`, `versioned`.

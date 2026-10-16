@@ -65,7 +65,7 @@ type StoredPortfolio = { id: string; registrations: Registration[]; accounts: St
 type StoredAccount = {
   id: string; network: Network; registrationId: string; status: AccountStatus;
   descriptor?: AccountDescriptor; // absent for an account not served locally
-  state?: Versioned;              // absent until the first sync
+  state?: Versioned;              // backs the account module's state store; absent until its first put
   error?: string;                 // why the registration, or the last sync, failed: its message
   failure?: ErrorView;            // why the last sync failed, JSON form; cleared by a successful sync
 };
@@ -79,7 +79,7 @@ service intent (see the write path below). `findAccount` lets the write path fin
 
 **One portfolio account is exactly one account of an account module.** The account layer is one Ledger Wallet account. That account may own many addresses, as a UTXO xpub account does, and it walks them itself. The portfolio layer is cross-chain: it brings together accounts across networks, and never composes addresses itself.
 
-A served account carries one `AccountDescriptor`: the network's `currencyId`, `derivationMode` and `derivationPath`, index 0, and the registration key. It also carries one versioned state.
+A served account carries one `AccountDescriptor`: the network's `currencyId`, `derivationMode` and `derivationPath`, index 0, and the registration key. It also carries one versioned state. Its account module gets a `StateStore` on it: `get` reads the `state` of the latest stored version of the account, and `put` writes it back through the `PortfolioStore`: a read-modify-write of the portfolio, like every account update of local.
 
 | Registration | Accounts |
 | --- | --- |
@@ -97,7 +97,7 @@ New accounts are `uninitialized`. When an account id already exists in the portf
 The extension fields and methods, and what their entries mean, are described once in the
 [framework README](../../portfolio-module-framework/README.md#extensions). Here is how local serves them.
 
-- **Sync is explicit.** `sync(portfolioId, { signal })` runs the account module sync of every account served locally to completion, and persists its state. A failing account records its `error` message and its `failure` (`ErrorView`) and the sync moves on to the next account; a successful sync clears both. The status becomes `registration_failure` only if the account was never synchronized. `PortfolioAccount.error` is the `failure`, else an `Error` of the message.
+- **Sync is explicit.** `sync(portfolioId, { signal })` runs the account module sync of every account served locally to completion; the module puts the account state through its state store. It is the only refresher of an account: local reads its account module (balances, addresses, outputs) without `refresh`, so they make no network call and serve what the last sync stored (their `updatedAt` is not surfaced). A failing account keeps the last state its module put, and records its `error` message and its `failure` (`ErrorView`) and the sync moves on to the next account; a successful sync clears both. The status becomes `registration_failure` only if the account was never synchronized. `PortfolioAccount.error` is the `failure`, else an `Error` of the message.
 - **Failures in JSON form** (`ErrorView`): name, message, the error's own fields in JSON form and up to three `Error` causes. Functions, undefined values, fields longer than 4096 characters of JSON, circular ones and `config`, `request`, `response`, `headers`, `stack` are dropped, so an HTTP client's headers and keyed URLs never reach the store.
 - **Indexer registration.** Once a `static` registration of a locally served network is stored, its address is handed to the coin module's `register` when `supports("register")` says so: fire and forget, a rejection logged through the network's context. A client registering its account on every sync registers it once per sync.
 - **No fiat values.** `currency` is ignored, and `fiat_value` is never set.

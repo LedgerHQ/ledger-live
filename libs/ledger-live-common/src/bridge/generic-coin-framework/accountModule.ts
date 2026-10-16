@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import {
   createMemoryHistoryStore,
+  createMemoryStateStore,
   type AccountData,
   type AccountIntent,
   type AccountOperation,
@@ -88,7 +89,10 @@ export function toLiveOperation(
   return binding.toLiveOperation?.(op, live) ?? live;
 }
 
-/** What the account module knows of a Ledger Wallet account; its pending operations are optimistic. */
+/**
+ * What the account module knows of a Ledger Wallet account, in memory: the state it persists, and
+ * its operations, the pending ones optimistic.
+ */
 export function accountDataOf(binding: AccountModuleBinding, account: Account): AccountData {
   return {
     descriptor: {
@@ -98,7 +102,7 @@ export function accountDataOf(binding: AccountModuleBinding, account: Account): 
       key: decodeAccountId(account.id).xpubOrAddress,
       derivationPath: accountPathOf(account.freshAddressPath),
     },
-    state: binding.readState(account),
+    state: createMemoryStateStore(binding.readState(account)),
     history: createMemoryHistoryStore([
       ...account.operations.map(op => toAccountOperation(op, false)),
       ...account.pendingOperations.map(op => toAccountOperation(op, true)),
@@ -107,8 +111,9 @@ export function accountDataOf(binding: AccountModuleBinding, account: Account): 
 }
 
 /**
- * The shape of an account served by an account module: the module syncs it from the state and the
- * operations the account holds, and the account is rebuilt from what the module reads.
+ * The shape of an account served by an account module: the module syncs it from in-memory stores
+ * seeded with the state and the operations the account holds, and the account is rebuilt from what
+ * the module stored there.
  */
 export async function getAccountModuleShape(
   binding: AccountModuleBinding,
@@ -142,6 +147,7 @@ export async function getAccountModuleShape(
   const history = createMemoryHistoryStore(
     (initialAccount?.operations ?? []).map(op => toAccountOperation(op, false)),
   );
+  const state = createMemoryStateStore(binding.readState(initialAccount));
   const account: AccountData = {
     descriptor: {
       currencyId: currency.id,
@@ -150,23 +156,23 @@ export async function getAccountModuleShape(
       key,
       derivationPath: accountPath,
     },
-    state: binding.readState(initialAccount),
+    state,
     history,
   };
 
   let blockHeight: number | undefined;
-  for await (const event of module.sync(context, account)) {
-    account.state = event.state;
-    blockHeight = event.progress.blockHeight ?? blockHeight;
+  for await (const { progress } of module.sync(context, account)) {
+    blockHeight = progress.blockHeight ?? blockHeight;
   }
 
-  const [balances, fresh, fields] = await Promise.all([
+  // The sync refreshed every scope: the reads answer from what it stored.
+  const [{ value: balances }, { value: fresh }, fields] = await Promise.all([
     module.getBalances(context, account),
     module.getFreshAddress(context, account),
     binding.accountFields({
       key,
-      state: account.state,
-      getUTXOs: async () => (await module.getUTXOs?.(context, account)) ?? [],
+      state: state.snapshot(),
+      getUTXOs: async () => (await module.getUTXOs?.(context, account))?.value ?? [],
     }),
   ]);
   const native = balances.find(balance => balance.asset.type === "native");

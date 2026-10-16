@@ -913,7 +913,7 @@ describe("getPortfolioAccountShape of an account module account", () => {
 
   it("scans an account from the key read on the device, with the fields legacy gives it", async () => {
     const module = fakeAccountModule();
-    (module as { getUTXOs?: unknown }).getUTXOs = jest.fn(async () => [utxo]);
+    (module as { getUTXOs?: unknown }).getUTXOs = jest.fn(async () => ({ value: [utxo] }));
     const toLiveOperation = jest.fn((_op, live) => ({ ...live, completed: true }));
     const syncedHeight = jest.fn(() => 790);
     const binding = fakeBinding(module, { toLiveOperation, syncedHeight });
@@ -970,14 +970,15 @@ describe("getPortfolioAccountShape of an account module account", () => {
 
   it("reads the operations newest first, as the module's history orders them", async () => {
     const module = fakeAccountModule();
-    module.sync.mockImplementation(async function* (_context, { history }) {
+    module.sync.mockImplementation(async function* (_context, { history, state }) {
       await history.upsert([
         accountOperation({ id: "a-OUT", hash: "a" }),
         accountOperation({ id: "b-IN", hash: "b", type: "IN" }),
         accountOperation({ id: "older", hash: "older", date: new Date("2026-01-01") }),
         accountOperation({ id: "sent", hash: "sent", optimistic: true, block: null }),
       ]);
-      yield { state: { version: 1, data: {} }, progress: {} };
+      await state.put({ version: 1, data: {} });
+      yield { progress: {} };
     });
     const binding = fakeBinding(module);
 

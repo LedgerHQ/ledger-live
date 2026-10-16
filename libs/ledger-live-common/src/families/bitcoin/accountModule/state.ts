@@ -92,6 +92,8 @@ export function migrateWalletAccount(
       addresses: [...addresses.values()],
       confirmedUtxos: utxos,
       utxos,
+      // Never refreshed by the account module: the next sync does.
+      refreshedAt: 0,
     },
   };
 }

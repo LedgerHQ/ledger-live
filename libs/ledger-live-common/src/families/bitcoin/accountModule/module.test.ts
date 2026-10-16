@@ -1,3 +1,4 @@
+import { createMemoryStateStore } from "@ledgerhq/account-module-framework";
 import type { UtxoCoinModuleApi } from "@ledgerhq/account-module-utxo";
 import type { createApi } from "@ledgerhq/coin-bitcoin/api";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
@@ -36,7 +37,7 @@ describe("bitcoinAccountModule", () => {
         currencyId: "litecoin",
         index: 0,
       },
-      state: undefined,
+      state: createMemoryStateStore(),
       history,
     })) {
       // drained

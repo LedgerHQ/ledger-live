@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import type {
+  AccountData,
   AccountModuleApi,
   AccountOperation,
   CraftedAccountTransaction,
@@ -71,12 +72,18 @@ const account = (fields: Partial<Account> = {}): Account =>
 
 function fakeModule(fields: Partial<AccountModuleApi> = {}): AccountModuleApi {
   return {
-    sync: async function* () {
-      yield { state: { version: 1, data: "first" }, progress: {} };
-      yield { state: { version: 1, data: "last" }, progress: { blockHeight: 120 } };
+    sync: async function* (_context, { state }) {
+      await state.put({ version: 1, data: "first" });
+      yield { progress: {} };
+      await state.put({ version: 1, data: "last" });
+      yield { progress: { blockHeight: 120 } };
     },
-    getBalances: jest.fn(async () => [{ value: 900n, asset: { type: "native" }, locked: 100n }]),
-    getFreshAddress: jest.fn(async () => ({ address: "next", derivationPath: "84'/0'/2'/0/8" })),
+    getBalances: jest.fn(async () => ({
+      value: [{ value: 900n, asset: { type: "native" }, locked: 100n }],
+    })),
+    getFreshAddress: jest.fn(async () => ({
+      value: { address: "next", derivationPath: "84'/0'/2'/0/8" },
+    })),
     estimateFees: jest.fn(async () => ({ value: 1n })),
     validateIntent: jest.fn(async () => ({
       errors: {},
@@ -180,7 +187,8 @@ describe("accountDataOf", () => {
       key: "xpub",
       derivationPath: "84'/0'/2'",
     });
-    expect(data.state).toEqual({ version: 1, data: "persisted" });
+    // In memory: the write path reads it, and never refreshes it.
+    expect(await data.state.get()).toEqual({ version: 1, data: "persisted" });
     expect((await data.history.list()).items.map(op => [op.hash, op.optimistic ?? false])).toEqual([
       ["sent", true],
       ["tx", false],
@@ -200,13 +208,15 @@ describe("getAccountModuleShape", () => {
 
   it("scans a new account: the key from the device, the account synced and read by the module", async () => {
     const module = fakeModule({
-      sync: async function* (_context, { history }) {
+      sync: async function* (_context, { history, state }) {
         await history.upsert([
           accountOperation(),
           accountOperation({ id: "o", hash: "o", optimistic: true }),
         ]);
-        yield { state: { version: 1, data: "synced" }, progress: { blockHeight: 120 } };
-        yield { state: { version: 1, data: "final" }, progress: {} };
+        await state.put({ version: 1, data: "synced" });
+        yield { progress: { blockHeight: 120 } };
+        await state.put({ version: 1, data: "final" });
+        yield { progress: {} };
       },
     });
     const bound = binding(module, { readState: jest.fn(() => undefined) });
@@ -257,11 +267,12 @@ describe("getAccountModuleShape", () => {
       replaceable: false,
       change: false,
     };
-    const getUTXOs = jest.fn(async () => [utxo]);
+    const getUTXOs = jest.fn(async () => ({ value: [utxo], updatedAt: 1 }));
     const withUtxos = binding(fakeModule({ getUTXOs }));
     await getAccountModuleShape(withUtxos, info, deps);
     const [{ getUTXOs: readUtxos }] = jest.mocked(withUtxos.accountFields).mock.calls[0];
     await expect(readUtxos()).resolves.toEqual([utxo]);
+    // From what the sync stored: no refresh asked.
     expect(getUTXOs).toHaveBeenCalledWith(
       context,
       expect.objectContaining({ state: expect.anything() }),
@@ -274,10 +285,13 @@ describe("getAccountModuleShape", () => {
   });
 
   it("syncs a known account from its key, its state and its operations", async () => {
-    const sync = jest.fn(async function* () {
-      yield { state: { version: 1, data: "synced" }, progress: {} };
+    const resumedFrom: unknown[] = [];
+    const sync = jest.fn(async function* (_context: unknown, { state }: AccountData) {
+      resumedFrom.push(await state.get());
+      await state.put({ version: 1, data: "synced" });
+      yield { progress: {} };
     });
-    const module = fakeModule({ sync, getBalances: jest.fn(async () => []) });
+    const module = fakeModule({ sync, getBalances: jest.fn(async () => ({ value: [] })) });
     const bound = binding(module);
 
     const shape = await getAccountModuleShape(
@@ -292,6 +306,7 @@ describe("getAccountModuleShape", () => {
       { state: unknown; descriptor: { key: string } },
     ];
     expect(data.descriptor.key).toBe("xpub");
+    expect(resumedFrom).toEqual([{ version: 1, data: "persisted" }]);
     expect(shape).toMatchObject({ id: ACCOUNT_ID, balance: new BigNumber(0), operationsCount: 1 });
     expect(shape).not.toHaveProperty("blockHeight");
   });

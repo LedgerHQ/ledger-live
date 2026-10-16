@@ -1,4 +1,4 @@
-import type { AccountData } from "@ledgerhq/account-module-framework";
+import type { AccountData, StateStore } from "@ledgerhq/account-module-framework";
 import {
   PortfolioApiError,
   type Portfolio,
@@ -59,11 +59,33 @@ export const toPortfolio = ({ id, registrations, accounts }: StoredPortfolio): P
   accounts: accounts.map(toPortfolioAccount),
 });
 
+/**
+ * The account state as its module reads and writes it: the stored account's, read from the latest
+ * stored version of the portfolio and written back through `updateAccount`.
+ */
+export const stateStoreOf = (
+  store: PortfolioStore,
+  portfolioId: string,
+  accountId: string,
+): StateStore => ({
+  get: async () =>
+    (await store.get(portfolioId))?.accounts.find(({ id }) => id === accountId)?.state,
+  put: async state => {
+    await updateAccount(store, portfolioId, accountId, account => ({ ...account, state }));
+  },
+});
+
 /** What the account module knows of the account; nothing for an account not served locally. */
 export const accountDataOf = (
   store: PortfolioStore,
-  { id, descriptor, state }: StoredAccount,
-): AccountData | undefined => descriptor && { descriptor, state, history: store.history(id) };
+  portfolioId: string,
+  { id, descriptor }: StoredAccount,
+): AccountData | undefined =>
+  descriptor && {
+    descriptor,
+    state: stateStoreOf(store, portfolioId, id),
+    history: store.history(id),
+  };
 
 export async function loadAccountData(
   store: PortfolioStore,
@@ -71,17 +93,18 @@ export async function loadAccountData(
 ): Promise<AccountData | undefined> {
   const portfolio = await store.get(portfolioId);
   const account = portfolio?.accounts.find(({ id }) => id === accountId);
-  return account && accountDataOf(store, account);
+  return account && accountDataOf(store, portfolioId, account);
 }
 
 export type LocalAccount = { network: LocalNetwork; data: AccountData };
 
-/** The network and account module data of an account served locally. */
+/** The network and account module data of an account of `portfolioId` served locally. */
 export function localAccountOf(
   { networks, store }: Pick<LocalPortfolioDeps, "networks" | "store">,
+  portfolioId: string,
   account: StoredAccount,
 ): LocalAccount | undefined {
   const network = localNetworkOf(networks, account.network);
-  const data = accountDataOf(store, account);
+  const data = accountDataOf(store, portfolioId, account);
   return network && data && { network, data };
 }

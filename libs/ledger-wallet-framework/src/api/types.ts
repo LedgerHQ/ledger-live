@@ -140,9 +140,9 @@ export type AccountUtxo = {
 export type SyncedAccountModule = {
   /** The account key (the extended public key of a UTXO account). */
   key: string;
-  /** The module state to persist; `undefined` when it has none. */
+  /** The module state to persist, as the sync left it in its state store; `undefined` when none. */
   state: Versioned | undefined;
-  /** The account's unspent outputs. */
+  /** The account's unspent outputs, as the sync stored them (no refresh). */
   getUTXOs: () => Promise<AccountUtxo[]>;
 };
 
@@ -169,7 +169,10 @@ export type AccountModuleBinding = {
     },
     signerContext: SignerContext<any>,
   ) => Promise<string>;
-  /** The module state the account persists; `undefined` when it has none. */
+  /**
+   * The module state the account persists, which seeds the module's state store; `undefined` when
+   * it has none.
+   */
   readState: (account: Account | undefined) => Versioned | undefined;
   /** The family fields of a synced account (its resources, the state to persist, ...). */
   accountFields: (synced: SyncedAccountModule) => Promise<Partial<Account>>;

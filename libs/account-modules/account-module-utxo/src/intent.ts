@@ -7,7 +7,7 @@ import {
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { addressPath, deriverOf, nextAddress } from "./addresses";
 import { inputsOf, outpointOf } from "./interpret";
-import { UtxoAccountNotSyncedError, readState } from "./state";
+import { UtxoAccountNotSyncedError, storedState } from "./state";
 import type {
   UtxoAccountOptions,
   UtxoAccountState,
@@ -91,17 +91,17 @@ function withoutAccountOptions(intent: AccountIntent<UtxoAccountOptions>) {
 /**
  * The coin intent of an account intent: what only the whole account knows is added to its data —
  * the inputs (coin selection by the coin module, or the replaced transaction's), their signing
- * paths, the change address and the derivation mode.
+ * paths, the change address and the derivation mode. From the stored state, not refreshed.
  */
 export async function completeIntent(
   api: UtxoCoinModuleApi,
   { receiveChain, changeChain }: Chains,
   context: Context<any>,
-  { descriptor, state: persisted, history }: AccountData<UtxoAccountState>,
+  { descriptor, state: store, history }: AccountData<UtxoAccountState>,
   intent: AccountIntent<UtxoAccountOptions>,
   customFeesParameters?: Record<string, unknown>,
 ): Promise<UtxoCoinIntent> {
-  const state = readState(persisted);
+  const state = await storedState(store);
   if (!state) throw new UtxoAccountNotSyncedError();
   const derive = deriverOf(api, context, descriptor);
   const [receive, change, operations] = await Promise.all([

@@ -1,7 +1,8 @@
 import { discoverAccounts, type DiscoveredAccount } from "./discover";
 import { createMemoryHistoryStore } from "./history";
+import { createMemoryStateStore } from "./state";
 import { anOperation, testContext } from "./test-utils";
-import type { AccountModuleApi, HistoryStore } from "./types";
+import type { AccountModuleApi, HistoryStore, StateStore } from "./types";
 
 const context = testContext();
 
@@ -9,13 +10,14 @@ const context = testContext();
 function fakeModule(): AccountModuleApi {
   const used = (key: string) => key === "key-0'" || key === "key-1'";
   return {
-    sync: async function* (_context, { descriptor, history }) {
+    sync: async function* (_context, { descriptor, state, history }) {
       if (used(descriptor.key)) await history.upsert([anOperation({ id: descriptor.key })]);
-      yield { state: { version: 1, data: descriptor.key }, progress: {} };
+      await state.put({ version: 1, data: descriptor.key });
+      yield { progress: {} };
     },
-    getBalances: async (_context, { descriptor }) => [
-      { value: descriptor.key === "key-2'" ? 5n : 0n, asset: { type: "native" } },
-    ],
+    getBalances: async (_context, { descriptor }) => ({
+      value: [{ value: descriptor.key === "key-2'" ? 5n : 0n, asset: { type: "native" } }],
+    }),
   } as Partial<AccountModuleApi> as AccountModuleApi;
 }
 
@@ -48,12 +50,13 @@ describe("discoverAccounts", () => {
         index: 0,
         key: "key-0'",
       },
-      state: { version: 1, data: "key-0'" },
     });
+    expect(await found[0]?.state.get()).toEqual({ version: 1, data: "key-0'" });
   });
 
-  it("starts where asked, bounds the scan, and writes to the histories the client provides", async () => {
+  it("starts where asked, bounds the scan, and writes to the stores the client provides", async () => {
     const histories: HistoryStore[] = [];
+    const states: StateStore[] = [];
     const found = await collect(
       discoverAccounts(fakeModule(), context, {
         ...request,
@@ -64,10 +67,16 @@ describe("discoverAccounts", () => {
           histories.push(history);
           return history;
         },
+        createState: () => {
+          const state = createMemoryStateStore();
+          states.push(state);
+          return state;
+        },
       }),
     );
     expect(found.map(a => a.descriptor.index)).toEqual([1]);
     expect(found[0]?.history).toBe(histories[0]);
+    expect(found[0]?.state).toBe(states[0]);
   });
 
   it("passes the abort signal on and stops once aborted", async () => {

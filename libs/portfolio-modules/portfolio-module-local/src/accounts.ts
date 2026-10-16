@@ -43,7 +43,7 @@ export function accountEndpoints(deps: LocalPortfolioDeps): AccountEndpoints {
     const portfolio = await requirePortfolio(deps.store, portfolioId);
     const account = portfolio.accounts.find(({ id }) => id === accountId);
     if (!account) throw new PortfolioApiError("NOT_FOUND", `Account ${accountId} not found`);
-    const local = localAccountOf(deps, account);
+    const local = localAccountOf(deps, portfolioId, account);
     if (!local) {
       throw new PortfolioApiError("BAD_REQUEST", `Account ${accountId} is not served locally`);
     }
@@ -53,7 +53,8 @@ export function accountEndpoints(deps: LocalPortfolioDeps): AccountEndpoints {
   return {
     getFreshAddress: async (portfolioId, accountId) => {
       const { network, data } = await requireLocalAccount(portfolioId, accountId);
-      return toAddressView(await network.accountModule.getFreshAddress(network.context, data));
+      const fresh = await network.accountModule.getFreshAddress(network.context, data);
+      return toAddressView(fresh.value);
     },
 
     getChangeAddress: async (portfolioId, accountId) => {
@@ -67,7 +68,7 @@ export function accountEndpoints(deps: LocalPortfolioDeps): AccountEndpoints {
       const { network, data } = await requireLocalAccount(portfolioId, accountId);
       const addresses = await network.accountModule.getAddresses(network.context, data);
       return {
-        items: addresses.map(({ address, derivationPath, used }) => ({
+        items: addresses.value.map(({ address, derivationPath, used }) => ({
           address,
           derivation_path: derivationPath,
           used,
@@ -79,7 +80,7 @@ export function accountEndpoints(deps: LocalPortfolioDeps): AccountEndpoints {
       const { network, data } = await requireLocalAccount(portfolioId, accountId);
       const { accountModule } = network;
       if (!accountModule.getUTXOs) throw notServed("getAccountUtxos", accountId);
-      const utxos: AccountUtxo[] = await accountModule.getUTXOs(network.context, data);
+      const utxos: AccountUtxo[] = (await accountModule.getUTXOs(network.context, data)).value;
       return { items: utxos.map(utxo => toJsonSafe(utxo) as UtxoView) };
     },
   };
