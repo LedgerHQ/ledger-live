@@ -234,6 +234,33 @@ describe("buildPreparedLegacySignOperation", () => {
     });
   });
 
+  it("does not reach the device when the send is dismissed while it builds", async () => {
+    let resolveBuild: ((info: TransactionInfo) => void) | undefined;
+    mockBuildPrepared.mockReturnValue(
+      new Promise<TransactionInfo>(resolve => {
+        resolveBuild = resolve;
+      }),
+    );
+    const { createPaymentTransaction, signerContext } = makeSigner();
+    const next = jest.fn();
+    const error = jest.fn();
+
+    const subscription = buildPreparedLegacySignOperation(
+      signerContext,
+      testContext,
+    )({ account, deviceId: "d", transaction }).subscribe({ next, error });
+    await new Promise(process.nextTick);
+    expect(mockBuildPrepared).toHaveBeenCalledTimes(1);
+
+    subscription.unsubscribe();
+    resolveBuild?.(txInfo);
+    await new Promise(process.nextTick);
+
+    expect(createPaymentTransaction).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
   it("surfaces a build refusal as the observable error, without reaching the device", async () => {
     mockBuildPrepared.mockRejectedValue(new Error("mismatch"));
     const { createPaymentTransaction, signerContext } = makeSigner();

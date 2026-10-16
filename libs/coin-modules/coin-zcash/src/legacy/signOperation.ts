@@ -105,6 +105,9 @@ const makeLegacySignOperation =
       (async () => {
         const walletAccount = await resolveWalletAccount(context, account);
         const txInfo = await build(walletAccount, account, transaction);
+        // The caller unsubscribes when the user dismisses the send; the device must
+        // not then be asked to sign it.
+        if (subscriber.closed) return;
 
         const signature = await signerContext(deviceId, signer =>
           signer.createPaymentTransaction(
