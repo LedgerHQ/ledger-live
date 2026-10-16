@@ -15,8 +15,11 @@ export function Header({ account }: Props) {
       <AccountSettingsDialog
         isOpen={viewModel.isSettingsOpen}
         accountName={viewModel.title}
+        ticker={viewModel.ticker}
+        nameMaxLength={viewModel.nameMaxLength}
+        isNameEditDisabled={viewModel.isNameEditDisabled}
         onClose={viewModel.onCloseSettings}
-        onChangeName={viewModel.onCloseSettings}
+        onConfirmName={viewModel.onConfirmName}
         onViewAdvancedLogs={viewModel.onCloseSettings}
         onConfirmRemove={viewModel.onCloseSettings}
         testID="account-detail-settings-dialog"
