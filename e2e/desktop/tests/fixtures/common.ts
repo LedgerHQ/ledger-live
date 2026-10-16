@@ -31,6 +31,7 @@ import {
   type CliCommand,
 } from "tests/utils/cliFixtureUtils";
 import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
+import { showSpeculosScreen } from "@ledgerhq/live-e2e-shared/speculosScreen";
 import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
@@ -179,6 +180,7 @@ export const test = base.extend<TestFixtures>({
       },
       relaunch: async (appName: string) => {
         currentDevice = await launchSpeculos(appName, testInfo.title, currentDevice);
+        await showSpeculosScreen(currentDevice.id);
         await handle.onRelaunch?.(currentDevice);
         return currentDevice;
       },
@@ -203,6 +205,7 @@ export const test = base.extend<TestFixtures>({
 
       if (speculosApp && !canSkipSpeculosLaunch(speculosForSetupOnly, cliCommands)) {
         currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
+        await showSpeculosScreen(currentDevice.id);
       }
 
       if (speculosApp) {

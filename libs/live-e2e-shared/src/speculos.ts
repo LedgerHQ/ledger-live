@@ -9,6 +9,8 @@ import {
 import { existsSync } from "fs";
 import path from "path";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
+import { forgetSpeculosScreen, registerSpeculosScreen } from "./speculosScreen";
+import { SPECULOS_VNC_PASSWORD } from "@ledgerhq/speculos-transport";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import axios from "axios";
@@ -540,6 +542,10 @@ export async function startSpeculos(
     if (isSpeculosRemote) return await createSpeculosDeviceCI(deviceParams);
     const device = await createSpeculosDevice(deviceParams, 3, wantedApiPort);
     invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+    registerSpeculosScreen(device.id, {
+      web: { url: `${getSpeculosAddress()}:${device.ports.apiPort}` },
+      vnc: { kind: "tcp", port: device.ports.vncPort, password: SPECULOS_VNC_PASSWORD },
+    });
     return {
       id: device.id,
       port: device.ports.apiPort,
@@ -559,6 +565,7 @@ export async function stopSpeculos(deviceId: string | undefined): Promise<boolea
   if (!deviceId) return false;
 
   log("engine", `test ${deviceId} finished`);
+  forgetSpeculosScreen(deviceId);
   if (isSpeculosRemote) {
     return releaseSpeculosDeviceCI(deviceId);
   }

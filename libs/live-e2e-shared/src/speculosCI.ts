@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/speculos-transport";
 import { SpeculosDevice } from "./speculos";
 import { sanitizeError } from "./index";
+import { getSpeculosScreenMode, registerSpeculosScreen } from "./speculosScreen";
 import { v4 as uuid } from "uuid";
 
 /** Speculinho operator base URL (no trailing slash). In CI, set via the `SPECULINHO_URL` secret / env var. */
@@ -137,6 +138,8 @@ type SpeculinhoAcquireResponse = {
   speculos_url?: string;
   protected?: boolean;
   session_token?: string;
+  vnc_url?: string;
+  vnc_password?: string;
 };
 
 type SpeculinhoStatusResponse = {
@@ -157,6 +160,7 @@ function buildAcquirePayload(
   runId: string,
   seed: string,
   protectedSession: boolean,
+  vnc: boolean,
 ) {
   const { model, firmware, appName, appVersion, dependencies, pki } = deviceParams;
   const device = reverseModelMap[model];
@@ -191,6 +195,7 @@ function buildAcquirePayload(
     /** Speculos PKI flag, same as the local Docker provider. */
     extra_args: pki ? ["-p"] : [],
     ...(protectedSession ? { protected: true } : {}),
+    ...(vnc ? { vnc: true } : {}),
   };
 }
 
@@ -241,6 +246,7 @@ export async function waitForSpeculosReady(
           } else {
             delete process.env.SPECULOS_SESSION_TOKEN;
           }
+          registerSpeculosScreen(deviceId, { web: { url: process.env.SPECULOS_ADDRESS, token } });
           console.warn(`Speculos is ready at ${process.env.SPECULOS_ADDRESS}`);
           return;
         }
@@ -303,6 +309,11 @@ async function rememberSession(runId: string, data?: SpeculinhoAcquireResponse):
   }
   sessionTokens.set(runId, token);
   if (token) await persistSessionToken(runId, token);
+  if (data?.vnc_url && data.vnc_password) {
+    registerSpeculosScreen(runId, {
+      vnc: { kind: "websocket", url: data.vnc_url, password: data.vnc_password, token },
+    });
+  }
 }
 
 export async function createSpeculosDeviceCI(
@@ -322,9 +333,10 @@ export async function createSpeculosDeviceCI(
 
   let runId = makeRunId(deviceParams);
   let protectedSession = true;
+  let vnc = getSpeculosScreenMode() === "vnc";
 
   for (let attempt = 0; attempt < 5; attempt++) {
-    const payload = buildAcquirePayload(deviceParams, runId, seed, protectedSession);
+    const payload = buildAcquirePayload(deviceParams, runId, seed, protectedSession, vnc);
     let res;
     try {
       res = await axios.post<SpeculinhoAcquireResponse>(`${speculinhoUrl}/acquire`, payload, {
@@ -356,7 +368,14 @@ export async function createSpeculosDeviceCI(
       continue;
     }
 
-    // An operator running without the session gate answers `protected` with 400.
+    // An operator running without the session gate answers `vnc` and `protected` with 400.
+    if (res.status === 400 && vnc) {
+      console.warn(
+        `[speculosCI] Speculinho VNC unavailable: ${formatAcquireFailure(res.status, res.data)}`,
+      );
+      vnc = false;
+      continue;
+    }
     if (res.status === 400 && protectedSession) {
       warnUnprotectedSession(formatAcquireFailure(res.status, res.data));
       protectedSession = false;
