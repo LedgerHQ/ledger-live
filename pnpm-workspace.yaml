@@ -268,6 +268,9 @@ saveExact: true
 virtualStoreDirMaxLength: 80
 
 overrides:
+  # Older npm-only releases of our own libs: JFrog does not list them, so CI re-resolution fails
+  "@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos": "workspace:^"
+  "@mysten/ledgerjs-hw-app-sui>@ledgerhq/ledger-cal-service": "workspace:^"
   react: "catalog:"
   react-dom: "catalog:"
   "@types/react": "catalog:"
