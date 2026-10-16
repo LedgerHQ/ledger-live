@@ -12,6 +12,7 @@ import type {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import type { AccountDetailNavigatorParamsList } from "../../types";
+import { useDeferredAccountRemoval } from "./useDeferredAccountRemoval";
 
 export type AccountDetailHeader = Readonly<{
   title: string;
@@ -28,6 +29,7 @@ export type AccountDetailViewModel = Readonly<{
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
   onViewAdvancedLogs: () => void;
+  onConfirmRemove: () => void;
 }>;
 
 type AccountDetailRoute = RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>;
@@ -45,6 +47,8 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
   const stackNavigation = useNavigation<AccountDetailStackNavigation>();
   const { account } = useAccountScreen(route);
   const mainAccount = account?.type === "Account" ? account : undefined;
+
+  const removeAccount = useDeferredAccountRemoval(mainAccount);
 
   useEffect(() => {
     if (mainAccount) return;
@@ -77,6 +81,11 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     stackNavigation.navigate(ScreenName.AccountDetailAdvancedLogs, { accountId: mainAccount.id });
   }, [mainAccount, stackNavigation]);
 
+  const onConfirmRemove = useCallback(() => {
+    setIsSettingsOpen(false);
+    removeAccount();
+  }, [removeAccount]);
+
   return {
     account: mainAccount,
     accountName: accountName ?? "",
@@ -85,5 +94,6 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     isSettingsOpen,
     onCloseSettings,
     onViewAdvancedLogs,
+    onConfirmRemove,
   };
 }
