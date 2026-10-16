@@ -10158,6 +10158,14 @@
         "desc": "Please wait",
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
+      },
+      "balanceTypeSync": {
+        "title": "Refreshing your private balance",
+        "progress": "{{percentage}}%",
+        "errorTitle": "Private sync failed",
+        "errorDescription": "Something went wrong, please try again",
+        "recordLimitTitle": "You can send up to {{amount}}",
+        "recordLimitDescription": "Your balance is split across several records, and one transaction can use a maximum of {{maxRecords}}. To send more, make multiple transactions."
       }
     },
     "operationTypes": {

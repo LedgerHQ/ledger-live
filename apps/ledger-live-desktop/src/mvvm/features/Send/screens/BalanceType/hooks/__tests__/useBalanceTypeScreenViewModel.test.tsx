@@ -5,7 +5,14 @@ import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { trackPage } from "@shared/analytics";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
+
+let mockFamily: { SendBalanceTypeSync?: unknown } = {};
+jest.mock("~/renderer/families", () => ({
+  useLLDCoinFamily: jest.fn(() => mockFamily),
+}));
 
 // Navigation mock
 const mockGoToStep = jest.fn();
@@ -22,8 +29,10 @@ const mockTransactionActions = {
   updateTransaction: mockUpdateTransactionAction,
 };
 
+type MockAccount = { id: string; type: string; currency?: unknown; token?: unknown };
+
 type MockState = {
-  account: { account: { id: string; type: string; currency: unknown } | null };
+  account: { account: MockAccount | null; parentAccount?: MockAccount | null };
   transaction: { transaction: { id: string; sender?: string } | null };
 };
 
@@ -76,6 +85,8 @@ jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
 const mockedTrackPage = jest.mocked(trackPage);
+const mockedUseAccountBridgeOrNull = jest.mocked(useAccountBridgeOrNull);
+const mockedUseLLDCoinFamily = jest.mocked(useLLDCoinFamily);
 
 const PUBLIC_POOL: BalanceTypeOption = {
   id: "public",
@@ -126,6 +137,7 @@ function renderViewModel(): HookApi | null {
 describe("useBalanceTypeScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFamily = {};
     mockUpdateTransaction.mockImplementation((tx, patch) => ({ ...tx, ...patch }));
     stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
 
@@ -298,6 +310,62 @@ describe("useBalanceTypeScreenViewModel", () => {
 
     expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
     expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  test.each(["public", "private"])(
+    "onSelect(%s) moves to the balance-type sync step when the family declares one",
+    optionId => {
+      mockFamily = { SendBalanceTypeSync: () => null };
+
+      const vm = renderViewModel();
+
+      expect(vm?.ready).toBe(true);
+      if (vm?.ready) {
+        vm.onSelect(optionId);
+      }
+
+      expect(mockGoToStep).toHaveBeenCalledTimes(1);
+      expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
+    },
+  );
+
+  test("runs the balance-type sync again when the same pool is picked again", () => {
+    mockFamily = { SendBalanceTypeSync: () => null };
+    mockState.transaction.transaction = { id: "tx1", sender: "private" };
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      vm.onSelect("private");
+    }
+
+    expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
+    expect(mockGoToStep).toHaveBeenCalledTimes(1);
+    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
+  });
+
+  test("resolves the bridge and the family through the parent of a token account", () => {
+    mockFamily = { SendBalanceTypeSync: () => null };
+    const parentAccount = { id: "aleo-acc", type: "Account", currency: { family: "aleo" } };
+    const tokenAccount = {
+      id: "aleo-token-acc",
+      type: "TokenAccount",
+      token: { id: "aleo-token" },
+    };
+    mockState.account = { account: tokenAccount, parentAccount };
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      vm.onSelect("private");
+    }
+
+    expect(mockedUseAccountBridgeOrNull).toHaveBeenLastCalledWith(tokenAccount, parentAccount);
+    expect(mockedUseLLDCoinFamily).toHaveBeenLastCalledWith("aleo");
+    expect(mockGoToStep).toHaveBeenCalledTimes(1);
+    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
   });
 
   describe("page tracking", () => {
