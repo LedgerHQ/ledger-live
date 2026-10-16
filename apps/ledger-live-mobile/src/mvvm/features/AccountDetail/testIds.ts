@@ -10,5 +10,6 @@ export const ACCOUNT_DETAIL_TEST_IDS = {
   navBarAddress: "account-detail-nav-bar-address",
   navBarNetworkIcon: "account-detail-nav-bar-network-icon",
   settingsButton: "account-detail-settings-button",
+  advancedLogsScreen: "account-detail-advanced-logs-screen",
   settingsSheet: "account-detail-settings-sheet",
 } as const;

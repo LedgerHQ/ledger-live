@@ -17,8 +17,15 @@ type NavigationProps = NativeStackNavigationProp<
 >;
 
 export default function AccountDetail() {
-  const { account, accountName, header, onOpenSettings, isSettingsOpen, onCloseSettings } =
-    useAccountDetailViewModel();
+  const {
+    account,
+    accountName,
+    header,
+    onOpenSettings,
+    isSettingsOpen,
+    onCloseSettings,
+    onViewAdvancedLogs,
+  } = useAccountDetailViewModel();
   const navigation = useNavigation<NavigationProps>();
 
   useLayoutEffect(() => {
@@ -51,7 +58,7 @@ export default function AccountDetail() {
         accountName={accountName}
         onClose={onCloseSettings}
         onChangeName={onCloseSettings}
-        onViewAdvancedLogs={onCloseSettings}
+        onViewAdvancedLogs={onViewAdvancedLogs}
         onConfirmRemove={onCloseSettings}
         testID={ACCOUNT_DETAIL_TEST_IDS.settingsSheet}
       />
