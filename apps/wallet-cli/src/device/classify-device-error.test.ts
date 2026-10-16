@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
 import {
   DisconnectedDevice,
@@ -114,5 +114,32 @@ describe("classifyDeviceError", () => {
     const state = classifyDeviceError(err);
     expect(state.code).toBe("unknown");
     if (state.code === "unknown") expect(state.cause).toBe(err);
+  });
+});
+
+describe("classifyDeviceError on Speculos", () => {
+  const speculosUrl = "http://127.0.0.1:40000";
+
+  beforeEach(() => {
+    process.env.SPECULOS_API_PORT = "40000";
+  });
+
+  afterEach(() => {
+    delete process.env.SPECULOS_API_PORT;
+  });
+
+  it("disconnects and timeouts name the active Speculos", () => {
+    expect(classifyDeviceError(new DisconnectedDevice())).toEqual({
+      code: "disconnected",
+      speculosUrl,
+    });
+    expect(classifyDeviceError(new SendApduTimeoutError("slow"))).toEqual({
+      code: "timeout",
+      speculosUrl,
+    });
+    expect(classifyDeviceError({ _tag: "ReceiverApduError" })).toEqual({
+      code: "timeout",
+      speculosUrl,
+    });
   });
 });
