@@ -7,19 +7,24 @@ import {
 import { nodeWebUsbTransportFactory, type NodeWebUsbTransport } from "./node-webusb";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared/services/LedgerLiveLogger";
 import { UserHashService } from "@ledgerhq/live-dmk-shared/services/UserHashService";
+import {
+  speculosTargetTransportFactory,
+  type SpeculosTarget,
+} from "@ledgerhq/live-dmk-shared/transport/speculosTarget";
 import { getEnv } from "@shared/env";
 
 export type WalletCliDmk = {
   dmk: DeviceManagementKit;
   /**
-   * Tear down the underlying node-webusb transport this kit was built with.
+   * Tear down the underlying node-webusb transport this kit was built with (a no-op on Speculos).
    * Bound to *this* kit's transport — building another kit returns its own
    * `destroyTransport` rather than overwriting a shared module-level ref.
    */
   destroyTransport: () => Promise<void>;
 };
 
-export function createDeviceManagementKit(): WalletCliDmk {
+/** Builds the kit on the given Speculos target, or on the first USB Ledger when it is `null`. */
+export function createDeviceManagementKit(speculos: SpeculosTarget | null): WalletCliDmk {
   const userId = getEnv("USER_ID") || "wallet-cli";
   const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
 
@@ -31,7 +36,7 @@ export function createDeviceManagementKit(): WalletCliDmk {
   };
 
   const dmk = new DeviceManagementKitBuilder()
-    .addTransport(captureTransportFactory)
+    .addTransport(speculos ? speculosTargetTransportFactory(speculos) : captureTransportFactory)
     .addLogger(new LedgerLiveLogger(LogLevel.Warning))
     .addConfig({ firmwareDistributionSalt })
     .build();
