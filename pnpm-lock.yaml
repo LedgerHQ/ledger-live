@@ -756,6 +756,9 @@ importers:
       '@react-native/babel-plugin-codegen':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
+      '@support/tsconfig':
+        specifier: workspace:*
+        version: link:support/tsconfig
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -20123,6 +20126,8 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
+
+  support/tsconfig: {}
 
   tests/dummy-live-app:
     dependencies:
