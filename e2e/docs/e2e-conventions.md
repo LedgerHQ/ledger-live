@@ -70,6 +70,16 @@ Every test includes a TMS annotation with a valid `B2CQA-XXXX` id. See [Desktop]
 
 Do not add retry loops, manual polling, or a second tap to hide an interaction failure. Fix an incorrect wait; otherwise diagnose the underlying product, environment, build, or test-flow issue.
 
+## Broadcast lock
+
+A test declares the QAA account it broadcasts from, with the app or with a CLI command such as a token approval. It also declares shared state it changes, such as the Pay card. No test on another worker or CI machine then uses them at the same time.
+
+- **Mobile:** call `declareBroadcastAccounts` or `declareSharedResources` before the `describe`. Run CLI approvals through `ensureTokenApprovalUnderLock`. A file-level `afterAll` runs after the lock is released, so a cleanup that broadcasts goes inside a `describe`.
+- **Desktop:** use `broadcastLockFor`, with its `names` on the `lock` detail and its `fixtures` in `test.use`. Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away.
+- **Which account:** declare the debited account, not the credited one. A test that always disables app broadcast declares no app account.
+
+See [Broadcast lock](broadcast-lock.md) for examples, how the lock works, and how to read its logs.
+
 ## Pay tab
 
 Pay tab specs must live under the `paytab` directory so they automatically opt in to an injected Card session. Injection differs by client. See [Desktop](../desktop/README.md#pay-tab) and [Mobile](../mobile/README.md#pay-tab).

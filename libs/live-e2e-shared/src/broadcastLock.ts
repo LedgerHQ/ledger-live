@@ -1,3 +1,4 @@
+// How the lock works, how tests declare it, and how to read its logs: e2e/docs/broadcast-lock.md
 import { randomUUID } from "node:crypto";
 import os from "node:os";
 import { byCodeUnit } from "./broadcastLock/byCodeUnit";
