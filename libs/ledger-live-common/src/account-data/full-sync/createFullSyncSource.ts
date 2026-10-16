@@ -7,6 +7,8 @@ import { dedupeInFlight } from "./dedupeInFlight";
 import { FullSyncAccountNotFoundError } from "./errors";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
+import { toAccountBalances } from "./toAccountBalances";
+import { toAccountOperations } from "./toAccountOperations";
 
 export type FullSyncHost = {
   /** The legacy account behind an account, if the legacy store holds one. */
@@ -43,8 +45,10 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
     id: AccountDataSourceIdSchema.parse("full-sync"),
     concurrency: getEnv("SYNC_MAX_CONCURRENT"),
     supports: isFullSyncSupported,
-    // One line per kind, mapping the synced account with its own file (LIVE-39358, LIVE-39359).
-    read: {},
+    read: {
+      balance: async target => toAccountBalances(await sync(target)),
+      operations: async target => toAccountOperations(await sync(target)),
+    },
     sync,
   };
 }

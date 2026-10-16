@@ -40,6 +40,15 @@ describe("createFullSyncSource", () => {
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
   });
 
+  it("shares one sync between a balance and an operations read of the account", async () => {
+    const reads = source(account);
+    await Promise.all([
+      reads.read?.balance?.(target, undefined),
+      reads.read?.operations?.(target, undefined),
+    ]);
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
   it("fails when no legacy account backs the account", async () => {
     await expect(source(undefined).sync(target)).rejects.toThrow(FullSyncAccountNotFoundError);
     expect(syncLegacyAccount).not.toHaveBeenCalled();
