@@ -3,6 +3,7 @@ import { Box, InteractiveIcon, Tag as LumenTag } from "@ledgerhq/lumen-ui-rnativ
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Close as CloseIcon } from "@ledgerhq/lumen-ui-rnative/symbols";
 import React, { PropsWithChildren } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import Video from "react-native-video";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
@@ -47,6 +48,7 @@ type MediaProps = {
 };
 
 export const Media = ({ uri, size, filledImage, isMediaOnly, mediaType }: MediaProps) => {
+  const isFocused = useIsFocused();
   const isBigCardAndFilled = (size === "L" && filledImage) || false;
   const isMediumCardAndFilled = (size === "M" && filledImage) || false;
   const isBigOrMediumCardAndFilled = isBigCardAndFilled || isMediumCardAndFilled;
@@ -77,7 +79,7 @@ export const Media = ({ uri, size, filledImage, isMediaOnly, mediaType }: MediaP
         style={{ ...MediaStyles[size], ...extraStylesCard, ...mediaOnlyStyle }}
         resizeMode={isBigOrMediumCardAndFilled ? "cover" : "contain"}
         fullscreen={false}
-        paused={false}
+        paused={!isFocused}
         repeat={true}
         muted={true}
       />

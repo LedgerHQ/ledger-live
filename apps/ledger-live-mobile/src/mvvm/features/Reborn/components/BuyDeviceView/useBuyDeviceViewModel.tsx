@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -69,7 +69,10 @@ const useBuyDeviceViewModel = () => {
     closeDrawer();
   }, [handleBuyDeviceAction, closeDrawer]);
 
-  const videoMounted = !useIsAppInBackground();
+  const isFocused = useIsFocused();
+  const isAppInBackground = useIsAppInBackground();
+  // Unmounting releases the decoder; a covered screen otherwise keeps it looping.
+  const videoMounted = isFocused && !isAppInBackground;
 
   return {
     t,
