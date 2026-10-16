@@ -335,7 +335,8 @@
   },
   "plugins": [
     "./tools/nx-plugins/project-tags/plugin.js",
-    "./tools/nx-plugins/enforce-package-structure/plugin.js"
+    "./tools/nx-plugins/enforce-package-structure/plugin.js",
+    "./tools/nx-plugins/enforce-tool-config/plugin.mjs"
   ],
   "targetDefaults": {
     "build": {
