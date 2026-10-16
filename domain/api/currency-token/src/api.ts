@@ -20,6 +20,7 @@ import {
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
+import { hashChanged, selectSyncHashBaseline } from "./internals/syncHashBaseline";
 
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
 
@@ -115,6 +116,12 @@ export const cryptoAssetsApi = calApi
           try {
             const previousHash = api.getCacheEntry()?.data as string | undefined;
             const { data: newHash } = await api.queryFulfilled;
+            const referenceHash =
+              previousHash ?? selectSyncHashBaseline(api.getState())[currencyId];
+
+            if (referenceHash && newHash && referenceHash !== newHash) {
+              api.dispatch(hashChanged({ currencyId, at: Date.now() }));
+            }
 
             if (previousHash && newHash && previousHash !== newHash) {
               extra.logger?.(

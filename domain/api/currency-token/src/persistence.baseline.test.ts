@@ -4,6 +4,7 @@ import { setupServer } from "msw/node";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
+import { mockApiTokenResponse } from "./fixtures";
 import { HEADER_X_LEDGER_COMMIT, PERSISTENCE_VERSION } from "./internals";
 import {
   extractPersistedCALFromState,
@@ -142,6 +143,34 @@ describe("restore → save → restart", () => {
     const saved = save(store);
     expect(saved.tokens.map(entry => entry.data.parentCurrencyId)).toEqual(["polygon"]);
     expect(saved.hashes).toEqual({ ethereum: "new-hash", polygon: OLD_HASH });
+  });
+
+  it("should keep a token fetched after a hash change when the same hash is refetched", async () => {
+    behaviors.ethereum = "changed";
+    behaviors.polygon = "same";
+    server.use(
+      http.get("https://cal.test/v1/tokens", () => HttpResponse.json([mockApiTokenResponse])),
+    );
+    const store = makeStore();
+
+    await restoreTokensToCache(store.dispatch, persisted, TTL);
+    await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
+    await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("polygon"));
+    await tick();
+
+    await store.dispatch(
+      cryptoAssetsApi.endpoints.findTokenById.initiate({ id: mockApiTokenResponse.id }),
+    );
+    await tick();
+    await store.dispatch(
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum", { forceRefetch: true }),
+    );
+
+    const saved = save(store);
+    const tokenIds = saved.tokens.map(entry => entry.data.id);
+    expect(tokenIds).toContain(mockApiTokenResponse.id);
+    expect(tokenIds).not.toContain("ethereum/erc20/usdt");
+    expect(saved.hashes?.ethereum).toBe("new-hash");
   });
 
   it("keeps all tokens when the hash checks confirm the stored hash", async () => {

@@ -12,6 +12,7 @@ import {
 import {
   baselineSeeded,
   selectSyncHashBaseline,
+  selectSyncHashChangedAt,
   type SyncHashBaselineState,
 } from "./internals/syncHashBaseline";
 import { PersistedCALSchema } from "./schema";
@@ -56,6 +57,7 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
   }
 
   const baseline = selectSyncHashBaseline(state);
+  const changedAt = selectSyncHashChangedAt(state);
   const observedHashes = extractObservedHashes(state);
 
   const tokens: PersistedTokenEntry[] = [];
@@ -74,8 +76,9 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
       const timestamp = query.fulfilledTimeStamp || Date.now();
       const baselineHash = baseline[token.parentCurrencyId];
       const observed = observedHashes[token.parentCurrencyId];
-      if (baselineHash && observed && observed.hash !== baselineHash && timestamp <= observed.at) {
-        continue;
+      if (baselineHash && observed && observed.hash !== baselineHash) {
+        const cutoff = changedAt[token.parentCurrencyId] ?? observed.at;
+        if (timestamp <= cutoff) continue;
       }
 
       const tokenIdentifier =
