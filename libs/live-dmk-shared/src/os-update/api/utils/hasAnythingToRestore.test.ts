@@ -1,5 +1,5 @@
 import type { Backup } from "@ledgerhq/dmk-ledger-wallet";
-import { ENGLISH_LANGUAGE_ID } from "../constants";
+import { ENGLISH_LANGUAGE_ID } from "../../internal/restore-backup/constants";
 import { hasAnythingToRestore } from "./hasAnythingToRestore";
 
 const FRENCH_LANGUAGE_ID = 1;

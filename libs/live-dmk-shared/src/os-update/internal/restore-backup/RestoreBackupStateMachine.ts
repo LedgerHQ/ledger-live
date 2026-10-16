@@ -25,7 +25,7 @@ import {
   type RestoreBackupStateMachineOutput,
 } from "./types";
 import { clampRestoreState } from "./utils/clampRestoreState";
-import { hasAnythingToRestore } from "./utils/hasAnythingToRestore";
+import { hasAnythingToRestore } from "../../api/utils/hasAnythingToRestore";
 import { isSameState } from "./utils/isSameState";
 import { restoreProgress } from "./utils/restoreProgress";
 import { toRestoreBackupState } from "./utils/toRestoreBackupState";
