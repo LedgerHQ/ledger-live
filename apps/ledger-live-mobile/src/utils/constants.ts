@@ -83,6 +83,8 @@ export const EXCLUDED_ERROR_DESCRIPTION = [
   // Braze content cards sync (network/rate-limit; emitted by Braze SDK, not actionable in-app)
   "BrazeKit.ContentCards.Error.syncFailure",
   "ContentCards.Error.syncFailure",
+  // Ledger Sync QR pairing with sync off on both apps (expected, user sees "Sync not detected")
+  "unexpected share credential",
 ];
 
 export const FIRST_PARTY_MAIN_HOST_DOMAIN = "ledger.com";

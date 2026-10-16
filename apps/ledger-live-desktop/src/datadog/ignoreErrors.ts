@@ -101,6 +101,7 @@ const OTHER = [
   "SwapNoAvailableProviders",
   "Transaction simulation failed",
   "TransactionRefusedOnDevice",
+  "unexpected share credential",
   "was reached for request with last error",
 ];
 
