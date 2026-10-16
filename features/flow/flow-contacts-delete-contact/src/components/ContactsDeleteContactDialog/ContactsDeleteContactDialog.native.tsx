@@ -1,16 +1,18 @@
 import React from "react";
 import { Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { ContactConfirmationBottomSheet } from "@features/platform-contacts";
+import { useDeleteContactLabels } from "../../copy/useDeleteContactLabels";
 import type { ContactsDeleteContactDrawerProps } from "./types";
 
 export function ContactsDeleteContactDialog({
   isOpen,
   isDeleting,
   bottomInset = 0,
-  labels,
   onConfirm,
   onCancel,
 }: ContactsDeleteContactDrawerProps): React.JSX.Element {
+  const labels = useDeleteContactLabels();
+
   return (
     <ContactConfirmationBottomSheet
       isOpen={isOpen}

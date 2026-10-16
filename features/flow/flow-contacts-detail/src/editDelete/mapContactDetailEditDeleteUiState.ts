@@ -27,7 +27,6 @@ export function createContactDetailEditDeleteUiState(
     delete: {
       isOpen: flow.deleteLifecycle.status === "open",
       isDeleting: flow.isDeleting,
-      labels: labels.delete,
       onConfirm: flow.confirmDelete,
       onCancel: flow.cancelDelete,
     },

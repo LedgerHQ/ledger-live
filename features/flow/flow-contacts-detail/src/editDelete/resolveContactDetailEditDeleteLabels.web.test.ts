@@ -24,10 +24,8 @@ describe("resolveContactDetailEditDeleteLabels", () => {
     const labels = resolveContactDetailEditDeleteLabels({
       t,
       editContactLabelKey: "contacts.detailActions.editName",
-      deleteDescriptionKey: "contacts.deleteContact.mobileDescription",
     });
 
     expect(labels.actions.editContact).toBe("contacts.detailActions.editName");
-    expect(labels.delete.description).toBe("contacts.deleteContact.mobileDescription");
   });
 });
