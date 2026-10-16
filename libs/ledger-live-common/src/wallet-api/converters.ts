@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { v5 as uuidv5 } from "uuid";
 import {
   accountNameWithDefaultSelector,

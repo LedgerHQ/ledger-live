@@ -23,7 +23,7 @@ import { INITIAL_STATE } from "~/reducers/settings";
 import { http, HttpResponse } from "msw";
 import { server } from "@tests/server";
 import { useNetworkState, type NetworkState } from "@shared/network-status";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),

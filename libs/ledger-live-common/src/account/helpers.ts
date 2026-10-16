@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 

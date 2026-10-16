@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAllDerivationModes } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {

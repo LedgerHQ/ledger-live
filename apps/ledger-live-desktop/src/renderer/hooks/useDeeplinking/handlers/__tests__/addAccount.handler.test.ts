@@ -1,9 +1,12 @@
-import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyByKeyword,
+} from "@domain/entity-currency-crypto/legacy";
 import { addAccountHandler } from "../addAccount.handler";
 import { createMockContext } from "./test-utils";
 
-jest.mock("@domain/entity-currency-crypto", () => ({
-  ...jest.requireActual("@domain/entity-currency-crypto"),
+jest.mock("@domain/entity-currency-crypto/legacy", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto/legacy"),
   findCryptoCurrencyByKeyword: jest.fn(),
 }));
 

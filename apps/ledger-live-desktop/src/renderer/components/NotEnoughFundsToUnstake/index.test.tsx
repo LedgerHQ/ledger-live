@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { track } from "@shared/analytics";
 import NotEnoughFundsToUnstake from "./index";
 

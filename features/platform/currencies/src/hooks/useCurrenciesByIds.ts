@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 

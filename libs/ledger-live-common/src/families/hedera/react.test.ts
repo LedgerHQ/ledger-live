@@ -10,7 +10,7 @@ import { apiClient } from "@ledgerhq/coin-hedera/network/api";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { renderHook, waitFor } from "@testing-library/react";
 import { liveConfig } from "../../config/sharedConfig";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
 import { hederaApi } from "./state-manager/api";
 import * as hooks from "./react";

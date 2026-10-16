@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto/legacy";
 import { Currency } from "@domain/entity-currency";
 import { DeeplinkHandler } from "../types";
 import { getAccountUrl } from "~/renderer/utils";

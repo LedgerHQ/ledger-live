@@ -3,7 +3,7 @@ import { secp256k1 } from "@noble/curves/secp256k1";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray } from "rxjs";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { clearBridgeCache, getAccountBridge } from "../../bridge";
 import { isGenericCoinFrameworkFamily } from "../../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import { accountGetPublicKeyLogic, type WalletAPIContext } from "../../wallet-api/logic";

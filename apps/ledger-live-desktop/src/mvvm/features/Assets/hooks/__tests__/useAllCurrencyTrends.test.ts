@@ -12,7 +12,7 @@ import {
   ETHEREUM_ASSET,
   STABLECOIN_ASSET,
 } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { AssetTableItem } from "../../types";
 import { useAllCurrencyTrends } from "../useAllCurrencyTrends";

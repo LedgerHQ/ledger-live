@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   formatCurrencyUnit,

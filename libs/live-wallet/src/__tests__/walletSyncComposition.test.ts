@@ -2,7 +2,7 @@ import { of } from "rxjs";
 import { contact, contactsInitialState } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { parseAnyAccountId, type AnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId, type AnyAccountId } from "@domain/entity-account/legacy";
 import {
   createWalletsync,
   type WalletSyncDocument,

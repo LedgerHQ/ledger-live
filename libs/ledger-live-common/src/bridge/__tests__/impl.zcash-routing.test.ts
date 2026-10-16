@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { BigNumber } from "bignumber.js";
 import { EMPTY } from "rxjs";
 import type { Account, SignOperationArg0, TransactionCommon } from "@ledgerhq/types-live";

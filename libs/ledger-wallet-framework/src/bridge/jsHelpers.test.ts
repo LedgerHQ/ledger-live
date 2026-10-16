@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import type {
   Account,
   Operation,

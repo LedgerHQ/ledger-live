@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import StepSummary from "./StepSummary";
 
 const mockStakingInfo: { unstakingPositions: { uid: string; delegate?: string }[] } = {

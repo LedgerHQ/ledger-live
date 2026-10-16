@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { balanceItem } from "../Balance";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 jest.mock("~/renderer/components/CounterValue", () => ({
   __esModule: true,

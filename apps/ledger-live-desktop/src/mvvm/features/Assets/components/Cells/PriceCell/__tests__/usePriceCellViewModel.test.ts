@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { usePriceCellViewModel } from "../usePriceCellViewModel";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { usePrice } from "~/renderer/hooks/usePrice";

@@ -1,7 +1,7 @@
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";

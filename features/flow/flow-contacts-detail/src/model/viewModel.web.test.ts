@@ -4,7 +4,7 @@ import {
   mockContactWithMultipleAddresses,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { ContactAddressCurrencyPort } from "./ports";
 import { sortContactAddressesByNetwork } from "./sortContactAddressesByNetwork";
 import {

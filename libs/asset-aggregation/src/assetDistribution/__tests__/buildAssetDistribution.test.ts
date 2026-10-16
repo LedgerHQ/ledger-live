@@ -7,7 +7,7 @@ import { resetRateLookup, setRateLookup } from "../../rateLookup";
 
 const mockFindCryptoCurrencyById = jest.fn();
 
-jest.mock("@domain/entity-currency-crypto", () => ({
+jest.mock("@domain/entity-currency-crypto/legacy", () => ({
   findCryptoCurrencyById: (...args: unknown[]) => mockFindCryptoCurrencyById(...args),
 }));
 

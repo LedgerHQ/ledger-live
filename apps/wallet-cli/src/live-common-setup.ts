@@ -8,15 +8,14 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv, getEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
+import { CryptoCurrencyIdSchema, type CryptoCurrencyId } from "@domain/entity-currency-crypto";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-  CryptoCurrencyIdSchema,
-  type CryptoCurrencyId,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { ledgerClientVersion } from "./shared/client-version";

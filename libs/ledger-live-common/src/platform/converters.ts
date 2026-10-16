@@ -1,5 +1,5 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { isTokenAccount } from "../account";
 import { loadPlatformAdapterForFamily } from "../coin-modules/registry";
 import type { Transaction } from "../coin-modules/transaction-types";

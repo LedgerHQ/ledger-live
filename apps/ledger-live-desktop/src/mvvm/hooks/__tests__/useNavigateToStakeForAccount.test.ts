@@ -1,7 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { useNavigateToStakeForAccount } from "../useNavigateToStakeForAccount";
 
 const mockNavigate = jest.fn();

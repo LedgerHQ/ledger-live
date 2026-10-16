@@ -22,7 +22,7 @@ import { approveToken } from "./families/evm";
 import { enableBlindSigningOnNanoS } from "./speculos";
 import { ZCASH_TEST_PRIVATE_INFO } from "./families/zcash";
 import type { ZcashPrivateInfoRaw } from "@ledgerhq/coin-zcash/network/types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   applyGeneratedUserdata,

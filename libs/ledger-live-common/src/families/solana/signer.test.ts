@@ -8,7 +8,7 @@ import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { isDmkTransport } from "../../hw/dmkUtils";
 import Transport from "@ledgerhq/hw-transport";
 import { VersionedTransaction } from "@solana/web3.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { setSolanaLdmkEnabled } from "./setup";
 

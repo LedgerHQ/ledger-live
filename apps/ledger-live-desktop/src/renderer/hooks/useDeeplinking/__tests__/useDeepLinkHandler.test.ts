@@ -3,7 +3,10 @@
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyByKeyword,
+} from "@domain/entity-currency-crypto/legacy";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import {
@@ -83,8 +86,8 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   parseCurrencyUnit: jest.fn((unit, amount) => amount),
 }));
 
-jest.mock("@domain/entity-currency-crypto", () => ({
-  ...jest.requireActual("@domain/entity-currency-crypto"),
+jest.mock("@domain/entity-currency-crypto/legacy", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto/legacy"),
   findCryptoCurrencyByKeyword: jest.fn(),
 }));
 

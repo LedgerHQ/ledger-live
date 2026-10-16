@@ -36,6 +36,9 @@ import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCIES_IDS } from "@domain/entit
 
 // Helper — use in currency definition files
 import { currency } from "@domain/entity-currency-crypto";
+
+// Legacy accessors over the static registry
+import { getCryptoCurrencyById, findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 ```
 
 For the full currency union (`CryptoCurrency | TokenCurrency | FiatCurrency`) use `@domain/entity-currency`.

@@ -1,4 +1,5 @@
-import { CryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 export function isCryptoCurrency<T extends { type: string }>(
   currency: T,

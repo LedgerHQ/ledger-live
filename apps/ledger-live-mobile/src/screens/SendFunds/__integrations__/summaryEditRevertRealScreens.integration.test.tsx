@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation, useNavigationState } from "@react-navigation/native";
 import { setEnv } from "@shared/env";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { act, renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
 import { bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import type { State } from "~/reducers/types";

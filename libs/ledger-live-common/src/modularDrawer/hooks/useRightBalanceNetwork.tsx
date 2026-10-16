@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { NetworkConfigurationOptions, BalanceUI, NetworkHookParams } from "../utils/type";
 import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 import BigNumber from "bignumber.js";

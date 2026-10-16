@@ -36,7 +36,7 @@ jest.mock("../../../config", () => ({
   getCurrencyConfiguration: jest.fn((currencyId: string) => {
     const { CHAIN_ID } = jest.requireActual("@ledgerhq/coin-evm/config");
     const currency = jest
-      .requireActual("@domain/entity-currency-crypto")
+      .requireActual("@domain/entity-currency-crypto/legacy")
       .getCryptoCurrencyById(currencyId);
     const getChainId = () => {
       switch (currencyId) {

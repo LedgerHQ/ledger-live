@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account, DistributionItem } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";

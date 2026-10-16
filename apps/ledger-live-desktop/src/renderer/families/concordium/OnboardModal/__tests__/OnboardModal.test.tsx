@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render, screen, waitFor } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   AccountOnboardStatus,
   ConcordiumPairingExpiredError,

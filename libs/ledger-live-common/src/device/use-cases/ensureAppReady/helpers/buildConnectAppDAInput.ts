@@ -1,7 +1,7 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import type { ConnectAppDAInput } from "@ledgerhq/live-dmk-shared";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   buildApplicationDependency,
   type GetMinVersion,

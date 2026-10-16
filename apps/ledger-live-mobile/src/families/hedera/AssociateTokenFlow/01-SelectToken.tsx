@@ -6,7 +6,7 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getEnv } from "@shared/env";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { useTokensData } from "@features/platform-currencies";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import invariant from "invariant";

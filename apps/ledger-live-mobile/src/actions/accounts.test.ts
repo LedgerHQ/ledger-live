@@ -1,6 +1,6 @@
 import type { UnknownAction } from "redux";
 import type { Account, AccountRaw, AccountUserData, DerivationMode } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import accountModel from "../logic/accountModel";
 import { importStore } from "./accounts";

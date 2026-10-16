@@ -4,7 +4,7 @@ import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { Provider } from "react-redux";
 import { contactsSlice } from "@domain/entity-contact";
 import { mockContactWithAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,

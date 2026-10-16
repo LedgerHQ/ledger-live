@@ -1,8 +1,5 @@
-import {
-  getCryptoCurrencyById,
-  CryptoCurrency,
-  CryptoCurrencyIdSchema,
-} from "@domain/entity-currency-crypto";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   genAccount,

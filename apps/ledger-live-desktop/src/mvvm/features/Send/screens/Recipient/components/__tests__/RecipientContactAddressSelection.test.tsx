@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import React from "react";

@@ -1,5 +1,5 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import {

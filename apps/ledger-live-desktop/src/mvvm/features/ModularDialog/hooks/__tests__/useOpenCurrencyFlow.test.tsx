@@ -1,5 +1,5 @@
 import { act, renderHook } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenCurrencyFlow } from "../useOpenCurrencyFlow";
 

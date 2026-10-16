@@ -3,7 +3,7 @@ import { catchError } from "rxjs/operators";
 import { getNodeApi } from "@ledgerhq/coin-evm/network";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { Job } from "@features/platform-device-intent";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { BroadcastEvmIntentInput, BroadcastEvmJobState } from "./types";
 import { buildContext } from "../../../../bridge/generic-coin-framework/api/context";
 

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getTransactionStatus as classicGetTransactionStatus } from "@ledgerhq/coin-stacks/bridge/getTransactionStatus";
 import { fetchPoxInfo } from "@ledgerhq/coin-stacks/network/pox";

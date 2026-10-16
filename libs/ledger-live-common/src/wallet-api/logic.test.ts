@@ -39,8 +39,8 @@ import {
   CryptoCurrency,
   CryptoCurrencyIdSchema,
   CRYPTO_CURRENCIES_REGISTRY,
-  getCryptoCurrencyById,
 } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { TrackingAPI } from "./tracking";

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoCurrency } from "../../types";
 import { createFixtureNFT } from "./nfts";
 import { NFTs, NFTs_BASE, NFTs_POLYGON, NFTs_SOLANA } from "./nftsSamples";

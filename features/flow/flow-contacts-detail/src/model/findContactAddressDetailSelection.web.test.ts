@@ -1,7 +1,7 @@
 import { createContactDetailAddressRowIntent } from "./viewModel";
 import { findContactAddressDetailSelection } from "./findContactAddressDetailSelection";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 describe("findContactAddressDetailSelection", () => {
   it("returns the selected row and its network group", () => {

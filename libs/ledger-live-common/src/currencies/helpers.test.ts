@@ -1,6 +1,6 @@
 import "../__tests__/test-helpers/setup";
 import { isCryptoCurrency, getFamilyByCurrencyId } from "./helpers";
-import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 
 describe("Currencies helpers", () => {
   test("listCryptoCurrencies returns only crypto currencies", () => {

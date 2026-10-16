@@ -4,7 +4,7 @@ import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { buildCryptoAssetsStore } from "@features/platform-currencies";
+import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { store } from "./store";
 import {
   getCryptoCurrencyById,
@@ -12,7 +12,7 @@ import {
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";

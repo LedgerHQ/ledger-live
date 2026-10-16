@@ -1,7 +1,8 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
 import type { Currency } from "@domain/entity-currency";
-import { type CryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Unit } from "@domain/entity-currency-unit";
 import {
   getFiatCurrencyByTicker,

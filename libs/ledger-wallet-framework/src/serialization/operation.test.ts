@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import Prando from "prando";
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "../types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount, genOperation } from "../mocks/account";
 import {
   buildSubOperationIndex,

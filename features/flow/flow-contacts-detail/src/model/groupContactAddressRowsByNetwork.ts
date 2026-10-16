@@ -1,8 +1,8 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   findCryptoCurrencyById,
   getCryptoCurrencyById,
-  type CryptoCurrency,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 import type { ContactAddressCurrencyPort } from "./ports";
 import type { ContactDetailAddressNetworkGroup, ContactDetailAddressRow } from "../types";
 

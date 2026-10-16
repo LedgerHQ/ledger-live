@@ -1,6 +1,6 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
 import { computeAccountAlias, registerAccountAliases } from "@domain/entity-account-alias";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import type { State } from "../../reducers";
 import { createAccountAliasMiddleware, withAccountAliases } from "../accountAlias";
 

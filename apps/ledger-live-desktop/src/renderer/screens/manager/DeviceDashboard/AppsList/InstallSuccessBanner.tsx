@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useRef, memo, useMemo } from "react";
 import styled, { keyframes } from "styled-components";
 import { Trans } from "react-i18next";
-import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/index";
 import { State } from "@ledgerhq/live-common/apps/types";
 import Text from "~/renderer/components/Text";

@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { type CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";

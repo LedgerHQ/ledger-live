@@ -10,7 +10,7 @@
  * @ledgerhq/ledger-wallet-framework/derivation — no hardcoded coin types or path tables.
  */
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   getDerivationScheme,
   runDerivationScheme,

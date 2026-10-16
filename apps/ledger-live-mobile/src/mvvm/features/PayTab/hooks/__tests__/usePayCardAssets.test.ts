@@ -1,6 +1,6 @@
 import { countervaluesTestUserSettings, renderHook } from "@tests/test-renderer";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";

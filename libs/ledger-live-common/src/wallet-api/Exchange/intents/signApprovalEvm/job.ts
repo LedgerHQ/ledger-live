@@ -4,7 +4,7 @@ import { craftTransaction } from "@ledgerhq/coin-evm/logic";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { DeviceConnectionResult, Job } from "@features/platform-device-intent";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { buildContext } from "../../../../bridge/generic-coin-framework/api/context";
 import { runSignTransactionEvm } from "../shared/signTransactionEvm";
 import type { QuoteApprovalTransaction } from "../../quotes/types";

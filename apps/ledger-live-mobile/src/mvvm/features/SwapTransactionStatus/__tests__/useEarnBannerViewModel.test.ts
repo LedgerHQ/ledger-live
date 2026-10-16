@@ -1,6 +1,6 @@
 import { trackPage, track } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   mockEthCryptoCurrency,
   usdcToken,

@@ -9,7 +9,10 @@ import * as Haptics from "expo-haptics";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+} from "@domain/entity-currency-crypto/legacy";
 import {
   makeEmptyTokenAccount,
   getMainAccount,

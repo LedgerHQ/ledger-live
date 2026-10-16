@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { NetworkRow, NetworkRowData } from "./components/NetworkRow";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {

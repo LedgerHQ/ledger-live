@@ -9,7 +9,7 @@ import {
 import { buildCV } from "@domain/entity-market-countervalues/mock";
 import type { RateSource } from "@domain/api-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { countervaluesReducer } from "../reducer";
 import { countervaluesLoadRequested, countervaluesPollingSet } from "../slice";

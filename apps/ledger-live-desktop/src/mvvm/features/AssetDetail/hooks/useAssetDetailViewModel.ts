@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   isMarketCurrencyData,
   resolveAssetDetailMarketInfo,

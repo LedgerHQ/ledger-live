@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { act, render, screen } from "tests/testSetup";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type {
   TezosAccount,

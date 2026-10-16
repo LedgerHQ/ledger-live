@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoCurrency } from "./types";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { DerivationMode } from "@ledgerhq/types-live";

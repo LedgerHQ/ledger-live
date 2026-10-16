@@ -1,5 +1,5 @@
 import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/index";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { colors } from "../../shared/ui";
 
 export { WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";

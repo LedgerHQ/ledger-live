@@ -1,4 +1,4 @@
-import { buildCryptoAssetsStore } from "@features/platform-currencies";
+import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { setCountervaluesLogger } from "@features/platform-market-countervalues";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { log } from "@ledgerhq/logs";

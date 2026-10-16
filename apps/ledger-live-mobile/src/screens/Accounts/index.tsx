@@ -4,7 +4,7 @@ import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto/legacy";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import SafeAreaView from "~/components/SafeAreaView";

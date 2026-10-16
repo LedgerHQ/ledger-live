@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import TransactionConfirmFields from "../TransactionConfirmFields";

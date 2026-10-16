@@ -1,5 +1,5 @@
 import type Transport from "@ledgerhq/hw-transport";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import getAddress from "./index";
 import { loadSetupForFamily } from "../../coin-modules/registry";
 

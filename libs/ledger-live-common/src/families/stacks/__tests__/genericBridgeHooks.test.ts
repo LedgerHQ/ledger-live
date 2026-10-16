@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { STACKS_DUMMY_ADDRESS } from "@ledgerhq/coin-stacks/constants";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";

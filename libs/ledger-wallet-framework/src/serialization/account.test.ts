@@ -1,5 +1,5 @@
 import type { AccountReadiness, AccountRaw, OperationRaw } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import { setCryptoAssetsStore } from "../cryptoAssetsStore";
 import { genAccount } from "../mocks/account";

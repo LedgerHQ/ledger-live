@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import {
   resolveEligibleAddressCurrencyIds,
   type EligibleAddressNetwork,
