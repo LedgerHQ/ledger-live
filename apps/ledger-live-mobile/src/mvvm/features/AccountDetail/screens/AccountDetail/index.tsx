@@ -25,6 +25,7 @@ export default function AccountDetail() {
     isSettingsOpen,
     onCloseSettings,
     onViewAdvancedLogs,
+    onConfirmRemove,
   } = useAccountDetailViewModel();
   const navigation = useNavigation<NavigationProps>();
 
@@ -59,7 +60,7 @@ export default function AccountDetail() {
         onClose={onCloseSettings}
         onChangeName={onCloseSettings}
         onViewAdvancedLogs={onViewAdvancedLogs}
-        onConfirmRemove={onCloseSettings}
+        onConfirmRemove={onConfirmRemove}
         testID={ACCOUNT_DETAIL_TEST_IDS.settingsSheet}
       />
     </>
