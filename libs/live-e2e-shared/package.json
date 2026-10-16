@@ -45,6 +45,7 @@
     "expect": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:",
+    "undici": "catalog:",
     "uuid": "catalog:"
   },
   "devDependencies": {

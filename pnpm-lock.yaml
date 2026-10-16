@@ -17287,6 +17287,9 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
+      undici:
+        specifier: 'catalog:'
+        version: 7.18.2
       uuid:
         specifier: 'catalog:'
         version: 11.1.0

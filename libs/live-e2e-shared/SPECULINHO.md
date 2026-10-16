@@ -52,10 +52,12 @@ Common failures:
 
 ## Watch the device
 
-`SPECULOS_SCREEN=web` or `SPECULOS_SCREEN=vnc` shows the device screen during a local run, as the suite READMEs describe. On Speculinho:
+To watch the device during a local run, on Docker or Speculinho, `export SPECULOS_SCREEN=web` or `SPECULOS_SCREEN=vnc` (ignored in CI). Each test then opens a view of its device once it is ready (on mobile, its main Speculos once the app is connected to it):
 
-- `web` opens the Speculos web page through a proxy on `127.0.0.1` that adds the session token, so the token never reaches the browser.
-- `vnc` goes through a local bridge to the session's VNC websocket. It needs operator 2.0.0 with chart 0.6.0; without them the run carries on without a viewer. Each session has 4 viewer slots, and the gateway cuts connections after 10 minutes, so reconnect from Screen Sharing if the window goes blank.
+- `web` opens the Speculos web page in your browser. On Speculinho the page goes through a proxy on `127.0.0.1` that keeps the session token to itself: the browser signs in through a single-use link and needs service workers, which Firefox private windows lack.
+- `vnc` opens macOS Screen Sharing; on other systems the address and password are logged. On Speculinho it goes through a local bridge to the session's VNC websocket, which needs operator 2.0.0 with chart 0.6.0; without them the run carries on without a viewer. Each session has 4 viewer slots, and the gateway cuts connections after 10 minutes, so reconnect from Screen Sharing if the window goes blank.
+
+Watching is safe, but pressing buttons while the test drives the device will throw it off. Each test opens its own view, so on desktop run a single spec with `--workers 1`.
 
 ## CI
 
