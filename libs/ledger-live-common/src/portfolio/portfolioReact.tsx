@@ -15,7 +15,10 @@ import {
   getAccountCurrency,
   flattenAccounts,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import {
+  useCountervaluesCache,
+  useCountervaluesState,
+} from "@features/platform-market-countervalues";
 import { useThrottledValues } from "../hooks/useThrottledValues";
 import {
   getBalanceHistoryWithCountervalue,
@@ -35,6 +38,7 @@ export function useBalanceHistoryWithCountervalue({
   range: PortfolioRange;
   to: Currency;
 }): AccountPortfolio {
+  // Re-renders on every load: the history is dated from the clock.
   const state = useCountervaluesState();
   const count = getPortfolioCount([account], range);
   return getBalanceHistoryWithCountervalue(account, range, count, state, to);
@@ -56,6 +60,7 @@ export function usePortfolio({
   to: Currency;
   options?: GetPortfolioOptionsType;
 }): Portfolio {
+  // Re-renders on every load: the history is dated from the clock.
   const state = useCountervaluesState();
   return getPortfolio(accounts, range, state, to, options);
 }
@@ -96,6 +101,7 @@ export function usePortfolioThrottled({
   stableThrottleDelay?: number;
 }): Portfolio {
   const [variableThrottleDelay, setVariableThrottleDelay] = useState(lowThrottleDelay);
+  // Re-renders on every load: the history is dated from the clock.
   const cvState = useCountervaluesState();
   const [throttledCVState, throttledAccounts] = useThrottledValues(
     [cvState, accounts],
@@ -142,6 +148,7 @@ export function useCurrencyPortfolio({
   currency: CryptoCurrency | TokenCurrency;
 }): CurrencyPortfolio {
   const accounts = flattenAccounts(rawAccounts).filter(a => getAccountCurrency(a) === currency);
+  // Re-renders on every load: the history is dated from the clock.
   const state = useCountervaluesState();
   return getCurrencyPortfolio(accounts, range, state, to);
 }
@@ -166,7 +173,7 @@ export function useDistribution({
   showEmptyAccounts?: boolean;
   hideEmptyTokenAccount?: boolean;
 }): AssetsDistribution {
-  const state = useCountervaluesState();
+  const state = useCountervaluesCache();
   if (skip) return emptyDistribution;
   return getAssetsDistribution(accounts, state, to, {
     minShowFirst: 6,

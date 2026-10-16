@@ -1,19 +1,13 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { inferTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/trackingPairs";
 import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
-import {
-  countervaluesStateSelector,
-  haveSameTrackingPairs,
-} from "@features/platform-market-countervalues";
+import { haveSameTrackingPairs } from "@features/platform-market-countervalues";
 import { selectFeature } from "@shared/feature-flags";
 import { createSelector } from "~/context/selectors";
-import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "./accounts";
 import { extraSessionTrackingPairsSelector } from "./countervaluesExtraSessionTracking";
 import { counterValueCurrencySelector } from "./settings";
 import type { State } from "./types";
-
-export const useCountervaluesState = () => useSelector(countervaluesStateSelector);
 
 function createTrackingPairsSelector() {
   // The same pairs while accounts resynchronize without changing them.
