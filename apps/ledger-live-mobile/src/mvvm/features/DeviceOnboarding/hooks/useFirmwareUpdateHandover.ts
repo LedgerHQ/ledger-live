@@ -11,6 +11,7 @@ const delegatedState = "checks.firmwareUpdateDelegated";
 
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
+  isDeviceOnboarded: boolean;
   machineState: string | null;
   send: (event: HostOnboardingEvent) => void;
 };
@@ -23,6 +24,7 @@ type BaseNavigation = NativeStackNavigationProp<
 
 export function useFirmwareUpdateHandover({
   device,
+  isDeviceOnboarded,
   machineState,
   send,
 }: UseFirmwareUpdateHandoverInput) {
@@ -79,7 +81,8 @@ export function useFirmwareUpdateHandover({
         deviceInfo,
         firmwareUpdateContext,
         onBackFromUpdate,
-        isBeforeOnboarding: true,
+        // A seeded device keeps its apps, image and language through the update.
+        isBeforeOnboarding: !isDeviceOnboarded,
       });
       return;
     }
@@ -93,6 +96,7 @@ export function useFirmwareUpdateHandover({
     device,
     deviceInfo,
     firmwareUpdateContext,
+    isDeviceOnboarded,
     baseNavigation,
     onBackFromUpdate,
     status,

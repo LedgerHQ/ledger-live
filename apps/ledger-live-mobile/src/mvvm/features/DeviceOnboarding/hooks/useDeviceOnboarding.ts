@@ -3,6 +3,7 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
+  type DeviceOnboardingContext,
   type OnboardingEvent,
   type SessionEvent,
 } from "@features/platform-device-onboarding";
@@ -21,6 +22,7 @@ import type { Subscription } from "rxjs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
+import { isCurrentSessionGenuine } from "../utils/genuineSession";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
@@ -29,9 +31,18 @@ type UseDeviceOnboardingInput = {
   knownDevices: KnownDevice[];
   offerSync: boolean;
   navigateOnExit?: boolean;
+  wasReadOnlyAtEntry?: boolean;
+};
+
+type GenuineActor = {
+  getSnapshot(): { context: DeviceOnboardingContext };
 };
 
 type StoppableActor = { stop(): void };
+
+export type DeviceOnboardingSession = DeviceOnboardingToolProps & {
+  liveDevice: Device | null;
+};
 
 function statusWithActor(
   actor: { getSnapshot(): unknown } | null,
@@ -44,12 +55,19 @@ export function useDeviceOnboarding({
   knownDevices,
   offerSync,
   navigateOnExit = true,
-}: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
+  wasReadOnlyAtEntry = false,
+}: UseDeviceOnboardingInput): DeviceOnboardingSession {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
-  const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
+  const actorBridge = useRef<{ current: GenuineActor | null } | null>(null);
+  const leaveOnboarding = useLeaveOnboarding({
+    device: liveDevice,
+    navigateOnExit,
+    wasReadOnlyAtEntry,
+    isGenuine: () => isCurrentSessionGenuine(actorBridge.current?.current?.getSnapshot().context),
+  });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -86,6 +104,10 @@ export function useDeviceOnboarding({
     onDone: handleDone,
     leaveOnboarding,
   });
+
+  useEffect(() => {
+    actorBridge.current = actorRef;
+  }, [actorRef]);
 
   const dropLostTransport = useCallback(() => {
     setSessionReady(false);
@@ -276,6 +298,7 @@ export function useDeviceOnboarding({
 
   useFirmwareUpdateHandover({
     device: liveDevice,
+    isDeviceOnboarded: context?.isOnboarded ?? false,
     machineState: state,
     send,
   });
@@ -294,6 +317,7 @@ export function useDeviceOnboarding({
   return {
     status,
     device,
+    liveDevice,
     state,
     context,
     events,
