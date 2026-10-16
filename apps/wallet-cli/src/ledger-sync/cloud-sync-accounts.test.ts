@@ -1,3 +1,4 @@
+import "../live-common-setup";
 import { describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
 import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
@@ -241,6 +242,49 @@ describe("mergeSyncedAccounts", () => {
       expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
     },
   );
+
+  it("skips an unknown derivation mode even when its id is also malformed", () => {
+    const session = Session.from([]);
+    const newer = { ...ETH_RAW, id: `js:2:ethereum:${ETH_ADDR}`, derivationMode: "ethFuture" };
+    const report = mergeSyncedAccounts(session, [newer]);
+
+    expect(report.invalid).toEqual([]);
+    expect(report.skipped).toEqual([expect.objectContaining({ status: "skipped", id: newer.id })]);
+  });
+
+  it("isolates an EVM account whose known mode belongs to another family as invalid", () => {
+    const session = Session.from([]);
+    const foreign = {
+      ...ETH_RAW,
+      id: `js:2:ethereum:${ETH_ADDR}:segwit`,
+      derivationMode: "segwit",
+    };
+    const report = mergeSyncedAccounts(session, [foreign, BTC_RAW]);
+
+    expect(report.skipped).toEqual([]);
+    expect(report.invalid).toEqual([
+      expect.objectContaining({
+        status: "invalid",
+        id: foreign.id,
+        reason: expect.stringContaining("No derivation mode for ethereum matches path"),
+      }),
+    ]);
+    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+    expect(session.accounts.map(({ descriptor }) => parseV1(descriptor).network.name)).toEqual([
+      "bitcoin",
+    ]);
+  });
+
+  it("imports on a full re-pull the entry a previous merge didn't have, leaving the rest unchanged", () => {
+    const session = Session.from([]);
+    mergeSyncedAccounts(session, [BTC_RAW]);
+
+    const report = mergeSyncedAccounts(session, [BTC_RAW, ETH_RAW]);
+
+    expect(report.imported).toEqual([expect.objectContaining({ network: "ethereum:main" })]);
+    expect(report.unchanged).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+    expect(session.accounts).toHaveLength(2);
+  });
 
   it("isolates a known currency whose id can't be decoded as invalid, not skipped", () => {
     const session = Session.from([]);
