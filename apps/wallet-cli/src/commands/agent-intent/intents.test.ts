@@ -195,6 +195,39 @@ describe("agent-intent intents", () => {
     expect(queries).toEqual([{ status: undefined, pageSize: undefined, cursor: "next-token" }]);
   });
 
+  it.each([{ status: "signed" }, { "page-size": "50" }])(
+    "refuses %j with a cursor before touching the keychain",
+    async flags => {
+      await expect(runIntents({ cursor: "next-token", ...flags })).rejects.toThrow(
+        "--cursor continues with the filters and page size of the listing that returned it: drop --status and --page-size.",
+      );
+      expect(queries).toEqual([]);
+      expect(secretKeyReads).toBe(0);
+    },
+  );
+
+  it.each(["7", "10.0", "abc"])("rejects --page-size %p", async pageSize => {
+    await expect(runIntents({ "page-size": pageSize })).rejects.toThrow(
+      "--page-size must be one of 1, 5, 10, 50, 100.",
+    );
+  });
+
+  it("shows the creation time in UTC whatever offset the service sent", async () => {
+    listImpl = async () => ({ intents: [record({ createdAt: "2026-10-07T12:30:00+02:00" })] });
+
+    await runIntents();
+
+    expect(stdout.join("")).toContain("2026-10-07 10:30");
+  });
+
+  it("shows a creation time it can't parse as the service sent it", async () => {
+    listImpl = async () => ({ intents: [record({ createdAt: "yesterday" })] });
+
+    await runIntents();
+
+    expect(stdout.join("")).toContain("yesterday");
+  });
+
   it("shows ERC-20 amounts in token units only when the token is known", async () => {
     listImpl = async () => ({
       intents: [
@@ -222,7 +255,7 @@ describe("agent-intent intents", () => {
     await runIntents();
 
     const text = stdout.join("");
-    expect(text).toContain("CREATED");
+    expect(text).toContain("CREATED (UTC)");
     expect(text).toContain("2026-10-07 10:00");
     expect(text).toContain("0.01 ETH");
     expect(text).toContain(RECIPIENT);

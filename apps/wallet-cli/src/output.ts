@@ -956,14 +956,14 @@ class HumanCommandOutput implements CommandOutput {
       // Every cell comes from the service, so none may carry terminal control sequences.
       const rows = intents.map(i =>
         [
-          i.createdAt.replace("T", " ").slice(0, 16),
+          utcMinute(i.createdAt),
           i.status,
           i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
           i.recipient ?? "—",
           i.id,
         ].map(stripControlChars),
       );
-      const headers = ["CREATED", "STATUS", "AMOUNT", "TO", "ID"];
+      const headers = ["CREATED (UTC)", "STATUS", "AMOUNT", "TO", "ID"];
       const widths = headers.map((h, c) => Math.max(h.length, ...rows.map(r => r[c].length)));
       const format = (cells: string[]) =>
         cells.map((cell, c) => (c === cells.length - 1 ? cell : cell.padEnd(widths[c]))).join("  ");
@@ -1024,6 +1024,13 @@ class HumanCommandOutput implements CommandOutput {
     const terminal = isTerminalIntentStatus(intent.status);
     writeStdout([headline, ...intentDetailLines(profileId, intent, terminal)].join("\n"));
   }
+}
+
+/** "2026-10-07 10:00" in UTC, whatever offset the service sent; unparsable text is kept. */
+function utcMinute(timestamp: string): string {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return timestamp;
+  return date.toISOString().replace("T", " ").slice(0, 16);
 }
 
 /** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
