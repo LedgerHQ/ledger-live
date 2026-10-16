@@ -86,7 +86,7 @@ describe("genuineCheck", () => {
     complete(fake, true);
     await settle();
 
-    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED" }]);
+    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } }]);
     stop();
   });
 
@@ -200,7 +200,7 @@ describe("genuineCheck", () => {
     await settle();
 
     expect(fake.executions).toHaveLength(2);
-    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED" }]);
+    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } }]);
     stop();
   });
 

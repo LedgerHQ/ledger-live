@@ -32,13 +32,13 @@ export const toggleEarlyCheck = fromCallback<ToggleEarlyCheckEvent, ToggleEarlyC
           sendBack(
             isSuccessCommandResult(result)
               ? { type: "EARLY_CHECK_TOGGLED" }
-              : { type: "EARLY_CHECK_UNAVAILABLE" },
+              : { type: "EARLY_CHECK_UNAVAILABLE", output: result.error },
           );
         }
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!stopped) {
-          sendBack({ type: "EARLY_CHECK_UNAVAILABLE" });
+          sendBack({ type: "EARLY_CHECK_UNAVAILABLE", output: error });
         }
       });
 

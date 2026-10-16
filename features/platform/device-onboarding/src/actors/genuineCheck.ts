@@ -86,7 +86,7 @@ export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
         if (!stopped) {
           sendBack(
             output.isGenuine
-              ? { type: "GENUINE_CHECK_PASSED" }
+              ? { type: "GENUINE_CHECK_PASSED", output }
               : { type: "DEVICE_NOT_GENUINE", failure: output },
           );
         }
