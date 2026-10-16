@@ -1,4 +1,6 @@
+import { waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ContactAddressTestData } from "@ledgerhq/live-e2e-shared/contacts";
 import ContactNameDrawer, { RENAME_CONTACT_PREFIX } from "@e2e/page/drawer/contactName.drawer";
 
@@ -46,6 +48,8 @@ export default class ContactDetailPage {
   private readonly editAction = () => getElementById("contacts-detail-edit-action");
   private readonly deleteAction = () => getElementById("contacts-detail-delete-action");
   private readonly deleteConfirmButton = () => getElementById("contacts-delete-contact-confirm");
+  private readonly renameDevicePendingId = "contacts-rename-contact-pending";
+  private readonly renameDeviceContinueId = "contacts-rename-contact-continue-on-device";
   private readonly addressValue = (address: string) =>
     getElementByIdAndText(this.addressValueRegExp, this.truncatedAddress(address));
 
@@ -71,9 +75,19 @@ export default class ContactDetailPage {
     await detoxExpect(this.screen()).toBeVisible();
   }
 
+  @Step("Expect the rename device sheet to be gone")
+  async expectRenameDeviceSheetClosed() {
+    await waitFor(getElementById(this.renameDevicePendingId))
+      .not.toExist()
+      .withTimeout(TIMEOUT.xxlarge);
+    await waitFor(getElementById(this.renameDeviceContinueId))
+      .not.toExist()
+      .withTimeout(TIMEOUT.xxlarge);
+  }
+
   @Step("Expect contact detail name to be {{0}}")
-  async expectName(name: string) {
-    await detoxExpect(this.name()).toHaveText(name);
+  async expectName(name: string, timeout = TIMEOUT.medium) {
+    await waitFor(this.name()).toHaveText(name).withTimeout(timeout);
   }
 
   @Step("Expect the contact to have no address")
@@ -93,7 +107,10 @@ export default class ContactDetailPage {
   }
 
   @Step("Enter address {{{0.addressInput}}} for {{0.networkName}}")
-  async enterAddress(data: ContactAddressTestData) {
+  async enterAddress(
+    data: ContactAddressTestData,
+    options?: { releaseIosSyncForDeviceSheet?: boolean },
+  ) {
     // POL sits below the drawer's top assets. The search field is a single line; once the
     // sheet expands it sits under the header, and typing Enter there never lands.
     await app.modularDrawer.performSearchByTicker(data.ticker, false);
@@ -120,14 +137,24 @@ export default class ContactDetailPage {
       await typeTextByElement(this.addAddressNameInput(), data.addressLabel, false);
     }
 
+    await this.submitAddressName(options?.releaseIosSyncForDeviceSheet === true);
+  }
+
+  private async submitAddressName(releaseIosSync: boolean) {
+    if (releaseIosSync) {
+      await app.common.disableSynchronizationForiOS();
+    }
     await tapByElement(this.addAddressNameContinueButton());
     await waitForElement(this.registerAddressDeviceConfirmation());
   }
 
   @Step("Add {{0.networkName}} address {{{0.addressInput}}}")
-  async addAddress(data: ContactAddressTestData) {
+  async addAddress(
+    data: ContactAddressTestData,
+    options?: { releaseIosSyncForDeviceSheet?: boolean },
+  ) {
     await this.openAddAddress();
-    await this.enterAddress(data);
+    await this.enterAddress(data, options);
   }
 
   @Step("Expect {{{0}}} saved under {{1}}")

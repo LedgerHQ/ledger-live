@@ -1,4 +1,5 @@
 import {
+  mockserverIdentifier,
   rnBleTransportIdentifier,
   rnHidTransportIdentifier,
   speculosIdentifier,
@@ -165,6 +166,24 @@ describe("knownDevices reducer", () => {
 
       // THEN
       expect(nextState.knownDevices).toEqual([flex, updatedDevice]);
+    });
+
+    it("GIVEN a placeholder mock-server device WHEN a connection reports its id THEN it updates that entry", () => {
+      const mockServer = {
+        id: "",
+        name: null,
+        deviceModelId: DeviceModelId.nanoSP,
+        transport: mockserverIdentifier,
+      };
+      const updatedDevice = {
+        ...mockServer,
+        id: "session-device-1",
+        name: "Ledger Nano S Plus",
+      };
+
+      const nextState = reducer({ knownDevices: [mockServer] }, updateKnownDevice(updatedDevice));
+
+      expect(nextState.knownDevices).toEqual([updatedDevice]);
     });
 
     it("GIVEN an existing Speculos known device WHEN a connection reports its fixed id THEN it updates that entry instead of adding one", () => {

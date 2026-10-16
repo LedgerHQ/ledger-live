@@ -4,6 +4,7 @@ import { launchApp, setupEnvironment } from "@e2e/helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { close as closeBridge } from "@e2e/bridge/server";
 import { setAllureDescription } from "@e2e/helpers/allure/allure-helper";
+import { deleteSpeculos } from "@e2e/utils/speculosUtils";
 
 const LAUNCH_TIMEOUT = 150_000;
 const TEARDOWN_TIMEOUT = 60_000;
@@ -31,9 +32,13 @@ afterAll(async () => {
   }
 
   try {
-    await app.common.removeSpeculos();
+    if (process.env.CI) {
+      await deleteSpeculos();
+    } else {
+      await app.common.removeSpeculos();
+    }
   } catch (e) {
-    log.warn(`setup afterAll removeSpeculos failed: ${sanitizeError(e)}`);
+    log.warn(`setup afterAll speculos cleanup failed: ${sanitizeError(e)}`);
   }
 
   try {
