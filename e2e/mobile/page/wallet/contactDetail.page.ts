@@ -107,10 +107,7 @@ export default class ContactDetailPage {
   }
 
   @Step("Enter address {{{0.addressInput}}} for {{0.networkName}}")
-  async enterAddress(
-    data: ContactAddressTestData,
-    options?: { releaseIosSyncForDeviceSheet?: boolean },
-  ) {
+  async enterAddress(data: ContactAddressTestData) {
     // POL sits below the drawer's top assets. The search field is a single line; once the
     // sheet expands it sits under the header, and typing Enter there never lands.
     await app.modularDrawer.performSearchByTicker(data.ticker, false);
@@ -137,24 +134,20 @@ export default class ContactDetailPage {
       await typeTextByElement(this.addAddressNameInput(), data.addressLabel, false);
     }
 
-    await this.submitAddressName(options?.releaseIosSyncForDeviceSheet === true);
-  }
-
-  private async submitAddressName(releaseIosSync: boolean) {
-    if (releaseIosSync) {
-      await app.common.disableSynchronizationForiOS();
+    // iOS Detox waits for idle, and the device sheet never settles, so the continue tap hangs.
+    await app.common.disableSynchronizationForiOS();
+    try {
+      await tapByElement(this.addAddressNameContinueButton());
+      await waitForElement(this.registerAddressDeviceConfirmation());
+    } finally {
+      await app.common.enableSynchronization();
     }
-    await tapByElement(this.addAddressNameContinueButton());
-    await waitForElement(this.registerAddressDeviceConfirmation());
   }
 
   @Step("Add {{0.networkName}} address {{{0.addressInput}}}")
-  async addAddress(
-    data: ContactAddressTestData,
-    options?: { releaseIosSyncForDeviceSheet?: boolean },
-  ) {
+  async addAddress(data: ContactAddressTestData) {
     await this.openAddAddress();
-    await this.enterAddress(data, options);
+    await this.enterAddress(data);
   }
 
   @Step("Expect {{{0}}} saved under {{1}}")
