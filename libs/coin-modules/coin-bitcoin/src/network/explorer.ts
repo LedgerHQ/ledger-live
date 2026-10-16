@@ -34,7 +34,7 @@ export function explorerBaseUrl(config: ExplorerConfig): string {
 }
 
 /** Tags some explorer versions wrap a UTXO entry in (`{ "Pending": { … } }`, `{ "Mined": { … } }`). */
-const UTXO_TAGS = ["Mined", "Pending"];
+const UTXO_TAGS = new Set(["Mined", "Pending"]);
 
 /**
  * A UTXO in the module's shape, from an explorer entry.
@@ -54,7 +54,7 @@ function toUtxo(entry: unknown): ExplorerUtxo {
     throw new Error(`explorer returned an unusable UTXO: ${JSON.stringify(entry)}`);
   }
   const keys = Object.keys(entry);
-  const wrapped = keys.length === 1 && UTXO_TAGS.includes(keys[0]) ? entry[keys[0]] : undefined;
+  const wrapped = keys.length === 1 && UTXO_TAGS.has(keys[0]) ? entry[keys[0]] : undefined;
   const raw = isRecord(wrapped) ? wrapped : entry;
   const hash = raw.txId ?? raw.tx_id ?? raw.output_hash ?? raw.hash;
   const outputIndex = raw.outputIndex ?? raw.output_index ?? raw.vout;

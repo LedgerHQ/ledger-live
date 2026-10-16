@@ -42,7 +42,7 @@ function strictlyDecreasing(rates: bigint[]): bigint[] {
  */
 function explorerRates(fees: ExplorerFees, relayFee: string | null | undefined): bigint[] {
   const rates = Object.entries(fees)
-    .filter(([target]) => !isNaN(Number(target)))
+    .filter(([target]) => !Number.isNaN(Number(target)))
     .map(([, rate]) => rate)
     .filter((rate): rate is number => typeof rate === "number")
     .map(rate => BigInt(Math.ceil(rate / 1000)));
@@ -106,8 +106,11 @@ export async function getFeeRate(
     feePerByte = positiveRate(options.feePerByte);
   } else {
     const strategy = options.feesStrategy ?? "medium";
-    const index = EXPLORER_SPEEDS.findIndex(speed => speed === strategy);
-    if (index < 0) throw new Error(`unknown fees strategy: ${String(strategy)}`);
+    const index = EXPLORER_SPEEDS.indexOf(strategy as FeesStrategy);
+    if (index < 0) {
+      const shown = typeof strategy === "string" ? strategy : JSON.stringify(strategy);
+      throw new Error(`unknown fees strategy: ${shown}`);
+    }
     feePerByte = explorerRates(rates ?? {}, network.relay_fee)[index];
   }
 

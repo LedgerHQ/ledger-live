@@ -18,38 +18,131 @@ import type { BitcoinIntent } from "./intent";
 import { opReturnScript } from "./intent";
 import { cryptoFor, paymentDustThreshold } from "./selectUtxos";
 
+type Validation = Pick<TransactionValidation, "errors" | "warnings">;
+
+const NONE: Validation = { errors: {}, warnings: {} };
+
 /**
- * Whether the fee is below the network's minimum relay fee, from what `estimateFees` returned in the
- * parameters (`relayFeePerByte`, `vsize`, `feePerByte`): a node would not relay the transaction.
- * Without those parameters, nothing is known and nothing is reported.
+ * The amount the transaction sends: the intent's, or for `useAllAmount` the sweep `estimateFees`
+ * priced (`parameters.amount`: every spendable output minus the fee), else the balance minus the
+ * fees.
  */
-function belowRelayMinimum(fees: bigint, parameters: FeeEstimation["parameters"]): boolean {
+function computeAmount(
+  intent: BitcoinIntent,
+  nativeBalance: bigint,
+  fees: bigint,
+  sweep?: bigint,
+): bigint {
+  if (!intent.useAllAmount) return intent.amount;
+  if (sweep !== undefined) return sweep;
+  return nativeBalance > fees ? nativeBalance - fees : 0n;
+}
+
+/** The recipient must be given, and be an address of the currency. */
+async function validateRecipient(
+  currencyId: string,
+  currencyName: string,
+  intent: BitcoinIntent,
+): Promise<Validation> {
+  if (!intent.recipient) {
+    return { errors: { recipient: new RecipientRequired() }, warnings: {} };
+  }
+  if (!(await validateAddress(intent.recipient, { currencyId }))) {
+    return { errors: { recipient: new InvalidAddress("", { currencyName }) }, warnings: {} };
+  }
+  return NONE;
+}
+
+/**
+ * The amount must be positive, covered by the funds, and above the payment's dust threshold.
+ *
+ * Funds: when `customFees` comes from `estimateFees`, its `parameters.sufficient` is the verdict,
+ * since the estimate selected from the outputs crafting spends (confirmed ones and the address's
+ * own unconfirmed change, see `getSpendableUtxos`), which a confirmed balance does not show; so is
+ * the sweep it priced. Otherwise the amount and the fees are checked against the native balance.
+ */
+function validateAmount(
+  currencyId: string,
+  intent: BitcoinIntent,
+  amount: bigint,
+  fees: bigint,
+  nativeBalance: bigint,
+  customFees: FeeEstimation | undefined,
+): Validation {
+  if (amount <= 0n) {
+    const error = intent.useAllAmount ? new NotEnoughBalance() : new AmountRequired();
+    return { errors: { amount: error }, warnings: {} };
+  }
+
+  const sufficient = customFees?.parameters?.sufficient;
+  const sweepEstimated =
+    intent.useAllAmount && amountParameter(customFees?.parameters, "amount") !== undefined;
+  const covered =
+    typeof sufficient === "boolean" ? sufficient : sweepEstimated || amount + fees <= nativeBalance;
+  if (!covered) {
+    return { errors: { amount: new NotEnoughBalance() }, warnings: {} };
+  }
+
+  // Undefined while the recipient is not an address: there is no payment to measure yet.
+  const dust = paymentDustThreshold(currencyId, intent.sender, intent.recipient);
+  if (dust !== undefined && amount < dust) {
+    return { errors: { amount: new DustLimit() }, warnings: {} };
+  }
+  return NONE;
+}
+
+/**
+ * The fee must not be negative (validation would subtract it from the funds needed, while crafting
+ * ignores it), nor below the network's minimum relay fee, as far as the parameters `estimateFees`
+ * returned tell (`relayFeePerByte`, `vsize`, `feePerByte`): a node would not relay the transaction.
+ */
+function validateFees(fees: bigint, parameters: FeeEstimation["parameters"]): Validation {
+  if (fees < 0n) {
+    return { errors: { fees: new Error("customFees.value must not be negative") }, warnings: {} };
+  }
+
   const relayFeePerByte = amountParameter(parameters, "relayFeePerByte");
-  if (relayFeePerByte === undefined) return false;
+  if (relayFeePerByte === undefined) return NONE;
   const vsize = amountParameter(parameters, "vsize");
   const feePerByte = amountParameter(parameters, "feePerByte");
-  return (
-    (fees > 0n && vsize !== undefined && fees < vsize * relayFeePerByte) ||
-    (feePerByte !== undefined && feePerByte < relayFeePerByte)
-  );
+  const belowRelayFee = fees > 0n && vsize !== undefined && fees < vsize * relayFeePerByte;
+  const belowRelayRate = feePerByte !== undefined && feePerByte < relayFeePerByte;
+  if (belowRelayFee || belowRelayRate) {
+    return { errors: { fees: new FeeTooLow() }, warnings: {} };
+  }
+  return NONE;
+}
+
+/**
+ * OP_RETURN data (`intent.data.opReturnData`) must be hex and within the relay limit
+ * (`OpReturnDataSizeLimit`, reported under `opReturnSizeLimit`, as the bridge reports it).
+ */
+function validateOpReturn(currencyId: string, intent: BitcoinIntent): Validation {
+  try {
+    opReturnScript(intent, cryptoFor(currencyId));
+    return NONE;
+  } catch (error) {
+    const opReturnSizeLimit = error instanceof Error ? error : new Error(String(error));
+    return { errors: { opReturnSizeLimit }, warnings: {} };
+  }
+}
+
+/** Warns when the fees are more than 10% of the amount. */
+function validateFeeRatio(
+  customFees: FeeEstimation | undefined,
+  amount: bigint,
+  fees: bigint,
+): Validation {
+  if (customFees && amount > 0n && fees * 10n > amount) {
+    return { errors: {}, warnings: { feeTooHigh: new FeeTooHigh() } };
+  }
+  return NONE;
 }
 
 /**
  * Fee-agnostic validation of a transaction intent, from the intent and the balances passed in,
- * plus `customFees` when provided. Makes no network call.
- *
- * A `useAllAmount` intent sends the amount `estimateFees` priced for that sweep, when `customFees`
- * carries it (`parameters.amount`): every spendable output minus the fee. Otherwise, as under a
- * custom fee, it sends the native balance minus `customFees`.
- *
- * Funds: when `customFees` comes from `estimateFees`, its `parameters.sufficient` is the verdict,
- * since the estimate selected from the outputs crafting spends (confirmed ones and the address's
- * own unconfirmed change, see `getSpendableUtxos`), which a confirmed balance does not show.
- * Otherwise the amount and the fee are checked against the native balance passed in.
- *
- * An amount below the dust threshold of the payment is refused (`DustLimit`). OP_RETURN data
- * (`intent.data.opReturnData`) over the relay limit is refused (`OpReturnDataSizeLimit`, under
- * `opReturnSizeLimit`, as the bridge reports it), as is data that is not hex.
+ * plus `customFees` when provided: recipient, amount (funds, dust), fees (relay minimum), OP_RETURN
+ * data, and a warning when the fees are high. Makes no network call.
  */
 export async function validateIntent(
   context: BitcoinContext,
@@ -58,63 +151,35 @@ export async function validateIntent(
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
-  const errors: Record<string, Error> = {};
-  const warnings: Record<string, Error> = {};
-
+  const config = await context.config(currencyId);
   const fees = customFees?.value ?? 0n;
   const nativeBalance = balances.find(balance => balance.asset.type === "native")?.value ?? 0n;
-  // The exact amount of a send-max, when the estimate behind `customFees` priced one; otherwise the
-  // balance minus the fees.
-  const estimatedSweep = amountParameter(customFees?.parameters, "amount");
-  const maxAmount =
-    typeof estimatedSweep === "bigint"
-      ? estimatedSweep
-      : nativeBalance > fees
-        ? nativeBalance - fees
-        : 0n;
-  const amount = intent.useAllAmount ? maxAmount : intent.amount;
-  const sufficientParameter = customFees?.parameters?.sufficient;
-  const estimatedSufficient =
-    typeof sufficientParameter === "boolean" ? sufficientParameter : undefined;
+  const sweep = amountParameter(customFees?.parameters, "amount");
+  const amount = computeAmount(intent, nativeBalance, fees, sweep);
 
-  if (!intent.recipient) {
-    errors.recipient = new RecipientRequired();
-  } else if (!(await validateAddress(intent.recipient, { currencyId }))) {
-    errors.recipient = new InvalidAddress("", {
-      currencyName: (await context.config(currencyId)).name,
-    });
-  }
+  const recipient = await validateRecipient(currencyId, config.name, intent);
+  const funds = validateAmount(currencyId, intent, amount, fees, nativeBalance, customFees);
+  const fee = validateFees(fees, customFees?.parameters);
+  const opReturn = validateOpReturn(currencyId, intent);
+  const feeRatio = validateFeeRatio(customFees, amount, fees);
 
-  const dust =
-    errors.recipient === undefined
-      ? paymentDustThreshold(currencyId, intent.sender, intent.recipient)
-      : undefined;
-  if (amount <= 0n) {
-    errors.amount = intent.useAllAmount ? new NotEnoughBalance() : new AmountRequired();
-  } else if (
-    estimatedSufficient === false ||
-    (estimatedSufficient === undefined &&
-      !(intent.useAllAmount && typeof estimatedSweep === "bigint") &&
-      amount + fees > nativeBalance)
-  ) {
-    errors.amount = new NotEnoughBalance();
-  } else if (dust !== undefined && amount < dust) {
-    errors.amount = new DustLimit();
-  }
-
-  // A negative fee would be subtracted from the balance check, while crafting ignores it.
-  if (fees < 0n) errors.fees = new Error("customFees.value must not be negative");
-  else if (belowRelayMinimum(fees, customFees?.parameters)) errors.fees = new FeeTooLow();
-
-  try {
-    opReturnScript(intent, cryptoFor(currencyId));
-  } catch (error) {
-    errors.opReturnSizeLimit = error instanceof Error ? error : new Error(String(error));
-  }
-
-  if (customFees && amount > 0n && fees * 10n > amount) {
-    warnings.feeTooHigh = new FeeTooHigh();
-  }
-
-  return { errors, warnings, estimatedFees: fees, amount, totalSpent: amount + fees };
+  return {
+    errors: {
+      ...recipient.errors,
+      ...funds.errors,
+      ...fee.errors,
+      ...opReturn.errors,
+      ...feeRatio.errors,
+    },
+    warnings: {
+      ...recipient.warnings,
+      ...funds.warnings,
+      ...fee.warnings,
+      ...opReturn.warnings,
+      ...feeRatio.warnings,
+    },
+    estimatedFees: fees,
+    amount,
+    totalSpent: amount + fees,
+  };
 }

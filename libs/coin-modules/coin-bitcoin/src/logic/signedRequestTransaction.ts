@@ -57,6 +57,65 @@ const expiryHeightOf = (request: SigningRequest): Buffer =>
   Buffer.from(request.expiryHeight ?? "00000000", "hex");
 
 /**
+ * Reads the inputs, checking each outpoint and sequence against the request's. Returns their
+ * scriptSigs (none for Decred, whose signatures are in the witness), or `undefined` on a mismatch.
+ */
+function readInputs(
+  reader: Reader,
+  request: SigningRequest,
+  decred: boolean,
+): Buffer[] | undefined {
+  if (reader.varInt() !== request.inputs.length) return undefined;
+  const scripts: Buffer[] = [];
+  for (const input of request.inputs) {
+    const txid = Buffer.from(reader.take(32)).reverse().toString("hex");
+    const vout = reader.uint32();
+    if (decred) {
+      // Decred's tree is part of the outpoint: hw-app-btc always writes the regular tree (0), the
+      // one every output the address spends is in. Another tree is another outpoint.
+      if (reader.take(1)[0] !== 0) return undefined;
+    } else {
+      scripts.push(reader.script());
+    }
+    const sequence = reader.uint32();
+    if (txid !== input.txid.toLowerCase() || vout !== input.vout || sequence !== input.sequence) {
+      return undefined;
+    }
+  }
+  return scripts;
+}
+
+/** Reads Decred's witness, one entry per input: their signature scripts, or `undefined` on a mismatch. */
+function readDecredWitness(reader: Reader, inputCount: number): Buffer[] | undefined {
+  if (reader.varInt() !== inputCount) return undefined;
+  const scripts: Buffer[] = [];
+  for (let remaining = inputCount; remaining > 0; remaining--) {
+    reader.take(16); // value, block height, block index
+    scripts.push(reader.script());
+  }
+  return scripts;
+}
+
+/**
+ * Reads what follows the outputs: locktime and expiry height, then Decred's witness or Komodo's
+ * empty Sapling fields, to the end. Returns Decred's signature scripts (none for Komodo), or
+ * `undefined` on a mismatch.
+ */
+function readTrailer(
+  reader: Reader,
+  request: SigningRequest,
+  decred: boolean,
+): Buffer[] | undefined {
+  if (reader.uint32() !== (request.lockTime ?? 0)) return undefined;
+  if (!reader.take(4).equals(expiryHeightOf(request))) return undefined;
+  const scripts = decred ? readDecredWitness(reader, request.inputs.length) : [];
+  if (!decred && !reader.take(SAPLING_EXTRA_DATA.length).equals(SAPLING_EXTRA_DATA)) {
+    return undefined;
+  }
+  return reader.done ? scripts : undefined;
+}
+
+/**
  * Reads `signed` in the format hw-app-btc's `createPaymentTransaction` writes for the request's
  * currency (`serializeTransaction` and its final assembly), and checks every field against the
  * request:
@@ -76,41 +135,20 @@ export function signedRequestMismatch(
   const decred = request.additionals.includes("decred");
   const reader = new Reader(signed);
   try {
-    const header = reader.take(decred ? DECRED_VERSION.length : SAPLING_HEADER.length);
-    if (!header.equals(decred ? DECRED_VERSION : SAPLING_HEADER)) return "transaction";
+    const header = decred ? DECRED_VERSION : SAPLING_HEADER;
+    if (!reader.take(header.length).equals(header)) return "transaction";
 
-    if (reader.varInt() !== request.inputs.length) return "transaction";
-    const scripts: Buffer[] = [];
-    for (const input of request.inputs) {
-      const txid = Buffer.from(reader.take(32)).reverse().toString("hex");
-      const vout = reader.uint32();
-      // Decred's tree is part of the outpoint: hw-app-btc always writes the regular tree (0), the
-      // one every output the address spends is in. Another tree is another outpoint.
-      if (decred && reader.take(1)[0] !== 0) return "transaction";
-      if (!decred) scripts.push(reader.script());
-      const sequence = reader.uint32();
-      if (txid !== input.txid.toLowerCase() || vout !== input.vout || sequence !== input.sequence) {
-        return "transaction";
-      }
-    }
+    const inputScripts = readInputs(reader, request, decred);
+    if (!inputScripts) return "transaction";
 
     const outputs = requestOutputScript(request);
     if (!reader.take(outputs.length).equals(outputs)) return "outputs";
 
-    if (reader.uint32() !== (request.lockTime ?? 0)) return "transaction";
-    if (!reader.take(4).equals(expiryHeightOf(request))) return "transaction";
+    const witnessScripts = readTrailer(reader, request, decred);
+    if (!witnessScripts) return "transaction";
 
-    if (decred) {
-      if (reader.varInt() !== request.inputs.length) return "transaction";
-      for (let i = 0; i < request.inputs.length; i++) {
-        reader.take(16); // value, block height, block index
-        scripts.push(reader.script());
-      }
-    } else if (!reader.take(SAPLING_EXTRA_DATA.length).equals(SAPLING_EXTRA_DATA)) {
-      return "transaction";
-    }
-    if (!reader.done) return "transaction";
-    return scripts.every(script => script.length > 0) ? undefined : "unsigned";
+    const allSigned = [...inputScripts, ...witnessScripts].every(script => script.length > 0);
+    return allSigned ? undefined : "unsigned";
   } catch {
     // Truncated or malformed: whatever it is, it is not the request's transaction.
     return "transaction";

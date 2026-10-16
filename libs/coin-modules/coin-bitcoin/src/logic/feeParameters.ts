@@ -9,18 +9,19 @@ import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
  * `estimateFees` returned may therefore come back as strings. A negative value is refused.
  */
 export function toBigInt(value: unknown, field: string): bigint {
-  const amount =
-    typeof value === "bigint"
-      ? value
-      : typeof value === "number" && Number.isSafeInteger(value)
-        ? BigInt(value)
-        : typeof value === "string" && /^\d+$/.test(value)
-          ? BigInt(value)
-          : undefined;
+  const amount = readInteger(value);
   if (amount === undefined || amount < 0n) {
     throw new Error(`${field} must be a non-negative integer amount`);
   }
   return amount;
+}
+
+/** `value` as a bigint when it is one, a safe integer or an integer string; otherwise `undefined`. */
+function readInteger(value: unknown): bigint | undefined {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number" && Number.isSafeInteger(value)) return BigInt(value);
+  if (typeof value === "string" && /^\d+$/.test(value)) return BigInt(value);
+  return undefined;
 }
 
 /** The numeric fee parameter `field`, or `undefined` when absent. */

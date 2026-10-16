@@ -205,7 +205,7 @@ function psbtSigningParameters(
   config: BitcoinCoinConfig,
   currencyId: string,
   psbtBase64: string,
-  { recipient, now = new Date() }: { recipient?: string | undefined; now?: Date | undefined },
+  { recipient, now = new Date() }: { recipient?: string; now?: Date },
 ): PaymentTransactionParameters {
   const psbt = Psbt.fromBase64(psbtBase64);
   const previousOutputs = psbt.txInputs.map((input, index) => {

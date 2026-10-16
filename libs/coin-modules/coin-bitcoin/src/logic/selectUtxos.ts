@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { OP_RETURN_DATA_SIZE_LIMIT } from "@ledgerhq/wallet-btc/crypto/base";
 import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
 import type { Currency, ICrypto } from "@ledgerhq/wallet-btc/crypto/types";
 import { DerivationModes } from "@ledgerhq/wallet-btc/types";
@@ -10,7 +9,8 @@ import {
 } from "@ledgerhq/wallet-btc/utils";
 import type { ExplorerUtxo } from "../network/types";
 
-export { DerivationModes, OP_RETURN_DATA_SIZE_LIMIT, maxTxSizeCeil };
+export { OP_RETURN_DATA_SIZE_LIMIT } from "@ledgerhq/wallet-btc/crypto/base";
+export { DerivationModes, maxTxSizeCeil };
 export type { ICrypto };
 
 /**
@@ -140,7 +140,8 @@ function spendingOrder(a: ExplorerUtxo, b: ExplorerUtxo): number {
   const heightA = a.height ?? Number.POSITIVE_INFINITY;
   const heightB = b.height ?? Number.POSITIVE_INFINITY;
   if (heightA !== heightB) return heightA < heightB ? -1 : 1;
-  return a.hash === b.hash ? a.outputIndex - b.outputIndex : a.hash < b.hash ? -1 : 1;
+  if (a.hash !== b.hash) return a.hash < b.hash ? -1 : 1;
+  return a.outputIndex - b.outputIndex;
 }
 
 /**
