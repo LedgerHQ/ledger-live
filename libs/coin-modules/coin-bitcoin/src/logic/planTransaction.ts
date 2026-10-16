@@ -37,6 +37,22 @@ export type TransactionPlan = {
 };
 
 /**
+ * Bytes a currency's transaction format carries that wallet-btc's size maths (`maxTxSizeCeil`) leave
+ * out, for `inputCount` inputs, read from its config:
+ *
+ * - Komodo (expiry height and extra data): the Sapling version group id (4), the expiry height (4)
+ *   and the empty Sapling fields (11).
+ * - Decred (expiry height only): the expiry height (4), the witness count (1), the change output's
+ *   script version (2) and each input's tree byte (1). wallet-btc over-counts the other outputs (8
+ *   bytes each for a 2-byte script version), which is left as margin.
+ */
+export function formatBytes(config: BitcoinCoinConfig, inputCount: number): number {
+  const { expiryHeight, extraData } = config.transaction ?? {};
+  if (!expiryHeight) return 0;
+  return extraData ? 19 : 7 + inputCount;
+}
+
+/**
  * Plans the transaction of an intent from a single address: its scripts, its fee rate, and the
  * outputs it spends, selected from the sender's spendable outputs (see `getSpendableUtxos`) as
  * `selectUtxos` selects them. `estimateFees` and `craftTransaction` both start from it, so the
@@ -78,6 +94,7 @@ export async function planTransaction(
     feePerByte,
     relayFeePerByte,
     extraOutputScripts,
+    formatBytes: inputCount => formatBytes(config, inputCount),
     ...(fees.fixedFee === undefined ? {} : { fixedFee: fees.fixedFee }),
   });
   const vsize = transactionSize(
@@ -87,6 +104,7 @@ export async function planTransaction(
     crypto,
     derivationMode,
     extraOutputScripts,
+    formatBytes(config, selection.inputs.length),
   );
 
   return {

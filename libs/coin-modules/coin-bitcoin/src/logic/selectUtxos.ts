@@ -100,6 +100,8 @@ export function paymentDustThreshold(
 /**
  * Size, in vbytes, of a single-address transaction with `inputCount` inputs (at least one), paying
  * the recipient plus `extraOutputScripts` (an OP_RETURN output), with or without change.
+ * `formatBytes` adds what the currency's format carries beyond wallet-btc's size maths (see
+ * `planTransaction`).
  */
 export function transactionSize(
   inputCount: number,
@@ -108,13 +110,16 @@ export function transactionSize(
   crypto: ICrypto,
   derivationMode: DerivationModes,
   extraOutputScripts: Buffer[] = [],
+  formatBytes = 0,
 ): number {
-  return maxTxSizeCeil(
-    Math.max(inputCount, 1),
-    [recipientScript, ...extraOutputScripts],
-    withChange,
-    crypto,
-    derivationMode,
+  return (
+    maxTxSizeCeil(
+      Math.max(inputCount, 1),
+      [recipientScript, ...extraOutputScripts],
+      withChange,
+      crypto,
+      derivationMode,
+    ) + formatBytes
   );
 }
 
@@ -162,6 +167,8 @@ export function selectUtxos(params: {
   fixedFee?: bigint;
   /** Outputs paid besides the recipient and the change (an OP_RETURN output), for sizes. */
   extraOutputScripts?: Buffer[];
+  /** Bytes the currency's format adds to a transaction of so many inputs (see `transactionSize`). */
+  formatBytes?: (inputCount: number) => number;
 }): UtxoSelection {
   const { amount, useAllAmount, recipientScript, crypto, derivationMode, feePerByte } = params;
   const utxos = [...params.utxos].sort(spendingOrder);
@@ -174,6 +181,7 @@ export function selectUtxos(params: {
       crypto,
       derivationMode,
       params.extraOutputScripts,
+      params.formatBytes?.(inputCount) ?? 0,
     );
   const feeFor = (inputCount: number, withChange: boolean) =>
     params.fixedFee ?? BigInt(size(inputCount, withChange)) * feePerByte;

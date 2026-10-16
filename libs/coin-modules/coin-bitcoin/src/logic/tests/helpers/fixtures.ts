@@ -48,10 +48,10 @@ export function buildSignedTxHex(inputs: { prevTxid?: string; index?: number }[]
       // PSBT input hashes are in internal byte order: the reverse of the displayed txid.
       hash: prevTxid ? Buffer.from(prevTxid, "hex").reverse() : Buffer.alloc(32, 0xab),
       index,
-      witnessUtxo: { value: 100000, script: p2wpkhScript! },
+      witnessUtxo: { value: 100_000n, script: p2wpkhScript! },
     });
   }
-  psbt.addOutput({ address: address!, value: 10000 - 500 });
+  psbt.addOutput({ address: address!, value: 10_000n - 500n });
 
   inputs.forEach((_, i) =>
     psbt.signInput(i, {

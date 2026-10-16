@@ -121,7 +121,7 @@ describe("estimateFees", () => {
     expect(estimation.parameters?.feePerByte).toBe(13n);
   });
 
-  it("prices a custom absolute fee intent at the relay minimum, without the explorer's rates or a sweep amount", async () => {
+  it("prices a custom absolute fee intent at the relay minimum, without returning a rate or a sweep amount", async () => {
     server.use(
       utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000)], token: null }]),
       noRates(),
@@ -132,8 +132,9 @@ describe("estimateFees", () => {
       intent({ useAllAmount: true, amount: 0n }),
       { feesStrategy: "custom" },
     );
-    expect(estimation.parameters?.feePerByte).toBe(1n);
     expect(estimation.value).toBe(vsize(1, false) * 1n);
+    expect(estimation.parameters?.relayFeePerByte).toBe(1n);
+    expect(estimation.parameters).not.toHaveProperty("feePerByte");
     expect(estimation.parameters).not.toHaveProperty("amount");
   });
 

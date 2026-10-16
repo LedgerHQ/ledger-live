@@ -6,6 +6,7 @@ import { fetchTxHex } from "../network/explorer";
 import type { BitcoinIntent } from "./intent";
 import type { TransactionPlan } from "./planTransaction";
 import { planTransaction } from "./planTransaction";
+import { sameBytes } from "./bytes";
 import { compressPublicKey } from "./publicKey";
 import { DerivationModes } from "./selectUtxos";
 import type { SigningRequest } from "./signingRequest";
@@ -40,13 +41,6 @@ async function fetchPreviousTransactions(
   return byId;
 }
 
-function toSafeNumber(value: bigint): number {
-  if (value > BigInt(Number.MAX_SAFE_INTEGER)) {
-    throw new Error(`amount ${value} exceeds the supported range`);
-  }
-  return Number(value);
-}
-
 /**
  * Redeem script of the nested SegWit (P2SH-P2WPKH) sender, from its public key; checks that the
  * key is the sender's.
@@ -60,10 +54,10 @@ function nestedSegwitRedeemScript(
   }
   const redeem = payments.p2wpkh({ pubkey: compressPublicKey(senderPublicKey) });
   const p2sh = payments.p2sh({ redeem });
-  if (!p2sh.output?.equals(senderScript) || !redeem.output) {
+  if (!sameBytes(p2sh.output, senderScript) || !redeem.output) {
     throw new Error("senderPublicKey does not match the sender address");
   }
-  return redeem.output;
+  return Buffer.from(redeem.output);
 }
 
 type Output = { script: Buffer; value: bigint };
@@ -106,15 +100,13 @@ function buildPsbt(
             // Every output a single-address account spends pays the sender's script.
             witnessUtxo: {
               script: plan.senderScript,
-              value: toSafeNumber(BigInt(utxo.value)),
+              value: BigInt(utxo.value),
             },
           }),
       ...(redeemScript ? { redeemScript } : {}),
     });
   });
-  outputsOf(plan).forEach(output =>
-    psbt.addOutput({ script: output.script, value: toSafeNumber(output.value) }),
-  );
+  outputsOf(plan).forEach(output => psbt.addOutput({ script: output.script, value: output.value }));
   return psbt.toBase64();
 }
 

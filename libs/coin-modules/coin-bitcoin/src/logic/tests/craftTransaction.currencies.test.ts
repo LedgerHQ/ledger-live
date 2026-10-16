@@ -99,13 +99,13 @@ describe("craftTransaction across the bitcoin family", () => {
       send(sender, recipient),
     );
     const [paid] = Psbt.fromBase64(crafted.transaction).txOutputs;
-    expect(paid.script).toEqual(cryptoFor("bitcoin_cash").toOutputScript(recipient));
-    expect(paid.script).toEqual(
+    expect(Buffer.from(paid.script)).toEqual(cryptoFor("bitcoin_cash").toOutputScript(recipient));
+    expect(Buffer.from(paid.script)).toEqual(
       cryptoFor("bitcoin_cash").toOutputScript(CURRENCY_ADDRESSES.bitcoin_cash),
     );
   });
 
-  it("refuses a Dogecoin amount beyond the range bitcoinjs-lib 6 represents", async () => {
+  it("crafts a Dogecoin amount above 2^53 exactly: bitcoinjs-lib 7 amounts are bigints", async () => {
     const sender = CURRENCY_ADDRESSES.dogecoin;
     const script = cryptoFor("dogecoin").toOutputScript(sender);
     // The explorer reports an output above 2^53 koinu; its previous transaction is only carried.
@@ -130,13 +130,12 @@ describe("craftTransaction across the bitcoin family", () => {
         HttpResponse.json({ hex: previous.toHex() }),
       ),
     );
-    await expect(
-      craftTransaction(
-        testContext({ explorerId: "doge" }),
-        "dogecoin",
-        send(sender, sender, { amount: 2n ** 53n + 2n }),
-      ),
-    ).rejects.toThrow("exceeds the supported range");
+    const crafted = await craftTransaction(
+      testContext({ explorerId: "doge" }),
+      "dogecoin",
+      send(sender, sender, { amount: 2n ** 53n + 2n }),
+    );
+    expect(Psbt.fromBase64(crafted.transaction).txOutputs[0].value).toBe(2n ** 53n + 2n);
   });
 
   describe("OP_RETURN data", () => {
@@ -154,10 +153,12 @@ describe("craftTransaction across the bitcoin family", () => {
       );
       const outputs = Psbt.fromBase64(crafted.transaction).txOutputs;
       const crypto = cryptoFor("bitcoin");
-      expect(outputs.map(output => [output.script.toString("hex"), output.value])).toEqual([
-        [crypto.toOutputScript(sender).toString("hex"), 50_000_000],
-        [crypto.toOpReturnOutputScript(Buffer.from(memo, "hex")).toString("hex"), 0],
-        [crypto.toOutputScript(sender).toString("hex"), Number(crafted.details?.change)],
+      expect(
+        outputs.map(output => [Buffer.from(output.script).toString("hex"), output.value]),
+      ).toEqual([
+        [crypto.toOutputScript(sender).toString("hex"), 50_000_000n],
+        [crypto.toOpReturnOutputScript(Buffer.from(memo, "hex")).toString("hex"), 0n],
+        [crypto.toOutputScript(sender).toString("hex"), crafted.details?.change],
       ]);
     });
 

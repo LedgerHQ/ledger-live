@@ -1,5 +1,6 @@
 import { Psbt, Transaction, payments, script as bscript } from "bitcoinjs-lib";
 import { getNetworkParameters } from "../networks";
+import { sameBytes } from "./bytes";
 import { compressPublicKey } from "./publicKey";
 import { DerivationModes, derivationModeOf } from "./selectUtxos";
 import { signedRequestMismatch } from "./signedRequestTransaction";
@@ -21,12 +22,13 @@ function sameTransaction(signed: Transaction, crafted: Psbt): boolean {
     signed.outs.length === outputs.length &&
     signed.ins.every(
       (input, i) =>
-        input.hash.equals(inputs[i].hash) &&
+        sameBytes(input.hash, inputs[i].hash) &&
         input.index === inputs[i].index &&
         input.sequence === (inputs[i].sequence ?? Transaction.DEFAULT_SEQUENCE),
     ) &&
     signed.outs.every(
-      (output, i) => output.script.equals(outputs[i].script) && output.value === outputs[i].value,
+      (output, i) =>
+        sameBytes(output.script, outputs[i].script) && output.value === outputs[i].value,
     )
   );
 }
@@ -70,10 +72,10 @@ function isSigned(transaction: Transaction): boolean {
 /** The script of the output the PSBT's input `index` spends. */
 function spentScript(psbt: Psbt, index: number): Buffer {
   const input = psbt.data.inputs[index];
-  if (input.witnessUtxo) return input.witnessUtxo.script;
+  if (input.witnessUtxo) return Buffer.from(input.witnessUtxo.script);
   if (input.nonWitnessUtxo) {
     const output = Transaction.fromBuffer(input.nonWitnessUtxo).outs[psbt.txInputs[index].index];
-    if (output) return output.script;
+    if (output) return Buffer.from(output.script);
   }
   throw new Error(`input ${index} carries no spent output`);
 }
@@ -116,7 +118,7 @@ function assemble(
     }
     const key = requirePubkey();
     if (mode === DerivationModes.LEGACY) {
-      if (!payments.p2pkh({ pubkey: key }).output?.equals(script)) {
+      if (!sameBytes(payments.p2pkh({ pubkey: key }).output, script)) {
         throw new Error("the public key does not match the spent outputs");
       }
       transaction.ins[index].script = bscript.compile([signature, key]);
@@ -125,11 +127,11 @@ function assemble(
     const witnessProgram = payments.p2wpkh({ pubkey: key }).output;
     if (!witnessProgram) throw new Error("the public key does not match the spent outputs");
     if (mode === DerivationModes.NATIVE_SEGWIT) {
-      if (!witnessProgram.equals(script)) {
+      if (!sameBytes(witnessProgram, script)) {
         throw new Error("the public key does not match the spent outputs");
       }
     } else {
-      if (!payments.p2sh({ redeem: { output: witnessProgram } }).output?.equals(script)) {
+      if (!sameBytes(payments.p2sh({ redeem: { output: witnessProgram } }).output, script)) {
         throw new Error("the public key does not match the spent outputs");
       }
       transaction.ins[index].script = bscript.compile([witnessProgram]);

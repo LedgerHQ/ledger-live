@@ -203,7 +203,7 @@ export function parseSigningRequest(tx: string): SigningRequest | undefined {
 }
 
 /** Id (hex, display order) of the transaction an input spends from. */
-const inputTxid = (hash: Buffer) => Buffer.from(hash).reverse().toString("hex");
+const inputTxid = (hash: Uint8Array) => Buffer.from(hash).reverse().toString("hex");
 
 /**
  * The device parameters of a PSBT crafted by `craftTransaction`. Every input must carry its
@@ -227,11 +227,11 @@ function psbtSigningParameters(
   });
   if (previousOutputs.length === 0) throw new Error("the transaction has no input");
 
-  const senderScript = previousOutputs[0].output.script;
+  const senderScript = Buffer.from(previousOutputs[0].output.script);
   const derivationMode = derivationModeOf(senderScript);
   const outputs = psbt.txOutputs.map(output => ({
-    script: output.script,
-    value: BigInt(output.value),
+    script: Buffer.from(output.script),
+    value: output.value,
   }));
   const changeOutputIndex = outputs.findIndex(
     (output, index) => index > 0 && output.script.equals(senderScript),
@@ -250,7 +250,7 @@ function psbtSigningParameters(
       txid: inputTxid(input.hash),
       vout: input.index,
       value: String(previousOutputs[index].output.value),
-      prevTxHex: previousOutputs[index].previousTx.toString("hex"),
+      prevTxHex: Buffer.from(previousOutputs[index].previousTx).toString("hex"),
       sequence: input.sequence ?? 0xffffffff,
     })),
     outputScriptHex: serializeOutputs(outputs, parameters.additionals),

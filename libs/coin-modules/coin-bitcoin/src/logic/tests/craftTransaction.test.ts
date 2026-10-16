@@ -5,6 +5,7 @@ import { http, HttpResponse } from "msw";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { combine } from "../combine";
 import { craftTransaction, RBF_SEQUENCE } from "../craftTransaction";
+import { estimateFees } from "../estimateFees";
 import { PRISTINE_P2PKH } from "./helpers/fixtures";
 import { ADDRESSES, PRIVATE_KEY, PUBLIC_KEY, fundingTransaction, signPsbt } from "./helpers/keys";
 import {
@@ -20,11 +21,11 @@ import {
 
 useMswServer();
 
-const RECIPIENT_SCRIPT = btcAddress.toOutputScript(PRISTINE_P2PKH);
+const RECIPIENT_SCRIPT = Buffer.from(btcAddress.toOutputScript(PRISTINE_P2PKH));
 
 /** Serves the funding transactions of `sender` as its UTXOs, with their raw hex. */
 function fund(sender: string, values: number[]) {
-  const script = btcAddress.toOutputScript(sender);
+  const script = Buffer.from(btcAddress.toOutputScript(sender));
   const txs = values.map((value, salt) => fundingTransaction(script, value, salt));
   server.use(
     utxosHandler(sender, [
@@ -112,11 +113,11 @@ describe("craftTransaction", () => {
     const crafted = await craftTransaction(testContext(), "bitcoin", intent(sender));
     const psbt = Psbt.fromBase64(crafted.transaction);
 
-    expect(psbt.txOutputs.map(o => [o.script.toString("hex"), o.value])).toEqual([
-      [RECIPIENT_SCRIPT.toString("hex"), 50_000],
+    expect(psbt.txOutputs.map(o => [Buffer.from(o.script).toString("hex"), o.value])).toEqual([
+      [RECIPIENT_SCRIPT.toString("hex"), 50_000n],
       [
-        btcAddress.toOutputScript(sender).toString("hex"),
-        80_000 - 50_000 - Number(crafted.details?.fee),
+        Buffer.from(btcAddress.toOutputScript(sender)).toString("hex"),
+        80_000n - 50_000n - (crafted.details?.fee as bigint),
       ],
     ]);
     expect(crafted.details?.feePerByte).toBe(2n);
@@ -134,7 +135,7 @@ describe("craftTransaction", () => {
     expect(Transaction.fromBuffer(psbt.data.inputs[0].nonWitnessUtxo!).getId()).toBe(
       funding.getId(),
     );
-    expect(psbt.data.inputs[0].witnessUtxo?.value).toBe(80_000);
+    expect(psbt.data.inputs[0].witnessUtxo?.value).toBe(80_000n);
   });
 
   it("sends everything without change for useAllAmount", async () => {
@@ -148,7 +149,7 @@ describe("craftTransaction", () => {
     const psbt = Psbt.fromBase64(crafted.transaction);
     expect(psbt.txInputs).toHaveLength(2);
     expect(psbt.txOutputs).toHaveLength(1);
-    expect(psbt.txOutputs[0].value).toBe(110_000 - Number(crafted.details?.fee));
+    expect(psbt.txOutputs[0].value).toBe(110_000n - (crafted.details?.fee as bigint));
   });
 
   it("imposes the custom fee rate, or the custom absolute fee", async () => {
@@ -260,6 +261,28 @@ describe("craftTransaction", () => {
     expect(crafted.details?.fee).toBe(2_500n);
   });
 
+  it("keeps the caller's absolute fee when the estimate's parameters come back with it", async () => {
+    fund(ADDRESSES.nativeSegwit, [80_000]);
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      intent(ADDRESSES.nativeSegwit),
+      {
+        feesStrategy: "custom",
+      },
+    );
+    const crafted = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      intent(ADDRESSES.nativeSegwit),
+      {
+        value: 2_500n,
+        parameters: { ...estimation.parameters, feesStrategy: "custom" },
+      },
+    );
+    expect(crafted.details?.fee).toBe(2_500n);
+  });
+
   it("crafts with an absolute fee without reading the explorer's rates", async () => {
     fund(ADDRESSES.nativeSegwit, [80_000]);
     // Only the relay floor is read: the rates endpoint is down.
@@ -275,9 +298,9 @@ describe("craftTransaction", () => {
 
   it("fetches each previous transaction once", async () => {
     const sender = ADDRESSES.nativeSegwit;
-    const script = btcAddress.toOutputScript(sender);
+    const script = Buffer.from(btcAddress.toOutputScript(sender));
     const funding = fundingTransaction(script, 40_000);
-    funding.addOutput(script, 40_000);
+    funding.addOutput(script, 40_000n);
     let fetches = 0;
     server.use(
       utxosHandler(sender, [

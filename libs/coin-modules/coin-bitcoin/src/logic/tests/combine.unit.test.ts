@@ -13,13 +13,13 @@ function craft(sender: string, inputs = 1, amount = 9_000): string {
       hash: funding.getId(),
       index: 0,
       nonWitnessUtxo: funding.toBuffer(),
-      ...(sender === ADDRESSES.legacy ? {} : { witnessUtxo: { script: spent, value: 10_000 } }),
+      ...(sender === ADDRESSES.legacy ? {} : { witnessUtxo: { script: spent, value: 10_000n } }),
       ...(sender === ADDRESSES.segwit
         ? { redeemScript: payments.p2wpkh({ pubkey: PUBLIC_KEY }).output! }
         : {}),
     });
   }
-  psbt.addOutput({ script: btcAddress.toOutputScript(PRISTINE_P2PKH), value: amount });
+  psbt.addOutput({ script: btcAddress.toOutputScript(PRISTINE_P2PKH), value: BigInt(amount) });
   return psbt.toBase64();
 }
 

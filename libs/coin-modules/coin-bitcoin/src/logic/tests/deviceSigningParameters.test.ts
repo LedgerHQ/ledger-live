@@ -19,7 +19,7 @@ function psbt(currencyId: string, sender: string, recipient: string): string {
   const funding = fundingTransaction(crypto.toOutputScript(sender), 100_000);
   return new Psbt()
     .addInput({ hash: funding.getId(), index: 0, nonWitnessUtxo: funding.toBuffer() })
-    .addOutput({ script: crypto.toOutputScript(recipient), value: 90_000 })
+    .addOutput({ script: crypto.toOutputScript(recipient), value: 90_000n })
     .toBase64();
 }
 
@@ -62,8 +62,8 @@ describe("deviceSigningParameters", () => {
     // An input carrying only the spent output, as a Taproot-only PSBT signer would accept.
     const script = cryptoFor("bitcoin").toOutputScript(ADDRESSES.nativeSegwit);
     const tx = new Psbt()
-      .addInput({ hash: "aa".repeat(32), index: 0, witnessUtxo: { script, value: 10_000 } })
-      .addOutput({ script, value: 9_000 })
+      .addInput({ hash: "aa".repeat(32), index: 0, witnessUtxo: { script, value: 10_000n } })
+      .addOutput({ script, value: 9_000n })
       .toBase64();
     expect(() => deviceSigningParameters(testConfig("bitcoin"), "bitcoin", tx)).toThrow(
       "input 0 does not carry its previous transaction",

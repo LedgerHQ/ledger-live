@@ -18,11 +18,15 @@ export const ADDRESSES = {
 };
 
 /** A transaction paying `value` to `script` at output 0, standing for a funding transaction. */
-export function fundingTransaction(script: Buffer, value: number, salt = 0): Transaction {
+export function fundingTransaction(
+  script: Uint8Array,
+  value: number | bigint,
+  salt = 0,
+): Transaction {
   const tx = new Transaction();
   tx.version = 2;
   tx.addInput(Buffer.alloc(32, 0xa0 + salt), 0, 0xffffffff);
-  tx.addOutput(script, value);
+  tx.addOutput(script, BigInt(value));
   return tx;
 }
 
@@ -62,7 +66,7 @@ export function signPsbt(base64: string, taproot = false) {
   });
   const signedBase64 = psbt.toBase64();
   const signatures = psbt.data.inputs.map(input =>
-    (input.tapKeySig ?? input.partialSig![0].signature).toString("hex"),
+    Buffer.from(input.tapKeySig ?? input.partialSig![0].signature).toString("hex"),
   );
   psbt.finalizeAllInputs();
   return { signedBase64, signatures, reference: psbt.extractTransaction().toHex() };

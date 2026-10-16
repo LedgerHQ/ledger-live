@@ -26,8 +26,10 @@ const intent = {
 describe("craftTransaction (mainnet)", () => {
   it("crafts a send with the amount and recipient", async () => {
     const psbt = Psbt.fromBase64((await craftTransaction(context, "bitcoin", intent)).transaction);
-    expect(psbt.txOutputs[0].value).toBe(1_000);
-    expect(psbt.txOutputs[0].script.equals(btcAddress.toOutputScript(PRISTINE_P2PKH))).toBe(true);
+    expect(psbt.txOutputs[0].value).toBe(1_000n);
+    expect(Buffer.from(psbt.txOutputs[0].script)).toEqual(
+      Buffer.from(btcAddress.toOutputScript(PRISTINE_P2PKH)),
+    );
     expect(psbt.data.inputs[0].nonWitnessUtxo?.length).toBeGreaterThan(0);
   });
 

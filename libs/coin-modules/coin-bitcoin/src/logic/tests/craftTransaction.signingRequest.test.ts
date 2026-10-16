@@ -212,6 +212,22 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
     );
   });
 
+  it.each([[[80_000_000]], [[30_000_000, 30_000_000]]])(
+    "prices at least the size of the transaction the device builds (outputs %j)",
+    async values => {
+      serve(c.explorerId, c.sender, values);
+      const estimation = await estimateFees(context, c.currencyId, intent);
+      const crafted = await craftTransaction(context, c.currencyId, intent);
+      const request = JSON.parse(crafted.transaction) as SigningRequest;
+      // A P2PKH scriptSig at its largest for a Ledger signer (low-S: a 71-byte DER signature and its
+      // sighash byte) and a 33-byte public key, with their pushes.
+      const scriptSig = `48${"ab".repeat(72)}21${"cd".repeat(33)}`;
+      const built = deviceBuilt(request, { scriptSig }).length / 2;
+      expect(request.inputs).toHaveLength(values.length);
+      expect(estimation.parameters?.vsize).toBeGreaterThanOrEqual(BigInt(built));
+    },
+  );
+
   it("reads the outputs where the format puts them, not anywhere in the transaction", async () => {
     serve(c.explorerId, c.sender, [80_000_000]);
     const crafted = await craftTransaction(context, c.currencyId, intent);
