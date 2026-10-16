@@ -1,2 +1,2 @@
-export * from "./schema";
-export * from "./utils";
+export * from "./legacy/schema";
+export * from "./legacy/utils";
