@@ -8,6 +8,11 @@ import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/t
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import {
+  recordPendingRent,
+  resetPendingRentsForTests,
+} from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
+import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import {
   SPONSORED_FAILURE_KIND,
   SPONSORED_PHASE,
 } from "@ledgerhq/live-common/flows/send/sponsored/types";
@@ -61,7 +66,7 @@ const sponsoredEvents = () =>
 const setupFakeTimersUser = () =>
   userEvent.setup({ advanceTimers: jest.advanceTimersByTime, pointerEventsCheck: 0 });
 
-function mockTronifySeam() {
+function mockTronifySeam(overrides: Partial<SponsoredCoinApi> = {}) {
   setMockSponsoredSeam({
     listFeeOptions: jest.fn().mockResolvedValue([
       { id: "tronify", feeAsset: TRON_USDT_FEE_ASSET },
@@ -72,6 +77,7 @@ function mockTronifySeam() {
       value: 3_200_000n,
       originalValue: 6_430_000n,
     }),
+    ...overrides,
   });
 }
 
@@ -988,15 +994,12 @@ describe("Send Flow Integration", () => {
 
   describe("Sponsored send (TRON Tronify)", () => {
     // The rent is paid from this USDT sub-account; without it the sponsored option is unaffordable.
-    const tronAccount = createTronAccount({
-      subAccounts: [
-        createMockTronUsdtAccount({
-          parentId: "mock-tron-account-id",
-          balance: new BigNumber(10_000_000),
-          spendableBalance: new BigNumber(10_000_000),
-        }),
-      ],
+    const usdtAccount = createMockTronUsdtAccount({
+      parentId: "mock-tron-account-id",
+      balance: new BigNumber(10_000_000),
+      spendableBalance: new BigNumber(10_000_000),
     });
+    const tronAccount = createTronAccount({ subAccounts: [usdtAccount] });
     const rawDataHex = "0a02abcd";
     const combinedTxASignature = "0008" + rawDataHex + "SIGA";
     const rentOrder = {
@@ -1030,6 +1033,7 @@ describe("Send Flow Integration", () => {
     });
 
     afterEach(() => {
+      resetPendingRentsForTests();
       jest.useRealTimers();
     });
 
@@ -1072,6 +1076,68 @@ describe("Send Flow Integration", () => {
       expect(screen.getByTestId("send-fee-payment-entry")).toHaveTextContent("3.2 USDT");
       expect(screen.queryByTestId("send-sponsored-fee-nudge")).toBeNull();
       expect(screen.queryByTestId("send-sponsored-fee-saved-badge")).toBeNull();
+    });
+
+    it("holds back the Tronify offer and says why while a paid rent is still arriving", async () => {
+      let deliverEnergy!: () => void;
+      const estimateSponsoredFeeQuote = jest.fn().mockResolvedValue({
+        feeAsset: TRON_USDT_FEE_ASSET,
+        value: 3_200_000n,
+        originalValue: 6_430_000n,
+      });
+      mockTronifySeam({
+        estimateSponsoredFeeQuote,
+        awaitEnergyDelivery: jest.fn().mockReturnValue(
+          new Promise<void>(resolve => {
+            deliverEnergy = resolve;
+          }),
+        ),
+      });
+      // Left behind by an earlier Send of this account that paid its rent and was closed.
+      recordPendingRent(
+        {
+          mainAccountId: tronAccount.id,
+          orderId: "order-1",
+          payerAddress: "TPayerAddress",
+          paymentTxId: "tx-a-id",
+          receiverAddress: "TReceiverAddress",
+          energyNeeded: 1000n,
+        },
+        Date.now() + 6 * 60_000,
+      );
+      // A USDT send: the landed rent lowers its fee, unlike a TRX send's.
+      setMockTransaction(
+        createMinimalTronTransaction({
+          amount: new BigNumber("1000000"),
+          recipient: VALID_TRON_RECIPIENT,
+          subAccountId: usdtAccount.id,
+        }),
+      );
+
+      renderSendFlow(usdtAccount, { parentAccount: tronAccount }, [], {
+        flags: { gasSponsorship: { enabled: true } },
+      });
+      const user = setupFakeTimersUser();
+      await navigateToAmountScreen(user, VALID_TRON_RECIPIENT);
+
+      expect(await screen.findByTestId("send-sponsored-rent-arriving")).toHaveTextContent(
+        "Your energy rental is still on its way. Network fees will update once it arrives.",
+      );
+      // Long enough for the seam to resolve and the quote to load, were the offer not held back.
+      await act(async () => {
+        await jest.advanceTimersByTimeAsync(5_000);
+      });
+      expect(estimateSponsoredFeeQuote).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("send-sponsored-fee-nudge")).toBeNull();
+      expect(screen.queryByTestId("send-fee-payment-entry")).toBeNull();
+
+      await act(async () => {
+        deliverEnergy();
+      });
+
+      await waitFor(() => expect(screen.queryByTestId("send-sponsored-rent-arriving")).toBeNull());
+      expect(await screen.findByTestId("send-sponsored-fee-nudge")).toBeVisible();
+      expect(estimateSponsoredFeeQuote).toHaveBeenCalled();
     });
 
     it("runs the sponsored happy path: rent signature -> polling -> transfer signature -> confirmation", async () => {

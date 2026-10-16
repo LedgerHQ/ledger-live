@@ -18,26 +18,33 @@ import type {
 import {
   SponsoredFeeNotApprovedError,
   SponsoredPaymentExpiredError,
+  SponsoredRentPendingError,
   SponsoredSendUnavailableError,
 } from "./errors";
+import { PENDING_RENT_EXPIRY_MARGIN_MS, getPendingRent } from "./pendingRents";
 import { SPONSORED_FAILURE_KIND, SPONSORED_PHASE } from "./types";
 import type { SponsoredState } from "./types";
 
 const LOG_TYPE = "sponsored-send";
-
-// Our clock and the chain's may disagree, and a payment takes a few blocks to land.
-const PAYMENT_EXPIRY_MARGIN_MS = 30_000;
 
 export type UseSponsoredSendOrchestrationParams = Readonly<{
   network: string; // parent-chain currency id — NOT a token id
   kind: string;
   intent: unknown;
   pollOpts?: { intervalMs?: number; timeoutMs?: number };
+  /** A pending rent this account paid elsewhere blocks a new order and payment until it lands. */
+  mainAccountId?: string | null;
   // Fires even after reset/unmount: TX-A may already be on-chain.
   onRentPaymentBroadcast?: (info: {
     paymentTxId?: string;
     payerAddress: string;
     rentPayment: RentPayment;
+    orderId: string;
+    receiverAddress: string | null;
+    energyNeeded: bigint | null;
+    paymentExpiresAt: number;
+    /** The provider reported it failed, yet it may still land: remember it, but reserve nothing. */
+    reportedFailed?: boolean;
   }) => void;
 }>;
 
@@ -96,7 +103,7 @@ function isCurrentCycle(state: SponsoredState, signedPaymentTxId: string | null)
 }
 
 const retryLockFor = (order: EnergyRentOrder | null): number | null =>
-  order ? order.paymentExpiresAt + PAYMENT_EXPIRY_MARGIN_MS : null;
+  order ? order.paymentExpiresAt + PENDING_RENT_EXPIRY_MARGIN_MS : null;
 
 const showableRejection = (rejection: RentOrderRejection | null): RentOrderRejection | null =>
   rejection?.reason === "priceAboveApproved" && !rejection.offered.asset.unit ? null : rejection;
@@ -298,7 +305,7 @@ async function submitRentPayment(
     paymentTxId?: string;
     target?: { receiverAddress: string; energyNeeded: bigint };
     getSeam: () => Promise<SponsoredCoinApi | null>;
-    reserveRentPayment: () => void;
+    reserveRentPayment: (reportedFailed?: boolean) => void;
   }>,
   ctx: RentFlowContext,
 ): Promise<SponsoredCoinApi | null> {
@@ -310,7 +317,7 @@ async function submitRentPayment(
     if (ctx.generation !== ctx.generationRef.current) return null;
     if (!seam) throw new SponsoredSendUnavailableError();
     // Signing can take long enough that the provider couldn't land the payment in time.
-    if (Date.now() >= args.order.paymentExpiresAt - PAYMENT_EXPIRY_MARGIN_MS) {
+    if (Date.now() >= args.order.paymentExpiresAt - PENDING_RENT_EXPIRY_MARGIN_MS) {
       throw new SponsoredPaymentExpiredError();
     }
     const signedTransaction = seam.buildSignedEnergyRentTransaction(
@@ -331,6 +338,9 @@ async function submitRentPayment(
     });
     if (action.type === "DELIVERY_SUCCESS" || action.type === "DELIVERY_FAILURE") {
       args.reserveRentPayment();
+    } else if (action.type === "SUBMIT_FAILURE" && action.paymentSent) {
+      // Before the generation check, so a Send closed meanwhile still holds it.
+      args.reserveRentPayment(true);
     }
     if (ctx.generation !== ctx.generationRef.current) return null;
     ctx.dispatch(action);
@@ -409,6 +419,13 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
   // The live quote reloads and can be withdrawn mid-cycle; a retry keeps the fee the user approved.
   const boundFeeRef = useRef<{ generation: number; fee: bigint } | null>(null);
 
+  // Payments sent since the last reset: their retry lock, not the pending-rent store, gates a retry.
+  const sentTxIdsRef = useRef(new Set<string>());
+  const heldByAnotherRent = useCallback((): boolean => {
+    const held = params.mainAccountId ? getPendingRent(params.mainAccountId) : null;
+    return held !== null && !sentTxIdsRef.current.has(held.paymentTxId);
+  }, [params.mainAccountId]);
+
   const seamCacheRef = useRef<{ key: string; promise: Promise<SponsoredCoinApi | null> } | null>(
     null,
   );
@@ -433,6 +450,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
         generation !== generationRef.current || craftSeq !== craftSeqRef.current;
       let seam: SponsoredCoinApi | null = null;
       try {
+        if (heldByAnotherRent()) throw new SponsoredRentPendingError();
         const bound = boundFeeRef.current;
         const fee = bound?.generation === generation ? bound.fee : approvedFee;
         if (fee === null) throw new SponsoredFeeNotApprovedError();
@@ -470,7 +488,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
         });
       }
     },
-    [getSeam, params.intent],
+    [getSeam, params.intent, heldByAnotherRent],
   );
 
   const startRentPayment = useCallback(
@@ -482,17 +500,32 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
       if (s.phase !== SPONSORED_PHASE.RENT_SIGNING) return;
       if (!isCurrentCycle(s, signedPaymentTxId)) return;
       if (inFlightRef.current) return;
+      // Recorded after the order was crafted: a closed Send's in-flight payment.
+      if (heldByAnotherRent()) {
+        dispatch({
+          type: "SUBMIT_FAILURE",
+          error: new SponsoredRentPendingError(),
+          paymentSent: false,
+        });
+        return;
+      }
       inFlightRef.current = true;
       try {
         const generation = generationRef.current;
         const paymentTxId = s.paymentTxId ?? undefined;
+        if (paymentTxId) sentTxIdsRef.current.add(paymentTxId);
 
-        const reserveRentPayment = () => {
+        const reserveRentPayment = (reportedFailed = false) => {
           if (!s.payerAddress || !s.rentPayment) return;
           params.onRentPaymentBroadcast?.({
             paymentTxId,
             payerAddress: s.payerAddress,
             rentPayment: s.rentPayment,
+            orderId: order.orderId,
+            receiverAddress: s.receiverAddress,
+            energyNeeded: s.energyNeeded,
+            paymentExpiresAt: order.paymentExpiresAt,
+            reportedFailed,
           });
         };
 
@@ -546,7 +579,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
     },
     // Reads go through stateRef; oxlint miscounts the member dep.
     // oxlint-disable-next-line react/memo-dependencies
-    [getSeam, params.pollOpts, params.onRentPaymentBroadcast],
+    [getSeam, params.pollOpts, params.onRentPaymentBroadcast, heldByAnotherRent],
   );
 
   const onTransferSuccess = useCallback((signedPaymentTxId: string | null) => {
@@ -571,6 +604,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
 
   const reset = useCallback(() => {
     generationRef.current += 1;
+    sentTxIdsRef.current = new Set();
     pollAbortRef.current?.abort();
     dispatch({ type: "RESET" });
   }, []);

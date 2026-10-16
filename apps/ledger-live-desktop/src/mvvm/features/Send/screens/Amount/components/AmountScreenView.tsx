@@ -30,6 +30,7 @@ export function AmountScreenView({
   reviewDisabled,
   reviewLoading,
   sponsoredFeeError,
+  sponsoredRentNotice,
   onReview,
   onGetFunds,
   onMessageLinkPress,
@@ -69,6 +70,7 @@ export function AmountScreenView({
         reviewDisabled={reviewDisabled}
         reviewLoading={reviewLoading}
         sponsoredFeeError={sponsoredFeeError}
+        sponsoredRentNotice={sponsoredRentNotice}
         onReview={onReview}
         onGetFunds={onGetFunds}
       />

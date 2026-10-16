@@ -9,6 +9,11 @@ import type {
   RentOrderRejection,
   RentPayment,
 } from "../../../bridge/generic-coin-framework/sponsored";
+import {
+  PENDING_RENT_EXPIRY_MARGIN_MS as PAYMENT_EXPIRY_MARGIN_MS,
+  recordPendingRent,
+  resetPendingRentsForTests,
+} from "./pendingRents";
 import { SPONSORED_FAILURE_KIND, SPONSORED_PHASE } from "./types";
 import { useSponsoredSendOrchestration } from "./useSponsoredSendOrchestration";
 
@@ -36,7 +41,6 @@ const RENT_PAYMENT: RentPayment = { asset: USDT_ASSET, amount: 3_200_000n };
 const REVIEW_FEE = 3_200_000n;
 
 const PAYMENT_EXPIRES_AT = Date.now() + 6 * 60_000;
-const PAYMENT_EXPIRY_MARGIN_MS = 30_000;
 const RETRY_UNLOCKS_AT = PAYMENT_EXPIRES_AT + PAYMENT_EXPIRY_MARGIN_MS;
 
 const rentOrder = (overrides: Record<string, unknown> = {}) => ({
@@ -81,6 +85,7 @@ const defaultParams = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetPendingRentsForTests();
 });
 
 function withClockAt<T>(now: number, fn: () => T): T {
@@ -1303,9 +1308,14 @@ const broadcastInfo = {
   paymentTxId: "txA",
   payerAddress: "TPayer",
   rentPayment: RENT_PAYMENT,
+  orderId: "o1",
+  receiverAddress: rentRequest.receiverAddress,
+  energyNeeded: rentRequest.energy,
+  paymentExpiresAt: PAYMENT_EXPIRES_AT,
+  reportedFailed: false,
 };
 
-test("onRentPaymentBroadcast fires on the happy submit path with the payer and amount", async () => {
+test("onRentPaymentBroadcast fires on the happy submit path with the payer, amount and order", async () => {
   const seam = makeSeam();
   mockGetSponsoredCoinApi.mockResolvedValue(seam);
   const onRentPaymentBroadcast = jest.fn();
@@ -1373,7 +1383,7 @@ test("onRentPaymentBroadcast fires when a submit reject reconciles to delivered"
   expect(onRentPaymentBroadcast).toHaveBeenCalledWith(broadcastInfo);
 });
 
-test("onRentPaymentBroadcast does NOT fire when the provider confirms the payment never landed", async () => {
+test("onRentPaymentBroadcast marks a payment the provider reports failed, so nothing is reserved", async () => {
   const seam = makeSeam({
     submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
     getEnergyRentStatus: jest.fn().mockResolvedValue("failed"),
@@ -1392,7 +1402,147 @@ test("onRentPaymentBroadcast does NOT fire when the provider confirms the paymen
   });
 
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
-  expect(onRentPaymentBroadcast).not.toHaveBeenCalled();
+  expect(onRentPaymentBroadcast).toHaveBeenCalledTimes(1);
+  expect(onRentPaymentBroadcast).toHaveBeenCalledWith({ ...broadcastInfo, reportedFailed: true });
+});
+
+test("should report a payment the provider reports failed when Send closed during the submit", async () => {
+  const submitGate = deferred<void>();
+  const submitCalled = deferred<void>();
+  const seam = makeSeam({
+    submitEnergyRentPayment: jest.fn().mockImplementation(() => {
+      submitCalled.resolve();
+      return submitGate.promise;
+    }),
+    getEnergyRentStatus: jest.fn().mockResolvedValue("failed"),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+  const onRentPaymentBroadcast = jest.fn();
+
+  const { result, unmount } = renderHook(() =>
+    useSponsoredSendOrchestration({ ...defaultParams, onRentPaymentBroadcast }),
+  );
+  await act(async () => {
+    await result.current.actions.craftRent(REVIEW_FEE);
+  });
+  let payPromise!: Promise<void>;
+  await act(async () => {
+    payPromise = result.current.actions.startRentPayment("sig", "txA");
+    await submitCalled.promise;
+  });
+
+  unmount();
+  submitGate.reject(new Error("submit boom"));
+  await payPromise;
+
+  expect(onRentPaymentBroadcast).toHaveBeenCalledWith({ ...broadcastInfo, reportedFailed: true });
+});
+
+describe("a rent this account paid elsewhere that is still pending", () => {
+  const MAIN_ACCOUNT_ID = "tron-1";
+  const holdRent = (paymentTxId: string) =>
+    recordPendingRent(
+      {
+        mainAccountId: MAIN_ACCOUNT_ID,
+        orderId: "o-old",
+        payerAddress: "TPayer",
+        paymentTxId,
+        receiverAddress: "TReceiver",
+        energyNeeded: 1_000n,
+      },
+      PAYMENT_EXPIRES_AT,
+    );
+  const renderHeld = (onRentPaymentBroadcast = jest.fn()) =>
+    renderHook(() =>
+      useSponsoredSendOrchestration({
+        ...defaultParams,
+        mainAccountId: MAIN_ACCOUNT_ID,
+        onRentPaymentBroadcast,
+      }),
+    );
+
+  it("should refuse a new order when the pending rent is another Send's", async () => {
+    const seam = makeSeam();
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    holdRent("txOld");
+    const { result } = renderHeld();
+
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    expect(seam.buildEnergyRentRequest).not.toHaveBeenCalled();
+    expect(seam.craftEnergyRentTransaction).not.toHaveBeenCalled();
+    expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+    expect(result.current.state.failureError?.name).toBe("SponsoredRentPendingError");
+  });
+
+  it("should refuse the payment when the pending rent is recorded after the order", async () => {
+    const seam = makeSeam();
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const onRentPaymentBroadcast = jest.fn();
+    const { result } = renderHeld(onRentPaymentBroadcast);
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+    holdRent("txOld");
+
+    await act(async () => {
+      await result.current.actions.startRentPayment("sig", "txA");
+    });
+
+    expect(seam.submitEnergyRentPayment).not.toHaveBeenCalled();
+    expect(onRentPaymentBroadcast).not.toHaveBeenCalled();
+    expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+    expect(result.current.state.failureError?.name).toBe("SponsoredRentPendingError");
+    expect(result.current.state.retryLockedUntil).toBeNull();
+  });
+
+  it("should let Retry order again when the pending rent is this flow's own payment", async () => {
+    const seam = makeSeam({
+      submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
+      getEnergyRentStatus: jest.fn().mockResolvedValue("paid"),
+    });
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const { result } = renderHeld();
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+    await act(async () => {
+      await result.current.actions.startRentPayment("sig", "txA");
+    });
+    expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
+    holdRent("txA");
+
+    act(() => withClockAt(RETRY_UNLOCKS_AT, () => result.current.actions.retry()));
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(2);
+    expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
+  });
+
+  it("should refuse a new order after a reset when this flow's earlier payment is pending", async () => {
+    const seam = makeSeam();
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const { result } = renderHeld();
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+    await act(async () => {
+      await result.current.actions.startRentPayment("sig", "txA");
+    });
+    holdRent("txA");
+
+    act(() => result.current.actions.reset());
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(1);
+    expect(result.current.state.failureError?.name).toBe("SponsoredRentPendingError");
+  });
 });
 
 test("onRentPaymentBroadcast still fires when reset() abandons the flow mid-submit", async () => {

@@ -86,6 +86,8 @@ type ReviewProps = Readonly<{
   reviewDisabled: boolean;
   reviewLoading: boolean;
   sponsoredFeeError: string | null;
+  /** Says why the sponsored option is off while its rent is still arriving. */
+  sponsoredRentNotice: string | null;
   onReview: () => void;
   onGetFunds?: () => void;
 }>;
