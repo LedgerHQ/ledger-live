@@ -146,6 +146,7 @@ export function useContactAddressDetailActionsAdapter(
     () =>
       resolveContactAddressDetailActionsLabels({
         t,
+        // Temporary until contact detail migrates to tooLongLabel (LIVE-39329).
         addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
         supportsDomain,
       }),
