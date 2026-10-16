@@ -20,6 +20,7 @@ import {
   type InstallOsUpdateDARequiredInteraction,
   type ResolveOsUpdatePathDAInput,
 } from "@ledgerhq/dmk-ledger-wallet";
+import { log } from "@ledgerhq/logs";
 import { assign, enqueueActions, fromPromise, sendTo, setup } from "xstate";
 import { createDeviceActionStateMachine } from "../../../device-action/CreateDeviceActionStateMachine/createDeviceActionStateMachine";
 import { ApplyUpdatesStateType, type ApplyUpdatesState } from "../../api/model/ApplyUpdatesState";
@@ -62,8 +63,33 @@ import { resumeTarget } from "./utils/resumeTarget";
 import { toApplyUpdatesState } from "./utils/toApplyUpdatesState";
 import { waitForDeviceReadyStateMachine } from "./waitForDeviceReadyStateMachine";
 
+const LOG_TYPE = "OsUpdatesApplyUpdates";
+
 const currentUpdate = (context: ApplyUpdatesStateMachineContext) =>
   context.osUpdates[context.updateIndex];
+
+/**
+ * The state changes on every progress tick while updating, so only a new type, or the start of the
+ * next update in the chain, is worth a log.
+ */
+const logStateChange = (previous: ApplyUpdatesState | null, next: ApplyUpdatesState): void => {
+  if (next.type === ApplyUpdatesStateType.UPDATING) {
+    if (
+      previous?.type === ApplyUpdatesStateType.UPDATING &&
+      previous.updateIndex === next.updateIndex
+    ) {
+      return;
+    }
+    log(LOG_TYPE, `state: ${next.type}`, {
+      updateIndex: next.updateIndex,
+      updateCount: next.updateCount,
+    });
+    return;
+  }
+  if (previous?.type !== next.type) {
+    log(LOG_TYPE, `state: ${next.type}`);
+  }
+};
 
 const enqueueStateUpdate = (
   enqueue: {
@@ -79,6 +105,7 @@ const enqueueStateUpdate = (
   if (context.lastSentState !== null && isSameState(context.lastSentState, state)) {
     return;
   }
+  logStateChange(context.lastSentState, state);
   enqueue.sendTo(context.parentRef, {
     type: OsUpdatesOrchestratorStateMachineEventType.STATE_UPDATE,
     state,
@@ -232,6 +259,15 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       }
       enqueueStateUpdate(enqueue, context, forwarded);
     }),
+    logState: (_, name: string) => {
+      log(LOG_TYPE, `state: ${name}`);
+    },
+    logError: ({ context }, name: string) => {
+      log(LOG_TYPE, `state: ${name}`, { error: context.error });
+    },
+    logData: (_, params: { message: string; data: Record<string, unknown> }) => {
+      log(LOG_TYPE, params.message, params.data);
+    },
     sendStop: sendTo(({ context }) => context.parentRef, {
       type: OsUpdatesOrchestratorStateMachineEventType.STOP,
     } as const),
@@ -400,9 +436,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       },
     },
     InstallOsu: {
-      entry: assign({
-        lastAction: ApplyUpdatesStateMachineLastAction.InstallOsu,
-      }),
+      entry: [
+        { type: "logState", params: "InstallOsu" },
+        assign({ lastAction: ApplyUpdatesStateMachineLastAction.InstallOsu }),
+      ],
       invoke: {
         src: "installOsUpdate",
         input: ({ context }) => ({
@@ -453,6 +490,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     },
     WaitForReadyAfterOsu: {
       entry: [
+        { type: "logState", params: "WaitForReadyAfterOsu" },
         assign({ lastAction: ApplyUpdatesStateMachineLastAction.WaitForReadyAfterOsu }),
         enqueueActions(({ enqueue, check }) => {
           if (!check("shouldFlashMcu") && !check("hasFinalFirmware")) {
@@ -486,7 +524,16 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       },
       after: {
         waitReadyTimeout: {
-          actions: "assignWaitTimedOut",
+          actions: [
+            {
+              type: "logData",
+              params: ({ context }) => ({
+                message: "event: waitTimedOut",
+                data: { lastAction: context.lastAction },
+              }),
+            },
+            "assignWaitTimedOut",
+          ],
           target: "CheckErrorCause",
         },
       },
@@ -503,9 +550,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       ],
     },
     FlashMcu: {
-      entry: assign({
-        lastAction: ApplyUpdatesStateMachineLastAction.FlashMcu,
-      }),
+      entry: [
+        { type: "logState", params: "FlashMcu" },
+        assign({ lastAction: ApplyUpdatesStateMachineLastAction.FlashMcu }),
+      ],
       invoke: {
         src: "flashMcu",
         input: ({ context }) => ({
@@ -547,6 +595,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     },
     WaitForReadyAfterFlash: {
       entry: [
+        { type: "logState", params: "WaitForReadyAfterFlash" },
         assign({ lastAction: ApplyUpdatesStateMachineLastAction.WaitForReadyAfterFlash }),
         enqueueActions(({ context, enqueue, check }) => {
           if (context.lastFlashTarget === MCU_FLASH_TARGET && !check("hasFinalFirmware")) {
@@ -579,7 +628,16 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       },
       after: {
         waitReadyAfterFlashTimeout: {
-          actions: "assignWaitTimedOut",
+          actions: [
+            {
+              type: "logData",
+              params: ({ context }) => ({
+                message: "event: waitTimedOut",
+                data: { lastAction: context.lastAction },
+              }),
+            },
+            "assignWaitTimedOut",
+          ],
           target: "CheckErrorCause",
         },
       },
@@ -600,9 +658,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     // been resolved yet, so there is no final firmware to hand over, which is what the recovery
     // mode is for: it resolves the MCU to flash from the bootloader version alone.
     FlashMcuRecovery: {
-      entry: assign({
-        lastAction: ApplyUpdatesStateMachineLastAction.FlashMcuRecovery,
-      }),
+      entry: [
+        { type: "logState", params: "FlashMcuRecovery" },
+        assign({ lastAction: ApplyUpdatesStateMachineLastAction.FlashMcuRecovery }),
+      ],
       invoke: {
         src: "flashMcu",
         input: ({ context }) => ({
@@ -641,6 +700,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     },
     WaitForReadyAfterRecoveryFlash: {
       entry: [
+        { type: "logState", params: "WaitForReadyAfterRecoveryFlash" },
         assign({
           lastAction: ApplyUpdatesStateMachineLastAction.WaitForReadyAfterRecoveryFlash,
         }),
@@ -674,7 +734,16 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       },
       after: {
         waitReadyAfterFlashTimeout: {
-          actions: "assignWaitTimedOut",
+          actions: [
+            {
+              type: "logData",
+              params: ({ context }) => ({
+                message: "event: waitTimedOut",
+                data: { lastAction: context.lastAction },
+              }),
+            },
+            "assignWaitTimedOut",
+          ],
           target: "CheckErrorCause",
         },
       },
@@ -694,9 +763,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     // A device sitting in OSU mode has an install under way, so a final firmware is pending by
     // construction and there is nothing to check before installing it.
     ResolveAfterOsu: {
-      entry: assign({
-        lastAction: ApplyUpdatesStateMachineLastAction.ResolveAfterOsu,
-      }),
+      entry: [
+        { type: "logState", params: "ResolveAfterOsu" },
+        assign({ lastAction: ApplyUpdatesStateMachineLastAction.ResolveAfterOsu }),
+      ],
       invoke: {
         src: "resolveOsUpdatePath",
         input: ({ context }) => ({
@@ -746,9 +816,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     // A recovery flash can leave the device in OSU mode with a final firmware to install, or back
     // on an OS with nothing under way, which is why this branches on the mode, unlike the OSU one.
     ResolveAfterFlash: {
-      entry: assign({
-        lastAction: ApplyUpdatesStateMachineLastAction.ResolveAfterFlash,
-      }),
+      entry: [
+        { type: "logState", params: "ResolveAfterFlash" },
+        assign({ lastAction: ApplyUpdatesStateMachineLastAction.ResolveAfterFlash }),
+      ],
       invoke: {
         src: "resolveOsUpdatePath",
         input: ({ context }) => ({
@@ -831,9 +902,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       ],
     },
     InstallFinalFirmware: {
-      entry: assign({
-        lastAction: ApplyUpdatesStateMachineLastAction.InstallFinalFirmware,
-      }),
+      entry: [
+        { type: "logState", params: "InstallFinalFirmware" },
+        assign({ lastAction: ApplyUpdatesStateMachineLastAction.InstallFinalFirmware }),
+      ],
       invoke: {
         src: "installOsUpdate",
         input: ({ context }) => ({
@@ -884,6 +956,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     },
     WaitForReadyAfterFinalInstall: {
       entry: [
+        { type: "logState", params: "WaitForReadyAfterFinalInstall" },
         assign({ lastAction: ApplyUpdatesStateMachineLastAction.WaitForReadyAfterFinalInstall }),
         {
           type: "sendStateUpdate",
@@ -911,12 +984,28 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       },
       after: {
         waitReadyTimeout: {
-          actions: "assignWaitTimedOut",
+          actions: [
+            {
+              type: "logData",
+              params: ({ context }) => ({
+                message: "event: waitTimedOut",
+                data: { lastAction: context.lastAction },
+              }),
+            },
+            "assignWaitTimedOut",
+          ],
           target: "CheckErrorCause",
         },
       },
     },
     CheckNextUpdate: {
+      entry: {
+        type: "logData",
+        params: ({ context }) => ({
+          message: "state: CheckNextUpdate",
+          data: { done: context.updateIndex + 1, updateCount: context.osUpdates.length },
+        }),
+      },
       always: [
         {
           guard: "hasAnotherUpdate",
@@ -941,6 +1030,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     // It reports to this machine as it would to the orchestrator, so its events are only ever
     // handled here, where that child is the one thing that can have sent them.
     RestoreBackup: {
+      entry: { type: "logState", params: "RestoreBackup" },
       on: {
         [OsUpdatesOrchestratorStateMachineEventType.STATE_UPDATE]: {
           actions: {
@@ -1001,6 +1091,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       },
     },
     CheckErrorCause: {
+      entry: { type: "logError", params: "CheckErrorCause" },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({
@@ -1028,10 +1119,16 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       },
     },
     ResumeLastAction: {
-      entry: {
-        type: "sendStateUpdate",
-        params: { type: ApplyUpdatesStateType.LOADING },
-      },
+      entry: [
+        {
+          type: "logData",
+          params: ({ context }) => ({
+            message: "state: ResumeLastAction",
+            data: { lastAction: context.lastAction },
+          }),
+        },
+        { type: "sendStateUpdate", params: { type: ApplyUpdatesStateType.LOADING } },
+      ],
       always: Object.entries(resumeTarget).map(([lastAction, target]) => ({
         guard: ({ context }: { context: ApplyUpdatesStateMachineContext }) =>
           context.lastAction === lastAction,
@@ -1039,19 +1136,22 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
       })),
     },
     UnrecoverableError: {
-      entry: {
-        type: "sendStateUpdate",
-        params: ({ context }) => ({
-          type: ApplyUpdatesStateType.UNEXPECTED_ERROR,
-          cancel: () => context.send({ type: ApplyUpdatesStateMachineEventType.CANCEL }),
-        }),
-      },
+      entry: [
+        { type: "logError", params: "UnrecoverableError" },
+        {
+          type: "sendStateUpdate",
+          params: ({ context }) => ({
+            type: ApplyUpdatesStateType.UNEXPECTED_ERROR,
+            cancel: () => context.send({ type: ApplyUpdatesStateMachineEventType.CANCEL }),
+          }),
+        },
+      ],
       on: {
         [ApplyUpdatesStateMachineEventType.CANCEL]: "Canceled",
       },
     },
     Canceled: {
-      entry: "sendStop",
+      entry: [{ type: "logState", params: "Canceled" }, "sendStop"],
     },
     UpdatesApplied: {
       entry: {
