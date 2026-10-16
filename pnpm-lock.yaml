@@ -7731,6 +7731,9 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1

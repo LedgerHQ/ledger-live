@@ -10,11 +10,6 @@ import {
 import type { Contact } from "@domain/entity-contact";
 import { ContactsCompactList } from "../../index";
 
-const labels = {
-  emptyAddress: "No saved addresses",
-  formatAddressCount: (count: number) => `${count} saved addresses`,
-};
-
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
@@ -34,16 +29,16 @@ describe("ContactsCompactList", () => {
   it("should render supplied contacts in order with the appropriate address descriptions", () => {
     const contacts = createContacts();
 
-    render(<ContactsCompactList contacts={contacts} labels={labels} onContactSelect={jest.fn()} />);
+    render(<ContactsCompactList contacts={contacts} onContactSelect={jest.fn()} />);
 
     const [zeroRow, oneRow, manyRow] = screen.getAllByTestId(/^contacts-compact-row-/);
 
     expect(zeroRow).toHaveTextContent("Zero");
-    expect(zeroRow).toHaveTextContent(labels.emptyAddress);
+    expect(zeroRow).toHaveTextContent("contacts.addressCount");
     expect(oneRow).toHaveTextContent("One");
     expect(oneRow).toHaveTextContent("Main wallet");
     expect(manyRow).toHaveTextContent("Many");
-    expect(manyRow).toHaveTextContent("2 saved addresses");
+    expect(manyRow).toHaveTextContent("contacts.addressCount");
     expect(zeroRow.compareDocumentPosition(oneRow)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     expect(oneRow.compareDocumentPosition(manyRow)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     expect(screen.getByTestId("contacts-avatar-contact-zero")).toBeVisible();
@@ -52,14 +47,7 @@ describe("ContactsCompactList", () => {
   it("should render only the first supplied contacts when maxContacts is set", () => {
     const contacts = createContacts();
 
-    render(
-      <ContactsCompactList
-        contacts={contacts}
-        labels={labels}
-        maxContacts={2}
-        onContactSelect={jest.fn()}
-      />,
-    );
+    render(<ContactsCompactList contacts={contacts} maxContacts={2} onContactSelect={jest.fn()} />);
 
     expect(screen.getAllByTestId(/^contacts-compact-row-/)).toHaveLength(2);
     expect(screen.getByTestId("contacts-compact-row-contact-zero")).toBeVisible();
@@ -68,16 +56,13 @@ describe("ContactsCompactList", () => {
   });
 
   it("should render no rows when contacts are empty or maxContacts is zero", () => {
-    const { rerender } = render(
-      <ContactsCompactList contacts={[]} labels={labels} onContactSelect={jest.fn()} />,
-    );
+    const { rerender } = render(<ContactsCompactList contacts={[]} onContactSelect={jest.fn()} />);
 
     expect(screen.getByTestId("contacts-compact-list")).toBeEmptyDOMElement();
 
     rerender(
       <ContactsCompactList
         contacts={createContacts()}
-        labels={labels}
         maxContacts={0}
         onContactSelect={jest.fn()}
       />,
@@ -90,9 +75,7 @@ describe("ContactsCompactList", () => {
     const contacts = createContacts();
     const onContactSelect = jest.fn();
 
-    render(
-      <ContactsCompactList contacts={contacts} labels={labels} onContactSelect={onContactSelect} />,
-    );
+    render(<ContactsCompactList contacts={contacts} onContactSelect={onContactSelect} />);
 
     fireEvent.click(screen.getByTestId("contacts-compact-row-contact-one"));
 

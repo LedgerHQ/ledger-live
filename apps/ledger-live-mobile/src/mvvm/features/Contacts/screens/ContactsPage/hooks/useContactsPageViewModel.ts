@@ -1,5 +1,4 @@
 import {
-  type ContactsListViewLabels,
   type ContactsViewNativeProps,
   useContactsSearchViewModel,
   useContactsMeContact,
@@ -42,20 +41,6 @@ export function useContactsPageViewModel(
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const labels = useMemo<ContactsListViewLabels>(
-    () => ({
-      title: t("contacts.title"),
-      searchPlaceholder: t("contacts.searchPlaceholder"),
-      searchNoResults: t("contacts.searchNoResults"),
-      searchNoResultsDescription: t("contacts.searchNoResultsDescription"),
-      addContact: t("contacts.addContact"),
-      ledgerSyncCheckingAccessibilityLabel: t(
-        "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
-      ),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
   const preference = useContactsFeatureIntroductionPreference();
   const { isRequested: isFeatureIntroductionRequested, dismiss: dismissFeatureIntroduction } =
     useContactsFeatureIntroductionState({
@@ -140,7 +125,6 @@ export function useContactsPageViewModel(
 
   return {
     viewModel,
-    labels,
     searchQuery,
     onSearchQueryChange,
     onOpenContact,

@@ -9,7 +9,6 @@ import { addAddress, contactAddress, type ContactId } from "@domain/entity-conta
 import {
   createContactsListViewModel,
   createContactsSearchViewModel,
-  type ContactsListViewLabels,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
@@ -358,16 +357,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
       isContactsEntryAvailable: true,
       preference,
     });
-  const labels = useMemo<ContactsListViewLabels>(
-    () => ({
-      title: t("contacts.title"),
-      searchPlaceholder: t("contacts.searchPlaceholder"),
-      searchNoResults: t("contacts.searchNoResults"),
-      addContact: t("contacts.addContact"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
   const featureIntroductionHighlights = useMemo(
     () =>
       CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({
@@ -440,7 +429,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     editDeleteDialogs,
     addressDetailActionsDialogs,
     viewModel,
-    labels,
     searchQuery,
     onSearchInputChange,
     onClearSearch,
