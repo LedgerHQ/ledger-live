@@ -42,10 +42,17 @@ export default class BuySellPage {
 
   @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
-    await openDeeplink(page.toLowerCase());
-    await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxxlarge, {
-      checkVisibility: false,
-    });
+    // The deeplink into the live app keeps the network busy, so with synchronization on Detox
+    // never sees the app idle and the webview wait hangs instead of timing out.
+    await app.common.disableSynchronization();
+    try {
+      await openDeeplink(page.toLowerCase());
+      await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxxlarge, {
+        checkVisibility: false,
+      });
+    } finally {
+      await app.common.enableSynchronization();
+    }
   }
 
   // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
