@@ -28,6 +28,7 @@ const ScanAccounts = ({
   currency,
   deviceId,
   deferAccountAddition,
+  autoSelect,
   onComplete,
   navigateToWarningScreen,
   onRetry,
@@ -56,6 +57,7 @@ const ScanAccounts = ({
     currency,
     deviceId,
     deferAccountAddition,
+    autoSelect,
     navigateToWarningScreen,
     onComplete,
   });

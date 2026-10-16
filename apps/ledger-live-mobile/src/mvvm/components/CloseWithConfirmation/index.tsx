@@ -13,10 +13,14 @@ export default function CloseWithConfirmation({
   onClose,
   showButton,
   buttonText,
+  skipNavigation,
+  disablePostOnboardingRedirect,
 }: {
   onClose?: () => void;
   showButton?: boolean;
   buttonText?: string;
+  skipNavigation?: boolean;
+  disablePostOnboardingRedirect?: boolean;
 }) {
   const route = useRoute();
   return (
@@ -27,6 +31,8 @@ export default function CloseWithConfirmation({
       {...(onClose && { onClose })}
       {...(showButton && { showButton })}
       {...(buttonText && { buttonText })}
+      {...(skipNavigation && { skipNavigation })}
+      {...(disablePostOnboardingRedirect && { disablePostOnboardingRedirect })}
       customDrawerStyle={{
         title: {
           textAlign: "left",
