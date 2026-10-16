@@ -1,15 +1,17 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useEditContactLabels } from "./copy/useEditContactLabels";
 import type { ContactsRenameContactFooterProps } from "./types";
 
 export function ContactsRenameContactFooter({
   isConfirmEnabled,
   isSaving,
   isDeviceRequired,
-  labels,
   onConfirm,
 }: ContactsRenameContactFooterProps): React.JSX.Element {
+  const labels = useEditContactLabels();
+
   return (
     <Button
       appearance="base"
