@@ -149,12 +149,17 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
         .freshAddress
     : undefined;
 
+  const balanceError = validateWithdrawAmount({
+    amount: new BigNumber(amount),
+    availableBalance,
+  });
+
   const {
     quote,
     isLoading: isQuoteLoading,
     error: quoteError,
   } = usePerpsWithdrawQuote({
-    amount: amountText,
+    amount: balanceError ? "" : amountText,
     sourceAddress: getMainAccount(sourceAccount, getParentAccount(sourceAccount, accounts))
       .freshAddress,
     toCurrencyId: destinationCurrency?.id,
@@ -180,11 +185,6 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
         .toNumber(),
     [availableBalance],
   );
-
-  const balanceError = validateWithdrawAmount({
-    amount: new BigNumber(amount),
-    availableBalance,
-  });
 
   const statusError = useMemo<WithdrawFormError | null>(() => {
     if (balanceError) return { labelKey: "perpsWithdraw.formErrors.insufficientBalance" };
