@@ -5,34 +5,24 @@ import { isCashaddrRecipient, shownRecipient } from "./cashaddr";
 import { DerivationModes, derivationModeOf } from "./selectUtxos";
 
 /**
- * Whether the currency's transactions are crafted as a PSBT (Bitcoin serialization, read and
- * written by bitcoinjs-lib) or as a {@link SigningRequest} for the device to build.
- *
- * Read from the currency's config: the formats carrying an expiry height (Komodo's
- * Overwinter/Sapling transactions, Decred's) are not Bitcoin serialization, so the Ledger app
- * builds them from a signing request, as the bridge has it build every transaction.
+ * The arguments of hw-app-btc's `createPaymentTransaction`, the derivation paths excepted: the
+ * signer knows them. hw-app-btc sends the inputs and outputs to the Ledger app, which checks them,
+ * shows the payment and returns one signature per input; hw-app-btc then serializes the signed
+ * transaction and returns it (`createTransaction.ts`; for app-bitcoin-new, `BtcNew.ts` turns them
+ * into a PSBT the app signs). Amounts are decimal strings.
  */
-export function craftsSigningRequest(config: BitcoinCoinConfig): boolean {
-  return config.transaction?.expiryHeight === true;
-}
-
-/**
- * Everything a Ledger bitcoin-family app needs to build and sign a transaction with its
- * trusted-input flow (hw-app-btc's `createPaymentTransaction`), the derivation paths excepted:
- * the signer knows them. Amounts are decimal strings.
- */
-export type DeviceSigningParameters = {
+export type PaymentTransactionParameters = {
   currencyId: string;
   inputs: {
     /** Id of the transaction that created the spent output. */
     txid: string;
     vout: number;
     value: string;
-    /** That transaction, serialized (hex): the device verifies the spent amount from it. */
+    /** That transaction, serialized (hex): the Ledger app verifies the spent amount from it. */
     prevTxHex: string;
     sequence: number;
   }[];
-  /** The outputs as the device serializes them (`createPaymentTransaction`'s `outputScriptHex`). */
+  /** The outputs, serialized in the currency's format (`createPaymentTransaction`'s `outputScriptHex`). */
   outputScriptHex: string;
   /** Index of the change output, sent back to the account's address, if any. */
   changeOutputIndex?: number;
@@ -41,21 +31,22 @@ export type DeviceSigningParameters = {
   expiryHeight?: string;
   sigHashType: number;
   segwit: boolean;
-  /** Format flags of the device protocol (hw-app-btc `additionals`). */
+  /** hw-app-btc's format flags (`additionals`). */
   additionals: string[];
   /** Whether previous transactions carry extra data (hw-app-btc `splitTransaction`). */
   hasExtraData: boolean;
 };
 
 /**
- * The transaction `craftTransaction` returns for the formats the device builds itself (Komodo,
- * Decred): the device parameters plus the outputs. Serialized as JSON.
+ * The transaction `craftTransaction` returns for the formats bitcoinjs-lib cannot serialize (Komodo,
+ * Decred): the `createPaymentTransaction` arguments plus the outputs, serialized as JSON. hw-app-btc
+ * serializes those formats itself.
  */
 export type SigningRequest = {
   type: "bitcoin-signing-request";
   version: 1;
   outputs: { script: string; value: string }[];
-} & DeviceSigningParameters;
+} & PaymentTransactionParameters;
 
 export const SIGNING_REQUEST_TYPE: SigningRequest["type"] = "bitcoin-signing-request";
 
@@ -74,7 +65,7 @@ function varInt(value: number): Buffer {
 }
 
 /**
- * The outputs as the device serializes them: count, then for each output its 8-byte value, then
+ * The outputs as hw-app-btc serializes them: count, then for each output its 8-byte value, then
  * its script. Decred inserts a 2-byte script version (0) before the script, as the bridge writes it
  * (`buildAndSign.ts`).
  */
@@ -95,18 +86,18 @@ export function serializeOutputs(
 }
 
 /**
- * The device-protocol parameters of a currency, as the bridge derives them (`signOperation.ts`):
+ * The `createPaymentTransaction` format parameters of a currency, as the bridge derives them (`signOperation.ts`):
  * the currency id and the format flags of its config, the address format, the expiry height, the
  * extra-data flag, the sighash type and, for Komodo, the interest locktime.
  */
-export function deviceParameters(
+export function formatParameters(
   config: BitcoinCoinConfig,
   currencyId: string,
   derivationMode: DerivationModes,
   recipient: string,
   now: Date,
 ): Pick<
-  DeviceSigningParameters,
+  PaymentTransactionParameters,
   "additionals" | "hasExtraData" | "sigHashType" | "segwit" | "lockTime" | "expiryHeight"
 > {
   const format = config.transaction;
@@ -114,7 +105,7 @@ export function deviceParameters(
   if (derivationMode === DerivationModes.NATIVE_SEGWIT) additionals.push("bech32");
   if (derivationMode === DerivationModes.TAPROOT) additionals.push("bech32m");
   additionals.push(...(format?.additionals ?? []));
-  // As the bridge: the device shows a cashaddr P2PKH recipient as cashaddr.
+  // As the bridge: the Ledger app shows a cashaddr P2PKH recipient as cashaddr.
   if (config.addressFormat === "cashaddr" && isCashaddrRecipient(recipient)) {
     additionals.push("cashaddr");
   }
@@ -171,7 +162,7 @@ function isSigningRequest(value: unknown): value is SigningRequest {
   );
 }
 
-/** The outputs of a signing request as the device serializes them, from its `outputs`. */
+/** The outputs of a signing request as hw-app-btc serializes them, from its `outputs`. */
 export function requestOutputScript(request: SigningRequest): Buffer {
   return Buffer.from(
     serializeOutputs(
@@ -206,15 +197,16 @@ export function parseSigningRequest(tx: string): SigningRequest | undefined {
 const inputTxid = (hash: Uint8Array) => Buffer.from(hash).reverse().toString("hex");
 
 /**
- * The device parameters of a PSBT crafted by `craftTransaction`. Every input must carry its
- * previous transaction (`nonWitnessUtxo`), which the device's trusted-input flow verifies.
+ * The `createPaymentTransaction` arguments of a PSBT crafted by `craftTransaction`. Every input must
+ * carry its previous transaction (`nonWitnessUtxo`), from which the Ledger app's trusted-input flow
+ * verifies the spent amount.
  */
 function psbtSigningParameters(
   config: BitcoinCoinConfig,
   currencyId: string,
   psbtBase64: string,
   { recipient, now = new Date() }: { recipient?: string | undefined; now?: Date | undefined },
-): DeviceSigningParameters {
+): PaymentTransactionParameters {
   const psbt = Psbt.fromBase64(psbtBase64);
   const previousOutputs = psbt.txInputs.map((input, index) => {
     const previousTx = psbt.data.inputs[index].nonWitnessUtxo;
@@ -236,14 +228,14 @@ function psbtSigningParameters(
   const changeOutputIndex = outputs.findIndex(
     (output, index) => index > 0 && output.script.equals(senderScript),
   );
-  // Some device flags depend on the recipient's format (Bitcoin Cash's `cashaddr`): the caller's
+  // Some format flags depend on the recipient's format (Bitcoin Cash's `cashaddr`): the caller's
   // recipient, or the one Ledger Wallet would show.
   const displayed =
     recipient ??
     (config.addressFormat === "cashaddr"
       ? shownRecipient(outputs[0]?.script ?? Buffer.alloc(0))
       : "");
-  const parameters = deviceParameters(config, currencyId, derivationMode, displayed, now);
+  const parameters = formatParameters(config, currencyId, derivationMode, displayed, now);
   return {
     currencyId,
     inputs: psbt.txInputs.map((input, index) => ({
@@ -261,22 +253,23 @@ function psbtSigningParameters(
 }
 
 /**
- * What a Ledger bitcoin-family app needs to build and sign the transaction `craftTransaction`
- * returned, through hw-app-btc's `createPaymentTransaction` (the derivation paths excepted). Every
- * app but app-bitcoin-new signs only this way, whatever the format: a PSBT for Bitcoin
- * serialization, a signing request for the formats the device builds itself.
+ * The arguments of hw-app-btc's `createPaymentTransaction` (the derivation paths excepted) for the
+ * transaction `craftTransaction` returned, whatever its form: a PSBT for Bitcoin serialization, a
+ * signing request for the formats bitcoinjs-lib cannot serialize. `createPaymentTransaction` serves
+ * every Ledger bitcoin-family app; it is the only way for all of them but app-bitcoin-new, which can
+ * also sign the PSBT itself.
  *
- * `options.recipient` is the recipient as the user entered it: some device flags depend on its
- * format (Bitcoin Cash's `cashaddr`, which makes the device show a cashaddr address). Without it,
+ * `options.recipient` is the recipient as the user entered it: some format flags depend on its
+ * format (Bitcoin Cash's `cashaddr`, which makes the Ledger app show a cashaddr address). Without it,
  * the format Ledger Wallet shows is assumed. `config` is the currency's coin config, as for every
  * other method.
  */
-export function deviceSigningParameters(
+export function paymentTransactionParameters(
   config: BitcoinCoinConfig,
   currencyId: string,
   tx: string,
   options: { recipient?: string; now?: Date } = {},
-): DeviceSigningParameters {
+): PaymentTransactionParameters {
   const request = parseSigningRequest(tx);
   if (request) {
     const { type: _type, version: _version, outputs: _outputs, ...parameters } = request;

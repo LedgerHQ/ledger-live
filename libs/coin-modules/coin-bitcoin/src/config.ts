@@ -55,8 +55,9 @@ export type BitcoinConfig = {
     /** Inputs signal replace-by-fee (BIP 125). @default false */
     signalsRbf?: boolean;
     /**
-     * The format carries an expiry height (Komodo, Decred): not Bitcoin serialization, so the
-     * device builds the transaction from a signing request instead of a PSBT.
+     * The format carries an expiry height (Komodo, Decred): not Bitcoin serialization, which
+     * bitcoinjs-lib cannot write, so the transaction is crafted as a signing request instead of a
+     * PSBT, and hw-app-btc serializes it.
      * @default false
      */
     expiryHeight?: boolean;
@@ -67,14 +68,15 @@ export type BitcoinConfig = {
      * @default false
      */
     interestLockTime?: boolean;
-    /** Device-protocol flags (hw-app-btc `additionals`) beyond the currency id and address type. */
+    /** hw-app-btc format flags (`additionals`) beyond the currency id and address type. */
     additionals?: string[];
   };
   /**
-   * The currency's address format when it is not Bitcoin's: Bitcoin Cash's cashaddr. The explorer is
-   * then queried with the `bitcoincash:` form, and the device told the recipient's format.
+   * The currency's address format when it is not Bitcoin's. Only `"cashaddr"` (Bitcoin Cash) changes
+   * anything: the explorer is then queried with the `bitcoincash:` form, and the Ledger app told the
+   * recipient's format. Any other value is read as Bitcoin's format.
    */
-  addressFormat?: "cashaddr";
+  addressFormat?: string;
 };
 
 export type BitcoinCoinConfig = CurrencyConfig & BitcoinConfig;

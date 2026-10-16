@@ -17,8 +17,8 @@ import type { Transaction as BridgeTransaction } from "../../types";
 import { craftTransaction } from "../../logic/craftTransaction";
 import type { BitcoinIntent } from "../../logic/intent";
 import { cryptoFor } from "../../logic/selectUtxos";
-import type { DeviceSigningParameters } from "../../logic/signingRequest";
-import { deviceSigningParameters } from "../../logic/signingRequest";
+import type { PaymentTransactionParameters } from "../../logic/signingRequest";
+import { paymentTransactionParameters } from "../../logic/signingRequest";
 import { PRISTINE_P2PKH } from "../../logic/tests/helpers/fixtures";
 import { ADDRESSES, PUBLIC_KEY, fundingTransaction } from "../../logic/tests/helpers/keys";
 import {
@@ -48,7 +48,7 @@ type Case = {
   recipient: string;
   /** The bridge's derivation mode of the sender. */
   derivationMode: DerivationMode;
-  /** Formats the device builds (Komodo, Decred): any hex stands for a previous transaction. */
+  /** Formats hw-app-btc serializes itself (Komodo, Decred): any hex stands for a previous transaction. */
   opaquePreviousTxs?: boolean;
 };
 
@@ -100,7 +100,7 @@ const CASES: Case[] = [
     opaquePreviousTxs: true,
   },
   {
-    // A cashaddr recipient: the device gets the `cashaddr` flag (APDU p2 0x03).
+    // A cashaddr recipient: the Ledger app gets the `cashaddr` flag (APDU p2 0x03).
     currencyId: "bitcoin_cash",
     explorerId: "bch",
     sender: ESTIMATION_RECIPIENTS.bitcoin_cash,
@@ -155,11 +155,11 @@ function fund(c: Case) {
 /** What the bridge passes to `createPaymentTransaction` for the same inputs and outputs. */
 async function bridgeArguments(
   c: Case,
-  ours: DeviceSigningParameters,
+  ours: PaymentTransactionParameters,
   outputs: { script: Buffer; value: bigint; isChange: boolean }[],
   opReturnData?: Buffer,
 ): Promise<CreateTransaction & { splits: unknown[] }> {
-  // signOperation.ts: the device parameters of the bridge.
+  // signOperation.ts: the createPaymentTransaction parameters of the bridge.
   const perCoin = perCoinLogic[c.currencyId];
   const transaction = { recipient: c.recipient, opReturnData } as unknown as BridgeTransaction;
   // buildTransaction.ts: bitcoin and its test networks send replaceable transactions.
@@ -217,7 +217,7 @@ async function bridgeArguments(
   return { ...captured.arg!, splits: captured.splits };
 }
 
-describe.each(CASES)("deviceSigningParameters for $currencyId ($derivationMode)", c => {
+describe.each(CASES)("paymentTransactionParameters for $currencyId ($derivationMode)", c => {
   const context = testContext({ explorerId: c.explorerId });
   const intent = (overrides: Partial<BitcoinIntent> = {}): BitcoinIntent => ({
     intentType: "transaction",
@@ -236,8 +236,8 @@ describe.each(CASES)("deviceSigningParameters for $currencyId ($derivationMode)"
   ] as const)("matches the bridge's arguments for %s", async (_label, overrides) => {
     fund(c);
     const crafted = await craftTransaction(context, c.currencyId, intent(overrides));
-    // The recipient as entered: Bitcoin Cash's `cashaddr` device flag depends on its format.
-    const ours = deviceSigningParameters(
+    // The recipient as entered: Bitcoin Cash's `cashaddr` flag depends on its format.
+    const ours = paymentTransactionParameters(
       testConfig(c.currencyId),
       c.currencyId,
       crafted.transaction,

@@ -10,12 +10,7 @@ import { sameBytes } from "./bytes";
 import { compressPublicKey } from "./publicKey";
 import { DerivationModes } from "./selectUtxos";
 import type { SigningRequest } from "./signingRequest";
-import {
-  SIGNING_REQUEST_TYPE,
-  craftsSigningRequest,
-  deviceParameters,
-  serializeOutputs,
-} from "./signingRequest";
+import { SIGNING_REQUEST_TYPE, formatParameters, serializeOutputs } from "./signingRequest";
 
 /** Sequence of a final input: no replace-by-fee signalling. */
 export const FINAL_SEQUENCE = 0xffffffff;
@@ -112,7 +107,7 @@ function buildPsbt(
 
 /**
  * The {@link SigningRequest} of a planned transaction, for the formats the Ledger app builds itself
- * (Komodo, Decred): the same inputs and outputs, with the device-protocol parameters the bridge
+ * (Komodo, Decred): the same inputs and outputs, with the `createPaymentTransaction` parameters the bridge
  * uses.
  */
 function buildSigningRequest(
@@ -124,7 +119,7 @@ function buildSigningRequest(
   previousTx: (txid: string) => string,
 ): string {
   const outputs = outputsOf(plan);
-  const parameters = deviceParameters(
+  const parameters = formatParameters(
     config,
     currencyId,
     plan.derivationMode,
@@ -157,8 +152,10 @@ function buildSigningRequest(
  * Crafts the unsigned transaction of a native transfer from a single address: the transaction
  * `planTransaction` plans (the same `estimateFees` prices), serialized.
  *
- * Currencies with Bitcoin serialization get a PSBT (BIP 174, base64). The formats the Ledger app
- * builds itself (Komodo, Decred: see `craftsSigningRequest`) get a {@link SigningRequest} (JSON).
+ * Currencies with Bitcoin serialization get a PSBT (BIP 174, base64). The formats carrying an
+ * expiry height (`transaction.expiryHeight` in the config: Komodo's Sapling transactions, Decred's)
+ * are not Bitcoin serialization: the Ledger app builds them itself, from a {@link SigningRequest}
+ * (JSON), as the bridge has it build every transaction.
  * As the bridge builds them, from the currency's config (`transaction`): inputs signal
  * replace-by-fee where the currency's transactions do (bitcoin and its test networks), and the
  * transaction version is the one the currency's Ledger app builds (2 for app-bitcoin-new, 1
@@ -201,7 +198,7 @@ export async function craftTransaction(
       : undefined;
 
   // Every input carries its previous transaction, Taproot included: the trusted-input flow every
-  // Ledger app but app-bitcoin-new uses verifies spent amounts from it (`deviceSigningParameters`).
+  // Ledger app but app-bitcoin-new uses verifies spent amounts from it (`paymentTransactionParameters`).
   const previousTxs = await fetchPreviousTransactions(
     txid => fetchTxHex(config, txid),
     plan.selection.inputs.map(utxo => utxo.hash),
@@ -225,7 +222,7 @@ export async function craftTransaction(
       value: BigInt(utxo.value),
     })),
   };
-  const transaction = craftsSigningRequest(config)
+  const transaction = config.transaction?.expiryHeight
     ? buildSigningRequest(config, currencyId, intent.recipient, plan, sequence, previousTx)
     : buildPsbt(config, plan, sequence, previousTx, redeemScript);
   return { transaction, details };

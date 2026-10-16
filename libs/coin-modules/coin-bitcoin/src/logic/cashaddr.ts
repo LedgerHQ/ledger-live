@@ -5,7 +5,7 @@ import type { BitcoinCoinConfig } from "../config";
  * Bitcoin Cash's cashaddr format, for currencies whose config says `addressFormat: "cashaddr"`.
  *
  * Ledger Wallet stores Bitcoin Cash addresses as cashaddr without the `bitcoincash:` prefix, which
- * the explorer does not answer for (`balance`, `utxos`: 500; `txs`: empty), and the device shows a
+ * the explorer does not answer for (`balance`, `utxos`: 500; `txs`: empty), and the Ledger app shows a
  * recipient as cashaddr only when told so (hw-app-btc `additionals: ["cashaddr"]`).
  */
 
@@ -22,7 +22,7 @@ export function explorerAddress(config: BitcoinCoinConfig, address: string): str
   }
 }
 
-/** Whether a recipient is a cashaddr P2PKH address, prefixed or not: the device shows it as cashaddr. */
+/** Whether a recipient is a cashaddr P2PKH address, prefixed or not: the Ledger app shows it as cashaddr. */
 export function isCashaddrRecipient(recipient: string): boolean {
   try {
     const { type } = cashaddr.decode(recipient.includes(":") ? recipient : PREFIX + recipient);

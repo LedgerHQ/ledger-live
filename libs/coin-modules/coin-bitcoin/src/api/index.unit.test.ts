@@ -131,7 +131,7 @@ describe("createApi", () => {
 
   it("delegates validateIntent with the custom fees", async () => {
     await createApi("bitcoin").validateIntent(context, intent, [], { customFees: { value: 3n } });
-    expect(validateIntent).toHaveBeenCalledWith("bitcoin", intent, [], { value: 3n });
+    expect(validateIntent).toHaveBeenCalledWith(context, "bitcoin", intent, [], { value: 3n });
   });
 
   it("delegates estimateFees with the custom fee parameters", async () => {

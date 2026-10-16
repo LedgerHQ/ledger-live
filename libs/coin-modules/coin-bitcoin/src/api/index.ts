@@ -14,8 +14,8 @@ import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
 
 export type { BitcoinTxData } from "../logic/intent";
-export type { DeviceSigningParameters, SigningRequest } from "../logic/signingRequest";
-export { deviceSigningParameters } from "../logic/signingRequest";
+export type { PaymentTransactionParameters, SigningRequest } from "../logic/signingRequest";
+export { paymentTransactionParameters } from "../logic/signingRequest";
 
 /**
  * Stateless, single-address Coin Module API for one currency served by coin-bitcoin.
@@ -40,8 +40,8 @@ export function createApi(currencyId: string) {
       craftTransaction(context, currencyId, intent, options?.customFees),
     combine: (_context: BitcoinContext, tx, signature, options?) =>
       combine(currencyId, tx, signature, options?.pubkey),
-    validateIntent: (_context: BitcoinContext, intent, balances, options?) =>
-      validateIntent(currencyId, intent, balances, options?.customFees),
+    validateIntent: (context: BitcoinContext, intent, balances, options?) =>
+      validateIntent(context, currencyId, intent, balances, options?.customFees),
     broadcast: (context: BitcoinContext, tx, options?) =>
       broadcast(context, currencyId, tx, options?.broadcastConfig),
     craftTransactionData: (_context: BitcoinContext, intent): BitcoinTxData => ({

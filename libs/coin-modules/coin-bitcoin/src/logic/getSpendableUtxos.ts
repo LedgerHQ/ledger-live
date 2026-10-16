@@ -67,5 +67,5 @@ export async function getSpendableUtxos(
     const key = outpoint(utxo.hash, utxo.outputIndex);
     if (!spent.has(key) && !spendable.has(key)) spendable.set(key, utxo);
   }
-  return [...spendable.values()];
+  return Array.from(spendable.values());
 }

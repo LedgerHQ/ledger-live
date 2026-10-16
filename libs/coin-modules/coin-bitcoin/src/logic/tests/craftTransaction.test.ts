@@ -75,7 +75,7 @@ describe("craftTransaction", () => {
     async (_label, sender, taproot) => {
       fund(sender, [80_000, 30_000]);
       const crafted = await craftTransaction(testContext(), "bitcoin", intent(sender));
-      // The signer (bitcoinjs here, a Ledger app on a device) returns either the whole signed
+      // The signer (bitcoinjs here, hw-app-btc with a Ledger app in production) returns either the whole signed
       // transaction (hw-app-btc `createPaymentTransaction`) or one signature per input (`signPsbt`).
       const { reference, signatures } = signPsbt(crafted.transaction, taproot);
       const uncompressed = Buffer.from(secp256k1.getPublicKey(PRIVATE_KEY, false)).toString("hex");
@@ -120,7 +120,8 @@ describe("craftTransaction", () => {
         80_000n - 50_000n - (crafted.details?.fee as bigint),
       ],
     ]);
-    expect(crafted.details?.feePerByte).toBe(2n);
+    // 3, 2 and 1 sat/vB, raised to the relay floor + 1 and kept strictly decreasing: 4, 3, 2.
+    expect(crafted.details?.feePerByte).toBe(3n);
     // As the bridge sends bitcoin transactions: replaceable (BIP 125), version 2 (app-bitcoin-new).
     expect(psbt.txInputs.map(input => input.sequence)).toEqual([RBF_SEQUENCE]);
     expect(psbt.version).toBe(2);
@@ -213,7 +214,7 @@ describe("craftTransaction", () => {
         parameters: { feesStrategy: "fast" },
       },
     );
-    expect(crafted.details?.feePerByte).toBe(3n);
+    expect(crafted.details?.feePerByte).toBe(4n);
   });
 
   it.each([
@@ -350,7 +351,7 @@ describe("craftTransaction", () => {
         "bitcoin",
         intent(ADDRESSES.nativeSegwit, { recipient: "nope" }),
       ),
-    ).rejects.toThrow();
+    ).rejects.toThrow("InvalidAddress");
   });
 
   it("requires the public key of a nested SegWit sender, and checks it", async () => {

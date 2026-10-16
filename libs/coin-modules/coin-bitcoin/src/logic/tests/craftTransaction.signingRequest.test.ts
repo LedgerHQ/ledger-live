@@ -76,12 +76,13 @@ const uint32 = (value: number): Buffer => {
  * The transaction hw-app-btc's `createPaymentTransaction` returns for a request, in the request's
  * format (`serializeTransaction` and its final assembly), with each part overridable to tamper with.
  */
-function deviceBuilt(
+function builtByHwAppBtc(
   request: SigningRequest,
   {
     outputs = request.outputScriptHex,
     scriptSig = "47".padEnd(144, "ab"),
     vout = request.inputs[0].vout,
+    tree = 0,
   } = {},
 ): string {
   const decred = request.additionals.includes("decred");
@@ -90,7 +91,7 @@ function deviceBuilt(
       Buffer.from(input.txid, "hex").reverse(),
       uint32(vout),
       decred
-        ? Buffer.from([0x00])
+        ? Buffer.from([tree])
         : Buffer.concat([Buffer.from([scriptSig.length / 2]), Buffer.from(scriptSig, "hex")]),
       uint32(input.sequence),
     ]),
@@ -131,7 +132,7 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
     asset: { type: "native" },
   };
 
-  it("crafts a signing request with the device parameters the bridge uses", async () => {
+  it("crafts a signing request with the createPaymentTransaction parameters the bridge uses", async () => {
     const { script, utxos } = serve(c.explorerId, c.sender, [80_000_000, 30_000_000]);
     const before = Math.floor(Date.now() / 1000);
     const crafted = await craftTransaction(context, c.currencyId, intent);
@@ -185,12 +186,12 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
     expect(crafted.details?.fee).toBe(estimation.value);
   });
 
-  it("combines the request with the transaction the device built", async () => {
+  it("combines the request with the transaction hw-app-btc built", async () => {
     serve(c.explorerId, c.sender, [80_000_000]);
     const crafted = await craftTransaction(context, c.currencyId, intent);
     const request = JSON.parse(crafted.transaction) as SigningRequest;
     const { outputScriptHex } = request;
-    const signed = deviceBuilt(request).toUpperCase();
+    const signed = builtByHwAppBtc(request).toUpperCase();
 
     expect(combine(c.currencyId, crafted.transaction, [signed])).toBe(signed.toLowerCase());
     expect(() => combine(c.currencyId, crafted.transaction, ["00".repeat(80)])).toThrow(
@@ -213,7 +214,7 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
   });
 
   it.each([[[80_000_000]], [[30_000_000, 30_000_000]]])(
-    "prices at least the size of the transaction the device builds (outputs %j)",
+    "prices at least the size of the transaction hw-app-btc builds (outputs %j)",
     async values => {
       serve(c.explorerId, c.sender, values);
       const estimation = await estimateFees(context, c.currencyId, intent);
@@ -222,7 +223,7 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
       // A P2PKH scriptSig at its largest for a Ledger signer (low-S: a 71-byte DER signature and its
       // sighash byte) and a 33-byte public key, with their pushes.
       const scriptSig = `48${"ab".repeat(72)}21${"cd".repeat(33)}`;
-      const built = deviceBuilt(request, { scriptSig }).length / 2;
+      const built = builtByHwAppBtc(request, { scriptSig }).length / 2;
       expect(request.inputs).toHaveLength(values.length);
       expect(estimation.parameters?.vsize).toBeGreaterThanOrEqual(BigInt(built));
     },
@@ -243,7 +244,7 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
       [...c.additionals],
     );
     expect(() =>
-      combine(c.currencyId, crafted.transaction, [deviceBuilt(request, { outputs: attacker })]),
+      combine(c.currencyId, crafted.transaction, [builtByHwAppBtc(request, { outputs: attacker })]),
     ).toThrow("the signed transaction does not pay the crafted outputs");
   });
 
@@ -252,10 +253,21 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
     const crafted = await craftTransaction(context, c.currencyId, intent);
     const request = JSON.parse(crafted.transaction) as SigningRequest;
     expect(() =>
-      combine(c.currencyId, crafted.transaction, [deviceBuilt(request, { vout: 7 })]),
+      combine(c.currencyId, crafted.transaction, [builtByHwAppBtc(request, { vout: 7 })]),
     ).toThrow("the signed transaction is not the crafted transaction");
     expect(() =>
-      combine(c.currencyId, crafted.transaction, [deviceBuilt(request, { scriptSig: "" })]),
+      combine(c.currencyId, crafted.transaction, [builtByHwAppBtc(request, { scriptSig: "" })]),
     ).toThrow("the transaction is not signed");
   });
+
+  if (c.currencyId === "decred") {
+    it("refuses an input in the stake tree: the same txid and vout, another outpoint", async () => {
+      serve(c.explorerId, c.sender, [80_000_000]);
+      const crafted = await craftTransaction(context, c.currencyId, intent);
+      const request = JSON.parse(crafted.transaction) as SigningRequest;
+      expect(() =>
+        combine(c.currencyId, crafted.transaction, [builtByHwAppBtc(request, { tree: 1 })]),
+      ).toThrow("the signed transaction is not the crafted transaction");
+    });
+  }
 });

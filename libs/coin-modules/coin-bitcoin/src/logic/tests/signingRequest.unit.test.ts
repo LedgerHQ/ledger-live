@@ -1,17 +1,12 @@
 import { Transaction } from "bitcoinjs-lib";
-import {
-  craftsSigningRequest,
-  deviceParameters,
-  parseSigningRequest,
-  serializeOutputs,
-} from "../signingRequest";
+import { formatParameters, parseSigningRequest, serializeOutputs } from "../signingRequest";
 import { DerivationModes } from "../selectUtxos";
 import { REAL_TXS } from "./helpers/fixtures";
 import { testConfig } from "./helpers/msw";
 
 const NOW = new Date("2026-10-06T00:00:00Z");
 
-describe("craftsSigningRequest", () => {
+describe("transaction format of each currency (config `transaction.expiryHeight`)", () => {
   // Each sample is a real mainnet transaction. PSBT crafting reads previous transactions with the
   // bitcoin parser (`nonWitnessUtxo`), so it must recover the explorer's id and inputs.
   it.each([
@@ -26,7 +21,7 @@ describe("craftsSigningRequest", () => {
   ])("crafts a PSBT for %s, whose real transactions the bitcoin parser reads", currencyId => {
     const { hex, inputs, txid } = REAL_TXS[currencyId];
     const tx = Transaction.fromHex(hex);
-    expect(craftsSigningRequest(testConfig(currencyId))).toBe(false);
+    expect(testConfig(currencyId).transaction?.expiryHeight ?? false).toBe(false);
     expect(tx.getId()).toBe(txid);
     expect(
       tx.ins.map(input => ({
@@ -39,7 +34,7 @@ describe("craftsSigningRequest", () => {
   it.each(["komodo", "decred"])(
     "crafts a signing request for %s, whose transactions the bitcoin parser cannot read",
     currencyId => {
-      expect(craftsSigningRequest(testConfig(currencyId))).toBe(true);
+      expect(testConfig(currencyId).transaction?.expiryHeight).toBe(true);
       expect(() => Transaction.fromHex(REAL_TXS[currencyId].hex)).toThrow(/./);
     },
   );
@@ -73,7 +68,7 @@ describe("serializeOutputs", () => {
 
 describe("serializeOutputs on real transactions", () => {
   // Outputs of the real komodo and decred transactions in REAL_TXS, as the explorer lists them: a
-  // device-built transaction must contain them exactly as serialized, which `combine` checks.
+  // transaction hw-app-btc builds must contain them exactly as serialized, which `combine` checks.
   it.each([
     [
       "komodo",
@@ -103,10 +98,10 @@ describe("serializeOutputs on real transactions", () => {
   );
 });
 
-describe("deviceParameters", () => {
+describe("formatParameters", () => {
   it("gives Komodo its sapling flag, extra data, expiry height and interest locktime", () => {
     expect(
-      deviceParameters(testConfig("komodo"), "komodo", DerivationModes.LEGACY, "R…", NOW),
+      formatParameters(testConfig("komodo"), "komodo", DerivationModes.LEGACY, "R…", NOW),
     ).toEqual({
       additionals: ["komodo", "sapling"],
       hasExtraData: true,
@@ -119,7 +114,7 @@ describe("deviceParameters", () => {
 
   it("gives Decred its expiry height, without extra data or locktime", () => {
     expect(
-      deviceParameters(testConfig("decred"), "decred", DerivationModes.LEGACY, "Ds…", NOW),
+      formatParameters(testConfig("decred"), "decred", DerivationModes.LEGACY, "Ds…", NOW),
     ).toEqual({
       additionals: ["decred"],
       hasExtraData: false,
@@ -131,7 +126,7 @@ describe("deviceParameters", () => {
 
   it("flags the address format of a native SegWit sender", () => {
     expect(
-      deviceParameters(
+      formatParameters(
         testConfig("bitcoin"),
         "bitcoin",
         DerivationModes.NATIVE_SEGWIT,

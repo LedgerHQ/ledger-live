@@ -193,6 +193,7 @@ describe("craftTransaction across the bitcoin family", () => {
         ),
       ).rejects.toBeInstanceOf(OpReturnDataSizeLimit);
       const validation = await validateIntent(
+        testContext(),
         "bitcoin",
         send(sender, sender, { data: { type: "string", opReturnData: tooLong } }),
         [{ value: 100_000_000n, asset: { type: "native" } }],
@@ -202,6 +203,7 @@ describe("craftTransaction across the bitcoin family", () => {
 
     it("refuses data that is not hex", async () => {
       const validation = await validateIntent(
+        testContext(),
         "bitcoin",
         send(sender, sender, { data: { type: "string", opReturnData: "not hex" } }),
         [{ value: 100_000_000n, asset: { type: "native" } }],

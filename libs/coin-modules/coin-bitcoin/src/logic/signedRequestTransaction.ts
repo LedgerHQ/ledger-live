@@ -63,7 +63,7 @@ const expiryHeightOf = (request: SigningRequest): Buffer =>
  *
  * - **Komodo** (Sapling): header and version group id, inputs (outpoint, scriptSig, sequence),
  *   outputs, locktime, expiry height, then empty Sapling fields.
- * - **Decred**: version, inputs (outpoint, tree, sequence), outputs, locktime, expiry height, then
+ * - **Decred**: version, inputs (outpoint, regular tree, sequence), outputs, locktime, expiry height, then
  *   the witness (value, block height, block index, signature script) of each input.
  *
  * The outputs are compared where the format puts them, never searched for: bytes that merely appear
@@ -84,8 +84,10 @@ export function signedRequestMismatch(
     for (const input of request.inputs) {
       const txid = Buffer.from(reader.take(32)).reverse().toString("hex");
       const vout = reader.uint32();
-      if (decred) reader.take(1); // tree
-      else scripts.push(reader.script());
+      // Decred's tree is part of the outpoint: hw-app-btc always writes the regular tree (0), the
+      // one every output the address spends is in. Another tree is another outpoint.
+      if (decred && reader.take(1)[0] !== 0) return "transaction";
+      if (!decred) scripts.push(reader.script());
       const sequence = reader.uint32();
       if (txid !== input.txid.toLowerCase() || vout !== input.vout || sequence !== input.sequence) {
         return "transaction";

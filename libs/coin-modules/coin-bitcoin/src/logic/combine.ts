@@ -148,7 +148,7 @@ function assemble(
  * - **the whole signed transaction**, as one element: what hw-app-btc's `createPaymentTransaction`
  *   returns, every Ledger app signing in one session. It must spend exactly the crafted inputs and
  *   pay exactly the crafted outputs, with the crafted version, locktime and sequences. For a signing
- *   request (Komodo, Decred: the device builds the transaction), this is the only form; it is read
+ *   request (Komodo, Decred: hw-app-btc serializes the transaction), this is the only form; it is read
  *   in the currency's format and checked field by field against the request.
  * - **one signature per input**, in input order: what a PSBT signer returns (app-bitcoin-new's
  *   `signPsbt`, any BIP 174 signer), small enough for any transport. `publicKey` is then the

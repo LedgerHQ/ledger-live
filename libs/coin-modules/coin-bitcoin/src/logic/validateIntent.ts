@@ -10,6 +10,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
+import type { BitcoinContext } from "../config";
 import { DustLimit, FeeTooLow } from "../errors";
 import { amountParameter } from "./feeParameters";
 import { validateAddress } from "./validateAddress";
@@ -51,6 +52,7 @@ function belowRelayMinimum(fees: bigint, parameters: FeeEstimation["parameters"]
  * `opReturnSizeLimit`, as the bridge reports it), as is data that is not hex.
  */
 export async function validateIntent(
+  context: BitcoinContext,
   currencyId: string,
   intent: BitcoinIntent,
   balances: Balance[],
@@ -78,7 +80,9 @@ export async function validateIntent(
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!(await validateAddress(intent.recipient, { currencyId }))) {
-    errors.recipient = new InvalidAddress("", { currencyName: currencyId });
+    errors.recipient = new InvalidAddress("", {
+      currencyName: (await context.config(currencyId)).name,
+    });
   }
 
   const dust =

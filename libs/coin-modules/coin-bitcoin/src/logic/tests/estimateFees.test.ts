@@ -1,3 +1,4 @@
+import { BitcoinInfrastructureError } from "../../errors";
 import { http, HttpResponse } from "msw";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { estimateFees } from "../estimateFees";
@@ -51,6 +52,8 @@ const utxo = (hash: string, value: number) => ({
 });
 
 // sat/kB → 13, 12 and 12 sat/vB (rounded up): fast, medium, slow.
+// 13, 12 and 12 sat/vB rounded up, which the bridge reads as 14, 13 and 12: each speed strictly
+// above the slower one.
 const FEES = { "2": 12_100, "4": 11_740, "6": 11_030 };
 
 // Fails the test if the explorer's rates were read.
@@ -90,13 +93,13 @@ describe("estimateFees", () => {
     server.use(utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000)], token: null }]));
     const estimation = await estimateFees(testContext(), "bitcoin", intent());
     expect(estimation).toEqual({
-      value: vsize(1, true) * 12n,
+      value: vsize(1, true) * 13n,
       parameters: {
-        feePerByte: 12n,
+        feePerByte: 13n,
         relayFeePerByte: 1n,
         vsize: vsize(1, true),
         inputCount: 1,
-        change: 100_000n - 10_000n - vsize(1, true) * 12n,
+        change: 100_000n - 10_000n - vsize(1, true) * 13n,
         sufficient: true,
       },
     });
@@ -118,7 +121,7 @@ describe("estimateFees", () => {
     const estimation = await estimateFees(testContext(), "bitcoin", intent(), {
       feesStrategy: "fast",
     });
-    expect(estimation.parameters?.feePerByte).toBe(13n);
+    expect(estimation.parameters?.feePerByte).toBe(14n);
   });
 
   it("prices a custom absolute fee intent at the relay minimum, without returning a rate or a sweep amount", async () => {
@@ -174,14 +177,15 @@ describe("estimateFees", () => {
     expect(estimation.parameters?.feePerByte).toBe(5n);
   });
 
-  it("floors at 1 sat/vB when the explorer gives no relay fee", async () => {
+  it("reads equal rates without a relay fee as the bridge does: 3, 2 and 1 sat/vB", async () => {
     server.use(
       utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000)], token: null }]),
       networkHandler(null),
       feesHandler({ "2": 100, "4": 100, "6": 100 }),
     );
     const estimation = await estimateFees(testContext(), "bitcoin", intent());
-    expect(estimation.parameters?.feePerByte).toBe(1n);
+    expect(estimation.parameters?.feePerByte).toBe(2n);
+    expect(estimation.parameters?.relayFeePerByte).toBe(1n);
   });
 
   it.each([
@@ -203,13 +207,13 @@ describe("estimateFees", () => {
       "bitcoin",
       intent({ useAllAmount: true, amount: 0n }),
     );
-    expect(estimation.value).toBe(vsize(2, false) * 12n);
+    expect(estimation.value).toBe(vsize(2, false) * 13n);
     expect(estimation.parameters).toEqual(
       expect.objectContaining({
         inputCount: 2,
         change: 0n,
         sufficient: true,
-        amount: 13_000n - vsize(2, false) * 12n,
+        amount: 13_000n - vsize(2, false) * 13n,
       }),
     );
   });
@@ -217,7 +221,7 @@ describe("estimateFees", () => {
   it("prices with an output of the sender's type while the recipient is not valid yet", async () => {
     server.use(utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000)], token: null }]));
     const estimation = await estimateFees(testContext(), "bitcoin", intent({ recipient: "" }));
-    expect(estimation.value).toBe(vsize(1, true, FUNDED_P2WPKH) * 12n);
+    expect(estimation.value).toBe(vsize(1, true, FUNDED_P2WPKH) * 13n);
   });
 
   it("reports insufficient funds instead of failing", async () => {
@@ -227,13 +231,13 @@ describe("estimateFees", () => {
     expect(estimation.value).toBeGreaterThan(0n);
   });
 
-  it("propagates an explorer error", async () => {
+  it("refuses an explorer answer without its three rates, as the bridge does", async () => {
     server.use(
       utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000)], token: null }]),
       feesHandler({}),
     );
-    await expect(estimateFees(testContext(), "bitcoin", intent())).rejects.toThrow(
-      "explorer returned no fee rates",
+    await expect(estimateFees(testContext(), "bitcoin", intent())).rejects.toBeInstanceOf(
+      BitcoinInfrastructureError,
     );
   });
 });
