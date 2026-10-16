@@ -313,12 +313,34 @@ describe("Token Persistence", () => {
       expect(mockDispatch).toHaveBeenCalled();
     });
 
-    it("should skip restore when hash changed", async () => {
-      const upsertActions: unknown[] = [];
+    it("should restore tokens then invalidate the cache when hash changed", async () => {
+      const actionTypes: string[] = [];
       const mockDispatch = jest.fn(async action => {
         if (typeof action === "function") {
           return { data: "hash456", error: undefined };
         }
+        actionTypes.push((action as { type?: string })?.type || "");
+        return action;
+      });
+
+      const persistedData: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: mockToken, timestamp: Date.now() }],
+        hashes: { ethereum: "hash123" },
+      };
+
+      await restoreTokensToCache(mockDispatch, persistedData, ttl);
+      expect(actionTypes.some(type => type.includes("cacheEntriesUpserted"))).toBe(true);
+      expect(actionTypes.some(type => type.includes("invalidateTags"))).toBe(false);
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(actionTypes.some(type => type.includes("invalidateTags"))).toBe(true);
+    });
+
+    it("should not wait for a hanging hash request", async () => {
+      const upsertActions: unknown[] = [];
+      const mockDispatch = jest.fn((action: unknown) => {
+        if (typeof action === "function") return new Promise(() => {});
         const actionType = (action as { type?: string })?.type || "";
         if (actionType.includes("cacheEntriesUpserted")) upsertActions.push(action);
         return action;
@@ -332,7 +354,7 @@ describe("Token Persistence", () => {
 
       await restoreTokensToCache(mockDispatch, persistedData, ttl);
 
-      expect(upsertActions).toHaveLength(0);
+      expect(upsertActions.length).toBeGreaterThan(0);
     });
 
     it("should upsert tokens when hash fetch fails", async () => {

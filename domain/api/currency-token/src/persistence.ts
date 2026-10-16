@@ -3,7 +3,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { ThunkDispatch } from "@reduxjs/toolkit";
 import { calApi } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
-import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
+import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY, TOKEN_TAGS } from "./internals";
 import {
   buildRestoreCacheEntries,
   groupTokensByCurrency,
@@ -147,10 +147,10 @@ export function filterExpiredTokens(
 }
 
 /**
- * Restores persisted tokens into the RTK Query cache. For a currency with a stored hash, validates
- * it against the current server hash and skips restoring that currency only when the hash changed.
- * A failed hash check restores persisted tokens. Currencies with no stored hash are restored
- * unconditionally (backward-compatible with pre-hash persisted blobs).
+ * Restores persisted tokens into the RTK Query cache without waiting for the network. Then, in the
+ * background, checks the stored hash of each currency against the current server hash. When a hash
+ * changed, the token cache is invalidated. A failed or slow hash check keeps the restored tokens.
+ * Currencies with no stored hash are never checked (backward-compatible with pre-hash blobs).
  */
 export async function restoreTokensToCache(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -163,22 +163,30 @@ export async function restoreTokensToCache(
     return;
   }
 
-  const tokensByCurrency = groupTokensByCurrency(validTokens);
-  const currencyIdsToEvict = await resolveCurrenciesToEvict(
-    dispatch,
-    tokensByCurrency,
-    persistedData.hashes ?? {},
-  );
-
-  const tokensToRestore = validTokens.filter(
-    entry => !currencyIdsToEvict.has(entry.data.parentCurrencyId),
-  );
-  if (tokensToRestore.length === 0) {
-    return;
-  }
-
-  const entries = buildRestoreCacheEntries(tokensToRestore);
+  const entries = buildRestoreCacheEntries(validTokens);
   if (entries.length > 0) {
     dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
+  }
+
+  void evictChangedCurrencies(dispatch, groupTokensByCurrency(validTokens), persistedData.hashes);
+}
+
+async function evictChangedCurrencies(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch: ThunkDispatch<any, any, any>,
+  tokensByCurrency: ReturnType<typeof groupTokensByCurrency>,
+  hashes: PersistedCAL["hashes"],
+): Promise<void> {
+  try {
+    const currencyIdsToEvict = await resolveCurrenciesToEvict(
+      dispatch,
+      tokensByCurrency,
+      hashes ?? {},
+    );
+    if (currencyIdsToEvict.size > 0) {
+      dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
+    }
+  } catch {
+    // Hash check failed: keep the restored tokens.
   }
 }
