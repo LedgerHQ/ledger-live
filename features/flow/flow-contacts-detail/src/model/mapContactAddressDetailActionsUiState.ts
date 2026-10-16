@@ -24,6 +24,7 @@ export type ContactAddressDetailActionsUiState = Readonly<{
 
 export function createInactiveContactAddressDetailActionsUiState(
   labels: ContactAddressDetailActionsLabels,
+  supportsDomain: boolean,
 ): ContactAddressDetailActionsUiState {
   return {
     addressDetailDialog: {
@@ -45,7 +46,7 @@ export function createInactiveContactAddressDetailActionsUiState(
       addressEntry: EMPTY_ADDRESS_ENTRY_STATE,
       isConfirmEnabled: false,
       isDeviceRequired: false,
-      labels: labels.rename,
+      supportsDomain,
       onOpen: () => undefined,
       onClose: () => undefined,
       onDraftLabelChange: () => undefined,
@@ -65,6 +66,7 @@ export function createActiveContactAddressDetailActionsUiState(
   flow: UseContactAddressDetailActionsFlowViewModelResult,
   renameViewModel: RenameAddressDialogViewModel,
   labels: ContactAddressDetailActionsLabels,
+  supportsDomain: boolean,
 ): ContactAddressDetailActionsUiState {
   return {
     addressDetailDialog: {
@@ -84,7 +86,7 @@ export function createActiveContactAddressDetailActionsUiState(
     rename: {
       ...renameViewModel,
       isDeviceRequired: flow.isSignerRequiredForEdit,
-      labels: labels.rename,
+      supportsDomain,
     },
     signerMismatch: {
       isOpen: flow.editUiState === "signer-mismatch",

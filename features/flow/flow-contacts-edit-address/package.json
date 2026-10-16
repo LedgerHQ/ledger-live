@@ -25,6 +25,7 @@
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
     "@features/platform-contacts": "workspace:^",
+    "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:^"
   },
   "peerDependencies": {
