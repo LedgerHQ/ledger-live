@@ -2,6 +2,12 @@ import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { Observable } from "rxjs";
 import type { GetGenuineCheckFromDeviceIdResult } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { runCli } from "../testing/cli-runner";
+import { WALLET_CLI_SKILL_DOCS_URL } from "../device/usb-timeout-hints";
+import {
+  recordLedgerVendorSeen,
+  recordScanCompleted,
+  resetUsbAccessDiagnostics,
+} from "../device/usb-access-diagnostics";
 
 let genuineCheckImpl: () => Observable<GetGenuineCheckFromDeviceIdResult>;
 
@@ -113,9 +119,40 @@ describe("genuine-check command (mock DMK)", () => {
       ok: false,
       error: {
         command: "genuine-check",
-        code: "timeout",
+        code: "USB_TIMEOUT",
+        likely_cause: expect.any(String),
+        user_hint: expect.any(String),
+        docs: WALLET_CLI_SKILL_DOCS_URL,
       },
     });
+  });
+
+  it("does not blame an unopened app for a timeout after the manager was allowed", async () => {
+    genuineCheckImpl = () =>
+      new Observable<GetGenuineCheckFromDeviceIdResult>(subscriber => {
+        subscriber.next({
+          socketEvent: { type: "device-permission-granted" },
+          lockedDevice: false,
+        });
+      });
+    resetUsbAccessDiagnostics();
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+
+    try {
+      const { stdout, exitCode } = await runCli(
+        ["genuine-check", "--output", "json", "--device-timeout", "1"],
+        MOCK_DMK_ENV,
+      );
+
+      expect(exitCode).toBe(6);
+      expect(parseNdjson(stdout).at(-1)).toMatchObject({
+        ok: false,
+        error: { code: "USB_TIMEOUT", likely_cause: "unknown" },
+      });
+    } finally {
+      resetUsbAccessDiagnostics();
+    }
   });
 
   it("fails when the device returns a non-genuine result", async () => {

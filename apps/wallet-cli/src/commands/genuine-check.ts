@@ -5,6 +5,7 @@ import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError"
 import { TimeoutError, timeout } from "rxjs";
 import { createCommandOutput } from "../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
+import { usbTimeoutState } from "../device/classify-device-error";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
 import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "./inputs";
@@ -19,9 +20,16 @@ class NonGenuineDeviceError extends Error {
   }
 }
 
-function mapGenuineCheckError(error: unknown): unknown {
+function mapGenuineCheckError(error: unknown, managerAllowed: boolean): unknown {
   if (error instanceof TimeoutError) {
-    return new WalletCliDeviceError({ code: "timeout" }, { cause: error });
+    // The rxjs deadline fires without an error from the device stack, but the USB evidence is
+    // still on record, so the envelope can name a cause.
+    return new WalletCliDeviceError(
+      usbTimeoutState(
+        managerAllowed ? {} : { expectedApp: "Ledger dashboard", rejectedContext: "open_app" },
+      ),
+      { cause: error },
+    );
   }
   if (isCounterfeitError(error)) {
     return new NonGenuineDeviceError();
@@ -56,6 +64,7 @@ export default defineCommand({
 
     await out.run(async () => {
       let isGenuine = false;
+      let managerAllowed = false;
       const spin = out.spin("Connect and unlock your Ledger on the dashboard…");
 
       await withDmkDeviceSession(async () => {
@@ -85,6 +94,7 @@ export default defineCommand({
                 }
                 break;
               case "device-permission-granted":
+                managerAllowed = true;
                 if (spin) {
                   spin.text = "Verifying device genuineness…";
                 }
@@ -97,7 +107,7 @@ export default defineCommand({
                 break;
             }
           },
-          mapError: mapGenuineCheckError,
+          mapError: error => mapGenuineCheckError(error, managerAllowed),
         });
       });
 
