@@ -50,7 +50,9 @@ export function useDeviceOnboarding({
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
-  const featureFlag = useDeviceOnboardingFeatureFlag();
+  const { featureFlag, setFeatureFlag, isFeatureFlagOverridden, resetFeatureFlag } =
+    useDeviceOnboardingFeatureFlag();
+  const hostsSeedSetup = Boolean(featureFlag?.enabled && featureFlag.params.connectUnseededDevice);
 
   const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
 
@@ -177,6 +179,7 @@ export function useDeviceOnboarding({
             deviceId: result.compatDeviceId,
             deviceModelId: session.deviceModelId,
             offerSync,
+            hostsSeedSetup,
           },
           {
             beforeStart: () => startSessionListener(result, nextPorts.currentSessionId()),
@@ -191,7 +194,16 @@ export function useDeviceOnboarding({
         setStatus(statusWithActor(actorRef.current));
       }
     },
-    [actorRef, offerSync, portsRef, send, setSessionReady, startActor, startSessionListener],
+    [
+      actorRef,
+      hostsSeedSetup,
+      offerSync,
+      portsRef,
+      send,
+      setSessionReady,
+      startActor,
+      startSessionListener,
+    ],
   );
 
   const handleConnectionState = useCallback(
@@ -310,6 +322,9 @@ export function useDeviceOnboarding({
     connect,
     send,
     reset,
-    ...featureFlag,
+    featureFlag,
+    setFeatureFlag,
+    isFeatureFlagOverridden,
+    resetFeatureFlag,
   };
 }

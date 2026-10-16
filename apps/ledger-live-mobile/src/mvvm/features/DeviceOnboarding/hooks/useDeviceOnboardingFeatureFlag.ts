@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import { flagRegistry, setOverride } from "@shared/feature-flags";
-import { useDispatch } from "~/context/hooks";
+import { featureFlagsOverridesSelector, flagRegistry, setOverride } from "@shared/feature-flags";
+import { useDispatch, useSelector } from "~/context/hooks";
 import type { DeviceOnboardingToolProps } from "../utils/toolState";
 
 type FeatureFlag = NonNullable<DeviceOnboardingToolProps["featureFlag"]>;
@@ -11,9 +11,12 @@ const defaultParams = flagRegistry.deviceOnboarding.parse(undefined).params;
 
 export function useDeviceOnboardingFeatureFlag(): Pick<
   DeviceOnboardingToolProps,
-  "featureFlag" | "setFeatureFlag"
+  "featureFlag" | "setFeatureFlag" | "isFeatureFlagOverridden" | "resetFeatureFlag"
 > {
   const feature = useFeature("deviceOnboarding");
+  const isFeatureFlagOverridden = useSelector(
+    state => featureFlagsOverridesSelector(state).deviceOnboarding !== undefined,
+  );
   const dispatch = useDispatch();
 
   const featureFlag = useMemo<FeatureFlag | undefined>(
@@ -41,5 +44,12 @@ export function useDeviceOnboardingFeatureFlag(): Pick<
     [dispatch, feature],
   );
 
-  return useMemo(() => ({ featureFlag, setFeatureFlag }), [featureFlag, setFeatureFlag]);
+  const resetFeatureFlag = useCallback(() => {
+    dispatch(setOverride({ key: "deviceOnboarding", value: undefined }));
+  }, [dispatch]);
+
+  return useMemo(
+    () => ({ featureFlag, setFeatureFlag, isFeatureFlagOverridden, resetFeatureFlag }),
+    [featureFlag, isFeatureFlagOverridden, resetFeatureFlag, setFeatureFlag],
+  );
 }

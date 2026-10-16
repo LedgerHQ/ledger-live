@@ -74,6 +74,9 @@ export interface DeviceOnboardingToolProps {
    */
   readonly featureFlag?: DeviceOnboardingFeatureFlag;
   readonly setFeatureFlag?: (featureFlag: DeviceOnboardingFeatureFlag) => void;
+  /** True when a local override replaces the resolved flag. Absent on a host that does not edit it. */
+  readonly isFeatureFlagOverridden?: boolean;
+  readonly resetFeatureFlag?: () => void;
 }
 
 /** Each param is a switch, so only boolean params are listed. */

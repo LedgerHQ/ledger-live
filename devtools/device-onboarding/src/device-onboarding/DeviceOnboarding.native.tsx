@@ -11,7 +11,14 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
-import { emptyLogCopy, headerCopy, featureFlagCopy, logCopy, overrideCopy } from "./configCopy";
+import {
+  emptyLogCopy,
+  headerCopy,
+  featureFlagCopy,
+  featureFlagSourceCopy,
+  logCopy,
+  overrideCopy,
+} from "./configCopy";
 import {
   useDeviceOnboardingViewModel,
   type DeviceOnboardingViewModel,
@@ -160,7 +167,13 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
 function ConfigTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
   return (
     <>
-      {vm.featureFlagRows.length > 0 ? <FeatureFlagSection rows={vm.featureFlagRows} /> : null}
+      {vm.featureFlagRows.length > 0 ? (
+        <FeatureFlagSection
+          rows={vm.featureFlagRows}
+          source={vm.featureFlagSource}
+          onReset={vm.resetFeatureFlag}
+        />
+      ) : null}
       <OverrideSection vm={vm} />
     </>
   );
@@ -228,12 +241,23 @@ function LogTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
 
 function FeatureFlagSection({
   rows,
-}: Readonly<{ rows: DeviceOnboardingViewModel["featureFlagRows"] }>) {
-  const { divider, mono } = useToolStyles();
+  source,
+  onReset,
+}: Readonly<{
+  rows: DeviceOnboardingViewModel["featureFlagRows"];
+  source: DeviceOnboardingViewModel["featureFlagSource"];
+  onReset: DeviceOnboardingViewModel["resetFeatureFlag"];
+}>) {
+  const { divider, mono, muted } = useToolStyles();
 
   return (
     <Box lx={SECTION_LX} style={divider}>
-      <SectionHeader {...featureFlagCopy} />
+      <SectionHeader title={featureFlagCopy.title} description={featureFlagCopy.description} />
+      {source ? (
+        <Text typography="body2" style={muted}>
+          {source === "mock" ? featureFlagSourceCopy.mock : featureFlagSourceCopy.flag}
+        </Text>
+      ) : null}
       {rows.map(row => (
         <Box key={row.key} lx={HEADER_ROW_LX}>
           <Text typography="body2" style={mono}>
@@ -248,6 +272,11 @@ function FeatureFlagSection({
           </Box>
         </Box>
       ))}
+      {source === "mock" && onReset ? (
+        <Button size="sm" appearance="transparent" onPress={onReset}>
+          {featureFlagSourceCopy.reset}
+        </Button>
+      ) : null}
     </Box>
   );
 }

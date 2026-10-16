@@ -1,7 +1,14 @@
 import { fireEvent, render, screen } from "@support/jest-devtools/native";
 import { Share } from "react-native";
 import { buildProps } from "jest/deviceOnboardingProps";
-import { emptyLogCopy, featureFlagCopy, headerCopy, logCopy, overrideCopy } from "./configCopy";
+import {
+  emptyLogCopy,
+  featureFlagCopy,
+  featureFlagSourceCopy,
+  headerCopy,
+  logCopy,
+  overrideCopy,
+} from "./configCopy";
 import DeviceOnboarding from "./DeviceOnboarding";
 
 const connectedDevice = {
@@ -110,6 +117,26 @@ describe("DeviceOnboarding", () => {
       enabled: true,
       params: { offerLedgerSync: true },
     });
+  });
+
+  it("names the feature flag until a mock replaces it, and reset drops the mock", () => {
+    const resetFeatureFlag = jest.fn();
+    const props = buildProps({
+      featureFlag: { enabled: true, params: { offerLedgerSync: false } },
+      setFeatureFlag: jest.fn(),
+      resetFeatureFlag,
+    });
+    const { rerender } = render(<DeviceOnboarding {...props} isFeatureFlagOverridden={false} />);
+
+    fireEvent.press(screen.getByText(headerCopy.config));
+    expect(screen.getByText(featureFlagSourceCopy.flag)).toBeTruthy();
+    expect(screen.queryByText(featureFlagSourceCopy.reset)).toBeNull();
+
+    rerender(<DeviceOnboarding {...props} isFeatureFlagOverridden />);
+    fireEvent.press(screen.getByText(featureFlagSourceCopy.reset));
+
+    expect(screen.getByText(featureFlagSourceCopy.mock)).toBeTruthy();
+    expect(resetFeatureFlag).toHaveBeenCalledTimes(1);
   });
 
   it("keeps each switch on the config tab, with a short line under its name", () => {
