@@ -44,6 +44,7 @@ import {
   getMaybeVoteAccount,
 } from "../../network/chain/web3";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
+import type { SolanaCoinConfig } from "../../config";
 
 const SENDER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const RECIPIENT = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
@@ -119,9 +120,17 @@ function makeStakeBalances(
   ];
 }
 
-type IntentArg = Parameters<typeof validateIntentRaw>[1];
-type BalancesArg = Parameters<typeof validateIntentRaw>[2];
-type FeesArg = Parameters<typeof validateIntentRaw>[3];
+const CONFIG: SolanaCoinConfig = {
+  token2022Enabled: false,
+  legacyOCMSMaxVersion: "1.0.0",
+  status: { type: "active" },
+  name: "Solana",
+  unit: { name: "SOL", code: "SOL", magnitude: 9 },
+};
+
+type IntentArg = Parameters<typeof validateIntentRaw>[2];
+type BalancesArg = Parameters<typeof validateIntentRaw>[3];
+type FeesArg = Parameters<typeof validateIntentRaw>[4];
 
 const validateIntent = (
   intent: IntentArg,
@@ -130,7 +139,7 @@ const validateIntent = (
   api?: ChainAPI,
 ): ReturnType<typeof validateIntentRaw> => {
   const resolvedApi = api ?? (intent.intentType === "staking" ? makeApi() : makeTransferApi());
-  return validateIntentRaw(resolvedApi, intent, balances, customFees);
+  return validateIntentRaw(resolvedApi, CONFIG, intent, balances, customFees);
 };
 
 function makeTransferApi(): ChainAPI {
@@ -233,6 +242,7 @@ describe("validateIntent", () => {
     );
 
     expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+    expect(result.errors.recipient).toMatchObject({ currencyName: "Solana" });
   });
 
   it("should error when amount is zero and not useAllAmount", async () => {
@@ -305,6 +315,24 @@ describe("validateIntent", () => {
       const result = await validateIntent(makeApproveIntent(), makeBalances(), { value: 5000n });
 
       expect(result.errors.recipient).toBeInstanceOf(SolanaMintAccountNotAllowed);
+    });
+
+    it("names Solana in an invalid delegate error regardless of the asset name", async () => {
+      const result = await validateIntent(
+        makeApproveIntent({
+          recipient: "not-a-valid-address!!!",
+          asset: {
+            type: "spl-token",
+            assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            name: "USDC",
+          },
+        }),
+        makeBalances(),
+        { value: 5000n },
+      );
+
+      expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+      expect(result.errors.recipient).toMatchObject({ currencyName: "Solana" });
     });
 
     it("rejects the sender as its own delegate", async () => {
@@ -420,12 +448,16 @@ describe("validateIntent", () => {
 
       it("should error when recipient is an invalid address", async () => {
         const result = await validateIntent(
-          makeStakeIntent({ recipient: "not-valid!!!" }),
+          makeStakeIntent({
+            recipient: "not-valid!!!",
+            asset: { type: "native", name: "Not Solana" },
+          }),
           makeBalances(),
           { value: 5000n },
         );
 
         expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+        expect(result.errors.recipient).toMatchObject({ currencyName: "Solana" });
       });
 
       it("should error when amount is zero", async () => {
@@ -470,6 +502,7 @@ describe("validateIntent", () => {
       it("should error when amount is below the stake minimum delegation", async () => {
         const result = await validateIntentRaw(
           makeApi(1_000_000_000),
+          CONFIG,
           makeStakeIntent({ amount: 999_999_999n }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
@@ -484,6 +517,7 @@ describe("validateIntent", () => {
       it("should error when useAllAmount yields a value below the stake minimum delegation", async () => {
         const result = await validateIntentRaw(
           makeApi(1_000_000_000),
+          CONFIG,
           makeStakeIntent({ amount: 0n, useAllAmount: true }),
           makeBalances(500_000_000n, 0n),
           { value: 5000n },
@@ -495,6 +529,7 @@ describe("validateIntent", () => {
       it("should error when useAllAmount minus rent-exempt drops below the stake minimum delegation", async () => {
         const result = await validateIntentRaw(
           makeApi(1_000_000_000, STAKE_ACC_RENT_EXEMPT),
+          CONFIG,
           makeStakeIntent({ amount: 0n, useAllAmount: true }),
           makeBalances(1_000_500_000n, 0n),
           { value: 5000n },
@@ -506,6 +541,7 @@ describe("validateIntent", () => {
       it("should pass when amount is at or above the stake minimum delegation", async () => {
         const result = await validateIntentRaw(
           makeApi(1_000_000_000),
+          CONFIG,
           makeStakeIntent({ amount: 1_000_000_000n }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
@@ -518,6 +554,7 @@ describe("validateIntent", () => {
         const api = makeApi(2_500_000_000);
         const result = await validateIntentRaw(
           api,
+          CONFIG,
           makeStakeIntent({ amount: 2_000_000_000n }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
@@ -531,6 +568,7 @@ describe("validateIntent", () => {
         const api = makeApi(1_000_000_000);
         const result = await validateIntentRaw(
           api,
+          CONFIG,
           makeStakeIntent({ recipient: "" }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
@@ -544,6 +582,7 @@ describe("validateIntent", () => {
         const api = makeApi(1_000_000_000);
         const result = await validateIntentRaw(
           api,
+          CONFIG,
           makeStakeIntent({ recipient: "not-valid!!!" }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
@@ -557,6 +596,7 @@ describe("validateIntent", () => {
         const api = makeApi(1_000_000_000);
         const result = await validateIntentRaw(
           api,
+          CONFIG,
           makeStakeIntent({ recipient: "", amount: 0n, useAllAmount: true }),
           makeBalances(5_000_000_000n, 890_880n),
           { value: 5000n },
@@ -574,6 +614,7 @@ describe("validateIntent", () => {
         await expect(
           validateIntentRaw(
             api,
+            CONFIG,
             makeStakeIntent({ recipient: "not-valid!!!" }),
             makeBalances(5_000_000_000n, 0n),
             { value: 5000n },
@@ -591,6 +632,7 @@ describe("validateIntent", () => {
 
         const result = await validateIntentRaw(
           api,
+          CONFIG,
           makeStakeIntent({ amount: 1n }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
@@ -1324,6 +1366,7 @@ describe("validateIntent", () => {
         );
 
         expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+        expect(result.errors.recipient).toMatchObject({ currencyName: "Solana" });
         expect(result.errors.gasPrice).toBeUndefined();
         expect(mockedGetMaybeTokenMint).not.toHaveBeenCalled();
       });

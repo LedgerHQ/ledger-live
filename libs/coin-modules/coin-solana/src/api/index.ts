@@ -135,8 +135,8 @@ export function createApi(currencyId: string) {
       balances: Balance[],
       options?: { customFees?: FeeEstimation },
     ) => {
-      const { api } = await chainAPIFromContext(context, currencyId);
-      return validateIntent(api, intent, balances, options?.customFees);
+      const { api, config } = await chainAPIFromContext(context, currencyId);
+      return validateIntent(api, config, intent, balances, options?.customFees);
     },
     getNextSequence: async (_context: SolanaContext, address: string) => {
       return getNextSequence(address);
