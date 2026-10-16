@@ -95,6 +95,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const arcTestnet = useFeature("currencyArcTestnet");
   const robinhood = useFeature("currencyRobinhood");
   const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
+  const alpenTestnet = useFeature("currencyAlpenTestnet");
   const gonka = useFeature("currencyGonka");
 
   const featureFlaggedCurrencies = useMemo(
@@ -189,6 +190,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arc_testnet: arcTestnet,
       robinhood,
       robinhood_testnet: robinhoodTestnet,
+      alpen_testnet: alpenTestnet,
       gonka,
     }),
     [
@@ -281,6 +283,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arcTestnet,
       robinhood,
       robinhoodTestnet,
+      alpenTestnet,
       gonka,
     ],
   );

@@ -16,7 +16,8 @@ type SheetsProps = Pick<
 
 function createProps(isRenameOpen = true): SheetsProps {
   const uiState = createInactiveContactAddressDetailActionsUiState(
-    resolveContactAddressDetailActionsLabels({ t: key => key, supportsDomain: true }),
+    resolveContactAddressDetailActionsLabels({ t: key => key }),
+    true,
   );
 
   return {

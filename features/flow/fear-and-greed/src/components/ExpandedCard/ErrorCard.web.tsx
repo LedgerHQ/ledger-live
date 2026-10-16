@@ -29,7 +29,7 @@ export function ErrorCard() {
           </CardContent>
         </CardLeading>
         <CardTrailing>
-          <Spot appearance="icon" icon={Warning} size={48} />
+          <Spot icon={Warning} size={48} />
         </CardTrailing>
       </CardHeader>
     </Card>

@@ -30,7 +30,7 @@ export function EarnBanner({ sendCurrency, receiveCurrency, provider }: EarnBann
 
   return (
     <ContentBanner data-testid="swap-transaction-earn-banner">
-      <Spot appearance="icon" icon={Chart2} size={48} />
+      <Spot icon={Chart2} size={48} />
       <ContentBannerContent>
         <ContentBannerTitle>{title}</ContentBannerTitle>
         <ContentBannerDescription>{description}</ContentBannerDescription>

@@ -47,7 +47,7 @@ export function ContactDetailActionsMenu({
           <Box lx={{ paddingHorizontal: "s8" }}>
             <ListItem onPress={onEdit} testID="contacts-detail-edit-action">
               <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}>
-                <Spot appearance="icon" icon={PenEdit} size={40} />
+                <Spot icon={PenEdit} size={40} />
                 <Text typography="body1SemiBold" lx={{ color: "base" }}>
                   {labels.editContact}
                 </Text>
@@ -56,7 +56,7 @@ export function ContactDetailActionsMenu({
             {canDelete ? (
               <ListItem onPress={onDelete} testID="contacts-detail-delete-action">
                 <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}>
-                  <Spot appearance="icon" icon={TrashDestructive} size={40} />
+                  <Spot icon={TrashDestructive} size={40} />
                   <Text typography="body1SemiBold" lx={{ color: "error" }}>
                     {labels.deleteContact}
                   </Text>

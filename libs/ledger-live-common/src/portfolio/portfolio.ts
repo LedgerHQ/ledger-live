@@ -1,4 +1,5 @@
 import {
+  type CounterValuesCacheView,
   type CounterValuesState,
   calculate,
   calculateMany,
@@ -71,6 +72,10 @@ export function getBalanceHistory(
   return history;
 }
 
+/**
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
+ */
 export function getBalanceHistoryWithCountervalue(
   ...args: Parameters<typeof getBalanceHistoryWithChanges>
 ): AccountPortfolio {
@@ -165,6 +170,8 @@ export type GetPortfolioOptionsType = {
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
  * NB the last item of the array is actually the current total balance.
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
  * @memberof account
  */
 export function getPortfolio(
@@ -250,6 +257,10 @@ export function getPortfolio(
   };
 }
 
+/**
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
+ */
 export function getCurrencyPortfolio(
   accounts: AccountLike[],
   range: PortfolioRange,
@@ -338,6 +349,8 @@ export function alignFlatDayCountervalueChange({
  * in the counter-value currency. Unlike getCurrencyPortfolio (which weights by the historical
  * balance and yields no percentage for freshly-held positions), this applies the current balance
  * to both the start and end rates, so the percentage reduces to (rateNow - rateThen) / rateThen.
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
  */
 export function getCurrentBalanceCountervalueChange(
   accounts: AccountLike[],
@@ -381,7 +394,7 @@ export function getCurrentBalanceCountervalueChange(
 
 export function getAssetsDistribution(
   topAccounts: Account[],
-  cvState: CounterValuesState,
+  cvState: CounterValuesCacheView,
   cvCurrency: Currency,
   opts?: AssetsDistributionOpts,
 ): AssetsDistribution {
@@ -493,7 +506,7 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
 
 export const orderAccountsByFiatValue = (
   accounts: AccountLike[],
-  counterValueState: CounterValuesState,
+  counterValueState: CounterValuesCacheView,
   to: Currency,
   fullBalance: boolean = true,
 ) => {

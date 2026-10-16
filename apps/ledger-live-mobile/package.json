@@ -356,6 +356,7 @@
     "@callstack/repack": "5.2.5",
     "@callstack/repack-plugin-expo-modules": "5.2.5",
     "@callstack/repack-plugin-reanimated": "5.2.5",
+    "@domain/entity-account-descriptor": "workspace:*",
     "@features/flow-market-banner": "workspace:^",
     "@jest/reporters": "catalog:",
     "@ledgerhq/asset-aggregation": "workspace:^",

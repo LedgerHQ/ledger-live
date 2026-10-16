@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import {
   AccountTuple,
   getAccountTuplesForCurrency,
@@ -26,7 +26,7 @@ export const useDetailedAccounts = (
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void,
 ) => {
   const { trackModularDialogEvent } = useModularDialogAnalytics();
-  const counterValuesState = useCountervaluesState();
+  const counterValuesState = useCountervaluesCache();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const source = useSelector(modularDialogSourceSelector);
   const { openAddAccountFlow } = useOpenAssetFlow(

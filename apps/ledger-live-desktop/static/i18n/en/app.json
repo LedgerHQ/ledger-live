@@ -311,6 +311,12 @@
       "viewAdvancedLogs": "View advanced logs",
       "removeAccount": "Remove account from portfolio"
     },
+    "changeName": {
+      "title": "Change account name",
+      "description": "Give this address a name to stay organized (ex. {{ticker}}-Trading, {{ticker}}-DeFi).",
+      "label": "Address name",
+      "submit": "Change name"
+    },
     "advancedLogs": {
       "derivationTip": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "synchronised": "Synchronised {{date}}",

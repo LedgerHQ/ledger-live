@@ -74,6 +74,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         ],
       },
       async ({ app }) => {
+        await app.speculos.enableBlindSigningOnNanoS();
         await revokeTokenApproval(fromAccount, provider);
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);

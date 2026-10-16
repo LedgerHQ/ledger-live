@@ -130,10 +130,7 @@ export function useContactAddressDetailActionsAdapter(
     currencyId,
     sendFeatures.supportsDomain,
   );
-  const labels = useMemo(
-    () => resolveContactAddressDetailActionsLabels({ t, supportsDomain }),
-    [t, supportsDomain],
-  );
+  const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const onEdit = useCallback(() => {
     trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
     flow.onEditPress();
@@ -163,10 +160,17 @@ export function useContactAddressDetailActionsAdapter(
   });
 
   if (!isSelectionActive) {
-    return mapUiStateToDialogProps(createInactiveContactAddressDetailActionsUiState(labels));
+    return mapUiStateToDialogProps(
+      createInactiveContactAddressDetailActionsUiState(labels, supportsDomain),
+    );
   }
 
-  const uiState = createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels);
+  const uiState = createActiveContactAddressDetailActionsUiState(
+    flow,
+    renameViewModel,
+    labels,
+    supportsDomain,
+  );
 
   return {
     ...mapUiStateToDialogProps(uiState),

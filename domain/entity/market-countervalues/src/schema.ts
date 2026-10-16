@@ -50,6 +50,8 @@ export const PairRateMapCacheSchema = z.object({
   fallback: z.number().optional(),
   map: RateMapSchema,
   stats: RateMapStatsSchema,
+  /** The `autofillGaps` setting the entry was built with: a load rebuilds an entry built with the other. */
+  autofillGaps: z.boolean().optional(),
 });
 
 /** The internal state of countervalues. */

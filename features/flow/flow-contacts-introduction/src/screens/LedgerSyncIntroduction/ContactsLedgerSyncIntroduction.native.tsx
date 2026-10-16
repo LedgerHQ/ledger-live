@@ -26,7 +26,7 @@ export function ContactsLedgerSyncIntroductionContent({
         <Box lx={{ gap: "s32", paddingHorizontal: "s16" }}>
           <BottomSheetHeader />
           <Box lx={{ alignItems: "center", gap: "s24" }}>
-            <Spot appearance="icon" size={72} icon={Refresh} />
+            <Spot size={72} icon={Refresh} />
             <Box lx={{ gap: "s8" }}>
               <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
                 {title}

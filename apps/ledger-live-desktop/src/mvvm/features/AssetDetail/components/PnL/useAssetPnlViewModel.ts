@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { useAssetGroupPnL } from "@ledgerhq/wallet-pnl/hooks";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
@@ -18,7 +18,7 @@ type Props = {
 
 export function useAssetPnlViewModel({ distributionItem }: Props): PnlViewModel {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const countervalues = useCountervaluesState();
+  const countervalues = useCountervaluesCache();
   const currencyId = distributionItem.currency.id;
 
   const groupPnl = useAssetGroupPnL(distributionItem.accounts, countervalues, fiatCurrency);

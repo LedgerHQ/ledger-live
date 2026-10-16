@@ -99,7 +99,7 @@ export default function Home() {
               aria-label={tool.title}
               onClick={() => navigate(tool.to)}
             >
-              <Spot appearance="icon" icon={tool.icon} />
+              <Spot icon={tool.icon} />
               <TileContent>
                 <TileTitle>{tool.title}</TileTitle>
                 {tool.description ? <TileDescription>{tool.description}</TileDescription> : null}

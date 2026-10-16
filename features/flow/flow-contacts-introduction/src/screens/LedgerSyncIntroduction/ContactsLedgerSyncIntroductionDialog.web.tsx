@@ -43,7 +43,7 @@ export function ContactsLedgerSyncIntroductionDialog({
         <DialogHeader density="compact" onClose={dismiss} />
         <DialogBody className="flex flex-col gap-32 px-24">
           <div className="flex flex-col items-center gap-24">
-            <Spot appearance="icon" size={72} icon={Refresh} />
+            <Spot size={72} icon={Refresh} />
             <div className="flex flex-col items-center gap-8 text-center">
               <h2 className="heading-4-semi-bold text-base">{title}</h2>
               <p className="body-2 text-muted">{description}</p>

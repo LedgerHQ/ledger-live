@@ -11,7 +11,7 @@ export function RecipientEmptyContactsState() {
       className="flex flex-1 flex-col items-center justify-center gap-10 px-24 py-128"
       data-testid="send-recipient-empty-contacts-state"
     >
-      <Spot appearance="icon" icon={Contact} size={72} />
+      <Spot icon={Contact} size={72} />
       <p className="text-center body-2 text-muted py-24">{t("newSendFlow.contactsWillAppear")}</p>
     </div>
   );

@@ -33,7 +33,7 @@ export function BorrowEntryPointView({ onClick }: BorrowEntryPointViewProps) {
       <Card onClick={onClick}>
         <CardHeader>
           <CardLeading>
-            <Spot appearance="icon" icon={CoinsAddPlus} />
+            <Spot icon={CoinsAddPlus} />
             <CardContent>
               <CardContentTitle>{t("portfolio.borrowEntry.cardTitle")}</CardContentTitle>
               <CardContentDescription>

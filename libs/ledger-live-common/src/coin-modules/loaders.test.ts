@@ -81,3 +81,23 @@ describe("gonka registration", () => {
     expect(getCryptoCurrencyById("gonka").family).toBe("cosmos");
   });
 });
+
+describe("alpen_testnet registration", () => {
+  it("registers alpen_testnet as a supported evm currency", () => {
+    const evmLoader = coinModuleLoaders.find(loader => loader.family === "evm");
+
+    expect(evmLoader?.supportedCoins).toContain("alpen_testnet");
+  });
+
+  it("is a supported currency once all coins are registered", () => {
+    registerAllCoins();
+
+    expect(isCurrencySupported(getCryptoCurrencyById("alpen_testnet"))).toBe(true);
+  });
+
+  it("resolves to the evm family", () => {
+    registerAllCoins();
+
+    expect(getCryptoCurrencyById("alpen_testnet").family).toBe("evm");
+  });
+});

@@ -60,7 +60,7 @@ export function UnsupportedSelectionSheet({ explanation, onClose }: Props): Reac
         <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
           <BottomSheetHeader density="compact" />
           <Box lx={{ alignItems: "center", gap: "s24", paddingHorizontal: "s16" }}>
-            <Spot appearance="icon" icon={InformationFill} size={56} />
+            <Spot icon={InformationFill} size={56} />
             <Box lx={{ alignItems: "center", gap: "s8" }}>
               <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
                 {explanation.title}
