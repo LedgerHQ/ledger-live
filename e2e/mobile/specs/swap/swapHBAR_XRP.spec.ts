@@ -7,7 +7,6 @@ runSwapTest(
   ["B2CQA-3753"],
   [
     "@NanoSP",
-    "@LNS",
     "@NanoX",
     "@Stax",
     "@Flex",

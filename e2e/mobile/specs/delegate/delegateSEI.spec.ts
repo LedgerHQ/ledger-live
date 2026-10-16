@@ -5,6 +5,7 @@ import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { setEnv } from "@shared/env";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
+import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -17,7 +18,7 @@ const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sei_evm", "@
 setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
 tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
 tags.forEach(tag => $Tag(tag));
-describe("Delegate", () => {
+describeIfNotNanoS("Delegate", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: AppInfos.SEI,

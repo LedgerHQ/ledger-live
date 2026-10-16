@@ -9,4 +9,6 @@ runDelegateTest(
   delegation,
   ["B2CQA-3020"],
   ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@elrond`, `@family-multiversx`],
+  // Speculos cannot parse the Nano S MultiversX app binary.
+  { skipLNS: true },
 );
