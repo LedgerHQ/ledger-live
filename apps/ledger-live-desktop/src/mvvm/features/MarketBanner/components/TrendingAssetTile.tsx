@@ -34,7 +34,7 @@ const TrendingAssetTileComponent = ({ item, onNavigate }: TrendingAssetTileProps
       onClick={onNavigate(item)}
       data-testid={`market-banner-asset-${item.id}`}
     >
-      <Spot size={40} appearance="icon" icon={renderIcon} />
+      <Spot size={40} icon={renderIcon} />
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
         <PerformanceIndicator item={item} />

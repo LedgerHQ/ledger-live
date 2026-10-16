@@ -15,7 +15,7 @@ export function LedgerSyncBannerV4({ onPress }: Readonly<{ onPress: () => void }
 
   return (
     <ContentBanner>
-      <Spot appearance="icon" icon={WarningFill} size={48} />
+      <Spot icon={WarningFill} size={48} />
       <ContentBannerContent>
         <ContentBannerTitle>{t("walletSync.banner.title")}</ContentBannerTitle>
         <ContentBannerDescription>{t("walletSync.banner.description")}</ContentBannerDescription>

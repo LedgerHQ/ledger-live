@@ -16,7 +16,7 @@ export function RecipientEmptyContactsState() {
       }}
       testID="send-recipient-empty-contacts-state"
     >
-      <Spot appearance="icon" icon={Contact} size={72} />
+      <Spot icon={Contact} size={72} />
       <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
         {t("send.newSendFlow.contactsWillAppear")}
       </Text>

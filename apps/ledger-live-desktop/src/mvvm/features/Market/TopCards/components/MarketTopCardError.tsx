@@ -42,7 +42,7 @@ export function MarketTopCardError({
                 errorMessage
               ) : (
                 <div className="flex items-center gap-8">
-                  <Spot appearance="icon" icon={Warning} size={40} />
+                  <Spot icon={Warning} size={40} />
                   {errorMessage}
                 </div>
               )}
@@ -51,7 +51,7 @@ export function MarketTopCardError({
         </CardLeading>
         {hasTrailing ? (
           <CardTrailing>
-            <Spot appearance="icon" icon={Warning} size={48} />
+            <Spot icon={Warning} size={48} />
           </CardTrailing>
         ) : null}
       </CardHeader>

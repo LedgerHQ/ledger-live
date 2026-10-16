@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Spot } from "@ledgerhq/lumen-ui-react";
+import { DeleteCircleFill } from "@ledgerhq/lumen-ui-react/symbols";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { useExportLogs } from "LLD/hooks/useExportLogs";
 
@@ -21,7 +22,7 @@ export const ErrorContent = ({ error }: ErrorContentProps) => {
       className="-mt-12 flex flex-col items-center gap-24"
       data-testid="send-confirmation-error-content"
     >
-      <Spot appearance="error" size={72} />
+      <Spot appearance="error" icon={DeleteCircleFill} size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
         <h3 className="heading-3-semi-bold text-base" data-testid="send-confirmation-error-title">
           <TranslatedError error={error} field="title" />

@@ -66,7 +66,7 @@ export function RecipientCard({
               testId="send-recipient-card-avatar"
             />
           ) : (
-            <Spot appearance="icon" icon={Wallet} />
+            <Spot icon={Wallet} />
           )}
           <CardContent>
             <CardContentTitle

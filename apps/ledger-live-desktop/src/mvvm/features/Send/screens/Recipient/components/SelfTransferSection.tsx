@@ -43,7 +43,7 @@ export function SelfTransferSection() {
         className={cn("mt-6", { "cursor-not-allowed opacity-50": isBlocked })}
       >
         <ListItemLeading>
-          <Spot appearance="icon" icon={IconComponent} />
+          <Spot icon={IconComponent} />
           <ListItemContent>
             <ListItemTitle>{t(`newSendFlow.${target.translationKey}.action`)}</ListItemTitle>
           </ListItemContent>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Spot } from "@ledgerhq/lumen-ui-react";
+import { SpotNumber } from "@ledgerhq/lumen-ui-react";
 import { ShieldLock } from "@ledgerhq/lumen-ui-react/symbols";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { InfoState } from "@shared/ui-info-state";
@@ -39,7 +39,7 @@ function NextStepsScreen({ onGotIt }: Readonly<{ onGotIt: () => void }>) {
           <ol className="flex flex-col gap-16">
             {steps.map(step => (
               <li key={step.index} className="flex flex-row items-center justify-start gap-12">
-                <Spot appearance="number" number={step.index} size={32} />
+                <SpotNumber value={step.index} size={32} />
                 <span className="body-2 text-base">{step.label}</span>
               </li>
             ))}

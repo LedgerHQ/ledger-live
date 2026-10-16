@@ -39,7 +39,7 @@ export function DeviceListItem({ device }: Readonly<DeviceListItemProps>): React
   return (
     <ListItem onPress={handleSelect}>
       <ListItemLeading>
-        <Spot size={48} appearance="icon" icon={DeviceIcon} />
+        <Spot size={48} icon={DeviceIcon} />
         <ListItemContent>
           <ListItemTitle typography="body2SemiBold">
             {getDeviceName(

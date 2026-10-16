@@ -3,9 +3,18 @@ import { View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import {
+  CheckmarkCircleFill,
+  DeleteCircleFill,
+  InformationFill,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import { StatusGradient, type StatusGradientTone } from "LLM/components/StatusGradient";
 
-const SPOT_APPEARANCE_BY_TONE = { success: "check", error: "error", info: "info" } as const;
+const SPOT_PROPS_BY_TONE = {
+  success: { appearance: "success", icon: CheckmarkCircleFill },
+  error: { appearance: "error", icon: DeleteCircleFill },
+  info: { appearance: "muted", icon: InformationFill },
+} as const;
 
 export type ConfirmationStatusLayoutProps = Readonly<{
   tone: StatusGradientTone;
@@ -53,7 +62,7 @@ export function ConfirmationStatusLayout({
 
       <Box lx={{ flex: 1, paddingHorizontal: "s16", paddingVertical: "s24" }}>
         <Box lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s24" }}>
-          <Spot appearance={SPOT_APPEARANCE_BY_TONE[tone]} size={72} />
+          <Spot {...SPOT_PROPS_BY_TONE[tone]} size={72} />
           {title || description || belowDescription ? (
             <Box lx={{ gap: "s8", alignItems: "center" }}>
               {title ? (
