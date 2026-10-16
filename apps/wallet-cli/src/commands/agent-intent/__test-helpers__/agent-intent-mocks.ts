@@ -60,6 +60,8 @@ const TOKEN_LOOKUP_KEYS = [
   "findEthereumSwapAsset",
   "findSolanaToken",
   "findSolanaMintProgram",
+  "findTokensByTicker",
+  "findAccountTokens",
 ] as const;
 
 const SWAP_QUOTE_KEYS = ["fetchAgentSwapQuote"] as const;
