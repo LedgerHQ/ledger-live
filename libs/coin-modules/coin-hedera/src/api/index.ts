@@ -33,7 +33,7 @@ import {
   extractInitiator,
   getBlockHash,
   getDateRangeFromBlockHeight,
-  getOperationValue,
+  getOperationFields,
   mapIntentToSDKOperation,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
@@ -214,21 +214,23 @@ export function createApi(currencyId: string) {
           ...(stakedAmount && { stakedAmount: stakedAmount.toFixed(0) }),
         };
 
+        const { type, value, senders, recipients } = getOperationFields({
+          asset,
+          operation: liveOp,
+          accountAddress: address,
+          ...(feesPayer && { feesPayer }),
+        });
+
         return {
           id: liveOp.id,
-          type: liveOp.type,
-          senders: liveOp.senders,
-          recipients: liveOp.recipients,
-          value: getOperationValue({
-            asset,
-            operation: liveOp,
-            accountAddress: address,
-            ...(feesPayer && { feesPayer }),
-          }),
+          type,
+          senders,
+          recipients,
+          value,
           asset,
           details: {
             ...(memo && { memo }),
-            ledgerOpType: liveOp.type,
+            ledgerOpType: type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
             ...(stakedAmount && { stakedAmount: BigInt(stakedAmount.toFixed(0)) }),
             ...(Object.keys(familyExtra).length > 0 && { familyExtra }),

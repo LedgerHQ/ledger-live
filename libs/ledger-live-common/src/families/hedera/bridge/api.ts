@@ -204,11 +204,21 @@ function withoutSponsorFee(address: string, operation: Operation): Operation {
   return { ...operation, value: operation.value.minus(operation.fee) };
 }
 
+// coin-hedera counts the fee the account paid in a native IN value, but the bridge only takes it out of OUT-like ones
+function withoutReceiverFee(address: string, operation: Operation): Operation {
+  if (isTokenOperation(operation) || operation.type !== "IN" || operation.hasFailed) {
+    return operation;
+  }
+  if (getOperationExtra(operation).feePayer !== address) return operation;
+
+  return { ...operation, value: operation.value.minus(operation.fee) };
+}
+
 export function adaptOperations(address: string, operations: Operation[]): Operation[] {
   const operationsByHash = groupBy(operations, op => op.hash);
 
   return operations.flatMap(op => {
-    const adaptedOp = withoutSponsorFee(address, op);
+    const adaptedOp = withoutReceiverFee(address, withoutSponsorFee(address, op));
     const transactionOperations = operationsByHash[op.hash];
     if (op !== transactionOperations.at(-1)) return [adaptedOp];
 
@@ -232,7 +242,9 @@ export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
     adaptOperations,
     stakingSupported: true,
     shouldMergeOps: false,
-    // Legacy stores other operation ids, so each bridge flag flip must resync from scratch.
-    syncVersion: "1",
+    // Bumped whenever stored operations go stale, so they are rebuilt from scratch:
+    // 1: legacy stores other operation ids, so each bridge flag flip resyncs.
+    // 2: native HBAR values and contract call types now follow getBlock.
+    syncVersion: "2",
   };
 }

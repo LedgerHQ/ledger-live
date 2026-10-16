@@ -58,7 +58,15 @@ export const deserializeTransaction = (tx: string) => {
   return HederaSDKTransaction.fromBytes(Buffer.from(tx, "hex"));
 };
 
-export const getOperationValue = ({
+/**
+ * Map a Ledger operation of `accountAddress` to the coin-module-framework fields that carry its balance change.
+ *
+ * A native operation splits the account's HBAR change like `getBlock` does: its transfer excluding the fees it paid,
+ * the fees being accounted once, in `tx.fees`. An incoming operation has that amount as value, an outgoing-like one
+ * its opposite: the value is negative when the account got back more than it sent, e.g. when another account paid
+ * part of the fees. The account is then kept among the senders, so that its value reads as leaving it.
+ */
+export const getOperationFields = ({
   asset,
   operation,
   accountAddress,
@@ -68,20 +76,47 @@ export const getOperationValue = ({
   operation: LiveOperation<HederaOperationExtra>;
   accountAddress: string;
   feesPayer?: string;
-}) => {
+}): { type: string; value: bigint; senders: string[]; recipients: string[] } => {
+  const value = BigInt(operation.value.toFixed(0));
+  const fields = {
+    type: operation.type,
+    value,
+    senders: operation.senders,
+    recipients: operation.recipients,
+  };
+
   if (operation.type === "FEES") {
-    return BigInt(0);
+    return { ...fields, value: BigInt(0) };
   }
 
-  if (
-    asset.type === "native" &&
-    OP_TYPES_EXCLUDING_FEES.includes(operation.type) &&
-    feesPayer === accountAddress
-  ) {
-    return BigInt(operation.value.toFixed(0)) - BigInt(operation.fee.toFixed(0));
+  if (asset.type !== "native" || operation.type === "REWARD") {
+    return fields;
   }
 
-  return BigInt(operation.value.toFixed(0));
+  // `parseTransfers` lists the account as a sender if and only if its balance decreased
+  const isSender = operation.senders.includes(accountAddress);
+  const isFeesPayer = feesPayer === accountAddress;
+  const transferred = isSender ? -value : value;
+  const amount = transferred + (isFeesPayer ? BigInt(operation.fee.toFixed(0)) : BigInt(0));
+
+  if (operation.type === "IN") {
+    return { ...fields, value: amount };
+  }
+
+  if (!OP_TYPES_EXCLUDING_FEES.includes(operation.type)) {
+    return fields;
+  }
+
+  // someone else's contract call that only credited the account is a receive for it
+  if (operation.type === "CONTRACT_CALL" && !isFeesPayer && transferred > BigInt(0)) {
+    return { ...fields, type: "IN", value: amount };
+  }
+
+  return {
+    ...fields,
+    value: -amount,
+    senders: isSender || !isFeesPayer ? fields.senders : [...fields.senders, accountAddress],
+  };
 };
 
 /**
