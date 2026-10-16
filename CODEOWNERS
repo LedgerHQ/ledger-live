@@ -60,7 +60,6 @@ libs/**/logs/                                            @ledgerhq/platform
 libs/**/types-live/                                      @ledgerhq/platform
 libs/disable-network-setup/                              @ledgerhq/platform
 libs/feature-flag-module/                                @ledgerhq/platform
-libs/oxc-live-libs/                                      @ledgerhq/platform
 
 # Platform — devtools
 devtools/transport/                                      @ledgerhq/platform
@@ -73,6 +72,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
+support/lint/                                            @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 
 # Wallet — libs
@@ -598,7 +598,6 @@ apps/ledger-live-mobile/e2e/                                                @led
 
 # Platform — monorepo / toolchain (before cross-team opt-out so opt-out patterns win on overlapping paths)
 # codeowners-check: allow-override
-**/.oxlintrc.*                                        @ledgerhq/platform
 **/.oxfmtrc.*                                         @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
 **/tsconfig*                                          @ledgerhq/platform
@@ -606,6 +605,9 @@ apps/ledger-live-mobile/e2e/                                                @led
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform
+/devtools/oxlint.config.mts                           @ledgerhq/platform
+/libs/oxlint.config.mts                               @ledgerhq/platform
+/support/oxlint.config.mts                            @ledgerhq/platform
 
 # Platform — Agent files
 /.agents/                                      @ledgerhq/platform

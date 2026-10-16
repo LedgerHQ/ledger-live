@@ -18,7 +18,7 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/ofac",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
-    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src"
+    "lint": "oxlint ./src"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",
