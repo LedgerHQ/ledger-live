@@ -83,7 +83,8 @@ const DEFAULT_WEB_ELEMENT_INTERVAL = INTERVAL.long;
 
 /**
  * Headroom past a native wait's own timeout: the native wait answers by itself once it elapses,
- * so the hard timeout must outlast it or it abandons a call that is still in flight.
+ * so the hard timeout must outlast it or it abandons a call that is still in flight. It never
+ * drops below withHardTimeout's default, since a busy app can answer a short wait late.
  */
 const NATIVE_WAIT_HARD_TIMEOUT_GRACE = TIMEOUT.xlarge;
 
@@ -183,7 +184,7 @@ export const NativeElementHelpers = {
   ) {
     return withHardTimeout(
       awaitNativeElement(nativeElement, timeout, options),
-      timeout + NATIVE_WAIT_HARD_TIMEOUT_GRACE,
+      Math.max(TIMEOUT.xxxlarge, timeout + NATIVE_WAIT_HARD_TIMEOUT_GRACE),
     );
   },
 
