@@ -36,11 +36,6 @@ jest.mock("@ledgerhq/live-config/LiveConfig", () => ({
   },
 }));
 
-// Prevent real network calls from bitcoin's prepareTransaction (getFeeItems).
-jest.mock("../families/bitcoin/bridge/api", () => ({
-  getFeeItems: jest.fn().mockResolvedValue({ items: [], defaultFeePerByte: null }),
-}));
-
 const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(React.Suspense, { fallback: null }, children);
 
@@ -67,6 +62,17 @@ describe("useBridgeTransaction", () => {
       },
       { timeout: 10000 },
     );
+    // MOCK mode serves the bitcoin mock bridge, which fills the generic-bridge fee parameters
+    // offline: the "medium" preset of createTransaction settles on the medium rate.
+    expect(result!.current.transaction).toMatchObject({
+      family: "bitcoin",
+      feesStrategy: "medium",
+      feeParameters: {
+        feePerByte: "3",
+        feeRates: { slow: "2", medium: "3", fast: "4" },
+        relayFeePerByte: "1",
+      },
+    });
   }, 30000);
 
   test("bridgeError go through", async () => {

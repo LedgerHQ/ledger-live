@@ -2,8 +2,8 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { BigNumber } from "bignumber.js";
 import { AccountNotSupported } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CurrencyNotSupported } from "../errors";
-import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
-import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import { initialBitcoinResourcesValue } from "../families/bitcoin/types";
+import type { BitcoinAccount } from "../families/bitcoin/types";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { genAccount } from "../mock/account";
 import { coinModuleLoaders } from "../coin-modules/loaders";
@@ -30,6 +30,17 @@ describe("wrapAccountBridge — extension routing", () => {
     // Mutate to simulate state that the family-specific clearAccount must wipe.
     account.bitcoinResources = {
       utxos: [{ hash: "deadbeef" } as unknown as BitcoinAccount["bitcoinResources"]["utxos"][0]],
+      accountState: {
+        version: 1,
+        data: {
+          syncedHeight: 999,
+          anchor: { height: 990, hash: "00ff" },
+          addresses: [{ address: "bc1qtest", chain: 0, index: 0 }],
+          confirmedUtxos: [],
+          utxos: [],
+          refreshedAt: 0,
+        },
+      },
       walletAccount: {
         foo: "bar",
       } as unknown as BitcoinAccount["bitcoinResources"]["walletAccount"],

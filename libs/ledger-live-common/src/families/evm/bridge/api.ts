@@ -1,29 +1,28 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { BridgeApi, ChainReads } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type {
   AccountReadiness,
   Operation as LiveOperation,
   StakingRedelegation,
+  StakingRedelegationRaw,
   StakingResources,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
+import {
+  ChainReadUnsupportedError,
+  InvalidTransactionError,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
-import {
-  fetchRedelegations,
-  buildRedelegationsFromOps,
-  isSeiAccountUnassociated,
-} from "@ledgerhq/coin-evm/staking";
-import { getNodeApi } from "@ledgerhq/coin-evm/network";
-import { getNextSequence } from "@ledgerhq/coin-evm/logic";
+import { FunctionFragment, Interface, Transaction as EthersTransaction } from "ethers";
+import { buildRedelegationsFromOps } from "@ledgerhq/coin-evm/staking";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { getCurrencyConfiguration } from "../../../config";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getStakingContract } from "../staking/logic";
+import { legacyChainReads } from "./legacyChainReads";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -91,137 +90,216 @@ function getBalanceOptions(currency: CryptoCurrency): BalanceOptions {
   };
 }
 
-async function enrichStakingResources(
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+const redelegationKey = (r: StakingRedelegation) =>
+  `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
+
+/** The redelegations the account metadata reports (JSON form); none when the read fails. */
+async function reportedRedelegations(
+  chain: ChainReads,
+  address: string,
+): Promise<StakingRedelegation[]> {
+  try {
+    const { redelegations } = await chain.getAccountInfo(address);
+    if (!Array.isArray(redelegations)) return [];
+    return (redelegations as StakingRedelegationRaw[]).map(
+      ({ validatorSrcAddress, validatorDstAddress, amount, completionDate }) => ({
+        validatorSrcAddress,
+        validatorDstAddress,
+        amount: new BigNumber(amount),
+        completionDate: new Date(completionDate),
+      }),
+    );
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * The REDELEGATE operations coin-evm decodes (still unbonding, not failed), each carrying its
+ * calldata: the cached `extra.contractPayload`, or the transaction's input data the chain reads
+ * answer. One whose calldata cannot be read is left out, so coin-evm never reads it itself.
+ */
+async function redelegateOperationsWithPayload(
+  currencyId: string,
+  operations: LiveOperation[],
+  chain: ChainReads,
+): Promise<LiveOperation[]> {
+  const staking = getStakingContract(currencyId);
+  if (!staking?.functions.redelegate) return [];
+  const unbondingMs = (staking.unbondingPeriodDays ?? 21) * MS_PER_DAY;
+  const now = Date.now();
+  const eligible = operations.filter(
+    op => op.type === "REDELEGATE" && !op.hasFailed && op.date.getTime() + unbondingMs > now,
+  );
+  const withPayload = await Promise.all(
+    eligible.map(async op => {
+      const extra = (op.extra ?? {}) as Record<string, unknown>;
+      if (typeof extra.contractPayload === "string") return op;
+      const data = await chain
+        .getTransactionInfo(op.hash)
+        .then(info => info?.data)
+        .catch(() => undefined);
+      return data ? { ...op, extra: { ...extra, contractPayload: data } } : null;
+    }),
+  );
+  return withPayload.filter((op): op is LiveOperation => op !== null);
+}
+
+/**
+ * The redelegations in progress: those the account metadata reports (the Cosmos staking module of
+ * Sei), and those decoded from the account's REDELEGATE operations (precompile-originated ones the
+ * module does not list), deduplicated by validator pair.
+ */
+export async function enrichStakingResources(
   currency: CryptoCurrency,
   address: string,
   operations: LiveOperation[],
   stakingResources: StakingResources,
+  chain: ChainReads,
 ): Promise<StakingResources> {
-  // Fetch redelegations from the Cosmos REST API (may return empty for
-  // EVM-precompile-originated redelegations on chains like Sei).
   const evmCtx = buildContext<EvmConfigInfo>(currency.id);
   const config = await evmCtx.config();
-  const apiRedelegations = await fetchRedelegations(config, address, evmCtx.logger).catch(() => []);
+  const [apiRedelegations, redelegateOperations] = await Promise.all([
+    reportedRedelegations(chain, address),
+    redelegateOperationsWithPayload(currency.id, operations, chain),
+  ]);
+  const opsRedelegations = await buildRedelegationsFromOps(
+    config,
+    redelegateOperations,
+    evmCtx.logger,
+  );
 
-  // Reconstruct active redelegations from the REDELEGATE operation history by
-  // decoding the ABI-encoded calldata fetched directly from the RPC node.
-  const opsRedelegations = await buildRedelegationsFromOps(config, operations, evmCtx.logger);
-
-  // Merge both sources, deduplicating by (src, dst) validator pair.
-  const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
-  const existing = new Set(apiRedelegations.map(key));
+  const existing = new Set(apiRedelegations.map(redelegationKey));
   const merged: StakingRedelegation[] = [
     ...apiRedelegations,
-    ...opsRedelegations.filter(r => !existing.has(key(r))),
+    ...opsRedelegations.filter(r => !existing.has(redelegationKey(r))),
   ];
 
   return { ...stakingResources, redelegations: merged };
 }
 
-async function getOperationStatus(
-  currency: CryptoCurrency,
+/** A pending operation as mined, from what the chain knows of its transaction; null otherwise. */
+async function refreshedOperation(
   op: LiveOperation,
+  chain: ChainReads,
 ): Promise<LiveOperation | null> {
-  try {
-    const evmCtx = buildContext<EvmConfigInfo>(currency.id);
-    const config = await evmCtx.config();
-    const nodeApi = getNodeApi(config, evmCtx.logger);
-    const { blockHeight, blockHash, nonce, gasPrice, gasUsed, value } =
-      await nodeApi.getTransaction(op.hash);
+  const info = await chain.getTransactionInfo(op.hash).catch(() => undefined);
+  if (!info?.block) return null;
 
-    if (!blockHeight) {
-      throw new Error("getOperationStatus: Transaction has no block");
-    }
-
-    const { timestamp } = await nodeApi.getBlockByHeight(blockHeight);
-    const date = new Date(timestamp);
-    const fee = new BigNumber(gasPrice).multipliedBy(gasUsed);
-
-    return {
-      ...op,
-      transactionSequenceNumber: new BigNumber(nonce),
+  const { height: blockHeight, hash: blockHash, time: date } = info.block;
+  const transactionSequenceNumber =
+    info.sequence === undefined
+      ? op.transactionSequenceNumber
+      : new BigNumber(info.sequence.toString());
+  const fee = new BigNumber((info.fee ?? 0n).toString());
+  return {
+    ...op,
+    transactionSequenceNumber,
+    blockHash,
+    blockHeight,
+    date,
+    fee,
+    value: new BigNumber((info.value ?? 0n).toString()).plus(fee),
+    subOperations: op.subOperations?.map(subOp => ({
+      ...subOp,
+      transactionSequenceNumber,
       blockHash,
       blockHeight,
       date,
-      fee,
-      value: new BigNumber(value.toString()).plus(fee),
-      subOperations: op.subOperations?.map(subOp => ({
-        ...subOp,
-        transactionSequenceNumber: new BigNumber(nonce),
-        blockHash,
-        blockHeight,
-        date,
-      })),
-    } as LiveOperation;
-  } catch {
-    return null;
-  }
+    })),
+  };
 }
 
+/**
+ * The pending operations the chain reads find mined, refreshed: for chains without an explorer,
+ * whose listing does not report them. Any other operation (pending, unknown, unreadable) is left out.
+ */
 export async function refreshOperations(
-  currency: CryptoCurrency,
   operations: LiveOperation[],
+  chain: ChainReads,
 ): Promise<LiveOperation[]> {
-  const refreshedOperationsOrNull = await Promise.all(
-    operations.map(op => getOperationStatus(currency, op)),
-  );
-
-  return refreshedOperationsOrNull.filter((op): op is LiveOperation => !!op);
+  const refreshed = await Promise.all(operations.map(op => refreshedOperation(op, chain)));
+  return refreshed.filter((op): op is LiveOperation => op !== null);
 }
 
 /**
  * A Sei account can only transact (swap included) once its EVM (0x) address is
- * associated on-chain with its Cosmos (sei1) address.
+ * associated on-chain with its Cosmos (sei1) address: the chain's address precompile returns the
+ * linked Cosmos address, and reverts while there is none. Any failure of that call (the revert, an
+ * RPC error) reads as unassociated, so the warning is shown; without an external node or a
+ * precompile there is nothing to check. A path that cannot make the call keeps the readiness.
  */
 export async function getAccountReadiness(
   currency: CryptoCurrency,
   address: string,
+  chain: ChainReads,
 ): Promise<AccountReadiness> {
   const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
-  const unassociated = await isSeiAccountUnassociated(config, address);
-  return unassociated ? { ready: false, reason: "activationRequired" } : { ready: true };
+  if (config.node?.type !== "external") return { ready: true };
+  const precompile = getStakingContract(currency.id)?.apiConfig?.precompileAddress;
+  if (!precompile) return { ready: true };
+
+  const { name } = FunctionFragment.from(precompile.abi);
+  const contract = new Interface([precompile.abi]);
+  let associated: boolean;
+  try {
+    const result = await chain.call({
+      to: precompile.address,
+      data: contract.encodeFunctionData(name, [address]),
+    });
+    const [cosmosAddress] = contract.decodeFunctionResult(name, result as string);
+    associated = typeof cosmosAddress === "string" && cosmosAddress.length > 0;
+  } catch (error) {
+    if (error instanceof ChainReadUnsupportedError) throw error;
+    associated = false;
+  }
+  return associated ? { ready: true } : { ready: false, reason: "activationRequired" };
 }
 
+/**
+ * Checks a signed transaction before broadcast: not already mined nor known by the chain (a failed
+ * lookup checks nothing), and its nonce not below the account's next one.
+ */
 export async function validateTransaction(
-  currency: CryptoCurrency,
-  { signature }: { signature: string },
+  signature: string,
+  chain: ChainReads,
 ): Promise<{ error: Error | undefined }> {
-  const evmCtx = buildContext<EvmConfigInfo>(currency.id);
-  const config = await evmCtx.config();
-  const nodeApi = getNodeApi(config, evmCtx.logger);
-  const transaction = ethers.Transaction.from(signature);
+  const transaction = EthersTransaction.from(signature);
 
   if (transaction.hash) {
-    try {
-      const { hash, blockHeight = null } = await nodeApi.getTransaction(transaction.hash);
-      if (blockHeight) {
-        return { error: new InvalidTransactionError("transaction is already mined") };
-      }
-      if (hash) {
-        return { error: new InvalidTransactionError("transaction is already known") };
-      }
-    } catch {
-      // eslint-disable-next-line no-empty
+    const info = await chain.getTransactionInfo(transaction.hash).catch(() => undefined);
+    if (info?.block) {
+      return { error: new InvalidTransactionError("transaction is already mined") };
+    }
+    if (info) {
+      return { error: new InvalidTransactionError("transaction is already known") };
     }
   }
 
   if (transaction.from) {
-    const currentNonce = await getNextSequence(
-      buildContext<EvmConfigInfo>(currency.id),
-      currency.id,
-      transaction.from,
-    );
-    if (typeof transaction.nonce === "number") {
-      const txNonce = BigInt(transaction.nonce);
-      if (txNonce < currentNonce) {
-        return {
-          error: new InvalidTransactionError("nonce is too low"),
-        };
-      }
+    const currentNonce = await nextSequence(chain, transaction.from);
+    if (
+      typeof transaction.nonce === "number" &&
+      currentNonce !== undefined &&
+      BigInt(transaction.nonce) < currentNonce
+    ) {
+      return { error: new InvalidTransactionError("nonce is too low") };
     }
   }
 
   return { error: undefined };
+}
+
+/** The next sequence of `address`; undefined when the path cannot tell it (the node checks then). */
+async function nextSequence(chain: ChainReads, address: string): Promise<bigint | undefined> {
+  try {
+    return await chain.getNextSequence(address);
+  } catch (error) {
+    if (error instanceof ChainReadUnsupportedError) return undefined;
+    throw error;
+  }
 }
 
 export default function evmBridge(currency: CryptoCurrency): BridgeApi {
@@ -231,8 +309,9 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
       getAssetFromToken(currency, token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
     balanceOptions: getBalanceOptions(currency),
-    enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
-    validateTransaction: (signature: string) => validateTransaction(currency, { signature }),
+    legacyChainReads,
+    enrichStakingResources,
+    validateTransaction,
     ...(getStakingContract(currency.id) ? { stakingSupported: true } : {}),
     // Only Sei has an activation concept; elsewhere readiness stays undefined (= ready).
     ...(currency.id === "sei_evm" ? { getAccountReadiness } : {}),
@@ -244,10 +323,7 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     ...(() => {
       try {
         return getCurrencyConfiguration<EvmConfigInfo>(currency.id).explorer?.type === "none"
-          ? {
-              refreshOperations: (operations: LiveOperation[]) =>
-                refreshOperations(currency, operations),
-            }
+          ? { refreshOperations }
           : {};
       } catch {
         return {};

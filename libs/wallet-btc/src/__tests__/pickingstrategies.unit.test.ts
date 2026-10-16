@@ -148,3 +148,44 @@ describe("CoinSelect picking strategy", () => {
     ).rejects.toBeInstanceOf(NotEnoughBalance);
   });
 });
+
+describe("selectFromUtxos (pure selection over caller-provided candidates)", () => {
+  const utxos = [
+    makeUtxo("h1", 0, 30000, 100),
+    makeUtxo("h2", 0, 40000, 101),
+    makeUtxo("h3", 1, 60000, 102),
+  ];
+
+  it.each([
+    ["Merge", Merge],
+    ["DeepFirst", DeepFirst],
+    ["CoinSelect", CoinSelect],
+  ])("%s gives the same selection as the xpub-based method", async (_name, Strategy) => {
+    const strat = new Strategy(crypto, DerivationModes.LEGACY, []);
+    const viaXpub = await strat.selectUnspentUtxosToUse(
+      jest.fn(),
+      makeXpub(utxos),
+      outputsFor(50000),
+      5,
+    );
+    const pure = strat.selectFromUtxos(jest.fn(), utxos, outputsFor(50000), 5);
+    expect(pure).toEqual(viaXpub);
+  });
+
+  it.each([
+    ["Merge", Merge],
+    ["DeepFirst", DeepFirst],
+    ["CoinSelect", CoinSelect],
+  ])("%s applies the strategy exclusions to the candidates", (_name, Strategy) => {
+    const strat = new Strategy(crypto, DerivationModes.LEGACY, [{ hash: "h3", outputIndex: 1 }]);
+    const res = strat.selectFromUtxos(jest.fn(), utxos, outputsFor(50000), 5);
+    expect(res.unspentUtxos.some(u => u.output_hash === "h3")).toBe(false);
+  });
+
+  it("throws NotEnoughBalance synchronously when the candidates cannot cover the outputs", () => {
+    const strat = new DeepFirst(crypto, DerivationModes.LEGACY, []);
+    expect(() => strat.selectFromUtxos(jest.fn(), utxos, outputsFor(1_000_000), 5)).toThrow(
+      NotEnoughBalance,
+    );
+  });
+});

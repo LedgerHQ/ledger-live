@@ -19,7 +19,8 @@ import { AccountPublicKeyUnavailable } from "../errors";
 import { createFixtureAccount, createFixtureTokenAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { Transaction as EvmTransaction } from "../families/evm/types";
 import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
+import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
+import { getBitcoinAccountKeys, type BitcoinAccountKeys } from "../families/bitcoin/accountKeys";
 import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
@@ -67,7 +68,7 @@ const mockedGetAccountIdFromWalletAccountId = jest.mocked(
 );
 const mockedAccountToWalletAPIAccount = jest.mocked(converters.accountToWalletAPIAccount);
 const mockedPrepareMessageToSign = jest.mocked(signMessage.prepareMessageToSign);
-const mockedGetWalletAccount = jest.mocked(getWalletAccount);
+const mockedGetBitcoinAccountKeys = jest.mocked(getBitcoinAccountKeys);
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -804,31 +805,34 @@ describe("signMessageLogic", () => {
   });
 });
 
-jest.mock("@ledgerhq/coin-bitcoin/getWalletAccount", () => ({
-  getWalletAccount: jest.fn().mockReturnValue({
-    params: { path: "84'/0'", index: 0 },
-    xpub: {
-      derivationMode: "native_segwit",
-      xpub: "xpub",
-      crypto: {
-        getAddress: jest
-          .fn()
-          .mockImplementation((_mode, _xpub, account, index) =>
-            Promise.resolve(account === 0 && index === 1 ? "0x01" : `addr_${account}_${index}`),
-          ),
-        getPubkeyAt: jest.fn().mockReturnValue(Buffer.from("testPubkey")),
-      },
-      getXpubAddresses: jest.fn().mockResolvedValue([
-        { account: 0, index: 0, address: "bc1qfirst" },
-        { account: 0, index: 1, address: "bc1qsecond" },
-        { account: 1, index: 0, address: "bc1qchange0" },
-      ]),
-      storage: {
-        getAddressUnspentUtxos: jest.fn().mockReturnValue([]),
-      },
-    },
-  }),
+jest.mock("../families/bitcoin/accountKeys", () => ({
+  getBitcoinAccountKeys: jest.fn(),
 }));
+
+/** Keys of a bitcoin account rooted at 84'/0', account 0, holding three addresses with history. */
+function createBitcoinAccountKeys(overrides: Partial<BitcoinAccountKeys> = {}): BitcoinAccountKeys {
+  return {
+    rootPath: "84'/0'",
+    accountIndex: 0,
+    addressAt: jest
+      .fn()
+      .mockImplementation((chain: number, index: number) =>
+        Promise.resolve(chain === 0 && index === 1 ? "0x01" : `addr_${chain}_${index}`),
+      ),
+    pubkeyAt: jest.fn().mockResolvedValue(Buffer.from("testPubkey")),
+    addresses: jest.fn().mockReturnValue([
+      { chain: 0, index: 0, address: "bc1qfirst", hasUtxo: false },
+      { chain: 0, index: 1, address: "bc1qsecond", hasUtxo: false },
+      { chain: 1, index: 0, address: "bc1qchange0", hasUtxo: false },
+    ]),
+    ...overrides,
+  };
+}
+
+beforeEach(() => {
+  mockedGetBitcoinAccountKeys.mockReset();
+  mockedGetBitcoinAccountKeys.mockImplementation(() => createBitcoinAccountKeys());
+});
 
 describe("bitcoinFamilyAccountGetAddressLogic", () => {
   // Given
@@ -903,19 +907,72 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
     expect(mockBitcoinFamilyAccountAddressSuccess).toHaveBeenCalledTimes(1);
   });
 
-  it("should return the address with a derivationPath", async () => {
+  it("should return the fresh address without reading the account keys", async () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
     mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
 
     // When
-    const result = await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId, "0/1");
+    await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId);
 
     // Then
-    expect(result).toEqual("0x01");
+    expect(mockedGetBitcoinAccountKeys).not.toHaveBeenCalled();
+  });
+
+  it("should return the address with a derivationPath", async () => {
+    // Given
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    const keys = createBitcoinAccountKeys({
+      addressAt: jest.fn().mockResolvedValue("bc1qderived"),
+    });
+    mockedGetBitcoinAccountKeys.mockReturnValueOnce(keys);
+
+    // When
+    const result = await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId, "1/7");
+
+    // Then
+    expect(result).toEqual("bc1qderived");
+    expect(mockedGetBitcoinAccountKeys).toHaveBeenCalledWith(
+      expect.objectContaining({ id: accountId }),
+    );
+    expect(keys.addressAt).toHaveBeenCalledWith(1, 7);
     expect(mockBitcoinFamilyAccountAddressRequested).toHaveBeenCalledTimes(1);
     expect(mockBitcoinFamilyAccountAddressFail).toHaveBeenCalledTimes(0);
     expect(mockBitcoinFamilyAccountAddressSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["a/1", "0/b"])("rejects the invalid derivationPath %s", async derivationPath => {
+    // Given
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    // When
+    await expect(
+      bitcoinFamilyAccountGetAddressLogic(context, walletAccountId, derivationPath),
+    ).rejects.toThrow("Invalid derivationPath");
+
+    // Then
+    expect(mockedGetBitcoinAccountKeys).not.toHaveBeenCalled();
+    expect(mockBitcoinFamilyAccountAddressFail).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressSuccess).toHaveBeenCalledTimes(0);
+  });
+
+  it("fails when the account must be resynced to derive its keys", async () => {
+    // Given
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    mockedGetBitcoinAccountKeys.mockImplementationOnce(() => {
+      throw new AccountNeedResync();
+    });
+
+    // When
+    await expect(async () => {
+      await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId, "0/1");
+    }).rejects.toThrow(AccountNeedResync);
+
+    // Then
+    expect(mockBitcoinFamilyAccountAddressSuccess).toHaveBeenCalledTimes(0);
   });
 });
 
@@ -977,16 +1034,20 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
     expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(0);
   });
 
-  it("should return the PublicKey", async () => {
+  it("should return the PublicKey of the fresh address path", async () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
     mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    const keys = createBitcoinAccountKeys();
+    mockedGetBitcoinAccountKeys.mockReturnValueOnce(keys);
 
     // When
     const result = await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId);
 
     // Then
     expect(result).toEqual(Buffer.from("testPubkey").toString("hex"));
+    // the fixture's fresh address path is 44'/60'/0'/0/0
+    expect(keys.pubkeyAt).toHaveBeenCalledWith(0, 0);
     expect(mockBitcoinFamilyAccountPublicKeyRequested).toHaveBeenCalledTimes(1);
     expect(mockBitcoinFamilyAccountPublicKeyFail).toHaveBeenCalledTimes(0);
     expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(1);
@@ -996,15 +1057,51 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
     mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    const keys = createBitcoinAccountKeys();
+    mockedGetBitcoinAccountKeys.mockReturnValueOnce(keys);
 
     // When
     const result = await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId, "0/1");
 
     // Then
     expect(result).toEqual(Buffer.from("testPubkey").toString("hex"));
+    expect(keys.pubkeyAt).toHaveBeenCalledWith(0, 1);
     expect(mockBitcoinFamilyAccountPublicKeyRequested).toHaveBeenCalledTimes(1);
     expect(mockBitcoinFamilyAccountPublicKeyFail).toHaveBeenCalledTimes(0);
     expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects an invalid derivationPath", async () => {
+    // Given
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    // When
+    await expect(
+      bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId, "x/1"),
+    ).rejects.toThrow("Invalid derivationPath");
+
+    // Then
+    expect(mockedGetBitcoinAccountKeys).not.toHaveBeenCalled();
+    expect(mockBitcoinFamilyAccountPublicKeyFail).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(0);
+  });
+
+  it("fails when the account must be resynced to derive its keys", async () => {
+    // Given
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    mockedGetBitcoinAccountKeys.mockImplementationOnce(() => {
+      throw new AccountNeedResync();
+    });
+
+    // When
+    await expect(bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId)).rejects.toThrow(
+      AccountNeedResync,
+    );
+
+    // Then
+    expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(0);
   });
 });
 
@@ -1350,39 +1447,52 @@ describe("bitcoinFamilyAccountGetAddressesLogic", () => {
     expect(changeAddresses.length).toBeGreaterThanOrEqual(2);
   });
 
+  it("returns the exact receive and change addresses to share", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    const keys = createBitcoinAccountKeys();
+    mockedGetBitcoinAccountKeys.mockReturnValueOnce(keys);
+
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId, [
+      "payment",
+    ]);
+
+    const publicKey = Buffer.from("testPubkey").toString("hex");
+    // receive: the first address, then two past the highest used index (1); change: two past 0
+    expect(result).toEqual([
+      { address: "bc1qfirst", publicKey, path: "m/84'/0'/0'/0/0", intention: "payment" },
+      { address: "addr_0_2", publicKey, path: "m/84'/0'/0'/0/2", intention: "payment" },
+      { address: "addr_0_3", publicKey, path: "m/84'/0'/0'/0/3", intention: "payment" },
+      { address: "addr_1_1", publicKey, path: "m/84'/0'/0'/1/1", intention: "payment" },
+      { address: "addr_1_2", publicKey, path: "m/84'/0'/0'/1/2", intention: "payment" },
+    ]);
+    // stored addresses are not derived again; every public key is
+    expect(keys.addressAt).toHaveBeenCalledTimes(4);
+    expect(keys.addressAt).not.toHaveBeenCalledWith(0, 0);
+    expect(keys.pubkeyAt).toHaveBeenCalledTimes(5);
+    expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(1);
+  });
+
   it("includes addresses that have UTXOs", async () => {
     const accountId = "js:2:bitcoin:0x013:";
     mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
 
-    const mockGetAddressUnspentUtxos = jest.fn().mockImplementation((addr: { address: string }) => {
-      // bc1qsecond (account 0, index 1) has a UTXO
-      if (addr.address === "bc1qsecond") return [{ value: "1000" }];
-      return [];
-    });
-
-    mockedGetWalletAccount.mockReturnValueOnce({
-      params: { path: "84'/0'", index: 0 },
-      xpub: {
-        derivationMode: "native_segwit",
-        xpub: "xpub",
-        crypto: {
-          getAddress: jest
-            .fn()
-            .mockImplementation((_mode: string, _xpub: string, account: number, index: number) =>
-              Promise.resolve(`addr_${account}_${index}`),
-            ),
-          getPubkeyAt: jest.fn().mockReturnValue(Buffer.from("testPubkey")),
-        },
-        getXpubAddresses: jest.fn().mockResolvedValue([
-          { account: 0, index: 0, address: "bc1qfirst" },
-          { account: 0, index: 1, address: "bc1qsecond" },
-          { account: 1, index: 0, address: "bc1qchange0" },
-        ]),
-        storage: {
-          getAddressUnspentUtxos: mockGetAddressUnspentUtxos,
-        },
-      },
-    } as unknown as ReturnType<typeof getWalletAccount>);
+    const addresses = jest.fn().mockReturnValue([
+      { chain: 0, index: 0, address: "bc1qfirst", hasUtxo: false },
+      // bc1qsecond (chain 0, index 1) has a UTXO
+      { chain: 0, index: 1, address: "bc1qsecond", hasUtxo: true },
+      { chain: 1, index: 0, address: "bc1qchange0", hasUtxo: true },
+    ]);
+    mockedGetBitcoinAccountKeys.mockReturnValueOnce(
+      createBitcoinAccountKeys({
+        addressAt: jest
+          .fn()
+          .mockImplementation((chain: number, index: number) =>
+            Promise.resolve(`addr_${chain}_${index}`),
+          ),
+        addresses,
+      }),
+    );
 
     const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
 
@@ -1390,13 +1500,72 @@ describe("bitcoinFamilyAccountGetAddressesLogic", () => {
     const addrWithUtxo = result.find((r: { path?: string }) => r.path === "m/84'/0'/0'/0/1");
     expect(addrWithUtxo).toBeDefined();
     expect(addrWithUtxo?.address).toBe("bc1qsecond");
+    // and so is the change address holding one
+    const changeWithUtxo = result.find((r: { path?: string }) => r.path === "m/84'/0'/0'/1/0");
+    expect(changeWithUtxo?.address).toBe("bc1qchange0");
 
-    // getAddressUnspentUtxos should have been called for each known address
-    expect(mockGetAddressUnspentUtxos).toHaveBeenCalledTimes(3);
+    // the stored addresses are read once
+    expect(addresses).toHaveBeenCalledTimes(1);
 
     expect(mockBitcoinFamilyAccountAddressesRequested).toHaveBeenCalledTimes(1);
     expect(mockBitcoinFamilyAccountAddressesFail).toHaveBeenCalledTimes(0);
     expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores addresses outside the receive and change chains", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    mockedGetBitcoinAccountKeys.mockReturnValueOnce(
+      createBitcoinAccountKeys({
+        rootPath: "44'/0'",
+        accountIndex: 2,
+        addresses: jest
+          .fn()
+          .mockReturnValue([{ chain: 2, index: 9, address: "bc1qother", hasUtxo: true }]),
+      }),
+    );
+
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
+
+    expect(result.map(r => r.path)).toEqual([
+      "m/44'/0'/2'/0/0",
+      "m/44'/0'/2'/0/1",
+      "m/44'/0'/2'/0/2",
+      "m/44'/0'/2'/1/1",
+      "m/44'/0'/2'/1/2",
+    ]);
+    expect(result.map(r => r.address)).not.toContain("bc1qother");
+  });
+
+  it("tracks a failure and rethrows when the account keys cannot be read", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    mockedGetBitcoinAccountKeys.mockImplementationOnce(() => {
+      throw new AccountNeedResync();
+    });
+
+    await expect(bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId)).rejects.toThrow(
+      AccountNeedResync,
+    );
+
+    expect(mockBitcoinFamilyAccountAddressesRequested).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesFail).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(0);
+  });
+
+  it("tracks a failure when a key derivation fails", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    mockedGetBitcoinAccountKeys.mockReturnValueOnce(
+      createBitcoinAccountKeys({ pubkeyAt: jest.fn().mockRejectedValue(new Error("derive")) }),
+    );
+
+    await expect(bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId)).rejects.toThrow(
+      "derive",
+    );
+
+    expect(mockBitcoinFamilyAccountAddressesFail).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(0);
   });
 });
 

@@ -54,7 +54,6 @@ function createTransactionStatus(overrides?: Partial<TransactionStatus>): Transa
     estimatedFees: new BigNumber(0),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
-    txInputs: [],
     ...overrides,
   } as TransactionStatus;
 }

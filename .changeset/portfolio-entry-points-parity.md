@@ -1,0 +1,5 @@
+---
+"@ledgerhq/live-common": minor
+---
+
+With `portfolio.enabled`, the generic bridge's entry points no longer go around the portfolio layer. Raw signing (wallet-api) reads the next sequence, encodes and combines through the portfolio (`encodeRawTransaction`, METHOD_NOT_ALLOWED where the service writes). Broadcast goes through `broadcastTransaction` with its broadcast config, and address validation through `validateAddress` with the network id. The EVM edit patch, the gas options hook and the token allowance read the chain through the portfolio's fee estimate and `call`. The EVM confirmation check goes through `getTransactionInfo` and falls back to the synced operations when the portfolio cannot look the hash up. NEAR validators come from the portfolio. The bitcoin replacement estimate, change address and own addresses are read on the account's write portfolio, where the UTXO module completes the replacement itself. A portfolio-enabled currency gets no sponsored fee seam: the Send flow offers the standard fee only.

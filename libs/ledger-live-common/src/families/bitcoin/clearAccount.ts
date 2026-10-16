@@ -1,5 +1,4 @@
-import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
-import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
+import { initialBitcoinResourcesValue, type BitcoinAccount } from "./types";
 
 export function clearAccount(account: BitcoinAccount): void {
   account.bitcoinResources = initialBitcoinResourcesValue;

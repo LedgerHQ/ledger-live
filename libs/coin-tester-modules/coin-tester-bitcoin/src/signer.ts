@@ -1,5 +1,13 @@
 import { splitTransaction } from "@ledgerhq/hw-app-btc/splitTransaction";
-import { BitcoinAddress, BitcoinSigner, CreateTransaction } from "@ledgerhq/coin-bitcoin/signer";
+import type { CreateTransactionArg } from "@ledgerhq/hw-app-btc/createTransaction";
+import {
+  BITCOIN_SIGNING_ENVELOPE_VERSION,
+  type BitcoinSigningEnvelope,
+} from "@ledgerhq/coin-bitcoin/api";
+import type {
+  BitcoinAddressResult,
+  BitcoinDeviceSigner,
+} from "@ledgerhq/live-common/families/bitcoin/signer";
 import { generateMnemonic, mnemonicToSeed } from "bip39";
 import { BIP32Factory } from "bip32";
 import * as bitcoin from "bitcoinjs-lib";
@@ -173,7 +181,7 @@ function getXpub(seed: Buffer, path: string): Promise<string> {
   return Promise.resolve(xpub);
 }
 
-function getPublicKey(seed: Buffer, path: string): Promise<BitcoinAddress> {
+function getPublicKey(seed: Buffer, path: string): Promise<BitcoinAddressResult> {
   const bip32 = BIP32Factory(eccWrapper);
   const root = bip32.fromSeed(seed, bitcoin.networks.regtest);
   const node = root.derivePath(path);
@@ -184,16 +192,17 @@ function getPublicKey(seed: Buffer, path: string): Promise<BitcoinAddress> {
   const uncompressed = eccWrapper.pointCompress(publicKey, false);
 
   return Promise.resolve({
-    bitcoinAddress: address,
+    address,
     publicKey: Buffer.from(uncompressed).toString("hex"),
     chainCode: (Buffer.isBuffer(chainCode)
       ? chainCode
       : Buffer.from(new Uint8Array(chainCode))
     ).toString("hex"),
+    path,
   });
 }
 
-function createPaymentTransaction(seed: Buffer, arg: CreateTransaction): Promise<string> {
+function createPaymentTransaction(seed: Buffer, arg: CreateTransactionArg): Promise<string> {
   const bip32 = BIP32Factory(eccWrapper);
   const root = bip32.fromSeed(seed, bitcoin.networks.regtest);
 
@@ -253,17 +262,54 @@ function createPaymentTransaction(seed: Buffer, arg: CreateTransaction): Promise
   return Promise.resolve(tx.extractTransaction().toHex());
 }
 
-export async function buildSigner(): Promise<BitcoinSigner> {
+function parseEnvelope(raw: string): BitcoinSigningEnvelope {
+  const envelope = JSON.parse(raw) as BitcoinSigningEnvelope;
+  if (envelope?.version !== BITCOIN_SIGNING_ENVELOPE_VERSION) {
+    throw new Error(`Unsupported bitcoin signing envelope version ${String(envelope?.version)}`);
+  }
+  return envelope;
+}
+
+// The payment transaction live-common's device signer asks hw-app-btc for, from the envelope the
+// coin module crafted.
+function toPaymentTransaction(envelope: BitcoinSigningEnvelope): CreateTransactionArg {
+  return {
+    inputs: envelope.inputs.map((input): CreateTransactionArg["inputs"][number] => [
+      splitTransaction(input.prevTxHex, true, envelope.hasExtraData, envelope.additionals),
+      input.outputIndex,
+      null,
+      input.sequence,
+      input.blockHeight,
+    ]),
+    associatedKeysets: envelope.inputs.map(input => input.path),
+    outputScriptHex: envelope.outputScriptHex,
+    blockHeight: envelope.blockHeight,
+    ...(envelope.lockTime ? { lockTime: envelope.lockTime } : {}),
+    sigHashType: envelope.sigHashType,
+    segwit: envelope.segwit,
+    ...(envelope.changePath ? { changePath: envelope.changePath } : {}),
+    additionals: envelope.additionals,
+  };
+}
+
+/** A software stand-in for the bitcoin family's device signer, over a random seed. */
+export async function buildSigner(): Promise<BitcoinDeviceSigner> {
   const mnemonic = generateMnemonic();
   const seed = await mnemonicToSeed(mnemonic);
 
   return {
-    getWalletPublicKey: path => getPublicKey(seed, path),
+    getAddress: path => getPublicKey(seed, path),
     getWalletXpub: ({ path }) => getXpub(seed, path),
-    splitTransaction: (arg1, arg2, arg3, arg4) => {
-      return splitTransaction(arg1, arg2, arg3 ?? false, arg4 ?? []);
+    signTransaction: async (_path, envelope, options = {}) => {
+      const payment = toPaymentTransaction(parseEnvelope(envelope));
+      options.onDeviceSignatureRequested?.();
+      const signed = await createPaymentTransaction(seed, payment);
+      options.onDeviceSignatureGranted?.();
+      return signed;
     },
-    createPaymentTransaction: arg => createPaymentTransaction(seed, arg),
+    signPsbtBuffer: () => {
+      throw new Error("Not implemented");
+    },
     signMessage: () => {
       throw new Error("Not implemented");
     },

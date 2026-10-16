@@ -13,6 +13,7 @@ import {
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 import { getBridgeApi } from "./bridge";
+import { writeIntentApi } from "./portfolio/intentApi";
 
 export function genericEstimateMaxSpendable(
   network,
@@ -34,13 +35,15 @@ export function genericEstimateMaxSpendable(
       useAllAmount: true,
     };
 
-    const estimated = await coinModuleApi.estimateFees(
+    const intentApi = writeIntentApi(bridgeApi, coinModuleApi, mainAccount, draftTransaction);
+    // No fee options: the legacy path passes none to a send-max estimate.
+    const estimated = await intentApi.estimateFees(
       context,
       transactionToIntent(
         mainAccount,
         draftTransaction,
         bridgeApi.computeIntentType,
-        intent => coinModuleApi.craftTransactionData(context, intent),
+        intent => intentApi.craftTransactionData(context, intent),
         bridgeApi.buildIntentData,
       ),
     );

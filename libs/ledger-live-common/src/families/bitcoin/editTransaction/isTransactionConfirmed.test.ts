@@ -1,77 +1,40 @@
+import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
-import wallet, { type BitcoinLikeWallet } from "@ledgerhq/wallet-btc/index";
-import type { AccountLike } from "@ledgerhq/types-live";
-import { getBoundWalletAccount } from "../coinConfig";
 
-jest.mock("@ledgerhq/wallet-btc/index", () => ({
-  __esModule: true,
-  default: {
-    getAccountTxBlockHeight: jest.fn(),
-  },
-}));
+const txid = "test-tx-id";
 
-jest.mock("../coinConfig", () => ({
-  getBoundWalletAccount: jest.fn(),
-}));
+const operation = (hash: string, blockHeight: number | null | undefined): Operation =>
+  ({ id: `op-${hash}`, hash, blockHeight }) as Operation;
 
-const mockedWallet = wallet as jest.Mocked<BitcoinLikeWallet>;
-const mockedGetBoundWalletAccount = jest.mocked(getBoundWalletAccount);
+const accountWith = (operations: Operation[]): AccountLike =>
+  ({ type: "Account", operations }) as unknown as AccountLike;
 
 describe("isTransactionConfirmed", () => {
-  const walletAccount = {} as any;
-  const boundWalletAccount = { bound: true } as any;
-  const account = {
-    type: "Account",
-    bitcoinResources: { walletAccount },
-  } as unknown as AccountLike;
-  const txid = "test-tx-id";
+  it("returns true when the synced operation of the transaction has a block height", async () => {
+    const account = accountWith([operation("other", 10), operation(txid, 123456)]);
 
-  beforeEach(() => {
-    mockedGetBoundWalletAccount.mockReturnValue({
-      config: {} as any,
-      walletAccount: boundWalletAccount,
-    });
+    await expect(isTransactionConfirmed({ account, hash: txid })).resolves.toBe(true);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it.each([
+    ["null", null],
+    ["undefined", undefined],
+    ["zero", 0],
+  ])("returns false when the operation block height is %s", async (_, blockHeight) => {
+    const account = accountWith([operation(txid, blockHeight)]);
+
+    await expect(isTransactionConfirmed({ account, hash: txid })).resolves.toBe(false);
   });
 
-  it("returns true when transaction exists and has a valid block height", async () => {
-    mockedWallet.getAccountTxBlockHeight.mockResolvedValue(123456);
+  it("returns false when the transaction is not found locally", async () => {
+    const account = accountWith([operation("other", 123456)]);
 
-    const result = await isTransactionConfirmed({ account, hash: txid });
-
-    expect(result).toBe(true);
-    // looked up on the account bound to the configured explorer (a deserialized one has none)
-    expect(mockedGetBoundWalletAccount).toHaveBeenCalledWith(account);
-    expect(mockedWallet.getAccountTxBlockHeight).toHaveBeenCalledWith(boundWalletAccount, txid);
+    await expect(isTransactionConfirmed({ account, hash: txid })).resolves.toBe(false);
   });
 
-  it("returns false when transaction exists but has no block", async () => {
-    mockedWallet.getAccountTxBlockHeight.mockResolvedValue(0);
-
-    const result = await isTransactionConfirmed({ account, hash: txid });
-
-    expect(result).toBe(false);
-  });
-
-  it("returns false when transaction is not found", async () => {
-    mockedWallet.getAccountTxBlockHeight.mockResolvedValue(null);
-
-    const result = await isTransactionConfirmed({ account, hash: txid });
-
-    expect(result).toBe(false);
-  });
-
-  it("returns false without a lookup when the account has no wallet-btc account", async () => {
-    const result = await isTransactionConfirmed({
-      account: { type: "Account" } as unknown as AccountLike,
-      hash: txid,
-    });
-
-    expect(result).toBe(false);
-    expect(mockedGetBoundWalletAccount).not.toHaveBeenCalled();
-    expect(mockedWallet.getAccountTxBlockHeight).not.toHaveBeenCalled();
+  it("returns false for an account without operations", async () => {
+    await expect(isTransactionConfirmed({ account: accountWith([]), hash: txid })).resolves.toBe(
+      false,
+    );
   });
 });

@@ -57,6 +57,8 @@ function makeTestCoinControlConfig(
 ): CoinControlConfig {
   return {
     customStrategyValue: bitcoinCoinControlConfig.customStrategyValue,
+    getStrategyValue: bitcoinCoinControlConfig.getStrategyValue,
+    getChangeToReturn: bitcoinCoinControlConfig.getChangeToReturn,
     getDisplayData,
     buildStrategyChangePatch: bitcoinCoinControlConfig.buildStrategyChangePatch,
     buildToggleRowExclusionPatch:
@@ -85,7 +87,9 @@ const createTransaction = (): Transaction =>
     amount: new BigNumber(0),
     recipient: "",
     useAllAmount: false,
-    utxoStrategy: { strategy: bitcoinPickingStrategy.MERGE_OUTPUTS, excludeUTXOs: [] },
+    familySpecificData: {
+      utxoStrategy: { strategy: bitcoinPickingStrategy.MERGE_OUTPUTS, excludeUTXOs: [] },
+    },
   }) as unknown as Transaction;
 
 const createStatus = (): TransactionStatus =>
@@ -95,7 +99,6 @@ const createStatus = (): TransactionStatus =>
     estimatedFees: new BigNumber(0),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
-    txInputs: [],
   }) as TransactionStatus;
 
 const mockLabels = {
@@ -133,13 +136,29 @@ function mockBridgeMergePatch(): void {
   });
 }
 
-function customTransaction(amount: BigNumber): Transaction {
+function customTransaction(
+  amount: BigNumber,
+  feeParameters?: Record<string, unknown>,
+): Transaction {
   return {
     ...createTransaction(),
     amount,
     useAllAmount: false,
-    utxoStrategy: { strategy: bitcoinPickingStrategy.CUSTOM, excludeUTXOs: [] },
+    familySpecificData: {
+      utxoStrategy: { strategy: bitcoinPickingStrategy.CUSTOM, excludeUTXOs: [] },
+    },
+    ...(feeParameters ? { feeParameters } : {}),
   } as unknown as Transaction;
+}
+
+/** The last estimation of a transaction giving `value` back to the account as change. */
+function withChangeOutput(value: BigNumber): Record<string, unknown> {
+  return {
+    outputs: [
+      { address: "recipient", value: "5000", isChange: false },
+      { address: "change", value: value.toFixed(), isChange: true },
+    ],
+  };
 }
 
 function displayDataForCustomRows(
@@ -158,14 +177,6 @@ function statusNotEnoughBalance(): TransactionStatus {
   return {
     ...createStatus(),
     errors: { amount: new NotEnoughBalance("Insufficient funds") },
-  } as unknown as TransactionStatus;
-}
-
-function statusWithChangeOutput(value: BigNumber): TransactionStatus {
-  return {
-    ...createStatus(),
-    errors: {},
-    txOutputs: [{ isChange: true, value }],
   } as unknown as TransactionStatus;
 }
 
@@ -330,14 +341,26 @@ describe("useCoinControlScreenViewModelCore", () => {
       });
       expect(result.current.isCustomPickingStrategy).toBe(true);
     });
+
+    it("is false when the transaction carries no picking strategy (default strategy)", () => {
+      const { result } = renderCoinControlCore({
+        transaction: {
+          ...createTransaction(),
+          familySpecificData: undefined,
+        } as unknown as Transaction,
+      });
+      expect(result.current.isCustomPickingStrategy).toBe(false);
+    });
   });
 
   describe("onToggleUtxoExclusion", () => {
     const rowKey = "tx1-0";
     const togglePatch = {
-      utxoStrategy: {
-        strategy: bitcoinPickingStrategy.CUSTOM,
-        excludeUTXOs: [{ hash: "tx1", outputIndex: 0 }],
+      familySpecificData: {
+        utxoStrategy: {
+          strategy: bitcoinPickingStrategy.CUSTOM,
+          excludeUTXOs: [{ hash: "tx1", outputIndex: 0 }],
+        },
       },
     };
 
@@ -490,11 +513,78 @@ describe("useCoinControlScreenViewModelCore", () => {
       const { result } = renderCoinControlCore({
         displayDataFactory: () =>
           displayDataForCustomRows([row("tx1", 0, false), row("tx2", 1, false)]),
-        transaction: txFilled(),
-        status: statusWithChangeOutput(new BigNumber(3500)),
+        transaction: customTransaction(new BigNumber(5000), withChangeOutput(new BigNumber(3500))),
       });
       expect(result.current.changeToReturn.value).toBe("3500 BTC");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
+      expect(result.current.changeToReturn.placeholder).toBe("Enter amount");
+    });
+
+    it("reads the change to return from the coin control config", () => {
+      const transaction = customTransaction(new BigNumber(5000));
+      const status = createStatus();
+      const getChangeToReturn = jest.fn().mockReturnValue(new BigNumber(1200));
+      mockBridgeMergePatch();
+      mockGetCoinControlConfig.mockReturnValue({
+        ...makeTestCoinControlConfig(() => null),
+        getChangeToReturn,
+      });
+      const account = createAccount();
+
+      const { result } = renderHook(() =>
+        useCoinControlScreenViewModelCore({
+          account,
+          parentAccount: null,
+          transaction,
+          status,
+          bridgePending: false,
+          uiConfig: { hasCoinControl: true } as never,
+          transactionActions: { updateTransaction: jest.fn() } as never,
+          locale: "en",
+          accountUnit: getAccountCurrency(account).units[0],
+          amountError: undefined,
+          networkFees: {},
+          labels: mockLabels,
+          onLearnMoreClick: mockOnLearnMore,
+        }),
+      );
+
+      expect(getChangeToReturn).toHaveBeenCalledWith({ transaction, status });
+      expect(result.current.changeToReturn.value).toBe("1200 BTC");
+    });
+
+    it("shows no change to return while the transaction has not been estimated", () => {
+      const { result } = renderCoinControlCore({
+        displayDataFactory: () => displayDataForCustomRows([row("tx1", 0, false)]),
+        transaction: txFilled(),
+      });
+      expect(result.current.changeToReturn.value).toBe("0 BTC");
+    });
+
+    it("formats a zero change to return when coin control config is missing", () => {
+      mockBridgeMergePatch();
+      mockGetCoinControlConfig.mockReturnValue(null);
+      const account = createAccount();
+
+      const { result } = renderHook(() =>
+        useCoinControlScreenViewModelCore({
+          account,
+          parentAccount: null,
+          transaction: txFilled(),
+          status: createStatus(),
+          bridgePending: false,
+          uiConfig: { hasCoinControl: true } as never,
+          transactionActions: { updateTransaction: jest.fn() } as never,
+          locale: "en",
+          accountUnit: getAccountCurrency(account).units[0],
+          amountError: undefined,
+          networkFees: {},
+          labels: mockLabels,
+          onLearnMoreClick: mockOnLearnMore,
+        }),
+      );
+
+      expect(result.current.changeToReturn.value).toBe("0 BTC");
       expect(result.current.changeToReturn.placeholder).toBe("Enter amount");
     });
   });

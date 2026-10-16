@@ -14,6 +14,7 @@ import { combine } from "../logic/combine";
 import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
+import { getAccountInfo } from "../logic/getAccountInfo";
 import { getBalance } from "../logic/getBalance";
 import { getNextSequence } from "../logic/getNextSequence";
 import { getStakes } from "../logic/getStakes";
@@ -52,6 +53,10 @@ jest.mock("../logic/craftRawTransaction", () => ({
 
 jest.mock("../logic/estimateFees", () => ({
   estimateFees: jest.fn(),
+}));
+
+jest.mock("../logic/getAccountInfo", () => ({
+  getAccountInfo: jest.fn(),
 }));
 
 jest.mock("../logic/getBalance", () => ({
@@ -111,6 +116,7 @@ describe("createApi", () => {
         craftTransaction: expect.any(Function),
         craftRawTransaction: expect.any(Function),
         estimateFees: expect.any(Function),
+        getAccountInfo: expect.any(Function),
         getBalance: expect.any(Function),
         lastBlock: expect.any(Function),
         listOperations: expect.any(Function),
@@ -144,6 +150,20 @@ describe("createApi", () => {
       token2022Enabled: false,
     });
     expect(result).toEqual(mockBalances);
+  });
+
+  it("should delegate getAccountInfo to the logic function, over the context's chain API", async () => {
+    const mockInfo = {
+      type: "solana" as const,
+      tokenAccounts: { mint: { state: "frozen" as const } },
+    };
+    jest.mocked(getAccountInfo).mockResolvedValueOnce(mockInfo);
+
+    const api = createApi("solana");
+    const result = await api.getAccountInfo(context, "address");
+
+    expect(getAccountInfo).toHaveBeenCalledWith(mockChainAPI, "address");
+    expect(result).toEqual(mockInfo);
   });
 
   it("should pass parameters correctly to lastBlock", async () => {

@@ -15,17 +15,14 @@ import hederaBridge, {
   keyControlsAccount,
 } from "./api";
 
-const getAccountsForPublicKeyMock = jest.fn();
-jest.mock("@ledgerhq/coin-hedera/network/api", () => ({
-  apiClient: {
-    getAccountsForPublicKey: (...a: unknown[]) => getAccountsForPublicKeyMock(...a),
-  },
-}));
-
-const config = { apiUrls: { mirrorNode: "https://mirror.test" } };
-jest.mock("../../../config", () => ({
-  getCurrencyConfiguration: () => config,
-}));
+const getAddressesForPublicKeyMock = jest.fn();
+const chain = {
+  getAccountInfo: jest.fn(),
+  call: jest.fn(),
+  getNextSequence: jest.fn(),
+  getAddressesForPublicKey: getAddressesForPublicKeyMock,
+  getTransactionInfo: jest.fn(),
+};
 
 const currency = getCryptoCurrencyById("hedera");
 
@@ -56,25 +53,22 @@ describe("hedera bridge", () => {
   });
 
   describe("getAddressesForPublicKey", () => {
-    it("returns the accounts the mirror node holds for the device key", async () => {
-      getAccountsForPublicKeyMock.mockResolvedValue([{ account: "0.0.1" }, { account: "0.0.2" }]);
+    const derived = { address: "", path: "44/3030", publicKey: "pk" };
 
-      const addresses = await getAddressesForPublicKey(currency, "pk");
+    it("returns the accounts the chain holds for the device key", async () => {
+      getAddressesForPublicKeyMock.mockResolvedValue(["0.0.1", "0.0.2"]);
+
+      const addresses = await getAddressesForPublicKey(derived, chain);
 
       expect(addresses).toEqual(["0.0.1", "0.0.2"]);
-      expect(getAccountsForPublicKeyMock).toHaveBeenCalledTimes(1);
-      expect(getAccountsForPublicKeyMock).toHaveBeenCalledWith({
-        configOrCurrencyId: config,
-        publicKey: "pk",
-      });
+      expect(getAddressesForPublicKeyMock).toHaveBeenCalledTimes(1);
+      expect(getAddressesForPublicKeyMock).toHaveBeenCalledWith("pk");
     });
 
     it("returns no address when the key controls no account", async () => {
-      getAccountsForPublicKeyMock.mockResolvedValue([]);
+      getAddressesForPublicKeyMock.mockResolvedValue([]);
 
-      const addresses = await getAddressesForPublicKey(currency, "pk");
-
-      expect(addresses).toEqual([]);
+      await expect(getAddressesForPublicKey(derived, chain)).resolves.toEqual([]);
     });
   });
 
@@ -88,19 +82,15 @@ describe("hedera bridge", () => {
   });
 
   it("looks up addresses by the derived public key", async () => {
-    getAccountsForPublicKeyMock.mockResolvedValue([{ account: "0.0.1" }]);
+    getAddressesForPublicKeyMock.mockResolvedValue(["0.0.1"]);
 
-    const addresses = await hederaBridge(currency).addressLookup?.getAddresses({
-      address: "",
-      path: "44/3030",
-      publicKey: "pk",
-    });
+    const addresses = await hederaBridge(currency).addressLookup?.getAddresses(
+      { address: "", path: "44/3030", publicKey: "pk" },
+      chain,
+    );
 
     expect(addresses).toEqual(["0.0.1"]);
-    expect(getAccountsForPublicKeyMock).toHaveBeenCalledTimes(1);
-    expect(getAccountsForPublicKeyMock).toHaveBeenCalledWith(
-      expect.objectContaining({ publicKey: "pk" }),
-    );
+    expect(getAddressesForPublicKeyMock).toHaveBeenCalledWith("pk");
   });
 
   describe("getTokenFromAsset", () => {

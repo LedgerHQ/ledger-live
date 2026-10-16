@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -16,6 +17,8 @@ import { PickingStrategy } from "./PickingStrategy";
 import { CoinControlRow } from "./CoinControlRow";
 import {
   BitcoinAccount as Account,
+  getFeeParameters,
+  getUtxoStrategy,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -51,13 +54,13 @@ const CoinControlModal = ({
   const bridge = useAccountBridge<Transaction>(account);
   if (!account.bitcoinResources) return null;
   const { bitcoinResources } = account;
-  const { utxoStrategy } = transaction;
+  const utxoStrategy = getUtxoStrategy(transaction);
   const totalExcludedUTXOS = account.bitcoinResources?.utxos
     .map(u => getUTXOStatus(u, utxoStrategy))
     .filter(({ excluded }) => excluded).length;
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
-  const returning = (status.txOutputs || []).find(output => !!output.isChange);
+  const returning = (getFeeParameters(transaction).outputs || []).find(output => output.isChange);
   return (
     <Modal width={700} isOpened={isOpened} centered onClose={onClose}>
       <TrackPage category="Modal" name="BitcoinCoinControl" />
@@ -106,7 +109,7 @@ const CoinControlModal = ({
                   utxo={utxo}
                   updateTransaction={updateTransaction}
                   bridge={bridge}
-                  status={status}
+                  transaction={transaction}
                   account={account}
                 />
               ))}
@@ -157,7 +160,7 @@ const CoinControlModal = ({
                     </Box>
                     <FormattedVal
                       disableRounding
-                      val={returning ? returning.value : 0}
+                      val={returning ? new BigNumber(returning.value) : 0}
                       unit={unit}
                       showCode
                       fontSize={4}

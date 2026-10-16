@@ -3,11 +3,13 @@ import { ReplacementTransactionUnderpriced } from "../../../errors";
 import type { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 import { getMinFees } from "./getMinEditTransactionFees";
-import type {
-  EditType,
-  Transaction as BitcoinTransaction,
-  TransactionStatus,
-} from "@ledgerhq/coin-bitcoin/types";
+import {
+  getFamilySpecificData,
+  getFeePerByte,
+  type EditType,
+  type Transaction as BitcoinTransaction,
+  type TransactionStatus,
+} from "../types";
 
 type ValidatedTransactionFields =
   | "recipient"
@@ -48,17 +50,18 @@ export const validateEditTransaction = ({
   if (!editType) {
     return { errors: {}, warnings: {} };
   }
+  const toUpdate = getFamilySpecificData(transactionToUpdate);
   // If the original tx is explicitly not replaceable, replacement should be considered invalid.
-  if (!transactionToUpdate.rbf) {
+  if (!toUpdate.rbf) {
     errors.replacementTransactionUnderpriced = new ReplacementTransactionUnderpriced();
     return { errors, warnings };
   }
 
-  const originalFeePerByte = transactionToUpdate.feePerByte ?? originalFeePerByteParam ?? null;
-  const newFeePerByte = transaction.feePerByte;
+  const toUpdateFeePerByte = getFeePerByte(transactionToUpdate);
+  const originalFeePerByte = toUpdateFeePerByte ?? originalFeePerByteParam ?? null;
+  const newFeePerByte = getFeePerByte(transaction);
 
-  const needsOriginalFee =
-    !!transactionToUpdate.replaceTxId && transactionToUpdate.feePerByte === null;
+  const needsOriginalFee = !!toUpdate.replaceTxId && toUpdateFeePerByte === null;
 
   if (needsOriginalFee && originalFeePerByte === null) {
     errors.replacementTransactionUnderpriced = new ReplacementTransactionUnderpriced();

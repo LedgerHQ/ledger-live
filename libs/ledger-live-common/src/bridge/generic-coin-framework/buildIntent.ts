@@ -3,6 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { writeIntentApi } from "./portfolio/intentApi";
 import { getAssetInfos } from "./prepareTransaction";
 import type { GenericTransaction } from "./types";
 import { getPendingTokenSpent, transactionToIntent } from "./utils";
@@ -42,11 +43,13 @@ export async function buildGenericTransactionIntent(
     }
   }
 
+  // The write path of the account completes the data: the side writing, on the portfolio layer.
+  const intentApi = writeIntentApi(bridgeApi, coinModuleApi, account, { ...transaction });
   return transactionToIntent(
     account,
     { ...transaction, assetOwner, assetReference, amount },
     bridgeApi.computeIntentType,
-    intent => coinModuleApi.craftTransactionData(context, intent),
+    intent => intentApi.craftTransactionData(context, intent),
     bridgeApi.buildIntentData,
   );
 }

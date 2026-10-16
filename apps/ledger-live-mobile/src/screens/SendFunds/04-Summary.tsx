@@ -6,7 +6,10 @@ import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
+import {
+  getFeeParameters,
+  type Transaction as BitcoinTransaction,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
@@ -93,16 +96,16 @@ function SendSummary({ navigation, route }: Props) {
     if (!continuing) {
       return;
     }
-    // FIXME: NOT SURE BITCOIN TRANSACTION STATUS IS CORRECT HERE
-    //  BUT WE TYPE LIKE ANIMALS SO...
-    const { warnings, txInputs } = status as BitcoinTransactionStatus;
+    const { warnings } = status;
+    // only a bitcoin estimation selects inputs
+    const { inputs } = getFeeParameters(transaction as BitcoinTransaction);
 
     if (Object.keys(warnings).includes("feeTooHigh") && !highFeesWarningPassed) {
       setHighFeesOpen(true);
       return;
     }
 
-    if (txInputs && txInputs.length >= WARN_FROM_UTXO_COUNT && !utxoWarningPassed) {
+    if (inputs && inputs.length >= WARN_FROM_UTXO_COUNT && !utxoWarningPassed) {
       const to = setTimeout(
         () => setUtxoWarningOpen(true), // looks like you can not open close a bottom modal
         // and open another one very fast
@@ -116,7 +119,15 @@ function SendSummary({ navigation, route }: Props) {
     setUtxoWarningPassed(false);
     setHighFeesWarningPassed(false);
     navigateToNext();
-  }, [status, continuing, highFeesWarningPassed, account, utxoWarningPassed, navigateToNext]);
+  }, [
+    status,
+    transaction,
+    continuing,
+    highFeesWarningPassed,
+    account,
+    utxoWarningPassed,
+    navigateToNext,
+  ]);
   const onPassUtxoWarning = useCallback(() => {
     setUtxoWarningOpen(false);
     setUtxoWarningPassed(true);

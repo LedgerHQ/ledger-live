@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { getValidators } from "@ledgerhq/coin-evm/staking";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { StakingOperation } from "@ledgerhq/coin-evm/types";
 import type { Cursor, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { Unit } from "@domain/entity-currency-unit";
 import { getStakingContractAddress, mapDelegations } from "./logic";
+import { getValidators } from "./reads";
 import { sortLedgerValidatorFirst } from "./ledgerValidator";
 import type { StakingAccount, StakingMappedDelegation } from "./types";
 import { getAccountCurrency } from "../../../account";
@@ -31,8 +31,8 @@ export type EvmStakingValidatorsState = {
 };
 
 /**
- * Fetches the validator list for an EVM staking chain and filters/sorts it
- * for display in a selection UI (Name, Commission, Total Stake).
+ * Fetches the validator list for an EVM staking chain (through the portfolio layer when it serves
+ * the currency) and filters/sorts it for display in a selection UI (Name, Commission, Total Stake).
  *
  * - Filters out validators with a 100% commission (non-delegatable)
  * - Sorts by total staked tokens (descending)

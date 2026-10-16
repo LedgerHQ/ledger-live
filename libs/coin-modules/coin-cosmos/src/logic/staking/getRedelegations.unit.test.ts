@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { CosmosAPI } from "../../network/Cosmos";
 import { getRedelegations } from "./getRedelegations";
 
 const mockGetRedelegationsWithQueued = jest.fn();
@@ -26,6 +27,17 @@ describe("logic/staking/getRedelegations", () => {
 
     expect(result).toEqual(redelegations);
     expect(mockGetRedelegationsWithQueued).toHaveBeenCalledWith("cosmos1a", "uatom");
+  });
+
+  it("reads through the API it is given rather than building one", async () => {
+    const api = {
+      getRedelegationsWithQueued: jest.fn().mockResolvedValue([]),
+    } as unknown as CosmosAPI;
+
+    await expect(getRedelegations("osmosis", "uosmo", "osmo1a", api)).resolves.toEqual([]);
+
+    expect(CosmosAPI).not.toHaveBeenCalled();
+    expect(api.getRedelegationsWithQueued).toHaveBeenCalledWith("osmo1a", "uosmo");
   });
 
   it("returns an empty array when the account has no redelegations", async () => {

@@ -51,14 +51,19 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     ],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/bitcoin/setup"),
-    loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
+    loadTransaction: () => import("../families/bitcoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-bitcoin/deviceTransactionConfig").then(m => m.default),
+      import("../families/bitcoin/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/bitcoin/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () => import("../families/bitcoin/platformAdapter").then(m => m.default),
-    loadAccount: () => import("@ledgerhq/coin-bitcoin/account").then(m => m.default),
+    loadAccount: () => import("../families/bitcoin/account").then(m => m.default),
     loadMockBridge: () => import("../families/bitcoin/bridge/mock").then(m => m.default),
     loadBridgeExtensions: () => import("../families/bitcoin/bridgeExtensions").then(m => m.default),
+    loadSigner: () => import("../families/bitcoin/signer").then(m => m.default),
+    loadBridgeApi: () => import("../families/bitcoin/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/bitcoin/accountRawAssign").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/bitcoin/coinModuleApi").then(m => m.createLocalBitcoinApi),
   },
   {
     family: "canton",

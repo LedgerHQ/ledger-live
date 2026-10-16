@@ -1,0 +1,75 @@
+{
+  "name": "@ledgerhq/portfolio-module-local",
+  "version": "0.1.0",
+  "description": "PortfolioApi served locally: portfolios kept by the client, accounts delegated to account modules",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/portfolio-modules/portfolio-module-local",
+  "private": true,
+  "sideEffects": false,
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@ledgerhq/account-module-framework": "workspace:*",
+    "@ledgerhq/coin-module-framework": "catalog:",
+    "@ledgerhq/portfolio-module-framework": "workspace:*"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "lint": "oxlint -c ../../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../../../.oxfmtrc.json ./src && oxlint -c ../../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../../../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../../../.oxfmtrc.json ./src --check",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  }
+}

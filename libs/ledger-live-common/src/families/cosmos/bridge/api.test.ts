@@ -3,12 +3,16 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import BigNumber from "bignumber.js";
 import { coinModuleLoaders } from "../../../coin-modules/loaders";
-import cosmosBridge, { getDeviceSignOptions } from "./api";
+import cosmosBridge, { enrichStakingResources, getDeviceSignOptions } from "./api";
 
-const mockGetRedelegations = jest.fn();
-jest.mock("@ledgerhq/coin-cosmos/logic/staking/getRedelegations", () => ({
-  getRedelegations: (...args: unknown[]) => mockGetRedelegations(...args),
-}));
+const getAccountInfo = jest.fn();
+const chainReads = {
+  getAccountInfo,
+  call: jest.fn(),
+  getNextSequence: jest.fn(),
+  getAddressesForPublicKey: jest.fn(),
+  getTransactionInfo: jest.fn(),
+};
 
 const cosmos = getCryptoCurrencyById("cosmos");
 
@@ -52,27 +56,64 @@ describe("cosmos bridge", () => {
       unbondingBalance: new BigNumber(0),
     };
 
-    it("populates redelegations fetched for the address, preserving the other fields", async () => {
-      const redelegations = [
-        {
-          validatorSrcAddress: "cosmosvaloper1src",
-          validatorDstAddress: "cosmosvaloper1dst",
-          amount: new BigNumber("1000000"),
-          completionDate: new Date("2026-01-01T00:00:00Z"),
-        },
-      ];
-      mockGetRedelegations.mockResolvedValue(redelegations);
+    it("populates the redelegations coin-cosmos reports for the address, preserving the other fields", async () => {
+      getAccountInfo.mockResolvedValue({
+        type: "cosmos",
+        redelegations: [
+          {
+            validatorSrcAddress: "cosmosvaloper1src",
+            validatorDstAddress: "cosmosvaloper1dst",
+            amount: "1000000000000000000000000",
+            completionDate: "2026-01-01T00:00:00.000Z",
+          },
+        ],
+      });
 
       const result = await cosmosBridge(cosmos).enrichStakingResources!(
         cosmos,
         "cosmos1a",
         [],
         base,
+        chainReads,
       );
 
-      expect(mockGetRedelegations).toHaveBeenCalledWith("cosmos", "uatom", "cosmos1a");
-      expect(result.redelegations).toEqual(redelegations);
+      expect(getAccountInfo).toHaveBeenCalledWith("cosmos1a");
+      expect(result.redelegations).toEqual([
+        {
+          validatorSrcAddress: "cosmosvaloper1src",
+          validatorDstAddress: "cosmosvaloper1dst",
+          amount: new BigNumber("1000000000000000000000000"),
+          completionDate: new Date("2026-01-01T00:00:00Z"),
+        },
+      ]);
       expect(result.delegatedBalance).toBe(base.delegatedBalance);
+    });
+
+    it.each([
+      ["metadata of another chain", { type: "none" }],
+      ["no redelegation list", { type: "cosmos" }],
+    ])("reports no redelegation for %s", async (_label, info) => {
+      getAccountInfo.mockResolvedValue(info);
+
+      const result = await cosmosBridge(cosmos).enrichStakingResources!(
+        cosmos,
+        "cosmos1a",
+        [],
+        base,
+        chainReads,
+      );
+
+      expect(result.redelegations).toEqual([]);
+    });
+
+    it("rejects when the read fails, so the sync keeps the base staking resources", async () => {
+      const failure = new Error("lcd down");
+      getAccountInfo.mockRejectedValue(failure);
+
+      expect(cosmosBridge(cosmos).enrichStakingResources).toBe(enrichStakingResources);
+      await expect(enrichStakingResources(cosmos, "cosmos1a", [], base, chainReads)).rejects.toBe(
+        failure,
+      );
     });
   });
 

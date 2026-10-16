@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { CosmosCoinConfig, CosmosContext } from "../config";
+import { getAccountInfo } from "../logic/account/getAccountInfo";
 import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
 import { lastBlock } from "../logic/history/lastBlock";
@@ -57,6 +58,10 @@ async function resolve(
  */
 export function createApi(currencyId: string) {
   return {
+    getAccountInfo: async (context, address) => {
+      const { api, config } = await resolve(context, currencyId);
+      return getAccountInfo(config, api, currencyId, address);
+    },
     getBalance: async (context, address, options?) => {
       const { api, config } = await resolve(context, currencyId);
       return rejectBalanceOptions(() => getBalance(config, api, address), options);

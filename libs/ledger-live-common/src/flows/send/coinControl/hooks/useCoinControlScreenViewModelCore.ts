@@ -7,7 +7,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
 import { sendFeatures } from "../../../../bridge/descriptor/send/features";
 import type { CoinControlDisplayData } from "../../../../bridge/descriptor/types";
-import { getChangeToReturn } from "../utils/changeToReturn";
+import { BigNumber } from "bignumber.js";
 import { useSendFlowAmountReviewCore } from "../../hooks/useSendFlowAmountReviewCore";
 import { useCoinControlAmountInput } from "./useCoinControlAmountInput";
 
@@ -131,18 +131,12 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
   const isCustomPickingStrategy = useMemo(
     () =>
       customStrategyValue !== undefined &&
-      "utxoStrategy" in transaction &&
-      transaction.utxoStrategy !== null &&
-      transaction.utxoStrategy.strategy === customStrategyValue,
-    [customStrategyValue, transaction],
+      coinControlConfig?.getStrategyValue(transaction) === customStrategyValue,
+    [coinControlConfig, customStrategyValue, transaction],
   );
 
   const customInsufficientUtxoForChangeRow = useMemo(() => {
-    const isCustomStrategy =
-      customStrategyValue != null &&
-      "utxoStrategy" in transaction &&
-      transaction.utxoStrategy != null &&
-      transaction.utxoStrategy.strategy === customStrategyValue;
+    const isCustomStrategy = isCustomPickingStrategy;
     const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
     if (!isCustomStrategy || !hasFilledAmount) return false;
 
@@ -156,7 +150,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     const isInsufficientFundsBridgeError = status.errors?.amount?.name === "NotEnoughBalance";
 
     return isInsufficientFundsBridgeError || hasNoSelectedUtxo;
-  }, [customStrategyValue, status, transaction, utxoDisplayData]);
+  }, [isCustomPickingStrategy, status, transaction, utxoDisplayData]);
 
   const changeToReturn = useMemo((): CoinControlChangeToReturnViewModel => {
     const placeholder = customInsufficientUtxoForChangeRow
@@ -165,7 +159,8 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     const hasAmountForChange = transaction.useAllAmount || transaction.amount?.gt(0);
     let value = "";
     if (hasAmountForChange && !customInsufficientUtxoForChangeRow) {
-      const changeAmount = getChangeToReturn(status);
+      const changeAmount =
+        coinControlConfig?.getChangeToReturn({ transaction, status }) ?? new BigNumber(0);
       value = formatCurrencyUnit(accountUnit, changeAmount, {
         showCode: true,
         disableRounding: true,
@@ -179,14 +174,14 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     };
   }, [
     accountUnit,
+    coinControlConfig,
     customInsufficientUtxoForChangeRow,
     labels.changeToReturnLabel,
     labels.enterAmountPlaceholder,
     labels.selectSufficientCoinsPlaceholder,
     locale,
     status,
-    transaction.amount,
-    transaction.useAllAmount,
+    transaction,
   ]);
 
   const onSelectStrategy = useCallback(
@@ -215,11 +210,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
   }, [utxoDisplayData?.pickingStrategyOptions, labels]);
 
   const resolvedAmountError = useMemo(() => {
-    const isCustomStrategy =
-      customStrategyValue != null &&
-      "utxoStrategy" in transaction &&
-      transaction.utxoStrategy != null &&
-      transaction.utxoStrategy.strategy === customStrategyValue;
+    const isCustomStrategy = isCustomPickingStrategy;
     const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
     if (isCustomStrategy && !hasFilledAmount) return undefined;
 
@@ -247,7 +238,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     }
 
     return amountError;
-  }, [amountError, bridgePending, customStrategyValue, status, transaction, utxoDisplayData]);
+  }, [amountError, bridgePending, isCustomPickingStrategy, status, transaction, utxoDisplayData]);
 
   const onToggleUtxoExclusion = useCallback(
     (rowKey: string) => {

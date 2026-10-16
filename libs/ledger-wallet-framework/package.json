@@ -96,6 +96,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@ledgerhq/account-module-framework": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",

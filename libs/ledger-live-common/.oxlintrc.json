@@ -153,7 +153,338 @@
       }
     },
     {
-      "files": ["**/*.test.{ts,tsx}", "**/__tests__/**"],
+      "files": [
+        "src/bridge/generic-coin-framework/portfolio/**",
+        "src/bridge/generic-coin-framework/assembly/**",
+        "src/bridge/generic-coin-framework/chainReads.ts",
+        "src/bridge/generic-coin-framework/familyReads.ts",
+        "src/families/*/bridge/api.ts"
+      ],
+      "rules": {
+        "eslint/no-restricted-globals": [
+          "error",
+          {
+            "name": "require",
+            "message": "require() goes around the import boundary of the portfolio path (spec §0.1): import the module, so that the restricted imports apply."
+          }
+        ],
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              "lodash",
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/types",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView",
+                  "CryptoCurrencyId",
+                  "TokenCurrencyId",
+                  "CryptoCurrencyIdSchema",
+                  "TokenCurrencyIdSchema"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              },
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/api",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView",
+                  "CryptoCurrencyId",
+                  "TokenCurrencyId",
+                  "CryptoCurrencyIdSchema",
+                  "TokenCurrencyIdSchema"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              },
+              {
+                "name": "ethers",
+                "importNames": [
+                  "ethers",
+                  "default",
+                  "JsonRpcProvider",
+                  "JsonRpcApiProvider",
+                  "AbstractProvider",
+                  "BrowserProvider",
+                  "WebSocketProvider",
+                  "SocketProvider",
+                  "FallbackProvider",
+                  "InfuraProvider",
+                  "AlchemyProvider",
+                  "AnkrProvider",
+                  "CloudflareProvider",
+                  "EtherscanProvider",
+                  "PocketProvider",
+                  "QuickNodeProvider",
+                  "FetchRequest",
+                  "getDefaultProvider"
+                ],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "name": "@ledgerhq/coin-evm/staking",
+                "importNames": [
+                  "getValidators",
+                  "prefetchValidators",
+                  "fetchRedelegations",
+                  "fetchUnbondings",
+                  "isSeiAccountUnassociated"
+                ],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "name": "@ledgerhq/coin-evm/logic",
+                "importNames": [
+                  "broadcast",
+                  "lastBlock",
+                  "getBalance",
+                  "estimateFees",
+                  "listOperations",
+                  "craftTransaction",
+                  "getNextSequence",
+                  "validateIntent",
+                  "getStakes",
+                  "getBlock",
+                  "getBlockInfo",
+                  "getAdditionalLayer2Fees"
+                ],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+                "message": "Please remove the /lib import from live-common import."
+              },
+              {
+                "group": [
+                  "@ledgerhq/live-common/currencies",
+                  "@ledgerhq/live-common/currencies/index",
+                  "@ledgerhq/live-common/currencies/helpers"
+                ],
+                "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
+                "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
+              },
+              {
+                "group": ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
+                "importNamePattern": "^createApi$",
+                "message": "Reach a coin module through getCoinModuleApi (bridge/generic-coin-framework/api), which applies the framework's withDefaults. Since a module may omit the capabilities its chain lacks, calling createApi directly yields an object with those methods missing, and the call fails at runtime with nothing failing at compile time. If a direct call is genuinely needed, add the file to the exemptions in this config and record in the PR why it cannot break."
+              },
+              {
+                "group": ["@ledgerhq/live-network", "@ledgerhq/live-network/*"],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "regex": "^@ledgerhq/coin-[^/]+/(.+/)?network",
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "group": ["ethers/providers", "ethers/lib.*/providers/*"],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "regex": "^(\\.{1,2}/)+(bridge/generic-coin-framework/)?api(/index)?$",
+                "message": "getCoinModuleApi bypasses the portfolio layer: the portfolio path calls the coin module only through PortfolioApi (spec §0.1). Only GCF/legacyChainReads.ts and the legacy path may resolve it."
+              },
+              {
+                "regex": "(^|/)a4(/|$)",
+                "message": "A4 is legacy-only: with portfolio.enabled, registration and reads go through PortfolioApi (spec §0.1, G4)."
+              },
+              {
+                "group": ["axios", "axios/*", "undici", "undici/*", "http", "https", "node:http", "node:https"],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "regex": "(^|/)coin-modules/registry$",
+                "message": "The coin-module registry builds a raw coin module around the portfolio layer (spec §0.1): the portfolio path calls the coin module only through PortfolioApi."
+              },
+              {
+                "regex": "(^|/)families/[^/]+/coinModuleApi$",
+                "message": "A family's coin module factory builds a raw coin module around the portfolio layer (spec §0.1): the portfolio path calls the coin module only through PortfolioApi."
+              },
+              {
+                "regex": "(^|/)legacyChainReads$",
+                "message": "The legacy chain reads are the legacy path's (spec §0.1): the portfolio path never consults them. Only GCF/chainReads.ts, which switches paths, and a family's bridge/api.ts, which attaches its own, import them."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/bridge/generic-coin-framework/chainReads.ts",
+        "src/families/*/bridge/api.ts"
+      ],
+      "rules": {
+        "eslint/no-restricted-globals": [
+          "error",
+          {
+            "name": "require",
+            "message": "require() goes around the import boundary of the portfolio path (spec §0.1): import the module, so that the restricted imports apply."
+          }
+        ],
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              "lodash",
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/types",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView",
+                  "CryptoCurrencyId",
+                  "TokenCurrencyId",
+                  "CryptoCurrencyIdSchema",
+                  "TokenCurrencyIdSchema"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              },
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/api",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView",
+                  "CryptoCurrencyId",
+                  "TokenCurrencyId",
+                  "CryptoCurrencyIdSchema",
+                  "TokenCurrencyIdSchema"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              },
+              {
+                "name": "ethers",
+                "importNames": [
+                  "ethers",
+                  "default",
+                  "JsonRpcProvider",
+                  "JsonRpcApiProvider",
+                  "AbstractProvider",
+                  "BrowserProvider",
+                  "WebSocketProvider",
+                  "SocketProvider",
+                  "FallbackProvider",
+                  "InfuraProvider",
+                  "AlchemyProvider",
+                  "AnkrProvider",
+                  "CloudflareProvider",
+                  "EtherscanProvider",
+                  "PocketProvider",
+                  "QuickNodeProvider",
+                  "FetchRequest",
+                  "getDefaultProvider"
+                ],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "name": "@ledgerhq/coin-evm/staking",
+                "importNames": [
+                  "getValidators",
+                  "prefetchValidators",
+                  "fetchRedelegations",
+                  "fetchUnbondings",
+                  "isSeiAccountUnassociated"
+                ],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "name": "@ledgerhq/coin-evm/logic",
+                "importNames": [
+                  "broadcast",
+                  "lastBlock",
+                  "getBalance",
+                  "estimateFees",
+                  "listOperations",
+                  "craftTransaction",
+                  "getNextSequence",
+                  "validateIntent",
+                  "getStakes",
+                  "getBlock",
+                  "getBlockInfo",
+                  "getAdditionalLayer2Fees"
+                ],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+                "message": "Please remove the /lib import from live-common import."
+              },
+              {
+                "group": [
+                  "@ledgerhq/live-common/currencies",
+                  "@ledgerhq/live-common/currencies/index",
+                  "@ledgerhq/live-common/currencies/helpers"
+                ],
+                "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
+                "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
+              },
+              {
+                "group": ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
+                "importNamePattern": "^createApi$",
+                "message": "Reach a coin module through getCoinModuleApi (bridge/generic-coin-framework/api), which applies the framework's withDefaults. Since a module may omit the capabilities its chain lacks, calling createApi directly yields an object with those methods missing, and the call fails at runtime with nothing failing at compile time. If a direct call is genuinely needed, add the file to the exemptions in this config and record in the PR why it cannot break."
+              },
+              {
+                "group": ["@ledgerhq/live-network", "@ledgerhq/live-network/*"],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "regex": "^@ledgerhq/coin-[^/]+/(.+/)?network",
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "group": ["ethers/providers", "ethers/lib.*/providers/*"],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "regex": "^(\\.{1,2}/)+(bridge/generic-coin-framework/)?api(/index)?$",
+                "message": "getCoinModuleApi bypasses the portfolio layer: the portfolio path calls the coin module only through PortfolioApi (spec §0.1). Only GCF/legacyChainReads.ts and the legacy path may resolve it."
+              },
+              {
+                "regex": "(^|/)a4(/|$)",
+                "message": "A4 is legacy-only: with portfolio.enabled, registration and reads go through PortfolioApi (spec §0.1, G4)."
+              },
+              {
+                "group": ["axios", "axios/*", "undici", "undici/*", "http", "https", "node:http", "node:https"],
+                "message": "The portfolio path reaches the network only through PortfolioApi (spec §0.1): a network read goes in GCF/legacyChainReads.ts or FAM/<family>/bridge/legacyChainReads.ts, which the portfolio path never consults."
+              },
+              {
+                "regex": "(^|/)coin-modules/registry$",
+                "message": "The coin-module registry builds a raw coin module around the portfolio layer (spec §0.1): the portfolio path calls the coin module only through PortfolioApi."
+              },
+              {
+                "regex": "(^|/)families/[^/]+/coinModuleApi$",
+                "message": "A family's coin module factory builds a raw coin module around the portfolio layer (spec §0.1): the portfolio path calls the coin module only through PortfolioApi."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "**/*.test.{ts,tsx}",
+        "**/__tests__/**",
+        "src/bridge/generic-coin-framework/portfolio/parity/**"
+      ],
       "env": {
         "jest": true
       },
@@ -161,6 +492,7 @@
       "rules": {
         "typescript/no-explicit-any": "warn",
         "eslint/no-console": "off",
+        "eslint/no-restricted-globals": "off",
         "eslint/no-restricted-imports": "off"
       }
     },
@@ -168,7 +500,6 @@
       "files": [
         "src/families/*/coinModuleApi.ts",
         "src/families/evm/getTokenAllowance.ts",
-        "src/families/tezos/bridge/api.ts",
         "src/families/canton/bridge/mock.ts"
       ],
       "rules": {

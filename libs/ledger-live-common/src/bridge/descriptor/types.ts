@@ -70,8 +70,14 @@ export type CustomFeeConfig = Readonly<{
   inputs: readonly CustomFeeInputDescriptor[];
   /** Extract initial values from the current transaction */
   getInitialValues: (transaction: unknown) => Record<string, string>;
-  /** Build a transaction patch from the user-entered values */
-  buildTransactionPatch: (values: Record<string, string>) => Record<string, unknown>;
+  /**
+   * Build a transaction patch from the user-entered values. The patch is merged shallowly, so a
+   * family keeping its fee inputs in a nested bag merges into `transaction`'s.
+   */
+  buildTransactionPatch: (
+    values: Record<string, string>,
+    transaction?: unknown,
+  ) => Record<string, unknown>;
 }>;
 
 export type CustomFeeInputValueTransform = Readonly<{
@@ -206,6 +212,10 @@ export type CoinControlBuildToggleRowExclusionPatchParams = Readonly<{
  */
 export type CoinControlConfig = Readonly<{
   customStrategyValue: number;
+  /** The picking strategy the transaction uses, when it carries one. */
+  getStrategyValue: (transaction: Transaction) => number | undefined;
+  /** What the transaction gives back to the account as change. */
+  getChangeToReturn: (params: { transaction: Transaction; status: unknown }) => BigNumber;
   getDisplayData: (params: CoinControlGetDisplayDataParams) => CoinControlDisplayData | null;
   buildStrategyChangePatch: (
     params: CoinControlBuildStrategyChangePatchParams,

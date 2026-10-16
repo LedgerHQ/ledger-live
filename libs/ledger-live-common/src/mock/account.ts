@@ -11,7 +11,7 @@ import {
 import { getAccountBridge } from "../bridge";
 import { getLoadedMockAccountForFamily, loadMockAccountForFamily } from "../coin-modules/registry";
 import { CosmosAccount } from "../families/cosmos/types";
-import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import type { BitcoinAccount } from "../families/bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
 import type { TezosAccount } from "../families/tezos/types";
 import type { TronAccount } from "../families/tron/types";

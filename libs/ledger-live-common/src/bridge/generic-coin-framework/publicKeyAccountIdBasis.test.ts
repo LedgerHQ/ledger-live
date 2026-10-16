@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { publicKeyAccountIdBasis } from "./getAccountShape";
+import { publicKeyAccountIdBasis } from "./publicKeyAccountIdBasis";
 
 const PUBLIC_KEY = "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 const ADDRESS = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";

@@ -3,32 +3,27 @@ import { HEDERA_TRANSACTION_MODES, OP_TYPES_EXCLUDING_FEES } from "@ledgerhq/coi
 import type { HederaAccountInfo } from "@ledgerhq/coin-hedera/logic/getAccountInfo";
 import { getAssetFromToken } from "@ledgerhq/coin-hedera/logic/getAssetFromToken";
 import { getTokenFromAsset } from "@ledgerhq/coin-hedera/logic/getTokenFromAsset";
-import { apiClient } from "@ledgerhq/coin-hedera/network/api";
-import type { HederaCoinConfig, HederaResources, HederaTxData } from "@ledgerhq/coin-hedera/types";
+import type { HederaResources, HederaTxData } from "@ledgerhq/coin-hedera/types";
 import type { AccountInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type {
   BridgeApi,
+  ChainReads,
   FamilyAccountShape,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { isStakingAccount, type Account, type Operation } from "@ledgerhq/types-live";
 import groupBy from "lodash/groupBy";
 import omit from "lodash/omit";
-import { getCurrencyConfiguration } from "../../../config";
 
-export async function getAddressesForPublicKey(
-  currency: CryptoCurrency,
-  publicKey: string,
+/** The accounts a device key controls: the network hands Hedera addresses out (ADR-055). */
+export function getAddressesForPublicKey(
+  derived: GetAddressResult,
+  chain: ChainReads,
 ): Promise<string[]> {
-  const config = getCurrencyConfiguration<HederaCoinConfig>(currency.id);
-  const accounts = await apiClient.getAccountsForPublicKey({
-    configOrCurrencyId: config,
-    publicKey,
-  });
-
-  return accounts.map(a => a.account);
+  return chain.getAddressesForPublicKey(derived.publicKey);
 }
 
 // Every Hedera account sits on the seed path (`44/3030`), so its key is `seedIdentifier`.
@@ -219,10 +214,7 @@ export function adaptOperations(address: string, operations: Operation[]): Opera
 
 export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
   return {
-    addressLookup: {
-      getAddresses: derived => getAddressesForPublicKey(currency, derived.publicKey),
-      keyControlsAccount,
-    },
+    addressLookup: { getAddresses: getAddressesForPublicKey, keyControlsAccount },
     getTokenFromAsset: asset => getTokenFromAsset(currency.id, asset),
     getAssetFromToken,
     buildAccountShape,

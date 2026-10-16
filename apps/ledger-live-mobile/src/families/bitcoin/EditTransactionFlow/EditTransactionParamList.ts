@@ -1,7 +1,8 @@
-import type { EditType, TransactionRaw } from "@ledgerhq/coin-bitcoin/types";
 import type BigNumber from "bignumber.js";
 import type {
+  EditType,
   Transaction as BitcoinTransaction,
+  TransactionRaw,
   TransactionStatus as BitcoinTransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";

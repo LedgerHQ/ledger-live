@@ -1,10 +1,8 @@
 import BigNumber from "bignumber.js";
-import flatten from "lodash/flatten";
 import sortBy from "lodash/sortBy";
 import { NotEnoughBalance } from "../errors";
 import { Output } from "../storage/types";
-import Xpub from "../xpub";
-import { PickingStrategy } from "./types";
+import { PickingStrategy, type UtxoSelection, withoutExcludedUtxos } from "./types";
 import * as utils from "../utils";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { OutputInfo } from "..";
@@ -13,29 +11,14 @@ import { OutputInfo } from "..";
  * prioritizes the oldest UTXOs in the current transaction
  */
 export class DeepFirst extends PickingStrategy {
-  async selectUnspentUtxosToUse(
+  selectFromUtxos(
     logger: Logger,
-    xpub: Xpub,
+    candidates: Output[],
     outputs: OutputInfo[],
     feePerByte: number,
-  ): Promise<{
-    unspentUtxos: Output[];
-    totalValue: BigNumber;
-    fee: number;
-    needChangeoutput: boolean;
-  }> {
-    // get the utxos to use as input
-    // from all addresses of the account
-    const addresses = await xpub.getXpubAddresses();
+  ): UtxoSelection {
     logger("picking strategy", "Deepfirst");
-    let unspentUtxos = flatten(
-      await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
-    ).filter(
-      o =>
-        !this.excludedUTXOs.filter(
-          x => x.hash === o.output_hash && x.outputIndex === o.output_index,
-        ).length,
-    );
+    let unspentUtxos = withoutExcludedUtxos(candidates, this.excludedUTXOs);
 
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     const outputScripts = outputs.map(o => o.script);

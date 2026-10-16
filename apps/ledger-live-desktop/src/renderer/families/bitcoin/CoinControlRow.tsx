@@ -13,8 +13,9 @@ import { SplitAddress, Cell } from "~/renderer/components/OperationsList/Address
 import {
   BitcoinAccount,
   BitcoinOutput,
+  getFamilySpecificData,
+  getFeeParameters,
   Transaction,
-  TransactionStatus,
   UtxoStrategy,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -22,7 +23,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type CoinControlRowProps = {
   utxo: BitcoinOutput;
   utxoStrategy: UtxoStrategy;
-  status: TransactionStatus;
+  transaction: Transaction;
   account: BitcoinAccount;
   totalExcludedUTXOS: number;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
@@ -58,7 +59,7 @@ const Container = styled(Box).attrs<{
 export const CoinControlRow = ({
   utxo,
   utxoStrategy,
-  status,
+  transaction,
   account,
   totalExcludedUTXOS,
   updateTransaction,
@@ -67,8 +68,8 @@ export const CoinControlRow = ({
   const unit = useAccountUnit(account);
   const s = getUTXOStatus(utxo, utxoStrategy);
   const utxoStatus = s.excluded ? s.reason || "" : "";
-  const input = (status.txInputs || []).find(
-    input => input.previousOutputIndex === utxo.outputIndex && input.previousTxHash === utxo.hash,
+  const input = (getFeeParameters(transaction).inputs || []).find(
+    input => input.vout === utxo.outputIndex && input.txid === utxo.hash,
   );
   const unconfirmed = utxoStatus === "pickPendingUtxo";
   const last = !s.excluded && totalExcludedUTXOS + 1 === account.bitcoinResources?.utxos.length; // make sure that at least one utxo is selected
@@ -76,20 +77,22 @@ export const CoinControlRow = ({
   const confirmations = utxo.blockHeight ? account.blockHeight - utxo.blockHeight : 0;
   const onClick = () => {
     if (disabled) return;
-    const patch = {
-      utxoStrategy: {
-        ...utxoStrategy,
-        excludeUTXOs: !s.excluded
-          ? utxoStrategy.excludeUTXOs.concat({
-              hash: utxo.hash,
-              outputIndex: utxo.outputIndex,
-            })
-          : utxoStrategy.excludeUTXOs.filter(
-              e => e.hash !== utxo.hash || e.outputIndex !== utxo.outputIndex,
-            ),
-      },
+    const nextUtxoStrategy = {
+      ...utxoStrategy,
+      excludeUTXOs: !s.excluded
+        ? utxoStrategy.excludeUTXOs.concat({
+            hash: utxo.hash,
+            outputIndex: utxo.outputIndex,
+          })
+        : utxoStrategy.excludeUTXOs.filter(
+            e => e.hash !== utxo.hash || e.outputIndex !== utxo.outputIndex,
+          ),
     };
-    updateTransaction((t: Transaction) => bridge.updateTransaction(t, patch));
+    updateTransaction((t: Transaction) =>
+      bridge.updateTransaction(t, {
+        familySpecificData: { ...getFamilySpecificData(t), utxoStrategy: nextUtxoStrategy },
+      }),
+    );
   };
   return (
     <Container disabled={unconfirmed} flow={2} horizontal alignItems="center" onClick={onClick}>

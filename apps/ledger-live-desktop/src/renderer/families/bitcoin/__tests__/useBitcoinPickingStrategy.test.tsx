@@ -6,6 +6,8 @@ import { act, renderHook, waitFor } from "tests/testSetup";
 import useBitcoinPickingStrategy from "../useBitcoinPickingStrategy";
 
 type StrategyProps = { strategy: number };
+// widened so that rerendering with another strategy typechecks
+const strategyProps = (strategy: number): StrategyProps => ({ strategy });
 
 describe("useBitcoinPickingStrategy", () => {
   const selectableStrategyKeySet = new Set(
@@ -52,7 +54,7 @@ describe("useBitcoinPickingStrategy", () => {
     const { result, rerender } = renderHook(
       ({ strategy }: StrategyProps) => useBitcoinPickingStrategy(strategy),
       {
-        initialProps: { strategy: bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST },
+        initialProps: strategyProps(bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST),
       },
     );
 
@@ -69,7 +71,7 @@ describe("useBitcoinPickingStrategy", () => {
     const { result, rerender } = renderHook(
       ({ strategy }: StrategyProps) => useBitcoinPickingStrategy(strategy),
       {
-        initialProps: { strategy: bitcoinPickingStrategy.MERGE_OUTPUTS },
+        initialProps: strategyProps(bitcoinPickingStrategy.MERGE_OUTPUTS),
       },
     );
 

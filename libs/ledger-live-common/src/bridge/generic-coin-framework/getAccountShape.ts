@@ -1,15 +1,8 @@
-import {
-  decodeAccountId,
-  encodeAccountId,
-  getSyncHash,
-} from "@ledgerhq/ledger-wallet-framework/account/index";
-import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
-import chunk from "lodash/chunk";
-import groupBy from "lodash/groupBy";
+import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
+import type { Account } from "@ledgerhq/types-live";
 import { A4Client } from "./a4/client/index";
 import { deriveA4AccountId } from "./a4/client/accountId";
 import { fetchA4Operations } from "./a4/client/operations";
@@ -22,458 +15,20 @@ import { resolveOperationHistoryBound } from "./operationHistoryBound";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { getAccountModuleShape } from "./accountModule";
+import { assembleAccountShape } from "./assembly";
+import { listedOperations, walkListing } from "./assembly/operations";
+import { addressAccountId, isSyncFromScratch, tokensSyncHash } from "./assembly/syncHash";
+import { readsValidators, toValidatorItems } from "./assembly/validators";
+import { readFamilyData } from "./familyReads";
+import { coinModuleChainReads } from "./legacyChainReads";
+import { isPortfolioEnabledFor } from "./portfolio/config";
+import { getPortfolioAccountShape } from "./portfolio/shape";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
-import {
-  adaptCoreOperationToLiveOperation,
-  cleanedOperation,
-  extractBalance,
-  optionalNumeric,
-  sumBalance,
-} from "./utils";
-import {
-  buildSubOperationIndex,
-  type SubOperationIndex,
-} from "@ledgerhq/ledger-wallet-framework/serialization";
-import { boundByTransaction } from "./boundByTransaction";
-import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import { paginateOperations } from "./paginateOperations";
-import type {
-  AssetInfo,
-  Balance,
-  BalanceOptions,
-  Operation,
-  Stake,
-} from "@ledgerhq/coin-module-framework/api/types";
-import type { OperationCommon } from "./types";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type {
-  Account,
-  AccountIdParams,
-  AccountReadiness,
-  StakingDelegation,
-  StakingDelegationStatus,
-  StakingPositionDetails,
-  StakingResources,
-  StakingUnbonding,
-  TokenAccount,
-} from "@ledgerhq/types-live";
-import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
+import { adaptCoreOperationToLiveOperation } from "./utils";
+import type { CoinFrameworkSigner, OperationCommon } from "./types";
 import { CurrencyRegionRestrictedError } from "../../errors";
 import { isRegionRestrictedFailure } from "./regionRestriction";
-
-function isNftCoreOp(operation: Operation): boolean {
-  return (
-    typeof operation.details?.ledgerOpType === "string" &&
-    ["NFT_IN", "NFT_OUT"].includes(operation.details?.ledgerOpType)
-  );
-}
-
-function isIncomingCoreOp(operation: Operation): boolean {
-  const type =
-    typeof operation.details?.ledgerOpType === "string"
-      ? operation.details.ledgerOpType
-      : operation.type;
-
-  return type === "IN";
-}
-
-function isInternalLiveOp(operation: OperationCommon): boolean {
-  return !!operation.extra?.internal;
-}
-
-function hasStake(balance: Balance): balance is Balance & { stake: Stake } {
-  return balance.stake !== undefined;
-}
-
-function hasActiveStake(balance: Balance): balance is Balance & {
-  stake: Stake & { state: "active" | "activating" };
-} {
-  return balance.stake !== undefined && ["active", "activating"].includes(balance.stake.state);
-}
-
-function hasDeactivatingStake(balance: Balance): balance is Balance & {
-  stake: Stake;
-} {
-  const state = balance.stake?.state;
-  // `inactive` would otherwise fall through both lists and vanish from `stakingResources`.
-  return state === "deactivating" || state === "withdrawable" || state === "inactive";
-}
-
-function delegatedAmountForStakingResources(b: Balance): bigint {
-  return b.stake?.amount ?? 0n;
-}
-
-function deriveDelegationStatus(
-  stakeState: Stake["state"],
-  detailStatus: unknown,
-): StakingDelegationStatus {
-  if (stakeState === "activating") return "activating";
-  if (detailStatus === "unbonding" || detailStatus === "unbonded") return detailStatus;
-  return "bonded";
-}
-
-function stakingPositionDetails(stake: Stake): StakingPositionDetails {
-  const details = stake.details ?? {};
-  const activeAmount = optionalNumeric(details.activeAmount);
-  const inactiveAmount = optionalNumeric(details.inactiveAmount);
-  const withdrawableAmount = optionalNumeric(details.withdrawableAmount);
-  const lockedReserve = optionalNumeric(details.lockedReserve);
-
-  // `!== undefined`, not truthiness: a zero amount is meaningful.
-  return {
-    ...(stake.uid ? { positionId: stake.uid } : {}),
-    ...(activeAmount !== undefined ? { activeAmount } : {}),
-    ...(inactiveAmount !== undefined ? { inactiveAmount } : {}),
-    ...(withdrawableAmount !== undefined ? { withdrawableAmount } : {}),
-    ...(lockedReserve !== undefined ? { lockedReserve } : {}),
-    ...(typeof details.canStake === "boolean" ? { canStake: details.canStake } : {}),
-    ...(typeof details.canWithdraw === "boolean" ? { canWithdraw: details.canWithdraw } : {}),
-  };
-}
-
-/**
- * On-Account shape for `stakingPositions`: framework `Stake` with `bigint`
- * amounts converted to `BigNumber`, matching the convention used elsewhere on
- * the Account (`balance`, `spendableBalance`, `stakingResources.*`).
- */
-type StakingPositionOnAccount = Omit<Stake, "amount" | "amountDeposited" | "amountRewarded"> & {
-  amount: BigNumber;
-  amountDeposited?: BigNumber;
-  amountRewarded?: BigNumber;
-};
-
-function toStakingPositionOnAccount(stake: Stake): StakingPositionOnAccount {
-  const { amount, amountDeposited, amountRewarded, ...rest } = stake;
-  return {
-    ...rest,
-    amount: new BigNumber(amount.toString()),
-    ...(amountDeposited !== undefined && {
-      amountDeposited: new BigNumber(amountDeposited.toString()),
-    }),
-    ...(amountRewarded !== undefined && {
-      amountRewarded: new BigNumber(amountRewarded.toString()),
-    }),
-  };
-}
-
-/** True when the op is a main-account (native) op, not a token/sub-account op */
-function isNativeLiveOp(operation: OperationCommon): boolean {
-  const assetReference = operation.extra?.assetReference;
-  const assetOwner = operation.extra?.assetOwner;
-  const hasAssetReference = typeof assetReference === "string" && assetReference.length > 0;
-  const hasAssetOwner = typeof assetOwner === "string" && assetOwner.length > 0;
-
-  // Native ops are those that do not have a non-empty asset reference/owner
-  return !(hasAssetReference || hasAssetOwner);
-}
-
-/**
- * Parent recipients for token-only ops: use the token contract (assetReference), not the token transfer recipient.
- */
-function getTokenContract(op: OperationCommon): string | undefined {
-  const ref = op.extra?.assetReference;
-  return typeof ref === "string" && ref.length > 0 ? ref : undefined;
-}
-
-/** Get the fee payer for this tx from the op (from API/extra). */
-function getFeePayer(op: OperationCommon): string | undefined {
-  const fp = op.extra?.feePayer;
-  return typeof fp === "string" && fp.length > 0 ? fp : undefined;
-}
-
-/** Compare two addresses for equality, ignoring case. */
-function isSameAddress(a: string, b: string): boolean {
-  return a.toLowerCase() === b.toLowerCase();
-}
-
-/** True when the native op is outbound with value equal to fee (fees-only). */
-function isFeesOnlyNativeOp(op: OperationCommon): boolean {
-  return op.type === "OUT" && op.value !== null && op.fee != null && op.value.eq(op.fee);
-}
-
-/** Emit one parent op per native op: FEES when fees-only, otherwise passthrough. */
-function parentOpsFromNativeOps(
-  nativeOps: OperationCommon[],
-  accountId: string,
-  subOperations: OperationCommon[],
-  internalOperations: OperationCommon[],
-): OperationCommon[] {
-  const out: OperationCommon[] = [];
-  for (const nativeOp of nativeOps) {
-    // Native outgoing operation with value 0 (only fees) => output as single FEES op
-    if (isFeesOnlyNativeOp(nativeOp)) {
-      out.push(
-        cleanedOperation({
-          id: encodeOperationId(accountId, nativeOp.hash, "FEES"),
-          hash: nativeOp.hash,
-          accountId,
-          type: "FEES",
-          value: nativeOp.fee,
-          fee: nativeOp.fee,
-          blockHash: nativeOp.blockHash,
-          blockHeight: nativeOp.blockHeight,
-          senders: nativeOp.senders,
-          recipients: nativeOp.recipients,
-          date: nativeOp.date,
-          transactionSequenceNumber: nativeOp.transactionSequenceNumber,
-          hasFailed: nativeOp.hasFailed,
-          extra: nativeOp.extra,
-          subOperations,
-          internalOperations,
-        }),
-      );
-    }
-    // Otherwise, don't transform the operation
-    else {
-      out.push(
-        cleanedOperation({
-          ...nativeOp,
-          subOperations,
-          internalOperations,
-        }),
-      );
-    }
-  }
-  return out;
-}
-
-/** One synthetic FEES or NONE parent when the tx has no native ops (e.g. token-only). */
-function syntheticParentForTokenOnlyTx(
-  referenceOp: OperationCommon,
-  accountId: string,
-  address: string,
-  subOperations: OperationCommon[],
-  internalOperations: OperationCommon[],
-): OperationCommon {
-  // Parent op is FEES only when the account actually paid a fee; NONE otherwise. A zero fee (e.g. a
-  // token send whose energy/bandwidth is fully covered) is not a FEES row — it stays hidden as NONE
-  // rather than surfacing an empty "0 fee" parent. An undefined fee is treated as paid, preserving the
-  // prior behaviour for ops synced without a fee value.
-  const feePayer = getFeePayer(referenceOp);
-  const isFeePayer = feePayer !== undefined && isSameAddress(address, feePayer);
-  const paysFee = isFeePayer && !referenceOp.fee?.isZero();
-  const parentType = paysFee ? "FEES" : "NONE";
-  const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);
-  // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
-  // is why we need to extract this information from the operation details.
-  const contract = getTokenContract(referenceOp);
-  const parentRecipients = contract === undefined ? (referenceOp.recipients ?? []) : [contract];
-  const parentSenders = referenceOp.senders ?? [];
-  return cleanedOperation({
-    id: encodeOperationId(accountId, referenceOp.hash, parentType),
-    hash: referenceOp.hash,
-    accountId,
-    type: parentType,
-    value: parentValue,
-    fee: referenceOp.fee,
-    blockHash: referenceOp.blockHash,
-    blockHeight: referenceOp.blockHeight,
-    senders: parentSenders,
-    recipients: parentRecipients,
-    date: referenceOp.date,
-    transactionSequenceNumber: referenceOp.transactionSequenceNumber,
-    hasFailed: referenceOp.hasFailed,
-    extra: referenceOp.extra,
-    subOperations,
-    internalOperations,
-  });
-}
-
-/** Parent op(s) for a tx that has non-internal ops (native and/or token). */
-function parentOpsForTxWithNonInternalOperations(
-  hash: string,
-  transactionOps: OperationCommon[],
-  internalOperations: OperationCommon[],
-  subOperationIndex: SubOperationIndex,
-  accountId: string,
-  address: string,
-): OperationCommon[] {
-  const nativeOps = transactionOps.filter(isNativeLiveOp);
-  // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
-  const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
-
-  // If transaction has native ops, use them as parents
-  if (nativeOps.length > 0)
-    return parentOpsFromNativeOps(nativeOps, accountId, subOperations, internalOperations);
-
-  // If transaction has no native ops, create a synthetic parent
-  const firstOp = transactionOps[0];
-  return [
-    syntheticParentForTokenOnlyTx(firstOp, accountId, address, subOperations, internalOperations),
-  ];
-}
-
-/**
- * Synthetic NONE parent for a tx that has only internal ops (e.g. contract transfer from B to C).
- * This case happens when an address A calls a smart contract, that performs a transfer from B to C,
- * seen from B or C's perspective. The parent operation is of type NONE, with A as the sender
- * (empty if unknown) and the contract as the recipient. Internal ops are attached to the NONE parent,
- * not emitted as additional top-level operations.
- */
-function parentOpsForTxWithOnlyInternalOperations(
-  hash: string,
-  internalOperations: OperationCommon[],
-  subOperationIndex: SubOperationIndex,
-  accountId: string,
-): OperationCommon[] {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
-  const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
-  const firstInternal = internalOperations[0];
-  if (!firstInternal) return [];
-
-  const feePayer = getFeePayer(firstInternal);
-  return [
-    cleanedOperation({
-      id: encodeOperationId(accountId, hash, "NONE"),
-      hash,
-      accountId,
-      type: "NONE",
-      value: new BigNumber(0),
-      fee: firstInternal.fee,
-      blockHash: firstInternal.blockHash,
-      blockHeight: firstInternal.blockHeight,
-      senders: feePayer ? [feePayer] : [],
-      recipients: firstInternal.senders,
-      date: firstInternal.date,
-      transactionSequenceNumber: firstInternal.transactionSequenceNumber,
-      hasFailed: firstInternal.hasFailed,
-      extra: firstInternal.extra,
-      subOperations,
-      internalOperations,
-    }),
-  ];
-}
-
-/**
- * Emit parent operations per tx hash: one top-level operation per transaction for normal transactions,
- * two for self-sends (IN + OUT). Internal-only transactions produce a single NONE parent with internal
- * ops attached, not emitted as additional top-level operations.
- */
-function buildParentOperations(
-  // Built once for all transactions rather than once per hash — the group-once pattern below
-  // already applies to the other side of this join (transactions grouped by hash); this applies it
-  // to the sub-account side.
-  subOperationIndex: SubOperationIndex,
-  newNonInternalOperations: OperationCommon[],
-  newInternalOperations: OperationCommon[],
-  accountId: string,
-  address: string,
-): OperationCommon[] {
-  const nonInternalByHash = groupBy(newNonInternalOperations, "hash");
-  const internalByHash = groupBy(newInternalOperations, "hash");
-
-  const result: OperationCommon[] = [];
-
-  // Inspect non-internal ops first to create parent ops
-  for (const [hash, transactionOps] of Object.entries(nonInternalByHash)) {
-    const internalOperations = internalByHash[hash] ?? [];
-    result.push(
-      ...parentOpsForTxWithNonInternalOperations(
-        hash,
-        transactionOps,
-        internalOperations,
-        subOperationIndex,
-        accountId,
-        address,
-      ),
-    );
-  }
-
-  // If transaction only has internal ops, we must create a synthetic parent op as well
-  for (const [hash, internalOperations] of Object.entries(internalByHash)) {
-    if (hash in nonInternalByHash) continue;
-    result.push(
-      ...parentOpsForTxWithOnlyInternalOperations(
-        hash,
-        internalOperations,
-        subOperationIndex,
-        accountId,
-      ),
-    );
-  }
-
-  return result;
-}
-
-const TOKEN_LOOKUP_BATCH_SIZE = 50;
-
-// Lower-cased, like every other asset reference comparison here: a chain's balance response and
-// its own derivations aren't guaranteed to agree on casing.
-function lowercasedReference(asset: AssetInfo): string | undefined {
-  return "assetReference" in asset && asset.assetReference
-    ? asset.assetReference.toLowerCase()
-    : undefined;
-}
-
-/**
- * The assets of walked token transfers that have no entry in `balances`, as the family would list
- * them in `knownAssets`. Only a token the family resolves and the user has not blacklisted
- * qualifies: `buildSubAccounts` drops any other one regardless, and an unlisted (spam) transfer
- * would otherwise cost a balance read on every sync it appears in.
- *
- * A lookup that fails is not an unlisted token, and is left to fail the sync: swallowed, the
- * token would be skipped while this sync still advances the watermark past its transfer, and no
- * later sync would look for it again. Failed, the sync is retried from the same watermark.
- */
-async function resolveUnbalancedTokenAssets(
-  operations: OperationCommon[],
-  balances: Balance[],
-  {
-    getTokenFromAsset,
-    getAssetFromToken,
-  }: Pick<BridgeApi, "getTokenFromAsset" | "getAssetFromToken">,
-  address: string,
-  blacklistedTokenIds: string[],
-): Promise<AssetInfo[]> {
-  if (!getTokenFromAsset || !getAssetFromToken) return [];
-
-  const balanced = new Set(balances.map(b => lowercasedReference(b.asset)));
-  const unbalanced = new Map<string, OperationCommon>();
-  for (const op of operations) {
-    const reference = String(op.extra.assetReference).toLowerCase();
-    if (!balanced.has(reference) && !unbalanced.has(reference)) unbalanced.set(reference, op);
-  }
-
-  const resolve = async (op: OperationCommon) => {
-    // `"token"` when the precise type is unknown, as when building a transaction intent.
-    const token = await getTokenFromAsset({
-      type: "token",
-      assetReference: String(op.extra.assetReference),
-      assetOwner: String(op.extra.assetOwner),
-    });
-    return token && !blacklistedTokenIds.includes(token.id)
-      ? getAssetFromToken(token, address)
-      : undefined;
-  };
-  // In batches: a walk of a spam-heavy address can carry thousands of distinct unlisted
-  // references, each a crypto-assets store lookup.
-  const assets: (AssetInfo | undefined)[] = [];
-  for (const batch of chunk([...unbalanced.values()], TOKEN_LOOKUP_BATCH_SIZE)) {
-    assets.push(...(await Promise.all(batch.map(resolve))));
-  }
-  return assets.filter((asset): asset is AssetInfo => asset !== undefined);
-}
-
-/**
- * Points each parent at the token rows `subOperationIndex` holds for its hash -- what restoring the
- * account computes from its stored sub-accounts. A parent whose links already match is returned
- * as-is, so an unchanged history allocates nothing.
- */
-function relinkSubOperations(
-  operations: OperationCommon[],
-  subOperationIndex: SubOperationIndex,
-): OperationCommon[] {
-  return operations.map(op => {
-    const linked = subOperationIndex.get(op.hash) ?? [];
-    const current = op.subOperations ?? [];
-    // By reference, not id: `mergeOps` keeps an unchanged token row's object and replaces a row it
-    // updated under the same id, so an id match alone would leave the parent holding the old row.
-    const unchanged =
-      current.length === linked.length && current.every((sub, i) => sub === linked[i]);
-    return unchanged ? op : { ...op, subOperations: linked };
-  });
-}
 
 // A4 being intentionally off for a chain is a per-chain steady-state config fact, not a per-sync
 // event: logged once per chain per process, same reasoning as loggedReadDecisions below.
@@ -530,30 +85,65 @@ function logReadDecisionOnce(chain: string, decision: string, message: string): 
 }
 
 /**
- * The `xpubOrAddress` (and any `customData`) of a family keyed on the public key
- * (`BridgeApi.accountIdFromPublicKey`). The stored id wins over the live public key, so a sync never
- * re-keys an account, including one a legacy bridge once keyed on its address. Only a scan, which
- * has no stored id, uses the key.
+ * The balance options of a resumed sync: the family's own, plus the assets the account already
+ * holds (`knownAssets`) and the height its scan resumes from (`scanAssetsMinHeight`), so the module
+ * scans from the watermark instead of the whole history and still returns a balance for a token
+ * last moved below it.
+ *
+ * No options at all unless the family declares some: coin-tron and coin-casper wrap their
+ * `getBalance` in `rejectBalanceOptions`, which throws on any truthy value, `{}` included. Declaring
+ * `balanceOptions` is what marks a family as accepting the parameter, and evm is today the only one
+ * whose module reads these two fields. Checked before deriving `knownAssets`, not after: a family
+ * that doesn't declare `balanceOptions` never uses that list, and `getAssetFromToken` is not
+ * guaranteed not to throw on every family that happens to declare it (coin-tron does, for its own
+ * reasons).
+ *
+ * The list is a filtered view -- the family's `includeAssets` keeps only CAL-resolvable tokens --
+ * but that filter is hashed into `syncHash`, so the day a token becomes listed the hash changes, the
+ * sync goes from scratch, and scans from 0 with no `knownAssets`. Completeness therefore holds by
+ * induction within one hash generation.
+ *
+ * All or nothing: the module reads `knownAssets` as *every* asset already held, and scans only from
+ * `scanAssetsMinHeight` on that assumption. A stored sub-account that failed to convert (a throwing
+ * `getAssetFromToken` included: it must not fail the whole sync over one sub-account) would be
+ * missing from that list, and if it hasn't moved since the watermark, from the scanned window too:
+ * gone from the balance response entirely, not merely stale. A conversion failure falls back to a
+ * full scan instead.
+ *
+ * Assigned onto a typed object, never spread into a literal: a spread escapes excess-property
+ * checking, so this would compile against a framework without the fields and ship as a silent no-op.
  */
-export function publicKeyAccountIdBasis(
+function resumedBalanceOptions(
+  { balanceOptions, getAssetFromToken }: Pick<BridgeApi, "balanceOptions" | "getAssetFromToken">,
   initialAccount: Account | undefined,
-  publicKey: string | undefined,
   address: string,
-): Pick<AccountIdParams, "xpubOrAddress" | "customData"> {
-  if (initialAccount) {
+  minHeight: number,
+): BalanceOptions | undefined {
+  if (!balanceOptions || minHeight === 0) return balanceOptions;
+
+  const rawKnownAssets = (initialAccount?.subAccounts ?? []).map(sub => {
     try {
-      const { xpubOrAddress, customData } = decodeAccountId(initialAccount.id);
-      return { xpubOrAddress, ...(customData && { customData }) };
+      return getAssetFromToken?.(sub.token, address);
     } catch {
-      // A malformed stored id falls through to the scan rule.
+      return undefined;
     }
-  }
-  return { xpubOrAddress: publicKey || address };
+  });
+  const knownAssets = rawKnownAssets.filter((asset): asset is AssetInfo => asset !== undefined);
+  if (!knownAssets.length || knownAssets.length !== rawKnownAssets.length) return balanceOptions;
+
+  const scoped: BalanceOptions = { ...balanceOptions };
+  scoped.knownAssets = knownAssets;
+  scoped.scanAssetsMinHeight = minHeight;
+  return scoped;
 }
 
-export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
+export function genericGetAccountShape(
+  network: string,
+  kind: string,
+  signer?: CoinFrameworkSigner,
+): GetAccountShape {
   return async (info, syncConfig) => {
-    const { address, initialAccount, currency, derivationMode, rest } = info;
+    const { address, initialAccount, currency } = info;
     const coinModuleApi = await getCoinModuleApi(currency.id, kind);
     const context = buildContext(currency.id);
     const bridgeApi = await getBridgeApi(currency, network);
@@ -562,131 +152,49 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     if (chainSpecificValidation) {
       chainSpecificValidation.getAccountShape(address);
     }
-    // `getAccountInfo` (ADR-045) is fetched only when a family declares a mapper: coin-tezos
-    // implements the fetch without one, so an unconditional call would add a request to every tezos
-    // sync for a result nothing reads.
-    //
-    // Deliberately uncaught, unlike `validatorsPromise` / `readinessPromise` below: those are the
-    // framework's own optional enrichments, whereas what this hook returns is the family's contract —
-    // it may be fields that family's screens require (a tron account derives `isAccountEmpty` from
-    // `tronResources.bandwidth.freeLimit`, so a missing `tronResources` breaks that check and hides
-    // its staking actions) or something cosmetic, and the framework cannot tell. Catching here would impose degradation on every family with no way back; a family whose
-    // contribution is optional catches inside its own hook and returns undefined, which this path
-    // already treats as nothing to contribute.
-    const buildShape = bridgeApi.buildAccountShape;
-    const chainSpecificShapePromise = buildShape
-      ? Promise.resolve(coinModuleApi.getAccountInfo?.(context, address)).then(accountInfo =>
-          buildShape(address, accountInfo),
-        )
-      : Promise.resolve(undefined);
-    // Started now but only awaited in the `Promise.all` below, after `getSyncHash`. A handler
-    // attached up front keeps a rejection in the meantime from surfacing as unhandled -- and covers
-    // the case where `getSyncHash` itself rejects and that `Promise.all` is never reached. The
-    // rejection still fails the sync through the `Promise.all`.
-    chainSpecificShapePromise.catch(() => undefined);
-    const accountId = encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: currency.id,
-      derivationMode,
-      ...(bridgeApi.accountIdFromPublicKey
-        ? publicKeyAccountIdBasis(initialAccount, rest?.publicKey, address)
-        : { xpubOrAddress: address }),
-    });
 
-    void registerWithA4(currency.id, address);
-    const validatorsPromise = bridgeApi.stakingSupported
-      ? coinModuleApi
-          .getValidators(context)
-          .then(page =>
-            page.items.map(validator => ({
-              validatorAddress: validator.address,
-              name: validator.name ?? validator.address,
-              commission: Number(validator.commissionRate ?? 0),
-              tokens: (validator.balance ?? 0n).toString(),
-              votingPower: 0,
-              estimatedYearlyRewardsRate: Number(validator.apy ?? 0),
-            })),
-          )
-          .catch(() => [])
-      : Promise.resolve([]);
+    // The coin config of the currency serves its accounts through the portfolio layer.
+    if (isPortfolioEnabledFor(currency.id)) {
+      const { fromOperationExtraRaw } = await getAccountRawAssignHooks(network);
+      return getPortfolioAccountShape(info, syncConfig, {
+        bridgeApi,
+        coinModuleApi,
+        context,
+        signer,
+        reviveFamilyExtra: fromOperationExtraRaw,
+        bound: resolveOperationHistoryBound(currency.id, network),
+      });
+    }
 
-    const readinessPromise: Promise<AccountReadiness | undefined> = bridgeApi.getAccountReadiness
-      ? bridgeApi.getAccountReadiness(currency, address).catch(e => {
-          log("generic-coin-framework", "getAccountReadiness failed, leaving readiness undefined", {
-            error: e instanceof Error ? e.message : String(e),
-          });
-          return undefined;
-        })
-      : Promise.resolve(undefined);
+    // The account is served by an account module, which owns its addresses (ADR-064 Option 1).
+    if (bridgeApi.accountModule) {
+      if (!signer) throw new Error(`No signer to sync a ${network} account`);
+      return getAccountModuleShape(bridgeApi.accountModule, info, {
+        api: coinModuleApi,
+        context,
+        signerContext: signer.context,
+      });
+    }
 
-    const sequencePromise: Promise<number | undefined> = bridgeApi.accountSequenceSupported
-      ? coinModuleApi.getNextSequence(context, address).then(Number)
-      : Promise.resolve(undefined);
-
-    // Normalize pre-coin-framework operations to the new accountId to keep UI rendering consistent
-    const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
-      op.accountId === accountId
-        ? op
-        : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
+    // The family hooks read the chain through these only: the coin module, and the reads the family
+    // makes beyond it on this path.
+    const chain = coinModuleChainReads(
+      coinModuleApi,
+      context,
+      bridgeApi.legacyChainReads?.(currency, coinModuleApi, context),
     );
-    const tokensSyncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
-    const syncHash = bridgeApi.syncVersion
-      ? `${tokensSyncHash}-${bridgeApi.syncVersion}`
-      : tokensSyncHash;
-    const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
+    const accountId = addressAccountId(info, bridgeApi);
+    const syncHash = await tokensSyncHash(currency.id, syncConfig, bridgeApi);
     // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
     // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
     // documents its own as volatile). Only the cursor varies from page to page below.
-    const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
+    const minHeight = isSyncFromScratch(initialAccount, syncHash)
+      ? 0
+      : (initialAccount?.operations?.[0]?.blockHeight ?? 0) + 1;
 
-    // No options at all unless the family declares some: coin-tron and coin-casper wrap their
-    // `getBalance` in `rejectBalanceOptions`, which throws on any truthy value, `{}` included.
-    // Declaring `balanceOptions` is what marks a family as accepting the parameter, and evm is
-    // today the only one whose module reads these two fields. Checked before deriving `knownAssets`
-    // below, not after: a family that doesn't declare `balanceOptions` never uses that list, and
-    // `getAssetFromToken` is not guaranteed not to throw on every family that happens to declare
-    // it (coin-tron does, for its own reasons) -- there is no reason to pay that cost or take that
-    // risk for a result that would be discarded regardless.
-    //
-    // Assigned onto a typed object, never spread into a literal: a spread escapes
-    // excess-property checking, so this would compile against a framework without the fields and
-    // ship as a silent no-op.
-    let balanceOptions: BalanceOptions | undefined = bridgeApi.balanceOptions;
-    if (balanceOptions && !syncFromScratch) {
-      // Assets this account already stores, so the module scans from the watermark instead of the
-      // whole history and still returns a balance for a token last moved below it.
-      //
-      // This list is a filtered view -- the family's `includeAssets` keeps only CAL-resolvable
-      // tokens -- but that filter is hashed into `syncHash`, so the day a token becomes listed the
-      // hash changes, `syncFromScratch` goes true, and the next sync scans from 0 with no
-      // `knownAssets`. Completeness therefore holds by induction within one hash generation.
-      //
-      // Guarded the same way as `vanishedTokenBalances` below: a throwing family implementation
-      // must not fail the whole sync over one sub-account.
-      const rawKnownAssets = ((initialAccount?.subAccounts ?? []) as TokenAccount[]).map(sub => {
-        try {
-          return bridgeApi.getAssetFromToken?.(sub.token, address);
-        } catch {
-          return undefined;
-        }
-      });
-      const knownAssets = rawKnownAssets.filter((asset): asset is AssetInfo => asset !== undefined);
+    void registerWithA4(currency.id, address);
 
-      // All or nothing: the module reads `knownAssets` as *every* asset already held, and scans
-      // only from `scanAssetsMinHeight` on that assumption. One stored sub-account that failed to
-      // convert would be missing from that list, and if it hasn't moved since the watermark it
-      // would be missing from the scanned window too -- gone from the balance response entirely,
-      // not merely stale (the vanished-token path downstream then either drops it or reports it at
-      // zero). A conversion failure falls back to a full scan instead.
-      if (knownAssets.length && knownAssets.length === rawKnownAssets.length) {
-        const scoped: BalanceOptions = { ...balanceOptions };
-        scoped.knownAssets = knownAssets;
-        scoped.scanAssetsMinHeight = minHeight;
-        balanceOptions = scoped;
-      }
-    }
-
+    const balanceOptions = resumedBalanceOptions(bridgeApi, initialAccount, address, minHeight);
     const readBalance = (options: BalanceOptions | undefined) =>
       coinModuleApi.getBalance(context, address, options).catch(async err => {
         // The config rejects when the currency has none, which is not a region restriction.
@@ -698,153 +206,21 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       });
     const balancePromise = readBalance(balanceOptions);
 
-    const [blockInfo, balanceRes, validators, readiness, chainSpecificShape, sequence] =
-      await Promise.all([
-        coinModuleApi.lastBlock(context),
-        balancePromise,
-        validatorsPromise,
-        readinessPromise,
-        chainSpecificShapePromise,
-        sequencePromise,
-      ]);
-
-    const nativeAsset = bridgeApi.partitionsNativeBalance
-      ? sumBalance(balanceRes, "native")
-      : extractBalance(balanceRes, "native");
-    const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
-
-    // A token account fully swept to zero can disappear entirely from the balance response
-    // (some chains' balance-listing endpoints only return non-zero holdings) rather than being
-    // reported with a 0 value. `buildSubAccounts` below only ever processes tokens present in
-    // this list, so without this, a previously-tracked token that vanished from a fresh balance
-    // read would never be re-processed -- silently freezing its subAccount's balance and
-    // operations at their pre-sweep state forever instead of ever reflecting the sweep.
-    const getAssetFromToken = bridgeApi.getAssetFromToken;
-    // Lower-cased: a chain's balance-listing response and its own `getAssetFromToken` derivation
-    // aren't guaranteed to agree on reference casing (observed on Stacks -- the balance response
-    // lowercases addresses, `getAssetFromToken` returns the contract address verbatim/uppercase),
-    // so a case-sensitive comparison here would misclassify an still-held, non-zero token as
-    // vanished and inject a spurious zero-value duplicate for it.
-    const freshAssetReferences = new Set(
-      freshTokenAssetsBalances
-        .map(b => ("assetReference" in b.asset ? b.asset.assetReference : undefined))
-        .filter((ref): ref is string => !!ref)
-        .map(ref => ref.toLowerCase()),
-    );
-    // Not gated on "fresh list non-empty": a wallet whose only token gets fully swept legitimately
-    // reports an empty token list on the next balance read (some chains, e.g. Stacks, omit
-    // zero-balance entries entirely), and that sweep must still zero the sub-account. Gating this
-    // on list-non-emptiness (to defend against a hypothetical degraded 200 with a truncated token
-    // list) breaks exactly that real case -- reproduced by the coin-tester's "Send max CTT"
-    // scenario, which never converges because the lone token's balance is never seen as "gone".
-    // A family's balance hook throwing/degrading already rejects the `Promise.all` above and
-    // aborts the whole sync, rather than silently reaching this point with a partial result.
-    const vanishedTokenBalances: Balance[] = getAssetFromToken
-      ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
-          // A throwing family implementation must not fail the whole sync over one sub-account.
-          let asset: ReturnType<typeof getAssetFromToken>;
-          try {
-            asset = getAssetFromToken(subAccount.token, address);
-          } catch {
-            return [];
-          }
-          if (
-            !asset ||
-            !("assetReference" in asset) ||
-            !asset.assetReference ||
-            freshAssetReferences.has(asset.assetReference.toLowerCase())
-          ) {
-            return [];
-          }
-          return [{ value: 0n, asset }];
-        })
-      : [];
-    const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
-
-    const usesStakingPositions = bridgeApi.usesStakingPositions === true;
-
-    const nativeBalance = nativeAsset?.value ?? 0n;
-    const nativeLocked = nativeAsset?.locked ?? 0n;
-    const spendableBalance = nativeBalance - nativeLocked;
-
-    let stakingResources: StakingResources | undefined;
-    let stakingPositions: StakingPositionOnAccount[] = [];
-    let delegationsCount = 0;
-    let unbondingsCount = 0;
-    if (usesStakingPositions) {
-      // Per-stake positions preserved so the UI can group by uid prefix
-      // (delegation-* / stake-* / unstaking-* / finalizable-*). `bigint` framework
-      // amounts are converted to `BigNumber` to match the Account-side convention
-      // (balance, spendableBalance, stakingResources also use BigNumber).
-      stakingPositions = balanceRes.filter(hasStake).map(b => toStakingPositionOnAccount(b.stake));
-    } else {
-      const activeStakes = balanceRes.filter(hasActiveStake);
-      const deactivatingStakes = balanceRes.filter(hasDeactivatingStake);
-
-      const delegatedBalance = activeStakes.reduce(
-        (acc, b) => acc + delegatedAmountForStakingResources(b),
-        0n,
-      );
-      const unbondingBalance = deactivatingStakes.reduce(
-        (acc, b) => acc + delegatedAmountForStakingResources(b),
-        0n,
-      );
-      const pendingRewardsBalance = activeStakes.reduce(
-        (acc, b) => acc + (b.stake.amountRewarded ?? 0n),
-        0n,
-      );
-
-      const delegations: StakingDelegation[] = activeStakes.map(b => {
-        const delegated: bigint = delegatedAmountForStakingResources(b);
-        const rewarded: bigint = b.stake.amountRewarded ?? 0n;
-        const validatorId = b.stake.details?.validatorId;
-        const validatorName = b.stake.details?.validatorName;
-        const sharesRaw = b.stake.details?.shares;
-        const detailStatus = b.stake.details?.status;
-        return {
-          ...stakingPositionDetails(b.stake),
-          validatorAddress: b.stake.delegate ?? "",
-          amount: new BigNumber(delegated.toString()),
-          pendingRewards: new BigNumber(rewarded.toString()),
-          status: deriveDelegationStatus(b.stake.state, detailStatus),
-          ...(typeof validatorId === "string" ? { validatorId } : {}),
-          ...(typeof validatorName === "string" ? { validatorName } : {}),
-          ...(typeof sharesRaw === "bigint" ? { shares: new BigNumber(sharesRaw.toString()) } : {}),
-        };
-      });
-      const unbondings: StakingUnbonding[] = deactivatingStakes.map(b => {
-        const delegated: bigint = delegatedAmountForStakingResources(b);
-        const validatorId = b.stake.details?.validatorId;
-        const validatorName = b.stake.details?.validatorName;
-        const withdrawId = b.stake.details?.withdrawId;
-
-        return {
-          ...stakingPositionDetails(b.stake),
-          validatorAddress: b.stake.delegate ?? "",
-          amount: new BigNumber(delegated.toString()),
-          completionDate: b.stake.stateUpdatedAt ?? new Date(),
-          // `inactive` also covers an idle stake, so trust `actions` rather than the state.
-          status:
-            b.stake.state === "withdrawable" || b.stake.actions?.includes("withdraw")
-              ? "withdrawable"
-              : "deactivating",
-          ...(typeof validatorId === "string" ? { validatorId } : {}),
-          ...(typeof validatorName === "string" ? { validatorName } : {}),
-          ...(typeof withdrawId === "number" ? { withdrawId } : {}),
-        };
-      });
-      stakingResources = {
-        delegations,
-        redelegations: [],
-        unbondings,
-        delegatedBalance: new BigNumber(delegatedBalance.toString()),
-        pendingRewardsBalance: new BigNumber(pendingRewardsBalance.toString()),
-        unbondingBalance: new BigNumber(unbondingBalance.toString()),
-        ...(validators.length > 0 ? { validators } : {}),
-      };
-      delegationsCount = delegations.length;
-      unbondingsCount = unbondings.length;
-    }
+    // The family's own reads (`buildAccountShape` and its `getAccountInfo` included, the account
+    // sequence) fail the sync when they reject: what a family contributes may be fields its screens
+    // require, which the framework cannot tell. Validators and readiness are optional enrichments,
+    // kept when they fail.
+    const [block, balances, validators, family] = await Promise.all([
+      coinModuleApi.lastBlock(context),
+      balancePromise,
+      readsValidators(bridgeApi)
+        ? coinModuleApi
+            .getValidators(context)
+            .then(page => toValidatorItems(page.items))
+            .catch(() => [])
+        : [],
+      readFamilyData(bridgeApi, chain, currency, address),
+    ]);
 
     const a4Network = toA4Network(currency.id);
     const a4ChainConfig = a4Network ? resolveA4ChainConfig(a4Network) : null;
@@ -853,68 +229,40 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // key) so a remote payload written in the same per-currency key space as every other config
     // in this framework actually matches. A bound always resolves -- the shipped default is a
     // measured safety ceiling, not `undefined` -- and a remote payload can only lower it, never
-    // raise or disable it. The walk bound below protects sync-time memory and traffic; the store
-    // bound applied after `mergeOps` (parent and per-sub-account) protects persistence and
+    // raise or disable it. The walk bound protects sync-time memory and traffic; the store bound
+    // the assembly applies after `mergeOps` (parent and per-sub-account) protects persistence and
     // stability across syncs -- bounding only the walk would still let the stored history grow
     // sync after sync, since `minHeight` resumes from the newest stored operation and `mergeOps`
     // appends.
-    const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id, network);
+    const bound = resolveOperationHistoryBound(currency.id, network);
 
     // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
     const delegateNewOps = async (): Promise<{
       operations: OperationCommon[];
       bounded: boolean;
     }> => {
-      // NFT and failed-incoming rows are dropped per page, before the walk counts them -- as the A4
-      // adapter does. Counted raw, a bounded prefix made only of such rows retained nothing: a first
-      // sync then kept `blockHeight: 0` and walked the same prefix again on every sync. An emptied
-      // page is followed like any other; a long run of them trips the empty-page budget.
-      const isUsable = (op: Operation) =>
-        !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed);
-      const { items: coreOps, bounded } = await paginateOperations(
-        cursor =>
-          coinModuleApi
-            .listOperations(context, address, {
-              minHeight,
-              cursor,
-              order: "desc",
-              // Sent only to a family whose `limit` support is established, and independently of
-              // `maxOperations`. Those are two different gates. `limit` bounds what one page costs
-              // (crash safety) while `maxOperations` bounds what is retained (a product decision), so
-              // coupling them would put crash safety behind a product call -- measured on the address
-              // from the out-of-memory report, a page size of 100 holds the sync flat whatever the
-              // retention bound, and sending no `limit` puts the Ledger-explorer arm back on its
-              // exhaustive path and reproduces the crash.
-              //
-              // But support is a real gate: the contract requires a module to *raise* when sent a
-              // `limit` it does not support, so sending one blindly fails the sync of every such
-              // family. Omitting the key entirely, rather than passing `undefined`, keeps the option
-              // absent for them -- which is their behaviour today.
-              ...(pageSize !== undefined ? { limit: pageSize } : {}),
-            })
-            .then(page => ({ ...page, items: page.items.filter(isUsable) })),
-        maxOperations,
-        op => op.tx.block?.height,
-        op => op.tx.date?.getTime(),
+      // NFT and failed-incoming operations are dropped per page, before the bound counts them (the
+      // A4 adapter does it on its own reads).
+      const { items: coreOps, bounded } = await walkListing(
+        options => coinModuleApi.listOperations(context, address, options),
+        minHeight,
+        bound,
       );
       // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation
       // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the
       // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
       const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
-      const operations = coreOps.map(op =>
+      const operations = listedOperations(coreOps).map(op =>
         adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
       ) as OperationCommon[];
       return { operations, bounded };
     };
 
-    let newOps: OperationCommon[];
+    let newOperations: OperationCommon[];
     // True when this round's walk (A4 or delegate, whichever served it) stopped on the bound
-    // before finding out whether it reached back to `minHeight`. Merging its result with the
-    // older stored parent operations or sub-accounts would then leave a hole between the two --
-    // the same failure the block-cut inside `paginateOperations` exists to avoid one level down --
-    // so a bounded round is treated the same way a from-scratch sync already is: nothing older is
-    // carried over, only what this round actually saw.
-    let newOpsBounded = false;
+    // before finding out whether it reached back to `minHeight`: the assembly then carries nothing
+    // older over (see `ChainSnapshot.bounded`).
+    let bounded: boolean;
 
     if (a4Network && a4ChainConfig?.read) {
       try {
@@ -931,11 +279,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           // Both bounds the delegate gets: the walk bound, without which a large A4-backed
           // account materialises its whole history before the store bound runs, and the page
           // size, without which a single response can do the same on its own.
-          maxOperations,
-          pageSize,
+          maxOperations: bound.maxOperations,
+          pageSize: bound.pageSize,
         });
-        newOps = a4Result.operations as OperationCommon[];
-        newOpsBounded = a4Result.bounded;
+        newOperations = a4Result.operations as OperationCommon[];
+        bounded = a4Result.bounded;
         logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
       } catch (e) {
         const status = toA4HttpError(e).status;
@@ -955,7 +303,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           status,
           error: e,
         });
-        ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
+        ({ operations: newOperations, bounded } = await delegateNewOps());
       }
     } else {
       if (a4Network) {
@@ -965,203 +313,29 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           "A4 read is off for this chain, delegate is used",
         );
       }
-      ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
+      ({ operations: newOperations, bounded } = await delegateNewOps());
     }
 
-    if (bridgeApi.adaptOperations) {
-      newOps = bridgeApi.adaptOperations(address, newOps) as OperationCommon[];
-    }
-
-    // A bounded round is treated the same way a from-scratch sync already is for both merges
-    // below: `newOpsBounded` means the walk stopped before finding out whether it reached back to
-    // `minHeight`, so nothing already stored can be assumed contiguous with what it fetched. The
-    // alternative -- merging anyway -- would leave a hole strictly between the old watermark and
-    // wherever this round's bound cut, which is worse than a short history: nothing revisits it,
-    // because the *next* watermark derives from this round's newest operation, past the hole.
-    // A bounded round always carries at least one usable operation: both walks filter before the
-    // bound counts, and a bounded stop never returns an empty list.
-    const discardOld = syncFromScratch || newOpsBounded;
-
-    const newAssetOperations = newOps.filter(
-      operation =>
-        operation?.extra?.assetReference &&
-        operation?.extra?.assetOwner &&
-        !["OPT_IN", "OPT_OUT"].includes(operation.type),
-    );
-
-    const newInternalOperations: OperationCommon[] = [];
-    const newNonInternalOperations: OperationCommon[] = [];
-    for (const op of newOps) {
-      if (isInternalLiveOp(op)) newInternalOperations.push(op);
-      else newNonInternalOperations.push(op);
-    }
-
-    // The balance read ran before the walk, so it only looked for tokens up to that moment. A
-    // token first received in between reaches `newAssetOperations` with no balance entry:
-    // `buildSubAccounts` would not create its sub-account, and the next sync -- resuming its scan
-    // past that transfer -- would not find it either. That holds after an unscoped read too: the
-    // next sync scopes its scan to the sub-accounts this one stores. Such a token is added to
-    // `knownAssets` and balances are read once more, with the same scan height, keeping only its
-    // entry. Limited to a family that declares `balanceOptions`, the one that accepts the fields.
-    const lateAssets = balanceOptions
-      ? await resolveUnbalancedTokenAssets(
-          newAssetOperations,
-          allTokenAssetsBalances,
-          bridgeApi,
-          address,
-          syncConfig.blacklistedTokenIds ?? [],
-        )
-      : [];
-    const lateReferences = new Set(lateAssets.map(lowercasedReference));
-    const lateTokenBalances =
-      balanceOptions && lateAssets.length
-        ? (
-            await readBalance({
+    return assembleAccountShape(
+      {
+        info,
+        syncConfig,
+        bridgeApi,
+        chain,
+        accountId,
+        syncHash,
+        maxOperations: bound.maxOperations,
+        // The balance read ran before the walk: a token first received in between is read again,
+        // from the same scan height, for a family that declares `balanceOptions`.
+        ...(balanceOptions && {
+          readTokenBalances: (assets: AssetInfo[]) =>
+            readBalance({
               ...balanceOptions,
-              knownAssets: [...(balanceOptions.knownAssets ?? []), ...lateAssets],
-            })
-          ).filter(b => lateReferences.has(lowercasedReference(b.asset)))
-        : [];
-
-    const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
-    const newSubAccounts = await buildSubAccounts({
-      accountId,
-      allTokenAssetsBalances: [...allTokenAssetsBalances, ...lateTokenBalances],
-      syncConfig,
-      operations: newAssetOperations,
-      getTokenFromAsset: bridgeApi.getTokenFromAsset,
-      familyShapes,
-    });
-    // A from-scratch sync goes through the same call with nothing stored, rather than around it:
-    // the bound has to apply to the sub-accounts this sync *creates* too. `paginateOperations`
-    // returns the whole page that reached the bound rather than splitting a transaction, so a walk
-    // bounded at N hands back up to N plus one page -- and all of that overshoot can belong to a
-    // single token.
-    //
-    // A bounded (but not from-scratch) round zeroes each sub-account's *operations* rather than
-    // dropping the sub-account itself: an empty `oldSubAccounts` array takes `mergeSubAccounts`'s
-    // early-return path, which hands back the freshly built sub-account as-is and skips the
-    // carry-over of `pendingOperations`, `swapHistory`, `balanceHistoryCache` and `creationDate`
-    // from the stored one -- fields `buildSubAccounts` cannot reconstruct (`swapHistory` in
-    // particular is local-only, never re-derivable from chain data). Emptying `operations` alone
-    // still starves `mergeOps` of the old rows that would otherwise straddle the un-walked
-    // interval, while keeping every sub-account matched so that carry-over still runs. Gated on
-    // `discardOld`, the same condition as the parent merge below, so both histories agree.
-    const subAccounts = mergeSubAccounts(
-      syncFromScratch
-        ? []
-        : (initialAccount?.subAccounts ?? []).map(sa =>
-            discardOld ? { ...sa, operations: [] } : sa,
-          ),
-      newSubAccounts,
-      maxOperations,
+              knownAssets: [...(balanceOptions.knownAssets ?? []), ...assets],
+            }),
+        }),
+      },
+      { balances, newOperations, bounded, tipHeight: block.height, validators, family },
     );
-
-    // From the bounded sub-accounts, not `newSubAccounts`: a restored account recomputes each
-    // parent's sub-operations from the stored (bounded) ones, so the synced shape has to as well.
-    // Confirmed rows only: every parent built or kept here is a confirmed transaction, and a token
-    // transfer that just confirmed still has its optimistic row in `pendingOperations` until
-    // `postSync` prunes it -- indexing that too would attach both rows to the same parent.
-    const confirmedSubOperationIndex = buildSubOperationIndex(
-      subAccounts.map(sa => ({ ...sa, pendingOperations: [] })),
-    );
-    const newOpsWithSubs = buildParentOperations(
-      confirmedSubOperationIndex,
-      newNonInternalOperations,
-      newInternalOperations,
-      accountId,
-      address,
-    );
-    // Try to refresh known pending and broadcasted operations (if not already updated)
-    // Useful for integrations without explorers. Not on a bounded round: it starts from an empty
-    // history, and a confirmation older than the walk's cut would sit below a gap nothing revisits.
-    // Those stay pending until a round that reaches them.
-    const operationsToRefresh = newOpsBounded
-      ? []
-      : initialAccount?.pendingOperations.filter(
-          pendingOp =>
-            pendingOp.hash && // operation has been broadcasted
-            !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
-        );
-    const confirmedOperations =
-      bridgeApi.refreshOperations && operationsToRefresh?.length
-        ? await bridgeApi.refreshOperations(operationsToRefresh)
-        : [];
-    const newOperations = [...confirmedOperations, ...newOpsWithSubs];
-    // A parent carried over from `oldOps` keeps the sub-operations it was stored with, some of
-    // which the token bound may just have evicted; relinked here, against the same index the
-    // parents built this round used, so every retained parent points at what is actually stored.
-    const mergedOperations = mergeOps(
-      discardOld ? [] : relinkSubOperations(oldOps, confirmedSubOperationIndex),
-      newOperations,
-    ) as OperationCommon[];
-    // Store bound: `mergeOps` returns newest-first (its own contract), so keeping the head keeps
-    // the newest -- this also keeps `minHeight` correct on the next sync, since it derives from
-    // the newest stored operation, which the head always retains. Cut on transactions rather than
-    // on a row index: `buildParentOperations` emits two top-level rows for a self-send, and a flat
-    // slice at that boundary would persist one and lose its sibling for good.
-    const operations = boundByTransaction(mergedOperations, maxOperations);
-    const stakingEnabled =
-      bridgeApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
-    let stakingShape: {
-      stakingResources?: StakingResources;
-      stakingPositions?: StakingPositionOnAccount[];
-    } = {};
-
-    const enrichedStakingResources =
-      stakingEnabled && bridgeApi.enrichStakingResources && stakingResources
-        ? await bridgeApi
-            .enrichStakingResources(currency, address, operations, stakingResources)
-            .catch(e => {
-              log(
-                "generic-coin-framework",
-                "enrichStakingResources failed, falling back to base staking resources",
-                { error: e instanceof Error ? e.message : String(e) },
-              );
-              return stakingResources;
-            })
-        : stakingResources;
-
-    if (usesStakingPositions) {
-      stakingShape = { stakingPositions };
-    } else if (stakingEnabled) {
-      stakingShape = { stakingResources: enrichedStakingResources };
-    }
-
-    // A shared xpub makes `sameAccountIdentity` merge the accounts.
-    const isXpubShared =
-      bridgeApi.addressLookup !== undefined &&
-      !getDerivationScheme({ derivationMode, currency }).includes("<account>");
-
-    const res: Partial<Account> & {
-      stakingResources?: StakingResources;
-      stakingPositions?: StakingPositionOnAccount[];
-    } = {
-      ...chainSpecificShape,
-      id: accountId,
-      // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
-      // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.
-      xpub: isXpubShared ? undefined : rest?.publicKey || initialAccount?.xpub || address,
-      blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
-      balance: new BigNumber(nativeBalance.toString()),
-      spendableBalance: new BigNumber(spendableBalance.toString()),
-      operations,
-      subAccounts,
-      // `operations.length`, i.e. the retained count once a bound applies, not the account's true
-      // count -- kept consistent with what is actually displayed rather than tracking a real
-      // count this bridge has no source of truth for. A bounded sync is still distinguishable via
-      // the `paginateOperations` log line (see `resolveOperationHistoryBound` above), which is
-      // this task's observability requirement; whether `operationsCount` itself should carry a
-      // different meaning is being decided on `account-data`'s own bridge (draft PRs #21560 and
-      // #21566) and is out of scope here.
-      operationsCount: operations.length,
-      syncHash,
-      // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
-      // readiness lookup retains the last persisted value instead of clearing it.
-      ...(readiness !== undefined ? { readiness } : {}),
-      ...(sequence !== undefined ? { sequence } : {}),
-      ...stakingShape,
-    };
-    return res;
   };
 }

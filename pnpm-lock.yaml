@@ -10496,6 +10496,114 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  libs/account-module-framework:
+    dependencies:
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 10.0.0
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  libs/account-modules/account-module-single-address:
+    dependencies:
+      '@ledgerhq/account-module-framework':
+        specifier: workspace:*
+        version: link:../../account-module-framework
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 10.0.0
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  libs/account-modules/account-module-utxo:
+    dependencies:
+      '@ledgerhq/account-module-framework':
+        specifier: workspace:*
+        version: link:../../account-module-framework
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 10.0.0
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   libs/asset-aggregation:
     dependencies:
       '@domain/api-aggregated-assets':
@@ -10951,12 +11059,12 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
+      '@ledgerhq/logs':
+        specifier: 'catalog:'
+        version: 6.19.0
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.1(@typescript/typescript6@6.0.2)
@@ -10966,9 +11074,6 @@ importers:
       '@ledgerhq/wallet-btc':
         specifier: workspace:^
         version: link:../../wallet-btc
-      '@noble/hashes':
-        specifier: 'catalog:'
-        version: 1.8.0
       axios:
         specifier: 'catalog:'
         version: 1.20.0
@@ -10978,24 +11083,9 @@ importers:
       bitcoinjs-lib:
         specifier: ^7.0.2
         version: 7.0.2(@typescript/typescript6@6.0.2)
-      bs58:
-        specifier: 'catalog:'
-        version: 4.0.1
       cashaddrjs:
         specifier: ^0.4.4
         version: 0.4.4
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      utility-types:
-        specifier: ^3.10.0
-        version: 3.11.0
     devDependencies:
       '@bitcoinerlab/secp256k1':
         specifier: 2.0.0
@@ -13278,6 +13368,9 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../ledger-live-common
       '@ledgerhq/live-config':
         specifier: 'catalog:'
         version: 3.9.0
@@ -14950,6 +15043,15 @@ importers:
       '@features/platform-market-countervalues':
         specifier: workspace:*
         version: link:../../features/platform/market-countervalues
+      '@ledgerhq/account-module-framework':
+        specifier: workspace:*
+        version: link:../account-module-framework
+      '@ledgerhq/account-module-single-address':
+        specifier: workspace:*
+        version: link:../account-modules/account-module-single-address
+      '@ledgerhq/account-module-utxo':
+        specifier: workspace:*
+        version: link:../account-modules/account-module-utxo
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../asset-aggregation
@@ -15202,6 +15304,18 @@ importers:
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
+      '@ledgerhq/portfolio-module-framework':
+        specifier: workspace:*
+        version: link:../portfolio-module-framework
+      '@ledgerhq/portfolio-module-hybrid':
+        specifier: workspace:*
+        version: link:../portfolio-modules/portfolio-module-hybrid
+      '@ledgerhq/portfolio-module-local':
+        specifier: workspace:*
+        version: link:../portfolio-modules/portfolio-module-local
+      '@ledgerhq/portfolio-module-portfolio-service':
+        specifier: workspace:*
+        version: link:../portfolio-modules/portfolio-module-portfolio-service
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -15628,6 +15742,9 @@ importers:
 
   libs/ledger-wallet-framework:
     dependencies:
+      '@ledgerhq/account-module-framework':
+        specifier: workspace:*
+        version: link:../account-module-framework
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 10.0.0
@@ -18139,6 +18256,144 @@ importers:
       ws:
         specifier: ^8.16.0
         version: 8.17.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+
+  libs/portfolio-module-framework:
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  libs/portfolio-modules/portfolio-module-hybrid:
+    dependencies:
+      '@ledgerhq/portfolio-module-framework':
+        specifier: workspace:*
+        version: link:../../portfolio-module-framework
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  libs/portfolio-modules/portfolio-module-local:
+    dependencies:
+      '@ledgerhq/account-module-framework':
+        specifier: workspace:*
+        version: link:../../account-module-framework
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 10.0.0
+      '@ledgerhq/portfolio-module-framework':
+        specifier: workspace:*
+        version: link:../../portfolio-module-framework
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  libs/portfolio-modules/portfolio-module-portfolio-service:
+    dependencies:
+      '@ledgerhq/portfolio-module-framework':
+        specifier: workspace:*
+        version: link:../../portfolio-module-framework
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/speculos-transport:
     dependencies:

@@ -7,6 +7,8 @@ import type { EvmTransactionEIP1559, EvmTransactionLegacy, Transaction } from ".
 import type { EditType, GasOptions } from "@ledgerhq/coin-evm/types";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { getCurrencyConfiguration } from "../../../config";
+import { isPortfolioEnabledFor } from "../../../bridge/generic-coin-framework/portfolio/config";
+import { editedTransactionGasOptions } from "./gasOptions";
 
 /**
  * Can't easily and properly use generics with Partial to avoid type casting
@@ -221,6 +223,21 @@ const getEip1559Patch = ({
   return patch;
 };
 
+/** The gas tracker's options of the coin module's network, for the legacy path. */
+async function trackedGasOptions(
+  currencyId: string,
+  useEIP1559: boolean,
+): Promise<GasOptions | undefined> {
+  const config = getCurrencyConfiguration<EvmConfigInfo>(currencyId);
+  const gasTracker = getGasTracker(config);
+  return gasTracker?.getGasOptions({ config, options: { useEIP1559 } });
+}
+
+/**
+ * The patch replacing a pending transaction, priced from the gas tracker's options: through the
+ * portfolio layer (the fee estimate of the edited transaction) when the coin config of the
+ * currency enables it, from the gas tracker of the coin module's network otherwise.
+ */
 export const getEditTransactionPatch = async ({
   editType,
   transaction,
@@ -231,19 +248,15 @@ export const getEditTransactionPatch = async ({
   account: Account;
 }): Promise<Partial<Transaction>> => {
   const { currency } = account;
-  const config = getCurrencyConfiguration<EvmConfigInfo>(account.currency.id);
-  const gasTracker = getGasTracker(config);
-
-  if (!gasTracker) {
-    throw new Error(`No gas tracker found for currency ${currency.id}`);
-  }
-
   const shouldUseEip1559 = transaction.type === 2;
 
-  const gasOptions = await gasTracker.getGasOptions({
-    config,
-    options: { useEIP1559: shouldUseEip1559 },
-  });
+  const gasOptions = isPortfolioEnabledFor(currency.id)
+    ? await editedTransactionGasOptions(account, transaction)
+    : await trackedGasOptions(currency.id, shouldUseEip1559);
+
+  if (!gasOptions) {
+    throw new Error(`No gas tracker found for currency ${currency.id}`);
+  }
 
   return shouldUseEip1559
     ? getEip1559Patch({ transaction, gasOptions, editType, account })

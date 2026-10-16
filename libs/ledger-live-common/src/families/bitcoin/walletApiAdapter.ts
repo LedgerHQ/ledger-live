@@ -1,49 +1,48 @@
-import { BitcoinTransaction as WalletAPIBitcoinTransaction } from "@ledgerhq/wallet-api-core";
-import {
+import type { BitcoinTransaction as WalletAPIBitcoinTransaction } from "@ledgerhq/wallet-api-core";
+import type {
   AreFeesProvided,
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
-import createTransaction from "@ledgerhq/coin-bitcoin/createTransaction";
-import { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import { createTransaction } from "../../bridge/generic-coin-framework/createTransaction";
+import type { BitcoinFamilySpecificData, Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
 const areFeesProvided: AreFeesProvided<WalletAPIBitcoinTransaction> = tx => !!tx.feePerByte;
 
+/**
+ * Wallet API transactions carry the bitcoin fields at the top level; on the generic coin framework
+ * they live in `familySpecificData` (ADR-065 D15).
+ */
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIBitcoinTransaction,
   Transaction
 > = ({ account, walletApiTransaction }) => {
-  const hasFeesProvided = areFeesProvided(walletApiTransaction);
+  const liveTx = createTransaction(account) as Transaction;
+  const familySpecificData: BitcoinFamilySpecificData = {
+    ...liveTx.familySpecificData,
+    ...(walletApiTransaction.feePerByte
+      ? { feePerByte: walletApiTransaction.feePerByte.toFixed() }
+      : {}),
+    ...(walletApiTransaction.opReturnData
+      ? { opReturnData: walletApiTransaction.opReturnData.toString("hex") }
+      : {}),
+    ...(walletApiTransaction.changeAddress
+      ? { changeAddress: walletApiTransaction.changeAddress }
+      : {}),
+  };
 
-  const liveTx: Transaction = createTransaction(account);
-
-  if (walletApiTransaction.amount) {
-    liveTx.amount = walletApiTransaction.amount;
-  }
-
-  if (walletApiTransaction.recipient) {
-    liveTx.recipient = walletApiTransaction.recipient;
-  }
-
-  if (walletApiTransaction.feePerByte) {
-    liveTx.feePerByte = walletApiTransaction.feePerByte;
-  }
-
-  if (walletApiTransaction.opReturnData) {
-    liveTx.opReturnData = walletApiTransaction.opReturnData;
-  }
-
-  if (walletApiTransaction.changeAddress) {
-    liveTx.changeAddress = walletApiTransaction.changeAddress;
-  }
-
-  if (hasFeesProvided) {
-    liveTx.feesStrategy = null;
-  }
-
-  return liveTx;
+  return {
+    ...liveTx,
+    // stays a bitcoin transaction on an account of another family, which the family check rejects
+    family: "bitcoin",
+    ...(walletApiTransaction.amount ? { amount: walletApiTransaction.amount } : {}),
+    ...(walletApiTransaction.recipient ? { recipient: walletApiTransaction.recipient } : {}),
+    // the live app's rate applies as is, no preset
+    ...(areFeesProvided(walletApiTransaction) ? { feesStrategy: null } : {}),
+    familySpecificData,
+  };
 };
 
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<

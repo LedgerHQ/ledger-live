@@ -301,7 +301,7 @@ export function useCustomFeesViewModelCore({
   const estimatedFeesFromInputs = useMemo(() => {
     if (!customFeeConfig || !allInputsValid || selectedInputValueTransform) return null;
 
-    const patch = customFeeConfig.buildTransactionPatch(canonicalValues);
+    const patch = customFeeConfig.buildTransactionPatch(canonicalValues, transaction);
 
     const directFees = patch["fees"];
     if (BigNumber.isBigNumber(directFees) && directFees.gt(0)) return directFees;
@@ -475,10 +475,9 @@ export function useCustomFeesViewModelCore({
   const handleConfirm = useCallback(() => {
     if (!customFeeConfig || isConfirmDisabled) return;
 
-    const patch = customFeeConfig.buildTransactionPatch(canonicalValues);
     transactionActions.updateTransaction(tx => ({
       ...tx,
-      ...patch,
+      ...customFeeConfig.buildTransactionPatch(canonicalValues, tx),
       // In max mode, amount is derived from balance - fees.
       // Reset to 0 to force bridge/status recomputation with the newly confirmed custom fees.
       ...(tx.useAllAmount ? { amount: new BigNumber(0) } : {}),

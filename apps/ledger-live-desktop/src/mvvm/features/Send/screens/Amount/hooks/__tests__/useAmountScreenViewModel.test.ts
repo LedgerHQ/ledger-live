@@ -297,7 +297,7 @@ describe("useAmountScreenViewModel", () => {
         useAllAmount: false,
         feesStrategy: "custom" as const,
         customFeeRate: new BigNumber(10),
-        feePerByte: new BigNumber(5),
+        familySpecificData: { feePerByte: "5" },
       } as unknown as Transaction;
       const status = {
         errors: {},
@@ -342,7 +342,7 @@ describe("useAmountScreenViewModel", () => {
         ...transaction,
         feesStrategy: "medium" as const,
         customFeeRate: new BigNumber(10),
-        feePerByte: new BigNumber(5),
+        familySpecificData: { feePerByte: "5" },
       } as unknown as Transaction;
 
       const { result } = renderHook(

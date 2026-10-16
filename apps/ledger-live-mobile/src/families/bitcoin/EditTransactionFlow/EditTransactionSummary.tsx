@@ -2,10 +2,12 @@
  * Bitcoin RBF edit transaction summary (cancel / speed up).
  */
 import { getOriginalTxFeeRateSatVb } from "@ledgerhq/live-common/families/bitcoin/editTransaction/rbfValidation";
-import type {
-  Transaction as BtcTransaction,
-  TransactionStatus,
-} from "@ledgerhq/coin-bitcoin/types";
+import {
+  getFamilySpecificData,
+  getFeePerByte,
+  type Transaction as BtcTransaction,
+  type TransactionStatus,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -58,11 +60,10 @@ function BitcoinEditTransactionSummaryContent({
 
   const [originalFeePerByte, setOriginalFeePerByte] = useState<BigNumber | null>(null);
 
-  // When transactionToUpdate.feePerByte is missing (e.g. not stored in operation), fetch original tx fee rate for RBF validation
+  // When the fee rate of transactionToUpdate is unknown (e.g. not stored in operation), fetch original tx fee rate for RBF validation
   useEffect(() => {
-    const replaceTxId = transactionToUpdate.replaceTxId;
-    const hasFeePerByte =
-      transactionToUpdate.feePerByte != null && !transactionToUpdate.feePerByte.isNaN();
+    const { replaceTxId } = getFamilySpecificData(transactionToUpdate);
+    const hasFeePerByte = getFeePerByte(transactionToUpdate) !== null;
 
     if (!replaceTxId || hasFeePerByte) {
       setOriginalFeePerByte(null);

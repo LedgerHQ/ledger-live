@@ -1,9 +1,11 @@
 import { findCryptoCurrencyByNetwork } from "./utils";
 import { loadSponsoredApiForFamily } from "../../coin-modules/registry";
+import { isPortfolioEnabledFor } from "./portfolio/config";
 import { getSponsoredCoinApi } from "./sponsored";
 
 jest.mock("./utils", () => ({ findCryptoCurrencyByNetwork: jest.fn() }));
 jest.mock("../../coin-modules/registry", () => ({ loadSponsoredApiForFamily: jest.fn() }));
+jest.mock("./portfolio/config", () => ({ isPortfolioEnabledFor: jest.fn() }));
 
 const mockFindCurrency = findCryptoCurrencyByNetwork as jest.Mock;
 const mockLoadSponsoredApi = loadSponsoredApiForFamily as jest.Mock;
@@ -27,6 +29,14 @@ describe("getSponsoredCoinApi", () => {
     jest.clearAllMocks();
     mockFindCurrency.mockReturnValue({ id: "tron", family: "tron" });
     mockLoadSponsoredApi.mockResolvedValue(() => seamApi);
+    jest.mocked(isPortfolioEnabledFor).mockReturnValue(false);
+  });
+
+  test("returns null for a currency the portfolio layer serves: it serves no sponsored fee yet", async () => {
+    jest.mocked(isPortfolioEnabledFor).mockReturnValue(true);
+    expect(await getSponsoredCoinApi("tron", "local")).toBeNull();
+    expect(isPortfolioEnabledFor).toHaveBeenCalledWith("tron");
+    expect(mockLoadSponsoredApi).not.toHaveBeenCalled();
   });
 
   test("returns null for a non-local kind (sponsored sends resolve only via the local module)", async () => {

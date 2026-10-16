@@ -111,6 +111,18 @@ jest.mock("../buildSubAccounts", () => ({
   mergeSubAccounts: (...a: any[]) => mergeSubAccountsMock(...a),
 }));
 
+const LISTED_AT = Date.UTC(2026, 0, 1);
+
+/** An operation a coin module lists, its transaction dated `secondsAgo` before the listing. */
+const listedAt = (secondsAgo: number, op: Record<string, any>) => ({
+  id: `${op.hash}-${op.type}${op._token ? "-token" : ""}`,
+  ...op,
+  tx: { failed: false, ...op.tx, date: new Date(LISTED_AT - secondsAgo * 1000) },
+});
+
+/** Operations as a coin module lists them (`order: "desc"`): newest first, in the given order. */
+const newestFirst = (...ops: Record<string, any>[]) => ops.map((op, index) => listedAt(index, op));
+
 // Test matrix for Stellar & XRP
 const chains = [
   { currency: { id: "stellar", name: "Stellar" }, network: "testnet" },
@@ -485,12 +497,12 @@ describe("genericGetAccountShape", () => {
         );
 
         listOperationsMock.mockResolvedValue({
-          items: [
+          items: newestFirst(
             { hash: "h2", type: "OUT", height: 12 },
             { hash: "h2", type: "OUT", height: 12, _token: true },
             { hash: "h3", type: "IN", tx: { failed: true }, height: 14 }, // won't appear in final shape
             { hash: "h4", type: "IN", tx: { failed: false }, height: 16 },
-          ],
+          ),
           next: undefined,
         });
         refreshOperationsMock.mockImplementation(ops => {
@@ -600,15 +612,15 @@ describe("genericGetAccountShape", () => {
 
       listOperationsMock
         .mockResolvedValueOnce({
-          items: [{ hash: "p1", type: "IN", tx: { failed: false }, height: 3 }],
+          items: [listedAt(0, { hash: "p1", type: "IN", tx: { failed: false }, height: 3 })],
           next: "c1",
         })
         .mockResolvedValueOnce({
-          items: [{ hash: "p2", type: "IN", tx: { failed: false }, height: 2 }],
+          items: [listedAt(1, { hash: "p2", type: "IN", tx: { failed: false }, height: 2 })],
           next: "c2",
         })
         .mockResolvedValueOnce({
-          items: [{ hash: "p3", type: "IN", tx: { failed: false }, height: 1 }],
+          items: [listedAt(2, { hash: "p3", type: "IN", tx: { failed: false }, height: 1 })],
         });
 
       const getShape = genericGetAccountShape(network, currency.id);
@@ -1005,15 +1017,23 @@ describe("genericGetAccountShape", () => {
     test("buildOneParentOpPerHash: native op with same hash as token uses native as parent with subOperations", async () => {
       const txHash = "native-and-token-hash";
       const nativeOpFromList = { hash: txHash, type: "OUT", height: 18, tx: { failed: false } };
-      const tokenOpFromList = { hash: txHash, type: "OUT", height: 18, tx: { failed: false } };
+      const tokenOpFromList = {
+        hash: txHash,
+        type: "OUT",
+        height: 18,
+        tx: { failed: false },
+        _token: true,
+      };
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue({ items: [nativeOpFromList, tokenOpFromList] });
+      listOperationsMock.mockResolvedValue({
+        items: newestFirst(nativeOpFromList, tokenOpFromList),
+      });
       lastBlockMock.mockResolvedValue({ height: 100 });
 
       adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => {
-        if (op === tokenOpFromList) {
+        if (op._token) {
           return {
             hash: op.hash,
             type: op.type,
@@ -1101,7 +1121,7 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue({ items: [inOpFromList, outOpFromList] });
+      listOperationsMock.mockResolvedValue({ items: newestFirst(inOpFromList, outOpFromList) });
       lastBlockMock.mockResolvedValue({ height: 100 });
 
       adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op: any) => {
@@ -1161,7 +1181,7 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue({ items: [nativeOp, internalOp] });
+      listOperationsMock.mockResolvedValue({ items: newestFirst(nativeOp, internalOp) });
       buildSubAccountsMock.mockReturnValue([]);
       lastBlockMock.mockResolvedValue({ height: 100 });
 
@@ -1225,7 +1245,10 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue({ items: [parentOp, internalOp], next: undefined });
+      listOperationsMock.mockResolvedValue({
+        items: newestFirst(parentOp, internalOp),
+        next: undefined,
+      });
       buildSubAccountsMock.mockReturnValue([]);
       lastBlockMock.mockResolvedValue({ height: 123 });
 
@@ -1413,7 +1436,8 @@ describe("genericGetAccountShape", () => {
         { paginationConfig: {} as any },
       );
 
-      expect(buildAccountShapeMock).toHaveBeenCalledWith("addr1", undefined);
+      // A module answering no metadata reads as ADR-045's `{ type: "none" }`.
+      expect(buildAccountShapeMock).toHaveBeenCalledWith("addr1", { type: "none" });
       expect((result as any).familyResources).toEqual({ energy: "1200" });
     });
 
@@ -1445,13 +1469,13 @@ describe("genericGetAccountShape", () => {
         { paginationConfig: {} as any },
       );
 
-      expect(buildAccountShapeMock).toHaveBeenCalledWith("addr2", undefined);
+      expect(buildAccountShapeMock).toHaveBeenCalledWith("addr2", { type: "none" });
       expect(result.balance).toBeDefined();
       expect((result as any).familyResources).toBeUndefined();
     });
 
     test("fails the sync on a sync hash lookup error, without leaving the family shape's rejection unhandled", async () => {
-      // The family shape is requested before `getSyncHash` is awaited and only collected by the
+      // A family shape requested before `getSyncHash` is awaited would only be collected by the
       // later `Promise.all`; when the hash lookup fails first, that `Promise.all` is never reached.
       const unhandled = jest.fn();
       process.on("unhandledRejection", unhandled);
@@ -1472,6 +1496,9 @@ describe("genericGetAccountShape", () => {
         await new Promise(resolve => setImmediate(resolve));
       } finally {
         process.off("unhandledRejection", unhandled);
+        // The family data is read once the sync hash resolves: the queued rejection is never
+        // consumed here, and must not reach the next test.
+        buildAccountShapeMock.mockReset();
       }
 
       expect(unhandled).not.toHaveBeenCalled();
@@ -1781,6 +1808,9 @@ describe("genericGetAccountShape", () => {
       }
     ).adaptCoreOperationToLiveOperation;
 
+    // Ids in creation order: the operations of one transaction share its date.
+    let coreOpIndex = 0;
+
     function toCoreOp(op: {
       type: string;
       senders: string[];
@@ -1803,7 +1833,9 @@ describe("genericGetAccountShape", () => {
           : op.internal
             ? { internal: true }
             : undefined;
+      coreOpIndex += 1;
       return {
+        id: `${txHash}-${coreOpIndex}`,
         type: op.type,
         senders: op.senders,
         recipients: op.recipients,
@@ -1822,6 +1854,7 @@ describe("genericGetAccountShape", () => {
     }
 
     function setupSpecTest() {
+      coreOpIndex = 0;
       getSyncHashMock.mockReturnValue("sync-hash");
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
@@ -3723,7 +3756,7 @@ describe("genericGetAccountShape", () => {
         { paginationConfig: {} as any },
       );
 
-      expect(buildTokenAccountShapes).toHaveBeenCalledWith("tz1shapes");
+      expect(buildTokenAccountShapes).toHaveBeenCalledWith("tz1shapes", { type: "none" });
       expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toEqual(shapes);
     });
 
@@ -4698,6 +4731,31 @@ describe("genericGetAccountShape", () => {
       expect(getBalanceMock.mock.calls[0][2]).toEqual({});
     });
 
+    it("passes neither option for an account stored without a token list", async () => {
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+      });
+
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({});
+    });
+
+    it("falls back the same way for a family that declares no getAssetFromToken", async () => {
+      getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), balanceOptions: {} }));
+
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa")],
+      });
+
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({});
+    });
+
     it("falls back the same way when a conversion returns undefined rather than throwing", async () => {
       getAssetFromTokenMock.mockReturnValueOnce(undefined);
 
@@ -4886,6 +4944,91 @@ describe("genericGetAccountShape", () => {
         await expect(syncWith(resumed)).rejects.toThrow("store unreachable");
         expect(buildSubAccountsMock).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe("chain reads of the legacy path", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+
+    beforeEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      lastBlockMock.mockResolvedValue({ height: 900 });
+      mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
+      buildSubAccountsMock.mockReturnValue([]);
+    });
+
+    const sync = (initialAccount?: object) =>
+      genericGetAccountShape(network, currency.id)(
+        { address: "tz1reads", currency, derivationMode: "", initialAccount } as any,
+        { paginationConfig: {} as any },
+      );
+
+    test("resumes above height 0 an account that holds no operation yet", async () => {
+      await sync({
+        operations: [],
+        pendingOperations: [],
+        blockHeight: 800,
+        syncHash: "sync-hash",
+      });
+
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "tz1reads",
+        expect.objectContaining({ minHeight: 1 }),
+      );
+    });
+
+    test("reads the validators of a staking family, none when the read fails", async () => {
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        stakingSupported: true,
+      }));
+      getValidatorsMock.mockResolvedValueOnce({
+        items: [{ address: "val1", name: "Validator", balance: 5n }],
+      });
+
+      const withValidators = await sync();
+      expect((withValidators as any).stakingResources.validators).toEqual([
+        expect.objectContaining({ validatorAddress: "val1", tokens: "5" }),
+      ]);
+
+      getValidatorsMock.mockRejectedValueOnce(new Error("validators down"));
+      const without = await sync();
+      expect((without as any).stakingResources).not.toHaveProperty("validators");
+    });
+
+    test("hands the family hooks the coin module's reads, with the family's legacy reads over them", async () => {
+      const getTransactionInfo = jest.fn(async () => undefined);
+      const legacyChainReads = jest.fn(() => ({ getTransactionInfo }));
+      let chain: any;
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        legacyChainReads,
+        getAccountReadiness: async (_currency: unknown, _address: string, reads: unknown) => {
+          chain = reads;
+          return { ready: true };
+        },
+      }));
+      getAccountInfoMock.mockResolvedValue({ type: "tezos", revealed: true });
+
+      await sync();
+
+      expect(legacyChainReads).toHaveBeenCalledWith(
+        currency,
+        expect.objectContaining({ getAccountInfo: expect.any(Function) }),
+        expect.objectContaining({ config: expect.any(Function) }),
+      );
+      await expect(chain.getAccountInfo("tz1reads")).resolves.toEqual({
+        type: "tezos",
+        revealed: true,
+      });
+      await expect(chain.getTransactionInfo("op")).resolves.toBeUndefined();
+      expect(getTransactionInfo).toHaveBeenCalledWith("op");
     });
   });
 });

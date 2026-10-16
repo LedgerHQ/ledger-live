@@ -3,12 +3,14 @@ import { buildGenericTransactionIntent } from "./buildIntent";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { writeIntentApi } from "./portfolio/intentApi";
 import { getAssetInfos } from "./prepareTransaction";
 import { transactionToIntent } from "./utils";
 
 jest.mock("./api", () => ({ getCoinModuleApi: jest.fn() }));
 jest.mock("./api/context", () => ({ buildContext: jest.fn(() => ({ config: jest.fn() })) }));
 jest.mock("./bridge", () => ({ getBridgeApi: jest.fn() }));
+jest.mock("./portfolio/intentApi", () => ({ writeIntentApi: jest.fn() }));
 jest.mock("./prepareTransaction", () => ({ getAssetInfos: jest.fn() }));
 jest.mock("./utils", () => ({
   transactionToIntent: jest.fn(() => ({ type: "send" })),
@@ -20,6 +22,7 @@ const mockBuildContext = buildContext as jest.Mock;
 const mockGetBridgeApi = getBridgeApi as jest.Mock;
 const mockGetAssetInfos = getAssetInfos as jest.Mock;
 const mockTransactionToIntent = transactionToIntent as jest.Mock;
+const mockWriteIntentApi = writeIntentApi as jest.Mock;
 
 const account = {
   currency: { id: "tron" },
@@ -30,10 +33,13 @@ const account = {
 const computeIntentType = jest.fn();
 const buildIntentData = jest.fn();
 const getAssetFromToken = jest.fn();
+const coinModuleApi = { craftTransactionData: jest.fn() };
+const craftTransactionData = jest.fn(() => undefined);
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockGetCoinModuleApi.mockResolvedValue({ craftTransactionData: jest.fn() });
+  mockGetCoinModuleApi.mockResolvedValue(coinModuleApi);
+  mockWriteIntentApi.mockReturnValue({ craftTransactionData });
   mockGetBridgeApi.mockResolvedValue({ getAssetFromToken, computeIntentType, buildIntentData });
   mockGetAssetInfos.mockResolvedValue({ assetReference: "TContract", assetOwner: "TSender" });
 });
@@ -99,4 +105,37 @@ test("falls back to the transaction's own asset fields when the family has no ge
   expect(mockGetAssetInfos).not.toHaveBeenCalled();
   const passedTx = mockTransactionToIntent.mock.calls[0][1];
   expect(passedTx).toMatchObject({ assetReference: "raw-ref", assetOwner: "raw-owner" });
+});
+
+test("completes the data of the intent through the write path of the account", async () => {
+  const transaction = { recipient: "TRecv", amount: new BigNumber(5) } as never;
+
+  await buildGenericTransactionIntent("tron", "local", account, transaction);
+
+  // The portfolio layer's write path when the coin config enables it: it leaves the data undefined.
+  const bridgeApi = await mockGetBridgeApi.mock.results[0].value;
+  expect(mockWriteIntentApi).toHaveBeenCalledWith(bridgeApi, coinModuleApi, account, transaction);
+  const completeData = mockTransactionToIntent.mock.calls[0][3];
+  const intent = { type: "send" };
+  expect(completeData(intent)).toBeUndefined();
+  expect(craftTransactionData).toHaveBeenCalledWith(mockBuildContext.mock.results[0].value, intent);
+  expect(coinModuleApi.craftTransactionData).not.toHaveBeenCalled();
+});
+
+test("sends no asset fields and keeps the amount when the family and the account resolve none", async () => {
+  mockGetBridgeApi.mockResolvedValue({ computeIntentType, buildIntentData });
+  const transaction = {
+    recipient: "TRecv",
+    amount: new BigNumber(7),
+    useAllAmount: true,
+    subAccountId: "unknown-sub",
+  } as never;
+
+  await buildGenericTransactionIntent("tron", "local", account, transaction);
+
+  expect(mockTransactionToIntent.mock.calls[0][1]).toMatchObject({
+    assetReference: "",
+    assetOwner: "",
+    amount: new BigNumber(7),
+  });
 });

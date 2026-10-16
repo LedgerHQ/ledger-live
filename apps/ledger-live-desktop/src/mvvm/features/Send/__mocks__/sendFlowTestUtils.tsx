@@ -24,7 +24,6 @@ export type MockTransactionStatus = {
   errors: Record<string, Error>;
   warnings: Record<string, Error>;
   estimatedFees?: BigNumber;
-  txOutputs?: ReadonlyArray<{ isChange: boolean; value: BigNumber }>;
 };
 
 let mockBridgeRecipientValidation = { errors: {}, warnings: {}, isLoading: false };
@@ -93,10 +92,8 @@ const defaultBtcTransaction: BtcTransaction = {
   recipient: "",
   useAllAmount: false,
   feesStrategy: "medium",
-  feePerByte: new BigNumber(10),
-  networkInfo: null,
-  rbf: false,
-  utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+  familySpecificData: { rbf: false, utxoStrategy: { strategy: 0, excludeUTXOs: [] } },
+  feeParameters: { feePerByte: "10" },
 };
 
 export const createMinimalBtcTransaction = (overrides?: Partial<BtcTransaction>): Transaction => ({

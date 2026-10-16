@@ -23,7 +23,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   }),
 }));
 
-// useFeesStrategy is a pure derivation over transaction.networkInfo; mock it so the
+// useFeesStrategy is a pure derivation over transaction.feeParameters; mock it so the
 // standard-mode SelectFeeStrategy list is deterministic and independent of network data.
 jest.mock("@ledgerhq/live-common/families/bitcoin/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/bitcoin/react"),
@@ -56,24 +56,18 @@ const buildZcashAccount = () =>
     currency: { ...baseAccount.currency, id: "zcash" } as CryptoCurrency,
   }) as BitcoinAccount;
 
-const buildTransaction = (overrides: Partial<Transaction> = {}): Transaction =>
-  ({
-    family: "bitcoin",
-    amount: new BigNumber(0),
-    recipient: "",
-    feePerByte: new BigNumber(1),
-    networkInfo: {
-      family: "bitcoin",
-      feeItems: { items: [], defaultFeePerByte: new BigNumber(1) },
-    },
-    feesStrategy: "medium",
-    utxoStrategy: { strategy: 0, excludedUTXOs: [] },
-    rbf: false,
-    ...overrides,
-  }) as Transaction;
+const buildTransaction = (overrides: Partial<Transaction> = {}): Transaction => ({
+  family: "bitcoin",
+  amount: new BigNumber(0),
+  recipient: "",
+  feesStrategy: "medium",
+  familySpecificData: { rbf: false, utxoStrategy: { strategy: 0, excludeUTXOs: [] } },
+  feeParameters: { feePerByte: "1", feeRates: { slow: "1", medium: "2", fast: "3" } },
+  ...overrides,
+});
 
-// A zcash account served by coin-zcash carries a slimmer transaction: no
-// utxoStrategy, networkInfo or feePerByte, since ZIP-317 prices the fee per action.
+// A zcash account served by coin-zcash carries a slimmer transaction: no coin
+// selection nor fee rate, since ZIP-317 prices the fee per action.
 const buildCoinZcashTransaction = (overrides: Record<string, unknown> = {}): Transaction =>
   ({
     family: "zcash",
@@ -138,6 +132,17 @@ describe("bitcoin SendAmountFields", () => {
       renderFields({ transaction: buildTransaction({ feesStrategy: undefined }) });
 
       expect(screen.getByTestId("currency-textbox")).toBeVisible();
+    });
+
+    it("should show the coin selection strategy of the transaction in advanced mode", () => {
+      renderFields({
+        transaction: buildTransaction({
+          feesStrategy: "custom",
+          familySpecificData: { utxoStrategy: { strategy: 2, excludeUTXOs: [] } },
+        }),
+      });
+
+      expect(screen.getByText("Minimize future fees (merge coins)")).toBeVisible();
     });
   });
 
@@ -214,6 +219,10 @@ describe("bitcoin SendAmountFields", () => {
         expect.objectContaining({ button: "slow", feePerByte: feeStrategies[0].amount }),
       );
       expect(updateTransaction).toHaveBeenCalledTimes(1);
+      // a preset only selects the strategy: the estimation resolves its rate
+      const updater = updateTransaction.mock.calls[0][0];
+      const transaction = buildTransaction({ feesStrategy: "medium" });
+      expect(updater(transaction)).toEqual({ ...transaction, feesStrategy: "slow" });
     });
 
     it("should switch to advanced mode and track when the advanced selector is clicked", async () => {

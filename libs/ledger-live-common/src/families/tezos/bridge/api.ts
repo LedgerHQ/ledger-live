@@ -1,13 +1,9 @@
-import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api";
-import type { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
-import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountReadiness } from "@ledgerhq/types-live";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { BridgeApi, ChainReads } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
   if (!("assetReference" in asset) || typeof asset.assetReference !== "string") {
@@ -48,16 +44,15 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
 
 /**
  * Readiness for a Tezos account: not ready (reason "unrevealed") until the account's
- * public key is revealed on-chain.
+ * public key is revealed on-chain. Read through the chain reads of the account's path: coin-tezos
+ * reports the reveal state in its account metadata.
  */
 export async function getAccountReadiness(
-  currency: CryptoCurrency,
+  _currency: CryptoCurrency,
   address: string,
+  chain: ChainReads,
 ): Promise<AccountReadiness> {
-  // Through withDefaults, so the metadata call is always there: a module that reports none answers
-  // with the `{ type: "none" }` sentinel instead of leaving the method undefined and throwing here.
-  const api = withDefaults(createTezosApi());
-  const info = await api.getAccountInfo(buildContext<TezosCoinConfig>(currency.id), address);
+  const info = await chain.getAccountInfo(address);
   // Nothing reported means there is no reveal state to gate on — the position of every family that
   // provides no readiness hook at all, which leaves the account ungated.
   if (info.type === "none") return { ready: true };

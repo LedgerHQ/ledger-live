@@ -1,6 +1,12 @@
 import { getOriginalTxFeeRateSatVb } from "@ledgerhq/live-common/families/bitcoin/editTransaction/rbfValidation";
-import { fromTransactionRaw } from "@ledgerhq/coin-bitcoin/transaction";
-import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
+import { fromTransactionRaw } from "@ledgerhq/live-common/families/bitcoin/transaction";
+import {
+  getFamilySpecificData,
+  getFeePerByte,
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -276,12 +282,10 @@ const Body = ({
     };
   }, [bridge, mainAccount, transactionToUpdate]);
 
-  // When transactionToUpdate.feePerByte is missing (e.g. not stored in operation), fetch original tx fee rate for RBF validation
+  // When transactionToUpdate's fee rate is missing (e.g. not stored in operation), fetch original tx fee rate for RBF validation
+  const { replaceTxId } = getFamilySpecificData(transactionToUpdate);
+  const hasFeePerByte = getFeePerByte(transactionToUpdate) !== null;
   useEffect(() => {
-    const replaceTxId = transactionToUpdate.replaceTxId;
-    const hasFeePerByte =
-      transactionToUpdate.feePerByte != null && !transactionToUpdate.feePerByte.isNaN();
-
     if (!replaceTxId || hasFeePerByte) {
       setOriginalFeePerByte(null);
       return;
@@ -296,7 +300,7 @@ const Body = ({
     return () => {
       cancelled = true;
     };
-  }, [mainAccount, transactionToUpdate.replaceTxId, transactionToUpdate.feePerByte]);
+  }, [mainAccount, replaceTxId, hasFeePerByte]);
 
   // if we are at this step (i.e: in this screen) it means the transaction is editable
   const pendingOperation = mainAccount.pendingOperations.find(

@@ -66,10 +66,9 @@ export {
   decodeRedelegatePayload,
   resolveRedelegationValidators,
   resolveStakingValidator,
-  getValidators,
-  prefetchValidators,
-  isSeiAccountUnassociated,
 } from "@ledgerhq/coin-evm/staking";
+// The network reads of the staking screens, through the portfolio layer when it serves the currency.
+export { getValidators, prefetchValidators, isSeiAccountUnassociated } from "./reads";
 
 export function mapDelegations(
   delegations: StakingDelegation[],

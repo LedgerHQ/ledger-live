@@ -7,7 +7,11 @@ import { Keyboard, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import {
+  getFamilySpecificData,
+  getFeeParameters,
+  type Transaction as BitcoinTransaction,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -60,7 +64,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   const bridge = useAccountBridge<BitcoinTransaction>(account, parentAccount);
   const [ownSatPerByte, setOwnSatPerByte] = useState(satPerByte ? satPerByte.toString() : "");
 
-  const relayFeePerByte = transaction.networkInfo?.relayFeePerByte;
+  const { relayFeePerByte } = getFeeParameters(transaction);
   const feeValue = BigNumber(ownSatPerByte || 0);
   const isBelowRelayFee = !!relayFeePerByte && feeValue.gt(0) && feeValue.lt(relayFeePerByte);
 
@@ -76,8 +80,11 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     }
     const { currentNavigation } = route.params;
     const updatedTransaction = bridge.updateTransaction(transaction, {
-      feePerByte: BigNumber(ownSatPerByte || 0),
       feesStrategy: "custom",
+      familySpecificData: {
+        ...getFamilySpecificData(transaction),
+        feePerByte: BigNumber(ownSatPerByte).toFixed(),
+      },
     });
 
     const nextParams = {

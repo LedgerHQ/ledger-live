@@ -2,8 +2,8 @@ import { TrackScreen } from "@shared/analytics-react";
 import type {
   EditType,
   Transaction as BtcTransaction,
-  TransactionRaw,
-} from "@ledgerhq/coin-bitcoin/types";
+} from "@ledgerhq/live-common/families/bitcoin/types";
+import { getEditableTransactionRaw } from "@ledgerhq/live-common/families/bitcoin/editTransaction/editableTransaction";
 import { isOldestBitcoinPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/live-common/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -13,7 +13,7 @@ import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@shared/env";
 import { Flex } from "@ledgerhq/native-ui";
 import { urls } from "~/utils/urls";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import MethodSelectionList from "~/components/EditTransaction/MethodSelectionList";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -34,27 +34,21 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = useAccountBridge<BtcTransaction>(account, parentAccount);
 
+  const editableTransactionRaw = useMemo(
+    () => getEditableTransactionRaw(operation, mainAccount),
+    [operation, mainAccount],
+  );
+
   const [transactionToEdit, setTransactionToEdit] = useState<BtcTransaction | undefined>(undefined);
   useEffect(() => {
     let cancelled = false;
-    const transactionRaw = {
-      family: "bitcoin" as const,
-      amount: "0",
-      recipient: mainAccount.freshAddress,
-      rbf: true,
-      replaceTxId: operation.hash,
-      utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-      feePerByte: null,
-      networkInfo: null,
-    };
-    fromTransactionRaw(transactionRaw as TransactionRaw).then(tx => {
-      if (!cancelled)
-        setTransactionToEdit({ ...tx, replaceTxId: operation.hash } as BtcTransaction);
+    fromTransactionRaw(editableTransactionRaw).then(tx => {
+      if (!cancelled) setTransactionToEdit(tx as BtcTransaction);
     });
     return () => {
       cancelled = true;
     };
-  }, [operation.hash, mainAccount.freshAddress]);
+  }, [editableTransactionRaw]);
 
   const { transaction, setTransaction } = useBridgeTransaction<BtcTransaction>(bridge, () => ({
     account,
@@ -159,21 +153,11 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     if (!selectedMethod || !transaction) {
       return;
     }
-    const transactionRaw = {
-      family: "bitcoin" as const,
-      amount: "0",
-      recipient: mainAccount.freshAddress,
-      rbf: true,
-      replaceTxId: operation.hash,
-      utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-      feePerByte: null,
-      networkInfo: null,
-    };
     navigation.navigate(ScreenName.EditTransactionSummary, {
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction,
-      transactionRaw: transactionRaw as TransactionRaw,
+      transactionRaw: editableTransactionRaw,
       currentNavigation: ScreenName.EditTransactionSummary,
       nextNavigation: ScreenName.SendSelectDevice,
       editType: selectedMethod,
@@ -181,10 +165,9 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   }, [
     selectedMethod,
     transaction,
-    operation,
+    editableTransactionRaw,
     account.id,
     parentAccount?.id,
-    mainAccount,
     navigation,
   ]);
 

@@ -16,10 +16,12 @@ import type {
 import { getUTXOStatus } from "../logic";
 import {
   bitcoinPickingStrategy,
+  getFamilySpecificData,
+  getFeeParameters,
+  getUtxoStrategy,
   type BitcoinAccount,
   type BitcoinOutput,
   type Transaction as BitcoinTransaction,
-  type TransactionStatus as BitcoinTransactionStatus,
 } from "../types";
 
 function isBitcoinBasedAccount(account: AccountLike): account is BitcoinAccount {
@@ -27,11 +29,12 @@ function isBitcoinBasedAccount(account: AccountLike): account is BitcoinAccount 
 }
 
 function isBitcoinUtxoTransaction(tx: SendFlowTransaction): tx is BitcoinTransaction {
-  return "utxoStrategy" in tx && tx.utxoStrategy != null;
+  return tx.family === "bitcoin";
 }
 
-function isBitcoinTransactionStatus(s: TransactionStatus): s is BitcoinTransactionStatus {
-  return "txInputs" in s;
+/** The inputs the last estimation selected, "txid:index". */
+function usedInputs(transaction: BitcoinTransaction): Set<string> {
+  return new Set((getFeeParameters(transaction).inputs ?? []).map(i => `${i.txid}:${i.vout}`));
 }
 
 export type PickingStrategyOption = Readonly<{
@@ -84,7 +87,7 @@ function utxoToRowDisplayData(
   utxoStatus: UtxoStatus,
   context: Readonly<{
     rowIndex: number;
-    txInputs: BitcoinTransactionStatus["txInputs"];
+    usedInputs: Set<string>;
     totalExcludedUTXOS: number;
     utxosLength: number;
     blockHeight: number;
@@ -95,9 +98,7 @@ function utxoToRowDisplayData(
   }>,
 ): UtxoRowDisplayData {
   const exclusionReason = utxoStatus.excluded ? utxoStatus.reason : undefined;
-  const isUsedInTx = (context.txInputs ?? []).some(
-    input => input.previousOutputIndex === utxo.outputIndex && input.previousTxHash === utxo.hash,
-  );
+  const isUsedInTx = context.usedInputs.has(`${utxo.hash}:${utxo.outputIndex}`);
   const unconfirmed = exclusionReason === "pickPendingUtxo";
   const disabled =
     unconfirmed || (context.amountTargetReached && exclusionReason === "userExclusion");
@@ -133,14 +134,13 @@ function computeBitcoinUtxoDisplayData({
 }: UseBitcoinUtxoDisplayDataParams): BitcoinUtxoDisplayData | null {
   if (!isBitcoinBasedAccount(account)) return null;
   if (!isBitcoinUtxoTransaction(transaction)) return null;
-  if (!isBitcoinTransactionStatus(status)) return null;
 
   const bitcoinAccount = account;
   const bitcoinResources = bitcoinAccount.bitcoinResources;
   if (!bitcoinResources?.utxos?.length) return null;
 
   const accountUnit = bitcoinAccount.currency.units[0];
-  const { utxoStrategy } = transaction;
+  const utxoStrategy = getUtxoStrategy(transaction);
   const utxos = bitcoinResources.utxos;
   const blockHeight = bitcoinAccount.blockHeight ?? 0;
 
@@ -164,12 +164,12 @@ function computeBitcoinUtxoDisplayData({
 
   const amountTargetReached =
     amountTargetApplies && !hasInsufficientBalanceError && selectedUtxosTotal.gte(requiredTotal);
-  const txInputs = status.txInputs ?? [];
+  const inputsInTx = usedInputs(transaction);
 
   const utxoRows: UtxoRowDisplayData[] = utxos.map((utxo, rowIndex) =>
     utxoToRowDisplayData(utxo, utxoStatuses[rowIndex], {
       rowIndex,
-      txInputs,
+      usedInputs: inputsInTx,
       totalExcludedUTXOS,
       utxosLength: utxos.length,
       blockHeight,
@@ -222,19 +222,18 @@ function parseBitcoinRowKey(rowKey: string): { hash: string; outputIndex: number
   return { hash, outputIndex: idx };
 }
 
-function hasUtxoStrategy(tx: unknown): tx is SendFlowTransaction & {
-  utxoStrategy: {
-    strategy: number;
-    excludeUTXOs: readonly { hash: string; outputIndex: number }[];
-  };
-} {
-  return (
-    typeof tx === "object" &&
-    tx !== null &&
-    "utxoStrategy" in tx &&
-    (tx as { utxoStrategy?: unknown }).utxoStrategy != null
-  );
+function isBitcoinTransaction(tx: unknown): tx is BitcoinTransaction {
+  return typeof tx === "object" && tx !== null && (tx as { family?: unknown }).family === "bitcoin";
 }
+
+/** The patch is merged shallowly: the other user choices of `familySpecificData` are kept. */
+const utxoStrategyPatch = (
+  transaction: BitcoinTransaction,
+  utxoStrategy: ReturnType<typeof getUtxoStrategy>,
+): Partial<SendFlowTransaction> =>
+  ({
+    familySpecificData: { ...getFamilySpecificData(transaction), utxoStrategy },
+  }) as Partial<SendFlowTransaction>;
 
 function getBitcoinCoinControlDisplayData(
   params: CoinControlGetDisplayDataParams,
@@ -253,7 +252,7 @@ function buildStrategyChangePatch({
   strategy,
   displayData,
 }: CoinControlBuildStrategyChangePatchParams): Partial<SendFlowTransaction> | null {
-  if (!hasUtxoStrategy(transaction)) return null;
+  if (!isBitcoinTransaction(transaction)) return null;
 
   const excludeUTXOs =
     strategy === bitcoinPickingStrategy.CUSTOM && displayData != null
@@ -262,9 +261,11 @@ function buildStrategyChangePatch({
           .filter((p): p is { hash: string; outputIndex: number } => p != null)
       : [];
 
-  return {
-    utxoStrategy: { ...transaction.utxoStrategy, strategy, excludeUTXOs },
-  };
+  return utxoStrategyPatch(transaction, {
+    ...getUtxoStrategy(transaction),
+    strategy: strategy as ReturnType<typeof getUtxoStrategy>["strategy"],
+    excludeUTXOs,
+  });
 }
 
 function buildToggleRowExclusionPatch({
@@ -272,8 +273,9 @@ function buildToggleRowExclusionPatch({
   rowKey,
   displayData,
 }: CoinControlBuildToggleRowExclusionPatchParams): Partial<SendFlowTransaction> | null {
-  if (!hasUtxoStrategy(transaction)) return null;
-  if (transaction.utxoStrategy.strategy !== bitcoinPickingStrategy.CUSTOM) return null;
+  if (!isBitcoinTransaction(transaction)) return null;
+  const utxoStrategy = getUtxoStrategy(transaction);
+  if (utxoStrategy.strategy !== bitcoinPickingStrategy.CUSTOM) return null;
 
   const row = displayData?.utxoRows.find(r => r.rowKey === rowKey);
   if (!row || row.disabled) return null;
@@ -281,23 +283,31 @@ function buildToggleRowExclusionPatch({
   const parsed = parseBitcoinRowKey(rowKey);
   if (parsed == null) return null;
 
-  const utxoStrategy = transaction.utxoStrategy;
   const id = { hash: parsed.hash, outputIndex: parsed.outputIndex };
 
-  return {
-    utxoStrategy: {
-      ...utxoStrategy,
-      excludeUTXOs: row.excluded
-        ? utxoStrategy.excludeUTXOs.filter(
-            e => e.hash !== id.hash || e.outputIndex !== id.outputIndex,
-          )
-        : utxoStrategy.excludeUTXOs.concat(id),
-    },
-  };
+  return utxoStrategyPatch(transaction, {
+    ...utxoStrategy,
+    excludeUTXOs: row.excluded
+      ? utxoStrategy.excludeUTXOs.filter(
+          e => e.hash !== id.hash || e.outputIndex !== id.outputIndex,
+        )
+      : utxoStrategy.excludeUTXOs.concat(id),
+  });
+}
+
+/** The change the last estimation gives back to the account. */
+function getChangeToReturn({ transaction }: { transaction: SendFlowTransaction }): BigNumber {
+  if (!isBitcoinUtxoTransaction(transaction)) return new BigNumber(0);
+  return (getFeeParameters(transaction).outputs ?? [])
+    .filter(output => output.isChange)
+    .reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
 }
 
 export const bitcoinCoinControlConfig: CoinControlConfig = {
   customStrategyValue: bitcoinPickingStrategy.CUSTOM,
+  getStrategyValue: transaction =>
+    isBitcoinUtxoTransaction(transaction) ? getUtxoStrategy(transaction).strategy : undefined,
+  getChangeToReturn,
   getDisplayData: getBitcoinCoinControlDisplayData,
   buildStrategyChangePatch,
   buildToggleRowExclusionPatch,

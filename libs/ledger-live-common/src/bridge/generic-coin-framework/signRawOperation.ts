@@ -1,9 +1,15 @@
 import { defer, Observable, switchMap, type Subscriber } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
+import type {
+  Account,
+  DeviceId,
+  SignOperationEvent,
+  SignRawOperationArg0,
+  AccountBridge,
+} from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
-import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { rawWriteApi } from "./portfolio/raw";
 import { buildOptimisticOperation } from "./utils";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
@@ -23,10 +29,10 @@ type SignRawDeps = {
 
 async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDeps): Promise<void> {
   const { network, kind, signerContext, account, transaction, deviceId } = deps;
-  // Coin-module/context resolve by account.currency.id; getBridgeApi (network) is family-keyed.
+  // The coin module resolves by account.currency.id; getBridgeApi (network) is family-keyed.
   const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
-  const context = buildContext(account.currency.id);
   const bridgeApi = await getBridgeApi(account.currency, network);
+  const raw = rawWriteApi(coinModuleApi, account, bridgeApi);
   const signedInfo = await signerContext(deviceId, async signer => {
     const derivationPath = account.freshAddressPath;
     const deviceSignOptions = bridgeApi.getDeviceSignOptions?.({ raw: transaction }, account);
@@ -38,16 +44,10 @@ async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDe
     const sender = account.freshAddress;
 
     // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-    const sequenceNumber = await coinModuleApi.getNextSequence(context, sender);
+    const sequenceNumber = await raw.getNextSequence(sender);
 
     /* Craft unsigned blob via coin-framework */
-    const { transaction: unsigned } = await coinModuleApi.craftRawTransaction(
-      context,
-      transaction,
-      sender,
-      publicKey,
-      sequenceNumber,
-    );
+    const unsigned = await raw.craftRawTransaction(transaction, sender, publicKey, sequenceNumber);
 
     /* Notify UI that the device is now showing the tx */
     o.next({ type: "device-signature-requested" });
@@ -66,9 +66,7 @@ async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDe
   o.next({ type: "device-signature-granted" });
 
   /* Combine payload + signature for broadcast */
-  const combined = await coinModuleApi.combine(context, signedInfo.unsigned, [signedInfo.txnSig], {
-    pubkey: signedInfo.publicKey,
-  });
+  const combined = await raw.combine(signedInfo.unsigned, signedInfo.txnSig, signedInfo.publicKey);
   const operation = buildOptimisticOperation(
     account,
     { family: account.currency.family, amount: new BigNumber(0), recipient: "" },
@@ -94,19 +92,13 @@ async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDe
 export const genericSignRawOperation =
   (network: string, kind: string) =>
   (signerContext: RawSignerContext): AccountBridge<GenericTransaction>["signRawOperation"] =>
-  ({
-    account,
-    transaction,
-    deviceId,
-  }: {
-    account: Account;
-    transaction: string;
-    deviceId: DeviceId;
-  }): Observable<SignOperationEvent> =>
-    defer(() => getBridgeApi(account.currency, network)).pipe(
+  (arg: SignRawOperationArg0<Account>): Observable<SignOperationEvent> => {
+    const { account, transaction, deviceId } = arg;
+    return defer(() => getBridgeApi(account.currency, network)).pipe(
       switchMap(
         bridgeApi =>
-          bridgeApi.signRawOperation?.({ account, transaction, deviceId }) ??
+          // The whole argument: a family signing a PSBT needs `broadcast` (whether to finalize it).
+          bridgeApi.signRawOperation?.(arg) ??
           new Observable<SignOperationEvent>(o => {
             signRawAndEmit(o, {
               network,
@@ -122,3 +114,4 @@ export const genericSignRawOperation =
           }),
       ),
     );
+  };

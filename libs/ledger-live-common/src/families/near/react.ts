@@ -12,7 +12,10 @@ import {
 import type { NearConfig } from "@ledgerhq/coin-near/config";
 import { getAccountCurrency } from "../../account";
 import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCoinModuleApi } from "../../bridge/generic-coin-framework/api";
+import { openCurrencyPortfolio } from "../../bridge/generic-coin-framework/networkPortfolio";
+import { isPortfolioEnabledFor } from "../../bridge/generic-coin-framework/portfolio/config";
 
 // The generic-framework bridge never runs families/near/setup.ts (which seeds the legacy
 // getCoinConfig() singleton via setCoinConfig), so resolve config directly from LiveConfig
@@ -28,16 +31,37 @@ type FrameworkAccount = {
   stakingPositions?: Array<{ state: string; delegate?: string; amount: BigNumber }>;
 };
 
+type ValidatorFields = {
+  address: string;
+  commissionRate?: string | undefined;
+  balance?: bigint | string | undefined;
+};
+
+/**
+ * The first page of NEAR validators: through the portfolio layer when the coin config enables it,
+ * from the coin module otherwise.
+ */
+async function nearValidators(): Promise<ValidatorFields[]> {
+  if (isPortfolioEnabledFor("near")) {
+    const { portfolio, network } = await openCurrencyPortfolio(
+      getCryptoCurrencyById("near"),
+      "read",
+    );
+    return (await portfolio.getValidators(network)).items ?? [];
+  }
+  const api = await getCoinModuleApi("near", "local");
+  return (await api.getValidators(nearContext)).items;
+}
+
 function useNearValidators(): NearValidatorItem[] {
   const [validators, setValidators] = useState<NearValidatorItem[]>([]);
   useEffect(() => {
     let mounted = true;
-    getCoinModuleApi("near", "local")
-      .then(api => api.getValidators(nearContext))
-      .then(page => {
+    nearValidators()
+      .then(items => {
         if (!mounted) return;
         setValidators(
-          page.items.map(v => ({
+          items.map(v => ({
             validatorAddress: v.address,
             commission: v.commissionRate != null ? Number(v.commissionRate) : null,
             tokens: String(v.balance),

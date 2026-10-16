@@ -4,9 +4,10 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { isAccountEmpty } from "@ledgerhq/coin-tron/index";
-import { fetchTronAccount } from "@ledgerhq/coin-tron/network";
+import { defaultTronResources } from "@ledgerhq/coin-tron/resources";
+import { toTronResourcesRaw } from "@ledgerhq/coin-tron/types/serialization";
+import { toJsonSafe } from "@ledgerhq/account-module-framework";
 import {
   buildAccountShape,
   buildIntentData,
@@ -18,7 +19,6 @@ import {
 } from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
-jest.mock("@ledgerhq/coin-tron/network", () => ({ fetchTronAccount: jest.fn() }));
 
 const trc20Token = {
   id: "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
@@ -41,22 +41,65 @@ const trc10Token = {
 const tron = getCryptoCurrencyById("tron");
 
 describe("tron bridge", () => {
-  // `buildAccountShape` resolves the coin config via `getCurrencyConfiguration` (LiveConfig); the
-  // network call is mocked, so a minimal entry is enough to avoid "Config not set".
-  beforeAll(() => {
-    LiveConfig.setConfig({
-      config_currency_tron: { type: "object", default: {} },
-    } as never);
-  });
-
   describe("buildAccountShape", () => {
-    it("returns the zeroed defaults for an unactivated address", async () => {
-      (fetchTronAccount as jest.Mock).mockResolvedValue([]);
+    const info = { type: "tron", energyLimit: 0, energy: 0, bandwidth: 0 };
 
-      const shape = await buildAccountShape("TUnactivated");
+    it("returns the zeroed defaults for an unactivated address", () => {
+      const shape = buildAccountShape("TUnactivated", { ...info, activated: false });
 
-      expect(shape).toEqual({ tronResources: expect.anything() });
+      expect(shape).toEqual({ tronResources: defaultTronResources });
       expect(isAccountEmpty(shape as { tronResources: never })).toBe(true);
+    });
+
+    it("revives the resources coin-tron reports, in their JSON form", () => {
+      const resources = {
+        ...defaultTronResources,
+        frozen: { bandwidth: { amount: new BigNumber(1_000_000) }, energy: undefined },
+        unFrozen: {
+          bandwidth: [
+            { amount: new BigNumber(5), expireTime: new Date("2026-01-01T00:00:00.000Z") },
+          ],
+          energy: undefined,
+        },
+        votes: [{ address: "TVote", voteCount: 3 }],
+        tronPower: 3,
+        energy: new BigNumber(42),
+        unwithdrawnReward: new BigNumber(7),
+        lastVotedDate: new Date("2026-02-01T00:00:00.000Z"),
+      };
+      const json = toJsonSafe({
+        ...info,
+        activated: true,
+        resources: toTronResourcesRaw(resources as never),
+      });
+
+      const shape = buildAccountShape("TActivated", json as never) as {
+        tronResources: typeof resources;
+      };
+
+      expect(shape.tronResources).toMatchObject({
+        frozen: { bandwidth: { amount: new BigNumber(1_000_000) } },
+        unFrozen: {
+          bandwidth: [
+            { amount: new BigNumber(5), expireTime: new Date("2026-01-01T00:00:00.000Z") },
+          ],
+        },
+        votes: [{ address: "TVote", voteCount: 3 }],
+        tronPower: 3,
+        energy: new BigNumber(42),
+        unwithdrawnReward: new BigNumber(7),
+        lastVotedDate: new Date("2026-02-01T00:00:00.000Z"),
+      });
+      expect(shape.tronResources.bandwidth.freeLimit).toEqual(
+        defaultTronResources.bandwidth.freeLimit,
+      );
+    });
+
+    it("contributes nothing without Tron metadata or reported resources", () => {
+      expect(buildAccountShape("T")).toBeUndefined();
+      expect(buildAccountShape("T", { type: "none" })).toBeUndefined();
+      expect(buildAccountShape("T", { ...info, activated: true })).toBeUndefined();
+      expect(buildAccountShape("T", { ...info, activated: true, resources: null })).toBeUndefined();
     });
   });
 

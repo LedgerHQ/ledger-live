@@ -9,7 +9,7 @@ jest.setTimeout(1_000_000);
 describe("Bitcoin Deterministic Tester", () => {
   it("scenario Bitcoin", async () => {
     try {
-      await executeScenario(scenarioBitcoin);
+      await executeScenario(scenarioBitcoin, "generic-adapter");
     } catch (e) {
       if (e != "done") {
         await killAtlas();

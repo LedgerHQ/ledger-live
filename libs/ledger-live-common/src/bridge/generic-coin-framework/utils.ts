@@ -16,6 +16,7 @@ import type {
 import { isStakingAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
+import { FEE_INCLUSIVE_OPERATION_TYPES, toJsonSafe } from "@ledgerhq/account-module-framework";
 import type {
   AssetInfo,
   Balance,
@@ -39,7 +40,6 @@ import type {
   GasOptionsRaw,
   GenericTransaction,
   GenericTransactionRaw,
-  JsonSafe,
   JsonSafeRecord,
   OperationCommon,
   TransferFee,
@@ -68,19 +68,6 @@ export function bigNumberToBigIntDeep<T>(obj: T): BigNumberToBigIntDeep<T> {
     ) as BigNumberToBigIntDeep<T>;
 
   return obj as BigNumberToBigIntDeep<T>;
-}
-
-function toJsonSafe(value: unknown): JsonSafe | undefined {
-  const json = JSON.stringify(value, jsonSafeReplacer);
-  return json === undefined ? undefined : (JSON.parse(json) as JsonSafe);
-}
-
-function jsonSafeReplacer(this: Record<string, unknown>, key: string, value: unknown): unknown {
-  const raw = this[key];
-  if (typeof raw === "bigint") return raw.toString();
-  if (BigNumber.isBigNumber(raw)) return raw.toFixed();
-  if (typeof value === "bigint") return value.toString();
-  return value;
 }
 
 const BUY_DEEPLINK = "ledgerlive://buy";
@@ -572,7 +559,7 @@ function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOper
 // Use the framework's memo union — `{ type: memoType, value }` without `kind` is silently dropped by coin modules (LIVE-35735).
 type GenericCoinFrameworkMemo = MemoNotSupported | StringMemo<string> | MapMemo<string, string>;
 type GenericCoinFrameworkTxData = { type: string; value?: unknown };
-type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
+export type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
   memo?: GenericCoinFrameworkMemo;
   data?: GenericCoinFrameworkTxData;
   mode?: StakingOperation;
@@ -823,18 +810,7 @@ function computeOperationValue(
   hasFailed: boolean,
 ): BigNumber {
   if (hasFailed) return bnFees;
-  if (
-    op.asset.type === "native" &&
-    [
-      "OUT",
-      "FEES",
-      "DELEGATE",
-      "UNDELEGATE",
-      "REDELEGATE",
-      "CONTRACT_CALL",
-      "UPDATE_ACCOUNT",
-    ].includes(opType)
-  ) {
+  if (op.asset.type === "native" && FEE_INCLUSIVE_OPERATION_TYPES.has(opType)) {
     return new BigNumber(op.value.toString()).plus(bnFees);
   }
   return new BigNumber(op.value.toString());
@@ -941,7 +917,7 @@ export function transactionToIntent(
   account: Account,
   transaction: GenericTransaction,
   computeIntentType?: (transaction: GenericTransaction) => string,
-  craftTransactionData?: (intent: TransactionIntent) => TxData,
+  craftTransactionData?: (intent: TransactionIntent) => TxData | undefined,
   buildIntentData?: BridgeApi["buildIntentData"],
 ): GenericCoinFrameworkTransactionIntent {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
@@ -1006,13 +982,15 @@ export function transactionToIntent(
 /**
  * A transaction that already carries data wins over both crafting paths, since a buffer is already
  * the crafted form. Otherwise the family's hook takes precedence over the coin module's crafting.
+ * `craftTransactionData` may leave the data undefined: the portfolio layer's side writing completes
+ * it itself.
  */
 function resolveIntentData(
   transaction: GenericTransaction,
   intent: GenericCoinFrameworkTransactionIntent,
-  craftTransactionData?: (intent: TransactionIntent) => TxData,
+  craftTransactionData?: (intent: TransactionIntent) => TxData | undefined,
   buildIntentData?: BridgeApi["buildIntentData"],
-): GenericCoinFrameworkTxData {
+): GenericCoinFrameworkTxData | undefined {
   if (transaction.data && transaction.data.length > 0) {
     return { type: "buffer", value: transaction.data };
   }
