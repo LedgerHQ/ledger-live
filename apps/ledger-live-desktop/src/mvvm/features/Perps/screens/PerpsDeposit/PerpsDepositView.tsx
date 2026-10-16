@@ -7,9 +7,11 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@ledgerhq/lumen-ui-react";
-import { DepositAccountSelector } from "./components/DepositAccountSelector";
-import { DepositAmountStatus } from "./components/DepositAmountStatus";
-import { RatioPicker } from "./components/RatioPicker";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { PerpsAccountSelector } from "LLD/features/Perps/components/PerpsAccountSelector";
+import { PerpsAmountStatus } from "LLD/features/Perps/components/PerpsAmountStatus";
+import { RatioPicker } from "LLD/features/Perps/components/RatioPicker";
+import { PERPS_DEPOSIT_PROVIDER_ID } from "LLD/features/Perps/constants/depositFunding";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
 export function PerpsDepositView({
@@ -37,6 +39,7 @@ export function PerpsDepositView({
   handleReview,
 }: Readonly<PerpsDepositViewModel>) {
   const { t } = useTranslation();
+  const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
   return (
     <>
@@ -55,11 +58,16 @@ export function PerpsDepositView({
           data-testid="perps-deposit-amount-input"
         />
 
-        <DepositAmountStatus
-          formattedAmount={formattedQuotedAmount}
+        <PerpsAmountStatus
+          quotedAmountText={
+            formattedQuotedAmount
+              ? t("perpsDeposit.inputDepositAmount", { value: formattedQuotedAmount })
+              : null
+          }
           isQuoteLoading={isQuoteLoading}
-          hasAmount={depositAmount > 0}
-          error={statusError}
+          notice={depositAmount > 0 ? t("perpsDeposit.inputSubText", { provider }) : null}
+          errorMessage={statusError ? t(statusError.labelKey, { provider }) : null}
+          testIdPrefix="perps-deposit"
         />
 
         <RatioPicker
@@ -69,17 +77,22 @@ export function PerpsDepositView({
           decimalPlaces={maxDecimalLength}
           onChange={selectAmountRatio}
           onMax={selectMax}
+          testIdPrefix="perps-deposit"
           className="justify-around"
         />
 
-        <DepositAccountSelector
+        <PerpsAccountSelector
+          title={t("perpsDeposit.selectCurrencyTitle", { currencyTicker: depositCurrencyTicker })}
           ticker={depositCurrencyTicker}
           ledgerId={depositCurrencyLedgerId}
           accountName={depositAccountName}
           counterValue={depositAccountCounterValue}
+          accountLabelKey="perpsDeposit.selectCurrencyAccount"
+          noAccountLabel={t("perpsDeposit.selectCurrencyNoAccount")}
           exceedsBalance={exceedsBalance}
           missingAccount={missingAccount}
           onSelect={pickDepositAccount}
+          testId="perps-deposit-select-currency"
         />
       </DialogBody>
 
