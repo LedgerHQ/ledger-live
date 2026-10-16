@@ -53,6 +53,27 @@ describe("LiftSplashOnAppAvailability", () => {
     await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
   });
 
+  it("should lift the splash onto the location screen when CAL hangs", async () => {
+    mockMarket.fail(451);
+    hangCal();
+    const store = createStore({});
+    render(
+      <LiftSplashOnAppAvailability>
+        <AppAvailability>
+          <div>App</div>
+        </AppAvailability>
+      </LiftSplashOnAppAvailability>,
+      { store },
+    );
+
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled(), { timeout: 4_000 });
+    expect(screen.getByRole("heading", { name: "Location unavailable" })).toBeVisible();
+    expect(screen.queryByText("App")).toBeNull();
+    expect(
+      screen.queryByRole("heading", { name: "Ledger Wallet is currently unavailable" }),
+    ).toBeNull();
+  });
+
   it("should call appLoaded when the check fails open", async () => {
     mockMarket.networkError();
     const store = createStore({});
