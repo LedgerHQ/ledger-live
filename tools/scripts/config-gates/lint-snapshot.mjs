@@ -2,6 +2,10 @@
 // Run every workspace package's `lint` script and record the config oxlint resolves and each
 // diagnostic it produces.
 //
+// A diagnostic can only change where code violates a rule, so the diff also compares the printed
+// configs rule by rule and lists every rule a package loses or downgrades (error to warn, warn to
+// off): a weaker rule set passes the same code today and lets the next violation through.
+//
 // Each package's `lint` script is replayed as `oxlint <args> -f json` in the package directory, so
 // the config oxlint finds is the one CI and the editor find. `oxlint --print-config` with the same
 // arguments records the resolved plugins, rules and settings (it leaves out `overrides`, which the
@@ -165,10 +169,37 @@ function ruleChanges(before = {}, after = {}) {
     .map(rule => `rule ${rule}: ${JSON.stringify(before[rule])} -> ${JSON.stringify(after[rule])}`);
 }
 
+const SEVERITY_RANK = { allow: 0, off: 0, warn: 1, deny: 2, error: 2 };
+
+// oxlint's rule flags on the command line. `--print-config` does not apply them.
+const RULE_FLAG = /(?:^|\s)(?:-A|-W|-D|--allow|--warn|--deny)(?:=|\s+)\S+/g;
+
+/**
+ * @param {unknown} setting a rule's entry in a printed config: a severity, or [severity, ...options]
+ * @returns {string} the severity, `allow` when the rule is not enabled
+ */
+function severityOf(setting) {
+  return (Array.isArray(setting) ? setting[0] : setting) ?? "allow";
+}
+
+/**
+ * @param {Record<string, unknown>} [before] `rules` of a printed config
+ * @param {Record<string, unknown>} [after]
+ * @returns {string[]} `rule from -> to`, one per rule the package loses or downgrades
+ */
+export function weakenedRules(before = {}, after = {}) {
+  return Object.keys(before)
+    .filter(
+      rule => SEVERITY_RANK[severityOf(after[rule])] < SEVERITY_RANK[severityOf(before[rule])],
+    )
+    .map(rule => `${rule} ${severityOf(before[rule])} -> ${severityOf(after[rule])}`);
+}
+
 /**
  * Prints, per package, the script, exit, config and rule changes, then the diagnostics gained (+)
  * and lost (-) per rule, with every new error spelled out. Totals split `ci` (packages with a
- * `lint` script) from `editor` (linted only because of --all).
+ * `lint` script) from `editor` (linted only because of --all). A last section lists the rules each
+ * package loses or downgrades.
  *
  * @param {string} beforePath base snapshot
  * @param {string} afterPath branch snapshot
@@ -177,6 +208,8 @@ export function diff(beforePath, afterPath) {
   const before = readSnapshot(beforePath);
   const after = readSnapshot(afterPath);
   const totals = {};
+  const weakened = [];
+  const flagged = [];
   for (const key of unionKeys(before, after)) {
     const b = before[key];
     const a = after[key];
@@ -221,10 +254,35 @@ export function diff(beforePath, afterPath) {
     }
     for (const item of added) if (item.startsWith("error")) changes.push(`   NEW ERROR ${item}`);
 
+    const lost = weakenedRules(b.config.rules, a.config.rules);
+    if (lost.length > 0) weakened.push({ key, bucket, lost });
+    const flags = [b.script, a.script].flatMap(script => script.match(RULE_FLAG) ?? []);
+    if (flags.length > 0) flagged.push(`${key}:${[...new Set(flags)].join("")}`);
+
     if (changes.length > 0) console.log(`~ ${key}\n    ${changes.join("\n    ")}`);
   }
   console.log("\nTOTALS (bucket severity direction):");
   for (const total of Object.keys(totals).sort()) console.log(`   ${total}  ${totals[total]}`);
+
+  console.log("\nWEAKENED RULES (package: rule before -> after):");
+  for (const { key, bucket, lost } of weakened) {
+    console.log(`  ${bucket} ${key}`);
+    for (const rule of lost) console.log(`      ${rule}`);
+  }
+  const count = bucket =>
+    weakened
+      .filter(entry => entry.bucket === bucket)
+      .reduce((sum, entry) => sum + entry.lost.length, 0);
+  const packages = bucket => weakened.filter(entry => entry.bucket === bucket).length;
+  console.log(`   ci      ${count("ci")} rule(s) in ${packages("ci")} package(s)`);
+  console.log(`   editor  ${count("editor")} rule(s) in ${packages("editor")} package(s)`);
+  console.log(
+    "   --print-config ignores `overrides` and the rule flags of the command line (-A, -W, -D):\n" +
+      "   a rule an override or a flag keeps can show here as weakened, and one they weaken does\n" +
+      "   not show. Check those with a probe file in the package.",
+  );
+  if (flagged.length > 0)
+    console.log(`   Packages with rule flags:${flagged.map(f => `\n      ${f}`).join("")}`);
 }
 
 await cli(import.meta.url, { snap, diff });

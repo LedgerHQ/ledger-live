@@ -12,7 +12,7 @@ gate asks it, through the checkout's own copy of the tool.
 | Script | Proves | Snapshot |
 | --- | --- | --- |
 | `tsconfig-snapshot.mjs` | Every tsconfig resolves to the same compiler options and the same program | Options and references from the TypeScript compiler API, as `--showConfig` prints them; program from `tsc --listFilesOnly` |
-| `lint-snapshot.mjs` | Every package's lint config and diagnostics stay the same, or change exactly as listed | Each `lint` script replayed with `--print-config` and `-f json`; `--all` adds what the editor sees |
+| `lint-snapshot.mjs` | Every package's lint config and diagnostics stay the same, or change exactly as listed, and no package loses or downgrades a rule | Each `lint` script replayed with `--print-config` and `-f json`; `--all` adds what the editor sees |
 | `fmt-snapshot.mjs` | Every oxfmt invocation formats the same set of files | Each script's `oxfmt` call under a forced style, with `--list-different` |
 | `jest-snapshot.mjs` | Every jest preset consumer resolves the same config and test files, and with `--run` passes and fails the same tests | `--showConfig` and `--listTests`; `--run` adds `--ci --forceExit --json` |
 
@@ -47,8 +47,13 @@ the base keeps both snapshots comparable while the gates themselves change.
 - `fmt-snapshot.mjs` rewrites every oxfmt config for the duration of the run and restores it from git,
   so it refuses to run while one of them has uncommitted changes.
 - `lint-snapshot.mjs` stores oxlint's own message when a run fails, without its run time, so only a
-  package whose failure changes shows up as `!` in the report. `--print-config` leaves out
-  `overrides`; their effect still shows in the diagnostics.
+  package whose failure changes shows up as `!` in the report. Its diff ends with the rules each
+  package loses or downgrades (error to warn, warn to off), compared on the printed configs: code
+  that violates no rule today lints the same under a weaker config, so the diagnostics alone cannot
+  show the loss. `--print-config` leaves out `overrides` and the rule flags of the command line
+  (`-A`, `-W`, `-D`), so a rule an override or a flag keeps can be listed as weakened, and one they
+  weaken is not listed. The diff names the packages with rule flags; check those, and the packages
+  an override covers, with a probe file.
 - `jest-snapshot.mjs --run` runs one consumer at a time, which is slow on the whole tree. Pass
   package directories after the output path to snapshot a subset. The config and test-file
   snapshot without `--run` takes seconds and is the first check to run.
