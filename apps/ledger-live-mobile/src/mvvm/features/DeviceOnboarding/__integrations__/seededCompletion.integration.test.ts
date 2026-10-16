@@ -1,4 +1,5 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import type { State } from "~/reducers/types";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
 import { createTestDevice, knownStax } from "../testing/testDevice";
@@ -31,6 +32,7 @@ describe("seeded onboarding completion", () => {
           wasReadOnlyAtEntry: true,
         }),
       {
+        innerWrapper: NotificationsPromptProvider,
         overrideInitialState: (state: State) => ({
           ...state,
           settings: {
