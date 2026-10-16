@@ -66,11 +66,15 @@ Running from source needs [Bun](https://bun.sh) ≥ 1.1.0 and the monorepo (see 
 pnpm wallet-cli start -- <command> [args]   # from the repo root
 pnpm start -- <command> [args]              # from apps/wallet-cli
 pnpm test                                   # see src/testing/README.md
-pnpm build                                  # native bundle in dist/
+pnpm build                                  # scripts/build.mjs: dist/<target>/cli
 ```
 
-- `pnpm build` compiles your own platform only. With `CI=true`, it compiles every release target, which needs every platform's OpenTUI packages. `prepare:npm`, `pack:check` and `smoke:npm` need that full build.
+- `pnpm build` compiles your own platform only. With `CI=true`, it compiles every release target, which needs every platform's native optional packages, such as `@napi-rs/keyring`. `prepare:npm`, `pack:check` and `smoke:npm` need that full build.
 - The embedded skill is generated from [`.agents/skills/`](../../.agents/skills) into `src/skills/manifest.gen.ts`. The file is gitignored and regenerated before `typecheck`, `test` and `build`. `pnpm check:skills` validates it.
 - The binary's copy and the copy published to [LedgerHQ/agent-skills](https://github.com/LedgerHQ/agent-skills) go through one transform, [`scripts/standalone-skill-transform.mjs`](./scripts/standalone-skill-transform.mjs). Don't add a second copy of its rules.
 
 `@ledgerhq/live-cli` ([`apps/cli`](../cli)) is a separate tool. It is internal and Speculos-only, and is used by e2e suites and CI.
+
+### Adding a command
+
+Top-level commands are listed in [`src/commands/registry.ts`](src/commands/registry.ts) with their name, description, subcommand names and a loader. `src/cli.ts` loads only the modules of the commands named on the command line. Root help, unknown-command suggestions and analytics read the registry. A command module takes its description from the registry with `commandDescription("<name>")`, and `registry.test.ts` fails when a command module is missing from the registry or its subcommands no longer match.

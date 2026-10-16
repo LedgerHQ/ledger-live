@@ -32,7 +32,7 @@ For `rxjs` (Apache-2.0), the same Apache-2.0 v2.0 text shipped in the `LICENSE` 
 
 The packages below are inlined into `bin/wallet-cli` by the bundler, in addition to the direct dependencies listed above. They are grouped by license; full license texts are reproduced in section 4. Copyright information was resolved by reading the upstream `LICENSE` file when available, otherwise by reading the `author`/`contributors` field of the upstream `package.json`, otherwise (rare cases) by alignment with the package's homepage or repository.
 
-### MIT License (200 packages)
+### MIT License (196 packages)
 
 | Package | Version | Copyright |
 |---|---|---|
@@ -46,10 +46,7 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | @babel/traverse | 7.29.0 | The Babel Team (https://babel.dev/team) |
 | @babel/types | 7.29.0 | Copyright (c) 2014-present Sebastian McKenzie and other contributors |
 | @bunli/core | 0.9.1 | Arya Labs, Inc. |
-| @bunli/generator | 0.6.5 | Copyright (c) Bunli contributors |
-| @bunli/plugin-completions | 0.3.5 | Bunli Team |
 | @bunli/runtime | 0.3.2 | Bunli Contributors |
-| @bunli/tui | 0.6.0 | Bunli Contributors |
 | @bunli/utils | 0.6.0 | Arya Labs, Inc. |
 | @inversifyjs/common | 1.5.0 | Copyright (c) 2024 inversify |
 | @inversifyjs/container | 1.9.1 | Copyright (c) 2024 inversify |
@@ -156,7 +153,6 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | buffer | 6.0.3 | Copyright (c) Feross Aboukhadijeh, and other contributors. |
 | bun-ffi-structs | 0.1.2 | Copyright (c) Oven and contributors |
 | bun-types | 1.4.2 | Copyright (c) Oven and contributors |
-| bunli | 0.9.1 | Arya Labs, Inc. |
 | call-bind-apply-helpers | 1.0.2 | Copyright (c) 2024 Jordan Harband |
 | call-bound | 1.0.4 | Copyright (c) 2024 Jordan Harband |
 | dunder-proto | 1.0.1 | Copyright (c) 2024 ECMAScript Shims |

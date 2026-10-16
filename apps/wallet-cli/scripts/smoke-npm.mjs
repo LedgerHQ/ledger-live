@@ -74,6 +74,14 @@ try {
   run("pnpm", ["add", platformTarball, mainTarball], { cwd: installDir });
   run("pnpm", ["exec", "wallet-cli", "--version"], { cwd: installDir });
 
+  // --version loads no command module; a lazily loaded command proves the binary embeds them.
+  const skillList = JSON.parse(
+    run("pnpm", ["exec", "wallet-cli", "skill", "list", "--output", "json"], { cwd: installDir }),
+  );
+  if (skillList.status !== "success" || skillList.skills.length === 0) {
+    throw new Error(`wallet-cli skill list returned no skills\n${JSON.stringify(skillList)}`);
+  }
+
   console.log(`Installed and executed @ledgerhq/wallet-cli for ${platformKey}.`);
 } finally {
   await rm(destination, { recursive: true, force: true });
