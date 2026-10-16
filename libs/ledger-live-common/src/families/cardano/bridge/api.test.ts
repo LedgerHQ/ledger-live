@@ -123,8 +123,6 @@ describe("cardano bridge", () => {
         type: "native",
         assetReference: ASSET_REFERENCE,
         assetOwner: owner,
-        name: "Coin Tester Token",
-        unit: { name: "Coin Tester Token", code: "CTT", magnitude: 0 },
       });
     });
 

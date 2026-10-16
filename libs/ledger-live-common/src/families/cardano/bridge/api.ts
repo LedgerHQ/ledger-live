@@ -34,8 +34,6 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
     type: token.tokenType,
     assetReference: decodeTokenCurrencyId(token.id).assetId,
     assetOwner: owner,
-    name: token.name,
-    unit: token.units[0],
   };
 }
 
