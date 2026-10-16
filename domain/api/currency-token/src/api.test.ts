@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { delay, http } from "msw";
+import { setupServer } from "msw/node";
 
 jest.mock("./converter", () => ({
   convertApiToken: jest.fn(),
@@ -212,6 +214,13 @@ describe("cryptoAssetsApi requests", () => {
     const timeoutDescriptor = Object.getOwnPropertyDescriptor(AbortSignal, "timeout");
     Reflect.deleteProperty(AbortSignal, "timeout");
 
+    const server = setupServer(
+      http.get("https://cal.test/v1/currencies", async () => {
+        await delay("infinite");
+      }),
+    );
+    server.listen({ onUnhandledRequest: "error" });
+
     const originalSetTimeout = globalThis.setTimeout.bind(globalThis);
     let abortFetch: (() => void) | undefined;
     const setTimeoutSpy = jest.spyOn(globalThis, "setTimeout").mockImplementation(((
@@ -226,18 +235,6 @@ describe("cryptoAssetsApi requests", () => {
       return originalSetTimeout(handler, timeout, ...args);
     }) as typeof setTimeout);
 
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
-      (_input, init) =>
-        new Promise((_resolve, reject) => {
-          const abort = () => reject(new DOMException("The operation was aborted.", "AbortError"));
-          const signal = init?.signal;
-          if (signal?.aborted) {
-            abort();
-            return;
-          }
-          signal?.addEventListener("abort", abort, { once: true });
-        }),
-    );
     const store = makeStore();
 
     try {
@@ -248,9 +245,6 @@ describe("cryptoAssetsApi requests", () => {
 
       expect(AbortSignal.timeout).toBeUndefined();
       expect(abortFetch).toEqual(expect.any(Function));
-      expect(fetchSpy.mock.calls[0][1]).toEqual(
-        expect.objectContaining({ signal: expect.any(AbortSignal) }),
-      );
 
       const started = Date.now();
       abortFetch?.();
@@ -260,6 +254,7 @@ describe("cryptoAssetsApi requests", () => {
       expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
     } finally {
       setTimeoutSpy.mockRestore();
+      server.close();
       if (timeoutDescriptor) {
         Object.defineProperty(AbortSignal, "timeout", timeoutDescriptor);
       }
