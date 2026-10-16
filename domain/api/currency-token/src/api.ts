@@ -71,7 +71,6 @@ export const cryptoAssetsApi = calApi
       getTokensSyncHash: build.query<string, string>({
         async queryFn(currencyId, queryApi) {
           const extra = getCalExtra(queryApi);
-          // React Native installs abort-controller@3 as AbortSignal, which has no AbortSignal.timeout.
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), TOKENS_SYNC_HASH_TIMEOUT_MS);
           try {
