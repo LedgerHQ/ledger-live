@@ -1,5 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { AccountSettingsSheet } from "@features/flow-account-detail-settings";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { ScreenName } from "~/const";
@@ -8,6 +9,7 @@ import { AccountDetailView } from "./AccountDetailView";
 import { AccountDetailNavBarCenter } from "./components/AccountDetailNavBarCenter";
 import { AccountDetailSettingsButton } from "./components/AccountDetailSettingsButton";
 import { useAccountDetailViewModel } from "./useAccountDetailViewModel";
+import { ACCOUNT_DETAIL_TEST_IDS } from "../../testIds";
 
 type NavigationProps = NativeStackNavigationProp<
   AccountDetailNavigatorParamsList,
@@ -15,7 +17,8 @@ type NavigationProps = NativeStackNavigationProp<
 >;
 
 export default function AccountDetail() {
-  const { account, header, onOpenSettings } = useAccountDetailViewModel();
+  const { account, accountName, header, onOpenSettings, isSettingsOpen, onCloseSettings } =
+    useAccountDetailViewModel();
   const navigation = useNavigation<NavigationProps>();
 
   useLayoutEffect(() => {
@@ -40,5 +43,18 @@ export default function AccountDetail() {
 
   if (!account) return null;
 
-  return <AccountDetailView account={account} />;
+  return (
+    <>
+      <AccountDetailView account={account} />
+      <AccountSettingsSheet
+        isOpen={isSettingsOpen}
+        accountName={accountName}
+        onClose={onCloseSettings}
+        onChangeName={onCloseSettings}
+        onViewAdvancedLogs={onCloseSettings}
+        onConfirmRemove={onCloseSettings}
+        testID={ACCOUNT_DETAIL_TEST_IDS.settingsSheet}
+      />
+    </>
+  );
 }
