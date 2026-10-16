@@ -1,3 +1,4 @@
+import React from "react";
 import BigNumber from "bignumber.js";
 import { fireEvent, within } from "tests/testSetup";
 import userEvent from "@testing-library/user-event";
@@ -40,6 +41,7 @@ import {
   setMockOrchestrationState,
   setMockScannedCode,
   setMockContacts,
+  setMockLLDCoinFamily,
   setMockSponsoredSeam,
   setMockStatus,
   setMockStatusResolver,
@@ -651,6 +653,70 @@ describe("Send Flow Integration", () => {
       await waitFor(() =>
         expect(screen.getByTestId("send-network-fees-menu-trigger")).toHaveTextContent(/fast/i),
       );
+    });
+  });
+
+  describe("Amount footer row slot", () => {
+    const FamilyFooterRow = ({ transaction }: { transaction: Transaction }) => (
+      <div data-testid="family-footer-row">{transaction.amount.toFixed()}</div>
+    );
+
+    it("renders the family row under the network fees and follows the amount", async () => {
+      setMockLLDCoinFamily({ SendAmountFooterRow: FamilyFooterRow });
+      setMockTransaction(
+        createMinimalEvmTransaction({ amount: new BigNumber(0), recipient: VALID_EVM_RECIPIENT }),
+      );
+
+      const { user } = renderSendFlow(ethereumAccount);
+      await navigateToAmountScreen(user);
+
+      const feesRow = screen.getByTestId("send-network-fees-row");
+      const footerRow = screen.getByTestId("family-footer-row");
+      expect(footerRow).toHaveTextContent("0");
+      expect(feesRow.compareDocumentPosition(footerRow)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+      expect(
+        within(screen.getByTestId("send-amount-footer")).getByTestId("family-footer-row"),
+      ).toBe(footerRow);
+
+      await user.click(screen.getByTestId("send-quick-actions-half"));
+
+      await waitFor(() =>
+        expect(screen.getByTestId("family-footer-row")).toHaveTextContent(
+          ethereumAccount.spendableBalance.dividedBy(2).toFixed(),
+        ),
+      );
+    });
+
+    it("mounts both the amount effect and the footer row when a family declares both", async () => {
+      const FamilyAmountEffect = jest.fn(() => null);
+      setMockLLDCoinFamily({
+        SendAmountEffect: FamilyAmountEffect,
+        SendAmountFooterRow: FamilyFooterRow,
+      });
+      setMockTransaction(
+        createMinimalEvmTransaction({ amount: new BigNumber(0), recipient: VALID_EVM_RECIPIENT }),
+      );
+
+      const { user } = renderSendFlow(ethereumAccount);
+      await navigateToAmountScreen(user);
+
+      expect(screen.getByTestId("family-footer-row")).toBeVisible();
+      expect(FamilyAmountEffect).toHaveBeenCalledWith(
+        expect.objectContaining({ account: ethereumAccount }),
+        undefined,
+      );
+    });
+
+    it("adds no row for a family that declares none", async () => {
+      setMockTransaction(
+        createMinimalEvmTransaction({ amount: new BigNumber(0), recipient: VALID_EVM_RECIPIENT }),
+      );
+
+      const { user } = renderSendFlow(ethereumAccount);
+      await navigateToAmountScreen(user);
+
+      expect(screen.getByTestId("send-network-fees-row")).toBeVisible();
+      expect(screen.queryByTestId("family-footer-row")).not.toBeInTheDocument();
     });
   });
 

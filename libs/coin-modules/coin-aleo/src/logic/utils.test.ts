@@ -135,6 +135,7 @@ import {
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
   getEstimatedSigningTime,
+  getSigningRecordCount,
   sumPrivateRecords,
   getMaxPrivateRecordsForAccount,
   getStrategyConfig,
@@ -3318,6 +3319,50 @@ describe("getEstimatedSigningTime", () => {
 
   it("should return 0 sec for 0 records", () => {
     expect(getEstimatedSigningTime(0, "sec", "min")).toBe("~0 sec");
+  });
+});
+
+const privateTransaction = (
+  amountRecordCount: number,
+  feeRecordCommitment: string | null,
+  mode:
+    | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE
+    | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE = TRANSACTION_TYPE.TRANSFER_PRIVATE,
+) =>
+  getMockedTransaction({
+    mode,
+    properties: {
+      amountRecordCommitments: Array.from({ length: amountRecordCount }, (_, i) => `record-${i}`),
+      feeRecordCommitment,
+    },
+  });
+
+describe("getSigningRecordCount", () => {
+  it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC])(
+    "returns 0 for %s",
+    mode => {
+      expect(getSigningRecordCount(getMockedTransaction({ mode }))).toBe(0);
+    },
+  );
+
+  it("counts the amount records and the fee record of a private send", () => {
+    expect(getSigningRecordCount(privateTransaction(3, "fee-record"))).toBe(4);
+  });
+
+  it("leaves the fee record out when the fee is sponsored", () => {
+    expect(getSigningRecordCount(privateTransaction(3, null))).toBe(3);
+  });
+
+  it("counts records the same way for a private token send", () => {
+    expect(
+      getSigningRecordCount(
+        privateTransaction(2, "fee-record", TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE),
+      ),
+    ).toBe(3);
+  });
+
+  it("returns 0 before any record is picked", () => {
+    expect(getSigningRecordCount(privateTransaction(0, null))).toBe(0);
   });
 });
 
