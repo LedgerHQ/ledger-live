@@ -23,6 +23,15 @@ describe("customErrorEventMapper", () => {
     ).toBeNull();
   });
 
+  it("drops the Ledger Sync QR pairing error with sync off on both apps", () => {
+    expect(
+      mapError({
+        message: "socket error unexpected share credential",
+        stacktrace: "",
+      } as Parameters<typeof mapError>[0]),
+    ).toBeNull();
+  });
+
   it("keeps unrelated errors", () => {
     const event = {
       message: "Something went wrong",

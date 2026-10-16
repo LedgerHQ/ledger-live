@@ -19,6 +19,14 @@ describe("datadog ignoreErrors", () => {
       ).toBe(true);
     });
 
+    it("should return true for the Ledger Sync QR pairing error with sync off on both apps", () => {
+      expect(
+        shouldIgnoreErrorMessage(
+          "socket error NoTrustchainInitialized: unexpected share credential",
+        ),
+      ).toBe(true);
+    });
+
     it("should return true when message matches RegExp pattern", () => {
       expect(shouldIgnoreErrorMessage("status code 404")).toBe(true);
     });
