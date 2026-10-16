@@ -5,24 +5,46 @@
 // rule. Each tool migration narrows or deletes the entries it makes obsolete, so this file shrinks
 // to nothing. Give every entry an exit condition.
 
+const LINT_LEAVES =
+  "keep their own oxlint config, which no support/lint preset reproduces yet. Exit condition: " +
+  "the subtree moves onto its layer's preset and its config is deleted.";
+
 /** @type {Record<string, { rules?: string[], reason: string }>} */
 export const EXCLUSIONS = {
   apps: {
-    reason:
-      "TEMPORARY. Application configs are out of scope of the support/ migration: they carry " +
-      "bundler, platform and build settings no preset covers yet. Exit condition: each tool " +
-      "migration that moves the apps onto its preset removes them from this entry.",
+    rules: ["lint"],
+    reason: `TEMPORARY. The applications ${LINT_LEAVES}`,
   },
   e2e: {
-    reason:
-      "TEMPORARY. End-to-end suites run their own jest, lint and TypeScript setups (Playwright, " +
-      "Detox). Exit condition: each tool migration that moves the suites onto its preset removes " +
-      "them from this entry.",
+    rules: ["lint"],
+    reason: `TEMPORARY. The end-to-end suites ${LINT_LEAVES}`,
   },
-  libs: {
-    reason:
-      "TEMPORARY. Legacy libraries keep hand-rolled configs, down to one jest config per coin " +
-      "module. Exit condition: each tool migration that moves libs/ onto its " +
-      "preset scopes this entry away from that tool's rule, then the entry is deleted.",
+  "libs/coin-modules": {
+    rules: ["lint"],
+    reason: `TEMPORARY. The coin modules, and coin-bitcoin on top of them, ${LINT_LEAVES}`,
+  },
+  "libs/ledger-live-common": {
+    rules: ["lint"],
+    reason: `TEMPORARY. live-common and its tools ${LINT_LEAVES}`,
+  },
+  "libs/ledger-services": {
+    rules: ["lint"],
+    reason: `TEMPORARY. The ledger-services packages ${LINT_LEAVES}`,
+  },
+  "libs/ledgerjs": {
+    rules: ["lint"],
+    reason: `TEMPORARY. The ledgerjs packages ${LINT_LEAVES}`,
+  },
+  "libs/ui": {
+    rules: ["lint"],
+    reason: `TEMPORARY. The legacy UI packages ${LINT_LEAVES}`,
+  },
+  "libs/wallet-btc": {
+    rules: ["lint"],
+    reason: `TEMPORARY. wallet-btc ${LINT_LEAVES}`,
+  },
+  tests: {
+    rules: ["lint"],
+    reason: `TEMPORARY. The test apps ${LINT_LEAVES}`,
   },
 };
