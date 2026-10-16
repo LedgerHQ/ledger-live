@@ -8,3 +8,4 @@ installer.repo_update = true
 installer.send(:prepare)
 installer.resolve_dependencies
 installer.send(:generate_lockfile).write_to_disk(config.lockfile_path)
+
