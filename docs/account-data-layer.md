@@ -2,7 +2,7 @@
 
 A screen asks for one kind of data of one account (a balance, a page of operations) when it needs it, instead of reading a monolithic `Account` filled by the background sync. The router picks, per account, the first source able to serve it; the answer lands in that kind's entity slice, and how the read went in the framework's `accountData` slice.
 
-Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`, both from [`@domain/entity-account-descriptor`](../domain/entity/account-descriptor).
+Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`, both from [`@domain/entity-account-descriptor`](../domain/entity/account-descriptor). The accounts of the app live in the `accounts` slice of [`@domain/entity-account`](../domain/entity/account), by `AccountUUID` (each app mounts it at `accountEntries` while the legacy store holds `accounts`, and binds its selectors there), kept in step with the legacy accounts by `connectAccountsStore` (wired in each app's `account-data-setup.ts`), so a screen holding a legacy account finds its descriptor with `selectAccountUUIDByLegacyId`.
 
 ## Packages
 

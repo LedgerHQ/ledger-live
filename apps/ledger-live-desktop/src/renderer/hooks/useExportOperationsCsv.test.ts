@@ -22,7 +22,7 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
 
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  useCountervaluesState: () => ({}),
+  useCountervaluesCache: () => ({}),
   useCountervaluesPolling: () => ({}),
 }));
 

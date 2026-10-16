@@ -70,7 +70,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     receiveVerify: {
       [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ADDRESS,
       [AppInfos.SOLANA.name]: DeviceLabels.PUBKEY,
-      [AppInfos.ZCASH.name]: DeviceLabels.VERIFY_ADDRESS,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.ADDRESS,
       [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.ADDRESS,
       default: DeviceLabels.ADDRESS,
@@ -78,8 +77,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     receiveConfirm: {
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
-      [AppInfos.TRON.name]: DeviceLabels.CONFIRM,
-      [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
@@ -90,6 +87,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.TEZOS.name]: DeviceLabels.REVIEW_OPERATION,
       [AppInfos.INJECTIVE.name]: DeviceLabels.CHAIN_ID,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CHAIN_ID,
+      [AppInfos.BABYLON.name]: DeviceLabels.CHAIN_ID,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     delegateConfirm: {
@@ -98,7 +96,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
       [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.SIGN,
-      [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT_RISK,
+      [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT,
       default: DeviceLabels.CAPS_APPROVE,
     },
     sendVerify: {
@@ -108,6 +106,9 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.POLKADOT.name]: DeviceLabels.CHAIN_STATEMINT,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.TRANSACTION_TYPE,
       [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.TRANSACTION_TYPE,
+      [AppInfos.INTERNET_COMPUTER.name]: DeviceLabels.TRANSACTION_TYPE,
+      [AppInfos.OSMOSIS.name]: DeviceLabels.CHAIN_ID,
+      [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {

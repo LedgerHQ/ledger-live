@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
@@ -15,6 +16,9 @@ import {
 
 const rendererCrashHandler = path.resolve(rootFolder, "src", "renderer", "pre.ts");
 const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
+// Node conditions pick the `main` build; resolving avoids pinning the peer-suffixed .pnpm dir name
+const resolveFromLib = (lib: string, request: string) =>
+  require.resolve(request, { paths: [path.resolve(rootFolder, "..", "..", "libs", lib)] });
 
 export function createRendererConfig(
   mode: "development" | "production",
@@ -120,59 +124,29 @@ export function createRendererConfig(
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
         // @stellar/stellar-sdk: browser field is dist/stellar-sdk.min.js (915KB), main is lib/index.js (smaller, tree-shakeable)
-        "@stellar/stellar-sdk": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "@stellar+stellar-sdk@14.0.0",
-          "node_modules",
-          "@stellar",
-          "stellar-sdk",
-          "lib",
-          "index.js",
-        ),
+        "@stellar/stellar-sdk": resolveFromLib("ledger-live-common", "@stellar/stellar-sdk"),
         // casper-js-sdk: browser field is dist/lib.web.js (1MB), main is dist/lib.node.js (smaller)
-        "casper-js-sdk": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "casper-js-sdk@5.1.1",
-          "node_modules",
-          "casper-js-sdk",
-          "dist",
-          "lib.node.js",
-        ),
-        // web3: browser field is dist/web3.min.js (1.3MB UMD), main is lib/index.js (tree-shakeable)
-        // LIVE-23059: long term solution is to get rid of this deprecated lib
-        web3: path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "web3@1.10.4",
-          "node_modules",
-          "web3",
-          "lib",
-          "index.js",
-        ),
+        "casper-js-sdk": resolveFromLib("coin-modules/coin-casper", "casper-js-sdk"),
         // Deduplicate @scure/bip39: multiple versions (1.x from cosmos/casper/filecoin, 2.x from @mysten/sui).
-        // The path pins an exact version, so a @mysten/sui bump that moves its 2.x needs it updated.
         // V2 is backward-compatible and shares @noble/hashes@2.x already in the bundle
-        "@scure/bip39": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "@scure+bip39@2.3.0",
-          "node_modules",
-          "@scure",
-          "bip39",
+        "@scure/bip39": path.dirname(
+          require.resolve("@scure/bip39", {
+            paths: [
+              fs.realpathSync(
+                path.resolve(
+                  rootFolder,
+                  "..",
+                  "..",
+                  "libs",
+                  "coin-modules",
+                  "coin-sui",
+                  "node_modules",
+                  "@mysten",
+                  "sui",
+                ),
+              ),
+            ],
+          }),
         ),
       },
     },

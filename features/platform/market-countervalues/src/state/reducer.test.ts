@@ -7,6 +7,7 @@ import {
 import {
   countervaluesInitialState,
   countervaluesReducer,
+  countervaluesCacheSelector,
   countervaluesStateSelector,
   countervaluesSyncErrorSelector,
   countervaluesSyncIsPollingSelector,
@@ -84,6 +85,7 @@ describe("countervaluesReducer", () => {
     const root = { countervalues };
 
     expect(countervaluesStateSelector(root)).toBe(rates);
+    expect(countervaluesCacheSelector(root)).toBe(rates.cache);
     expect(countervaluesSyncPendingSelector(root)).toBe(true);
     expect(countervaluesSyncErrorSelector(root)).toBe(error);
     expect(countervaluesSyncIsPollingSelector(root)).toBe(false);

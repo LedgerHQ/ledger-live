@@ -14,14 +14,9 @@ import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 import { Currency } from "../enum/Currency";
 
-const getSignTransactionLabel = (currencyId: string): string => {
-  switch (currencyId) {
-    case Currency.ZEC.id:
-      return DeviceLabels.SIGN_TRANSACTION;
-    default:
-      return DeviceLabels.ACCEPT;
-  }
-};
+// Zcash on the Nano S is 2.4.2, the legacy app Dogecoin and Bitcoin Cash also run.
+const usesLegacyBitcoinApp = (currencyId: string): boolean =>
+  currencyId !== Currency.ZEC.id || getSpeculosModel() === DeviceModelId.nanoS;
 
 export const sendBTCBasedCoin = withDeviceController(
   ({ getButtonsController }) =>
@@ -43,11 +38,13 @@ export const sendBTCBasedCoin = withDeviceController(
         const amountStep = await pressUntilTextFound(DeviceLabels.AMOUNT);
         expectSpeculosEventsContain(tx.amount, amountStep);
 
-        const addressStep = await pressUntilTextFound(DeviceLabels.ADDRESS);
-        expectSpeculosEventsContain(tx.accountToCredit.address, addressStep);
+        const legacyApp = usesLegacyBitcoinApp(currencyId);
+        const stepsThroughAllAddressPages = await pressUntilTextFound(
+          legacyApp ? DeviceLabels.ACCEPT : DeviceLabels.SIGN_TRANSACTION,
+        );
+        expectSpeculosEventsContain(tx.accountToCredit.address, stepsThroughAllAddressPages);
 
-        await pressUntilTextFound(getSignTransactionLabel(currencyId));
-        if (currencyId !== Currency.ZEC.id) {
+        if (legacyApp) {
           await buttons.both();
           await waitFor(DeviceLabels.CONFIRM);
           await pressUntilTextFound(DeviceLabels.ACCEPT);
