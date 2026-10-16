@@ -1,14 +1,15 @@
 import { useCallback, useMemo, type ChangeEvent } from "react";
+import { useAddAddressNameLabels } from "../../copy/useAddAddressNameLabels";
 import type { ContactsAddAddressNameProps, ContactsAddAddressNameViewProps } from "./types";
 
 export function useContactsAddAddressNameViewModel({
   addressEntry,
   addressLabel,
-  labels,
   showConfirmedAddress = true,
   onAddressLabelChange,
   onContinue,
 }: ContactsAddAddressNameProps): ContactsAddAddressNameViewProps {
+  const labels = useAddAddressNameLabels();
   const validationMessage = useMemo(
     () =>
       addressLabel.validationError

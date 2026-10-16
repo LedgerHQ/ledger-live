@@ -11900,6 +11900,7 @@
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
       "labelTooLong": "This address name is too long.",
+      "tooLongLabel": "This address name is too long.",
       "privacyPolicy": "Learn more about Ledger's Privacy Policy."
     },
     "addAddressReview": {
