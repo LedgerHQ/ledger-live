@@ -4,3 +4,4 @@ export {
 } from "./transport/DeviceManagementKitTransportSpeculos";
 
 export type { SpeculosHttpTransportOpts } from "./transport/DeviceManagementKitTransportSpeculos";
+export { getSpeculosDeviceModel } from "./transport/speculosDeviceModel";
