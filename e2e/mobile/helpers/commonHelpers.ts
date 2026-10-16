@@ -60,10 +60,25 @@ export function isSpeculosRemote(): boolean {
   return process.env.REMOTE_SPECULOS === "true";
 }
 
-/**
- * Creates a regex string for Detox URL blacklisting
- * @returns Formatted regex string for Detox
- */
+const DEFAULT_MOCK_SERVER_HOST_PATTERN = ".*device-mock-server.*";
+
+function escapeForDetoxUrlPattern(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function mockServerDetoxUrlPattern(): string {
+  const raw = process.env.MOCK_SERVER_TRANSPORT_URL;
+  if (!raw) return DEFAULT_MOCK_SERVER_HOST_PATTERN;
+  try {
+    const host = new URL(raw).host;
+    if (!host) return DEFAULT_MOCK_SERVER_HOST_PATTERN;
+    return `.*${escapeForDetoxUrlPattern(host)}.*`;
+  } catch {
+    return DEFAULT_MOCK_SERVER_HOST_PATTERN;
+  }
+}
+
+/** Creates a regex string for Detox URL blacklisting. */
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
     ".*sdk.*.braze.*",
@@ -73,6 +88,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
+    mockServerDetoxUrlPattern(),
     ".*optimism.*",
     ".*speculos.ledgerlabs.net.*",
   ];
@@ -88,6 +104,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
   const port = await findFreePort();
   closeBridge();
   const wsToken = initBridge(port);
+  const { launchArgs: extraLaunchArgs, ...restConfig } = customConfig;
   await device.launchApp({
     launchArgs: {
       wsPort: port,
@@ -98,12 +115,13 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
       ...cardSession,
+      ...extraLaunchArgs,
     },
     languageAndLocale: {
       language: "en-US",
       locale: "en-US",
     },
-    ...customConfig,
+    ...restConfig,
   });
   return port;
 }

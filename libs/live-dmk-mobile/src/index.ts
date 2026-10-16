@@ -10,6 +10,7 @@ export {
   type SpeculosTarget,
 } from "./transport/SpeculosDmkTransport";
 export { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
+export { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 export {
   USB_COMPAT_DEVICE_ID_PREFIX,
   buildUsbCompatDeviceId,
