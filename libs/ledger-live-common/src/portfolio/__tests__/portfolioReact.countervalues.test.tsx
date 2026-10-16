@@ -8,7 +8,6 @@ import { act, renderHook } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import {
-  formatCounterValueHour,
   setCountervaluesState,
   type CounterValuesState,
   type CountervaluesSettings,
@@ -20,11 +19,12 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "./currencies";
 import { inferTrackingPairForAccounts } from "../trackingPairs";
 import { getBalanceHistoryWithCountervalue, getPortfolioCount } from "../portfolio";
-import { startOfHour } from "../ranges";
 import { useBalanceHistoryWithCountervalue } from "../portfolioReact";
 
-// The hook on a real countervalues store, fed by the real loadCountervalues. The clock stays frozen
-// between loads unless a step moves it, so a load can bring the same rates again.
+// The hook on a real countervalues store, fed by the real loadCountervalues. Its history is dated
+// from the clock, so it recomputes on every load, including one that brings nothing new: the load
+// is what moves the history to the current hour. The clock stays frozen between loads unless a
+// step moves it.
 
 const HOUR = 60 * 60 * 1000;
 const account = genAccount("bitcoin_1", { currency: getCryptoCurrencyById("bitcoin") });
@@ -40,22 +40,13 @@ const settings: CountervaluesSettings = {
 
 // The mock rates, with every latest rate shifted by what the test sets. The mock moves its latest
 // rates with the clock, so a step can hold the ones the previous load fetched. It has no hourly
-// rates: this source gives one per hour up to now, as the service does.
+// rates, so a load an hour later with the latest held brings nothing new.
 const mockRates = createMockRateSource("1");
 let latestShift = 0;
 let holdLatest = false;
 let lastLatest: Array<number | null | undefined> = [];
 const rates: RateSource = {
-  async fetchHistorical(granularity, pair, granularitiesRates) {
-    if (granularity !== "hourly") {
-      return mockRates.fetchHistorical(granularity, pair, granularitiesRates);
-    }
-    const hourly: Record<string, number> = {};
-    for (let t = startOfHour(pair.startDate).getTime(); t <= Date.now(); t += HOUR) {
-      hourly[formatCounterValueHour(new Date(t))] = 9_000 + ((t / HOUR) % 100);
-    }
-    return hourly;
-  },
+  fetchHistorical: (...args) => mockRates.fetchHistorical(...args),
   async fetchLatest(...args) {
     if (holdLatest) return lastLatest;
     const fetched = await mockRates.fetchLatest(...args);
@@ -71,7 +62,7 @@ afterAll(() => {
 });
 
 describe("useBalanceHistoryWithCountervalue on a countervalues store", () => {
-  it("recomputes when a load moves the latest rate or brings a new hour, and only then", async () => {
+  it("recomputes on every load, also one that brings nothing new in a new hour", async () => {
     const store = configureStore({
       reducer: { countervalues: countervaluesReducer },
       // The state holds rate Maps.
@@ -94,29 +85,29 @@ describe("useBalanceHistoryWithCountervalue on a countervalues store", () => {
     expect(initial.countervalueAvailable).toBe(true);
     expect(initial).toEqual(fromFullState());
 
-    // The same rates again: only the status moves.
-    const before = store.getState().countervalues.rates;
+    // The same rates again.
     await load();
-    expect(store.getState().countervalues.rates).not.toBe(before);
-    expect(renders).toBe(1);
-    expect(result.current).toBe(initial);
+    expect(renders).toBe(2);
+    expect(result.current).toEqual(initial);
 
     // Only the latest rate moves: "now" and the points after the last past rate read it.
     latestShift = 1_000;
     await load();
-    expect(renders).toBe(2);
+    expect(renders).toBe(3);
     expect(result.current).toEqual(fromFullState());
     expect(now(result.current)).not.toBe(now(initial));
     const latestMoved = result.current;
 
-    // An hour later, the latest rates held: the load brings that hour's rate alone, and the history
-    // moves to the new hour.
+    // An hour later, the latest rates held: the load brings nothing new, yet the history moves to
+    // the new hour.
     holdLatest = true;
     timemachine.config({ timestamp: Date.now() + HOUR });
     const beforeHour = store.getState().countervalues.rates;
     await load();
-    expect(latestOf(store.getState().countervalues.rates)).toEqual(latestOf(beforeHour));
-    expect(renders).toBe(3);
+    const afterHour = store.getState().countervalues.rates;
+    expect(afterHour.cache).toBe(beforeHour.cache);
+    expect(latestOf(afterHour)).toEqual(latestOf(beforeHour));
+    expect(renders).toBe(4);
     expect(result.current).toEqual(fromFullState());
     expect(result.current.history.at(-1)?.date.getTime()).toBe(Date.now());
     expect(result.current.history.at(-1)?.date).not.toEqual(latestMoved.history.at(-1)?.date);

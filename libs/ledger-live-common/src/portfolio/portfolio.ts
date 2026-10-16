@@ -1,5 +1,6 @@
 import {
   type CounterValuesCacheView,
+  type CounterValuesState,
   calculate,
   calculateMany,
 } from "@domain/entity-market-countervalues";
@@ -70,6 +71,10 @@ export function getBalanceHistory(
   return history;
 }
 
+/**
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
+ */
 export function getBalanceHistoryWithCountervalue(
   ...args: Parameters<typeof getBalanceHistoryWithChanges>
 ): AccountPortfolio {
@@ -81,7 +86,7 @@ function getBalanceHistoryWithChanges(
   account: AccountLike,
   range: PortfolioRange,
   count: number,
-  cvState: CounterValuesCacheView,
+  cvState: CounterValuesState,
   cvCurrency: Currency,
 ) {
   const balanceHistory = getBalanceHistory(account, range, count);
@@ -164,12 +169,14 @@ export type GetPortfolioOptionsType = {
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
  * NB the last item of the array is actually the current total balance.
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
  * @memberof account
  */
 export function getPortfolio(
   topAccounts: AccountLike[],
   range: PortfolioRange,
-  cvState: CounterValuesCacheView,
+  cvState: CounterValuesState,
   cvCurrency: Currency,
   options?: GetPortfolioOptionsType,
 ): Portfolio {
@@ -249,10 +256,14 @@ export function getPortfolio(
   };
 }
 
+/**
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
+ */
 export function getCurrencyPortfolio(
   accounts: AccountLike[],
   range: PortfolioRange,
-  cvState: CounterValuesCacheView,
+  cvState: CounterValuesState,
   cvCurrency: Currency,
 ): CurrencyPortfolio {
   const count = getPortfolioCount(accounts, range);
@@ -301,11 +312,13 @@ export function getCurrencyPortfolio(
  * in the counter-value currency. Unlike getCurrencyPortfolio (which weights by the historical
  * balance and yields no percentage for freshly-held positions), this applies the current balance
  * to both the start and end rates, so the percentage reduces to (rateNow - rateThen) / rateThen.
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
  */
 export function getCurrentBalanceCountervalueChange(
   accounts: AccountLike[],
   range: PortfolioRange,
-  cvState: CounterValuesCacheView,
+  cvState: CounterValuesState,
   cvCurrency: Currency,
 ): ValueChange {
   if (accounts.length === 0) return { value: 0, percentage: null };

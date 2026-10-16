@@ -15,7 +15,10 @@ import {
   getAccountCurrency,
   flattenAccounts,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { useCountervaluesCache } from "@features/platform-market-countervalues";
+import {
+  useCountervaluesCache,
+  useCountervaluesState,
+} from "@features/platform-market-countervalues";
 import { useThrottledValues } from "../hooks/useThrottledValues";
 import {
   getBalanceHistoryWithCountervalue,
@@ -35,7 +38,8 @@ export function useBalanceHistoryWithCountervalue({
   range: PortfolioRange;
   to: Currency;
 }): AccountPortfolio {
-  const state = useCountervaluesCache();
+  // Re-renders on every load: the history is dated from the clock.
+  const state = useCountervaluesState();
   const count = getPortfolioCount([account], range);
   return getBalanceHistoryWithCountervalue(account, range, count, state, to);
 }
@@ -56,7 +60,8 @@ export function usePortfolio({
   to: Currency;
   options?: GetPortfolioOptionsType;
 }): Portfolio {
-  const state = useCountervaluesCache();
+  // Re-renders on every load: the history is dated from the clock.
+  const state = useCountervaluesState();
   return getPortfolio(accounts, range, state, to, options);
 }
 
@@ -96,7 +101,8 @@ export function usePortfolioThrottled({
   stableThrottleDelay?: number;
 }): Portfolio {
   const [variableThrottleDelay, setVariableThrottleDelay] = useState(lowThrottleDelay);
-  const cvState = useCountervaluesCache();
+  // Re-renders on every load: the history is dated from the clock.
+  const cvState = useCountervaluesState();
   const [throttledCVState, throttledAccounts] = useThrottledValues(
     [cvState, accounts],
     variableThrottleDelay,
@@ -142,7 +148,8 @@ export function useCurrencyPortfolio({
   currency: CryptoCurrency | TokenCurrency;
 }): CurrencyPortfolio {
   const accounts = flattenAccounts(rawAccounts).filter(a => getAccountCurrency(a) === currency);
-  const state = useCountervaluesCache();
+  // Re-renders on every load: the history is dated from the clock.
+  const state = useCountervaluesState();
   return getCurrencyPortfolio(accounts, range, state, to);
 }
 

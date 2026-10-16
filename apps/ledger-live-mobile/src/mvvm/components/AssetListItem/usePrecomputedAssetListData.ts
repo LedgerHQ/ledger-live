@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";
-import { useCountervaluesCache } from "@features/platform-market-countervalues";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import {
   getCurrencyPortfolio,
@@ -28,7 +28,7 @@ export interface AssetListItemViewModelResult {
 const CV_THROTTLE_MS = 5_000;
 
 interface SharedState {
-  cvState: ReturnType<typeof useCountervaluesCache>;
+  cvState: ReturnType<typeof useCountervaluesState>;
   counterValueCurrency: ReturnType<typeof counterValueCurrencySelector>;
   range: "day";
   locale: string;
@@ -150,7 +150,7 @@ export function usePrecomputedAssetListData(
   const discreet = useSelector(discreetModeSelector);
   const range = "day" as const;
 
-  const rawCvState = useCountervaluesCache();
+  const rawCvState = useCountervaluesState();
   const [cvState] = useThrottledValues([rawCvState], CV_THROTTLE_MS);
 
   const cacheRef = useRef(new Map<string, AssetListItemViewModelResult>());

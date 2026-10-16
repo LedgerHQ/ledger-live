@@ -1,5 +1,5 @@
 import { renderHook, act } from "@tests/test-renderer";
-import { useCountervaluesCache } from "@features/platform-market-countervalues";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import {
   getCurrencyPortfolio,
@@ -14,7 +14,7 @@ import { bitcoin, ethereum, createCryptoAsset } from "./shared";
 
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  useCountervaluesCache: jest.fn(),
+  useCountervaluesState: jest.fn(),
 }));
 
 jest.mock("@domain/entity-market-countervalues", () => ({
@@ -33,13 +33,13 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   formatCurrencyUnit: jest.fn(),
 }));
 
-const mockedUseCountervaluesCache = jest.mocked(useCountervaluesCache);
+const mockedUseCountervaluesState = jest.mocked(useCountervaluesState);
 const mockedCalculate = jest.mocked(calculate);
 const mockedGetCurrencyPortfolio = jest.mocked(getCurrencyPortfolio);
 const mockedGetCurrentBalanceChange = jest.mocked(getCurrentBalanceCountervalueChange);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
 
-const mockState: ReturnType<typeof useCountervaluesCache> = { cache: {} };
+const mockState: ReturnType<typeof useCountervaluesState> = { data: {}, status: {}, cache: {} };
 
 const makePortfolio = (percentage: number | null) =>
   ({
@@ -55,7 +55,7 @@ const makePortfolio = (percentage: number | null) =>
 describe("usePrecomputedAssetListData", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseCountervaluesCache.mockReturnValue(mockState);
+    mockedUseCountervaluesState.mockReturnValue(mockState);
     mockedCalculate.mockReturnValue(5000000);
     mockedFormatCurrencyUnit.mockReturnValue("$50,000.00");
     mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(0.035));
@@ -73,7 +73,7 @@ describe("usePrecomputedAssetListData", () => {
 
     const { result } = renderHook(() => usePrecomputedAssetListData(assets));
 
-    expect(mockedUseCountervaluesCache).toHaveBeenCalledTimes(1);
+    expect(mockedUseCountervaluesState).toHaveBeenCalledTimes(1);
     expect(mockedCalculate).toHaveBeenCalledTimes(2);
     expect(mockedGetCurrencyPortfolio).toHaveBeenCalledTimes(2);
 
@@ -124,8 +124,12 @@ describe("usePrecomputedAssetListData", () => {
     const firstRef = result.current.get(bitcoin.id);
 
     mockedCalculate.mockReturnValue(6000000);
-    const newState: ReturnType<typeof useCountervaluesCache> = { cache: {} };
-    mockedUseCountervaluesCache.mockReturnValue(newState);
+    const newState: ReturnType<typeof useCountervaluesState> = {
+      data: { btc: new Map() },
+      status: {},
+      cache: {},
+    };
+    mockedUseCountervaluesState.mockReturnValue(newState);
     rerender({});
 
     const midRef = result.current.get(bitcoin.id);

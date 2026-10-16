@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { useCountervaluesCache } from "@features/platform-market-countervalues";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
@@ -22,7 +22,7 @@ export function useAllCurrencyTrends(
   range: PortfolioRange,
 ): Map<string, number | null> {
   const to = useSelector(counterValueCurrencySelector);
-  const state = useCountervaluesCache();
+  const state = useCountervaluesState();
 
   return useMemo(() => {
     const map = new Map<string, number | null>();
