@@ -1344,7 +1344,7 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
 const waitForSwapReviewOnNanoS = withDeviceController(
   ({ getButtonsController }) =>
     async (): Promise<boolean> => {
-      const port = getEnv("SPECULOS_API_PORT");
+      const port = Number(process.env.SPECULOS_API_PORT ?? 0);
       const review = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
       const warning = DeviceLabels.BLIND_SIGNING.toLowerCase();
       for (let attempt = 0; attempt < SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS; attempt++) {
