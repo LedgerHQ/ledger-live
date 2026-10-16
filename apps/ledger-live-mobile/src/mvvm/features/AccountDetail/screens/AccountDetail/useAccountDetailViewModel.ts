@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -26,16 +27,22 @@ export type AccountDetailViewModel = Readonly<{
   onOpenSettings: () => void;
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
+  onViewAdvancedLogs: () => void;
 }>;
 
 type AccountDetailRoute = RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>;
 type AccountDetailNavigation = RootNavigationComposite<
   StackNavigatorNavigation<BaseNavigatorStackParamList>
 >;
+type AccountDetailStackNavigation = NativeStackNavigationProp<
+  AccountDetailNavigatorParamsList,
+  ScreenName.AccountDetail
+>;
 
 export function useAccountDetailViewModel(): AccountDetailViewModel {
   const route = useRoute<AccountDetailRoute>();
   const navigation = useNavigation<AccountDetailNavigation>();
+  const stackNavigation = useNavigation<AccountDetailStackNavigation>();
   const { account } = useAccountScreen(route);
   const mainAccount = account?.type === "Account" ? account : undefined;
 
@@ -64,6 +71,11 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const onOpenSettings = useCallback(() => setIsSettingsOpen(true), []);
   const onCloseSettings = useCallback(() => setIsSettingsOpen(false), []);
+  const onViewAdvancedLogs = useCallback(() => {
+    if (!mainAccount) return;
+    setIsSettingsOpen(false);
+    stackNavigation.navigate(ScreenName.AccountDetailAdvancedLogs, { accountId: mainAccount.id });
+  }, [mainAccount, stackNavigation]);
 
   return {
     account: mainAccount,
@@ -72,5 +84,6 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     onOpenSettings,
     isSettingsOpen,
     onCloseSettings,
+    onViewAdvancedLogs,
   };
 }

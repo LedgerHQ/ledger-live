@@ -12,5 +12,6 @@ export type AdvancedLogsContentViewProps = Readonly<{
   synchronised: string;
   json: string;
   copyLabel: string;
+  isCopied: boolean;
   onCopy: () => void;
 }>;

@@ -1,5 +1,6 @@
 import React from "react";
 import { Banner, Button } from "@ledgerhq/lumen-ui-react";
+import { Check } from "@ledgerhq/lumen-ui-react/symbols";
 import type { AdvancedLogsContentViewProps } from "./types";
 
 export function AdvancedLogsContentView({
@@ -7,6 +8,7 @@ export function AdvancedLogsContentView({
   synchronised,
   json,
   copyLabel,
+  isCopied,
   onCopy,
 }: AdvancedLogsContentViewProps) {
   return (
@@ -25,6 +27,7 @@ export function AdvancedLogsContentView({
         appearance="base"
         size="lg"
         isFull
+        icon={isCopied ? Check : undefined}
         onClick={onCopy}
         data-testid="account-settings-copy-logs"
       >

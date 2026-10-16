@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { copyToClipboard } from "@shared/clipboard";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
@@ -69,5 +69,43 @@ describe("AdvancedLogsContent (Web)", () => {
     rerender(<AdvancedLogsContent input={advancedLogsInput} locale="en-US" />);
 
     expect(screen.getByText(`Synchronised ${americanDate}`)).toBeVisible();
+  });
+
+  describe("copied feedback", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("shows Copied after copying, then goes back to Copy logs", async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      render(<AdvancedLogsContent input={advancedLogsInput} locale="en-US" />, {
+        wrapper: I18nWrapper,
+      });
+
+      await user.click(screen.getByRole("button", { name: "Copy logs" }));
+
+      expect(await screen.findByRole("button", { name: "Copied" })).toBeVisible();
+
+      act(() => jest.advanceTimersByTime(2000));
+
+      expect(screen.getByRole("button", { name: "Copy logs" })).toBeVisible();
+    });
+
+    it("keeps Copy logs when the copy fails", async () => {
+      mockCopyToClipboard.mockResolvedValue(false);
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      render(<AdvancedLogsContent input={advancedLogsInput} locale="en-US" />, {
+        wrapper: I18nWrapper,
+      });
+
+      await user.click(screen.getByRole("button", { name: "Copy logs" }));
+
+      await waitFor(() => expect(mockCopyToClipboard).toHaveBeenCalled());
+      expect(screen.getByRole("button", { name: "Copy logs" })).toBeVisible();
+    });
   });
 });

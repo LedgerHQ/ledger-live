@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { Banner, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Check } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { AdvancedLogsContentViewProps } from "./types";
 
 export function AdvancedLogsContentView({
@@ -8,6 +9,7 @@ export function AdvancedLogsContentView({
   synchronised,
   json,
   copyLabel,
+  isCopied,
   onCopy,
 }: AdvancedLogsContentViewProps) {
   return (
@@ -33,6 +35,7 @@ export function AdvancedLogsContentView({
         appearance="base"
         size="lg"
         isFull
+        icon={isCopied ? Check : undefined}
         onPress={onCopy}
         testID="account-settings-copy-logs"
       >
