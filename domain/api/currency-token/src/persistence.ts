@@ -148,9 +148,9 @@ export function filterExpiredTokens(
 
 /**
  * Restores persisted tokens into the RTK Query cache. For a currency with a stored hash, validates
- * it against the current server hash and skips restoring that currency when the hash changed or the
- * hash fetch failed. Currencies with no stored hash are restored unconditionally (backward-compatible
- * with pre-hash persisted blobs).
+ * it against the current server hash and skips restoring that currency when the hash changed or CAL
+ * answered the hash request with an error; an unreachable CAL keeps the tokens. Currencies with no
+ * stored hash are restored unconditionally (backward-compatible with pre-hash persisted blobs).
  */
 export async function restoreTokensToCache(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
-import { PERSISTENCE_VERSION } from "./internals";
+import { HEADER_X_LEDGER_COMMIT, PERSISTENCE_VERSION } from "./internals";
 import {
   extractTokensFromState,
   extractHashesFromState,
@@ -27,6 +29,22 @@ const mockToken: TokenCurrency = token({
   disableCountervalue: false,
   units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
 });
+
+function makeStore() {
+  return configureStore({
+    reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+        thunk: {
+          extraArgument: calApiExtra({
+            calServiceUrl: "https://cal.test",
+            ledgerClientVersion: "1.0.0",
+          }),
+        },
+      }).concat(cryptoAssetsApi.middleware),
+  });
+}
 
 describe("Token Persistence", () => {
   describe("parsePersistedCAL", () => {
@@ -335,11 +353,11 @@ describe("Token Persistence", () => {
       expect(upsertActions).toHaveLength(0);
     });
 
-    it("should skip restore when hash fetch fails", async () => {
+    it("should skip restore when dispatching the hash request throws", async () => {
       const upsertActions: unknown[] = [];
-      const mockDispatch = jest.fn(async action => {
+      const mockDispatch = jest.fn(action => {
         if (typeof action === "function") {
-          throw new Error("Network error");
+          throw new Error("RTK Query middleware missing");
         }
         const actionType = (action as { type?: string })?.type || "";
         if (actionType.includes("upsert")) upsertActions.push(action);
@@ -473,22 +491,6 @@ describe("Token Persistence", () => {
   describe("integration: token_identifier round-trip", () => {
     const ttl = 24 * 60 * 60 * 1000;
 
-    function makeStore() {
-      return configureStore({
-        reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
-        middleware: getDefaultMiddleware =>
-          getDefaultMiddleware({
-            serializableCheck: false,
-            thunk: {
-              extraArgument: calApiExtra({
-                calServiceUrl: "https://cal.test",
-                ledgerClientVersion: "1.0.0",
-              }),
-            },
-          }).concat(cryptoAssetsApi.middleware),
-      });
-    }
-
     it("should restore cache entry with token_identifier after extract → restore cycle", async () => {
       const sourceState = {
         [cryptoAssetsApi.reducerPath]: {
@@ -557,6 +559,75 @@ describe("Token Persistence", () => {
       expect(
         (addressEntry?.originalArgs as { token_identifier?: string } | undefined)?.token_identifier,
       ).toBeUndefined();
+    });
+  });
+
+  describe("integration: hash validation", () => {
+    const ttl = 24 * 60 * 60 * 1000;
+    const CURRENCIES_URL = "https://cal.test/v1/currencies";
+    const server = setupServer();
+
+    beforeAll(() => {
+      server.listen({ onUnhandledRequest: "error" });
+    });
+
+    afterEach(() => {
+      server.resetHandlers();
+    });
+
+    afterAll(() => {
+      server.close();
+    });
+
+    async function restoreWithStoredHash() {
+      const store = makeStore();
+      await restoreTokensToCache(
+        store.dispatch,
+        {
+          version: PERSISTENCE_VERSION,
+          tokens: [{ data: mockToken, timestamp: Date.now() }],
+          hashes: { ethereum: "hash123" },
+        },
+        ttl,
+      );
+      return Object.values(store.getState()[cryptoAssetsApi.reducerPath].queries);
+    }
+
+    it("should restore a currency whose stored hash still matches", async () => {
+      server.use(
+        http.get(CURRENCIES_URL, () =>
+          HttpResponse.json([{ id: "ethereum" }], {
+            headers: { [HEADER_X_LEDGER_COMMIT]: "hash123" },
+          }),
+        ),
+      );
+
+      const entries = await restoreWithStoredHash();
+
+      expect(entries.map(entry => entry?.endpointName)).toEqual(
+        expect.arrayContaining(["findTokenById", "findTokenByAddressInCurrency"]),
+      );
+    });
+
+    it("should not restore a currency when CAL answers the hash request with an error", async () => {
+      server.use(http.get(CURRENCIES_URL, () => HttpResponse.json({}, { status: 500 })));
+
+      const entries = await restoreWithStoredHash();
+
+      expect(entries.map(entry => entry?.endpointName)).toEqual(["getTokensSyncHash"]);
+    });
+
+    it("should restore a currency when CAL is unreachable", async () => {
+      server.use(http.get(CURRENCIES_URL, () => HttpResponse.error()));
+
+      const entries = await restoreWithStoredHash();
+
+      expect(
+        entries.find(entry => entry?.endpointName === "getTokensSyncHash")?.error,
+      ).toMatchObject({ status: "FETCH_ERROR" });
+      expect(entries.map(entry => entry?.endpointName)).toEqual(
+        expect.arrayContaining(["findTokenById", "findTokenByAddressInCurrency"]),
+      );
     });
   });
 
