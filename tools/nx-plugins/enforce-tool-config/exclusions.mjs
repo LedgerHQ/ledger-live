@@ -8,21 +8,76 @@
 /** @type {Record<string, { rules?: string[], reason: string }>} */
 export const EXCLUSIONS = {
   apps: {
+    rules: ["tsconfig"],
     reason:
-      "TEMPORARY. Application configs are out of scope of the support/ migration: they carry " +
-      "bundler, platform and build settings no preset covers yet. Exit condition: each tool " +
-      "migration that moves the apps onto its preset removes them from this entry.",
+      "TEMPORARY. Application configs carry bundler, platform and build settings no preset " +
+      "covers yet. Exit condition: an application archetype in @support/tsconfig, then each " +
+      "application moved onto it.",
   },
   e2e: {
+    rules: ["tsconfig"],
     reason:
-      "TEMPORARY. End-to-end suites run their own jest, lint and TypeScript setups (Playwright, " +
-      "Detox). Exit condition: each tool migration that moves the suites onto its preset removes " +
-      "them from this entry.",
+      "TEMPORARY. End-to-end suites run their own TypeScript setups (Playwright, Detox). Exit " +
+      "condition: the suites moved onto a @support/tsconfig preset.",
   },
-  libs: {
+  tests: {
+    rules: ["tsconfig"],
     reason:
-      "TEMPORARY. Legacy libraries keep hand-rolled configs, down to one jest config per coin " +
-      "module. Exit condition: each tool migration that moves libs/ onto its " +
-      "preset scopes this entry away from that tool's rule, then the entry is deleted.",
+      "TEMPORARY. The dummy apps the end-to-end suites load are standalone web apps with their " +
+      "own compiler options. Exit condition: they move onto a @support/tsconfig preset with the " +
+      "e2e suites.",
+  },
+  tools: {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. Repository tooling runs as Node scripts on the NodeNext defaults, which no " +
+      "package preset targets. Exit condition: a node tooling archetype in @support/tsconfig, " +
+      "then each tool moved onto it.",
+  },
+  "features/platform/card": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. A web and native package without JSX: the dual, web and native presets all " +
+      "set `jsx`, so no preset reproduces its configs. Exit condition: the package enables JSX " +
+      "or a preset for dual packages without it exists.",
+  },
+  "shared/clipboard": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. Same as features/platform/card: a dual package without JSX. Exit condition: " +
+      "the package enables JSX or a preset for dual packages without it exists.",
+  },
+  "shared/network-status": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. Same as features/platform/card: a dual package without JSX. Exit condition: " +
+      "the package enables JSX or a preset for dual packages without it exists.",
+  },
+  "libs/ledger-live-common": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. A composite project rooted at the package directory, with a nested src/ " +
+      "project that references it; no lib preset emits from that layout. Exit condition: the " +
+      "package builds from src/ like the other libs, then extends @support/tsconfig/lib.",
+  },
+  "libs/ledgerjs": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. The 22 ledgerjs packages extend the shared libs/ledgerjs/tsconfig.json across " +
+      "package boundaries; moving them onto the lib preset would spell its six options out in " +
+      "each package. Exit condition: those options are dropped or folded into a preset, then " +
+      "each package extends @support/tsconfig/lib.",
+  },
+  "libs/ui/packages/native": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. Its tsconfig.json extends nothing and its build config re-enables emit over " +
+      "it. Exit condition: the package extends a @support/tsconfig preset.",
+  },
+  "libs/ui/packages/shared": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. It emits without `rootDir`, which every lib preset sets. Exit condition: the " +
+      "package sets its root to src/ and extends @support/tsconfig/lib.",
   },
 };
