@@ -56,7 +56,7 @@ test("a rule's violations are reported under its name", () => {
 });
 
 test("an exclusion covers its directory and everything below it, nothing else", () => {
-  const exclusions = { libs: { reason: "r" } };
+  const exclusions = { libs: { rules: ["fmt"], reason: "r" } };
   assert.equal(isExcluded("libs", "fmt", exclusions), true);
   assert.equal(isExcluded("libs/coin-modules/coin-evm", "fmt", exclusions), true);
   assert.equal(isExcluded("libs-extra/thing", "fmt", exclusions), false);
@@ -83,10 +83,14 @@ test("every exclusion names an existing directory and states its exit condition"
   }
 });
 
-test("exclusions scoped to rules only name rules that exist", () => {
+test("every exclusion names the rules it exempts, and only rules that exist", () => {
   const names = new Set(RULES.map(rule => rule.name));
   for (const [dir, entry] of Object.entries(EXCLUSIONS)) {
-    for (const rule of entry.rules ?? []) {
+    assert.ok(
+      Array.isArray(entry.rules) && entry.rules.length > 0,
+      `${dir} must name the rules it exempts`,
+    );
+    for (const rule of entry.rules) {
       assert.ok(names.has(rule), `${dir} names unknown rule ${rule}`);
     }
   }

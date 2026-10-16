@@ -18,7 +18,7 @@ const SKIP_DIRS = new Set([".git", ".nx", "node_modules", "dist", "lib", "lib-es
 
 /**
  * Whether an exclusion exempts the project from the rule: an entry covers its directory and
- * everything below it, for every rule or only for the rules it names.
+ * everything below it, for the rules it names.
  *
  * @param {string} projectRoot posix-style, e.g. "libs/coin-modules/coin-evm"
  * @param {string} ruleName
@@ -28,8 +28,7 @@ const SKIP_DIRS = new Set([".git", ".nx", "node_modules", "dist", "lib", "lib-es
 export function isExcluded(projectRoot, ruleName, exclusions = EXCLUSIONS) {
   return Object.entries(exclusions).some(
     ([dir, entry]) =>
-      (projectRoot === dir || projectRoot.startsWith(`${dir}/`)) &&
-      (!entry.rules || entry.rules.includes(ruleName)),
+      (projectRoot === dir || projectRoot.startsWith(`${dir}/`)) && entry.rules.includes(ruleName),
   );
 }
 
