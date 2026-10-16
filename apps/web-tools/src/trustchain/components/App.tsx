@@ -24,6 +24,7 @@ import { TrustchainSDKContext, defaultContext } from "../context";
 import { DeviceInteractionVisibleContext } from "../deviceInteractionContext";
 import { AppQRCodeHost } from "./AppQRCodeHost";
 import { AppMemberRow } from "./AppMemberRow";
+import { AppInspectTrustchain } from "./AppInspectTrustchain";
 import { AGENT_INTENT_MEMBER_PERMISSIONS, AppAgentIntentMembers } from "./AppAgentIntentMembers";
 import { AppDecryptUserData } from "./AppDecryptUserData";
 import { AppEncryptUserData } from "./AppEncryptUserData";
@@ -171,6 +172,11 @@ const App = () => {
         : callbacks,
     [isAgentIntent, callbacks],
   );
+  const destroyWithDevice = useCallback(
+    (trustchain: Trustchain) =>
+      sdk.closeApplicationStreamWithHardware(deviceId, trustchain, callbacks),
+    [sdk, deviceId, callbacks],
+  );
 
   return (
     <ThemeProvider colorScheme="system">
@@ -265,34 +271,42 @@ const App = () => {
                 setMembers={setMembers}
               />
 
+              {members?.map(member => (
+                <AppMemberRow
+                  key={member.id}
+                  deviceId={deviceId}
+                  trustchain={trustchain}
+                  memberCredentials={memberCredentials}
+                  member={member}
+                  setTrustchain={setTrustchain}
+                  setMembers={setMembers}
+                  callbacks={callbacks}
+                  removeWithDevice={isAgentIntent}
+                />
+              ))}
+
               {isAgentIntent ? (
                 <AppAgentIntentMembers
                   deviceId={deviceId}
                   trustchain={trustchain}
                   memberCredentials={memberCredentials}
-                  setTrustchain={setTrustchain}
+                  setMembers={setMembers}
                   callbacks={callbacks}
                 />
-              ) : (
-                members?.map(member => (
-                  <AppMemberRow
-                    key={member.id}
-                    deviceId={deviceId}
-                    trustchain={trustchain}
-                    memberCredentials={memberCredentials}
-                    member={member}
-                    setTrustchain={setTrustchain}
-                    setMembers={setMembers}
-                    callbacks={callbacks}
-                  />
-                ))
-              )}
+              ) : null}
+
+              <AppInspectTrustchain
+                deviceId={deviceId}
+                memberCredentials={memberCredentials}
+                callbacks={callbacks}
+              />
 
               <AppEncryptUserData trustchain={trustchain} />
 
               <AppDecryptUserData trustchain={trustchain} />
 
               <AppDestroyApplication
+                destroyWithDevice={isAgentIntent ? destroyWithDevice : undefined}
                 trustchain={trustchain}
                 setTrustchain={setTrustchain}
                 memberCredentials={memberCredentials}

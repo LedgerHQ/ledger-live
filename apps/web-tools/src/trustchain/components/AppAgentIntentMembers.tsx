@@ -9,6 +9,7 @@ import {
 import { Actionable } from "./Actionable";
 import { DisplayName } from "./IdentityManager";
 import { useTrustchainSDK } from "../context";
+import { useReadStreamsWithDevice } from "./AppInspectTrustchain";
 
 // Ledger Sync device firmware only lets app 18 add members with these permissions.
 export const AGENT_INTENT_MEMBER_PERMISSIONS = 0x03;
@@ -29,126 +30,140 @@ export function describePermissions(permissions: number): string {
   return names.length ? `${hex} ${names.join("|")}` : `${hex} none`;
 }
 
-type Streams = { app: TrustchainSubtree | undefined; subtrees: TrustchainSubtree[] };
-
 type Props = {
   deviceId: string;
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
-  setTrustchain: (trustchain: Trustchain | null) => void;
+  setMembers: (members: TrustchainMember[] | null) => void;
   callbacks?: TrustchainDeviceCallbacks;
 };
 
+/** Members of the trustchain's application stream, read with the device login. */
+export function useReadMembersWithDevice(deviceId: string, callbacks?: TrustchainDeviceCallbacks) {
+  const readStreams = useReadStreamsWithDevice(deviceId, callbacks);
+  return useCallback(
+    async (trustchain: Trustchain): Promise<TrustchainMember[]> => {
+      const streams = await readStreams(trustchain.rootId);
+      const app = streams.find(s => s.path === trustchain.applicationPath);
+      if (!app) throw new Error(`application stream ${trustchain.applicationPath} was not found`);
+      return app.members;
+    },
+    [readStreams],
+  );
+}
+
+const step = <T,>(name: string, job: () => Promise<T>): Promise<T> =>
+  job().catch(e => {
+    throw new Error(`${name}: ${e?.message ?? e}`, { cause: e });
+  });
+
 /**
- * App 18 members management: the software member has no CAN_ADD_BLOCK,
- * so every mutation is signed by the device.
+ * Removes an app stream member by rotating the stream: the device derives the next stream with us,
+ * re-adds the other members, then closes the current one.
+ */
+export function useRemoveMemberWithDevice(deviceId: string, callbacks?: TrustchainDeviceCallbacks) {
+  const sdk = useTrustchainSDK();
+  const readMembers = useReadMembersWithDevice(deviceId, callbacks);
+  return useCallback(
+    async (
+      trustchain: Trustchain,
+      memberCredentials: MemberCredentials,
+      member: TrustchainMember,
+    ): Promise<{ trustchain: Trustchain; members: TrustchainMember[] }> => {
+      if (member.id === memberCredentials.pubkey) {
+        throw new Error("the rotation keeps the current member: remove it from another member");
+      }
+      const members = await step("read app stream", () => readMembers(trustchain));
+      const me = members.find(m => m.id === memberCredentials.pubkey);
+      if (!me) throw new Error("current member is not in the application stream");
+      const next = await step("prepare next app stream", () =>
+        sdk.prepareApplicationStreamRotationWithHardware(
+          deviceId,
+          trustchain,
+          memberCredentials,
+          me,
+          callbacks,
+        ),
+      );
+      for (const m of members) {
+        if (m.id === me.id || m.id === member.id) continue;
+        await step(`re-add ${m.name}`, () =>
+          sdk.addMemberToApplicationWithHardware(deviceId, next, m, callbacks),
+        );
+      }
+      await step("close previous app stream", () =>
+        sdk.closeApplicationStreamWithHardware(deviceId, trustchain, callbacks),
+      );
+      return {
+        trustchain: next,
+        members: await step("read next app stream", () => readMembers(next)),
+      };
+    },
+    [sdk, deviceId, callbacks, readMembers],
+  );
+}
+
+/**
+ * App 18 subtrees and device-signed member add: the software member has no CAN_ADD_BLOCK.
  */
 export function AppAgentIntentMembers({
   deviceId,
   trustchain,
   memberCredentials,
-  setTrustchain,
+  setMembers,
   callbacks,
 }: Props) {
   const sdk = useTrustchainSDK();
-  const [streams, setStreams] = useState<Streams | null>(null);
+  const readStreams = useReadStreamsWithDevice(deviceId, callbacks);
+  const readMembers = useReadMembersWithDevice(deviceId, callbacks);
+  const [subtrees, setSubtrees] = useState<TrustchainSubtree[] | null>(null);
 
   useEffect(() => {
-    setStreams(null);
+    setSubtrees(null);
   }, [trustchain, memberCredentials]);
 
-  const fetchStreams = useCallback(
-    (trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<Streams> => {
-      const options = { ignorePermissionsChecks: true };
-      return Promise.all([
-        sdk.getApplicationStreamState(trustchain, memberCredentials, options),
-        sdk.getSubtrees(trustchain, memberCredentials, options),
-      ]).then(([app, subtrees]) => ({ app, subtrees }));
-    },
-    [sdk],
-  );
-
-  const refresh = useCallback(
-    (trustchain: Trustchain, memberCredentials: MemberCredentials) =>
-      fetchStreams(trustchain, memberCredentials).then(setStreams),
-    [fetchStreams],
-  );
-
-  // Rotate the app stream without `member`: the device derives the next stream with us,
-  // re-adds the other members, then closes the current one.
-  const removeAppMember = useCallback(
-    async (
-      trustchain: Trustchain,
-      memberCredentials: MemberCredentials,
-      member: TrustchainMember,
-    ) => {
-      const app = await sdk.getApplicationStreamState(trustchain, memberCredentials, {
-        ignorePermissionsChecks: true,
-      });
-      const me = app?.members.find(m => m.id === memberCredentials.pubkey);
-      if (!app || !me) throw new Error("current member is not in the application stream");
-      const next = await sdk.prepareApplicationStreamRotationWithHardware(
-        deviceId,
-        trustchain,
-        memberCredentials,
-        me,
-        callbacks,
-      );
-      for (const m of app.members) {
-        if (m.id === me.id || m.id === member.id) continue;
-        await sdk.addMemberToApplicationWithHardware(deviceId, next, m, callbacks);
-      }
-      await sdk.closeApplicationStreamWithHardware(deviceId, trustchain, callbacks);
-      setTrustchain(next);
-      await refresh(next, memberCredentials);
-      return member;
-    },
-    [sdk, deviceId, callbacks, setTrustchain, refresh],
+  const getSubtrees = useCallback(
+    (trustchain: Trustchain) =>
+      readStreams(trustchain.rootId).then(streams =>
+        streams.filter(s => s.path.startsWith(`${trustchain.applicationPath}/`)),
+      ),
+    [readStreams],
   );
 
   const closeSubtree = useCallback(
-    async (trustchain: Trustchain, memberCredentials: MemberCredentials, path: string) => {
+    async (trustchain: Trustchain, path: string) => {
       await sdk.closeSubtreeWithHardware(deviceId, trustchain, path, callbacks);
-      await refresh(trustchain, memberCredentials);
+      setSubtrees(await getSubtrees(trustchain));
       return path;
     },
-    [sdk, deviceId, callbacks, refresh],
+    [sdk, deviceId, callbacks, getSubtrees],
   );
 
-  const inputs: [Trustchain, MemberCredentials] | null =
-    trustchain && memberCredentials ? [trustchain, memberCredentials] : null;
+  const onAdded = useCallback(
+    (trustchain: Trustchain) => readMembers(trustchain).then(setMembers),
+    [readMembers, setMembers],
+  );
 
   return (
-    <div className="my-8">
-      <Actionable
-        buttonTitle="sdk.getSubtrees"
-        inputs={inputs}
-        action={fetchStreams}
-        value={streams}
-        setValue={setStreams}
-        valueDisplay={({ app, subtrees }) =>
-          `${app?.members.length ?? 0} app stream member(s), ${subtrees.length} subtree(s)`
-        }
+    <>
+      <AppAgentIntentAddMember
+        deviceId={deviceId}
+        trustchain={trustchain}
+        memberCredentials={memberCredentials}
+        callbacks={callbacks}
+        onAdded={onAdded}
       />
 
-      {streams?.app ? (
-        <StreamMembers
-          stream={streams.app}
-          renderAction={member =>
-            streams.app?.closed || member.id === memberCredentials?.pubkey ? null : (
-              <Actionable
-                buttonTitle="remove (device rotation)"
-                inputs={
-                  trustchain && memberCredentials ? [trustchain, memberCredentials, member] : null
-                }
-                action={removeAppMember}
-              />
-            )
-          }
-        />
-      ) : null}
+      <Actionable
+        buttonTitle="getSubtrees (device)"
+        inputs={trustchain ? [trustchain] : null}
+        action={getSubtrees}
+        value={subtrees}
+        setValue={setSubtrees}
+        valueDisplay={subtrees => `${subtrees.length} subtree(s)`}
+      />
 
-      {streams?.subtrees.map(subtree => (
+      {subtrees?.map(subtree => (
         <StreamMembers
           key={subtree.path}
           stream={subtree}
@@ -156,44 +171,23 @@ export function AppAgentIntentMembers({
             subtree.closed ? null : (
               <Actionable
                 buttonTitle="sdk.closeSubtreeWithHardware"
-                inputs={
-                  trustchain && memberCredentials
-                    ? [trustchain, memberCredentials, subtree.path]
-                    : null
-                }
+                inputs={trustchain ? [trustchain, subtree.path] : null}
                 action={closeSubtree}
               />
             )
           }
         />
       ))}
-
-      {streams?.app && streams.subtrees.length ? (
-        <p className="body-3 text-muted pl-40">
-          Removing an app stream member rotates to a new app stream: subtrees above stay under the
-          closed one.
-        </p>
-      ) : null}
-
-      <AppAgentIntentAddMember
-        deviceId={deviceId}
-        trustchain={trustchain}
-        memberCredentials={memberCredentials}
-        callbacks={callbacks}
-        onAdded={refresh}
-      />
-    </div>
+    </>
   );
 }
 
 function StreamMembers({
   stream,
   headerAction,
-  renderAction,
 }: {
   stream: TrustchainSubtree;
   headerAction?: React.ReactNode;
-  renderAction?: (member: TrustchainMember) => React.ReactNode;
 }) {
   return (
     <div className="pl-40 my-4">
@@ -206,7 +200,6 @@ function StreamMembers({
         <div key={member.id} className="flex items-center gap-8 pl-16">
           <DisplayName pubkey={member.id} overridesName={member.name} />
           <code className="body-3 text-muted">{describePermissions(member.permissions)}</code>
-          {renderAction?.(member)}
         </div>
       ))}
     </div>
