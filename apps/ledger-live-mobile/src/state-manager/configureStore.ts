@@ -19,7 +19,7 @@ import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistrib
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
-import { accountDataSources } from "~/config/account-data-setup";
+import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
@@ -159,6 +159,7 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) =>
   }),
 );
 connectRecentAddressesStore(store, recentAddressesSelector);
+connectAccounts(store);
 setupCryptoAssetsStore(store);
 setupRateLookups();
 setSwapQuotesStore(store.dispatch);
