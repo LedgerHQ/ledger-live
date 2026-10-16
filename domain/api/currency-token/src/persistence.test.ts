@@ -320,7 +320,7 @@ describe("Token Persistence", () => {
           return { data: "hash456", error: undefined };
         }
         const actionType = (action as { type?: string })?.type || "";
-        if (actionType.includes("upsert")) upsertActions.push(action);
+        if (actionType.includes("cacheEntriesUpserted")) upsertActions.push(action);
         return action;
       });
 
@@ -335,14 +335,14 @@ describe("Token Persistence", () => {
       expect(upsertActions).toHaveLength(0);
     });
 
-    it("should skip restore when hash fetch fails", async () => {
+    it("should upsert tokens when hash fetch fails", async () => {
       const upsertActions: unknown[] = [];
       const mockDispatch = jest.fn(async action => {
         if (typeof action === "function") {
           throw new Error("Network error");
         }
         const actionType = (action as { type?: string })?.type || "";
-        if (actionType.includes("upsert")) upsertActions.push(action);
+        if (actionType.includes("cacheEntriesUpserted")) upsertActions.push(action);
         return action;
       });
 
@@ -354,7 +354,7 @@ describe("Token Persistence", () => {
 
       await restoreTokensToCache(mockDispatch, persistedData, ttl);
 
-      expect(upsertActions).toHaveLength(0);
+      expect(upsertActions.length).toBeGreaterThan(0);
     });
 
     it("should restore tokens without hash (backward compatibility)", async () => {

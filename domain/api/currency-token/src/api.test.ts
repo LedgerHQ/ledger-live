@@ -118,6 +118,13 @@ describe("param interfaces", () => {
 
 describe("cryptoAssetsApi requests", () => {
   let fetchSpy: jest.SpyInstance;
+  let timeoutSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    timeoutSpy = jest
+      .spyOn(AbortSignal, "timeout")
+      .mockImplementation(() => new AbortController().signal);
+  });
 
   // Wired the way the apps wire it: the store registers the *service api*, and the endpoints only
   // exist because importing this package injected them.
@@ -146,6 +153,7 @@ describe("cryptoAssetsApi requests", () => {
 
   afterEach(() => {
     fetchSpy?.mockRestore();
+    timeoutSpy.mockRestore();
   });
 
   it("findTokenById hits the prod base URL with the client-version header", async () => {
@@ -206,6 +214,45 @@ describe("cryptoAssetsApi requests", () => {
     const url = String(fetchSpy.mock.calls[0][0]);
     expect(url).toContain("https://cal.test/v1/currencies");
     expect(url).toContain("id=ethereum");
+  });
+
+  it("should pass a 30 second abort signal when fetching the sync hash", async () => {
+    const signal = new AbortController().signal;
+    timeoutSpy.mockReturnValue(signal);
+    mockFetch([{ id: "ethereum" }], { "X-Ledger-Commit": "commit-hash" });
+    const store = makeStore();
+
+    await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
+
+    expect(timeoutSpy).toHaveBeenCalledWith(30_000);
+    expect(fetchSpy.mock.calls[0][1]).toEqual(expect.objectContaining({ signal }));
+  });
+
+  it("should return FETCH_ERROR when the sync-hash fetch is aborted", async () => {
+    const controller = new AbortController();
+    timeoutSpy.mockReturnValue(controller.signal);
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
+      (_input, init) =>
+        new Promise((_resolve, reject) => {
+          const abort = () => reject(new DOMException("The operation was aborted.", "AbortError"));
+          const signal = init?.signal;
+          if (signal?.aborted) {
+            abort();
+            return;
+          }
+          signal?.addEventListener("abort", abort, { once: true });
+          controller.abort();
+        }),
+    );
+    const store = makeStore();
+
+    const started = Date.now();
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"),
+    );
+
+    expect(Date.now() - started).toBeLessThan(1_000);
+    expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
   });
 
   it("getTokensSyncHash preserves a path prefix in the base URL (Gravitee /cal prefix)", async () => {

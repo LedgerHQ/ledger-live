@@ -16,6 +16,7 @@ import {
   fetchError,
   HEADER_X_LEDGER_COMMIT,
   TOKEN_TAGS,
+  TOKENS_SYNC_HASH_TIMEOUT_MS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
@@ -81,6 +82,7 @@ export const cryptoAssetsApi = calApi
                 "Content-Type": "application/json",
                 [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
               },
+              signal: AbortSignal.timeout(TOKENS_SYNC_HASH_TIMEOUT_MS),
             });
 
             if (!response.ok) {

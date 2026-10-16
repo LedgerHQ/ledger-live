@@ -120,7 +120,22 @@ describe("resolveCurrenciesToEvict", () => {
     expect(evict.has("ethereum")).toBe(true);
   });
 
-  it("evicts when the hash fetch fails", async () => {
+  it("keeps the currency when the hash result contains an error", async () => {
+    const dispatch = jest.fn().mockResolvedValue({
+      error: { status: "FETCH_ERROR", error: "network" },
+    });
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum"),
+      {
+        ethereum: "hash1",
+      },
+    );
+
+    expect(evict.has("ethereum")).toBe(false);
+  });
+
+  it("keeps the currency when the hash request throws", async () => {
     const dispatch = jest.fn().mockRejectedValue(new Error("network"));
     const evict = await resolveCurrenciesToEvict(
       dispatch as unknown as Dispatch,
@@ -130,6 +145,33 @@ describe("resolveCurrenciesToEvict", () => {
       },
     );
 
-    expect(evict.has("ethereum")).toBe(true);
+    expect(evict.has("ethereum")).toBe(false);
+  });
+
+  it("requests every stored-hash currency while the others are still in flight", async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+    const dispatch = jest.fn(
+      () =>
+        new Promise(resolve => {
+          inFlight += 1;
+          maxInFlight = Math.max(maxInFlight, inFlight);
+          queueMicrotask(() => {
+            inFlight -= 1;
+            resolve({ data: "hash1" });
+          });
+        }),
+    );
+
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum", "polygon"),
+      { ethereum: "hash1", polygon: "hash2" },
+    );
+
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(maxInFlight).toBe(2);
+    expect(evict.has("ethereum")).toBe(false);
+    expect(evict.has("polygon")).toBe(true);
   });
 });
