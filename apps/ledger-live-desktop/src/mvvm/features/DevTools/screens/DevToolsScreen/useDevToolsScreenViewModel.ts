@@ -16,6 +16,7 @@ import {
   useProdToggle,
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
+  useAccountDataToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -82,6 +83,7 @@ export function useDevToolsScreenViewModel() {
     prodToggle.trustchainApiBaseUrl,
   );
   const deviceOnboardingProps = useDeviceOnboarding();
+  const accountDataToolProps = useAccountDataToolProps();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -91,6 +93,7 @@ export function useDevToolsScreenViewModel() {
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
+      { id: "account-data", config: accountDataToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -99,6 +102,7 @@ export function useDevToolsScreenViewModel() {
       trustchainToolProps,
       cloudSyncToolProps,
       deviceOnboardingProps,
+      accountDataToolProps,
     ],
   );
 
