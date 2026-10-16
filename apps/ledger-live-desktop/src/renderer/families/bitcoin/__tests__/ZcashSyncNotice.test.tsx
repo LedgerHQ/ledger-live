@@ -69,6 +69,15 @@ describe("ZcashSyncNotice", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("renders the running banner for a zcash_testnet account too", () => {
+    const testnetAccount = {
+      ...buildZcashAccount({ syncState: "running", progress: 50 }),
+      currency: { id: "zcash_testnet" } as CryptoCurrency,
+    } as unknown as ZcashAccount;
+    renderNotice(testnetAccount, "private");
+    expect(screen.getByTestId("zcash-sync-banner-running")).toBeVisible();
+  });
+
   it("renders the running banner for Zcash + private sender + syncState=running", () => {
     renderNotice(buildZcashAccount({ syncState: "running", progress: 50 }), "private");
     expect(screen.getByTestId("zcash-sync-banner-running")).toBeVisible();

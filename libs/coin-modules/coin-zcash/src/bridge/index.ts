@@ -146,8 +146,12 @@ export function createBridges(
         currency: account.currency,
         path: path ?? account.freshAddressPath,
       }),
+    // The address is derived from the UFVK alone, which encodes its own network;
+    // the endpoint is never contacted.
     deriveShieldedAddress: async (ufvk: string) => {
-      const client = await getZCashClient(zainoEndpoint((await context.config("zcash")).zaino.url));
+      const client = await getZCashClient(
+        zainoEndpoint((await context.config("zcash")).zaino.url, "zcash"),
+      );
       return client.deriveShieldedAddress(ufvk);
     },
     getShieldedAddress: (account, { deviceId, path, display }) =>

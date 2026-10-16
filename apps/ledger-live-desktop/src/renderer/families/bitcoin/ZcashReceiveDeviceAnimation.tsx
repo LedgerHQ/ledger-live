@@ -9,6 +9,7 @@ import Text from "~/renderer/components/Text";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import type { StepProps } from "~/renderer/modals/Receive/Body";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = StepProps & { fallback: React.ReactNode };
 
@@ -21,7 +22,7 @@ const ZcashReceiveDeviceAnimation = ({ account, parentAccount, device, fallback 
     | ZcashPrivateInfo
     | undefined;
   const shieldedAddress =
-    shieldedEnabled && mainAccount?.currency.id === "zcash"
+    shieldedEnabled && !!mainAccount && isZcashCurrencyId(mainAccount.currency.id)
       ? (privateInfo?.shieldedAddress ?? null)
       : null;
 

@@ -127,7 +127,24 @@ describe("buildLegacySignOperation", () => {
     expect(arg.blockHeight).toBe(3_500_000);
     expect(arg.expiryHeight).toEqual(Buffer.alloc(4));
     expect(arg.sigHashType).toBe(1);
-    expect(arg).not.toHaveProperty("network");
+    expect(arg.network).toBe("mainnet");
+  });
+
+  it("signs a zcash_testnet payment against the testnet network", async () => {
+    const { createPaymentTransaction, signerContext } = makeSigner();
+    const testnetAccount = {
+      ...account,
+      currency: { id: "zcash_testnet" },
+    } as unknown as ZcashAccount;
+
+    await firstValueFrom(
+      buildLegacySignOperation(
+        signerContext,
+        testContext,
+      )({ account: testnetAccount, deviceId: "d", transaction }).pipe(toArray()),
+    );
+
+    expect(createPaymentTransaction.mock.calls[0][0].network).toBe("testnet");
   });
 
   it("reports the device steps and returns an outgoing operation carrying its inputs", async () => {

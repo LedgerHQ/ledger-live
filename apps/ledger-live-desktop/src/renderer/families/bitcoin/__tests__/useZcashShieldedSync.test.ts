@@ -82,6 +82,37 @@ describe("useZcashShieldedSync", () => {
     ]);
   });
 
+  it("starts a shielded sync for a zcash_testnet account too", async () => {
+    const account = {
+      ...buildAccount(),
+      currency: { id: "zcash_testnet" } as CryptoCurrency,
+    } as unknown as ZcashAccount;
+    const syncMock = jest.fn(
+      () =>
+        new Observable<(a: unknown) => unknown>(subscriber => {
+          subscriber.next(a => a);
+        }),
+    );
+    mockedGetAccountBridge.mockReturnValue({
+      sync: syncMock,
+    } as unknown as ReturnType<typeof getAccountBridge>);
+
+    const { result } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { shieldedSyncSubscriptions: [] },
+    });
+
+    act(() => {
+      result.current.startShieldedSync();
+    });
+
+    await waitFor(() => {
+      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      });
+    });
+  });
+
   it("is a no-op when a sync is already in flight for the account", () => {
     const account = buildAccount();
     const existingUnsubscribe = jest.fn();

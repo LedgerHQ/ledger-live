@@ -7,6 +7,7 @@ import {
   type ZcashAccount,
 } from "@ledgerhq/coin-zcash/types";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = {
   account: Account;
@@ -20,7 +21,7 @@ const ZCASH_POST_BROADCAST_SYNC_RETRY_INTERVAL_MS = 90_000;
 const ZcashPostBroadcastSync = ({ account, transaction }: Props) => {
   const { startShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
   const tx = transaction as unknown as ZcashTransaction;
-  const isZcashPrivateSend = account.currency.id === "zcash" && isShieldedTransfer(tx);
+  const isZcashPrivateSend = isZcashCurrencyId(account.currency.id) && isShieldedTransfer(tx);
 
   const startShieldedSyncRef = useRef(startShieldedSync);
   startShieldedSyncRef.current = startShieldedSync;

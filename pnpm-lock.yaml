@@ -17991,8 +17991,8 @@ importers:
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/device-signer-kit-zcash':
-        specifier: 0.7.1
-        version: 0.7.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
+        specifier: 0.8.0
+        version: 0.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -24129,10 +24129,10 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.9.0
 
-  '@ledgerhq/device-signer-kit-zcash@0.7.1':
-    resolution: {integrity: sha512-WTim/MTeghnaShDr8IxKu+ZOc9NDhS5hJmHuN5np7McEfNuhrpnkVEVlGsjLn0+4D7ZZ8u+5Ry7C7Nur2oCkYA==}
+  '@ledgerhq/device-signer-kit-zcash@0.8.0':
+    resolution: {integrity: sha512-fN2VLuI+WbWU4bi+SOv8lxUDAjdjslgrlsHrwUqUzN6F41dCpL/tIKekJxjET3GTCG59M6+8NuB38WOPDRsd4w==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.0
+      '@ledgerhq/device-management-kit': ^1.11.0
 
   '@ledgerhq/device-transport-kit-mockserver@1.1.2':
     resolution: {integrity: sha512-vd+XvXsv+Rt7MnrvYS5Tn+yIK282MJvXgJjYHCtDboEGfMxXLFhf3bSGwv8cwp3wLeO5Hlq4yhWOUJXvVXhicw==}
@@ -45692,7 +45692,7 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-zcash@0.7.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
+  '@ledgerhq/device-signer-kit-zcash@0.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))

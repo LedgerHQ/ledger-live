@@ -47,6 +47,9 @@ type ZcashGetFullViewingKeyResult = {
   fullViewingKey: string | Uint8Array;
 };
 
+/** Hardened coin types of the Zcash apps: 133' on mainnet, 1' on the test networks. */
+const ZCASH_COIN_TYPES = new Set(["133'", "1'"]);
+
 /** Mask clearing ZIP-202's fOverwintered bit, leaving the transaction version. */
 const OVERWINTERED_FLAG_MASK = 0x7fffffff;
 
@@ -164,11 +167,15 @@ export class DmkSignerZcash implements ZcashSigner {
     const [purpose, coinType, account] = segments;
     const accountIndex = account.match(/^(\d+)'$/)?.[1];
 
-    if (!accountIndex || coinType !== "133'" || (purpose !== "44'" && purpose !== "32'")) {
+    if (
+      !accountIndex ||
+      !ZCASH_COIN_TYPES.has(coinType) ||
+      (purpose !== "44'" && purpose !== "32'")
+    ) {
       throw new Error(`Invalid Zcash derivation path: ${path}`);
     }
 
-    return `32'/133'/${accountIndex}'`;
+    return `32'/${coinType}/${accountIndex}'`;
   }
 
   async getFullViewingKey(path: string): Promise<ZcashViewKey> {
@@ -267,6 +274,7 @@ export class DmkSignerZcash implements ZcashSigner {
       ...(arg.blockHeight !== undefined ? { blockHeight: arg.blockHeight } : {}),
       ...(arg.sigHashType !== undefined ? { sigHashType: arg.sigHashType } : {}),
       ...(arg.expiryHeight !== undefined ? { expiryHeight: arg.expiryHeight } : {}),
+      ...(arg.network !== undefined ? { network: arg.network } : {}),
     };
 
     // `onDeviceStreaming` (declared on the arg for legacy parity) is intentionally
