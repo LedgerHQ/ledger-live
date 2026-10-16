@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { usdcToken } from "../../modularDrawer/__mocks__/currencies.mock";
-import { getDepositMaxBuffer } from "./depositMaxBuffer";
+import { usdcToken } from "../../../modularDrawer/__mocks__/currencies.mock";
+import { getDepositMaxBuffer } from "./maxBuffer";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const ethAccount = genAccount("eth-1", { currency: ethereum, operationsSize: 0 });

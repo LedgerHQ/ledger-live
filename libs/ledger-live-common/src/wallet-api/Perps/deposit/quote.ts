@@ -1,12 +1,10 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getWalletApiIdFromAccountId } from "../converters";
-import { resolveQuoteId } from "../Exchange/quotes/normalizer/quoteHelpers";
-import { resolveQuotesInput } from "../Exchange/quotes/resolveQuotesInput";
-import { fetchQuotes } from "../Exchange/quotes/service/fetchQuotes";
-
-/** Aggregator provider bridging a funding asset into a perps balance. */
-export const PERPS_DEPOSIT_QUOTE_PROVIDER = "swapkit_hyperliquid";
+import { getWalletApiIdFromAccountId } from "../../converters";
+import { resolveQuoteId } from "../../Exchange/quotes/normalizer/quoteHelpers";
+import { resolveQuotesInput } from "../../Exchange/quotes/resolveQuotesInput";
+import { fetchQuotes } from "../../Exchange/quotes/service/fetchQuotes";
+import { PERPS_SWAPKIT_PROVIDER } from "../constants";
 
 export type PerpsDepositQuoteParams = {
   accounts: AccountLike[];
@@ -44,7 +42,7 @@ export async function fetchPerpsDepositQuote({
   if (!quotesInput) return undefined;
 
   const { rawQuotes } = await fetchQuotes(
-    { providers: [PERPS_DEPOSIT_QUOTE_PROVIDER], data: quotesInput },
+    { providers: [PERPS_SWAPKIT_PROVIDER], data: quotesInput },
     counterValueCurrency,
   );
 
