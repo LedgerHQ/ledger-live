@@ -88,16 +88,17 @@ async function withHardTimeout<T>(
 }
 
 /**
- * Resolves a Detox wait to true when it matches, false when it does not. Rethrows when the app
- * never answered: Detox starts the wait's own timeout only once the app is idle, so an app that
- * never idles would otherwise hold the probe until the Jest test timeout.
+ * Resolves a Detox wait to true when it matches, false when it does not. Rethrows only when the
+ * hard timeout fires: Detox starts the wait's own timeout only once the app is idle, so an app
+ * that never idles would otherwise hold the probe until the Jest test timeout.
  */
 async function probeNativeElement(wait: Promise<unknown>, timeout: number): Promise<boolean> {
   try {
     await withHardTimeout(wait, timeout + TIMEOUT.xxxlarge);
     return true;
   } catch (error) {
-    if (isUnansweredDetoxRequestError(error)) throw error;
+    const appNeverAnswered = error instanceof Error && error.message.includes(HARD_TIMEOUT_MARKER);
+    if (appNeverAnswered) throw error;
     return false;
   }
 }
