@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { delay, http } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
 jest.mock("./converter", () => ({
@@ -214,15 +214,23 @@ describe("cryptoAssetsApi requests", () => {
     const timeoutDescriptor = Object.getOwnPropertyDescriptor(AbortSignal, "timeout");
     Reflect.deleteProperty(AbortSignal, "timeout");
 
+    let markRequestHung: () => void = () => undefined;
+    const requestHung = new Promise<void>(resolve => {
+      markRequestHung = resolve;
+    });
     const server = setupServer(
       http.get("https://cal.test/v1/currencies", async () => {
+        markRequestHung();
         await delay("infinite");
+        return HttpResponse.json([{ id: "ethereum" }]);
       }),
     );
     server.listen({ onUnhandledRequest: "error" });
 
     const originalSetTimeout = globalThis.setTimeout.bind(globalThis);
+    const originalClearTimeout = globalThis.clearTimeout.bind(globalThis);
     let abortFetch: (() => void) | undefined;
+    const forwardedTimers: number[] = [];
     const setTimeoutSpy = jest.spyOn(globalThis, "setTimeout").mockImplementation(((
       handler: TimerHandler,
       timeout?: number,
@@ -232,7 +240,9 @@ describe("cryptoAssetsApi requests", () => {
         abortFetch = () => handler(...args);
         return 0 as unknown as ReturnType<typeof setTimeout>;
       }
-      return originalSetTimeout(handler, timeout, ...args);
+      const timer = originalSetTimeout(handler, timeout, ...args);
+      forwardedTimers.push(timer);
+      return timer;
     }) as typeof setTimeout);
 
     const store = makeStore();
@@ -241,7 +251,7 @@ describe("cryptoAssetsApi requests", () => {
       const pending = store.dispatch(
         cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"),
       );
-      await new Promise(resolve => originalSetTimeout(resolve, 0));
+      await requestHung;
 
       expect(AbortSignal.timeout).toBeUndefined();
       expect(abortFetch).toEqual(expect.any(Function));
@@ -254,6 +264,9 @@ describe("cryptoAssetsApi requests", () => {
       expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
     } finally {
       setTimeoutSpy.mockRestore();
+      for (const timer of forwardedTimers) {
+        originalClearTimeout(timer);
+      }
       server.close();
       if (timeoutDescriptor) {
         Object.defineProperty(AbortSignal, "timeout", timeoutDescriptor);
