@@ -920,7 +920,8 @@ jobs:
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
-        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
+        # A broadcast run can also wait up to 30 minutes for each busy broadcast lock.
+        timeout-minutes: ${{ env.IOS_BROADCAST_ENABLED == 'true' && 120 || fromJSON(needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
