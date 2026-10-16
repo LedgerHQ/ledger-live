@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { randomBytes, timingSafeEqual } from "node:crypto";
 import http from "node:http";
 import https from "node:https";
 import net, { type AddressInfo } from "node:net";
@@ -38,8 +39,14 @@ export type SpeculosScreenAccess = {
 
 type LocalServer = { port: number; close: () => void };
 
+export type SpeculosWebProxy = LocalServer & {
+  /** Address that opens the page in a browser: it works once, within 5 minutes. */
+  signInUrl: () => string;
+};
+
 const accesses = new Map<string, SpeculosScreenAccess>();
-const servers = new Map<string, LocalServer>();
+const webProxies = new Map<string, SpeculosWebProxy>();
+const vncBridges = new Map<string, LocalServer>();
 
 /** Records how to reach the device's screen. A no-op unless `SPECULOS_SCREEN` is on. */
 export function registerSpeculosScreen(deviceId: string, access: SpeculosScreenAccess): void {
@@ -49,8 +56,10 @@ export function registerSpeculosScreen(deviceId: string, access: SpeculosScreenA
 
 export function forgetSpeculosScreen(deviceId: string): void {
   accesses.delete(deviceId);
-  servers.get(deviceId)?.close();
-  servers.delete(deviceId);
+  for (const servers of [webProxies, vncBridges]) {
+    servers.get(deviceId)?.close();
+    servers.delete(deviceId);
+  }
 }
 
 async function listenLocally(server: net.Server): Promise<number> {
@@ -63,8 +72,15 @@ async function listenLocally(server: net.Server): Promise<number> {
   return (server.address() as AddressInfo).port;
 }
 
+const SCREEN_PATH = "/__speculos-screen";
+const SIGN_IN_PATH = `${SCREEN_PATH}/sign-in`;
+const WORKER_PATH = `${SCREEN_PATH}/worker.js`;
+const SIGN_IN_TTL_MS = 5 * 60_000;
+const KEY_HEADER = "x-speculos-screen-key";
+
 // Hop-by-hop headers, and what the browser sends that is only meant for 127.0.0.1.
 const DROPPED_REQUEST_HEADERS = new Set([
+  KEY_HEADER,
   "connection",
   "keep-alive",
   "proxy-connection",
@@ -85,22 +101,129 @@ function withoutHeaders(
   return Object.fromEntries(Object.entries(headers).filter(([name]) => !dropped.has(name)));
 }
 
+function newSecret(): string {
+  return randomBytes(32).toString("base64url");
+}
+
+function sameSecret(value: string | undefined, secret: string): boolean {
+  const given = Buffer.from(value ?? "");
+  const expected = Buffer.from(secret);
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
+
+// Adds the proxy key to every request of the page, which only this origin's worker can do: unlike
+// a cookie, it never reaches another service on 127.0.0.1. Navigations are left alone: any site can
+// start one (e.g. a form posting here), so they reach the proxy as the browser made them, keyless.
+const WORKER_SOURCE = `const key = new URL(self.location.href).searchParams.get("key");
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", event => event.waitUntil(self.clients.claim()));
+self.addEventListener("fetch", event => {
+  const { request } = event;
+  if (request.mode === "navigate" || new URL(request.url).origin !== self.location.origin) return;
+  event.respondWith((async () => {
+    const headers = new Headers(request.headers);
+    headers.set("${KEY_HEADER}", key);
+    const hasBody = request.method !== "GET" && request.method !== "HEAD";
+    return fetch(request.url, {
+      method: request.method,
+      headers,
+      body: hasBody ? await request.arrayBuffer() : undefined,
+      mode: "same-origin",
+      credentials: "omit",
+      redirect: "follow",
+      signal: request.signal,
+    });
+  })());
+});
+`;
+
+function signInPage(key: string): string {
+  return `<!doctype html>
+<meta charset="utf-8">
+<title>Speculos screen</title>
+<p id="status">Opening the Speculos screen…</p>
+<script>
+(async () => {
+  const worker = new URL("${WORKER_PATH}?key=${key}", location.href).href;
+  const registration = await navigator.serviceWorker.register(worker, { scope: "/" });
+  for (let wait = 0; registration.active?.scriptURL !== worker || registration.active.state !== "activated"; wait++) {
+    if (wait === 200) throw new Error("its service worker did not start");
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  location.replace("/");
+})().catch(error => {
+  document.getElementById("status").textContent = "Could not open the Speculos screen: " + error.message;
+});
+</script>
+`;
+}
+
 /**
  * Serves the Speculos web page of `target` on a local port, adding the session token that a
  * browser cannot send itself. Responses are streamed as they come, which keeps the page's screen
  * (`/events?stream=true`) live.
+ *
+ * Any local process can reach the port, and a browser shares its 127.0.0.1 cookies with every port,
+ * so requests must carry a key that only this proxy's origin holds: the page that `signInUrl` opens
+ * installs a service worker that adds it to each request the Speculos page makes. Only that page
+ * (`GET /`), static HTML, loads without the key. The session token never leaves the proxy.
  */
-export async function startSpeculosWebProxy(target: string, token: string): Promise<LocalServer> {
+export async function startSpeculosWebProxy(
+  target: string,
+  token: string,
+): Promise<SpeculosWebProxy> {
   const upstream = new URL(target);
+  const basePath = upstream.pathname.replace(/\/+$/, "");
   const send = upstream.protocol === "https:" ? https.request : http.request;
+  const secret = newSecret();
+  const signIns = new Map<string, number>();
   let origin = "";
 
   const server = http.createServer((req, res) => {
-    // Only this page may drive the device: not another site, nor a host name rebound to 127.0.0.1.
+    // Only this page may drive the device: not another site or local page, nor a host name rebound
+    // to 127.0.0.1.
+    const fetchSite = req.headers["sec-fetch-site"];
     const foreign =
       `http://${req.headers.host}` !== origin ||
-      (req.headers.origin !== undefined && req.headers.origin !== origin);
+      (req.headers.origin !== undefined && req.headers.origin !== origin) ||
+      (fetchSite !== undefined && fetchSite !== "same-origin" && fetchSite !== "none");
     if (foreign || !req.url?.startsWith("/")) {
+      res.writeHead(403).end();
+      return;
+    }
+
+    const url = new URL(req.url, origin);
+    if (url.pathname === SIGN_IN_PATH) {
+      const code = url.searchParams.get("code") ?? "";
+      const expiry = signIns.get(code);
+      signIns.delete(code);
+      if (expiry === undefined || expiry < Date.now()) {
+        res.writeHead(403).end();
+        return;
+      }
+      res
+        .writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" })
+        .end(signInPage(secret));
+      return;
+    }
+    if (url.pathname === WORKER_PATH) {
+      if (!sameSecret(url.searchParams.get("key") ?? undefined, secret)) {
+        res.writeHead(403).end();
+        return;
+      }
+      res
+        .writeHead(200, {
+          "content-type": "text/javascript; charset=utf-8",
+          "cache-control": "no-store",
+          "service-worker-allowed": "/",
+        })
+        .end(WORKER_SOURCE);
+      return;
+    }
+    // The page arrives as a navigation, which the worker leaves keyless; it holds nothing.
+    const page = (req.method === "GET" || req.method === "HEAD") && url.pathname === "/";
+    const key = req.headers[KEY_HEADER];
+    if (!page && !sameSecret(typeof key === "string" ? key : undefined, secret)) {
       res.writeHead(403).end();
       return;
     }
@@ -110,7 +233,7 @@ export async function startSpeculosWebProxy(target: string, token: string): Prom
         protocol: upstream.protocol,
         hostname: upstream.hostname,
         port: upstream.port || undefined,
-        path: req.url,
+        path: basePath + req.url,
         method: req.method,
         headers: {
           ...withoutHeaders(req.headers, DROPPED_REQUEST_HEADERS),
@@ -142,6 +265,11 @@ export async function startSpeculosWebProxy(target: string, token: string): Prom
   origin = `http://127.0.0.1:${port}`;
   return {
     port,
+    signInUrl: () => {
+      const code = newSecret();
+      signIns.set(code, Date.now() + SIGN_IN_TTL_MS);
+      return `${origin}${SIGN_IN_PATH}?code=${code}`;
+    },
     close: () => {
       server.close();
       server.closeAllConnections();
@@ -191,14 +319,15 @@ export async function startSpeculosVncBridge(url: string, token?: string): Promi
   };
 }
 
-async function localServer(
+async function startOnce<T extends LocalServer>(
+  started: Map<string, T>,
   deviceId: string,
-  start: () => Promise<LocalServer>,
-): Promise<LocalServer> {
-  let server = servers.get(deviceId);
+  start: () => Promise<T>,
+): Promise<T> {
+  let server = started.get(deviceId);
   if (!server) {
     server = await start();
-    servers.set(deviceId, server);
+    started.set(deviceId, server);
   }
   return server;
 }
@@ -208,13 +337,13 @@ async function localWebUrl(
   { url, token }: NonNullable<SpeculosScreenAccess["web"]>,
 ): Promise<string> {
   if (!token) return `${url}/`;
-  const proxy = await localServer(deviceId, () => startSpeculosWebProxy(url, token));
-  return `http://127.0.0.1:${proxy.port}/`;
+  const proxy = await startOnce(webProxies, deviceId, () => startSpeculosWebProxy(url, token));
+  return proxy.signInUrl();
 }
 
 async function localVncPort(deviceId: string, endpoint: SpeculosVncEndpoint): Promise<number> {
   if (endpoint.kind === "tcp") return endpoint.port;
-  const bridge = await localServer(deviceId, () =>
+  const bridge = await startOnce(vncBridges, deviceId, () =>
     startSpeculosVncBridge(endpoint.url, endpoint.token),
   );
   return bridge.port;
