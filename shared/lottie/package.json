@@ -30,7 +30,7 @@
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-native": ">=0.70.0",
-    "lottie-react-native": "7.3.6"
+    "lottie-react-native": "7.3.8"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -54,7 +54,7 @@
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "lottie-react-native": "7.3.6",
+    "lottie-react-native": "7.3.8",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
