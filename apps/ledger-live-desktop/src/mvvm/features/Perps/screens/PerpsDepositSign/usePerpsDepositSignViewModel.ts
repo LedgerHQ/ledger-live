@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 import {
   usePerpsDepositExecution,
   type PerpsDepositDeviceStep,
@@ -14,8 +15,8 @@ export type PerpsDepositSignViewModel = {
   deviceStep: PerpsDepositDeviceStep;
   retry: () => void;
   onClose: () => void;
-  /** Errors raised while connecting to the device, which never reach the execution. */
   onDeviceError: (error: Error) => void;
+  onOpenManager: () => void;
 };
 
 export function usePerpsDepositSignViewModel(
@@ -45,6 +46,11 @@ export function usePerpsDepositSignViewModel(
     [handleRefused],
   );
 
+  const onOpenManager = useCallback(() => {
+    cancelDepositRequest();
+    onClose();
+  }, [onClose]);
+
   const startedRef = useRef(false);
   useEffect(() => {
     if (startedRef.current) return;
@@ -57,5 +63,6 @@ export function usePerpsDepositSignViewModel(
     retry,
     onClose,
     onDeviceError,
+    onOpenManager,
   };
 }
