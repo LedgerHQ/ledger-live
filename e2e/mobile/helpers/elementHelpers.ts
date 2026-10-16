@@ -81,6 +81,13 @@ const scroller = new PageScroller();
 
 const DEFAULT_WEB_ELEMENT_INTERVAL = INTERVAL.long;
 
+/**
+ * Headroom past a native wait's own timeout: the native wait answers by itself once it elapses,
+ * so the hard timeout must outlast it or it abandons a call that is still in flight. It never
+ * drops below withHardTimeout's default, since a busy app can answer a short wait late.
+ */
+const NATIVE_WAIT_HARD_TIMEOUT_GRACE = TIMEOUT.xlarge;
+
 /** How far past the viewport edge revealForTap pushes a target so an overlay cannot intercept it. */
 const EDGE_CLEARANCE_PIXELS = 200;
 
@@ -175,7 +182,10 @@ export const NativeElementHelpers = {
     timeout: number = TIMEOUT.xxlarge,
     options?: WaitForElementOptions,
   ) {
-    return withHardTimeout(awaitNativeElement(nativeElement, timeout, options));
+    return withHardTimeout(
+      awaitNativeElement(nativeElement, timeout, options),
+      Math.max(TIMEOUT.xxxlarge, timeout + NATIVE_WAIT_HARD_TIMEOUT_GRACE),
+    );
   },
 
   async waitForElementById(
