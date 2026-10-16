@@ -326,6 +326,10 @@
       {
         "env": "UPDATE_CHECK_PUBKEY"
       }
+    ],
+    "formatConfig": [
+      "{workspaceRoot}/oxfmt.config.mts",
+      "{workspaceRoot}/support/fmt/oxfmt.config.mts"
     ]
   },
   "pluginsConfig": {
@@ -364,7 +368,7 @@
     },
     "format:check": {
       "cache": true,
-      "inputs": ["default", "^default"]
+      "inputs": ["default", "^default", "formatConfig"]
     },
     "check-export-rules": {
       "cache": false
