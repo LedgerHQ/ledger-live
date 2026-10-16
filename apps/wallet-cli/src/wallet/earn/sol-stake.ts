@@ -22,7 +22,9 @@
  * integration contract.
  */
 
+import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { WalletAdapter } from "../index";
 import type { AccountDescriptor } from "../models";
 import { SolanaTransactionIntentSchema } from "../intents";
@@ -30,7 +32,14 @@ import type { TransactionIntent } from "../intents";
 import { prepareIntentDryRun, signAndBroadcastIntent } from "../sign-and-broadcast";
 import type { CommandOutput } from "../../output";
 import type { EarnDeviceContext } from "./device-context";
-import type { EarnDepositResult, EarnTransaction, EarnWithdrawResult } from "./types";
+import { SolanaStakeAmountError } from "./errors";
+import type { StakeAmountErrorName } from "./errors";
+import type {
+  EarnDepositResult,
+  EarnTransaction,
+  EarnWithdrawResult,
+  SolanaStakeLimits,
+} from "./types";
 
 /** Parameters for a Solana native staking deposit (create + delegate). */
 export type DepositSolanaParams = {
@@ -125,6 +134,57 @@ function zeroAmount(currencyId: string): string {
   return `0 ${getCryptoCurrencyById(currencyId).ticker}`;
 }
 
+export function describeStakeAmountError(
+  errorName: StakeAmountErrorName,
+  requested: string,
+  limits: SolanaStakeLimits,
+  currencyId: string,
+): string {
+  const unit = getCryptoCurrencyById(currencyId).units[0];
+  const fmt = (lamports: BigNumber) =>
+    formatCurrencyUnit(unit, lamports, { showCode: true, disableRounding: true });
+  const minimum = new BigNumber(limits.minimumDelegation);
+  const rent = new BigNumber(limits.rent);
+  const maxStakeable = new BigNumber(limits.maxStakeable);
+  const pendingDebits = new BigNumber(limits.pendingDebits);
+  const spendableBalance = fmt(new BigNumber(limits.spendableBalance));
+  const pending = pendingDebits.gt(0) ? `pending outgoing ${fmt(pendingDebits)}, ` : "";
+  // estimateMaxSpendable floors at 0, so a 0 max hides how far the balance is from the costs.
+  const nothingStakeable = maxStakeable.isZero();
+
+  const maxStakeableBreakdown = nothingStakeable
+    ? `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} leaves ` +
+      `nothing to stake after ${pending}stake account rent ${fmt(rent)} and network fees.`
+    : `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} minus ` +
+      `${pending}stake account rent ${fmt(rent)} and fee reserve ` +
+      `${fmt(new BigNumber(limits.feeReserve))}.`;
+
+  const message =
+    errorName === "SolanaStakeAccountAmountTooLow"
+      ? `Solana requires at least ${fmt(minimum)} per stake account (network minimum delegation). ` +
+        `Requested ${requested}. ${maxStakeableBreakdown}`
+      : `${maxStakeableBreakdown} Requested ${requested}.`;
+
+  const canReachMinimum = maxStakeable.gte(minimum);
+  if (canReachMinimum) return message;
+
+  if (nothingStakeable) {
+    return (
+      `${message} This account cannot stake until it receives at least ${fmt(minimum)} more, ` +
+      `plus the part of those costs its balance does not cover.`
+    );
+  }
+  const missing = minimum.minus(maxStakeable);
+  return `${message} This account cannot stake until it receives about ${fmt(missing)} more.`;
+}
+
+/** Restates a bridge stake amount error with the limits it carries; other errors pass through. */
+function explainStakeAmountError(err: unknown, requested: string, currencyId: string): unknown {
+  if (!(err instanceof SolanaStakeAmountError)) return err;
+  const message = describeStakeAmountError(err.name, requested, err.limits, currencyId);
+  return new SolanaStakeAmountError(err.cause, err.limits, message);
+}
+
 /**
  * Stake (create + delegate) via native Solana staking.
  *
@@ -157,6 +217,8 @@ export async function depositSolana(params: DepositSolanaParams): Promise<EarnDe
     dryRun,
     device,
     out,
+  }).catch((err: unknown) => {
+    throw explainStakeAmountError(err, amount, descriptor.currencyId);
   });
 
   return {

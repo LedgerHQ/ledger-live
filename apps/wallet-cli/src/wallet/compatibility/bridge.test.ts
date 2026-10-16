@@ -1,9 +1,19 @@
-import { describe, expect, it } from "bun:test";
+import "../../live-common-setup";
+import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import { BigNumber } from "bignumber.js";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
+import type { Operation } from "@ledgerhq/types-live";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
-import { applyEvmGasLimitMultiplier, BridgeAdapter, buildSolanaTransactionPatch } from "./bridge";
+import {
+  applyEvmGasLimitMultiplier,
+  BridgeAdapter,
+  buildSolanaTransactionPatch,
+  toSolanaStakeLimits,
+} from "./bridge";
+import { SolanaStakeAmountError } from "../earn/errors";
 import type { TransactionIntent } from "../intents";
 import type { AccountDescriptor } from "../models";
 
@@ -186,15 +196,225 @@ describe("buildSolanaTransactionPatch", () => {
   });
 });
 
+const pendingOp = (op: Pick<Operation, "type" | "value" | "fee">) => op as Operation;
+
+type SyncStub = { sync: () => Promise<unknown> };
+
+// Stubs the private sync so tests drive the adapter with a fixed synced account, off the chain.
+const adapterWithSyncedAccount = (account: unknown): BridgeAdapter => {
+  const adapter = new BridgeAdapter();
+  (adapter as unknown as SyncStub).sync = async () => account;
+  return adapter;
+};
+
+const namedError = <N extends string>(name: N) => Object.assign(new Error(name), { name });
+
+describe("toSolanaStakeLimits", () => {
+  it("takes the stake account rent off the max spendable and derives the fee reserve", () => {
+    expect(
+      toSolanaStakeLimits({
+        minimumDelegation: new BigNumber(1_000_000_000),
+        rent: new BigNumber(1_666_240),
+        spendableBalance: new BigNumber(50_929_500),
+        pendingDebits: new BigNumber(0),
+        maxSpendable: new BigNumber(50_909_500),
+      }),
+    ).toEqual({
+      minimumDelegation: BigNumberStrSchema.parse("1000000000"),
+      rent: BigNumberStrSchema.parse("1666240"),
+      spendableBalance: BigNumberStrSchema.parse("50929500"),
+      pendingDebits: BigNumberStrSchema.parse("0"),
+      maxStakeable: BigNumberStrSchema.parse("49243260"),
+      feeReserve: BigNumberStrSchema.parse("20000"),
+    });
+  });
+
+  it("keeps pending outgoing SOL out of the fee reserve", () => {
+    const limits = toSolanaStakeLimits({
+      minimumDelegation: new BigNumber(1_000_000_000),
+      rent: new BigNumber(1_666_240),
+      spendableBalance: new BigNumber(600_000_000),
+      pendingDebits: new BigNumber(500_000_000),
+      maxSpendable: new BigNumber(99_980_000),
+    });
+    expect(limits.pendingDebits).toBe(BigNumberStrSchema.parse("500000000"));
+    expect(limits.maxStakeable).toBe(BigNumberStrSchema.parse("98313760"));
+    expect(limits.feeReserve).toBe(BigNumberStrSchema.parse("20000"));
+  });
+
+  it("floors the max stakeable and fee reserve at 0 when the max spendable does not cover the rent", () => {
+    const limits = toSolanaStakeLimits({
+      minimumDelegation: new BigNumber(1_000_000_000),
+      rent: new BigNumber(1_666_240),
+      spendableBalance: new BigNumber(1_000_000),
+      pendingDebits: new BigNumber(0),
+      maxSpendable: new BigNumber(980_000),
+    });
+    expect(limits.maxStakeable).toBe(BigNumberStrSchema.parse("0"));
+    expect(limits.feeReserve).toBe(BigNumberStrSchema.parse("0"));
+  });
+});
+
+describe("BridgeAdapter.prepareSend Solana stake amount errors", () => {
+  const address = "4pKFxpCN3k97FW5TUNYpJrCXNvGBu4aYGqPESkzi3tmR";
+  const descriptor = {
+    id: `js:2:solana:${address}:solanaMain`,
+    currencyId: "solana",
+    freshAddress: address,
+    seedIdentifier: address,
+    derivationMode: "solanaMain",
+    index: 0,
+  } as AccountDescriptor;
+  const account = {
+    ...descriptorToAccount(descriptor),
+    spendableBalance: new BigNumber(50_929_500),
+  };
+  const stakeIntent: TransactionIntent = {
+    family: "solana",
+    recipient: "",
+    amount: "0.01 SOL",
+    mode: "stake.createAccount",
+    validator: "voteAcc123",
+  };
+  const restores: Array<() => void> = [];
+
+  afterEach(() => {
+    restores.splice(0).forEach(restore => restore());
+  });
+
+  async function mockSolanaBridge(params: {
+    errors: Record<string, Error>;
+    maxSpendable?: BigNumber;
+    chainError?: Error;
+  }) {
+    const { errors, maxSpendable = new BigNumber(50_909_500), chainError } = params;
+    const solanaNetwork = await import("@ledgerhq/coin-solana/network/index");
+    const bridge = await getAccountBridge(account);
+    const chainApi = {
+      getStakeMinimumDelegation: async () => {
+        if (chainError) throw chainError;
+        return 1_000_000_000;
+      },
+      getMinimumBalanceForRentExemption: async () => 1_666_240,
+    } as unknown as ReturnType<typeof solanaNetwork.getChainAPI>;
+    const getChainAPI = spyOn(solanaNetwork, "getChainAPI").mockReturnValue(chainApi);
+    const prepareTransaction = spyOn(bridge, "prepareTransaction").mockImplementation(
+      async (_account, tx) => ({ ...tx, prepared: true }),
+    );
+    const getTransactionStatus = spyOn(bridge, "getTransactionStatus").mockResolvedValue({
+      errors,
+      warnings: {},
+      estimatedFees: new BigNumber(5_000),
+      amount: new BigNumber(10_000_000),
+      totalSpent: new BigNumber(10_005_000),
+    });
+    const estimateMaxSpendable = spyOn(bridge, "estimateMaxSpendable").mockResolvedValue(
+      maxSpendable,
+    );
+    restores.push(
+      () => getChainAPI.mockRestore(),
+      () => prepareTransaction.mockRestore(),
+      () => getTransactionStatus.mockRestore(),
+      () => estimateMaxSpendable.mockRestore(),
+    );
+    return { getChainAPI, estimateMaxSpendable };
+  }
+
+  it.each(["SolanaStakeAccountAmountTooLow", "NotEnoughBalance"])(
+    "attaches the stake limits to an amount-field %s and keeps its name and cause",
+    async name => {
+      const cause = namedError(name);
+      const { getChainAPI, estimateMaxSpendable } = await mockSolanaBridge({
+        errors: { amount: cause },
+      });
+      const adapter = adapterWithSyncedAccount(account);
+      const sync = spyOn(adapter as unknown as SyncStub, "sync");
+
+      const prepared = adapter.prepareSend(descriptor, stakeIntent);
+      await expect(prepared).rejects.toBeInstanceOf(SolanaStakeAmountError);
+      await expect(prepared).rejects.toMatchObject({
+        name,
+        cause,
+        message: cause.message,
+        limits: {
+          minimumDelegation: BigNumberStrSchema.parse("1000000000"),
+          rent: BigNumberStrSchema.parse("1666240"),
+          spendableBalance: BigNumberStrSchema.parse("50929500"),
+          pendingDebits: BigNumberStrSchema.parse("0"),
+          maxStakeable: BigNumberStrSchema.parse("49243260"),
+          feeReserve: BigNumberStrSchema.parse("20000"),
+        },
+      });
+      expect(sync).toHaveBeenCalledTimes(1);
+      expect(getChainAPI).toHaveBeenCalledTimes(1);
+      expect(getChainAPI).toHaveBeenCalledWith({ endpoint: expect.stringMatching(/^https?:\/\//) });
+      expect(estimateMaxSpendable).toHaveBeenCalledTimes(1);
+      expect(estimateMaxSpendable).toHaveBeenCalledWith({
+        account,
+        transaction: expect.objectContaining({ mode: "stake", prepared: true }),
+      });
+    },
+  );
+
+  it("reports pending outgoing SOL separately from the fee reserve", async () => {
+    await mockSolanaBridge({
+      errors: { amount: namedError("NotEnoughBalance") },
+      maxSpendable: new BigNumber(99_970_000),
+    });
+    const adapter = adapterWithSyncedAccount({
+      ...account,
+      spendableBalance: new BigNumber(600_000_000),
+      pendingOperations: [
+        pendingOp({ type: "OUT", value: new BigNumber(500_000_000), fee: new BigNumber(5_000) }),
+        pendingOp({ type: "FEES", value: new BigNumber(2_000_000), fee: new BigNumber(5_000) }),
+      ],
+    });
+
+    await expect(adapter.prepareSend(descriptor, stakeIntent)).rejects.toMatchObject({
+      limits: {
+        pendingDebits: BigNumberStrSchema.parse("500010000"),
+        maxStakeable: BigNumberStrSchema.parse("98303760"),
+        feeReserve: BigNumberStrSchema.parse("20000"),
+      },
+    });
+  });
+
+  it("throws a NotEnoughBalance on another field unchanged", async () => {
+    const cause = namedError("NotEnoughBalance");
+    const { getChainAPI } = await mockSolanaBridge({ errors: { fee: cause } });
+    const adapter = adapterWithSyncedAccount(account);
+
+    await expect(adapter.prepareSend(descriptor, stakeIntent)).rejects.toBe(cause);
+    expect(getChainAPI).not.toHaveBeenCalled();
+  });
+
+  it("throws the original error unchanged when the limits lookup fails", async () => {
+    const cause = namedError("SolanaStakeAccountAmountTooLow");
+    await mockSolanaBridge({ errors: { amount: cause }, chainError: new Error("rpc down") });
+    const adapter = adapterWithSyncedAccount(account);
+
+    await expect(adapter.prepareSend(descriptor, stakeIntent)).rejects.toBe(cause);
+  });
+
+  it("leaves a plain Solana send unaffected", async () => {
+    const cause = namedError("NotEnoughBalance");
+    const { getChainAPI } = await mockSolanaBridge({ errors: { amount: cause } });
+    const adapter = adapterWithSyncedAccount(account);
+
+    await expect(
+      adapter.prepareSend(descriptor, {
+        family: "solana",
+        recipient: address,
+        amount: "0.01 SOL",
+        mode: "send",
+      }),
+    ).rejects.toBe(cause);
+    expect(getChainAPI).not.toHaveBeenCalled();
+  });
+});
+
 describe("BridgeAdapter.getSolanaStakes", () => {
   const descriptor = { id: "sol-acc", currencyId: "solana" } as AccountDescriptor;
-
-  // Stubs the private sync so getSolanaStakes maps a fixed synced account without hitting the chain.
-  const adapterWithSyncedAccount = (account: unknown): BridgeAdapter => {
-    const adapter = new BridgeAdapter();
-    (adapter as unknown as { sync: () => Promise<unknown> }).sync = async () => account;
-    return adapter;
-  };
 
   it("maps stakingResources positions to EarnSolanaStake rows", async () => {
     const adapter = adapterWithSyncedAccount({
