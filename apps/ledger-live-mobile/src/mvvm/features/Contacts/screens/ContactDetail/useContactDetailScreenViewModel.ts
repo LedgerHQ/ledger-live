@@ -73,6 +73,11 @@ const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 type ContactDetailScreenViewModel =
   | Readonly<{ status: "redirecting" }>
   | Readonly<{
+      status: "closing-delete-sheet";
+      editDeleteFlow: ContactDetailEditDeleteFlowProps;
+      onDeleteSheetDismissed: () => void;
+    }>
+  | Readonly<{
       status: "ready";
       addAddressFlowState: AddAddressFlowState;
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
@@ -84,6 +89,9 @@ type ContactDetailScreenViewModel =
       ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
       ledgerSyncActivationDrawer: ContactsLedgerSyncActivationDrawerProps;
       dieProps: ContactsDeviceIntentExecutorProps | undefined;
+      isDeviceSheetRequested: boolean;
+      onDeviceSheetDismissed: () => void;
+      onDeleteSheetDismissed: () => void;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -107,10 +115,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     useContactsLedgerSyncActivationDrawer();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
   const { t } = useTranslation();
-  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
-    intents: contactsIntentLWMDefinitions,
-    getLiveConfigMinVersion: getMinVersion,
-  });
+  const { deviceIntents, dieProps, isDeviceSheetRequested, dismissDeviceSheet } =
+    useContactsIntentsOrchestrator({
+      intents: contactsIntentLWMDefinitions,
+      getLiveConfigMinVersion: getMinVersion,
+      retainUntilSheetDismissed: true,
+    });
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {
@@ -357,9 +367,25 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }),
     [t],
   );
-  const onDeleteSuccess = useCallback(() => {
-    navigation.navigate(ScreenName.MyWalletContacts);
+  const deleteSheetWasOpenRef = useRef(false);
+  const contactMissingRef = useRef(false);
+  const navigatedAfterDeleteRef = useRef(false);
+  const [deleteSheetDismissed, setDeleteSheetDismissed] = useState(false);
+  const returnToContacts = useCallback(() => {
+    navigatedAfterDeleteRef.current = true;
+    navigation.popTo(ScreenName.MyWalletContacts);
   }, [navigation]);
+  const onDeleteSheetDismissed = useCallback(() => {
+    const leave = deleteSheetWasOpenRef.current && contactMissingRef.current;
+    deleteSheetWasOpenRef.current = false;
+    setDeleteSheetDismissed(true);
+    if (!leave) return;
+    returnToContacts();
+  }, [returnToContacts]);
+  const onDeleteSuccess = useCallback(() => {
+    if (deleteSheetWasOpenRef.current) return;
+    returnToContacts();
+  }, [returnToContacts]);
   const addressDetailAsset = selection?.network?.networkTicker;
   const addressDetailNetwork = selection?.network?.networkName;
   const editDeleteFlow = useContactDetailEditDeleteAdapter(
@@ -386,7 +412,31 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
     onCloseAddressDetail();
   }, [isAddressDetailActionSheetOpen, onCloseAddressDetail]);
-  const shouldRedirect = !isEnabled || !contact;
+  if (editDeleteFlow.deleteDrawer.isOpen) {
+    deleteSheetWasOpenRef.current = true;
+  }
+  const contactMissing = !isEnabled || !contact;
+  contactMissingRef.current = contactMissing;
+  const waitingForDeleteSheet =
+    contactMissing && deleteSheetWasOpenRef.current && !deleteSheetDismissed;
+  const shouldRedirect = contactMissing && !waitingForDeleteSheet;
+
+  useEffect(() => {
+    if (editDeleteFlow.deleteDrawer.isOpen && deleteSheetDismissed) {
+      setDeleteSheetDismissed(false);
+    }
+  }, [deleteSheetDismissed, editDeleteFlow.deleteDrawer.isOpen]);
+
+  const isDeleteDrawerOpen = editDeleteFlow.deleteDrawer.isOpen;
+  const cancelDeleteDrawer = editDeleteFlow.deleteDrawer.onCancel;
+
+  useEffect(() => {
+    if (!waitingForDeleteSheet || !isDeleteDrawerOpen) {
+      return;
+    }
+
+    cancelDeleteDrawer();
+  }, [cancelDeleteDrawer, isDeleteDrawerOpen, waitingForDeleteSheet]);
 
   useEffect(() => {
     if (shouldRedirect) {
@@ -433,7 +483,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   }, [isOpen]);
 
   useLayoutEffect(() => {
-    if (shouldRedirect) {
+    if (shouldRedirect && !navigatedAfterDeleteRef.current) {
       if (navigation.canGoBack()) {
         navigation.goBack();
       } else {
@@ -444,7 +494,15 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
   const getDisplayName = useContactDisplayName();
 
-  if (shouldRedirect) {
+  if (waitingForDeleteSheet) {
+    return {
+      status: "closing-delete-sheet",
+      editDeleteFlow,
+      onDeleteSheetDismissed,
+    };
+  }
+
+  if (!isEnabled || !contact) {
     return { status: "redirecting" };
   }
 
@@ -502,5 +560,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     },
     ledgerSyncActivationDrawer,
     dieProps,
+    isDeviceSheetRequested,
+    onDeviceSheetDismissed: dismissDeviceSheet,
+    onDeleteSheetDismissed,
   };
 }
