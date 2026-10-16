@@ -159,10 +159,7 @@ export function AddNewContactView({
     select: {
       content: (
         <SelectContactStep
-          title={selectContact.labels.title}
           viewModel={selectContact.listViewModel}
-          labels={selectContact.labels}
-
           searchQuery={selectContact.searchQuery}
           onSearchQueryChange={selectContact.onSearchQueryChange}
           onOpenContact={selectContact.onSelectContact}

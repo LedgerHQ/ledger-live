@@ -1,6 +1,6 @@
 import type { ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import type { ContactsListViewLabels, ContactsPageViewModel } from "@features/flow-contacts-list";
+import type { ContactsPageViewModel } from "@features/flow-contacts-list";
 import type {
   ContactsFeatureIntroduction,
   ContactsLedgerSyncIntroduction,
@@ -10,7 +10,6 @@ import type { ContactDetailViewProps } from "@features/flow-contacts-detail";
 
 type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
-  labels: ContactsListViewLabels;
   searchQuery: string;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
