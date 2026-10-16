@@ -54,10 +54,9 @@ describe("loginToBaanx", () => {
     expect(session.expirySource).toBe("token");
   });
 
-  it("triggers the challenge, derives the code and retries the login", async () => {
+  it("derives the code and retries the login without calling the OTP trigger", async () => {
     const { fetchImpl, requests } = createFetchMock([
       { body: { isOtpRequired: true, userId: "user-1", phoneNumber: "+445*****225" } },
-      { body: { success: true } },
       { body: { accessToken: "token-after-otp", userId: "user-1" } },
     ]);
 
@@ -68,18 +67,13 @@ describe("loginToBaanx", () => {
 
     expect(session.accessToken).toBe("token-after-otp");
     expect(session.otpUsed).toBe(true);
-    expect(requests.map(request => request.path)).toEqual([
-      "/v1/auth/login",
-      "/v1/auth/login/otp",
-      "/v1/auth/login",
-    ]);
-    expect(requests[1].body).toEqual({ userId: "user-1" });
-    expect(requests[2].body).toEqual({
+    expect(requests.map(request => request.path)).toEqual(["/v1/auth/login", "/v1/auth/login"]);
+    expect(requests[1].body).toEqual({
       email: "tester@ledger.test",
       password: "correct horse battery staple",
       otpCode: generateTotpCodeAt(testConfig().totp, AT_MS),
     });
-    expect(requests[2].body).not.toHaveProperty("phoneNumber");
+    expect(requests[1].body).not.toHaveProperty("phoneNumber");
   });
 
   it("should redact config secrets echoed in phase on BaanxOnboardingIncompleteError", async () => {
@@ -103,7 +97,6 @@ describe("loginToBaanx", () => {
     const code = generateTotpCodeAt(config.totp, AT_MS);
     const { fetchImpl } = createFetchMock([
       { body: { isOtpRequired: true, userId: "user-1" } },
-      { body: { success: true } },
       { body: { phase: `PHONE_NUMBER ${code}` } },
     ]);
 
@@ -124,7 +117,6 @@ describe("loginToBaanx", () => {
     const code = generateTotpCodeAt(config.totp, AT_MS);
     const { fetchImpl } = createFetchMock([
       { body: { isOtpRequired: true, userId: "user-1" } },
-      { body: { success: true } },
       { body: { detail: `rejected ${code}` } },
     ]);
 
