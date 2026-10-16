@@ -17,7 +17,7 @@ export function AccountSettingsMenuView({
   onRemoveAccount,
 }: AccountSettingsMenuViewProps) {
   return (
-    <div className="flex flex-col" data-testid="account-settings-menu">
+    <div className="-mx-8 flex flex-col" data-testid="account-settings-menu">
       <ListItem onClick={onChangeName} data-testid="account-settings-change-name">
         <ListItemLeading>
           <PenEditWriting size={20} />

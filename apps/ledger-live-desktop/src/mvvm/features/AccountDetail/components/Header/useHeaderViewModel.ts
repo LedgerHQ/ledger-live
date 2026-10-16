@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import type { Account } from "@ledgerhq/types-live";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -11,6 +11,8 @@ export type HeaderViewModel = Readonly<{
   ticker: string;
   onBack: () => void;
   onOpenSettings: () => void;
+  isSettingsOpen: boolean;
+  onCloseSettings: () => void;
 }>;
 
 export function useHeaderViewModel(account: Account): HeaderViewModel {
@@ -25,7 +27,9 @@ export function useHeaderViewModel(account: Account): HeaderViewModel {
     navigate(-1);
   }, [navigate]);
 
-  const onOpenSettings = useCallback(() => undefined, []);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const onOpenSettings = useCallback(() => setIsSettingsOpen(true), []);
+  const onCloseSettings = useCallback(() => setIsSettingsOpen(false), []);
 
   return {
     title: accountName ?? "",
@@ -34,5 +38,7 @@ export function useHeaderViewModel(account: Account): HeaderViewModel {
     ticker: account.currency.ticker,
     onBack,
     onOpenSettings,
+    isSettingsOpen,
+    onCloseSettings,
   };
 }
