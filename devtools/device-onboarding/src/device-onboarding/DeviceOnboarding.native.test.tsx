@@ -1,7 +1,14 @@
 import { fireEvent, render, screen } from "@support/jest-devtools/native";
 import { Share } from "react-native";
 import { buildProps } from "jest/deviceOnboardingProps";
-import { emptyLogCopy, featureFlagCopy, headerCopy, logCopy, overrideCopy } from "./configCopy";
+import {
+  emptyLogCopy,
+  featureFlagCopy,
+  headerCopy,
+  hostCopy,
+  logCopy,
+  overrideCopy,
+} from "./configCopy";
 import DeviceOnboarding from "./DeviceOnboarding";
 
 const connectedDevice = {
@@ -110,6 +117,25 @@ describe("DeviceOnboarding", () => {
       enabled: true,
       params: { offerLedgerSync: true },
     });
+  });
+
+  it("turns seed setup on for the next run", () => {
+    const setHostsSeedSetup = jest.fn();
+    render(<DeviceOnboarding {...buildProps({ hostsSeedSetup: false, setHostsSeedSetup })} />);
+
+    fireEvent.press(screen.getByText(headerCopy.config));
+    expect(screen.getByText(hostCopy.title)).toBeTruthy();
+    fireEvent.press(screen.getByRole("switch", { name: "hostsSeedSetup" }));
+
+    expect(setHostsSeedSetup).toHaveBeenCalledWith(true);
+  });
+
+  it("hides the seed setup switch when the host cannot change it", () => {
+    render(<DeviceOnboarding {...buildProps()} />);
+
+    fireEvent.press(screen.getByText(headerCopy.config));
+
+    expect(screen.queryByText(hostCopy.title)).toBeNull();
   });
 
   it("keeps each switch on the config tab, with a short line under its name", () => {

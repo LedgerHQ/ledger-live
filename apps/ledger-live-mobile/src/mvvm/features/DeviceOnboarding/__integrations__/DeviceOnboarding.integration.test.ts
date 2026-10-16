@@ -198,6 +198,23 @@ describe("useDeviceOnboarding", () => {
     expect(deactivateKeepAwake).toHaveBeenCalledTimes(1);
   });
 
+  // QA turns seed setup on to reach it with an unseeded device. Off, the run matches the app.
+  it("starts the next run with the seed setup switch QA picked", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    expect(result.current.machineContext).toMatchObject({ hostsSeedSetup: false });
+
+    act(() => result.current.reset());
+    act(() => result.current.setHostsSeedSetup?.(true));
+    await connectStax(result, device);
+
+    expect(result.current.machineContext).toMatchObject({ hostsSeedSetup: true });
+  });
+
   // A new run must drop the old exit. Otherwise the next screen can open again.
   it("clears the old exit when a new run starts", async () => {
     const device = createTestDevice();

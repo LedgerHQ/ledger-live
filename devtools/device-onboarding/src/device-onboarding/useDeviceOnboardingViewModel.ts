@@ -109,6 +109,8 @@ export interface DeviceOnboardingViewModel {
   readonly reset: () => void;
   /** Empty when the host has no feature flag: the section is hidden. */
   readonly featureFlagRows: readonly SwitchRow[];
+  /** Empty when the host does not let QA change the machine input: the section is hidden. */
+  readonly hostRows: readonly SwitchRow[];
   readonly overrideRows: readonly OverrideRow[];
 }
 
@@ -302,6 +304,8 @@ export function useDeviceOnboardingViewModel(
     error,
     featureFlag,
     setFeatureFlag,
+    hostsSeedSetup = false,
+    setHostsSeedSetup,
     send,
   } = props;
 
@@ -364,6 +368,16 @@ export function useDeviceOnboardingViewModel(
     send,
     reset: props.reset,
     featureFlagRows: featureFlagRows(featureFlag, setFeatureFlag),
+    hostRows: setHostsSeedSetup
+      ? [
+          {
+            key: "hostsSeedSetup",
+            label: "hostsSeedSetup",
+            checked: hostsSeedSetup,
+            onChange: setHostsSeedSetup,
+          },
+        ]
+      : [],
     overrideRows: [
       {
         key: "genuine",
