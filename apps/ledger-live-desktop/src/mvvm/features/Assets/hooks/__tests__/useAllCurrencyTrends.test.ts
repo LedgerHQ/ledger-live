@@ -22,6 +22,7 @@ jest.mock("@features/platform-market-countervalues", () => ({
   useCountervaluesState: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/portfolio/portfolio", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/portfolio/portfolio"),
   getCurrencyPortfolio: jest.fn(),
   getCurrentBalanceCountervalueChange: jest.fn(),
 }));
@@ -37,8 +38,11 @@ const mockCountervaluesState: CounterValuesState = {
   cache: {},
 };
 
-const makePortfolio = (percentage?: number): CurrencyPortfolio => ({
-  history: [],
+const makePortfolio = (
+  percentage?: number,
+  points: Array<{ value: number; countervalue: number }> = [],
+): CurrencyPortfolio => ({
+  history: points.map(point => ({ date: new Date(0), ...point })),
   countervalueAvailable: true,
   histories: [],
   accounts: [],
@@ -236,5 +240,96 @@ describe("useAllCurrencyTrends", () => {
 
     expect(mockedGetCurrentBalanceCountervalueChange).not.toHaveBeenCalled();
     expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(7.89);
+  });
+
+  it("should use the market 24h ratio when the day balance is unchanged", () => {
+    const bitcoinAccount = genAccount("btc-flat-market-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    mockedGetCurrencyPortfolio.mockReturnValueOnce(
+      makePortfolio(0.02, [
+        { value: 1, countervalue: 100 },
+        { value: 1, countervalue: 110 },
+      ]),
+    );
+
+    const { result } = renderHook(
+      () =>
+        useAllCurrencyTrends(
+          [
+            {
+              ...BITCOIN_ASSET,
+              accounts: [bitcoinAccount],
+              isPlaceholder: false,
+            },
+          ],
+          "day",
+          new Map([[BITCOIN_ASSET.currency.id, 10]]),
+        ),
+      { initialState },
+    );
+
+    expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(0.1);
+    expect(mockedGetCurrentBalanceCountervalueChange).not.toHaveBeenCalled();
+  });
+
+  it("should keep the portfolio ratio when the day balance changes", () => {
+    const bitcoinAccount = genAccount("btc-changed-market-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    mockedGetCurrencyPortfolio.mockReturnValueOnce(
+      makePortfolio(0.02, [
+        { value: 1, countervalue: 100 },
+        { value: 2, countervalue: 110 },
+      ]),
+    );
+
+    const { result } = renderHook(
+      () =>
+        useAllCurrencyTrends(
+          [
+            {
+              ...BITCOIN_ASSET,
+              accounts: [bitcoinAccount],
+              isPlaceholder: false,
+            },
+          ],
+          "day",
+          new Map([[BITCOIN_ASSET.currency.id, 10]]),
+        ),
+      { initialState },
+    );
+
+    expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(0.02);
+  });
+
+  it("should keep the balance fallback when the market 24h change is missing", () => {
+    const bitcoinAccount = genAccount("btc-missing-market-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    mockedGetCurrencyPortfolio.mockReturnValueOnce(
+      makePortfolio(undefined, [
+        { value: 1, countervalue: 100 },
+        { value: 1, countervalue: 110 },
+      ]),
+    );
+    mockedGetCurrentBalanceCountervalueChange.mockReturnValueOnce({ value: 42, percentage: 3.21 });
+
+    const { result } = renderHook(
+      () =>
+        useAllCurrencyTrends(
+          [
+            {
+              ...BITCOIN_ASSET,
+              accounts: [bitcoinAccount],
+              isPlaceholder: false,
+            },
+          ],
+          "day",
+        ),
+      { initialState },
+    );
+
+    expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(3.21);
   });
 });
