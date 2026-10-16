@@ -72,6 +72,8 @@ type TestFixtures = {
     cmd: CliCommand;
   }[];
   localManifestOverride?: LiveAppManifest[];
+  /** Coin-config keys merged over the default and remote config, as Developer settings would. */
+  coinConfigOverrides?: Record<string, unknown>;
   teamOwner?: Team;
   teamOwnerLabel: void;
   annotationLinks: void;
@@ -99,6 +101,7 @@ export const test = base.extend<TestFixtures>({
   cliCommands: [],
   cliCommandsOnApp: [],
   localManifestOverride: undefined,
+  coinConfigOverrides: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
 
@@ -126,7 +129,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async (
-    { userdataOriginalFile, settings, localManifestOverride },
+    { userdataOriginalFile, settings, localManifestOverride, coinConfigOverrides },
     use,
   ) => {
     const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
@@ -149,6 +152,10 @@ export const test = base.extend<TestFixtures>({
       userData.data = userData.data || {};
       userData.data.discover = userData.data.discover || {};
       userData.data.discover.localLiveApp = localManifestOverride;
+    }
+    if (coinConfigOverrides) {
+      // Over any overrides the userdata file already carries, not in place of them.
+      merge(userData, { data: { coinConfigOverrides: { overrides: coinConfigOverrides } } });
     }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
     await use(userdataDestinationPath);

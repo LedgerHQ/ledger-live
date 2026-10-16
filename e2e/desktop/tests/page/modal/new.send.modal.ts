@@ -52,6 +52,26 @@ export class NewSendModal extends Modal {
   readonly viewDetailsButton = this.dialog.getByTestId("send-confirmation-view-details-button");
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
   readonly signaturePrompt = this.dialog.getByTestId("send-signature-prompt");
+  private readonly sponsoredFeeNudge = this.dialog.getByTestId("send-sponsored-fee-nudge");
+  private readonly feePaymentEntry = this.dialog.getByTestId("send-fee-payment-entry");
+  private readonly feePaymentConfirmButton = this.dialog.getByTestId("send-fee-payment-confirm");
+  private readonly sponsoredFeeValue = this.dialog.getByTestId("send-sponsored-fee-value");
+  private readonly sponsoredFeeError = this.dialog.getByTestId("send-sponsored-fee-error");
+  private readonly sponsoredPolling = this.dialog.getByTestId("send-sponsored-polling");
+  private readonly sponsoredFailure = this.dialog.getByTestId("send-sponsored-failure");
+  private readonly sponsoredFailureRetry = this.dialog.getByTestId("send-sponsored-failure-retry");
+  private readonly sponsoredFailureRetryBlocked = this.dialog.getByTestId(
+    "send-sponsored-failure-retry-blocked",
+  );
+  private readonly sponsoredFailureCancel = this.dialog.getByTestId(
+    "send-sponsored-failure-cancel",
+  );
+  private readonly notEnoughUsdtCopy = this.dialog.getByText("You don't have enough USDT");
+
+  private readonly feePaymentOption = (optionId: string) =>
+    this.dialog.getByTestId(`send-fee-payment-option-${optionId}`);
+  private readonly feePaymentOptionFee = (optionId: string) =>
+    this.dialog.getByTestId(`send-fee-payment-option-${optionId}-fee`);
 
   getFeePreset(preset: Fee) {
     return this.page.getByTestId(`send-fees-preset-${preset.toLowerCase()}`);
@@ -266,6 +286,8 @@ export class NewSendModal extends Modal {
   @step("Click review to proceed to signature")
   async clickReview() {
     await expect(this.reviewButton).toBeEnabled();
+    // A loading Review is still enabled but has no label; a sponsored send needs its quote first.
+    await expect(this.reviewButton).toHaveText(/\S/);
     await this.reviewButton.click();
   }
 
@@ -281,6 +303,73 @@ export class NewSendModal extends Modal {
     const item = this.getFeePreset(preset);
     await item.click();
     await item.waitFor({ state: "hidden" });
+  }
+
+  @step("Verify the sponsored fee offer is shown")
+  async expectSponsoredNudgeVisible() {
+    await expect(this.sponsoredFeeNudge).toBeVisible();
+  }
+
+  @step("Open the fee payment options")
+  async openFeePayment() {
+    await this.feePaymentEntry.click();
+  }
+
+  @step("Verify fee payment option $0 costs $1")
+  async expectFeePaymentOptionFee(optionId: string, fee: string) {
+    await expect(this.feePaymentOptionFee(optionId)).toContainText(fee);
+  }
+
+  @step("Select fee payment option: $0")
+  async selectFeePaymentOption(optionId: string) {
+    const option = this.feePaymentOption(optionId);
+    await option.click();
+    await expect(option).toHaveAttribute("aria-pressed", "true");
+  }
+
+  @step("Confirm the fee payment option")
+  async confirmFeePayment() {
+    await this.feePaymentConfirmButton.click();
+    await expect(this.feePaymentConfirmButton).toBeHidden();
+  }
+
+  @step("Verify the network fee is paid with the sponsored option")
+  async expectSponsoredFeeSelected() {
+    await expect(this.sponsoredFeeValue).toBeVisible();
+  }
+
+  @step("Verify sponsored fee error: $0")
+  async expectSponsoredFeeError(message: string | RegExp) {
+    await expect(this.sponsoredFeeError).toContainText(message);
+  }
+
+  @step("Verify the energy delivery wait is shown")
+  async waitForSponsoredPolling() {
+    await expect(this.sponsoredPolling).toBeVisible();
+  }
+
+  @step("Verify the sponsored send failed: $0")
+  async expectSponsoredFailure(message: string | RegExp) {
+    await expect(this.sponsoredFailure).toContainText(message);
+  }
+
+  @step("Verify Retry is locked while the paid rent may still land")
+  async expectRetryLocked() {
+    await expect(this.sponsoredFailureRetry).toBeDisabled();
+    await expect(this.sponsoredFailureRetryBlocked).toBeVisible();
+  }
+
+  @step("Verify Retry is offered as: $0")
+  async expectRetryOffered(label: string | RegExp) {
+    await expect(this.sponsoredFailureRetry).toBeEnabled();
+    await expect(this.sponsoredFailureRetry).toHaveText(label);
+    await expect(this.notEnoughUsdtCopy).toHaveCount(0);
+  }
+
+  @step("Cancel the failed sponsored send")
+  async cancelSponsoredFailure() {
+    await this.sponsoredFailureCancel.click();
+    await expect(this.dialog).toBeHidden();
   }
 
   @step("Wait for signature screen or device action loader")

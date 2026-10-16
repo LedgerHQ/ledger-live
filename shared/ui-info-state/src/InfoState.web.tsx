@@ -57,6 +57,7 @@ export function InfoState(props: InfoStateProps) {
               appearance={banner.appearance ?? "info"}
               title={banner.title}
               description={banner.description}
+              data-testid={banner.testID}
             />
           </div>
         ) : null}

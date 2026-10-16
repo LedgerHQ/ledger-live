@@ -75,7 +75,7 @@ export const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
 );
 
 const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
-const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+export const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SEND_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
 export type Spec = {
@@ -804,6 +804,13 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
     ),
   );
   return response.data.events.map(event => event.text);
+}
+
+/** Clears the screen events recorded so far, so the next review is checked against its own pages only. */
+export async function resetSpeculosEvents(): Promise<void> {
+  const speculosAddress = getSpeculosAddress();
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  await retryAxiosRequest(() => axios.delete(`${speculosAddress}:${speculosApiPort}/events`));
 }
 
 export const pressUntilTextFound = withDeviceController(
