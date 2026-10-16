@@ -20,7 +20,7 @@ import {
   findSolanaMintProgram,
   findSolanaToken,
 } from "../../agent-intent/token-lookup";
-import { resolveSenderFromAccount } from "../../agent-intent/sender";
+import { parseSenderInput, resolveSenderFromAccount } from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
@@ -28,15 +28,6 @@ import {
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput } from "../../output";
-
-function parseSenderInput(flags: {
-  account?: string;
-  from?: string;
-}): { account: string } | { from: string } {
-  if (flags.account && !flags.from) return { account: flags.account };
-  if (flags.from && !flags.account) return { from: flags.from };
-  throw new Error("Pass exactly one sender: --account <session-label> or --from <address>.");
-}
 
 /**
  * `--token` picks the network by its shape: a `0x` contract is an ERC-20 on Ethereum, anything else
@@ -86,7 +77,7 @@ type SendParties = {
 /** Solana addresses are checked by the SDK later: canonical base58, 32 bytes. */
 async function resolveParties(
   network: IntentNetwork,
-  senderInput: { account: string } | { from: string },
+  senderInput: { account: string } | { address: string },
   to: string,
 ): Promise<SendParties> {
   const recipient = network === "ethereum" ? parseEvmAddress(to, "to") : to;
@@ -98,7 +89,7 @@ async function resolveParties(
     };
   }
   const sender =
-    network === "ethereum" ? parseEvmAddress(senderInput.from, "from") : senderInput.from;
+    network === "ethereum" ? parseEvmAddress(senderInput.address, "from") : senderInput.address;
   return { sender, recipient, senderField: "--from" };
 }
 
@@ -225,7 +216,7 @@ export default defineCommand({
       network: `${network}:main`,
     });
     await out.run(async () => {
-      const senderInput = parseSenderInput(flags);
+      const senderInput = parseSenderInput({ account: flags.account, address: flags.from }, "from");
       assertNetworkFlags(network, flags);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const { sender, recipient, senderField } = await resolveParties(
