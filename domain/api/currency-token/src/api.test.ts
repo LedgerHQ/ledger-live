@@ -118,13 +118,6 @@ describe("param interfaces", () => {
 
 describe("cryptoAssetsApi requests", () => {
   let fetchSpy: jest.SpyInstance;
-  let timeoutSpy: jest.SpyInstance;
-
-  beforeEach(() => {
-    timeoutSpy = jest
-      .spyOn(AbortSignal, "timeout")
-      .mockImplementation(() => new AbortController().signal);
-  });
 
   // Wired the way the apps wire it: the store registers the *service api*, and the endpoints only
   // exist because importing this package injected them.
@@ -153,7 +146,6 @@ describe("cryptoAssetsApi requests", () => {
 
   afterEach(() => {
     fetchSpy?.mockRestore();
-    timeoutSpy.mockRestore();
   });
 
   it("findTokenById hits the prod base URL with the client-version header", async () => {
@@ -216,21 +208,24 @@ describe("cryptoAssetsApi requests", () => {
     expect(url).toContain("id=ethereum");
   });
 
-  it("should pass a 30 second abort signal when fetching the sync hash", async () => {
-    const signal = new AbortController().signal;
-    timeoutSpy.mockReturnValue(signal);
-    mockFetch([{ id: "ethereum" }], { "X-Ledger-Commit": "commit-hash" });
-    const store = makeStore();
+  it("should abort the sync-hash fetch after 30 seconds when AbortSignal.timeout is unavailable", async () => {
+    const timeoutDescriptor = Object.getOwnPropertyDescriptor(AbortSignal, "timeout");
+    Reflect.deleteProperty(AbortSignal, "timeout");
 
-    await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
+    const originalSetTimeout = globalThis.setTimeout.bind(globalThis);
+    let abortFetch: (() => void) | undefined;
+    const setTimeoutSpy = jest.spyOn(globalThis, "setTimeout").mockImplementation(((
+      handler: TimerHandler,
+      timeout?: number,
+      ...args: unknown[]
+    ) => {
+      if (timeout === 30_000 && typeof handler === "function") {
+        abortFetch = () => handler(...args);
+        return 0 as unknown as ReturnType<typeof setTimeout>;
+      }
+      return originalSetTimeout(handler, timeout, ...args);
+    }) as typeof setTimeout);
 
-    expect(timeoutSpy).toHaveBeenCalledWith(30_000);
-    expect(fetchSpy.mock.calls[0][1]).toEqual(expect.objectContaining({ signal }));
-  });
-
-  it("should return FETCH_ERROR when the sync-hash fetch is aborted", async () => {
-    const controller = new AbortController();
-    timeoutSpy.mockReturnValue(controller.signal);
     fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
       (_input, init) =>
         new Promise((_resolve, reject) => {
@@ -241,18 +236,34 @@ describe("cryptoAssetsApi requests", () => {
             return;
           }
           signal?.addEventListener("abort", abort, { once: true });
-          controller.abort();
         }),
     );
     const store = makeStore();
 
-    const started = Date.now();
-    const result = await store.dispatch(
-      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"),
-    );
+    try {
+      const pending = store.dispatch(
+        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"),
+      );
+      await new Promise(resolve => originalSetTimeout(resolve, 0));
 
-    expect(Date.now() - started).toBeLessThan(1_000);
-    expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
+      expect(AbortSignal.timeout).toBeUndefined();
+      expect(abortFetch).toEqual(expect.any(Function));
+      expect(fetchSpy.mock.calls[0][1]).toEqual(
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+
+      const started = Date.now();
+      abortFetch?.();
+      const result = await pending;
+
+      expect(Date.now() - started).toBeLessThan(1_000);
+      expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
+    } finally {
+      setTimeoutSpy.mockRestore();
+      if (timeoutDescriptor) {
+        Object.defineProperty(AbortSignal, "timeout", timeoutDescriptor);
+      }
+    }
   });
 
   it("getTokensSyncHash preserves a path prefix in the base URL (Gravitee /cal prefix)", async () => {

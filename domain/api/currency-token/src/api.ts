@@ -71,6 +71,9 @@ export const cryptoAssetsApi = calApi
       getTokensSyncHash: build.query<string, string>({
         async queryFn(currencyId, queryApi) {
           const extra = getCalExtra(queryApi);
+          // React Native installs abort-controller@3 as AbortSignal, which has no AbortSignal.timeout.
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), TOKENS_SYNC_HASH_TIMEOUT_MS);
           try {
             const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
             url.searchParams.set("output", "id");
@@ -82,7 +85,7 @@ export const cryptoAssetsApi = calApi
                 "Content-Type": "application/json",
                 [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
               },
-              signal: AbortSignal.timeout(TOKENS_SYNC_HASH_TIMEOUT_MS),
+              signal: controller.signal,
             });
 
             if (!response.ok) {
@@ -104,6 +107,8 @@ export const cryptoAssetsApi = calApi
             return { data: hash };
           } catch (error) {
             return fetchError(error);
+          } finally {
+            clearTimeout(timeoutId);
           }
         },
         async onQueryStarted(currencyId, api) {
