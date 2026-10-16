@@ -149,6 +149,17 @@ describe("PerpsWithdraw integration", () => {
     expect(reviewCta()).toBeDisabled();
   });
 
+  it("should not ask for a quote when the amount leaves no room for the fee", async () => {
+    const { user } = renderWithdraw();
+    openWithdraw();
+
+    await user.type(input(), "1000");
+
+    expect(mockUsePerpsWithdrawQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({ amount: "" }),
+    );
+  });
+
   it.each([
     [
       "the minimum amount",
