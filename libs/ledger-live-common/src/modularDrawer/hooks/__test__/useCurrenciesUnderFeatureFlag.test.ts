@@ -56,5 +56,18 @@ describe("useCurrenciesUnderFeatureFlag", () => {
     expect(currencies).toHaveProperty("stacks");
     expect(currencies).toHaveProperty("optimism");
     expect(currencies).toHaveProperty("gonka");
+    expect(currencies).toHaveProperty("alpen_testnet");
+  });
+
+  it("should deactivate alpen_testnet only when its own flag is disabled", () => {
+    mockedEnvironment.mockReturnValue(false);
+    mockUseFeature.mockImplementation(((key: string) => ({
+      enabled: key !== "currencyAlpenTestnet",
+    })) as typeof useFeature);
+
+    const { result } = renderHook(() => useCurrenciesUnderFeatureFlag());
+
+    expect(result.current.deactivatedCurrencyIds.has("alpen_testnet")).toBe(true);
+    expect(result.current.deactivatedCurrencyIds.size).toBe(1);
   });
 });
