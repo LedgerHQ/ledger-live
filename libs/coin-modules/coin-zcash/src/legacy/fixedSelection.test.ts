@@ -56,6 +56,22 @@ describe("FixedSelection", () => {
     );
   });
 
+  it("pins the outpoints among candidates it is handed, without reading storage", () => {
+    const strategy = new FixedSelection(
+      {} as ICrypto,
+      "",
+      [{ hash: "b", outputIndex: 1 }],
+      new BigNumber(1_000),
+      false,
+    );
+
+    const result = strategy.selectFromUtxos(logger as never, STORED as never, [], 1);
+
+    expect(result.unspentUtxos.map(u => u.output_hash)).toEqual(["b"]);
+    expect(result).toMatchObject({ fee: 1_000, needChangeoutput: false });
+    expect(result.totalValue.toNumber()).toBe(20_000);
+  });
+
   it("refuses when an outpoint was excluded as unusable", async () => {
     await expect(
       select([{ hash: "b", outputIndex: 1 }], [{ hash: "b", outputIndex: 1 }]),

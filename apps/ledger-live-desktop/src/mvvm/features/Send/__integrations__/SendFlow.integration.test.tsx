@@ -720,7 +720,7 @@ describe("Send Flow Integration", () => {
           amount: new BigNumber("1000"),
           recipient: VALID_BTC_RECIPIENT,
           feesStrategy: "custom",
-          feePerByte: new BigNumber(20),
+          familySpecificData: { feePerByte: "20" },
         }),
       );
 
@@ -744,13 +744,18 @@ describe("Send Flow Integration", () => {
           amount: new BigNumber("1000"),
           recipient: VALID_BTC_RECIPIENT,
           feesStrategy: "custom",
-          feePerByte: new BigNumber(20),
+          familySpecificData: { feePerByte: "20" },
         }),
       );
       setMockStatusResolver((transaction: Transaction) => {
-        const feePerByte = "feePerByte" in transaction ? transaction.feePerByte : undefined;
+        const familySpecificData =
+          "familySpecificData" in transaction ? transaction.familySpecificData : undefined;
+        const feePerByte =
+          familySpecificData && "feePerByte" in familySpecificData
+            ? familySpecificData.feePerByte
+            : undefined;
 
-        if (BigNumber.isBigNumber(feePerByte) && feePerByte.gte(new BigNumber(5000))) {
+        if (feePerByte && new BigNumber(feePerByte).gte(new BigNumber(5000))) {
           return createResolvedStatus({ amount: new NotEnoughBalance() });
         }
 
@@ -781,21 +786,16 @@ describe("Send Flow Integration", () => {
         createMinimalBtcTransaction({
           amount: new BigNumber("1000"),
           recipient: VALID_BTC_RECIPIENT,
-          utxoStrategy: {
-            strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
-            excludeUTXOs: [],
+          familySpecificData: {
+            utxoStrategy: {
+              strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
+              excludeUTXOs: [],
+            },
           },
+          feeParameters: { outputs: [{ address: null, value: "100", isChange: true }] },
         }),
       );
-      setMockStatus(
-        createResolvedStatus(
-          {},
-          {
-            estimatedFees: new BigNumber(250),
-            txOutputs: [{ isChange: true, value: new BigNumber(100) }],
-          },
-        ),
-      );
+      setMockStatus(createResolvedStatus({}, { estimatedFees: new BigNumber(250) }));
 
       const { user } = renderSendFlow(bitcoinAccount);
       await navigateToAmountScreen(user, VALID_BTC_RECIPIENT);
@@ -811,19 +811,19 @@ describe("Send Flow Integration", () => {
         createMinimalBtcTransaction({
           amount: new BigNumber("150000000"),
           recipient: VALID_BTC_RECIPIENT,
-          utxoStrategy: {
-            strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
-            excludeUTXOs: [],
+          familySpecificData: {
+            utxoStrategy: {
+              strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
+              excludeUTXOs: [],
+            },
           },
+          feeParameters: { outputs: [{ address: null, value: "0", isChange: true }] },
         }),
       );
       setMockStatus(
         createResolvedStatus(
           { amount: new NotEnoughBalance() },
-          {
-            estimatedFees: new BigNumber(250),
-            txOutputs: [{ isChange: true, value: new BigNumber(0) }],
-          },
+          { estimatedFees: new BigNumber(250) },
         ),
       );
 

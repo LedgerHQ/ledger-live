@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { FeatureId } from "@shared/feature-flags";
 import {
+  bitcoinTransaction,
   hederaTransaction,
   solanaTransaction,
   TransactionWithCustomFee,
@@ -80,6 +81,87 @@ describe("transactionStrategies", () => {
         recipient: transaction.recipient,
         memoType: "string",
         memoValue: "payin-42",
+      });
+    });
+  });
+
+  describe("bitcoinTransaction", () => {
+    const base = {
+      family: "bitcoin",
+      amount: new BigNumber(1000),
+      recipient: "bc1qpayin",
+    };
+
+    it("returns a plain send when neither a fee rate nor a payin memo is given", () => {
+      const transaction = { ...base, customFeeConfig: {} } as TransactionWithCustomFee;
+
+      expect(bitcoinTransaction(transaction)).toEqual({
+        family: "bitcoin",
+        amount: base.amount,
+        recipient: base.recipient,
+      });
+    });
+
+    it("returns a plain send without custom fee config", () => {
+      const transaction = {
+        ...base,
+        customFeeConfig: undefined,
+      } as unknown as TransactionWithCustomFee;
+
+      expect(bitcoinTransaction(transaction)).not.toHaveProperty("familySpecificData");
+    });
+
+    it("puts the custom fee rate in familySpecificData as a decimal string", () => {
+      const transaction = {
+        ...base,
+        customFeeConfig: { feePerByte: new BigNumber("12.5") },
+      } as TransactionWithCustomFee;
+
+      const result = bitcoinTransaction(transaction);
+
+      expect(result).toEqual({
+        family: "bitcoin",
+        amount: base.amount,
+        recipient: base.recipient,
+        familySpecificData: { feePerByte: "12.5" },
+      });
+      expect(result).not.toHaveProperty("feePerByte");
+    });
+
+    it("ignores a fee rate that is not a BigNumber", () => {
+      const transaction = {
+        ...base,
+        customFeeConfig: { feePerByte: "12" },
+      } as unknown as TransactionWithCustomFee;
+
+      expect(bitcoinTransaction(transaction)).not.toHaveProperty("familySpecificData");
+    });
+
+    it("hex encodes the payin memo as OP_RETURN data", () => {
+      const transaction = {
+        ...base,
+        customFeeConfig: {},
+        extraTransactionParameters: "memo",
+      } as TransactionWithCustomFee;
+
+      const result = bitcoinTransaction(transaction);
+
+      expect(result.familySpecificData).toEqual({
+        opReturnData: Buffer.from("memo", "utf-8").toString("hex"),
+      });
+      expect(result).not.toHaveProperty("opReturnData");
+    });
+
+    it("carries both the fee rate and the payin memo", () => {
+      const transaction = {
+        ...base,
+        customFeeConfig: { feePerByte: new BigNumber(3) },
+        extraTransactionParameters: "=:ETH.ETH:0xabc",
+      } as TransactionWithCustomFee;
+
+      expect(bitcoinTransaction(transaction).familySpecificData).toEqual({
+        feePerByte: "3",
+        opReturnData: Buffer.from("=:ETH.ETH:0xabc", "utf-8").toString("hex"),
       });
     });
   });

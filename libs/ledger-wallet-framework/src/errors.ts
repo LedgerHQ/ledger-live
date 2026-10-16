@@ -213,3 +213,16 @@ export class InvalidParameterError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/**
+ * A `ChainReads` read the path the account is on cannot serve (a capability the coin module or the
+ * portfolio layer lacks). Family hooks test it with `instanceof` and map it to an absent value.
+ */
+export class ChainReadUnsupportedError extends Error {
+  override name = "ChainReadUnsupportedError";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>, options?: ErrorOptions) {
+    super(message || "ChainReadUnsupportedError", options);
+    if (fields) Object.assign(this, fields);
+  }
+}

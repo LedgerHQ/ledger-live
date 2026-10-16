@@ -1,9 +1,9 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { AccountInfo, AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { decodeTokenAccountIdSync } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import { log } from "@ledgerhq/logs";
 import type {
   BridgeApi,
+  FamilyAccountShape,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type {
@@ -15,16 +15,16 @@ import type {
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import {
   endpointByCurrencyId,
   transactionHasNonPlaceholderSignatures,
 } from "@ledgerhq/coin-solana/utils";
 import { VersionedTransaction } from "@solana/web3.js";
 import bs58 from "bs58";
-import { getTokenAccountShapes } from "@ledgerhq/coin-solana/logic/tokenAccountShapes";
-import { getCurrencyConfiguration } from "../../../config";
+import type { SolanaAccountInfo } from "@ledgerhq/coin-solana/logic/getAccountInfo";
 import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { getCurrencyConfiguration } from "../../../config";
+import { latestBlockhashReader } from "../latestBlockhash";
 import type { SolanaTransactionIntentData } from "../types";
 import { getStakeCreationDeposit } from "../transactions";
 
@@ -121,16 +121,18 @@ export function describeOptimisticOperation(
   };
 }
 
-async function buildTokenAccountShapes(currency: CryptoCurrency, address: string) {
-  try {
-    const config = getCurrencyConfiguration<SolanaCoinConfig>(currency.id);
-    const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currency.id) });
-    return await getTokenAccountShapes(api, address);
-  } catch (error) {
-    // Recoverable: the sync goes on without the frozen state and Token-2022 extensions.
-    log(currency.id, "token account shapes unavailable", { error: String(error) });
-    return {};
-  }
+/**
+ * The frozen state and Token-2022 extensions of each held mint, as coin-solana reports them in its
+ * account metadata (ADR-045). Without that metadata (the read failed, or the path cannot serve it)
+ * the sync goes on without them.
+ */
+export function buildTokenAccountShapes(
+  _address: string,
+  accountInfo: AccountInfo | undefined,
+): Record<string, FamilyAccountShape> {
+  if (accountInfo?.type !== "solana") return {};
+  const { tokenAccounts } = accountInfo as Partial<SolanaAccountInfo>;
+  return (tokenAccounts ?? {}) as Record<string, FamilyAccountShape>;
 }
 
 /**
@@ -168,8 +170,9 @@ function hasRealSignatures(raw: unknown): boolean {
 /**
  * What the device needs to name a token recipient instead of showing its raw account, and to take a
  * fresh blockhash once the user has reviewed the transaction: a review longer than the blockhash's
- * lifetime would otherwise fail at broadcast. The legacy signer additionally wants `deviceModelId`,
- * which no signing context reaches this hook — see LIVE-35692.
+ * lifetime would otherwise fail at broadcast (not when the portfolio layer serves the currency, see
+ * `latestBlockhashReader`). The legacy signer additionally wants `deviceModelId`, which no signing
+ * context reaches this hook — see LIVE-35692.
  */
 export function getDeviceSignOptions(
   transaction: Record<string, unknown>,
@@ -226,10 +229,11 @@ export function getDeviceSignOptions(
     solanaRPCURL: endpoint,
   };
 
-  if (!hasRealSignatures(raw)) {
+  const readLatestBlockhash = latestBlockhashReader(account.currency.id, endpoint);
+  if (readLatestBlockhash && !hasRealSignatures(raw)) {
     options.delayed = true;
     options.fetchBlockhash = async () => {
-      const { blockhash } = await getChainAPI({ endpoint }).getLatestBlockhash("confirmed");
+      const blockhash = await readLatestBlockhash();
       refreshedBlockhashes.set(options, blockhash);
       return bs58.decode(blockhash);
     };
@@ -271,7 +275,7 @@ export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
     buildIntentData,
-    buildTokenAccountShapes: (address: string) => buildTokenAccountShapes(currency, address),
+    buildTokenAccountShapes,
     describeOptimisticOperation,
     getDeviceSignOptions,
     applyDeviceSignResult,

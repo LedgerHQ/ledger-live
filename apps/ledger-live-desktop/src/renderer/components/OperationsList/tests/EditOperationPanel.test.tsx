@@ -90,11 +90,11 @@ describe("EditOperationPanel", () => {
         family: "bitcoin" as const,
         amount: "0",
         recipient: "bc1qfreshaddress",
-        rbf: true,
-        replaceTxId: "tx-hash",
-        utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-        feePerByte: null,
-        networkInfo: null,
+        familySpecificData: {
+          rbf: true,
+          utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+          replaceTxId: "tx-hash",
+        },
       },
       transactionHash: "tx-hash",
     };

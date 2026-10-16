@@ -1,9 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { ICrypto } from "@ledgerhq/wallet-btc/crypto/types";
-import { PickingStrategy } from "@ledgerhq/wallet-btc/pickingstrategies/types";
+import {
+  PickingStrategy,
+  withoutExcludedUtxos,
+  type UtxoSelection,
+} from "@ledgerhq/wallet-btc/pickingstrategies/types";
 import type { Output } from "@ledgerhq/wallet-btc/storage/types";
-import type Xpub from "@ledgerhq/wallet-btc/xpub";
 import { ZcashPreparedBuildMismatch } from "../types/errors";
 
 export type Outpoint = { hash: string; outputIndex: number };
@@ -14,7 +17,8 @@ export type Outpoint = { hash: string; outputIndex: number };
  * The selection the user reviewed is made before any device is connected, over
  * the whole bounded UTXO set; wallet-btc's own strategies would pick a different
  * set and price a different fee. Feeding wallet-btc this strategy keeps its
- * input fetching and derivation lookups while pinning what gets signed.
+ * input fetching (`selectUnspentUtxosToUse` reads every address of the xpub) and
+ * derivation lookups while pinning what gets signed.
  */
 export class FixedSelection extends PickingStrategy {
   constructor(
@@ -27,29 +31,14 @@ export class FixedSelection extends PickingStrategy {
     super(crypto, derivationMode, []);
   }
 
-  async selectUnspentUtxosToUse(
+  /** The requested outpoints, in their order, among the candidates that are not excluded. */
+  selectFromUtxos(
     _logger: Logger,
-    xpub: Xpub,
+    candidates: Output[],
     _outputs: unknown[],
     _feePerByte: number,
-  ): Promise<{
-    unspentUtxos: Output[];
-    totalValue: BigNumber;
-    fee: number;
-    needChangeoutput: boolean;
-  }> {
-    const addresses = await xpub.getXpubAddresses();
-    const available = (
-      await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address)))
-    )
-      .flat()
-      .filter(
-        utxo =>
-          !this.excludedUTXOs.some(
-            excluded =>
-              excluded.hash === utxo.output_hash && excluded.outputIndex === utxo.output_index,
-          ),
-      );
+  ): UtxoSelection {
+    const available = withoutExcludedUtxos(candidates, this.excludedUTXOs);
 
     const unspentUtxos = this.outpoints.map(({ hash, outputIndex }) => {
       const found = available.find(

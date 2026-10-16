@@ -12,6 +12,10 @@ import { getCurrencyBridge, getAccountBridgeByFamily, clearBridgeCache } from ".
 
 const mockedLoad = registry.loadSetupForFamily as jest.Mock;
 
+// A family whose currency bridge comes from its setup module, the path loadSetupForFamily serves:
+// bitcoin, like every generic coin framework family, never loads its setup for its bridges.
+const SETUP_FAMILY = "cosmos";
+
 beforeEach(() => {
   mockedLoad.mockReset();
   clearBridgeCache();
@@ -19,7 +23,7 @@ beforeEach(() => {
 
 describe("impl.ts — family cache behavior on rejection (no auto-eviction)", () => {
   test("currencyBridgePromiseCache MEMOIZES rejection — React.use() would loop without identity stability", async () => {
-    const family = "bitcoin";
+    const family = SETUP_FAMILY;
     mockedLoad.mockImplementation(() => Promise.reject(new Error("chunk load failure")));
 
     const p1 = getCurrencyBridge(getCryptoCurrencyById(family));
@@ -49,7 +53,7 @@ describe("impl.ts — family cache behavior on rejection (no auto-eviction)", ()
   });
 
   test("clearBridgeCache(family) allows callers to retry after a transient failure", async () => {
-    const family = "bitcoin";
+    const family = SETUP_FAMILY;
     mockedLoad
       .mockImplementationOnce(() => Promise.reject(new Error("transient")))
       .mockImplementationOnce(() =>
@@ -75,7 +79,7 @@ describe("impl.ts — family cache behavior on rejection (no auto-eviction)", ()
   test("clearBridgeCache() with no argument clears every family", async () => {
     mockedLoad.mockImplementation(() => Promise.reject(new Error("transient")));
 
-    const p1 = getCurrencyBridge(getCryptoCurrencyById("bitcoin"));
+    const p1 = getCurrencyBridge(getCryptoCurrencyById(SETUP_FAMILY));
     p1.catch(() => {});
     await expect(p1).rejects.toThrow(/transient/);
     const p2 = getAccountBridgeByFamily("ethereum");
@@ -87,7 +91,7 @@ describe("impl.ts — family cache behavior on rejection (no auto-eviction)", ()
     mockedLoad.mockImplementation(() =>
       Promise.resolve({ bridge: { currencyBridge: {}, accountBridge: {} } }),
     );
-    await expect(getCurrencyBridge(getCryptoCurrencyById("bitcoin"))).resolves.toBeDefined();
+    await expect(getCurrencyBridge(getCryptoCurrencyById(SETUP_FAMILY))).resolves.toBeDefined();
     await expect(getAccountBridgeByFamily("ethereum")).resolves.toBeDefined();
   });
 });

@@ -1,23 +1,21 @@
 // TODO: to remove once live-app-sdk is depreciated and removed from LL
 
-import { BitcoinTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
-import { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import type { BitcoinTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
+import type { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
 const areFeesProvided = (tx: PlatformTransaction): boolean => !!tx.feePerByte;
 
+/** The platform transaction's top-level fee rate moves to `familySpecificData` (ADR-065 D15). */
 const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction> => {
-  const hasFeesProvided = areFeesProvided(tx);
-
   const liveTx: Partial<Transaction> = {
-    ...tx,
+    family: "bitcoin",
     amount: tx.amount,
     recipient: tx.recipient,
-    feePerByte: tx.feePerByte,
+    ...(tx.feePerByte ? { familySpecificData: { feePerByte: tx.feePerByte.toFixed() } } : {}),
   };
-
-  return hasFeesProvided ? { ...liveTx, feesStrategy: null } : liveTx;
+  return areFeesProvided(tx) ? { ...liveTx, feesStrategy: null } : liveTx;
 };
 
 const getPlatformTransactionSignFlowInfos = (

@@ -1,4 +1,5 @@
 {
+  "bitcoin": true,
   "evm": true,
   "hypercore": true,
   "xrp": true,

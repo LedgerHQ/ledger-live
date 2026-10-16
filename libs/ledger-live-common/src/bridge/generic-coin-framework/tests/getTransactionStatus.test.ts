@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { AccountAwaitingSendPendingOperations } from "../../../errors";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
@@ -277,6 +278,90 @@ describe("genericGetTransactionStatus", () => {
       } as any);
 
       expect("gasLimit" in readParameters()).toBe(false);
+    });
+  });
+
+  describe("chain rules and status amounts", () => {
+    const pendingRule = (throwIfPendingOperation: boolean) => ({
+      getChainSpecificRules: { getTransactionStatus: { throwIfPendingOperation } },
+    });
+    const transaction = {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xRecipient",
+      family: "evm",
+    } as any;
+
+    it("refuses while a send is pending when the family's rules say so", async () => {
+      mockGetBridgeApi.mockResolvedValue(pendingRule(true));
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      await expect(
+        getStatus({ ...account, pendingOperations: [{ hash: "pending" }] }, transaction),
+      ).rejects.toThrow(AccountAwaitingSendPendingOperations);
+      await expect(getStatus(account, transaction)).resolves.toMatchObject({ errors: {} });
+      expect(validateIntent).toHaveBeenCalledTimes(1);
+    });
+
+    it("validates a pending account when the family's rules allow it", async () => {
+      mockGetBridgeApi.mockResolvedValue(pendingRule(false));
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      await expect(
+        getStatus({ ...account, pendingOperations: [{ hash: "pending" }] }, transaction),
+      ).resolves.toMatchObject({ errors: {} });
+    });
+
+    it("keeps the fee the transaction set, and the total fees and spent the module validated", async () => {
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      const result = await getStatus(account, {
+        ...transaction,
+        mode: "send",
+        fees: new BigNumber(70),
+        assetReference: "0xToken",
+        assetOwner: "0xSender",
+        subAccountId: "sub",
+        memoType: "text",
+        memoValue: "hi",
+      });
+
+      expect(result).toEqual({
+        errors: {},
+        warnings: {},
+        totalFees: new BigNumber(50),
+        estimatedFees: new BigNumber(70),
+        amount: new BigNumber(1000),
+        totalSpent: new BigNumber(1050),
+      });
+      expect(validateIntent).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ memo: { type: "string", kind: "text", value: "hi" } }),
+        expect.anything(),
+        expect.objectContaining({ customFees: expect.objectContaining({ value: 70n }) }),
+      );
+    });
+
+    it("takes the validated fee and no total fees when the module tells none", async () => {
+      const { totalFees: _totalFees, ...withoutTotalFees } = validateIntentResult;
+      validateIntent.mockResolvedValue(withoutTotalFees);
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      const result = await getStatus(account, {
+        ...transaction,
+        amount: undefined,
+        fees: new BigNumber(0),
+      });
+
+      expect((result as { totalFees?: BigNumber }).totalFees).toBeUndefined();
+      expect(result.estimatedFees).toEqual(new BigNumber(50));
+      // No amount yet: validated as 0.
+      expect(validateIntent).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ amount: 0n }),
+        expect.anything(),
+        expect.anything(),
+      );
     });
   });
 });

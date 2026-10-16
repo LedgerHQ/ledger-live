@@ -8,7 +8,11 @@ import { getGasTracker } from "@ledgerhq/coin-evm/network";
 import type { GasTrackerApi } from "@ledgerhq/coin-evm/network";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { networkGasOptions } from "./editTransaction/gasOptions";
 import { useGasOptions } from "./react";
+
+jest.mock("./editTransaction/gasOptions", () => ({ networkGasOptions: jest.fn() }));
+const mockedNetworkGasOptions = jest.mocked(networkGasOptions);
 
 jest.useFakeTimers();
 jest.spyOn(global, "setInterval");
@@ -220,5 +224,91 @@ describe("useGasOptions", () => {
     expect(result.current).toMatchObject([undefined, null, true]);
 
     await waitFor(() => expect(result.current).toMatchObject([undefined, expectedError, false]));
+  });
+});
+
+describe("useGasOptions through the portfolio layer", () => {
+  const configure = (config: Record<string, unknown>) =>
+    LiveConfig.setConfig({
+      config_currency_my_new_chain: {
+        type: "object",
+        default: { portfolio: { enabled: true }, ...config },
+      },
+    } as never);
+
+  afterEach(() => {
+    mockedNetworkGasOptions.mockReset();
+    mockedGetGasTracker.mockReset();
+  });
+
+  test("reads the gas options of the currency's portfolio, not the gas tracker", async () => {
+    configure({ gasTracker: { type: "ledger", explorerId: "eth" } });
+    mockedNetworkGasOptions.mockResolvedValue(expectedGasOptions);
+
+    const { result } = renderHook(() =>
+      useGasOptions({
+        currency: fakeCurrency as CryptoCurrency,
+        transaction: {
+          ...coinTransaction,
+          type: 0,
+          gasPrice: new BigNumber(10),
+          maxFeePerGas: undefined,
+          maxPriorityFeePerGas: undefined,
+        },
+        interval: 0,
+      }),
+    );
+
+    await waitFor(() => expect(result.current).toMatchObject([expectedGasOptions, null, false]));
+    expect(mockedNetworkGasOptions).toHaveBeenCalledWith(fakeCurrency, false);
+    expect(mockedGetGasTracker).not.toHaveBeenCalled();
+  });
+
+  test("reports the failure of an estimate without gas options", async () => {
+    configure({ gasTracker: { type: "ledger", explorerId: "eth" } });
+    mockedNetworkGasOptions.mockResolvedValue(undefined);
+
+    const { result } = renderHook(() =>
+      useGasOptions({
+        currency: fakeCurrency as CryptoCurrency,
+        transaction: coinTransaction,
+        interval: 0,
+      }),
+    );
+
+    await waitFor(() => expect(result.current[2]).toBe(false));
+    expect(result.current[0]).toBeUndefined();
+    expect(result.current[1]).toEqual(new Error("No gas tracker found for currency my_new_chain"));
+    expect(mockedNetworkGasOptions).toHaveBeenCalledWith(fakeCurrency, true);
+  });
+
+  test("refreshes them every minute by default", async () => {
+    configure({ gasTracker: { type: "ledger", explorerId: "eth" } });
+    mockedNetworkGasOptions.mockResolvedValue(expectedGasOptions);
+    jest.mocked(setInterval).mockClear();
+
+    const { result, unmount } = renderHook(() =>
+      useGasOptions({ currency: fakeCurrency as CryptoCurrency, transaction: coinTransaction }),
+    );
+
+    await waitFor(() => expect(result.current).toMatchObject([expectedGasOptions, null, false]));
+    expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 60 * 1000);
+    unmount();
+  });
+
+  test("reads nothing for a currency configuring no gas tracker", async () => {
+    configure({});
+
+    const { result } = renderHook(() =>
+      useGasOptions({
+        currency: fakeCurrency as CryptoCurrency,
+        transaction: coinTransaction,
+        interval: 0,
+      }),
+    );
+
+    await waitFor(() => expect(result.current).toMatchObject([undefined, null, false]));
+    expect(mockedNetworkGasOptions).not.toHaveBeenCalled();
+    expect(mockedGetGasTracker).not.toHaveBeenCalled();
   });
 });

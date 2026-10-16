@@ -7,9 +7,6 @@ const config = {
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
-    "!src/__tests__/**/*.ts",
-    "!src/datasets/**/*.ts",
-    "!src/wallet-btc/__tests__/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
@@ -27,7 +24,6 @@ const config = {
     "^@ledgerhq/coin-bitcoin/(.*)$": "<rootDir>/src/$1",
   },
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
-  modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),

@@ -10,12 +10,13 @@ import tezosBridgeApi, {
 } from "./api";
 
 const getAccountInfoMock = jest.fn();
-jest.mock("@ledgerhq/coin-tezos/api", () => ({
-  createApi: () => ({ getAccountInfo: getAccountInfoMock }),
-}));
-jest.mock("../../../config", () => ({
-  getCurrencyConfiguration: () => ({}),
-}));
+const chain = {
+  getAccountInfo: getAccountInfoMock,
+  call: jest.fn(),
+  getNextSequence: jest.fn(),
+  getAddressesForPublicKey: jest.fn(),
+  getTransactionInfo: jest.fn(),
+};
 
 beforeAll(() => {
   const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
@@ -257,17 +258,32 @@ describe("getAccountReadiness", () => {
 
   it("is ready when the account is revealed", async () => {
     getAccountInfoMock.mockResolvedValueOnce({ type: "tezos", revealed: true });
-    await expect(getAccountReadiness(currency, "tz1revealed")).resolves.toEqual({ ready: true });
-    expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1revealed");
+    await expect(getAccountReadiness(currency, "tz1revealed", chain)).resolves.toEqual({
+      ready: true,
+    });
+    expect(getAccountInfoMock).toHaveBeenCalledWith("tz1revealed");
   });
 
   it("is not ready with reason 'unrevealed' when the account is not revealed", async () => {
     getAccountInfoMock.mockResolvedValueOnce({ type: "tezos", revealed: false });
-    await expect(getAccountReadiness(currency, "tz1unrevealed")).resolves.toEqual({
+    await expect(getAccountReadiness(currency, "tz1unrevealed", chain)).resolves.toEqual({
       ready: false,
       reason: "unrevealed",
     });
-    expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1unrevealed");
+    expect(getAccountInfoMock).toHaveBeenCalledWith("tz1unrevealed");
+  });
+
+  it("is ready when the chain reports no account metadata to gate on", async () => {
+    getAccountInfoMock.mockResolvedValueOnce({ type: "none" });
+    await expect(getAccountReadiness(currency, "tz1none", chain)).resolves.toEqual({
+      ready: true,
+    });
+  });
+
+  it("rejects when the read fails or the path cannot serve it, so the account keeps its readiness", async () => {
+    const failure = new Error("unsupported");
+    getAccountInfoMock.mockRejectedValueOnce(failure);
+    await expect(getAccountReadiness(currency, "tz1down", chain)).rejects.toBe(failure);
   });
 });
 

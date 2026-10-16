@@ -17,6 +17,7 @@ import {
   combine,
   craftTransaction,
   getAccountInfo,
+  getAddressesForPublicKey,
   getBalance,
   getBlockInfo,
   getBlockV2,
@@ -40,6 +41,7 @@ import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, safeParseAccountId } from "../network/utils";
 import type {
   EstimateFeesParams,
+  HederaCoinModuleExtensions,
   HederaMemo,
   HederaTxData,
   HederaCoinConfig,
@@ -63,6 +65,9 @@ import type {
 //                             device app parses contract calls.
 //   - `register`            — no enrollment step.
 // The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
+//
+// Beyond the contract it offers {@link HederaCoinModuleExtensions}, which `withDefaults` and the
+// logging wrappers carry over untouched.
 export function createApi(currencyId: string) {
   return {
     broadcast: async (context: HederaContext, tx, _options?) => {
@@ -108,6 +113,10 @@ export function createApi(currencyId: string) {
     getAccountInfo: async (context: HederaContext, address: string) => {
       const coinConfig = await context.config();
       return getAccountInfo(coinConfig, address);
+    },
+    getAddressesForPublicKey: async (context: HederaContext, publicKey: string) => {
+      const coinConfig = await context.config();
+      return getAddressesForPublicKey(coinConfig, publicKey);
     },
     getBalance: (context: HederaContext, address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(async () => {
@@ -289,5 +298,6 @@ export function createApi(currencyId: string) {
       return error === null;
     },
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  } satisfies CoinModuleImpl<HederaCoinConfig, HederaMemo, HederaTxData>;
+  } satisfies CoinModuleImpl<HederaCoinConfig, HederaMemo, HederaTxData> &
+    HederaCoinModuleExtensions;
 }

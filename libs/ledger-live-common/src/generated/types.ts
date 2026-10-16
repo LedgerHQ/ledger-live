@@ -21,7 +21,7 @@ import type {
   TransactionRaw as bitcoinTransactionRaw,
   TransactionStatus as bitcoinTransactionStatus,
   TransactionStatusRaw as bitcoinTransactionStatusRaw,
-} from "@ledgerhq/coin-bitcoin/types";
+} from "../families/bitcoin/types";
 import type {
   Transaction as cantonTransaction,
   TransactionRaw as cantonTransactionRaw,

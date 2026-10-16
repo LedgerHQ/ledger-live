@@ -7,19 +7,59 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import { ChainReadUnsupportedError } from "@ledgerhq/ledger-wallet-framework/errors";
+import type { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import { CHAIN_ID } from "@ledgerhq/coin-evm/config";
-import { isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking";
+import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking";
 import evmBridge, {
   computeIntentType,
+  enrichStakingResources,
   getAccountReadiness,
   getAssetFromToken,
   getTokenFromAsset,
+  refreshOperations,
 } from "./api";
+import { legacyChainReads } from "./legacyChainReads";
 
-jest.mock("@ledgerhq/coin-evm/staking", () => ({
-  ...jest.requireActual("@ledgerhq/coin-evm/staking"),
-  isSeiAccountUnassociated: jest.fn(),
-}));
+// The staking registry is keyed on the chain id, read from the currency config.
+const configure = (node: unknown) =>
+  LiveConfig.setConfig({
+    config_currency_sei_evm: { type: "object", default: { chainId: CHAIN_ID.SEI_EVM, node } },
+  } as never);
+
+const redelegate = (fields: Partial<Operation>): Operation =>
+  ({
+    hash: "0xredelegate",
+    type: "REDELEGATE",
+    hasFailed: false,
+    date: new Date(),
+    recipients: [],
+    extra: {},
+    ...fields,
+  }) as Operation;
+
+const pending = (fields: Partial<Operation> = {}): Operation =>
+  ({
+    hash: "0xpending",
+    type: "OUT",
+    value: new BigNumber(10),
+    fee: new BigNumber(1),
+    blockHeight: null,
+    blockHash: null,
+    date: new Date("2026-01-01T00:00:00.000Z"),
+    transactionSequenceNumber: new BigNumber(4),
+    ...fields,
+  }) as Operation;
+
+const chainReads = () => ({
+  getAccountInfo: jest.fn(),
+  call: jest.fn(),
+  getNextSequence: jest.fn(),
+  getAddressesForPublicKey: jest.fn(),
+  getTransactionInfo: jest.fn(),
+});
 
 describe("evm bridge", () => {
   const ethereum = getCryptoCurrencyById("ethereum");
@@ -314,28 +354,293 @@ describe("evm bridge", () => {
       expect(evmBridge(ethereum)).not.toHaveProperty("getAccountReadiness");
       expect(evmBridge(seiEvm).getAccountReadiness).toEqual(expect.any(Function));
     });
+
+    it("declares the reads its legacy path makes beyond coin-evm", () => {
+      expect(evmBridge(ethereum).legacyChainReads).toBe(legacyChainReads);
+    });
   });
 
   describe("getAccountReadiness", () => {
     const address = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    const precompile = STAKING_CONTRACTS[CHAIN_ID.SEI_EVM]!.apiConfig!.precompileAddress!;
+    const contract = new ethers.Interface([precompile.abi]);
+    const { name } = ethers.FunctionFragment.from(precompile.abi);
+    const answering = (cosmosAddress: string) =>
+      contract.encodeFunctionResult(name, [cosmosAddress]);
 
-    beforeEach(() => {
-      LiveConfig.setConfig({
-        config_currency_sei_evm: { type: "object", default: {} },
-      } as never);
+    beforeEach(() => configure({ type: "external", uri: "https://sei.rpc" }));
+
+    it("asks the address precompile through the chain reads, and is ready once associated", async () => {
+      const chain = chainReads();
+      chain.call.mockResolvedValue(answering("sei1linked"));
+
+      await expect(getAccountReadiness(seiEvm, address, chain)).resolves.toEqual({ ready: true });
+      expect(chain.call).toHaveBeenCalledWith({
+        to: precompile.address,
+        data: contract.encodeFunctionData(name, [address]),
+      });
     });
 
-    it("is ready when the sei account is associated", async () => {
-      jest.mocked(isSeiAccountUnassociated).mockResolvedValueOnce(false);
-      await expect(getAccountReadiness(seiEvm, address)).resolves.toEqual({ ready: true });
-    });
+    it.each([
+      [
+        "an empty Cosmos address",
+        (chain: ReturnType<typeof chainReads>) => chain.call.mockResolvedValue(answering("")),
+      ],
+      [
+        "a revert or an RPC failure",
+        (chain: ReturnType<typeof chainReads>) =>
+          chain.call.mockRejectedValue(new Error("execution reverted")),
+      ],
+      [
+        "an undecodable answer",
+        (chain: ReturnType<typeof chainReads>) => chain.call.mockResolvedValue("0x"),
+      ],
+    ])("is not ready ('activationRequired') on %s", async (_label, answer) => {
+      const chain = chainReads();
+      answer(chain);
 
-    it("is not ready with reason 'activationRequired' when the sei account is unassociated", async () => {
-      jest.mocked(isSeiAccountUnassociated).mockResolvedValueOnce(true);
-      await expect(getAccountReadiness(seiEvm, address)).resolves.toEqual({
+      await expect(getAccountReadiness(seiEvm, address, chain)).resolves.toEqual({
         ready: false,
         reason: "activationRequired",
       });
+    });
+
+    it("keeps the readiness when the path cannot make the call", async () => {
+      const chain = chainReads();
+      const unsupported = new ChainReadUnsupportedError("call is not served");
+      chain.call.mockRejectedValue(unsupported);
+
+      await expect(getAccountReadiness(seiEvm, address, chain)).rejects.toBe(unsupported);
+    });
+
+    it("is ready without an external node or a precompile to ask", async () => {
+      const chain = chainReads();
+      configure({ type: "ledger", explorerId: "sei" });
+      await expect(getAccountReadiness(seiEvm, address, chain)).resolves.toEqual({ ready: true });
+
+      LiveConfig.setConfig({
+        config_currency_ethereum: {
+          type: "object",
+          default: {
+            chainId: CHAIN_ID.ETHEREUM,
+            node: { type: "external", uri: "https://eth.rpc" },
+          },
+        },
+      } as never);
+      await expect(getAccountReadiness(ethereum, address, chain)).resolves.toEqual({
+        ready: true,
+      });
+      expect(chain.call).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("enrichStakingResources", () => {
+    const address = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    const staking = STAKING_CONTRACTS[CHAIN_ID.SEI_EVM]!;
+    const contract = new ethers.Interface([
+      `function ${staking.functions.redelegate}(string src, string dst, uint256 amount)`,
+    ]);
+    const payload = (src: string, dst: string) =>
+      contract.encodeFunctionData(staking.functions.redelegate!, [src, dst, 5n]);
+    const base = {
+      delegations: [],
+      redelegations: [],
+      unbondings: [],
+      delegatedBalance: new BigNumber(1),
+      pendingRewardsBalance: new BigNumber(0),
+      unbondingBalance: new BigNumber(0),
+    };
+
+    beforeEach(() => {
+      LiveConfig.setConfig({
+        config_currency_sei_evm: { type: "object", default: { chainId: CHAIN_ID.SEI_EVM } },
+        config_currency_ethereum: { type: "object", default: { chainId: CHAIN_ID.ETHEREUM } },
+      } as never);
+    });
+
+    it("merges the reported redelegations with those decoded from the operations, deduplicated", async () => {
+      const chain = chainReads();
+      chain.getAccountInfo.mockResolvedValue({
+        type: "none",
+        redelegations: [
+          {
+            validatorSrcAddress: "seivaloper1a",
+            validatorDstAddress: "seivaloper1b",
+            amount: "1000",
+            completionDate: "2099-01-01T00:00:00.000Z",
+          },
+        ],
+      });
+      chain.getTransactionInfo.mockImplementation(async (hash: string) =>
+        hash === "0xfetched"
+          ? { hash, block: null, data: payload("seivaloper1c", "seivaloper1d") }
+          : undefined,
+      );
+
+      const result = await enrichStakingResources(
+        seiEvm,
+        address,
+        [
+          // cached payload, same pair as the reported one: deduplicated
+          redelegate({
+            hash: "0xcached",
+            extra: { contractPayload: payload("seivaloper1a", "seivaloper1b") },
+          }),
+          // payload read through the chain
+          redelegate({ hash: "0xfetched" }),
+          // payload unknown to the chain: left out, never fetched by coin-evm
+          redelegate({ hash: "0xunknown", extra: undefined }),
+          // not eligible: failed, completed, or not a redelegation
+          redelegate({ hash: "0xfailed", hasFailed: true }),
+          redelegate({ hash: "0xold", date: new Date("2000-01-01T00:00:00.000Z") }),
+          redelegate({ hash: "0xdelegate", type: "DELEGATE" }),
+        ],
+        base,
+        chain,
+      );
+
+      expect(chain.getAccountInfo).toHaveBeenCalledWith(address);
+      expect(chain.getTransactionInfo.mock.calls.map(([hash]) => hash).sort()).toEqual([
+        "0xfetched",
+        "0xunknown",
+      ]);
+      expect(result.delegatedBalance).toBe(base.delegatedBalance);
+      expect(result.redelegations).toEqual([
+        {
+          validatorSrcAddress: "seivaloper1a",
+          validatorDstAddress: "seivaloper1b",
+          amount: new BigNumber(1000),
+          completionDate: new Date("2099-01-01T00:00:00.000Z"),
+        },
+        expect.objectContaining({
+          validatorSrcAddress: "seivaloper1c",
+          validatorDstAddress: "seivaloper1d",
+        }),
+      ]);
+    });
+
+    it("reports none when the account metadata carries none or cannot be read", async () => {
+      const chain = chainReads();
+      chain.getAccountInfo.mockResolvedValueOnce({ type: "none" });
+      chain.getTransactionInfo.mockRejectedValue(new ChainReadUnsupportedError("unsupported"));
+
+      const withoutList = await enrichStakingResources(
+        seiEvm,
+        address,
+        [redelegate({ hash: "0xunsupported" })],
+        base,
+        chain,
+      );
+      expect(withoutList.redelegations).toEqual([]);
+
+      chain.getAccountInfo.mockRejectedValueOnce(new ChainReadUnsupportedError("unsupported"));
+      const unread = await enrichStakingResources(seiEvm, address, [], base, chain);
+      expect(unread.redelegations).toEqual([]);
+    });
+
+    it("decodes nothing for a chain without a redelegate function", async () => {
+      const chain = chainReads();
+      chain.getAccountInfo.mockResolvedValue({ type: "none" });
+
+      const result = await enrichStakingResources(
+        ethereum,
+        address,
+        [redelegate({ hash: "0xredelegate" })],
+        base,
+        chain,
+      );
+
+      expect(result.redelegations).toEqual([]);
+      expect(chain.getTransactionInfo).not.toHaveBeenCalled();
+    });
+
+    it("uses the default unbonding period of a chain that declares none", async () => {
+      const chain = chainReads();
+      chain.getAccountInfo.mockResolvedValue({ type: "none" });
+      chain.getTransactionInfo.mockResolvedValue(undefined);
+      const { unbondingPeriodDays } = staking;
+      delete (staking as { unbondingPeriodDays?: number }).unbondingPeriodDays;
+      try {
+        await enrichStakingResources(
+          seiEvm,
+          address,
+          [redelegate({ hash: "0xrecent", date: new Date(Date.now() - 20 * 24 * 3600 * 1000) })],
+          base,
+          chain,
+        );
+      } finally {
+        (staking as { unbondingPeriodDays?: number }).unbondingPeriodDays = unbondingPeriodDays;
+      }
+      expect(chain.getTransactionInfo).toHaveBeenCalledWith("0xrecent");
+    });
+  });
+
+  describe("refreshOperations", () => {
+    it("refreshes the operations the chain finds mined, with their sub-operations", async () => {
+      const chain = chainReads();
+      const time = new Date("2026-02-01T00:00:00.000Z");
+      chain.getTransactionInfo.mockResolvedValue({
+        hash: "0xpending",
+        block: { height: 12, hash: "0xblock", time },
+        fee: 21n,
+        value: 100n,
+        sequence: 7n,
+      });
+
+      const [refreshed] = await refreshOperations(
+        [pending({ subOperations: [pending({ type: "IN" })] })],
+        chain,
+      );
+
+      expect(refreshed).toMatchObject({
+        blockHeight: 12,
+        blockHash: "0xblock",
+        date: time,
+        fee: new BigNumber(21),
+        value: new BigNumber(121),
+        transactionSequenceNumber: new BigNumber(7),
+        subOperations: [
+          expect.objectContaining({
+            blockHeight: 12,
+            blockHash: "0xblock",
+            date: time,
+            transactionSequenceNumber: new BigNumber(7),
+          }),
+        ],
+      });
+    });
+
+    it("keeps the operation's sequence and counts nothing the chain does not report", async () => {
+      const chain = chainReads();
+      const time = new Date("2026-02-01T00:00:00.000Z");
+      chain.getTransactionInfo.mockResolvedValue({
+        hash: "0xpending",
+        block: { height: 12, hash: "0xblock", time },
+      });
+
+      const [refreshed] = await refreshOperations([pending()], chain);
+
+      expect(refreshed).toMatchObject({
+        fee: new BigNumber(0),
+        value: new BigNumber(0),
+        transactionSequenceNumber: new BigNumber(4),
+      });
+      expect(refreshed.subOperations).toBeUndefined();
+    });
+
+    it("leaves out the operations still pending, unknown or unreadable", async () => {
+      const chain = chainReads();
+      chain.getTransactionInfo
+        .mockResolvedValueOnce({ hash: "0xa", block: null })
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new ChainReadUnsupportedError("unsupported"));
+
+      await expect(
+        refreshOperations(
+          [pending({ hash: "0xa" }), pending({ hash: "0xb" }), pending({ hash: "0xc" })],
+          chain,
+        ),
+      ).resolves.toEqual([]);
     });
   });
 });

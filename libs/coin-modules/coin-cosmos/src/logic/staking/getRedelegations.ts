@@ -6,12 +6,15 @@ import { CosmosRedelegation } from "../../types";
  * so it's fetched here for the `enrichStakingResources` hook — executed plus, on epoched chains, the
  * queued x/epoching ones. Returns the neutral `CosmosRedelegation` (structurally a
  * `StakingRedelegation`) so the logic layer stays free of `@ledgerhq/types-live`.
+ *
+ * `api` is the caller's per-chain API when it has one (the coin module's, built from its context's
+ * config); otherwise one is built for `currencyId`.
  */
 export async function getRedelegations(
   currencyId: string,
   denom: string,
   address: string,
+  api: CosmosAPI = new CosmosAPI(currencyId),
 ): Promise<CosmosRedelegation[]> {
-  const api = new CosmosAPI(currencyId);
   return api.getRedelegationsWithQueued(address, denom);
 }

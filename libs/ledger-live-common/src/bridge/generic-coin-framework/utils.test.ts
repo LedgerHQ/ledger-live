@@ -875,6 +875,29 @@ describe("coin-framework utils", () => {
         expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
       });
 
+      it("leaves the data undefined, key included, when the crafting leaves it to the writer", () => {
+        const defaultCraftTransactionDataSpy = jest.spyOn(
+          craftTransactionDataModule,
+          "craftTransactionData",
+        );
+
+        const intent = transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: ["wei"],
+            },
+          } as unknown as Account,
+          {} as unknown as GenericTransaction,
+          undefined,
+          () => undefined,
+        );
+
+        // The portfolio layer's side writing completes an undefined `data` itself.
+        expect(intent).toHaveProperty("data", undefined);
+        expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
+      });
+
       it("should use default craftTransactionData when not provided", () => {
         const defaultCraftTransactionDataSpy = jest.spyOn(
           craftTransactionDataModule,

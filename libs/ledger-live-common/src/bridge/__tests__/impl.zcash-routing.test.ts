@@ -23,7 +23,6 @@ const loadersFor = (...families: string[]) =>
 
 // Same modules the loaders import, so the bridges compare by identity.
 const coinZcash = () => import("../../families/zcash/setup");
-const coinBitcoin = () => import("../../families/bitcoin/setup");
 
 // genAccount gives a `mock:` id, which getAccountBridge serves from a family's
 // mock bridge. A `js:` id keeps the account on the module bridges.
@@ -79,7 +78,8 @@ describe("bridge/impl -- zcash routing", () => {
   });
 
   it("never moves another currency of the bitcoin family", async () => {
-    expect(await getCurrencyBridge(BITCOIN)).toBe((await coinBitcoin()).bridge.currencyBridge);
+    // bitcoin runs on the generic coin framework (ADR-065), not on coin-zcash
+    expect(await getCurrencyBridge(BITCOIN)).not.toBe((await coinZcash()).bridge.currencyBridge);
   });
 
   it("keeps zcash on its currency family when the host registers no zcash module", async () => {
@@ -87,7 +87,7 @@ describe("bridge/impl -- zcash routing", () => {
     registerCoinModules(loadersFor("bitcoin"));
     clearBridgeCache();
 
-    expect(await getCurrencyBridge(ZCASH)).toBe((await coinBitcoin()).bridge.currencyBridge);
+    expect(await getCurrencyBridge(ZCASH)).toBe(await getCurrencyBridge(BITCOIN));
   });
 
   it("evicts the zcash entry on clearBridgeCache('zcash')", async () => {
@@ -116,14 +116,10 @@ describe("bridge/impl -- zcash routing", () => {
     const zcashSignOperation = jest
       .spyOn((await coinZcash()).bridge.accountBridge, "signOperation")
       .mockReturnValue(EMPTY);
-    const bitcoinSignOperation = jest
-      .spyOn((await coinBitcoin()).bridge.accountBridge, "signOperation")
-      .mockReturnValue(EMPTY);
 
     const bridge = await getAccountBridge(account);
     bridge.signOperation(signArg(account)).subscribe();
 
     expect(zcashSignOperation).toHaveBeenCalledTimes(1);
-    expect(bitcoinSignOperation).not.toHaveBeenCalled();
   });
 });

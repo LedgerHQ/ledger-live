@@ -36,6 +36,11 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -47,21 +52,15 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/psbtv2": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
-    "@noble/hashes": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bitcoinjs-lib": "^7.0.2",
-    "bs58": "catalog:",
-    "cashaddrjs": "^0.4.4",
-    "invariant": "^2.2.2",
-    "lodash": "catalog:",
-    "rxjs": "catalog:",
-    "utility-types": "^3.10.0"
+    "cashaddrjs": "^0.4.4"
   },
   "devDependencies": {
     "@bitcoinerlab/secp256k1": "2.0.0",

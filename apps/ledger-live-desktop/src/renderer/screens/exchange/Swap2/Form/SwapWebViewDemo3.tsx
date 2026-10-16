@@ -5,14 +5,13 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@shared/env";
 
-import { getNodeApi } from "@ledgerhq/coin-evm/network";
-import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
-import { buildContext } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
+import { getEvmTransactionByHash } from "@ledgerhq/live-common/families/evm/getTransactionByHash";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import {
   convertToAtomicUnit,
   convertToNonAtomicUnit,
+  getBitcoinCustomFeesPatch,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
@@ -188,7 +187,7 @@ const SwapWebView = ({
           fromAmount: string;
           feeStrategy: string;
           openDrawer: boolean;
-          customFeeConfig: object;
+          customFeeConfig: Record<string, unknown>;
           SWAP_VERSION: string;
           gasLimit?: string;
           data?: string;
@@ -248,7 +247,10 @@ const SwapWebView = ({
           data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
           feesStrategy: params.feeStrategy || "medium",
           customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
-          ...transformToBigNumbers(params.customFeeConfig),
+          // bitcoin fee settings are user choices, carried in familySpecificData
+          ...(transaction.family === "bitcoin"
+            ? getBitcoinCustomFeesPatch(transaction, params.customFeeConfig)
+            : transformToBigNumbers(params.customFeeConfig)),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
         const statusInit = status;
@@ -373,17 +375,8 @@ const SwapWebView = ({
 
         const fromParentAccount = getParentAccount(fromAccount, accounts);
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-        const evmCtx = buildContext<EvmConfigInfo>(mainAccount.currency.id);
-        const config = await evmCtx.config();
-        const nodeAPI = getNodeApi(config, evmCtx.logger);
-
-        try {
-          const tx = await nodeAPI.getTransaction(params.transactionHash);
-          return Promise.resolve(tx);
-        } catch {
-          // not a real error, the node just didn't find the transaction yet
-          return Promise.resolve({});
-        }
+        // `{}` while the transaction is not found yet; through the portfolio layer when it serves the chain.
+        return getEvmTransactionByHash(mainAccount, params.transactionHash);
       },
       "custom.swapRedirectToHistory": async ({
         params,

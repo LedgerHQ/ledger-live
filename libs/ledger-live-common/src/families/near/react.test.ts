@@ -12,11 +12,22 @@ import {
 } from "./react";
 import type { NearAccount, Transaction } from "@ledgerhq/coin-near/types";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { openCurrencyPortfolio } from "../../bridge/generic-coin-framework/networkPortfolio";
+import { isPortfolioEnabledFor } from "../../bridge/generic-coin-framework/portfolio/config";
 
 const mockGetValidators = jest.fn();
 
 jest.mock("../../bridge/generic-coin-framework/api", () => ({
   getCoinModuleApi: () => Promise.resolve({ getValidators: mockGetValidators }),
+}));
+
+jest.mock("../../bridge/generic-coin-framework/networkPortfolio", () => ({
+  openCurrencyPortfolio: jest.fn(),
+}));
+
+jest.mock("../../bridge/generic-coin-framework/portfolio/config", () => ({
+  isPortfolioEnabledFor: jest.fn(() => false),
 }));
 
 jest.mock("../../config", () => ({
@@ -161,6 +172,20 @@ describe("getNearBalanceBreakdown", () => {
     } as unknown as NearAccount;
 
     expect(getNearBalanceBreakdown(account).stakedBalance.toFixed()).toBe("200");
+  });
+
+  it("reads no position from an account with neither positions nor legacy aggregates", () => {
+    const account = {
+      balance: new BigNumber("500"),
+      spendableBalance: new BigNumber("400"),
+    } as unknown as NearAccount;
+
+    const result = getNearBalanceBreakdown(account);
+
+    expect(result.stakedBalance.toFixed()).toBe("0");
+    expect(result.pendingBalance.toFixed()).toBe("0");
+    expect(result.availableBalance.toFixed()).toBe("0");
+    expect(result.storageUsageBalance.toFixed()).toBe("100");
   });
 
   it("falls back gracefully when account has no stakingPositions field", () => {
@@ -332,6 +357,30 @@ describe("useLedgerFirstShuffledValidatorsNear", () => {
     expect(result.current).toEqual([]);
   });
 
+  it("hands the coin module the NEAR config of the live config", async () => {
+    mockGetValidators.mockResolvedValue(validatorPage([]));
+
+    renderHook(() => useLedgerFirstShuffledValidatorsNear(""));
+
+    await waitFor(() => expect(mockGetValidators).toHaveBeenCalled());
+    const [context] = mockGetValidators.mock.calls[0];
+    await expect(context.config()).resolves.toEqual({});
+    expect(context.logger()).toBeUndefined();
+  });
+
+  it("drops the validators that arrive once the hook is unmounted", async () => {
+    let resolve: (page: unknown) => void = () => undefined;
+    mockGetValidators.mockReturnValue(new Promise(r => (resolve = r)));
+
+    const { result, unmount } = renderHook(() => useLedgerFirstShuffledValidatorsNear(""));
+    await waitFor(() => expect(mockGetValidators).toHaveBeenCalled());
+    unmount();
+    resolve(validatorPage([{ address: "late.near", balance: 1n }]));
+    await new Promise(r => setTimeout(r, 0));
+
+    expect(result.current).toEqual([]);
+  });
+
   it("maps a null commissionRate to null rather than NaN", async () => {
     mockGetValidators.mockResolvedValue(
       validatorPage([{ address: "nocommission.near", balance: 1n }]),
@@ -341,5 +390,51 @@ describe("useLedgerFirstShuffledValidatorsNear", () => {
 
     await waitFor(() => expect(result.current).toHaveLength(1));
     expect(result.current[0].commission).toBeNull();
+  });
+});
+
+describe("NEAR validators through the portfolio layer", () => {
+  const getValidators = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(isPortfolioEnabledFor).mockReturnValue(true);
+    jest
+      .mocked(openCurrencyPortfolio)
+      .mockResolvedValue({ portfolio: { getValidators }, network: "near", mode: "local" } as never);
+  });
+
+  afterEach(() => {
+    jest.mocked(isPortfolioEnabledFor).mockReturnValue(false);
+  });
+
+  it("reads the first page of the portfolio's validators, in the same items", async () => {
+    getValidators.mockResolvedValue({
+      items: [
+        { address: "small.near", name: "small.near", balance: "10", commissionRate: "0.05" },
+        { address: "big.near", name: "big.near", balance: "999" },
+      ],
+    });
+
+    const { result } = renderHook(() => useLedgerFirstShuffledValidatorsNear(""));
+
+    await waitFor(() => expect(result.current).toHaveLength(2));
+    expect(result.current).toEqual([
+      { validatorAddress: "big.near", commission: null, tokens: "999" },
+      { validatorAddress: "small.near", commission: 0.05, tokens: "10" },
+    ]);
+    expect(isPortfolioEnabledFor).toHaveBeenCalledWith("near");
+    expect(openCurrencyPortfolio).toHaveBeenCalledWith(getCryptoCurrencyById("near"), "read");
+    expect(getValidators).toHaveBeenCalledWith("near");
+    expect(mockGetValidators).not.toHaveBeenCalled();
+  });
+
+  it("reads none from a page without items", async () => {
+    getValidators.mockResolvedValue({});
+
+    const { result } = renderHook(() => useLedgerFirstShuffledValidatorsNear(""));
+
+    await waitFor(() => expect(getValidators).toHaveBeenCalled());
+    expect(result.current).toEqual([]);
   });
 });

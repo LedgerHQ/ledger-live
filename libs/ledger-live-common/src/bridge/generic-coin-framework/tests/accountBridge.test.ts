@@ -3,7 +3,10 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import { getCoinFrameworkAccountBridge } from "../accountBridge";
+import { getSigner } from "../signer";
 import type { CoinFrameworkSigner } from "../types";
+
+jest.mock("../signer", () => ({ getSigner: jest.fn() }));
 
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers"),
@@ -13,6 +16,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
 const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
   getBridgeApi: (...a: unknown[]) => getBridgeApiMock(...a),
+  getBridgeApiResolver: async () => () => ({}),
 }));
 
 const assignFromAccountRawMock = jest.fn();
@@ -44,6 +48,17 @@ describe("getCoinFrameworkAccountBridge — raw-assign hook wiring", () => {
     expect(bridge.assignToAccountRaw).toBe(assignToAccountRawMock);
     expect(bridge.fromOperationExtraRaw).toBe(fromOperationExtraRawMock);
     expect(bridge.toOperationExtraRaw).toBe(toOperationExtraRawMock);
+  });
+});
+
+describe("getCoinFrameworkAccountBridge — signer", () => {
+  it("signs with the network's own signer when none is given", async () => {
+    jest.mocked(getSigner).mockResolvedValue(stubSigner);
+
+    const bridge = await getCoinFrameworkAccountBridge("networkx", "local");
+
+    expect(getSigner).toHaveBeenCalledWith("networkx");
+    expect(bridge.signOperation).toEqual(expect.any(Function));
   });
 });
 

@@ -16,6 +16,7 @@ import { ZcashSyncNotice } from "./ZcashSyncNotice";
 import { getAccountRecipientAddresses } from "./getAccountRecipientAddresses";
 import { BitcoinFamily } from "./types";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
+import { getEditableTransactionRaw } from "@ledgerhq/live-common/families/bitcoin/editTransaction/editableTransaction";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
@@ -54,27 +55,12 @@ const family: BitcoinFamily = {
       return null;
     }
 
-    // replaceTxId must always target the operation being replaced.
-    const transactionRaw =
-      operation.transactionRaw === undefined
-        ? {
-            family: "bitcoin" as const,
-            amount: "0",
-            recipient: mainAccount.freshAddress,
-            rbf: true,
-            replaceTxId: operation.hash,
-            utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-            feePerByte: null,
-            networkInfo: null,
-          }
-        : { ...operation.transactionRaw, replaceTxId: operation.hash };
-
     return {
       modalName: "MODAL_BITCOIN_EDIT_TRANSACTION",
       params: {
         account,
         parentAccount,
-        transactionRaw,
+        transactionRaw: getEditableTransactionRaw(operation, mainAccount),
         transactionHash: operation.hash,
       },
     };

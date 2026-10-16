@@ -233,6 +233,45 @@ describe("genericGetAccountShape - A4 read branch", () => {
     );
   });
 
+  it("falls back to the coin-module delegate when fetchA4Operations rejects with a non-error", async () => {
+    fetchA4OperationsMock.mockRejectedValue("socket hang up");
+
+    await call();
+
+    expect(listOperationsMock).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(log)).toHaveBeenCalledWith(
+      "a4",
+      "A4 read failed, falling back to delegate: socket hang up",
+      expect.objectContaining({ decision: "read_failover_to_delegate" }),
+    );
+  });
+
+  it("logs a registration that fails to set up, without failing the sync", async () => {
+    // Each sync resolves the url to register, then to read.
+    resolveA4BaseUrlMock
+      .mockImplementationOnce(() => {
+        throw new Error("A4_BASE_URL not set");
+      })
+      .mockReturnValueOnce("https://a4.test")
+      .mockImplementationOnce(() => {
+        throw "no url";
+      });
+
+    await call();
+    await call();
+
+    const setupFailures = jest
+      .mocked(log)
+      .mock.calls.filter(
+        ([, , data]) => (data as { decision?: string })?.decision === "register_setup_error",
+      )
+      .map(([, message]) => message);
+    expect(setupFailures).toEqual([
+      "A4 registration setup failed unexpectedly: A4_BASE_URL not set",
+      "A4 registration setup failed unexpectedly: no url",
+    ]);
+  });
+
   it("skips fetchA4Operations and uses the coin-module delegate when read=false", async () => {
     resolveA4ChainConfigMock.mockReturnValue({
       read: false,

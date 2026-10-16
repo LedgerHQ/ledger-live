@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import { getFeePerByte, type Transaction } from "../types";
 
 /**
  * Used to display the pending transaction (the original transaction being sped up or canceled) fees info in the edit flow
@@ -19,7 +19,7 @@ export const getFormattedFeeFields = ({
 } => {
   const { currency } = mainAccount;
   const unit = currency.units[0];
-  const feeValue = transaction.feePerByte ?? new BigNumber(0);
+  const feeValue = getFeePerByte(transaction) ?? new BigNumber(0);
   const formattedFeeValue = formatCurrencyUnit(unit, feeValue, {
     showCode: true,
     locale,

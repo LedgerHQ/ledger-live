@@ -11,8 +11,12 @@ import {
   tokenTransaction,
 } from "../transaction.fixtures";
 import { getGasTracker } from "@ledgerhq/coin-evm/network";
+import { editedTransactionGasOptions } from "./gasOptions";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
+
+jest.mock("./gasOptions", () => ({ editedTransactionGasOptions: jest.fn() }));
+const mockedEditedTransactionGasOptions = jest.mocked(editedTransactionGasOptions);
 
 jest.mock("@ledgerhq/coin-evm/network");
 const mockedGetGasTracker = jest.mocked(getGasTracker);
@@ -289,5 +293,48 @@ describe.each(["speedup", "cancel"])("with editType %s", editType => {
         },
       );
     });
+  });
+});
+
+describe("through the portfolio layer", () => {
+  const { gasOptions, minFees } = gasOptionFastAndMinFeesByTypeAndTest[2][">"];
+
+  beforeEach(() => {
+    LiveConfig.setConfig({
+      config_currency_ethereum: { type: "object", default: { portfolio: { enabled: true } } },
+    } as never);
+    mockedGetMinEip1559Fees.mockReturnValue(minFees);
+  });
+
+  afterEach(() => {
+    mockedGetMinEip1559Fees.mockReset();
+    mockedEditedTransactionGasOptions.mockReset();
+  });
+
+  it("prices the patch from the gas options of the edited transaction's estimate", async () => {
+    mockedEditedTransactionGasOptions.mockResolvedValue(gasOptions);
+
+    const patch = await getEditTransactionPatch({
+      editType: "speedup",
+      transaction: eip1559Tx,
+      account,
+    });
+
+    expect(mockedEditedTransactionGasOptions).toHaveBeenCalledWith(account, eip1559Tx);
+    expect(mockedGetGasTracker).not.toHaveBeenCalled();
+    expect(patch).toMatchObject({
+      feesStrategy: "fast",
+      gasOptions,
+      maxFeePerGas: gasOptions.fast.maxFeePerGas,
+      maxPriorityFeePerGas: gasOptions.fast.maxPriorityFeePerGas,
+    });
+  });
+
+  it("fails as without a gas tracker when the estimate carries no gas options", async () => {
+    mockedEditedTransactionGasOptions.mockResolvedValue(undefined);
+
+    await expect(
+      getEditTransactionPatch({ editType: "cancel", transaction: eip1559Tx, account }),
+    ).rejects.toThrow("No gas tracker found for currency ethereum");
   });
 });

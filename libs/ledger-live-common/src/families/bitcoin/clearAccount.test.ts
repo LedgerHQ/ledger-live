@@ -1,12 +1,11 @@
-jest.mock("@ledgerhq/coin-bitcoin/types", () => ({
-  initialBitcoinResourcesValue: { utxos: [] },
-}));
-
 import { clearAccount } from "./clearAccount";
-import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
+import { initialBitcoinResourcesValue, type BitcoinAccount } from "./types";
 
 it("resets bitcoinResources to initial value", () => {
-  const account = { bitcoinResources: { utxos: [{}] } } as any;
+  const account = {
+    bitcoinResources: { utxos: [{}], accountState: { version: 1 } },
+  } as unknown as BitcoinAccount;
   clearAccount(account);
   expect(account.bitcoinResources).toBe(initialBitcoinResourcesValue);
+  expect(account.bitcoinResources).toEqual({ utxos: [] });
 });

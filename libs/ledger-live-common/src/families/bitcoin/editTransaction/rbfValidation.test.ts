@@ -1,118 +1,123 @@
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
-import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
-import { getOriginalTxFeeContext } from "@ledgerhq/coin-bitcoin/rbfFees";
-import { getBoundWalletAccount } from "../coinConfig";
+import type { Transaction as BtcTransaction } from "../types";
+import { getReplacementEstimate } from "./replacement";
 import { getAdditionalFeeRequiredForRbf, getOriginalTxFeeRateSatVb } from "./rbfValidation";
 
-jest.mock("../coinConfig", () => ({
-  getBoundWalletAccount: jest.fn(),
+jest.mock("./replacement", () => ({
+  getReplacementEstimate: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-bitcoin/rbfFees", () => ({
-  getOriginalTxFeeContext: jest.fn(),
-}));
+const mockedGetReplacementEstimate = getReplacementEstimate as jest.Mock;
 
-const mockedGetBoundWalletAccount = getBoundWalletAccount as jest.Mock;
-const mockedGetOriginalTxFeeContext = getOriginalTxFeeContext as jest.Mock;
-
-const walletAccount = { xpub: { explorer: {} } } as any;
-const config: BitcoinCoinConfig = {
-  status: { type: "active" },
-  name: "Bitcoin",
-  unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-  explorer: { url: "https://explorer.test.invalid" },
-};
+const mainAccount = { id: "btc-account" } as Account;
+const toUpdate = (familySpecificData?: BtcTransaction["familySpecificData"]) =>
+  ({ family: "bitcoin", ...(familySpecificData ? { familySpecificData } : {}) }) as BtcTransaction;
 
 describe("rbfValidation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetBoundWalletAccount.mockReturnValue({ config, walletAccount });
   });
 
   describe("getAdditionalFeeRequiredForRbf", () => {
-    it("returns zero when replaceTxId is not provided", async () => {
+    it.each([
+      ["there is no familySpecificData", toUpdate()],
+      ["replaceTxId is not provided", toUpdate({ rbf: true })],
+      ["replaceTxId is empty", toUpdate({ replaceTxId: "" })],
+    ])("returns zero without estimating when %s", async (_, transactionToUpdate) => {
+      const result = await getAdditionalFeeRequiredForRbf({ mainAccount, transactionToUpdate });
+
+      expect(result.toNumber()).toBe(0);
+      expect(mockedGetReplacementEstimate).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["the minimum replacement fee", { originalFee: 1000n }],
+      ["the original fee", { minReplacementFee: 1200n }],
+      ["both fees", {}],
+    ])("returns zero when the estimation does not know %s", async (_, parameters) => {
+      mockedGetReplacementEstimate.mockResolvedValue(parameters);
+
       const result = await getAdditionalFeeRequiredForRbf({
-        mainAccount: {} as Account,
-        transactionToUpdate: {} as BtcTransaction,
+        mainAccount,
+        transactionToUpdate: toUpdate({ replaceTxId: "orig-txid" }),
       });
 
       expect(result.toNumber()).toBe(0);
-      expect(mockedGetBoundWalletAccount).not.toHaveBeenCalled();
-      expect(mockedGetOriginalTxFeeContext).not.toHaveBeenCalled();
+      expect(mockedGetReplacementEstimate).toHaveBeenCalledWith(mainAccount, "orig-txid");
     });
 
-    it("returns zero when the original transaction has no fee context (not RBF enabled)", async () => {
-      mockedGetOriginalTxFeeContext.mockResolvedValue(null);
-
-      const result = await getAdditionalFeeRequiredForRbf({
-        mainAccount: {} as Account,
-        transactionToUpdate: { replaceTxId: "orig-txid" } as BtcTransaction,
-      });
-
-      expect(result.toNumber()).toBe(0);
-      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(
-        config,
-        walletAccount,
-        "orig-txid",
-      );
-    });
-
-    it("computes additional fee according to RBF policy", async () => {
-      // oldFeeSat=1000, vsize=100, oldFeeRate=10, incrementalFeeRate=2
-      // minNewFeeFromAbsolute = 1000 + ceil(2 * 100) = 1200
-      // minNewFeeFromRate     = (10 + 2) * 100        = 1200
-      // additional            = max(1200 - 1000, 0)   = 200
-      mockedGetOriginalTxFeeContext.mockResolvedValue({
-        vsize: 100,
-        oldFeeSat: new BigNumber(1000),
-        oldFeeRateSatVb: new BigNumber(10),
-        incrementalFeeRateSatVb: new BigNumber(2),
+    it("returns what the replacement pays on top of the original fee", async () => {
+      // the coin module applies the RBF policy: minReplacementFee = 1200 for an original fee of 1000
+      mockedGetReplacementEstimate.mockResolvedValue({
+        minReplacementFee: 1200n,
+        originalFee: 1000n,
       });
 
       const result = await getAdditionalFeeRequiredForRbf({
-        mainAccount: {} as Account,
-        transactionToUpdate: { replaceTxId: "orig-txid" } as BtcTransaction,
+        mainAccount,
+        transactionToUpdate: toUpdate({ replaceTxId: "orig-txid", rbf: true }),
       });
 
       expect(result.toNumber()).toBe(200);
-      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(
-        config,
-        walletAccount,
-        "orig-txid",
-      );
+      expect(mockedGetReplacementEstimate).toHaveBeenCalledWith(mainAccount, "orig-txid");
+    });
+
+    it("never returns a negative fee", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({
+        minReplacementFee: 900n,
+        originalFee: 1000n,
+      });
+
+      const result = await getAdditionalFeeRequiredForRbf({
+        mainAccount,
+        transactionToUpdate: toUpdate({ replaceTxId: "orig-txid" }),
+      });
+
+      expect(result.toNumber()).toBe(0);
+    });
+
+    it("propagates a failed estimation", async () => {
+      mockedGetReplacementEstimate.mockRejectedValue(new Error("network error"));
+
+      await expect(
+        getAdditionalFeeRequiredForRbf({
+          mainAccount,
+          transactionToUpdate: toUpdate({ replaceTxId: "orig-txid" }),
+        }),
+      ).rejects.toThrow("network error");
     });
   });
 
   describe("getOriginalTxFeeRateSatVb", () => {
-    it("returns the original tx fee rate from the fee context", async () => {
-      mockedGetOriginalTxFeeContext.mockResolvedValue({
-        oldFeeRateSatVb: new BigNumber(10),
-      });
+    it("returns the original transaction fee rate of the replacement estimation", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({ originalFeePerByte: 10n });
 
-      const result = await getOriginalTxFeeRateSatVb({} as Account, "orig-txid");
+      const result = await getOriginalTxFeeRateSatVb(mainAccount, "orig-txid");
 
       expect(result?.toNumber()).toBe(10);
-      expect(mockedGetOriginalTxFeeContext).toHaveBeenCalledWith(
-        config,
-        walletAccount,
-        "orig-txid",
-      );
+      expect(mockedGetReplacementEstimate).toHaveBeenCalledWith(mainAccount, "orig-txid");
     });
 
-    it("returns null when there is no fee context", async () => {
-      mockedGetOriginalTxFeeContext.mockResolvedValue(null);
+    it("returns zero rates as such", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({ originalFeePerByte: 0n });
 
-      const result = await getOriginalTxFeeRateSatVb({} as Account, "orig-txid");
+      const result = await getOriginalTxFeeRateSatVb(mainAccount, "orig-txid");
+
+      expect(result?.toNumber()).toBe(0);
+    });
+
+    it("returns null when the estimation has no original rate", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({});
+
+      const result = await getOriginalTxFeeRateSatVb(mainAccount, "orig-txid");
 
       expect(result).toBeNull();
     });
 
-    it("returns null when resolving the fee context throws", async () => {
-      mockedGetOriginalTxFeeContext.mockRejectedValue(new Error("network error"));
+    it("returns null when the estimation throws", async () => {
+      mockedGetReplacementEstimate.mockRejectedValue(new Error("network error"));
 
-      const result = await getOriginalTxFeeRateSatVb({} as Account, "orig-txid");
+      const result = await getOriginalTxFeeRateSatVb(mainAccount, "orig-txid");
 
       expect(result).toBeNull();
     });

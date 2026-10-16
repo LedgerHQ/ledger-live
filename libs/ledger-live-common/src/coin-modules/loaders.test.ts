@@ -81,3 +81,33 @@ describe("gonka registration", () => {
     expect(getCryptoCurrencyById("gonka").family).toBe("cosmos");
   });
 });
+
+// ADR-065: the bitcoin family runs on the generic coin framework bridge; every Zcash account is
+// served by coin-zcash (see bridge/zcashRouting.ts).
+describe("bitcoin registration", () => {
+  const loaderOf = (family: string) => {
+    const loader = coinModuleLoaders.find(l => l.family === family);
+    if (!loader) throw new Error(`no ${family} loader`);
+    return loader;
+  };
+
+  it("leaves Zcash to the zcash loader", () => {
+    expect(loaderOf("bitcoin").supportedCoins).not.toContain("zcash");
+    expect(loaderOf("zcash").supportedCoins).toEqual(["zcash", "zcash_testnet"]);
+  });
+
+  it("gives the bitcoin family the generic-bridge modules", async () => {
+    const bitcoin = loaderOf("bitcoin");
+
+    expect(await bitcoin.loadBridgeApi?.()).toBe(
+      (await import("../families/bitcoin/bridge/api")).default,
+    );
+    expect(await bitcoin.loadSigner?.()).toBe((await import("../families/bitcoin/signer")).default);
+    expect(await bitcoin.loadAccountRawAssign?.()).toBe(
+      (await import("../families/bitcoin/accountRawAssign")).default,
+    );
+    expect(await bitcoin.loadLocalApi?.()).toBe(
+      (await import("../families/bitcoin/coinModuleApi")).createLocalBitcoinApi,
+    );
+  });
+});

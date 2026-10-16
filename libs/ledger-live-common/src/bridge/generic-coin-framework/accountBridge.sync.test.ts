@@ -11,7 +11,10 @@ const makeSyncMock = jest.mocked(makeSync);
 jest.mock("./signer", () => ({ getSigner: jest.fn(async () => ({})) }));
 jest.mock("./accountRawAssign", () => ({ getAccountRawAssignHooks: jest.fn(async () => ({})) }));
 // A family that sets nothing: the default is what has to keep the outer merge off.
-jest.mock("./bridge", () => ({ getBridgeApi: jest.fn(async () => ({})) }));
+jest.mock("./bridge", () => ({
+  getBridgeApi: jest.fn(async () => ({})),
+  getBridgeApiResolver: jest.fn(async () => () => ({})),
+}));
 
 const op = (hash: string, blockHeight: number) =>
   ({ id: hash, hash, blockHeight, accountId: "accId", type: "IN" }) as any;

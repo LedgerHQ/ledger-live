@@ -87,9 +87,11 @@ function createBitcoinTransaction(overrides?: Partial<Transaction>): Transaction
     amount: new BigNumber(0),
     recipient: "",
     useAllAmount: false,
-    utxoStrategy: {
-      strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
-      excludeUTXOs: [],
+    familySpecificData: {
+      utxoStrategy: {
+        strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
+        excludeUTXOs: [],
+      },
     },
     ...overrides,
   } as Transaction;
@@ -102,7 +104,6 @@ function createTransactionStatus(overrides?: Partial<TransactionStatus>): Transa
     estimatedFees: new BigNumber(0),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
-    txInputs: [],
     ...overrides,
   } as TransactionStatus;
 }
@@ -290,15 +291,19 @@ describe("useCoinControlScreenViewModel", () => {
     expect(result.current.changeToReturn.value).toBe("");
   });
 
-  it("should format change to return when status has txOutputs with change", () => {
+  it("should format change to return when the estimation has change outputs", () => {
     const params = buildBaseParams({
-      transaction: { amount: new BigNumber(5000), recipient: "bc1q", useAllAmount: false },
-      status: {
-        txOutputs: [
-          { isChange: false, value: new BigNumber(5000) },
-          { isChange: true, value: new BigNumber(2000) },
-        ],
-      } as TransactionStatus,
+      transaction: {
+        amount: new BigNumber(5000),
+        recipient: "bc1q",
+        useAllAmount: false,
+        feeParameters: {
+          outputs: [
+            { address: "bc1q", value: "5000", isChange: false },
+            { address: "bc1qchange", value: "2000", isChange: true },
+          ],
+        },
+      },
     });
 
     const { result } = renderHook(() => useCoinControlScreenViewModel(params), {
@@ -311,9 +316,11 @@ describe("useCoinControlScreenViewModel", () => {
   it("should set isCustomPickingStrategy true when utxo strategy is CUSTOM", () => {
     const params = buildBaseParams({
       transaction: {
-        utxoStrategy: {
-          strategy: bitcoinPickingStrategy.CUSTOM,
-          excludeUTXOs: [],
+        familySpecificData: {
+          utxoStrategy: {
+            strategy: bitcoinPickingStrategy.CUSTOM,
+            excludeUTXOs: [],
+          },
         },
       },
     });
@@ -329,9 +336,11 @@ describe("useCoinControlScreenViewModel", () => {
     const params = buildBaseParams({
       transaction: createBitcoinTransaction({
         amount: new BigNumber(1000),
-        utxoStrategy: {
-          strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
-          excludeUTXOs: [],
+        familySpecificData: {
+          utxoStrategy: {
+            strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
+            excludeUTXOs: [],
+          },
         },
       }),
     });

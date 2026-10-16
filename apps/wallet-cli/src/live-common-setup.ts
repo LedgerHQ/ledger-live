@@ -48,14 +48,25 @@ const walletCliLoaders: CoinModuleLoader[] = [
     supportedCoins: ["bitcoin"],
     accountDescriptorType: "utxo",
     loadSetup: () => import("@ledgerhq/live-common/families/bitcoin/setup"),
-    loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
+    loadTransaction: () =>
+      import("@ledgerhq/live-common/families/bitcoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-bitcoin/deviceTransactionConfig").then(m => m.default),
+      import("@ledgerhq/live-common/families/bitcoin/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>
       import("@ledgerhq/live-common/families/bitcoin/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () =>
       import("@ledgerhq/live-common/families/bitcoin/platformAdapter").then(m => m.default),
-    loadAccount: () => import("@ledgerhq/coin-bitcoin/account").then(m => m.default),
+    loadAccount: () =>
+      import("@ledgerhq/live-common/families/bitcoin/account").then(m => m.default),
+    loadSigner: () => import("@ledgerhq/live-common/families/bitcoin/signer").then(m => m.default),
+    loadBridgeApi: () =>
+      import("@ledgerhq/live-common/families/bitcoin/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("@ledgerhq/live-common/families/bitcoin/accountRawAssign").then(m => m.default),
+    loadLocalApi: () =>
+      import("@ledgerhq/live-common/families/bitcoin/coinModuleApi").then(
+        m => m.createLocalBitcoinApi,
+      ),
   },
   {
     family: "evm",

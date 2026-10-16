@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { writeIntentApi } from "./portfolio/intentApi";
 import {
   addAccountToBuyLinks,
   bigNumberToBigIntDeep,
@@ -51,12 +52,14 @@ export function genericGetTransactionStatus(
       }
     }
 
+    // Through the portfolio layer when the coin config enables it: the side writing validates.
+    const intentApi = writeIntentApi(bridgeApi, coinModuleApi, account, { ...transaction });
     const buildIntentData = bridgeApi.buildIntentData;
     const intent = transactionToIntent(
       account,
       draftTransaction,
       bridgeApi.computeIntentType,
-      intent => coinModuleApi.craftTransactionData(context, intent),
+      intent => intentApi.craftTransactionData(context, intent),
       // The real transaction, not the draft: the draft is a field-by-field allowlist, so a field it
       // omits reads as `undefined` inside the hook with no type error, and this path would validate
       // an intent whose `data` differs from the one `signOperation` hands the device. Everything the
@@ -89,7 +92,7 @@ export function genericGetTransactionStatus(
     });
 
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
-      await coinModuleApi.validateIntent(
+      await intentApi.validateIntent(
         context,
         intent,
         extractBalances(

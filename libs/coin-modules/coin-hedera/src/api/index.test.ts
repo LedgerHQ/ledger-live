@@ -1,5 +1,5 @@
 import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
-import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
+import { withDefaults, withLogging } from "@ledgerhq/coin-module-framework/api/index";
 import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
@@ -32,6 +32,7 @@ const mockCombine = jest.mocked(logic.combine);
 const mockCraftTransaction = jest.mocked(logic.craftTransaction);
 const mockEstimateFees = jest.mocked(logic.estimateFees);
 const mockGetAccountInfo = jest.mocked(logic.getAccountInfo);
+const mockGetAddressesForPublicKey = jest.mocked(logic.getAddressesForPublicKey);
 const mockGetBalance = jest.mocked(logic.getBalance);
 const mockLastBlockV2 = jest.mocked(logic.lastBlockV2);
 const mockGetBlockV2 = jest.mocked(logic.getBlockV2);
@@ -73,6 +74,7 @@ describe("createApi", () => {
     expect(impl.craftTransactionData).toBeInstanceOf(Function);
     expect(impl.estimateFees).toBeInstanceOf(Function);
     expect(impl.getAccountInfo).toBeInstanceOf(Function);
+    expect(impl.getAddressesForPublicKey).toBeInstanceOf(Function);
     expect(impl.getBalance).toBeInstanceOf(Function);
     expect(impl.getBlock).toBeInstanceOf(Function);
     expect(impl.getBlockInfo).toBeInstanceOf(Function);
@@ -221,6 +223,31 @@ describe("createApi", () => {
       expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
       expect(mockGetAccountInfo).toHaveBeenCalledWith(await mockContext.config(), "0.0.1234");
       expect(result).toEqual(accountInfo);
+    });
+  });
+
+  describe("getAddressesForPublicKey", () => {
+    it("should call getAddressesForPublicKey from logic with the context config", async () => {
+      mockGetAddressesForPublicKey.mockResolvedValue(["0.0.1", "0.0.2"]);
+
+      const result = await api.getAddressesForPublicKey(mockContext, "public-key");
+
+      expect(mockGetAddressesForPublicKey).toHaveBeenCalledTimes(1);
+      expect(mockGetAddressesForPublicKey).toHaveBeenCalledWith(
+        await mockContext.config(),
+        "public-key",
+      );
+      expect(result).toEqual(["0.0.1", "0.0.2"]);
+    });
+
+    it("is kept, as an extra member, by the logging wrapper a consumer applies", async () => {
+      mockGetAddressesForPublicKey.mockResolvedValue(["0.0.1"]);
+
+      const logged = withLogging(withDefaults(createApi(mockCurrency.id)));
+
+      await expect(logged.getAddressesForPublicKey(mockContext, "public-key")).resolves.toEqual([
+        "0.0.1",
+      ]);
     });
   });
 

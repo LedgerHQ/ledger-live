@@ -5,7 +5,6 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, CryptoAssetsStore, StakingDelegation } from "@ledgerhq/types-live";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import { log } from "@ledgerhq/logs";
 import {
   PublicKey,
   SystemProgram,
@@ -16,6 +15,7 @@ import bs58 from "bs58";
 import solanaBridge, {
   applyDeviceSignResult,
   buildIntentData,
+  buildTokenAccountShapes,
   computeIntentType,
   getDeviceSignOptions,
   describeOptimisticOperation,
@@ -25,17 +25,15 @@ import solanaBridge, {
 } from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
-jest.mock("@ledgerhq/logs");
 
-const mockGetTokenAccountShapes = jest.fn();
-jest.mock("@ledgerhq/coin-solana/logic/tokenAccountShapes", () => ({
-  getTokenAccountShapes: (...args: unknown[]) => mockGetTokenAccountShapes(...args),
-}));
 const mockGetLatestBlockhash = jest.fn();
 jest.mock("@ledgerhq/coin-solana/network/index", () => ({
   getChainAPI: () => ({ getLatestBlockhash: mockGetLatestBlockhash }),
 }));
-jest.mock("../../../config", () => ({ getCurrencyConfiguration: () => ({}) }));
+const mockGetCurrencyConfiguration = jest.fn((): object => ({}));
+jest.mock("../../../config", () => ({
+  getCurrencyConfiguration: () => mockGetCurrencyConfiguration(),
+}));
 jest.mock("@ledgerhq/coin-solana/utils", () => ({
   ...jest.requireActual("@ledgerhq/coin-solana/utils"),
   endpointByCurrencyId: () => "endpoint",
@@ -412,7 +410,12 @@ describe("solana bridge", () => {
       const blockhashOf = (base64: string) =>
         VersionedTransaction.deserialize(Buffer.from(base64, "base64")).message.recentBlockhash;
 
-      beforeEach(() => mockGetLatestBlockhash.mockResolvedValue({ blockhash: refreshed }));
+      beforeEach(() => {
+        mockGetCurrencyConfiguration.mockReturnValue({});
+        mockGetLatestBlockhash.mockReset();
+        mockGetLatestBlockhash.mockResolvedValue({ blockhash: refreshed });
+      });
+      afterAll(() => mockGetCurrencyConfiguration.mockReturnValue({}));
 
       it("takes a fresh blockhash after the review and signs with it", async () => {
         const unsigned = base64Of(transactionWith(crafted));
@@ -434,6 +437,20 @@ describe("solana bridge", () => {
         const raw = base64Of(transactionWith(crafted, Buffer.alloc(64, 7)));
 
         expect(getDeviceSignOptions({ raw }, withToken)).not.toHaveProperty("delayed");
+      });
+
+      it("signs the crafted blockhash when the portfolio layer serves the currency", () => {
+        mockGetCurrencyConfiguration.mockReturnValue({
+          portfolio: { enabled: true, mode: "local" },
+        });
+        const unsigned = base64Of(transactionWith(crafted));
+        const options = getDeviceSignOptions({ recipient: "addr" }, withToken);
+
+        expect(options).toMatchObject({ solanaRPCURL: "endpoint" });
+        expect(options).not.toHaveProperty("delayed");
+        expect(options).not.toHaveProperty("fetchBlockhash");
+        expect(applyDeviceSignResult(unsigned, options)).toBe(unsigned);
+        expect(mockGetLatestBlockhash).not.toHaveBeenCalled();
       });
     });
   });
@@ -459,21 +476,19 @@ describe("solana bridge", () => {
   });
 
   describe("buildTokenAccountShapes", () => {
-    it("reads the token account shapes off the chain", async () => {
-      mockGetTokenAccountShapes.mockResolvedValue({ mint: { state: "frozen" } });
+    it("maps the token accounts coin-solana reports in its account metadata", () => {
+      const tokenAccounts = { mint: { state: "frozen", extensions: { nonTransferable: true } } };
 
-      expect(await solanaBridge(solana).buildTokenAccountShapes?.("owner")).toEqual({
-        mint: { state: "frozen" },
-      });
+      expect(
+        solanaBridge(solana).buildTokenAccountShapes?.("owner", { type: "solana", tokenAccounts }),
+      ).toEqual(tokenAccounts);
     });
 
-    it("reports no shape rather than failing the sync when the chain is unreachable", async () => {
-      mockGetTokenAccountShapes.mockRejectedValue(new Error("network"));
-
-      expect(await solanaBridge(solana).buildTokenAccountShapes?.("owner")).toEqual({});
-      expect(log).toHaveBeenCalledWith("solana", "token account shapes unavailable", {
-        error: "Error: network",
-      });
+    it("reports no shape without Solana metadata, rather than failing the sync", () => {
+      expect(solanaBridge(solana).buildTokenAccountShapes).toBe(buildTokenAccountShapes);
+      expect(buildTokenAccountShapes("owner", undefined)).toEqual({});
+      expect(buildTokenAccountShapes("owner", { type: "none" })).toEqual({});
+      expect(buildTokenAccountShapes("owner", { type: "solana" })).toEqual({});
     });
   });
 });

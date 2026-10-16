@@ -28,7 +28,7 @@ import { resolveFamily } from "../bridge/zcashRouting";
 import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { type AccountNamesState } from "@domain/entity-account-name";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
+import { getBitcoinAccountKeys } from "../families/bitcoin/accountKeys";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
@@ -294,15 +294,9 @@ export const bitcoinFamilyAccountGetAddressLogic = (
       return Promise.reject(new Error("Invalid derivationPath"));
     }
 
-    const walletAccount = getWalletAccount(account);
-    const address = walletAccount.xpub.crypto.getAddress(
-      walletAccount.xpub.derivationMode,
-      walletAccount.xpub.xpub,
-      accountNumber,
-      index,
-    );
+    const address = getBitcoinAccountKeys(account).addressAt(accountNumber, index);
     tracking.bitcoinFamilyAccountAddressSuccess(manifest);
-    return Promise.resolve(address);
+    return address;
   }
 
   tracking.bitcoinFamilyAccountAddressSuccess(manifest);
@@ -347,12 +341,7 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
     return Promise.reject(new Error("Invalid derivationPath"));
   }
 
-  const walletAccount = getWalletAccount(account);
-  const publicKey = await walletAccount.xpub.crypto.getPubkeyAt(
-    walletAccount.xpub.xpub,
-    accountNumber,
-    index,
-  );
+  const publicKey = await getBitcoinAccountKeys(account).pubkeyAt(accountNumber, index);
   tracking.bitcoinFamilyAccountPublicKeySuccess(manifest);
   return publicKey.toString("hex");
 };
@@ -495,11 +484,10 @@ export const bitcoinFamilyAccountGetAddressesLogic = async (
   }
 
   try {
-    const walletAccount = getWalletAccount(account);
-    const { xpub } = walletAccount;
-    const { path: rootPath, index: accountIndex } = walletAccount.params;
+    const keys = getBitcoinAccountKeys(account);
+    const { rootPath, accountIndex } = keys;
 
-    const allAddresses = await xpub.getXpubAddresses();
+    const allAddresses = keys.addresses();
 
     let maxReceiveIndex = 0;
     let maxChangeIndex = 0;
@@ -507,13 +495,12 @@ export const bitcoinFamilyAccountGetAddressesLogic = async (
     const changeIndicesToInclude = new Set<number>();
 
     for (const a of allAddresses) {
-      const hasUtxo = xpub.storage.getAddressUnspentUtxos(a).length > 0;
-      if (a.account === 0) {
+      if (a.chain === 0) {
         if (a.index > maxReceiveIndex) maxReceiveIndex = a.index;
-        if (hasUtxo) receiveIndicesToInclude.add(a.index);
-      } else if (a.account === 1) {
+        if (a.hasUtxo) receiveIndicesToInclude.add(a.index);
+      } else if (a.chain === 1) {
         if (a.index > maxChangeIndex) maxChangeIndex = a.index;
-        if (hasUtxo) changeIndicesToInclude.add(a.index);
+        if (a.hasUtxo) changeIndicesToInclude.add(a.index);
       }
     }
 
@@ -531,7 +518,7 @@ export const bitcoinFamilyAccountGetAddressesLogic = async (
 
     const storedAddressByAccountIndex = new Map<string, string>();
     for (const a of allAddresses) {
-      storedAddressByAccountIndex.set(`${a.account}:${a.index}`, a.address);
+      storedAddressByAccountIndex.set(`${a.chain}:${a.index}`, a.address);
     }
 
     const addressPromises = toInclude.map(({ account: addrAccount, index: addrIndex }) => {
@@ -539,10 +526,10 @@ export const bitcoinFamilyAccountGetAddressesLogic = async (
       const cached = storedAddressByAccountIndex.get(key);
       return cached !== undefined
         ? Promise.resolve(cached)
-        : xpub.crypto.getAddress(xpub.derivationMode, xpub.xpub, addrAccount, addrIndex);
+        : keys.addressAt(addrAccount, addrIndex);
     });
     const publicKeyPromises = toInclude.map(({ account: addrAccount, index: addrIndex }) =>
-      xpub.crypto.getPubkeyAt(xpub.xpub, addrAccount, addrIndex),
+      keys.pubkeyAt(addrAccount, addrIndex),
     );
 
     const [addressStrs, publicKeys] = await Promise.all([

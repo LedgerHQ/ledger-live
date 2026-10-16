@@ -45,8 +45,8 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
   // Follow the transaction when the recipient is driven externally (the field
   // is locked). Also runs once on the unlock transition so clearing the
   // recipient clears the input. Inert wherever recipientIsReadOnly is never
-  // true -- i.e. every currency today -- so typing and bc1... lowercasing in
-  // coin-bitcoin's updateTransaction are untouched.
+  // true -- i.e. every currency today -- so typing and any recipient
+  // normalization in the bridge's updateTransaction are untouched.
   useEffect(() => {
     const isReadOnly = Boolean(status?.recipientIsReadOnly);
     if (isReadOnly || wasReadOnly.current) {

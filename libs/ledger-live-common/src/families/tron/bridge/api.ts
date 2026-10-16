@@ -1,8 +1,8 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { fetchTronAccount } from "@ledgerhq/coin-tron/network";
-import { defaultTronResources, fetchTronResources } from "@ledgerhq/coin-tron/resources";
+import type { AccountInfo, AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { TronAccountInfo } from "@ledgerhq/coin-tron/logic/getAccountInfo";
+import { defaultTronResources } from "@ledgerhq/coin-tron/resources";
+import { fromTronResourcesRaw } from "@ledgerhq/coin-tron/types/serialization";
 import { RESOURCE_STAKING_OPERATION_TYPES, SUPPORTED_MODES } from "@ledgerhq/coin-tron/logic/modes";
-import type { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import type { TronAccount, Transaction } from "../types";
 import type { TronTxData } from "@ledgerhq/coin-tron/types/assets";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -15,27 +15,27 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { BigNumber } from "bignumber.js";
-import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 
 /**
- * Attaches `tronResources` (frozen/unfrozen amounts, votes, unwithdrawn reward) to the account
- * shape — the whole Tron UI reads it.
+ * Attaches `tronResources` (frozen/unfrozen amounts, votes, unwithdrawn reward, the four raw
+ * bandwidth limits) to the account shape — the whole Tron UI reads it — from what coin-tron reports
+ * in its account metadata (ADR-045), in its JSON form.
  *
- * The coin module's `getAccountInfo` (ADR-045) cannot feed this — it reports collapsed
- * energy/bandwidth totals, while `tronResources.bandwidth` carries the four raw free/staked limits and
- * `isAccountEmpty` reads one of them. So the `accountInfo` the framework passes as its second argument
- * goes unread here, and this hook fetches the account itself.
+ * An unactivated address still gets the zeroed defaults. Leaving `tronResources` absent instead would
+ * invert `isAccountEmpty` — it reads `bandwidth.freeLimit.eq(0)`, so no resources means "not empty" —
+ * and would hide the staking actions, which gate on `mainAccount.tronResources` being present.
+ * Metadata that is not Tron's, or reports no resources, contributes nothing: the account keeps its
+ * stored resources.
  */
-export async function buildAccountShape(address: string): Promise<FamilyAccountShape> {
-  const context = buildContext<TronCoinConfig>("tron");
-  const config = await context.config();
-  const accounts = await fetchTronAccount(context.logger, config, address);
-  // An unactivated address still gets the zeroed defaults. Leaving `tronResources` absent instead
-  // would invert `isAccountEmpty` — it reads `bandwidth.freeLimit.eq(0)`, so no resources means
-  // "not empty" — and would hide the staking actions, which gate on `mainAccount.tronResources`
-  // being present.
-  if (accounts.length === 0) return { tronResources: defaultTronResources };
-  return { tronResources: await fetchTronResources(context.logger, config, accounts[0]) };
+export function buildAccountShape(
+  _address: string,
+  accountInfo?: AccountInfo,
+): FamilyAccountShape | undefined {
+  if (accountInfo?.type !== "tron") return undefined;
+  const { activated, resources } = accountInfo as Partial<TronAccountInfo>;
+  if (activated === false) return { tronResources: defaultTronResources };
+  if (typeof resources !== "object" || resources === null) return undefined;
+  return { tronResources: fromTronResourcesRaw(resources) };
 }
 
 // A TRC10 transfer is crafted with the numeric asset id (encoded into the TransferAssetContract

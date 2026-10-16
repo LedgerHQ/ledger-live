@@ -136,6 +136,20 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         feesStrategy: "fast",
         nonce: new BigNumber(0),
       };
+    case "bitcoin":
+      // UTXO chain: same no-sequence pattern as kaspa above. The coin selection inputs the user can
+      // set — strategy and excluded UTXOs (coin control) — travel in familySpecificData (ADR-065).
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        feesStrategy: "medium",
+        nonce: new BigNumber(0),
+        familySpecificData: { utxoStrategy: { strategy: 0, excludeUTXOs: [] } },
+      };
     case "stacks":
       // Unlike near/vechain/cardano above, leaving nonce unset lets craftTransaction/estimateFees
       // fetch the real sequential nonce instead of defaulting to 0.

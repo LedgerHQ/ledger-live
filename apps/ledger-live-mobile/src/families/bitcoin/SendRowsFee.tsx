@@ -7,7 +7,10 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import { Trans } from "~/context/Locale";
-import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import {
+  getFeePerByte,
+  type Transaction as BitcoinTransaction,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
@@ -65,19 +68,19 @@ function BitcoinFeeRows({
             {
               label: transaction.feesStrategy,
               forceValueLabel: null,
-              amount: (transaction as BitcoinTransaction).feePerByte,
+              amount: getFeePerByte(transaction as BitcoinTransaction),
               unit: defaultStrategies[0].unit,
             },
           ]
         : defaultStrategies,
     [defaultStrategies, transaction],
   );
+  // a preset's rate comes with the estimation, a custom one is already in familySpecificData
   const onFeesSelected = useCallback(
-    ({ amount, label }: SelectFeeStrategy) => {
+    ({ label }: SelectFeeStrategy) => {
       setTransaction(
         bridge.updateTransaction(transaction as BitcoinTransaction, {
           feesStrategy: label as BitcoinTransaction["feesStrategy"],
-          feePerByte: amount,
         }),
       );
     },

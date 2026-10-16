@@ -2,13 +2,23 @@ import type {
   AccountInfo,
   AssetInfo,
   BalanceOptions,
+  CoinModuleApi,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
+import type {
+  AccountModuleApi,
+  AccountOperation,
+  CraftedAccountTransaction,
+  Versioned,
+} from "@ledgerhq/account-module-framework";
 import type { GetAddressResult } from "../derivation";
+import type { SignerContext } from "../signer";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import type {
   Account,
   AccountReadiness,
+  DerivationMode,
   Operation as LiveOperation,
   OperationType,
   SignRawOperationFnSignature,
@@ -60,8 +70,146 @@ export type AddressLookup = {
   keyControlsAccount: (publicKey: string, account: Account) => boolean;
 };
 
+/** What the network knows of a transaction (in memory). */
+export type TransactionInfo = {
+  hash: string;
+  /** null while known but not in a block. */
+  block: { height: number; hash: string; time: Date } | null;
+  fee?: bigint;
+  value?: bigint;
+  sequence?: bigint;
+  /** Input data (EVM calldata), hex. */
+  data?: string;
+};
+
+/**
+ * What a family hook reads from the chain, served by the path the account is on: the coin module
+ * (plus the family's `legacyChainReads`) on the legacy path, the portfolio layer only when the
+ * currency's portfolio is enabled. A hook cannot tell which path it is on.
+ *
+ * Each read rejects with `ChainReadUnsupportedError` when the path cannot serve it; a hook maps that
+ * to an absent value. Any other rejection is the read's own failure.
+ */
+export type ChainReads = {
+  /** ADR-045 metadata, JSON form; `{ type: "none" }` when there is none. Memoised per bridge call. */
+  getAccountInfo: (address: string) => Promise<AccountInfo>;
+  /** The coin module's read-only `call`: opaque, network-defined parameters and result. */
+  call: (params: unknown) => Promise<unknown>;
+  getNextSequence: (address: string) => Promise<bigint>;
+  /** The addresses a public key controls, for chains whose address the network hands out. */
+  getAddressesForPublicKey: (publicKey: string) => Promise<string[]>;
+  /** undefined when the network does not know the hash. */
+  getTransactionInfo: (hash: string) => Promise<TransactionInfo | undefined>;
+};
+
+/**
+ * The address lookup a family declares; the bridge binds `chain` before handing it to jsHelpers'
+ * `AddressLookup`.
+ */
+export type FamilyAddressLookup = {
+  /** @see AddressLookup.getAddresses — reading the network through `chain` only. */
+  getAddresses: (derived: GetAddressResult, chain: ChainReads) => Promise<string[]>;
+  /** @see AddressLookup.keyControlsAccount */
+  keyControlsAccount: (publicKey: string, account: Account) => boolean;
+};
+
+/** Device events a family signer reports while signing (bitcoin streams the previous transactions). */
+export type SignerDeviceEvents = {
+  onDeviceStreaming: (event: { progress: number; index: number; total: number }) => void;
+  onDeviceSignatureRequested: () => void;
+  onDeviceSignatureGranted: () => void;
+};
+
+/** An unspent output of a UTXO account, as a binding reads it. */
+export type AccountUtxo = {
+  txid: string;
+  vout: number;
+  value: bigint;
+  /** As the account shows it. */
+  address: string;
+  /** null while unconfirmed. */
+  height: number | null;
+  replaceable: boolean;
+  change: boolean;
+};
+
+/**
+ * What a binding reads once an account is synced, whichever path synced it (the account module
+ * itself, or the portfolio layer), to fill the family fields of the account.
+ */
+export type SyncedAccountModule = {
+  /** The account key (the extended public key of a UTXO account). */
+  key: string;
+  /** The module state to persist; `undefined` when it has none. */
+  state: Versioned | undefined;
+  /** The account's unspent outputs. */
+  getUTXOs: () => Promise<AccountUtxo[]>;
+};
+
+/**
+ * A family whose accounts are served by an account module (ADR-064 Option 1): the generic bridge
+ * syncs, completes intents and crafts through the module, which owns the account (every address,
+ * its history, its state) and delegates the chain to the coin module. What stays here is the
+ * Ledger Wallet side of the family: the device, the persistence and the presentation.
+ */
+export type AccountModuleBinding = {
+  /** The account module of a currency, on the coin module the generic bridge resolves. */
+  create: (
+    coinModuleApi: CoinModuleApi<any, any, any>,
+    currencyId: string,
+  ) => AccountModuleApi<any>;
+  /** The account key read on the device (the extended public key of a UTXO account). */
+  getAccountKey: (
+    request: {
+      currencyId: string;
+      /** Account level, e.g. "84'/0'/0'". */
+      derivationPath: string;
+      derivationMode: DerivationMode;
+      deviceId: string | undefined;
+    },
+    signerContext: SignerContext<any>,
+  ) => Promise<string>;
+  /** The module state the account persists; `undefined` when it has none. */
+  readState: (account: Account | undefined) => Versioned | undefined;
+  /** The family fields of a synced account (its resources, the state to persist, ...). */
+  accountFields: (synced: SyncedAccountModule) => Promise<Partial<Account>>;
+  /**
+   * The height the module's last sync reported (a UTXO state's `syncedHeight`); `undefined` when
+   * the state reports none.
+   */
+  syncedHeight: (state: Versioned | undefined) => number | undefined;
+  /** Module options of the write path, from the family transaction (coin control, replacement). */
+  accountOptions?: (transaction: Record<string, unknown>) => unknown;
+  /** Completes the generic mapping of an account operation to a Ledger Wallet operation. */
+  toLiveOperation?: (operation: AccountOperation, live: LiveOperation) => LiveOperation;
+  /** A pending operation settled although its own transaction is not on chain (replaced). */
+  isPendingSettled?: (pending: LiveOperation, synced: Account) => boolean;
+  /** The synced operation of a sent transaction, completed from its optimistic one. */
+  mergeSentOperation?: (synced: LiveOperation, optimistic: LiveOperation) => LiveOperation;
+  /** Completes the optimistic operation with what only the family shows. */
+  decorateOptimisticOperation?: (
+    operation: LiveOperation,
+    crafted: CraftedAccountTransaction,
+    account: Account,
+    transaction: Record<string, unknown>,
+  ) => LiveOperation;
+  /** Address parameters of the swap/exchange flow, when the family's differ from the default. */
+  getSerializedAddressParameters?: (account: Account, addressFormat?: string) => Buffer;
+};
+
 export type BridgeApi = {
   getChainSpecificRules?: ChainSpecificRules;
+  /**
+   * The reads the legacy path makes beyond the coin module, merged over the coin-module reads into
+   * the `ChainReads` its hooks get. Never consulted when the currency's portfolio is enabled: there,
+   * every read goes through the portfolio layer. Lives in the family's `bridge/legacyChainReads.ts`,
+   * the only bridge file of a family allowed to import network modules.
+   */
+  legacyChainReads?: (
+    currency: CryptoCurrency,
+    coinModuleApi: CoinModuleApi<any, any, any>,
+    context: Context<any>,
+  ) => Partial<ChainReads>;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
@@ -123,29 +271,43 @@ export type BridgeApi = {
    * Account` rather than a list of names so a field added upstream is covered the day it lands;
    * anything a later `postSync` fills is unprotected.
    *
-   * `accountInfo` is the coin module's own `getAccountInfo` output (ADR-045), `undefined` when the
-   * module does not implement it. This hook is the *mapper*: the framework performs the standard
-   * call, and the family decides which of its own account fields that metadata feeds, so nothing
-   * chain-shaped reaches the generic account. A family whose account fields need more than
-   * `getAccountInfo` exposes fetches the remainder here.
+   * `accountInfo` is `ChainReads.getAccountInfo` (ADR-045), in its JSON form on both paths
+   * (`{ type: "none" }` when the network reports nothing more). This hook is the *mapper*: the
+   * framework performs the read, and the family decides which of its own account fields that
+   * metadata feeds, so nothing chain-shaped reaches the generic account. It reads nothing itself:
+   * whatever the fields need must come through `getAccountInfo`.
    *
    * A rejection fails the sync, leaving the last good account in place for the next poll to retry —
    * the framework cannot know whether these fields are load-bearing for the family. Return
    * `undefined` (catching inside the hook) for a contribution the account is correct without. That
-   * only covers what this hook does itself: the `getAccountInfo` call feeding it is awaited first, so
-   * a rejection there fails the sync without ever reaching the hook.
+   * only covers what this hook does itself: the `getAccountInfo` read feeding it is awaited first, so
+   * a rejection there fails the sync without ever reaching the hook — except
+   * `ChainReadUnsupportedError`, which skips the hook and keeps the stored family fields.
    */
   buildAccountShape?: (
     address: string,
     accountInfo?: AccountInfo,
   ) => Promise<FamilyAccountShape | undefined> | FamilyAccountShape | undefined;
-  /** Family-specific token sub-account fields, keyed by the token's `contractAddress`. */
+  /**
+   * Family-specific token sub-account fields, keyed by the token's `contractAddress`, mapped from
+   * `ChainReads.getAccountInfo` (JSON form) like `buildAccountShape`. `accountInfo` is `undefined`
+   * when that read failed or the path cannot serve it.
+   */
   buildTokenAccountShapes?: (
     address: string,
+    accountInfo: AccountInfo | undefined,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
-  refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
+  /**
+   * The pending operations the sync did not list, as confirmed operations when `chain` finds them
+   * mined (for chains without an explorer). Any other operation is left out of the result.
+   */
+  refreshOperations?: (operations: LiveOperation[], chain: ChainReads) => Promise<LiveOperation[]>;
   adaptOperations?: (address: string, operations: LiveOperation[]) => LiveOperation[];
-  validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
+  /** Checks a signed transaction before broadcast, reading the chain through `chain` only. */
+  validateTransaction?: (
+    signature: string,
+    chain: ChainReads,
+  ) => Promise<{ error: Error | undefined }>;
   /**
    * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
    * `GenericTransaction.feeParameters`) into the `customFees.parameters` bag it hands
@@ -200,6 +362,7 @@ export type BridgeApi = {
    * @param address - The account address.
    * @param operations - The full merged operation list.
    * @param stakingResources - The current staking resources to enrich.
+   * @param chain - The chain reads of the path the account is on, the hook's only network access.
    * @returns The enriched staking resources, or the same object unchanged when no enrichment is needed.
    */
   enrichStakingResources?: (
@@ -207,6 +370,7 @@ export type BridgeApi = {
     address: string,
     operations: LiveOperation[],
     stakingResources: StakingResources,
+    chain: ChainReads,
   ) => Promise<StakingResources>;
   /**
    * Optional hook returning the account's generic readiness projection, written to
@@ -215,15 +379,20 @@ export type BridgeApi = {
    *
    * @param currency - The crypto currency of the account being synced.
    * @param address - The account address.
+   * @param chain - The chain reads of the path the account is on, the hook's only network access.
    * @returns The readiness of the account (ready flag + optional reason).
    */
-  getAccountReadiness?: (currency: CryptoCurrency, address: string) => Promise<AccountReadiness>;
+  getAccountReadiness?: (
+    currency: CryptoCurrency,
+    address: string,
+    chain: ChainReads,
+  ) => Promise<AccountReadiness>;
   /**
    * For chains whose address is handed out by the network, not derived from the path (ADR-055).
    * When present, scan asks it for the addresses a device key controls, and `receive()` verifies the
    * device through `keyControlsAccount`.
    */
-  addressLookup?: AddressLookup;
+  addressLookup?: FamilyAddressLookup;
   /**
    * Defaults to `false` on the generic coin framework bridge, whose account shape already returns
    * the merged, bounded list: merging again would put back the operations the bound dropped. Set
@@ -241,4 +410,6 @@ export type BridgeApi = {
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
    */
   accountIdFromPublicKey?: boolean;
+  /** @see AccountModuleBinding */
+  accountModule?: AccountModuleBinding;
 };

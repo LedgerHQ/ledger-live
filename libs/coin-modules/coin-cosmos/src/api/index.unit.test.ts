@@ -16,6 +16,7 @@ jest.mock("../network/Cosmos", () => ({
     getUnbondings: jest.fn().mockResolvedValue([]),
     getStakingPositions: jest.fn().mockResolvedValue({ delegations: [], unbondings: [] }),
     broadcastRawTransaction: jest.fn().mockResolvedValue("HASH"),
+    getRedelegationsWithQueued: jest.fn().mockResolvedValue([]),
   })),
 }));
 
@@ -58,6 +59,7 @@ describe("api/createApi", () => {
     const api = createApi("cosmos") as unknown as Record<string, unknown>;
 
     const methods = [
+      "getAccountInfo",
       "getBalance",
       "getNextSequence",
       "lastBlock",
@@ -80,6 +82,10 @@ describe("api/createApi", () => {
   it("wires the supported delegations to the logic layer", async () => {
     const api = createApi("cosmos");
 
+    await expect(api.getAccountInfo(context, "cosmos1a")).resolves.toEqual({
+      type: "cosmos",
+      redelegations: [],
+    });
     await expect(api.getBalance(context, "cosmos1a")).resolves.toEqual([
       { value: 0n, asset: { type: "native" }, locked: 0n },
     ]);
@@ -114,6 +120,9 @@ describe("api/createApi", () => {
 
     const osmosisApi = createApi("osmosis");
     await osmosisApi.lastBlock(makeContext(osmosisConfig));
+    expect(CosmosAPI).toHaveBeenLastCalledWith("osmosis", undefined, osmosisConfig);
+
+    await osmosisApi.getAccountInfo(makeContext(osmosisConfig), "osmo1a");
     expect(CosmosAPI).toHaveBeenLastCalledWith("osmosis", undefined, osmosisConfig);
   });
 });

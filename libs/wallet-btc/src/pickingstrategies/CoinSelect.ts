@@ -1,10 +1,8 @@
 import BigNumber from "bignumber.js";
-import flatten from "lodash/flatten";
 import sortBy from "lodash/sortBy";
 import { NotEnoughBalance } from "../errors";
 import { Output } from "../storage/types";
-import Xpub from "../xpub";
-import { PickingStrategy } from "./types";
+import { PickingStrategy, type UtxoSelection, withoutExcludedUtxos } from "./types";
 import * as utils from "../utils";
 import { DeepFirst } from "./DeepFirst";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
@@ -15,30 +13,15 @@ import { OutputInfo } from "..";
  * Aims to pick the best UTXOs to minimize the transaction fees in the current transaction
  */
 export class CoinSelect extends PickingStrategy {
-  async selectUnspentUtxosToUse(
+  selectFromUtxos(
     logger: Logger,
-    xpub: Xpub,
+    candidates: Output[],
     outputs: OutputInfo[],
     feePerByte: number,
-  ): Promise<{
-    unspentUtxos: Output[];
-    totalValue: BigNumber;
-    fee: number;
-    needChangeoutput: boolean;
-  }> {
-    // get the utxos to use as input
-    // from all addresses of the account
-    const addresses = await xpub.getXpubAddresses();
+  ): UtxoSelection {
     logger("picking strategy", "Coinselect");
 
-    const unspentUtxos = flatten(
-      await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
-    ).filter(
-      o =>
-        !this.excludedUTXOs.filter(
-          x => x.hash === o.output_hash && x.outputIndex === o.output_index,
-        ).length,
-    );
+    const unspentUtxos = withoutExcludedUtxos(candidates, this.excludedUTXOs);
 
     const TOTAL_TRIES = 100000;
     logger("picking strategy", "utxos", unspentUtxos);
@@ -193,6 +176,6 @@ export class CoinSelect extends PickingStrategy {
     }
 
     const pickingStrategy = new DeepFirst(this.crypto, this.derivationMode, this.excludedUTXOs);
-    return pickingStrategy.selectUnspentUtxosToUse(logger, xpub, outputs, feePerByte);
+    return pickingStrategy.selectFromUtxos(logger, unspentUtxos, outputs, feePerByte);
   }
 }

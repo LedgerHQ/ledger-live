@@ -1,5 +1,6 @@
 import { findCryptoCurrencyByNetwork } from "./utils";
 import { loadSponsoredApiForFamily } from "../../coin-modules/registry";
+import { isPortfolioEnabledFor } from "./portfolio/config";
 import type { AssetInfo, FeeOptionMeta } from "@ledgerhq/coin-module-framework/api/index";
 
 export type EnergyRentStatus = "pending" | "paid" | "delivered" | "failed" | "unknown";
@@ -79,13 +80,18 @@ export interface SponsoredCoinApi {
   rentPayment(order: EnergyRentOrder): RentPayment;
 }
 
-/** Null unless `kind` is "local" and the family registers a sponsored seam. Pass the network id, not a token's currency id. */
+/**
+ * Null unless `kind` is "local" and the family registers a sponsored seam. Pass the network id, not
+ * a token's currency id. Null too for a currency served by the portfolio layer: the layer serves no
+ * sponsored fee yet, so the Send flow offers the standard fee only.
+ */
 export async function getSponsoredCoinApi(
   network: string,
   kind: string,
 ): Promise<SponsoredCoinApi | null> {
   if (kind !== "local") return null;
   const currency = findCryptoCurrencyByNetwork(network);
-  const createSponsoredApi = currency && (await loadSponsoredApiForFamily(currency.family));
+  if (!currency || isPortfolioEnabledFor(currency.id)) return null;
+  const createSponsoredApi = await loadSponsoredApiForFamily(currency.family);
   return createSponsoredApi ? createSponsoredApi(currency.id) : null;
 }

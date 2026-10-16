@@ -1,7 +1,7 @@
 import btc from "./platformAdapter";
 import { BitcoinTransaction as PlatformTransaction, FAMILIES } from "@ledgerhq/live-app-sdk";
 import BigNumber from "bignumber.js";
-import { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import type { Transaction } from "./types";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for BTC platform tx", () => {
@@ -13,7 +13,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       };
 
       const expectedLiveTx: Partial<Transaction> = {
-        family: btcPlatformTx.family,
+        family: "bitcoin",
         amount: btcPlatformTx.amount,
         recipient: btcPlatformTx.recipient,
       };
@@ -28,7 +28,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       expect(liveTx).toEqual(expectedLiveTx);
     });
 
-    test("with fees provided", () => {
+    test("with fees provided, the fee rate moves to familySpecificData", () => {
       const btcPlatformTx: PlatformTransaction = {
         family: FAMILIES.BITCOIN,
         amount: new BigNumber(100000),
@@ -37,10 +37,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       };
 
       const expectedLiveTx: Partial<Transaction> = {
-        family: btcPlatformTx.family,
+        family: "bitcoin",
         amount: btcPlatformTx.amount,
         recipient: btcPlatformTx.recipient,
-        feePerByte: btcPlatformTx.feePerByte,
+        familySpecificData: { feePerByte: "300" },
         feesStrategy: null,
       };
 
@@ -52,6 +52,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       expect(hasFeesProvided).toBe(true);
 
       expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).not.toHaveProperty("feePerByte");
     });
   });
 });

@@ -3,6 +3,7 @@ export { combine } from "./combine";
 export { craftTransaction } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getAccountInfo } from "./getAccountInfo";
+export { getAddressesForPublicKey } from "./getAddressesForPublicKey";
 export { getBalance } from "./getBalance";
 export { getBlockV2 } from "./getBlock.v2";
 export { getBlockInfo } from "./getBlockInfo";

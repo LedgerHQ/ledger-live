@@ -1,6 +1,6 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import { getUtxoStrategy, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -64,7 +64,7 @@ const Fields: Props = ({
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
   // Hooks run before the `hideFeeSelection` return below, so this is reached even
   // for zcash, whose coin-zcash transaction carries no utxo strategy.
-  const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy?.strategy);
+  const { item } = useBitcoinPickingStrategy(getUtxoStrategy(transaction).strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
   const onFeeStrategyClick = useCallback(
@@ -76,7 +76,6 @@ const Fields: Props = ({
       });
       updateTransaction((transaction: Transaction) =>
         bridge.updateTransaction(transaction, {
-          feePerByte: amount,
           feesStrategy: feesStrategy as Transaction["feesStrategy"],
         }),
       );

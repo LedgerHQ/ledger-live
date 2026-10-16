@@ -1,6 +1,11 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { bitcoinPickingStrategy, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import {
+  bitcoinPickingStrategy,
+  getFamilySpecificData,
+  getUtxoStrategy,
+  Transaction,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import { Account } from "@ledgerhq/types-live";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import Box from "~/renderer/components/Box";
@@ -14,7 +19,8 @@ type Props = {
 };
 export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
   const bridge = useAccountBridge<Transaction>(account);
-  const { item, options } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
+  const utxoStrategy = getUtxoStrategy(transaction);
+  const { item, options } = useBitcoinPickingStrategy(utxoStrategy.strategy);
   return (
     <Box flow={2} horizontal alignItems="center" justifyContent="space-between">
       <Text color="neutral.c70" ff="Inter|Regular" fontSize={13}>
@@ -27,11 +33,14 @@ export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
         onChange={item =>
           onChange(
             bridge.updateTransaction(transaction, {
-              utxoStrategy: {
-                ...transaction.utxoStrategy,
-                strategy: item
-                  ? bitcoinPickingStrategy[item.value as keyof typeof bitcoinPickingStrategy]
-                  : 0,
+              familySpecificData: {
+                ...getFamilySpecificData(transaction),
+                utxoStrategy: {
+                  ...utxoStrategy,
+                  strategy: item
+                    ? bitcoinPickingStrategy[item.value as keyof typeof bitcoinPickingStrategy]
+                    : 0,
+                },
               },
             }),
           )

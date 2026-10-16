@@ -3,7 +3,7 @@ import { View, ScrollView } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { GasLessThanEstimate, NotEnoughGas } from "@ledgerhq/coin-evm/errors";
-import { render, screen } from "@tests/test-renderer";
+import { act, fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -40,6 +40,12 @@ jest.mock("~/components/SafeAreaView", () => ({
 jest.mock("~/components/NavigationScrollView", () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => <ScrollView>{children}</ScrollView>,
+}));
+
+jest.mock("./TooMuchUTXOBottomModal", () => ({
+  __esModule: true,
+  default: ({ isOpened }: { isOpened: boolean }) =>
+    isOpened ? <View testID="too-much-utxo-modal" /> : null,
 }));
 
 const mockGetCustomSendFlow = jest.mocked(getCustomSendFlow);
@@ -203,5 +209,67 @@ describe("SendSummary — status errors", () => {
     render(<SendSummary navigation={mockNavigation as never} route={mockRoute as never} />);
 
     expect(screen.getByTestId("disabled-summary-continue-button")).toBeOnTheScreen();
+  });
+});
+
+describe("SendSummary — UTXO count warning", () => {
+  const mockRoute = makeRoute();
+
+  beforeEach(() => {
+    mockGetCustomSendFlow.mockReturnValue(null);
+    mockUseAccountScreen.mockReturnValue({ account: ALEO_ACCOUNT_1, parentAccount: null });
+  });
+
+  function mockEstimatedInputs(count: number) {
+    const inputs = Array.from({ length: count }, (_, vout) => ({
+      txid: "txid",
+      vout,
+      value: "1000",
+      address: "bc1qaddress",
+    }));
+    mockUseBridgeTransaction.mockReturnValue({
+      transaction: {
+        family: "aleo",
+        recipient: "aleo1abc",
+        useAllAmount: false,
+        feeParameters: { inputs },
+      },
+      setTransaction: jest.fn(),
+      status: mockStatus,
+      bridgePending: false,
+      bridgeError: null,
+    } as never);
+  }
+
+  it("should warn before continuing when the estimation selects 50 inputs", () => {
+    const mockNavigation = makeNavigation();
+    mockEstimatedInputs(50);
+
+    render(<SendSummary navigation={mockNavigation as never} route={mockRoute as never} />);
+    // the warning opens on a timer: it has to fire inside act for its update to render, which
+    // user-event's own timer advance does not do
+    fireEvent.press(screen.getByTestId("enabled-summary-continue-button"));
+    act(() => jest.runOnlyPendingTimers());
+
+    expect(screen.getByTestId("too-much-utxo-modal")).toBeOnTheScreen();
+    expect(mockNavigation.navigate).not.toHaveBeenCalled();
+  });
+
+  it("should continue without warning when the estimation selects fewer than 50 inputs", async () => {
+    const mockNavigation = makeNavigation();
+    mockEstimatedInputs(49);
+
+    const { user } = render(
+      <SendSummary navigation={mockNavigation as never} route={mockRoute as never} />,
+    );
+    await user.press(screen.getByTestId("enabled-summary-continue-button"));
+
+    await waitFor(() => {
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(
+        ScreenName.SendSelectDevice,
+        expect.objectContaining({ selectDeviceLink: true }),
+      );
+    });
+    expect(screen.queryByTestId("too-much-utxo-modal")).not.toBeOnTheScreen();
   });
 });

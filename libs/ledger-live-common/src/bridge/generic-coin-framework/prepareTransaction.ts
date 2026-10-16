@@ -2,6 +2,7 @@ import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { writeIntentApi } from "./portfolio/intentApi";
 import {
   bigNumberToBigIntDeep,
   computeUseAllAmount,
@@ -124,6 +125,7 @@ export function genericPrepareTransaction(
       }
     }
 
+    const intentApi = writeIntentApi(bridgeApi, coinModuleApi, account, { ...transaction });
     // Pass any parameters that help estimating fees
     // This includes `assetOwner` and `assetReference` that are not used by some apps that only rely on `subAccountId`
     // TODO Remove `assetOwner` and `assetReference` in order to maintain one unique way of identifying the type of asset
@@ -137,7 +139,7 @@ export function genericPrepareTransaction(
         amount,
       },
       bridgeApi.computeIntentType,
-      intent => coinModuleApi.craftTransactionData(context, intent),
+      intent => intentApi.craftTransactionData(context, intent),
       bridgeApi.buildIntentData,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
@@ -153,7 +155,7 @@ export function genericPrepareTransaction(
     const estimated =
       customParametersFees && !transaction.useAllAmount
         ? undefined
-        : await coinModuleApi.estimateFees(context, intent, { customFeesParameters });
+        : await intentApi.estimateFees(context, intent, { customFeesParameters });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()), parameters: estimated?.parameters }
       : (estimated as FeeEstimation);

@@ -1,88 +1,36 @@
-import { FeeEstimationFailed } from "../../../errors";
-import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-import { blockchainBaseURL } from "@ledgerhq/coin-bitcoin/explorer";
-import { makeLRUCacheWithTtlOf } from "@ledgerhq/coin-bitcoin/cache";
-import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
-import { DEFAULT_FEE_RATES_CACHE_TTL_MS } from "@ledgerhq/coin-bitcoin/constants";
-import { getBitcoinCoinConfig } from "../coinConfig";
-import type { FeeItems } from "../types";
-
-type Fees = Record<string, number>;
-
-const cachedEstimatedFees = makeLRUCacheWithTtlOf(
-  async (currency: CryptoCurrency, config: BitcoinCoinConfig): Promise<Fees> => {
-    const baseURL = blockchainBaseURL(currency, config);
-    invariant(baseURL, `Fees for ${currency.id} are not supported`);
-    const { data, status } = await network<Fees>({
-      method: "GET",
-      url: `${baseURL}/fees`,
-    });
-
-    if (data) {
-      return data;
-    }
-
-    throw new FeeEstimationFailed(`FeeEstimationFailed ${status}`, {
-      httpStatus: status,
-    });
-  },
-  // Keyed by the explorer base URL (it carries the currency's explorer id), so a remote change of
-  // `explorer.url` or `explorerId` fetches from the new endpoint.
-  (currency, config) => blockchainBaseURL(currency, config),
-  (_currency, config) => config.fees?.feeRatesCacheTtlMs ?? DEFAULT_FEE_RATES_CACHE_TTL_MS,
-);
-
-const getEstimatedFees = (currency: CryptoCurrency): Promise<Fees> =>
-  cachedEstimatedFees(currency, getBitcoinCoinConfig(currency.id));
-
-export const speeds = new Map([
-  [1, "fast"],
-  [3, "medium"],
-  [6, "slow"],
-]);
-
-export const defaultBlockCount = 3;
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { BitcoinTxData } from "@ledgerhq/coin-bitcoin/api";
+import { bitcoinAccountModuleBinding, computeIntentType } from "../accountModule";
+import { getFamilySpecificData, type Transaction } from "../types";
+import { buildSignRawOperation } from "../signRawOperation";
+import signer from "../signer";
 
 /**
- * Returns the current network fee rate(fast, medium, slow) from our backend for a given currency
+ * Maps the user's choices (`familySpecificData`, ADR-047) onto the coin module's `BitcoinTxData`.
+ * The account context — inputs, change, paths — is added by the account module.
  */
-export const getFeeItems = async (currency: CryptoCurrency): Promise<FeeItems> => {
-  const all: Array<{
-    key: string;
-    speed: string;
-    blockCount: number;
-    feePerByte: BigNumber;
-  }> = [];
-  const fees = await getEstimatedFees(currency);
-  let defaultFeePerByte = new BigNumber(0);
-
-  for (const key of Object.keys(fees)) {
-    const feePerByte = new BigNumber(Math.ceil(fees[key] / 1000));
-    const blockCount = parseInt(key, 10);
-    if (blockCount === defaultBlockCount) defaultFeePerByte = feePerByte;
-
-    if (!Number.isNaN(blockCount) && !feePerByte.isNaN() && speeds.has(blockCount)) {
-      all.push({
-        key,
-        speed: speeds.get(blockCount)!,
-        blockCount,
-        feePerByte,
-      });
-    }
-  }
-
-  const items = all
-    .sort((a, b) => a.blockCount - b.blockCount)
-    .map(({ key, speed, feePerByte }) => ({
-      key,
-      speed,
-      feePerByte,
-    }));
+export function buildIntentData(transaction: Record<string, unknown>): BitcoinTxData {
+  const tx = transaction as Partial<Transaction>;
+  const { feePerByte, opReturnData } = getFamilySpecificData(tx);
   return {
-    items,
-    defaultFeePerByte,
+    type: "bitcoin",
+    // a set rate counts without a preset strategy — custom, or provided by a live app (no strategy)
+    ...((!tx.feesStrategy || tx.feesStrategy === "custom") && feePerByte ? { feePerByte } : {}),
+    ...(opReturnData ? { opReturnData } : {}),
   };
+}
+
+const bitcoinBridgeApi: BridgeApi = {
+  computeIntentType,
+  buildIntentData,
+  // the fee rate the estimation settled on is the one the transaction is crafted with
+  forwardsFeeParametersToCraft: true,
+  // the device app depends on the currency
+  getDeviceSignOptions: (_transaction, account) => ({ currencyId: account.currency.id }),
+  signRawOperation: buildSignRawOperation(signer.context),
+  // the account module returns the whole operation list, RBF-replaced ones removed
+  shouldMergeOps: false,
+  accountModule: bitcoinAccountModuleBinding,
 };
+
+export default bitcoinBridgeApi;

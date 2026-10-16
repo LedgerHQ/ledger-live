@@ -1,12 +1,12 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { BitcoinAccount, Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
-import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type {
+  BitcoinAccount,
+  Transaction as BtcTransaction,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import resolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
-import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/networks";
+import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/api";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
-import type { BitcoinCoinConfig, BitcoinContext } from "@ledgerhq/coin-bitcoin/config";
 import { BigNumber } from "bignumber.js";
 import {
   loadWallet,
@@ -18,55 +18,100 @@ import {
 } from "../helpers";
 import { makeAccount } from "../fixtures";
 import { killAtlas, spawnAtlas } from "../atlas";
-import { findNewUtxo, waitForExplorerSync, waitForTxInMempool } from "../utils";
+import { findUtxo, waitForExplorerSync, waitForTxInMempool } from "../utils";
 import {
+  assertChange,
   assertCommonTxProperties,
+  assertSent,
   assertUtxoExcluded,
   assertUtxoSpent,
   getNewChangeUtxos,
+  sumOf,
 } from "../assert";
 import { buildSigner } from "../signer";
+import { getBridges } from "../bridges";
 import { setupServer } from "msw/node";
 
 type BitcoinScenarioTransaction = ScenarioTransaction<BtcTransaction, BitcoinAccount>;
+
+const ACCOUNT_PATH = "49'/1'/0'";
+const receivePath = (index: number) => `${ACCOUNT_PATH}/0/${index}`;
+const ONE_BTC = 1e8;
+// The account is funded with 2, 3 and 2 BTC on its first receive address and 2 BTC on its second.
+const FUNDING_BTC = [2, 3, 2];
+const SECOND_ADDRESS_FUNDING_BTC = 2;
+const FUNDING_OPERATIONS = FUNDING_BTC.length + 1;
+// The sends of getTransactions, then the two receives of getInternalTransactions.
+const SENDS = 9;
+const INTERNAL_RECEIVES = 2;
 
 let firstUtxoHash = "";
 let firstUtxoOutputIndex = 0;
 let secondUtxoHash = "";
 let secondUtxoOutputIndex = 0;
+let secondReceiveAddress = "";
+let thirdReceiveAddress = "";
+let accountBridge: AccountBridge<BtcTransaction, BitcoinAccount>;
+
+// executeScenario does not await `expect`: the steps driven from the regtest node are chained
+// here, one after the other, and afterAll waits for them before its own checks.
+let internalSteps: Promise<void> = Promise.resolve();
+const internalStepErrors: unknown[] = [];
+const runInternalStep = (step: () => Promise<void>): void => {
+  internalSteps = internalSteps.then(step).catch(error => {
+    internalStepErrors.push(error);
+  });
+};
+
+function syncAccount(account: BitcoinAccount): Promise<BitcoinAccount> {
+  return new Promise((resolve, reject) => {
+    let synced = account;
+    accountBridge.sync(account, { paginationConfig: {} }).subscribe({
+      next: update => {
+        synced = update(synced);
+      },
+      error: reject,
+      complete: () => resolve(synced),
+    });
+  });
+}
+
+const RECIPIENT = "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz";
 
 const makeScenarioTransactions = (): BitcoinScenarioTransaction[] => {
   const scenarioExcludeTwoUtxos: BitcoinScenarioTransaction = {
     name: "Send BTC excluding two UTXOs",
-    rbf: true,
-    utxoStrategy: {
-      strategy: 1, // Optimize size, for exemple
-      excludeUTXOs: [
-        { hash: firstUtxoHash, outputIndex: firstUtxoOutputIndex },
-        { hash: secondUtxoHash, outputIndex: secondUtxoOutputIndex },
-      ],
+    familySpecificData: {
+      utxoStrategy: {
+        strategy: 1, // Optimize size, for exemple
+        excludeUTXOs: [
+          { hash: firstUtxoHash, outputIndex: firstUtxoOutputIndex },
+          { hash: secondUtxoHash, outputIndex: secondUtxoOutputIndex },
+        ],
+      },
     },
-    amount: new BigNumber(1e8),
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    amount: new BigNumber(ONE_BTC),
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      assertCommonTxProperties(previousAccount, currentAccount);
+      const latestOperation = assertSent(previousAccount, currentAccount, new BigNumber(ONE_BTC));
 
       assertUtxoExcluded(currentAccount, firstUtxoHash, firstUtxoOutputIndex);
       assertUtxoExcluded(currentAccount, secondUtxoHash, secondUtxoOutputIndex);
 
-      const newChangeUtxo = findNewUtxo(previousAccount, currentAccount);
-      expect(newChangeUtxo).toBeDefined();
+      // The change comes back on the change chain
+      assertChange(previousAccount, currentAccount, new BigNumber(ONE_BTC), latestOperation.fee);
     },
   };
   const scenarioExcludeOneUtxo: BitcoinScenarioTransaction = {
     name: "Send BTC excluding second UTXO",
-    rbf: true,
-    utxoStrategy: {
-      strategy: 1,
-      excludeUTXOs: [{ hash: secondUtxoHash, outputIndex: secondUtxoOutputIndex }],
+    familySpecificData: {
+      utxoStrategy: {
+        strategy: 1,
+        excludeUTXOs: [{ hash: secondUtxoHash, outputIndex: secondUtxoOutputIndex }],
+      },
     },
     useAllAmount: true,
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
       const latestOperation = assertCommonTxProperties(previousAccount, currentAccount);
 
@@ -84,124 +129,80 @@ const makeScenarioTransactions = (): BitcoinScenarioTransaction[] => {
         utxo => !(utxo.hash === secondUtxoHash && utxo.outputIndex === secondUtxoOutputIndex),
       );
 
-      const totalSpent = spentUtxos.reduce((sum, utxo) => sum.plus(utxo.value), new BigNumber(0));
-      const totalChange = changeUtxos.reduce((sum, utxo) => sum.plus(utxo.value), new BigNumber(0));
+      const totalSpent = sumOf(spentUtxos);
+      const totalChange = sumOf(changeUtxos);
       const expectedChange = totalSpent.minus(latestOperation.value);
       expect(totalChange.toFixed()).toBe(expectedChange.toFixed());
+
+      // Everything but the excluded UTXO is gone: the balance is exactly that UTXO
+      const excluded = findUtxo(previousAccount, secondUtxoHash, secondUtxoOutputIndex);
+      expect(currentAccount.balance.toFixed()).toBe(excluded!.value.toFixed());
     },
   };
   const scenarioSendBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send 1 BTC",
-    rbf: false,
-    amount: new BigNumber(1e8),
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    amount: new BigNumber(ONE_BTC),
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e8).toFixed());
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
+      assertSent(previousAccount, currentAccount, new BigNumber(ONE_BTC));
     },
   };
   const scenarioSendFastFeesStrategyBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Fast Fees Strategy BTC",
-    rbf: false,
     feesStrategy: "fast",
     amount: new BigNumber(1e6),
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
+      assertSent(previousAccount, currentAccount, new BigNumber(1e6));
     },
   };
   const scenarioSendSlowFeesStrategyBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Slow Fees Strategy BTC",
-    rbf: false,
     feesStrategy: "slow",
     amount: new BigNumber(1e6),
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
+      assertSent(previousAccount, currentAccount, new BigNumber(1e6));
     },
   };
   const scenarioSendFIFOBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send FIFO BTC",
-    rbf: true,
-    utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+    familySpecificData: { utxoStrategy: { strategy: 0, excludeUTXOs: [] } },
     amount: new BigNumber(1e6),
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
+      assertSent(previousAccount, currentAccount, new BigNumber(1e6));
     },
   };
   const scenarioSendOptimizeSizeBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Optimize Size BTC",
-    rbf: true,
-    utxoStrategy: {
-      strategy: 1,
-      excludeUTXOs: [],
-    },
+    familySpecificData: { utxoStrategy: { strategy: 1, excludeUTXOs: [] } },
     amount: new BigNumber(1e6),
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
+      assertSent(previousAccount, currentAccount, new BigNumber(1e6));
     },
   };
   const scenarioSendMergeCoinsBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Merge Coins BTC",
-    rbf: true,
-    utxoStrategy: { strategy: 2, excludeUTXOs: [] },
+    familySpecificData: { utxoStrategy: { strategy: 2, excludeUTXOs: [] } },
     amount: new BigNumber(1e6),
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
+      assertSent(previousAccount, currentAccount, new BigNumber(1e6));
     },
   };
   const scenarioSendMaxBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Max BTC",
-    rbf: false,
     useAllAmount: true,
-    recipient: "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz",
+    recipient: RECIPIENT,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
+      const latestOperation = assertCommonTxProperties(previousAccount, currentAccount);
 
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
+      // Every UTXO is spent, nothing comes back
+      expect(latestOperation.value.toFixed()).toBe(previousAccount.balance.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe("0");
+      expect(currentAccount.operations.length).toBe(FUNDING_OPERATIONS + SENDS);
     },
   };
   return [
@@ -222,36 +223,38 @@ const makeScenarioTransactions = (): BitcoinScenarioTransaction[] => {
 const makeInternalScenarioTransactions = async () => {
   const scenarioReplaceBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Replace BTC transaction",
-    expect: async (previousAccount, currentAccount) => {
-      const txId = await sendTransaction(currentAccount.freshAddress, 0.003);
-      // Waiting a bit before replacing...
-      await waitForTxInMempool(txId, 10000); // waits up to 10s
+    expect: (previousAccount, currentAccount) =>
+      runInternalStep(async () => {
+        const txId = await sendTransaction(currentAccount.freshAddress, 0.003);
+        // Waiting a bit before replacing...
+        await waitForTxInMempool(txId, 10000); // waits up to 10s
 
-      const replacementTxid = await replaceTransaction(txId, currentAccount.freshAddress);
-      const mempool = await getRawMempool();
-      expect(mempool.includes(txId)).toBe(false);
-      expect(mempool.includes(replacementTxid)).toBe(true);
+        const replacementTxid = await replaceTransaction(txId, currentAccount.freshAddress);
+        const mempool = await getRawMempool();
+        expect(mempool.includes(txId)).toBe(false);
+        expect(mempool.includes(replacementTxid)).toBe(true);
 
-      // Ensure explorer is synced after replacement
-      await waitForExplorerSync();
-    },
+        // Ensure explorer is synced after replacement
+        await waitForExplorerSync();
+      }),
   };
   const scenarioCancelBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Cancel BTC transaction",
-    expect: async (previousAccount, currentAccount) => {
-      await mineToWalletAddress("2");
-      const txId = await sendTransaction("bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz", 0.003);
-      // Waiting a bit before replacing...
-      await waitForTxInMempool(txId, 10000); // waits up to 10s
+    expect: (previousAccount, currentAccount) =>
+      runInternalStep(async () => {
+        await mineToWalletAddress("2");
+        const txId = await sendTransaction(RECIPIENT, 0.003);
+        // Waiting a bit before replacing...
+        await waitForTxInMempool(txId, 10000); // waits up to 10s
 
-      const replacementTxid = await replaceTransaction(txId, currentAccount.freshAddress);
-      const mempool = await getRawMempool();
-      expect(mempool.includes(txId)).toBe(false);
-      expect(mempool.includes(replacementTxid)).toBe(true);
+        const replacementTxid = await replaceTransaction(txId, currentAccount.freshAddress);
+        const mempool = await getRawMempool();
+        expect(mempool.includes(txId)).toBe(false);
+        expect(mempool.includes(replacementTxid)).toBe(true);
 
-      // Ensure explorer is synced after cancellation
-      await waitForExplorerSync();
-    },
+        // Ensure explorer is synced after cancellation
+        await waitForExplorerSync();
+      }),
   };
 
   return [scenarioReplaceBtcTransaction, scenarioCancelBtcTransaction];
@@ -264,43 +267,40 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   setup: async () => {
     await spawnAtlas();
 
-    const signer: BitcoinSigner | null = await buildSigner();
-    const signerContext: SignerContext = (_, crypto, fn) => fn(signer);
-
-    const coinConfig: BitcoinCoinConfig = {
-      status: {
-        type: "active",
-      },
-      name: "Bitcoin Regtest",
-      unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
-      explorerId: "btc_regtest",
-      explorer: { url: "http://localhost:9876" },
-    };
-    const context: BitcoinContext = {
-      config: async () => coinConfig,
-      logger: () => {},
-    };
     LiveConfig.setConfig({
       config_currency_bitcoin_regtest: {
         type: "object",
-        default: coinConfig,
+        default: {
+          status: {
+            type: "active",
+          },
+          name: "Bitcoin Regtest",
+          unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
+          explorerId: "btc_regtest",
+          explorer: { url: "http://localhost:9876" },
+        },
       },
     });
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext, context);
+    const bridges = await getBridges(await buildSigner());
+    accountBridge = bridges.accountBridge;
     const BITCOIN = getCryptoCurrencyById("bitcoin_regtest");
-    const getAddress = resolver(signerContext, context.logger);
     // Can also test LEGACY here
-    const { address, publicKey } = await getAddress("", {
-      path: "49'/1'/0'/0/0",
-      currency: BITCOIN,
-      derivationMode: "segwit",
-    });
+    const receiveAddress = (index: number) =>
+      bridges.getAddress("", {
+        path: receivePath(index),
+        currency: BITCOIN,
+        derivationMode: "segwit",
+      });
+    const { address, publicKey } = await receiveAddress(0);
+    secondReceiveAddress = (await receiveAddress(1)).address;
+    thirdReceiveAddress = (await receiveAddress(2)).address;
     const xpubVersion = getNetworkParameters(BITCOIN.id).xpubVersion.readUInt32BE(0);
 
-    const xpub = await signerContext("", BITCOIN, signer =>
+    const xpub = await bridges.signerContext("", signer =>
       signer.getWalletXpub({
-        path: "49'/1'/0'",
+        currencyId: BITCOIN.id,
+        path: ACCOUNT_PATH,
         xpubVersion,
       }),
     );
@@ -309,12 +309,14 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     // Need to wait 100 blocks to be able to spend coinbase UTXOs
     await mineToWalletAddress("101");
     // Fund it with 7 BTC in three send to have 3 UTXOs
-    await sendTo(address, 2);
-    await sendTo(address, 3);
-    await sendTo(address, 2);
+    for (const amount of FUNDING_BTC) await sendTo(address, amount);
+    // and with 2 BTC on its second receive address, which the sync must discover
+    await sendTo(secondReceiveAddress, SECOND_ADDRESS_FUNDING_BTC);
+    // Coin selection only spends confirmed UTXOs, or unconfirmed change
+    await mineToWalletAddress("2");
     return {
+      currencyBridge: bridges.currencyBridge,
       accountBridge,
-      currencyBridge,
       account: scenarioAccount,
       retryLimit: 0,
     };
@@ -330,6 +332,22 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
       },
     });
 
+    // The funding: one operation per transaction, on both receive addresses, and nothing else
+    const funding = [...FUNDING_BTC, SECOND_ADDRESS_FUNDING_BTC];
+    const fundedBalance = new BigNumber(funding.reduce((sum, btc) => sum + btc, 0) * ONE_BTC);
+    expect(account.operations.length).toBe(FUNDING_OPERATIONS);
+    expect(account.operations.every(operation => operation.type === "IN")).toBe(true);
+    expect(account.balance.toFixed()).toBe(fundedBalance.toFixed());
+    const onSecondAddress = account.bitcoinResources.utxos.filter(
+      utxo => utxo.address === secondReceiveAddress,
+    );
+    expect(sumOf(onSecondAddress).toFixed()).toBe(
+      new BigNumber(SECOND_ADDRESS_FUNDING_BTC * ONE_BTC).toFixed(),
+    );
+    // Both receive addresses hold history, so the next one is the third
+    expect(account.freshAddress).toBe(thirdReceiveAddress);
+    expect(account.freshAddressPath).toBe(receivePath(2));
+
     firstUtxoHash = account.bitcoinResources.utxos[0].hash;
     firstUtxoOutputIndex = account.bitcoinResources.utxos[0].outputIndex;
     secondUtxoHash = account.bitcoinResources.utxos[1].hash;
@@ -341,9 +359,25 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     await waitForExplorerSync();
   },
   afterAll: async account => {
+    await internalSteps;
+    if (internalStepErrors.length > 0) throw internalStepErrors[0];
+    // Confirm the last replacement, then sync what the regtest steps did
+    await mineToWalletAddress("1");
     await waitForExplorerSync();
+    const synced = await syncAccount(account);
     mockServer.close();
-    expect(account.operations.length).toBeGreaterThanOrEqual(14);
+
+    expect(synced.operations.length).toBe(FUNDING_OPERATIONS + SENDS + INTERNAL_RECEIVES);
+    expect(synced.operations.every(operation => typeof operation.blockHeight === "number")).toBe(
+      true,
+    );
+    // The operations account for the balance, to the satoshi
+    const net = synced.operations.reduce(
+      (sum, operation) =>
+        operation.type === "IN" ? sum.plus(operation.value) : sum.minus(operation.value),
+      new BigNumber(0),
+    );
+    expect(synced.balance.toFixed()).toBe(net.toFixed());
   },
   beforeEach: async () => {
     // Make sure explorer is in sync before each transaction

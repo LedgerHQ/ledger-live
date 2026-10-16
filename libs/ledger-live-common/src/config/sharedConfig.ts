@@ -32,6 +32,7 @@ import { zcashConfig } from "../families/zcash/config";
 import { concordiumConfig } from "../families/concordium/config";
 import { a4Config } from "../bridge/generic-coin-framework/a4/config";
 import { operationHistoryConfig } from "../bridge/generic-coin-framework/operationHistoryBound";
+import { portfolioServiceConfig } from "../bridge/generic-coin-framework/portfolio/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -83,4 +84,5 @@ export const liveConfig: ConfigSchema = {
   ...concordiumConfig,
   ...a4Config,
   ...operationHistoryConfig,
+  ...portfolioServiceConfig,
 };

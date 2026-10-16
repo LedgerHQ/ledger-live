@@ -1,9 +1,15 @@
-import { getRedelegations } from "@ledgerhq/coin-cosmos/logic/staking/getRedelegations";
+import BigNumber from "bignumber.js";
+import type { CosmosRedelegationRaw } from "@ledgerhq/coin-cosmos/types/index";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { buildSignRawOperation } from "@ledgerhq/coin-cosmos/signRawOperation";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { BridgeApi, ChainReads } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Account } from "@ledgerhq/types-live";
+import type {
+  Account,
+  Operation,
+  StakingRedelegation,
+  StakingResources,
+} from "@ledgerhq/types-live";
 import { executeWithSigner } from "../../../bridge/setup";
 import { createSigner } from "../setup";
 
@@ -13,6 +19,33 @@ export function getDeviceSignOptions(
 ): { hrp: string; signWithPrefix: boolean } {
   const chain = cryptoFactory(account.currency.id);
   return { hrp: chain.prefix, signWithPrefix: chain.signWithPrefix };
+}
+
+/**
+ * The redelegations in progress, as coin-cosmos reports them in its account metadata (ADR-045, JSON
+ * form). A failed read rejects: the sync keeps the base staking resources.
+ */
+export async function enrichStakingResources(
+  _currency: CryptoCurrency,
+  address: string,
+  _operations: Operation[],
+  stakingResources: StakingResources,
+  chain: ChainReads,
+): Promise<StakingResources> {
+  const info = await chain.getAccountInfo(address);
+  const reported =
+    info.type === "cosmos" && Array.isArray(info.redelegations)
+      ? (info.redelegations as CosmosRedelegationRaw[])
+      : [];
+  const redelegations: StakingRedelegation[] = reported.map(
+    ({ validatorSrcAddress, validatorDstAddress, amount, completionDate }) => ({
+      validatorSrcAddress,
+      validatorDstAddress,
+      amount: new BigNumber(amount),
+      completionDate: new Date(completionDate),
+    }),
+  );
+  return { ...stakingResources, redelegations };
 }
 
 export default function cosmosBridge(_currency: CryptoCurrency): BridgeApi {
@@ -34,10 +67,7 @@ export default function cosmosBridge(_currency: CryptoCurrency): BridgeApi {
           throw new Error(`Unsupported Cosmos transaction mode: ${mode}`);
       }
     },
-    enrichStakingResources: async (currency, address, _operations, stakingResources) => ({
-      ...stakingResources,
-      redelegations: await getRedelegations(currency.id, currency.units[1].code, address),
-    }),
+    enrichStakingResources,
     getDeviceSignOptions,
     signRawOperation: buildSignRawOperation(executeWithSigner(createSigner)),
   };

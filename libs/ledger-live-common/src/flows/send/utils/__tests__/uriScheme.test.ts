@@ -8,13 +8,12 @@ describe("buildTransactionPatchFromURIScheme", () => {
     amount: new BigNumber(0),
     recipient: "",
     useAllAmount: false,
-    utxoStrategy: {
-      strategy: 0,
-      excludeUTXOs: [],
+    familySpecificData: {
+      utxoStrategy: {
+        strategy: 0,
+        excludeUTXOs: [],
+      },
     },
-    rbf: false,
-    feePerByte: null,
-    networkInfo: null,
   };
 
   it("returns an empty patch when the URI has no amount or matching extras", () => {

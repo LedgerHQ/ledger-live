@@ -1,4 +1,4 @@
-import type { Transaction as BitcoinTransaction } from "@ledgerhq/coin-bitcoin/types";
+import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";

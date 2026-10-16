@@ -261,13 +261,23 @@ export function useSendHeaderModel({
     if (currentStep === SEND_FLOW_STEP.AMOUNT) {
       resetAmountStep();
     } else if (currentStep === SEND_FLOW_STEP.COIN_CONTROL) {
-      // Reset UTXO exclusions so the selection doesn't bleed into the next visit
+      // Reset UTXO exclusions so the selection doesn't bleed into the next visit:
+      // re-applying the current strategy without display data excludes nothing
+      const coinControlConfig = sendFeatures.getCoinControlConfig(
+        state.account.currency ?? undefined,
+      );
       transaction.updateTransaction(tx => {
-        if (!("utxoStrategy" in tx)) return tx;
-        return {
-          ...tx,
-          utxoStrategy: { ...tx.utxoStrategy, excludeUTXOs: [] },
-        };
+        if (!coinControlConfig) return tx;
+        const strategy = coinControlConfig.getStrategyValue(tx);
+        const patch =
+          strategy === undefined
+            ? null
+            : coinControlConfig.buildStrategyChangePatch({
+                transaction: tx,
+                strategy,
+                displayData: null,
+              });
+        return patch ? ({ ...tx, ...patch } as typeof tx) : tx;
       });
     }
 
@@ -291,6 +301,7 @@ export function useSendHeaderModel({
     isSelectingContactAddress,
     navigation,
     resetAmountStep,
+    state.account.currency,
     transaction,
     trackingProperties,
   ]);

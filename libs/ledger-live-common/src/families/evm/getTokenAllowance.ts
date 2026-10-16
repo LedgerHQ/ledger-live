@@ -1,10 +1,15 @@
 import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Unit } from "@domain/entity-currency-unit";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { createApi } from "@ledgerhq/coin-evm/api";
 import { getNodeApi } from "@ledgerhq/coin-evm/network";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { requireExtension } from "@ledgerhq/portfolio-module-framework";
+import { ethers } from "ethers";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
+import { openCurrencyPortfolio } from "../../bridge/generic-coin-framework/networkPortfolio";
+import { isPortfolioEnabledFor } from "../../bridge/generic-coin-framework/portfolio/config";
 import BigNumber from "bignumber.js";
 
 export type GetEvmTokenAllowanceResult = {
@@ -16,6 +21,32 @@ export type GetEvmTokenAllowanceResult = {
   spender: string;
   contractAddress: string;
 };
+
+const ERC20_ALLOWANCE = new ethers.Interface([
+  "function allowance(address owner, address spender) view returns (uint256)",
+]);
+
+/**
+ * The allowance through the portfolio layer: the network's read-only call (`eth_call`) of the
+ * token's `allowance(owner, spender)`, decoded.
+ */
+async function portfolioTokenAllowance(
+  currency: CryptoCurrency,
+  { owner, contractAddress, spender }: { owner: string; contractAddress: string; spender: string },
+): Promise<BigNumber> {
+  const { portfolio, network } = await openCurrencyPortfolio(currency, "read");
+  const { result } = await requireExtension(portfolio, "call")(network, {
+    params: {
+      to: contractAddress,
+      data: ERC20_ALLOWANCE.encodeFunctionData("allowance", [
+        ethers.getAddress(owner),
+        ethers.getAddress(spender),
+      ]),
+    },
+  });
+  const [allowance] = ERC20_ALLOWANCE.decodeFunctionResult("allowance", result as string);
+  return new BigNumber(allowance.toString());
+}
 
 /**
  * Get the ERC-20 allowance that an owner has granted to a spender for a given token.
@@ -48,16 +79,25 @@ export async function getEvmTokenAllowance(
     );
   }
 
-  // Ensure EVM coin config is set (e.g. when CLI runs tokenAllowance without having used the bridge)
-  createApi(account.currency.id);
-  const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
-  const config = await evmCtx.config();
-  const nodeApi = getNodeApi(config, evmCtx.logger);
-  const allowance = await nodeApi.getTokenAllowance(
-    account.freshAddress,
-    tokenCurrency.contractAddress,
-    spender,
-  );
+  let allowance: BigNumber;
+  if (isPortfolioEnabledFor(account.currency.id)) {
+    allowance = await portfolioTokenAllowance(account.currency, {
+      owner: account.freshAddress,
+      contractAddress: tokenCurrency.contractAddress,
+      spender,
+    });
+  } else {
+    // Ensure EVM coin config is set (e.g. when CLI runs tokenAllowance without having used the bridge)
+    createApi(account.currency.id);
+    const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
+    const config = await evmCtx.config();
+    const nodeApi = getNodeApi(config, evmCtx.logger);
+    allowance = await nodeApi.getTokenAllowance(
+      account.freshAddress,
+      tokenCurrency.contractAddress,
+      spender,
+    );
+  }
 
   return {
     allowance,

@@ -92,7 +92,8 @@ const mockCustomFeeConfigs: Record<string, ReturnType<() => unknown>> = {
       feePerByte: "2",
     }),
     buildTransactionPatch: (values: Record<string, string>) => ({
-      feePerByte: new BigNumber(values.feePerByte),
+      feesStrategy: "custom",
+      familySpecificData: { feePerByte: values.feePerByte },
     }),
   },
 };

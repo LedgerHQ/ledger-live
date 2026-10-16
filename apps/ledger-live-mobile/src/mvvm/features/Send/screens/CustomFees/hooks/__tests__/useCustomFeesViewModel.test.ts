@@ -48,7 +48,8 @@ const mockCustomFeeConfig = {
     feePerByte: "2",
   }),
   buildTransactionPatch: (values: Record<string, string>) => ({
-    feePerByte: new BigNumber(values.feePerByte),
+    feesStrategy: "custom",
+    familySpecificData: { feePerByte: values.feePerByte },
   }),
 };
 
@@ -80,7 +81,6 @@ function createStatus(): TransactionStatus {
     estimatedFees: new BigNumber(1000),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
-    txInputs: [],
   } as TransactionStatus;
 }
 

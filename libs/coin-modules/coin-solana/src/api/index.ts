@@ -20,6 +20,7 @@ import { combine } from "../logic/combine";
 import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
+import { getAccountInfo } from "../logic/getAccountInfo";
 import { getBalance } from "../logic/getBalance";
 import { getNextSequence } from "../logic/getNextSequence";
 import { getStakes } from "../logic/getStakes";
@@ -98,6 +99,10 @@ export function createApi(currencyId: string) {
     ) => {
       const { api } = await chainAPIFromContext(context, currencyId);
       return estimateFees(api, intent, options?.customFeesParameters);
+    },
+    getAccountInfo: async (context: SolanaContext, address: string) => {
+      const { api } = await chainAPIFromContext(context, currencyId);
+      return getAccountInfo(api, address);
     },
     getBalance: async (context: SolanaContext, address: string, options?: BalanceOptions) => {
       const { api, config } = await chainAPIFromContext(context, currencyId);

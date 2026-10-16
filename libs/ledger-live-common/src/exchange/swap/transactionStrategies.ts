@@ -159,27 +159,29 @@ export function evmTransaction({
   };
 }
 
+/**
+ * The swap's bitcoin fee rate and OP_RETURN payload (the payin memo) are user choices, so they
+ * travel in `familySpecificData` (ADR-065): a rate as a decimal string, a payload hex encoded.
+ */
 export function bitcoinTransaction({
   amount,
   recipient,
   customFeeConfig,
   extraTransactionParameters,
 }: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "bitcoin" }>> {
-  const baseTransaction = {
+  const feePerByte = customFeeConfig?.feePerByte;
+  const familySpecificData = {
+    ...(BigNumber.isBigNumber(feePerByte) ? { feePerByte: feePerByte.toFixed() } : {}),
+    ...(extraTransactionParameters
+      ? { opReturnData: Buffer.from(extraTransactionParameters, "utf-8").toString("hex") }
+      : {}),
+  };
+  return {
     family: "bitcoin" as const,
     amount,
     recipient,
-    ...customFeeConfig,
+    ...(Object.keys(familySpecificData).length > 0 ? { familySpecificData } : {}),
   };
-
-  if (extraTransactionParameters) {
-    return {
-      ...baseTransaction,
-      opReturnData: Buffer.from(extraTransactionParameters, "utf-8"),
-    };
-  }
-
-  return baseTransaction;
 }
 
 export function solanaTransaction(

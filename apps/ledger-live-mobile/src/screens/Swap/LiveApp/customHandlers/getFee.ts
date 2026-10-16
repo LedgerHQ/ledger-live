@@ -2,6 +2,7 @@ import { reduce, firstValueFrom } from "rxjs";
 import { Strategy } from "@ledgerhq/coin-evm/types";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getBitcoinCustomFeesPatch } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -144,7 +145,9 @@ export const getFee =
       data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
       feesStrategy: params.feeStrategy || "medium",
       customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
-      ...transformToBigNumbers(params.customFeeConfig),
+      ...(mainAccount.currency.family === "bitcoin"
+        ? getBitcoinCustomFeesPatch(transaction, params.customFeeConfig)
+        : transformToBigNumbers(params.customFeeConfig)),
     });
 
     // Get transaction status and fee config

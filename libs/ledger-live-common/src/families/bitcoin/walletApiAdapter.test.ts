@@ -1,10 +1,28 @@
-import { Account } from "@ledgerhq/types-live";
-import { BitcoinTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Account } from "@ledgerhq/types-live";
+import type { BitcoinTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
 import btc from "./walletApiAdapter";
 
-describe("getPlatformTransactionSignFlowInfos", () => {
-  describe("should properly get infos for BTC platform tx", () => {
+const account = {
+  type: "Account",
+  currency: getCryptoCurrencyById("bitcoin"),
+} as unknown as Account;
+
+const defaultLiveTx = {
+  family: "bitcoin",
+  amount: new BigNumber(0),
+  recipient: "",
+  fees: null,
+  useAllAmount: false,
+  mode: "send",
+  feesStrategy: "medium",
+  nonce: new BigNumber(0),
+  familySpecificData: { utxoStrategy: { strategy: 0, excludeUTXOs: [] } },
+};
+
+describe("getWalletAPITransactionSignFlowInfos", () => {
+  describe("should properly get infos for BTC wallet API tx", () => {
     test("without fees provided", () => {
       const btcPlatformTx: WalletAPITransaction = {
         family: "bitcoin",
@@ -14,32 +32,21 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 
       const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
         walletApiTransaction: btcPlatformTx,
-        account: {} as Account,
+        account,
       });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toMatchInlineSnapshot(`
-{
-  "amount": "100000",
-  "family": "bitcoin",
-  "feePerByte": null,
-  "feesStrategy": "medium",
-  "networkInfo": null,
-  "rbf": false,
-  "recipient": "0xABCDEF",
-  "useAllAmount": false,
-  "utxoStrategy": {
-    "excludeUTXOs": [],
-    "strategy": 0,
-  },
-}
-`);
+      expect(liveTx).toEqual({
+        ...defaultLiveTx,
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+      });
     });
 
-    test("with fees provided", () => {
+    test("with fees provided, the rate goes to familySpecificData and no preset applies", () => {
       const btcPlatformTx: WalletAPITransaction = {
         family: "bitcoin",
         amount: new BigNumber(100000),
@@ -49,32 +56,27 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 
       const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
         walletApiTransaction: btcPlatformTx,
-        account: {} as Account,
+        account,
       });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(true);
 
-      expect(liveTx).toMatchInlineSnapshot(`
-{
-  "amount": "100000",
-  "family": "bitcoin",
-  "feePerByte": "300",
-  "feesStrategy": null,
-  "networkInfo": null,
-  "rbf": false,
-  "recipient": "0xABCDEF",
-  "useAllAmount": false,
-  "utxoStrategy": {
-    "excludeUTXOs": [],
-    "strategy": 0,
-  },
-}
-`);
+      expect(liveTx).toEqual({
+        ...defaultLiveTx,
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        feesStrategy: null,
+        familySpecificData: {
+          utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+          feePerByte: "300",
+        },
+      });
+      expect(liveTx).not.toHaveProperty("feePerByte");
     });
 
-    test("with opReturnData provided", () => {
+    test("with opReturnData provided, it is hex encoded in familySpecificData", () => {
       const btcPlatformTx: WalletAPITransaction = {
         family: "bitcoin",
         amount: new BigNumber(100000),
@@ -84,48 +86,26 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 
       const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
         walletApiTransaction: btcPlatformTx,
-        account: {} as Account,
+        account,
       });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toMatchInlineSnapshot(`
-{
-  "amount": "100000",
-  "family": "bitcoin",
-  "feePerByte": null,
-  "feesStrategy": "medium",
-  "networkInfo": null,
-  "opReturnData": {
-    "data": [
-      104,
-      101,
-      108,
-      108,
-      111,
-      32,
-      119,
-      111,
-      114,
-      108,
-      100,
-    ],
-    "type": "Buffer",
-  },
-  "rbf": false,
-  "recipient": "0xABCDEF",
-  "useAllAmount": false,
-  "utxoStrategy": {
-    "excludeUTXOs": [],
-    "strategy": 0,
-  },
-}
-`);
+      expect(liveTx).toEqual({
+        ...defaultLiveTx,
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        familySpecificData: {
+          utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+          opReturnData: "68656c6c6f20776f726c64",
+        },
+      });
+      expect(liveTx).not.toHaveProperty("opReturnData");
     });
 
-    test("with changeAddress provided", () => {
+    test("with changeAddress provided, it goes to familySpecificData", () => {
       const btcPlatformTx: WalletAPITransaction = {
         family: "bitcoin",
         amount: new BigNumber(100000),
@@ -135,30 +115,74 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 
       const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
         walletApiTransaction: btcPlatformTx,
-        account: {} as Account,
+        account,
       });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toMatchInlineSnapshot(`
-{
-  "amount": "100000",
-  "changeAddress": "1ChangeAddressExample",
-  "family": "bitcoin",
-  "feePerByte": null,
-  "feesStrategy": "medium",
-  "networkInfo": null,
-  "rbf": false,
-  "recipient": "0xABCDEF",
-  "useAllAmount": false,
-  "utxoStrategy": {
-    "excludeUTXOs": [],
-    "strategy": 0,
-  },
-}
-`);
+      expect(liveTx).toEqual({
+        ...defaultLiveTx,
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        familySpecificData: {
+          utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+          changeAddress: "1ChangeAddressExample",
+        },
+      });
+      expect(liveTx).not.toHaveProperty("changeAddress");
+    });
+
+    test("with every bitcoin field provided at once", () => {
+      const btcPlatformTx: WalletAPITransaction = {
+        family: "bitcoin",
+        amount: new BigNumber(42),
+        recipient: "bc1qrecipient",
+        feePerByte: new BigNumber("2.5"),
+        opReturnData: Buffer.from([0xde, 0xad]),
+        changeAddress: "bc1qchange",
+      };
+
+      const { hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: btcPlatformTx,
+        account,
+      });
+
+      expect(hasFeesProvided).toBe(true);
+      expect(liveTx.familySpecificData).toEqual({
+        utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+        feePerByte: "2.5",
+        opReturnData: "dead",
+        changeAddress: "bc1qchange",
+      });
+      expect(liveTx.feesStrategy).toBeNull();
+    });
+
+    test("without amount nor recipient, keeps the defaults of the created transaction", () => {
+      const btcPlatformTx = {
+        family: "bitcoin",
+        recipient: "",
+      } as unknown as WalletAPITransaction;
+
+      const { hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: btcPlatformTx,
+        account,
+      });
+
+      expect(hasFeesProvided).toBe(false);
+      expect(liveTx).toEqual(defaultLiveTx);
+    });
+
+    test("on an account of another family, stays a bitcoin transaction", () => {
+      const stellarAccount: Account = { ...account, currency: getCryptoCurrencyById("stellar") };
+
+      const { liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: { family: "bitcoin", amount: new BigNumber(1), recipient: "bc1q" },
+        account: stellarAccount,
+      });
+
+      expect(liveTx.family).toBe("bitcoin");
     });
   });
 });
