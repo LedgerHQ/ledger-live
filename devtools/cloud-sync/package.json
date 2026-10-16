@@ -32,7 +32,7 @@
     "@shared/cloud-sync": "workspace:^"
   },
   "devDependencies": {
-    "@support/jest-devtools": "workspace:*",
+    "@support/jest": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@testing-library/dom": "catalog:",

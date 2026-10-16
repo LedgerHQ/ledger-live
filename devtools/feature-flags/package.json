@@ -25,7 +25,7 @@
     "@shared/feature-flags": "workspace:^"
   },
   "devDependencies": {
-    "@support/jest-devtools": "workspace:*",
+    "@support/jest": "workspace:*",
     "expo-document-picker": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
