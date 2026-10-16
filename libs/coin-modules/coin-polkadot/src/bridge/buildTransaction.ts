@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { PolkadotContext } from "../config";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 import type { PolkadotAccount, Transaction } from "../types";
@@ -35,6 +34,6 @@ export const buildTransaction = async (
     account.freshAddress,
     getNonce(account),
     extractExtrinsicArg(account, transaction),
-    getCryptoCurrencyById(account.currency.id),
+    account.currency.id,
   );
 };

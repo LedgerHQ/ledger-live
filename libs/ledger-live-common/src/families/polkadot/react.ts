@@ -66,7 +66,7 @@ function usePolkadotData<T>(
 /** Fetch the Polkadot validators list on demand (LRU-cached in the network layer). */
 export function usePolkadotValidators(currency?: CryptoCurrency): PolkadotValidator[] {
   return usePolkadotData(currency, lastSeenValidators, [], async cur =>
-    polkadotAPI.getValidators(await context.config(cur.id), "all", cur),
+    polkadotAPI.getValidators(await context.config(cur.id), "all", cur.id),
   );
 }
 
@@ -75,14 +75,14 @@ export function usePolkadotStakingProgress(
   currency?: CryptoCurrency,
 ): PolkadotStakingProgress | undefined {
   return usePolkadotData(currency, lastSeenStaking, undefined, async cur =>
-    polkadotAPI.getStakingProgress(context.logger, await context.config(cur.id), cur),
+    polkadotAPI.getStakingProgress(context.logger, await context.config(cur.id), cur.id),
   );
 }
 
 /** Fetch the Polkadot minimum bond balance on demand. */
 export function usePolkadotMinimumBondBalance(currency?: CryptoCurrency): BigNumber {
   return usePolkadotData(currency, lastSeenMinBond, new BigNumber(0), async cur =>
-    polkadotAPI.getMinimumBondBalance(await context.config(cur.id), cur),
+    polkadotAPI.getMinimumBondBalance(await context.config(cur.id), cur.id),
   );
 }
 

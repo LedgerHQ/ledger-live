@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import type { PolkadotCoinConfig } from "../config";
@@ -26,7 +25,7 @@ jest.mock("./node", () => ({
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
-const currency = getCryptoCurrencyById("assethub_polkadot");
+const currencyId = "assethub_polkadot";
 const logger = jest.fn();
 const config: PolkadotCoinConfig = {
   ...polkadotStakingConfigValue,
@@ -68,7 +67,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount(logger, config, "addr", currency);
+    const account = await getAccount(logger, config, "addr", currencyId);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -120,7 +119,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount(logger, config, "addr", currency);
+    const account = await getAccount(logger, config, "addr", currencyId);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -214,7 +213,7 @@ describe("getAccount", () => {
       .plus(lockedBalance.minus(unlockingBalance))
       .plus(unlockingBalance.minus(unlockedBalance));
 
-    const account = await getAccount(logger, config, "addr", currency);
+    const account = await getAccount(logger, config, "addr", currencyId);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -243,7 +242,7 @@ describe("getAccount", () => {
     jest.mocked(node.default.fetchNominations).mockRejectedValueOnce(error);
     const nominationsLogger = jest.fn();
 
-    await getAccount(nominationsLogger, config, "addr", currency);
+    await getAccount(nominationsLogger, config, "addr", currencyId);
 
     expect(nominationsLogger).toHaveBeenCalledWith("polkadot", "failed to fetch nominations addr", {
       error,
@@ -281,7 +280,7 @@ describe("getBalances", () => {
 
 describe("getRegistry", () => {
   it("works", async () => {
-    const { registry, extrinsics } = await getRegistry(config, currency);
+    const { registry, extrinsics } = await getRegistry(config, currencyId);
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
   });
@@ -298,7 +297,7 @@ describe("getMetadata", () => {
       callData,
       includedInExtrinsic,
       includedInSignedData,
-      currency,
+      currencyId,
     );
 
     expect(result).toEqual({ metadataBlob: "0xdeadbeef", metadataHash: "0x1234" });
@@ -326,7 +325,7 @@ describe("getMetadata", () => {
     const includedInExtrinsic = "0xf50004000001";
     const includedInSignedData = "0x" + "bb".repeat(105);
 
-    await getMetadata(config, callData, includedInExtrinsic, includedInSignedData, currency);
+    await getMetadata(config, callData, includedInExtrinsic, includedInSignedData, currencyId);
 
     expect(capturedBody).toEqual({
       callData,
@@ -348,7 +347,7 @@ const progressResponse = (height: string, toggleEstimate: string) =>
 
 describe("getStakingProgress", () => {
   it("returns the default progress when the staking feature is not active", async () => {
-    const progress = await getStakingProgress(logger, polkadotMainnetConfigValue, currency);
+    const progress = await getStakingProgress(logger, polkadotMainnetConfigValue, currencyId);
 
     expect(progress).toEqual(DEFAULT_STAKING_PROGRESS);
   });
@@ -360,7 +359,7 @@ describe("getStakingProgress", () => {
       ),
     );
 
-    const progress = await getStakingProgress(logger, config, currency);
+    const progress = await getStakingProgress(logger, config, currencyId);
 
     expect(progress.electionClosed).toEqual(false);
   });
@@ -372,7 +371,7 @@ describe("getStakingProgress", () => {
       ),
     );
 
-    const progress = await getStakingProgress(logger, config, currency);
+    const progress = await getStakingProgress(logger, config, currencyId);
 
     expect(progress.electionClosed).toEqual(true);
   });
@@ -387,7 +386,7 @@ describe("getStakingProgress", () => {
     const progress = await getStakingProgress(
       logger,
       { ...config, staking: { electionStatusThreshold: 5 } },
-      currency,
+      currencyId,
     );
 
     expect(progress.electionClosed).toEqual(true);
@@ -401,7 +400,7 @@ describe("getStakingProgress", () => {
     );
     const constsLogger = jest.fn();
 
-    await getStakingProgress(constsLogger, config, getCryptoCurrencyById("assethub_westend"));
+    await getStakingProgress(constsLogger, config, "assethub_westend");
 
     expect(constsLogger).toHaveBeenCalledWith(
       "polkadot/sidecar",
@@ -413,7 +412,7 @@ describe("getStakingProgress", () => {
 
 describe("isElectionClosed", () => {
   it("returns true without calling the sidecar when the staking feature is not active", async () => {
-    const isClosed = await isElectionClosed(polkadotMainnetConfigValue, currency);
+    const isClosed = await isElectionClosed(polkadotMainnetConfigValue, currencyId);
 
     expect(isClosed).toEqual(true);
   });

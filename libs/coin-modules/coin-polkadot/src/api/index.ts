@@ -36,7 +36,7 @@ import { validateAddress } from "../logic/validateAddress";
 //
 // `combine` stays and keeps throwing: it is a required method, so it cannot be omitted — the device
 // signature is attached by the signer rather than here.
-export function createApi() {
+export function createApi(currencyId: string) {
   return {
     broadcast: async (
       context: PolkadotContext,
@@ -44,7 +44,7 @@ export function createApi() {
       _options?: { broadcastConfig?: BroadcastConfig },
     ) => {
       const config = await context.config();
-      return broadcast(config, transaction, "polkadot");
+      return broadcast(config, transaction, currencyId);
     },
     combine: (
       _context: PolkadotContext,
@@ -55,8 +55,9 @@ export function createApi() {
       throw new Error("UnsupportedMethod");
     },
     craftTransaction: (context, transactionIntent, options?) =>
-      craft(context, transactionIntent, options?.customFees),
-    estimateFees: (context, transactionIntent, _options?) => estimate(context, transactionIntent),
+      craft(context, currencyId, transactionIntent, options?.customFees),
+    estimateFees: (context, transactionIntent, _options?) =>
+      estimate(context, currencyId, transactionIntent),
     getBalance: async (context: PolkadotContext, address: string, options?: BalanceOptions) => {
       const config = await context.config();
       return rejectBalanceOptions(() => getBalance(config, address), options);
@@ -73,6 +74,7 @@ export function createApi() {
 
 async function craft(
   context: PolkadotContext,
+  currencyId: string,
   transactionIntent: TransactionIntent,
   _customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -80,7 +82,13 @@ async function craft(
   const extrinsicArg = defaultExtrinsicArg(transactionIntent.amount, transactionIntent.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
   const nonce = 0;
-  const tx = await craftTransaction(config, transactionIntent.sender, nonce, extrinsicArg);
+  const tx = await craftTransaction(
+    config,
+    transactionIntent.sender,
+    nonce,
+    extrinsicArg,
+    currencyId,
+  );
   const extrinsic = tx.registry.createType("Extrinsic", tx.unsigned, {
     version: tx.unsigned.version,
   });
@@ -89,6 +97,7 @@ async function craft(
 
 async function estimate(
   context: PolkadotContext,
+  currencyId: string,
   transactionIntent: TransactionIntent,
 ): Promise<FeeEstimation> {
   const config = await context.config();
@@ -96,8 +105,9 @@ async function estimate(
     config,
     transactionIntent.sender,
     transactionIntent.amount,
+    currencyId,
   );
-  const value = await estimateFees(config, tx);
+  const value = await estimateFees(config, tx, currencyId);
   return { value };
 }
 
