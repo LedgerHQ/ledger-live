@@ -1,4 +1,4 @@
-import { act, render, screen, userEvent } from "@support/jest-devtools/native";
+import { act, render, screen, userEvent } from "@support/jest/devtools/native";
 import { ResultToast } from "./ResultToast";
 
 const VISIBLE_MS = 5000;

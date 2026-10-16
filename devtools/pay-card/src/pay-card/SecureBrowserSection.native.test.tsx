@@ -1,4 +1,4 @@
-import { render, screen, userEvent, waitFor } from "@support/jest-devtools/native";
+import { render, screen, userEvent, waitFor } from "@support/jest/devtools/native";
 import { SecureBrowserSection } from "./SecureBrowserSection";
 
 const HINT = "The browser session the hosted login opens. The app's own deep link closes it.";

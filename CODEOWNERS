@@ -70,9 +70,7 @@ devtools/relay/                                          @ledgerhq/platform
 tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
-support/jest-devtools/                                   @ledgerhq/platform
-support/jest-features-flow/                              @ledgerhq/platform
-support/jest-shared/                                     @ledgerhq/platform
+support/jest/                                            @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 
 # Wallet — libs
@@ -602,7 +600,6 @@ apps/ledger-live-mobile/e2e/                                                @led
 **/.oxfmtrc.*                                         @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
 **/tsconfig*                                          @ledgerhq/platform
-**/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform

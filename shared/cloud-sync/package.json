@@ -37,6 +37,6 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "@support/jest": "workspace:*"
   }
 }

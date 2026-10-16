@@ -3320,9 +3320,9 @@ importers:
       '@rspack/core':
         specifier: 'catalog:'
         version: 2.1.10(@swc/helpers@0.5.23)
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -3526,9 +3526,9 @@ importers:
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -3656,9 +3656,9 @@ importers:
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -3749,9 +3749,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -3840,9 +3840,9 @@ importers:
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -3975,9 +3975,9 @@ importers:
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -4228,9 +4228,9 @@ importers:
       '@react-navigation/native-stack':
         specifier: 'catalog:'
         version: 7.3.26(6ecfde62cac34d7b5ec9177df22d7f02)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -4388,9 +4388,9 @@ importers:
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -4511,9 +4511,9 @@ importers:
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
-      '@support/jest-devtools':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-devtools
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6237,9 +6237,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6309,9 +6309,9 @@ importers:
 
   features/flow/account-detail-hero:
     devDependencies:
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6379,9 +6379,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6501,9 +6501,9 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/ui-app-unavailable
     devDependencies:
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6589,9 +6589,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6650,9 +6650,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6705,9 +6705,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6772,9 +6772,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6830,9 +6830,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -6921,9 +6921,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7027,9 +7027,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7130,9 +7130,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7209,9 +7209,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7291,9 +7291,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7367,9 +7367,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7464,9 +7464,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7549,9 +7549,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7619,9 +7619,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7689,9 +7689,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7774,9 +7774,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -7961,9 +7961,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -8076,9 +8076,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -8167,9 +8167,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -8273,9 +8273,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -8394,9 +8394,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -8539,9 +8539,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -8675,9 +8675,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@support/msw-features-flow-pay-card':
         specifier: workspace:*
         version: link:../../../support/msw-features-flow-pay-card
@@ -8793,9 +8793,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@support/msw-features-flow-pay-card':
         specifier: workspace:*
         version: link:../../../support/msw-features-flow-pay-card
@@ -8887,9 +8887,9 @@ importers:
         specifier: workspace:^
         version: link:../../../domain/entity/currency
     devDependencies:
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -8969,9 +8969,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -9072,9 +9072,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -9175,9 +9175,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -9278,9 +9278,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -9387,9 +9387,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -9633,9 +9633,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -9816,9 +9816,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -9996,9 +9996,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
-      '@support/jest-features-flow':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-features-flow
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -11027,9 +11027,9 @@ importers:
       '@noble/curves':
         specifier: 'catalog:'
         version: 1.9.7
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../../support/jest-shared
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -15765,9 +15765,9 @@ importers:
         specifier: 'catalog:'
         version: 4.17.21
     devDependencies:
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -17465,9 +17465,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -17642,9 +17642,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -18205,9 +18205,9 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 10.0.0
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -18959,9 +18959,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19002,9 +19002,9 @@ importers:
       '@react-navigation/native':
         specifier: 'catalog:'
         version: 7.1.17(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19078,9 +19078,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19121,9 +19121,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19157,9 +19157,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19221,9 +19221,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19261,9 +19261,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19295,9 +19295,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19335,9 +19335,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19372,9 +19372,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19426,9 +19426,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19472,9 +19472,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19538,9 +19538,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19601,9 +19601,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19635,9 +19635,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19665,9 +19665,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19744,9 +19744,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19807,9 +19807,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19856,9 +19856,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19932,9 +19932,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/jest-shared':
+      '@support/jest':
         specifier: workspace:*
-        version: link:../../support/jest-shared
+        version: link:../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19972,7 +19972,11 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  support/jest-devtools:
+  support/jest:
+    dependencies:
+      undici:
+        specifier: 'catalog:'
+        version: 7.18.2
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
@@ -20028,28 +20032,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-
-  support/jest-features-flow:
-    dependencies:
-      undici:
-        specifier: 'catalog:'
-        version: 7.18.2
-    devDependencies:
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-
-  support/jest-shared:
-    devDependencies:
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
 
   support/lint-rules:
     devDependencies:

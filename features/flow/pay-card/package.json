@@ -37,7 +37,7 @@
     "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
