@@ -14,18 +14,18 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useFeatureIntroductionCopy } from "../../copy/useFeatureIntroductionCopy";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
 import type { ContactsFeatureIntroductionContentProps } from "./types";
 
 export function ContactsFeatureIntroductionContent({
   isOpen,
-  title,
-  highlights,
-  primaryActionLabel,
   heroImageSrc,
   bottomInset,
   onComplete,
 }: ContactsFeatureIntroductionContentProps): React.JSX.Element | null {
+  const { title, highlights, primaryActionLabel } = useFeatureIntroductionCopy();
+
   if (!isOpen) {
     return null;
   }

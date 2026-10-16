@@ -551,10 +551,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     ledgerSyncIntroduction: {
       isOpen:
         isContactsLedgerSyncActivationRequired(ledgerSyncStatus) && isLedgerSyncIntroductionOpen,
-      title: t("contacts.ledgerSyncIntroduction.title"),
-      description: t("contacts.ledgerSyncIntroduction.description"),
-      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-      dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onActivate: onActivateLedgerSync,
       onDismiss: onDismissLedgerSyncIntroduction,
     },

@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
 import { type Contact, type ContactAddress } from "@domain/entity-contact";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
@@ -38,7 +37,6 @@ export type UsePayTabContactsResult = Readonly<{
 export function usePayTabContacts(
   onSelectAddress: (address: ContactAddress) => void,
 ): UsePayTabContactsResult {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname: payTabPath } = useLocation();
@@ -139,17 +137,12 @@ export function usePayTabContacts(
       },
       ledgerSyncIntroduction: {
         open: isLedgerSyncIntroductionOpen,
-        title: t("contacts.ledgerSyncIntroduction.title"),
-        description: t("contacts.ledgerSyncIntroduction.description"),
-        activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-        dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
         onActivate: onActivateLedgerSyncIntroduction,
         onDismiss: onDismissLedgerSyncIntroduction,
       },
       contactAddressPicker,
     }),
     [
-      t,
       contactCreation,
       onRequestAddContact,
       onSaveSuccess,

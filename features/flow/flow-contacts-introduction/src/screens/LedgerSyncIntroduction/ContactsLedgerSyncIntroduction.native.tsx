@@ -8,18 +8,17 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useLedgerSyncIntroductionCopy } from "../../copy/useLedgerSyncIntroductionCopy";
 import type { ContactsLedgerSyncIntroductionContentProps } from "./types";
 
 export function ContactsLedgerSyncIntroductionContent({
   isOpen,
-  title,
-  description,
-  activateLabel,
-  dismissLabel,
   bottomInset,
   onActivate,
   onDismiss,
 }: ContactsLedgerSyncIntroductionContentProps): React.JSX.Element {
+  const { title, description, activateLabel, dismissLabel } = useLedgerSyncIntroductionCopy();
+
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
       {isOpen ? (

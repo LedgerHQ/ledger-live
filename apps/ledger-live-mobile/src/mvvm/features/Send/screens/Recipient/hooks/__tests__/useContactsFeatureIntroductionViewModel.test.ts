@@ -22,29 +22,10 @@ function renderViewModel({
 }
 
 describe("useContactsFeatureIntroductionViewModel", () => {
-  it("should open with the translated copy and highlights on a first visit", () => {
+  it("should open on a first visit", () => {
     const { result } = renderViewModel();
 
     expect(result.current.isOpen).toBe(true);
-    expect(result.current.title).toBe("Introducing Contacts");
-    expect(result.current.primaryActionLabel).toBe("Try now");
-    expect(result.current.highlights).toEqual([
-      {
-        icon: "Contact",
-        title: "Save addresses by a name you choose",
-        description: "Exchanges, friends, your own external accounts.",
-      },
-      {
-        icon: "ShieldCheck",
-        title: "Send to the right address",
-        description: "See a name you trust, not an address.",
-      },
-      {
-        icon: "Devices",
-        title: "Private across your Ledger devices",
-        description: "End-to-end encrypted with Ledger Sync.",
-      },
-    ]);
   });
 
   it("should stay closed when the introduction was already dismissed", () => {

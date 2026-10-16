@@ -9,18 +9,16 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { Refresh } from "@ledgerhq/lumen-ui-react/symbols";
+import { useLedgerSyncIntroductionCopy } from "../../copy/useLedgerSyncIntroductionCopy";
 import { useSingleFireDismiss } from "../../internals/useSingleFireDismiss";
 import type { ContactsLedgerSyncIntroductionDialogProps } from "./types";
 
 export function ContactsLedgerSyncIntroductionDialog({
   open,
-  title,
-  description,
-  activateLabel,
-  dismissLabel,
   onActivate,
   onDismiss,
 }: ContactsLedgerSyncIntroductionDialogProps): React.ReactNode {
+  const { title, description, activateLabel, dismissLabel } = useLedgerSyncIntroductionCopy();
   const dismiss = useSingleFireDismiss(onDismiss, open);
 
   const handleOpenChange = (isOpen: boolean) => {
