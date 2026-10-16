@@ -1,5 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { Button, DialogBody, DialogFooter, Spinner, Spot } from "@ledgerhq/lumen-ui-react";
+import { DeleteCircleFill, InformationFill } from "@ledgerhq/lumen-ui-react/symbols";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/aleo/types";
 import { cn } from "LLD/utils/cn";
@@ -16,8 +17,11 @@ type Props = Readonly<{
 }>;
 
 const STATUS_STYLE = {
-  error: { spot: "error", gradient: "bg-gradient-error" },
-  recordLimit: { spot: "info", gradient: "bg-gradient-muted" },
+  error: { spot: { appearance: "error", icon: DeleteCircleFill }, gradient: "bg-gradient-error" },
+  recordLimit: {
+    spot: { appearance: "muted", icon: InformationFill },
+    gradient: "bg-gradient-muted",
+  },
 } as const;
 
 function SendBalanceTypeSyncView({
@@ -46,7 +50,7 @@ function SendBalanceTypeSyncView({
                 STATUS_STYLE[viewModel.status].gradient,
               )}
             />
-            <Spot appearance={STATUS_STYLE[viewModel.status].spot} size={72} />
+            <Spot {...STATUS_STYLE[viewModel.status].spot} size={72} />
           </>
         )}
         <div className={cn("flex flex-col", isSyncing ? "gap-8" : "gap-12")}>

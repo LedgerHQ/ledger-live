@@ -22,7 +22,7 @@ export function MyLedgerView({ title, description, icon, onClick }: MyLedgerView
   return (
     <ListItem onClick={onClick} className="bg-surface" data-testid="my-wallet-my-ledger">
       <ListItemLeading>
-        <Spot icon={icon} appearance="icon" />
+        <Spot icon={icon} />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription>{description}</ListItemDescription>

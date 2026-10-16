@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Spot } from "@ledgerhq/lumen-ui-react";
+import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-react/symbols";
 
 export const SuccessContent = () => {
   const { t } = useTranslation();
@@ -10,7 +11,7 @@ export const SuccessContent = () => {
       className="-mt-12 flex flex-col items-center gap-24"
       data-testid="send-confirmation-success-content"
     >
-      <Spot appearance="check" size={72} />
+      <Spot appearance="success" icon={CheckmarkCircleFill} size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
         <h3 className="heading-3-semi-bold text-base" data-testid="send-confirmation-success-title">
           {t("send.steps.confirmation.success.title")}

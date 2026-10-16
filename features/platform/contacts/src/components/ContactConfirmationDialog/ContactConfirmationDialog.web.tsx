@@ -31,7 +31,7 @@ export function ContactConfirmationDialog({
         <DialogHeader density="compact" onClose={onCancel} />
         <DialogBody className="flex flex-col items-center gap-32 px-24 pb-24 text-center">
           <div className="flex flex-col items-center gap-24">
-            <Spot appearance="icon" icon={Trash} size={56} />
+            <Spot icon={Trash} size={56} />
             <div className="flex flex-col gap-8">
               <h2 className="heading-3-semi-bold text-base">{labels.title}</h2>
               <p className="body-2 text-muted">{labels.description}</p>

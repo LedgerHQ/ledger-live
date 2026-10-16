@@ -15,7 +15,7 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
         style={{ maxWidth: CONTENT_MAX_WIDTH_PX }}
       >
         <div className="flex w-full flex-col items-center gap-24">
-          <Spot appearance="icon" icon={Globe} size={SPOT_SIZE} />
+          <Spot icon={Globe} size={SPOT_SIZE} />
           <div className="flex w-full flex-col items-center gap-8 text-center">
             <h1 className="heading-4-semi-bold text-base">{title}</h1>
             <p className="body-2 text-muted">{description}</p>

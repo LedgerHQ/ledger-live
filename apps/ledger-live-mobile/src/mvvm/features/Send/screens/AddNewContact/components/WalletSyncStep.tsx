@@ -33,7 +33,7 @@ export function WalletSyncStep({
       <BottomSheetHeader />
       <Box lx={{ flexDirection: "column", gap: "s32" }}>
         <Box lx={{ flexDirection: "column", alignItems: "center", gap: "s24" }}>
-          <Spot appearance="icon" size={72} icon={Refresh} />
+          <Spot size={72} icon={Refresh} />
           <Box lx={{ flexDirection: "column", alignItems: "center", gap: "s8" }}>
             <Text typography="heading4SemiBold" lx={{ color: "base" }}>
               {t("send.newSendFlow.addContact.syncWallet.title")}

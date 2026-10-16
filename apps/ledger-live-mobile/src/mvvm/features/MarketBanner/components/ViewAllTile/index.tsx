@@ -17,7 +17,7 @@ const ViewAllTile = ({ onPress }: ViewAllTileProps) => {
       accessibilityLabel={t("marketBanner.viewAll")}
       accessibilityHint={t("marketBanner.viewAllAccessibilityHint")}
     >
-      <Spot size={40} appearance="icon" icon={ChevronRight} />
+      <Spot size={40} icon={ChevronRight} />
       <TileContent>
         <TileTitle>{t("marketBanner.viewAll")}</TileTitle>
       </TileContent>

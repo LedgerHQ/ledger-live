@@ -70,7 +70,7 @@ export function AddressListItem({
   return (
     <ListItem onPress={disabled ? undefined : onSelect} disabled={disabled} testID={testID}>
       <ListItemLeading>
-        <Spot appearance="icon" icon={icon} lx={{ marginRight: "s4" }} />
+        <Spot icon={icon} lx={{ marginRight: "s4" }} />
         <ListItemContent>
           <ListItemTitle typography="body2SemiBold">{title}</ListItemTitle>
           <ListItemDescription typography="body3" ellipsizeMode="middle">

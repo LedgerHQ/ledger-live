@@ -77,7 +77,7 @@ export function AddressListItem({
       })}
     >
       <ListItemLeading>
-        <Spot appearance="icon" icon={icon} />
+        <Spot icon={icon} />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription>{subtitle}</ListItemDescription>

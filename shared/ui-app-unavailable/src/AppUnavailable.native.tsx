@@ -10,7 +10,7 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
     <Box lx={rootStyle} testID={testID}>
       <Box lx={columnStyle} style={{ maxWidth: CONTENT_MAX_WIDTH_PX }}>
         <Box lx={contentStyle}>
-          <Spot appearance="icon" icon={Globe} size={SPOT_SIZE} />
+          <Spot icon={Globe} size={SPOT_SIZE} />
           <Box lx={copyStyle}>
             <Text
               accessibilityRole="header"

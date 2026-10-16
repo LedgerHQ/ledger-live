@@ -112,7 +112,7 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
               style={{ marginHorizontal: -8 }}
             >
               <ListItemLeading>
-                {IconComponent && <Spot appearance="icon" icon={IconComponent} />}
+                {IconComponent && <Spot icon={IconComponent} />}
                 <ListItemContent>
                   <ListItemTitle>{label}</ListItemTitle>
                 </ListItemContent>
