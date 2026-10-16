@@ -491,6 +491,7 @@ apps/ledger-live-desktop/src/mvvm/features/ProductTour/                         
 apps/ledger-live-desktop/src/mvvm/features/BackupHub/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Onboarding/                                         @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/DeviceOnboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/GenericAwarenessModal/                              @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useRecoverRestoreOnboarding.ts                     @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/images/lns-upsell-banner-*.webp                          @ledgerhq/engagement
