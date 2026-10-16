@@ -86,9 +86,8 @@ Two rules for the app:
   `SESSION_READY`. Why: a listener on the dead session cannot report the new one.
 
 A new session starts the checks over (firmware answer, genuine failure, paused checks), because they
-belong to the old session. A genuine result is kept only for the session it was made on. The one
-exception is the firmware update: this app ran it, so the result follows the device to its new
-session.
+belong to the old session. A genuine result is kept only for the session it was made on. A firmware
+update reboots onto a new session and drops that result, so the genuine check runs again.
 
 ### The exit
 

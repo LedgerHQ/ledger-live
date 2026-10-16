@@ -331,7 +331,7 @@ describe("DeviceOnboarding desktop integration", () => {
 
     await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
     expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.NANO_X);
-    expect(result.current.context?.isGenuine).toBe(true);
+    expect(result.current.context?.isGenuine).toBeNull();
     expect(result.current.state).toBe("readingState");
   });
 

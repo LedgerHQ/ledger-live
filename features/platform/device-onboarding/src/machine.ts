@@ -265,7 +265,7 @@ export const deviceOnboardingMachine = setup({
             QUIT: stopsHere,
             FIRMWARE_UPDATE_FLOW_CLOSED: {
               target: "#deviceOnboarding.readingState",
-              actions: ["forgetFirmwareCheck", "carryAttestationThroughReboot"],
+              actions: ["forgetFirmwareCheck", "forgetAttestationAfterUpdate"],
             },
           },
         },

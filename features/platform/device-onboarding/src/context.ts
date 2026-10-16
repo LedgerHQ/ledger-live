@@ -137,18 +137,13 @@ export const contextActions = {
       checksPaused: false,
     };
   }),
-  // The update reboots the device onto a new session, but this app ran it: the verdict still holds.
-  carryAttestationThroughReboot: update(({ context, event }) => {
+  // The update reboots the device onto a new session: it goes through the genuine check again.
+  forgetAttestationAfterUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_FLOW_CLOSED") {
       return {};
     }
 
-    const { genuineVerdict } = context;
-
-    return {
-      sessionId: event.sessionId,
-      genuineVerdict: genuineVerdict && { ...genuineVerdict, sessionId: event.sessionId },
-    };
+    return { sessionId: event.sessionId, genuineVerdict: null };
   }),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),
