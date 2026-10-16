@@ -7,7 +7,7 @@
       "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/.npmrc",
+      "{workspaceRoot}/pnpm-workspace.yaml",
       "{workspaceRoot}/patches/**/*"
     ],
     "default": [

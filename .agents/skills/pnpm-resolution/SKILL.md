@@ -18,7 +18,7 @@ They invent a graph that `package.json` does not declare. That poisons `nx affec
 
 1. **Declare it** on the workspace package that imports it (`dependencies`, or `peerDependencies` when a singleton is required).
 2. **Fix upstream** if a third-party package `require()`s something it does not list — PR, then bump.
-3. **`pnpm.overrides` / catalog** only pin versions; they do not replace a missing declaration.
+3. **`overrides` / catalog** only pin versions; they do not replace a missing declaration.
 4. Existing entries: shrink them. Moving a `.pnpmfile.cjs` hook into `packageExtensions` is the same workaround.
 
-`pnpm.patchedDependencies` is a content fork, not this class of workaround. Prefer upstream; do not use a patch to inject undeclared deps. Read [dependency-patches](../dependency-patches/SKILL.md) before creating or changing one.
+`patchedDependencies` is a content fork, not this class of workaround. Prefer upstream; do not use a patch to inject undeclared deps. Read [dependency-patches](../dependency-patches/SKILL.md) before creating or changing one.
