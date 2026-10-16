@@ -1,5 +1,4 @@
 import { Step } from "jest-allure2-reporter/api";
-import { isIos } from "@e2e/helpers/commonHelpers";
 
 export const RENAME_CONTACT_PREFIX = "contacts-rename-contact";
 
@@ -23,10 +22,6 @@ export default class ContactNameDrawer {
   async typeAndConfirm(name: string) {
     // LIVE-37168 - confirm button should remain interactable when the keyboard is open
     await typeTextByElement(this.nameInput(), name, false);
-    if (isIos()) {
-      // LIVE-37909 - workaround for iOS keyboard hiding the button; delete me when the issue is fixed
-      await this.nameInput().tapReturnKey();
-    }
     await tapByElement(this.confirmButton());
   }
 }
