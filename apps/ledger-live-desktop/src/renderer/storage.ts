@@ -75,6 +75,7 @@ type DatabaseValues = {
   history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
+    appConfig?: Record<string, "staging" | "prod">;
   };
   discover: DiscoverDB;
   ptx: {
