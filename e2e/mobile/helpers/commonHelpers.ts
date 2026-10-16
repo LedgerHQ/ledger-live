@@ -89,7 +89,6 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
-      ...(isPaytabSpec() ? { log_drawers: "1" } : {}),
       ...cardSession,
     },
     languageAndLocale: {
