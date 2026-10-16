@@ -97,11 +97,19 @@ runs:
       with:
         packages: build-essential pkg-config
 
-    - name: Get pnpm store directory
+    - name: Get pnpm store and cache directories
       id: get-store-path
       shell: bash
       run: |
         echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        echo "cache-path=$(pnpm cache path --silent)" >> $GITHUB_OUTPUT
+
+    # pnpm skips re-checking an unchanged lockfile against the supply-chain policies when its verdict is in this log.
+    - name: Cache pnpm lockfile verification log
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.get-store-path.outputs.cache-path }}/lockfile-verified.jsonl
+        key: ${{ runner.os }}-pnpm-lockfile-verified-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml') }}
 
     - name: Resolve Nx remote cache profile and apply S3 prefix
       id: nx-remote-cache

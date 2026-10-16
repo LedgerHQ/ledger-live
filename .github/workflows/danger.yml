@@ -39,13 +39,24 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.4.0
         with:
-          version: 10.24.0
+          version: 11.28.2
 
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
+
+      - name: Get pnpm cache directory
+        id: pnpm-cache-path
+        run: echo "path=$(pnpm cache path --silent)" >> "$GITHUB_OUTPUT"
+
+      # pnpm skips re-checking an unchanged lockfile against the supply-chain policies when its verdict is in this log.
+      - name: Cache pnpm lockfile verification log
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.pnpm-cache-path.outputs.path }}/lockfile-verified.jsonl
+          key: ${{ runner.os }}-pnpm-lockfile-verified-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml') }}
 
       - name: Install dependencies
         run: pnpm i --filter @tools/danger... --frozen-lockfile --ignore-scripts
@@ -55,3 +66,58 @@ jobs:
         run: pnpm danger ci --dangerfile dangerfile.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dedupe:
+    name: "Check pnpm-lock.yaml is deduplicated"
+    # GitHub-hosted with public npm, like local installs: JFrog lists only the @ledgerhq/* versions
+    # published to it, with tarballs that differ from npm's. Runs for forks too, with no secrets.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 2 # HEAD^1 is the base tip
+          persist-credentials: false
+
+      - name: Detect dependency changes
+        id: changes
+        run: |
+          if git diff --quiet HEAD^1 -- pnpm-lock.yaml pnpm-workspace.yaml '**/package.json' package.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup pnpm
+        if: steps.changes.outputs.changed == 'true'
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.4.0
+        with:
+          version: 11.28.2
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Get pnpm cache directory
+        if: steps.changes.outputs.changed == 'true'
+        id: pnpm-cache-path
+        run: echo "path=$(pnpm cache path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm lockfile verification log
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.pnpm-cache-path.outputs.path }}/lockfile-verified.jsonl
+          key: ${{ runner.os }}-pnpm-lockfile-verified-public-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml') }}
+
+      - name: pnpm dedupe --check
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          pnpm dedupe --check --ignore-scripts || {
+            echo "::error file=pnpm-lock.yaml::pnpm-lock.yaml is not deduplicated. Run 'pnpm dedupe' and commit the result."
+            exit 1
+          }
