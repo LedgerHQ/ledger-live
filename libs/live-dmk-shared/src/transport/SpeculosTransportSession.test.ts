@@ -1,5 +1,6 @@
 import {
   DeviceBusyError,
+  DeviceModelId,
   UnknownDeviceError,
   type Transport as DmkTransport,
 } from "@ledgerhq/device-management-kit";
@@ -62,6 +63,19 @@ describe("SpeculosTransportSession", () => {
     const transport = session.resolve(target);
 
     expect(session.resolve(otherTarget)).not.toBe(transport);
+    expect(transport!.stopDiscovering).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens a new transport when only the session token changes", () => {
+    const openTransport = jest.fn(createTransport);
+    const session = new SpeculosTransportSession(openTransport);
+    const nextTarget = { ...target, deviceModelId: DeviceModelId.NANO_X, bearerToken: "token-2" };
+
+    const transport = session.resolve({ ...nextTarget, bearerToken: "token-1" });
+
+    expect(session.resolve(nextTarget)).not.toBe(transport);
+    expect(openTransport).toHaveBeenCalledTimes(2);
+    expect(openTransport).toHaveBeenLastCalledWith(nextTarget);
     expect(transport!.stopDiscovering).toHaveBeenCalledTimes(1);
   });
 

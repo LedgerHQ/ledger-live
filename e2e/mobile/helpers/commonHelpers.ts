@@ -87,10 +87,11 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
 
   const port = await findFreePort();
   closeBridge();
-  initBridge(port);
+  const wsToken = initBridge(port);
   await device.launchApp({
     launchArgs: {
       wsPort: port,
+      wsToken,
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
