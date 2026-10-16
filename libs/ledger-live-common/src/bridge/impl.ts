@@ -9,6 +9,7 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   Account,
   AccountBridge,
+  AccountBridgeExtensions,
   AccountLike,
   CurrencyBridge,
   ResolvedAccountBridge,
@@ -20,6 +21,15 @@ import { getCoinFrameworkAccountBridge } from "./generic-coin-framework/accountB
 import { getCoinFrameworkCurrencyBridge } from "./generic-coin-framework/currencyBridge";
 import { isGenericCoinFrameworkFamily } from "./generic-coin-framework/genericCoinFrameworkFamilies";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
+import {
+  checkTransaction,
+  getTransactionCheckConfig,
+  TransactionCheckRisk,
+} from "@ledgerhq/ledger-wallet-framework/transactionCheck/index";
+import {
+  TransactionCheckCriticalThreat,
+  TransactionCheckPotentialRisk,
+} from "@ledgerhq/ledger-wallet-framework/transactionCheck/errors";
 import {
   loadSetupForFamily,
   loadMockBridgeForFamily,
@@ -277,19 +287,19 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
   family: string,
 ): Promise<ResolvedAccountBridge<T>> {
   const extensions = await loadBridgeExtensionsForFamily(family);
+  const getTransactionCheckPayload =
+    extensions.getTransactionCheckPayload ?? bridge.getTransactionCheckPayload;
   return {
     ...defaultBridgeExtensions,
     ...bridge,
     ...extensions,
     getTransactionStatus: async (...args) => {
       const blockchainTransactionStatus = await bridge.getTransactionStatus(...args);
-
-      const account = args[0];
-      if (!isCheckSanctionedAddressEnabled(account.currency)) {
-        return blockchainTransactionStatus;
-      }
-
-      const commonTransactionStatus = await commonGetTransactionStatus(...args);
+      const commonTransactionStatus = await commonGetTransactionStatus(
+        ...args,
+        blockchainTransactionStatus,
+        getTransactionCheckPayload,
+      );
       return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
     },
     /**
@@ -419,28 +429,52 @@ function mergeResults(
   return { ...blockchainTransactionStatus, errors, warnings };
 }
 
-async function commonGetTransactionStatus(
+async function commonGetTransactionStatus<T extends TransactionCommon>(
   account: Account,
-  transaction: TransactionCommon,
+  transaction: T,
+  blockchainTransactionStatus: TransactionStatusCommon,
+  getTransactionCheckPayload: AccountBridgeExtensions<T>["getTransactionCheckPayload"],
 ): Promise<Partial<TransactionStatusCommon>> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  let isRecipientSanctioned = false;
-  if (transaction.recipient && transaction.recipient !== "") {
-    isRecipientSanctioned = await isAddressSanctioned(account.currency, transaction.recipient);
-    if (isRecipientSanctioned) {
-      errors.recipient = new AddressesSanctionedError("AddressesSanctionedError", {
-        addresses: [transaction.recipient],
+  if (isCheckSanctionedAddressEnabled(account.currency)) {
+    if (transaction.recipient && transaction.recipient !== "") {
+      const isRecipientSanctioned = await isAddressSanctioned(
+        account.currency,
+        transaction.recipient,
+      );
+      if (isRecipientSanctioned) {
+        errors.recipient = new AddressesSanctionedError("AddressesSanctionedError", {
+          addresses: [transaction.recipient],
+        });
+      }
+    }
+
+    const isSenderSanctioned = await isAddressSanctioned(account.currency, account.freshAddress);
+    if (isSenderSanctioned) {
+      errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: [account.freshAddress],
       });
     }
   }
 
-  const isSenderSanctioned = await isAddressSanctioned(account.currency, account.freshAddress);
-  if (isSenderSanctioned) {
-    errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
-      addresses: [account.freshAddress],
-    });
+  // Web3checks screening of the recipient, shown where the OFAC error is but as a warning: unlike
+  // OFAC, the user can still continue. Skipped when the recipient is already in error. A critical
+  // threat replaces a recipient warning of the coin, a potential risk does not.
+  const checkConfig = getTransactionCheckPayload && getTransactionCheckConfig(account.currency);
+  if (checkConfig && !errors.recipient && !blockchainTransactionStatus.errors.recipient) {
+    const payload = await getTransactionCheckPayload(account, transaction);
+    const result = payload && (await checkTransaction(checkConfig, payload));
+    const fields = { category: result?.category, reportUrl: result?.reportUrl };
+    if (result?.risk === TransactionCheckRisk.Threat) {
+      warnings.recipient = new TransactionCheckCriticalThreat(undefined, fields);
+    } else if (
+      result?.risk === TransactionCheckRisk.Risk &&
+      !blockchainTransactionStatus.warnings.recipient
+    ) {
+      warnings.recipient = new TransactionCheckPotentialRisk(undefined, fields);
+    }
   }
 
   return { errors, warnings };

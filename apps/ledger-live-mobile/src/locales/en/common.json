@@ -1367,6 +1367,14 @@
     "PolkadotValidatorsRequired": {
       "title": "You must select at least one validator"
     },
+    "TransactionCheckPotentialRisk": {
+      "title": "Potential risk",
+      "description": "This transaction involves a suspicious address. It might not be safe to continue."
+    },
+    "TransactionCheckCriticalThreat": {
+      "title": "Critical threat",
+      "description": "This transaction involves a malicious address. Your assets will most likely be stolen."
+    },
     "TaprootNotActivated": {
       "title": "Taproot mainnet is not activated yet"
     },
