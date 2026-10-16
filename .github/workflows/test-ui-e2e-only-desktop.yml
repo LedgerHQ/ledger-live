@@ -2,12 +2,20 @@ name: "[Desktop] - E2E Only - Scheduled/Manual"
 run-name: >
   @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
+# Broadcast runs never overlap: a new one waits for the running one. GitHub keeps one waiting run
+# per group, so a newer broadcast run replaces the one already waiting. Other runs never wait.
+concurrency:
+  group: >-
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 1 * * 1') && 'desktop-e2e-broadcast' || format('desktop-e2e-{0}-{1}', github.run_id, inputs.speculos_device || 'nanoSP') }}
+  cancel-in-progress: false
+
 on:
   schedule:
     # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
     # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
     # broadcast from the shared QAA accounts on the same day.
-    # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
+    # The cron expression below is matched verbatim in the concurrency group and the
+    # E2E_BROADCAST_ENABLED env — keep all three in sync.
     - cron: "0 1 * * 1"
     - cron: "0 1 * * 2-5"
   workflow_dispatch:
@@ -82,6 +90,11 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      broadcast_deferral_passes:
+        description: "Passes that move a test whose broadcast lock is busy to the next one (default 2)"
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -210,7 +223,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
-    timeout-minutes: 40
+    # A broadcast run (E2E_BROADCAST_ENABLED) can also wait up to 30 minutes for each busy broadcast lock.
+    timeout-minutes: ${{ (inputs.enable_broadcast || github.event.schedule == '0 1 * * 1') && 70 || 40 }}
     env:
       NODE_OPTIONS: "--max-old-space-size=14336"
       INSTRUMENT_BUILD: true
@@ -418,6 +432,11 @@ jobs:
           BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
+          E2E_BROADCAST_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_BROADCAST_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_BROADCAST_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_BROADCAST_LOCK_DEFERRAL_PASSES: ${{ inputs.broadcast_deferral_passes }}
 
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() }}

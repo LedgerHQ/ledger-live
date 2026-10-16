@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/contacts";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { PAY_CARD } from "@ledgerhq/live-e2e-shared/broadcastLock";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -18,6 +19,7 @@ import {
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
+import { broadcastLockFor } from "tests/utils/broadcastLock";
 
 const ALL_STABLECOINS = "All stablecoins";
 const FILTER_TICKER = "USDT";
@@ -29,6 +31,8 @@ const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
 const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
+const paymentLock = broadcastLockFor({ broadcastAccounts: [transaction.accountToDebit] });
+const cardLock = broadcastLockFor({ sharedResources: [PAY_CARD] });
 
 function payContactSeed(address: string): ContactSeed {
   return {
@@ -146,85 +150,96 @@ test.describe("Pay tab", () => {
     },
   );
 
-  test(
-    "New payment",
-    {
-      tag: [...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-6327" },
-    },
-    async ({ app }) => {
-      const address = transaction.accountToCredit.address;
-      invariant(address, "Recipient address is not set");
-      await app.mainNavigation.openTargetFromMainNavigation("pay");
-      await app.payTab.openNewPayment();
-      await app.modularDialog.selectAssetByTicker(Currency.ETH_USDT);
-      await app.modularDialog.selectNetwork(Currency.ETH_USDT);
-      await app.modularDialog.selectAccountByName(transaction.accountToDebit);
-      await app.newSendFlow.waitForDialog();
-      await app.newSendFlow.typeAddress(address);
-      await app.newSendFlow.clickRecipientCardSend();
-      await app.newSendFlow.fillCryptoAmount(transaction.amount);
-      await app.newSendFlow.clickReview();
-      await app.newSendFlow.waitForSignature();
-      await app.speculos.signSendTransaction(transaction);
-      await app.payTab.expectYouPaid();
-      await app.payTab.closePaySuccess();
-      await app.payTab.expectScreenVisible();
-    },
-  );
+  test.describe(() => {
+    test.use(paymentLock.fixtures);
 
-  test(
-    "Pay a contact",
-    {
-      tag: [...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-6328" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("pay");
-      await app.payTab.expectScreenVisible();
-      await app.payTab.selectContact(CONTACT_ID);
-      await app.payTab.selectContactAddress(CONTACT_ADDRESS_ID);
-      await app.modularDialog.selectAccountByName(transaction.accountToDebit);
-      await app.newSendFlow.waitForDialog();
-      await app.newSendFlow.fillCryptoAmount(transaction.amount);
-      await app.newSendFlow.clickReview();
-      await app.newSendFlow.waitForSignature();
-      await app.speculos.signSendTransaction(transaction);
-      await app.payTab.expectPaySuccess(CONTACT_NAME);
-      await app.payTab.closePaySuccess();
-      await app.payTab.expectScreenVisible();
-    },
-  );
+    test(
+      "New payment",
+      {
+        tag: [...DEVICE_TAGS],
+        annotation: { type: "TMS", description: "B2CQA-6327" },
+        lock: paymentLock.names,
+      },
+      async ({ app }) => {
+        const address = transaction.accountToCredit.address;
+        invariant(address, "Recipient address is not set");
+        await app.mainNavigation.openTargetFromMainNavigation("pay");
+        await app.payTab.openNewPayment();
+        await app.modularDialog.selectAssetByTicker(Currency.ETH_USDT);
+        await app.modularDialog.selectNetwork(Currency.ETH_USDT);
+        await app.modularDialog.selectAccountByName(transaction.accountToDebit);
+        await app.newSendFlow.waitForDialog();
+        await app.newSendFlow.typeAddress(address);
+        await app.newSendFlow.clickRecipientCardSend();
+        await app.newSendFlow.fillCryptoAmount(transaction.amount);
+        await app.newSendFlow.clickReview();
+        await app.newSendFlow.waitForSignature();
+        await app.speculos.signSendTransaction(transaction);
+        await app.payTab.expectYouPaid();
+        await app.payTab.closePaySuccess();
+        await app.payTab.expectScreenVisible();
+      },
+    );
 
-  test(
-    "Freeze and unfreeze the card",
-    {
-      tag: [...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-6329" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("pay");
-      await app.payTab.expectScreenVisible();
-      await app.payTab.expectCardPanel();
-      await app.payTab.expectCashbackRow();
-      await app.payTab.expectFreezeTile(FREEZE);
-      await app.payTab.openFreezeConfirmation();
-      await app.payTab.confirmFreeze();
-      await app.payTab.expectCardFrozen();
-      await app.payTab.expectFreezeTile(UNFREEZE);
+    test(
+      "Pay a contact",
+      {
+        tag: [...DEVICE_TAGS],
+        annotation: { type: "TMS", description: "B2CQA-6328" },
+        lock: paymentLock.names,
+      },
+      async ({ app }) => {
+        await app.mainNavigation.openTargetFromMainNavigation("pay");
+        await app.payTab.expectScreenVisible();
+        await app.payTab.selectContact(CONTACT_ID);
+        await app.payTab.selectContactAddress(CONTACT_ADDRESS_ID);
+        await app.modularDialog.selectAccountByName(transaction.accountToDebit);
+        await app.newSendFlow.waitForDialog();
+        await app.newSendFlow.fillCryptoAmount(transaction.amount);
+        await app.newSendFlow.clickReview();
+        await app.newSendFlow.waitForSignature();
+        await app.speculos.signSendTransaction(transaction);
+        await app.payTab.expectPaySuccess(CONTACT_NAME);
+        await app.payTab.closePaySuccess();
+        await app.payTab.expectScreenVisible();
+      },
+    );
+  });
 
-      await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.mainNavigation.openTargetFromMainNavigation("pay");
-      await app.payTab.expectScreenVisible();
-      await app.payTab.expectCardFrozen();
-      await app.payTab.expectFreezeTile(UNFREEZE);
+  test.describe(() => {
+    test.use(cardLock.fixtures);
 
-      await app.payTab.openFreezeConfirmation();
-      await app.payTab.confirmFreeze();
-      await app.payTab.expectCardNotFrozen();
-      await app.payTab.expectFreezeTile(FREEZE);
-    },
-  );
+    test(
+      "Freeze and unfreeze the card",
+      {
+        tag: [...DEVICE_TAGS],
+        annotation: { type: "TMS", description: "B2CQA-6329" },
+        lock: cardLock.names,
+      },
+      async ({ app }) => {
+        await app.mainNavigation.openTargetFromMainNavigation("pay");
+        await app.payTab.expectScreenVisible();
+        await app.payTab.expectCardPanel();
+        await app.payTab.expectCashbackRow();
+        await app.payTab.expectFreezeTile(FREEZE);
+        await app.payTab.openFreezeConfirmation();
+        await app.payTab.confirmFreeze();
+        await app.payTab.expectCardFrozen();
+        await app.payTab.expectFreezeTile(UNFREEZE);
+
+        await app.mainNavigation.openTargetFromMainNavigation("home");
+        await app.mainNavigation.openTargetFromMainNavigation("pay");
+        await app.payTab.expectScreenVisible();
+        await app.payTab.expectCardFrozen();
+        await app.payTab.expectFreezeTile(UNFREEZE);
+
+        await app.payTab.openFreezeConfirmation();
+        await app.payTab.confirmFreeze();
+        await app.payTab.expectCardNotFrozen();
+        await app.payTab.expectFreezeTile(FREEZE);
+      },
+    );
+  });
 
   test(
     "Open a card transaction from history",

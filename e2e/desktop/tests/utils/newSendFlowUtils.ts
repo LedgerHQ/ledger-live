@@ -15,6 +15,7 @@ import {
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
+import { broadcastLockFor } from "tests/utils/broadcastLock";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -107,12 +108,14 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
     const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
     const currency = tx.accountToDebit.currency;
     const currencyLabel = currency.testLabel;
+    const sendLock = broadcastLockFor({ broadcastAccounts: [tx.accountToDebit] });
 
-    test.describe("Send - new flow", () => {
+    test.describe("Send - new flow", { lock: sendLock.names }, () => {
       test.use({
         teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
+        ...sendLock.fixtures,
         cliCommands: [liveDataWithRecipientAddressCommand(tx, { useScheme: true })],
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
