@@ -131,14 +131,18 @@ export function useDeviceOnboardingActor({
   }, [stopActor]);
 
   const resetActor = useCallback(() => {
-    stopActor();
+    const current = actorRef.current;
+    actorRef.current = null;
+    // Stopping skips the exit that takes the device off its early-check screen, so start it first.
+    if (current?.getSnapshot().context.onEarlyCheckScreen) current.send({ type: "QUIT" });
+    current?.stop();
     previousSnapshotRef.current = null;
     lastLoggedStep.current = null;
     setSnapshot(null);
     setSessionReady(false);
     setEvents([]);
     setExit(null);
-  }, [stopActor]);
+  }, []);
 
   const startActor = useCallback(
     (input: StartOnboardingActorInput, hooks?: { beforeStart?: () => void }) => {
