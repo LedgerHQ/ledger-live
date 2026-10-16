@@ -11,7 +11,6 @@ describe("resolveContactAddressDetailActionsLabels", () => {
 
     const labels = resolveContactAddressDetailActionsLabels({ t, supportsDomain: true });
 
-    expect(labels.delete.title).toBe("contacts.deleteAddress.title");
     expect(labels.rename.labelValidationErrors).toEqual({
       [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "contacts.editAddress.invalidLabelError",
       [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "contacts.addAddressName.duplicateLabel",

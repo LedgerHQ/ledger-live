@@ -34,7 +34,6 @@ export function createInactiveContactAddressDetailActionsUiState(
     delete: {
       isOpen: false,
       isDeleting: false,
-      labels: labels.delete,
       onConfirm: async () => undefined,
       onCancel: () => undefined,
     },
@@ -79,7 +78,6 @@ export function createActiveContactAddressDetailActionsUiState(
     delete: {
       isOpen: flow.deleteLifecycle.status === "open",
       isDeleting: flow.isDeleting,
-      labels: labels.delete,
       onConfirm: flow.confirmDelete,
       onCancel: flow.cancelDelete,
     },
