@@ -74,7 +74,7 @@ export function PerpsDepositSignView({
   const styles = useStyleSheet(
     theme => ({
       deviceSelection: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.flatten(StyleSheet.absoluteFill),
         backgroundColor: theme.colors.bg.base,
         paddingHorizontal: 16,
         paddingTop: 8,

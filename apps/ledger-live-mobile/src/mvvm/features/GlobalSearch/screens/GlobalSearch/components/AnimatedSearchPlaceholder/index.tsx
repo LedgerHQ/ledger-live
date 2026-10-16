@@ -54,7 +54,7 @@ export function AnimatedSearchPlaceholder({ visible }: Props) {
   const styles = useStyleSheet(
     theme => ({
       overlay: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.flatten(StyleSheet.absoluteFill),
         overflow: "hidden",
       },
       layer: {

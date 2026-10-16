@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loaderOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.flatten(StyleSheet.absoluteFill),
   },
   headerRight: {
     display: "flex",
