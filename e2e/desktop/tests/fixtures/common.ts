@@ -16,6 +16,7 @@ import {
   addTeamOwner,
   addAnnotationLinks,
   attachMergedFeatureFlags,
+  attachSpeculinhoLogs,
 } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { PageLogCollector } from "tests/utils/pageLogCollector";
@@ -46,6 +47,7 @@ type SpeculosFixtureHandle = {
   get current(): SpeculosDevice;
   get device(): SpeculosDevice | undefined;
   relaunch: (appName: string) => Promise<SpeculosDevice>;
+  onRelaunch?: (device: SpeculosDevice) => Promise<void>;
 };
 
 type TestFixtures = {
@@ -177,6 +179,7 @@ export const test = base.extend<TestFixtures>({
       },
       relaunch: async (appName: string) => {
         currentDevice = await launchSpeculos(appName, testInfo.title, currentDevice);
+        await handle.onRelaunch?.(currentDevice);
         return currentDevice;
       },
     };
@@ -191,7 +194,7 @@ export const test = base.extend<TestFixtures>({
       unregisterAllTransportModules();
 
       if (cliCommandsOnApp?.length) {
-        currentDevice = await runCliCommandsOnLaunchedApps(
+        await runCliCommandsOnLaunchedApps(
           cliCommandsOnApp,
           testInfo.title,
           userdataDestinationPath,
@@ -240,6 +243,7 @@ export const test = base.extend<TestFixtures>({
         MANAGER_DEV_MODE: true,
         SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
         SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
+        SPECULOS_SESSION_TOKEN: speculos.device ? process.env.SPECULOS_SESSION_TOKEN : undefined,
         DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
         ...(process.env.DEV_TOOLS && { DEV_TOOLS_MODE: process.env.DEV_TOOLS_MODE || "detach" }),
       },
@@ -329,6 +333,16 @@ export const test = base.extend<TestFixtures>({
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
+    // A relaunched remote Speculos is a new session, on its own URL and token.
+    // A local one keeps its port, so the app needs no update.
+    if (process.env.REMOTE_SPECULOS === "true") {
+      speculos.onRelaunch = () =>
+        page.evaluate(({ address, token }) => window.ledger.setSpeculosTarget(address, token), {
+          address: getSpeculosAddress(),
+          token: process.env.SPECULOS_SESSION_TOKEN,
+        });
+    }
+
     // use page in the test
     await use(page);
 
@@ -345,6 +359,10 @@ export const test = base.extend<TestFixtures>({
         webviewCollector,
         appCollector,
       );
+
+      if (process.env.REMOTE_SPECULOS === "true" && speculos.device) {
+        await attachSpeculinhoLogs(testInfo, speculos.device.id);
+      }
     }
 
     // Remove video if test passed

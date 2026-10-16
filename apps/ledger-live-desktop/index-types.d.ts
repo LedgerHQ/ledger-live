@@ -86,6 +86,7 @@ interface Window {
     removeDevice: (device: Device) => void;
     resetDevices: () => void;
     getMockServerSessionToken: () => string | undefined;
+    setSpeculosTarget: (address: string, sessionToken?: string) => void;
   };
 
   // used for the analytics, initialized in the index.html
