@@ -1,8 +1,15 @@
+import { EMPTY_WALLET_TX } from "./__tests__/fixtures/walletTx";
 import { TEST_CONFIG, TEST_LOGGER } from "./__tests__/fixtures/coinConfig";
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInput, Transaction } from "./types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { DustLimit, RbfBuildError, FeeTooLow } from "./errors";
+import {
+  DustLimit,
+  RbfBuildError,
+  FeeTooLow,
+  TransactionCheckCriticalThreat,
+  TransactionCheckPotentialRisk,
+} from "./errors";
 import BigNumber from "bignumber.js";
 
 // Mock modules before importing the module under test
@@ -23,13 +30,22 @@ jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => {
   };
 });
 
+jest.mock("./transactionCheck", () => ({
+  ...jest.requireActual("./transactionCheck"),
+  checkTransaction: jest.fn(),
+}));
+
+jest.mock("./getWalletAccount", () => ({ getWalletAccount: jest.fn() }));
+
 import * as cache from "./cache";
+import * as transactionCheck from "./transactionCheck";
 import * as sanction from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import getTransactionStatus, { MAX_BLOCK_HEIGHT_FOR_TAPROOT } from "./getTransactionStatus";
 
 const calculateFeesSpy = jest.mocked(cache.calculateFees);
 const validateRecipientSpy = jest.mocked(cache.validateRecipient);
 const isAddressSanctionedSpy = jest.mocked(sanction.isAddressSanctioned);
+const checkTransactionSpy = jest.mocked(transactionCheck.checkTransaction);
 
 describe("getTransactionStatus on Bitcoin", () => {
   it("should return as sender error only sanctioned utxo addresses", async () => {
@@ -68,6 +84,7 @@ describe("getTransactionStatus on Bitcoin", () => {
       txInputs: utxoAddresses,
       txOutputs: [],
       fees: BigNumber(0),
+      walletTx: EMPTY_WALLET_TX,
     });
 
     const account = {
@@ -119,6 +136,7 @@ describe("getTransactionStatus on Bitcoin", () => {
       txInputs: utxoAddresses,
       txOutputs: [],
       fees: BigNumber(0),
+      walletTx: EMPTY_WALLET_TX,
     });
 
     const account = {
@@ -204,6 +222,7 @@ describe("getTransactionStatus on Bitcoin", () => {
         txInputs: [],
         txOutputs: [],
         fees: BigNumber(0),
+        walletTx: EMPTY_WALLET_TX,
       });
     });
 
@@ -292,6 +311,7 @@ describe("getTransactionStatus on Bitcoin", () => {
         txInputs: [],
         txOutputs: [],
         fees: BigNumber(0),
+        walletTx: EMPTY_WALLET_TX,
       });
     });
 
@@ -347,6 +367,103 @@ describe("getTransactionStatus on Bitcoin", () => {
         buildTransaction(1000, 0, 10),
       );
       expect(status.errors.dustLimit).toBeUndefined();
+    });
+  });
+
+  describe("transaction check", () => {
+    const config = {
+      ...TEST_CONFIG,
+      transactionChecks: { url: "https://transaction-checks.test.invalid/v3" },
+    };
+    const account = {
+      currency: { id: "bitcoin" },
+      blockHeight: MAX_BLOCK_HEIGHT_FOR_TAPROOT + 1,
+    } as unknown as Account;
+    const transaction = {
+      amount: BigNumber(1000),
+      recipient: "bc1qneyw3q5r7m88e7yheem7wn4wvx2chug5g4hrve",
+      feePerByte: BigNumber(2),
+    } as unknown as Transaction;
+    const checkResult = (risk: number) => ({
+      risk,
+      category: 0x02,
+      providerMessage: undefined,
+      reportUrl: "https://bl.kd/abc",
+    });
+
+    beforeEach(() => {
+      checkTransactionSpy.mockReset();
+      validateRecipientSpy.mockResolvedValue({
+        recipientError: undefined,
+        recipientWarning: undefined,
+        changeAddressError: undefined,
+        changeAddressWarning: undefined,
+      });
+      isAddressSanctionedSpy.mockResolvedValue(false);
+      calculateFeesSpy.mockResolvedValue({
+        txInputs: [],
+        txOutputs: [],
+        fees: BigNumber(10),
+        walletTx: EMPTY_WALLET_TX,
+      });
+    });
+
+    it("blocks the recipient on a critical threat", async () => {
+      checkTransactionSpy.mockResolvedValue(
+        checkResult(transactionCheck.TransactionCheckRisk.Threat),
+      );
+
+      const status = await getTransactionStatus(config, TEST_LOGGER, account, transaction);
+
+      expect(status.errors.recipient).toBeInstanceOf(TransactionCheckCriticalThreat);
+      expect(status.errors.recipient).toMatchObject({
+        category: 0x02,
+        reportUrl: "https://bl.kd/abc",
+      });
+    });
+
+    it("warns on the recipient on a potential risk", async () => {
+      checkTransactionSpy.mockResolvedValue(
+        checkResult(transactionCheck.TransactionCheckRisk.Risk),
+      );
+
+      const status = await getTransactionStatus(config, TEST_LOGGER, account, transaction);
+
+      expect(status.errors.recipient).toBeUndefined();
+      expect(status.warnings.recipient).toBeInstanceOf(TransactionCheckPotentialRisk);
+    });
+
+    it("adds nothing for a benign or unavailable check", async () => {
+      checkTransactionSpy.mockResolvedValueOnce(
+        checkResult(transactionCheck.TransactionCheckRisk.Benign),
+      );
+      const benign = await getTransactionStatus(config, TEST_LOGGER, account, transaction);
+      checkTransactionSpy.mockResolvedValueOnce(null);
+      const unavailable = await getTransactionStatus(config, TEST_LOGGER, account, transaction);
+
+      for (const status of [benign, unavailable]) {
+        expect(status.errors.recipient).toBeUndefined();
+        expect(status.warnings.recipient).toBeUndefined();
+      }
+    });
+
+    it("skips the check when it is not configured", async () => {
+      await getTransactionStatus(TEST_CONFIG, TEST_LOGGER, account, transaction);
+
+      expect(checkTransactionSpy).not.toHaveBeenCalled();
+    });
+
+    it("skips the check when the recipient is already invalid", async () => {
+      validateRecipientSpy.mockResolvedValue({
+        recipientError: new Error("InvalidAddress"),
+        recipientWarning: undefined,
+        changeAddressError: undefined,
+        changeAddressWarning: undefined,
+      });
+
+      await getTransactionStatus(config, TEST_LOGGER, account, transaction);
+
+      expect(checkTransactionSpy).not.toHaveBeenCalled();
     });
   });
 });
