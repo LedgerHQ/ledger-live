@@ -249,7 +249,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
-    timeout-minutes: 40
+    # A broadcast run (E2E_BROADCAST_ENABLED) can also wait up to 30 minutes for each busy broadcast lock.
+    timeout-minutes: ${{ (inputs.enable_broadcast || github.event.schedule == '0 1 * * 1') && 70 || 40 }}
     env:
       NODE_OPTIONS: "--max-old-space-size=14336"
       INSTRUMENT_BUILD: true
