@@ -1648,6 +1648,13 @@ export const getEstimatedSigningTime = (
   return `~${minutes} ${minuteShort}`;
 };
 
+export function getSigningRecordCount(transaction: Transaction): number {
+  if (!isPrivateTransaction(transaction)) return 0;
+
+  const { amountRecordCommitments, feeRecordCommitment } = transaction.properties;
+  return amountRecordCommitments.length + (feeRecordCommitment ? 1 : 0);
+}
+
 /** Narrows any cross-family transaction shape down to Aleo's own `Transaction` type. */
 export function isAleoTransaction(tx: { family: string }): tx is Transaction {
   return tx.family === "aleo";

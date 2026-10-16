@@ -10161,6 +10161,12 @@
         "recordsUsed": "Records used",
         "signingTime": "Signing time"
       },
+      "amount": {
+        "signingTime": {
+          "label": "Signing time",
+          "description": "Your Ledger signer approves each record this transaction uses. Sending more from your private balance can use more records and take longer."
+        }
+      },
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
         "desc": "Please wait",

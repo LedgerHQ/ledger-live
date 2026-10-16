@@ -4,6 +4,7 @@ import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { FeeSelectorOption, SponsoredFeeDisplay } from "../types";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { AmountMessageText } from "./AmountMessageText";
+import { FamilySendAmountFooterRow } from "./FamilySendAmountFooterRow";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
 import type { SponsoredFeeNudgeProps } from "./Fees/SponsoredFeeNudge";
 
@@ -76,6 +77,7 @@ export function AmountFooter({
         sponsoredNudge={sponsoredNudge}
         sponsoredFee={sponsoredFee}
       />
+      <FamilySendAmountFooterRow />
       <Button
         appearance="base"
         size="lg"
