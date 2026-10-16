@@ -18,7 +18,7 @@ export function AccountSettingsMenuView({
 }: AccountSettingsMenuViewProps) {
   return (
     <div className="-mx-8 flex flex-col" data-testid="account-settings-menu">
-      <ListItem onClick={onChangeName} data-testid="account-settings-change-name">
+      <ListItem priority="start" onClick={onChangeName} data-testid="account-settings-change-name">
         <ListItemLeading>
           <PenEditWriting size={20} />
           <ListItemContent>
@@ -26,7 +26,9 @@ export function AccountSettingsMenuView({
           </ListItemContent>
         </ListItemLeading>
         <ListItemTrailing className="gap-8">
-          <span className="body-2-semi-bold text-muted">{accountName}</span>
+          <span className="truncate body-2-semi-bold text-muted" title={accountName}>
+            {accountName}
+          </span>
           <ChevronRight size={16} className="text-muted" />
         </ListItemTrailing>
       </ListItem>

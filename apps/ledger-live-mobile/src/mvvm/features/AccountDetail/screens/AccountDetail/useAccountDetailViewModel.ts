@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
@@ -28,9 +28,13 @@ export type AccountDetailViewModel = Readonly<{
   onOpenSettings: () => void;
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
+  onSettingsHidden: () => void;
+  onChangeName: () => void;
   onViewAdvancedLogs: () => void;
   onConfirmRemove: () => void;
 }>;
+
+type SettingsScreen = ScreenName.AccountDetailEditName | ScreenName.AccountDetailAdvancedLogs;
 
 type AccountDetailRoute = RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>;
 type AccountDetailNavigation = RootNavigationComposite<
@@ -75,11 +79,25 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const onOpenSettings = useCallback(() => setIsSettingsOpen(true), []);
   const onCloseSettings = useCallback(() => setIsSettingsOpen(false), []);
-  const onViewAdvancedLogs = useCallback(() => {
-    if (!mainAccount) return;
+  const screenToOpenAfterSettings = useRef<SettingsScreen | undefined>(undefined);
+  const openSettingsScreen = useCallback((screen: SettingsScreen) => {
+    screenToOpenAfterSettings.current = screen;
     setIsSettingsOpen(false);
-    stackNavigation.navigate(ScreenName.AccountDetailAdvancedLogs, { accountId: mainAccount.id });
+  }, []);
+  const onSettingsHidden = useCallback(() => {
+    const screen = screenToOpenAfterSettings.current;
+    screenToOpenAfterSettings.current = undefined;
+    if (!screen || !mainAccount) return;
+    stackNavigation.navigate(screen, { accountId: mainAccount.id });
   }, [mainAccount, stackNavigation]);
+  const onChangeName = useCallback(
+    () => openSettingsScreen(ScreenName.AccountDetailEditName),
+    [openSettingsScreen],
+  );
+  const onViewAdvancedLogs = useCallback(
+    () => openSettingsScreen(ScreenName.AccountDetailAdvancedLogs),
+    [openSettingsScreen],
+  );
 
   const onConfirmRemove = useCallback(() => {
     setIsSettingsOpen(false);
@@ -93,6 +111,8 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     onOpenSettings,
     isSettingsOpen,
     onCloseSettings,
+    onSettingsHidden,
+    onChangeName,
     onViewAdvancedLogs,
     onConfirmRemove,
   };

@@ -14,6 +14,7 @@ export enum ScreenName {
   AccountSettingsMain = "AccountSettingsMain",
   AccountDetail = "AccountDetail",
   AccountDetailAdvancedLogs = "AccountDetailAdvancedLogs",
+  AccountDetailEditName = "AccountDetailEditName",
   AccountsSettings = "AccountsSettings",
   AddAccountsAccounts = "AddAccountsAccounts",
   AddAccountsSelectDevice = "AddAccountsSelectDevice",

@@ -20,7 +20,7 @@ export function AccountSettingsMenuView({
 }: AccountSettingsMenuViewProps) {
   return (
     <Box lx={{ marginHorizontal: "-s8" }} testID="account-settings-menu">
-      <ListItem onPress={onChangeName} testID="account-settings-change-name">
+      <ListItem priority="start" onPress={onChangeName} testID="account-settings-change-name">
         <ListItemLeading>
           <PenEditWriting size={20} />
           <ListItemContent>
@@ -28,7 +28,12 @@ export function AccountSettingsMenuView({
           </ListItemContent>
         </ListItemLeading>
         <ListItemTrailing lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
-          <Text typography="body2SemiBold" lx={{ color: "muted" }}>
+          <Text
+            typography="body2SemiBold"
+            lx={{ color: "muted", flexShrink: 1 }}
+            numberOfLines={1}
+            testID="account-settings-change-name-value"
+          >
             {accountName}
           </Text>
           <ChevronRight size={16} color="muted" />

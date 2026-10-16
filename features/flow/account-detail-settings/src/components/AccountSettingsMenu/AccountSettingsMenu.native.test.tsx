@@ -23,6 +23,12 @@ describe("AccountSettingsMenu (Native)", () => {
     expect(screen.getByText("Remove account from portfolio")).toBeVisible();
   });
 
+  it("keeps the account name on a single line", () => {
+    renderMenu();
+
+    expect(screen.getByTestId("account-settings-change-name-value")).toHaveProp("numberOfLines", 1);
+  });
+
   it("calls the handler of the pressed setting", () => {
     const handlers = renderMenu();
 

@@ -9,6 +9,7 @@ import {
 } from "LLM/components/Navigation";
 import AccountDetail from "./screens/AccountDetail";
 import AdvancedLogs from "./screens/AdvancedLogs";
+import EditName from "./screens/EditName";
 import type { AccountDetailNavigatorParamsList } from "./types";
 
 const Stack = createLumenNativeStackNavigator<AccountDetailNavigatorParamsList>();
@@ -39,6 +40,11 @@ export default function AccountDetailNavigator({ accountId }: Props) {
         name={ScreenName.AccountDetailAdvancedLogs}
         component={AdvancedLogs}
         options={{ title: t("accountDetailSettings.advancedLogs.title") }}
+      />
+      <Stack.Screen
+        name={ScreenName.AccountDetailEditName}
+        component={EditName}
+        options={{ title: t("accountDetail.editName.title") }}
       />
     </Stack.Navigator>
   );
