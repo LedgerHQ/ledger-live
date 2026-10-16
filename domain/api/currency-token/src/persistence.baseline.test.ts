@@ -173,6 +173,34 @@ describe("restore → save → restart", () => {
     expect(saved.hashes?.ethereum).toBe("new-hash");
   });
 
+  it("should keep a failed currency's tokens when another currency's hash changed", async () => {
+    behaviors.ethereum = "changed";
+    behaviors.polygon = "fail";
+    const store = makeStore();
+
+    await restoreTokensToCache(store.dispatch, persisted, TTL);
+    await tick();
+
+    const cached = new Set<string>();
+    for (const query of Object.values(
+      store.getState()[cryptoAssetsApi.reducerPath].queries ?? {},
+    )) {
+      if (
+        query?.status === "fulfilled" &&
+        (query.endpointName === "findTokenById" ||
+          query.endpointName === "findTokenByAddressInCurrency") &&
+        query.data &&
+        typeof query.data === "object" &&
+        "parentCurrencyId" in query.data &&
+        typeof query.data.parentCurrencyId === "string"
+      ) {
+        cached.add(query.data.parentCurrencyId);
+      }
+    }
+
+    expect([...cached].sort()).toEqual(["polygon"]);
+  });
+
   it("keeps all tokens when the hash checks confirm the stored hash", async () => {
     behaviors.ethereum = "same";
     behaviors.polygon = "same";

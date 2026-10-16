@@ -17,6 +17,7 @@ import {
   HEADER_X_LEDGER_COMMIT,
   TOKEN_TAGS,
   TOKENS_SYNC_HASH_TIMEOUT_MS,
+  tokenCurrencyTag,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
@@ -46,7 +47,7 @@ export const cryptoAssetsApi = calApi
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,
-        providesTags: [...TOKEN_TAGS],
+        providesTags: (_result, _error, arg) => [tokenCurrencyTag(arg.id.split("/")[0] || arg.id)],
       }),
 
       findTokenByAddressInCurrency: build.query<
@@ -66,7 +67,7 @@ export const cryptoAssetsApi = calApi
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,
-        providesTags: [...TOKEN_TAGS],
+        providesTags: (_result, _error, arg) => [tokenCurrencyTag(arg.network)],
       }),
 
       getTokensSyncHash: build.query<string, string>({
@@ -128,7 +129,7 @@ export const cryptoAssetsApi = calApi
                 "cryptoassets",
                 `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
               );
-              api.dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
+              api.dispatch(cryptoAssetsApi.util.invalidateTags([tokenCurrencyTag(currencyId)]));
             }
           } catch {
             // Query failed, skip eviction

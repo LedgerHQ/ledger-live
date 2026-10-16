@@ -3,6 +3,10 @@
 /** RTK Query cache tags for CAL token data. */
 export const TOKEN_TAGS = ["Tokens"] as const;
 
+export function tokenCurrencyTag(currencyId: string) {
+  return { type: TOKEN_TAGS[0], id: currencyId };
+}
+
 /** Default page size for the paginated `getTokensData` query. */
 export const DEFAULT_PAGE_SIZE = 1000;
 

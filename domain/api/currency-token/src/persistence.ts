@@ -3,7 +3,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { calApi, type CalApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
-import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY, TOKEN_TAGS } from "./internals";
+import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY, tokenCurrencyTag } from "./internals";
 import {
   buildRestoreCacheEntries,
   groupTokensByCurrency,
@@ -222,7 +222,11 @@ async function evictChangedCurrencies(
   try {
     const currencyIdsToEvict = await resolveCurrenciesToEvict(dispatch, tokensByCurrency, hashes);
     if (currencyIdsToEvict.size > 0) {
-      dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
+      dispatch(
+        cryptoAssetsApi.util.invalidateTags(
+          [...currencyIdsToEvict].map(currencyId => tokenCurrencyTag(currencyId)),
+        ),
+      );
     }
   } catch {
     // Hash check failed: keep the restored tokens.
