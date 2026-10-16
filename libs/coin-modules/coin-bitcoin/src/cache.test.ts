@@ -3,6 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { makeLRUCacheWithTtlOf, calculateFees } from "./cache";
 import getFeesForTransaction from "./getFeesForTransaction";
 import type { Transaction } from "./types";
+import { EMPTY_WALLET_TX } from "./__tests__/fixtures/walletTx";
 import { TEST_CONFIG, TEST_LOGGER } from "./__tests__/fixtures/coinConfig";
 
 jest.mock("./getFeesForTransaction", () => ({
@@ -63,7 +64,7 @@ describe("calculateFees", () => {
     utxoStrategy: { strategy: 0, excludeUTXOs: [] },
     rbf: true,
   } as unknown as Transaction;
-  const fees = { fees: new BigNumber(1), txInputs: [], txOutputs: [] };
+  const fees = { fees: new BigNumber(1), txInputs: [], txOutputs: [], walletTx: EMPTY_WALLET_TX };
 
   beforeEach(() => {
     calculateFees.reset();

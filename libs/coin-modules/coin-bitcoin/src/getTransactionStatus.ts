@@ -5,7 +5,14 @@ import {
   FeeTooHigh,
   FeeRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { DustLimit, OpReturnDataSizeLimit, TaprootNotActivated, FeeTooLow } from "./errors";
+import {
+  DustLimit,
+  OpReturnDataSizeLimit,
+  TaprootNotActivated,
+  FeeTooLow,
+  TransactionCheckCriticalThreat,
+  TransactionCheckPotentialRisk,
+} from "./errors";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type {
@@ -24,6 +31,9 @@ import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import type { BitcoinCoinConfig } from "./config";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
+import type { TransactionInfo as WalletTxInfo } from "@ledgerhq/wallet-btc/types";
+import { getWalletAccount } from "./getWalletAccount";
+import { checkTransaction, TransactionCheckRisk } from "./transactionCheck";
 
 export const MAX_BLOCK_HEIGHT_FOR_TAPROOT = 709632;
 
@@ -36,6 +46,7 @@ type FeeCalculation = {
   txInputs: BitcoinInput[];
   txOutputs: BitcoinOutput[];
   estimatedFees: BigNumber;
+  walletTx?: WalletTxInfo;
 };
 
 async function validateRecipientAndChange(
@@ -120,6 +131,7 @@ async function computeFees(
       txInputs: res.txInputs,
       txOutputs: res.txOutputs,
       estimatedFees: res.fees,
+      walletTx: res.walletTx,
     };
   } catch (error) {
     const err = error as Error;
@@ -142,6 +154,33 @@ async function collectSanctionedInputs(
     }
   }
   return sanctionedAddresses;
+}
+
+async function applyTransactionCheck(
+  config: BitcoinCoinConfig,
+  logger: Logger,
+  account: Account,
+  walletTx: WalletTxInfo | undefined,
+  errors: ErrorMap,
+  warnings: ErrorMap,
+): Promise<void> {
+  if (!walletTx || errors.recipient || !config.transactionChecks) return;
+
+  const result = await checkTransaction(
+    config,
+    logger,
+    account.currency.id,
+    getWalletAccount(account),
+    walletTx,
+  );
+  if (!result) return;
+
+  const fields = { category: result.category, reportUrl: result.reportUrl };
+  if (result.risk === TransactionCheckRisk.Threat) {
+    errors.recipient = new TransactionCheckCriticalThreat(undefined, fields);
+  } else if (result.risk === TransactionCheckRisk.Risk && !warnings.recipient) {
+    warnings.recipient = new TransactionCheckPotentialRisk(undefined, fields);
+  }
 }
 
 function checkDustLimit(
@@ -181,7 +220,7 @@ export const getTransactionStatus = async (
 
   await applyTaprootSafeguard(account, transaction, errors);
 
-  const { txInputs, txOutputs, estimatedFees } = await computeFees(
+  const { txInputs, txOutputs, estimatedFees, walletTx } = await computeFees(
     config,
     logger,
     account,
@@ -202,6 +241,8 @@ export const getTransactionStatus = async (
     });
   }
   logger("bitcoin", `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`);
+
+  await applyTransactionCheck(config, logger, account, walletTx, errors, warnings);
 
   const totalSpent = sumOfInputs.minus(sumOfChanges);
   const amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount;

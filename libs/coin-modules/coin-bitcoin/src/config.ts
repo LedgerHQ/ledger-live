@@ -34,6 +34,14 @@ export type BitcoinConfig = {
      */
     feeRatesCacheTtlMs?: number;
   };
+  /**
+   * Web3checks backend that screens the built transaction (PSBT) for risky recipients.
+   * The check runs only when this is set and the currency has a transaction check chain id.
+   */
+  transactionChecks?: {
+    /** Base URL, e.g. https://global.api.prd.ledger.com/transaction-checks/v3 */
+    url: string;
+  };
   sync?: {
     /**
      * Age after which an unconfirmed operation is dropped from the synced history.
