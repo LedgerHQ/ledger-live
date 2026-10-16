@@ -10425,6 +10425,12 @@
   "accountDetail": {
     "transactions": {
       "title": "Transactions"
+    },
+    "editName": {
+      "title": "Change name",
+      "description": "Give this address a name to stay organized (ex. {{ticker}}-Trading, {{ticker}}-DeFi).",
+      "label": "Address name",
+      "submit": "Change name"
     }
   },
   "assetDetail": {

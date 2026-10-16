@@ -7,6 +7,7 @@ export type AccountSettingsSheetProps = Readonly<{
   onChangeName: () => void;
   onViewAdvancedLogs: () => void;
   onConfirmRemove: () => void;
+  onHidden?: () => void;
   testID?: string;
 }>;
 
