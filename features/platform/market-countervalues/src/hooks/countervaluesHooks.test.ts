@@ -3,7 +3,13 @@ import { act, renderHook } from "@testing-library/react";
 import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import { setCountervaluesState, wipeCountervalues } from "@domain/entity-market-countervalues";
+import {
+  applyRatePatches,
+  pairId,
+  setCountervaluesState,
+  wipeCountervalues,
+  type CountervaluesSettings,
+} from "@domain/entity-market-countervalues";
 import { buildCV } from "@domain/entity-market-countervalues/mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
@@ -34,6 +40,13 @@ const oneBitcoin = new BigNumber(10).pow(bitcoin.units[0].magnitude);
 const thirtyThousandDollars = 3_000_000;
 
 const state = buildCV({ pair: { from: bitcoin, to: usd }, latest: 30_000 });
+const btcUsd = pairId({ from: bitcoin, to: usd });
+const settings: CountervaluesSettings = {
+  trackingPairs: [],
+  autofillGaps: true,
+  refreshRate: 60_000,
+  marketCapBatchingAfterRank: 20,
+};
 const loadError = new Error("countervalues service unreachable");
 
 function createTestStore() {
@@ -113,6 +126,42 @@ describe("countervalues hooks", () => {
     });
     expect(renders.cache).toBe(2);
     expect(cacheView.result.current).toEqual({ cache: {} });
+  });
+
+  it("re-render the conversions when a load moves only the latest rate", () => {
+    const { store } = createTestStore();
+    let renders = 0;
+    const { result } = renderHook(
+      () => {
+        renders++;
+        return {
+          view: useCountervaluesCache(),
+          calculated: useCalculate({ value: oneBitcoin.toNumber(), from: bitcoin, to: usd }),
+        };
+      },
+      { wrapper: wrapperFor(store) },
+    );
+    expect(result.current.calculated).toBe(thirtyThousandDollars);
+
+    act(() => {
+      store.dispatch(setCountervaluesState(loadLatest(31_000)));
+    });
+    expect(renders).toBe(2);
+    expect(result.current.calculated).toBe(3_100_000);
+    const moved = result.current;
+
+    // Control: the same latest again keeps the view, so the re-render above came from the rate.
+    act(() => {
+      store.dispatch(setCountervaluesState(loadLatest(31_000)));
+    });
+    expect(renders).toBe(2);
+    expect(result.current).toBe(moved);
+
+    function loadLatest(latest: number) {
+      const { rates } = store.getState().countervalues;
+      const status = { [btcUsd]: { timestamp: Date.now() } };
+      return applyRatePatches(rates, { ...rates, status }, [{ [btcUsd]: { latest } }], settings);
+    }
   });
 
   it("keep the polling controls stable through a load cycle, without re-rendering", () => {

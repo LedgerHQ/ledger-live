@@ -259,6 +259,9 @@ describe("applyRatePatches: a changed value always yields a new Map", () => {
       });
       expect(next.data[btcUsd].get(key)).toBe(value);
       expect(next.cache[btcUsd]).not.toBe(state.cache[btcUsd]);
+      // What the cache view and the conversions select.
+      expect(next.data).not.toBe(state.data);
+      expect(next.cache).not.toBe(state.cache);
     }
     expect([...state.data[btcUsd]]).toEqual(before);
   });
