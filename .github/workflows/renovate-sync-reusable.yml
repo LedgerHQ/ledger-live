@@ -25,7 +25,10 @@ jobs:
       relevant: ${{ steps.compare.outputs.relevant }}
     steps:
       - id: compare
-        if: startsWith(github.head_ref, 'renovate/') && github.event.sender.login != 'live-github-bot[bot]'
+        if: >-
+          startsWith(github.head_ref, 'renovate/') &&
+          github.event.pull_request.user.login == 'renovate-operator[bot]' &&
+          github.event.sender.login != 'live-github-bot[bot]'
         env:
           GH_TOKEN: ${{ github.token }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
