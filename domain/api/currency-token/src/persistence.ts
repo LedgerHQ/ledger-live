@@ -10,7 +10,12 @@ import {
   resolveCurrenciesToEvict,
 } from "./internals/restore";
 import { PersistedCALSchema } from "./schema";
-import type { PersistedCAL, PersistedTokenEntry, TokenByAddressInCurrencyParams } from "./types";
+import type {
+  PersistedCAL,
+  PersistedTokenEntry,
+  TokenByAddressInCurrencyParams,
+  TokenByTokenIdentifierInCurrencyParams,
+} from "./types";
 
 /**
  * Validates an untrusted persisted blob (e.g. read from localStorage) against
@@ -34,9 +39,16 @@ export interface WithCryptoAssetsApi {
   [calApi.reducerPath]: ReturnType<typeof calApi.reducer>;
 }
 
+const PERSISTED_TOKEN_ENDPOINTS = new Set([
+  "findTokenById",
+  "findTokenByAddressInCurrency",
+  "findTokenByTokenIdentifierInCurrency",
+]);
+
 /**
- * Extracts all cached tokens from RTK Query state. Only fulfilled `findTokenById` and
- * `findTokenByAddressInCurrency` queries are considered, deduplicated by token id.
+ * Extracts all cached tokens from RTK Query state. Only fulfilled token queries are considered,
+ * deduplicated by token id. A token reached through several queries keeps its latest fetched body
+ * but collects each query's lookup arguments, so restoring it rebuilds all those cache keys.
  */
 export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTokenEntry[] {
   const rtkState = state[cryptoAssetsApi.reducerPath];
@@ -45,15 +57,13 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
     return [];
   }
 
-  const tokens: PersistedTokenEntry[] = [];
-  const seenIds = new Set<string>();
+  const tokensById = new Map<string, PersistedTokenEntry>();
 
   for (const query of Object.values(rtkState.queries)) {
     if (
       query?.status === "fulfilled" &&
       query.data &&
-      (query.endpointName === "findTokenById" ||
-        query.endpointName === "findTokenByAddressInCurrency")
+      PERSISTED_TOKEN_ENDPOINTS.has(query.endpointName)
     ) {
       const token = query.data as TokenCurrency;
       if (!token?.id) continue;
@@ -62,19 +72,40 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
         query.endpointName === "findTokenByAddressInCurrency"
           ? (query.originalArgs as TokenByAddressInCurrencyParams | undefined)?.token_identifier
           : undefined;
+      const tokenIdentifierLookup =
+        query.endpointName === "findTokenByTokenIdentifierInCurrency"
+          ? (query.originalArgs as TokenByTokenIdentifierInCurrencyParams | undefined)
+              ?.token_identifier
+          : undefined;
 
-      if (seenIds.has(token.id)) continue;
-      seenIds.add(token.id);
-
-      tokens.push({
-        data: token,
-        timestamp: query.fulfilledTimeStamp || Date.now(),
-        token_identifier: tokenIdentifier,
-      });
+      tokensById.set(
+        token.id,
+        mergeTokenEntries(tokensById.get(token.id), {
+          data: token,
+          timestamp: query.fulfilledTimeStamp || Date.now(),
+          token_identifier: tokenIdentifier,
+          token_identifier_lookup: tokenIdentifierLookup,
+        }),
+      );
     }
   }
 
-  return tokens;
+  return [...tokensById.values()];
+}
+
+/** Merges two entries of the same token: the later fetched body wins, lookup arguments add up. */
+function mergeTokenEntries(
+  previous: PersistedTokenEntry | undefined,
+  next: PersistedTokenEntry,
+): PersistedTokenEntry {
+  if (!previous) return next;
+  const latest = next.timestamp > previous.timestamp ? next : previous;
+  return {
+    data: latest.data,
+    timestamp: latest.timestamp,
+    token_identifier: previous.token_identifier ?? next.token_identifier,
+    token_identifier_lookup: previous.token_identifier_lookup ?? next.token_identifier_lookup,
+  };
 }
 
 /** Extracts the `currencyId → hash` map from fulfilled `getTokensSyncHash` queries. */
@@ -118,9 +149,9 @@ export function extractPersistedCALFromState(state: WithCryptoAssetsApi): Persis
 }
 
 /**
- * Compares two {@link PersistedCAL} values by content (version, hashes, token data), ignoring
- * token timestamps so refetches with identical cache content are considered equal. Returns true
- * only when both are null or both are content-equal.
+ * Compares two {@link PersistedCAL} values by content (version, hashes, token data and lookup
+ * arguments), ignoring token timestamps so refetches with identical cache content are considered
+ * equal. Returns true only when both are null or both are content-equal.
  */
 export function persistedCALContentEqual(a: PersistedCAL | null, b: PersistedCAL | null): boolean {
   if (a === b) return true;
@@ -128,13 +159,23 @@ export function persistedCALContentEqual(a: PersistedCAL | null, b: PersistedCAL
   if (a.version !== b.version) return false;
   if (!isEqual(a.hashes, b.hashes)) return false;
   if (a.tokens.length !== b.tokens.length) return false;
-  const tokensByIdA = new Map(a.tokens.map(t => [t.data.id, t.data]));
-  const tokensByIdB = new Map(b.tokens.map(t => [t.data.id, t.data]));
-  for (const [id, dataA] of tokensByIdA) {
-    const dataB = tokensByIdB.get(id);
-    if (!dataB || !isEqual(dataA, dataB)) return false;
+  const tokensByIdA = new Map(a.tokens.map(t => [t.data.id, t]));
+  const tokensByIdB = new Map(b.tokens.map(t => [t.data.id, t]));
+  for (const [id, entryA] of tokensByIdA) {
+    const entryB = tokensByIdB.get(id);
+    if (!entryB || !tokenEntryContentEqual(entryA, entryB)) return false;
   }
   return true;
+}
+
+// A lookup argument gained after the token was first persisted must count as a change, or the blob
+// is never rewritten and that cache key is never restored.
+function tokenEntryContentEqual(a: PersistedTokenEntry, b: PersistedTokenEntry): boolean {
+  return (
+    isEqual(a.data, b.data) &&
+    a.token_identifier === b.token_identifier &&
+    a.token_identifier_lookup === b.token_identifier_lookup
+  );
 }
 
 /** Filters out persisted tokens older than `ttl` (ms). */

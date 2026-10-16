@@ -16,6 +16,14 @@ export interface TokenByAddressInCurrencyParams {
   token_identifier?: string;
 }
 
+/** Parameters for the `findTokenByTokenIdentifierInCurrency` query. */
+export interface TokenByTokenIdentifierInCurrencyParams {
+  /** The token identifier (e.g. a TRON TRC10 asset id). */
+  token_identifier: string;
+  /** The network of the token. */
+  network: string;
+}
+
 /** Parameters for the `getTokensData` query. */
 export interface GetTokensDataParams {
   /** Filter by network family (e.g. "ethereum", "polygon"). */
