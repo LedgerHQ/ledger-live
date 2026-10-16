@@ -493,10 +493,25 @@ jobs:
           fi
           code=$(curl -sS -m 15 -o /dev/null -w '%{http_code}' "$SPECULINHO_URL/status/poc-probe" || true)
           echo "Speculinho answered HTTP ${code:-none}"
-          if [ -z "$code" ] || [ "$code" = "000" ]; then
-            echo "::error::Speculinho is not reachable from this runner"
-            exit 1
-          fi
+          case "$code" in
+            "" | 000)
+              echo "::warning::Speculinho is not reachable from this runner: device tests will fail"
+              ;;
+            401 | 403)
+              echo "::warning::Speculinho refuses this runner (HTTP $code, access policy): device tests will fail"
+              ;;
+          esac
+
+      - name: Print runner OS
+        shell: bash
+        run: |
+          case "$RUNNER_OS" in
+            Windows) os_name=$(powershell -NoProfile -Command "(Get-CimInstance Win32_OperatingSystem).Caption + ' ' + (Get-CimInstance Win32_OperatingSystem).Version") ;;
+            macOS) os_name="$(sw_vers -productName) $(sw_vers -productVersion)" ;;
+            *) os_name=$(uname -sr) ;;
+          esac
+          echo "Runner OS: $os_name ($(uname -m)) on $RUNNER_NAME"
+          echo "### Runner OS: $os_name ($(uname -m)) on \`$RUNNER_NAME\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Check out with LF line endings (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -618,6 +633,47 @@ jobs:
         if: ${{ always() && runner.os == 'macOS' }}
         shell: bash
         run: pkill -f "$GITHUB_WORKSPACE/.*Electron.app/Contents/MacOS/Electron" || true
+
+  report-to-allure-cross-os:
+    name: "Create Allure Report - cross-OS POC (${{ matrix.os }})"
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
+    needs: [e2e-tests-cross-os]
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows, macos]
+    env:
+      ALLURE_RESULTS: "allure-results"
+    steps:
+      - name: Download Allure results from test jobs
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: allure-results-${{ matrix.os }}-*
+          merge-multiple: true
+          path: ${{ env.ALLURE_RESULTS }}
+
+      - name: Extract test summary
+        id: summary
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ${{ env.ALLURE_RESULTS }}
+          platform: ${{ matrix.os }}
+
+      - name: Publish report to Allure Server
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        with:
+          platform: ${{ matrix.os }}-speculos-poc
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: ${{ env.ALLURE_RESULTS }}
+          summary_message: ${{ steps.summary.outputs.summary_message }}
+
+      - name: Write failed tests summary
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: ${{ env.ALLURE_RESULTS }}
+          runner: playwright
 
   report-to-allure:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
