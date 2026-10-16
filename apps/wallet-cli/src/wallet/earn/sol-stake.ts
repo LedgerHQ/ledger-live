@@ -22,7 +22,7 @@
  * integration contract.
  */
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { WalletAdapter } from "../index";
 import type { AccountDescriptor } from "../models";
 import { SolanaTransactionIntentSchema } from "../intents";

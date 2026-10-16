@@ -3,7 +3,7 @@ import {
   mockContactAddress,
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { ContactAddressCurrencyPort } from "./ports";
 import { createContactDetailAddressRowIntent } from "./viewModel";
 import { groupContactAddressRowsByNetwork } from "./groupContactAddressRowsByNetwork";

@@ -1,4 +1,4 @@
-import { parseAnyAccountId, safeParseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId, safeParseAnyAccountId } from "@domain/entity-account/legacy";
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Observable, concat, defer, find, from, ignoreElements, mergeMap, tap } from "rxjs";
 import { Button } from "@ledgerhq/lumen-ui-react";
@@ -31,7 +31,7 @@ import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridg
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { Account, BridgeCacheSystem, ScanAccountEvent } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
-import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { v5 as uuidv5 } from "uuid";
-import { type AnyAccountId, parseAnyAccountId } from "@domain/entity-account";
+import { type AnyAccountId, parseAnyAccountId } from "@domain/entity-account/legacy";
 
 /**
  * Namespace for account id aliasing. Randomly generated uuid v4, distinct from the wallet-api one

@@ -1,5 +1,5 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";
 import { useIsAccountDetailPage } from "../useIsAccountDetailPage";

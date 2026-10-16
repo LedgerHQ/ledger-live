@@ -1,4 +1,4 @@
-import { safeParseAnyAccountId, type AnyAccountId } from "@domain/entity-account";
+import { safeParseAnyAccountId, type AnyAccountId } from "@domain/entity-account/legacy";
 import type { AccountAliasState } from "./schema";
 
 /** Account id behind an alias, `undefined` when the alias was never registered. */

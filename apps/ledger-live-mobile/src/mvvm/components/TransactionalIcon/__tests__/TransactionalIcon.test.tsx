@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { render, screen } from "@tests/test-renderer";
 import TransactionalIcon from "../index";
 

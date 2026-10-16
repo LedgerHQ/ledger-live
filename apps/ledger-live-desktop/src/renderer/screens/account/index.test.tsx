@@ -1,10 +1,10 @@
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { computeAccountAlias } from "@domain/entity-account-alias";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { getAccountUrl } from "~/renderer/utils";
 import AccountPageWrapper from "./index";
 

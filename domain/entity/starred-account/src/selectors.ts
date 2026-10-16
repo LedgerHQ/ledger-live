@@ -1,4 +1,4 @@
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import type { StarredAccountState } from "./slice";
 
 export const isStarredAccountSelector = (

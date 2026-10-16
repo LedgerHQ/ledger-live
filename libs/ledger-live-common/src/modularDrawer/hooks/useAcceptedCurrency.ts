@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { isCurrencySupported } from "../../currencies";
 import { isSendDisabledForFamily, isReceiveDisabledForFamily } from "../../account/support";

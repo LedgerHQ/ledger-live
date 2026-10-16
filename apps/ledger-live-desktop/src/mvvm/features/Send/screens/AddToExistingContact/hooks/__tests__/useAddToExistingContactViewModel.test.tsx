@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { act, renderHook, waitFor } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { useContactsAddressValidationAdapter } from "LLD/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import { AddNewContactHeaderProvider } from "LLD/features/Send/context/AddNewContactHeaderContext";

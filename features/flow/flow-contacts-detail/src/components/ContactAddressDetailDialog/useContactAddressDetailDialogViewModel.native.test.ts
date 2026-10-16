@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from "@testing-library/react-native";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
 import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel.native";

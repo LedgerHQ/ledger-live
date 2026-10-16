@@ -6,7 +6,7 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Box, CardButton } from "@ledgerhq/lumen-ui-rnative";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 type Props = {
   sourceScreenName: string;

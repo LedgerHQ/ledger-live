@@ -11,7 +11,7 @@ import {
   type CountervaluesSettings,
 } from "@domain/entity-market-countervalues";
 import { buildCV } from "@domain/entity-market-countervalues/mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   useCalculate,

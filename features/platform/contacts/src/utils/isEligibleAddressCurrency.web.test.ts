@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { isEligibleAddressCurrency } from "./isEligibleAddressCurrency";
 

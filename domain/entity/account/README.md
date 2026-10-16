@@ -21,7 +21,7 @@ While the legacy store holds `accounts`, each app mounts the slice under another
 
 ## Legacy (`src/legacy/`)
 
-A compatibility layer for the migration, kept until the legacy `Account` is gone. Avoid it in new code: with the account models rework, an account is identified by its `AccountDescriptor` and `AccountUUID`.
+Imported from `@domain/entity-account/legacy`, never from the root. A compatibility layer for the migration, kept until the legacy `Account` is gone. Avoid it in new code: with the account models rework, an account is identified by its `AccountDescriptor` and `AccountUUID`.
 
 - `AccountId` / `TokenAccountId` / `AnyAccountId` — the legacy ids: a top-level id has no `+`, a token account id is `<parentAccountId>+<encodedTokenId>`.
 - `parseAnyAccountId` / `safeParseAnyAccountId`, `encodeTokenAccountId` / `getParentId`.
@@ -32,7 +32,8 @@ What an account *has* — a name, a balance, a history, a star — lives in its 
 ## Usage
 
 ```ts
-import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
+import { accountsSlice } from "@domain/entity-account";
+import { AccountIdSchema } from "@domain/entity-account/legacy";
 
 const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
   (state: State) => state.accountEntries,

@@ -11,7 +11,10 @@ import { firstValueFrom, reduce } from "rxjs";
 import { encodeAccountId, fromAccountRaw, toAccountRaw } from "../../account";
 import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
 import { liveConfig } from "../../config/sharedConfig";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+} from "@domain/entity-currency-crypto/legacy";
 import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
 
 // mandatory to run the script

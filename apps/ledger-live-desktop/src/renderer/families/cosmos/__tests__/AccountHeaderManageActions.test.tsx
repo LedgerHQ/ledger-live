@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import * as config from "@ledgerhq/live-common/config/index";

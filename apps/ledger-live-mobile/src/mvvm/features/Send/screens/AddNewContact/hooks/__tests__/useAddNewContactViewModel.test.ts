@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { addAddress } from "@domain/entity-contact";
 import {
   mockContact,

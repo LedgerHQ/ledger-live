@@ -1,5 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";

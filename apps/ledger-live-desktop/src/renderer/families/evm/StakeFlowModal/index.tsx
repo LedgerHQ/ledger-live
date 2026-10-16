@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { useFeature } from "@features/platform-feature-flags";
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { AccountLike, EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";

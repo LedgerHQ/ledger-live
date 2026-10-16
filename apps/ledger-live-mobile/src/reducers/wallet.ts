@@ -29,7 +29,7 @@ import type { State } from "./types";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 const walletReducer = combineReducers({
   accountNames: accountNamesSlice.reducer,

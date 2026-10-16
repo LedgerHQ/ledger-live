@@ -13,7 +13,7 @@ import {
   removeDismissedContentCards,
   setDismissedContentCards,
 } from "../actions/settings";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker, FiatCurrencySchema } from "@domain/entity-currency-fiat";
 import reducer, {
   lastSeenDeviceSelector,

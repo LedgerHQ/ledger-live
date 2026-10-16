@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";

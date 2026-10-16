@@ -5,7 +5,7 @@ import useExportLogs from "~/components/useExportLogs";
 import { render, screen } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 jest.mock("@ledgerhq/live-common/account/helpers", () => ({
   ...jest.requireActual("@ledgerhq/live-common/account/helpers"),

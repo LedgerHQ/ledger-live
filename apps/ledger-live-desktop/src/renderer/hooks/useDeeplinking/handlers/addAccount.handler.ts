@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto/legacy";
 import { DeeplinkHandler } from "../types";
 
 export const addAccountHandler: DeeplinkHandler<"add-account"> = (

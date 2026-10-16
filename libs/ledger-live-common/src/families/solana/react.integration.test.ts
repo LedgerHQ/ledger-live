@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { LEDGER_VALIDATOR_DEFAULT } from "@ledgerhq/coin-solana/utils";
 import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
 import { renderHook, waitFor } from "@testing-library/react";

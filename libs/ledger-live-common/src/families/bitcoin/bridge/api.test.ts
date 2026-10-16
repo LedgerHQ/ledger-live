@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { getBitcoinCoinConfig } from "../coinConfig";
 import { getFeeItems } from "./api";

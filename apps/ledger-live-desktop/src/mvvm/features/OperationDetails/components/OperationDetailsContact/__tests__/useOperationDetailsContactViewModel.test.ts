@@ -1,6 +1,6 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { addContact } from "@domain/entity-contact";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   mockContact,
   mockContactAddress,

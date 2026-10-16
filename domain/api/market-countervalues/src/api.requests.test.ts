@@ -7,7 +7,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { countervaluesApi, cvsApiExtra } from "@shared/api-services";
 import { createRateSource } from "./rateSource";
 import { marketCountervaluesApi } from "./api";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 
 jest.setTimeout(20000);

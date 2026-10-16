@@ -1,5 +1,5 @@
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { buildSwapWebViewHash, type SwapLocationState } from "./buildSwapWebViewHash";
 import type { SwapDefaultAccounts } from "./useSwapDefaultAccounts";

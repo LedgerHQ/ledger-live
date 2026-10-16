@@ -15,7 +15,7 @@ import type { WSState } from "@domain/entity-wallet-sync";
 import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
 import type { State } from ".";
 import type { WalletState } from "./wallet.core";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 export type { WalletState, ExportedWalletState } from "./wallet.core";
 export {

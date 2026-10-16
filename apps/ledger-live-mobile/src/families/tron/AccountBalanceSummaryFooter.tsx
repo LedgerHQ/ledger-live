@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import type { Account } from "@ledgerhq/types-live";

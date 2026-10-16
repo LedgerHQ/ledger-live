@@ -1,10 +1,10 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
-  CryptoCurrency,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,

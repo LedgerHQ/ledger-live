@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";

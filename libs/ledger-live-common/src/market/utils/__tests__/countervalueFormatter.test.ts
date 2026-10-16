@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByTicker } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyByTicker } from "@domain/entity-currency-crypto/legacy";
 import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { counterValueFormatter } from "../countervalueFormatter";
 

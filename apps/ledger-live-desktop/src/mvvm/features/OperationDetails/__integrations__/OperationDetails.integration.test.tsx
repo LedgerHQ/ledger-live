@@ -1,7 +1,7 @@
 import React from "react";
 import { TFunction } from "i18next";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   mockContact,
   mockContactAddress,

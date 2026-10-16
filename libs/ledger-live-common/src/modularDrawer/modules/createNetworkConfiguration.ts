@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { ReactElement } from "react";
 import { useLeftAccountsModule } from "../hooks/useLeftAccounts";

@@ -4,7 +4,7 @@ import {
   identitiesSlice,
   initialIdentitiesState,
 } from "@domain/entity-client-identity";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS } from "@ledgerhq/live-common/braze/identityLifecycle";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";

@@ -6,7 +6,7 @@ import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),

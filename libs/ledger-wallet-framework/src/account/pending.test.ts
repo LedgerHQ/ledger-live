@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import { addPendingOperation, shouldRetainPendingOperation } from "./pending";
 import { emptyHistoryCache } from "./balanceHistoryCache";

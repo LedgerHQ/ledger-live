@@ -120,7 +120,7 @@
               "@ledgerhq/live-common/featureFlags/groupedFeatures"
             ],
             "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
-            "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
+            "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS), @shared/feature-flags/legacy for groupedFeatures/GroupedFeature."
           },
           {
             "group": [
@@ -245,7 +245,7 @@
                   "@ledgerhq/live-common/featureFlags/groupedFeatures"
                 ],
                 "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
-                "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
+                "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS), @shared/feature-flags/legacy for groupedFeatures/GroupedFeature."
               },
               {
                 "group": [

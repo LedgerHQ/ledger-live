@@ -1,9 +1,6 @@
 import type { AccountDataSource } from "@domain/api-account-data";
-import {
-  accountsSlice,
-  connectAccountsStore,
-  type AccountsReduxStore,
-} from "@domain/entity-account";
+import { accountsSlice } from "@domain/entity-account";
+import { connectAccountsStore, type AccountsReduxStore } from "@domain/entity-account/legacy";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { createFullSyncSource } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
 import { prepareCurrency } from "~/bridge/cache";

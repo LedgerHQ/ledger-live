@@ -1,6 +1,9 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+} from "@domain/entity-currency-crypto/legacy";
 import { WalletAdapter } from "../wallet";
 import { TransactionIntentSchema } from "../wallet/intents";
 import { prepareIntentDryRun, signAndBroadcastIntent } from "../wallet/sign-and-broadcast";

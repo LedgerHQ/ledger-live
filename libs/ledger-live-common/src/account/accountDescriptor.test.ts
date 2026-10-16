@@ -1,4 +1,4 @@
-import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import { networkFromCurrencyId, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";

@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { screen, fireEvent } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { ScreenName } from "~/const";

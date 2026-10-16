@@ -17,7 +17,7 @@ import {
 } from "tests/utils/distributionTestUtils";
 import { hoverChartSvg, mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
 import { mockDada, mockMarket } from "tests/utils/assetDetailMocks";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import celoBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";

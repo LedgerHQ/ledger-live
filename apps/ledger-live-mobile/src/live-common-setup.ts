@@ -17,7 +17,7 @@ import {
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";

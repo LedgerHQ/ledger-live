@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { deriveRequestReceiveData } from "../deriveRequestReceiveData";

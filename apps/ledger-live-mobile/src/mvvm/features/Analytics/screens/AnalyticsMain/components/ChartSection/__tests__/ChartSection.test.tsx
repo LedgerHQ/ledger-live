@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { State } from "~/reducers/types";

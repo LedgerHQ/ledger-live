@@ -4,7 +4,7 @@ import flatMap from "lodash/flatMap";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { AppOp, State, Action, ListAppsResult, AppsDistribution, SkipReason } from "./types";
-import { findCryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { isCurrencySupported } from "../currencies";
 import { NoSuchAppOnProvider, LatestFirmwareVersionRequired } from "../errors";
 import { App } from "@ledgerhq/types-live";

@@ -6,10 +6,10 @@ import {
   FEATURE_FLAGS_DEFAULTS,
   FeatureIdSchema,
   featureFlagsBannerVisibleSelector,
-  groupedFeatures,
   setAllOverrides,
   setBannerVisible,
 } from "@shared/feature-flags";
+import { groupedFeatures } from "@shared/feature-flags/legacy";
 import type { FeatureId } from "@shared/feature-flags";
 
 import {

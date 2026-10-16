@@ -1,5 +1,5 @@
 import type { ContactAddress } from "@domain/entity-contact";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export type ContactsCurrencyAnalytics = Readonly<{

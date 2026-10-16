@@ -1,5 +1,5 @@
 import { Currency } from "@domain/entity-currency";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import perFamily from "~/generated/MemoTagInput";
 import { MEMO_TAG_COINS } from "../constants";
 

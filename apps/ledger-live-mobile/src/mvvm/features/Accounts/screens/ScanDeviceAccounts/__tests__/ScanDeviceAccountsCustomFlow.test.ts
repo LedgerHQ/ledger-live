@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import BigNumber from "bignumber.js";
 import { of, EMPTY } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { sameAccountIdentity } from "@ledgerhq/live-common/account/addAccounts";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { act } from "@testing-library/react-native";

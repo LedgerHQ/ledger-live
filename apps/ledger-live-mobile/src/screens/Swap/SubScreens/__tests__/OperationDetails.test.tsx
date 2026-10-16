@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { Linking } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import type { OperationDetailsParamList } from "../../types";

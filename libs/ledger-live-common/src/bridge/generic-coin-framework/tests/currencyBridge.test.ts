@@ -1,5 +1,5 @@
 import { lastValueFrom, toArray } from "rxjs";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import { getCoinFrameworkCurrencyBridge } from "../currencyBridge";
 import type { CoinFrameworkSigner } from "../types";

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { buildEarnDeviceContext } from "../../wallet/earn/device-context";
 import {

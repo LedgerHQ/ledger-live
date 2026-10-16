@@ -31,7 +31,7 @@ import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";

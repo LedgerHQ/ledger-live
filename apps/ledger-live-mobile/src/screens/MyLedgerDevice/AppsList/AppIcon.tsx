@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { Image } from "react-native";
 import manager from "@ledgerhq/live-common/manager/index";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getValidCryptoIconSizeNative } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 import type { App } from "@ledgerhq/types-live";
 import ManagerAppIcon from "~/images/managerAppIcon.webp";

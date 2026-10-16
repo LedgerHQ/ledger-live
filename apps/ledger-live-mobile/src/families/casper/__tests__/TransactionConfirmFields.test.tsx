@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/casper/types";
 import TransactionConfirmFields from "../TransactionConfirmFields";

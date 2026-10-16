@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { Currency } from "@domain/entity-currency";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import type {

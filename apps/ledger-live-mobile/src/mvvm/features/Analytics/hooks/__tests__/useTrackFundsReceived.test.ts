@@ -6,7 +6,7 @@ import { accountsSelector } from "~/reducers/accounts";
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 jest.mock("~/context/hooks", () => ({
   useSelector: jest.fn(),

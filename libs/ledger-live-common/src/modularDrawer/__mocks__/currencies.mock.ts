@@ -1,5 +1,6 @@
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 export const mockBtcCryptoCurrency = getCryptoCurrencyById("bitcoin");
 export const mockEthCryptoCurrency = getCryptoCurrencyById("ethereum");

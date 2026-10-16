@@ -3,7 +3,8 @@
  */
 import { renderHook } from "@testing-library/react";
 import { useAcceptedCurrency } from "../useAcceptedCurrency";
-import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { useCurrenciesUnderFeatureFlag } from "../useCurrenciesUnderFeatureFlag";
 import { isCurrencySupported } from "../../../coin-modules/registry";

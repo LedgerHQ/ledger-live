@@ -3,7 +3,7 @@
  */
 import "../__tests__/test-helpers/dom-polyfill";
 import React from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { CurrencyNotSupported } from "../errors";
 import { render, renderHook, act, screen } from "@testing-library/react";
 import { genAccount } from "../mock/account";

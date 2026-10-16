@@ -7,7 +7,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Check, Close, Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { Alert } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import {

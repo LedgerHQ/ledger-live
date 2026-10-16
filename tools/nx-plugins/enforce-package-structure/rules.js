@@ -6,7 +6,8 @@
 // optional default re-export. Having to sort in the export (`export { a, b } from "./x"`) proves
 // the target file mixes public and private, so the private part was never moved to an `internals`
 // location. Re-exporting another package turns the barrel into a proxy: two import paths for the
-// same symbol, and no obvious original provider.
+// same symbol, and no obvious original provider. Legacy code is reachable only through the
+// `./legacy` subpath, never re-exported by a barrel outside `legacy/`.
 
 /** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
 
@@ -56,6 +57,28 @@ function isInternalSpecifier(specifier) {
   if (segments.includes("internals")) return true;
   const last = segments[segments.length - 1] ?? "";
   return last.endsWith(".internals");
+}
+
+/**
+ * True when a specifier points at legacy code: a `legacy` segment at any depth.
+ *
+ * @param {string} specifier
+ * @returns {boolean}
+ */
+function isLegacySpecifier(specifier) {
+  return specifier.replace(SOURCE_EXTENSION, "").split("/").includes("legacy");
+}
+
+/**
+ * True for a `legacy.*` source file: legacy code must be a `legacy/` folder with its own barrel.
+ *
+ * @param {string} filePath posix-style path
+ * @returns {boolean}
+ */
+function isLegacyFile(filePath) {
+  const basename = filePath.split("/").pop() ?? "";
+  if (TEST_BASENAME.test(basename)) return false;
+  return /^legacy(?:\.[A-Za-z0-9-]+)*\.[cm]?[jt]sx?$/.test(basename);
 }
 
 /**
@@ -157,7 +180,7 @@ function endOfStatement(code, start) {
  * re-export that points somewhere it must not.
  *
  * @param {string} source raw file contents
- * @param {{ allowNonRelative?: boolean }} [options]
+ * @param {{ allowNonRelative?: boolean, insideLegacy?: boolean }} [options]
  * @returns {Violation[]}
  */
 function checkBarrel(source, options = {}) {
@@ -201,6 +224,13 @@ function checkBarrel(source, options = {}) {
         message: `\`${specifier}\` is a private location; internals must stay out of the public API`,
         text,
       });
+    } else if (isLegacySpecifier(specifier) && !options.insideLegacy) {
+      violations.push({
+        line,
+        code: "legacy-reexport",
+        message: `\`${specifier}\` is legacy code; expose it only through the \`./legacy\` subpath`,
+        text,
+      });
     } else if (!specifier.startsWith(".") && !options.allowNonRelative) {
       const inRepo = isInRepoSpecifier(specifier);
       violations.push({
@@ -224,5 +254,7 @@ module.exports = {
   isBarrelFile,
   isInternalSpecifier,
   isInRepoSpecifier,
+  isLegacyFile,
+  isLegacySpecifier,
   stripComments,
 };

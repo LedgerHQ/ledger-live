@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { nearConfig } from "../families/near/config";
 import { stacksConfig } from "../families/stacks/config";

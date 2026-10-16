@@ -3,7 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useOpenAssetFlow } from "../useOpenAssetFlow";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { setDrawer } from "~/renderer/drawers/Provider";
 

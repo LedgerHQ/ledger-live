@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

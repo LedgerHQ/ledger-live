@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { EditName } from "LLD/features/CryptoAddresses/components/EditName";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 const ASSET_NAME = "Ethereum";
 

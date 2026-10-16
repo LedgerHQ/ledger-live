@@ -3,7 +3,7 @@
 import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
 import type { Subscriber, Subscription } from "rxjs";
 import { filter, map, reduce } from "rxjs/operators";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";

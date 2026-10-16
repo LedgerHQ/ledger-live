@@ -7,7 +7,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import type { Account } from "@ledgerhq/types-live";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { Observable } from "rxjs";
 import type { Observer } from "rxjs";
 import { genAccount } from "../../mock/account";

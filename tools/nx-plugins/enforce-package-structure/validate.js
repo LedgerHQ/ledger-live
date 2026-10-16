@@ -1,13 +1,14 @@
 "use strict";
 
-// Checks that every `index.*` in a new-architecture package is a pure barrel.
+// Checks that every `index.*` in a new-architecture package is a pure barrel, and that legacy code
+// lives in `src/legacy/`, exposed only as the `./legacy` subpath.
 //
 // Run for one package (the inferred `lint:structure` target passes its project root) or for all
 // of them at once (no argument), which is handy to audit the workspace.
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { checkBarrel, isBarrelFile } = require("./rules");
+const { checkBarrel, isBarrelFile, isLegacyFile } = require("./rules");
 const { PACKAGE_EXCEPTIONS } = require("./exceptions");
 
 const LAYER_ROOTS = ["domain", "shared", "features"];
@@ -53,6 +54,46 @@ function findPackageRoots(workspaceRoot) {
 }
 
 /**
+ * A `src/legacy/index.*` barrel must be the target of a `./legacy` entry in `package.json#exports`.
+ *
+ * @param {string} workspaceRoot
+ * @param {string} projectRoot
+ * @returns {Array<{ file: string, line: number, code: string, message: string, text: string }>}
+ */
+function checkLegacyExport(workspaceRoot, projectRoot) {
+  const legacyDir = path.join(workspaceRoot, projectRoot, "src", "legacy");
+  let barrel;
+  try {
+    barrel = fs.readdirSync(legacyDir).find(name => isBarrelFile(name));
+  } catch {
+    return [];
+  }
+  if (!barrel) return [];
+
+  const file = `${projectRoot}/package.json`;
+  let exportsField;
+  try {
+    exportsField = JSON.parse(fs.readFileSync(path.join(workspaceRoot, file), "utf8")).exports;
+  } catch {
+    exportsField = undefined;
+  }
+  const expected = `./src/legacy/${barrel}`;
+  const entry = exportsField?.["./legacy"];
+  // Either the plain string form or the conditional `{ "default": … }` form.
+  const targets = typeof entry === "string" ? [entry] : Object.values(entry ?? {});
+  if (targets.includes(expected)) return [];
+  return [
+    {
+      file,
+      line: 1,
+      code: "legacy-not-exported",
+      message: `\`exports["./legacy"]\` must point at \`${expected}\``,
+      text: "",
+    },
+  ];
+}
+
+/**
  * @param {string} workspaceRoot
  * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
  * @returns {Array<{ file: string, line: number, code: string, message: string, text: string }>}
@@ -66,6 +107,16 @@ function checkPackage(workspaceRoot, projectRoot) {
 
   walk(srcDir, file => {
     const relative = path.relative(workspaceRoot, file).split(path.sep).join("/");
+    if (isLegacyFile(relative)) {
+      found.push({
+        file: relative,
+        line: 1,
+        code: "legacy-file",
+        message: "legacy code must live in a `legacy/` folder with its own `index` barrel",
+        text: "",
+      });
+      return;
+    }
     if (!isBarrelFile(relative)) return;
     let source;
     try {
@@ -73,10 +124,13 @@ function checkPackage(workspaceRoot, projectRoot) {
     } catch {
       return;
     }
-    for (const violation of checkBarrel(source, options)) {
+    const insideLegacy = path.relative(srcDir, file).split(path.sep).includes("legacy");
+    for (const violation of checkBarrel(source, { ...options, insideLegacy })) {
       found.push({ file: relative, ...violation });
     }
   });
+
+  found.push(...checkLegacyExport(workspaceRoot, projectRoot));
 
   return found.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
 }
@@ -94,7 +148,7 @@ function main() {
   }
 
   const files = new Set(violations.map(v => v.file));
-  console.error(`\n✗ ${violations.length} barrel violation(s) in ${files.size} file(s):\n`);
+  console.error(`\n✗ ${violations.length} structure violation(s) in ${files.size} file(s):\n`);
 
   let current = "";
   for (const violation of violations) {
@@ -110,7 +164,10 @@ function main() {
     '\nAn `index.*` may only contain `export * from "./x"` and an optional default re-export.',
   );
   console.error("Move anything private to an internals location: internals/, internals.ts,");
-  console.error("or a <name>.internals.ts companion. See .agents/skills/package-public-api.\n");
+  console.error(
+    "or a <name>.internals.ts companion. Legacy code lives in src/legacy/, exposed only",
+  );
+  console.error("as the `./legacy` subpath. See .agents/skills/package-public-api.\n");
 
   process.exit(1);
 }

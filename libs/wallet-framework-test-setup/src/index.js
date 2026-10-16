@@ -9,7 +9,7 @@ const {
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-} = require("@domain/entity-currency-crypto");
+} = require("@domain/entity-currency-crypto/legacy");
 const { setCurrenciesResolver } = require("@ledgerhq/ledger-wallet-framework/currencies");
 const { setCryptoAssetsStore } = require("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 

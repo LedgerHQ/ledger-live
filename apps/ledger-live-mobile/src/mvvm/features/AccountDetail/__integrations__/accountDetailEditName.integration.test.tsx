@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";

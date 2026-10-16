@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { getAccountCurrency, getMainAccount } from "../../../account/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { formatCurrencyUnit } from "../../../currencies/index";
 import { getSwapProvider, type AdditionalProviderConfig } from "../../providers/swap";
 import { getProviderName } from "../../swap/utils/index";

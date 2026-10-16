@@ -2,7 +2,7 @@ import React from "react";
 import { act, render } from "@testing-library/react-native";
 import { Provider } from "react-redux";
 import { loadCountervalues } from "@domain/api-market-countervalues";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   exportCountervalues,

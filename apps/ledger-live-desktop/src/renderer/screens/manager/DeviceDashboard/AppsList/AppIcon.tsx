@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import manager from "@ledgerhq/live-common/manager/index";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";

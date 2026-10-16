@@ -19,7 +19,7 @@ import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.moc
 import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
 import { cardApiExtra } from "@shared/api-services";
 import { getEnv } from "@shared/env";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";

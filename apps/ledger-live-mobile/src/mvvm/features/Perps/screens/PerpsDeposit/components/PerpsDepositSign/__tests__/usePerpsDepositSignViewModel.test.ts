@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { act, renderHook } from "@tests/test-renderer";

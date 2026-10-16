@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import eip55 from "eip55";
 import resolver from "./getAddress";
 import type { EvmSigner } from "@ledgerhq/live-signer-evm";

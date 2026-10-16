@@ -1,6 +1,7 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
-import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { isAppAssociatedCurrencySupported } from "./isAppAssociatedCurrencySupported";

@@ -3,7 +3,8 @@
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
 import React from "react";
-import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";

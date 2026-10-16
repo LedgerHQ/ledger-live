@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import * as config from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";

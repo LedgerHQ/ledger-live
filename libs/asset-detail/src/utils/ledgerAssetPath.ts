@@ -1,4 +1,4 @@
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 export type LedgerAssetPath = Readonly<{
   currencyId: string;

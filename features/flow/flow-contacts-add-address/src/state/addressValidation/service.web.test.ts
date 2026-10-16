@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { createContactsAddressValidationService } from "./service";

@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { View, Pressable, Text } from "react-native";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { render, screen } from "@tests/test-renderer";

@@ -7,6 +7,8 @@ const {
   isBarrelFile,
   isInternalSpecifier,
   isInRepoSpecifier,
+  isLegacyFile,
+  isLegacySpecifier,
   stripComments,
 } = require("./rules");
 
@@ -111,6 +113,33 @@ test("re-exporting an internals location is a violation", () => {
   assert.deepEqual(codes('export * from "./internals";'), ["internals-reexport"]);
   assert.deepEqual(codes('export * from "./state/slice.internals";'), ["internals-reexport"]);
   assert.deepEqual(codes('export { default } from "./internals";'), ["internals-reexport"]);
+});
+
+test("isLegacySpecifier matches a `legacy` segment only", () => {
+  assert.ok(isLegacySpecifier("./legacy"));
+  assert.ok(isLegacySpecifier("./legacy/store"));
+  assert.ok(isLegacySpecifier("./legacy.ts"));
+  assert.ok(isLegacySpecifier("@domain/entity-account/legacy"));
+  assert.ok(!isLegacySpecifier("./legacyAccounts"));
+  assert.ok(!isLegacySpecifier("./schema"));
+});
+
+test("isLegacyFile flags a `legacy.*` source file and skips its tests", () => {
+  assert.ok(isLegacyFile("shared/feature-flags/src/legacy.ts"));
+  assert.ok(isLegacyFile("shared/thing/src/legacy.native.tsx"));
+  assert.ok(!isLegacyFile("shared/thing/src/legacy.test.ts"));
+  assert.ok(!isLegacyFile("shared/thing/src/legacy/index.ts"));
+  assert.ok(!isLegacyFile("shared/thing/src/legacyAccounts.ts"));
+});
+
+test("re-exporting legacy code is a violation outside `legacy/`", () => {
+  // features/platform/currencies used to re-export its legacy store from the root barrel.
+  assert.deepEqual(codes('export * from "./legacy";'), ["legacy-reexport"]);
+  assert.deepEqual(codes('export * from "./data/legacy";'), ["legacy-reexport"]);
+  assert.deepEqual(codes('export * from "@domain/entity-account/legacy";'), ["legacy-reexport"]);
+  // The legacy barrel itself regroups its own files.
+  assert.deepEqual(checkBarrel('export * from "./store";', { insideLegacy: true }), []);
+  assert.deepEqual(checkBarrel('export * from "./legacy/x";', { insideLegacy: true }), []);
 });
 
 test("re-exporting a workspace package is a proxy", () => {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import BigNumber from "bignumber.js";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, CryptoAssetsStore, StakingDelegation } from "@ledgerhq/types-live";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";

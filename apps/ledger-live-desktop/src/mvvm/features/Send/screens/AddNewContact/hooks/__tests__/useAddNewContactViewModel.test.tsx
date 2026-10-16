@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { act, renderHook, waitFor } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { addAddress } from "@domain/entity-contact";
 import {

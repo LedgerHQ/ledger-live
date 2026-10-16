@@ -1,5 +1,6 @@
 import { useFeatureFlags } from "@features/platform-feature-flags";
-import { groupedFeatures, GroupedFeature, setOverride } from "@shared/feature-flags";
+import { setOverride } from "@shared/feature-flags";
+import { groupedFeatures, GroupedFeature } from "@shared/feature-flags/legacy";
 import type { FeatureId } from "@shared/feature-flags";
 import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useState } from "react";

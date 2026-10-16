@@ -1,5 +1,6 @@
 import type { ContactAddress } from "@domain/entity-contact";
-import { listCryptoCurrencies, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import type { ContactAddressCurrencyPort } from "./ports";
 
 const DEFAULT_NETWORK_ORDER_INDEX: ReadonlyMap<CryptoCurrency["id"], number> = new Map(

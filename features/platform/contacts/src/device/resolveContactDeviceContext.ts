@@ -1,5 +1,6 @@
 import type { ContactAddress } from "@domain/entity-contact";
-import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { ContactsDeviceInitializationInput } from "./types";
 

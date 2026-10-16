@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "tests/testSetup";
 import { server } from "tests/server";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { mockMarket, mockDada } from "tests/utils/assetDetailMocks";
 import type { DistributionItem } from "@ledgerhq/types-live";

@@ -1,4 +1,4 @@
-import type { FeatureId } from "./data/schema";
+import type { FeatureId } from "../data/schema";
 
 /**
  * @deprecated Legacy mechanism to batch-toggle related flags under a single

@@ -1,5 +1,5 @@
 import type { CloudSyncDataManager } from "@shared/cloud-sync-module";
-import { parseAnyAccountId, type AnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId, type AnyAccountId } from "@domain/entity-account/legacy";
 import {
   AccountNamesDistantSchema,
   type AccountNamesDistantState,

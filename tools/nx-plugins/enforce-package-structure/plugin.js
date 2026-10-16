@@ -31,6 +31,8 @@ function buildTarget(projectRoot) {
     inputs: [
       `{projectRoot}/src/**/index*.ts`,
       `{projectRoot}/src/**/index*.tsx`,
+      `{projectRoot}/src/**/legacy*`,
+      `{projectRoot}/package.json`,
       `{workspaceRoot}/${PLUGIN_ROOT}/rules.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/validate.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/exceptions.js`,

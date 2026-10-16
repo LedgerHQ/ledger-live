@@ -1,4 +1,4 @@
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import type { WalletState } from "~/renderer/reducers/wallet";
 
 export function createWalletState(accountNames: Map<string, string>): { wallet: WalletState } {

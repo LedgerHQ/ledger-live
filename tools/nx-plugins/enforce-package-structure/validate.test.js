@@ -50,6 +50,41 @@ test("tests and non-index files are left alone", () => {
   assert.deepEqual(checkPackage(root, "shared/thing"), []);
 });
 
+test("legacy code lives in `src/legacy/`, exported as `./legacy` only", () => {
+  const clean = workspace({
+    "shared/thing/package.json": JSON.stringify({
+      exports: { ".": "./src/index.ts", "./legacy": "./src/legacy/index.ts" },
+    }),
+    "shared/thing/src/index.ts": 'export * from "./schema";\n',
+    "shared/thing/src/legacy/index.ts": 'export * from "./store";\n',
+    "shared/thing/src/legacy/store/index.ts": 'export * from "./port";\n',
+  });
+  assert.deepEqual(checkPackage(clean, "shared/thing"), []);
+
+  const conditional = workspace({
+    "features/thing/package.json": JSON.stringify({
+      exports: { "./legacy": { default: "./src/legacy/index.ts" } },
+    }),
+    "features/thing/src/legacy/index.ts": 'export * from "./store";\n',
+  });
+  assert.deepEqual(checkPackage(conditional, "features/thing"), []);
+
+  const broken = workspace({
+    "shared/thing/package.json": JSON.stringify({ exports: { ".": "./src/index.ts" } }),
+    "shared/thing/src/index.ts": 'export * from "./schema";\nexport * from "./legacy";\n',
+    "shared/thing/src/legacy/index.ts": 'export * from "./store";\n',
+    "shared/other/src/legacy.ts": "export const a = 1;\n",
+  });
+  assert.deepEqual(
+    checkPackage(broken, "shared/thing").map(v => `${v.file}:${v.code}`),
+    ["shared/thing/package.json:legacy-not-exported", "shared/thing/src/index.ts:legacy-reexport"],
+  );
+  assert.deepEqual(
+    checkPackage(broken, "shared/other").map(v => v.code),
+    ["legacy-file"],
+  );
+});
+
 test("a package marked `skip` is not checked at all", () => {
   const root = workspace({
     "shared/env/src/index.ts": 'import { z } from "zod";\nexport const broken = z;\n',

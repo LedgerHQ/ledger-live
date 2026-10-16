@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useBalanceCellViewModel } from "../useBalanceCellViewModel";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 

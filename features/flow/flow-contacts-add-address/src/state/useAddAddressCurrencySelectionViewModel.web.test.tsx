@@ -2,7 +2,7 @@ import React, { type FC, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import {
   FEATURE_FLAGS_DEFAULTS,
   FEATURE_FLAGS_INITIAL_STATE,

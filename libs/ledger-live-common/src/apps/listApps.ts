@@ -7,7 +7,10 @@ import { LocalTracer } from "@ledgerhq/logs";
 import semver from "semver";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "./types";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
-import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  listCryptoCurrencies,
+  findCryptoCurrencyById,
+} from "@domain/entity-currency-crypto/legacy";
 import { currenciesByMarketcap } from "../currencies";
 import ManagerAPI from "../manager/api";
 
