@@ -973,7 +973,7 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
-async function waitUntilScreenLeavesIdle(maxAttempts = 60): Promise<void> {
+export async function waitUntilScreenLeavesIdle(maxAttempts = 60): Promise<void> {
   const port = getEnv("SPECULOS_API_PORT");
 
   const poll = async (attempt: number): Promise<void> => {
@@ -981,7 +981,7 @@ async function waitUntilScreenLeavesIdle(maxAttempts = 60): Promise<void> {
     if (!texts.toLowerCase().includes("is ready")) return;
     if (attempt + 1 >= maxAttempts) {
       throw new Error(
-        `Device stayed on "${texts}" after ${maxAttempts} attempts. The contact review never started.`,
+        `Device stayed on "${texts}" after ${maxAttempts} attempts. The review never started.`,
       );
     }
     await sleep(SCREEN_POLL_INTERVAL_MS);
@@ -1043,7 +1043,8 @@ const TOUCH_SETTLE_MS = 1_000;
  * calling this twice on one container would turn the setting back off; every caller gets a fresh
  * container, whose NVRAM starts with it disabled.
  *
- * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1, flex, stax and nanoGen5.
+ * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1, flex, stax and nanoGen5, and against
+ * Ethereum 1.16.2 on nanos 2.1.0 (app-ethereum `nanos` branch), whose menu reads "Settings".
  */
 export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
@@ -1067,8 +1068,9 @@ export const enableBlindSigning = withDeviceController(({ getButtonsController }
   }
 
   const buttons = getButtonsController();
+  const isNanoS = getSpeculosModel() === DeviceModelId.nanoS;
 
-  await pressUntilTextFound(DeviceLabels.APP_SETTINGS);
+  await pressUntilTextFound(isNanoS ? DeviceLabels.SETTINGS : DeviceLabels.APP_SETTINGS);
   await buttons.both();
   await waitFor(DeviceLabels.BLIND_SIGNING);
 
@@ -1078,12 +1080,27 @@ export const enableBlindSigning = withDeviceController(({ getButtonsController }
 
   await pressUntilTextFound(DeviceLabels.BACK);
   await buttons.both();
-  // "Back" lands on the App settings entry of the top-level menu, one step short of idle.
-  await buttons.left();
+  // "Back" lands on the App settings entry of the top-level menu, one step short of idle. On
+  // nanos it lands on idle itself, and a left press would wrap the looping menu round to "Quit".
+  if (!isNanoS) {
+    await buttons.left();
+  }
   // Parked in the menu the app stops answering sign APDUs, which surfaces much later as an
   // opaque transport error, so a navigation that drifted is reported here instead.
   await waitFor(IDLE_SCREEN_LABEL);
 });
+
+/**
+ * The nanos Ethereum app (1.16.2) asks for blind signing on reviews the other models clear-sign:
+ * the ERC-20 approves the swap flows send, every EIP-712 message, which it shows as hashes, and DEX
+ * router calls its plugins cannot describe, such as 1inch v6.
+ * Call it on the device that will sign, before the APDU is sent.
+ */
+export async function enableBlindSigningOnNanoS(): Promise<void> {
+  if (getSpeculosModel() === DeviceModelId.nanoS) {
+    await enableBlindSigning();
+  }
+}
 
 export const goToSettings = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
@@ -1319,15 +1336,45 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
   return await pressUntilTextFound(delegateConfirmLabel);
 }
 
+/**
+ * The nanos Ethereum app (1.16.2) puts a "Blind signing" warning in front of a review it cannot
+ * describe, such as the 1inch v6 router call, and ends that review on "Accept risk and send".
+ * Waits for the review and steps past the warning, returning whether there was one.
+ */
+const waitForSwapReviewOnNanoS = withDeviceController(
+  ({ getButtonsController }) =>
+    async (): Promise<boolean> => {
+      const port = Number(process.env.SPECULOS_API_PORT ?? 0);
+      const review = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
+      const warning = DeviceLabels.BLIND_SIGNING.toLowerCase();
+      for (let attempt = 0; attempt < SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS; attempt++) {
+        const texts = (await fetchCurrentScreenTexts(port)).trim().toLowerCase();
+        if (texts.includes(review)) return false;
+        if (texts.startsWith(warning)) {
+          await getButtonsController().right();
+          await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+          return true;
+        }
+        await sleep(SCREEN_POLL_INTERVAL_MS);
+      }
+      // Out of budget: one last look, which fails with the usual diagnostics.
+      await waitForReviewTransaction(1);
+      return false;
+    },
+);
+
 export const verifyAmountsAndAcceptSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
-      const events =
-        getSpeculosModel() === DeviceModelId.nanoS
-          ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
-          : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      let confirmLabel: DeviceLabels = DeviceLabels.SIGN_TRANSACTION;
+      if (getSpeculosModel() === DeviceModelId.nanoS) {
+        const blindSigned = await waitForSwapReviewOnNanoS();
+        confirmLabel = blindSigned ? DeviceLabels.ACCEPT_RISK : DeviceLabels.ACCEPT_AND_SEND;
+      } else {
+        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+      }
+      const events = await pressUntilTextFound(confirmLabel);
       verifySwapData(swap, events, amount);
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

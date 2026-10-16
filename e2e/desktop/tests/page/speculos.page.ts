@@ -17,6 +17,7 @@ import {
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
   confirmContactAction,
   waitForAppReady,
+  enableBlindSigningOnNanoS,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
@@ -101,6 +102,11 @@ export class SpeculosPage extends AppPage {
   @step("Share view key")
   async shareViewKey() {
     await shareViewKey();
+  }
+
+  @step("Enable blind signing if the device is a Nano S")
+  async enableBlindSigningOnNanoS() {
+    await enableBlindSigningOnNanoS();
   }
 
   @step("Sign token approval on device")

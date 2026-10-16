@@ -69,12 +69,11 @@ export class SwapProvider extends BaseProvider {
     AppInfos.ETHEREUM,
   );
 
-  // The Nano S 1inch plugin cannot clear-sign the v6 router and falls back to blind signing.
   static readonly ONE_INCH = new SwapProvider(
     "oneinch",
     "1inch",
     false,
-    false,
+    true,
     "0x111111125421cA6dc452d289314280a0f8842A65",
     AppInfos.ONE_INCH,
   );

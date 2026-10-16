@@ -69,6 +69,7 @@ test.describe("Swap - token reapproval", () => {
       // Reapproval broadcasts revoke + approve and waits for each to confirm on mainnet; extend beyond the 400s CI default.
       test.setTimeout(600_000);
       await app.swap.logSelectedProvider(provider.uiName);
+      await app.speculos.enableBlindSigningOnNanoS();
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
