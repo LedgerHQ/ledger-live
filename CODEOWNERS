@@ -74,6 +74,7 @@ support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
+support/tsconfig/                                        @ledgerhq/platform
 
 # Wallet — libs
 libs/live-send/                                          @ledgerhq/wallet-xp
@@ -601,11 +602,11 @@ apps/ledger-live-mobile/e2e/                                                @led
 **/.oxlintrc.*                                        @ledgerhq/platform
 **/.oxfmtrc.*                                         @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
-**/tsconfig*                                          @ledgerhq/platform
 **/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform
+/tsconfig.base.json                                   @ledgerhq/platform
 
 # Platform — Agent files
 /.agents/                                      @ledgerhq/platform

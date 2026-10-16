@@ -1,11 +1,13 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/tsconfig/logic",
   "compilerOptions": {
-    "noEmit": true,
     "allowImportingTsExtensions": true,
     "types": ["node"],
     "lib": ["ESNext"],
-    "customConditions": []
+    "customConditions": [],
+    "target": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext"
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }

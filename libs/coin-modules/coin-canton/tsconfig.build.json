@@ -1,10 +1,7 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@support/tsconfig/lib/build"],
   "compilerOptions": {
-    "customConditions": [],
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
   "exclude": [
     "**/*.test.ts",

@@ -1,16 +1,10 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/tsconfig/lib",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
-    "lib": ["es2022", "dom"],
     "types": ["node", "jest"],
-    "rootDir": "./src",
     "exactOptionalPropertyTypes": true,
-    "typeRoots": ["./node_modules/@types", "index.d.ts"],
-    "outDir": "./lib"
-  },
-  "include": ["src/**/*", "index.d.ts"]
+    "typeRoots": ["./node_modules/@types", "index.d.ts"]
+  }
 }

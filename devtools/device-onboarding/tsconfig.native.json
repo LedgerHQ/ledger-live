@@ -1,9 +1,4 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "moduleSuffixes": [".native", ""],
-    "types": ["node", "jest"]
-  },
-  "include": ["src/**/*", "jest/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules", "jest/**/*.web.*", "src/**/*.web.*"]
+  "extends": ["./tsconfig.json", "@support/tsconfig/native"],
+  "include": ["src/**/*", "jest/**/*", "**/*.d.ts"]
 }
