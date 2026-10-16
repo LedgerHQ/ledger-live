@@ -13,7 +13,6 @@ import {
   parseIntentId,
   toIntentListEntry,
 } from "../../agent-intent/intent-list";
-import { findEthereumToken } from "../../agent-intent/token-lookup";
 import { createCommandOutput } from "../../output";
 
 export default defineCommand({
@@ -56,7 +55,7 @@ export default defineCommand({
 
       out.agentIntentStatus({
         profileId: profile.profileId,
-        intent: await toIntentListEntry(record, findEthereumToken),
+        intent: await toIntentListEntry(record),
         terminal: isTerminalIntentStatus(record.status),
       });
     });

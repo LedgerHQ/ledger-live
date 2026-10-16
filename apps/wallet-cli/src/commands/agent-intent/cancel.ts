@@ -19,7 +19,6 @@ import {
 } from "../../agent-intent/service-errors";
 import { parseIntentId, toIntentListEntry } from "../../agent-intent/intent-list";
 import { askToConfirm, canAskToConfirm } from "../../agent-intent/confirm-prompt";
-import { findEthereumToken } from "../../agent-intent/token-lookup";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
 
@@ -72,7 +71,7 @@ export default defineCommand({
       ) =>
         out.agentIntentCancel({
           profileId,
-          intent: await toIntentListEntry(record, findEthereumToken),
+          intent: await toIntentListEntry(record),
           alreadyCancelled,
           readBack,
         });
@@ -123,7 +122,7 @@ async function confirmCancel(
 ): Promise<boolean> {
   out.agentIntentCancelPreview({
     profileId,
-    intent: await toIntentListEntry(intent, findEthereumToken),
+    intent: await toIntentListEntry(intent),
   });
   return askToConfirm("Cancel this intent? This can't be undone. [y/N] ");
 }

@@ -35,7 +35,7 @@ function record(status: string): AgentIntentRecord {
     status,
     createdAt: "2026-10-07T10:00:00Z",
     updatedAt: "2026-10-07T10:05:00Z",
-    intent: {
+    intent: intentOverride ?? {
       type: "send",
       network: "ethereum",
       sender: SENDER,
@@ -55,6 +55,8 @@ let readStatuses: (string | Error)[];
 let reads: string[];
 let readError: Error | undefined;
 let description: string | undefined;
+/** Replaces the default ETH send the service reads back. */
+let intentOverride: AgentIntentRecord["intent"] | undefined;
 /** The id the service echoes back, when a test needs it to differ from the one asked for. */
 let serviceId: string | undefined;
 let cancelImpl: (intentId: string) => Promise<void>;
@@ -90,7 +92,11 @@ beforeAll(() =>
         },
       }),
     },
-    tokenLookup: { findEthereumToken: async () => null },
+    tokenLookup: {
+      findEthereumToken: async () => null,
+      findEthereumSwapAsset: async () => null,
+      findSolanaToken: async () => null,
+    },
     confirmPrompt: {
       canAskToConfirm: () => canAsk,
       askToConfirm: async (question: string) => {
@@ -127,6 +133,7 @@ describe("agent-intent cancel", () => {
     reads = [];
     readError = undefined;
     description = undefined;
+    intentOverride = undefined;
     serviceId = undefined;
     cancelImpl = async () => {};
     cancels = [];
@@ -157,6 +164,39 @@ describe("agent-intent cancel", () => {
       alreadyCancelled: false,
       readBack: true,
       intent: { id: INTENT_ID, status: "cancelled", amount: "10000000000000000" },
+    });
+  });
+
+  it("shows a swap's pair and provider, and a Solana send's memo", async () => {
+    intentOverride = {
+      type: "swap",
+      network: "ethereum",
+      sender: SENDER,
+      fromAsset: "ethereum",
+      toAsset: "ethereum/erc20/usd__coin",
+      fromAmount: "0.5",
+      toAmount: "1250",
+      provider: "velora",
+    };
+    await runCancel();
+    expect(stdout.join("")).toContain(
+      "Amount:  0.5 ethereum → 1250 ethereum/erc20/usd__coin via velora",
+    );
+
+    stdout = [];
+    readStatuses = ["crafted", "cancelled"];
+    intentOverride = {
+      type: "send",
+      network: "solana",
+      sender: "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2",
+      recipient: "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3",
+      amount: "500000000",
+      asset: { type: "native" },
+      memo: "Invoice 42",
+    };
+    await runCancel({ output: "json" });
+    expect(jsonResult()).toMatchObject({
+      intent: { displayAmount: "0.5 SOL", memo: "Invoice 42", swap: null },
     });
   });
 
