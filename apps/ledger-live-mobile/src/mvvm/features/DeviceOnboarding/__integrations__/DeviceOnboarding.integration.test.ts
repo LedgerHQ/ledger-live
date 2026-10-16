@@ -27,6 +27,43 @@ describe("useDeviceOnboarding", () => {
     activeHidDeviceSessionSubject.next(null);
   });
 
+  it("saves each event on the state it led to", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    expect(result.current.log.at(-1)?.state).toBe("readingState");
+    expect(result.current.nextStates).toEqual(
+      expect.arrayContaining([{ event: "DEVICE_STATE_READ", state: "routing" }]),
+    );
+    expect(result.current.nextStates.map(row => row.event)).toEqual(
+      expect.not.arrayContaining(["LOCKED", "TRANSPORT_LOST", "QUIT"]),
+    );
+
+    await quit(result);
+    const quitRow = [...result.current.log].reverse().find(row => row.event?.type === "QUIT");
+    expect(quitRow?.state).toBe("exitOnboarding");
+  });
+
+  it("keeps the newest 200 log rows, so a long run does not grow without end", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    // A device that locks and unlocks again and again, the longest run QA sees.
+    for (let index = 0; index < 150; index++) {
+      act(() => result.current.send({ type: "LOCKED" }));
+      act(() => result.current.send({ type: "UNLOCKED" }));
+    }
+
+    await waitFor(() => expect(result.current.log).toHaveLength(200));
+    expect(result.current.log.at(-1)?.event?.type).toBe("UNLOCKED");
+  });
+
   // A lost Bluetooth connection must bring Connect back.
   // SESSION_READY stays off until a new session is watched.
   it("hides the device when Bluetooth disconnects, so Connect can be used again", async () => {

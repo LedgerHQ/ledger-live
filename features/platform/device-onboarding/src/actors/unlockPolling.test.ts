@@ -1,3 +1,4 @@
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { CommandResultFactory } from "@ledgerhq/device-management-kit";
 import { runActor } from "../tests/actorHarness";
 import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
@@ -7,10 +8,10 @@ import {
   defaultUnlockPollingIntervalMs,
   unlockPolling,
   type UnlockPollingEvent,
-  type UnlockPollingInput,
 } from "./unlockPolling";
 
-const answers = CommandResultFactory({ data: createOsVersionResponse({ isOnboarded: false }) });
+const unlockedResponse = createOsVersionResponse({ isOnboarded: false });
+const answers = CommandResultFactory({ data: unlockedResponse });
 
 beforeEach(() => {
   jest.useFakeTimers();
@@ -27,7 +28,7 @@ describe("unlockPolling", () => {
 
     await jest.advanceTimersByTimeAsync(0);
 
-    expect(received).toEqual([{ type: "UNLOCKED" }]);
+    expect(received).toEqual([{ type: "UNLOCKED", output: unlockedResponse }]);
     stop();
   });
 
@@ -44,7 +45,7 @@ describe("unlockPolling", () => {
 
     await jest.advanceTimersByTimeAsync(2 * defaultUnlockPollingIntervalMs);
 
-    expect(received).toEqual([{ type: "UNLOCKED" }]);
+    expect(received).toEqual([{ type: "UNLOCKED", output: unlockedResponse }]);
     expect(sendCommand).toHaveBeenCalledTimes(3);
     stop();
   });
@@ -95,6 +96,6 @@ describe("unlockPolling", () => {
   });
 });
 
-function start(dmk: UnlockPollingInput["dmk"]) {
+function start(dmk: DeviceManagementKit) {
   return runActor<UnlockPollingEvent>(unlockPolling, { dmk, sessionId: "session" });
 }

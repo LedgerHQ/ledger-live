@@ -121,7 +121,9 @@ export const contextActions = {
       return {};
     }
 
-    return { firmware: { kind: "offered", update: event.update } };
+    return {
+      firmware: { kind: "offered", update: event.output.firmwareUpdateContext.availableUpdate },
+    };
   }),
   forgetFirmwareCheck: update({ firmware: null }),
   // A new session starts the checks over: the old firmware answer and failure belong to the old one.

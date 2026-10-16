@@ -21,6 +21,7 @@ import type { Subscription } from "rxjs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
+import { useDeviceOnboardingFeatureFlag } from "./useDeviceOnboardingFeatureFlag";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
@@ -49,6 +50,8 @@ export function useDeviceOnboarding({
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
+  const featureFlag = useDeviceOnboardingFeatureFlag();
+
   const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
@@ -69,9 +72,11 @@ export function useDeviceOnboarding({
   const {
     state,
     context,
-    events,
+    machineContext,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     setSessionReady,
     actorRef,
     portsRef,
@@ -296,12 +301,15 @@ export function useDeviceOnboarding({
     device,
     state,
     context,
-    events,
+    machineContext,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     error,
     connect,
     send,
     reset,
+    ...featureFlag,
   };
 }

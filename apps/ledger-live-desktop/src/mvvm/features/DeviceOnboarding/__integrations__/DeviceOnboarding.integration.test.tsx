@@ -217,7 +217,7 @@ describe("DeviceOnboarding desktop integration", () => {
 
     await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
     expect(result.current.state).toBe("readingState");
-    expect(result.current.events.some(event => event.type === "SESSION_READY")).toBe(true);
+    expect(result.current.log.some(row => row.event?.type === "SESSION_READY")).toBe(true);
   });
 
   it("should keep showing the machine when reconnect fails and a later session resumes", async () => {
@@ -267,7 +267,7 @@ describe("DeviceOnboarding desktop integration", () => {
     await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
     expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.STAX);
     expect(result.current.state).toBe("readingState");
-    expect(result.current.events.some(event => event.type === "SESSION_READY")).toBe(false);
+    expect(result.current.log.some(row => row.event?.type === "SESSION_READY")).toBe(false);
     expect(setDrawer).not.toHaveBeenCalled();
   });
 
@@ -289,7 +289,7 @@ describe("DeviceOnboarding desktop integration", () => {
     await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
     expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.STAX);
     expect(result.current.state).toBe("readingState");
-    expect(result.current.events.some(event => event.type === "SESSION_READY")).toBe(false);
+    expect(result.current.log.some(row => row.event?.type === "SESSION_READY")).toBe(false);
   });
 
   it("should restart onboarding when another Ledger is connected as firmware handover ends", async () => {
@@ -315,7 +315,7 @@ describe("DeviceOnboarding desktop integration", () => {
     expect(result.current.device?.sessionId).toBe("session-2");
     expect(result.current.context?.isGenuine).toBeNull();
     expect(result.current.state).toBe("readingState");
-    expect(result.current.events.some(event => event.type === "SESSION_READY")).toBe(false);
+    expect(result.current.log.some(row => row.event?.type === "SESSION_READY")).toBe(false);
   });
 
   it("should keep the same Ledger when its session is replaced during firmware handover", async () => {
@@ -345,12 +345,12 @@ describe("DeviceOnboarding desktop integration", () => {
       result.current.send({ type: "QUIT" });
     });
     await waitFor(() => expect(result.current.exit?.reason).toBe("userQuit"));
-    expect(result.current.events.some(event => event.type === "QUIT")).toBe(true);
+    expect(result.current.log.some(row => row.event?.type === "QUIT")).toBe(true);
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.status).toBe("running"));
     expect(result.current.exit).toBeNull();
-    expect(result.current.events.some(event => event.type === "QUIT")).toBe(false);
+    expect(result.current.log.some(row => row.event?.type === "QUIT")).toBe(false);
   });
 
   it("should pause the machine when the device locks and resume when it unlocks", async () => {
