@@ -11,6 +11,7 @@ import type {
 } from "../../../bridge/generic-coin-framework/sponsored";
 import {
   PENDING_RENT_EXPIRY_MARGIN_MS as PAYMENT_EXPIRY_MARGIN_MS,
+  getPendingRent,
   recordPendingRent,
   resetPendingRentsForTests,
 } from "./pendingRents";
@@ -1542,6 +1543,162 @@ describe("a rent this account paid elsewhere that is still pending", () => {
 
     expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(1);
     expect(result.current.state.failureError?.name).toBe("SponsoredRentPendingError");
+  });
+
+  it("should refuse a reopened Send while the closed Send's payment is still being submitted", async () => {
+    const submitGate = deferred<void>();
+    const submitCalled = deferred<void>();
+    const seam = makeSeam({
+      submitEnergyRentPayment: jest.fn().mockImplementation(() => {
+        submitCalled.resolve();
+        return submitGate.promise;
+      }),
+    });
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const closed = renderHeld();
+    await act(async () => {
+      await closed.result.current.actions.craftRent(REVIEW_FEE);
+    });
+    let payPromise!: Promise<void>;
+    await act(async () => {
+      payPromise = closed.result.current.actions.startRentPayment("sig", "txA");
+      await submitCalled.promise;
+    });
+    closed.unmount();
+
+    const reopened = renderHeld();
+    await act(async () => {
+      await reopened.result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(1);
+    expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+    expect(reopened.result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+    expect(reopened.result.current.state.failureError?.name).toBe("SponsoredRentPendingError");
+    expect(getPendingRent(MAIN_ACCOUNT_ID)).toMatchObject({ paymentTxId: "txA", submitting: true });
+
+    submitGate.resolve();
+    await payPromise;
+
+    expect(getPendingRent(MAIN_ACCOUNT_ID)).toMatchObject({
+      paymentTxId: "txA",
+      submitting: false,
+    });
+  });
+
+  it("should let only one of two Sends pay when both submit at once", async () => {
+    const seam = makeSeam({
+      getEnergyRentSignaturePayload: jest
+        .fn()
+        .mockReturnValueOnce({ toSign: "0aA", paymentTxId: "txA" })
+        .mockReturnValueOnce({ toSign: "0aB", paymentTxId: "txB" }),
+    });
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const first = renderHeld();
+    const second = renderHeld();
+    await act(async () => {
+      await first.result.current.actions.craftRent(REVIEW_FEE);
+    });
+    await act(async () => {
+      await second.result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    await act(async () => {
+      await Promise.all([
+        first.result.current.actions.startRentPayment("sigA", "txA"),
+        second.result.current.actions.startRentPayment("sigB", "txB"),
+      ]);
+    });
+
+    expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+    expect(first.result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+    expect(second.result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+    expect(second.result.current.state.failureError?.name).toBe("SponsoredRentPendingError");
+    expect(second.result.current.state.retryLockedUntil).toBeNull();
+    expect(getPendingRent(MAIN_ACCOUNT_ID)?.paymentTxId).toBe("txA");
+  });
+
+  it("should keep the hold when the provider reports the sent payment failed", async () => {
+    const seam = makeSeam({
+      submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
+      getEnergyRentStatus: jest.fn().mockResolvedValue("failed"),
+    });
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const { result } = renderHeld();
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    await act(async () => {
+      await result.current.actions.startRentPayment("sig", "txA");
+    });
+
+    expect(result.current.state.retryLockedUntil).toBe(RETRY_UNLOCKS_AT);
+    expect(getPendingRent(MAIN_ACCOUNT_ID)).toMatchObject({
+      paymentTxId: "txA",
+      submitting: false,
+    });
+  });
+
+  it("should take no hold when the payment is too close to its expiry to send", async () => {
+    mockGetSponsoredCoinApi.mockResolvedValue(makeSeam());
+    const { result } = renderHeld();
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    const clock = jest
+      .spyOn(Date, "now")
+      .mockReturnValue(PAYMENT_EXPIRES_AT - PAYMENT_EXPIRY_MARGIN_MS);
+    try {
+      await act(async () => {
+        await result.current.actions.startRentPayment("sig", "txA");
+      });
+    } finally {
+      clock.mockRestore();
+    }
+
+    expect(result.current.state.failureError?.name).toBe("SponsoredPaymentExpiredError");
+    expect(getPendingRent(MAIN_ACCOUNT_ID)).toBeNull();
+  });
+
+  it("should take no hold when a reset drops the payment before its submit", async () => {
+    const seam = makeSeam();
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const { result } = renderHeld();
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    await act(async () => {
+      const pending = result.current.actions.startRentPayment("sig", "txA");
+      result.current.actions.reset();
+      await pending;
+    });
+
+    expect(seam.submitEnergyRentPayment).not.toHaveBeenCalled();
+    expect(getPendingRent(MAIN_ACCOUNT_ID)).toBeNull();
+  });
+
+  it("should take no hold when the signed payment can't be built", async () => {
+    const seam = makeSeam({
+      buildSignedEnergyRentTransaction: jest.fn(() => {
+        throw new Error("bad signature");
+      }),
+    });
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+    const { result } = renderHeld();
+    await act(async () => {
+      await result.current.actions.craftRent(REVIEW_FEE);
+    });
+
+    await act(async () => {
+      await result.current.actions.startRentPayment("sig", "txA");
+    });
+
+    expect(seam.submitEnergyRentPayment).not.toHaveBeenCalled();
+    expect(result.current.state.retryLockedUntil).toBeNull();
+    expect(getPendingRent(MAIN_ACCOUNT_ID)).toBeNull();
   });
 });
 

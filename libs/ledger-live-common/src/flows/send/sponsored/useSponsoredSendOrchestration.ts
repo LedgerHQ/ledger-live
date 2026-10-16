@@ -21,7 +21,7 @@ import {
   SponsoredRentPendingError,
   SponsoredSendUnavailableError,
 } from "./errors";
-import { PENDING_RENT_EXPIRY_MARGIN_MS, getPendingRent } from "./pendingRents";
+import { PENDING_RENT_EXPIRY_MARGIN_MS, getPendingRent, recordPendingRent } from "./pendingRents";
 import { SPONSORED_FAILURE_KIND, SPONSORED_PHASE } from "./types";
 import type { SponsoredState } from "./types";
 
@@ -32,7 +32,8 @@ export type UseSponsoredSendOrchestrationParams = Readonly<{
   kind: string;
   intent: unknown;
   pollOpts?: { intervalMs?: number; timeoutMs?: number };
-  /** A pending rent this account paid elsewhere blocks a new order and payment until it lands. */
+  /** Held from a payment's submit until it lands; another Send's pending rent blocks a new order
+   * and payment. */
   mainAccountId?: string | null;
   // Fires even after reset/unmount: TX-A may already be on-chain.
   onRentPaymentBroadcast?: (info: {
@@ -305,6 +306,7 @@ async function submitRentPayment(
     paymentTxId?: string;
     target?: { receiverAddress: string; energyNeeded: bigint };
     getSeam: () => Promise<SponsoredCoinApi | null>;
+    acquireHold: () => boolean;
     reserveRentPayment: (reportedFailed?: boolean) => void;
   }>,
   ctx: RentFlowContext,
@@ -324,6 +326,8 @@ async function submitRentPayment(
       args.order.transaction,
       combinedSignature,
     );
+    // Taken with no await before the submit, so no other Send can pay too.
+    if (!args.acquireHold()) throw new SponsoredRentPendingError();
     submitAttempted = true;
     await seam.submitEnergyRentPayment({ orderId: args.order.orderId, signedTransaction });
   } catch (error) {
@@ -500,22 +504,46 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
       if (s.phase !== SPONSORED_PHASE.RENT_SIGNING) return;
       if (!isCurrentCycle(s, signedPaymentTxId)) return;
       if (inFlightRef.current) return;
-      // Recorded after the order was crafted: a closed Send's in-flight payment.
-      if (heldByAnotherRent()) {
-        dispatch({
-          type: "SUBMIT_FAILURE",
-          error: new SponsoredRentPendingError(),
-          paymentSent: false,
-        });
-        return;
-      }
       inFlightRef.current = true;
       try {
         const generation = generationRef.current;
         const paymentTxId = s.paymentTxId ?? undefined;
-        if (paymentTxId) sentTxIdsRef.current.add(paymentTxId);
+
+        const holdAccount = (submitting: boolean) => {
+          const mainAccountId = params.mainAccountId;
+          if (
+            !mainAccountId ||
+            !paymentTxId ||
+            !s.payerAddress ||
+            !s.receiverAddress ||
+            s.energyNeeded == null
+          ) {
+            return;
+          }
+          recordPendingRent(
+            {
+              mainAccountId,
+              orderId: order.orderId,
+              payerAddress: s.payerAddress,
+              paymentTxId,
+              receiverAddress: s.receiverAddress,
+              energyNeeded: s.energyNeeded,
+              submitting,
+            },
+            order.paymentExpiresAt,
+          );
+        };
+
+        const acquireHold = (): boolean => {
+          if (heldByAnotherRent()) return false;
+          if (paymentTxId) sentTxIdsRef.current.add(paymentTxId);
+          holdAccount(true);
+          return true;
+        };
 
         const reserveRentPayment = (reportedFailed = false) => {
+          // The submit returned, so the chain can now show this payment's energy.
+          holdAccount(false);
           if (!s.payerAddress || !s.rentPayment) return;
           params.onRentPaymentBroadcast?.({
             paymentTxId,
@@ -542,6 +570,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
                 ? { receiverAddress: s.receiverAddress, energyNeeded: s.energyNeeded }
                 : undefined,
             getSeam,
+            acquireHold,
             reserveRentPayment,
           },
           ctx,
@@ -577,9 +606,15 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
         inFlightRef.current = false;
       }
     },
-    // Reads go through stateRef; oxlint miscounts the member dep.
-    // oxlint-disable-next-line react/memo-dependencies
-    [getSeam, params.pollOpts, params.onRentPaymentBroadcast, heldByAnotherRent],
+    [
+      // Reads go through stateRef; oxlint miscounts the member dep.
+      // oxlint-disable-next-line react/memo-dependencies
+      getSeam,
+      params.pollOpts,
+      params.onRentPaymentBroadcast,
+      params.mainAccountId,
+      heldByAnotherRent,
+    ],
   );
 
   const onTransferSuccess = useCallback((signedPaymentTxId: string | null) => {
