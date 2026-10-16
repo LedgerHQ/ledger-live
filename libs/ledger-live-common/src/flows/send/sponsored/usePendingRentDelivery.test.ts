@@ -6,6 +6,7 @@ import { log } from "@ledgerhq/logs";
 import type { SponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";
 import {
   PENDING_RENT_EXPIRY_MARGIN_MS,
+  PENDING_RENT_RECHECK_INTERVAL_MS,
   getPendingRent,
   recordPendingRent,
   resetPendingRentsForTests,
@@ -101,6 +102,26 @@ describe("usePendingRentDelivery", () => {
     expect(seam.awaitEnergyDelivery).not.toHaveBeenCalled();
   });
 
+  it("holds a rent still being submitted without reading the chain, and reads once it is sent", async () => {
+    recordRent({ submitting: true });
+    // Energy from elsewhere is already on-chain.
+    const seam = makeSeam(true);
+    const { result } = renderDelivery({ seam });
+    await settle();
+
+    expect(result.current).toEqual({ rentArriving: true, deliveredAt: null });
+    expect(seam.isEnergyDelivered).not.toHaveBeenCalled();
+    expect(seam.awaitEnergyDelivery).not.toHaveBeenCalled();
+    expect(getPendingRent("acc-1")).not.toBeNull();
+
+    act(() => recordRent());
+    await settle();
+
+    expect(seam.isEnergyDelivered).toHaveBeenCalledTimes(1);
+    expect(result.current).toEqual({ rentArriving: false, deliveredAt: Date.now() });
+    expect(getPendingRent("acc-1")).toBeNull();
+  });
+
   it("holds while the energy is on its way, then clears once it lands", async () => {
     recordRent();
     const delivery = deferred<void>();
@@ -136,6 +157,132 @@ describe("usePendingRentDelivery", () => {
     expect(result.current.rentArriving).toBe(true);
     await advance(1);
     expect(result.current).toEqual({ rentArriving: false, deliveredAt: null });
+  });
+
+  describe("after the wait ends early", () => {
+    const makeFailedSeam = () => {
+      const seam = makeSeam();
+      seam.awaitEnergyDelivery.mockRejectedValue(new Error("Energy rent order failed"));
+      return seam;
+    };
+
+    it("keeps reading the chain, and clears once the energy lands", async () => {
+      recordRent();
+      const seam = makeFailedSeam();
+      seam.isEnergyDelivered
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValue(true);
+      const { result } = renderDelivery({ seam });
+      await settle();
+
+      await advance(2 * PENDING_RENT_RECHECK_INTERVAL_MS);
+      expect(seam.isEnergyDelivered).toHaveBeenCalledTimes(3);
+      expect(result.current).toEqual({ rentArriving: true, deliveredAt: null });
+
+      await advance(PENDING_RENT_RECHECK_INTERVAL_MS);
+      expect(result.current).toEqual({ rentArriving: false, deliveredAt: Date.now() });
+      expect(getPendingRent("acc-1")).toBeNull();
+    });
+
+    it("reads up to the rent's window end, then stops", async () => {
+      recordRent();
+      const windowEnd = Date.now() + RENT_WINDOW_MS;
+      const readAt: number[] = [];
+      const seam = makeFailedSeam();
+      seam.isEnergyDelivered.mockImplementation(async () => {
+        readAt.push(Date.now());
+        return false;
+      });
+      // Off the recheck cadence, so only the cap puts a read at the window's end.
+      await advance(5_000);
+      const { result } = renderDelivery({ seam });
+      await settle();
+
+      await advance(RENT_WINDOW_MS);
+      expect(result.current).toEqual({ rentArriving: false, deliveredAt: null });
+      expect(readAt.at(-1)).toBe(windowEnd);
+
+      const reads = readAt.length;
+      await advance(RENT_WINDOW_MS);
+      expect(readAt).toHaveLength(reads);
+    });
+
+    it("stops reading the chain on unmount", async () => {
+      recordRent();
+      const seam = makeFailedSeam();
+      const { unmount } = renderDelivery({ seam });
+      await settle();
+      await advance(PENDING_RENT_RECHECK_INTERVAL_MS);
+      expect(seam.isEnergyDelivered).toHaveBeenCalledTimes(2);
+
+      unmount();
+      await advance(RENT_WINDOW_MS);
+
+      expect(seam.isEnergyDelivered).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([true, false])(
+      "stops reading the chain, and drops a read in flight returning %s, when the flow starts again",
+      async delivered => {
+        recordRent();
+        const read = deferred<boolean>();
+        const seam = makeFailedSeam();
+        seam.isEnergyDelivered.mockResolvedValueOnce(false).mockReturnValueOnce(read.promise);
+        const { result, rerender } = renderDelivery({ seam });
+        await settle();
+        await advance(PENDING_RENT_RECHECK_INTERVAL_MS);
+        expect(seam.isEnergyDelivered).toHaveBeenCalledTimes(2);
+
+        rerender({ mainAccountId: "acc-1", seam, idle: false });
+        await act(async () => read.resolve(delivered));
+        await advance(3 * PENDING_RENT_RECHECK_INTERVAL_MS);
+
+        expect(seam.isEnergyDelivered).toHaveBeenCalledTimes(2);
+        expect(result.current).toEqual({ rentArriving: false, deliveredAt: null });
+        expect(getPendingRent("acc-1")).not.toBeNull();
+      },
+    );
+
+    it("does not start reading the chain when the wait rejects on unmount", async () => {
+      recordRent();
+      const seam = makeSeam();
+      // Like coin-tron, the wait rejects once its signal aborts.
+      seam.awaitEnergyDelivery.mockImplementation(
+        (_ref, _target, { signal }: { signal: AbortSignal }) =>
+          new Promise<void>((_, reject) =>
+            signal.addEventListener("abort", () => reject(new Error("aborted"))),
+          ),
+      );
+      const { unmount } = renderDelivery({ seam });
+      await settle();
+
+      unmount();
+      await advance(3 * PENDING_RENT_RECHECK_INTERVAL_MS);
+
+      expect(seam.isEnergyDelivered).toHaveBeenCalledTimes(1);
+    });
+
+    it("logs a read that throws, and the next one can still clear the rent", async () => {
+      recordRent();
+      const nodeDown = new Error("node down");
+      const seam = makeFailedSeam();
+      seam.isEnergyDelivered
+        .mockResolvedValueOnce(false)
+        .mockRejectedValueOnce(nodeDown)
+        .mockResolvedValue(true);
+      const { result } = renderDelivery({ seam });
+      await settle();
+
+      await advance(PENDING_RENT_RECHECK_INTERVAL_MS);
+      expect(log).toHaveBeenCalledWith("sponsored-send", expect.any(String), { error: nodeDown });
+      expect(result.current.rentArriving).toBe(true);
+
+      await advance(PENDING_RENT_RECHECK_INTERVAL_MS);
+      expect(result.current).toEqual({ rentArriving: false, deliveredAt: Date.now() });
+      expect(getPendingRent("acc-1")).toBeNull();
+    });
   });
 
   it("holds until the newer rent's window, not the replaced one's", async () => {

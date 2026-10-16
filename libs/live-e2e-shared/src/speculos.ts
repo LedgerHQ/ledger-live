@@ -810,7 +810,11 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
 export async function resetSpeculosEvents(): Promise<void> {
   const speculosAddress = getSpeculosAddress();
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await retryAxiosRequest(() => axios.delete(`${speculosAddress}:${speculosApiPort}/events`));
+  await retryAxiosRequest(() =>
+    axios.delete(`${speculosAddress}:${speculosApiPort}/events`, {
+      headers: getSpeculosHeaders(),
+    }),
+  );
 }
 
 export const pressUntilTextFound = withDeviceController(

@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { SponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";
-import { clearPendingRent, getPendingRent, subscribePendingRents } from "./pendingRents";
+import {
+  PENDING_RENT_RECHECK_INTERVAL_MS,
+  clearPendingRent,
+  getPendingRent,
+  subscribePendingRents,
+} from "./pendingRents";
 
 const LOG_TYPE = "sponsored-send";
 
@@ -45,6 +50,7 @@ export function usePendingRentDelivery({
     let ignore = false;
     const controller = new AbortController();
     let expiryTimer: ReturnType<typeof setTimeout> | undefined;
+    let recheckTimer: ReturnType<typeof setTimeout> | undefined;
     setArrivingFor(mainAccountId);
     // A rent arriving again outdates the last delivery time.
     setDelivered(null);
@@ -71,6 +77,25 @@ export function usePendingRentDelivery({
 
     const watchDelivery = async (api: SponsoredCoinApi) => {
       const target = { receiverAddress: rent.receiverAddress, energyNeeded: rent.energyNeeded };
+      // Capped at the window's end, where the hold stops anyway.
+      const recheckLater = () => {
+        const remaining = rent.expiresAt - Date.now();
+        if (remaining <= 0) return;
+        recheckTimer = setTimeout(
+          async () => {
+            try {
+              if (await api.isEnergyDelivered(target)) {
+                if (!ignore) onDelivered();
+                return;
+              }
+            } catch (error) {
+              log(LOG_TYPE, "pending rent delivery check failed", { error });
+            }
+            if (!ignore) recheckLater();
+          },
+          Math.min(PENDING_RENT_RECHECK_INTERVAL_MS, remaining),
+        );
+      };
       try {
         if (await api.isEnergyDelivered(target)) {
           if (!ignore) onDelivered();
@@ -92,16 +117,20 @@ export function usePendingRentDelivery({
         );
         if (!ignore) onDelivered();
       } catch (error) {
-        // A timeout or abort: the hold runs on until the rent's window ends.
-        if (!ignore) log(LOG_TYPE, "pending rent delivery wait ended", { error });
+        if (ignore) return;
+        log(LOG_TYPE, "pending rent delivery wait ended", { error });
+        // A provider "failed" or a run of read errors ends the wait early, yet the energy can still land.
+        recheckLater();
       }
     };
-    if (seam) void watchDelivery(seam);
+    // The record once the submit returns re-runs this; until then, energy on-chain isn't this rent's.
+    if (seam && !rent.submitting) void watchDelivery(seam);
 
     return () => {
       ignore = true;
       controller.abort();
       clearTimeout(expiryTimer);
+      clearTimeout(recheckTimer);
     };
     // recordVersion only re-triggers the read.
     // oxlint-disable-next-line react/exhaustive-effect-dependencies

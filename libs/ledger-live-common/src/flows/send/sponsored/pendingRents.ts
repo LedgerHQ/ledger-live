@@ -3,6 +3,8 @@ export const PENDING_RENT_MIN_WINDOW_MS = 180_000;
 // Our clock and the chain's may disagree, and a payment takes a few blocks to land. The in-flow
 // retry lock uses it too, so this hold never ends before the lock.
 export const PENDING_RENT_EXPIRY_MARGIN_MS = 30_000;
+// On-chain re-read cadence once the provider's wait ends before the rent's window does.
+export const PENDING_RENT_RECHECK_INTERVAL_MS = 10_000;
 
 export type PendingRent = Readonly<{
   mainAccountId: string;
@@ -12,6 +14,8 @@ export type PendingRent = Readonly<{
   receiverAddress: string;
   energyNeeded: bigint;
   expiresAt: number;
+  /** Held before its submit returned: energy already on-chain can't be its delivery. */
+  submitting?: boolean;
 }>;
 
 const pendingRents = new Map<string, PendingRent>();
