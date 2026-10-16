@@ -52,10 +52,10 @@ export type CalTokenCacheDispatch = ThunkDispatch<WithCryptoAssetsApi, CalApiExt
 const TOKEN_LOOKUP_ENDPOINTS = new Set<string>(["findTokenById", "findTokenByAddressInCurrency"]);
 
 type TokenLookupQuery = {
-  status?: string;
+  status?: string | undefined;
   data?: unknown;
-  endpointName?: string;
-  fulfilledTimeStamp?: number;
+  endpointName?: string | undefined;
+  fulfilledTimeStamp?: number | undefined;
   originalArgs?: unknown;
 };
 
