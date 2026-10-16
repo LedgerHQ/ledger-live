@@ -753,7 +753,7 @@ jobs:
   allure-report-mobile-ui-e2e-smoke:
     name: "Allure Report - Mobile UI E2E Smoke (iOS + Android)"
     continue-on-error: true
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [detox-ui-e2e-ios, detox-ui-e2e-android]
     if: ${{ !cancelled() && (needs.detox-ui-e2e-ios.outputs.artifact || needs.detox-ui-e2e-android.outputs.artifact) }}
     outputs:
