@@ -76,6 +76,30 @@ describe("useAssetDetailChartSeries", () => {
       );
     });
 
+    it("should forward the live price with the timestamp captured when the series is built", () => {
+      jest.useFakeTimers({ now: 1_700_000_000_000 });
+
+      try {
+        renderHook(() =>
+          useAssetDetailChartSeries({
+            id: "bitcoin",
+            counterCurrency: "usd",
+            isCryptoCountervalue: false,
+            selectedRange: "1d",
+            latestPrice: 82_235,
+          }),
+        );
+
+        expect(mockedBuildSeries).toHaveBeenCalledWith(
+          expect.objectContaining({
+            latestPrice: { price: 82_235, timestamp: 1_700_000_000_000 },
+          }),
+        );
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
     it("forwards the loading and error states from the wrapper hook", () => {
       mockChartData({ isLoading: true, isFetching: true, isError: true });
 
