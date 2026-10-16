@@ -1,36 +1,29 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { track } from "@shared/analytics";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type {
+  FeePaymentLabels,
+  FeePaymentOption,
+} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { useFeePaymentOptions } from "@ledgerhq/live-common/flows/send/sponsored/useFeePaymentOptions";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
-import { useSponsoredSend, STANDARD_FEE_OPTION_ID } from "../../../context/SponsoredSendContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { getSendFlowTrackingPage } from "../../../utils/contactTracking";
-import type { FeeAmountDisplay } from "LLD/features/Send/types";
-
-export type FeePaymentOption = Readonly<{
-  id: string;
-  label: string;
-  paidInLabel: string;
-  fee:
-    | (FeeAmountDisplay &
-        Readonly<{
-          /** The standard fee's fiat price, struck through before `value`; null when not comparable. */
-          originalValue: string | null;
-        }>)
-    | null;
-  selected: boolean;
-  disabled: boolean;
-  /** Why the option can't be picked; null while it can. */
-  note: string | null;
-}>;
 
 export type FeePaymentViewModel = Readonly<{
   options: readonly FeePaymentOption[];
   disclaimer: string;
+  learnMoreLabel: string;
+  learnMoreUrl: string;
+  onLearnMore: () => void;
   confirmLabel: string;
   confirmDisabled: boolean;
   onSelect: (id: string) => void;
@@ -41,36 +34,33 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard<SendFlowStep>();
   const { state } = useSendFlowData();
-  const {
-    selectedFeeOptionId,
-    sponsoredFeeOptionId,
-    providerName,
-    selectSponsored,
-    selectStandard,
-    sponsoredFeeAmounts,
-    feeCurrencyTicker,
-    feeTokenAccount,
-    sponsoredMaxAmount,
-  } = useSponsoredSend();
-  const sponsoredDisabled = !feeTokenAccount || !!sponsoredMaxAmount?.lte(0);
+  const sponsoredSend = useSponsoredSend();
+  const { providerName, feeCurrencyTicker } = sponsoredSend;
   const { account, parentAccount } = state.account;
   const nativeTicker = account ? getMainAccount(account, parentAccount).currency.ticker : "";
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const { flowSessionId } = useSendFlowTracking();
 
-  const [pendingId, setPendingId] = useState(selectedFeeOptionId);
-  const pendingUnavailable = pendingId === sponsoredFeeOptionId && sponsoredDisabled;
-
-  const onSelect = useCallback(
-    (id: string) => {
-      if (id === sponsoredFeeOptionId && sponsoredDisabled) return;
-      setPendingId(id);
-    },
-    [sponsoredFeeOptionId, sponsoredDisabled],
+  const labels: FeePaymentLabels = useMemo(
+    () => ({
+      sponsored: t("newSendFlow.feePayment.sponsored", { provider: providerName }),
+      sponsoredPaidIn: t("newSendFlow.feePayment.paidIn", { currency: feeCurrencyTicker }),
+      regular: t("newSendFlow.feePayment.regular"),
+      regularPaidIn: t("newSendFlow.feePayment.paidIn", { currency: nativeTicker }),
+      insufficientFunds: t("newSendFlow.feePayment.insufficientFunds", {
+        feeCurrency: feeCurrencyTicker,
+        provider: providerName,
+      }),
+    }),
+    [t, providerName, feeCurrencyTicker, nativeTicker],
   );
+  const { options, pendingId, confirmDisabled, onSelect, confirm } = useFeePaymentOptions({
+    ...sponsoredSend,
+    labels,
+  });
 
   const onConfirm = useCallback(() => {
-    if (pendingUnavailable) return;
+    if (confirmDisabled) return;
     track("button_clicked", {
       button: "confirm",
       page: getSendFlowTrackingPage(SEND_FLOW_STEP.FEE_PAYMENT),
@@ -78,63 +68,14 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
       flow_session_id: flowSessionId,
       ...sendFlowTrackingProperties,
     });
-    if (pendingId !== selectedFeeOptionId) {
-      if (pendingId === sponsoredFeeOptionId) {
-        selectSponsored();
-      } else {
-        selectStandard();
-      }
-    }
+    confirm();
     navigation.goToPreviousStep();
-  }, [
-    pendingUnavailable,
-    pendingId,
-    selectedFeeOptionId,
-    sponsoredFeeOptionId,
-    selectSponsored,
-    selectStandard,
-    navigation,
-    flowSessionId,
-    sendFlowTrackingProperties,
-  ]);
+  }, [confirmDisabled, pendingId, flowSessionId, sendFlowTrackingProperties, confirm, navigation]);
 
-  const options: readonly FeePaymentOption[] = useMemo(
-    () => [
-      {
-        id: sponsoredFeeOptionId,
-        label: t("newSendFlow.feePayment.sponsored", { provider: providerName }),
-        paidInLabel: t("newSendFlow.feePayment.paidIn", { currency: feeCurrencyTicker }),
-        fee: sponsoredFeeAmounts?.sponsored ?? null,
-        selected: pendingId === sponsoredFeeOptionId,
-        disabled: sponsoredDisabled,
-        note: sponsoredDisabled
-          ? t("newSendFlow.feePayment.insufficientFunds", {
-              feeCurrency: feeCurrencyTicker,
-              provider: providerName,
-            })
-          : null,
-      },
-      {
-        id: STANDARD_FEE_OPTION_ID,
-        label: t("newSendFlow.feePayment.regular"),
-        paidInLabel: t("newSendFlow.feePayment.paidIn", { currency: nativeTicker }),
-        fee: sponsoredFeeAmounts ? { ...sponsoredFeeAmounts.standard, originalValue: null } : null,
-        selected: pendingId === STANDARD_FEE_OPTION_ID,
-        disabled: false,
-        note: null,
-      },
-    ],
-    [
-      t,
-      pendingId,
-      sponsoredFeeOptionId,
-      providerName,
-      sponsoredFeeAmounts,
-      sponsoredDisabled,
-      feeCurrencyTicker,
-      nativeTicker,
-    ],
-  );
+  const learnMoreUrl = useLocalizedUrl(urls.gasSponsorship);
+  const onLearnMore = useCallback(() => {
+    if (learnMoreUrl) openURL(learnMoreUrl);
+  }, [learnMoreUrl]);
 
   return {
     options,
@@ -142,8 +83,11 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
       feeCurrency: feeCurrencyTicker,
       provider: providerName,
     }),
+    learnMoreLabel: t("common.learnMore"),
+    learnMoreUrl,
+    onLearnMore,
     confirmLabel: t("newSendFlow.feePayment.confirm"),
-    confirmDisabled: pendingUnavailable,
+    confirmDisabled,
     onSelect,
     onConfirm,
   };
