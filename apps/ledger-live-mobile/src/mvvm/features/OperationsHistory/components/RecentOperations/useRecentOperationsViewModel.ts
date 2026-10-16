@@ -1,0 +1,118 @@
+import { track } from "@shared/analytics";
+import { useCallback, useMemo } from "react";
+import { useNavigation } from "@react-navigation/native";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useSelector } from "~/context/hooks";
+import { accountsSelector } from "~/reducers/accounts";
+import { lastSeenOperationDateSelector } from "~/reducers/history";
+import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
+import { NavigatorName, ScreenName } from "~/const";
+import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
+import { parseLastSeenMs } from "../../utils/unreadOperations";
+
+export const MAX_PREVIEW_OPERATIONS = 3;
+
+export type RecentOperationsParams = Readonly<{
+  accountIds: readonly string[];
+  trackingPage: string;
+  trackingCurrencyId?: string;
+}>;
+
+type ResolvedAccount = Readonly<{ account: AccountLike; parentAccount: Account | undefined }>;
+
+export type RecentOperationsViewModel = Readonly<{
+  operations: Operation[];
+  accountByAddress: Map<string, AccountLike>;
+  lastSeenTs: number | null;
+  findAccount: (accountId: string) => ResolvedAccount | null;
+  onHeaderPress: () => void;
+  hasData: boolean;
+}>;
+
+export function useRecentOperationsViewModel({
+  accountIds,
+  trackingPage,
+  trackingCurrencyId,
+}: RecentOperationsParams): RecentOperationsViewModel {
+  const navigation = useNavigation<BaseNavigation>();
+  const allAccounts = useSelector(accountsSelector);
+
+  const accountIdsKey = accountIds.join(",");
+  const allowedIds = useMemo(
+    () => new Set(accountIdsKey ? accountIdsKey.split(",") : []),
+    [accountIdsKey],
+  );
+
+  const rootAccounts: Account[] = useMemo(() => {
+    if (allowedIds.size === 0) return [];
+    return allAccounts.filter(root => flattenAccounts([root]).some(a => allowedIds.has(a.id)));
+  }, [allAccounts, allowedIds]);
+
+  const flattenedRootAccounts: AccountLike[] = useMemo(
+    () => flattenAccounts(rootAccounts),
+    [rootAccounts],
+  );
+
+  const scopedFilter = useCallback(
+    (_op: Operation, account: AccountLike) => allowedIds.has(account.id),
+    [allowedIds],
+  );
+
+  const { sections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
+    filterOperation: scopedFilter,
+  });
+
+  const operations: Operation[] = useMemo(
+    () => sections.flatMap(section => section.data).slice(0, MAX_PREVIEW_OPERATIONS),
+    [sections],
+  );
+
+  const lastSeenDate = useSelector(lastSeenOperationDateSelector);
+  const lastSeenTs = useMemo(() => parseLastSeenMs(lastSeenDate), [lastSeenDate]);
+
+  const accountByAddress = useMemo(() => {
+    const map = new Map<string, AccountLike>();
+    for (const account of rootAccounts) {
+      const { freshAddress } = account;
+      if (freshAddress) {
+        const currId = getAccountCurrency(account).id;
+        map.set(`${currId}:${freshAddress}`, account);
+      }
+    }
+    return map;
+  }, [rootAccounts]);
+
+  const findAccount = useCallback(
+    (accountId: string): ResolvedAccount | null => {
+      const account = flattenedRootAccounts.find(a => a.id === accountId);
+      if (!account) return null;
+      const parentAccount: Account | undefined =
+        account.type === "Account" ? undefined : rootAccounts.find(a => a.id === account.parentId);
+      return { account, parentAccount };
+    },
+    [flattenedRootAccounts, rootAccounts],
+  );
+
+  const onHeaderPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Transactions",
+      currency: trackingCurrencyId,
+      page: trackingPage,
+    });
+    navigation.navigate(NavigatorName.OperationsHistory, {
+      screen: ScreenName.OperationsList,
+      params: { accountIds: Array.from(allowedIds) },
+    });
+  }, [navigation, trackingCurrencyId, trackingPage, allowedIds]);
+
+  return {
+    operations,
+    accountByAddress,
+    lastSeenTs,
+    findAccount,
+    onHeaderPress,
+    hasData: operations.length > 0,
+  };
+}

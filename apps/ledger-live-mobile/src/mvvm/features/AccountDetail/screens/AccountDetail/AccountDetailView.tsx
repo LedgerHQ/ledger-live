@@ -7,6 +7,7 @@ import { AccountDetailLayout } from "@features/flow-account-detail";
 import { TrackScreen } from "@shared/analytics-react";
 import type { Account } from "@ledgerhq/types-live";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../testIds";
+import { Transactions } from "./components/Transactions";
 
 type Props = Readonly<{ account: Account }>;
 
@@ -30,9 +31,7 @@ export function AccountDetailView({ account }: Props) {
             hero={<Box testID={ACCOUNT_DETAIL_TEST_IDS.hero} lx={heroStyle} />}
             customPlace={<Box testID={ACCOUNT_DETAIL_TEST_IDS.customPlace} lx={customPlaceStyle} />}
             assets={<Box testID={ACCOUNT_DETAIL_TEST_IDS.assets} lx={assetsStyle} />}
-            transactions={
-              <Box testID={ACCOUNT_DETAIL_TEST_IDS.transactions} lx={transactionsStyle} />
-            }
+            transactions={<Transactions account={account} />}
           />
         </Box>
       </ScrollView>
@@ -50,4 +49,3 @@ const customPlaceStyle: LumenViewStyle = {
   backgroundColor: "warning",
 };
 const assetsStyle: LumenViewStyle = { ...sectionStyle, backgroundColor: "success" };
-const transactionsStyle: LumenViewStyle = { ...sectionStyle, backgroundColor: "active" };
