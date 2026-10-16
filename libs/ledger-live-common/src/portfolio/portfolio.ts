@@ -24,6 +24,7 @@ import type {
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Currency } from "@domain/entity-currency";
+import { getFiatPriceVariationFromPercentChange } from "../market/utils/resolveRangePriceChange";
 import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./ranges";
 import { defaultAssetsDistribution } from "./assetsDistribution";
 import type { AssetsDistributionOpts } from "./assetsDistribution";
@@ -293,6 +294,42 @@ export function getCurrencyPortfolio(
     histories,
     cryptoChange,
     countervalueChange,
+  };
+}
+
+export function alignFlatDayCountervalueChange({
+  range,
+  countervalueChange,
+  balanceAtRangeStart,
+  balanceAtRangeEnd,
+  currentCountervalue,
+  marketDayChangePercentPoints,
+}: {
+  range: PortfolioRange;
+  countervalueChange: ValueChange;
+  balanceAtRangeStart: number;
+  balanceAtRangeEnd: number;
+  currentCountervalue: number | null | undefined;
+  marketDayChangePercentPoints: number | null | undefined;
+}): ValueChange {
+  if (
+    range !== "day" ||
+    balanceAtRangeStart !== balanceAtRangeEnd ||
+    marketDayChangePercentPoints == null ||
+    !Number.isFinite(marketDayChangePercentPoints)
+  ) {
+    return countervalueChange;
+  }
+
+  const value = getFiatPriceVariationFromPercentChange(
+    currentCountervalue ?? undefined,
+    marketDayChangePercentPoints,
+  );
+  if (value == null || !Number.isFinite(value)) return countervalueChange;
+
+  return {
+    percentage: marketDayChangePercentPoints / 100,
+    value,
   };
 }
 
