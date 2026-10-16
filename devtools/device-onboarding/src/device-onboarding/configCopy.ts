@@ -22,6 +22,12 @@ export const featureFlagCopy = {
     "Overrides the flag on this app. A new run reads the new value. The override stays after a restart: reset it in the Feature flags tool.",
 };
 
+export const hostCopy = {
+  title: "Machine input",
+  description:
+    "hostsSeedSetup on lets an unseeded device reach seed setup. Off is the app today: it goes to legacy. A new run reads the new value.",
+};
+
 export const headerCopy = {
   connect: "Connect",
   reset: "Reset",

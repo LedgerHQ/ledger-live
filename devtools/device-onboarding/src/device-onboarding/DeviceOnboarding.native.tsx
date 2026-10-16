@@ -11,7 +11,14 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
-import { emptyLogCopy, headerCopy, featureFlagCopy, logCopy, overrideCopy } from "./configCopy";
+import {
+  emptyLogCopy,
+  headerCopy,
+  featureFlagCopy,
+  hostCopy,
+  logCopy,
+  overrideCopy,
+} from "./configCopy";
 import {
   useDeviceOnboardingViewModel,
   type DeviceOnboardingViewModel,
@@ -19,6 +26,7 @@ import {
   type EventRow,
   type NextStateGroup,
   type StateStep,
+  type SwitchRow,
 } from "./useDeviceOnboardingViewModel";
 
 const HEADER_LX = {
@@ -160,7 +168,10 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
 function ConfigTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
   return (
     <>
-      {vm.featureFlagRows.length > 0 ? <FeatureFlagSection rows={vm.featureFlagRows} /> : null}
+      {vm.featureFlagRows.length > 0 ? (
+        <SwitchSection copy={featureFlagCopy} rows={vm.featureFlagRows} />
+      ) : null}
+      {vm.hostRows.length > 0 ? <SwitchSection copy={hostCopy} rows={vm.hostRows} /> : null}
       <OverrideSection vm={vm} />
     </>
   );
@@ -226,14 +237,18 @@ function LogTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
   );
 }
 
-function FeatureFlagSection({
+function SwitchSection({
+  copy,
   rows,
-}: Readonly<{ rows: DeviceOnboardingViewModel["featureFlagRows"] }>) {
+}: Readonly<{
+  copy: { title: string; description: string };
+  rows: readonly SwitchRow[];
+}>) {
   const { divider, mono } = useToolStyles();
 
   return (
     <Box lx={SECTION_LX} style={divider}>
-      <SectionHeader {...featureFlagCopy} />
+      <SectionHeader {...copy} />
       {rows.map(row => (
         <Box key={row.key} lx={HEADER_ROW_LX}>
           <Text typography="body2" style={mono}>

@@ -74,6 +74,12 @@ export interface DeviceOnboardingToolProps {
    */
   readonly featureFlag?: DeviceOnboardingFeatureFlag;
   readonly setFeatureFlag?: (featureFlag: DeviceOnboardingFeatureFlag) => void;
+  /**
+   * Devtool only. The machine's `hostsSeedSetup` input: off sends an unseeded device to legacy. A
+   * host that leaves the setter out hides the switch.
+   */
+  readonly hostsSeedSetup?: boolean;
+  readonly setHostsSeedSetup?: (hostsSeedSetup: boolean) => void;
 }
 
 /** Each param is a switch, so only boolean params are listed. */
