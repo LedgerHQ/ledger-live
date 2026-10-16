@@ -4,8 +4,10 @@
 
 import { renderHook } from "@testing-library/react";
 import { useStockAssetIds } from "./useStockAssetIds";
-import { useGetAssetCurrencyIdsByCategoryQuery } from "@domain/api-aggregated-assets";
-import { AssetCategory } from "@domain/api-aggregated-assets";
+import {
+  AssetCategory,
+  useGetAssetCurrencyIdsByCategoryQuery,
+} from "@domain/api-aggregated-assets";
 
 jest.mock("@domain/api-aggregated-assets", () => ({
   ...jest.requireActual("@domain/api-aggregated-assets"),
