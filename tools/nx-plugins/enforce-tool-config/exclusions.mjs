@@ -9,6 +9,16 @@ const LINT_LEAVES =
   "keep their own oxlint config, which no support/lint preset reproduces yet. Exit condition: " +
   "the subtree moves onto its layer's preset and its config is deleted.";
 
+// The jest rule: consumers of @support/jest whose config does not come out of a preset factory.
+const JEST_ESM_HELPER_ONLY =
+  "TEMPORARY. A hand-rolled jest config that only takes withEsmDeps from @support/jest/shared. " +
+  "Exit condition: the package builds its config with a preset factory, or stops depending on " +
+  "@support/jest.";
+const JEST_FLOW_NATIVE_ONLY =
+  "TEMPORARY. Native-only tests: the config drops the web project from createFlowJestConfig() " +
+  "instead of passing overrides. Exit condition: @support/jest/features-flow offers a native-only " +
+  "factory, as @support/jest/shared does with createSharedUiNativeJestConfig.";
+
 /** @type {Record<string, { rules: string[], reason: string }>} */
 export const EXCLUSIONS = {
   apps: {
@@ -19,6 +29,7 @@ export const EXCLUSIONS = {
       "covers yet. Exit condition: an application archetype in @support/tsconfig, then each " +
       "application moved onto it.",
   },
+  "apps/web-tools": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   e2e: {
     rules: ["lint", "tsconfig"],
     reason:
@@ -26,10 +37,32 @@ export const EXCLUSIONS = {
       "tsconfig: end-to-end suites run their own TypeScript setups (Playwright, Detox). Exit " +
       "condition: the suites moved onto a @support/tsconfig preset.",
   },
+  "features/flow/app-availability": {
+    rules: ["jest"],
+    reason:
+      "TEMPORARY. The config edits the projects createFlowJestConfig() returns, adding a web " +
+      "setup file and a native module mapping. Exit condition: the features-flow factory takes " +
+      "per-project overrides.",
+  },
+  "features/flow/app-longer-password": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
+  "features/flow/app-password-removal": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
+  "features/flow/app-password-setup": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
+  "features/flow/app-protection-prompt": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
+  "features/flow/app-unlock": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
+  "features/platform/app-lock": {
+    rules: ["jest"],
+    reason:
+      "TEMPORARY. A features/platform package: it hand-rolls a node project and borrows the " +
+      "native project of @support/jest/features-flow for its UI folders. Exit condition: a preset " +
+      "covers features/platform packages.",
+  },
+  "features/platform/app-update": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/coin-modules": {
     rules: ["lint"],
     reason: `TEMPORARY. The coin modules, and coin-bitcoin on top of them, ${LINT_LEAVES}`,
   },
+  "libs/coin-modules/coin-bitcoin": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
+  "libs/coin-modules/coin-zcash": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ledger-live-common": {
     rules: ["lint", "tsconfig"],
     reason:
@@ -43,14 +76,19 @@ export const EXCLUSIONS = {
     reason: `TEMPORARY. The ledger-services packages ${LINT_LEAVES}`,
   },
   "libs/ledgerjs": {
-    rules: ["lint", "tsconfig"],
+    rules: ["lint", "tsconfig", "jest"],
     reason:
       `TEMPORARY. lint: the ledgerjs packages ${LINT_LEAVES} ` +
       "tsconfig: the 22 ledgerjs packages extend the shared libs/ledgerjs/tsconfig.json across " +
       "package boundaries; moving them onto the lib preset would spell its six options out in " +
       "each package. Exit condition: those options are dropped or folded into a preset, then " +
-      "each package extends @support/tsconfig/lib.",
+      "each package extends @support/tsconfig/lib. " +
+      "jest: their jest config only takes withEsmDeps from @support/jest/shared. Exit " +
+      "condition: it is built by a preset factory.",
   },
+  "libs/live-signer-celo": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
+  "libs/live-signer-evm": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
+  "libs/transaction-observability": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ui": {
     rules: ["lint", "tsconfig"],
     reason:
@@ -61,8 +99,11 @@ export const EXCLUSIONS = {
       "extends a @support/tsconfig preset.",
   },
   "libs/wallet-btc": {
-    rules: ["lint"],
-    reason: `TEMPORARY. wallet-btc ${LINT_LEAVES}`,
+    rules: ["lint", "jest"],
+    reason:
+      `TEMPORARY. lint: wallet-btc ${LINT_LEAVES} ` +
+      "jest: its jest configs only take withEsmDeps from @support/jest/shared. Exit condition: " +
+      "they are built by a preset factory.",
   },
   tests: {
     rules: ["lint", "tsconfig"],

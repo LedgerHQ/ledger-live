@@ -27,7 +27,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

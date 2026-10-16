@@ -1,4 +1,4 @@
-import { renderHook, act } from "@support/jest-devtools/native";
+import { renderHook, act } from "@support/jest/devtools/native";
 import { useCloudSyncViewModel } from "./useCloudSyncViewModel";
 import type { CloudSyncDevToolProps } from "../types";
 

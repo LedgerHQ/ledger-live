@@ -21,7 +21,7 @@
 "@features/platform-contacts": patch
 "@shared/ui-app-unavailable": patch
 "@shared/ui-info-state": patch
-"@support/jest-devtools": patch
+"@support/jest": patch
 ---
 
 Bump Lumen to lumen-design-core 0.1.32, lumen-ui-react 0.1.64, lumen-ui-rnative 0.1.67 and lumen-utils-shared 0.1.16, and migrate `Spot` to its palette API (`icon` required, `appearance="icon"` dropped, `check`/`info`/`error`/`warning`/`loader` mapped to explicit icons, `number` moved to `SpotNumber`). The devtools native jest preset now mocks `react-native-gesture-handler`, which the new lumen `Toaster` imports.

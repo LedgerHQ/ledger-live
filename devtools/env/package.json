@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@support/jest-devtools": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
