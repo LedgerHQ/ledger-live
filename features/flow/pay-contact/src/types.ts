@@ -4,7 +4,6 @@ import type {
   AddContactDialogLifecycleCallbacks,
   AddContactDialogViewModel,
   ContactCreationPort,
-  ContactsAddContactContentLabels,
 } from "@features/flow-contacts-add-contact";
 import type { ContactOperation, OutgoingOperation } from "@features/platform-contacts";
 
@@ -16,7 +15,6 @@ export type EmptyStateLabels = Readonly<{
 export type EmptyStateProps = EmptyStateLabels & Readonly<{ onAddContact: () => void }>;
 
 export type PayAddContactProps = Readonly<{
-  labels: ContactsAddContactContentLabels;
   contactCreation: ContactCreationPort;
   onRequestAddContact: (onAllowed: () => void) => void;
   onSaveSuccess?: (contact: Contact) => void;

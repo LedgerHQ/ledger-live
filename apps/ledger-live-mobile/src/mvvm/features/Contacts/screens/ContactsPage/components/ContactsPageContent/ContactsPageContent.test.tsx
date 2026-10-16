@@ -70,16 +70,6 @@ function createViewModel({
       draftName: "",
       avatarInitial: "",
       invalidNameError: null,
-      labels: {
-        title: "Add contact",
-        namePlaceholder: "Contact name",
-        namingDisclaimer: "Use a nickname.",
-        confirmAddContact: "Add contact",
-        nameValidationErrors: {
-          InvalidContactNameError: "Special characters are not allowed.",
-          DuplicateContactNameError: "This contact name is already in use.",
-        },
-      },
       onOpen: jest.fn(),
       onClose: jest.fn(),
       onDraftNameChange: jest.fn(),
