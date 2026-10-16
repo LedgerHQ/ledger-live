@@ -4,8 +4,11 @@ import {
   connectAccountsStore,
   type AccountsReduxStore,
 } from "@domain/entity-account";
+import { createCoinModuleSource } from "@features/platform-account-source-coin-module";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
+import { loadCoinModule } from "@ledgerhq/live-common/account-data/coinModulePorts";
 import { createFullSyncSource } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import { accountsSelector, type AccountsState } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
@@ -15,7 +18,14 @@ const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => stat
 
 /** The app's account data sources, in rank order: for each account, the first that serves it answers. */
 export function accountDataSources(getState: () => State): readonly AccountDataSource[] {
+  const blacklistedTokenIds = (): string[] => blacklistedTokenIdsSelector(getState());
   return [
+    // Operations stay on the full sync until the coin module history is proven on par.
+    createCoinModuleSource({
+      loadCoinModule,
+      families: { balance: getEnabledGenericCoinFrameworkFamilies },
+      blacklistedTokenIds,
+    }),
     createFullSyncSource({
       findAccount: accountUUID => {
         const state = getState();
@@ -25,7 +35,7 @@ export function accountDataSources(getState: () => State): readonly AccountDataS
           : accountsSelector(state).find(account => account.id === legacyId);
       },
       prepareCurrency,
-      blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()),
+      blacklistedTokenIds,
     }),
   ];
 }

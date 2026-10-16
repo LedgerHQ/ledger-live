@@ -55,6 +55,8 @@ import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/sta
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
 import { accountsSlice } from "@domain/entity-account";
+import { accountBalancesSlice } from "@domain/entity-account-balance";
+import { accountOperationsSlice } from "@domain/entity-account-operations";
 import { appLockSlice } from "@features/platform-app-lock";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
@@ -117,6 +119,8 @@ const appReducer = combineReducers({
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
   accountEntries: accountsSlice.reducer,
+  accountBalances: accountBalancesSlice.reducer,
+  accountOperations: accountOperationsSlice.reducer,
   appLock: appLockSlice.reducer,
   ...llmRTKApiReducers,
 });

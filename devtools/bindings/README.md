@@ -12,6 +12,7 @@ Keep tools decoupled from the app. The builder is the only bridge between app im
 | Hook | Tool | Behaviour |
 | ---- | ---- | --------- |
 | `useFeatureFlagsToolProps()` | `feature-flags` | Reads `overrides`/`resolved` from the `featureFlags` slice (`@shared/feature-flags` + `@features/platform-feature-flags`) and wires `setOverride` / `setAllOverrides` / `clearOverride` / `clearAllOverrides` to the slice actions. Requires the host to register that slice (desktop, mobile and web-tools already do). |
+| `useAccountDataToolProps()` | `account-data` | Lists the entries of the `accountEntries` slice with what `accountData`, `accountBalances` and `accountOperations` hold for each, as stored, and wires the reads to `fetchAccountData` / `fetchMoreAccountData`. Requires the host to mount those four slices and the account data router (desktop does). |
 
 Future tools add their own builder + row here, each depending only on the state it needs.
 
