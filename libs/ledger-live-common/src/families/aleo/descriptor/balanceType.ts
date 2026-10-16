@@ -84,7 +84,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
     {
       id: PRIVATE,
       translationKey: "balanceType.aleoPrivate",
-      balance: balances.privateBalance ?? new BigNumber(0),
+      balance: balances.privateBalance,
       hasPendingBalance: false,
       icon: "lock",
       hideSubtitle: true,

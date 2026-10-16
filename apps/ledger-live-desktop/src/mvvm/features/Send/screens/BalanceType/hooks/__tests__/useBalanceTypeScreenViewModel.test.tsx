@@ -193,6 +193,23 @@ describe("useBalanceTypeScreenViewModel", () => {
       expect(vm.options[0].formattedCounterValue).toBeTruthy();
       expect(vm.options[0].isZero).toBe(false);
       expect(vm.options[1].isZero).toBe(true);
+      expect(vm.options[0].requiresSync).toBe(false);
+      expect(vm.options[1].requiresSync).toBe(false);
+    }
+  });
+
+  test("shows a dash and flags a sync for a pool whose balance is unknown", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: null }]);
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      expect(vm.options[1].formattedBalance).toBe("-");
+      expect(vm.options[1].formattedCounterValue).toBe("");
+      expect(vm.options[1].isZero).toBe(false);
+      expect(vm.options[1].requiresSync).toBe(true);
+      expect(vm.options[0].requiresSync).toBe(false);
     }
   });
 
