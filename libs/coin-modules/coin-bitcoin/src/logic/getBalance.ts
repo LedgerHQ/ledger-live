@@ -13,6 +13,6 @@ export async function getBalance(
   address: string,
 ): Promise<Balance[]> {
   const config = await context.config(currencyId);
-  const value = await fetchAddressBalance(config, currencyId, explorerAddress(config, address));
+  const value = await fetchAddressBalance(config, explorerAddress(config, address));
   return [{ value, asset: { type: "native" } }];
 }

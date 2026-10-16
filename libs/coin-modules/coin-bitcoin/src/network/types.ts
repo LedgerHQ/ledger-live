@@ -35,8 +35,9 @@ export type ExplorerTxOutput = {
 };
 
 export type ExplorerTx = {
-  /** Transaction id (`tx/{hash}` responses); `hash` may then be the witness hash. */
+  /** Transaction id (txid). */
   id?: string | null;
+  /** Legacy field of the explorer's v1, documented as not matching the node's: use {@link txidOf}. */
   hash: string;
   /** Date the explorer first saw the transaction (ISO-8601). */
   received_at?: string | null;
@@ -96,3 +97,6 @@ export type ExplorerTxPage = {
 export type ExplorerTxHex = {
   hex: string;
 };
+
+/** The transaction id of an explorer transaction: `id`, with `hash` only where `id` is absent. */
+export const txidOf = (tx: Pick<ExplorerTx, "id" | "hash">): string => tx.id ?? tx.hash;

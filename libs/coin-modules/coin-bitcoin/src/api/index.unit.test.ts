@@ -38,7 +38,7 @@ const intent: TransactionIntent<MemoNotSupported, BitcoinTxData> = {
   recipient: "b",
   amount: 1n,
   asset: { type: "native" },
-  data: { type: "bitcoin" },
+  data: { type: "string" },
 };
 
 describe("createApi", () => {
@@ -148,31 +148,14 @@ describe("createApi", () => {
     expect(broadcast).toHaveBeenCalledWith(context, "bitcoin_cash", "00", broadcastConfig);
   });
 
-  it("hands the logic bigints when a JSON consumer passes strings", async () => {
-    jest.mocked(craftTransaction).mockImplementation(async () => ({ transaction: "psbt" }));
-    const fromJson = { ...intent, amount: "5000" } as unknown as typeof intent;
-    await createApi("bitcoin").craftTransaction(context, fromJson, {
-      customFees: {
-        value: "0" as unknown as bigint,
-        parameters: { feesStrategy: "fast", feePerByte: "3" },
-      },
-    });
-    expect(craftTransaction).toHaveBeenCalledWith(
-      context,
-      "bitcoin",
-      { ...intent, amount: 5000n },
-      { value: 0n, parameters: { feesStrategy: "fast", feePerByte: 3n } },
-    );
-  });
-
   it("returns the intent's bitcoin data, OP_RETURN data included", () => {
     const api = createApi("bitcoin");
-    expect(api.craftTransactionData(context, intent)).toEqual({ type: "bitcoin" });
+    expect(api.craftTransactionData(context, intent)).toEqual({ type: "string" });
     expect(
       api.craftTransactionData(context, {
         ...intent,
-        data: { type: "bitcoin", opReturnData: "abcd" },
+        data: { type: "string", opReturnData: "abcd" },
       }),
-    ).toEqual({ type: "bitcoin", opReturnData: "abcd" });
+    ).toEqual({ type: "string", opReturnData: "abcd" });
   });
 });

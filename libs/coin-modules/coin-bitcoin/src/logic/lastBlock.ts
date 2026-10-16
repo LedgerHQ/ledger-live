@@ -6,5 +6,5 @@ import { toBlockInfo } from "./getBlockInfo";
 /** The explorer's current chain tip. */
 export async function lastBlock(context: BitcoinContext, currencyId: string): Promise<BlockInfo> {
   const config = await context.config(currencyId);
-  return toBlockInfo(await fetchCurrentBlock(config, currencyId));
+  return toBlockInfo(await fetchCurrentBlock(config));
 }

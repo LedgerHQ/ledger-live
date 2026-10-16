@@ -75,6 +75,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_dash: {
     type: "object",
     default: {
+      explorerId: "dash",
       status: {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
@@ -159,6 +160,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_qtum: {
     type: "object",
     default: {
+      explorerId: "qtum",
       transaction: { version: 2 },
       status: {
         type: "active",

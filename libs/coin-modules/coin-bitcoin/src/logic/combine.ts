@@ -2,19 +2,28 @@ import { Psbt, Transaction, payments, script as bscript } from "bitcoinjs-lib";
 import { getNetworkParameters } from "../networks";
 import { compressPublicKey } from "./publicKey";
 import { DerivationModes, derivationModeOf } from "./selectUtxos";
-import { parseSigningRequest, requestOutputScript } from "./signingRequest";
+import { signedRequestMismatch } from "./signedRequestTransaction";
+import { parseSigningRequest } from "./signingRequest";
 
 const HEX = /^(?:[0-9a-fA-F]{2})+$/;
 
-/** Whether `signed` spends exactly the crafted inputs and pays exactly the crafted outputs. */
+/**
+ * Whether `signed` is the crafted transaction: same version and locktime, exactly the crafted inputs
+ * with their sequences (which carry the RBF signal), exactly the crafted outputs.
+ */
 function sameTransaction(signed: Transaction, crafted: Psbt): boolean {
   const inputs = crafted.txInputs;
   const outputs = crafted.txOutputs;
   return (
+    signed.version === crafted.version &&
+    signed.locktime === crafted.locktime &&
     signed.ins.length === inputs.length &&
     signed.outs.length === outputs.length &&
     signed.ins.every(
-      (input, i) => input.hash.equals(inputs[i].hash) && input.index === inputs[i].index,
+      (input, i) =>
+        input.hash.equals(inputs[i].hash) &&
+        input.index === inputs[i].index &&
+        input.sequence === (inputs[i].sequence ?? Transaction.DEFAULT_SEQUENCE),
     ) &&
     signed.outs.every(
       (output, i) => output.script.equals(outputs[i].script) && output.value === outputs[i].value,
@@ -136,8 +145,9 @@ function assemble(
  *
  * - **the whole signed transaction**, as one element: what hw-app-btc's `createPaymentTransaction`
  *   returns, every Ledger app signing in one session. It must spend exactly the crafted inputs and
- *   pay exactly the crafted outputs. For a signing request (Komodo, Decred: formats this module
- *   does not parse), this is the only form, and it must contain the crafted outputs as serialized.
+ *   pay exactly the crafted outputs, with the crafted version, locktime and sequences. For a signing
+ *   request (Komodo, Decred: the device builds the transaction), this is the only form; it is read
+ *   in the currency's format and checked field by field against the request.
  * - **one signature per input**, in input order: what a PSBT signer returns (app-bitcoin-new's
  *   `signPsbt`, any BIP 174 signer), small enough for any transport. `publicKey` is then the
  *   sender's public key (compressed or not), except for Taproot.
@@ -154,13 +164,17 @@ export function combine(
 
   const request = parseSigningRequest(tx);
   if (request) {
-    const [signed] = signature;
     if (signature.length !== 1) {
       throw new Error(`expected one signed transaction, got ${signature.length} value(s)`);
     }
-    // Byte match on the outputs serialized from the request's own outputs, not on its hex text.
-    if (Buffer.from(signed, "hex").indexOf(requestOutputScript(request)) < 0) {
-      throw new Error("the signed transaction does not pay the crafted outputs");
+    const [signed] = signature;
+    switch (signedRequestMismatch(Buffer.from(signed, "hex"), request)) {
+      case "transaction":
+        throw new Error("the signed transaction is not the crafted transaction");
+      case "outputs":
+        throw new Error("the signed transaction does not pay the crafted outputs");
+      case "unsigned":
+        throw new Error("the transaction is not signed");
     }
     return signed.toLowerCase();
   }

@@ -51,6 +51,23 @@ describe("combine", () => {
         );
       }
     });
+
+    it("refuses a signed transaction with another version, locktime or sequence", () => {
+      const tampered = [
+        (tx: Transaction) => (tx.version = tx.version === 2 ? 1 : 2),
+        (tx: Transaction) => (tx.locktime = 800_000),
+        // Final instead of the crafted sequence: drops or adds the replace-by-fee signal.
+        (tx: Transaction) =>
+          (tx.ins[1].sequence = tx.ins[1].sequence === 0xfffffffd ? 0xffffffff : 0xfffffffd),
+      ];
+      for (const tamper of tampered) {
+        const other = Transaction.fromHex(signed);
+        tamper(other);
+        expect(() => combine("bitcoin", crafted, [other.toHex()])).toThrow(
+          "the signed transaction is not the crafted transaction",
+        );
+      }
+    });
   });
 
   describe("one signature per input", () => {

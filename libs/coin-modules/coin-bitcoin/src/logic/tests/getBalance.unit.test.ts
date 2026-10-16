@@ -37,6 +37,6 @@ describe("getBalance", () => {
     const config = jest.spyOn(context, "config");
     await getBalance(context, "litecoin", ME);
     expect(config).toHaveBeenCalledWith("litecoin");
-    expect(mockedBalance).toHaveBeenCalledWith(expect.anything(), "litecoin", ME);
+    expect(mockedBalance).toHaveBeenCalledWith(expect.anything(), ME);
   });
 });

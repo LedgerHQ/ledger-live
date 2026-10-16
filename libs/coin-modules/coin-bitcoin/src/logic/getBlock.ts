@@ -6,6 +6,7 @@ import type {
 import type { BitcoinContext } from "../config";
 import { fetchBlock, fetchBlockTxs } from "../network/explorer";
 import type { ExplorerTx } from "../network/types";
+import { txidOf } from "../network/types";
 import { toBlockInfo } from "./getBlockInfo";
 import { feeShares, sumByAddress } from "./txMovements";
 
@@ -32,7 +33,7 @@ export function toBlockTransaction(tx: ExplorerTx): BlockTransaction {
     }
   }
 
-  const transaction: BlockTransaction = { hash: tx.hash, failed: false, operations, fees };
+  const transaction: BlockTransaction = { hash: txidOf(tx), failed: false, operations, fees };
   if (senders.length === 1) {
     transaction.feesPayer = senders[0];
   }
@@ -46,8 +47,8 @@ export async function getBlock(
 ): Promise<Block> {
   const config = await context.config(currencyId);
   const [block, txs] = await Promise.all([
-    fetchBlock(config, currencyId, height),
-    fetchBlockTxs(config, currencyId, height),
+    fetchBlock(config, height),
+    fetchBlockTxs(config, height),
   ]);
   return { info: toBlockInfo(block), transactions: txs.map(toBlockTransaction) };
 }

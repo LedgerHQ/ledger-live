@@ -16,7 +16,7 @@ export async function broadcast(
   broadcastConfig?: Pick<BroadcastConfig, "source">,
 ): Promise<string> {
   const config = await context.config(currencyId);
-  const txid = await sendRawTransaction(config, currencyId, tx, broadcastConfig?.source);
+  const txid = await sendRawTransaction(config, tx, broadcastConfig?.source);
   if (!txid) {
     throw new Error("broadcast returned no transaction id");
   }

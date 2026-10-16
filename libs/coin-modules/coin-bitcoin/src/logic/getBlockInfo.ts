@@ -18,5 +18,5 @@ export async function getBlockInfo(
   height: number,
 ): Promise<BlockInfo> {
   const config = await context.config(currencyId);
-  return toBlockInfo(await fetchBlock(config, currencyId, height));
+  return toBlockInfo(await fetchBlock(config, height));
 }

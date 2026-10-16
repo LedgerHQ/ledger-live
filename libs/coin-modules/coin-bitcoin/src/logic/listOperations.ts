@@ -6,6 +6,7 @@ import type {
 import type { BitcoinContext } from "../config";
 import { fetchAddressTxs } from "../network/explorer";
 import type { ExplorerTx } from "../network/types";
+import { txidOf } from "../network/types";
 import { explorerAddress } from "./cashaddr";
 import { sumByAddress } from "./txMovements";
 
@@ -61,14 +62,14 @@ export function toOperation(tx: ExplorerTx, address: string): Operation | undefi
   const blockTime = new Date(tx.block.time);
 
   return {
-    id: tx.hash,
+    id: txidOf(tx),
     type,
     senders,
     recipients,
     value,
     asset: { type: "native" },
     tx: {
-      hash: tx.hash,
+      hash: txidOf(tx),
       block: { height: tx.block.height, hash: tx.block.hash, time: blockTime },
       fees: paidFees,
       ...(onlySender ? { feesPayer: address } : {}),
@@ -92,7 +93,7 @@ export async function listOperations(
   const config = await context.config(currencyId);
   // The explorer answers in the form it was queried with: the same form is compared below.
   const queried = explorerAddress(config, address);
-  const page = await fetchAddressTxs(config, currencyId, queried, {
+  const page = await fetchAddressTxs(config, queried, {
     minHeight: options.minHeight,
     order: options.order ?? "desc",
     ...(options.limit === undefined ? {} : { limit: options.limit }),

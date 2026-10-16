@@ -12,7 +12,7 @@ describe("getBlockInfo", () => {
   });
 
   it("maps the block of the requested height", async () => {
-    mockedBlock.mockImplementation(async (_config, _currency, height) =>
+    mockedBlock.mockImplementation(async (_config, height) =>
       makeBlock(height, { hash: "0c".repeat(32), time: "2009-04-06T03:23:33Z" }),
     );
     expect(await getBlockInfo(testContext(), "bitcoin", 10000)).toEqual({
@@ -20,7 +20,7 @@ describe("getBlockInfo", () => {
       hash: "0c".repeat(32),
       time: new Date("2009-04-06T03:23:33Z"),
     });
-    expect(mockedBlock).toHaveBeenCalledWith(expect.anything(), "bitcoin", 10000);
+    expect(mockedBlock).toHaveBeenCalledWith(expect.anything(), 10000);
   });
 
   it("omits the parent when the payload has no previous hash", () => {

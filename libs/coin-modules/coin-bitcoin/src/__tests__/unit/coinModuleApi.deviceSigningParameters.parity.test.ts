@@ -232,7 +232,7 @@ describe.each(CASES)("deviceSigningParameters for $currencyId ($derivationMode)"
 
   it.each([
     ["a payment with change", {}],
-    ["a payment with OP_RETURN data", { data: { type: "bitcoin", opReturnData: "73776170" } }],
+    ["a payment with OP_RETURN data", { data: { type: "string", opReturnData: "73776170" } }],
   ] as const)("matches the bridge's arguments for %s", async (_label, overrides) => {
     fund(c);
     const crafted = await craftTransaction(context, c.currencyId, intent(overrides));

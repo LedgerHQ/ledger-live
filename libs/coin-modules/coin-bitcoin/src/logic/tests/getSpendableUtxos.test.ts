@@ -33,7 +33,7 @@ describe("getSpendableUtxos", () => {
       utxosHandler(ME, [{ data: [output("a", "100")], token: null }]),
       pendingUtxosHandler(ME),
     );
-    expect(outpoints(await getSpendableUtxos(await config(), "bitcoin", ME))).toEqual(["a:0"]);
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["a:0"]);
   });
 
   it("excludes a confirmed output a mempool transaction already spends", async () => {
@@ -41,7 +41,7 @@ describe("getSpendableUtxos", () => {
       utxosHandler(ME, [{ data: [output("a", "100"), output("b", "200")], token: null }]),
       pendingUtxosHandler(ME, { spent: [output("a", "100")] }),
     );
-    expect(outpoints(await getSpendableUtxos(await config(), "bitcoin", ME))).toEqual(["b:0"]);
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["b:0"]);
   });
 
   it("spends the change of the address's own unconfirmed transaction", async () => {
@@ -51,10 +51,7 @@ describe("getSpendableUtxos", () => {
       pendingUtxosHandler(ME, { spent: [output("a", "100")], created: [output("c", "50", 1)] }),
       txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
     );
-    expect(outpoints(await getSpendableUtxos(await config(), "bitcoin", ME))).toEqual([
-      "b:0",
-      "c:1",
-    ]);
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["b:0", "c:1"]);
   });
 
   it("does not spend an unconfirmed payment from someone else, which its sender can replace", async () => {
@@ -63,7 +60,7 @@ describe("getSpendableUtxos", () => {
       pendingUtxosHandler(ME, { created: [output("c", "50", 1)] }),
       txHandler("c".repeat(64), [`${"e".repeat(64)}:3`]),
     );
-    expect(outpoints(await getSpendableUtxos(await config(), "bitcoin", ME))).toEqual(["a:0"]);
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["a:0"]);
   });
 
   it("does not spend an incoming unconfirmed payment alongside an own unconfirmed send", async () => {
@@ -77,7 +74,7 @@ describe("getSpendableUtxos", () => {
       txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
       txHandler("d".repeat(64), [`${"e".repeat(64)}:0`]),
     );
-    expect(outpoints(await getSpendableUtxos(await config(), "bitcoin", ME))).toEqual(["c:0"]);
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["c:0"]);
   });
 
   it("spends the change of a chain of own unconfirmed transactions, each once", async () => {
@@ -91,7 +88,7 @@ describe("getSpendableUtxos", () => {
       txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
       txHandler("d".repeat(64), [`${"c".repeat(64)}:0`]),
     );
-    expect(outpoints(await getSpendableUtxos(await config(), "bitcoin", ME))).toEqual(["d:0"]);
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["d:0"]);
   });
 
   it("does not read unconfirmed transactions when the address has none of its own", async () => {
@@ -101,7 +98,7 @@ describe("getSpendableUtxos", () => {
       utxosHandler(ME, [{ data: [output("a", "100")], token: null }]),
       pendingUtxosHandler(ME, { created: [output("c", "50")] }),
     );
-    expect(outpoints(await getSpendableUtxos(await config(), "bitcoin", ME))).toEqual(["a:0"]);
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["a:0"]);
   });
 
   it("reads outpoints whichever way the explorer names them", async () => {
@@ -121,7 +118,7 @@ describe("getSpendableUtxos", () => {
       }),
       txHandler("c".repeat(64), [`${"b".repeat(64)}:2`]),
     );
-    const utxos = await getSpendableUtxos(await config(), "bitcoin", ME);
+    const utxos = await getSpendableUtxos(await config(), ME);
     expect(utxos.map(utxo => [utxo.hash, utxo.outputIndex, utxo.value])).toEqual([
       ["a".repeat(64), 1, "100"],
       ["c".repeat(64), 0, "50"],
@@ -136,7 +133,7 @@ describe("getSpendableUtxos", () => {
       ]),
       pendingUtxosHandler(ME),
     );
-    await expect(getSpendableUtxos(await config(), "bitcoin", ME)).rejects.toThrow(
+    await expect(getSpendableUtxos(await config(), ME)).rejects.toThrow(
       "explorer repeated a UTXO page cursor",
     );
   });
@@ -146,7 +143,7 @@ describe("getSpendableUtxos", () => {
       utxosHandler(ME, [{ data: [{ outputIndex: 0, value: "100" }], token: null }]),
       pendingUtxosHandler(ME),
     );
-    await expect(getSpendableUtxos(await config(), "bitcoin", ME)).rejects.toThrow(
+    await expect(getSpendableUtxos(await config(), ME)).rejects.toThrow(
       "explorer returned an unusable UTXO",
     );
   });
@@ -162,7 +159,7 @@ describe("getSpendableUtxos", () => {
       }),
       txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
     );
-    const utxos = await getSpendableUtxos(await config(), "bitcoin", ME);
+    const utxos = await getSpendableUtxos(await config(), ME);
     expect(utxos.map(utxo => [utxo.hash, utxo.outputIndex, utxo.value])).toEqual([
       ["c".repeat(64), 1, "300000000"],
     ]);
@@ -178,7 +175,7 @@ describe("getSpendableUtxos", () => {
       ]),
       pendingUtxosHandler(ME),
     );
-    const [utxo] = await getSpendableUtxos(await config(), "bitcoin", ME);
+    const [utxo] = await getSpendableUtxos(await config(), ME);
     expect(utxo.hash).toBe("a".repeat(64));
   });
 });

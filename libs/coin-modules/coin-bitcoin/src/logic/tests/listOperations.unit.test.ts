@@ -55,6 +55,15 @@ describe("toOperation", () => {
     });
   });
 
+  it("identifies the operation by the txid, not the explorer's legacy hash", () => {
+    const operation = toOperation(
+      { ...tx([[ALICE, 10_000]], [[ME, 9_000]], 1_000), id: "ef".repeat(32) },
+      ME,
+    );
+    expect(operation?.id).toBe("ef".repeat(32));
+    expect(operation?.tx.hash).toBe("ef".repeat(32));
+  });
+
   it("maps a payment with change: the value excludes the fees, which the address paid", () => {
     const operation = toOperation(
       tx(

@@ -71,7 +71,7 @@ describe("Bitcoin Cash reads with the prefixless form Ledger Wallet stores", () 
       ),
       pendingUtxosHandler(PREFIXED, {}, "bch"),
     );
-    const utxos = await getSpendableUtxos(bch(), "bitcoin_cash", PREFIXLESS);
+    const utxos = await getSpendableUtxos(bch(), PREFIXLESS);
     expect(utxos.map(utxo => utxo.value)).toEqual(["100"]);
   });
 

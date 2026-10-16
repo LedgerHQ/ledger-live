@@ -6,6 +6,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
+import { DustLimit, FeeTooLow } from "../../errors";
 import { validateIntent } from "../validateIntent";
 import { FUNDED_P2WPKH, PRISTINE_P2PKH, PRISTINE_P2TR } from "./helpers/fixtures";
 import { useMswServer } from "./helpers/msw";
@@ -151,6 +152,60 @@ describe("validateIntent", () => {
     });
     expect(result.amount).toBe(12_000n);
     expect(result.errors).toEqual({});
+  });
+
+  it("reads the sweep amount Ledger Live hands back JSON-safe, as a decimal string", async () => {
+    const result = await validateIntent("bitcoin", intent({ useAllAmount: true }), BALANCES, {
+      value: 300n,
+      parameters: { amount: "12000" },
+    });
+    expect(result.amount).toBe(12_000n);
+    expect(result.errors).toEqual({});
+  });
+
+  it("reports a negative custom fee, which would otherwise lower the funds needed", async () => {
+    const result = await validateIntent("bitcoin", intent({ amount: 10_000n }), BALANCES, {
+      value: -1_000n,
+    });
+    expect(result.errors.fees?.message).toBe("customFees.value must not be negative");
+  });
+
+  describe("against the relay minimum the estimate returned", () => {
+    const relay = { relayFeePerByte: 5n, vsize: 141n };
+
+    it("reports a fee below the relay fee for the transaction's size", async () => {
+      const result = await validateIntent("bitcoin", intent(), BALANCES, {
+        value: 141n * 5n - 1n,
+        parameters: relay,
+      });
+      expect(result.errors.fees).toBeInstanceOf(FeeTooLow);
+    });
+
+    it("reports a rate below the relay rate", async () => {
+      const result = await validateIntent("bitcoin", intent(), BALANCES, {
+        value: 0n,
+        parameters: { ...relay, feesStrategy: "custom", feePerByte: 2n },
+      });
+      expect(result.errors.fees).toBeInstanceOf(FeeTooLow);
+    });
+
+    it("accepts the relay minimum, also as the JSON-safe strings Ledger Live hands back", async () => {
+      const result = await validateIntent("bitcoin", intent(), BALANCES, {
+        value: 141n * 5n,
+        parameters: { relayFeePerByte: "5", vsize: "141", feePerByte: "5" },
+      });
+      expect(result.errors.fees).toBeUndefined();
+    });
+
+    it("reports nothing without the estimate's parameters", async () => {
+      const result = await validateIntent("bitcoin", intent(), BALANCES, { value: 1n });
+      expect(result.errors.fees).toBeUndefined();
+    });
+  });
+
+  it("reports an amount below the dust threshold of the payment", async () => {
+    const result = await validateIntent("bitcoin", intent({ amount: 100n }), BALANCES);
+    expect(result.errors.amount).toBeInstanceOf(DustLimit);
   });
 
   it("sends the whole balance for useAllAmount without fees", async () => {

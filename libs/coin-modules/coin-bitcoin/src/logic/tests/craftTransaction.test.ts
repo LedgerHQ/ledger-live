@@ -1,8 +1,7 @@
-import { NotEnoughBalance, InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { Psbt, Transaction, address as btcAddress } from "bitcoinjs-lib";
 import { http, HttpResponse } from "msw";
-import { DustLimit, FeeTooLow } from "../../errors";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { combine } from "../combine";
 import { craftTransaction, RBF_SEQUENCE } from "../craftTransaction";
@@ -174,25 +173,18 @@ describe("craftTransaction", () => {
     ).rejects.toBeInstanceOf(NotEnoughBalance);
   });
 
-  it("refuses a custom fee below the network's relay minimum", async () => {
+  it("crafts a fee below the relay minimum as given: validateIntent reports it", async () => {
     fund(ADDRESSES.nativeSegwit, [80_000]);
-    await expect(
-      craftTransaction(testContext(), "bitcoin", intent(ADDRESSES.nativeSegwit), {
+    const crafted = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      intent(ADDRESSES.nativeSegwit),
+      {
         value: 10n,
         parameters: { feesStrategy: "custom" },
-      }),
-    ).rejects.toBeInstanceOf(FeeTooLow);
-  });
-
-  it("refuses a custom rate below the network's relay minimum", async () => {
-    fund(ADDRESSES.nativeSegwit, [80_000]);
-    server.use(networkHandler("0.00005"));
-    await expect(
-      craftTransaction(testContext(), "bitcoin", intent(ADDRESSES.nativeSegwit), {
-        value: 0n,
-        parameters: { feesStrategy: "custom", feePerByte: 2n },
-      }),
-    ).rejects.toBeInstanceOf(FeeTooLow);
+      },
+    );
+    expect(crafted.details?.fee).toBe(10n);
   });
 
   it("crafts with a custom rate", async () => {
@@ -268,6 +260,19 @@ describe("craftTransaction", () => {
     expect(crafted.details?.fee).toBe(2_500n);
   });
 
+  it("crafts with an absolute fee without reading the explorer's rates", async () => {
+    fund(ADDRESSES.nativeSegwit, [80_000]);
+    // Only the relay floor is read: the rates endpoint is down.
+    server.use(http.get(`${explorerUrl("btc")}/fees`, () => HttpResponse.error()));
+    const crafted = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      intent(ADDRESSES.nativeSegwit),
+      { value: 2_500n },
+    );
+    expect(crafted.details?.fee).toBe(2_500n);
+  });
+
   it("fetches each previous transaction once", async () => {
     const sender = ADDRESSES.nativeSegwit;
     const script = btcAddress.toOutputScript(sender);
@@ -315,24 +320,18 @@ describe("craftTransaction", () => {
     }
   });
 
-  it("refuses an amount below the dust threshold", async () => {
-    fund(ADDRESSES.nativeSegwit, [80_000]);
-    await expect(
-      craftTransaction(testContext(), "bitcoin", intent(ADDRESSES.nativeSegwit, { amount: 100n })),
-    ).rejects.toBeInstanceOf(DustLimit);
-  });
-
-  it("refuses an invalid recipient before any request", async () => {
+  it("cannot build a transaction to what is not an address, and asks nothing of the explorer", async () => {
     await expect(
       craftTransaction(
         testContext(),
         "bitcoin",
         intent(ADDRESSES.nativeSegwit, { recipient: "nope" }),
       ),
-    ).rejects.toBeInstanceOf(InvalidAddress);
+    ).rejects.toThrow();
   });
 
   it("requires the public key of a nested SegWit sender, and checks it", async () => {
+    fund(ADDRESSES.segwit, [80_000]);
     await expect(
       craftTransaction(
         testContext(),

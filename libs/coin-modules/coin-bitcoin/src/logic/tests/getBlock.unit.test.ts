@@ -120,12 +120,21 @@ describe("getBlock", () => {
   });
 
   it("combines the block info and every transaction of the block", async () => {
-    jest.mocked(fetchBlock).mockImplementation(async (_c, _id, height) => makeBlock(height));
+    jest.mocked(fetchBlock).mockImplementation(async (_c, height) => makeBlock(height));
     jest
       .mocked(fetchBlockTxs)
       .mockImplementation(async () => [makeTx("07".repeat(32)), makeTx("08".repeat(32))]);
     const block = await getBlock(testContext(), "bitcoin", 42);
     expect(block.info.height).toBe(42);
     expect(block.transactions.map(tx => tx.hash)).toEqual(["07".repeat(32), "08".repeat(32)]);
+  });
+
+  it("identifies a transaction by its txid, not the explorer's legacy hash", async () => {
+    jest.mocked(fetchBlock).mockImplementation(async (_c, height) => makeBlock(height));
+    jest
+      .mocked(fetchBlockTxs)
+      .mockImplementation(async () => [makeTx("07".repeat(32), { id: "09".repeat(32) })]);
+    const block = await getBlock(testContext(), "bitcoin", 42);
+    expect(block.transactions.map(tx => tx.hash)).toEqual(["09".repeat(32)]);
   });
 });

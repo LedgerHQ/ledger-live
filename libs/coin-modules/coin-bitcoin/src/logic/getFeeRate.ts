@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { BitcoinCoinConfig } from "../config";
 import { fetchFeeRates, fetchNetworkInfo } from "../network/explorer";
-import { toBigInt } from "./normalize";
+import { toBigInt } from "./feeParameters";
 
 export type FeesStrategy = "fast" | "medium" | "slow" | "custom";
 
@@ -46,13 +46,12 @@ function positiveRate(feePerByte: unknown): bigint {
  */
 export async function getFeeRate(
   config: BitcoinCoinConfig,
-  currencyId: string,
   options: { feePerByte?: unknown; feesStrategy?: unknown } = {},
 ): Promise<FeeRate> {
   const custom = options.feesStrategy === "custom";
   const [rates, network] = await Promise.all([
-    custom || options.feePerByte !== undefined ? undefined : fetchFeeRates(config, currencyId),
-    fetchNetworkInfo(config, currencyId),
+    custom || options.feePerByte !== undefined ? undefined : fetchFeeRates(config),
+    fetchNetworkInfo(config),
   ]);
   const relayFeePerByte = relayFloor(network.relay_fee);
 

@@ -12,12 +12,6 @@ import type { BitcoinTxData } from "../logic/intent";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
-import {
-  normalizeBalances,
-  normalizeFeeParameters,
-  normalizeFees,
-  normalizeIntent,
-} from "../logic/normalize";
 
 export type { BitcoinTxData } from "../logic/intent";
 export type { DeviceSigningParameters, SigningRequest } from "../logic/signingRequest";
@@ -28,8 +22,7 @@ export { deviceSigningParameters } from "../logic/signingRequest";
  *
  * The configuration is read on every call through `context.config(currencyId)`. Capabilities the
  * module does not have (staking, validators, raw crafting, …) are omitted: the consumer's
- * `withDefaults` answers them as not supported. Amounts a JSON consumer passes as strings are
- * normalized to bigints here, before the logic. Bitcoin-specific fields (OP_RETURN data) travel in
+ * `withDefaults` answers them as not supported. Bitcoin-specific fields (OP_RETURN data) travel in
  * the intent's `data` ({@link BitcoinTxData}).
  */
 export function createApi(currencyId: string) {
@@ -42,32 +35,17 @@ export function createApi(currencyId: string) {
     listOperations: (context: BitcoinContext, address, options) =>
       listOperations(context, currencyId, address, options),
     estimateFees: (context: BitcoinContext, intent, options?) =>
-      estimateFees(
-        context,
-        currencyId,
-        normalizeIntent(intent),
-        normalizeFeeParameters(options?.customFeesParameters),
-      ),
+      estimateFees(context, currencyId, intent, options?.customFeesParameters),
     craftTransaction: (context: BitcoinContext, intent, options?) =>
-      craftTransaction(
-        context,
-        currencyId,
-        normalizeIntent(intent),
-        normalizeFees(options?.customFees),
-      ),
+      craftTransaction(context, currencyId, intent, options?.customFees),
     combine: (_context: BitcoinContext, tx, signature, options?) =>
       combine(currencyId, tx, signature, options?.pubkey),
     validateIntent: (_context: BitcoinContext, intent, balances, options?) =>
-      validateIntent(
-        currencyId,
-        normalizeIntent(intent),
-        normalizeBalances(balances),
-        normalizeFees(options?.customFees),
-      ),
+      validateIntent(currencyId, intent, balances, options?.customFees),
     broadcast: (context: BitcoinContext, tx, options?) =>
       broadcast(context, currencyId, tx, options?.broadcastConfig),
     craftTransactionData: (_context: BitcoinContext, intent): BitcoinTxData => ({
-      type: "bitcoin",
+      type: "string",
       ...(intent.data?.opReturnData ? { opReturnData: intent.data.opReturnData } : {}),
     }),
   } satisfies CoinModuleImpl<BitcoinCoinConfig, MemoNotSupported, BitcoinTxData>;

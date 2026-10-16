@@ -37,10 +37,11 @@ describe("getBalance (explorer wire format)", () => {
     expect((await getBalance(context, "bitcoin", ME))[0].value).toBe(1n);
   });
 
-  it("falls back to the currency id when the config has no explorer id", async () => {
-    server.use(balanceHandler(ME, "7", "litecoin"));
+  it("refuses a config without an explorer id", async () => {
     const { explorerId: _explorerId, ...config } = await testContext().config();
     const context = { ...testContext(), config: async () => config };
-    expect((await getBalance(context, "litecoin", ME))[0].value).toBe(7n);
+    await expect(getBalance(context, "litecoin", ME)).rejects.toThrow(
+      "the currency config has no explorerId",
+    );
   });
 });

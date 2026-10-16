@@ -58,7 +58,7 @@ export function derivationModeOf(script: Buffer): DerivationModes {
  * Smallest output value the network relays for a transaction of `txSize` vbytes, as the bridge
  * computes it (wallet-btc's dust model; the relay fee is optional).
  */
-export function dustThreshold(
+function dustThreshold(
   crypto: ICrypto,
   txSize: number,
   derivationMode: DerivationModes,

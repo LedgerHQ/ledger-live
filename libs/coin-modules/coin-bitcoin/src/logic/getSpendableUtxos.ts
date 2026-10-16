@@ -1,6 +1,7 @@
 import type { BitcoinCoinConfig } from "../config";
 import { fetchPendingUtxos, fetchTx, fetchUtxos } from "../network/explorer";
 import type { ExplorerTx, ExplorerUtxo } from "../network/types";
+import { txidOf } from "../network/types";
 import { explorerAddress } from "./cashaddr";
 
 const outpoint = (hash: string, outputIndex: number) => `${hash}:${outputIndex}`;
@@ -8,15 +9,11 @@ const outpoint = (hash: string, outputIndex: number) => `${hash}:${outputIndex}`
 /** Unconfirmed transactions fetched at once, so many pending transactions do not flood the explorer. */
 const PENDING_TX_CONCURRENCY = 8;
 
-async function fetchTxs(
-  config: BitcoinCoinConfig,
-  currencyId: string,
-  txids: string[],
-): Promise<ExplorerTx[]> {
+async function fetchTxs(config: BitcoinCoinConfig, txids: string[]): Promise<ExplorerTx[]> {
   const txs: ExplorerTx[] = [];
   for (let start = 0; start < txids.length; start += PENDING_TX_CONCURRENCY) {
     const batch = txids.slice(start, start + PENDING_TX_CONCURRENCY);
-    txs.push(...(await Promise.all(batch.map(txid => fetchTx(config, currencyId, txid)))));
+    txs.push(...(await Promise.all(batch.map(txid => fetchTx(config, txid)))));
   }
   return txs;
 }
@@ -38,18 +35,17 @@ async function fetchTxs(
  */
 export async function getSpendableUtxos(
   config: BitcoinCoinConfig,
-  currencyId: string,
   address: string,
 ): Promise<ExplorerUtxo[]> {
   const queried = explorerAddress(config, address);
   const [confirmed, pending] = await Promise.all([
-    fetchUtxos(config, currencyId, queried),
-    fetchPendingUtxos(config, currencyId, queried),
+    fetchUtxos(config, queried),
+    fetchPendingUtxos(config, queried),
   ]);
   const spent = new Set(pending.spent.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
 
   const pendingTxids = [...new Set(pending.created.map(utxo => utxo.hash))];
-  const pendingTxs = spent.size === 0 ? [] : await fetchTxs(config, currencyId, pendingTxids);
+  const pendingTxs = spent.size === 0 ? [] : await fetchTxs(config, pendingTxids);
   const ownTxids = new Set(
     pendingTxs
       .filter(tx =>
@@ -62,7 +58,7 @@ export async function getSpendableUtxos(
           );
         }),
       )
-      .map(tx => tx.id ?? tx.hash),
+      .map(txidOf),
   );
   const ownChange = pending.created.filter(utxo => ownTxids.has(utxo.hash));
 

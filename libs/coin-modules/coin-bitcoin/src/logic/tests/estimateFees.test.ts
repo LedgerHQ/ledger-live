@@ -93,6 +93,8 @@ describe("estimateFees", () => {
       value: vsize(1, true) * 12n,
       parameters: {
         feePerByte: 12n,
+        relayFeePerByte: 1n,
+        vsize: vsize(1, true),
         inputCount: 1,
         change: 100_000n - 10_000n - vsize(1, true) * 12n,
         sufficient: true,
@@ -148,6 +150,7 @@ describe("estimateFees", () => {
       { feesStrategy: "custom", feePerByte: 2n },
     );
     expect(estimation.parameters?.feePerByte).toBe(2n);
+    expect(estimation.parameters?.relayFeePerByte).toBe(5n);
     expect(estimation.parameters?.amount).toBe(100_000n - vsize(1, false) * 2n);
   });
 

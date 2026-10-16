@@ -66,6 +66,60 @@ function serve(explorerId: string, sender: string, values: number[]) {
   return { script, utxos };
 }
 
+const uint32 = (value: number): Buffer => {
+  const buffer = Buffer.alloc(4);
+  buffer.writeUInt32LE(value);
+  return buffer;
+};
+
+/**
+ * The transaction hw-app-btc's `createPaymentTransaction` returns for a request, in the request's
+ * format (`serializeTransaction` and its final assembly), with each part overridable to tamper with.
+ */
+function deviceBuilt(
+  request: SigningRequest,
+  {
+    outputs = request.outputScriptHex,
+    scriptSig = "47".padEnd(144, "ab"),
+    vout = request.inputs[0].vout,
+  } = {},
+): string {
+  const decred = request.additionals.includes("decred");
+  const inputs = request.inputs.map(input =>
+    Buffer.concat([
+      Buffer.from(input.txid, "hex").reverse(),
+      uint32(vout),
+      decred
+        ? Buffer.from([0x00])
+        : Buffer.concat([Buffer.from([scriptSig.length / 2]), Buffer.from(scriptSig, "hex")]),
+      uint32(input.sequence),
+    ]),
+  );
+  const witness = decred
+    ? Buffer.concat([
+        Buffer.from([request.inputs.length]),
+        ...request.inputs.map(() =>
+          Buffer.concat([
+            Buffer.alloc(8),
+            Buffer.alloc(4),
+            Buffer.from("ffffffff", "hex"),
+            Buffer.from([scriptSig.length / 2]),
+            Buffer.from(scriptSig, "hex"),
+          ]),
+        ),
+      ])
+    : Buffer.alloc(11);
+  return Buffer.concat([
+    Buffer.from(decred ? "01000000" : "0400008085202f89", "hex"),
+    Buffer.from([request.inputs.length]),
+    ...inputs,
+    Buffer.from(outputs, "hex"),
+    uint32(request.lockTime ?? 0),
+    Buffer.from(request.expiryHeight ?? "00000000", "hex"),
+    witness,
+  ]).toString("hex");
+}
+
 describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
   const context = testContext({ explorerId: c.explorerId });
   const intent: TransactionIntent = {
@@ -134,27 +188,58 @@ describe.each(CASES)("craftTransaction and combine for $currencyId", c => {
   it("combines the request with the transaction the device built", async () => {
     serve(c.explorerId, c.sender, [80_000_000]);
     const crafted = await craftTransaction(context, c.currencyId, intent);
-    const { outputScriptHex } = JSON.parse(crafted.transaction) as SigningRequest;
-    const signed = `0400008085202f8901${"ab".repeat(70)}${outputScriptHex}00000000`.toUpperCase();
+    const request = JSON.parse(crafted.transaction) as SigningRequest;
+    const { outputScriptHex } = request;
+    const signed = deviceBuilt(request).toUpperCase();
 
     expect(combine(c.currencyId, crafted.transaction, [signed])).toBe(signed.toLowerCase());
     expect(() => combine(c.currencyId, crafted.transaction, ["00".repeat(80)])).toThrow(
-      "the signed transaction does not pay the crafted outputs",
+      "the signed transaction is not the crafted transaction",
     );
     // The request comes back from the consumer: its outputs are re-serialized, never trusted.
-    const request = JSON.parse(crafted.transaction) as SigningRequest;
     expect(() =>
       combine(c.currencyId, JSON.stringify({ ...request, outputScriptHex: "" }), [signed]),
     ).toThrow("the signing request's outputScriptHex does not serialize its outputs");
     expect(() =>
       combine(c.currencyId, JSON.stringify({ ...request, outputs: [] }), [signed]),
     ).toThrow("malformed signing request");
-    // An odd-nibble text match is not a byte match.
+    // The crafted outputs alone, or shifted by a nibble, are not a transaction of the format.
     expect(() => combine(c.currencyId, crafted.transaction, [`0${outputScriptHex}0`])).toThrow(
-      "the signed transaction does not pay the crafted outputs",
+      "the signed transaction is not the crafted transaction",
     );
     expect(() => combine(c.currencyId, crafted.transaction, [signed, signed])).toThrow(
       "expected one signed transaction, got 2 value(s)",
     );
+  });
+
+  it("reads the outputs where the format puts them, not anywhere in the transaction", async () => {
+    serve(c.explorerId, c.sender, [80_000_000]);
+    const crafted = await craftTransaction(context, c.currencyId, intent);
+    const request = JSON.parse(crafted.transaction) as SigningRequest;
+    // Pays someone else, with the crafted outputs as the payload of an OP_RETURN output.
+    const payload = Buffer.from(request.outputScriptHex, "hex");
+    const opReturn = Buffer.concat([Buffer.from([0x6a, 0x4c, payload.length]), payload]);
+    const attacker = serializeOutputs(
+      [
+        { script: cryptoFor(c.currencyId).toOutputScript(c.sender), value: 79_000_000n },
+        { script: opReturn, value: 0n },
+      ],
+      [...c.additionals],
+    );
+    expect(() =>
+      combine(c.currencyId, crafted.transaction, [deviceBuilt(request, { outputs: attacker })]),
+    ).toThrow("the signed transaction does not pay the crafted outputs");
+  });
+
+  it("refuses a transaction that spends other inputs, or leaves an input unsigned", async () => {
+    serve(c.explorerId, c.sender, [80_000_000]);
+    const crafted = await craftTransaction(context, c.currencyId, intent);
+    const request = JSON.parse(crafted.transaction) as SigningRequest;
+    expect(() =>
+      combine(c.currencyId, crafted.transaction, [deviceBuilt(request, { vout: 7 })]),
+    ).toThrow("the signed transaction is not the crafted transaction");
+    expect(() =>
+      combine(c.currencyId, crafted.transaction, [deviceBuilt(request, { scriptSig: "" })]),
+    ).toThrow("the transaction is not signed");
   });
 });

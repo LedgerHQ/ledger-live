@@ -150,7 +150,7 @@ describe("craftTransaction across the bitcoin family", () => {
       const crafted = await craftTransaction(
         testContext(),
         "bitcoin",
-        send(sender, sender, { data: { type: "bitcoin", opReturnData: memo } }),
+        send(sender, sender, { data: { type: "string", opReturnData: memo } }),
       );
       const outputs = Psbt.fromBase64(crafted.transaction).txOutputs;
       const crypto = cryptoFor("bitcoin");
@@ -168,7 +168,7 @@ describe("craftTransaction across the bitcoin family", () => {
         testContext({ explorerId: "kmd" }),
         "komodo",
         send(komodo, CURRENCY_ADDRESSES.komodo, {
-          data: { type: "bitcoin", opReturnData: memo },
+          data: { type: "string", opReturnData: memo },
         }),
       );
       const request = JSON.parse(crafted.transaction) as SigningRequest;
@@ -188,12 +188,12 @@ describe("craftTransaction across the bitcoin family", () => {
         craftTransaction(
           testContext(),
           "bitcoin",
-          send(sender, sender, { data: { type: "bitcoin", opReturnData: tooLong } }),
+          send(sender, sender, { data: { type: "string", opReturnData: tooLong } }),
         ),
       ).rejects.toBeInstanceOf(OpReturnDataSizeLimit);
       const validation = await validateIntent(
         "bitcoin",
-        send(sender, sender, { data: { type: "bitcoin", opReturnData: tooLong } }),
+        send(sender, sender, { data: { type: "string", opReturnData: tooLong } }),
         [{ value: 100_000_000n, asset: { type: "native" } }],
       );
       expect(validation.errors.opReturnSizeLimit).toBeInstanceOf(OpReturnDataSizeLimit);
@@ -202,7 +202,7 @@ describe("craftTransaction across the bitcoin family", () => {
     it("refuses data that is not hex", async () => {
       const validation = await validateIntent(
         "bitcoin",
-        send(sender, sender, { data: { type: "bitcoin", opReturnData: "not hex" } }),
+        send(sender, sender, { data: { type: "string", opReturnData: "not hex" } }),
         [{ value: 100_000_000n, asset: { type: "native" } }],
       );
       expect(validation.errors.opReturnSizeLimit?.message).toBe("opReturnData must be hex");

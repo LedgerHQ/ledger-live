@@ -20,7 +20,7 @@ describe("lastBlock", () => {
       hash: "0a".repeat(32),
       time: new Date("2026-10-02T12:28:56Z"),
     });
-    expect(mockedCurrent).toHaveBeenCalledWith(expect.anything(), "bitcoin");
+    expect(mockedCurrent).toHaveBeenCalledWith(expect.anything());
   });
 
   it("fills the parent when the previous hash is known", async () => {

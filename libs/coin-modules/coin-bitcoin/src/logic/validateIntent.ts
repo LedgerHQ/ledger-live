@@ -10,11 +10,28 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { DustLimit } from "../errors";
+import { DustLimit, FeeTooLow } from "../errors";
+import { amountParameter } from "./feeParameters";
 import { validateAddress } from "./validateAddress";
 import type { BitcoinIntent } from "./intent";
 import { opReturnScript } from "./intent";
 import { cryptoFor, paymentDustThreshold } from "./selectUtxos";
+
+/**
+ * Whether the fee is below the network's minimum relay fee, from what `estimateFees` returned in the
+ * parameters (`relayFeePerByte`, `vsize`, `feePerByte`): a node would not relay the transaction.
+ * Without those parameters, nothing is known and nothing is reported.
+ */
+function belowRelayMinimum(fees: bigint, parameters: FeeEstimation["parameters"]): boolean {
+  const relayFeePerByte = amountParameter(parameters, "relayFeePerByte");
+  if (relayFeePerByte === undefined) return false;
+  const vsize = amountParameter(parameters, "vsize");
+  const feePerByte = amountParameter(parameters, "feePerByte");
+  return (
+    (fees > 0n && vsize !== undefined && fees < vsize * relayFeePerByte) ||
+    (feePerByte !== undefined && feePerByte < relayFeePerByte)
+  );
+}
 
 /**
  * Fee-agnostic validation of a transaction intent, from the intent and the balances passed in,
@@ -46,7 +63,7 @@ export async function validateIntent(
   const nativeBalance = balances.find(balance => balance.asset.type === "native")?.value ?? 0n;
   // The exact amount of a send-max, when the estimate behind `customFees` priced one; otherwise the
   // balance minus the fees.
-  const estimatedSweep = customFees?.parameters?.amount;
+  const estimatedSweep = amountParameter(customFees?.parameters, "amount");
   const maxAmount =
     typeof estimatedSweep === "bigint"
       ? estimatedSweep
@@ -80,6 +97,10 @@ export async function validateIntent(
   } else if (dust !== undefined && amount < dust) {
     errors.amount = new DustLimit();
   }
+
+  // A negative fee would be subtracted from the balance check, while crafting ignores it.
+  if (fees < 0n) errors.fees = new Error("customFees.value must not be negative");
+  else if (belowRelayMinimum(fees, customFees?.parameters)) errors.fees = new FeeTooLow();
 
   try {
     opReturnScript(intent, cryptoFor(currencyId));

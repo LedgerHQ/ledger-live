@@ -1,9 +1,13 @@
 import type { CraftedTransaction, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Psbt, payments } from "bitcoinjs-lib";
-import type { BitcoinContext } from "../config";
-import { DustLimit, FeeTooLow } from "../errors";
+import type { BitcoinCoinConfig, BitcoinContext } from "../config";
 import { fetchTxHex } from "../network/explorer";
+import type { BitcoinIntent } from "./intent";
+import type { TransactionPlan } from "./planTransaction";
+import { planTransaction } from "./planTransaction";
+import { compressPublicKey } from "./publicKey";
+import { DerivationModes } from "./selectUtxos";
 import type { SigningRequest } from "./signingRequest";
 import {
   SIGNING_REQUEST_TYPE,
@@ -11,19 +15,6 @@ import {
   deviceParameters,
   serializeOutputs,
 } from "./signingRequest";
-import { getFeeRate } from "./getFeeRate";
-import { getSpendableUtxos } from "./getSpendableUtxos";
-import type { BitcoinIntent } from "./intent";
-import { opReturnScript } from "./intent";
-import { compressPublicKey } from "./publicKey";
-import {
-  DerivationModes,
-  cryptoFor,
-  derivationModeOf,
-  dustThreshold,
-  selectUtxos,
-  transactionSize,
-} from "./selectUtxos";
 
 /** Sequence of a final input: no replace-by-fee signalling. */
 export const FINAL_SEQUENCE = 0xffffffff;
@@ -75,30 +66,121 @@ function nestedSegwitRedeemScript(
   return redeem.output;
 }
 
+type Output = { script: Buffer; value: bigint };
+
+/** The outputs, in order: the recipient's, the OP_RETURN one if any, then the change. */
+function outputsOf(plan: TransactionPlan): Output[] {
+  const { selection, recipientScript, opReturn, senderScript } = plan;
+  return [
+    { script: recipientScript, value: selection.amount },
+    ...(opReturn ? [{ script: opReturn, value: 0n }] : []),
+    ...(selection.change > 0n ? [{ script: senderScript, value: selection.change }] : []),
+  ];
+}
+
 /**
- * Crafts the unsigned transaction of a native transfer from a single address.
+ * The PSBT of a planned transaction. Every input carries what a Ledger signer needs to verify it:
+ * the full previous transaction (`nonWitnessUtxo`), the spent output (`witnessUtxo`) for SegWit
+ * ones, and the redeem script for nested SegWit. Key derivation information is not part of the
+ * PSBT: the signer, which knows the account's derivation path, adds it.
+ */
+function buildPsbt(
+  config: BitcoinCoinConfig,
+  plan: TransactionPlan,
+  sequence: number,
+  previousTx: (txid: string) => string,
+  redeemScript: Buffer | undefined,
+): string {
+  const psbt = new Psbt();
+  psbt.setVersion(config.transaction?.version ?? 1);
+  psbt.setLocktime(0);
+  plan.selection.inputs.forEach(utxo => {
+    psbt.addInput({
+      hash: utxo.hash,
+      index: utxo.outputIndex,
+      sequence,
+      nonWitnessUtxo: Buffer.from(previousTx(utxo.hash), "hex"),
+      ...(plan.derivationMode === DerivationModes.LEGACY
+        ? {}
+        : {
+            // Every output a single-address account spends pays the sender's script.
+            witnessUtxo: {
+              script: plan.senderScript,
+              value: toSafeNumber(BigInt(utxo.value)),
+            },
+          }),
+      ...(redeemScript ? { redeemScript } : {}),
+    });
+  });
+  outputsOf(plan).forEach(output =>
+    psbt.addOutput({ script: output.script, value: toSafeNumber(output.value) }),
+  );
+  return psbt.toBase64();
+}
+
+/**
+ * The {@link SigningRequest} of a planned transaction, for the formats the Ledger app builds itself
+ * (Komodo, Decred): the same inputs and outputs, with the device-protocol parameters the bridge
+ * uses.
+ */
+function buildSigningRequest(
+  config: BitcoinCoinConfig,
+  currencyId: string,
+  recipient: string,
+  plan: TransactionPlan,
+  sequence: number,
+  previousTx: (txid: string) => string,
+): string {
+  const outputs = outputsOf(plan);
+  const parameters = deviceParameters(
+    config,
+    currencyId,
+    plan.derivationMode,
+    recipient,
+    new Date(),
+  );
+  const request: SigningRequest = {
+    type: SIGNING_REQUEST_TYPE,
+    version: 1,
+    currencyId,
+    inputs: plan.selection.inputs.map(utxo => ({
+      txid: utxo.hash,
+      vout: utxo.outputIndex,
+      value: utxo.value,
+      prevTxHex: previousTx(utxo.hash),
+      sequence,
+    })),
+    outputs: outputs.map(output => ({
+      script: output.script.toString("hex"),
+      value: output.value.toString(),
+    })),
+    outputScriptHex: serializeOutputs(outputs, parameters.additionals),
+    ...(plan.selection.change > 0n ? { changeOutputIndex: outputs.length - 1 } : {}),
+    ...parameters,
+  };
+  return JSON.stringify(request);
+}
+
+/**
+ * Crafts the unsigned transaction of a native transfer from a single address: the transaction
+ * `planTransaction` plans (the same `estimateFees` prices), serialized.
  *
  * Currencies with Bitcoin serialization get a PSBT (BIP 174, base64). The formats the Ledger app
- * builds itself (Komodo, Decred: see `craftsSigningRequest`) get a {@link SigningRequest} (JSON):
- * the same inputs and outputs, with the device-protocol parameters the bridge uses.
- *
+ * builds itself (Komodo, Decred: see `craftsSigningRequest`) get a {@link SigningRequest} (JSON).
  * As the bridge builds them, from the currency's config (`transaction`): inputs signal
  * replace-by-fee where the currency's transactions do (bitcoin and its test networks), and the
  * transaction version is the one the currency's Ledger app builds (2 for app-bitcoin-new, 1
- * otherwise). The outputs are the recipient's, then the OP_RETURN
- * output when the intent carries data (`intent.data.opReturnData`), then the change.
- *
- * The outputs spent are selected as `estimateFees` selects them, the change goes back to the
- * sender, and every input carries what a Ledger signer needs to verify it: the full previous
- * transaction (`nonWitnessUtxo`), the spent output (`witnessUtxo`) for SegWit ones, and the redeem
- * script for nested SegWit. Key derivation information is not part of the PSBT: the signer, which
- * knows the account's derivation path, adds it.
+ * otherwise).
  *
  * `customFees.parameters.feePerByte` imposes a rate (a custom rate under `feesStrategy: "custom"`,
  * used as given); otherwise a positive `customFees.value` imposes the absolute fee (Ledger Live's
- * custom fee). A zero `value` imposes nothing: the rate follows `feesStrategy`.
- * A fee below the network's relay minimum for the transaction's size is refused (`FeeTooLow`).
- * Without `customFees`, the medium explorer rate is used.
+ * custom fee). A zero `value` imposes nothing: the rate follows `feesStrategy`. Without
+ * `customFees`, the medium explorer rate is used.
+ *
+ * Crafting refuses only what it cannot build: an intent other than a native transfer, a recipient
+ * or sender that is not an address of the currency, outputs that do not cover the intent
+ * (`NotEnoughBalance`). Whether the fee meets the relay minimum and the amount the dust threshold is
+ * `validateIntent`'s to report; the node refuses such a transaction at `broadcast`.
  */
 export async function craftTransaction(
   context: BitcoinContext,
@@ -109,79 +191,37 @@ export async function craftTransaction(
   if (intent.intentType !== "transaction" || intent.asset.type !== "native") {
     throw new Error("only native transfers are supported");
   }
-  const crypto = cryptoFor(currencyId);
-  if (!intent.recipient || !crypto.validateAddress(intent.recipient)) {
-    throw new InvalidAddress("", { currencyName: currencyId });
-  }
-  const senderScript = crypto.toOutputScript(intent.sender);
-  const recipientScript = crypto.toOutputScript(intent.recipient);
-  const opReturn = opReturnScript(intent, crypto);
-  const extraOutputScripts = opReturn ? [opReturn] : [];
-  const derivationMode = derivationModeOf(senderScript);
-  const redeemScript =
-    derivationMode === DerivationModes.SEGWIT
-      ? nestedSegwitRedeemScript(intent.senderPublicKey, senderScript)
-      : undefined;
-
   const config = await context.config(currencyId);
   const imposedRate = customFees?.parameters?.feePerByte;
-  const [utxos, { feePerByte, relayFeePerByte }] = await Promise.all([
-    getSpendableUtxos(config, currencyId, intent.sender),
-    getFeeRate(config, currencyId, {
-      feePerByte: imposedRate,
-      feesStrategy: customFees?.parameters?.feesStrategy,
-    }),
-  ]);
-
-  const selection = selectUtxos({
-    utxos,
-    amount: intent.amount,
-    useAllAmount: !!intent.useAllAmount,
-    recipientScript,
-    crypto,
-    derivationMode,
-    feePerByte,
-    relayFeePerByte,
-    extraOutputScripts,
-    // An absolute fee is imposed only when one is given: some callers (e.g. coin-service) send
-    // `value: 0n` alongside the fee parameters to mean "no absolute fee".
-    ...(customFees && imposedRate === undefined && customFees.value > 0n
-      ? { fixedFee: customFees.value }
-      : {}),
+  // An absolute fee is imposed only when one is given: some callers (e.g. coin-service) send
+  // `value: 0n` alongside the fee parameters to mean "no absolute fee".
+  const fixedFee =
+    customFees && imposedRate === undefined && customFees.value > 0n ? customFees.value : undefined;
+  const plan = await planTransaction(config, currencyId, intent, {
+    feePerByte: imposedRate,
+    feesStrategy: customFees?.parameters?.feesStrategy,
+    ...(fixedFee === undefined ? {} : { fixedFee }),
   });
-  if (!selection.sufficient) throw new NotEnoughBalance();
-  const withChange = selection.change > 0n;
-  const size = transactionSize(
-    selection.inputs.length,
-    recipientScript,
-    withChange,
-    crypto,
-    derivationMode,
-    extraOutputScripts,
-  );
-  if (selection.fee < BigInt(size) * relayFeePerByte) throw new FeeTooLow();
-  const dust = dustThreshold(crypto, size, derivationMode, relayFeePerByte);
-  if (selection.amount < dust) throw new DustLimit();
+  if (!plan.selection.sufficient) throw new NotEnoughBalance();
+  const redeemScript =
+    plan.derivationMode === DerivationModes.SEGWIT
+      ? nestedSegwitRedeemScript(intent.senderPublicKey, plan.senderScript)
+      : undefined;
 
-  const signingRequest = craftsSigningRequest(config);
-  const sequence = config.transaction?.signalsRbf ? RBF_SEQUENCE : FINAL_SEQUENCE;
   // Every input carries its previous transaction, Taproot included: the trusted-input flow every
   // Ledger app but app-bitcoin-new uses verifies spent amounts from it (`deviceSigningParameters`).
   const previousTxs = await fetchPreviousTransactions(
-    txid => fetchTxHex(config, currencyId, txid),
-    selection.inputs.map(utxo => utxo.hash),
+    txid => fetchTxHex(config, txid),
+    plan.selection.inputs.map(utxo => utxo.hash),
   );
   const previousTx = (txid: string): string => {
     const hex = previousTxs.get(txid);
     if (hex === undefined) throw new Error(`previous transaction ${txid} was not fetched`);
     return hex;
   };
-  const outputs = [
-    { script: recipientScript, value: selection.amount },
-    ...(opReturn ? [{ script: opReturn, value: 0n }] : []),
-    ...(withChange ? [{ script: senderScript, value: selection.change }] : []),
-  ];
+  const sequence = config.transaction?.signalsRbf ? RBF_SEQUENCE : FINAL_SEQUENCE;
 
+  const { selection, feePerByte } = plan;
   const details = {
     fee: selection.fee,
     feePerByte,
@@ -193,61 +233,8 @@ export async function craftTransaction(
       value: BigInt(utxo.value),
     })),
   };
-
-  if (signingRequest) {
-    const parameters = deviceParameters(
-      config,
-      currencyId,
-      derivationMode,
-      intent.recipient,
-      new Date(),
-    );
-    const request: SigningRequest = {
-      type: SIGNING_REQUEST_TYPE,
-      version: 1,
-      currencyId,
-      inputs: selection.inputs.map(utxo => ({
-        txid: utxo.hash,
-        vout: utxo.outputIndex,
-        value: utxo.value,
-        prevTxHex: previousTx(utxo.hash),
-        sequence,
-      })),
-      outputs: outputs.map(output => ({
-        script: output.script.toString("hex"),
-        value: output.value.toString(),
-      })),
-      outputScriptHex: serializeOutputs(outputs, parameters.additionals),
-      ...(withChange ? { changeOutputIndex: outputs.length - 1 } : {}),
-      ...parameters,
-    };
-    return { transaction: JSON.stringify(request), details };
-  }
-
-  const psbt = new Psbt();
-  psbt.setVersion(config.transaction?.version ?? 1);
-  psbt.setLocktime(0);
-  selection.inputs.forEach(utxo => {
-    psbt.addInput({
-      hash: utxo.hash,
-      index: utxo.outputIndex,
-      sequence,
-      nonWitnessUtxo: Buffer.from(previousTx(utxo.hash), "hex"),
-      ...(derivationMode === DerivationModes.LEGACY
-        ? {}
-        : {
-            // Every output a single-address account spends pays the sender's script.
-            witnessUtxo: {
-              script: senderScript,
-              value: toSafeNumber(BigInt(utxo.value)),
-            },
-          }),
-      ...(redeemScript ? { redeemScript } : {}),
-    });
-  });
-  outputs.forEach(output =>
-    psbt.addOutput({ script: output.script, value: toSafeNumber(output.value) }),
-  );
-
-  return { transaction: psbt.toBase64(), details };
+  const transaction = craftsSigningRequest(config)
+    ? buildSigningRequest(config, currencyId, intent.recipient, plan, sequence, previousTx)
+    : buildPsbt(config, plan, sequence, previousTx, redeemScript);
+  return { transaction, details };
 }
