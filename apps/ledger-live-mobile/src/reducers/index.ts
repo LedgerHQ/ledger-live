@@ -3,6 +3,11 @@ import { largeScreenUpsellModalReducer } from "@ledgerhq/live-engagement/largeSc
 import postOnboardingHubDrawer from "./postOnboardingHubDrawer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
+import {
+  SYNC_HASH_BASELINE_REDUCER_PATH,
+  syncHashBaselineReducer,
+} from "@domain/api-currency-token";
+
 import featureFlags from "@shared/feature-flags";
 import accounts from "./accounts";
 import appstate from "./appstate";
@@ -117,6 +122,7 @@ const appReducer = combineReducers({
   accountData: accountDataSlice.reducer,
   appLock: appLockSlice.reducer,
   ...llmRTKApiReducers,
+  [SYNC_HASH_BASELINE_REDUCER_PATH]: syncHashBaselineReducer,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>

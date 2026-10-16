@@ -3,3 +3,4 @@ export * from "./types";
 export * from "./converter";
 export * from "./api";
 export * from "./persistence";
+export * from "./syncHashBaseline";

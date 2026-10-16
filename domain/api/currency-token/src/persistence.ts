@@ -1,7 +1,7 @@
 import isEqual from "lodash/isEqual";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { ThunkDispatch } from "@reduxjs/toolkit";
-import { calApi } from "@shared/api-services";
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { calApi, type CalApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
 import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY, TOKEN_TAGS } from "./internals";
 import {
@@ -9,6 +9,11 @@ import {
   groupTokensByCurrency,
   resolveCurrenciesToEvict,
 } from "./internals/restore";
+import {
+  baselineSeeded,
+  selectSyncHashBaseline,
+  type SyncHashBaselineState,
+} from "./internals/syncHashBaseline";
 import { PersistedCALSchema } from "./schema";
 import type { PersistedCAL, PersistedTokenEntry, TokenByAddressInCurrencyParams } from "./types";
 
@@ -32,11 +37,16 @@ export function parsePersistedCAL(raw: unknown): PersistedCAL | null {
  */
 export interface WithCryptoAssetsApi {
   [calApi.reducerPath]: ReturnType<typeof calApi.reducer>;
+  /** Present only when the app registers `syncHashBaselineReducer`. */
+  calSyncHashBaseline?: SyncHashBaselineState;
 }
+
+export type CalTokenCacheDispatch = ThunkDispatch<WithCryptoAssetsApi, CalApiExtra, UnknownAction>;
 
 /**
  * Extracts all cached tokens from RTK Query state. Only fulfilled `findTokenById` and
- * `findTokenByAddressInCurrency` queries are considered, deduplicated by token id.
+ * `findTokenByAddressInCurrency` queries are considered, deduplicated by token id. A token fetched
+ * before a hash check saw a different hash than its restore baseline is stale and is left out.
  */
 export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTokenEntry[] {
   const rtkState = state[cryptoAssetsApi.reducerPath];
@@ -44,6 +54,9 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
   if (!rtkState?.queries) {
     return [];
   }
+
+  const baseline = selectSyncHashBaseline(state);
+  const observedHashes = extractObservedHashes(state);
 
   const tokens: PersistedTokenEntry[] = [];
   const seenIds = new Set<string>();
@@ -58,6 +71,13 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
       const token = query.data as TokenCurrency;
       if (!token?.id) continue;
 
+      const timestamp = query.fulfilledTimeStamp || Date.now();
+      const baselineHash = baseline[token.parentCurrencyId];
+      const observed = observedHashes[token.parentCurrencyId];
+      if (baselineHash && observed && observed.hash !== baselineHash && timestamp <= observed.at) {
+        continue;
+      }
+
       const tokenIdentifier =
         query.endpointName === "findTokenByAddressInCurrency"
           ? (query.originalArgs as TokenByAddressInCurrencyParams | undefined)?.token_identifier
@@ -68,7 +88,7 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
 
       tokens.push({
         data: token,
-        timestamp: query.fulfilledTimeStamp || Date.now(),
+        timestamp,
         token_identifier: tokenIdentifier,
       });
     }
@@ -77,17 +97,14 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
   return tokens;
 }
 
-/** Extracts the `currencyId → hash` map from fulfilled `getTokensSyncHash` queries. */
-export function extractHashesFromState(state: WithCryptoAssetsApi): Record<string, string> {
+/** Reads each fulfilled `getTokensSyncHash` query as `currencyId → { hash, at }`. */
+function extractObservedHashes(
+  state: WithCryptoAssetsApi,
+): Record<string, { hash: string; at: number }> {
   const rtkState = state[cryptoAssetsApi.reducerPath];
+  const observed: Record<string, { hash: string; at: number }> = {};
 
-  if (!rtkState?.queries) {
-    return {};
-  }
-
-  const hashes: Record<string, string> = {};
-
-  for (const [queryKey, query] of Object.entries(rtkState.queries)) {
+  for (const [queryKey, query] of Object.entries(rtkState?.queries ?? {})) {
     if (
       query?.status === "fulfilled" &&
       query.endpointName === "getTokensSyncHash" &&
@@ -97,9 +114,23 @@ export function extractHashesFromState(state: WithCryptoAssetsApi): Record<strin
       // Query key format: 'getTokensSyncHash("ethereum")'
       const match = SYNC_HASH_QUERY_KEY.exec(queryKey);
       if (match?.[1]) {
-        hashes[match[1]] = query.data;
+        observed[match[1]] = { hash: query.data, at: query.fulfilledTimeStamp ?? 0 };
       }
     }
+  }
+
+  return observed;
+}
+
+/**
+ * Extracts the `currencyId → hash` map. A fulfilled `getTokensSyncHash` query wins; a currency
+ * whose check is pending or failed keeps its restore baseline hash.
+ */
+export function extractHashesFromState(state: WithCryptoAssetsApi): Record<string, string> {
+  const hashes: Record<string, string> = { ...selectSyncHashBaseline(state) };
+
+  for (const [currencyId, { hash }] of Object.entries(extractObservedHashes(state))) {
+    hashes[currencyId] = hash;
   }
 
   return hashes;
@@ -153,8 +184,7 @@ export function filterExpiredTokens(
  * Currencies with no stored hash are never checked (backward-compatible with pre-hash blobs).
  */
 export async function restoreTokensToCache(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<any, any, any>,
+  dispatch: CalTokenCacheDispatch,
   persistedData: PersistedCAL,
   ttl: number,
 ): Promise<void> {
@@ -168,21 +198,26 @@ export async function restoreTokensToCache(
     dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
   }
 
-  void evictChangedCurrencies(dispatch, groupTokensByCurrency(validTokens), persistedData.hashes);
+  const tokensByCurrency = groupTokensByCurrency(validTokens);
+  const baseline = Object.fromEntries(
+    Object.entries(persistedData.hashes ?? {}).filter(([currencyId]) =>
+      tokensByCurrency.has(currencyId),
+    ),
+  );
+  if (Object.keys(baseline).length > 0) {
+    dispatch(baselineSeeded(baseline));
+  }
+
+  void evictChangedCurrencies(dispatch, tokensByCurrency, baseline);
 }
 
 async function evictChangedCurrencies(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<any, any, any>,
+  dispatch: CalTokenCacheDispatch,
   tokensByCurrency: ReturnType<typeof groupTokensByCurrency>,
-  hashes: PersistedCAL["hashes"],
+  hashes: Record<string, string>,
 ): Promise<void> {
   try {
-    const currencyIdsToEvict = await resolveCurrenciesToEvict(
-      dispatch,
-      tokensByCurrency,
-      hashes ?? {},
-    );
+    const currencyIdsToEvict = await resolveCurrenciesToEvict(dispatch, tokensByCurrency, hashes);
     if (currencyIdsToEvict.size > 0) {
       dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
     }

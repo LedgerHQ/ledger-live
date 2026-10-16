@@ -1,6 +1,6 @@
-import type { ThunkDispatch } from "@reduxjs/toolkit";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { cryptoAssetsApi } from "../api";
+import type { CalTokenCacheDispatch } from "../persistence";
 import type { PersistedTokenEntry } from "../types";
 
 // Package-private cache-restoration helpers for `restoreTokensToCache`. Imported directly by
@@ -29,8 +29,7 @@ export function groupTokensByCurrency(
  * hash change skips them. Currencies without a stored hash are never evicted.
  */
 export async function resolveCurrenciesToEvict(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<any, any, any>,
+  dispatch: CalTokenCacheDispatch,
   tokensByCurrency: Map<string, PersistedTokenEntry[]>,
   hashes: Record<string, string>,
 ): Promise<Set<string>> {
