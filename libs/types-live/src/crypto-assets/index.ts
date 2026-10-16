@@ -57,6 +57,26 @@ export type CryptoAssetsStore = {
   ): Promise<TokenCurrency | undefined>;
 
   /**
+   * Finds a token by its `token_identifier` alone within a specific parent currency, for chains
+   * where an operation names a token only by that identifier (e.g. a TRON TRC10 asset id) and the
+   * contract address is unknown.
+   * Optional so stores that never serve such a lookup (test doubles) need not stub it.
+   *
+   * @param tokenIdentifier - The token identifier (e.g. "1002000" for a TRC10 asset)
+   * @param currencyId - The ID of the parent currency/blockchain (e.g. "tron")
+   * @returns Promise resolving to the TokenCurrency if found, undefined otherwise; rejects when
+   *   several tokens of the currency carry that identifier
+   * @example
+   * ```typescript
+   * const bttOld = await store.findTokenByTokenIdentifierInCurrency?.("1002000", "tron");
+   * ```
+   */
+  findTokenByTokenIdentifierInCurrency?(
+    tokenIdentifier: string,
+    currencyId: string,
+  ): Promise<TokenCurrency | undefined>;
+
+  /**
    * Gets a sync hash representing the current state of tokens for a given currency.
    * This hash can be used to detect changes in the token list for a currency.
    *

@@ -15,5 +15,10 @@ export interface CryptoAssetsStore {
     currencyId: string,
     tokenIdentifier?: string,
   ): Promise<TokenCurrency | undefined>;
+  /** Rejects when several tokens of the currency carry that identifier. */
+  findTokenByTokenIdentifierInCurrency(
+    tokenIdentifier: string,
+    currencyId: string,
+  ): Promise<TokenCurrency | undefined>;
   getTokensSyncHash(currencyId: string): Promise<string>;
 }

@@ -32,8 +32,9 @@ const trc10Token = {
   id: "tron/trc10/1002000",
   tokenType: "trc10",
   parentCurrencyId: "tron",
-  // CAL stores the issuer address here, not the numeric asset id, which lives in `id`.
+  // CAL stores the issuer address here, not the numeric asset id, which is the `tokenIdentifier`.
   contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+  tokenIdentifier: "1002000",
   name: "BitTorrent",
   units: [{ name: "BTT", code: "BTT", magnitude: 6 }],
 } as unknown as TokenCurrency;
@@ -196,7 +197,7 @@ describe("tron bridge", () => {
 
     it("passes the token's CAL signature for a sub-account send, which app-tron clear-signs with", () => {
       expect(getDeviceSignOptions({ subAccountId: "sub-1" }, account as never)).toEqual({
-        token: { id: signedToken.id, ledgerSignature: "3045cafe" },
+        token: { tokenType: "trc10", ledgerSignature: "3045cafe" },
       });
     });
 
@@ -213,14 +214,17 @@ describe("tron bridge", () => {
       CryptoAssetsStore["findTokenByAddressInCurrency"]
     >;
     const mockFindTokenById = jest.fn() as jest.MockedFunction<CryptoAssetsStore["findTokenById"]>;
+    const mockFindTokenByTokenIdentifierInCurrency = jest.fn() as jest.MockedFunction<
+      NonNullable<CryptoAssetsStore["findTokenByTokenIdentifierInCurrency"]>
+    >;
+    const { getCryptoAssetsStore } = jest.requireMock(
+      "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore",
+    ) as { getCryptoAssetsStore: jest.Mock };
 
-    (
-      jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
-        getCryptoAssetsStore: jest.Mock;
-      }
-    ).getCryptoAssetsStore.mockReturnValue({
+    getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
       findTokenById: mockFindTokenById,
+      findTokenByTokenIdentifierInCurrency: mockFindTokenByTokenIdentifierInCurrency,
     });
 
     afterEach(() => {
@@ -261,15 +265,30 @@ describe("tron bridge", () => {
       expect(result).toBe(trc20Token);
     });
 
-    it("should resolve a TRC10 token by its id (mirrors the legacy synchronization lookup)", async () => {
-      mockFindTokenById.mockResolvedValue(trc10Token);
+    it("should resolve a TRC10 token by its asset id as the CAL token_identifier", async () => {
+      mockFindTokenByTokenIdentifierInCurrency.mockResolvedValue(trc10Token);
       const asset: AssetInfo = { type: "trc10", assetReference: "1002000" };
 
       const result = await getTokenFromAsset(tron, asset);
 
-      expect(mockFindTokenById).toHaveBeenCalledWith(`${tron.id}/trc10/1002000`);
+      expect(mockFindTokenByTokenIdentifierInCurrency).toHaveBeenCalledWith("1002000", tron.id);
+      expect(mockFindTokenById).not.toHaveBeenCalled();
       expect(mockFindTokenByAddressInCurrency).not.toHaveBeenCalled();
       expect(result).toBe(trc10Token);
+    });
+
+    it("should throw for a TRC10 asset when the store cannot look up by token_identifier", async () => {
+      getCryptoAssetsStore.mockReturnValueOnce({
+        findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
+        findTokenById: mockFindTokenById,
+      });
+      const asset: AssetInfo = { type: "trc10", assetReference: "1002000" };
+
+      await expect(getTokenFromAsset(tron, asset)).rejects.toThrow(
+        "The crypto assets store cannot look up TRC10 tokens by token_identifier",
+      );
+      expect(mockFindTokenById).not.toHaveBeenCalled();
+      expect(mockFindTokenByAddressInCurrency).not.toHaveBeenCalled();
     });
 
     it("should return undefined when token is not found", async () => {
@@ -305,17 +324,17 @@ describe("tron bridge", () => {
       });
     });
 
-    it.each([
-      ["a non-<currency>/trc10/<id> layout", "tron:trc10:1002000"],
-      ["a mismatched currency prefix", "ethereum/trc10/1002000"],
-      ["a non-trc10 standard segment", "tron/trc20/1002000"],
-      ["a non-numeric asset id", "tron/trc10/BTT"],
-      ["extra trailing segments", "tron/trc10/1002000/x"],
-    ])("should throw when the TRC10 token id has %s", (_case, id) => {
-      const malformed = { ...trc10Token, id } as TokenCurrency;
+    it("should take the TRC10 asset id from tokenIdentifier, never from the token id", () => {
+      const token = { ...trc10Token, id: "tron/trc10/unrelated" } as TokenCurrency;
 
-      expect(() => getAssetFromToken(malformed, owner)).toThrow(
-        `Unexpected TRC10 token id, cannot derive asset id: ${id}`,
+      expect(getAssetFromToken(token, owner)).toMatchObject({ assetReference: "1002000" });
+    });
+
+    it("should throw when a TRC10 token has no tokenIdentifier", () => {
+      const { tokenIdentifier: _, ...withoutIdentifier } = trc10Token;
+
+      expect(() => getAssetFromToken(withoutIdentifier as TokenCurrency, owner)).toThrow(
+        "TRC10 token tron/trc10/1002000 has no tokenIdentifier, cannot derive its asset id",
       );
     });
   });

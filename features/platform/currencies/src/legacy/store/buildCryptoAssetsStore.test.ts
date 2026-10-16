@@ -13,6 +13,10 @@ function setup() {
       thunk: "findTokenByAddressInCurrency",
       arg,
     })),
+    findTokenByTokenIdentifierInCurrency: jest.fn((arg: unknown) => ({
+      thunk: "findTokenByTokenIdentifierInCurrency",
+      arg,
+    })),
     getTokensSyncHash: jest.fn((arg: unknown) => ({ thunk: "getTokensSyncHash", arg })),
     getTokenListHash: jest.fn((arg: unknown) => ({ thunk: "getTokenListHash", arg })),
   };
@@ -20,6 +24,9 @@ function setup() {
     endpoints: {
       findTokenById: { initiate: initiate.findTokenById },
       findTokenByAddressInCurrency: { initiate: initiate.findTokenByAddressInCurrency },
+      findTokenByTokenIdentifierInCurrency: {
+        initiate: initiate.findTokenByTokenIdentifierInCurrency,
+      },
       getTokensSyncHash: { initiate: initiate.getTokensSyncHash },
       getTokenListHash: { initiate: initiate.getTokenListHash },
     },
@@ -61,6 +68,19 @@ describe("buildCryptoAssetsStore", () => {
         contract_address: "0xABC",
         network: "ethereum",
       });
+    });
+
+    it("findTokenByTokenIdentifierInCurrency initiates with the identifier and network", async () => {
+      const { store, dispatch, initiate } = setup();
+      dispatch.mockResolvedValue({ data: { id: "tron/trc10/1002000" } });
+
+      const result = await store.findTokenByTokenIdentifierInCurrency("1002000", "tron");
+
+      expect(initiate.findTokenByTokenIdentifierInCurrency).toHaveBeenCalledWith({
+        token_identifier: "1002000",
+        network: "tron",
+      });
+      expect(result).toEqual({ id: "tron/trc10/1002000" });
     });
 
     it("getTokensSyncHash returns the token list hash and still queries the commit", async () => {
@@ -116,6 +136,16 @@ describe("buildCryptoAssetsStore", () => {
       const { store, dispatch } = setup();
       dispatch.mockResolvedValue({ error: { status: "FETCH_ERROR", error: "Failed to fetch" } });
       await expect(store.getTokensSyncHash("ethereum")).rejects.toBeInstanceOf(NetworkDown);
+    });
+
+    it("an ambiguous token_identifier lookup rejects with the endpoint's message", async () => {
+      const { store, dispatch } = setup();
+      dispatch.mockResolvedValue({
+        error: { name: "Error", message: 'token_identifier "0" matches several tezos tokens' },
+      });
+      await expect(store.findTokenByTokenIdentifierInCurrency("0", "tezos")).rejects.toThrow(
+        'token_identifier "0" matches several tezos tokens',
+      );
     });
 
     it("other string status -> generic Error carrying the message", async () => {

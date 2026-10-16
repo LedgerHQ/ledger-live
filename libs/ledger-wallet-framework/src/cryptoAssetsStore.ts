@@ -7,6 +7,14 @@ export type FrameworkCryptoAssetsStore = {
     currencyId: string,
     tokenIdentifier?: string,
   ): Promise<TokenCurrency | undefined>;
+  /**
+   * Optional so stores that never serve such a lookup (test doubles) need not stub it; the CAL-backed
+   * stores the apps install implement it, and a caller that needs it fails without it.
+   */
+  findTokenByTokenIdentifierInCurrency?(
+    tokenIdentifier: string,
+    currencyId: string,
+  ): Promise<TokenCurrency | undefined>;
   getTokensSyncHash(currencyId: string): Promise<string>;
 };
 

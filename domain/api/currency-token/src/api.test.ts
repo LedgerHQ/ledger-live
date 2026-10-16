@@ -13,6 +13,7 @@ import {
   useGetTokensDataInfiniteQuery,
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
+  useFindTokenByTokenIdentifierInCurrencyQuery,
   useGetTokensSyncHashQuery,
   useGetTokenListHashQuery,
 } from "./api";
@@ -86,6 +87,7 @@ describe("cryptoAssetsApi configuration", () => {
   it("should expose all five endpoints", () => {
     expect(cryptoAssetsApi.endpoints.findTokenById).toBeDefined();
     expect(cryptoAssetsApi.endpoints.findTokenByAddressInCurrency).toBeDefined();
+    expect(cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency).toBeDefined();
     expect(cryptoAssetsApi.endpoints.getTokensSyncHash).toBeDefined();
     expect(cryptoAssetsApi.endpoints.getTokenListHash).toBeDefined();
     expect(cryptoAssetsApi.endpoints.getTokensData).toBeDefined();
@@ -95,6 +97,7 @@ describe("cryptoAssetsApi configuration", () => {
     expect(useGetTokensDataInfiniteQuery).toBeDefined();
     expect(useFindTokenByIdQuery).toBeDefined();
     expect(useFindTokenByAddressInCurrencyQuery).toBeDefined();
+    expect(useFindTokenByTokenIdentifierInCurrencyQuery).toBeDefined();
     expect(useGetTokensSyncHashQuery).toBeDefined();
     expect(useGetTokenListHashQuery).toBeDefined();
   });
@@ -216,6 +219,66 @@ describe("cryptoAssetsApi requests", () => {
     });
     expect(new URL(request.url).searchParams.get("output")).toBeTruthy();
     expect(request.headers.get("X-Ledger-Client-Version")).toBe("1.2.3");
+  });
+
+  it("findTokenByTokenIdentifierInCurrency asks for two matches of the identifier in the network", async () => {
+    calEndpoints.tokens.mockImplementation(() => HttpResponse.json([mockApiTokenResponse]));
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
+        token_identifier: "1002000",
+        network: "tron",
+      }),
+    );
+
+    const request = received(calEndpoints.tokens);
+    expectUrl(request, "/v1/tokens", { token_identifier: "1002000", network: "tron", limit: "2" });
+    expect(new URL(request.url).searchParams.has("contract_address")).toBe(false);
+    expect(result.data).toEqual(mockTokenCurrency);
+  });
+
+  it("findTokenByTokenIdentifierInCurrency resolves undefined when nothing matches", async () => {
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
+        token_identifier: "1002000",
+        network: "tron",
+      }),
+    );
+
+    expect(result.isSuccess).toBe(true);
+    expect(result.data).toBeUndefined();
+  });
+
+  it("findTokenByTokenIdentifierInCurrency errors instead of picking one of several matches", async () => {
+    // RTK Query logs the error thrown by the response transform.
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    calEndpoints.tokens.mockImplementation(() =>
+      HttpResponse.json([
+        mockApiTokenResponse,
+        { ...mockApiTokenResponse, id: "tron/trc10/other" },
+      ]),
+    );
+    const store = makeStore();
+
+    try {
+      const result = await store.dispatch(
+        cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
+          token_identifier: "1002000",
+          network: "tron",
+        }),
+      );
+
+      expect(result.isError).toBe(true);
+      expect(result.error).toMatchObject({
+        message: expect.stringContaining('token_identifier "1002000" matches several tron tokens'),
+      });
+      expect(mockConvert).not.toHaveBeenCalled();
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("getTokensData uses the injected CAL service base URL", async () => {

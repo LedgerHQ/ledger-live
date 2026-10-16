@@ -11,15 +11,21 @@ type RestoreCacheEntry =
       arg: { contract_address: string; network: string; token_identifier?: string };
       value: TokenCurrency | undefined;
     }
+  | {
+      endpointName: "findTokenByTokenIdentifierInCurrency";
+      arg: { token_identifier: string; network: string };
+      value: TokenCurrency | undefined;
+    }
   | { endpointName: "getTokensSyncHash"; arg: string; value: string };
 
 /**
  * Builds the RTK Query cache entries to upsert for the given persisted tokens: a `findTokenById`
  * and a `findTokenByAddressInCurrency` entry per token, plus an address-only key when a
- * `token_identifier` is present (so lookups without it still hit the cache).
+ * `token_identifier` is present (so lookups without it still hit the cache), and a
+ * `findTokenByTokenIdentifierInCurrency` entry only for a token that such a lookup resolved.
  */
 export function buildRestoreCacheEntries(tokens: PersistedTokenEntry[]): RestoreCacheEntry[] {
-  return tokens.flatMap(({ data: token, token_identifier }) => {
+  return tokens.flatMap(({ data: token, token_identifier, token_identifier_lookup }) => {
     const entries: RestoreCacheEntry[] = [
       { endpointName: "findTokenById", arg: { id: token.id }, value: token },
       {
@@ -37,6 +43,14 @@ export function buildRestoreCacheEntries(tokens: PersistedTokenEntry[]): Restore
       entries.push({
         endpointName: "findTokenByAddressInCurrency",
         arg: { contract_address: token.contractAddress, network: token.parentCurrencyId },
+        value: token,
+      });
+    }
+
+    if (token_identifier_lookup !== undefined) {
+      entries.push({
+        endpointName: "findTokenByTokenIdentifierInCurrency",
+        arg: { token_identifier: token_identifier_lookup, network: token.parentCurrencyId },
         value: token,
       });
     }
