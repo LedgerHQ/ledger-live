@@ -42,7 +42,7 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "ts-node": "^10.9.2"
+    "ts-node": "10.9.2"
   },
   "exports": {
     ".": {

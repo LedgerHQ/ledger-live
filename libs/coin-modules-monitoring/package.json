@@ -38,9 +38,9 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "jest": "catalog:",
-    "tsx": "^4.7.1",
+    "tsx": "4.10.3",
     "typescript": "catalog:"
   },
   "typesVersions": {
