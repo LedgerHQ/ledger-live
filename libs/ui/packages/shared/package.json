@@ -37,6 +37,6 @@
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "tiny-glob": "^0.2.9"
+    "tiny-glob": "0.2.9"
   }
 }
