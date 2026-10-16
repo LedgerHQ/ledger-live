@@ -1,6 +1,6 @@
 import { getCurrencyConfiguration } from "./config";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 /**
  * Interface for the end user.

@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
 import { ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";

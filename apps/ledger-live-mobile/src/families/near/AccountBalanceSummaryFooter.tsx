@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getNearBalanceBreakdown } from "@ledgerhq/live-common/families/near/react";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";

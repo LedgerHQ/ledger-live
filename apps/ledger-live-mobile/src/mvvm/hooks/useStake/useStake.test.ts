@@ -8,7 +8,7 @@ import { accountRawToAccountUserData } from "@ledgerhq/live-common/account/index
 import type { WalletState } from "~/reducers/wallet";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";

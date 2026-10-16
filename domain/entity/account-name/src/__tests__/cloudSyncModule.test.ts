@@ -1,4 +1,4 @@
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { accountNamesSyncModule } from "../cloudSyncModule";
 import type { AccountNamesState } from "../schema";
 import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";

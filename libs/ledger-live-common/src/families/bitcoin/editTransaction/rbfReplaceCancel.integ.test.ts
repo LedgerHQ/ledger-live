@@ -13,7 +13,7 @@
  */
 import { BigNumber } from "bignumber.js";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { walletBtcCurrencyById } from "@ledgerhq/coin-bitcoin/walletBtcCurrency";
 import { DerivationModes } from "@ledgerhq/wallet-btc/index";
 import BitcoinLikeWallet from "@ledgerhq/wallet-btc/wallet";

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Fuse from "fuse.js";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import useEnv from "@features/platform-env";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";

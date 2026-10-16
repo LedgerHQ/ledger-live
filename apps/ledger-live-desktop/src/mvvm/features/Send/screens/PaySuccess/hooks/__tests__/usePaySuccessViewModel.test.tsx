@@ -1,12 +1,12 @@
 import { BigNumber } from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import type { Operation } from "@ledgerhq/types-live";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { usePaySuccessViewModel } from "../usePaySuccessViewModel";

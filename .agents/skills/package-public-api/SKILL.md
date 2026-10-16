@@ -46,6 +46,10 @@ A barrel must never re-export any of them — that would make private code publi
 point. Everything else can: a test sitting next to `slice.internals.ts` imports it directly, so
 private code stays fully testable without being part of the package API.
 
+## Legacy code lives behind `/legacy`
+
+Code kept for the old architecture goes in `src/legacy/` with its own `legacy/index.ts` barrel, exposed as a `./legacy` entry in `package.json#exports`. The root barrel never re-exports it: consumers import `@domain/<pkg>/legacy` explicitly, so every remaining legacy usage is visible and greppable.
+
 ## Never re-export another package
 
 ```ts

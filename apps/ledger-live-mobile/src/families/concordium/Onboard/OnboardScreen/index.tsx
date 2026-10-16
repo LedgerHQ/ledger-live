@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import {

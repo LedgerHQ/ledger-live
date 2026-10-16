@@ -5,7 +5,7 @@
 // those into a shared error type loses the distinction silently, which is why RateFetchError
 // carries RTK Query's status verbatim rather than mapping it.
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { initialState, pairId } from "@domain/entity-market-countervalues";
 import type { CounterValuesState } from "@domain/entity-market-countervalues";

@@ -1,9 +1,9 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { WalletState } from "~/renderer/reducers/wallet";
 import { render, screen, waitFor } from "tests/testSetup";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import AccountHeader from "../AccountHeader";
 
 jest.mock("~/renderer/linking", () => ({

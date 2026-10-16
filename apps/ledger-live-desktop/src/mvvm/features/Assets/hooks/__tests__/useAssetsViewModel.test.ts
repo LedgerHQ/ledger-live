@@ -19,7 +19,7 @@ import {
 } from "../../constants";
 import { buildAssetsPagePath } from "../../utils/buildAssetsPagePath";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AssetTableItem } from "../../types";

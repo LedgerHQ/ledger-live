@@ -11,7 +11,7 @@ import {
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 // The domain registry is the runtime source of truth for currency data.

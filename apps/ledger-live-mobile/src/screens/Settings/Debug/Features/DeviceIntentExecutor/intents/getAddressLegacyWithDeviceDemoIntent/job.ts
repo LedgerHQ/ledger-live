@@ -3,7 +3,7 @@ import { catchError, ignoreElements, map } from "rxjs/operators";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Job } from "@features/platform-device-intent";
 import type {
   GetAddressLegacyWithDeviceDemoIntentInput,

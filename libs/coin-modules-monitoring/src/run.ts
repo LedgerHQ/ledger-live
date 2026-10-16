@@ -1,14 +1,14 @@
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
 import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
-  type CryptoCurrency,
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { firstValueFrom, reduce } from "rxjs";

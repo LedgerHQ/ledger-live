@@ -1,6 +1,6 @@
 import * as cacheModule from "@ledgerhq/live-network/cache";
 import { makeBridgeCacheSystem } from "./cache";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { setEnv } from "@shared/env";
 import { loadMockBridgeForFamily } from "../coin-modules/registry";
 

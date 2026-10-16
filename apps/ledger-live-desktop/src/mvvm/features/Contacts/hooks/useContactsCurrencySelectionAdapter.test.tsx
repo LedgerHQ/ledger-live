@@ -1,5 +1,5 @@
 import { renderHook } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useOpenCurrencyFlow } from "../../ModularDialog/hooks/useOpenCurrencyFlow";
 import { useContactsCurrencySelectionAdapter } from "./useContactsCurrencySelectionAdapter";

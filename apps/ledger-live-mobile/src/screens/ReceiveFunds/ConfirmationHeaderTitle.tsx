@@ -3,7 +3,7 @@ import { useWindowDimensions } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { Currency } from "@domain/entity-currency";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 export const CONFIRMATION_HEADER_SIDE_WIDTH = 88;
 const HEADER_HORIZONTAL_MARGIN = 16;

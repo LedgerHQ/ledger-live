@@ -1,7 +1,7 @@
 import Braze, { type ContentCard } from "@braze/react-native-sdk";
 import { BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS } from "@ledgerhq/live-common/braze/identityLifecycle";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { act, render } from "@tests/test-renderer";
 import React, { useEffect } from "react";
 import { addOneAccount } from "~/actions/accounts";

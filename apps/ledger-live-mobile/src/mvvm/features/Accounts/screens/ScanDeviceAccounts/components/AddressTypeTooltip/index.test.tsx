@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { render, screen } from "@tests/test-renderer";
 import { i18n } from "~/context/Locale";
 import { urls } from "~/utils/urls";

@@ -16,7 +16,8 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   AmountRequired,
   FeeTooHigh,

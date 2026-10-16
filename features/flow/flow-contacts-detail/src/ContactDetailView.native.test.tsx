@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react-native";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";

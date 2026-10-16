@@ -4,7 +4,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { countervaluesApi, cvsApiExtra } from "@shared/api-services";
 import type { Currency } from "@domain/entity-currency";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";

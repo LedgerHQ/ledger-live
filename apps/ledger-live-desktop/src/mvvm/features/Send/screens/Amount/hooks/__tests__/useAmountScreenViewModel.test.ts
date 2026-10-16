@@ -11,7 +11,7 @@ import {
 import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslatedBridgeError";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   TRON_USDT_FEE_ASSET,

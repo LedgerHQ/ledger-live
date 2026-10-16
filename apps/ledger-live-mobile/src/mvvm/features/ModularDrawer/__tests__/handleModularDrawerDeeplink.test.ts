@@ -1,6 +1,9 @@
 import { handleModularDrawerDeeplink } from "../handleModularDrawerDeeplink";
 import { openModularDrawer } from "~/reducers/modularDrawer";
-import { findCryptoCurrencyByKeyword, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  findCryptoCurrencyByKeyword,
+  getCryptoCurrencyById,
+} from "@domain/entity-currency-crypto/legacy";
 import { getStateFromPath } from "@react-navigation/native";
 import { callbackRegistry } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
 
@@ -9,8 +12,8 @@ jest.mock("~/reducers/modularDrawer", () => ({
   openModularDrawer: jest.fn(),
 }));
 
-jest.mock("@domain/entity-currency-crypto", () => ({
-  ...jest.requireActual("@domain/entity-currency-crypto"),
+jest.mock("@domain/entity-currency-crypto/legacy", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto/legacy"),
   findCryptoCurrencyByKeyword: jest.fn(),
 }));
 

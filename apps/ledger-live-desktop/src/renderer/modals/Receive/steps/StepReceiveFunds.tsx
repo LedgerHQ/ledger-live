@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useEffect, useCallback, useRef, useState } from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { TrackPage } from "@shared/analytics-react";

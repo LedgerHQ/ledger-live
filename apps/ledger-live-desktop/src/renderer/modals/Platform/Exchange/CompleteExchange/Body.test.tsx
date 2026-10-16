@@ -1,6 +1,6 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";

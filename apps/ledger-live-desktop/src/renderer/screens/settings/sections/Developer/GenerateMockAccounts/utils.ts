@@ -1,7 +1,8 @@
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { initAccounts } from "~/renderer/actions/accounts";

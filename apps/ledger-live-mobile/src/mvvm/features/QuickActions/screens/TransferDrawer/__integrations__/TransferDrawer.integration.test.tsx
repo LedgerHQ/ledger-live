@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { useTransferDrawerViewModel } from "../useTransferDrawerViewModel";
 import { NavigatorName, ScreenName } from "~/const";
 import { overrideStateWithFunds } from "LLM/features/QuickActions/__integrations__/shared";

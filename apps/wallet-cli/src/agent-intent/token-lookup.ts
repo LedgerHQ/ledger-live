@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";

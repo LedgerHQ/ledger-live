@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { PerpsAccountBanner } from "..";
 
 const hypercore = getCryptoCurrencyById("hypercore");

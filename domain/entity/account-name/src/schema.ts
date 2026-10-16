@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type AnyAccountId } from "@domain/entity-account";
+import type { AnyAccountId } from "@domain/entity-account/legacy";
 
 export const AccountNamesDistantSchema = z.record(z.string(), z.string());
 export type AccountNamesDistantState = z.infer<typeof AccountNamesDistantSchema>;

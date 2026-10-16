@@ -1,5 +1,5 @@
 import React from "react";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Contact } from "@domain/entity-contact";
 import { CryptoIconStack, type CryptoIconStackItem } from "LLD/components/CryptoIconStack";
 

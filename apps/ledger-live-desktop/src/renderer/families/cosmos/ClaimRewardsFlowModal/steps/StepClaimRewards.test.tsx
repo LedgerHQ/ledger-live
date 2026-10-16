@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import StepClaimRewards from "./StepClaimRewards";
 import type { StepProps } from "../types";

@@ -1,6 +1,6 @@
 import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
 import { CURRENCIES_LIST, IDS } from "./mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { setEnv } from "@shared/env";
 
 jest.mock("@ledgerhq/live-network", () => ({ default: jest.fn(), __esModule: true }));

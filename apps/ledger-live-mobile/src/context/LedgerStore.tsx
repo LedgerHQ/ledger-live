@@ -12,7 +12,7 @@ import {
 } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";

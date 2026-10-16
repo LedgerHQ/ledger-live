@@ -17,7 +17,8 @@ import {
 import { buildCV, buildMultiCV } from "@domain/entity-market-countervalues/mock";
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
-import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { countervaluesInitialState, countervaluesReducer } from "./reducer";

@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { computeAccountAlias, initialAccountAliasState } from "./schema";
 
 export const accountAliasSlice = createSlice({

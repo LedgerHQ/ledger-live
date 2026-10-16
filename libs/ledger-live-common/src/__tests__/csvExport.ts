@@ -1,7 +1,7 @@
 import "./test-helpers/staticTime";
 import { setEnv } from "@shared/env";
 import { genAccount } from "../mock/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState } from "@domain/entity-market-countervalues";

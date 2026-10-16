@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import React from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { render, withFlagOverrides } from "tests/testSetup";
 import {

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account } from "@ledgerhq/types-live";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";

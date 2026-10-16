@@ -13,7 +13,7 @@ import {
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-currency-crypto/legacy";
 
 // The crypto-assets token store validates a non-empty LEDGER_CLIENT_VERSION (calApiExtra) at store
 // creation; the app sets it at boot, so tests must provide one too.

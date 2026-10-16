@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { useAccountStatus } from "./useAccountStatus";

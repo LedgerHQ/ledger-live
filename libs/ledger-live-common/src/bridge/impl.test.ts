@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { BigNumber } from "bignumber.js";
 import { AccountNotSupported } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CurrencyNotSupported } from "../errors";

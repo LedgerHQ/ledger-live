@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { registerCoinModules, resetCoinModulesForTests } from "../../coin-modules/registry";
 import type { CoinModuleLoader } from "../../coin-modules/types";
 import { coinModuleLoaders } from "../../coin-modules/loaders";

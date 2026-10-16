@@ -1,7 +1,7 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   act,
   fireEvent,

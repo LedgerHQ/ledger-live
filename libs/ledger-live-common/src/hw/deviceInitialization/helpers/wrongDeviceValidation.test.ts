@@ -1,5 +1,5 @@
 import { getDefaultAccountName } from "@domain/entity-account-name";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { createFixtureAccount } from "../../../mock/fixtures/cryptoCurrencies";
 import { buildExpectedAccountIdentity, validateDerivedAddress } from "./wrongDeviceValidation";
 

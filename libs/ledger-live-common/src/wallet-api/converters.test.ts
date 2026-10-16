@@ -10,7 +10,7 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 import type { Transaction } from "../coin-modules/transaction-types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getAccountBridge } from "../bridge";
 import {
   accountToWalletAPIAccount,

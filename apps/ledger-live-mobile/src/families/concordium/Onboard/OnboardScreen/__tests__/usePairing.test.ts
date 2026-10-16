@@ -1,7 +1,7 @@
 import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { Subject } from "rxjs";
 import { ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { PairStatus, usePairing } from "../hooks/usePairing";
 
 let pairingSubject: Subject<unknown>;

@@ -4,7 +4,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { buildGenericTransactionIntent } from "../../../bridge/generic-coin-framework/buildIntent";
 import { getSponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";

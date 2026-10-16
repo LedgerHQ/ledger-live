@@ -1,7 +1,7 @@
 // loadCountervalues must leave the state it loads from untouched, so its result can live in a
 // store that freezes what it holds (immer, behind createSlice) and be fed back on the next poll.
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   countervaluesRatesSlice,

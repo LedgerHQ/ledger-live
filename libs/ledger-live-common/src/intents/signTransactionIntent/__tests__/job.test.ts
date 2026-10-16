@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getMainAccount } from "../../../account/index";
 import { getAccountBridge } from "../../../bridge/index";
 import type {

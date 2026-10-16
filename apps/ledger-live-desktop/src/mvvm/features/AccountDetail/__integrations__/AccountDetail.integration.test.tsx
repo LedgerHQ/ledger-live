@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from "react-router";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account } from "@ledgerhq/types-live";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";

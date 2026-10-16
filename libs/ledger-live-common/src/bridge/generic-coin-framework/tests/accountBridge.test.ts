@@ -1,5 +1,5 @@
 import { firstValueFrom } from "rxjs";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import { getCoinFrameworkAccountBridge } from "../accountBridge";

@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, Route, Routes } from "react-router";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { render, screen, within, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";

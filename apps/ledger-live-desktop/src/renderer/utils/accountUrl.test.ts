@@ -1,6 +1,6 @@
 import { computeAccountAlias } from "@domain/entity-account-alias";
 import { getAccountUrl } from "./accountUrl";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 const ETH_ACCOUNT_ID = "js:2:ethereum:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:";
 const TRON_ACCOUNT_ID = "js:2:tron:TDyq9kiahZXthXHrpQNLyyRSj75kEZuYZQ:";

@@ -1,6 +1,6 @@
 import { act } from "react";
 import invariant from "invariant";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { StacksAccount, StakingPosition } from "@ledgerhq/live-common/families/stacks/types";
 import { renderHook, withFlagOverrides } from "tests/testSetup";

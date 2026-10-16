@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import type { FlashListProps } from "@shopify/flash-list";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";

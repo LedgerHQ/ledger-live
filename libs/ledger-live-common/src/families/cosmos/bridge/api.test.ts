@@ -1,5 +1,5 @@
 import type { StakingResources } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import BigNumber from "bignumber.js";
 import { coinModuleLoaders } from "../../../coin-modules/loaders";

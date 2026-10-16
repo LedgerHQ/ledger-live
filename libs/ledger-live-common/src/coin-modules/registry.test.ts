@@ -1,5 +1,5 @@
 import { CurrencyNotSupported } from "../errors";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import {
   registerCoinModules,
   getRegisteredFamilies,

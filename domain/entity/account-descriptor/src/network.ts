@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { UnknownNetworkError } from "./errors";
 
 /** A blockchain by name and environment; `env` is `main` or the testnet suffix of the currency id. */

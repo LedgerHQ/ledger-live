@@ -1,10 +1,10 @@
 import type { Account } from "@ledgerhq/types-live";
 import type { WalletState } from "~/renderer/reducers/wallet";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { renderHook } from "tests/testSetup";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { useAddressListItemViewModel } from "../useAddressListItemViewModel";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 

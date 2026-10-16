@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 
 export const hederaCurrency = getCryptoCurrencyById("hedera");

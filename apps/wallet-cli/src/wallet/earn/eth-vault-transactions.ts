@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { walletCliDebug } from "../../shared/log";
 import { EvmTransactionIntentSchema } from "../intents";
 import { prepareIntentDryRun, signAndBroadcastIntent } from "../sign-and-broadcast";

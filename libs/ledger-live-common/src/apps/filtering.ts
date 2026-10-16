@@ -1,6 +1,6 @@
 import camelCase from "lodash/fp/camelCase";
 import type { InstalledItem } from "./types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { isCurrencySupported } from "../currencies";
 import { useMemo } from "react";
 import type { App } from "@ledgerhq/types-live";

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 jest.mock("../coin-modules/registry", () => ({
   ...jest.requireActual("../coin-modules/registry"),
