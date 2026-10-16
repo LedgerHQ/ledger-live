@@ -132,6 +132,7 @@ export enum ScreenName {
   ExchangeSell = "ExchangeSell",
   ExperimentalSettings = "ExperimentalSettings",
   FirmwareUpdate = "FirmwareUpdate",
+  OsUpdate = "OsUpdate",
   FreezeAmount = "FreezeAmount",
   FreezeConnectDevice = "FreezeConnectDevice",
   FreezeInfo = "FreezeInfo",
