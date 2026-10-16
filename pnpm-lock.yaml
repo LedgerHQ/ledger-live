@@ -2643,7 +2643,7 @@ importers:
         version: 18.0.1
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@react-native/codegen':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
@@ -3501,7 +3501,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -3516,7 +3516,7 @@ importers:
         version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -3646,7 +3646,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -3830,7 +3830,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -3965,7 +3965,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -4212,7 +4212,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@react-navigation/native':
         specifier: 'catalog:'
         version: 7.1.17(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -4378,7 +4378,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -4483,7 +4483,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -4501,7 +4501,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -6218,7 +6218,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -6357,7 +6357,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7005,7 +7005,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7099,7 +7099,7 @@ importers:
         version: link:../../platform/feature-flags
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7181,7 +7181,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7260,7 +7260,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7330,7 +7330,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7427,7 +7427,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7515,7 +7515,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7585,7 +7585,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7655,7 +7655,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7734,7 +7734,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -7822,7 +7822,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7924,7 +7924,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -8039,7 +8039,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -8130,7 +8130,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -8357,7 +8357,7 @@ importers:
         version: 3.2.2(react@19.1.4)
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -8502,7 +8502,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -8638,7 +8638,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -8756,7 +8756,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -8932,7 +8932,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -9032,7 +9032,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -9138,7 +9138,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -9238,7 +9238,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -9350,7 +9350,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -9776,7 +9776,7 @@ importers:
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -9959,7 +9959,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -10353,7 +10353,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -14717,7 +14717,7 @@ importers:
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       nock:
         specifier: 14.0.3
-        version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 14.0.3
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -18419,7 +18419,7 @@ importers:
         version: 0.81.6
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@testing-library/dom':
         specifier: 'catalog:'
         version: 10.4.1
@@ -19625,7 +19625,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -19704,7 +19704,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -19949,7 +19949,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
@@ -26278,6 +26278,8 @@ packages:
   '@react-native/babel-preset@0.81.6':
     resolution: {integrity: sha512-RtIr82ccPoyMLmIC3/vCG96MzRmIT+IzQkjCgTS5b93uAxiER9BS7+d1l7+zD00VanClt6CTBM4K4n6RCnAykg==}
     engines: {node: '>= 20.19.4'}
+    peerDependencies:
+      '@babel/core': '*'
 
   '@react-native/codegen@0.77.3':
     resolution: {integrity: sha512-Q6ZJCE7h6Z3v3DiEZUnqzHbgwF3ZILN+ACTx6qu/x2X1cL96AatKwdX92e0+7J9RFg6gdoFYJgRrW8Q6VnWZsQ==}
@@ -45444,7 +45446,7 @@ snapshots:
       react: 19.1.4
     optionalDependencies:
       '@ledgerhq/lumen-design-core': 0.1.30
-      '@ledgerhq/lumen-ui-react': 0.1.61(37bac6de22e6d88d84a129ef2061f97c)
+      '@ledgerhq/lumen-ui-react': 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
       '@ledgerhq/lumen-ui-rnative': 0.1.64(2a913cbbde5f2bcb62faa89a61ee3507)
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
@@ -45957,7 +45959,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.1.61(37bac6de22e6d88d84a129ef2061f97c)':
+  '@ledgerhq/lumen-ui-react@0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)':
     dependencies:
       '@base-ui/react': 1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-design-core': 0.1.30
@@ -46170,7 +46172,7 @@ snapshots:
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
 
-  '@mswjs/interceptors@0.38.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
+  '@mswjs/interceptors@0.38.3':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/logger': 0.3.0
@@ -48175,7 +48177,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native/babel-preset@0.81.6':
+  '@react-native/babel-preset@0.81.6(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-proposal-export-default-from': 7.25.9(@babel/core@7.28.5)
@@ -60091,9 +60093,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  nock@14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6):
+  nock@14.0.3:
     dependencies:
-      '@mswjs/interceptors': 0.38.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      '@mswjs/interceptors': 0.38.3
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
     transitivePeerDependencies:

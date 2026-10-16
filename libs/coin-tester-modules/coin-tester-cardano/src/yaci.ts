@@ -36,6 +36,10 @@ export async function spawnYaci(): Promise<void> {
     const { out: logs } = await compose
       .logs("yaci", { ...composeOpts(), commandOptions: ["--tail", "200"] })
       .catch(() => ({ out: "" }));
+    // Jest skips globalTeardown when globalSetup throws, so release the container here.
+    await killYaci().catch(cleanupError =>
+      console.warn(`Yaci DevKit cleanup failed: ${formatComposeError(cleanupError)}`),
+    );
     throw new Error(`Yaci DevKit did not become healthy: ${formatComposeError(error)}\n${logs}`);
   }
   console.log(chalk.bgBlueBright(" -  YACI DEVKIT READY ✅  - "));
