@@ -125,10 +125,10 @@ export const cryptoAssetsApi = calApi
               api.dispatch(hashChanged({ currencyId, at: Date.now() }));
             }
 
-            if (previousHash && newHash && previousHash !== newHash) {
+            if (referenceHash && newHash && referenceHash !== newHash) {
               extra.logger?.(
                 "cryptoassets",
-                `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
+                `Hash changed for currencyId ${currencyId}: ${referenceHash} -> ${newHash}, evicting token cache`,
               );
               api.dispatch(
                 cryptoAssetsApi.util.invalidateTags([tokenCurrencyTag(currencyId), tokenListTag()]),
