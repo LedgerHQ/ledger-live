@@ -10,6 +10,7 @@
 // Add the module here to enable it. Packages that do not conform yet go in ../exclusions.mjs.
 
 import fmt from "./fmt.mjs";
+import lint from "./lint.mjs";
 
 /**
  * @typedef {{ file: string, message: string }} Violation
@@ -18,4 +19,4 @@ import fmt from "./fmt.mjs";
  */
 
 /** @type {Rule[]} */
-export const RULES = [fmt];
+export const RULES = [fmt, lint];

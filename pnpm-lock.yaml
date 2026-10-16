@@ -761,6 +761,9 @@ importers:
       '@support/fmt':
         specifier: workspace:*
         version: link:support/fmt
+      '@support/lint':
+        specifier: workspace:*
+        version: link:support/lint
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -20077,8 +20080,11 @@ importers:
         specifier: 19.1.4
         version: 19.1.4
 
-  support/lint-rules:
+  support/lint:
     devDependencies:
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
