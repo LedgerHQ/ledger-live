@@ -213,6 +213,33 @@ describe("applyRatePatches keeps identity only for equal content", () => {
   });
 });
 
+describe.each([
+  [false, true],
+  [true, false],
+])("applyRatePatches when autofillGaps goes from %s to %s", (before, after) => {
+  it("rebuilds the cache entry of an unchanged pair, as a rebuild does", () => {
+    const state = steadyState(settingsFor(before));
+    const same = [{ [btcUsd]: history(state, btcUsd) }];
+
+    const kept = apply(state, same, settingsFor(after));
+    const rebuilt = rebuildEveryTouchedPair(state, nextOf(state), same, settingsFor(after));
+
+    expect(kept.data[btcUsd]).toBe(state.data[btcUsd]);
+    expect(cacheContent(kept)[btcUsd]).toEqual(cacheContent(rebuilt)[btcUsd]);
+    expect(conversions(kept)).toEqual(conversions(rebuilt));
+    // Control: the setting does change the entry, so keeping it would have been wrong.
+    expect(cacheContent(kept)[btcUsd]).not.toEqual(cacheContent(state)[btcUsd]);
+  });
+
+  it("control: keeps the entry when the setting stays the same", () => {
+    const state = steadyState(settingsFor(before));
+
+    const next = apply(state, [{ [btcUsd]: history(state, btcUsd) }], settingsFor(before));
+
+    expect(next.cache[btcUsd]).toBe(state.cache[btcUsd]);
+  });
+});
+
 describe("applyRatePatches: a changed value always yields a new Map", () => {
   const settings = settingsFor(true);
 

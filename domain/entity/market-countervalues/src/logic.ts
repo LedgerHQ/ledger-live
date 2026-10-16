@@ -255,10 +255,10 @@ export function calculateMany(
  * are skipped. `previous` supplies the cache stats to extend and the post-restore hole check.
  *
  * Copy-on-write: no argument is mutated. A pair a patch changes gets a new `Map` and cache entry;
- * a pair whose values all stay as they were keeps both, unless holes are checked, which rebuilds
- * its cache entry. When no pair changes, `data` and `cache` are `previous`'s own objects, so a
- * reader of the rates sees nothing new. The result can be stored in a frozen (immer) store and fed
- * back on the next load.
+ * a pair whose values all stay as they were keeps both, unless holes are checked or its cache entry
+ * was built with another `autofillGaps`, which rebuilds the entry. When no pair changes, `data` and
+ * `cache` are `previous`'s own objects, so a reader of the rates sees nothing new. The result can be
+ * stored in a frozen (immer) store and fed back on the next load.
  *
  * @param previous
  * The state the load started from.
@@ -304,7 +304,8 @@ export function applyRatePatches(
   const checkHolesOnNextLoad = previous.checkHolesOnNextLoad === true;
   for (const pair of touched) {
     const checkHoles = checkHolesOnNextLoad || !status[pair];
-    if (!changed.has(pair) && !checkHoles && cache[pair]) continue;
+    const kept = cache[pair];
+    if (!changed.has(pair) && !checkHoles && kept?.autofillGaps === settings.autofillGaps) continue;
     const previousStats = previous.cache[pair]?.stats;
     cache[pair] = generateCache(pair, data[pair], settings, checkHoles, previousStats);
   }
@@ -394,6 +395,7 @@ function generateCache(
     map,
     stats,
     fallback,
+    autofillGaps: settings.autofillGaps,
   };
 }
 
