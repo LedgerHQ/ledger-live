@@ -1,11 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import {
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressValueSchema,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameAddressDialog } from ".";
 import type { ContactsRenameAddressDrawerProps } from "./types";
 
@@ -49,29 +48,7 @@ function createViewModel(
       inputMethod: "manual",
     },
     isDeviceRequired: true,
-    labels: {
-      title: "Edit address",
-      inputLabel: "Address label",
-      applyChanges: "Apply changes",
-      labelValidationErrors: {
-        [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Address label is invalid.",
-        [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Address label is already in use.",
-        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "Address label is too long.",
-      },
-      addressValidation: {
-        addressPlaceholder: "Address",
-        validatingAddress: "Validating address",
-        validAddress: "Valid address",
-        invalidAddress: "Invalid address",
-        domainNotFound: "Domain not found",
-        sanctionedAddress: "Sanctioned address",
-        validationUnavailable: "Validation unavailable",
-        ensDisclaimer: "ENS addresses are supported.",
-        ensDisclaimerDescription: "ENS names can change over time.",
-        duplicateAddress: (contactName: string) =>
-          `This address is already used for ${contactName}.`,
-      },
-    },
+    supportsDomain: true,
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftLabelChange: jest.fn(),
@@ -94,6 +71,7 @@ describe("ContactsRenameAddressDrawer", () => {
           invalidLabelError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByTestId("contacts-rename-address-input")).toBeVisible();
@@ -112,6 +90,7 @@ describe("ContactsRenameAddressDrawer", () => {
           onConfirm,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     fireEvent.changeText(screen.getByTestId("contacts-rename-address-input"), "Treasury");
@@ -122,27 +101,34 @@ describe("ContactsRenameAddressDrawer", () => {
   });
 
   it("should not render its content while closed", () => {
-    render(<ContactsRenameAddressDialog {...createViewModel({ isOpen: false })} />);
+    render(<ContactsRenameAddressDialog {...createViewModel({ isOpen: false })} />, {
+      wrapper: I18nTestProvider,
+    });
 
-    expect(screen.queryByText("Edit address")).not.toBeOnTheScreen();
+    expect(screen.queryByText("contacts.editAddress.title")).not.toBeOnTheScreen();
   });
 
   it("should clear the on-screen navigation area below the form", () => {
     const { toJSON } = render(
       <ContactsRenameAddressDialog {...createViewModel({ bottomInset: 8 })} />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 32 } } });
   });
 
   it("should raise the keyboard on the address field when the host asks for focus", () => {
-    render(<ContactsRenameAddressDialog {...createViewModel({ autoFocus: true })} />);
+    render(<ContactsRenameAddressDialog {...createViewModel({ autoFocus: true })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(mockFocus).toHaveBeenCalledTimes(1);
   });
 
   it("should leave the field unfocused unless the host asks for focus", () => {
-    render(<ContactsRenameAddressDialog {...createViewModel()} />);
+    render(<ContactsRenameAddressDialog {...createViewModel()} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(mockFocus).not.toHaveBeenCalled();
   });
@@ -150,7 +136,9 @@ describe("ContactsRenameAddressDrawer", () => {
   // Without this the enclosing sheet never learns it raised the keyboard, and the sheet closing
   // behind it retracts it again.
   it("should register both fields with the enclosing sheet", () => {
-    render(<ContactsRenameAddressDialog {...createViewModel()} />);
+    render(<ContactsRenameAddressDialog {...createViewModel()} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(screen.getByTestId("contacts-edit-address-input")).toHaveProp("onFocus");
     expect(screen.getByTestId("contacts-rename-address-input")).toHaveProp("onFocus");

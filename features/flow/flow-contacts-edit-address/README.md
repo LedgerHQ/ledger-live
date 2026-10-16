@@ -18,4 +18,4 @@ Import `@features/flow-contacts-edit-address` from both platforms. The package e
 resolves the Web dialog or Native drawer from the consumer's platform configuration.
 
 `@features/platform-contacts` owns shared address-entry primitives and the address-edit port.
-Applications own their container placement, navigation, translations, and analytics.
+Applications own their container placement, navigation, and analytics. This package resolves its own copy with `@shared/i18n`.
