@@ -75,6 +75,7 @@ support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
 support/lint/                                            @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
+support/tsconfig/                                        @ledgerhq/platform
 
 # Wallet — libs
 libs/live-send/                                          @ledgerhq/wallet-xp
@@ -602,7 +603,6 @@ apps/ledger-live-mobile/e2e/                                                @led
 # codeowners-check: allow-override
 /oxfmt.config.mts                                     @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
-**/tsconfig*                                          @ledgerhq/platform
 **/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
@@ -610,6 +610,7 @@ mise.toml                                             @ledgerhq/platform
 /devtools/oxlint.config.mts                           @ledgerhq/platform
 /libs/oxlint.config.mts                               @ledgerhq/platform
 /support/oxlint.config.mts                            @ledgerhq/platform
+/tsconfig.base.json                                   @ledgerhq/platform
 
 # Platform — Agent files
 /.agents/                                      @ledgerhq/platform
