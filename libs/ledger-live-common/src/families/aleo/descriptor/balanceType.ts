@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { TRANSACTION_TYPE } from "../constants";
 import type { AleoUnspentRecord, Transaction as AleoTransaction } from "../types";
 import {
@@ -108,27 +108,45 @@ function buildSelectionPatch(optionId: string): TransactionPatch {
   return {};
 }
 
+function getSelfTransferAddress(
+  account: AccountLike,
+  parentAccount: Account | null | undefined,
+): string | null {
+  if (!isAleoAccount(account)) return null;
+
+  if (account.type === "Account") {
+    if (account.aleoResources?.privateBalance == null) return null;
+    return account.freshAddress || null;
+  }
+
+  if (account.privateBalance == null) return null;
+  if (!parentAccount || parentAccount.id !== account.parentId) return null;
+  return parentAccount.freshAddress || null;
+}
+
 function getSelfTransferTarget({
   account,
+  parentAccount,
   transaction,
 }: {
   account: AccountLike;
+  parentAccount?: Account | null;
   transaction: unknown;
 }): BalanceTypeSelfTransferTarget | null {
-  if (!isAleoAccount(account) || account.type !== "Account") return null;
   if (!isAleoFlowTransaction(transaction)) return null;
-  if (!account.freshAddress || account.aleoResources?.privateBalance == null) return null;
+  const address = getSelfTransferAddress(account, parentAccount);
+  if (!address) return null;
 
   if (resolveSource(transaction) === PUBLIC) {
     return {
-      address: account.freshAddress,
+      address,
       translationKey: "recipient.selfTransfer.toPrivate",
       isDestinationPublic: false,
     };
   }
 
   return {
-    address: account.freshAddress,
+    address,
     translationKey: "recipient.selfTransfer.toPublic",
     isDestinationPublic: true,
   };

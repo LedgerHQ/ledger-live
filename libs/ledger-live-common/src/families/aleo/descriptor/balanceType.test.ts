@@ -48,6 +48,7 @@ function tokenAccount({
   return {
     id: "aleo-token",
     type: "TokenAccount",
+    parentId: ALEO_ACCOUNT_1.id,
     token: { parentCurrencyId: "aleo" },
     transparentBalance: new BigNumber(7),
     privateBalance: privateBalance === null ? null : new BigNumber(privateBalance),
@@ -217,10 +218,40 @@ describe("aleo balance-type config", () => {
       ).toBeNull();
     });
 
-    it("has no target for a token account", () => {
+    it.each([
+      [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC, "recipient.selfTransfer.toPrivate", false],
+      [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, "recipient.selfTransfer.toPublic", true],
+    ])(
+      "targets the token's other balance at its parent's address from a %s spend",
+      (mode, translationKey, isDestinationPublic) => {
+        expect(
+          aleoBalanceTypeConfig.getSelfTransferTarget({
+            account: tokenAccount(),
+            parentAccount: account(),
+            transaction: transaction(mode, { subAccountId: "aleo-token" }),
+          }),
+        ).toEqual({ address: "aleo1self", translationKey, isDestinationPublic });
+      },
+    );
+
+    it("has no target until the token's private balance is synced", () => {
+      expect(
+        aleoBalanceTypeConfig.getSelfTransferTarget({
+          account: tokenAccount({ privateBalance: null }),
+          parentAccount: account(),
+          transaction: transaction(TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC),
+        }),
+      ).toBeNull();
+    });
+
+    it.each([
+      ["without its parent", undefined],
+      ["with another account as parent", { ...account(), id: "another-aleo-account" }],
+    ])("has no target for a token account %s", (_, parentAccount) => {
       expect(
         aleoBalanceTypeConfig.getSelfTransferTarget({
           account: tokenAccount(),
+          parentAccount,
           transaction: transaction(TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC),
         }),
       ).toBeNull();

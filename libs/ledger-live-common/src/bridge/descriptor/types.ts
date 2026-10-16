@@ -396,6 +396,8 @@ export type BalanceTypeConfig = Readonly<{
   /** Destination for a transfer to the account's other pool; `null` when it has none. */
   getSelfTransferTarget: (params: {
     account: AccountLike;
+    /** Parent of a token `account`, which holds the address its pools share. */
+    parentAccount?: Account | null;
     transaction: unknown;
   }) => BalanceTypeSelfTransferTarget | null;
   /**

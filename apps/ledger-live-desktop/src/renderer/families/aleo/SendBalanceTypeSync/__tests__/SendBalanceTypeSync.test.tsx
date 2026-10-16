@@ -87,9 +87,12 @@ describe("SendBalanceTypeSync", () => {
     renderSync(privateTransaction);
 
     expect(mockedUseAleoPrivateSync).toHaveBeenCalledWith(
-      expect.objectContaining({ account: ALEO_MAIN_ACCOUNT, autoStart: true }),
+      expect.objectContaining({
+        account: ALEO_MAIN_ACCOUNT,
+        autoStart: true,
+        keepAliveOnUnmount: true,
+      }),
     );
-    expect(mockedUseAleoPrivateSync.mock.calls[0][0].keepAliveOnUnmount).toBeFalsy();
     expect(screen.getByText("Refreshing your private balance")).toBeVisible();
     expect(screen.getByText("42%")).toBeVisible();
     expect(screen.queryByRole("button")).toBeNull();
@@ -106,6 +109,15 @@ describe("SendBalanceTypeSync", () => {
     expect(mockStart).toHaveBeenCalledTimes(1);
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnComplete).not.toHaveBeenCalled();
+  });
+
+  it("keeps the sync running without moving on once the flow is closed", () => {
+    const { unmount } = renderSync(privateTransaction);
+
+    unmount();
+    completeSync(withRecords([ONE_ALEO]));
+
     expect(mockOnComplete).not.toHaveBeenCalled();
   });
 
