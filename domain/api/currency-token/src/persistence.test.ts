@@ -67,6 +67,20 @@ describe("Token Persistence", () => {
       expect(parsePersistedCAL({ version: PERSISTENCE_VERSION - 1, tokens: [] })).toBeNull();
     });
 
+    it("returns null for a version 2 blob, which may hold TRC10 tokens without an identifier", () => {
+      const trc10Token = token({
+        ...mockToken,
+        id: "tron/trc10/1002000",
+        contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+        parentCurrencyId: "tron",
+        tokenType: "trc10",
+      });
+
+      expect(
+        parsePersistedCAL({ version: 2, tokens: [{ data: trc10Token, timestamp: Date.now() }] }),
+      ).toBeNull();
+    });
+
     it("returns null for a malformed token", () => {
       expect(
         parsePersistedCAL({
@@ -211,6 +225,115 @@ describe("Token Persistence", () => {
 
       expect(tokens).toHaveLength(1);
       expect(tokens[0].token_identifier).toBeUndefined();
+    });
+
+    it("should record the token_identifier of a findTokenByTokenIdentifierInCurrency lookup", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenByTokenIdentifierInCurrency({"network":"ethereum","token_identifier":"42"})':
+              {
+                status: "fulfilled",
+                data: mockToken,
+                endpointName: "findTokenByTokenIdentifierInCurrency",
+                originalArgs: { token_identifier: "42", network: mockToken.parentCurrencyId },
+                fulfilledTimeStamp: Date.now(),
+              },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      const tokens = extractTokensFromState(mockState);
+
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].token_identifier_lookup).toBe("42");
+      expect(tokens[0].token_identifier).toBeUndefined();
+    });
+
+    it("should keep the lookup arguments of every query that reached the same token", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenById({"id":"ethereum/erc20/usdt"})': {
+              status: "fulfilled",
+              data: mockToken,
+              endpointName: "findTokenById",
+              originalArgs: { id: mockToken.id },
+              fulfilledTimeStamp: 1000,
+            },
+            'findTokenByAddressInCurrency({"contract_address":"0xdac17f958d2ee523a2206206994597c13d831ec7","network":"ethereum","token_identifier":"MYTOKEN-abc123"})':
+              {
+                status: "fulfilled",
+                data: mockToken,
+                endpointName: "findTokenByAddressInCurrency",
+                originalArgs: {
+                  contract_address: mockToken.contractAddress,
+                  network: mockToken.parentCurrencyId,
+                  token_identifier: "MYTOKEN-abc123",
+                },
+                fulfilledTimeStamp: 2000,
+              },
+            'findTokenByTokenIdentifierInCurrency({"network":"ethereum","token_identifier":"42"})':
+              {
+                status: "fulfilled",
+                data: mockToken,
+                endpointName: "findTokenByTokenIdentifierInCurrency",
+                originalArgs: { token_identifier: "42", network: mockToken.parentCurrencyId },
+                fulfilledTimeStamp: 3000,
+              },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      expect(extractTokensFromState(mockState)).toEqual([
+        {
+          data: mockToken,
+          timestamp: 3000,
+          token_identifier: "MYTOKEN-abc123",
+          token_identifier_lookup: "42",
+        },
+      ]);
+    });
+
+    it("should keep the latest fetched body of a token reached through several queries", () => {
+      const staleToken = { ...mockToken, name: "Stale" };
+      const freshToken = { ...mockToken, tokenIdentifier: "42" };
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenById({"id":"ethereum/erc20/usdt"})': {
+              status: "fulfilled",
+              data: staleToken,
+              endpointName: "findTokenById",
+              originalArgs: { id: mockToken.id },
+              fulfilledTimeStamp: 1000,
+            },
+            'findTokenByTokenIdentifierInCurrency({"network":"ethereum","token_identifier":"42"})':
+              {
+                status: "fulfilled",
+                data: freshToken,
+                endpointName: "findTokenByTokenIdentifierInCurrency",
+                originalArgs: { token_identifier: "42", network: mockToken.parentCurrencyId },
+                fulfilledTimeStamp: 3000,
+              },
+            'findTokenByAddressInCurrency({"contract_address":"0xdac17f958d2ee523a2206206994597c13d831ec7","network":"ethereum"})':
+              {
+                status: "fulfilled",
+                data: staleToken,
+                endpointName: "findTokenByAddressInCurrency",
+                originalArgs: {
+                  contract_address: mockToken.contractAddress,
+                  network: mockToken.parentCurrencyId,
+                },
+                fulfilledTimeStamp: 2000,
+              },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      expect(extractTokensFromState(mockState)).toEqual([
+        { data: freshToken, timestamp: 3000, token_identifier_lookup: "42" },
+      ]);
     });
   });
 
@@ -558,6 +681,69 @@ describe("Token Persistence", () => {
         (addressEntry?.originalArgs as { token_identifier?: string } | undefined)?.token_identifier,
       ).toBeUndefined();
     });
+
+    it("should restore the latest body under every key so the next lookups hit the cache", async () => {
+      const trc10Token = token({
+        type: "TokenCurrency",
+        id: "tron/trc10/1002000",
+        contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+        parentCurrencyId: "tron",
+        tokenType: "trc10",
+        tokenIdentifier: "1002000",
+        name: "BitTorrent Old",
+        ticker: "BTTOLD",
+        units: [{ name: "BitTorrent Old", code: "BTTOLD", magnitude: 6 }],
+      });
+      const staleTrc10Token = { ...trc10Token, tokenIdentifier: undefined };
+      const sourceState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenById({"id":"tron/trc10/1002000"})': {
+              status: "fulfilled",
+              data: staleTrc10Token,
+              endpointName: "findTokenById",
+              originalArgs: { id: trc10Token.id },
+              fulfilledTimeStamp: Date.now() - 1000,
+            },
+            'findTokenByTokenIdentifierInCurrency({"network":"tron","token_identifier":"1002000"})':
+              {
+                status: "fulfilled",
+                data: trc10Token,
+                endpointName: "findTokenByTokenIdentifierInCurrency",
+                originalArgs: { token_identifier: "1002000", network: "tron" },
+                fulfilledTimeStamp: Date.now(),
+              },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+      const store = makeStore();
+      const fetchSpy = jest.spyOn(globalThis, "fetch");
+
+      try {
+        const persisted = parsePersistedCAL(
+          JSON.parse(JSON.stringify(extractPersistedCALFromState(sourceState))),
+        );
+        expect(persisted).not.toBeNull();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await restoreTokensToCache(store.dispatch as any, persisted!, ttl);
+
+        const byIdentifier = await store.dispatch(
+          cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
+            token_identifier: "1002000",
+            network: "tron",
+          }),
+        );
+        const byId = await store.dispatch(
+          cryptoAssetsApi.endpoints.findTokenById.initiate({ id: trc10Token.id }),
+        );
+
+        expect(byIdentifier.data).toEqual(trc10Token);
+        expect(byId.data).toEqual(trc10Token);
+        expect(fetchSpy).not.toHaveBeenCalled();
+      } finally {
+        fetchSpy.mockRestore();
+      }
+    });
   });
 
   describe("persistedCALContentEqual", () => {
@@ -640,6 +826,23 @@ describe("Token Persistence", () => {
         tokens: [{ data: changedToken, timestamp: 1000 }],
       };
       expect(persistedCALContentEqual(a, b)).toBe(false);
+    });
+
+    it("should return false when a lookup argument was gained", () => {
+      const a: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+      };
+      const withIdentifier: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000, token_identifier: "MYTOKEN-abc123" }],
+      };
+      const withLookup: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000, token_identifier_lookup: "42" }],
+      };
+      expect(persistedCALContentEqual(a, withIdentifier)).toBe(false);
+      expect(persistedCALContentEqual(a, withLookup)).toBe(false);
     });
   });
 });

@@ -13,7 +13,7 @@ export const HEADER_X_LEDGER_COMMIT = "X-Ledger-Commit";
 export const HEADER_X_LEDGER_NEXT = "x-ledger-next";
 
 /** Persisted-cache format version. Bump to invalidate older blobs (pinned via `z.literal`). */
-export const PERSISTENCE_VERSION = 2;
+export const PERSISTENCE_VERSION = 3;
 
 /** Matches an RTK Query `getTokensSyncHash` cache key, capturing the currency id. */
 export const SYNC_HASH_QUERY_KEY = /getTokensSyncHash\("([^"]+)"\)/;

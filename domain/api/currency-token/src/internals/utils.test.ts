@@ -9,6 +9,7 @@ import {
   transformTokensResponse,
   transformApiTokenToTokenCurrency,
   validateAndTransformSingleTokenResponse,
+  validateAndTransformTokenIdentifierResponse,
 } from "./utils";
 import { mockApiTokenResponse, mockTokenCurrency } from "../fixtures";
 
@@ -109,5 +110,38 @@ describe("validateAndTransformSingleTokenResponse", () => {
 
   it("should throw when the token structure is invalid", () => {
     expect(() => validateAndTransformSingleTokenResponse([{ invalid: "data" }])).toThrow();
+  });
+});
+
+describe("validateAndTransformTokenIdentifierResponse", () => {
+  const params = { token_identifier: "1002000", network: "tron" };
+
+  it("should validate and transform the only matching token", () => {
+    expect(validateAndTransformTokenIdentifierResponse([mockApiTokenResponse], params)).toEqual(
+      mockTokenCurrency,
+    );
+  });
+
+  it("should return undefined when nothing matches", () => {
+    expect(validateAndTransformTokenIdentifierResponse([], params)).toBeUndefined();
+    expect(validateAndTransformTokenIdentifierResponse(null, params)).toBeUndefined();
+    expect(validateAndTransformTokenIdentifierResponse(undefined, params)).toBeUndefined();
+  });
+
+  it("should throw rather than pick one when several tokens match", () => {
+    const other = { ...mockApiTokenResponse, id: "tron/trc10/other" };
+
+    expect(() =>
+      validateAndTransformTokenIdentifierResponse([mockApiTokenResponse, other], params),
+    ).toThrow(
+      `token_identifier "1002000" matches several tron tokens: ${mockApiTokenResponse.id}, tron/trc10/other`,
+    );
+    expect(convertApiToken).not.toHaveBeenCalled();
+  });
+
+  it("should throw when the token structure is invalid", () => {
+    expect(() =>
+      validateAndTransformTokenIdentifierResponse([{ invalid: "data" }], params),
+    ).toThrow();
   });
 });

@@ -9,6 +9,7 @@ describe("buildStandaloneCryptoAssetsStore", () => {
 
     expect(typeof store.findTokenById).toBe("function");
     expect(typeof store.findTokenByAddressInCurrency).toBe("function");
+    expect(typeof store.findTokenByTokenIdentifierInCurrency).toBe("function");
     expect(typeof store.getTokensSyncHash).toBe("function");
   });
 });

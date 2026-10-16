@@ -6,6 +6,7 @@ import {
   type PageParam,
   type TokenByAddressInCurrencyParams,
   type TokenByIdParams,
+  type TokenByTokenIdentifierInCurrencyParams,
   type TokensDataWithPagination,
 } from "./types";
 import {
@@ -18,6 +19,7 @@ import {
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
+  validateAndTransformTokenIdentifierResponse,
 } from "./internals";
 
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
@@ -64,6 +66,26 @@ export const cryptoAssetsApi = calApi
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,
+        providesTags: [...TOKEN_TAGS],
+      }),
+
+      findTokenByTokenIdentifierInCurrency: build.query<
+        TokenCurrency | undefined,
+        TokenByTokenIdentifierInCurrencyParams
+      >({
+        query: params => ({
+          url: "/v1/tokens",
+          params: {
+            token_identifier: params.token_identifier,
+            network: params.network,
+            // Two, not one: a second match means the identifier does not name a single token on
+            // this network, which the response transform reports instead of picking one.
+            limit: "2",
+            output: TOKEN_OUTPUT_FIELDS.join(","),
+          },
+        }),
+        transformResponse: (response, _meta, params) =>
+          validateAndTransformTokenIdentifierResponse(response, params),
         providesTags: [...TOKEN_TAGS],
       }),
 
@@ -157,6 +179,7 @@ export const {
   useGetTokensDataInfiniteQuery,
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
+  useFindTokenByTokenIdentifierInCurrencyQuery,
   useGetTokensSyncHashQuery,
 } = cryptoAssetsApi;
 
