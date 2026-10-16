@@ -50,11 +50,9 @@ const TOUCHSCREEN_DEVICE_CONFIG: LabelConfig = {
     default: DeviceLabels.CONFIRM,
   },
   delegateVerify: {
-    [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
     default: DeviceLabels.REVIEW_OPERATION,
   },
   delegateConfirm: {
-    [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
     default: DeviceLabels.HOLD_TO_SIGN,
   },
   sendVerify: {
@@ -85,7 +83,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     delegateVerify: {
       [AppInfos.COSMOS.name]: DeviceLabels.TYPE_DELEGATE,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
-      [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
       [AppInfos.SOLANA.name]: DeviceLabels.DELEGATE_FROM,
       [AppInfos.TEZOS.name]: DeviceLabels.REVIEW_OPERATION,
       [AppInfos.INJECTIVE.name]: DeviceLabels.CHAIN_ID,
@@ -95,7 +92,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     delegateConfirm: {
       [AppInfos.CELO.name]: DeviceLabels.ACCEPT,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
-      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
+      [AppInfos.NEAR.name]: DeviceLabels.SIGN_TRANSACTION,
       [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.SIGN,
       [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT_RISK,
@@ -158,7 +155,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     delegateVerify: {
       [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
-      [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
       [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION,
       [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,
@@ -169,7 +165,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.INJECTIVE.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
-      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
+      [AppInfos.NEAR.name]: DeviceLabels.SIGN_TRANSACTION,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.SOLANA.name]: DeviceLabels.SIGN,
       [AppInfos.SUI.name]: DeviceLabels.SIGN,
