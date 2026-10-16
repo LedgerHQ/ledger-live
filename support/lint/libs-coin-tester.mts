@@ -7,9 +7,8 @@ import base from "./libs.mts";
 // same set the config this replaced allowed.
 export default defineConfig({
   extends: [base],
-  // libs opts libs/ out of the categories, which suits the published tree. The coin testers
-  // never did: their config named no categories at all, so they ran on oxlint's correctness
-  // defaults, and folding them onto the libs preset unchanged would drop them from 83 rules to 33.
+  // The coin testers run the correctness rules as errors and the suspicious ones as warnings, as
+  // the layers with a full config do, rather than the correctness warnings of the libs preset.
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   overrides: [
     {

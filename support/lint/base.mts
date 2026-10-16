@@ -27,8 +27,6 @@ export default defineConfig({
     "import/no-named-as-default": "off",
     "typescript/no-deprecated": "error",
     "typescript/no-explicit-any": "warn",
-    "unicorn/no-useless-fallback-in-spread": "off",
-    "unicorn/no-useless-spread": "off",
 
     // React Compiler rules. They ship in `correctness`, they fire in the hundreds across the repo,
     // and no layer enforces them; every React-bearing config demotes the ones it has met.
@@ -55,8 +53,7 @@ export default defineConfig({
     "jest/require-to-throw-message": "warn",
     "jest/valid-title": "warn",
 
-    // jsx-a11y assumes the DOM. These two are the ones that misfire on React Native.
-    "jsx-a11y/anchor-is-valid": "off",
+    // jsx-a11y assumes the DOM. This one misfires on React Native.
     "jsx-a11y/no-autofocus": "off",
 
     // Named by three or more of the layers that have not migrated yet, at the value they agree on.
@@ -65,24 +62,28 @@ export default defineConfig({
     // that set it agree on the value, but none of the migrated layers ever had it and adopting it
     // here is 1485 new warnings. That is a policy call, not a consolidation, so it stays in the
     // leaves that already made it.
-    "jest/no-export": "off",
     "jest/no-standalone-expect": "warn",
     "jest/valid-describe-callback": "warn",
     "jest/valid-expect": "warn",
     "typescript/no-empty-function": "off",
     "typescript/no-namespace": ["error", { allowDeclarations: true }],
-    "unicorn/no-array-reverse": "off",
 
     // Demoted or disabled identically by every config that names them.
     "eslint/no-constant-binary-expression": "warn",
-    "eslint/no-unsafe-optional-chaining": "off",
     "eslint/no-unused-expressions": "warn",
     "eslint/no-useless-rename": "warn",
     "import/namespace": "warn",
     "oxc/const-comparisons": "warn",
     "typescript/no-non-null-assertion": "off",
-    "unicorn/no-new-array": "off",
     "unicorn/no-array-sort": "off",
+
+    // Some configs turned these off, others ran them at the value below. A preset never weakens
+    // what a package had, so they stay at the strongest value any of them had.
+    "jsx-a11y/anchor-is-valid": ["error", { components: [] }],
+    "unicorn/no-array-reverse": "warn",
+    "unicorn/no-new-array": "warn",
+    "unicorn/no-useless-fallback-in-spread": "warn",
+    "unicorn/no-useless-spread": "warn",
 
     // Declared so any layer can flip it on without naming a plugin path. Only devtools enforces it
     // today.
