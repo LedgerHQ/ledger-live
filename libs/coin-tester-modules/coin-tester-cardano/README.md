@@ -23,7 +23,7 @@ await executeScenario(scenarioCardano);
 
 ## Development
 
-Run the tests with `pnpm start`
+Run the tests with `pnpm start`. It needs a running Docker daemon: the Yaci DevKit devnet runs from `docker-compose.yml` (store on `:8080`, admin API on `:10000`).
 
 ## Dependencies
 
