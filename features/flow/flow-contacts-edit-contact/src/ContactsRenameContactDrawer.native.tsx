@@ -1,6 +1,7 @@
 import React from "react";
 import { ContactNameInput } from "@features/platform-contacts";
 import { Banner, BottomSheetHeader, BottomSheetView, Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useEditContactLabels } from "./copy/useEditContactLabels";
 import type { ContactsRenameContactDrawerProps } from "./types";
 
 export function ContactsRenameContactDrawer({
@@ -9,9 +10,9 @@ export function ContactsRenameContactDrawer({
   invalidNameError,
   autoFocus = false,
   bottomInset = 0,
-  labels,
   onDraftNameChange,
 }: ContactsRenameContactDrawerProps): React.JSX.Element {
+  const labels = useEditContactLabels();
   const nameValidationError =
     invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
 

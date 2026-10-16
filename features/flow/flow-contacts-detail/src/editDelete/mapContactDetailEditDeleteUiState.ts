@@ -22,7 +22,6 @@ export function createContactDetailEditDeleteUiState(
     rename: {
       ...renameViewModel,
       isDeviceRequired: flow.isSignerRequiredForEdit,
-      labels: labels.rename,
     },
     delete: {
       isOpen: flow.deleteLifecycle.status === "open",

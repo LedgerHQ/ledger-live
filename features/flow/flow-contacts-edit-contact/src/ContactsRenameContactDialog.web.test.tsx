@@ -1,9 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-} from "@domain/entity-contact";
+import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameContactDialog } from ".";
 import type { ContactsRenameContactDialogProps } from "./types";
 
@@ -17,17 +15,6 @@ function createViewModel(
     draftName: "",
     invalidNameError: null,
     isDeviceRequired: false,
-    labels: {
-      title: "Edit contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer: "Use a nickname or a first name and initial.",
-      applyChanges: "Apply changes",
-      confirmName: "Apply changes",
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
-      },
-    },
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftNameChange: jest.fn(),
@@ -45,6 +32,7 @@ describe("ContactsRenameContactDialog", () => {
           invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByTestId("contacts-rename-contact-name-input")).toHaveValue("Cédric");
@@ -62,6 +50,7 @@ describe("ContactsRenameContactDialog", () => {
           onDraftNameChange,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     fireEvent.change(screen.getByTestId("contacts-rename-contact-name-input"), {
