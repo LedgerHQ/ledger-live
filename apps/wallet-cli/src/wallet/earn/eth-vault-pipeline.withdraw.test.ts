@@ -5,11 +5,8 @@ import type { AccountDescriptor } from "../models";
 import type { CommandOutput } from "../../output";
 import type { WalletAdapter } from "../index";
 import type { DefiProduct, EthTxStatus } from "./api.types";
-import { activateEarnApiMock, deactivateEarnApiMock } from "./__test-helpers__/earn-api-mock";
-import {
-  activateSignBroadcastMock,
-  deactivateSignBroadcastMock,
-} from "./__test-helpers__/sign-and-broadcast-mock";
+import { earnApiMock } from "./__test-helpers__/earn-api-mock";
+import { signBroadcastMock } from "./__test-helpers__/sign-and-broadcast-mock";
 
 const PRODUCT: DefiProduct = {
   id: "usdc-vault",
@@ -35,7 +32,7 @@ beforeAll(() => {
   // withdrawEvm's chain guard reads chainId via getCurrencyConfiguration (LiveConfig); seed the real
   // wallet-cli config so it resolves deterministically when this file runs in isolation.
   LiveConfig.setConfig(walletCliConfig);
-  activateEarnApiMock({
+  earnApiMock.activate({
     getDefiProducts: async () => [PRODUCT],
     postDefiWithdraw: async (request: Record<string, unknown>) => {
       lastWithdrawRequest = request;
@@ -61,7 +58,7 @@ beforeAll(() => {
     },
     getEthTxStatus: async () => ({ data: { status: ethTxStatus } }),
   });
-  activateSignBroadcastMock({
+  signBroadcastMock.activate({
     signAndBroadcastIntent,
     prepareIntentDryRun: async () => ({}),
   });
@@ -92,8 +89,8 @@ afterEach(() => {
 afterAll(() => {
   // Release this file's fakes so they don't bleed into sibling test files when the whole directory runs
   // in one bun process.
-  deactivateEarnApiMock();
-  deactivateSignBroadcastMock();
+  earnApiMock.deactivate();
+  signBroadcastMock.deactivate();
 });
 
 describe("withdrawEvm", () => {

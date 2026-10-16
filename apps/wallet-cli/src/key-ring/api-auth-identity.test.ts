@@ -1,22 +1,19 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { APP_NAME } from "../session/session-store";
+import { InMemoryKeychain } from "../testing/in-memory-keychain";
 import {
-  _setTestApiAuthKeychain,
+  _resetApiAuthIdentity,
   apiAuthKeychainAccount,
   loadApiAuthIdentity,
-  type ApiAuthKeychain,
 } from "./api-auth-identity";
 import { pubkeyFromPrivatekey } from "./crypto";
+import { _setTestKeychain } from "./keychain-entry";
 
 const origStateHome = process.env.XDG_STATE_HOME;
-let entries: Map<string, string>;
+let keychain: InMemoryKeychain;
 
-function mapKeychain(): ApiAuthKeychain {
-  return {
-    getPassword: account => entries.get(account) ?? null,
-    setPassword: (account, value) => {
-      entries.set(account, value);
-    },
-  };
+function storedKey(): string | undefined {
+  return keychain.entries.get(`${APP_NAME}:${apiAuthKeychainAccount()}`);
 }
 
 function useProfile(name: string): void {
@@ -24,13 +21,14 @@ function useProfile(name: string): void {
 }
 
 beforeEach(() => {
-  entries = new Map();
-  _setTestApiAuthKeychain(mapKeychain());
+  keychain = new InMemoryKeychain();
+  _setTestKeychain(keychain.open);
+  _resetApiAuthIdentity();
   useProfile("a");
 });
 
 afterEach(() => {
-  _setTestApiAuthKeychain(null);
+  _setTestKeychain(null);
   if (origStateHome === undefined) delete process.env.XDG_STATE_HOME;
   else process.env.XDG_STATE_HOME = origStateHome;
 });
@@ -44,17 +42,17 @@ describe("loadApiAuthIdentity", () => {
     const { memberCredentials } = loadApiAuthIdentity();
 
     expect(apiAuthKeychainAccount()).toStartWith("api-auth-key-");
-    expect(entries.get(apiAuthKeychainAccount())).toBe(memberCredentials.privatekey);
+    expect(storedKey()).toBe(memberCredentials.privatekey);
     expect(memberCredentials.pubkey).toBe(pubkeyFromPrivatekey(memberCredentials.privatekey));
   });
 
   it("reuses the stored key on later runs", () => {
     const first = loadApiAuthIdentity().memberCredentials;
-    _setTestApiAuthKeychain(mapKeychain());
+    _resetApiAuthIdentity();
     const second = loadApiAuthIdentity().memberCredentials;
 
     expect(second).toEqual(first);
-    expect(entries.size).toBe(1);
+    expect(keychain.entries.size).toBe(1);
   });
 
   it("keeps a separate key per profile", () => {
@@ -63,42 +61,29 @@ describe("loadApiAuthIdentity", () => {
     const keyB = loadApiAuthIdentity().memberCredentials;
 
     expect(keyB.privatekey).not.toBe(keyA.privatekey);
-    expect(entries.size).toBe(2);
+    expect(keychain.entries.size).toBe(2);
   });
 
   it("replaces a corrupt entry with a fresh key", () => {
-    entries.set(apiAuthKeychainAccount(), "not-hex");
+    keychain.entries.set(`${APP_NAME}:${apiAuthKeychainAccount()}`, "not-hex");
 
     const { memberCredentials } = loadApiAuthIdentity();
 
     expect(memberCredentials.privatekey).not.toBe("not-hex");
-    expect(entries.get(apiAuthKeychainAccount())).toBe(memberCredentials.privatekey);
+    expect(storedKey()).toBe(memberCredentials.privatekey);
   });
 
   it("falls back to a one-off key when the keychain cannot be read", () => {
-    let writes = 0;
-    _setTestApiAuthKeychain({
-      getPassword: () => {
-        throw new Error("no secret service");
-      },
-      setPassword: () => {
-        writes++;
-      },
-    });
+    keychain.readError = new Error("no secret service");
 
     const { memberCredentials } = loadApiAuthIdentity();
 
     expect(memberCredentials.pubkey).toBe(pubkeyFromPrivatekey(memberCredentials.privatekey));
-    expect(writes).toBe(0);
+    expect(keychain.entries.size).toBe(0);
   });
 
   it("keeps the one-off key for the rest of the run", () => {
-    _setTestApiAuthKeychain({
-      getPassword: () => {
-        throw new Error("no secret service");
-      },
-      setPassword: () => {},
-    });
+    keychain.readError = new Error("no secret service");
 
     const first = loadApiAuthIdentity().memberCredentials;
     const second = loadApiAuthIdentity().memberCredentials;
@@ -107,12 +92,7 @@ describe("loadApiAuthIdentity", () => {
   });
 
   it("still returns the new key when the keychain cannot store it", () => {
-    _setTestApiAuthKeychain({
-      getPassword: () => null,
-      setPassword: () => {
-        throw new Error("keychain locked");
-      },
-    });
+    keychain.writeError = new Error("keychain locked");
 
     const { memberCredentials } = loadApiAuthIdentity();
 

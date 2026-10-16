@@ -41,6 +41,16 @@ export function writeStderr(message: string): void {
 
 let activeSpinner: Spinner | null = null;
 
+type CreateSpinner = (text: string) => Spinner;
+
+const createYoctoSpinner: CreateSpinner = text => yoctoSpinner({ text, stream: process.stderr });
+let createSpinner = createYoctoSpinner;
+
+/** @internal Test seam — creates spinners that draw nothing; `null` restores yocto-spinner. */
+export function _setTestSpinner(create: CreateSpinner | null): void {
+  createSpinner = create ?? createYoctoSpinner;
+}
+
 export function isAgentEnvironment(): boolean {
   return detectAgent().detected;
 }
@@ -105,7 +115,7 @@ export function spinner(text: string): Spinner {
   if (activeSpinner?.isSpinning) {
     activeSpinner.stop();
   }
-  activeSpinner = yoctoSpinner({ text, stream: process.stderr }).start();
+  activeSpinner = createSpinner(text).start();
   return activeSpinner;
 }
 

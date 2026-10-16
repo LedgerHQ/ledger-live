@@ -1,30 +1,18 @@
-import { Entry } from "@napi-rs/keyring";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { initMemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { APP_NAME } from "../session/session-store";
 import { walletCliDebug } from "../shared/log";
 import { pubkeyFromPrivatekey } from "./crypto";
 import { profileKeychainAccount } from "./keychain";
-
-export type ApiAuthKeychain = {
-  getPassword(account: string): string | null;
-  setPassword(account: string, value: string): void;
-};
-
-const osKeychain: ApiAuthKeychain = {
-  getPassword: account => new Entry(APP_NAME, account).getPassword(),
-  setPassword: (account, value) => new Entry(APP_NAME, account).setPassword(value),
-};
+import { openKeychainEntry } from "./keychain-entry";
 
 type ApiAuthIdentity = { trustchain: null; memberCredentials: MemberCredentials };
 
-let keychain = osKeychain;
 // Loaded once per run, so re-authenticating after a 401 signs with the same key, even a one-off one.
 let cachedIdentity: { account: string; identity: ApiAuthIdentity } | undefined;
 
-/** @internal Test seam — keeps tests off the OS keychain and starts a new run; `null` restores it. */
-export function _setTestApiAuthKeychain(k: ApiAuthKeychain | null): void {
-  keychain = k ?? osKeychain;
+/** @internal Test seam — starts a new run: the next call reads the keychain again. */
+export function _resetApiAuthIdentity(): void {
   cachedIdentity = undefined;
 }
 
@@ -51,7 +39,7 @@ export function loadApiAuthIdentity(): ApiAuthIdentity {
 function getOrCreateApiAuthCredentials(account: string): MemberCredentials {
   let stored: string | null;
   try {
-    stored = keychain.getPassword(account);
+    stored = openKeychainEntry(APP_NAME, account).getPassword();
   } catch (error) {
     // No usable keychain (e.g. headless Linux without a secret service): a one-off key still
     // authenticates this run.
@@ -64,7 +52,7 @@ function getOrCreateApiAuthCredentials(account: string): MemberCredentials {
 
   const created = initMemberCredentials();
   try {
-    keychain.setPassword(account, created.privatekey);
+    openKeychainEntry(APP_NAME, account).setPassword(created.privatekey);
   } catch (error) {
     walletCliDebug("api auth: failed to store the key in the OS keychain", error);
   }

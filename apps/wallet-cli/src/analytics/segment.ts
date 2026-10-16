@@ -1,4 +1,4 @@
-import { Analytics } from "@segment/analytics-node";
+import { Analytics, type IdentifyParams, type TrackParams } from "@segment/analytics-node";
 import os from "node:os";
 import { closeAndFlush, setAnalytics, setEnabledFn } from "@shared/analytics";
 import pkg from "../../package.json" with { type: "json" };
@@ -20,6 +20,15 @@ const extraProperties = () => ({
   osVersion,
 });
 
+/** The part of the Segment client wallet-cli uses; it ignores what identify and track return. */
+type SegmentClient = {
+  identify(params: IdentifyParams): void;
+  track(params: TrackParams): void;
+  closeAndFlush(): Promise<void>;
+};
+
+const createSegmentClient = (writeKey: string): SegmentClient => new Analytics({ writeKey });
+
 let client: unknown | null = null;
 
 const unregisterAnalytics = (): void => {
@@ -28,11 +37,12 @@ const unregisterAnalytics = (): void => {
   setEnabledFn(undefined);
 };
 
-export const startAnalytics = (): void => {
+/** `createClient` lets tests record what reaches Segment instead of sending it. */
+export const startAnalytics = (createClient = createSegmentClient): void => {
   if (client) return;
 
   try {
-    const segmentClient = new Analytics({ writeKey: WALLET_CLI_WRITE_KEY });
+    const segmentClient = createClient(WALLET_CLI_WRITE_KEY);
     client = segmentClient;
     setEnabledFn(() => true);
     setAnalytics({

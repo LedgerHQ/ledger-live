@@ -1,21 +1,22 @@
-import { describe, it, expect, beforeAll, afterAll, mock } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import type { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
 import { YAML } from "bun";
-import type { ApiAuthKeychain } from "../../key-ring/api-auth-identity";
+import { deriveWrappingKey } from "../../key-ring/crypto";
+import { loadMemberCredentials, savePrivateKey } from "../../key-ring/keychain";
+import { _setTestKeychain } from "../../key-ring/keychain-entry";
+import { _setTestLkrpSdk } from "../../key-ring/lkrp-sdk";
+import { loadDomainKey, loadKeyRing } from "../../key-ring/load-key-ring";
 import { APP_NAME } from "../../session/session-store";
-import {
-  runCli,
-  storedApiAuthPubkey,
-  useApiAuthKeychain,
-  type RunResult,
-} from "../../testing/cli-runner";
+import { runCli, storedApiAuthPubkey, type RunResult } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
+import { InMemoryKeychain } from "../../testing/in-memory-keychain";
 
 function runCliWithStdin(
   args: string[],
@@ -32,32 +33,18 @@ function runCliWithStdin(
   });
 }
 
-// Mock OS keychain so tests never touch macOS Keychain / libsecret.
-// Must be installed before any runCli() call that triggers a keychain import.
-const _store = new Map<string, string>();
-function installKeychainMock(): void {
-  mock.module("@napi-rs/keyring", () => ({
-    Entry: class {
-      #k: string;
-      constructor(svc: string, acc: string) {
-        this.#k = `${svc}:${acc}`;
-      }
-      setPassword(v: string) {
-        _store.set(this.#k, v);
-      }
-      getPassword() {
-        return _store.get(this.#k) ?? null;
-      }
-      deletePassword() {
-        _store.delete(this.#k);
-      }
-    },
-  }));
+// Fake OS keychain so tests never touch macOS Keychain / libsecret.
+const keychain = new InMemoryKeychain();
+const _store = keychain.entries;
+beforeAll(() => _setTestKeychain(keychain.open));
+afterAll(() => _setTestKeychain(null));
+// A test that fakes LKRP SDK methods hands the next one back the real (WALLET_CLI_MOCK) SDK.
+afterEach(() => _setTestLkrpSdk(null));
+
+/** Makes the commands' LKRP SDK one with only `methods`, for the rest of the test. */
+function useLkrpSdk(methods: Partial<TrustchainSDK>): void {
+  _setTestLkrpSdk(() => methods as TrustchainSDK);
 }
-installKeychainMock();
-// Final cleanup after the whole file, so neither the keychain mock nor any per-test module mock
-// leaks into other test files sharing this process.
-afterAll(() => mock.restore());
 
 const MOCK_ENV = { WALLET_CLI_MOCK: "1" };
 const MOCK_ENV_DMK = { ...MOCK_ENV, WALLET_CLI_MOCK_DMK: "1" };
@@ -100,7 +87,8 @@ describe("ring — happy path", () => {
   let encFile: string;
   let decFile: string;
 
-  beforeAll(async () => {
+  // Every test starts from a freshly initialized ring, so none depends on another having run first.
+  beforeEach(async () => {
     _store.clear();
     ({ dir, env } = makeTmpDir());
     plainFile = join(dir, "plain.txt");
@@ -115,7 +103,15 @@ describe("ring — happy path", () => {
     expect(initResult.exitCode, `init failed: ${initResult.stderr}`).toBe(0);
   });
 
-  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  async function encryptPlainFile(): Promise<void> {
+    const r = await runCli(
+      ["ring", "encrypt", "--key", "prod", "--input", plainFile, "--out", encFile],
+      env,
+    );
+    expect(r.exitCode, r.stderr).toBe(0);
+  }
 
   it("init outputs member name and root id", () => {
     expect(initResult.stdout).toContain("test-member");
@@ -142,20 +138,18 @@ describe("ring — happy path", () => {
   });
 
   it("encrypt writes ciphertext to file", async () => {
-    const r = await runCli(
-      ["ring", "encrypt", "--key", "prod", "--input", plainFile, "--out", encFile],
-      env,
-    );
-    expect(r.exitCode, r.stderr).toBe(0);
+    await encryptPlainFile();
     const ct = await Bun.file(encFile).arrayBuffer();
     expect(ct.byteLength).toBeGreaterThan("hello key ring".length);
   });
 
-  it("encrypt writes the output file with 0600 permissions", () => {
+  it("encrypt writes the output file with 0600 permissions", async () => {
+    await encryptPlainFile();
     expect(statSync(encFile).mode & 0o777).toBe(0o600);
   });
 
   it("keys shows key after encrypt", async () => {
+    await encryptPlainFile();
     const r = await runCli(["ring", "keys"], env);
     expect(r.exitCode, r.stderr).toBe(0);
     expect(r.stdout).toContain("prod");
@@ -184,6 +178,7 @@ describe("ring — happy path", () => {
   });
 
   it("decrypt round-trips plaintext from file", async () => {
+    await encryptPlainFile();
     const r = await runCli(
       ["ring", "decrypt", "--key", "prod", "--input", encFile, "--out", decFile],
       env,
@@ -193,6 +188,7 @@ describe("ring — happy path", () => {
   });
 
   it("decrypt --output json reports dest", async () => {
+    await encryptPlainFile();
     const r = await runCli(
       [
         "ring",
@@ -214,6 +210,7 @@ describe("ring — happy path", () => {
   });
 
   it("decrypt with wrong key name fails", async () => {
+    await encryptPlainFile();
     const r = await runCli(
       ["ring", "decrypt", "--key", "wrong", "--input", encFile, "--out", decFile],
       env,
@@ -227,6 +224,8 @@ describe("ring — happy path", () => {
   });
 
   it("keys exits 1 after destroy", async () => {
+    const destroy = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
+    expect(destroy.exitCode, destroy.stderr).toBe(0);
     const r = await runCli(["ring", "keys"], env);
     expect(r.exitCode).toBe(1);
   });
@@ -235,27 +234,34 @@ describe("ring — happy path", () => {
 describe("ring — with password", () => {
   let dir: string;
   let env: Record<string, string>;
+  let initResult: RunResult;
   let plainFile: string;
   let encFile: string;
 
-  beforeAll(async () => {
+  // Every test starts from a freshly initialized ring, so none depends on another having run first.
+  beforeEach(async () => {
     _store.clear();
     ({ dir, env } = makeTmpDir());
     plainFile = join(dir, "plain.txt");
     encFile = join(dir, "test.enc");
     await Bun.write(plainFile, "hello password");
-  });
 
-  afterAll(() => rmSync(dir, { recursive: true, force: true }));
-
-  it("init stores password-wrapped key", async () => {
-    const r = await runCli(["ring", "init", "--name", "pw-member"], {
+    initResult = await runCli(["ring", "init", "--name", "pw-member"], {
       ...env,
       ...MOCK_ENV_DMK,
       WALLET_PASS: "testpw",
     });
-    expect(r.exitCode, r.stderr).toBe(0);
-    expect(r.stdout).toContain("pw-member");
+    expect(initResult.exitCode, `init failed: ${initResult.stderr}`).toBe(0);
+  });
+
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  async function destroyWith(password: string): Promise<RunResult> {
+    return runCliWithStdin(["ring", "destroy"], { ...env, WALLET_PASS: password }, ["destroy"]);
+  }
+
+  it("init stores password-wrapped key", () => {
+    expect(initResult.stdout).toContain("pw-member");
   });
 
   it("init rejects empty password", async () => {
@@ -317,9 +323,7 @@ describe("ring — with password", () => {
   });
 
   it("destroy with wrong password aborts without wiping the ring", async () => {
-    const r = await runCliWithStdin(["ring", "destroy"], { ...env, WALLET_PASS: "wrongpw" }, [
-      "destroy",
-    ]);
+    const r = await destroyWith("wrongpw");
     expect(r.exitCode).toBe(1);
     // `ring keys` still succeeds → the ring was not wiped.
     const keys = await runCli(["ring", "keys"], env);
@@ -328,20 +332,20 @@ describe("ring — with password", () => {
 
   it("destroy with an empty WALLET_PASS aborts without wiping the ring", async () => {
     // Empty WALLET_PASS is a mistake (failed substitution), not a skip.
-    const r = await runCliWithStdin(["ring", "destroy"], { ...env, WALLET_PASS: "" }, ["destroy"]);
+    const r = await destroyWith("");
     expect(r.exitCode).toBe(1);
     const keys = await runCli(["ring", "keys"], env);
     expect(keys.exitCode, keys.stderr).toBe(0);
   });
 
   it("destroy with correct password fully destroys the ring", async () => {
-    const r = await runCliWithStdin(["ring", "destroy"], { ...env, WALLET_PASS: "testpw" }, [
-      "destroy",
-    ]);
+    const r = await destroyWith("testpw");
     expect(r.exitCode, r.stderr).toBe(0);
   });
 
   it("keys exits 1 after destroy", async () => {
+    const destroy = await destroyWith("testpw");
+    expect(destroy.exitCode, destroy.stderr).toBe(0);
     const r = await runCli(["ring", "keys"], env);
     expect(r.exitCode).toBe(1);
   });
@@ -351,17 +355,10 @@ describe("ring — the API auth key stays separate from a password-protected rin
   const { server, runQuoteAndGetAuthSignature } = makeAuthenticatedQuoteServer();
   const accounts = [{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }];
   const fixture = makeSessionDir(accounts);
-  // Same mocked keychain as the ring key, so a teardown that deleted the API auth key would show.
-  const sharedKeychain: ApiAuthKeychain = {
-    getPassword: account => _store.get(`${APP_NAME}:${account}`) ?? null,
-    setPassword: (account, value) => {
-      _store.set(`${APP_NAME}:${account}`, value);
-    },
-  };
-
+  // The API auth key lives in this file's fake keychain next to the ring key, so a teardown that
+  // deleted it would show.
   beforeAll(async () => {
     _store.clear();
-    useApiAuthKeychain(sharedKeychain);
     server.start();
     const init = await runCli(["ring", "init", "--name", "auth-member"], {
       ...fixture.env,
@@ -372,7 +369,6 @@ describe("ring — the API auth key stays separate from a password-protected rin
   });
 
   afterAll(() => {
-    useApiAuthKeychain(null);
     server.stop();
     fixture.cleanup();
   });
@@ -421,11 +417,6 @@ describe("ring — uninitialized with a stray password-protected key", () => {
   // Asserted at unit level because Bunli prints a plain Error to the real stderr, which runCli's
   // output capture does not observe.
   it("throws 'not initialized' rather than a password error", async () => {
-    // Dynamic import: static imports hoist above the mock.module() call above and defeat the mock.
-    const { savePrivateKey } = await import("../../key-ring/keychain");
-    const { deriveWrappingKey } = await import("../../key-ring/crypto");
-    const { loadKeyRing } = await import("../../key-ring/load-key-ring");
-
     const saved = process.env.XDG_STATE_HOME;
     process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
     try {
@@ -448,7 +439,6 @@ describe("ring init — orphan guard", () => {
   afterAll(cleanup);
 
   it("refuses to init over a stray keychain key when the session has no trustchain", async () => {
-    const { savePrivateKey } = await import("../../key-ring/keychain");
     const saved = process.env.XDG_STATE_HOME;
     process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
     try {
@@ -476,8 +466,6 @@ describe("ring — CRLF-stored keychain entry", () => {
 
   // Regression guard for a bare split("\n"), which left a trailing \r on the private-key line.
   it("loadMemberCredentials strips \\r from a CRLF-joined entry", async () => {
-    const { savePrivateKey, loadMemberCredentials } = await import("../../key-ring/keychain");
-
     const saved = process.env.XDG_STATE_HOME;
     process.env.XDG_STATE_HOME = dir;
     try {
@@ -514,8 +502,6 @@ describe("ring — password-protected keychain entry decode errors", () => {
   }
 
   it("reports corruption (not a wrong password) for a non-hex ENC payload", async () => {
-    const { savePrivateKey, loadMemberCredentials } = await import("../../key-ring/keychain");
-    const { deriveWrappingKey } = await import("../../key-ring/crypto");
     await withStateDir(async () => {
       _store.clear();
       const wrappingKey = await deriveWrappingKey("pw", "0".repeat(32));
@@ -528,8 +514,6 @@ describe("ring — password-protected keychain entry decode errors", () => {
   });
 
   it("reports a wrong password when the ENC payload is valid hex but does not decrypt", async () => {
-    const { savePrivateKey, loadMemberCredentials } = await import("../../key-ring/keychain");
-    const { deriveWrappingKey } = await import("../../key-ring/crypto");
     await withStateDir(async () => {
       _store.clear();
       const stored = await deriveWrappingKey("right", "0".repeat(32));
@@ -547,7 +531,6 @@ describe("ring destroy — stray key with no trustchain (local-only recovery)", 
 
   it("wipes the stray local key and unblocks a fresh init", async () => {
     _store.clear();
-    const { savePrivateKey } = await import("../../key-ring/keychain");
     const saved = process.env.XDG_STATE_HOME;
     process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
     try {
@@ -644,13 +627,7 @@ describe("ring destroy — corrupt keychain entry with a trustchain (local-wipe 
 
 describe("ring destroy — transient remote failure keeps the local key", () => {
   const { env, cleanup } = makeTmpDir();
-  afterAll(() => {
-    // Undo this block's lkrp-sdk module mock. mock.restore() is all-or-nothing, so it also drops the
-    // file-wide keychain mock — re-install it so the suite doesn't depend on this block running last.
-    mock.restore();
-    installKeychainMock();
-    cleanup();
-  });
+  afterAll(cleanup);
 
   it("aborts with exit 1 and leaves the keychain key intact", async () => {
     _store.clear();
@@ -663,13 +640,11 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
     expect(before).toHaveLength(1);
 
     // Simulate a transient remote failure: destroyApplication throws a non-ejected error.
-    mock.module("../../key-ring/lkrp-sdk", () => ({
-      createLkrpSdk: () => ({
-        destroyApplication: async () => {
-          throw new Error("network down");
-        },
-      }),
-    }));
+    useLkrpSdk({
+      destroyApplication: async () => {
+        throw new Error("network down");
+      },
+    });
 
     const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
     expect(r.exitCode).toBe(1);
@@ -677,10 +652,8 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
   });
 });
 
-// The runner shares one in-process module graph across tests (see cli-runner.ts), and an lkrp-sdk
-// `mock.module` from an earlier block stays registered here — so a real `ring init` would use the
-// mocked SDK and fail. We therefore seed the initialized ring state (session + keychain) directly
-// and mock only the SDK method under test.
+// Seeds the initialized ring state (session + keychain) without `ring init`, so a test fakes only
+// the LKRP SDK method under test.
 async function seedInitializedRing(dir: string): Promise<void> {
   const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
   mkdirSync(dirname(sessionPath), { recursive: true });
@@ -693,7 +666,6 @@ async function seedInitializedRing(dir: string): Promise<void> {
   );
   // savePrivateKey hashes the account name from XDG_STATE_HOME, so pin it to this temp dir (matching
   // the env passed to runCli) before saving.
-  const { savePrivateKey } = await import("../../key-ring/keychain");
   const saved = process.env.XDG_STATE_HOME;
   process.env.XDG_STATE_HOME = dir;
   try {
@@ -706,13 +678,7 @@ async function seedInitializedRing(dir: string): Promise<void> {
 
 describe("ring destroy — ejected member wipes locally", () => {
   const { dir, env, cleanup } = makeTmpDir();
-  afterAll(() => {
-    // See the transient-failure block: mock.restore() is all-or-nothing, so re-install the file-wide
-    // keychain mock afterwards.
-    mock.restore();
-    installKeychainMock();
-    cleanup();
-  });
+  afterAll(cleanup);
 
   it("treats TrustchainEjected as remote-already-gone and wipes the key (exit 0)", async () => {
     _store.clear();
@@ -723,13 +689,11 @@ describe("ring destroy — ejected member wipes locally", () => {
     // TrustchainEjected means this member is no longer on the ring (removed by another owner, or the
     // trustchain was destroyed remotely): the remote is gone for us, so destroy should proceed to the
     // local wipe rather than abort.
-    mock.module("../../key-ring/lkrp-sdk", () => ({
-      createLkrpSdk: () => ({
-        destroyApplication: async () => {
-          throw new TrustchainEjected("not a member of trustchain");
-        },
-      }),
-    }));
+    useLkrpSdk({
+      destroyApplication: async () => {
+        throw new TrustchainEjected("not a member of trustchain");
+      },
+    });
 
     const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
     expect(r.exitCode, r.stderr).toBe(0);
@@ -740,11 +704,7 @@ describe("ring destroy — ejected member wipes locally", () => {
 
 describe("ring encrypt/decrypt — closed application stream gives reactivation guidance", () => {
   const { dir, env, cleanup } = makeTmpDir();
-  afterAll(() => {
-    mock.restore();
-    installKeychainMock();
-    cleanup();
-  });
+  afterAll(cleanup);
 
   // Asserted at unit level (like the "stray password-protected key" block above): Bunli prints the
   // command Error to the real stderr, which runCli's output capture does not observe.
@@ -753,15 +713,11 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
     await seedInitializedRing(dir);
 
     // The application was deactivated on the ring elsewhere: restoreTrustchain rejects a closed stream.
-    mock.module("../../key-ring/lkrp-sdk", () => ({
-      createLkrpSdk: () => ({
-        restoreTrustchain: async () => {
-          throw new TrustchainEjected("application stream is closed");
-        },
-      }),
-    }));
-    // Dynamic import so the mock above is in effect (a static import would hoist above it).
-    const { loadDomainKey } = await import("../../key-ring/load-key-ring");
+    useLkrpSdk({
+      restoreTrustchain: async () => {
+        throw new TrustchainEjected("application stream is closed");
+      },
+    });
 
     const saved = process.env.XDG_STATE_HOME;
     process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
@@ -795,28 +751,24 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
     // Positive control: with an open stream, the exact same command succeeds and writes ciphertext.
     // This pins the failure below to the ejection — Bunli prints the command Error to the real stderr
     // (not captured by runCli), so exit code + file side effect are all we can observe at CLI level.
-    mock.module("../../key-ring/lkrp-sdk", () => ({
-      createLkrpSdk: () => ({
-        restoreTrustchain: async () => ({
-          rootId: "seed-root",
-          applicationPath: "m/0'/17'/0'", // matches the seed → no rotation warning
-          walletSyncEncryptionKey: "00".repeat(32),
-        }),
+    useLkrpSdk({
+      restoreTrustchain: async () => ({
+        rootId: "seed-root",
+        applicationPath: "m/0'/17'/0'", // matches the seed → no rotation warning
+        walletSyncEncryptionKey: "00".repeat(32),
       }),
-    }));
+    });
     const ok = await runCli(encryptArgs, env);
     expect(ok.exitCode, ok.stderr).toBe(0);
     expect(existsSync(outFile)).toBe(true);
 
     // Now the stream is ejected: the same command must fail and must NOT leave ciphertext behind.
     rmSync(outFile, { force: true });
-    mock.module("../../key-ring/lkrp-sdk", () => ({
-      createLkrpSdk: () => ({
-        restoreTrustchain: async () => {
-          throw new TrustchainEjected("application stream is closed");
-        },
-      }),
-    }));
+    useLkrpSdk({
+      restoreTrustchain: async () => {
+        throw new TrustchainEjected("application stream is closed");
+      },
+    });
     const r = await runCli(encryptArgs, env);
     expect(r.exitCode).toBe(1);
     expect(existsSync(outFile)).toBe(false); // aborted before writing ciphertext
@@ -825,11 +777,7 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
 
 describe("ring destroy — non-destructive deactivation keeps the ring but wipes locally", () => {
   const { dir, env, cleanup } = makeTmpDir();
-  afterAll(() => {
-    mock.restore();
-    installKeychainMock();
-    cleanup();
-  });
+  afterAll(cleanup);
 
   it("reports the app was deactivated (kept for other apps), wipes locally, and unblocks re-init", async () => {
     _store.clear();
@@ -837,11 +785,9 @@ describe("ring destroy — non-destructive deactivation keeps the ring but wipes
 
     // Non-destructive close: destroyApplication closes only the wallet-cli stream (the trustchain is
     // kept for other applications), so trustchainDestroyed is false.
-    mock.module("../../key-ring/lkrp-sdk", () => ({
-      createLkrpSdk: () => ({
-        destroyApplication: async () => ({ trustchainDestroyed: false }),
-      }),
-    }));
+    useLkrpSdk({
+      destroyApplication: async () => ({ trustchainDestroyed: false }),
+    });
     const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
     expect(r.exitCode, r.stderr).toBe(0);
     expect([..._store.values()]).toHaveLength(0); // local credentials still wiped
