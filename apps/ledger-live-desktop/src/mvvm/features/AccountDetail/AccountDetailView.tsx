@@ -2,6 +2,7 @@ import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { AccountDetailLayout } from "@features/flow-account-detail";
 import { Header } from "./components/Header";
+import { Transactions } from "./components/Transactions";
 
 type Props = Readonly<{ account: Account }>;
 
@@ -20,12 +21,7 @@ export function AccountDetailView({ account }: Props) {
         assets={
           <section className="rounded-md bg-success p-48" data-testid="account-detail-assets" />
         }
-        transactions={
-          <section
-            className="rounded-md bg-active p-48"
-            data-testid="account-detail-transactions"
-          />
-        }
+        transactions={<Transactions account={account} />}
       />
     </div>
   );
