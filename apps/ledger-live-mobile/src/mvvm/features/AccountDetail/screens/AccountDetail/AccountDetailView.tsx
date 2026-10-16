@@ -5,6 +5,7 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { AccountDetailLayout } from "@features/flow-account-detail";
 import { TrackScreen } from "@shared/analytics-react";
+import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
 import type { Account } from "@ledgerhq/types-live";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../testIds";
 import { Transactions } from "./components/Transactions";
@@ -24,7 +25,7 @@ export function AccountDetailView({ account }: Props) {
       <ScrollView
         testID={ACCOUNT_DETAIL_TEST_IDS.scrollView}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: bottom }}
+        contentContainerStyle={{ paddingBottom: GRADIENT_HEIGHT + bottom }}
       >
         <Box lx={contentStyle}>
           <AccountDetailLayout
@@ -35,6 +36,7 @@ export function AccountDetailView({ account }: Props) {
           />
         </Box>
       </ScrollView>
+      <BottomFadeGradient />
     </Box>
   );
 }

@@ -94,6 +94,7 @@ describe("AccountDetail entry", () => {
 
     expect(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
+    expect(screen.getByTestId("bottom-fade-gradient")).toBeOnTheScreen();
     expect(screen.queryByTestId("legacy-account-screen")).toBeNull();
   });
 
