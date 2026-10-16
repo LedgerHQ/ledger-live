@@ -173,8 +173,6 @@ describe("generic-coin-framework Tezos token", () => {
         type: "fa2",
         assetReference: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o:0",
         assetOwner: "tz1owner",
-        name: "Tether USD",
-        unit: { name: "Tether USD", code: "USDt", magnitude: 6 },
       });
     });
 
@@ -199,8 +197,6 @@ describe("generic-coin-framework Tezos token", () => {
         type: "fa2",
         assetReference: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ:17",
         assetOwner: "tz1owner",
-        name: "Wrapped USDC",
-        unit: { name: "Wrapped USDC", code: "wUSDC", magnitude: 6 },
       });
     });
 
