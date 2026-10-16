@@ -68,6 +68,6 @@
     "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "@support/jest": "workspace:*"
   }
 }

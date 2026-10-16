@@ -1,6 +1,6 @@
 const UI_FOLDERS = ["/PasswordField/", "/passwordDraft/"];
 
-const nativeProject = require("@support/jest-features-flow")
+const nativeProject = require("@support/jest/features-flow")
   .createFlowJestConfig()
   .projects.find(project => project.displayName === "native");
 

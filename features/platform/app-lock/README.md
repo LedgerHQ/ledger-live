@@ -81,7 +81,7 @@ Exported from `index.native.ts` only, so the default entry stays free of UI:
   picks it to the step that confirms it in a ref, deliberately not in navigation state, which is
   serialisable and gets persisted.
 
-Their tests run in the React Native project of `@support/jest-features-flow`
+Their tests run in the React Native project of `@support/jest/features-flow`
 (`*.native.test.tsx`); the rest of the package keeps its plain Node project (`*.test.ts`).
 
 ## Validation

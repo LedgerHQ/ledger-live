@@ -43,7 +43,7 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
