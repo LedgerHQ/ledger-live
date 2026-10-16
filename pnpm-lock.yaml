@@ -629,6 +629,8 @@ catalogs:
       version: 4.4.3
 
 overrides:
+  '@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos': workspace:^
+  '@mysten/ledgerjs-hw-app-sui>@ledgerhq/ledger-cal-service': workspace:^
   react: 19.1.4
   react-dom: 19.1.4
   '@types/react': 19.0.14
@@ -16607,9 +16609,15 @@ importers:
         specifier: 'catalog:'
         version: 7.7.3
     devDependencies:
+      '@ledgerhq/hw-bolos':
+        specifier: workspace:^
+        version: link:../hw-bolos
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.0
+      '@ledgerhq/ledger-cal-service':
+        specifier: workspace:^
+        version: link:../../../ledger-services/cal
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -24199,9 +24207,6 @@ packages:
   '@ledgerhq/evm-tools@2.0.0':
     resolution: {integrity: sha512-wkZQxYduOFNwnNloZQ35Dk8oKBVQ1ajNX09wazEVeLxzfWTDMvZwWWtaKK0WUdX53/OX4l2wr/5vaNCJs+IYow==}
 
-  '@ledgerhq/hw-bolos@6.35.1':
-    resolution: {integrity: sha512-+osQFmZAKv1JOMZPiYU3G8wgW/JqxA0HCe/Y/O+b72TyH0SOyiXybdyIc1//We6AUyrJ2CiG8cev3vPYfjsjwQ==}
-
   '@ledgerhq/hw-ledger-key-ring-protocol@1.0.0':
     resolution: {integrity: sha512-iEeKLKMIzKDQ/BhActeUSB/jmzMuMShrCQ3wpxo2tXLW90uV4VLswQlgNkf5SRfFowxRXhcBDIaZg6aiXaI7BQ==}
 
@@ -24226,9 +24231,6 @@ packages:
       react-native:
         optional: true
 
-  '@ledgerhq/ledger-cal-service@1.15.1':
-    resolution: {integrity: sha512-fmg5kHzIdm1xcWpquWwf86o9QID4rtBItvD7ztSCUpAyCs4cRaOeu6/jV3pEAdjt14BFDIKSQBFZtQ9hCFAvCQ==}
-
   '@ledgerhq/ledger-key-ring-protocol@1.0.0':
     resolution: {integrity: sha512-4N+AZvvsljNytjFq+3/eMW0SqYg0zw+xUx1NXVuEqIPM9zcEmvBqELQpt5+EhXMnSFZj317MifStreYMCKU+Cg==}
 
@@ -24241,22 +24243,13 @@ packages:
   '@ledgerhq/live-currency-format@0.16.0':
     resolution: {integrity: sha512-OTgVRCn5ELkRQ5Audjmyknweydy0BSFceZJx0P9imVbxNn3NWY7uLL1akYIWus8pvwr4kv+bO03g95vicA6ojQ==}
 
-  '@ledgerhq/live-env@2.31.0':
-    resolution: {integrity: sha512-Hl5ldGa7lT7bKkNHruFepKhEWvb0hvjvQ1cXBbR7yp9I7EPceDXQt/uySOyaY41caWX0x27TUQIz3PVEv67HJA==}
-
   '@ledgerhq/live-env@4.1.0':
     resolution: {integrity: sha512-PhmQNymmw5M7jM/Uj4B1ghrVxA+x4tE20GYUJFEoCIBHHVS8Z5cKCulJqcJ5Nj/yI8BOxbRRuZW88OpbyBQ0Bw==}
-
-  '@ledgerhq/live-network@2.4.3':
-    resolution: {integrity: sha512-o55Mas7QvjqlwFVX5CL8DVl199i8gTn6j9Ljj+2nPetrsKtIrf2mz6leiUAgB5opWU4VyZpxKn65hXv5VD0b0Q==}
 
   '@ledgerhq/live-network@3.2.0':
     resolution: {integrity: sha512-50s8mkrU1PYcYVMihXPWYLWGAV6bZGMJWkjlDdm06rM4X4BRC4XV5iSuFPUDZr43eFQJ4EOc3yZVxzLKLipo6A==}
     peerDependencies:
       axios: 1.20.0
-
-  '@ledgerhq/live-promise@0.2.2':
-    resolution: {integrity: sha512-1ve8lWgXxhvWgAQ8Z+Ka6WhCVk7IZV997x2YXAblo24XB/8Rn6dqTxMosdZ+vqcPeb5wMwmbcJVi2PMOPRpRTw==}
 
   '@ledgerhq/live-promise@0.4.0':
     resolution: {integrity: sha512-5upP/IcQXT55u+onctpnGdWl2pNt354DMt6SpLwTCnbH1OULtQwBBx+raqel4WLySejWw3r0ItdxQrtcJbEfzg==}
@@ -30035,9 +30028,6 @@ packages:
     resolution: {integrity: sha512-aR99oXhpEDGo0UuAlYcn2iGRds30k366Zfa05XWScR9QaQD4JYiP3/1Qt1u7YlefUOK+cn0CcwoL1oefavQUlQ==}
     peerDependencies:
       axios: 0.x || 1.x
-
-  axios@1.13.2:
-    resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
 
   axios@1.16.0:
     resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
@@ -36374,9 +36364,6 @@ packages:
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
     engines: {node: '>= 0.10'}
-
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
   proxy-from-env@2.1.0:
     resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
@@ -45747,10 +45734,6 @@ snapshots:
       - debug
       - supports-color
 
-  '@ledgerhq/hw-bolos@6.35.1':
-    dependencies:
-      '@ledgerhq/hw-transport': 6.36.0
-
   '@ledgerhq/hw-ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)':
     dependencies:
       '@ledgerhq/hw-transport': 6.36.0
@@ -45783,13 +45766,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  '@ledgerhq/ledger-cal-service@1.15.1':
-    dependencies:
-      '@ledgerhq/live-env': 2.31.0
-      '@ledgerhq/live-network': 2.4.3
-    transitivePeerDependencies:
-      - debug
 
   '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
@@ -45858,23 +45834,7 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
 
-  '@ledgerhq/live-env@2.31.0':
-    dependencies:
-      rxjs: 7.8.2
-      utility-types: 3.11.0
-
   '@ledgerhq/live-env@4.1.0': {}
-
-  '@ledgerhq/live-network@2.4.3':
-    dependencies:
-      '@ledgerhq/errors': 6.37.0
-      '@ledgerhq/live-env': 2.31.0
-      '@ledgerhq/live-promise': 0.2.2
-      '@ledgerhq/logs': 6.19.0
-      axios: 1.13.2
-      lru-cache: 7.18.3
-    transitivePeerDependencies:
-      - debug
 
   '@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3))':
     dependencies:
@@ -45889,10 +45849,6 @@ snapshots:
       '@ledgerhq/logs': 6.19.0
       axios: 1.20.0
       lru-cache: 7.18.3
-
-  '@ledgerhq/live-promise@0.2.2':
-    dependencies:
-      '@ledgerhq/logs': 6.19.0
 
   '@ledgerhq/live-promise@0.4.0':
     dependencies:
@@ -46201,13 +46157,11 @@ snapshots:
     dependencies:
       '@ledgerhq/devices': 8.18.0
       '@ledgerhq/errors': 6.37.0
-      '@ledgerhq/hw-bolos': 6.35.1
+      '@ledgerhq/hw-bolos': link:libs/ledgerjs/packages/hw-bolos
       '@ledgerhq/hw-transport': 6.36.0
-      '@ledgerhq/ledger-cal-service': 1.15.1
+      '@ledgerhq/ledger-cal-service': link:libs/ledger-services/cal
       fast-sha256: 1.3.0
       semver: 7.8.1
-    transitivePeerDependencies:
-      - debug
 
   '@mysten/signers@1.0.1(@mysten/sui@2.23.1(@typescript/typescript6@6.0.2))':
     dependencies:
@@ -52983,14 +52937,6 @@ snapshots:
     dependencies:
       axios: 1.16.0
       is-retry-allowed: 2.2.0
-
-  axios@1.13.2:
-    dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
-      form-data: 4.0.6
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
 
   axios@1.16.0:
     dependencies:
@@ -61260,8 +61206,6 @@ snapshots:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
-
-  proxy-from-env@1.1.0: {}
 
   proxy-from-env@2.1.0: {}
 
