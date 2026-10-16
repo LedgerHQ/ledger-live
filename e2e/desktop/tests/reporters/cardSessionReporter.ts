@@ -20,7 +20,11 @@ class CardSessionReporter implements Reporter {
       const result = spawnSync(
         "pnpm",
         ["--silent", "--filter", "@ledgerhq/baanx-test-client", "token", "--session"],
-        { encoding: "utf8", stdio: ["ignore", "pipe", "inherit"] },
+        {
+          encoding: "utf8",
+          stdio: ["ignore", "pipe", "inherit"],
+          shell: process.platform === "win32",
+        },
       );
       const session = result.stdout?.trim() ?? "";
       if (result.status !== 0 || session.length === 0) {
