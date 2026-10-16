@@ -1,6 +1,6 @@
-import type { ThunkDispatch } from "@reduxjs/toolkit";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { cryptoAssetsApi } from "../api";
+import type { CalTokenCacheDispatch } from "../persistence";
 import type { PersistedTokenEntry } from "../types";
 
 // Package-private cache-restoration helpers for `restoreTokensToCache`. Imported directly by
@@ -25,32 +25,35 @@ export function groupTokensByCurrency(
 
 /**
  * For each currency that has a stored hash, fetches the current server hash and returns the set of
- * currencies whose hash changed (or whose fetch failed) — those must not be restored from cache.
- * Currencies without a stored hash are never evicted.
+ * currencies whose hash changed. A failed hash check restores persisted tokens; only a confirmed
+ * hash change skips them. Currencies without a stored hash are never evicted.
  */
 export async function resolveCurrenciesToEvict(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<any, any, any>,
+  dispatch: CalTokenCacheDispatch,
   tokensByCurrency: Map<string, PersistedTokenEntry[]>,
   hashes: Record<string, string>,
 ): Promise<Set<string>> {
-  const toEvict = new Set<string>();
-  for (const currencyId of tokensByCurrency.keys()) {
-    const storedHash = hashes[currencyId];
-    if (!storedHash) continue;
+  const currencyIds = await Promise.all(
+    [...tokensByCurrency.keys()].map(async currencyId => {
+      const storedHash = hashes[currencyId];
+      if (!storedHash) return null;
 
-    try {
-      const { data: currentHash } = await dispatch(
-        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: false }),
-      );
-      if (currentHash && currentHash !== storedHash) {
-        toEvict.add(currencyId);
+      try {
+        const result = await dispatch(
+          cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, {
+            forceRefetch: false,
+          }),
+        );
+        const currentHash = result?.data;
+        if (result?.error || !currentHash || currentHash === storedHash) return null;
+        return currencyId;
+      } catch {
+        return null;
       }
-    } catch {
-      toEvict.add(currencyId);
-    }
-  }
-  return toEvict;
+    }),
+  );
+
+  return new Set(currencyIds.filter(currencyId => currencyId !== null));
 }
 
 type RestoreCacheEntry =

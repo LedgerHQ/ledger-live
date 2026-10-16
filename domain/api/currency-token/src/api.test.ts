@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { delay, http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 
 jest.mock("./converter", () => ({
   convertApiToken: jest.fn(),
@@ -206,6 +208,70 @@ describe("cryptoAssetsApi requests", () => {
     const url = String(fetchSpy.mock.calls[0][0]);
     expect(url).toContain("https://cal.test/v1/currencies");
     expect(url).toContain("id=ethereum");
+  });
+
+  it("should abort the sync-hash fetch after 30 seconds when AbortSignal.timeout is unavailable", async () => {
+    const timeoutDescriptor = Object.getOwnPropertyDescriptor(AbortSignal, "timeout");
+    Reflect.deleteProperty(AbortSignal, "timeout");
+
+    let markRequestHung: () => void = () => undefined;
+    const requestHung = new Promise<void>(resolve => {
+      markRequestHung = resolve;
+    });
+    const server = setupServer(
+      http.get("https://cal.test/v1/currencies", async () => {
+        markRequestHung();
+        await delay("infinite");
+        return HttpResponse.json([{ id: "ethereum" }]);
+      }),
+    );
+    server.listen({ onUnhandledRequest: "error" });
+
+    const originalSetTimeout = globalThis.setTimeout.bind(globalThis);
+    const originalClearTimeout = globalThis.clearTimeout.bind(globalThis);
+    let abortFetch: (() => void) | undefined;
+    const forwardedTimers: number[] = [];
+    const setTimeoutSpy = jest.spyOn(globalThis, "setTimeout").mockImplementation(((
+      handler: TimerHandler,
+      timeout?: number,
+      ...args: unknown[]
+    ) => {
+      if (timeout === 30_000 && typeof handler === "function") {
+        abortFetch = () => handler(...args);
+        return 0 as unknown as ReturnType<typeof setTimeout>;
+      }
+      const timer = originalSetTimeout(handler, timeout, ...args);
+      forwardedTimers.push(timer);
+      return timer;
+    }) as typeof setTimeout);
+
+    const store = makeStore();
+
+    try {
+      const pending = store.dispatch(
+        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"),
+      );
+      await requestHung;
+
+      expect(AbortSignal.timeout).toBeUndefined();
+      expect(abortFetch).toEqual(expect.any(Function));
+
+      const started = Date.now();
+      abortFetch?.();
+      const result = await pending;
+
+      expect(Date.now() - started).toBeLessThan(1_000);
+      expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
+    } finally {
+      setTimeoutSpy.mockRestore();
+      for (const timer of forwardedTimers) {
+        originalClearTimeout(timer);
+      }
+      server.close();
+      if (timeoutDescriptor) {
+        Object.defineProperty(AbortSignal, "timeout", timeoutDescriptor);
+      }
+    }
   });
 
   it("getTokensSyncHash preserves a path prefix in the base URL (Gravitee /cal prefix)", async () => {

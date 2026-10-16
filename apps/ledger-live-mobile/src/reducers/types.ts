@@ -33,6 +33,10 @@ import type { TrackingPair } from "@domain/entity-market-countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
+import {
+  SYNC_HASH_BASELINE_REDUCER_PATH,
+  type syncHashBaselineReducer,
+} from "@domain/api-currency-token";
 import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
 import type { ContactsState } from "@domain/entity-contact";
 import type { AccountDataState } from "@domain/entity-account-data";
@@ -451,6 +455,7 @@ export type DeeplinkInstallAppState = {
 // === ROOT STATE ===
 
 export type State = LLMRTKApiState & {
+  [SYNC_HASH_BASELINE_REDUCER_PATH]: ReturnType<typeof syncHashBaselineReducer>;
   accounts: AccountsState;
   appstate: AppState;
   auth: AuthState;

@@ -27,6 +27,11 @@ import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
+import {
+  SYNC_HASH_BASELINE_REDUCER_PATH,
+  syncHashBaselineReducer,
+} from "@domain/api-currency-token";
+
 import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
@@ -77,6 +82,7 @@ import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverr
 import knownDevices, { KnownDevicesState } from "./knownDevices";
 
 export type State = LLDRTKApiState & {
+  [SYNC_HASH_BASELINE_REDUCER_PATH]: ReturnType<typeof syncHashBaselineReducer>;
   accountAliases: AccountAliasState;
   accounts: AccountsState;
   application: ApplicationState;
@@ -171,6 +177,7 @@ const appReducer = combineReducers({
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,
   ...lldRTKApiReducers,
+  [SYNC_HASH_BASELINE_REDUCER_PATH]: syncHashBaselineReducer,
   ...(getEnv("PLAYWRIGHT_RUN") && {
     lastAction: (_: unknown, action: PayloadAction) => action,
   }),

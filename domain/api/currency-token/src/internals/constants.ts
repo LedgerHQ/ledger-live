@@ -1,13 +1,24 @@
 // Package-private: nothing under `internals/` is re-exported from the public barrel (`../index.ts`).
 
-/** RTK Query cache tags for CAL token data. */
-export const TOKEN_TAGS = ["Tokens"] as const;
+/** RTK Query cache tag types for CAL token data. */
+export const TOKEN_TAGS = ["Tokens", "TokenList"] as const;
+
+export function tokenCurrencyTag(currencyId: string) {
+  return { type: TOKEN_TAGS[0], id: currencyId };
+}
+
+export function tokenListTag() {
+  return { type: TOKEN_TAGS[1], id: "LIST" };
+}
 
 /** Default page size for the paginated `getTokensData` query. */
 export const DEFAULT_PAGE_SIZE = 1000;
 
 /** Response header holding the CAL commit hash, used for token-cache invalidation. */
 export const HEADER_X_LEDGER_COMMIT = "X-Ledger-Commit";
+
+/** Abort a CAL sync-hash request that has not completed within this time. */
+export const TOKENS_SYNC_HASH_TIMEOUT_MS = 30_000;
 
 /** Response header carrying the pagination cursor for the next page. */
 export const HEADER_X_LEDGER_NEXT = "x-ledger-next";

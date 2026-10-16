@@ -16,9 +16,13 @@ import {
   fetchError,
   HEADER_X_LEDGER_COMMIT,
   TOKEN_TAGS,
+  TOKENS_SYNC_HASH_TIMEOUT_MS,
+  tokenCurrencyTag,
+  tokenListTag,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
+import { hashChanged, selectSyncHashBaseline } from "./internals/syncHashBaseline";
 
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
 
@@ -44,7 +48,7 @@ export const cryptoAssetsApi = calApi
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,
-        providesTags: [...TOKEN_TAGS],
+        providesTags: (_result, _error, arg) => [tokenCurrencyTag(arg.id.split("/")[0] || arg.id)],
       }),
 
       findTokenByAddressInCurrency: build.query<
@@ -64,12 +68,14 @@ export const cryptoAssetsApi = calApi
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,
-        providesTags: [...TOKEN_TAGS],
+        providesTags: (_result, _error, arg) => [tokenCurrencyTag(arg.network)],
       }),
 
       getTokensSyncHash: build.query<string, string>({
         async queryFn(currencyId, queryApi) {
           const extra = getCalExtra(queryApi);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), TOKENS_SYNC_HASH_TIMEOUT_MS);
           try {
             const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
             url.searchParams.set("output", "id");
@@ -81,6 +87,7 @@ export const cryptoAssetsApi = calApi
                 "Content-Type": "application/json",
                 [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
               },
+              signal: controller.signal,
             });
 
             if (!response.ok) {
@@ -102,6 +109,8 @@ export const cryptoAssetsApi = calApi
             return { data: hash };
           } catch (error) {
             return fetchError(error);
+          } finally {
+            clearTimeout(timeoutId);
           }
         },
         async onQueryStarted(currencyId, api) {
@@ -109,13 +118,21 @@ export const cryptoAssetsApi = calApi
           try {
             const previousHash = api.getCacheEntry()?.data as string | undefined;
             const { data: newHash } = await api.queryFulfilled;
+            const referenceHash =
+              previousHash ?? selectSyncHashBaseline(api.getState())[currencyId];
 
-            if (previousHash && newHash && previousHash !== newHash) {
+            if (referenceHash && newHash && referenceHash !== newHash) {
+              api.dispatch(hashChanged({ currencyId, at: Date.now() }));
+            }
+
+            if (referenceHash && newHash && referenceHash !== newHash) {
               extra.logger?.(
                 "cryptoassets",
-                `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
+                `Hash changed for currencyId ${currencyId}: ${referenceHash} -> ${newHash}, evicting token cache`,
               );
-              api.dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
+              api.dispatch(
+                cryptoAssetsApi.util.invalidateTags([tokenCurrencyTag(currencyId), tokenListTag()]),
+              );
             }
           } catch {
             // Query failed, skip eviction
@@ -140,7 +157,7 @@ export const cryptoAssetsApi = calApi
             params,
           };
         },
-        providesTags: [...TOKEN_TAGS],
+        providesTags: [tokenListTag()],
         transformResponse: transformTokensResponse,
         infiniteQueryOptions: {
           initialPageParam: {
