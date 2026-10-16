@@ -7,6 +7,8 @@ The account **identity**: the branded id every `@domain/entity-account-*` packag
 
 ## Responsibility
 
+These legacy ids live in `src/legacy/`: a compatibility layer for the migration, while new code identifies an account by its `AccountDescriptor` and `AccountUUID`.
+
 - `AccountId` — a top-level account's id. Must not contain `+`.
 - `TokenAccountId` — `<parentAccountId>+<encodedTokenId>`, exactly one `+`.
 - `AnyAccountId` / `AnyAccountIdSchema` — either kind, for the many places that hold both.
