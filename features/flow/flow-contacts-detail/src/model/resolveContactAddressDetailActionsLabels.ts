@@ -3,12 +3,10 @@ import {
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
-import type { ContactsDeleteAddressDialogLabels } from "@features/flow-contacts-delete-address";
 import type { ContactsRenameAddressLabels } from "@features/flow-contacts-edit-address";
 import { resolveContactEditSignerActionLabels } from "./resolveContactEditSignerActionLabels";
 
 export type ContactAddressDetailActionsLabels = Readonly<{
-  delete: ContactsDeleteAddressDialogLabels;
   rename: ContactsRenameAddressLabels;
 }> &
   ReturnType<typeof resolveContactEditSignerActionLabels>;
@@ -25,12 +23,6 @@ export function resolveContactAddressDetailActionsLabels({
   supportsDomain,
 }: ResolveContactAddressDetailActionsLabelsOptions): ContactAddressDetailActionsLabels {
   return {
-    delete: {
-      title: t("contacts.deleteAddress.title"),
-      description: t("contacts.deleteAddress.description"),
-      confirm: t("contacts.deleteAddress.confirm"),
-      cancel: t("contacts.deleteAddress.cancel"),
-    },
     rename: {
       title: t("contacts.editAddress.title"),
       inputLabel: t("contacts.editAddress.inputLabel"),
