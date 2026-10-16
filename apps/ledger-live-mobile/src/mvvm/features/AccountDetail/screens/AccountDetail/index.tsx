@@ -24,6 +24,8 @@ export default function AccountDetail() {
     onOpenSettings,
     isSettingsOpen,
     onCloseSettings,
+    onSettingsHidden,
+    onChangeName,
     onViewAdvancedLogs,
     onConfirmRemove,
   } = useAccountDetailViewModel();
@@ -58,9 +60,10 @@ export default function AccountDetail() {
         isOpen={isSettingsOpen}
         accountName={accountName}
         onClose={onCloseSettings}
-        onChangeName={onCloseSettings}
+        onChangeName={onChangeName}
         onViewAdvancedLogs={onViewAdvancedLogs}
         onConfirmRemove={onConfirmRemove}
+        onHidden={onSettingsHidden}
         testID={ACCOUNT_DETAIL_TEST_IDS.settingsSheet}
       />
     </>
