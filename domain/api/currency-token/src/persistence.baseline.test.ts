@@ -88,6 +88,24 @@ function save(store: ReturnType<typeof makeStore>): PersistedCAL {
   return extractPersistedCALFromState(store.getState() as WithCryptoAssetsApi);
 }
 
+function fulfilledTokenCurrencies(store: ReturnType<typeof makeStore>): string[] {
+  const cached = new Set<string>();
+  for (const query of Object.values(store.getState()[cryptoAssetsApi.reducerPath].queries ?? {})) {
+    if (
+      query?.status === "fulfilled" &&
+      (query.endpointName === "findTokenById" ||
+        query.endpointName === "findTokenByAddressInCurrency") &&
+      query.data &&
+      typeof query.data === "object" &&
+      "parentCurrencyId" in query.data &&
+      typeof query.data.parentCurrencyId === "string"
+    ) {
+      cached.add(query.data.parentCurrencyId);
+    }
+  }
+  return [...cached].sort();
+}
+
 const tick = () => new Promise(resolve => setTimeout(resolve, 50));
 
 describe("restore → save → restart", () => {
@@ -173,6 +191,33 @@ describe("restore → save → restart", () => {
     expect(saved.hashes?.ethereum).toBe("new-hash");
   });
 
+  it("should refresh the token list when a currency hash changes and keep the other currency", async () => {
+    behaviors.ethereum = "changed";
+    behaviors.polygon = "fail";
+    let tokenListRequests = 0;
+    server.use(
+      http.get("https://cal.test/v1/tokens", () => {
+        tokenListRequests += 1;
+        return HttpResponse.json([mockApiTokenResponse]);
+      }),
+    );
+    const store = makeStore();
+    const list = store.dispatch(cryptoAssetsApi.endpoints.getTokensData.initiate({}));
+    await list;
+    expect(tokenListRequests).toBe(1);
+
+    await restoreTokensToCache(store.dispatch, persisted, TTL);
+    for (let attempt = 0; attempt < 20 && tokenListRequests < 2; attempt += 1) {
+      await tick();
+    }
+    list.unsubscribe();
+
+    expect(tokenListRequests).toBeGreaterThanOrEqual(2);
+    const cached = fulfilledTokenCurrencies(store);
+    expect(cached).toContain("polygon");
+    expect(cached).not.toContain("ethereum");
+  });
+
   it("should keep a failed currency's tokens when another currency's hash changed", async () => {
     behaviors.ethereum = "changed";
     behaviors.polygon = "fail";
@@ -181,24 +226,7 @@ describe("restore → save → restart", () => {
     await restoreTokensToCache(store.dispatch, persisted, TTL);
     await tick();
 
-    const cached = new Set<string>();
-    for (const query of Object.values(
-      store.getState()[cryptoAssetsApi.reducerPath].queries ?? {},
-    )) {
-      if (
-        query?.status === "fulfilled" &&
-        (query.endpointName === "findTokenById" ||
-          query.endpointName === "findTokenByAddressInCurrency") &&
-        query.data &&
-        typeof query.data === "object" &&
-        "parentCurrencyId" in query.data &&
-        typeof query.data.parentCurrencyId === "string"
-      ) {
-        cached.add(query.data.parentCurrencyId);
-      }
-    }
-
-    expect([...cached].sort()).toEqual(["polygon"]);
+    expect(fulfilledTokenCurrencies(store)).toEqual(["polygon"]);
   });
 
   it("keeps all tokens when the hash checks confirm the stored hash", async () => {

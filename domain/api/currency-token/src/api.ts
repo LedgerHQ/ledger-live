@@ -18,6 +18,7 @@ import {
   TOKEN_TAGS,
   TOKENS_SYNC_HASH_TIMEOUT_MS,
   tokenCurrencyTag,
+  tokenListTag,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
@@ -129,7 +130,9 @@ export const cryptoAssetsApi = calApi
                 "cryptoassets",
                 `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
               );
-              api.dispatch(cryptoAssetsApi.util.invalidateTags([tokenCurrencyTag(currencyId)]));
+              api.dispatch(
+                cryptoAssetsApi.util.invalidateTags([tokenCurrencyTag(currencyId), tokenListTag()]),
+              );
             }
           } catch {
             // Query failed, skip eviction
@@ -154,7 +157,7 @@ export const cryptoAssetsApi = calApi
             params,
           };
         },
-        providesTags: [...TOKEN_TAGS],
+        providesTags: [tokenListTag()],
         transformResponse: transformTokensResponse,
         infiniteQueryOptions: {
           initialPageParam: {
