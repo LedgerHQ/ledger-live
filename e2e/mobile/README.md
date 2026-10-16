@@ -107,6 +107,15 @@ For complete setup, debugging, workflow, writing tests, and CI integration, see 
 To run only selected specs when dispatching an E2E workflow, see
 [Using `test_filter` in the E2E workflows](../tooling/filter/test-filter-guide.md).
 
+## Remote Speculos (Speculinho)
+
+Tests run on a local Docker Speculos by default. To run them on remote Speculos instances instead, for example to debug a CI run, see the
+[Speculinho guide](../../libs/live-e2e-shared/SPECULINHO.md).
+
+## Watch the device
+
+To watch the device, `export SPECULOS_SCREEN=web` or `SPECULOS_SCREEN=vnc` (ignored in CI). Each test then shows the screen of its main Speculos once the app is connected to it: `web` opens the Speculos web page in your browser, `vnc` opens macOS Screen Sharing (on other systems, the address and password are logged). Watching is safe, but pressing buttons while the test drives the device will throw it off. For Speculinho, see [Watch the device](../../libs/live-e2e-shared/SPECULINHO.md#watch-the-device).
+
 ## Feature Flags
 
 ### E2E_FEATURE_FLAGS_JSON

@@ -89,6 +89,15 @@ For detailed setup, debugging, and contribution guidelines, see:
 To run only selected specs when dispatching an E2E workflow, see
 [Using `test_filter` in the E2E workflows](../tooling/filter/test-filter-guide.md).
 
+## Remote Speculos (Speculinho)
+
+Tests run on a local Docker Speculos by default. To run them on remote Speculos instances instead, for example to debug a CI run, see the
+[Speculinho guide](../../libs/live-e2e-shared/SPECULINHO.md).
+
+## Watch the device
+
+To watch the device, `export SPECULOS_SCREEN=web` or `SPECULOS_SCREEN=vnc` (ignored in CI). Each test then shows the screen of its Speculos once it starts: `web` opens the Speculos web page in your browser, `vnc` opens macOS Screen Sharing (on other systems, the address and password are logged). Watching is safe, but pressing buttons while the test drives the device will throw it off. Each test opens its own view, so run a single spec with `--workers 1`. For Speculinho, see [Watch the device](../../libs/live-e2e-shared/SPECULINHO.md#watch-the-device).
+
 ## Pay tab
 
 Pay tab specs need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET` environment variables. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
