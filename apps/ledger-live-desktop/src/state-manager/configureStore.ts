@@ -72,7 +72,7 @@ const customCreateStore = ({
           immutableCheck: false,
           thunk: {
             extraArgument: {
-              ...accountDataExtra(accountDataSources),
+              ...accountDataExtra(accountDataSources((): State => store.getState())),
               ...calApiExtra({
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
