@@ -11229,6 +11229,24 @@
   "actionMenuDialog": {
     "a11yTitle": "Choose an action"
   },
+  "perpsWithdraw": {
+    "title": "Withdraw",
+    "review": "Review",
+    "estimatedAmount": "Withdraw ~{{value}}",
+    "inputSubText": "Swap and withdraw via {{provider}}",
+    "selectCurrencyTitle": "Withdraw to {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount": "No account",
+    "formErrors": {
+      "insufficientBalance": "Insufficient balance",
+      "minimumAmount": "The minimum withdrawal is {{minAmount}} USDC.",
+      "minimumAmountUnknown": "This amount is too low to withdraw.",
+      "lowLiquidity": "This asset is temporarily unavailable. Try again later or choose another asset.",
+      "addressScreening": "This withdrawal can’t be processed to this account.",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
+      "currenciesUnavailable": "We can’t load the assets you can withdraw to. Try again later."
+    }
+  },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",
     "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
