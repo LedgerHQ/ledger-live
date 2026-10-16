@@ -19,6 +19,7 @@ import { setEnv } from "@shared/env";
 import { runWithCrossProcessLock } from "./crossProcessLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
+import { enableBlindSigningOnNanoS } from "./speculos";
 import { ZCASH_TEST_PRIVATE_INFO } from "./families/zcash";
 import type { ZcashPrivateInfoRaw } from "@ledgerhq/coin-zcash/network/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -507,6 +508,8 @@ async function broadcastTokenApproval(
   const owner = account.parentAccount ?? account;
   const eoa = (owner.address ?? (await getAccountAddress(owner))).toLowerCase();
   const lockKey = `${owner.currency.id}:${eoa}`;
+  // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
+  await enableBlindSigningOnNanoS();
   // Prevent nonce races across workers (QAA-1323).
   return runWithCrossProcessLock(lockKey, () => runTokenApprovalWithRetry(opts));
 }
