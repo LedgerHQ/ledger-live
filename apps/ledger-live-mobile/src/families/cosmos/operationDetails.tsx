@@ -3,12 +3,12 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import type { OperationType, Operation } from "@ledgerhq/types-live";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "~/context/hooks";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
@@ -37,7 +37,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
   const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
   const { extra } = operation;
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const cosmosValidators = accountValidators(account);
   const redirectAddressCreator = useCallback(
     (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);

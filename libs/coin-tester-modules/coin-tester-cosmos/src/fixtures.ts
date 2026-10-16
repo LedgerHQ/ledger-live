@@ -52,15 +52,7 @@ export const makeAccount = (
       DAY: { latestDate: null, balances: [] },
       WEEK: { latestDate: null, balances: [] },
     },
-    cosmosResources: {
-      delegations: [],
-      redelegations: [],
-      unbondings: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-      sequence: 0,
-    },
+    sequence: 0,
     stakingResources: {
       delegations: [],
       redelegations: [],

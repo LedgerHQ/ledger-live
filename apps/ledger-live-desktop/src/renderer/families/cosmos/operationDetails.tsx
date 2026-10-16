@@ -2,9 +2,8 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
+import { accountValidators, mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
   CosmosAccount,
   CosmosOperation,
@@ -130,9 +129,8 @@ const OperationDetailsExtra = ({
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const currencyId = account.currency.id;
   const { extra } = operation;
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const cosmosValidators = accountValidators(account);
   const getValidatorName = (address: string): string => {
     return cosmosValidators.find(v => v.validatorAddress === address)?.name || address;
   };

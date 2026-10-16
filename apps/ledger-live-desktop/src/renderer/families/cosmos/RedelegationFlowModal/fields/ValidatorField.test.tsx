@@ -18,6 +18,7 @@ jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
 const account = {
   type: "Account",
   currency: getCryptoCurrencyById("cosmos"),
+  stakingResources: { validators: [VALIDATOR_A, VALIDATOR_B] },
 } as unknown as CosmosAccount;
 
 describe("Cosmos Redelegation ValidatorField", () => {

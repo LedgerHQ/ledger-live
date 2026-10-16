@@ -130,6 +130,54 @@ describe("DataModel", () => {
     expect(migratedCryptoOrgAccountRaw.id).toBeDefined();
   });
 
+  test("createDataModel migrates a legacy cosmos account and does not persist the legacy fields", async () => {
+    const legacyDelegation = {
+      validatorAddress: "cosmosvaloper1abc",
+      amount: "1000",
+      pendingRewards: "10",
+      status: "bonded",
+    };
+    const legacyCosmosAccount = {
+      data: {
+        ...cryptoOrgAccount.data,
+        id: "js:2:cosmos:cosmos1address:",
+        currencyId: "cosmos",
+        xpub: "cosmos1address",
+        cosmosResources: {
+          delegations: [legacyDelegation],
+          redelegations: [],
+          unbondings: [],
+          delegatedBalance: "1000",
+          pendingRewardsBalance: "10",
+          unbondingBalance: "0",
+          sequence: 7,
+          publicKey: "02" + "ab".repeat(32),
+        },
+      } as AccountRaw,
+      version: 1,
+    };
+    const dataModel = createDataModel(schema);
+
+    const [account] = await dataModel.decode(legacyCosmosAccount);
+    expect(account).toMatchObject({
+      sequence: 7,
+      xpub: "02" + "ab".repeat(32),
+      stakingResources: { delegatedBalance: expect.anything() },
+    });
+    expect(account).not.toHaveProperty("cosmosResources");
+
+    const { data: encoded } = await dataModel.encode([
+      account,
+      accountRawToAccountUserData(legacyCosmosAccount.data),
+    ] as never);
+    expect(encoded).not.toHaveProperty("cosmosResources");
+    expect(encoded).toMatchObject({
+      sequence: 7,
+      xpub: "02" + "ab".repeat(32),
+      stakingResources: { delegations: [legacyDelegation] },
+    });
+  });
+
   test("createDataModel for aptos account", async () => {
     const migratedAptosAccount = await createDataModel(schema).decode(aptosAccount);
     expect(migratedAptosAccount.length).toBeGreaterThan(0);

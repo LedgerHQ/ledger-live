@@ -9,11 +9,11 @@ import {
   getCosmosPreloadDataUpdates,
   getCurrentCosmosPreloadData,
 } from "@ledgerhq/coin-cosmos/preloadedData";
+import { isStakingAccount, StakingValidatorItem, type Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import { searchFilter as defaultSearchFilter, mapDelegations } from "./logic";
 import type {
-  CosmosAccount,
   CosmosDelegationInfo,
   CosmosMappedDelegation,
   CosmosMappedValidator,
@@ -43,11 +43,14 @@ export function useCosmosFamilyPreloadData(currencyId?: string): CosmosPreloadDa
 }
 
 export function useCosmosFamilyMappedDelegations(
-  account: CosmosAccount,
+  account: Account,
   mode?: CosmosOperationMode,
 ): CosmosMappedDelegation[] {
-  const currencyId = account.currency.id;
-  const { validators } = useCosmosFamilyPreloadData(currencyId);
+  invariant(isStakingAccount(account), "cosmos staking account required");
+  const validators =
+    isStakingAccount(account) && account.stakingResources.validators
+      ? account.stakingResources.validators
+      : [];
 
   const { delegations } = account.stakingResources;
   const unit = getAccountCurrency(account).units[0];
@@ -60,7 +63,7 @@ export function useCosmosFamilyMappedDelegations(
 }
 
 export function useCosmosFamilyDelegationsQuerySelector(
-  account: CosmosAccount,
+  account: Account,
   transaction: Transaction,
   delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter,
 ): {
@@ -135,14 +138,19 @@ export function useSortedValidators(
 
 export function useLedgerFirstShuffledValidatorsCosmosFamily(
   currencyId: string,
+  validatorsOrSearch?: StakingValidatorItem[] | string,
   searchInput?: string,
 ): CosmosValidatorItem[] {
-  const data = getCurrentCosmosPreloadData()[currencyId];
+  const validators = Array.isArray(validatorsOrSearch)
+    ? validatorsOrSearch
+    : getCurrentCosmosPreloadData()[currencyId]?.validators;
+  const resolvedSearchInput =
+    typeof validatorsOrSearch === "string" ? validatorsOrSearch : searchInput;
   const ledgerValidatorAddress = cryptoFactory(currencyId).ledgerValidator;
 
   return useMemo(() => {
-    return reorderValidators(data?.validators ?? [], ledgerValidatorAddress, searchInput);
-  }, [data, ledgerValidatorAddress, searchInput]);
+    return reorderValidators(validators ?? [], ledgerValidatorAddress, resolvedSearchInput);
+  }, [validators, ledgerValidatorAddress, resolvedSearchInput]);
 }
 
 function reorderValidators(
