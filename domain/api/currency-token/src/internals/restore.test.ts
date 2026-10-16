@@ -1,10 +1,11 @@
 import { token } from "@domain/entity-currency-token";
-import type { PersistedTokenEntry } from "../types";
+import { fetchCurrencyError, fetchError } from "./errors";
 import {
   buildRestoreCacheEntries,
   groupTokensByCurrency,
   resolveCurrenciesToEvict,
 } from "./restore";
+import type { PersistedTokenEntry } from "../types";
 
 function entry(
   id: string,
@@ -120,8 +121,58 @@ describe("resolveCurrenciesToEvict", () => {
     expect(evict.has("ethereum")).toBe(true);
   });
 
-  it("evicts when the hash fetch fails", async () => {
-    const dispatch = jest.fn().mockRejectedValue(new Error("network"));
+  it("evicts when CAL answers the hash request with an error", async () => {
+    const dispatch = jest.fn().mockResolvedValue({
+      data: undefined,
+      ...fetchCurrencyError(500, "Internal Server Error"),
+    });
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum"),
+      {
+        ethereum: "hash1",
+      },
+    );
+
+    expect(evict.has("ethereum")).toBe(true);
+  });
+
+  it("evicts when CAL answers with an error even if the result still carries a matching hash", async () => {
+    const dispatch = jest.fn().mockResolvedValue({
+      data: "hash1",
+      ...fetchCurrencyError(500, "Internal Server Error"),
+    });
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum"),
+      {
+        ethereum: "hash1",
+      },
+    );
+
+    expect(evict.has("ethereum")).toBe(true);
+  });
+
+  it("does not evict when CAL is unreachable", async () => {
+    const dispatch = jest.fn().mockResolvedValue({
+      data: undefined,
+      ...fetchError(new Error("network")),
+    });
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum"),
+      {
+        ethereum: "hash1",
+      },
+    );
+
+    expect(evict.has("ethereum")).toBe(false);
+  });
+
+  it("evicts when dispatching the hash request throws", async () => {
+    const dispatch = jest.fn(() => {
+      throw new Error("RTK Query middleware missing");
+    });
     const evict = await resolveCurrenciesToEvict(
       dispatch as unknown as Dispatch,
       currencies("ethereum"),

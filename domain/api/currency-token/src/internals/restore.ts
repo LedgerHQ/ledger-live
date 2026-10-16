@@ -25,8 +25,9 @@ export function groupTokensByCurrency(
 
 /**
  * For each currency that has a stored hash, fetches the current server hash and returns the set of
- * currencies whose hash changed (or whose fetch failed) — those must not be restored from cache.
- * Currencies without a stored hash are never evicted.
+ * currencies whose hash changed, or whose hash request CAL answered with an error — those must not be
+ * restored from cache. A currency is kept when CAL is unreachable, since nothing fresher could replace
+ * its tokens, and currencies without a stored hash are never evicted.
  */
 export async function resolveCurrenciesToEvict(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,13 +41,17 @@ export async function resolveCurrenciesToEvict(
     if (!storedHash) continue;
 
     try {
-      const { data: currentHash } = await dispatch(
+      const { data: currentHash, error } = await dispatch(
         cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: false }),
       );
-      if (currentHash && currentHash !== storedHash) {
+      // A failed request resolves with `error`; it never rejects.
+      const calUnreachable =
+        error !== undefined && "status" in error && error.status === "FETCH_ERROR";
+      if (!calUnreachable && (error !== undefined || currentHash !== storedHash)) {
         toEvict.add(currencyId);
       }
     } catch {
+      // `dispatch` throws synchronously when the store lacks the RTK Query middleware.
       toEvict.add(currencyId);
     }
   }
