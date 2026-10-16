@@ -9,6 +9,7 @@ import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/bridge/react/index"),
   SyncOneAccountOnMount: () => null,
 }));
 

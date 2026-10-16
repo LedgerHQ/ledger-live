@@ -8,6 +8,7 @@ import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/bridge/react/index"),
   SyncOneAccountOnMount: () => null,
 }));
 
@@ -31,6 +32,7 @@ function renderFromPreviousPage() {
       initialState: {
         ...withFlagOverrides({ accountDetail: { enabled: true } }),
         accounts: [ethAccount],
+        syncRefresh: { hasCompletedInitialSync: true, lastUserSyncClickTimestamp: 0 },
         wallet: {
           accountNames: new Map([[parseAnyAccountId(ethAccount.id), "Ethereum 1"]]),
           starredAccountIds: new Set(),
@@ -84,5 +86,55 @@ describe("AccountDetail header", () => {
 
     const dialog = await screen.findByRole("dialog", { name: "Account settings" });
     expect(within(dialog).getByText("Remove account?")).toBeVisible();
+  });
+
+  it("renames the account from the settings dialog", async () => {
+    const { user } = renderFromPreviousPage();
+    await user.click(screen.getByText("Open account"));
+    await user.click(await screen.findByRole("button", { name: "Account settings" }));
+    await user.click(await screen.findByTestId("account-settings-change-name"));
+
+    const dialog = await screen.findByRole("dialog", { name: "Change account name" });
+    expect(
+      within(dialog).getAllByText(
+        /Give this address a name to stay organized \(ex\. ETH-Trading/,
+      )[0],
+    ).toBeVisible();
+    const input = within(dialog).getByRole("textbox", { name: "Address name" });
+    expect(input).toHaveValue("Ethereum 1");
+    expect(within(dialog).getByRole("button", { name: "Change name" })).toBeDisabled();
+
+    await user.clear(input);
+    await user.type(input, "Savings");
+    await user.click(within(dialog).getByRole("button", { name: "Change name" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("page-header-title")).toHaveTextContent("Savings");
+  });
+
+  it("renames the account with Enter from the name field", async () => {
+    const { user } = renderFromPreviousPage();
+    await user.click(screen.getByText("Open account"));
+    await user.click(await screen.findByRole("button", { name: "Account settings" }));
+    await user.click(await screen.findByTestId("account-settings-change-name"));
+
+    const dialog = await screen.findByRole("dialog", { name: "Change account name" });
+    const input = within(dialog).getByRole("textbox", { name: "Address name" });
+    await user.clear(input);
+    await user.type(input, "Savings{Enter}");
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("page-header-title")).toHaveTextContent("Savings");
+  });
+
+  it("goes back to the settings menu from the change name step", async () => {
+    const { user } = renderFromPreviousPage();
+    await user.click(screen.getByText("Open account"));
+    await user.click(await screen.findByRole("button", { name: "Account settings" }));
+    await user.click(await screen.findByTestId("account-settings-change-name"));
+
+    await user.click(await screen.findByRole("button", { name: /back/i }));
+
+    expect(await screen.findByTestId("account-settings-menu")).toBeVisible();
   });
 });

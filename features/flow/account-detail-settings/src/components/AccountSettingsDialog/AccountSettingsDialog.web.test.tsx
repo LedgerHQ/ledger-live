@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import { AccountSettingsDialog } from "./AccountSettingsDialog.web";
@@ -9,8 +9,10 @@ function renderDialog(overrides: Partial<AccountSettingsDialogProps> = {}) {
   const props: AccountSettingsDialogProps = {
     isOpen: true,
     accountName: "Bitcoin 1",
+    ticker: "BTC",
+    nameMaxLength: 50,
     onClose: jest.fn(),
-    onChangeName: jest.fn(),
+    onConfirmName: jest.fn(),
     onViewAdvancedLogs: jest.fn(),
     onConfirmRemove: jest.fn(),
     ...overrides,
@@ -35,14 +37,72 @@ describe("AccountSettingsDialog (Web)", () => {
     expect(screen.queryByTestId("dialog-status-gradient-error")).toBeNull();
   });
 
-  it("forwards the menu actions", async () => {
+  it("forwards the advanced logs action", async () => {
+    const { props, user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-advanced-logs"));
+
+    expect(props.onViewAdvancedLogs).toHaveBeenCalledTimes(1);
+  });
+
+  it("changes the account name from its own step", async () => {
     const { props, user } = renderDialog();
 
     await user.click(screen.getByTestId("account-settings-change-name"));
-    await user.click(screen.getByTestId("account-settings-advanced-logs"));
 
-    expect(props.onChangeName).toHaveBeenCalledTimes(1);
-    expect(props.onViewAdvancedLogs).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Change account name")).toBeVisible();
+    expect(screen.getByText(/BTC-Trading, BTC-DeFi/)).toBeVisible();
+    const input = screen.getByTestId("account-settings-change-name-input");
+    expect(input).toHaveValue("Bitcoin 1");
+    expect(screen.getByRole("button", { name: "Change name" })).toBeDisabled();
+
+    await user.clear(input);
+    await user.type(input, "  My   savings ");
+    await user.click(screen.getByRole("button", { name: "Change name" }));
+
+    expect(props.onConfirmName).toHaveBeenCalledWith("My savings");
+  });
+
+  it("submits the new name with Enter", async () => {
+    const { props, user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-change-name"));
+    const input = screen.getByTestId("account-settings-change-name-input");
+    await user.clear(input);
+    await user.type(input, "Savings{Enter}");
+
+    expect(props.onConfirmName).toHaveBeenCalledWith("Savings");
+    expect(input).toHaveValue("Savings");
+  });
+
+  it("ignores Enter while an input method is composing", async () => {
+    const { props, user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-change-name"));
+    const input = screen.getByTestId("account-settings-change-name-input");
+    await user.clear(input);
+    await user.type(input, "Savings");
+    fireEvent.keyDown(input, { key: "Enter", isComposing: true });
+
+    expect(props.onConfirmName).not.toHaveBeenCalled();
+  });
+
+  it("keeps the change name button disabled while the name can't be edited", async () => {
+    const { user } = renderDialog({ isNameEditDisabled: true });
+
+    await user.click(screen.getByTestId("account-settings-change-name"));
+    await user.type(screen.getByTestId("account-settings-change-name-input"), " 2");
+
+    expect(screen.getByRole("button", { name: "Change name" })).toBeDisabled();
+  });
+
+  it("goes back to the menu from the change name step", async () => {
+    const { user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-change-name"));
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+
+    expect(screen.getByTestId("account-settings-menu")).toBeVisible();
   });
 
   it("asks for confirmation before removing the account", async () => {

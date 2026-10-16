@@ -21,7 +21,7 @@ function DialogContent({ children, ...props }) {
 }
 
 // Render the header's back and close buttons so tests can query them by their real Lumen labels.
-function DialogHeader({ title, onBack, onClose }) {
+function DialogHeader({ title, description, onBack, onClose }) {
   return React.createElement(
     "div",
     undefined,
@@ -29,6 +29,7 @@ function DialogHeader({ title, onBack, onClose }) {
       ? null
       : React.createElement("button", { type: "button", "aria-label": "Go back", onClick: onBack }),
     title === undefined ? null : React.createElement("h2", undefined, title),
+    description === undefined ? null : React.createElement("p", undefined, description),
     React.createElement("button", { type: "button", "aria-label": "Close", onClick: onClose }),
   );
 }
