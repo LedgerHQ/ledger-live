@@ -1,5 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { setContacts } from "@domain/entity-contact";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
@@ -145,5 +146,63 @@ describe("useContactDetailScreenViewModel", () => {
 
     expect(mockRegisterExternalAddress).toHaveBeenCalledTimes(1);
     expect(viewModel().addAddressFlowState.status).toBe("closed");
+  });
+
+  it("should close the delete confirmation when the contact disappears", async () => {
+    const contact = mockContact({ id: "contact-ada", name: "Ada" });
+    const mockPopTo = jest.fn();
+    mockedUseRoute.mockReturnValue({
+      key: ScreenName.MyWalletContactDetail,
+      name: ScreenName.MyWalletContactDetail,
+      params: { contactId: contact.id },
+    });
+    mockedUseNavigation.mockReturnValue({
+      navigate: jest.fn(),
+      goBack: mockGoBack,
+      replace: mockReplace,
+      popTo: mockPopTo,
+      canGoBack: jest.fn(() => true),
+    } as never);
+
+    const { result, store } = renderHook(() => useContactDetailScreenViewModel(), {
+      overrideInitialState: withFlagOverrides(
+        {
+          lwmContacts: {
+            enabled: true,
+            params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+          },
+        },
+        state => ({ ...state, contacts: { contacts: [mockMeContact(), contact] } }),
+      ),
+    });
+
+    const ready = () => {
+      if (result.current.status !== "ready") throw new Error("view model is not ready");
+      return result.current;
+    };
+
+    act(() => ready().editDeleteFlow.actionsMenu.onDelete());
+    expect(ready().editDeleteFlow.deleteDrawer.isOpen).toBe(true);
+
+    act(() => store.dispatch(setContacts([mockMeContact()])));
+
+    await waitFor(() => {
+      expect(result.current.status).toBe("closing-delete-sheet");
+    });
+    if (result.current.status !== "closing-delete-sheet") {
+      throw new Error("delete sheet is not closing");
+    }
+    expect(result.current.editDeleteFlow.deleteDrawer.isOpen).toBe(false);
+    expect(mockPopTo).not.toHaveBeenCalled();
+
+    act(() => {
+      if (result.current.status !== "closing-delete-sheet") {
+        throw new Error("delete sheet is not closing");
+      }
+      result.current.onDeleteSheetDismissed();
+    });
+
+    expect(mockPopTo).toHaveBeenCalledWith(ScreenName.MyWalletContacts);
+    expect(mockGoBack).not.toHaveBeenCalled();
   });
 });

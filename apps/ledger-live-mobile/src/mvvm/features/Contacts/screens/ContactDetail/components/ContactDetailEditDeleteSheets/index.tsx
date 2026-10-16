@@ -12,13 +12,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
 import type { ContactDetailEditDeleteFlowProps } from "../../hooks/useContactDetailEditDeleteAdapter";
 
-type ContactDetailEditDeleteSheetsProps = ContactDetailEditDeleteFlowProps;
+type ContactDetailEditDeleteSheetsProps = ContactDetailEditDeleteFlowProps &
+  Readonly<{ onDeleteSheetDismissed?: () => void }>;
 
 export function ContactDetailEditDeleteSheets({
   actionsMenu,
   renameDrawer,
   deleteDrawer,
   signerMismatchSheet,
+  onDeleteSheetDismissed,
 }: ContactDetailEditDeleteSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { onClose: onCloseActionsMenuFromMenu, ...actionsMenuProps } = actionsMenu;
@@ -58,6 +60,7 @@ export function ContactDetailEditDeleteSheets({
         isRequestingToBeOpened={deleteDrawer.isOpen}
         isForcingToBeOpened={deleteDrawer.isOpen}
         onClose={onCloseDelete}
+        onModalHide={onDeleteSheetDismissed}
         testID="contacts-delete-contact-sheet"
         enableDynamicSizing
       >

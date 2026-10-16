@@ -200,7 +200,7 @@ function ContactsGatingTestApp() {
 function ContactDetailViewModelProbe() {
   const viewModel = useContactDetailScreenViewModel();
 
-  if (viewModel.status === "redirecting") {
+  if (viewModel.status !== "ready") {
     return null;
   }
 
@@ -270,7 +270,7 @@ function ContactDetailAddressEntryTestScreen() {
   const viewModel = useContactDetailScreenViewModel();
   const { handleCurrencySelected } = useModularDrawerController();
 
-  if (viewModel.status === "redirecting") {
+  if (viewModel.status !== "ready") {
     return null;
   }
 

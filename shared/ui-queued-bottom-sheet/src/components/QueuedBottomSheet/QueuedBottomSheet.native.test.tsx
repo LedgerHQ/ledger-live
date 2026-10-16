@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
 import { QueuedBottomSheet } from ".";
 import { QueuedBottomSheetsProvider } from "../QueuedBottomSheetsProvider";
 import { useBottomSheetBottomInset } from "../../contexts/BottomSheetBottomInsetContext";
@@ -25,6 +26,57 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
 });
 
 describe("QueuedBottomSheet (native)", () => {
+  it("closes from inside the sheet, and keeps closing, once it is no longer requested", () => {
+    jest.useFakeTimers();
+    try {
+      const { close } = useBottomSheet() as unknown as { close: jest.Mock };
+      close.mockClear();
+      const { rerender, unmount } = render(
+        <QueuedBottomSheetsProvider>
+          <QueuedBottomSheet testID="sheet" isRequestingToBeOpened>
+            <View testID="sheet-content" />
+          </QueuedBottomSheet>
+        </QueuedBottomSheetsProvider>,
+      );
+
+      expect(close).not.toHaveBeenCalled();
+
+      rerender(
+        <QueuedBottomSheetsProvider>
+          <QueuedBottomSheet testID="sheet" isRequestingToBeOpened={false}>
+            <View testID="sheet-content" />
+          </QueuedBottomSheet>
+        </QueuedBottomSheetsProvider>,
+      );
+
+      expect(close).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        jest.advanceTimersByTime(200);
+      });
+
+      expect(close).toHaveBeenCalledTimes(2);
+      unmount();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("does not close a sheet that was never requested", () => {
+    const { close } = useBottomSheet() as unknown as { close: jest.Mock };
+    close.mockClear();
+
+    render(
+      <QueuedBottomSheetsProvider>
+        <QueuedBottomSheet testID="sheet" isRequestingToBeOpened={false}>
+          <View testID="sheet-content" />
+        </QueuedBottomSheet>
+      </QueuedBottomSheetsProvider>,
+    );
+
+    expect(close).not.toHaveBeenCalled();
+  });
+
   it("renders its children inside the bottom sheet", () => {
     const { getByTestId } = render(
       <QueuedBottomSheetsProvider>
