@@ -1092,7 +1092,8 @@ export const enableBlindSigning = withDeviceController(({ getButtonsController }
 
 /**
  * The nanos Ethereum app (1.16.2) asks for blind signing on reviews the other models clear-sign:
- * the ERC-20 approves the swap flows send, and every EIP-712 message, which it shows as hashes.
+ * the ERC-20 approves the swap flows send, every EIP-712 message, which it shows as hashes, and DEX
+ * router calls its plugins cannot describe, such as 1inch v6.
  * Call it on the device that will sign, before the APDU is sent.
  */
 export async function enableBlindSigningOnNanoS(): Promise<void> {
@@ -1335,15 +1336,45 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
   return await pressUntilTextFound(delegateConfirmLabel);
 }
 
+/**
+ * The nanos Ethereum app (1.16.2) puts a "Blind signing" warning in front of a review it cannot
+ * describe, such as the 1inch v6 router call, and ends that review on "Accept risk and send".
+ * Waits for the review and steps past the warning, returning whether there was one.
+ */
+const waitForSwapReviewOnNanoS = withDeviceController(
+  ({ getButtonsController }) =>
+    async (): Promise<boolean> => {
+      const port = getEnv("SPECULOS_API_PORT");
+      const review = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
+      const warning = DeviceLabels.BLIND_SIGNING.toLowerCase();
+      for (let attempt = 0; attempt < SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS; attempt++) {
+        const texts = (await fetchCurrentScreenTexts(port)).trim().toLowerCase();
+        if (texts.includes(review)) return false;
+        if (texts.startsWith(warning)) {
+          await getButtonsController().right();
+          await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+          return true;
+        }
+        await sleep(SCREEN_POLL_INTERVAL_MS);
+      }
+      // Out of budget: one last look, which fails with the usual diagnostics.
+      await waitForReviewTransaction(1);
+      return false;
+    },
+);
+
 export const verifyAmountsAndAcceptSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
-      const events =
-        getSpeculosModel() === DeviceModelId.nanoS
-          ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
-          : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      let confirmLabel: DeviceLabels = DeviceLabels.SIGN_TRANSACTION;
+      if (getSpeculosModel() === DeviceModelId.nanoS) {
+        const blindSigned = await waitForSwapReviewOnNanoS();
+        confirmLabel = blindSigned ? DeviceLabels.ACCEPT_RISK : DeviceLabels.ACCEPT_AND_SEND;
+      } else {
+        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+      }
+      const events = await pressUntilTextFound(confirmLabel);
       verifySwapData(swap, events, amount);
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
