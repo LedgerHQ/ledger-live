@@ -15,6 +15,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
+import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
+import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
 import { UnsupportedFirmwareVersionView } from "LLM/components/UnsupportedFirmwareVersion";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
@@ -76,6 +78,8 @@ export function ChecksView({
   closeLabel,
   allowSheet,
   updateSheet,
+  errorDrawer,
+  notGenuineDrawer,
 }: ChecksViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -161,6 +165,20 @@ export function ChecksView({
           </BottomSheetView>
         </QueuedBottomSheet>
       ) : null}
+      <GenuineCheckErrorDrawer
+        isOpen={errorDrawer.isOpen}
+        error={null}
+        showProviderSettings={errorDrawer.kind === "provider"}
+        productName={errorDrawer.productName}
+        onRetry={errorDrawer.onRetry}
+        onCancel={errorDrawer.onCancel}
+        onClose={errorDrawer.onClose}
+      />
+      <GenuineCheckNonGenuineDrawer
+        isOpen={notGenuineDrawer.isOpen}
+        productName={notGenuineDrawer.productName}
+        onClose={notGenuineDrawer.onClose}
+      />
     </Box>
   );
 }

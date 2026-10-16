@@ -1,7 +1,25 @@
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { ChecksScreenProps, ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
+import type {
+  ChecksScreenProps,
+  ChecksScreenState,
+  GenuineErrorKind,
+} from "LLM/features/DeviceOnboarding/types";
+
+const errorPreviews = new Set<string>(["declined", "notGenuine", "provider", "network", "unknown"]);
+
+export type DeviceOnboardingPreview = ChecksScreenState | "offer" | GenuineErrorKind;
+
+function isErrorPreview(preview: DeviceOnboardingPreview): preview is GenuineErrorKind {
+  return errorPreviews.has(preview);
+}
+
+function checksStateForPreview(preview: DeviceOnboardingPreview): ChecksScreenState {
+  if (preview === "offer") return "idle";
+  if (isErrorPreview(preview)) return "checking";
+  return preview;
+}
 
 const previewDevice = {
   deviceId: "preview",
@@ -12,7 +30,7 @@ const previewDevice = {
 
 export function useDeviceOnboardingDebugViewModel() {
   const navigation = useNavigation();
-  const [preview, setPreview] = useState<ChecksScreenState | "offer">("idle");
+  const [preview, setPreview] = useState<DeviceOnboardingPreview>("idle");
   const [isScreenOpen, setIsScreenOpen] = useState(true);
 
   const closePreview = () => {
@@ -22,11 +40,11 @@ export function useDeviceOnboardingDebugViewModel() {
 
   const screenProps: ChecksScreenProps = {
     device: previewDevice,
-    state: preview === "offer" ? "idle" : preview,
-    error: null,
+    state: checksStateForPreview(preview),
+    error: isErrorPreview(preview) ? { kind: preview } : null,
     update: null,
     onStart: () => setPreview("checking"),
-    onRetry: () => undefined,
+    onRetry: () => setPreview("checking"),
     onAcceptUpdate: () => setPreview("checking"),
     onDeclineUpdate: () => setPreview("checking"),
     onCloseSheet: () => setPreview("checking"),
@@ -37,7 +55,7 @@ export function useDeviceOnboardingDebugViewModel() {
   return {
     preview,
     isScreenOpen,
-    onSelectPreview: (next: ChecksScreenState | "offer") => {
+    onSelectPreview: (next: DeviceOnboardingPreview) => {
       setPreview(next);
       setIsScreenOpen(true);
     },

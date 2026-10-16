@@ -8,48 +8,28 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import type { SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { DmkError, isDmkError } from "@ledgerhq/live-dmk-mobile";
 
-export type Props = {
-  /**
-   * State to trigger the opening/closing of the drawer
-   */
-  isOpen: boolean;
-
-  /**
-   * Callback when the user wants to retry the genuine check and presses on the retry button
-   */
-  onRetry: () => void;
-
-  /**
-   * Callback when the user wants to cancel the genuine check step and presses on the cancel button
-   */
-  onCancel: () => void;
-
-  /**
-   * Callback when the drawer is closed
-   *
-   * As the drawer has no close button (`noCloseButton`), the drawer is closed only when `isOpen === false`
-   */
-  onClose?: () => void;
-
-  productName: string;
-
-  /**
-   * Error instance coming from the genuine check hook - if null, a default message is displayed.
-   */
-  error: Error | DmkError | null;
+type ExperimentalSettingsNavigation = {
+  navigate: (
+    navigator: typeof NavigatorName.Base,
+    params: {
+      screen: typeof NavigatorName.Settings;
+      params: { screen: typeof ScreenName.ExperimentalSettings };
+    },
+  ) => void;
 };
 
-/**
- * Drawer displayed when an error occurred during the genuine check during the early security check
- *
- * If `error` is set:
- * - special case when the wrong provider was set and the entity was not found
- * - otherwise displays the associated `GenericErrorView` with the translated message defined in common.json
- * Otherwise displays a generic error message
- */
+export type Props = {
+  isOpen: boolean;
+  onRetry: () => void;
+  onCancel: () => void;
+  onClose?: () => void;
+  productName: string;
+  error: Error | DmkError | null;
+  showProviderSettings?: boolean;
+};
+
 const GenuineCheckErrorDrawer: React.FC<Props> = ({
   isOpen,
   onRetry,
@@ -57,16 +37,19 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   onClose,
   productName,
   error,
+  showProviderSettings = false,
 }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
+  const navigation = useNavigation<ExperimentalSettingsNavigation>();
   const eName = (error as { name?: string })?.name;
 
-  // Depending from where the device was not recognized we can a FirmwareNotRecognized or a simple Error
   const isNotFoundEntity =
-    error &&
-    (eName === "FirmwareNotRecognized" ||
-      (error instanceof Error && error.message === "not found entity"));
+    showProviderSettings ||
+    Boolean(
+      error &&
+      (eName === "FirmwareNotRecognized" ||
+        (error instanceof Error && error.message === "not found entity")),
+    );
 
   const onGoToSettings = useCallback(() => {
     track("button_clicked", {
@@ -83,11 +66,13 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
 
   let content;
 
-  const screenName = isNotFoundEntity
-    ? "Error: Device OS version not recognized"
-    : error
-      ? `Error: ${isDmkError(error) ? error._tag : eName}`
-      : "Error: unknown error";
+  let screenName = "Error: unknown error";
+  if (isNotFoundEntity) {
+    screenName = "Error: Device OS version not recognized";
+  } else if (error) {
+    const errorLabel = isDmkError(error) ? error._tag : eName;
+    screenName = `Error: ${errorLabel}`;
+  }
 
   const handleRetry = () => {
     track("button_clicked", {
@@ -105,7 +90,6 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
     onCancel();
   };
 
-  // Special case for the genuine check during the ESC
   if (isNotFoundEntity) {
     content = (
       <>
@@ -128,9 +112,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         </Link>
       </>
     );
-  }
-  // Generic error management
-  else if (error) {
+  } else if (error) {
     content = (
       <Flex mt={7}>
         <GenericErrorView
@@ -153,9 +135,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         </Link>
       </Flex>
     );
-  }
-  // Default content if no error is provided
-  else {
+  } else {
     content = (
       <>
         <Flex justifyContent="center" alignItems="center" mt={10}>
