@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
@@ -30,7 +29,6 @@ import {
   type AddAddressFlowState,
 } from "@features/flow-contacts-add-address";
 import {
-  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   isContactsLedgerSyncActivationRequired,
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
@@ -73,7 +71,6 @@ export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "ad
 
 export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const { openDrawer } = useActivationDrawer();
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
@@ -357,15 +354,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
       isContactsEntryAvailable: true,
       preference,
     });
-  const featureIntroductionHighlights = useMemo(
-    () =>
-      CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({
-        icon,
-        title: t(`contacts.featureIntroduction.highlights.${translationKey}.title`),
-        description: t(`contacts.featureIntroduction.highlights.${translationKey}.description`),
-      })),
-    [t],
-  );
   const getDisplayName = useContactDisplayName();
   const viewModel = useMemo(() => {
     if (searchQuery.trim().length > 0) {
@@ -441,18 +429,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
     dieProps,
     featureIntroduction: {
       isOpen: isFeatureIntroductionRequested,
-      title: t("contacts.featureIntroduction.title"),
-      highlights: featureIntroductionHighlights,
-      primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       onComplete: dismissFeatureIntroduction,
       onClose: dismissFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
-      title: t("contacts.ledgerSyncIntroduction.title"),
-      description: t("contacts.ledgerSyncIntroduction.description"),
-      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-      dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onActivate: onActivateLedgerSyncIntroduction,
       onDismiss: onDismissLedgerSyncIntroduction,
     },

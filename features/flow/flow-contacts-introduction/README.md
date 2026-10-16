@@ -23,7 +23,8 @@ reserved for components genuinely shared by both introduction screens.
 ## Public API
 
 Apps that mount an introduction directly import this package for its hooks, types, helpers, and
-native content. `ContactsView` from `@features/flow-contacts` remains the aggregate API for the
-complete Contacts experience and composes these introductions on Web.
+native content. The package resolves its own copy with `@shared/i18n`. `ContactsView` from
+`@features/flow-contacts` remains the aggregate API for the complete Contacts experience and
+composes these introductions on Web.
 
 Files under `src/` are internal and must not be imported through package subpaths.

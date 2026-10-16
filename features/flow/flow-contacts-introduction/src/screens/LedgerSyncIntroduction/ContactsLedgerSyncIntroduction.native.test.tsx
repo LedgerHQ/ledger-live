@@ -1,5 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsLedgerSyncIntroductionContent } from "./ContactsLedgerSyncIntroduction";
 
 function renderContent(isOpen = true) {
@@ -9,14 +10,11 @@ function renderContent(isOpen = true) {
   render(
     <ContactsLedgerSyncIntroductionContent
       isOpen={isOpen}
-      title="Keep contacts in sync"
-      description="Ledger Sync protects your contacts across devices."
-      activateLabel="Activate Ledger Sync"
-      dismissLabel="Not now"
       bottomInset={12}
       onActivate={onActivate}
       onDismiss={onDismiss}
     />,
+    { wrapper: I18nTestProvider },
   );
 
   return { onActivate, onDismiss };
@@ -26,10 +24,10 @@ describe("ContactsLedgerSyncIntroductionContent", () => {
   it("should render the native Ledger Sync introduction and dispatch its actions", () => {
     const { onActivate, onDismiss } = renderContent();
 
-    expect(screen.getByText("Keep contacts in sync")).toBeVisible();
+    expect(screen.getByText("contacts.ledgerSyncIntroduction.title")).toBeVisible();
 
-    fireEvent.press(screen.getByText("Activate Ledger Sync"));
-    fireEvent.press(screen.getByText("Not now"));
+    fireEvent.press(screen.getByText("contacts.ledgerSyncIntroduction.activate"));
+    fireEvent.press(screen.getByText("contacts.ledgerSyncIntroduction.dismiss"));
 
     expect(onActivate).toHaveBeenCalledTimes(1);
     expect(onDismiss).toHaveBeenCalledTimes(1);
@@ -38,6 +36,6 @@ describe("ContactsLedgerSyncIntroductionContent", () => {
   it("should hide the Ledger Sync introduction when it is closed", () => {
     renderContent(false);
 
-    expect(screen.queryByText("Keep contacts in sync")).toBeNull();
+    expect(screen.queryByText("contacts.ledgerSyncIntroduction.title")).toBeNull();
   });
 });

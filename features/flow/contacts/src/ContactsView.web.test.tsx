@@ -33,18 +33,11 @@ describe("ContactsView", () => {
         ledgerSyncStatus="ready"
         featureIntroduction={{
           isOpen: false,
-          title: "Add contacts",
-          highlights: [],
-          primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),
           onClose: jest.fn(),
         }}
         ledgerSyncIntroduction={{
           isOpen: false,
-          title: "Sync your wallet to add a contact",
-          description: "Keep contacts in sync.",
-          activateLabel: "Sync my wallet",
-          dismissLabel: "Not now",
           onActivate: jest.fn(),
           onDismiss: jest.fn(),
         }}
@@ -71,24 +64,17 @@ describe("ContactsView", () => {
         ledgerSyncStatus="unavailable"
         featureIntroduction={{
           isOpen: false,
-          title: "Add contacts",
-          highlights: [],
-          primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),
           onClose: jest.fn(),
         }}
         ledgerSyncIntroduction={{
           isOpen: true,
-          title: "Sync your wallet to add a contact",
-          description: "Keep contacts in sync.",
-          activateLabel: "Sync my wallet",
-          dismissLabel: "Not now",
           onActivate: jest.fn(),
           onDismiss: jest.fn(),
         }}
       />,
     );
 
-    expect(screen.getByText("Keep contacts in sync.")).toBeVisible();
+    expect(screen.getByText("contacts.ledgerSyncIntroduction.description")).toBeVisible();
   });
 });
