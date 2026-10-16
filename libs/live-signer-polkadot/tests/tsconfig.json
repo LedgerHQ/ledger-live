@@ -2,7 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": null,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "rootDir": "../src"
   },
   "include": ["."]
 }

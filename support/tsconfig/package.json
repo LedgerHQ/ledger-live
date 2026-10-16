@@ -1,0 +1,19 @@
+{
+  "name": "@support/tsconfig",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript config presets, one per project archetype, over the repository base",
+  "exports": {
+    "./base": "./base.json",
+    "./logic": "./logic.json",
+    "./client": "./client.json",
+    "./web": "./web.json",
+    "./native": "./native.json",
+    "./dual": "./dual.json",
+    "./lib": "./lib.json",
+    "./lib-react": "./lib-react.json",
+    "./lib-node": "./lib-node.json",
+    "./lib/build": "./lib-build.json",
+    "./package.json": "./package.json"
+  }
+}
