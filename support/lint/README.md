@@ -29,17 +29,18 @@ rule that several packages of a layer need belongs in that layer's preset.
 | --- | --- | --- |
 | `base` | `domain/`, `shared/`, `features/platform/` | The baseline |
 | `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on |
-| `features-flow` | `features/flow/` | `any` is an error; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted |
+| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal |
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
-| `libs` | `libs/` | Rule categories off, only named rules enforced |
-| `libs-coin-tester` | `libs/coin-tester-modules/` | `libs`, with the correctness categories back on |
+| `libs` | `libs/` | Correctness rules as warnings, suspicious off |
+| `libs-coin-tester` | `libs/coin-tester-modules/` | `libs`, with correctness as errors and suspicious as warnings |
 
-oxlint `overrides` cannot set `categories` or `ignorePatterns`, which is why each layer that differs
-gets its own config file rather than an override in a root one. `ignorePatterns`, `globals` and
-`settings` do not survive `extends` either, so a preset that needs them declares them itself. Globs
-in `overrides` and `ignorePatterns` anchor to the directory of the layer config that re-exports the
-preset.
+A preset never weakens a rule a package had: where some packages of a layer are stricter than the
+rest, an `overrides` entry keeps them stricter. `overrides` cannot set `categories` or
+`ignorePatterns`, though, which is why each layer that differs gets its own config file rather than
+an override in a root one. `ignorePatterns`, `globals` and `settings` do not survive `extends`
+either, so a preset that needs them declares them itself. Globs in `overrides` and `ignorePatterns`
+anchor to the directory of the layer config that re-exports the preset.
 
 ## Conformance
 
