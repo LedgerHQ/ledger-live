@@ -205,6 +205,7 @@ export function useBalanceGraphViewModel({
       atl,
       athTime,
       atlTime,
+      latestPrice: price == null ? undefined : { price, timestamp: Date.now() },
     });
     return {
       series: [
@@ -220,7 +221,7 @@ export function useBalanceGraphViewModel({
       timestamps: tsList,
       hasData: prices.length > 0,
     };
-  }, [chartData, range, ath, atl, athTime, atlTime]);
+  }, [chartData, range, ath, atl, athTime, atlTime, price]);
 
   // While the next timeframe loads, keep rendering the previous (non-empty)
   // series so the chart morphs from the old shape (Lumen transition-loading)

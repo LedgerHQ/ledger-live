@@ -12,6 +12,7 @@ type UseAssetDetailChartSeriesParams = Readonly<{
   atl?: number;
   athTime?: number;
   atlTime?: number;
+  latestPrice?: number;
   skip?: boolean;
 }>;
 
@@ -24,6 +25,7 @@ export function useAssetDetailChartSeries({
   atl,
   athTime,
   atlTime,
+  latestPrice,
   skip = false,
 }: UseAssetDetailChartSeriesParams) {
   const {
@@ -48,8 +50,10 @@ export function useAssetDetailChartSeries({
         atl,
         athTime,
         atlTime,
+        latestPrice:
+          latestPrice == null ? undefined : { price: latestPrice, timestamp: Date.now() },
       }),
-    [chartData, selectedRange, ath, atl, athTime, atlTime],
+    [chartData, selectedRange, ath, atl, athTime, atlTime, latestPrice],
   );
 
   return { prices, timestamps, isLoading, isFetching, isError };

@@ -109,6 +109,7 @@ export function useChartSectionViewModel({
   const atl = marketCurrencyData?.atl;
   const athTime = marketCurrencyData?.athDate?.getTime();
   const atlTime = marketCurrencyData?.atlDate?.getTime();
+  const latestPrice = marketCurrencyData?.price;
 
   const {
     prices: currentPrices,
@@ -124,6 +125,7 @@ export function useChartSectionViewModel({
     atl,
     athTime,
     atlTime,
+    latestPrice,
   });
 
   // While the next timeframe loads, keep rendering the previous (non-empty)
