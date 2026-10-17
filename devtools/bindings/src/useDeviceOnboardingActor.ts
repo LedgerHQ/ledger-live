@@ -25,7 +25,7 @@ export type OnboardingActorSnapshot = ReturnType<OnboardingActor["getSnapshot"]>
 
 type StartOnboardingActorInput = Pick<
   DeviceOnboardingInput,
-  "dmk" | "deviceId" | "deviceModelId" | "offerSync"
+  "dmk" | "deviceId" | "deviceModelId" | "offerSync" | "hostsSeedSetup"
 >;
 
 type UseDeviceOnboardingActorOptions = {
@@ -191,6 +191,7 @@ export function useDeviceOnboardingActor({
           deviceId: input.deviceId,
           deviceModelId: input.deviceModelId,
           offerSync: input.offerSync,
+          hostsSeedSetup: input.hostsSeedSetup,
         },
         // Each snapshot update carries the event that led to it, including the ones child
         // actors send back. The log keeps both, so a row shows where the event took the machine.
