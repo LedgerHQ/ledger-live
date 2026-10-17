@@ -7,6 +7,7 @@ import type {
   ProgressDisplay,
 } from "../../../hooks/useFinishingProgress";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { OsUpdateButton } from "../../../analytics/types";
 import { FINISHING_ANIMATION_MS } from "../../UpdateProgressScreen/ProgressBar";
 import { UpdateProgressScreen } from "../../UpdateProgressScreen";
 import { UpdatesAppliedScreen } from "../../UpdatesAppliedScreen";
@@ -26,6 +27,7 @@ type Props = Readonly<{
   finishing?: FinishingProgress;
   lastDisplay?: ProgressDisplay;
   onClose: () => void;
+  trackClick: (button: OsUpdateButton) => void;
 }>;
 
 function getScreen({
@@ -95,7 +97,12 @@ function getScreen({
   }
 }
 
-function getSheet({ state, deviceModelId, deviceName }: Props): OsUpdateSheetSpec | undefined {
+function getSheet({
+  state,
+  deviceModelId,
+  deviceName,
+  trackClick,
+}: Props): OsUpdateSheetSpec | undefined {
   const continueOnDevice = {
     content: <ContinueOnDeviceContent deviceModelId={deviceModelId} deviceName={deviceName} />,
   };
@@ -118,22 +125,48 @@ function getSheet({ state, deviceModelId, deviceName }: Props): OsUpdateSheetSpe
     case ApplyUpdatesStateType.AWAITING_CONFIRM_LOAD_IMAGE:
     case ApplyUpdatesStateType.AWAITING_CONFIRM_COMMIT_IMAGE:
       return continueOnDevice;
-    case ApplyUpdatesStateType.ALLOW_SECURE_CONNECTION_REFUSED:
-      return {
-        content: <SecureConnectionRefusedContent onRetry={state.retry} onCancel={state.cancel} />,
+    case ApplyUpdatesStateType.ALLOW_SECURE_CONNECTION_REFUSED: {
+      const onRetry = () => {
+        trackClick(OsUpdateButton.RETRY);
+        state.retry();
       };
-    case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
-      return {
-        content: <InstallFirmwareRefusedContent onCancel={state.cancel} />,
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
       };
+      return {
+        content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
+      };
+    }
+    case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
+      };
+      return {
+        content: <InstallFirmwareRefusedContent onCancel={onCancel} />,
+      };
+    }
     case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
       return { content: <DeviceDisconnectedContent /> };
-    case ApplyUpdatesStateType.OUT_OF_MEMORY:
-      return { content: <OutOfMemoryContent onCancel={state.cancel} /> };
-    case ApplyUpdatesStateType.UNEXPECTED_ERROR:
-      return {
-        content: <UnexpectedErrorContent onCancel={state.cancel} />,
+    case ApplyUpdatesStateType.OUT_OF_MEMORY: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
       };
+      return {
+        content: <OutOfMemoryContent onCancel={onCancel} />,
+      };
+    }
+    case ApplyUpdatesStateType.UNEXPECTED_ERROR: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
+      };
+      return {
+        content: <UnexpectedErrorContent onCancel={onCancel} />,
+      };
+    }
     default: {
       const unhandled: never = state;
       return unhandled;

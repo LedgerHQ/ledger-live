@@ -1,10 +1,10 @@
 import React from "react";
 import { CreateBackupStateType, type CreateBackupState } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import { InfoState } from "@shared/ui-info-state";
-import { Trans } from "~/context/Locale";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { OsUpdateButton } from "../../../analytics/types";
 import { PreparingScreen } from "../../PreparingScreen";
+import { BackupSelectionContent } from "../../../sheets/BackupSelectionContent";
 import { ContinueOnDeviceContent } from "../../../sheets/ContinueOnDeviceContent";
 import { DeviceDisconnectedContent } from "../../../sheets/DeviceDisconnectedContent";
 import { DeviceLockedContent } from "../../../sheets/DeviceLockedContent";
@@ -15,34 +15,31 @@ type Props = Readonly<{
   state: CreateBackupState;
   deviceModelId: DeviceModelId;
   deviceName: string;
+  trackClick: (button: OsUpdateButton) => void;
 }>;
 
-function getSheet({ state, deviceModelId, deviceName }: Props): OsUpdateSheetSpec | undefined {
+function getSheet({
+  state,
+  deviceModelId,
+  deviceName,
+  trackClick,
+}: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case CreateBackupStateType.LOADING:
       return undefined;
-    case CreateBackupStateType.AWAITING_BACKUP_SELECTION:
-      return {
-        content: (
-          <InfoState
-            preset="info"
-            size="hug"
-            title={<Trans i18nKey="osUpdates.backupSelection.title" />}
-            description={<Trans i18nKey="osUpdates.backupSelection.description" />}
-            primaryCta={{
-              label: <Trans i18nKey="osUpdates.backupSelection.useExisting" />,
-              onPress: state.useExistingBackup,
-              testID: "os-update-use-existing-backup",
-            }}
-            secondaryCta={{
-              label: <Trans i18nKey="osUpdates.backupSelection.createNew" />,
-              onPress: state.createNewBackup,
-              testID: "os-update-create-new-backup",
-            }}
-            testID="os-update-backup-selection"
-          />
-        ),
+    case CreateBackupStateType.AWAITING_BACKUP_SELECTION: {
+      const onUseExisting = () => {
+        trackClick(OsUpdateButton.USE_EXISTING_BACKUP);
+        state.useExistingBackup();
       };
+      const onCreateNew = () => {
+        trackClick(OsUpdateButton.CREATE_NEW_BACKUP);
+        state.createNewBackup();
+      };
+      return {
+        content: <BackupSelectionContent onUseExisting={onUseExisting} onCreateNew={onCreateNew} />,
+      };
+    }
     case CreateBackupStateType.DEVICE_LOCKED:
       return {
         content: <DeviceLockedContent deviceModelId={deviceModelId} deviceName={deviceName} />,
@@ -51,16 +48,30 @@ function getSheet({ state, deviceModelId, deviceName }: Props): OsUpdateSheetSpe
       return {
         content: <ContinueOnDeviceContent deviceModelId={deviceModelId} deviceName={deviceName} />,
       };
-    case CreateBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
-      return {
-        content: <SecureConnectionRefusedContent onRetry={state.retry} onCancel={state.cancel} />,
+    case CreateBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED: {
+      const onRetry = () => {
+        trackClick(OsUpdateButton.RETRY);
+        state.retry();
       };
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
+      };
+      return {
+        content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
+      };
+    }
     case CreateBackupStateType.DEVICE_DISCONNECTED:
       return { content: <DeviceDisconnectedContent /> };
-    case CreateBackupStateType.UNEXPECTED_ERROR:
-      return {
-        content: <UnexpectedErrorContent onCancel={state.cancel} />,
+    case CreateBackupStateType.UNEXPECTED_ERROR: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
       };
+      return {
+        content: <UnexpectedErrorContent onCancel={onCancel} />,
+      };
+    }
     default: {
       const unhandled: never = state;
       return unhandled;

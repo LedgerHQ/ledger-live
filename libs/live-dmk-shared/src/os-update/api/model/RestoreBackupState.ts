@@ -52,6 +52,7 @@ export type RestoreBackupState =
     }
   | {
       type: RestoreBackupStateType.OUT_OF_MEMORY;
+      error: unknown;
       cancel: () => void;
     }
   | {
@@ -60,5 +61,6 @@ export type RestoreBackupState =
     }
   | {
       type: RestoreBackupStateType.UNEXPECTED_ERROR;
+      error: unknown;
       cancel: () => void;
     };

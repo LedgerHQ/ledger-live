@@ -69,10 +69,15 @@ export const osUpdatesOrchestratorStateMachine = setup({
         return event.state;
       },
     }),
+    rememberChildError: assign({
+      failedError: ({ event }) => ("error" in event ? event.error : undefined),
+    }),
     assignUnexpectedError: assign({
       currentState: ({ context, self }) =>
-        unexpectedErrorState(context.currentStep, () =>
-          self.send({ type: OsUpdatesOrchestratorStateMachineEventType.STOP }),
+        unexpectedErrorState(
+          context.currentStep,
+          () => self.send({ type: OsUpdatesOrchestratorStateMachineEventType.STOP }),
+          context.failedError,
         ),
     }),
   },
@@ -129,10 +134,13 @@ export const osUpdatesOrchestratorStateMachine = setup({
         ],
         onError: {
           target: "Failed",
-          actions: {
-            type: "logChildFailed",
-            params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
-          },
+          actions: [
+            "rememberChildError",
+            {
+              type: "logChildFailed",
+              params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
+            },
+          ],
         },
       },
     },
@@ -156,10 +164,13 @@ export const osUpdatesOrchestratorStateMachine = setup({
         },
         onError: {
           target: "Failed",
-          actions: {
-            type: "logChildFailed",
-            params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
-          },
+          actions: [
+            "rememberChildError",
+            {
+              type: "logChildFailed",
+              params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
+            },
+          ],
         },
       },
     },
@@ -184,10 +195,13 @@ export const osUpdatesOrchestratorStateMachine = setup({
         },
         onError: {
           target: "Failed",
-          actions: {
-            type: "logChildFailed",
-            params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
-          },
+          actions: [
+            "rememberChildError",
+            {
+              type: "logChildFailed",
+              params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
+            },
+          ],
         },
       },
     },
@@ -211,10 +225,13 @@ export const osUpdatesOrchestratorStateMachine = setup({
         },
         onError: {
           target: "Failed",
-          actions: {
-            type: "logChildFailed",
-            params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
-          },
+          actions: [
+            "rememberChildError",
+            {
+              type: "logChildFailed",
+              params: ({ context, event }) => ({ step: context.currentStep, error: event.error }),
+            },
+          ],
         },
       },
     },

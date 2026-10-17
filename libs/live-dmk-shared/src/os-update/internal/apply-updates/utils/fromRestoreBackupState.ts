@@ -43,9 +43,17 @@ export const fromRestoreBackupState = (
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
       return { type: ApplyUpdatesStateType.DEVICE_DISCONNECTED };
     case RestoreBackupStateType.OUT_OF_MEMORY:
-      return { type: ApplyUpdatesStateType.OUT_OF_MEMORY, cancel: state.cancel };
+      return {
+        type: ApplyUpdatesStateType.OUT_OF_MEMORY,
+        error: state.error,
+        cancel: state.cancel,
+      };
     case RestoreBackupStateType.UNEXPECTED_ERROR:
-      return { type: ApplyUpdatesStateType.UNEXPECTED_ERROR, cancel: state.cancel };
+      return {
+        type: ApplyUpdatesStateType.UNEXPECTED_ERROR,
+        error: state.error,
+        cancel: state.cancel,
+      };
     case RestoreBackupStateType.LOADING:
     case RestoreBackupStateType.BACKUP_RESTORED:
       return null;

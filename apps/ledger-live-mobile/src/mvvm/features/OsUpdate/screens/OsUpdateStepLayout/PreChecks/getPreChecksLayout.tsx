@@ -1,10 +1,10 @@
 import React from "react";
 import { PreChecksStateType, type PreChecksState } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import { InfoState } from "@shared/ui-info-state";
-import { Trans } from "~/context/Locale";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { OsUpdateButton } from "../../../analytics/types";
 import { PreparingScreen } from "../../PreparingScreen";
+import { BatteryTooLowContent } from "../../../sheets/BatteryTooLowContent";
 import { DeviceDisconnectedContent } from "../../../sheets/DeviceDisconnectedContent";
 import { DeviceLockedContent } from "../../../sheets/DeviceLockedContent";
 import { UnexpectedErrorContent } from "../../../sheets/UnexpectedErrorContent";
@@ -14,6 +14,7 @@ type Props = Readonly<{
   deviceModelId: DeviceModelId;
   deviceName: string;
   productName: string;
+  trackClick: (button: OsUpdateButton) => void;
 }>;
 
 function getSheet({
@@ -21,6 +22,7 @@ function getSheet({
   deviceModelId,
   deviceName,
   productName,
+  trackClick,
 }: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case PreChecksStateType.LOADING:
@@ -31,31 +33,30 @@ function getSheet({
       };
     case PreChecksStateType.DEVICE_DISCONNECTED:
       return { content: <DeviceDisconnectedContent /> };
-    case PreChecksStateType.BATTERY_TOO_LOW:
+    case PreChecksStateType.BATTERY_TOO_LOW: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
+      };
       return {
         content: (
-          <InfoState
-            preset="info"
-            size="hug"
-            title={<Trans i18nKey="osUpdates.batteryTooLow.title" values={{ productName }} />}
-            description={
-              <Trans
-                i18nKey="osUpdates.batteryTooLow.description"
-                values={{ percentage: state.currentPercentage }}
-              />
-            }
-            primaryCta={{
-              label: <Trans i18nKey="osUpdates.actions.cancel" />,
-              onPress: state.cancel,
-            }}
-            testID="os-update-battery-too-low"
+          <BatteryTooLowContent
+            productName={productName}
+            percentage={state.currentPercentage}
+            onCancel={onCancel}
           />
         ),
       };
-    case PreChecksStateType.UNEXPECTED_ERROR:
-      return {
-        content: <UnexpectedErrorContent onCancel={state.cancel} />,
+    }
+    case PreChecksStateType.UNEXPECTED_ERROR: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
       };
+      return {
+        content: <UnexpectedErrorContent onCancel={onCancel} />,
+      };
+    }
     default: {
       const unhandled: never = state;
       return unhandled;

@@ -1,4 +1,4 @@
-import React, { type ComponentProps } from "react";
+import React, { useEffect, type ComponentProps } from "react";
 import { OsUpdatesSteps } from "@ledgerhq/live-dmk-shared";
 import type {
   ApplyUpdatesComponent,
@@ -23,6 +23,11 @@ import {
   getRestoreBackupLayout,
   getRestoreBackupProgress,
 } from "../../screens/OsUpdateStepLayout/RestoreBackup/getRestoreBackupLayout";
+import { useSelector } from "~/context/hooks";
+import { osUpdatesSelector } from "../../state/osUpdateSlice";
+import { useOsUpdateTracking } from "../../analytics/TrackingProvider";
+import { getOsUpdateFlowStep, getPageEvent } from "../../analytics/getPageEvent";
+import { OsUpdateButton, OsUpdatePage } from "../../analytics/types";
 
 export type OsUpdateStepProps =
   | ComponentProps<PreChecksComponent>
@@ -50,18 +55,20 @@ function getLayout(
   props: OsUpdateStepProps,
   device: OsUpdateDevice,
   { finishing, lastDisplay }: FinishingProgressResult,
+  trackClick: (button: OsUpdateButton) => void,
 ): OsUpdateStepLayoutSpec {
   switch (props.step) {
     case OsUpdatesSteps.PRE_CHECKS:
-      return getPreChecksLayout({ state: props.state, ...device });
+      return getPreChecksLayout({ state: props.state, trackClick, ...device });
     case OsUpdatesSteps.CREATE_BACKUP:
-      return getCreateBackupLayout({ state: props.state, ...device });
+      return getCreateBackupLayout({ state: props.state, trackClick, ...device });
     case OsUpdatesSteps.APPLY_UPDATES:
       return getApplyUpdatesLayout({
         state: props.state,
         finishing,
         lastDisplay,
         onClose: props.onUserClose,
+        trackClick,
         ...device,
       });
     case OsUpdatesSteps.RESTORE_BACKUP:
@@ -70,6 +77,7 @@ function getLayout(
         finishing,
         lastDisplay,
         onClose: props.onUserClose,
+        trackClick,
         ...device,
       });
     default: {
@@ -90,7 +98,19 @@ function getLayout(
 export function OsUpdateStep(props: OsUpdateStepProps) {
   const device = useOsUpdateDevice(props.connectedDevice);
   const progress = useFinishingProgress(getProgress(props));
-  const { screen, sheet } = getLayout(props, device, progress);
+  const osUpdates = useSelector(osUpdatesSelector);
+  const { trackPage, trackClick } = useOsUpdateTracking();
+  const { screen, sheet } = getLayout(props, device, progress, trackClick);
+
+  useEffect(() => {
+    if (props.isCloseConfirmationOpen) {
+      trackPage({ page: OsUpdatePage.CLOSE_CONFIRMATION, step: getOsUpdateFlowStep(props.step) });
+      return;
+    }
+    if (progress.finishing) return;
+    const pageEvent = getPageEvent(props, osUpdates);
+    if (pageEvent) trackPage(pageEvent);
+  }, [props, progress.finishing, osUpdates, trackPage]);
 
   return (
     <OsUpdateStepLayout
