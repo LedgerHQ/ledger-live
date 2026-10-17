@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { allure } from "jest-allure2-reporter/api";
+import { setEnv } from "@shared/env";
 import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
@@ -9,6 +10,7 @@ import {
   TRONIFY_OPTION_ID,
   USDT_UNIT,
   expectRentOrderedFromFake,
+  expectUsdtTransferBroadcastToFake,
   fakeTronifyCoinConfig,
   startFakeTronify,
   upstreamTronGrid,
@@ -23,6 +25,9 @@ import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 import { beforeAllTokenFunction } from "@e2e/specs/send/newSendFlow";
 
 const FEATURE_FLAGS = { ...FF_NEW_SEND_FLOW_ENABLED, gasSponsorship: { enabled: true } };
+
+// Broadcasts reach the fake TronGrid, which answers them and never forwards them.
+setEnv("DISABLE_TRANSACTION_BROADCAST", false);
 
 // The device shows the rent in full; the app rounds it the way it rounds every fee.
 const appFee = (usdt: string) =>
@@ -153,6 +158,11 @@ export function runNewSendFlowSponsoredTest(
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
       await app.newSend.waitForSuccessConfirmation();
+      await expectUsdtTransferBroadcastToFake(
+        fake,
+        transaction.accountToCredit.address,
+        transaction.amount,
+      );
     },
   );
 }
