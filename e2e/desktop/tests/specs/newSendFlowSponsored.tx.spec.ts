@@ -13,6 +13,7 @@ import {
   TRONIFY_OPTION_ID,
   USDT_UNIT,
   expectRentOrderedFromFake,
+  expectUsdtTransferBroadcastToFake,
   fakeTronifyCoinConfig,
   startFakeTronify,
   upstreamTronGrid,
@@ -92,7 +93,8 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
     featureFlags: { ...FF_NEW_SEND_FLOW_ENABLED, gasSponsorship: { enabled: true } },
-    env: { DISABLE_TRANSACTION_BROADCAST: "1" },
+    // Broadcasts reach the fake TronGrid, which answers them and never forwards them.
+    env: { DISABLE_TRANSACTION_BROADCAST: "0" },
     coinConfigOverrides: fakeTronifyCoinConfig(),
   });
 
@@ -127,6 +129,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
         await app.newSendFlow.waitForSignature();
         await app.speculos.signSendTransaction(tx);
         await app.newSendFlow.waitForSuccessConfirmation();
+        await expectUsdtTransferBroadcastToFake(fake, tx.accountToCredit.address, tx.amount);
       },
     );
   });

@@ -4,6 +4,7 @@ import type { AddressInfo } from "node:net";
 import test, { afterEach, beforeEach } from "node:test";
 import {
   expectRentOrderedFromFake,
+  expectUsdtTransferBroadcastToFake,
   startFakeTronify,
   TRONIFY_E2E_PAYEES,
   type FakeTronify,
@@ -537,15 +538,42 @@ test("switches scenarios and serves the request log over HTTP", async () => {
 
 test("should resolve when the rent order reaches the fake while it waits", async () => {
   const waited = expectRentOrderedFromFake(fake, 5_000);
+  await get(`/trongrid/v1/accounts/${PAYER}`);
   await order();
 
   await waited;
 });
 
 test("should refuse to sign when no rent order reached the fake", async () => {
+  await get(`/trongrid/v1/accounts/${PAYER}`);
   await quote();
 
   await assert.rejects(expectRentOrderedFromFake(fake, 300), /refusing to sign a TX-A/);
+});
+
+test("should refuse to sign when TronGrid calls didn't reach the fake", async () => {
+  await order();
+
+  await assert.rejects(expectRentOrderedFromFake(fake, 300), /refusing to sign a TX-A/);
+});
+
+test("should keep each broadcast's raw data until the scenario changes", async () => {
+  const { data } = await order();
+  // The scenario's first order pays the first payee.
+  const [payee] = TRONIFY_E2E_PAYEES;
+  await post("/trongrid/wallet/broadcasttransaction", { ...data.transaction, signature: ["ab"] });
+
+  assert.deepEqual(fake.broadcasts(), [
+    { txid: data.transaction.txID, rawDataHex: data.transaction.raw_data_hex },
+  ]);
+  await expectUsdtTransferBroadcastToFake(fake, payee, data.payCoinAmt, 300);
+  await assert.rejects(
+    expectUsdtTransferBroadcastToFake(fake, payee, "1", 300),
+    /no broadcast of 1 USDT/,
+  );
+
+  fake.setScenario("happy");
+  assert.deepEqual(fake.broadcasts(), []);
 });
 
 test("answers CORS preflights so a renderer can call it", async () => {
