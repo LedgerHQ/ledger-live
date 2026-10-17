@@ -61,6 +61,7 @@ export function InfoState(props: InfoStateProps) {
               appearance={banner.appearance ?? "info"}
               title={banner.title}
               description={banner.description}
+              testID={banner.testID}
             />
           </Box>
         ) : null}

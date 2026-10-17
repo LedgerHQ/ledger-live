@@ -69,6 +69,7 @@ export function useAmountScreenViewModel({
     feeCurrencyTicker,
     feeTokenAccount,
     sponsoredUnaffordable,
+    rentArriving,
   } = useSponsoredSend();
   const sponsoredSelected = selectedFeeOptionId === sponsoredFeeOptionId;
 
@@ -296,6 +297,9 @@ export function useAmountScreenViewModel({
   const sponsoredReviewNotReady =
     !hasInsufficientFundsError && sponsoredSelected && available && (!intentReady || !quote);
 
+  // Only a TRC-20 transfer burns energy: the landed rent won't change a TRX or TRC-10 send's fee.
+  const rentChangesFee = account.type === "TokenAccount" && account.token.tokenType === "trc20";
+
   return {
     amountValue: amountInput.amountValue,
     amountInputMaxDecimalLength: amountInput.amountInputMaxDecimalLength,
@@ -323,6 +327,8 @@ export function useAmountScreenViewModel({
           provider: providerName,
         })
       : null,
+    sponsoredRentNotice:
+      rentArriving && rentChangesFee ? t("newSendFlow.feePayment.rentArriving") : null,
     reviewLoading: amountComputationPending || sponsoredReviewNotReady,
     ...networkFees,
     feeSelector: {

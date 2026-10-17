@@ -10,6 +10,14 @@ import { buildGenericTransactionIntent } from "../../../bridge/generic-coin-fram
 import { getSponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";
 import type { Transaction } from "../../../generated/types";
 import { USDT_CONTRACT, USDT_RENT_PAYMENT as RENT_PAYMENT } from "./fixtures/usdt";
+import {
+  PENDING_RENT_EXPIRY_MARGIN_MS,
+  markPendingRentDelivered,
+  getPendingRent,
+  recordPendingRent,
+  resetPendingRentsForTests,
+} from "./pendingRents";
+import { SPONSORED_PHASE } from "./types";
 import { useSponsoredSendOrchestration } from "./useSponsoredSendOrchestration";
 import { useSponsoredSendSession } from "./useSponsoredSendSession";
 
@@ -49,11 +57,43 @@ const makeTransaction = (overrides: Record<string, unknown> = {}) =>
     ...overrides,
   }) as unknown as Transaction;
 
-const seam = { reservationDedupKey: jest.fn().mockReturnValue("7.5") };
+const seam = {
+  reservationDedupKey: jest.fn().mockReturnValue("7.5"),
+  isEnergyDelivered: jest.fn(),
+  awaitEnergyDelivery: jest.fn(),
+};
 const reset = jest.fn();
+
+const BROADCAST = {
+  paymentTxId: "txA",
+  payerAddress: "TPayer",
+  rentPayment: RENT_PAYMENT,
+  orderId: "order-1",
+  receiverAddress: "TReceiver",
+  energyNeeded: 64_285n,
+  paymentExpiresAt: Date.now() + 360_000,
+};
+
+const FOREIGN_FEE_ASSET = {
+  rentPayment: { ...RENT_PAYMENT, asset: { ...RENT_PAYMENT.asset, assetReference: "TOther" } },
+};
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(res => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
+const setOrchestrationState = (state: Record<string, unknown>) =>
+  mockOrchestration.mockReturnValue({ state, actions: { reset } } as never);
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetPendingRentsForTests();
+  seam.isEnergyDelivered.mockResolvedValue(false);
+  seam.awaitEnergyDelivery.mockReturnValue(new Promise<void>(() => {}));
   mockGetSponsoredCoinApi.mockResolvedValue(seam as never);
   mockBuildIntent.mockResolvedValue({ built: true } as never);
   mockOrchestration.mockReturnValue({ state: {}, actions: { reset } } as never);
@@ -105,7 +145,12 @@ describe("useSponsoredSendSession", () => {
     expect(mockGetSponsoredCoinApi).toHaveBeenCalledWith("tron", "local");
     expect(mockBuildIntent).toHaveBeenCalledWith("tron", "local", tronAccount, transaction);
     expect(mockOrchestration).toHaveBeenLastCalledWith(
-      expect.objectContaining({ network: "tron", kind: "local", intent: { built: true } }),
+      expect.objectContaining({
+        network: "tron",
+        kind: "local",
+        intent: { built: true },
+        mainAccountId: tronAccount.id,
+      }),
     );
   });
 
@@ -153,9 +198,8 @@ describe("useSponsoredSendSession", () => {
       const { result } = renderSession({}, reservePendingOperation);
       await waitFor(() => expect(result.current.seam).toBe(seam));
 
-      const broadcast = { paymentTxId: "txA", payerAddress: "TPayer", rentPayment: RENT_PAYMENT };
-      act(() => lastBroadcastCallback()(broadcast));
-      act(() => lastBroadcastCallback()(broadcast));
+      act(() => lastBroadcastCallback()(BROADCAST));
+      act(() => lastBroadcastCallback()(BROADCAST));
 
       expect(reservePendingOperation).toHaveBeenCalledTimes(1);
       const [mainAccountId, op] = reservePendingOperation.mock.calls[0];
@@ -167,30 +211,224 @@ describe("useSponsoredSendSession", () => {
 
     it.each([
       ["no payment id", { paymentTxId: undefined }],
-      [
-        "a fee asset the account doesn't hold",
-        {
-          rentPayment: {
-            ...RENT_PAYMENT,
-            asset: { ...RENT_PAYMENT.asset, assetReference: "TOther" },
-          },
-        },
-      ],
+      ["a fee asset the account doesn't hold", FOREIGN_FEE_ASSET],
     ])("files nothing for %s", async (_label, overrides) => {
       const reservePendingOperation = jest.fn();
       const { result } = renderSession({}, reservePendingOperation);
       await waitFor(() => expect(result.current.seam).toBe(seam));
 
-      act(() =>
-        lastBroadcastCallback()({
-          paymentTxId: "txA",
-          payerAddress: "TPayer",
-          rentPayment: RENT_PAYMENT,
-          ...overrides,
-        }),
-      );
+      act(() => lastBroadcastCallback()({ ...BROADCAST, ...overrides }));
 
       expect(reservePendingOperation).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("the pending rent", () => {
+    it("remembers the paid rent for a reopened Send", async () => {
+      const { result } = renderSession();
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+
+      act(() => lastBroadcastCallback()(BROADCAST));
+
+      expect(getPendingRent(tronAccount.id)).toMatchObject({
+        mainAccountId: tronAccount.id,
+        orderId: "order-1",
+        payerAddress: "TPayer",
+        paymentTxId: "txA",
+        receiverAddress: "TReceiver",
+        energyNeeded: 64_285n,
+      });
+    });
+
+    it("should remember it without filing the op when the provider reported it failed", async () => {
+      const reservePendingOperation = jest.fn();
+      const { result } = renderSession({}, reservePendingOperation);
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+
+      act(() => lastBroadcastCallback()({ ...BROADCAST, reportedFailed: true }));
+
+      expect(reservePendingOperation).not.toHaveBeenCalled();
+      expect(getPendingRent(tronAccount.id)?.paymentTxId).toBe("txA");
+    });
+
+    it("remembers it even when no reservation op can be filed", async () => {
+      const reservePendingOperation = jest.fn();
+      const { result } = renderSession({}, reservePendingOperation);
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+
+      act(() => lastBroadcastCallback()({ ...BROADCAST, ...FOREIGN_FEE_ASSET }));
+
+      expect(reservePendingOperation).not.toHaveBeenCalled();
+      expect(getPendingRent(tronAccount.id)?.paymentTxId).toBe("txA");
+    });
+
+    it("remembers a payment once, so a repeat can't revive a cleared rent", async () => {
+      const { result } = renderSession();
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+
+      act(() => lastBroadcastCallback()(BROADCAST));
+      markPendingRentDelivered(tronAccount.id);
+      act(() => lastBroadcastCallback()(BROADCAST));
+
+      expect(getPendingRent(tronAccount.id)).toBeNull();
+    });
+
+    it.each([
+      ["no payment id", { paymentTxId: undefined }],
+      ["no receiver", { receiverAddress: null }],
+      ["no energy amount", { energyNeeded: null }],
+    ])("remembers nothing for %s", async (_label, overrides) => {
+      const { result } = renderSession();
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+
+      act(() => lastBroadcastCallback()({ ...BROADCAST, ...overrides }));
+
+      expect(getPendingRent(tronAccount.id)).toBeNull();
+    });
+
+    it("remembers the rent before filing the op, so an op that throws can't skip it", async () => {
+      const reservePendingOperation = jest.fn(() => {
+        throw new Error("store down");
+      });
+      const { result } = renderSession({}, reservePendingOperation);
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+
+      expect(() => lastBroadcastCallback()(BROADCAST)).toThrow("store down");
+
+      expect(getPendingRent(tronAccount.id)?.paymentTxId).toBe("txA");
+    });
+
+    it("forgets the rent once its transfer is released", async () => {
+      const { result, rerender } = renderSession();
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+      act(() => lastBroadcastCallback()(BROADCAST));
+
+      setOrchestrationState({ phase: SPONSORED_PHASE.TRANSFER, paymentTxId: "txOther" });
+      rerender({ enabled: true, transaction: makeTransaction() });
+      expect(getPendingRent(tronAccount.id)).not.toBeNull();
+
+      setOrchestrationState({ phase: SPONSORED_PHASE.TRANSFER, paymentTxId: "txA" });
+      rerender({ enabled: true, transaction: makeTransaction() });
+      expect(getPendingRent(tronAccount.id)).toBeNull();
+    });
+
+    it("holds the offer when an edit sends a paid flow back to IDLE", async () => {
+      const transaction = makeTransaction();
+      setOrchestrationState({ phase: SPONSORED_PHASE.POLLING, paymentTxId: "txA" });
+      const { result, rerender } = renderSession({ transaction });
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+
+      act(() => lastBroadcastCallback()(BROADCAST));
+      expect(result.current.rentArriving).toBe(false);
+
+      setOrchestrationState({ phase: SPONSORED_PHASE.IDLE, paymentTxId: null });
+      rerender({ enabled: true, transaction });
+
+      await waitFor(() => expect(result.current.rentArriving).toBe(true));
+      expect(result.current.rentDeliveredAt).toBeNull();
+    });
+
+    it("holds the offer when the broadcast lands after a reset already returned to IDLE", async () => {
+      setOrchestrationState({ phase: SPONSORED_PHASE.IDLE, paymentTxId: null });
+      const { result } = renderSession();
+      await waitFor(() => expect(result.current.seam).toBe(seam));
+      expect(result.current.rentArriving).toBe(false);
+
+      act(() => lastBroadcastCallback()(BROADCAST));
+
+      await waitFor(() => expect(result.current.rentArriving).toBe(true));
+    });
+
+    describe("a payment the provider reported failed", () => {
+      const FAILED = {
+        phase: SPONSORED_PHASE.FAILED,
+        order: { orderId: "order-1", paymentExpiresAt: BROADCAST.paymentExpiresAt },
+        paymentTxId: "txA",
+        payerAddress: "TPayer",
+        receiverAddress: "TReceiver",
+        energyNeeded: 64_285n,
+        retryLockedUntil: BROADCAST.paymentExpiresAt + 30_000,
+      };
+
+      it("is remembered, and holds the offer once the flow returns to IDLE", async () => {
+        const reservePendingOperation = jest.fn();
+        setOrchestrationState(FAILED);
+        const { result, rerender } = renderSession({}, reservePendingOperation);
+        await waitFor(() => expect(result.current.seam).toBe(seam));
+
+        expect(getPendingRent(tronAccount.id)).toEqual({
+          mainAccountId: tronAccount.id,
+          orderId: "order-1",
+          payerAddress: "TPayer",
+          paymentTxId: "txA",
+          receiverAddress: "TReceiver",
+          energyNeeded: 64_285n,
+          expiresAt: BROADCAST.paymentExpiresAt + PENDING_RENT_EXPIRY_MARGIN_MS,
+        });
+        expect(reservePendingOperation).not.toHaveBeenCalled();
+        expect(result.current.rentArriving).toBe(false);
+
+        setOrchestrationState({ phase: SPONSORED_PHASE.IDLE, paymentTxId: null });
+        rerender({ enabled: true, transaction: makeTransaction() });
+
+        await waitFor(() => expect(result.current.rentArriving).toBe(true));
+      });
+
+      it.each([
+        ["no retry lock", { retryLockedUntil: null }],
+        ["a phase other than FAILED", { phase: SPONSORED_PHASE.POLLING }],
+        ["no order", { order: null }],
+        ["no payment id", { paymentTxId: null }],
+        ["no payer", { payerAddress: null }],
+        ["no receiver", { receiverAddress: null }],
+        ["no energy amount", { energyNeeded: null }],
+      ])("is not remembered with %s", async (_label, overrides) => {
+        setOrchestrationState({ ...FAILED, ...overrides });
+        const { result } = renderSession();
+        await waitFor(() => expect(result.current.seam).toBe(seam));
+
+        expect(getPendingRent(tronAccount.id)).toBeNull();
+      });
+
+      it("shares its dedupe with the broadcast, so it can't revive a cleared rent", async () => {
+        const { result, rerender } = renderSession();
+        await waitFor(() => expect(result.current.seam).toBe(seam));
+        act(() => lastBroadcastCallback()(BROADCAST));
+        markPendingRentDelivered(tronAccount.id);
+
+        setOrchestrationState(FAILED);
+        rerender({ enabled: true, transaction: makeTransaction() });
+
+        expect(getPendingRent(tronAccount.id)).toBeNull();
+      });
+    });
+
+    it("surfaces a rent still pending when Send reopens, and when its energy lands", async () => {
+      const { orderId, payerAddress, paymentTxId, receiverAddress, energyNeeded } = BROADCAST;
+      recordPendingRent(
+        {
+          mainAccountId: tronAccount.id,
+          orderId,
+          payerAddress,
+          paymentTxId,
+          receiverAddress,
+          energyNeeded,
+        },
+        BROADCAST.paymentExpiresAt,
+      );
+      setOrchestrationState({ phase: SPONSORED_PHASE.IDLE, paymentTxId: null });
+      const delivery = deferred<void>();
+      seam.awaitEnergyDelivery.mockReturnValue(delivery.promise);
+      const { result } = renderSession();
+
+      await waitFor(() => expect(seam.awaitEnergyDelivery).toHaveBeenCalled());
+      expect(result.current.rentArriving).toBe(true);
+      expect(result.current.rentDeliveredAt).toBeNull();
+
+      act(() => delivery.resolve());
+
+      await waitFor(() => expect(result.current.rentArriving).toBe(false));
+      expect(result.current.rentDeliveredAt).toEqual(expect.any(Number));
     });
   });
 

@@ -25,6 +25,9 @@ import {
   useSponsoredFeeSelection,
 } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeSelection";
 import { useSponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeAmounts";
+import { useReestimateOnRentDelivery } from "@ledgerhq/live-common/flows/send/sponsored/useReestimateOnRentDelivery";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
@@ -61,6 +64,8 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredMaxAmount: BigNumber | null;
   /** The sponsored pick can't pay the amount and the rent from the fee token. */
   sponsoredUnaffordable: boolean;
+  /** A rent paid outside this flow hasn't landed: the sponsored option stays off until it does. */
+  rentArriving: boolean;
 }>;
 
 const NO_WAIVED_KEYS: readonly string[] = [];
@@ -92,6 +97,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     intentFailed,
     state: sponsoredState,
     actions,
+    rentArriving,
+    rentDeliveredAt,
   } = useSponsoredSendSession({
     enabled: flagEnabled,
     account,
@@ -111,7 +118,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     feeTokenAccount,
   } = useSponsoredFeeQuote({
     mainAccount,
-    seam,
+    // No seam, no offer: a second rent would pay twice for the energy that is on its way.
+    seam: rentArriving ? null : seam,
     intent,
     intentFailed,
     refresh: sponsoredState.phase === SPONSORED_PHASE.IDLE,
@@ -144,6 +152,14 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     updateTransaction: transactionActions.updateTransaction,
   });
   const { selectedFeeOptionId, selectStandard } = selection;
+
+  // Signature is its own step here, so being on Amount also means not signing.
+  const { currentStep } = useFlowWizard<SendFlowStep>();
+  useReestimateOnRentDelivery({
+    deliveredAt: rentDeliveredAt,
+    active: currentStep === SEND_FLOW_STEP.AMOUNT,
+    updateTransaction: transactionActions.updateTransaction,
+  });
 
   const locale = useSelector(localeSelector);
   const nativeUnit = useMaybeAccountUnit(mainAccount);
@@ -186,6 +202,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       quote,
       feeCurrencyTicker,
       feeTokenAccount,
+      rentArriving,
     }),
     [
       sponsoredState,
@@ -202,6 +219,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       quote,
       feeCurrencyTicker,
       feeTokenAccount,
+      rentArriving,
     ],
   );
 

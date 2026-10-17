@@ -7,12 +7,18 @@ import type {
   SponsoredFeeQuote,
 } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import {
   TRON_USDT_FEE_ASSET,
   createMockAccount,
   createMockTronUsdtAccount,
 } from "../../screens/Recipient/__integrations__/__fixtures__/accounts";
 import { getPendingTokenSpent } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
+import {
+  getPendingRent,
+  resetPendingRentsForTests,
+} from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
+import type { useSponsoredSendOrchestration } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
 import { track } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { SponsoredSendProvider, useSponsoredSend } from "../SponsoredSendContext";
@@ -55,6 +61,11 @@ jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestrat
 
 jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent", () => ({
   buildGenericTransactionIntent: jest.fn(() => Promise.resolve({ fake: "intent" })),
+}));
+
+const mockPendingRentDelivery = { rentArriving: false, deliveredAt: null as number | null };
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/usePendingRentDelivery", () => ({
+  usePendingRentDelivery: () => mockPendingRentDelivery,
 }));
 
 const mockSeam = {
@@ -115,6 +126,11 @@ jest.mock("../../hooks/useSendFlowTrackingProperties", () => ({
   useSendFlowTrackingProperties: () => ({ flow: "send" }),
 }));
 
+let mockCurrentStep: SendFlowStep = SEND_FLOW_STEP.AMOUNT;
+jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: () => ({ currentStep: mockCurrentStep }),
+}));
+
 const mockUpdateTransaction = jest.fn();
 jest.mock("../SendFlowContext", () => ({
   useSendFlowData: jest.fn(() => ({
@@ -146,10 +162,13 @@ describe("SponsoredSendContext", () => {
     mockUseSponsoredFeeResult.feeTokenAccount = null;
     mockUseSponsoredFeeResult.standardFeeFiat = null;
     mockUseSponsoredFeeResult.sponsoredFeeFiat = null;
+    mockPendingRentDelivery.rentArriving = false;
+    mockPendingRentDelivery.deliveredAt = null;
     mockSponsoredState.phase = "IDLE";
     mockTransaction = { family: "tron", amount: {} };
     mockSendAccount = mockAccount;
     mockParentAccount = null;
+    mockCurrentStep = SEND_FLOW_STEP.AMOUNT;
   });
 
   it("exposes useSponsoredFeeQuote's result (available/quote/savingsFiatFormatted)", () => {
@@ -417,14 +436,175 @@ describe("SponsoredSendContext", () => {
     expect(mockUpdateTransaction).not.toHaveBeenCalled();
   });
 
+  describe("a rent that is still arriving", () => {
+    afterEach(() => {
+      mockUseSponsoredFeeQuote.mockImplementation(() => mockUseSponsoredFeeResult);
+    });
+
+    it("withholds the seam from the quote, so the sponsored option is off, and exposes rentArriving", async () => {
+      mockPendingRentDelivery.rentArriving = true;
+      const { result } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+      await act(async () => {});
+
+      expect(result.current.rentArriving).toBe(true);
+      expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
+        expect.objectContaining({ seam: null }),
+      );
+      // Only the quote is held back: the rest of the flow still sees the resolved seam.
+      expect(result.current.sponsoredFeeOptionId).toBe("sponsored-fixture");
+      expect(result.current.providerName).toBe("Provider");
+    });
+
+    it("hands the seam to the quote again once the rent has landed", async () => {
+      mockPendingRentDelivery.rentArriving = true;
+      const { result, rerender } = renderHook(() => useSponsoredSend(), {
+        wrapper,
+        initialState: flagOn,
+      });
+      await act(async () => {});
+
+      mockPendingRentDelivery.rentArriving = false;
+      await act(async () => {
+        rerender();
+      });
+
+      expect(result.current.rentArriving).toBe(false);
+      expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
+        expect.objectContaining({ seam: mockSeam }),
+      );
+    });
+
+    it("should move a sponsored pick back to the standard fee when a rent starts arriving", async () => {
+      // As the real quote does: no seam, no offer.
+      mockUseSponsoredFeeQuote.mockImplementation((...args: unknown[]) => ({
+        ...mockUseSponsoredFeeResult,
+        available: (args[0] as { seam: unknown }).seam !== null,
+      }));
+      const { result, rerender } = renderHook(() => useSponsoredSend(), {
+        wrapper,
+        initialState: flagOn,
+      });
+      await act(async () => {});
+      await act(async () => {
+        result.current.selectSponsored();
+      });
+      expect(result.current.selectedFeeOptionId).toBe("sponsored-fixture");
+
+      mockPendingRentDelivery.rentArriving = true;
+      await act(async () => {
+        rerender();
+      });
+
+      expect(result.current.selectedFeeOptionId).toBe("standard");
+      expect(mockUpdateTransaction.mock.calls.at(-1)![0]({})).toEqual({ sponsored: false });
+    });
+  });
+
+  describe("a rent that has been delivered", () => {
+    it("re-estimates once with a copy of the transaction", async () => {
+      const { rerender } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+      await act(async () => {});
+      expect(mockUpdateTransaction).not.toHaveBeenCalled();
+
+      mockPendingRentDelivery.deliveredAt = 1_000;
+      await act(async () => {
+        rerender();
+      });
+
+      expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
+      const updater = mockUpdateTransaction.mock.calls[0]![0] as (
+        transaction: Record<string, unknown>,
+      ) => Record<string, unknown>;
+      const transaction = { family: "tron", amount: {} };
+      const copy = updater(transaction);
+      expect(copy).toEqual(transaction);
+      expect(copy).not.toBe(transaction);
+    });
+
+    it("does not re-estimate again on later renders of the same delivery", async () => {
+      const { rerender } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+      await act(async () => {});
+      mockPendingRentDelivery.deliveredAt = 1_000;
+      await act(async () => {
+        rerender();
+      });
+
+      mockTransaction = { family: "tron", amount: {}, recipient: "TNewRecipient" };
+      await act(async () => {
+        rerender();
+      });
+      await act(async () => {
+        rerender();
+      });
+
+      expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
+    });
+
+    it("re-estimates again for a later delivery", async () => {
+      const { rerender } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+      await act(async () => {});
+      mockPendingRentDelivery.deliveredAt = 1_000;
+      await act(async () => {
+        rerender();
+      });
+
+      mockPendingRentDelivery.deliveredAt = 2_000;
+      await act(async () => {
+        rerender();
+      });
+
+      expect(mockUpdateTransaction).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([SEND_FLOW_STEP.RECIPIENT, SEND_FLOW_STEP.SIGNATURE])(
+      "should wait for the Amount step when the delivery lands on %s",
+      async step => {
+        mockCurrentStep = step;
+        const { rerender } = renderHook(() => useSponsoredSend(), {
+          wrapper,
+          initialState: flagOn,
+        });
+        await act(async () => {});
+
+        mockPendingRentDelivery.deliveredAt = 1_000;
+        await act(async () => {
+          rerender();
+        });
+        expect(mockUpdateTransaction).not.toHaveBeenCalled();
+
+        mockCurrentStep = SEND_FLOW_STEP.AMOUNT;
+        await act(async () => {
+          rerender();
+        });
+        mockCurrentStep = SEND_FLOW_STEP.SIGNATURE;
+        await act(async () => {
+          rerender();
+        });
+        mockCurrentStep = SEND_FLOW_STEP.AMOUNT;
+        await act(async () => {
+          rerender();
+        });
+
+        expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
+      },
+    );
+  });
+
   describe("the TX-A rent reservation", () => {
     const RENT_PAYMENT: RentPayment = { asset: TRON_USDT_FEE_ASSET, amount: 3_200_000n };
 
-    type RentPaymentBroadcast = (info: {
-      paymentTxId?: string;
-      payerAddress: string;
-      rentPayment: RentPayment;
-    }) => void;
+    type RentPaymentBroadcast = NonNullable<
+      Parameters<typeof useSponsoredSendOrchestration>[0]["onRentPaymentBroadcast"]
+    >;
+    const BROADCAST: Parameters<RentPaymentBroadcast>[0] = {
+      paymentTxId: "txA",
+      payerAddress: "TPayer",
+      rentPayment: RENT_PAYMENT,
+      orderId: "order-1",
+      receiverAddress: "TReceiver",
+      energyNeeded: 64_285n,
+      paymentExpiresAt: Date.now() + 6 * 60_000,
+    };
 
     async function renderAndGetBroadcastHandler(): Promise<RentPaymentBroadcast> {
       renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
@@ -439,17 +619,31 @@ describe("SponsoredSendContext", () => {
     beforeEach(() => {
       mockUpdateAccountWithUpdater.mockClear();
       mockSeam.reservationDedupKey.mockReturnValue("123.5");
+      resetPendingRentsForTests();
+    });
+
+    it("should remember the rent as pending for the account when its payment is broadcast", async () => {
+      const onRentPaymentBroadcast = await renderAndGetBroadcastHandler();
+
+      await act(async () => {
+        onRentPaymentBroadcast(BROADCAST);
+      });
+
+      expect(getPendingRent("acc_tron")).toMatchObject({
+        mainAccountId: "acc_tron",
+        orderId: "order-1",
+        payerAddress: "TPayer",
+        paymentTxId: "txA",
+        receiverAddress: "TReceiver",
+        energyNeeded: 64_285n,
+      });
     });
 
     it("locks the rent as a pending OUT on the USDT sub-account and leaves the TRX balance alone", async () => {
       const onRentPaymentBroadcast = await renderAndGetBroadcastHandler();
 
       await act(async () => {
-        onRentPaymentBroadcast({
-          paymentTxId: "txA",
-          payerAddress: "TPayer",
-          rentPayment: RENT_PAYMENT,
-        });
+        onRentPaymentBroadcast(BROADCAST);
       });
 
       expect(mockUpdateAccountWithUpdater).toHaveBeenCalledTimes(1);
@@ -483,8 +677,7 @@ describe("SponsoredSendContext", () => {
 
       await act(async () => {
         onRentPaymentBroadcast({
-          paymentTxId: "txA",
-          payerAddress: "TPayer",
+          ...BROADCAST,
           rentPayment: {
             asset: { type: "trc20", assetReference: "TOtherToken" },
             amount: 3_200_000n,
@@ -497,11 +690,10 @@ describe("SponsoredSendContext", () => {
 
     it("reserves a payment once, however often it is reported", async () => {
       const onRentPaymentBroadcast = await renderAndGetBroadcastHandler();
-      const info = { paymentTxId: "txA", payerAddress: "TPayer", rentPayment: RENT_PAYMENT };
 
       await act(async () => {
-        onRentPaymentBroadcast(info);
-        onRentPaymentBroadcast(info);
+        onRentPaymentBroadcast(BROADCAST);
+        onRentPaymentBroadcast(BROADCAST);
       });
 
       expect(mockUpdateAccountWithUpdater).toHaveBeenCalledTimes(1);

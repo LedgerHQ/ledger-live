@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Contact } from "@domain/entity-contact";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { BalanceTypeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
 import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
@@ -544,14 +544,17 @@ export const createTronAccount = (overrides?: Partial<Account>): Account => {
 };
 
 export const renderSendFlow = (
-  account: Account,
+  account: AccountLike,
   params: Omit<NonNullable<React.ComponentProps<typeof SendWorkflow>["params"]>, "account"> = {},
   contacts: readonly Contact[] = [],
   options?: { flags?: Parameters<typeof withFlagOverrides>[0] },
 ) =>
   render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account, ...params }} />, {
     initialState: {
-      accounts: [account],
+      // A token account is stored under its parent.
+      accounts: [account.type === "Account" ? account : params.parentAccount].filter(
+        (stored): stored is Account => stored !== undefined,
+      ),
       contacts: { contacts: [...contacts] },
       settings: {
         counterValue: "USD",

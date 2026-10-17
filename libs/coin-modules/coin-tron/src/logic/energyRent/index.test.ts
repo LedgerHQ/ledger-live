@@ -8,6 +8,7 @@ import {
   uploadHash,
 } from "../../network/tronify";
 import { decode58Check } from "../../network/format";
+import { ENERGY_RENT_POLL_INTERVAL_MS, ENERGY_RENT_POLL_TIMEOUT_MS } from "../constants";
 import { decodeTransaction, isCanonicalTriggerSmartContractTx } from "../utils";
 import {
   EnergyDelegationTimeoutError,
@@ -308,6 +309,22 @@ describe("energyRent provider switch", () => {
         mockLogger,
         config,
         expect.objectContaining({ pledgeDay: "0", pledgeHour: "3", pledgeMinute: "0" }),
+      );
+    });
+
+    it("should quote the 1-hour window when the duration is past 10 minutes and within the hour", async () => {
+      mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
+
+      const quote = await getEnergyRentQuote(mockLogger, config, {
+        ...request,
+        durationSeconds: 30 * 60,
+      });
+
+      expect(quote.durationSeconds).toBe(3600);
+      expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
+        mockLogger,
+        config,
+        expect.objectContaining({ pledgeDay: "0", pledgeHour: "1", pledgeMinute: "0" }),
       );
     });
 
@@ -1109,6 +1126,20 @@ describe("awaitEnergyDeliveryWith", () => {
     await jest.advanceTimersByTimeAsync(50);
     await assertion;
     expect(getStatus.mock.calls.length).toBeLessThanOrEqual(callsBeforeAbort + 1);
+  });
+
+  test("should poll at the default interval and time out at the default deadline when given no options", async () => {
+    const getStatus = jest.fn<Promise<EnergyRentStatus>, []>().mockResolvedValue("pending");
+    const p = awaitEnergyDeliveryWith(getStatus);
+    const assertion = expect(p).rejects.toBeInstanceOf(EnergyDelegationTimeoutError);
+
+    await jest.advanceTimersByTimeAsync(ENERGY_RENT_POLL_INTERVAL_MS - 1);
+    expect(getStatus).toHaveBeenCalledTimes(1);
+    await jest.advanceTimersByTimeAsync(1);
+    expect(getStatus).toHaveBeenCalledTimes(2);
+
+    await jest.advanceTimersByTimeAsync(ENERGY_RENT_POLL_TIMEOUT_MS);
+    await assertion;
   });
 
   test("times out while a status request is still in flight", async () => {
