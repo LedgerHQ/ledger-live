@@ -203,6 +203,14 @@ function isPlainList(
   return Array.isArray(value) && value.every(item => item === null || typeof item !== "object");
 }
 
+function featureFlagSourceOf(
+  flag: DeviceOnboardingFeatureFlag | undefined,
+  isOverridden: boolean | undefined,
+): "flag" | "mock" | null {
+  if (flag === undefined || isOverridden === undefined) return null;
+  return isOverridden ? "mock" : "flag";
+}
+
 export function featureFlagRows(
   flag: DeviceOnboardingFeatureFlag | undefined,
   setFlag: ((flag: DeviceOnboardingFeatureFlag) => void) | undefined,
@@ -369,12 +377,7 @@ export function useDeviceOnboardingViewModel(
     send,
     reset: props.reset,
     featureFlagRows: featureFlagRows(featureFlag, setFeatureFlag),
-    featureFlagSource:
-      featureFlag === undefined || isFeatureFlagOverridden === undefined
-        ? null
-        : isFeatureFlagOverridden
-          ? "mock"
-          : "flag",
+    featureFlagSource: featureFlagSourceOf(featureFlag, isFeatureFlagOverridden),
     resetFeatureFlag: resetFeatureFlag ?? null,
     overrideRows: [
       {
