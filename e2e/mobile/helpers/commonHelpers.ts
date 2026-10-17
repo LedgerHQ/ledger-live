@@ -10,6 +10,7 @@ import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { isPaytabSpec } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import { FAKE_TRONIFY_PORT } from "@ledgerhq/live-e2e-shared/tronify/index";
 import {
   CARD_SESSION_BOOTSTRAP_ENV,
   resolveCardSessionBootstrap,
@@ -84,6 +85,11 @@ function mockServerDetoxUrlPattern(): string {
   }
 }
 
+/** The fake Tronify's port in this Jest worker: CI runs several workers on one host. */
+export function fakeTronifyPort(): number {
+  return FAKE_TRONIFY_PORT + Number(process.env.JEST_WORKER_ID ?? 1) - 1;
+}
+
 /** Creates a regex string for Detox URL blacklisting. */
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
@@ -93,6 +99,8 @@ function createDetoxURLBlacklistRegex(): string {
     ".*tron.coin.ledger.com/wallet/getBrokerage.*",
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
+    // The Android emulator reaches the fake Tronify on this machine through 10.0.2.2.
+    `.*10.0.2.2:${fakeTronifyPort()}.*`,
     ".*speculos.*ldg-tech.com.*",
     mockServerDetoxUrlPattern(),
     ".*optimism.*",

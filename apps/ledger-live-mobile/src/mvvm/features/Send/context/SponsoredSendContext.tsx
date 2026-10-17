@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useState,
   type ReactNode,
 } from "react";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
@@ -21,6 +22,7 @@ import { useSponsoredSendFunnelTracking } from "@ledgerhq/live-common/flows/send
 import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
 import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
 import { useSponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeAmounts";
+import { useReestimateOnRentDelivery } from "@ledgerhq/live-common/flows/send/sponsored/useReestimateOnRentDelivery";
 import { formatRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
 import {
   STANDARD_FEE_OPTION_ID,
@@ -68,7 +70,11 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredMaxAmount: BigNumber | null;
   /** The sponsored pick can't pay the amount and the rent from the fee token. */
   sponsoredUnaffordable: boolean;
+  /** A rent paid outside this flow hasn't landed: the sponsored option stays off until it does. */
+  rentArriving: boolean;
   approvedFee: bigint | null;
+  /** Called by the Amount screen on focus and blur: a landed rent is re-estimated only there. */
+  setAmountFocused: (focused: boolean) => void;
 }>;
 
 const NO_WAIVED_KEYS: readonly string[] = [];
@@ -104,6 +110,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     intentFailed,
     state: sponsoredState,
     actions,
+    rentArriving,
+    rentDeliveredAt,
   } = useSponsoredSendSession({
     enabled: flagEnabled,
     account,
@@ -123,7 +131,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     feeTokenAccount,
   } = useSponsoredFeeQuote({
     mainAccount,
-    seam,
+    // No seam, no offer: a second rent would pay twice for the energy that is on its way.
+    seam: rentArriving ? null : seam,
     intent,
     intentFailed,
     refresh: sponsoredState.phase === SPONSORED_PHASE.IDLE,
@@ -156,6 +165,14 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     updateTransaction: transactionActions.updateTransaction,
   });
   const { selectedFeeOptionId, sponsoredSelected, selectStandard, resetSelection } = selection;
+
+  // Amount stays mounted under later screens and the signing overlay, so it reports its focus.
+  const [amountFocused, setAmountFocused] = useState(false);
+  useReestimateOnRentDelivery({
+    deliveredAt: rentDeliveredAt,
+    active: amountFocused && !isSigning,
+    updateTransaction: transactionActions.updateTransaction,
+  });
 
   const { locale } = useLocale();
   const nativeUnit = useMaybeAccountUnit(mainAccount);
@@ -225,7 +242,9 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       feeCurrencyTicker,
       available,
       feeTokenAccount,
+      rentArriving,
       approvedFee,
+      setAmountFocused,
     }),
     [
       sponsoredState,
@@ -244,6 +263,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       feeCurrencyTicker,
       available,
       feeTokenAccount,
+      rentArriving,
       approvedFee,
     ],
   );
