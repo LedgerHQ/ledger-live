@@ -66,7 +66,11 @@ describe("PreChecks step", () => {
 
   it("cancels from the unexpected error state", async () => {
     const cancel = jest.fn();
-    const { user } = renderView({ type: PreChecksStateType.UNEXPECTED_ERROR, cancel });
+    const { user } = renderView({
+      type: PreChecksStateType.UNEXPECTED_ERROR,
+      error: new Error("boom"),
+      cancel,
+    });
 
     await user.press(screen.getByText("Cancel"));
 

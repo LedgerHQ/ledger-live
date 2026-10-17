@@ -33,5 +33,6 @@ export type CreateBackupState =
     }
   | {
       type: CreateBackupStateType.UNEXPECTED_ERROR;
+      error: unknown;
       cancel: () => void;
     };

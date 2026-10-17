@@ -502,6 +502,9 @@ describe("PreChecksStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("UnrecoverableError");
       expect(lastSentStateType()).toBe(PreChecksStateType.UNEXPECTED_ERROR);
+      expect(sentStatesOfType(PreChecksStateType.UNEXPECTED_ERROR)[0].error).toEqual(
+        new UnknownDAError("boom"),
+      );
     });
 
     it("should emit DEVICE_DISCONNECTED when a command fails with a disconnect tag", async () => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device } from "@ledgerhq/live-dmk-shared";
 import { useTranslation } from "~/context/Locale";
 import { BackupConfirmationSheet } from "./BackupConfirmationSheet";
 import { useBackupBannerViewModel } from "./useBackupBannerViewModel";
@@ -14,6 +14,7 @@ export function BackupBanner({ device }: BackupBannerProps) {
     confirmation,
     onRestore,
     onDelete,
+    onDismissConfirmation,
     onCancelConfirmation,
     onConfirmRestore,
     onConfirmDelete,
@@ -60,6 +61,7 @@ export function BackupBanner({ device }: BackupBannerProps) {
         onConfirmRestore={onConfirmRestore}
         onConfirmDelete={onConfirmDelete}
         onCancel={onCancelConfirmation}
+        onDismiss={onDismissConfirmation}
       />
     </>
   );

@@ -301,6 +301,7 @@ export const createBackupStateMachine = setup({
           type: "sendStateUpdate",
           params: ({ context }) => ({
             type: CreateBackupStateType.UNEXPECTED_ERROR,
+            error: context.error,
             cancel: () => context.send({ type: CreateBackupStateMachineEventType.CANCEL }),
           }),
         },

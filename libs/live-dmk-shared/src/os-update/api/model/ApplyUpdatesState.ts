@@ -53,6 +53,7 @@ export type ApplyUpdatesState =
     }
   | {
       type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED;
+      error: unknown;
       cancel: () => void;
     }
   | {
@@ -72,6 +73,7 @@ export type ApplyUpdatesState =
     }
   | {
       type: ApplyUpdatesStateType.OUT_OF_MEMORY;
+      error: unknown;
       cancel: () => void;
     }
   | {
@@ -80,5 +82,6 @@ export type ApplyUpdatesState =
     }
   | {
       type: ApplyUpdatesStateType.UNEXPECTED_ERROR;
+      error: unknown;
       cancel: () => void;
     };

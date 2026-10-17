@@ -10,6 +10,8 @@ type BackupConfirmationSheetProps = Readonly<{
   onConfirmRestore: () => void;
   onConfirmDelete: () => void;
   onCancel: () => void;
+  /** The sheet is closed without a button. */
+  onDismiss: () => void;
 }>;
 
 export function BackupConfirmationSheet({
@@ -17,10 +19,11 @@ export function BackupConfirmationSheet({
   onConfirmRestore,
   onConfirmDelete,
   onCancel,
+  onDismiss,
 }: BackupConfirmationSheetProps) {
   return (
     <>
-      <OsUpdateStateSheet isOpen={confirmation === "restore"} onClose={onCancel} hideHeader>
+      <OsUpdateStateSheet isOpen={confirmation === "restore"} onClose={onDismiss} hideHeader>
         <InfoState
           preset="spot"
           spotProps={{ icon: Warning }}
@@ -40,7 +43,7 @@ export function BackupConfirmationSheet({
           testID="backup-restore-confirmation"
         />
       </OsUpdateStateSheet>
-      <OsUpdateStateSheet isOpen={confirmation === "delete"} onClose={onCancel} hideHeader>
+      <OsUpdateStateSheet isOpen={confirmation === "delete"} onClose={onDismiss} hideHeader>
         <InfoState
           preset="spot"
           spotProps={{ icon: Warning }}

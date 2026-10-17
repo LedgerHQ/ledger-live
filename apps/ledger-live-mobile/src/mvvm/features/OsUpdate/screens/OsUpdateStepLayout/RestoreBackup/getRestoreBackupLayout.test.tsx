@@ -97,7 +97,7 @@ describe("RestoreBackup step", () => {
     [RestoreBackupStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"],
   ] as const)("only offers cancel for %s", async (type, testID) => {
     const cancel = jest.fn();
-    const { user } = renderView({ type, cancel });
+    const { user } = renderView({ type, error: new Error("boom"), cancel });
 
     expect(screen.getByTestId(testID)).toBeVisible();
     await user.press(screen.getByText("Cancel"));
