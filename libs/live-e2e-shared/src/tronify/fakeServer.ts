@@ -6,6 +6,7 @@ import {
   base58ToHex,
   encodeRentPaymentRawData,
   hexToBase58,
+  isUsdtTransfer,
   signedTransactionRawDataHex,
   trc20TransferCallHex,
   tronTxId,
@@ -57,30 +58,53 @@ export function upstreamTronGrid(): string {
 }
 
 const RENT_ORDER_PATH = "/api/tronRent/addTronRentRecord";
-const RENT_ORDER_POLL_MS = 250;
+const FAKE_POLL_MS = 250;
+
+async function pollUntil(done: () => boolean, timeoutMs: number, failure: string): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  const poll = async (): Promise<void> => {
+    if (done()) return;
+    if (Date.now() >= deadline) throw new Error(failure);
+    await new Promise(resolve => setTimeout(resolve, FAKE_POLL_MS));
+    return poll();
+  };
+  await poll();
+}
 
 /**
  * SAFETY: call before signing a TX-A. The specs use real Tronify payees, so only the coin-config
- * override keeps the app off the real Tronify. Waits for the app's rent order to reach the fake,
- * and throws if it doesn't, so a spec whose override stopped applying fails before the device signs.
+ * override keeps the app off the real Tronify and, once TX-C is broadcast, off the real TronGrid.
+ * Waits for the app's rent order and a TronGrid call to reach the fake, and throws if they don't,
+ * so a spec whose override stopped applying fails before the device signs.
  */
 export async function expectRentOrderedFromFake(
   fake: Pick<FakeTronify, "log">,
   timeoutMs = 30_000,
 ): Promise<void> {
-  const ordered = () => fake.log().some(({ path }) => path.startsWith(RENT_ORDER_PATH));
-  const deadline = Date.now() + timeoutMs;
-  const poll = async (): Promise<void> => {
-    if (ordered()) return;
-    if (Date.now() >= deadline) {
-      throw new Error(
-        `fake Tronify got no rent order in ${timeoutMs} ms: refusing to sign a TX-A for the real Tronify`,
-      );
-    }
-    await new Promise(resolve => setTimeout(resolve, RENT_ORDER_POLL_MS));
-    return poll();
-  };
-  await poll();
+  const reached = (prefix: string) => fake.log().some(({ path }) => path.startsWith(prefix));
+  await pollUntil(
+    () => reached(RENT_ORDER_PATH) && reached("/trongrid/"),
+    timeoutMs,
+    `fake Tronify got no rent order and TronGrid call in ${timeoutMs} ms: refusing to sign a TX-A for the real services`,
+  );
+}
+
+/** Waits for the app to broadcast a USDT `transfer(recipient, amount)`, which the fake answers and
+ * never forwards. `amount` is in USDT, as the specs write it. */
+export async function expectUsdtTransferBroadcastToFake(
+  fake: Pick<FakeTronify, "broadcasts">,
+  recipient: string | undefined,
+  amount: string,
+  timeoutMs = 30_000,
+): Promise<void> {
+  if (!recipient) throw new Error("The transaction has no recipient address to look for");
+  const toHex = base58ToHex(recipient);
+  const baseUnits = parseUsdt(amount);
+  await pollUntil(
+    () => fake.broadcasts().some(({ rawDataHex }) => isUsdtTransfer(rawDataHex, toHex, baseUnits)),
+    timeoutMs,
+    `fake TronGrid got no broadcast of ${amount} USDT to ${recipient} in ${timeoutMs} ms`,
+  );
 }
 
 const SCENARIOS = [
@@ -104,6 +128,8 @@ export type FakeRequest = {
   scenario: FakeTronifyScenario;
 };
 
+export type FakeBroadcast = { txid: string; rawDataHex: string };
+
 export type FakeTronify = {
   /** Tronify base url: coin-tron appends `/api/tronRent/<endpoint>`. */
   url: string;
@@ -114,6 +140,8 @@ export type FakeTronify = {
    * active. */
   setScenario(scenario: FakeTronifyScenario, params?: Record<string, unknown>): void;
   log(): FakeRequest[];
+  /** The transactions broadcast since the scenario was set, answered here and never forwarded. */
+  broadcasts(): FakeBroadcast[];
   close(): Promise<void>;
 };
 
@@ -183,6 +211,11 @@ const trimEnd = (text: string, char: string): string => {
   let end = text.length;
   while (end > 0 && text[end - 1] === char) end--;
   return text.slice(0, end);
+};
+
+const parseUsdt = (amount: string): bigint => {
+  const [whole, fraction = ""] = amount.split(".");
+  return BigInt(whole) * ONE_USDT + BigInt(fraction.padEnd(6, "0").slice(0, 6) || "0");
 };
 
 const formatUsdt = (baseUnits: bigint): string => {
@@ -276,6 +309,7 @@ function parseBody(raw: Buffer): unknown {
 export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTronify> {
   const upstreamTronGrid = trimEnd(opts.upstreamTronGrid, "/");
   const requests: FakeRequest[] = [];
+  const broadcasts: FakeBroadcast[] = [];
   let scenario: FakeTronifyScenario = "happy";
   let params: Record<string, unknown> = {};
   let orders: Order[] = [];
@@ -286,6 +320,7 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     params = nextParams;
     orders = [];
     requests.length = 0;
+    broadcasts.length = 0;
   }
 
   const quotedRent = () => (scenario === "overCap" ? OVER_CAP_RENT : QUOTED_RENT);
@@ -523,9 +558,12 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     // A path that won't decode can't be ruled out as one, so it is refused.
     if (path === undefined) return send(res, 400, { error: `fake Tronify: bad path ${rawPath}` });
     if (/broadcast/i.test(path)) {
-      const txid = path.endsWith("/broadcasthex")
-        ? tronTxId(signedTransactionRawDataHex(String(body?.transaction)))
-        : String(body?.txID);
+      const viaHex = path.endsWith("/broadcasthex");
+      const rawDataHex = viaHex
+        ? signedTransactionRawDataHex(String(body?.transaction))
+        : String(body?.raw_data_hex ?? "");
+      const txid = viaHex ? tronTxId(rawDataHex) : String(body?.txID);
+      broadcasts.push({ txid, rawDataHex });
       return send(res, 200, { result: true, code: "SUCCESS", txid });
     }
     // TronGrid would revert the simulation for the empty test account.
@@ -618,6 +656,7 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     tronGridUrl: `${url}/trongrid`,
     setScenario,
     log: () => [...requests],
+    broadcasts: () => [...broadcasts],
     close: () =>
       new Promise<void>((resolve, reject) => {
         server.close(error => (error ? reject(error) : resolve()));

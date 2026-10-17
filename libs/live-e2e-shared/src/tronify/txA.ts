@@ -52,6 +52,24 @@ export function trc20TransferCallHex(payeeHex: string, amountBaseUnits: bigint):
   );
 }
 
+/** Whether raw_data hex holds a USDT `transfer(to, amount)`, whichever way its address word is
+ * padded. */
+export function isUsdtTransfer(
+  rawDataHex: string,
+  toHex: string,
+  amountBaseUnits: bigint,
+): boolean {
+  const hex = rawDataHex.toLowerCase();
+  const call = hex.indexOf(TRC20_TRANSFER_SELECTOR);
+  if (!hex.includes(USDT_CONTRACT_HEX) || call < 0) return false;
+  const args = hex.slice(call + TRC20_TRANSFER_SELECTOR.length);
+  if (args.length < 128) return false;
+  return (
+    args.slice(24, 64) === toHex.slice(-40).toLowerCase() &&
+    BigInt(`0x${args.slice(64, 128)}`) === amountBaseUnits
+  );
+}
+
 /** raw_data hex of a USDT `transfer(payee, amount)` from `ownerHex`, the shape of Tronify's rent
  * payments. Fields go out in field-number order and unset ones are left out, as protobuf encodes
  * them, so coin-tron's canonical-encoding check accepts the bytes. */
