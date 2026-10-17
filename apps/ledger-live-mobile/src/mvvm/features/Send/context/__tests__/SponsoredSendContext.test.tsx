@@ -22,25 +22,8 @@ let mockTransaction: MockTransaction;
 let mockPhase: SponsoredPhase;
 let mockRentPayment: { asset: unknown; amount: bigint } | null;
 let mockIsSigning: boolean;
-let mockRentArriving: boolean;
-let mockRentDeliveredAt: number | null;
-let mockFreshUpdateTransaction: boolean;
 let mockQuoteResult: Record<string, unknown>;
-// Like the real hook, offers nothing without a seam.
-const mockNoOffer = {
-  available: false,
-  quote: null,
-  feeAsset: null,
-  feeTokenAccount: null,
-  standardFeeFiat: null,
-  sponsoredFeeFiat: null,
-  savingsFiat: null,
-  feeCurrencyTicker: "",
-  loading: false,
-};
-const mockUseSponsoredFeeQuote = jest.fn((params: { seam: unknown }) =>
-  params.seam ? mockQuoteResult : mockNoOffer,
-);
+const mockUseSponsoredFeeQuote = jest.fn((..._args: unknown[]) => mockQuoteResult);
 const mockFeeAmounts = {
   sponsored: { value: "€2.80", secondaryValue: "3.2 USDT", originalValue: "€3.60" },
   standard: { value: "€3.60", secondaryValue: "13 TRX" },
@@ -75,20 +58,13 @@ jest.mock("../SendFlowContext", () => ({
       transaction: { transaction: mockTransaction },
     },
   }),
-  useSendFlowActions: () => ({
-    transaction: {
-      // A new function per render, as a store that doesn't memoize its actions would give.
-      updateTransaction: mockFreshUpdateTransaction
-        ? (...args: unknown[]) => mockUpdateTransaction(...args)
-        : mockUpdateTransaction,
-    },
-  }),
+  useSendFlowActions: () => ({ transaction: { updateTransaction: mockUpdateTransaction } }),
 }));
 jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession", () => ({
   useSponsoredSendSession: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote", () => ({
-  useSponsoredFeeQuote: (params: { seam: unknown }) => mockUseSponsoredFeeQuote(params),
+  useSponsoredFeeQuote: (...args: unknown[]) => mockUseSponsoredFeeQuote(...args),
 }));
 jest.mock("@ledgerhq/live-common/flows/send/sponsored/feeAmounts", () => ({
   formatSponsoredFeeAmounts: (...args: unknown[]) => mockFormatSponsoredFeeAmounts(...args),
@@ -161,9 +137,6 @@ beforeEach(() => {
   mockPhase = SPONSORED_PHASE.IDLE;
   mockRentPayment = null;
   mockIsSigning = false;
-  mockRentArriving = false;
-  mockRentDeliveredAt = null;
-  mockFreshUpdateTransaction = false;
   mockQuoteResult = {
     available: true,
     quote: QUOTE,
@@ -181,8 +154,6 @@ beforeEach(() => {
     intentFailed: false,
     state: { phase: mockPhase, rentPayment: mockRentPayment },
     actions,
-    rentArriving: mockRentArriving,
-    rentDeliveredAt: mockRentDeliveredAt,
   }));
 });
 
@@ -241,8 +212,6 @@ describe("SponsoredSendProvider", () => {
       intentFailed: false,
       state: { phase: mockPhase },
       actions: { reset: mockReset },
-      rentArriving: false,
-      rentDeliveredAt: null,
     }));
     const { result } = renderContext();
 
@@ -292,8 +261,6 @@ describe("SponsoredSendProvider", () => {
       intentFailed: true,
       state: { phase: mockPhase },
       actions: { reset: mockReset },
-      rentArriving: false,
-      rentDeliveredAt: null,
     }));
 
     renderContext();
@@ -421,127 +388,6 @@ describe("SponsoredSendProvider", () => {
     expect(result.current.value.available).toBe(true);
     expect(result.current.selected).toBe(false);
     expect(mockTransaction.sponsored).toBe(false);
-  });
-
-  describe("a rent that is still arriving", () => {
-    it("withholds the seam from the quote, so no sponsored option is offered, and exposes rentArriving", () => {
-      mockRentArriving = true;
-      const { result } = renderContext();
-
-      expect(result.current.value.rentArriving).toBe(true);
-      expect(result.current.value.available).toBe(false);
-      expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
-        expect.objectContaining({ seam: null }),
-      );
-      // Only the quote is held back: the rest of the flow still sees the resolved seam.
-      expect(result.current.value.sponsoredFeeOptionId).toBe("sponsored");
-      expect(result.current.value.providerName).toBe("Provider");
-      expect(mockUseSponsoredSendFunnelTracking).toHaveBeenLastCalledWith(
-        expect.objectContaining({ provider: "sponsored" }),
-      );
-    });
-
-    it("hands the seam to the quote again once the rent has landed", () => {
-      mockRentArriving = true;
-      const { result, rerender } = renderContext();
-
-      mockRentArriving = false;
-      rerender({});
-
-      expect(result.current.value.rentArriving).toBe(false);
-      expect(result.current.value.available).toBe(true);
-      expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
-        expect.objectContaining({ seam: SEAM }),
-      );
-    });
-
-    it("moves a sponsored pick back to the standard fee when a rent starts arriving", () => {
-      const { result, rerender } = renderSelected();
-      expect(result.current.selected).toBe(true);
-
-      mockRentArriving = true;
-      rerender({});
-      applyUpdates();
-
-      expect(result.current.selected).toBe(false);
-      expect(mockTransaction.sponsored).toBe(false);
-    });
-  });
-
-  describe("a rent that has been delivered", () => {
-    const renderOnAmount = () => {
-      const rendered = renderContext();
-      act(() => rendered.result.current.value.setAmountFocused(true));
-      return rendered;
-    };
-
-    it("re-estimates once with a copy of the transaction", () => {
-      const { rerender } = renderOnAmount();
-      expect(mockUpdateTransaction).not.toHaveBeenCalled();
-
-      mockRentDeliveredAt = 1_000;
-      rerender({});
-
-      expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
-      const updater = mockUpdateTransaction.mock.calls[0][0] as (
-        transaction: MockTransaction,
-      ) => MockTransaction;
-      const copy = updater(mockTransaction);
-      expect(copy).toEqual(mockTransaction);
-      expect(copy).not.toBe(mockTransaction);
-    });
-
-    it("does not re-estimate again on later renders of the same delivery", () => {
-      mockFreshUpdateTransaction = true;
-      const { rerender } = renderOnAmount();
-      mockRentDeliveredAt = 1_000;
-      rerender({});
-
-      rerender({});
-      rerender({});
-
-      expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
-    });
-
-    it("re-estimates again for a later delivery", () => {
-      const { rerender } = renderOnAmount();
-      mockRentDeliveredAt = 1_000;
-      rerender({});
-
-      mockRentDeliveredAt = 2_000;
-      rerender({});
-
-      expect(mockUpdateTransaction).toHaveBeenCalledTimes(2);
-    });
-
-    it("should wait for the Amount screen when the delivery lands while it is not focused", () => {
-      const { result, rerender } = renderOnAmount();
-      act(() => result.current.value.setAmountFocused(false));
-
-      mockRentDeliveredAt = 1_000;
-      rerender({});
-      expect(mockUpdateTransaction).not.toHaveBeenCalled();
-
-      act(() => result.current.value.setAmountFocused(true));
-      act(() => result.current.value.setAmountFocused(false));
-      act(() => result.current.value.setAmountFocused(true));
-
-      expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
-    });
-
-    it("should wait until signing ends when the delivery lands while signing", () => {
-      mockIsSigning = true;
-      const { rerender } = renderOnAmount();
-
-      mockRentDeliveredAt = 1_000;
-      rerender({});
-      expect(mockUpdateTransaction).not.toHaveBeenCalled();
-
-      mockIsSigning = false;
-      rerender({});
-
-      expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
-    });
   });
 
   it("files the TX-A reservation on the main account through the store", () => {

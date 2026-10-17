@@ -72,7 +72,6 @@ export function useAmountScreenViewModel({
     sponsoredUnaffordable,
     sponsoredCommitted,
     committedRentFee,
-    rentArriving,
   } = useSponsoredSend();
 
   const statusWithoutWaived = useMemo(
@@ -231,12 +230,6 @@ export function useAmountScreenViewModel({
     t,
   ]);
 
-  // Not on `sponsoredFee`: that is null while the option is held back, which is when this shows.
-  // Only a TRC-20 transfer burns energy: the landed rent won't change a TRX or TRC-10 send's fee.
-  const rentChangesFee = account.type === "TokenAccount" && account.token.tokenType === "trc20";
-  const sponsoredRentNotice =
-    rentArriving && rentChangesFee ? t("send.newSendFlow.feePayment.rentArriving") : null;
-
   // An insufficient amount turns Review into Get funds, which needs no sponsored quote and stays
   // pressable.
   const sponsoredReviewNotReady = !reviewReady && !hasInsufficientFundsError;
@@ -263,7 +256,6 @@ export function useAmountScreenViewModel({
       },
       networkFees,
       sponsoredFee,
-      sponsoredRentNotice,
       quickActions: {
         actions: quickActions,
         show: mainAccount.balance.gt(0),
@@ -282,7 +274,6 @@ export function useAmountScreenViewModel({
       isAmountInputDisabled,
       networkFees,
       sponsoredFee,
-      sponsoredRentNotice,
       quickActions,
       mainAccount.balance,
       reviewLabel,

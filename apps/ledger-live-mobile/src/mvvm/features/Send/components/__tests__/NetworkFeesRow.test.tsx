@@ -1,5 +1,4 @@
 import React from "react";
-import type { TextProps as RNTextProps } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { NetworkFeesRow } from "../NetworkFeesRow";
 import type { NetworkFeesViewModel, SponsoredFeeEntryViewModel } from "../../types";
@@ -51,25 +50,9 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     ),
     CardFooter: Passthrough,
     Link: ({ children }: { children: React.ReactNode }) => <RN.Text>{children}</RN.Text>,
-    // `lx` is forwarded so the tests can tell the muted line from the error one.
-    Text: ({
-      children,
-      testID,
-      lx,
-      accessibilityLiveRegion,
-    }: {
-      children: React.ReactNode;
-      testID?: string;
-      lx?: unknown;
-      accessibilityLiveRegion?: RNTextProps["accessibilityLiveRegion"];
-    }) => {
-      const StyledText = RN.Text as React.ComponentType<RNTextProps & { lx?: unknown }>;
-      return (
-        <StyledText testID={testID} lx={lx} accessibilityLiveRegion={accessibilityLiveRegion}>
-          {children}
-        </StyledText>
-      );
-    },
+    Text: ({ children, testID }: { children: React.ReactNode; testID?: string }) => (
+      <RN.Text testID={testID}>{children}</RN.Text>
+    ),
     Tag: ({ label, testID }: { label: string; testID?: string }) => (
       <RN.Text testID={testID}>{label}</RN.Text>
     ),
@@ -373,49 +356,5 @@ describe("NetworkFeesRow sponsored fee entry", () => {
 
     expect(screen.queryByTestId("send-fee-payment-entry")).toBeNull();
     expect(screen.queryByTestId("send-fee-payment-options")).toBeNull();
-  });
-});
-
-describe("NetworkFeesRow rent notice", () => {
-  const NOTICE = "Your energy rental is still on its way.";
-
-  beforeEach(() => jest.clearAllMocks());
-
-  it("tells the user a rent is arriving, as a muted line announced politely", () => {
-    render(<NetworkFeesRow viewModel={editableViewModel} sponsoredRentNotice={NOTICE} />);
-
-    const notice = screen.getByTestId("send-sponsored-rent-arriving");
-    expect(notice).toHaveTextContent(NOTICE);
-    expect(notice).toHaveProp("lx", { color: "muted" });
-    expect(notice).toHaveProp("accessibilityLiveRegion", "polite");
-  });
-
-  it.each([undefined, null])("renders no notice when given %s", sponsoredRentNotice => {
-    render(
-      <NetworkFeesRow viewModel={editableViewModel} sponsoredRentNotice={sponsoredRentNotice} />,
-    );
-
-    expect(screen.queryByTestId("send-sponsored-rent-arriving")).toBeNull();
-  });
-
-  it("shows next to a fee error rather than in place of it", () => {
-    render(
-      <NetworkFeesRow
-        viewModel={editableViewModel}
-        sponsored={{
-          label: null,
-          selected: true,
-          locked: false,
-          fee: null,
-          infoDescription: null,
-          error: "Not enough USDT",
-        }}
-        sponsoredRentNotice={NOTICE}
-      />,
-    );
-
-    expect(screen.getByTestId("send-sponsored-fee-error")).toHaveTextContent("Not enough USDT");
-    expect(screen.getByTestId("send-sponsored-fee-error")).toHaveProp("lx", { color: "error" });
-    expect(screen.getByTestId("send-sponsored-rent-arriving")).toHaveTextContent(NOTICE);
   });
 });

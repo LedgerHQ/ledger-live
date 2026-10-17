@@ -1,6 +1,6 @@
 import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -48,14 +48,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { startSigning } = useSendSignature();
   const { flowSessionId, recipientType } = useSendFlowTracking();
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
-  const { reviewReady: sponsoredReviewReady, setAmountFocused } = useSponsoredSend();
-
-  useFocusEffect(
-    useCallback(() => {
-      setAmountFocused(true);
-      return () => setAmountFocused(false);
-    }, [setAmountFocused]),
-  );
+  const { reviewReady: sponsoredReviewReady } = useSponsoredSend();
 
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;

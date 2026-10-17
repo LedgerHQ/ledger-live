@@ -14,10 +14,6 @@ import {
   USDT_FEE_ASSET,
   USDT_RENT_PAYMENT,
 } from "@ledgerhq/live-common/flows/send/sponsored/fixtures/usdt";
-import {
-  recordPendingRent,
-  resetPendingRentsForTests,
-} from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
 import { act, renderWithReactQuery, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { Account, Operation, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
@@ -300,10 +296,6 @@ describe("Sponsored send flow integration tests", () => {
     jest.mocked(track).mockClear();
   });
 
-  afterEach(() => {
-    resetPendingRentsForTests();
-  });
-
   beforeAll(() => {
     setEnv("MOCK", "1");
   });
@@ -334,14 +326,10 @@ describe("Sponsored send flow integration tests", () => {
     );
   }
 
-  function renderSponsoredSend(
-    usdtBalance: number,
-    { beforeRender }: Readonly<{ beforeRender?: (account: Account) => void }> = {},
-  ) {
+  function renderSponsoredSend(usdtBalance: number) {
     account = makeTronAccount(`sponsored-sender-${usdtBalance}`, usdtBalance);
     seam = makeSeam(account);
     mockSeam = seam;
-    beforeRender?.(account);
     const [usdt] = account.subAccounts as TokenAccount[];
 
     const withAccount = (state: State): State => ({
@@ -556,39 +544,6 @@ describe("Sponsored send flow integration tests", () => {
 
     expect(await screen.findByTestId("device-intent-executor-rent")).toBeOnTheScreen();
     expect(seam.buildEnergyRentRequest).toHaveBeenLastCalledWith(expect.anything(), 3_500_000n);
-  });
-
-  it("should hold back the Tronify offer and say why while a paid rent is still arriving", async () => {
-    const { user } = renderSponsoredSend(100 * ONE_USDT, {
-      // Left behind by an earlier Send of this account that paid its rent and was closed.
-      beforeRender: payer =>
-        recordPendingRent(
-          {
-            mainAccountId: payer.id,
-            orderId: "order-0",
-            payerAddress: payer.freshAddress,
-            paymentTxId: "txA-0",
-            receiverAddress: payer.freshAddress,
-            energyNeeded: 65_000n,
-          },
-          Date.now() + PAYMENT_VALIDITY_MS,
-        ),
-    });
-
-    await user.press(await screen.findByText("50%"));
-    await flushTimers();
-
-    expect(await screen.findByTestId("send-sponsored-rent-arriving")).toHaveTextContent(
-      "Your energy rental is still on its way. Network fees will update once it arrives.",
-    );
-    expect(seam.awaitEnergyDelivery).toHaveBeenCalledTimes(1);
-    expect(screen.queryByTestId("send-sponsored-fee-nudge")).not.toBeOnTheScreen();
-    expect(screen.queryByTestId("send-fee-payment-entry")).not.toBeOnTheScreen();
-
-    await deliverEnergy();
-
-    expect(await screen.findByTestId("send-sponsored-fee-nudge")).toBeOnTheScreen();
-    expect(screen.queryByTestId("send-sponsored-rent-arriving")).not.toBeOnTheScreen();
   });
 
   it("should send with the standard fee while the sponsored fee isn't picked", async () => {

@@ -33,8 +33,6 @@ type NetworkFeesRowProps = Readonly<{
   viewModel: NetworkFeesViewModel;
   /** While set, the fee value opens the fee payment sheet instead of the strategy selector. */
   sponsored?: SponsoredFeeEntryViewModel | null;
-  /** Says why the sponsored fee isn't offered while its rent is still arriving. */
-  sponsoredRentNotice?: string | null;
 }>;
 
 const STRUCK_THROUGH = { textDecorationLine: "line-through" } as const;
@@ -128,7 +126,7 @@ function SponsoredFeeEntry({ entry, standardFee, onPress }: SponsoredFeeEntryPro
   );
 }
 
-export function NetworkFeesRow({ viewModel, sponsored, sponsoredRentNotice }: NetworkFeesRowProps) {
+export function NetworkFeesRow({ viewModel, sponsored }: NetworkFeesRowProps) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const infoBottomSheetRef = useBottomSheetRef();
@@ -275,16 +273,6 @@ export function NetworkFeesRow({ viewModel, sponsored, sponsoredRentNotice }: Ne
       {sponsored?.error ? (
         <Text typography="body3" lx={{ color: "error" }} testID="send-sponsored-fee-error">
           {sponsored.error}
-        </Text>
-      ) : null}
-      {sponsoredRentNotice ? (
-        <Text
-          typography="body3"
-          lx={{ color: "muted" }}
-          testID="send-sponsored-rent-arriving"
-          accessibilityLiveRegion="polite"
-        >
-          {sponsoredRentNotice}
         </Text>
       ) : null}
 
