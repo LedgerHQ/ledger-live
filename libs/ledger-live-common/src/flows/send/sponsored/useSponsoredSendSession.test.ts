@@ -12,7 +12,7 @@ import type { Transaction } from "../../../generated/types";
 import { USDT_CONTRACT, USDT_RENT_PAYMENT as RENT_PAYMENT } from "./fixtures/usdt";
 import {
   PENDING_RENT_EXPIRY_MARGIN_MS,
-  clearPendingRent,
+  markPendingRentDelivered,
   getPendingRent,
   recordPendingRent,
   resetPendingRentsForTests,
@@ -267,7 +267,7 @@ describe("useSponsoredSendSession", () => {
       await waitFor(() => expect(result.current.seam).toBe(seam));
 
       act(() => lastBroadcastCallback()(BROADCAST));
-      clearPendingRent(tronAccount.id);
+      markPendingRentDelivered(tronAccount.id);
       act(() => lastBroadcastCallback()(BROADCAST));
 
       expect(getPendingRent(tronAccount.id)).toBeNull();
@@ -394,7 +394,7 @@ describe("useSponsoredSendSession", () => {
         const { result, rerender } = renderSession();
         await waitFor(() => expect(result.current.seam).toBe(seam));
         act(() => lastBroadcastCallback()(BROADCAST));
-        clearPendingRent(tronAccount.id);
+        markPendingRentDelivered(tronAccount.id);
 
         setOrchestrationState(FAILED);
         rerender({ enabled: true, transaction: makeTransaction() });

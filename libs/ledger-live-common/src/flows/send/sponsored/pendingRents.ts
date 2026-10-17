@@ -19,6 +19,11 @@ export type PendingRent = Readonly<{
 }>;
 
 const pendingRents = new Map<string, PendingRent>();
+// The last rent seen landing per account, so every Send watching it learns of it, not only the one
+// that saw it. Expiry isn't a delivery and doesn't land here.
+const deliveries = new Map<string, RentDelivery>();
+
+export type RentDelivery = Readonly<{ paymentTxId: string; at: number }>;
 const listeners = new Set<(mainAccountId: string) => void>();
 
 function notify(mainAccountId: string): void {
@@ -60,15 +65,28 @@ export function getPendingRent(
   return rent;
 }
 
-export function clearPendingRent(mainAccountId: string, paymentTxId?: string): void {
+/** Ends the hold because the rent's energy landed. Returns the delivery, or null when the account
+ * holds no rent, or another one than `paymentTxId`. */
+export function markPendingRentDelivered(
+  mainAccountId: string,
+  paymentTxId?: string,
+  now: number = Date.now(),
+): RentDelivery | null {
   const rent = pendingRents.get(mainAccountId);
-  if (rent && (paymentTxId === undefined || rent.paymentTxId === paymentTxId)) {
-    pendingRents.delete(mainAccountId);
-    notify(mainAccountId);
-  }
+  if (!rent || (paymentTxId !== undefined && rent.paymentTxId !== paymentTxId)) return null;
+  const delivery = { paymentTxId: rent.paymentTxId, at: now };
+  pendingRents.delete(mainAccountId);
+  deliveries.set(mainAccountId, delivery);
+  notify(mainAccountId);
+  return delivery;
+}
+
+export function getRentDelivery(mainAccountId: string): RentDelivery | null {
+  return deliveries.get(mainAccountId) ?? null;
 }
 
 export function resetPendingRentsForTests(): void {
   pendingRents.clear();
+  deliveries.clear();
   listeners.clear();
 }
