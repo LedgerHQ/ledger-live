@@ -8,6 +8,7 @@ import {
   PENDING_RENT_EXPIRY_MARGIN_MS,
   PENDING_RENT_RECHECK_INTERVAL_MS,
   getPendingRent,
+  markPendingRentDelivered,
   recordPendingRent,
   resetPendingRentsForTests,
 } from "./pendingRents";
@@ -157,6 +158,35 @@ describe("usePendingRentDelivery", () => {
     expect(result.current.rentArriving).toBe(true);
     await advance(1);
     expect(result.current).toEqual({ rentArriving: false, deliveredAt: null });
+  });
+
+  it("learns of a delivery another Send saw while it was waiting", async () => {
+    recordRent();
+    const delivery = deferred<void>();
+    const seeing = makeSeam();
+    seeing.awaitEnergyDelivery.mockReturnValue(delivery.promise);
+    const first = renderDelivery({ seam: seeing });
+    const second = renderDelivery({ seam: makeSeam() });
+    await settle();
+    expect(second.result.current.rentArriving).toBe(true);
+
+    await act(async () => delivery.resolve());
+
+    const landed = { rentArriving: false, deliveredAt: Date.now() };
+    expect(first.result.current).toEqual(landed);
+    expect(second.result.current).toEqual(landed);
+  });
+
+  it("learns of a delivery the paying flow saw", async () => {
+    recordRent();
+    const { result } = renderDelivery({ seam: makeSeam() });
+    await settle();
+
+    act(() => {
+      markPendingRentDelivered("acc-1", "tx-1");
+    });
+
+    expect(result.current).toEqual({ rentArriving: false, deliveredAt: Date.now() });
   });
 
   describe("after the wait ends early", () => {
