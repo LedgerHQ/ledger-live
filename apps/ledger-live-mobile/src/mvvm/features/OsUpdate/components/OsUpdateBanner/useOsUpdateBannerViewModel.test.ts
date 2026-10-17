@@ -1,8 +1,9 @@
+import { rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import type { OsUpdate } from "@ledgerhq/live-dmk-shared";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
-import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
+import { useOsUpdateBannerViewModel } from "./useOsUpdateBannerViewModel";
 
 const mockUseRoute = jest.fn();
 const mockUseNavigation = jest.fn();
@@ -11,17 +12,16 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: (...args: unknown[]) => mockUseRoute(...args),
   useNavigation: (...args: unknown[]) => mockUseNavigation(...args),
-  useFocusEffect: (cb: () => void) => cb(),
+  useFocusEffect: (callback: () => void) => callback(),
 }));
-
-jest.mock("@ledgerhq/live-common/device/hooks/useLatestFirmware", () => ({
-  useLatestFirmware: jest.fn(),
-}));
-const { useLatestFirmware } = jest.requireMock(
-  "@ledgerhq/live-common/device/hooks/useLatestFirmware",
-);
 
 const lastConnectedDevice = { deviceId: "usb|1", modelId: "stax", wired: true };
+const osUpdateDevice = {
+  id: "usb|1",
+  name: null,
+  deviceModelId: "stax",
+  transport: rnHidTransportIdentifier,
+};
 const osUpdate = {
   finalFirmware: { version: "1.8.0" },
   osuFirmware: { notes: "notes" },
@@ -48,49 +48,40 @@ function withOsUpdatesState({
   }));
 }
 
-describe("useUpdateBannerViewModel with ldmkOsUpdates", () => {
+describe("useOsUpdateBannerViewModel", () => {
   const navigate = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseRoute.mockReturnValue({ name: ScreenName.Portfolio });
     mockUseNavigation.mockReturnValue({ navigate });
-    useLatestFirmware.mockReturnValue({ final: { name: "legacy-version" } });
   });
 
-  it("shows the banner with the version of the last resolved update", () => {
-    const { result } = renderHook(() => useUpdateBannerViewModel({ onBackFromUpdate: jest.fn() }), {
+  it("shows the portfolio banner with the version of the last resolved update", () => {
+    const { result } = renderHook(() => useOsUpdateBannerViewModel(), {
       overrideInitialState: withOsUpdatesState({
         osUpdates: [{ finalFirmware: { version: "1.7.0" } } as OsUpdate, osUpdate],
       }),
     });
 
-    expect(result.current.bannerVisible).toBe(true);
+    expect(result.current.variant).toBe("portfolio");
     expect(result.current.version).toBe("1.8.0");
   });
 
-  it("ignores the legacy latest firmware check", () => {
-    const { result } = renderHook(() => useUpdateBannerViewModel({ onBackFromUpdate: jest.fn() }), {
-      overrideInitialState: withOsUpdatesState({ osUpdates: [] }),
-    });
-
-    expect(result.current.bannerVisible).toBe(false);
-    expect(useLatestFirmware).toHaveBeenCalledWith(null);
-  });
-
   it.each([
+    ["there is no update", { osUpdates: [] as OsUpdate[] }],
     ["onboarding is not completed", { hasCompletedOnboarding: false }],
     ["no device was connected in this session", { hasConnectedDevice: false }],
   ])("hides the banner when %s", (_label, state) => {
-    const { result } = renderHook(() => useUpdateBannerViewModel({ onBackFromUpdate: jest.fn() }), {
+    const { result } = renderHook(() => useOsUpdateBannerViewModel(), {
       overrideInitialState: withOsUpdatesState(state),
     });
 
-    expect(result.current.bannerVisible).toBe(false);
+    expect(result.current.variant).toBe("hidden");
   });
 
   it("goes to My Ledger with the last device and asks to open the What's new from the portfolio", () => {
-    const { result } = renderHook(() => useUpdateBannerViewModel({ onBackFromUpdate: jest.fn() }), {
+    const { result } = renderHook(() => useOsUpdateBannerViewModel(), {
       overrideInitialState: withOsUpdatesState(),
     });
 
@@ -104,12 +95,13 @@ describe("useUpdateBannerViewModel with ldmkOsUpdates", () => {
 
   it("opens the OS update flow from My Ledger", () => {
     mockUseRoute.mockReturnValue({ name: ScreenName.MyLedgerDevice });
-    const { result } = renderHook(() => useUpdateBannerViewModel({ onBackFromUpdate: jest.fn() }), {
+    const { result } = renderHook(() => useOsUpdateBannerViewModel(), {
       overrideInitialState: withOsUpdatesState(),
     });
 
     result.current.onClickUpdate();
 
-    expect(navigate).toHaveBeenCalledWith(ScreenName.OsUpdate, { device: lastConnectedDevice });
+    expect(result.current.variant).toBe("myLedger");
+    expect(navigate).toHaveBeenCalledWith(ScreenName.OsUpdate, { device: osUpdateDevice });
   });
 });

@@ -438,6 +438,7 @@ export const preChecksStateMachine = setup({
           type: "sendStateUpdate",
           params: ({ context }) => ({
             type: PreChecksStateType.UNEXPECTED_ERROR,
+            error: context.error,
             cancel: () => context.send({ type: PreChecksStateMachineEventType.CANCEL }),
           }),
         },

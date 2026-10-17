@@ -254,6 +254,7 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: RestoreBackupStateType.OUT_OF_MEMORY,
+          error: context.error,
           cancel: () => context.send({ type: RestoreBackupStateMachineEventType.CANCEL }),
         }),
       },
@@ -296,6 +297,7 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
           type: "sendStateUpdate",
           params: ({ context }) => ({
             type: RestoreBackupStateType.UNEXPECTED_ERROR,
+            error: context.error,
             cancel: () => context.send({ type: RestoreBackupStateMachineEventType.CANCEL }),
           }),
         },

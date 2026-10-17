@@ -1,11 +1,14 @@
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
-import { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { OsUpdate } from "@ledgerhq/live-dmk-shared";
+import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
+import { track, trackPage } from "@shared/analytics";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { Device, OsUpdate } from "@ledgerhq/live-dmk-shared";
+import { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
 import { act, renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import { useBackupBannerViewModel } from "./useBackupBannerViewModel";
+import { OsUpdateButton, OsUpdatePage } from "../../analytics/types";
 
 const mockNavigate = jest.fn();
 const mockRemoveBackup = jest.fn();
@@ -14,11 +17,21 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(() => Promise.resolve()),
+  trackPage: jest.fn(),
+}));
 jest.mock("../../storage/deviceBackupStorage", () => ({
   deviceBackupStorage: { removeBackup: (...args: unknown[]) => mockRemoveBackup(...args) },
 }));
 
-const device: Device = { deviceId: "id", modelId: DeviceModelId.europa, wired: false };
+const device: Device = {
+  id: "id",
+  name: null,
+  deviceModelId: DeviceModelId.europa,
+  transport: rnBleTransportIdentifier,
+};
 const osUpdate = { finalFirmware: { version: "1.8.0" } } as OsUpdate;
 
 const withState = (hasBackup: boolean, osUpdates: OsUpdate[] = []) => ({
@@ -55,7 +68,7 @@ describe("useBackupBannerViewModel", () => {
     expect(result.current.confirmation).toBeNull();
     expect(mockNavigate).toHaveBeenCalledWith(ScreenName.OsUpdate, {
       device,
-      mode: "restoreBackup",
+      mode: OsUpdateFlowMode.RESTORE_BACKUP,
     });
   });
 
@@ -91,5 +104,81 @@ describe("useBackupBannerViewModel", () => {
     expect(result.current.confirmation).toBeNull();
     expect(mockRemoveBackup).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  describe("tracking", () => {
+    const shared = {
+      platform: "lwm",
+      modelId: DeviceModelId.europa,
+      transport: "ble",
+      mode: "restoreBackup",
+      updateCount: 0,
+    };
+
+    it("tracks the banner, the restore confirmation and its buttons", () => {
+      const { result } = renderHook(() => useBackupBannerViewModel(device), withState(true));
+
+      act(() => result.current.onRestore());
+      act(() => result.current.onConfirmRestore());
+
+      expect(jest.mocked(trackPage).mock.calls).toEqual([
+        [{ category: OsUpdatePage.BACKUP_BANNER, props: shared }],
+        [{ category: OsUpdatePage.RESTORE_CONFIRMATION, props: shared }],
+      ]);
+      expect(jest.mocked(track).mock.calls).toEqual([
+        [
+          "button_clicked",
+          { button: OsUpdateButton.RESTORE, page: OsUpdatePage.BACKUP_BANNER, ...shared },
+        ],
+        [
+          "button_clicked",
+          { button: OsUpdateButton.RESTORE, page: OsUpdatePage.RESTORE_CONFIRMATION, ...shared },
+        ],
+      ]);
+    });
+
+    it("tracks a cancelled delete confirmation, but not its dismissal", () => {
+      const { result } = renderHook(() => useBackupBannerViewModel(device), withState(true));
+
+      act(() => result.current.onDelete());
+      act(() => result.current.onCancelConfirmation());
+      act(() => result.current.onDelete());
+      act(() => result.current.onDismissConfirmation());
+
+      expect(jest.mocked(trackPage)).toHaveBeenCalledWith({
+        category: OsUpdatePage.DELETE_CONFIRMATION,
+        props: shared,
+      });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: OsUpdateButton.CANCEL,
+        page: OsUpdatePage.DELETE_CONFIRMATION,
+        ...shared,
+      });
+      // Delete, Cancel, then Delete again: the dismissal is not a click.
+      expect(track).toHaveBeenCalledTimes(3);
+    });
+
+    it("does not track the pages again when rerendered with an equivalent device", () => {
+      let currentDevice = device;
+      const { result, rerender } = renderHook(
+        () => useBackupBannerViewModel(currentDevice),
+        withState(true),
+      );
+
+      act(() => result.current.onRestore());
+      currentDevice = { ...device };
+      rerender({});
+
+      expect(jest.mocked(trackPage).mock.calls).toEqual([
+        [{ category: OsUpdatePage.BACKUP_BANNER, props: shared }],
+        [{ category: OsUpdatePage.RESTORE_CONFIRMATION, props: shared }],
+      ]);
+    });
+
+    it("does not track a hidden banner", () => {
+      renderHook(() => useBackupBannerViewModel(device), withState(false));
+
+      expect(trackPage).not.toHaveBeenCalled();
+    });
   });
 });

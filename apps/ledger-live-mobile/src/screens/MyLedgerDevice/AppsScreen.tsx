@@ -23,6 +23,7 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 
 import { Trans } from "~/context/Locale";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
@@ -225,7 +226,14 @@ const AppsScreen = ({
         ) : null}
         {showBackupBanner ? (
           <Flex pb={16} testID="backup-banner-container">
-            <BackupBanner device={device} />
+            <BackupBanner
+              device={{
+                id: device.deviceId,
+                name: device.deviceName ?? null,
+                deviceModelId: device.modelId,
+                transport: device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier,
+              }}
+            />
           </Flex>
         ) : null}
         <DeviceCard
