@@ -34,7 +34,6 @@ import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { ptxHandoffStore } from "~/e2e/ptxHandoffStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@shared/env";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
@@ -265,10 +264,6 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "overrideFeatureFlag": {
         const { id, value } = msg.payload as { id: FeatureId; value: Feature | undefined };
         store.dispatch(setOverride({ key: id, value }));
-        break;
-      }
-      case "overrideLiveConfig": {
-        LiveConfig.setAllOverrides(msg.payload);
         break;
       }
       case "navigate":

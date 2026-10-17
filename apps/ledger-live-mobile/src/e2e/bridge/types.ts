@@ -95,7 +95,6 @@ export type MessageData =
   | { type: "importPayCard"; id: string; payload: Partial<PayCardPersistedState> }
   | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }
   | { type: "overrideFeatureFlag"; id: string; payload: OverrideFeatureFlagPayload }
-  | { type: "overrideLiveConfig"; id: string; payload: Record<string, unknown> }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }

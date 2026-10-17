@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { renderHook } from "@testing-library/react-native";
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { FeeTooHigh } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DustLimit } from "@ledgerhq/coin-bitcoin/errors";
@@ -56,7 +56,6 @@ function mockSponsored({
   sponsoredUnaffordable = false,
   sponsoredCommitted = false,
   committedRentFee = null as string | null,
-  rentArriving = false,
 } = {}) {
   (useSponsoredSend as jest.Mock).mockReturnValue({
     waivesNativeFee,
@@ -72,7 +71,6 @@ function mockSponsored({
     sponsoredUnaffordable,
     sponsoredCommitted,
     committedRentFee,
-    rentArriving,
   });
 }
 
@@ -147,10 +145,10 @@ describe("useAmountScreenViewModel", () => {
     mockSponsored();
   });
 
-  const renderViewModel = (status: TransactionStatus, account: AccountLike = mockAccount) =>
+  const renderViewModel = (status: TransactionStatus) =>
     renderHook(() =>
       useAmountScreenViewModel({
-        account,
+        account: mockAccount,
         parentAccount: null,
         transaction: baseTransaction,
         status,
@@ -305,52 +303,6 @@ describe("useAmountScreenViewModel", () => {
         });
 
         expect(renderReady().reviewButton.disabled).toBe(false);
-      });
-    });
-
-    describe("a rent that is still arriving", () => {
-      const usdtAccount = {
-        type: "TokenAccount",
-        id: "usdt-account",
-        parentId: "tron-account",
-        token: {
-          type: "TokenCurrency",
-          tokenType: "trc20",
-          ticker: "USDT",
-          parentCurrencyId: "tron",
-        },
-        balance: new BigNumber(10_000_000),
-      } as unknown as TokenAccount;
-      const tronAccount = {
-        ...mockAccount,
-        id: "tron-account",
-        currency: { ...mockAccount.currency, id: "tron", family: "tron", ticker: "TRX" },
-      } as Account;
-
-      const renderReady = (account: AccountLike) => {
-        const { result } = renderViewModel(createBaseStatus(), account);
-        if (!result.current.ready) throw new Error("view model should be ready");
-        return result.current;
-      };
-
-      it("should tell the user when a rent is arriving on a USDT send", () => {
-        mockSponsored({ available: false, rentArriving: true });
-
-        expect(renderReady(usdtAccount).sponsoredRentNotice).toBe(
-          "send.newSendFlow.feePayment.rentArriving",
-        );
-      });
-
-      it("should stay silent when the send is native TRX, whose fee the rent won't change", () => {
-        mockSponsored({ available: false, rentArriving: true });
-
-        expect(renderReady(tronAccount).sponsoredRentNotice).toBeNull();
-      });
-
-      it("should stay silent when no rent is arriving", () => {
-        mockSponsored({ available: true, rentArriving: false });
-
-        expect(renderReady(usdtAccount).sponsoredRentNotice).toBeNull();
       });
     });
 

@@ -5422,7 +5422,6 @@
         "paidIn": "Paid in {{currency}}",
         "nudge": "You could save {{amount}} with {{provider}}",
         "saved": "Saved with {{provider}}",
-        "rentArriving": "Your energy rental is still on its way. Network fees will update once it arrives.",
         "confirm": "Confirm",
         "disclaimer": "With {{provider}}, a third-party energy provider, fees are paid in {{feeCurrency}}.",
         "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."

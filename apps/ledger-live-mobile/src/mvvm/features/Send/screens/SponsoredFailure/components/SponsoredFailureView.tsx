@@ -27,13 +27,7 @@ export function SponsoredFailureView({
         preset="error"
         description={message ?? undefined}
         banner={
-          retryBlockedMessage
-            ? {
-                appearance: "error",
-                title: retryBlockedMessage,
-                testID: "send-sponsored-failure-retry-blocked",
-              }
-            : undefined
+          retryBlockedMessage ? { appearance: "error", title: retryBlockedMessage } : undefined
         }
         primaryCta={{
           label: retryLabel,
