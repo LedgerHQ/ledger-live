@@ -16,6 +16,10 @@ jest.mock("../../../../context/SendFlowContext", () => ({
     },
   }),
 }));
+// The real hook suspends on a dynamic import(), which leaves the first render empty.
+jest.mock("~/renderer/families", () => ({
+  useLLDCoinFamily: jest.fn(() => ({})),
+}));
 
 const baseProps: React.ComponentProps<typeof AmountFooter> = {
   feesRowLabel: "Network fees",
