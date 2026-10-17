@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { SponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";
 import {
   PENDING_RENT_RECHECK_INTERVAL_MS,
-  clearPendingRent,
   getPendingRent,
+  getRentDelivery,
+  markPendingRentDelivered,
   subscribePendingRents,
 } from "./pendingRents";
 
@@ -30,6 +31,8 @@ export function usePendingRentDelivery({
   // Keyed by account so a switch can't show the previous account's state for a render.
   const [arrivingFor, setArrivingFor] = useState<string | null>(null);
   const [delivered, setDelivered] = useState<{ mainAccountId: string; at: number } | null>(null);
+  // The rent last watched, to tell its landing, seen by another Send, from its expiry.
+  const watchedRef = useRef<{ mainAccountId: string; paymentTxId: string } | null>(null);
 
   // A rent can be recorded after the first read: the in-flight submit of a flow reset meanwhile.
   const [recordVersion, setRecordVersion] = useState(0);
@@ -43,9 +46,16 @@ export function usePendingRentDelivery({
   useEffect(() => {
     const rent = idle && mainAccountId ? getPendingRent(mainAccountId) : null;
     if (!mainAccountId || !rent) {
+      const watched = watchedRef.current;
+      const delivery = watched ? getRentDelivery(watched.mainAccountId) : null;
+      if (watched && delivery?.paymentTxId === watched.paymentTxId) {
+        setDelivered({ mainAccountId: watched.mainAccountId, at: delivery.at });
+      }
+      watchedRef.current = null;
       setArrivingFor(null);
       return;
     }
+    watchedRef.current = { mainAccountId, paymentTxId: rent.paymentTxId };
 
     let ignore = false;
     const controller = new AbortController();
@@ -70,8 +80,11 @@ export function usePendingRentDelivery({
 
     const onDelivered = () => {
       clearTimeout(expiryTimer);
-      clearPendingRent(mainAccountId, rent.paymentTxId);
-      setDelivered({ mainAccountId, at: Date.now() });
+      const delivery = markPendingRentDelivered(mainAccountId, rent.paymentTxId);
+      // Settled by another Send, or replaced by a newer rent: the re-run that followed handles it.
+      if (!delivery) return;
+      watchedRef.current = null;
+      setDelivered({ mainAccountId, at: delivery.at });
       setArrivingFor(null);
     };
 

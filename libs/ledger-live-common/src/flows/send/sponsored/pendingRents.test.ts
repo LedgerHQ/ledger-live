@@ -1,7 +1,7 @@
 import {
   PENDING_RENT_EXPIRY_MARGIN_MS,
   PENDING_RENT_MIN_WINDOW_MS,
-  clearPendingRent,
+  markPendingRentDelivered,
   getPendingRent,
   recordPendingRent,
   resetPendingRentsForTests,
@@ -43,7 +43,7 @@ describe("pendingRents", () => {
     recordPendingRent(rent(), NOW + 360_000, NOW);
     recordPendingRent(rent({ mainAccountId: "acc-2", paymentTxId: "tx-2" }), NOW + 360_000, NOW);
 
-    clearPendingRent("acc-1");
+    markPendingRentDelivered("acc-1");
 
     expect(getPendingRent("acc-1", NOW)).toBeNull();
     expect(getPendingRent("acc-2", NOW)?.paymentTxId).toBe("tx-2");
@@ -51,9 +51,9 @@ describe("pendingRents", () => {
 
   it("clears only the named payment", () => {
     recordPendingRent(rent(), NOW + 360_000, NOW);
-    clearPendingRent("acc-1", "tx-other");
+    markPendingRentDelivered("acc-1", "tx-other");
     expect(getPendingRent("acc-1", NOW)).not.toBeNull();
-    clearPendingRent("acc-1", "tx-1");
+    markPendingRentDelivered("acc-1", "tx-1");
     expect(getPendingRent("acc-1", NOW)).toBeNull();
   });
 
@@ -73,7 +73,7 @@ describe("pendingRents", () => {
       recordPendingRent(rent({ mainAccountId: "acc-2" }), NOW + 360_000, NOW);
       expect(listener).toHaveBeenLastCalledWith("acc-2");
 
-      clearPendingRent("acc-1", "tx-1");
+      markPendingRentDelivered("acc-1", "tx-1");
       expect(listener).toHaveBeenCalledTimes(3);
       expect(listener).toHaveBeenLastCalledWith("acc-1");
     });
@@ -83,8 +83,8 @@ describe("pendingRents", () => {
       const listener = jest.fn();
       subscribePendingRents(listener);
 
-      clearPendingRent("acc-1", "tx-other");
-      clearPendingRent("acc-2");
+      markPendingRentDelivered("acc-1", "tx-other");
+      markPendingRentDelivered("acc-2");
 
       expect(listener).not.toHaveBeenCalled();
     });

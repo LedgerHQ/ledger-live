@@ -12,7 +12,7 @@ import type {
 import type { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
 import type { Transaction } from "../../../generated/types";
 import { findFeeTokenAccount } from "./feeAsset";
-import { clearPendingRent, recordPendingRent } from "./pendingRents";
+import { markPendingRentDelivered, recordPendingRent } from "./pendingRents";
 import type { PendingRent } from "./pendingRents";
 import { buildRentReservationOperation } from "./rentReservation";
 import { SPONSORED_PHASE } from "./types";
@@ -241,7 +241,7 @@ export function useSponsoredSendSession({
   // The flow saw its own energy land, so the record is spent.
   useEffect(() => {
     if (mainAccountId && state.phase === SPONSORED_PHASE.TRANSFER && state.paymentTxId) {
-      clearPendingRent(mainAccountId, state.paymentTxId);
+      markPendingRentDelivered(mainAccountId, state.paymentTxId);
     }
   }, [mainAccountId, state.phase, state.paymentTxId]);
 
