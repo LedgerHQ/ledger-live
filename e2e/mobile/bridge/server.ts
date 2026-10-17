@@ -99,17 +99,15 @@ export function close() {
     webSocket.ws = undefined;
   }
 
-  const { wss } = webSocket;
-  if (wss) {
-    wss.clients.forEach(client => {
+  if (webSocket.wss) {
+    webSocket.wss.clients.forEach(client => {
       client.removeAllListeners();
       client.terminate();
     });
 
-    // Dropped now, not once closed: launchApp starts the next server right after this call, and a
-    // late reset would orphan that one, still listening, so Jest never exits.
-    webSocket.wss = undefined;
-    wss.close();
+    webSocket.wss.close(() => {
+      webSocket.wss = undefined;
+    });
   }
   webSocket.messages = {};
 

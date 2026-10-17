@@ -85,6 +85,11 @@ function mockServerDetoxUrlPattern(): string {
   }
 }
 
+/** The fake Tronify's port in this Jest worker: CI runs several workers on one host. */
+export function fakeTronifyPort(): number {
+  return FAKE_TRONIFY_PORT + Number(process.env.JEST_WORKER_ID ?? 1) - 1;
+}
+
 /** Creates a regex string for Detox URL blacklisting. */
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
@@ -95,7 +100,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
     // The Android emulator reaches the fake Tronify on this machine through 10.0.2.2.
-    `.*10.0.2.2:${FAKE_TRONIFY_PORT}.*`,
+    `.*10.0.2.2:${fakeTronifyPort()}.*`,
     ".*speculos.*ldg-tech.com.*",
     mockServerDetoxUrlPattern(),
     ".*optimism.*",
