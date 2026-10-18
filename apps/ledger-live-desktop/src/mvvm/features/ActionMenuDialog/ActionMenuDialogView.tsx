@@ -48,7 +48,7 @@ const ActionMenuDialogView = ({
               onClick={() => onSelect(id)}
             >
               <ListItemLeading>
-                <Spot appearance="icon" icon={ICONS[icon]} size={48} />
+                <Spot icon={ICONS[icon]} size={48} />
                 <ListItemContent>
                   <ListItemTitle>{label}</ListItemTitle>
                 </ListItemContent>
