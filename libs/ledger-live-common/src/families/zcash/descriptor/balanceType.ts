@@ -6,6 +6,7 @@ import {
   getSpendableIronwoodBalance,
   hasMaturingIronwoodNotes,
 } from "@ledgerhq/coin-zcash/logic/account/spendability";
+import { getWalletAccount } from "@ledgerhq/coin-zcash/bridge/getWalletAccount";
 import { boundTransparentUtxos } from "@ledgerhq/coin-zcash/bridge/statusHelpers";
 import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
 import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
@@ -121,6 +122,62 @@ function buildSelfTransferPatch({ isSelfTransfer }: { isSelfTransfer: boolean })
   return { selfTransfer: isSelfTransfer };
 }
 
+/** Highest ZIP 32 account index the device accepts in an output declaration. */
+const MAX_DECLARED_ACCOUNT_INDEX = 100;
+
+const NO_RECIPIENT_ACCOUNT: TransactionPatch = { recipientAccountIndex: undefined };
+
+/** ZIP 32 account index of a Zcash account, or `undefined` while its wallet account is not built. */
+function readAccountIndex(account: ZcashAccount): number | undefined {
+  try {
+    return getWalletAccount(account).params.index;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Records the ZIP 32 account index of the recipient when it is the stored shielded
+ * address of another account of the same seed, so the device can recognise the transfer
+ * as one between the user's own accounts. Anything else (the sending account's own
+ * address, another seed, another network, a transparent or unknown address, an index the
+ * device would refuse) clears it: it is applied on every recipient write.
+ */
+function buildRecipientAccountPatch({
+  account,
+  recipient,
+  accounts,
+}: {
+  account: AccountLike;
+  recipient: string | undefined;
+  accounts: readonly AccountLike[];
+  transaction: unknown;
+}): TransactionPatch {
+  const address = recipient?.trim();
+  if (!address || !isZcashMainAccount(account)) return NO_RECIPIENT_ACCOUNT;
+
+  const destination = accounts.find(
+    (candidate): candidate is ZcashAccount =>
+      isZcashMainAccount(candidate) &&
+      candidate.id !== account.id &&
+      candidate.currency.id === account.currency.id &&
+      candidate.seedIdentifier === account.seedIdentifier &&
+      candidate.privateInfo?.shieldedAddress === address,
+  );
+  if (!destination) return NO_RECIPIENT_ACCOUNT;
+
+  const index = readAccountIndex(destination);
+  if (
+    index === undefined ||
+    !Number.isInteger(index) ||
+    index < 0 ||
+    index > MAX_DECLARED_ACCOUNT_INDEX
+  ) {
+    return NO_RECIPIENT_ACCOUNT;
+  }
+  return { recipientAccountIndex: index };
+}
+
 /**
  * Balance the amount step may spend from the given pool, bounded by the 32-input ceiling.
  * `getOptions` returns the full spendable figure (display accuracy); this function caps it
@@ -148,6 +205,8 @@ function getSelectableBalance({
 
   return new BigNumber(0);
 }
+
+export const zcashRecipientAccount = { buildPatch: buildRecipientAccountPatch };
 
 export const zcashBalanceTypeConfig: BalanceTypeConfig = {
   getOptions,

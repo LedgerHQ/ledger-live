@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
-import { zcashBalanceTypeConfig } from "./balanceType";
+import { zcashBalanceTypeConfig, zcashRecipientAccount } from "./balanceType";
 
 const REFERENCE_HEIGHT = 3_450_000;
 /** Deeper than ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS, so the note is spendable. */
@@ -338,5 +338,120 @@ describe("zcash balance-type config", () => {
         ).toEqual({ selfTransfer: isSelfTransfer });
       },
     );
+  });
+});
+
+describe("zcash recipient account patch", () => {
+  const SIBLING_ADDRESS = "u1sibling";
+  const CLEARED = { recipientAccountIndex: undefined };
+
+  function seedAccount({
+    id,
+    index,
+    shieldedAddress,
+    seedIdentifier = "seed-a",
+    currencyId = "zcash",
+    type = "Account",
+  }: {
+    id: string;
+    index: number;
+    shieldedAddress: string | null;
+    seedIdentifier?: string;
+    currencyId?: string;
+    type?: string;
+  }): AccountLike {
+    return {
+      id,
+      type,
+      seedIdentifier,
+      currency: { id: currencyId },
+      bitcoinResources: { utxos: [], walletAccount: { params: { index } } },
+      privateInfo: { shieldedAddress },
+    } as unknown as AccountLike;
+  }
+
+  const sender = seedAccount({ id: "sender", index: 0, shieldedAddress: "u1sender" });
+  const sibling = seedAccount({ id: "sibling", index: 3, shieldedAddress: SIBLING_ADDRESS });
+  const buildPatch = (recipient: string | undefined, accounts: AccountLike[], from = sender) =>
+    zcashRecipientAccount.buildPatch({ account: from, recipient, accounts, transaction: {} });
+
+  it("records the index of another account of the same seed holding the recipient", () => {
+    expect(buildPatch(SIBLING_ADDRESS, [sender, sibling])).toEqual({ recipientAccountIndex: 3 });
+  });
+
+  it("matches the recipient as typed, after trimming", () => {
+    expect(buildPatch(`  ${SIBLING_ADDRESS} `, [sender, sibling])).toEqual({
+      recipientAccountIndex: 3,
+    });
+  });
+
+  it("accepts the index bounds 0 and 100", () => {
+    const first = seedAccount({ id: "first", index: 0, shieldedAddress: "u1first" });
+    const last = seedAccount({ id: "last", index: 100, shieldedAddress: "u1last" });
+
+    expect(buildPatch("u1first", [sender, first])).toEqual({ recipientAccountIndex: 0 });
+    expect(buildPatch("u1last", [sender, last])).toEqual({ recipientAccountIndex: 100 });
+  });
+
+  it.each([
+    ["the sending account's own address", "u1sender", [sender, sibling]],
+    ["an unknown address", "u1unknown", [sender, sibling]],
+    ["a transparent address", "t1sibling", [sender, sibling]],
+    ["an empty recipient", "", [sender, sibling]],
+    ["an account list without the sibling", SIBLING_ADDRESS, [sender]],
+  ])("clears the index for %s", (_label, recipient, accounts) => {
+    expect(buildPatch(recipient, accounts)).toEqual(CLEARED);
+  });
+
+  it("clears the index for an undefined recipient", () => {
+    expect(buildPatch(undefined, [sender, sibling])).toEqual(CLEARED);
+  });
+
+  it("clears the index for an account of another seed", () => {
+    const other = seedAccount({
+      id: "other",
+      index: 1,
+      shieldedAddress: SIBLING_ADDRESS,
+      seedIdentifier: "seed-b",
+    });
+
+    expect(buildPatch(SIBLING_ADDRESS, [sender, other])).toEqual(CLEARED);
+  });
+
+  it("clears the index for an account of another network", () => {
+    const testnet = seedAccount({
+      id: "testnet",
+      index: 1,
+      shieldedAddress: SIBLING_ADDRESS,
+      currencyId: "zcash_testnet",
+    });
+
+    expect(buildPatch(SIBLING_ADDRESS, [sender, testnet])).toEqual(CLEARED);
+  });
+
+  it.each([101, -1, 1.5])("clears the index when the account index is %s", index => {
+    const far = seedAccount({ id: "far", index, shieldedAddress: SIBLING_ADDRESS });
+
+    expect(buildPatch(SIBLING_ADDRESS, [sender, far])).toEqual(CLEARED);
+  });
+
+  it("clears the index when the destination wallet account cannot be read", () => {
+    const broken = {
+      ...(sibling as object),
+      bitcoinResources: { utxos: [] },
+    } as unknown as AccountLike;
+
+    expect(buildPatch(SIBLING_ADDRESS, [sender, broken])).toEqual(CLEARED);
+  });
+
+  it("clears the index when the sending account is not a Zcash main account", () => {
+    const tokenAccount = seedAccount({
+      id: "tok",
+      index: 0,
+      shieldedAddress: null,
+      type: "TokenAccount",
+    });
+
+    expect(buildPatch(SIBLING_ADDRESS, [sibling], tokenAccount)).toEqual(CLEARED);
   });
 });

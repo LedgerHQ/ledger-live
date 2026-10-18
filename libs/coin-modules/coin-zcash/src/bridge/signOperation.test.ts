@@ -670,3 +670,147 @@ describe("bridge/signOperation", () => {
     });
   });
 });
+
+describe("bridge/signOperation output account declaration", () => {
+  const derivation = { path: "m/32'/133'/3'", seedFingerprint: new Uint8Array([1, 2, 3]) };
+  const action = (declared: boolean) => ({
+    spendValue: 1n,
+    value: 1n,
+    ...(declared && { outputZip32Derivation: derivation }),
+  });
+  const buildResultWith = (declared: boolean) =>
+    ({
+      ...defaultIronwoodBuildResult,
+      pcztTransaction: {
+        ...defaultIronwoodBuildResult.pcztTransaction,
+        orchardBundle: { actions: [action(declared)] },
+        ironwoodBundle: { actions: [action(declared), action(false)] },
+      },
+    }) as unknown as Awaited<ReturnType<typeof craftIronwoodTransaction>>;
+
+  const signingError = (name: string) => Object.assign(new Error(name), { name });
+
+  function run(signPcztTransaction: jest.Mock) {
+    const signerContext = jest.fn(async (_deviceId, fn) =>
+      fn({ getAddress: jest.fn(), getFullViewingKey: jest.fn(), signPcztTransaction }),
+    ) as unknown as SignerContext;
+    return collectEvents(buildSignOperation(signerContext, testContext), {
+      account: makeAccount(),
+      deviceId: "device-1",
+      transaction: makeTx("shielded", { recipientAccountIndex: 3 }),
+    } as never);
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockCraftIronwoodTransaction.mockResolvedValue(buildResultWith(true));
+    mockCombine.mockResolvedValue(defaultFinalizeResult);
+    mockAssertCanSend.mockResolvedValue(undefined);
+    mockGetWalletAccount.mockReturnValue({
+      params: { index: 0 },
+    } as unknown as ReturnType<typeof getWalletAccount>);
+  });
+
+  it("requests the declaration on the output through the builder", async () => {
+    await run(jest.fn().mockResolvedValue(defaultSigResult));
+
+    expect(mockCraftIronwoodTransaction).toHaveBeenCalledWith(
+      testContext,
+      "zcash",
+      expect.objectContaining({
+        outputs: [expect.objectContaining({ address: "u1recipientaddress", account: 3 })],
+      }),
+    );
+  });
+
+  it("signs once, unchanged, when the device accepts the declaration", async () => {
+    const sign = jest.fn().mockResolvedValue(defaultSigResult);
+
+    await run(sign);
+
+    expect(sign).toHaveBeenCalledTimes(1);
+    expect(sign.mock.calls[0][0].orchardBundle.actions[0].outputZip32Derivation).toEqual(
+      derivation,
+    );
+  });
+
+  it("retries once without any declaration when the app cannot read it, and finalizes the original PCZT", async () => {
+    const sign = jest
+      .fn()
+      .mockRejectedValueOnce(signingError("ZcashOutputAccountNotSupported"))
+      .mockResolvedValueOnce(defaultSigResult);
+
+    const events = await run(sign);
+
+    expect(sign).toHaveBeenCalledTimes(2);
+    const retried = sign.mock.calls[1][0];
+    expect(retried.orchardBundle.actions[0]).not.toHaveProperty("outputZip32Derivation");
+    for (const a of retried.ironwoodBundle.actions) {
+      expect(a).not.toHaveProperty("outputZip32Derivation");
+    }
+    // The first call's input keeps its declaration: the retry works on a copy.
+    expect(sign.mock.calls[0][0].orchardBundle.actions[0].outputZip32Derivation).toEqual(
+      derivation,
+    );
+    expect(mockCombine).toHaveBeenCalledWith(
+      testContext,
+      "zcash",
+      expect.objectContaining({ pczt: MOCK_PCZT_V2_HEX }),
+    );
+    expect(events.map(e => e.type)).toContain("signed");
+  });
+
+  it("does not retry a refused declaration", async () => {
+    const sign = jest.fn().mockRejectedValue(signingError("ZcashOutputAccountRefused"));
+
+    await expect(run(sign)).rejects.toThrow("ZcashOutputAccountRefused");
+    expect(sign).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not retry an unrelated signer error", async () => {
+    const sign = jest.fn().mockRejectedValue(new Error("device locked"));
+
+    await expect(run(sign)).rejects.toThrow("device locked");
+    expect(sign).toHaveBeenCalledTimes(1);
+  });
+
+  it("propagates the unsupported error when the PCZT carries no declaration", async () => {
+    mockCraftIronwoodTransaction.mockResolvedValue(buildResultWith(false));
+    const sign = jest.fn().mockRejectedValue(signingError("ZcashOutputAccountNotSupported"));
+
+    await expect(run(sign)).rejects.toThrow("ZcashOutputAccountNotSupported");
+    expect(sign).toHaveBeenCalledTimes(1);
+  });
+
+  it("propagates the error when the retry fails too", async () => {
+    const sign = jest
+      .fn()
+      .mockRejectedValueOnce(signingError("ZcashOutputAccountNotSupported"))
+      .mockRejectedValueOnce(new Error("device locked"));
+
+    await expect(run(sign)).rejects.toThrow("device locked");
+    expect(sign).toHaveBeenCalledTimes(2);
+  });
+
+  it("retries a PCZT whose bundles are absent only when a declaration exists", async () => {
+    mockCraftIronwoodTransaction.mockResolvedValue({
+      ...defaultIronwoodBuildResult,
+      pcztTransaction: {
+        ...defaultIronwoodBuildResult.pcztTransaction,
+        orchardBundle: null,
+        ironwoodBundle: { actions: [action(true)] },
+      },
+    } as unknown as Awaited<ReturnType<typeof craftIronwoodTransaction>>);
+    const sign = jest
+      .fn()
+      .mockRejectedValueOnce(signingError("ZcashOutputAccountNotSupported"))
+      .mockResolvedValueOnce(defaultSigResult);
+
+    await run(sign);
+
+    expect(sign.mock.calls[1][0].orchardBundle).toBeNull();
+    expect(sign.mock.calls[1][0].ironwoodBundle.actions[0]).not.toHaveProperty(
+      "outputZip32Derivation",
+    );
+  });
+});

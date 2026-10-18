@@ -43,6 +43,7 @@ const noBalanceTypeConfig: BalanceTypeConfig | null = null;
 const noAmountEffects: readonly FlowEffect[] = [];
 const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 const noTrackingAttributes: Record<string, string> = {};
+const noRecipientAccountPatch = (): TransactionPatch => ({});
 
 export const sendFeatures = {
   canSendMax: fromDescriptor(d => d.amount?.canSendMax, true),
@@ -124,6 +125,14 @@ export const sendFeatures = {
   hasDefaultStrategy: fromDescriptor(d => d.fees.defaultStrategy != null, false),
   hasBalanceTypeStep: fromDescriptor(d => d.balanceType != null, false),
   getBalanceTypeConfig: fromDescriptor(d => d.balanceType, noBalanceTypeConfig),
+  /**
+   * Builds the patch recording which other account of the user the recipient belongs to.
+   * Currencies that declare no such destination get a builder returning an empty patch.
+   */
+  getRecipientAccountPatchBuilder: (
+    currency: CryptoOrTokenCurrency | undefined,
+  ): NonNullable<SendDescriptor["recipientAccount"]>["buildPatch"] =>
+    getSendDescriptor(currency)?.recipientAccount?.buildPatch ?? noRecipientAccountPatch,
   getDefaultStrategyPatch: (
     currency: CryptoOrTokenCurrency | undefined,
   ): TransactionPatch | null => {

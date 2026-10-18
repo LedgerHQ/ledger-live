@@ -453,6 +453,21 @@ export type SendDescriptor = {
    * itself, so it stays family-agnostic. Sync, so it can run in a `useMemo`.
    */
   getTrackingAttributes?: (transaction: unknown) => Record<string, string>;
+  /**
+   * Records which of the user's other accounts the recipient belongs to, for coins that
+   * declare such a destination to the device (e.g. Zcash's ZIP 32 account of a transfer
+   * between two accounts of the same seed). Applied on every recipient write, so the
+   * patch must also clear whatever it set earlier: return the clearing patch when the
+   * recipient belongs to none of `accounts`.
+   */
+  recipientAccount?: {
+    buildPatch: (params: {
+      account: AccountLike;
+      recipient: string | undefined;
+      accounts: readonly AccountLike[];
+      transaction: unknown;
+    }) => TransactionPatch;
+  };
 };
 
 /**

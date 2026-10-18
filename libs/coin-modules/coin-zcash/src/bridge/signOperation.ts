@@ -9,9 +9,11 @@ import type {
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from "../types/bridge";
 import { isShieldedTransfer } from "../types/bridge";
+import type { PcztTransaction } from "@ledgerhq/live-signer-zcash";
 import type { SignerContext } from "../types/signer";
 import type { ZcashContext } from "../config";
 import {
+  OUTPUT_ACCOUNT_NOT_SUPPORTED_ERROR_NAME,
   ZcashNotesNotYetSpendable,
   ZcashShieldedKeyMissing,
   ZcashSignerNotSupported,
@@ -50,6 +52,45 @@ const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
 function isNotePositionPastAnchor(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return message.includes("compute_ironwood_witnesses") && message.includes("anchor_total_leaves");
+}
+
+function isOutputAccountNotSupported(error: unknown): boolean {
+  return error instanceof Error && error.name === OUTPUT_ACCOUNT_NOT_SUPPORTED_ERROR_NAME;
+}
+
+type PcztActions = { outputZip32Derivation?: unknown }[];
+
+function hasOutputDerivation(pczt: PcztTransaction): boolean {
+  const actions: PcztActions = [
+    ...(pczt.orchardBundle?.actions ?? []),
+    ...(pczt.ironwoodBundle?.actions ?? []),
+  ];
+  return actions.some(action => action.outputZip32Derivation !== undefined);
+}
+
+function withoutOutputDerivation<A extends object>(action: A): A {
+  const { outputZip32Derivation: _dropped, ...rest } = action as A & {
+    outputZip32Derivation?: unknown;
+  };
+  return rest as A;
+}
+
+/** A copy of the PCZT whose actions (both bundles) carry no output account declaration. */
+function stripOutputDerivations(pczt: PcztTransaction): PcztTransaction {
+  return {
+    ...pczt,
+    orchardBundle: pczt.orchardBundle
+      ? { ...pczt.orchardBundle, actions: pczt.orchardBundle.actions.map(withoutOutputDerivation) }
+      : pczt.orchardBundle,
+    ...(pczt.ironwoodBundle !== undefined && {
+      ironwoodBundle: pczt.ironwoodBundle
+        ? {
+            ...pczt.ironwoodBundle,
+            actions: pczt.ironwoodBundle.actions.map(withoutOutputDerivation),
+          }
+        : null,
+    }),
+  };
 }
 
 /**
@@ -180,7 +221,18 @@ export const buildSignOperation =
               "Zcash signing requires a signer exposing signPcztTransaction",
             );
           }
-          return signer.signPcztTransaction(pcztTransaction);
+          try {
+            return await signer.signPcztTransaction(pcztTransaction);
+          } catch (error) {
+            // The app cannot read the declared destination account: the same transfer
+            // signs without it, reviewed as a transfer to an external address. The error
+            // comes before any transaction APDU, so the device shows a single review.
+            // A refused declaration is not retried.
+            if (!isOutputAccountNotSupported(error) || !hasOutputDerivation(pcztTransaction)) {
+              throw error;
+            }
+            return signer.signPcztTransaction(stripOutputDerivations(pcztTransaction));
+          }
         });
 
         subscriber.next({ type: "device-signature-granted" });

@@ -847,6 +847,62 @@ describe("DmkSignerZcash", () => {
       );
     });
 
+    it.each([
+      [
+        "an unsupported output account declaration",
+        {
+          _tag: "UnsupportedOutputAccountDeclarationError",
+          errorCode: "unsupported_output_account",
+        },
+        "ZcashOutputAccountNotSupported",
+      ],
+      [
+        "an unsupported declaration known by its code only",
+        { _tag: "Renamed", errorCode: "unsupported_output_account", message: "kit words" },
+        "ZcashOutputAccountNotSupported",
+      ],
+      [
+        "an unsupported declaration known by its tag only",
+        { _tag: "UnsupportedOutputAccountDeclarationError", errorCode: "other" },
+        "ZcashOutputAccountNotSupported",
+      ],
+      [
+        "a refused output account declaration",
+        { _tag: "OutputAccountRefusedError", errorCode: "output_account_refused" },
+        "ZcashOutputAccountRefused",
+      ],
+      [
+        "a refused declaration known by its code only",
+        { _tag: "Renamed", errorCode: "output_account_refused", message: "kit words" },
+        "ZcashOutputAccountRefused",
+      ],
+      [
+        "a refused declaration known by its tag only",
+        { _tag: "OutputAccountRefusedError", errorCode: "other" },
+        "ZcashOutputAccountRefused",
+      ],
+    ])("maps %s to its typed error", async (_label, kitError, name) => {
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createErrorStatusObservable(kitError),
+      });
+
+      await expect(signer.signPcztTransaction(minimalPczt)).rejects.toMatchObject({ name });
+    });
+
+    it("surfaces the kit message of an output account error", async () => {
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({
+          _tag: "OutputAccountRefusedError",
+          errorCode: "output_account_refused",
+          message: "Zcash app 3.1 refused account 3",
+        }),
+      });
+
+      await expect(signer.signPcztTransaction(minimalPczt)).rejects.toThrow(
+        "Zcash app 3.1 refused account 3",
+      );
+    });
+
     it("returns ironwood spendAuthSigs for a V6 transaction with an Ironwood bundle", async () => {
       const result = {
         orchard: [],

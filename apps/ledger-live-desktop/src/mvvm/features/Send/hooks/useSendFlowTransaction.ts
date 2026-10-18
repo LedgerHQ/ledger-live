@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useSelector } from "LLD/hooks/redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { buildRecipientTransactionPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
@@ -12,6 +13,7 @@ import type {
   RecipientData,
 } from "@ledgerhq/live-common/flows/send/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 type UseSendFlowTransactionParams = Readonly<{
   account: AccountLike | null;
@@ -58,6 +60,8 @@ export function useSendFlowTransaction({
     }
   });
 
+  const accounts = useSelector(accountsSelector);
+
   const setTransaction = useCallback(
     (tx: Transaction) => bridgeSetTransaction(tx),
     [bridgeSetTransaction],
@@ -72,7 +76,8 @@ export function useSendFlowTransaction({
     (recipient: RecipientData) => {
       if (!account || !transaction || !bridge) return;
 
-      const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
+      const currency = getAccountCurrency(account);
+      const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(currency);
       const updates = {
         ...buildRecipientTransactionPatch(transaction, recipient),
         // Every recipient write passes here, so a coin holding self-transfer state has it
@@ -81,11 +86,19 @@ export function useSendFlowTransaction({
           isSelfTransfer: recipient.isSelfTransfer === true,
           transaction,
         }),
+        // Also on every write: records which other account of the user the recipient is
+        // (when the coin declares it to the device) and clears it for anything else.
+        ...sendFeatures.getRecipientAccountPatchBuilder(currency)({
+          account,
+          recipient: recipient.address,
+          accounts,
+          transaction,
+        }),
       } as Partial<Transaction>;
 
       bridgeSetTransaction(bridge.updateTransaction(transaction, updates));
     },
-    [account, bridge, transaction, bridgeSetTransaction],
+    [account, accounts, bridge, transaction, bridgeSetTransaction],
   );
 
   const setAccountForTransaction = useCallback(

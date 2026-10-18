@@ -11,6 +11,13 @@ export class ZcashSaplingRecipientNotSupported extends Error {
   }
 }
 
+/**
+ * `name` of the signer's error for a device whose Zcash app cannot read the account
+ * declared on an output. Matched by name: coin-zcash only imports types from the signer
+ * package, so it does not load the signer at runtime to get the class.
+ */
+export const OUTPUT_ACCOUNT_NOT_SUPPORTED_ERROR_NAME = "ZcashOutputAccountNotSupported";
+
 export class ZcashSignerNotSupported extends Error {
   constructor(message = "Signer does not support Zcash PCZT signing") {
     super(message);

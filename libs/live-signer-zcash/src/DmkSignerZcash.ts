@@ -13,10 +13,16 @@ import type {
 } from "./types";
 import { lastValueFrom, type Observable } from "rxjs";
 import {
+  OUTPUT_ACCOUNT_REFUSED_ERROR_CODE,
+  OUTPUT_ACCOUNT_REFUSED_ERROR_TAG,
+  UNSUPPORTED_OUTPUT_ACCOUNT_ERROR_CODE,
+  UNSUPPORTED_OUTPUT_ACCOUNT_ERROR_TAG,
   UNSUPPORTED_V6_TRANSACTION_ERROR_CODE,
   UNSUPPORTED_V6_TRANSACTION_ERROR_TAG,
   UnsupportedV6SourceTransaction,
   UserRefusedOnDevice,
+  ZcashOutputAccountNotSupported,
+  ZcashOutputAccountRefused,
 } from "./errors";
 import {
   DeviceActionStatus,
@@ -99,6 +105,22 @@ export class DmkSignerZcash implements ZcashSigner {
           ? details.message
           : undefined,
       );
+    }
+    const kitMessage =
+      typeof details.message === "string" && details.message.length > 0
+        ? details.message
+        : undefined;
+    if (
+      details.errorCode === UNSUPPORTED_OUTPUT_ACCOUNT_ERROR_CODE ||
+      details._tag === UNSUPPORTED_OUTPUT_ACCOUNT_ERROR_TAG
+    ) {
+      return new ZcashOutputAccountNotSupported(kitMessage);
+    }
+    if (
+      details.errorCode === OUTPUT_ACCOUNT_REFUSED_ERROR_CODE ||
+      details._tag === OUTPUT_ACCOUNT_REFUSED_ERROR_TAG
+    ) {
+      return new ZcashOutputAccountRefused(kitMessage);
     }
     if (typeof details._tag === "string" && details._tag.length > 0) {
       return new Error(details._tag);

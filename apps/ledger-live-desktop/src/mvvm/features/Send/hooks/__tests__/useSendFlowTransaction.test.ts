@@ -15,10 +15,16 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridgeOrNull: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  sendFeatures: { getBalanceTypeConfig: jest.fn(() => null) },
+  sendFeatures: {
+    getBalanceTypeConfig: jest.fn(() => null),
+    getRecipientAccountPatchBuilder: jest.fn(() => () => ({})),
+  },
 }));
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+const mockedGetRecipientAccountPatchBuilder = jest.mocked(
+  sendFeatures.getRecipientAccountPatchBuilder,
+);
 
 /** Stubs a currency holding balance pools and returns its self-transfer patch builder. */
 function stubBalanceTypeConfig() {
@@ -347,6 +353,52 @@ describe("useSendFlowTransaction", () => {
       expect(buildSelfTransferPatch).toHaveBeenCalledWith({
         isSelfTransfer: false,
         transaction: mockTransaction,
+      });
+    });
+
+    it("merges the recipient-account patch with the self-transfer patch into one update", () => {
+      const buildSelfTransferPatch = stubBalanceTypeConfig();
+      const buildRecipientAccountPatch = jest.fn(() => ({ recipientAccountIndex: 3 }));
+      mockedGetRecipientAccountPatchBuilder.mockReturnValueOnce(buildRecipientAccountPatch);
+      const { result } = renderHook(() =>
+        useSendFlowTransaction({ account: mockAccount, parentAccount: null }),
+      );
+
+      act(() => {
+        result.current.actions.setRecipient({ address: "u1sibling" });
+      });
+
+      expect(buildRecipientAccountPatch).toHaveBeenCalledWith({
+        account: mockAccount,
+        recipient: "u1sibling",
+        accounts: expect.any(Array),
+        transaction: mockTransaction,
+      });
+      expect(buildSelfTransferPatch).toHaveBeenCalledTimes(1);
+      expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
+      expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+        recipient: "u1sibling",
+        selfTransfer: false,
+        recipientAccountIndex: 3,
+      });
+    });
+
+    it("applies the clearing patch of the recipient-account builder on a later write", () => {
+      mockedGetRecipientAccountPatchBuilder.mockReturnValueOnce(() => ({
+        recipientAccountIndex: undefined,
+      }));
+
+      const { result } = renderHook(() =>
+        useSendFlowTransaction({ account: mockAccount, parentAccount: null }),
+      );
+
+      act(() => {
+        result.current.actions.setRecipient({ address: "u1edited" });
+      });
+
+      expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+        recipient: "u1edited",
+        recipientAccountIndex: undefined,
       });
     });
 

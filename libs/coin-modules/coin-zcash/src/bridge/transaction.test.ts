@@ -104,3 +104,29 @@ describe("transaction serialization", () => {
     },
   );
 });
+
+describe("recipientAccountIndex", () => {
+  const base = {
+    family: "zcash",
+    transferType: "transparent-to-shielded",
+    recipient: "u1sibling",
+    amount: "1000",
+    useAllAmount: false,
+  } as TransactionRaw;
+
+  it("round-trips the index, index 0 included", () => {
+    for (const recipientAccountIndex of [0, 7]) {
+      const raw = { ...base, recipientAccountIndex };
+
+      expect(fromTransactionRaw(raw).recipientAccountIndex).toBe(recipientAccountIndex);
+      expect(toTransactionRaw(fromTransactionRaw(raw))).toMatchObject({ recipientAccountIndex });
+    }
+  });
+
+  it("leaves it out when it was never set", () => {
+    const tx = fromTransactionRaw(base);
+
+    expect(tx).not.toHaveProperty("recipientAccountIndex");
+    expect(toTransactionRaw(tx)).not.toHaveProperty("recipientAccountIndex");
+  });
+});
