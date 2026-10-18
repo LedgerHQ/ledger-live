@@ -26,10 +26,8 @@ const SPOT_PROPS = {
 } as const;
 
 function ConfirmationSpot({ icon }: Readonly<{ icon: ActionDialogIcon }>) {
-  if (icon === "withdraw") {
-    return <Spot icon={Download} size={72} />;
-  }
-  return <Spot {...SPOT_PROPS[icon]} size={72} />;
+  const props = icon === "withdraw" ? { icon: Download } : SPOT_PROPS[icon];
+  return <Spot {...props} size={72} />;
 }
 
 export function ActionConfirmationDialog() {
