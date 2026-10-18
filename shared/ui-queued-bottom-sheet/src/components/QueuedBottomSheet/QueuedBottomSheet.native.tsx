@@ -1,6 +1,17 @@
-import React, { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Platform, View } from "react-native";
-import { BottomSheetFooter, type BottomSheetFooterProps } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetFooter,
+  useBottomSheet,
+  type BottomSheetFooterProps,
+} from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IsInBottomSheetProvider } from "../../contexts/IsInBottomSheetContext";
 import { BottomSheetBackgroundContext } from "../../contexts/BottomSheetBackgroundContext";
@@ -59,11 +70,13 @@ export function QueuedBottomSheet({
     handleBackdropPress,
     handleHeaderClosePressed,
     handleDismiss,
+    handleOpened,
     handleAnimate,
     onBack: hookOnBack,
     enablePanDownToClose: computedEnablePanDownToClose,
     backgroundContextValue,
     backgroundComponent,
+    isAwaitingNextPresentation,
   } = useQueuedBottomSheet({
     isRequestingToBeOpened,
     isForcingToBeOpened,
@@ -76,8 +89,21 @@ export function QueuedBottomSheet({
     restoreOnFocus,
   });
 
+  // While a re-made request waits for the next presentation, the outgoing sheet keeps rendering
+  // what it last committed instead of the new `children`/`footer`. Recorded on commit, so an
+  // abandoned render cannot leak in.
+  const committedContentRef = useRef({ children, footer });
+  useLayoutEffect(() => {
+    if (!isAwaitingNextPresentation) {
+      committedContentRef.current = { children, footer };
+    }
+  }, [isAwaitingNextPresentation, children, footer]);
+  const { children: content, footer: footerContent } = isAwaitingNextPresentation
+    ? committedContentRef.current
+    : { children, footer };
+
   const [footerHeight, setFooterHeight] = useState(0);
-  const hasFooter = footer !== null && footer !== undefined;
+  const hasFooter = footerContent !== null && footerContent !== undefined;
   const contentBottomInset = useContentBottomInset(hasFooter, enableDynamicSizing);
   const showBottomSpace = !hasFooter && !(enableDynamicSizing && contentHasBottomSpace);
 
@@ -88,8 +114,8 @@ export function QueuedBottomSheet({
   const footerStore = footerStoreRef.current;
 
   useEffect(() => {
-    footerStore.setContent(footer ?? null);
-  }, [footer, footerStore]);
+    footerStore.setContent(footerContent ?? null);
+  }, [footerContent, footerStore]);
 
   // gorhom memoizes the footer container on this identity, so a new function every render would
   // remount the footer and throw away its measured height.
@@ -120,17 +146,21 @@ export function QueuedBottomSheet({
       onBack={hasBackButton ? hookOnBack : undefined}
       onHeaderClosePressed={handleHeaderClosePressed}
       onAnimate={handleAnimate}
-      onOpen={onOpened}
+      onOpen={() => {
+        if (handleOpened()) return;
+        onOpened?.();
+      }}
       onDismiss={handleDismiss}
       backdropPressBehavior={preventBackdropClick || areBottomSheetsLocked ? "none" : "close"}
       onBackdropPress={handleBackdropPress}
       backgroundComponent={backgroundComponent}
     >
+      <CloseWhenNoLongerRequested requested={isRequestingToBeOpened || isForcingToBeOpened} />
       <BottomSheetInstanceContext.Provider value={sheetId}>
         <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
           <BottomSheetFooterInsetContext.Provider value={hasFooter ? footerHeight : 0}>
             <BottomSheetBottomInsetContext.Provider value={contentBottomInset}>
-              <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
+              <IsInBottomSheetProvider>{content}</IsInBottomSheetProvider>
             </BottomSheetBottomInsetContext.Provider>
           </BottomSheetFooterInsetContext.Provider>
         </BottomSheetBackgroundContext.Provider>
@@ -159,6 +189,32 @@ function FooterSlot({
       <QueuedBottomSheetFooter onHeightChange={onHeightChange}>{content}</QueuedBottomSheetFooter>
     </BottomSheetFooter>
   );
+}
+
+const CLOSE_RETRY_MS = 200;
+
+function CloseWhenNoLongerRequested({ requested }: { requested: boolean }) {
+  const { close } = useBottomSheet();
+  const closeRef = useRef(close);
+  closeRef.current = close;
+  const wasRequestedRef = useRef(false);
+
+  useEffect(() => {
+    if (requested) {
+      wasRequestedRef.current = true;
+      return;
+    }
+    if (!wasRequestedRef.current) return;
+
+    const closeSheet = () => {
+      closeRef.current();
+    };
+    closeSheet();
+    const retry = setInterval(closeSheet, CLOSE_RETRY_MS);
+    return () => clearInterval(retry);
+  }, [requested]);
+
+  return null;
 }
 
 function OnscreenNavigationSafeArea() {

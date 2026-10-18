@@ -18,7 +18,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-common/portfolio/portfolio";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
 import { TrackingEvent } from "../enums";
 
@@ -44,7 +44,7 @@ const useAccountsListViewModel = ({
   onContentChange,
 }: Props) => {
   const navigation = useNavigation<NavigationProp>();
-  const countervalueState = useCountervaluesState();
+  const countervalueState = useCountervaluesCache();
   const toCurrency = useSelector(counterValueCurrencySelector);
   const allAccounts = useSelector(flattenAccountsSelector, isEqual);
   const walletState = useSelector(walletSelector, isEqual);

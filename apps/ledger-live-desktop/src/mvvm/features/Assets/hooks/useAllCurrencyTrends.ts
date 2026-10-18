@@ -3,6 +3,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import { useCountervaluesState } from "@features/platform-market-countervalues";
 import {
+  alignFlatDayCountervalueChange,
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
@@ -20,6 +21,7 @@ import type { AssetTableItem } from "../types";
 export function useAllCurrencyTrends(
   items: AssetTableItem[],
   range: PortfolioRange,
+  marketDayChangeByCurrencyId?: ReadonlyMap<string, number>,
 ): Map<string, number | null> {
   const to = useSelector(counterValueCurrencySelector);
   const state = useCountervaluesState();
@@ -37,12 +39,25 @@ export function useAllCurrencyTrends(
       }
       const accounts = item.accounts as AccountLike[];
       const portfolio = getCurrencyPortfolio(accounts, range, state, to);
+      const balanceAtRangeStart = portfolio.history[0]?.value;
+      const balanceAtRangeEnd = portfolio.history.at(-1)?.value;
+      const countervalueChange =
+        balanceAtRangeStart == null || balanceAtRangeEnd == null
+          ? portfolio.countervalueChange
+          : alignFlatDayCountervalueChange({
+              range,
+              countervalueChange: portfolio.countervalueChange,
+              balanceAtRangeStart,
+              balanceAtRangeEnd,
+              currentCountervalue: portfolio.history.at(-1)?.countervalue,
+              marketDayChangePercentPoints: marketDayChangeByCurrencyId?.get(item.currency.id),
+            });
       const trend =
-        portfolio.countervalueChange.percentage ??
+        countervalueChange.percentage ??
         getCurrentBalanceCountervalueChange(accounts, range, state, to).percentage ??
         null;
       map.set(item.currency.id, trend);
     }
     return map;
-  }, [items, to, state, range]);
+  }, [items, to, state, range, marketDayChangeByCurrencyId]);
 }

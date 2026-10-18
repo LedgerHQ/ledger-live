@@ -428,7 +428,7 @@ jobs:
 
   report-to-allure:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     outputs:
       status: ${{ steps.summary.outputs.status }}
@@ -472,7 +472,7 @@ jobs:
 
   report-to-allure-device2:
     name: "Create Allure Report - device 2"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     outputs:
@@ -516,7 +516,7 @@ jobs:
 
   qaa-allure-upload:
     name: "QAA Allure Upload - ${{ needs.prepare-devices.outputs.device_1 }} (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() }}
     continue-on-error: true
@@ -541,10 +541,11 @@ jobs:
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
 
   qaa-allure-upload-device2:
     name: "QAA Allure Upload - device 2 (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     continue-on-error: true
@@ -569,10 +570,11 @@ jobs:
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
 
   notify-to-slack:
     name: "Notify to Slack"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, report-to-allure, report-to-allure-device2, qaa-allure-upload, qaa-allure-upload-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:

@@ -5,10 +5,13 @@ import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
 import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { setMarketCurrentPage, setMarketRequestParams } from "~/actions/market";
+import { toMarketListQueryArg } from "@ledgerhq/live-common/market/utils/marketListQueryArg";
+import { resolveMarketListRefreshRate } from "@ledgerhq/live-common/market/utils/timers";
+import { setMarketCurrentPage } from "~/actions/market";
+import { LIMIT } from "~/reducers/market";
 import { useFeature } from "@features/platform-feature-flags";
 import { useMarket } from "../../hooks/useMarket";
-import { getCurrentPage, isDataStale } from "../../utils";
+import { getCurrentPage } from "../../utils";
 import { ViewToken } from "react-native";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,23 +20,26 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
 
-export const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
-
-export const BASIC_REFETCH = 3; // nb minutes
-
 export const viewabilityConfig = {
   viewAreaCoveragePercentThreshold: 72,
 };
+
+const TOP_MARKET_RESULT_CAP = 100;
+
+function marketListLimit(isTop100Route: boolean | undefined, storedLimit?: number) {
+  if (isTop100Route) return TOP_MARKET_RESULT_CAP;
+  if (storedLimit === TOP_MARKET_RESULT_CAP) return LIMIT;
+  return storedLimit;
+}
 
 function useMarketListViewModel() {
   const llmRefreshMarketDataFeature = useFeature("llmRefreshMarketData");
   const { params } = useRoute<NavigationProps["route"]>();
   const queryClient = useQueryClient();
 
-  const REFRESH_RATE =
-    Number(llmRefreshMarketDataFeature?.params?.refreshTime) > 0
-      ? REFETCH_TIME_ONE_MINUTE * Number(llmRefreshMarketDataFeature?.params?.refreshTime)
-      : REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH;
+  const REFRESH_RATE = resolveMarketListRefreshRate(
+    llmRefreshMarketDataFeature?.params?.refreshTime,
+  );
 
   const initialTop100 = params?.top100;
 
@@ -50,12 +56,17 @@ function useMarketListViewModel() {
   const { search, counterCurrency, range } = marketParams;
 
   const shouldDisplayLiveCompatible = marketParams.liveCompatible;
+  const listLimit = marketListLimit(initialTop100, marketParams.limit);
 
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    starred: filterByStarredCurrencies ? starredMarketCoins : [],
-    liveCompatible: shouldDisplayLiveCompatible,
-  });
+  const marketResult = useMarketDataHook(
+    {
+      ...marketParams,
+      limit: listLimit,
+      starred: filterByStarredCurrencies ? starredMarketCoins : [],
+      liveCompatible: shouldDisplayLiveCompatible,
+    },
+    { refreshRate: REFRESH_RATE },
+  );
 
   const baseData = filterByStarredCurrencies
     ? (marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined)
@@ -66,57 +77,40 @@ function useMarketListViewModel() {
     : undefined;
 
   useEffect(() => {
-    if (initialTop100) {
-      updateMarketParams({
-        limit: 100,
-        starred: [],
-        order: Order.MarketCapDesc,
-        search: "",
-        liveCompatible: shouldDisplayLiveCompatible,
-      });
-    }
+    if (!initialTop100) return;
+    updateMarketParams({
+      starred: [],
+      order: Order.MarketCapDesc,
+      search: "",
+      liveCompatible: shouldDisplayLiveCompatible,
+    });
   }, [initialTop100, updateMarketParams, shouldDisplayLiveCompatible]);
 
-  const onEndReached = useCallback(() => {
-    dispatch(setMarketRequestParams({ page: (marketParams?.page || 1) + 1 }));
-  }, [dispatch, marketParams?.page]);
+  useEffect(() => {
+    if (initialTop100 || marketParams.limit !== TOP_MARKET_RESULT_CAP) return;
+    updateMarketParams({ limit: LIMIT });
+  }, [initialTop100, marketParams.limit, updateMarketParams]);
 
-  /**
-   *
-   * Refresh mechanism ----------------------------------------------
-   */
-
-  const refetchData = useCallback(
-    (pageToRefetch: number) => {
-      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch - 1));
-      if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
-        elem.refetch();
-      }
-    },
-    [marketResult.cachedMetadataMap, REFRESH_RATE],
-  );
+  const { fetchNextPage, refetch: refetchMarketList, resetToFirstPage } = marketResult;
+  const { pageSize } = toMarketListQueryArg({ ...marketParams, limit: listLimit });
 
   const refetchAllPages = useCallback(() => {
-    marketResult.cachedMetadataMap.forEach(({ refetch }) => {
-      refetch();
-    });
+    refetchMarketList();
 
     // Also invalidate individual currency data to ensure detail screens show fresh data
     queryClient.invalidateQueries({ queryKey: ["CurrencyDataRaw"] });
     queryClient.invalidateQueries({ queryKey: ["CurrencyChartData"] });
-  }, [marketResult.cachedMetadataMap, queryClient]);
+  }, [refetchMarketList, queryClient]);
 
   const checkIfDataIsStaleAndRefetch = useCallback(
     (indexPosition: number) => {
-      const newCurrentPage = getCurrentPage(indexPosition, marketParams.limit || 50);
+      const newCurrentPage = getCurrentPage(indexPosition, pageSize);
 
       if (marketCurrentPage !== newCurrentPage) {
         dispatch(setMarketCurrentPage(newCurrentPage));
       }
-
-      refetchData(newCurrentPage);
     },
-    [marketParams.limit, marketCurrentPage, refetchData, dispatch],
+    [pageSize, marketCurrentPage, dispatch],
   );
 
   const onViewableItemsChanged = ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -127,31 +121,26 @@ function useMarketListViewModel() {
   };
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);
 
-  const resetMarketPageToInital = (page: number) => {
-    if (page > 1) {
-      dispatch(setMarketRequestParams({ page: 1 }));
-      dispatch(setMarketCurrentPage(1));
-    }
-  };
+  const resetMarketPage = useCallback(() => {
+    resetToFirstPage();
+    dispatch(setMarketCurrentPage(1));
+  }, [dispatch, resetToFirstPage]);
 
   return {
     marketData: marketDataFiltered,
     filterByStarredCurrencies,
     starredMarketCoins,
     search,
-    loading: marketResult.isFetching,
+    loading: marketResult.isLoading || marketResult.isFetchingNextPage,
+    refreshing: marketResult.isFetching,
     updateMarketParams,
     counterCurrency,
     range,
-    onEndReached,
-    refetchData,
+    onEndReached: fetchNextPage,
     refetchAllPages,
-    refreshRate: REFRESH_RATE,
-    marketCurrentPage,
     checkIfDataIsStaleAndRefetch,
     viewabilityConfigCallbackPairs,
-    marketParams,
-    resetMarketPageToInital,
+    resetMarketPage,
   };
 }
 

@@ -6,12 +6,22 @@ import type {
   BridgeApi,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { Account, OperationType } from "@ledgerhq/types-live";
+import type {
+  Account,
+  OperationType,
+  StakingDelegation,
+  StakingUnbonding,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
-import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
+import {
+  endpointByCurrencyId,
+  transactionHasNonPlaceholderSignatures,
+} from "@ledgerhq/coin-solana/utils";
+import { VersionedTransaction } from "@solana/web3.js";
+import bs58 from "bs58";
 import { getTokenAccountShapes } from "@ledgerhq/coin-solana/logic/tokenAccountShapes";
 import { getCurrencyConfiguration } from "../../../config";
 import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
@@ -141,10 +151,25 @@ function tokenIdOfSubAccount(
   return tokenId.startsWith(`${account.currency.id}/`) ? tokenId : undefined;
 }
 
+// The blockhash a signature was refreshed to, keyed on the options object that carried the callback.
+const refreshedBlockhashes = new WeakMap<object, string>();
+
+/** A raw transaction already carrying a real signature is a co-signed one: its message is final. */
+function hasRealSignatures(raw: unknown): boolean {
+  if (typeof raw !== "string" || raw === "") return false;
+  try {
+    const { signatures } = VersionedTransaction.deserialize(Buffer.from(raw, "base64"));
+    return transactionHasNonPlaceholderSignatures(signatures);
+  } catch {
+    return false;
+  }
+}
+
 /**
- * What the device needs to name a token recipient instead of showing its raw account. The legacy
- * signer additionally wants `deviceModelId`, which no signing context reaches this hook — see
- * LIVE-35692.
+ * What the device needs to name a token recipient instead of showing its raw account, and to take a
+ * fresh blockhash once the user has reviewed the transaction: a review longer than the blockhash's
+ * lifetime would otherwise fail at broadcast. The legacy signer additionally wants `deviceModelId`,
+ * which no signing context reaches this hook — see LIVE-35692.
  */
 export function getDeviceSignOptions(
   transaction: Record<string, unknown>,
@@ -158,6 +183,7 @@ export function getDeviceSignOptions(
     userInputType,
     assetReference,
     mode,
+    raw,
   } = transaction as {
     templateId?: string;
     subAccountId?: string;
@@ -166,6 +192,7 @@ export function getDeviceSignOptions(
     userInputType?: string;
     assetReference?: string;
     mode?: string;
+    raw?: string;
   };
 
   // Opening an account names its future owner; a transfer that opens one names the recipient.
@@ -186,19 +213,60 @@ export function getDeviceSignOptions(
     destination = { tokenAddress: recipientTokenAccount };
   }
 
-  const options = {
+  const endpoint = endpointByCurrencyId(
+    getCurrencyConfiguration<SolanaCoinConfig>(account.currency.id),
+    account.currency.id,
+  );
+
+  const options: Record<string, unknown> = {
     ...(templateId ? { templateId } : {}),
     ...(tokenInternalId ? { tokenInternalId } : {}),
     ...destination,
     ...(userInputType ? { userInputType } : {}),
+    solanaRPCURL: endpoint,
   };
 
-  return Object.keys(options).length > 0 ? options : undefined;
+  if (!hasRealSignatures(raw)) {
+    options.delayed = true;
+    options.fetchBlockhash = async () => {
+      const { blockhash } = await getChainAPI({ endpoint }).getLatestBlockhash("confirmed");
+      refreshedBlockhashes.set(options, blockhash);
+      return bs58.decode(blockhash);
+    };
+  }
+
+  return options;
+}
+
+/**
+ * The device signs the message with the blockhash `fetchBlockhash` returned, so that is the one the
+ * signature has to be combined with, not the one the transaction was crafted with.
+ */
+export function applyDeviceSignResult(
+  unsigned: string,
+  options: Record<string, unknown> | undefined,
+): string {
+  const blockhash = options && refreshedBlockhashes.get(options);
+  if (!blockhash) return unsigned;
+
+  const transaction = VersionedTransaction.deserialize(Buffer.from(unsigned, "base64"));
+  transaction.message.recentBlockhash = blockhash;
+  return Buffer.from(transaction.serialize()).toString("base64");
+}
+
+export function getHeldNativeAmount(position: StakingDelegation | StakingUnbonding): BigNumber {
+  const reserve = position.lockedReserve ?? 0;
+  if (position.activeAmount && position.inactiveAmount) {
+    return position.activeAmount.plus(position.inactiveAmount).plus(reserve);
+  }
+  return position.amount.plus(reserve);
 }
 
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
     stakingSupported: true,
+    partitionsNativeBalance: true,
+    getHeldNativeAmount,
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
@@ -206,5 +274,6 @@ export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
     buildTokenAccountShapes: (address: string) => buildTokenAccountShapes(currency, address),
     describeOptimisticOperation,
     getDeviceSignOptions,
+    applyDeviceSignResult,
   };
 }

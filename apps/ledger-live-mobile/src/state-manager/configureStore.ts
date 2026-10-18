@@ -18,6 +18,8 @@ import { setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-mobile";
 import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
+import { accountDataExtra } from "@domain/api-account-data";
+import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
@@ -43,6 +45,7 @@ import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { selectFeature } from "@shared/feature-flags";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
+import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 /** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
@@ -60,6 +63,7 @@ export const store = configureStore({
         immutableCheck: false,
         thunk: {
           extraArgument: {
+            ...accountDataExtra(accountDataSources),
             ...calApiExtra({
               calServiceUrl: getEnv("CAL_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -123,7 +127,8 @@ export const store = configureStore({
         }),
       )
       .concat(createMobileFeatureFlagsMiddleware())
-      .concat(sleepingListener.middleware),
+      .concat(sleepingListener.middleware)
+      .concat(createMobileCountervaluesMiddleware()),
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
@@ -154,6 +159,7 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) =>
   }),
 );
 connectRecentAddressesStore(store, recentAddressesSelector);
+connectAccounts(store);
 setupCryptoAssetsStore(store);
 setupRateLookups();
 setSwapQuotesStore(store.dispatch);

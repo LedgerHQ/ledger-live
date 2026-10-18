@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { registerCoinModules, resetCoinModulesForTests } from "../../coin-modules/registry";
 import type { CoinModuleLoader } from "../../coin-modules/types";
+import { coinModuleLoaders } from "../../coin-modules/loaders";
 
 const notCallableInTests = () => {
   throw new Error("loader thunk not callable in this support-only test fixture");
@@ -18,6 +19,9 @@ export function supportOnlyForTest(ids: string[]): void {
     Object.entries(byFamily).map(([family, supportedCoins]): CoinModuleLoader => ({
       family,
       supportedCoins,
+      accountDescriptorType:
+        coinModuleLoaders.find(loader => loader.family === family)?.accountDescriptorType ??
+        "address",
       loadSetup: notCallableInTests,
       loadTransaction: notCallableInTests,
     })),

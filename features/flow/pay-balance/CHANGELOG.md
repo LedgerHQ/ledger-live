@@ -1,5 +1,37 @@
 # @features/flow-pay-balance
 
+## 0.7.0
+
+### Minor Changes
+
+- [#23053](https://github.com/LedgerHQ/ledger-live/pull/23053) [`2a09181`](https://github.com/LedgerHQ/ledger-live/commit/2a091816a8ec716c0bba802767671052c75843e8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show each stablecoin as its own Pay balance filter option, including testnet holdings
+
+- [#22879](https://github.com/LedgerHQ/ledger-live/pull/22879) [`77e7162`](https://github.com/LedgerHQ/ledger-live/commit/77e716257785645b79027b580fcef2dfbab7ad3b) Thanks [@tonykhaov](https://github.com/tonykhaov)! - fix(pay-balance): keep funded USDC in the balance filter when a testnet USDC is held
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/i18n@0.2.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @domain/entity-currency-unit@0.3.0
+  - @features/platform-pay-analytics@0.3.0
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#23053](https://github.com/LedgerHQ/ledger-live/pull/23053) [`2a09181`](https://github.com/LedgerHQ/ledger-live/commit/2a091816a8ec716c0bba802767671052c75843e8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show each stablecoin as its own Pay balance filter option, including testnet holdings
+
+- [#22879](https://github.com/LedgerHQ/ledger-live/pull/22879) [`77e7162`](https://github.com/LedgerHQ/ledger-live/commit/77e716257785645b79027b580fcef2dfbab7ad3b) Thanks [@tonykhaov](https://github.com/tonykhaov)! - fix(pay-balance): keep funded USDC in the balance filter when a testnet USDC is held
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/i18n@0.2.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @domain/entity-currency-unit@0.3.0
+  - @features/platform-pay-analytics@0.3.0
+
 ## 0.6.0
 
 ### Minor Changes

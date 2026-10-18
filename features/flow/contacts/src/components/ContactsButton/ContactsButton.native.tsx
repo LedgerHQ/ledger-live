@@ -29,7 +29,7 @@ export function ContactsButton({
     <Card type="interactive" onPress={onPress} testID="my-wallet-contacts-button">
       <CardHeader>
         <CardLeading>
-          <Spot appearance="icon" icon={Contact} size={48} />
+          <Spot icon={Contact} size={48} />
           <CardContent>
             <CardContentTitle>{title}</CardContentTitle>
             <CardContentDescription>{description}</CardContentDescription>

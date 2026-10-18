@@ -1,16 +1,17 @@
 import { execFileSync } from "node:child_process";
+import { parse } from "yaml";
 
 /**
  * Estimates how much a PR grows node_modules from the pnpm-lock.yaml diff, without any install.
  *
  * Every lockfile entry is one directory in node_modules/.pnpm (peer variants count separately, like pnpm).
  * Only entries whose count differs between base and head are priced, with the registry `unpackedSize`.
- * Optional os/cpu/libc packages follow `pnpm.supportedArchitectures` of each ref, else the host platform.
+ * Optional os/cpu/libc packages follow `supportedArchitectures` in each ref's pnpm-workspace.yaml, else the host platform.
  */
 
 const ENTRY_RE = /^ {2}(['"]?)([^'"\s].*?)\1:(?: \{\})?\s*$/;
 const LIST_RE = /^ {4}(cpu|os|libc): \[(.*)\]\s*$/;
-const RELIABILITY_PATHS = [".npmrc", "pnpm-workspace.yaml", "patches"];
+const RELIABILITY_PATHS = ["pnpm-workspace.yaml", "patches"];
 const TOP = 5;
 // CI runs on glibc Linux; pnpm only installs the libc variant matching the host
 const HOST_LIBC = "glibc";
@@ -108,10 +109,10 @@ function parseLockfile(text: string): Lockfile {
 }
 
 /** Platforms pnpm installs optional deps for, or null when only the host is installed. */
-function supportedArchitectures(packageJsonText: string | null, host: Host): Platform | null {
+function supportedArchitectures(workspaceYamlText: string | null, host: Host): Platform | null {
   let sa;
   try {
-    sa = JSON.parse(packageJsonText ?? "{}").pnpm?.supportedArchitectures;
+    sa = parse(workspaceYamlText ?? "")?.supportedArchitectures;
   } catch {
     return null;
   }
@@ -239,14 +240,6 @@ const gitShow = (ref: string, path: string) => {
   }
 };
 
-function pnpmSection(ref: string) {
-  try {
-    return JSON.stringify(JSON.parse(gitShow(ref, "package.json") ?? "{}").pnpm ?? null);
-  } catch {
-    return null;
-  }
-}
-
 const formatMb = (bytes: number) =>
   `${bytes >= 0 ? "+" : "−"}${(Math.abs(bytes) / 1e6).toFixed(1)} MB`;
 
@@ -306,8 +299,8 @@ export async function estimateNodeModulesSizeDelta(thresholdMb: number): Promise
   const baseLock = parseLockfile(gitShow(BASE, "pnpm-lock.yaml") ?? "");
   const headLock = parseLockfile(gitShow(HEAD, "pnpm-lock.yaml") ?? "");
   const meta = new Map([...baseLock.meta, ...headLock.meta]);
-  const baseArch = supportedArchitectures(gitShow(BASE, "package.json"), host);
-  const headArch = supportedArchitectures(gitShow(HEAD, "package.json"), host);
+  const baseArch = supportedArchitectures(gitShow(BASE, "pnpm-workspace.yaml"), host);
+  const headArch = supportedArchitectures(gitShow(HEAD, "pnpm-workspace.yaml"), host);
 
   const base = { installs: baseLock.installs, meta };
   const head = { installs: headLock.installs, meta };
@@ -330,7 +323,6 @@ export async function estimateNodeModulesSizeDelta(thresholdMb: number): Promise
   const unreliable = RELIABILITY_PATHS.filter(p =>
     changedFiles.some(f => f === p || f.startsWith(`${p}/`)),
   );
-  if (pnpmSection(BASE) !== pnpmSection(HEAD)) unreliable.push("package.json#pnpm");
 
   return {
     exceedsThreshold: installed.total >= thresholdMb * 1e6,

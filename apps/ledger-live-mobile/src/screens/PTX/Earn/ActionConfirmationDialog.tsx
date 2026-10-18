@@ -7,24 +7,29 @@ import {
   Text,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Download } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  CheckmarkCircleFill,
+  Download,
+  InformationFill,
+  WarningFill,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { ActionDialogIcon } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import { useSelector } from "~/context/hooks";
 import { earnActionDialogSelector } from "~/reducers/earn";
 import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 
-const SPOT_APPEARANCE = {
-  info: "info",
-  warning: "warning",
-  success: "check",
+const SPOT_PROPS = {
+  info: { appearance: "muted", icon: InformationFill },
+  warning: { appearance: "warning", icon: WarningFill },
+  success: { appearance: "success", icon: CheckmarkCircleFill },
 } as const;
 
 function ConfirmationSpot({ icon }: Readonly<{ icon: ActionDialogIcon }>) {
   if (icon === "withdraw") {
-    return <Spot appearance="icon" icon={Download} size={72} />;
+    return <Spot icon={Download} size={72} />;
   }
-  return <Spot appearance={SPOT_APPEARANCE[icon]} size={72} />;
+  return <Spot {...SPOT_PROPS[icon]} size={72} />;
 }
 
 export function ActionConfirmationDialog() {

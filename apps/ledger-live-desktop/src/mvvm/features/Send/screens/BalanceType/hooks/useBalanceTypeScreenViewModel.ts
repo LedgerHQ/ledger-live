@@ -3,11 +3,15 @@ import { SEND_FLOW_STEP, type SendFlowState } from "@ledgerhq/live-common/flows/
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { trackPage } from "@shared/analytics";
 import {
   counterValueCurrencySelector,
@@ -28,6 +32,7 @@ export type BalanceTypeOption = {
   isZero: boolean;
   hasPendingBalance: boolean;
   icon: "lock" | "check";
+  hideSubtitle?: boolean;
 };
 
 export type BalanceTypeScreenViewModel =
@@ -50,10 +55,15 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     to: counterValueCurrency,
   });
 
-  const { account } = state.account;
+  const { account, parentAccount } = state.account;
   const { transaction } = state.transaction;
 
-  const bridge = useAccountBridgeOrNull<FlowTransaction>(account);
+  const mainAccount = account ? getMainAccount(account, parentAccount) : undefined;
+  const hasBalanceTypeSync = Boolean(
+    useLLDCoinFamily(mainAccount?.currency.family).SendBalanceTypeSync,
+  );
+
+  const bridge = useAccountBridgeOrNull<FlowTransaction>(account, parentAccount);
   const unit = useMaybeAccountUnit(account ?? undefined);
   const trackingProperties = useSendFlowTrackingProperties();
 
@@ -84,15 +94,16 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       const poolChanged = balanceTypeConfig.getSelectedOptionId(transaction) !== optionId;
       if (poolChanged) {
         resetRecipient();
+        transactionActions.updateTransaction(currentTransaction =>
+          bridge.updateTransaction(
+            currentTransaction,
+            balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
+          ),
+        );
       }
-
-      transactionActions.updateTransaction(currentTransaction =>
-        bridge.updateTransaction(
-          currentTransaction,
-          balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
-        ),
+      navigation.goToStep(
+        hasBalanceTypeSync ? SEND_FLOW_STEP.BALANCE_TYPE_SYNC : SEND_FLOW_STEP.RECIPIENT,
       );
-      navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
     },
     [
       account,
@@ -102,6 +113,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       bridge,
       balanceTypeConfig,
       navigation,
+      hasBalanceTypeSync,
     ],
   );
 
@@ -128,6 +140,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       isZero: option.balance.isZero(),
       hasPendingBalance: option.hasPendingBalance,
       icon: option.icon,
+      hideSubtitle: option.hideSubtitle,
     };
   });
 

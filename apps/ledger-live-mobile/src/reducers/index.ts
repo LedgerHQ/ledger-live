@@ -10,6 +10,7 @@ import auth from "./auth";
 import ble from "./ble";
 import borrow from "./borrow";
 import { countervaluesReducer } from "@features/platform-market-countervalues";
+import { countervaluesExtraSessionTrackingReducer } from "./countervaluesExtraSessionTracking";
 import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
 import earn from "./earn";
@@ -52,6 +53,8 @@ import { payRequestVerifyHintSlice } from "@features/flow-pay-request/state";
 import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { contactsSlice } from "@domain/entity-contact";
+import { accountDataSlice } from "@domain/entity-account-data";
+import { accountsSlice } from "@domain/entity-account";
 import { appLockSlice } from "@features/platform-app-lock";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
@@ -64,6 +67,7 @@ const appReducer = combineReducers({
   ble,
   borrow,
   countervalues: countervaluesReducer,
+  countervaluesExtraSessionTracking: countervaluesExtraSessionTrackingReducer,
   deeplinkInstallApp,
   dynamicContent,
   earn,
@@ -111,6 +115,8 @@ const appReducer = combineReducers({
   liveAppModal,
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
+  accountData: accountDataSlice.reducer,
+  accountEntries: accountsSlice.reducer,
   appLock: appLockSlice.reducer,
   ...llmRTKApiReducers,
 });

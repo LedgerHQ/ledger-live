@@ -2,24 +2,26 @@ import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
-  type ContactsDeleteAddressDialogProps,
-  type ContactsEditSignerMismatchDialogProps,
-  type ContactAddressDetailDialogProps,
-  type ContactAddressDetailSendIntent,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
+  useContactAddressEditAnalytics,
+  useContactsAddressDetailActionsPorts,
+  trackContactAddressDetailQuickAction,
+} from "@features/flow-contacts";
+import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
+import {
+  type ContactsEditSignerMismatchDialogProps,
+  type ContactAddressDetailDialogProps,
+  type ContactAddressDetailSendIntent,
   createActiveContactAddressDetailActionsUiState,
   createInactiveContactAddressDetailActionsUiState,
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
-  useContactAddressEditAnalytics,
-  useContactsAddressDetailActionsPorts,
-  trackContactAddressDetailQuickAction,
   resolveContactAddressSupportsDomain,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDialogProps,
@@ -128,10 +130,7 @@ export function useContactAddressDetailActionsAdapter(
     currencyId,
     sendFeatures.supportsDomain,
   );
-  const labels = useMemo(
-    () => resolveContactAddressDetailActionsLabels({ t, supportsDomain }),
-    [t, supportsDomain],
-  );
+  const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const onEdit = useCallback(() => {
     trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
     flow.onEditPress();
@@ -161,10 +160,17 @@ export function useContactAddressDetailActionsAdapter(
   });
 
   if (!isSelectionActive) {
-    return mapUiStateToDialogProps(createInactiveContactAddressDetailActionsUiState(labels));
+    return mapUiStateToDialogProps(
+      createInactiveContactAddressDetailActionsUiState(labels, supportsDomain),
+    );
   }
 
-  const uiState = createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels);
+  const uiState = createActiveContactAddressDetailActionsUiState(
+    flow,
+    renameViewModel,
+    labels,
+    supportsDomain,
+  );
 
   return {
     ...mapUiStateToDialogProps(uiState),

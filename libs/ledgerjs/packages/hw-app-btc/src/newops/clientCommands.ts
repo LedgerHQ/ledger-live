@@ -295,7 +295,7 @@ export class ClientCommandInterpreter {
   }
 
   addKnownPreimage(preimage: Buffer): void {
-    this.preimages.set(crypto.sha256(preimage).toString("hex"), preimage);
+    this.preimages.set(Buffer.from(crypto.sha256(preimage)).toString("hex"), preimage);
   }
 
   addKnownList(elements: Buffer[]): void {

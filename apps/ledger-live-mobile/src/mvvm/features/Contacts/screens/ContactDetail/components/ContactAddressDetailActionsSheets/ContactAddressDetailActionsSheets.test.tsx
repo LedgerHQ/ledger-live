@@ -2,7 +2,7 @@ import React from "react";
 import {
   createInactiveContactAddressDetailActionsUiState,
   resolveContactAddressDetailActionsLabels,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
@@ -16,7 +16,8 @@ type SheetsProps = Pick<
 
 function createProps(isRenameOpen = true): SheetsProps {
   const uiState = createInactiveContactAddressDetailActionsUiState(
-    resolveContactAddressDetailActionsLabels({ t: key => key, supportsDomain: true }),
+    resolveContactAddressDetailActionsLabels({ t: key => key }),
+    true,
   );
 
   return {

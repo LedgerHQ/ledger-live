@@ -30,7 +30,7 @@ export const ErrorState = () => {
       accessibilityLabel={t("marketBanner.connectionFailed")}
       accessibilityHint={t("marketBanner.errorAccessibilityHint")}
     >
-      <Spot appearance="icon" icon={Warning} size={48} />
+      <Spot icon={Warning} size={48} />
       <Text typography="body2SemiBold" lx={{ color: "base", textAlign: "center", marginTop: "s8" }}>
         {t("marketBanner.connectionFailed")}
       </Text>

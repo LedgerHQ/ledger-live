@@ -1,6 +1,6 @@
 import React from "react";
 import { ContactsAddAddressFlowContent } from "@features/flow-contacts-add-address";
-import { DeviceIntentExecutorLWD } from "LLD/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLD/components/DeviceIntentExecutor";
 import type { AddNewContactAddressPhase } from "./hooks/useAddNewContactViewModel";
 
 type AddNewContactAddressViewProps = Readonly<{
@@ -9,7 +9,7 @@ type AddNewContactAddressViewProps = Readonly<{
 
 export function AddNewContactAddressView({ addressPhase }: AddNewContactAddressViewProps) {
   if (addressPhase.dieProps?.enabled === true) {
-    return <DeviceIntentExecutorLWD sourceFlow="contacts" {...addressPhase.dieProps} />;
+    return <DeviceIntentExecutor sourceFlow="contacts" {...addressPhase.dieProps} />;
   }
 
   return (
@@ -19,9 +19,7 @@ export function AddNewContactAddressView({ addressPhase }: AddNewContactAddressV
     >
       <ContactsAddAddressFlowContent
         state={addressPhase.state}
-        entryLabels={addressPhase.entryLabels}
-        nameLabels={addressPhase.nameLabels}
-        reviewLabels={addressPhase.reviewLabels}
+        supportsDomain={addressPhase.supportsDomain}
         onAddressChange={() => undefined}
         onContinueFromAddressDetails={() => undefined}
         onAddressLabelChange={addressPhase.onAddressLabelChange}

@@ -27,6 +27,7 @@ import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
 type SpeculosTarget = Readonly<{
   url: string;
   deviceModelId: DeviceModelId;
+  bearerToken?: string;
 }>;
 
 const SPECULOS_DEVICE_TO_MODEL: Record<string, LLDeviceModelId> = {
@@ -60,11 +61,13 @@ function readSpeculosTarget(): SpeculosTarget | null {
 
   const configuredHost = withoutTrailingSlashes(process.env.SPECULOS_ADDRESS ?? "http://127.0.0.1");
   const url = endsWithPort(configuredHost) ? configuredHost : `${configuredHost}:${port}`;
-  const model = SPECULOS_DEVICE_TO_MODEL[process.env.SPECULOS_DEVICE ?? ""] ?? DEFAULT_SPECULOS_MODEL;
+  const model =
+    SPECULOS_DEVICE_TO_MODEL[process.env.SPECULOS_DEVICE ?? ""] ?? DEFAULT_SPECULOS_MODEL;
 
   return {
     url,
     deviceModelId: ledgerToDmkDeviceIdMap[model],
+    bearerToken: process.env.SPECULOS_SESSION_TOKEN,
   };
 }
 
@@ -81,7 +84,9 @@ function ignoreCompletion<T>(source: Observable<T>): Observable<T> {
 
 function openSpeculosTransport(args: TransportArgs) {
   return (target: SpeculosSessionTarget) =>
-    speculosTransportFactory(target.url, true, target.deviceModelId)(args);
+    speculosTransportFactory(target.url, true, target.deviceModelId, {
+      bearerToken: target.bearerToken,
+    })(args);
 }
 
 export class SpeculosDmkTransport implements DmkTransport {

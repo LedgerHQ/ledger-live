@@ -6,7 +6,7 @@ import {
   CONTACTS_TRACKING_BUTTON,
 } from "../analytics/contactsAnalytics.types";
 import type { ContactsAnalyticsHelper } from "../analytics/createContactsAnalyticsHelper";
-import type { UseContactDetailEditDeleteFlowViewModelResult } from "../steps/Detail/editDelete/useContactDetailEditDeleteFlowViewModel";
+import type { UseContactDetailEditDeleteFlowViewModelResult } from "@features/flow-contacts-detail";
 
 export function useContactDetailEditDeleteAnalytics(
   analytics: ContactsAnalyticsHelper,

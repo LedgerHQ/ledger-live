@@ -11,6 +11,7 @@ import Text from "~/renderer/components/Text";
 import Label from "~/renderer/components/Label";
 import Alert from "~/renderer/components/Alert";
 import Switch from "~/renderer/components/Switch";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Sender = "public" | "private";
 
@@ -28,7 +29,7 @@ const Unavailable = styled(Text).attrs(() => ({
 
 const ZcashSelfTransferToggle = ({ account, transaction, onChange }: Props) => {
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
-  const isZcash = account.type === "Account" && account.currency.id === "zcash";
+  const isZcash = account.type === "Account" && isZcashCurrencyId(account.currency.id);
   const active = isZcash && shieldedEnabled;
 
   const bridge = useAccountBridge<ZcashTransaction>(account);

@@ -27,7 +27,7 @@ export function ConfirmBody({
   return (
     <>
       <Box lx={{ alignItems: "center", gap: "s16", paddingHorizontal: "s16" }}>
-        <Spot appearance="icon" icon={SPOT_ICON[appearance]} size={56} />
+        <Spot icon={SPOT_ICON[appearance]} size={56} />
         <Box lx={{ alignItems: "center", gap: "s8" }}>
           <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {t(titleKey)}

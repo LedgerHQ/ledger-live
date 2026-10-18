@@ -56,6 +56,7 @@ export function runSwapTokenApprovalFlow(
       async () => {
         const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
         await app.swap.logSelectedProvider(provider.uiName);
+        await app.speculos.enableBlindSigningOnNanoS();
         await revokeTokenApproval(fromAccount, provider);
         const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
         if (amountToSwap === null) {

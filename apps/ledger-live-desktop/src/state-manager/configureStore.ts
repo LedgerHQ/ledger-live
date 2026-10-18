@@ -32,6 +32,8 @@ import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
+import { accountDataExtra } from "@domain/api-account-data";
+import { accountDataSources } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { selectFeature } from "@shared/feature-flags";
 import { sleepingListener } from "./sleepingListener";
@@ -39,11 +41,17 @@ import {
   createDesktopFeatureFlagsMiddleware,
   type FeatureFlagsSources,
 } from "./middleware/feature-flags";
+import {
+  createDesktopCountervaluesMiddleware,
+  type CountervaluesSources,
+} from "./middleware/countervalues";
 
 type Props = FeatureFlagsSources & {
   state?: State;
   dbMiddleware?: Middleware;
   analyticsMiddleware?: Middleware;
+  /** The countervalues loop's app wiring (window events, persistence); left out by unit tests. */
+  countervalues?: CountervaluesSources;
 };
 
 const customCreateStore = ({
@@ -52,6 +60,7 @@ const customCreateStore = ({
   analyticsMiddleware,
   fetchRemoteFlags,
   readCachedFlags,
+  countervalues,
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
@@ -63,6 +72,7 @@ const customCreateStore = ({
           immutableCheck: false,
           thunk: {
             extraArgument: {
+              ...accountDataExtra(accountDataSources),
               ...calApiExtra({
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -127,7 +137,8 @@ const customCreateStore = ({
           }),
         )
         .concat(createDesktopFeatureFlagsMiddleware({ fetchRemoteFlags, readCachedFlags }))
-        .concat(sleepingListener.middleware),
+        .concat(sleepingListener.middleware)
+        .concat(createDesktopCountervaluesMiddleware(countervalues)),
     devTools: __DEV__
       ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
       : false,

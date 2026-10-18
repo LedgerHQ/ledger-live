@@ -60,7 +60,7 @@ describe("testing xpub legacy transactions", () => {
 
   it("merge output strategy should be correct", async () => {
     // Initialize the xpub with 2 txs. So that it has 2 utxo
-    dataset.xpub.storage.appendTxs([
+    dataset.xpub.storage.appendTxs(jest.fn(), [
       {
         id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
         inputs: [],
@@ -134,10 +134,20 @@ describe("testing xpub legacy transactions", () => {
     ]);
     // this account has one utxo 500000000 and one utxo 300000000
     const utxoPickingStrategy = new Merge(dataset.xpub.crypto, dataset.xpub.derivationMode, []);
-    let res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(10000), 0);
+    let res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(10000),
+      0,
+    );
     expect(res.unspentUtxos.length).toEqual(1); // only 1 utxo is enough
     expect(Number(res.unspentUtxos[0].value)).toEqual(300000000); // use cheaper utxo first
-    res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(500000000), 0);
+    res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(500000000),
+      0,
+    );
     expect(res.unspentUtxos.length).toEqual(2); // need 2 utxo
     expect(Number(res.unspentUtxos[0].value) + Number(res.unspentUtxos[1].value)).toEqual(
       300000000 + 5000000000,
@@ -147,10 +157,20 @@ describe("testing xpub legacy transactions", () => {
   it("deep first output strategy should be correct", async () => {
     // this account has one utxo 500000000 and one utxo 300000000
     const utxoPickingStrategy = new DeepFirst(dataset.xpub.crypto, dataset.xpub.derivationMode, []);
-    let res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(10000), 0);
+    let res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(10000),
+      0,
+    );
     expect(res.unspentUtxos.length).toEqual(1); // only 1 utxo is enough
     expect(Number(res.unspentUtxos[0].value)).toEqual(5000000000); // use old utxo first
-    res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(5200000000), 0);
+    res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(5200000000),
+      0,
+    );
     expect(res.unspentUtxos.length).toEqual(2); // need 2 utxo
     expect(Number(res.unspentUtxos[0].value) + Number(res.unspentUtxos[1].value)).toEqual(
       300000000 + 5000000000,
@@ -159,7 +179,7 @@ describe("testing xpub legacy transactions", () => {
 
   it("coin select strategy should be correct", async () => {
     // Add 3 txs for the xpub. So that it has 5 utxo
-    dataset.xpub.storage.appendTxs([
+    dataset.xpub.storage.appendTxs(jest.fn(), [
       {
         id: "8f30fe84da5a5846d668b4bad260730f2b0125fa66fb2633fa1cee23c6b11053",
         inputs: [
@@ -284,29 +304,59 @@ describe("testing xpub legacy transactions", () => {
       dataset.xpub.derivationMode,
       [],
     );
-    let res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(10000), 10);
+    let res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(10000),
+      10,
+    );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(100000000);
 
-    res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(290000000), 10);
+    res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(290000000),
+      10,
+    );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(300000000);
 
-    res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(500000000), 10);
+    res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(500000000),
+      10,
+    );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(600000000);
 
-    res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(800000000), 10);
+    res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(800000000),
+      10,
+    );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(5000000000);
 
-    res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(5000000000), 10);
+    res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(5000000000),
+      10,
+    );
     expect(res.unspentUtxos.length).toEqual(2);
     expect(Number(res.unspentUtxos[0].value) + Number(res.unspentUtxos[1].value)).toEqual(
       5100000000,
     );
 
-    res = await utxoPickingStrategy.selectUnspentUtxosToUse(dataset.xpub, outputs(5600000000), 10);
+    res = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      jest.fn(),
+      dataset.xpub,
+      outputs(5600000000),
+      10,
+    );
     expect(res.unspentUtxos.length).toEqual(3);
     expect(
       Number(res.unspentUtxos[0].value) +
@@ -373,7 +423,7 @@ describe("picking strategies – segwit edge cases", () => {
     const expectedFee = expectedV * feePerByte;
 
     // single utxo exactly amount + expectedFee
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-utxo-1",
         inputs: [],
@@ -397,7 +447,12 @@ describe("picking strategies – segwit edge cases", () => {
 
     // run any segwit strategy; DeepFirst is fine
     const strat = new DeepFirst(xpub.crypto, xpub.derivationMode, []);
-    const res = await strat.selectUnspentUtxosToUse(xpub, out(amount, scriptP2WPKH), feePerByte);
+    const res = await strat.selectUnspentUtxosToUse(
+      jest.fn(),
+      xpub,
+      out(amount, scriptP2WPKH),
+      feePerByte,
+    );
 
     expect(res.unspentUtxos.length).toBe(1);
     expect(res.needChangeoutput).toBe(false);
@@ -454,7 +509,7 @@ describe("picking strategies – segwit edge cases", () => {
     // Make a single-UTXO wallet with just enough to hit that leftover
     const utxoValue = amount + Math.ceil(feeNoChange_FLOAT + targetLeftover);
 
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-utxo-taproot-recipient",
         inputs: [],
@@ -478,6 +533,7 @@ describe("picking strategies – segwit edge cases", () => {
 
     const strat = new Merge(xpub.crypto, xpub.derivationMode, []);
     const res = await strat.selectUnspentUtxosToUse(
+      jest.fn(),
       xpub,
       [
         {
@@ -570,7 +626,7 @@ describe("CoinSelect – segwit change delta must match input derivation (not re
     const utxoValue = amount + feeNoChange + L; // ensures currentValue - actualTarget = L
 
     // single UTXO to force 1-input selection
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-utxo-coinselect-change-test",
         inputs: [],
@@ -594,6 +650,7 @@ describe("CoinSelect – segwit change delta must match input derivation (not re
 
     const strat = new CoinSelect(xpub.crypto, xpub.derivationMode, []);
     const res = await strat.selectUnspentUtxosToUse(
+      jest.fn(),
       xpub,
       [
         {

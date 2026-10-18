@@ -29,7 +29,7 @@ describe("testing zcash transactions", () => {
     const changeAddress = await xpub.getNewAddress(1, 0);
     const OUTPUT_VALUE_1 = 1_000_000;
     const OUTPUT_VALUE_2 = 2_000_000;
-    xpub.storage.appendTxs([
+    xpub.storage.appendTxs(jest.fn(), [
       {
         id: "fca8f0b145a04e8cd1286dba61f7ad8bee389d12a70a0137aa4af6d1cb7efbb8",
         received_at: "2024-12-04T08:31:06Z",
@@ -119,7 +119,7 @@ describe("testing zcash transactions", () => {
     const amountMinusFees = balance.minus(50_000);
     expect(amountMinusFees.isPositive()).toBe(true);
 
-    const { inputs } = await xpub.buildTx({
+    const { inputs } = await xpub.buildTx(jest.fn(), {
       destAddress: "t1T8MQwJhUiDdxP2XCfcLviTPCsnQJyfcL1",
       amount: amountMinusFees,
       feePerByte: 1, // Merge will clamp anyway

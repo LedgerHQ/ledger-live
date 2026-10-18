@@ -43,12 +43,12 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
     expect(getBluetoothHelper).not.toHaveBeenCalled();
   });
 
-  it("GIVEN Bluetooth is in an unknown state, WHEN running preflight, THEN it should return a check-only Bluetooth state error", async () => {
+  it("GIVEN Bluetooth stays in an unknown state, WHEN running preflight, THEN it should return a check-only Bluetooth state error", async () => {
     // GIVEN
     const { check } = makeCheck({ states: [BlePlxState.Unknown] });
 
     // WHEN
-    const result = await check.run(makeRequirements());
+    const result = await runWithFakeTimers(() => check.run(makeRequirements()));
 
     // THEN
     expect(getError(result)).toMatchObject({
@@ -56,6 +56,23 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
       state: BlePlxState.Unknown,
       resolution: { type: "check-only", retry },
     });
+  });
+
+  it("GIVEN Bluetooth is turning off, WHEN running preflight, THEN it should wait for the off state", async () => {
+    // GIVEN
+    const { check, getState } = makeCheck({
+      states: [BlePlxState.Resetting, BlePlxState.Resetting, BlePlxState.PoweredOff],
+    });
+
+    // WHEN
+    const result = await runWithFakeTimers(() => check.run(makeRequirements()));
+
+    // THEN
+    expect(getError(result)).toMatchObject({
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
+      resolution: { type: "manual-action", retry },
+    });
+    expect(getState).toHaveBeenCalledTimes(3);
   });
 
   it("GIVEN Bluetooth is powered off and no prompt helper exists, WHEN running preflight, THEN it should require manual action", async () => {
@@ -107,7 +124,22 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
     });
   });
 
-  it("GIVEN Bluetooth enters an unknown state after the prompt, WHEN running preflight, THEN it should return a state error", async () => {
+  it("GIVEN Bluetooth is turning on after the prompt, WHEN running preflight, THEN it should wait for the on state", async () => {
+    // GIVEN
+    const prompt = jest.fn().mockResolvedValue(undefined);
+    const { check } = makeCheck({
+      states: [BlePlxState.PoweredOff, BlePlxState.Resetting, BlePlxState.PoweredOn],
+      bluetoothHelper: { prompt },
+    });
+
+    // WHEN
+    const result = await runWithFakeTimers(() => check.run(makeRequirements()));
+
+    // THEN
+    expect(result).toEqual({ success: true });
+  });
+
+  it("GIVEN Bluetooth stays in an unknown state after the prompt, WHEN running preflight, THEN it should return a state error", async () => {
     // GIVEN
     const prompt = jest.fn().mockResolvedValue(undefined);
     const { check } = makeCheck({
@@ -116,7 +148,7 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
     });
 
     // WHEN
-    const result = await check.run(makeRequirements());
+    const result = await runWithFakeTimers(() => check.run(makeRequirements()));
 
     // THEN
     expect(getError(result)).toMatchObject({
@@ -172,7 +204,8 @@ const makeCheck = ({
   states: BlePlxState[];
   bluetoothHelper?: BluetoothHelperModule;
 }) => {
-  const getState = jest.fn<Promise<BlePlxState>, []>();
+  // The last state stays, as the adapter does.
+  const getState = jest.fn<Promise<BlePlxState>, []>().mockResolvedValue(states[states.length - 1]);
   for (const state of states) {
     getState.mockResolvedValueOnce(state);
   }
@@ -186,6 +219,17 @@ const makeCheck = ({
   );
 
   return { check, getBluetoothHelper, getState };
+};
+
+const runWithFakeTimers = async <T>(run: () => Promise<T>): Promise<T> => {
+  jest.useFakeTimers();
+  try {
+    const promise = run();
+    await jest.runAllTimersAsync();
+    return await promise;
+  } finally {
+    jest.useRealTimers();
+  }
 };
 
 const makeRequirements = (): AndroidPreflightRequirements => ({

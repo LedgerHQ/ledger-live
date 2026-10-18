@@ -81,6 +81,14 @@ describe("useMarketActions", () => {
     expect(result.current.availableOnBuy).toBe(false);
   });
 
+  it("should return availableOnBuy=false when only tokens of deactivated networks are listed", () => {
+    const deactivatedToken = { ...mockCurrency, ledgerIds: ["arbitrum/erc20/usd_coin"] };
+
+    const { result } = renderMarketActionsHook(deactivatedToken);
+
+    expect(result.current.availableOnBuy).toBe(false);
+  });
+
   it("should return availableOnSwap=true when currency ledgerId is in the swap set", () => {
     const { result } = renderMarketActionsHook();
 
@@ -147,6 +155,25 @@ describe("useMarketActions", () => {
 
     expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.anything(), {
       currencyIds: ["bitcoin", "ethereum"],
+    });
+  });
+
+  it("onSwap leaves out tokens whose parent network is deactivated", async () => {
+    jest.mocked(useFetchCurrencyAll).mockReturnValue({
+      data: ["ethereum/erc20/usd__coin", "arbitrum/erc20/usd_coin"],
+    } as unknown as ReturnType<typeof useFetchCurrencyAll>);
+
+    const { result } = renderMarketActionsHook({
+      ...mockCurrency,
+      ledgerIds: ["ethereum/erc20/usd__coin", "arbitrum/erc20/usd_coin"],
+    });
+
+    await act(async () => {
+      await result.current.onSwap(mockEvent);
+    });
+
+    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.anything(), {
+      currencyIds: ["ethereum/erc20/usd__coin"],
     });
   });
 

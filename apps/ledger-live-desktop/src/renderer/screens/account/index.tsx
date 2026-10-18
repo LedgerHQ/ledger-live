@@ -38,6 +38,7 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 import { useAccountBackNavigation } from "./hooks/useAccountBackNavigation";
 import { useAccountIdFromRoute } from "~/renderer/hooks/useAccountIdFromRoute";
+import { getAccountRouteSegments } from "LLD/features/AccountDetail/utils/getAccountRouteSegments";
 
 const AccountHeaderActionsRow = styled(Box)`
   &:empty {
@@ -214,12 +215,10 @@ const ConnectedAccountPage = compose<React.ComponentType<OwnProps>>(
 
 // Wrapper component that resolves the aliased route params and passes them to the connected component
 const AccountPageWrapper = () => {
-  const { id, parentId, "*": splat } = useParams<Params & { "*"?: string }>();
-  // legacy links carry a raw account id, whose slashes react-router hands over in the splat
-  const fullId =
-    id && parentId && splat && splat.indexOf("account/") === -1 ? `${id}/${splat}` : id;
-  const accountId = useAccountIdFromRoute(fullId);
-  const parentAccountId = useAccountIdFromRoute(parentId);
+  const { accountSegment, parentSegment } =
+    getAccountRouteSegments(useParams<Params & { "*"?: string }>());
+  const accountId = useAccountIdFromRoute(accountSegment);
+  const parentAccountId = useAccountIdFromRoute(parentSegment);
   return <ConnectedAccountPage id={accountId} parentId={parentAccountId} />;
 };
 

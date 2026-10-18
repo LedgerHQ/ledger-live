@@ -20,12 +20,16 @@ function DialogContent({ children, ...props }) {
   return React.createElement("div", props, children);
 }
 
-// Render the header's close button so tests can query getByRole("button", { name: /close/i }).
-function DialogHeader({ title, onClose }) {
+// Render the header's back and close buttons so tests can query them by their real Lumen labels.
+function DialogHeader({ title, description, onBack, onClose }) {
   return React.createElement(
     "div",
     undefined,
+    onBack === undefined
+      ? null
+      : React.createElement("button", { type: "button", "aria-label": "Go back", onClick: onBack }),
     title === undefined ? null : React.createElement("h2", undefined, title),
+    description === undefined ? null : React.createElement("p", undefined, description),
     React.createElement("button", { type: "button", "aria-label": "Close", onClick: onClose }),
   );
 }

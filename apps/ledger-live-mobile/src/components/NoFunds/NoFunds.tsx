@@ -25,6 +25,7 @@ import {
 import { isReceiveDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
@@ -63,6 +64,17 @@ type ButtonItem = {
   rightArrow: boolean;
 };
 
+function getSwapAccountParams(
+  account: AccountLike,
+  parentAccount: Account | undefined,
+  isAccountInStore: boolean,
+  isParentInStore: boolean,
+) {
+  if (isAccountInStore) return { defaultAccount: account, defaultParentAccount: parentAccount };
+  if (isParentInStore) return { defaultAccount: parentAccount };
+  return {};
+}
+
 /** Entry point is either "stake" button but user has insufficient funds in account, or "Get <ticker>" button on Earn dashboard, so text differs accordingly.  */
 export default function NoFunds({ route }: Readonly<Props>) {
   const { t } = useTranslation();
@@ -84,12 +96,14 @@ export default function NoFunds({ route }: Readonly<Props>) {
     return currency && swapAvailableIds.includes(currency.id);
   }, [currency, swapAvailableIds]);
 
-  // `custom.getFunds` synthesises a token account when the user holds none yet: it is absent
-  // from the store, so the Swap live app cannot match its id. Pre-fill the asset instead.
   const accounts = useSelector(flattenAccountsSelector);
   const isAccountInStore = useMemo(
     () => accounts.some(a => a.id === account.id),
     [accounts, account.id],
+  );
+  const isParentInStore = useMemo(
+    () => !!parentAccount && accounts.some(a => a.id === parentAccount.id),
+    [accounts, parentAccount],
   );
 
   const page = usePageNameFromRoute();
@@ -135,13 +149,10 @@ export default function NoFunds({ route }: Readonly<Props>) {
       params: {
         defaultCurrency: currency,
         fromPath: page,
-        ...(isAccountInStore && {
-          defaultAccount: account,
-          defaultParentAccount: parentAccount,
-        }),
+        ...getSwapAccountParams(account, parentAccount, isAccountInStore, isParentInStore),
       },
     });
-  }, [account, currency, isAccountInStore, navigation, page, parentAccount]);
+  }, [account, currency, isAccountInStore, isParentInStore, navigation, page, parentAccount]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {

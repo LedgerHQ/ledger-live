@@ -28,6 +28,8 @@ export type RateMapStats = z.infer<typeof RateMapStatsSchema>;
 export type PairRateMapCache = z.infer<typeof PairRateMapCacheSchema>;
 /** The countervalues state, inferred from {@link CounterValuesStateSchema}. */
 export type CounterValuesState = z.infer<typeof CounterValuesStateSchema>;
+/** The part of the countervalues state that conversions read. */
+export type CounterValuesCacheView = Pick<CounterValuesState, "cache">;
 /** Serialized countervalues state, inferred from {@link CounterValuesStateRawSchema}. */
 export type CounterValuesStateRaw = z.infer<typeof CounterValuesStateRawSchema>;
 /** User configuration, inferred from {@link CountervaluesSettingsSchema}. */

@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { ZcashPrivateInfo } from "./network/types";
+import { zcashNetworkOf, type ZcashNetwork } from "./logic/network";
 
 export const ZCASH_LOG_TYPE = "zcash";
 export const ZCASH_XPUB_VERSION = 0x0488b21e;
@@ -8,20 +9,17 @@ export const ZCASH_XPUB_VERSION = 0x0488b21e;
 //
 // The shielded sync path (bridge/sync.ts) and the shielded send path
 // (bridge/signOperation.ts) MUST target the same endpoint and network. Both
-// derive it with `zainoEndpoint` from the coin config's `zaino.url`, so one config
-// change reaches both.
+// derive it with `zainoEndpoint`: the coin config's `zaino.url` says where to
+// connect, the account's currency which network to apply.
 
-export type ZcashNetwork = "mainnet" | "testnet";
+export type { ZcashNetwork };
 
 export type ZainoEndpoint = { grpcUrl: string; network: ZcashNetwork };
 
-const inferZainoNetwork = (url: string): ZcashNetwork =>
-  /testnet/i.test(url) ? "testnet" : "mainnet";
-
-/** Zaino endpoint (URL + network) shared by shielded sync and sends, from `zaino.url`. */
-export const zainoEndpoint = (grpcUrl: string): ZainoEndpoint => ({
+/** Zaino endpoint shared by shielded sync and sends: `zaino.url` and the currency's network. */
+export const zainoEndpoint = (grpcUrl: string, currencyId: string): ZainoEndpoint => ({
   grpcUrl,
-  network: inferZainoNetwork(grpcUrl),
+  network: zcashNetworkOf(currencyId),
 });
 
 /**
@@ -41,11 +39,6 @@ export const sanitizeEndpointForLog = (url: string): string => {
     return "[unparsable endpoint]";
   }
 };
-
-// Whether a Zcash account is served by this module or by coin-bitcoin's Zcash
-// chain-adapter is decided upstream, by the `zcashShielded` feature flag the host
-// app mirrors into live-common (`bridge/zcashRouting.ts`). This module never has
-// to ask: it is only ever reached when the answer is yes.
 
 // Ironwood (NU6.3) activation, not Orchard/NU5 -- Ledger's shielded balance
 // covers the Ironwood pool only. The earliest block a Ledger-created

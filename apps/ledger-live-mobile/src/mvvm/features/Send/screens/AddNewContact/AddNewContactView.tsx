@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import {
   QueuedDrawerFlow,
   type QueuedDrawerFlowOptions,
@@ -159,10 +159,7 @@ export function AddNewContactView({
     select: {
       content: (
         <SelectContactStep
-          title={selectContact.labels.title}
           viewModel={selectContact.listViewModel}
-          labels={selectContact.labels}
-
           searchQuery={selectContact.searchQuery}
           onSearchQueryChange={selectContact.onSearchQueryChange}
           onOpenContact={selectContact.onSelectContact}
@@ -191,9 +188,7 @@ export function AddNewContactView({
         isOpen={isActivationDrawerVisible}
         handleClose={closeActivationDrawer}
       />
-      {dieProps === undefined ? null : (
-        <DeviceIntentExecutorLWM sourceFlow="contacts" {...dieProps} />
-      )}
+      {dieProps === undefined ? null : <DeviceIntentExecutor sourceFlow="contacts" {...dieProps} />}
     </>
   );
 }

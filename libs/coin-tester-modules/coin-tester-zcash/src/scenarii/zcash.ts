@@ -9,6 +9,7 @@ import type { SignerContext } from "@ledgerhq/coin-zcash/types/signer";
 import type { ZcashCoinConfig } from "@ledgerhq/coin-zcash";
 import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "@ledgerhq/coin-zcash/constants";
 import {
+  LEGACY_MARGINAL_FEE,
   computeShieldedSpendFee,
   computeShieldingFee,
   computeZip317Fee,
@@ -119,7 +120,13 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
       const operation = assertCommonTxProperties(previousAccount, currentAccount);
       const inputCount = previousAccount.bitcoinResources.utxos.length;
       const gotChange = findNewUtxo(previousAccount, currentAccount) !== undefined;
-      const expectedFee = computeZip317Fee(0, 0, inputCount, gotChange ? 2 : 1);
+      const expectedFee = computeZip317Fee(
+        0,
+        0,
+        inputCount,
+        gotChange ? 2 : 1,
+        LEGACY_MARGINAL_FEE,
+      );
 
       expect(operation.fee.toFixed()).toBe(expectedFee.toFixed());
       expect(operation.value.toFixed()).toBe(T_TO_T_AMOUNT.plus(expectedFee).toFixed());
@@ -152,7 +159,7 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
       const latestOperation = newOperationOfType(previousAccount, currentAccount, "OUT");
 
       const inputCount = previousAccount.bitcoinResources.utxos.length;
-      const expectedFee = computeShieldingFee(inputCount, 1);
+      const expectedFee = computeShieldingFee(inputCount, 1, LEGACY_MARGINAL_FEE);
       expect(latestOperation.fee.toFixed()).toBe(expectedFee.toFixed());
 
       const shieldedAmount = transparentBalance(previousAccount).minus(expectedFee);
@@ -177,7 +184,12 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
       // A single Ironwood note (from the shielding leg above) fully covers this
       // small amount, so exactly 1 spend is consumed and change comes back as a
       // new Ironwood note -- i.e. hasChange is always true here.
-      const expectedFee = computeShieldedSpendFee(1, true, "shielded-to-transparent");
+      const expectedFee = computeShieldedSpendFee(
+        1,
+        true,
+        "shielded-to-transparent",
+        LEGACY_MARGINAL_FEE,
+      );
       // De-shielding to the account's own transparent address, the mirror of the
       // shielding self-transfer above. The transparent leg records an "IN" and not
       // an "OUT" because `mapTxToOperations` only emits an "OUT" for a transaction
@@ -214,7 +226,7 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
     expect: (previousAccount, currentAccount) => {
       // useAllAmount over the single remaining (change) Ironwood note: 1 spend,
       // no change -- see computeShieldedSpendFee's "shielded" branch.
-      const expectedFee = computeShieldedSpendFee(1, false, "shielded");
+      const expectedFee = computeShieldedSpendFee(1, false, "shielded", LEGACY_MARGINAL_FEE);
       const [latestOperation] = currentAccount.operations;
       expect(latestOperation.type).toBe("SHIELDED_TX_IRONWOOD_IN");
       expect(latestOperation.fee.toFixed()).toBe(expectedFee.toFixed());
@@ -241,7 +253,7 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
     amount: NOTE_SPLIT_AMOUNT,
     recipient: shieldedRecipientAddress,
     expect: (previousAccount, currentAccount) => {
-      const expectedFee = computeShieldedSpendFee(1, true, "shielded");
+      const expectedFee = computeShieldedSpendFee(1, true, "shielded", LEGACY_MARGINAL_FEE);
       const [latestOperation] = currentAccount.operations;
       // "SHIELDED_TX_IRONWOOD_IN", same reasoning as scenarioShieldedToShielded
       // above: the change note lands on our *internal* address and carries
@@ -280,6 +292,7 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
         NOTE_COUNT_TARGET,
         false,
         "shielded-to-transparent",
+        LEGACY_MARGINAL_FEE,
       );
       // Same two legs as scenarioShieldedToTransparent above -- the note count
       // funding the spend changes the fee, not the shape of what is recorded.
@@ -333,7 +346,7 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     setZcashShieldedEnabled(true);
 
     // The local zaino node and explorer. Zaino is addressed as "mainnet" (the
-    // network inferred from this URL), like every zcash-utils call here, to match
+    // network coin-zcash gives zcash_regtest), like every zcash-utils call here, to match
     // the mainnet-prefixed addresses coin-zcash's own classifier requires -- see
     // zcash_regtest.ts and signer.ts for the full rationale.
     const coinConfig: ZcashCoinConfig = {
@@ -354,10 +367,15 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
       },
     });
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext, {
-      config: async () => coinConfig,
-      logger: () => {},
-    });
+    // The scenarios exercise the shielded engine, so the bridge runs it.
+    const { accountBridge, currencyBridge } = createBridges(
+      signerContext,
+      {
+        config: async () => coinConfig,
+        logger: () => {},
+      },
+      { isShieldedEnabled: () => true },
+    );
     const ZCASH_REGTEST = getCryptoCurrencyById("zcash_regtest");
 
     const getAddress = resolver(signerContext);

@@ -5,6 +5,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/aleo/setup"),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -14,6 +15,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "algorand",
     supportedCoins: ["algorand"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/algorand/setup"),
     loadTransaction: () => import("@ledgerhq/coin-algorand/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -24,6 +26,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aptos",
     supportedCoins: ["aptos", "aptos_testnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/aptos/setup"),
     loadTransaction: () => import("@ledgerhq/coin-aptos/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -37,8 +40,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "bitcoin_cash",
       "dogecoin",
       "dash",
-      "zcash",
-      "zcash_testnet",
       "decred",
       "digibyte",
       "qtum",
@@ -48,6 +49,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "bitcoin_testnet",
       "bitcoin_regtest",
     ],
+    accountDescriptorType: "utxo",
     loadSetup: () => import("../families/bitcoin/setup"),
     loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -61,6 +63,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "canton",
     supportedCoins: ["canton_network", "canton_network_devnet", "canton_network_testnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/canton/setup"),
     loadLocalApi: () =>
       import("../families/canton/coinModuleApi").then(m => m.createLocalCantonApi),
@@ -73,6 +76,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "cardano",
     supportedCoins: ["cardano"],
+    accountDescriptorType: "utxo",
     loadSetup: () => import("../families/cardano/setup"),
     loadLocalApi: () =>
       import("../families/cardano/coinModuleApi").then(m => m.createLocalCardanoApi),
@@ -86,6 +90,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "casper",
     supportedCoins: ["casper"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/casper/setup"),
     loadLocalApi: () =>
       import("../families/casper/coinModuleApi").then(m => m.createLocalCasperApi),
@@ -99,6 +104,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "celo",
     supportedCoins: ["celo"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/celo/setup"),
     loadLocalApi: () => import("../families/celo/coinModuleApi").then(m => m.createLocalCeloApi),
     loadTransaction: () => import("@ledgerhq/coin-celo/transaction").then(m => m.default),
@@ -109,6 +115,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "concordium",
     supportedCoins: ["concordium", "concordium_testnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/concordium/setup"),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -122,7 +129,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "secret_network",
       "desmos",
       "dydx",
-      "quicksilver",
       "persistence",
       "cosmos",
       "crypto_org",
@@ -132,10 +138,10 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "injective",
       "mantra",
       "xion",
-      "zenrock",
       "babylon",
       "gonka",
     ],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/cosmos/setup"),
     loadTransaction: () => import("@ledgerhq/coin-cosmos/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -182,7 +188,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "mantle_sepolia",
       "boba",
       "moonriver",
-      "velas_evm",
       "syscoin",
       "bitlayer",
       "klaytn",
@@ -218,7 +223,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "zero_gravity",
       "unichain",
       "unichain_sepolia",
+      "alpen_testnet",
     ],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/evm/setup"),
     loadLocalApi: () => import("../families/evm/coinModuleApi").then(m => m.createLocalEvmApi),
     loadTransaction: () => import("../families/evm/transaction").then(m => m.default),
@@ -236,6 +243,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "filecoin",
     supportedCoins: ["filecoin"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/filecoin/setup"),
     loadTransaction: () => import("@ledgerhq/coin-filecoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -244,6 +252,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "hedera",
     supportedCoins: ["hedera", "hedera_testnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/hedera/setup"),
     loadTransaction: () =>
       isGenericCoinFrameworkFamily("hedera")
@@ -267,6 +276,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     // listOperations and validateAddress are backed by coin-hypercore.
     family: "hypercore",
     supportedCoins: ["hypercore"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/hypercore/setup"),
     loadLocalApi: () =>
       import("../families/hypercore/coinModuleApi").then(m => m.createLocalHypercoreApi),
@@ -276,6 +286,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "icon",
     supportedCoins: ["icon", "icon_berlin_testnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/icon/setup"),
     loadTransaction: () => import("@ledgerhq/coin-icon/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -286,6 +297,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "internet_computer",
     supportedCoins: ["internet_computer"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/internet_computer/setup"),
     loadTransaction: () =>
       import("@ledgerhq/coin-internet_computer/transaction").then(m => m.default),
@@ -295,6 +307,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "kaspa",
     supportedCoins: ["kaspa"],
+    accountDescriptorType: "utxo",
     loadSetup: () => import("../families/kaspa/setup"),
     loadTransaction: () => import("@ledgerhq/coin-kaspa/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -304,6 +317,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "mina",
     supportedCoins: ["mina"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/mina/setup"),
     loadTransaction: () => import("@ledgerhq/coin-mina/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -312,6 +326,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "multiversx",
     supportedCoins: ["elrond"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/multiversx/setup"),
     loadLocalApi: () =>
       import("../families/multiversx/coinModuleApi").then(m => m.createLocalMultiversxApi),
@@ -324,6 +339,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "near",
     supportedCoins: ["near"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/near/setup"),
     loadLocalApi: () => import("../families/near/coinModuleApi").then(m => m.createLocalNearApi),
     loadBridgeApi: () => import("../families/near/bridge/api").then(m => m.default),
@@ -339,6 +355,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "polkadot",
     supportedCoins: ["polkadot", "westend", "assethub_westend", "assethub_polkadot"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/polkadot/setup"),
     loadTransaction: () => import("@ledgerhq/coin-polkadot/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -351,6 +368,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "solana",
     supportedCoins: ["solana", "solana_testnet", "solana_devnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/solana/setup"),
     loadLocalApi: () =>
       import("../families/solana/coinModuleApi").then(m => m.createLocalSolanaApi),
@@ -367,6 +385,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "stacks",
     supportedCoins: ["stacks"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/stacks/setup"),
     loadTransaction: () => import("@ledgerhq/coin-stacks/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -381,6 +400,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "stellar",
     supportedCoins: ["stellar"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/stellar/setup"),
     loadLocalApi: () =>
       import("../families/stellar/coinModuleApi").then(m => m.createLocalStellarApi),
@@ -395,6 +415,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "sui",
     supportedCoins: ["sui", "sui_testnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/sui/setup"),
     loadTransaction: () => import("@ledgerhq/coin-sui/transaction").then(m => m.default),
     // No loadDeviceTxConfig: sui has no deviceTransactionConfig
@@ -402,6 +423,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "tezos",
     supportedCoins: ["tezos"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/tezos/setup"),
     loadLocalApi: () => import("../families/tezos/coinModuleApi").then(m => m.createLocalTezosApi),
     loadTransaction: () => import("../families/tezos/transaction").then(m => m.default),
@@ -416,6 +438,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "ton",
     supportedCoins: ["ton"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/ton/setup"),
     loadTransaction: () => import("@ledgerhq/coin-ton/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -424,6 +447,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "tron",
     supportedCoins: ["tron"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/tron/setup"),
     loadLocalApi: () => import("../families/tron/coinModuleApi").then(m => m.createLocalTronApi),
     loadSponsoredApi: () =>
@@ -442,6 +466,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "vechain",
     supportedCoins: ["vechain"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/vechain/setup") as object as Promise<FamilySetup>,
     loadTransaction: () => import("@ledgerhq/coin-vechain/transaction").then(m => m.default),
     // No loadDeviceTxConfig: vechain has no deviceTransactionConfig
@@ -454,7 +479,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     family: "xrp",
-    supportedCoins: ["ripple"],
+    supportedCoins: ["ripple", "ripple_testnet", "ripple_devnet"],
+    accountDescriptorType: "address",
     loadSetup: () => import("../families/xrp/setup"),
     loadLocalApi: () => import("../families/xrp/coinModuleApi").then(m => m.createLocalXrpApi),
     loadTransaction: () => import("../families/xrp/transaction").then(m => m.default),
@@ -468,14 +494,14 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
-    // added to genericCoinFrameworkFamilies.json). Routing between this family
-    // and the "bitcoin" family's Zcash chain-adapter is decided in
-    // bridge/impl.ts's resolveFamily, gated on the `zcashShielded` feature
-    // flag -- the "bitcoin" loader's supportedCoins still lists "zcash" so the
-    // flag-OFF path keeps resolving to coin-bitcoin unchanged.
+    // added to genericCoinFrameworkFamilies.json). Every Zcash account is served
+    // by it (bridge/zcashRouting.ts), although the currencies keep
+    // `family: "bitcoin"`.
     family: "zcash",
-    supportedCoins: ["zcash"],
+    supportedCoins: ["zcash", "zcash_testnet"],
+    accountDescriptorType: "utxo",
     loadSetup: () => import("../families/zcash/setup"),
+    loadWalletApiAdapter: () => import("../families/zcash/walletApiAdapter").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),

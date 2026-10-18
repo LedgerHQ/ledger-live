@@ -1,4 +1,4 @@
-import type { DeviceOnboardingInput } from "@ledgerhq/device-onboarding";
+import type { DeviceOnboardingInput } from "@features/platform-device-onboarding";
 
 export type DeviceOnboardingSession = Pick<
   DeviceOnboardingInput,

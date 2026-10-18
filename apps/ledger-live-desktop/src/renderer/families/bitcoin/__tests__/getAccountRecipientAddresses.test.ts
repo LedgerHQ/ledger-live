@@ -1,6 +1,7 @@
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { BitcoinAccount, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import { getAccountRecipientAddresses } from "../getAccountRecipientAddresses";
 

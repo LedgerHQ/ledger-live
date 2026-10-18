@@ -13,6 +13,7 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { createSyncSessionManager } from "../syncSessionManager";
+import { isZcashCurrencyId } from "../zcashRouting";
 
 export type Props = {
   // this is a wrapping component that you need to put in your tree
@@ -205,7 +206,7 @@ function useSyncQueue({
         const syncConfig = {
           paginationConfig: {},
           blacklistedTokenIds,
-          ...(account.currency.id === "zcash"
+          ...(isZcashCurrencyId(account.currency.id)
             ? { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED }
             : {}),
         };

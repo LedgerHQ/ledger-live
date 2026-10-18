@@ -57,6 +57,7 @@ export type NewSendFlowEntry = {
    * entry, on entries that have actually been run.
    */
   verifyOperationAmount?: boolean;
+  disableBroadcast?: boolean;
 };
 
 function currencyRequiresMemoStep(currencyId: string): boolean {
@@ -112,11 +113,12 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+        cliCommands: [liveDataWithRecipientAddressCommand(tx, { useScheme: true })],
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           ...FF_NEW_SEND_FLOW_ENABLED,
         },
+        ...(entry.disableBroadcast && { env: { DISABLE_TRANSACTION_BROADCAST: "1" } }),
       });
 
       test(

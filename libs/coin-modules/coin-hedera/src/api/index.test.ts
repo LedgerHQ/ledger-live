@@ -8,7 +8,7 @@ import * as logicUtils from "../logic/utils";
 import { mapIntentToSDKOperation } from "../logic/utils";
 import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
-import { getMockedContext } from "../test/fixtures/config.fixture";
+import { getMockedConfig, getMockedContext } from "../test/fixtures/config.fixture";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedMirrorAccount } from "../test/fixtures/mirror.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
@@ -41,6 +41,7 @@ const mockGetStakes = jest.mocked(logic.getStakes);
 const mockGetRewards = jest.mocked(logic.getRewards);
 const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
 const mockValidateIntent = jest.mocked(logic.validateIntent);
+const mockSafeParseAccountId = jest.mocked(networkUtils.safeParseAccountId);
 
 // The consumer resolver hands the module to callers through `withDefaults`, so exercise the API the
 // way a consumer sees it: the capabilities Hedera omits are backfilled by the framework.
@@ -81,6 +82,30 @@ describe("createApi", () => {
     expect(impl.lastBlock).toBeInstanceOf(Function);
     expect(impl.listOperations).toBeInstanceOf(Function);
     expect(impl.validateAddress).toBeInstanceOf(Function);
+  });
+
+  describe("validateAddress", () => {
+    it("parses the address with the context config and returns true when it is valid", async () => {
+      mockSafeParseAccountId.mockResolvedValueOnce([
+        null,
+        { accountId: "0.0.9124531", checksum: null },
+      ]);
+
+      await expect(api.validateAddress(mockContext, "0.0.9124531", {})).resolves.toBe(true);
+      expect(mockSafeParseAccountId).toHaveBeenCalledTimes(1);
+      expect(mockSafeParseAccountId).toHaveBeenCalledWith({
+        configOrCurrencyId: getMockedConfig(),
+        address: "0.0.9124531",
+      });
+    });
+
+    it("returns false when the address does not parse", async () => {
+      mockSafeParseAccountId.mockResolvedValueOnce([new Error("invalid"), null]);
+
+      await expect(api.validateAddress(mockContext, "not-a-valid-address", {})).resolves.toBe(
+        false,
+      );
+    });
   });
 
   describe("broadcast", () => {
@@ -629,6 +654,36 @@ describe("createApi", () => {
 
       expect(mockExtractInitiator).not.toHaveBeenCalled();
       expect(result.items[0].tx).not.toHaveProperty("feesPayer");
+    });
+
+    it("should pass the synchronized account and external fee payer when mapping an OUT operation", async () => {
+      const accountAddress = "0.0.453351";
+      const feesPayer = "0.0.356354";
+      const operation = getMockedOperation({
+        type: "OUT",
+        value: new BigNumber(10000),
+        fee: new BigNumber(1056079),
+        senders: [accountAddress, feesPayer],
+        recipients: ["0.0.306412", "0.0.14"],
+        extra: {
+          transactionId: "0.0.356354-1639485212-058094606",
+          feesPayer,
+        },
+      });
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [operation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      await api.listOperations(mockContext, accountAddress, mockOptions);
+
+      expect(mockGetOperationValue).toHaveBeenCalledWith({
+        asset: { type: "native" },
+        operation,
+        accountAddress,
+        feesPayer,
+      });
     });
 
     it("should prefer feesPayer from operation extra over transactionId", async () => {

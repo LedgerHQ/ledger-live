@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import type { ZcashAccount, ZcashAccountRaw } from "../types/bridge";
 
 // A bitcoin-shaped zcash AccountRaw, as produced today by coin-bitcoin's
@@ -34,6 +34,8 @@ function makeBitcoinShapedAccountRaw(): AccountRaw {
     },
   } as unknown as AccountRaw;
 }
+
+const assignFromAccountRaw = makeAssignFromAccountRaw(jest.fn());
 
 describe("bridge/serialization", () => {
   it("round-trips bitcoinResources.utxos from a bitcoin-shaped zcash AccountRaw", () => {

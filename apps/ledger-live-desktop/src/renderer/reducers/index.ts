@@ -21,7 +21,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@shared/env";
 import {
   countervaluesReducer,
-  type CountervaluesState,
+  type CountervaluesStoreState,
 } from "@features/platform-market-countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
@@ -31,6 +31,8 @@ import { accountAliasSlice, type AccountAliasState } from "@domain/entity-accoun
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
+import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
+import { accountsSlice, type AccountsState as AccountEntriesState } from "@domain/entity-account";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
@@ -79,7 +81,7 @@ export type State = LLDRTKApiState & {
   accountAliases: AccountAliasState;
   accounts: AccountsState;
   application: ApplicationState;
-  countervalues: CountervaluesState;
+  countervalues: CountervaluesStoreState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
   featureFlags: FeatureFlagsState;
@@ -113,6 +115,8 @@ export type State = LLDRTKApiState & {
   knownDevices: KnownDevicesState;
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
+  accountData: AccountDataState;
+  accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
   payCardFeatureTour: PayCardFeatureTourState;
@@ -160,6 +164,8 @@ const appReducer = combineReducers({
   knownDevices,
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
+  accountData: accountDataSlice.reducer,
+  accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,

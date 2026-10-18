@@ -5,6 +5,7 @@ export const FEE_PLACEHOLDER = "--";
 
 export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.BALANCE_TYPE,
+  SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
   SEND_FLOW_STEP.RECIPIENT,
   SEND_FLOW_STEP.AMOUNT,
   SEND_FLOW_STEP.RECENT_HISTORY,
@@ -33,6 +34,12 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     // account name, no aggregate balance (a third, summed figure would be
     // confusing on a screen whose whole purpose is choosing between two pools).
     showAvailable: false,
+    height: "fit",
+  },
+  [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: {
+    id: SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
+    canGoBack: false,
+    showTitle: false,
     height: "fit",
   },
   [SEND_FLOW_STEP.RECIPIENT]: {

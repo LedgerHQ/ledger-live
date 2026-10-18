@@ -7,7 +7,10 @@ import ContactsScreen from "LLD/features/Contacts";
 jest.mock("@features/flow-contacts", () => {
   const actual =
     jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts");
-  const mismatchPort = actual.createMockContactSignerValidationPort({
+  const { createMockContactSignerValidationPort } = jest.requireActual<
+    typeof import("@features/flow-contacts-detail")
+  >("@features/flow-contacts-detail");
+  const mismatchPort = createMockContactSignerValidationPort({
     currentSignerId: "signer-b",
   });
 

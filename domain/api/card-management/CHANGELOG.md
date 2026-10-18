@@ -1,5 +1,21 @@
 # @domain/api-card-management
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0
+  - @domain/entity-card-asset-mapping@0.7.0
+
+## 0.8.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0-next.0
+  - @domain/entity-card-asset-mapping@0.7.0
+
 ## 0.8.0
 
 ### Minor Changes

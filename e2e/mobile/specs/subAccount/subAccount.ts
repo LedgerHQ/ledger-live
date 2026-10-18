@@ -8,6 +8,7 @@ import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionSta
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import invariant from "invariant";
 import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
+import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
 
 const BST_ADD_SUBACCOUNT_PARENT_CURRENCIES = new Set(["algorand", "sui"]);
 
@@ -137,8 +138,9 @@ export function runAddSubAccountTest(testConfig: {
   tags: string[];
   networks?: string[];
 }) {
-  describe("Add sub-account", () => {
-    const { asset, tmslinks, tags, networks } = testConfig;
+  const { asset, tmslinks, tags, networks } = testConfig;
+  const describeOnDevice = describeIfNanoSSupports((asset.parentAccount ?? asset).currency.id);
+  describeOnDevice("Add sub-account", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",

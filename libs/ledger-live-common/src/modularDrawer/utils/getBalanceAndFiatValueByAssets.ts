@@ -6,7 +6,7 @@ import {
 import { AssetType } from "./type";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { CounterValuesState } from "@domain/entity-market-countervalues";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 
 export interface ExtendedAssetType extends AssetType {
   currency: CryptoOrTokenCurrency;
@@ -17,7 +17,7 @@ export interface ExtendedAssetType extends AssetType {
 export const getBalanceAndFiatValueByAssets = (
   accounts: AccountLike[],
   assets: CryptoOrTokenCurrency[],
-  counterValuesState: CounterValuesState,
+  counterValuesState: CounterValuesCacheView,
   targetCurrency: Currency,
 ): ExtendedAssetType[] => {
   const groupedAccountsByAsset = groupAccountsByAsset(accounts, counterValuesState, targetCurrency);

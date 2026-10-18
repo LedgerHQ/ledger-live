@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
@@ -52,7 +51,6 @@ export const buildSignOperation =
           .toU8a({
             method: true,
           });
-        const currency = getCryptoCurrencyById(account.currency.id);
         // Decompose the ExtrinsicPayload into its three parts for the sidecar metadata-blob endpoint
         // payload = callData ++ includedInExtrinsic (extra) ++ includedInSignedData (additional_signed)
         const callData = unsigned.method;
@@ -82,7 +80,7 @@ export const buildSignOperation =
           callData,
           includedInExtrinsic,
           includedInSignedData,
-          currency,
+          account.currency.id,
         );
 
         // Rebuild unsigned and payload with the real metadataHash
@@ -108,7 +106,7 @@ export const buildSignOperation =
           callData,
           includedInExtrinsic,
           finalIncludedInSignedData,
-          currency,
+          account.currency.id,
         );
 
         const r = await signerContext(deviceId, signer =>

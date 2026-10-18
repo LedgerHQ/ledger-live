@@ -59,34 +59,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL | BitcoinLikeSigHashType.SIGHASH_FORKID,
       additionalBIPs: [],
     };
-  } else if (networkName === "zcash") {
-    return {
-      identifier: "zec",
-      P2PKHVersion: Buffer.from([0x1c, 0xb8]),
-      P2SHVersion: Buffer.from([0x1c, 0xbd]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "Zcash Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: ["ZIP"],
-    };
-  } else if (networkName === "zcash_testnet") {
-    return {
-      identifier: "zec_testnet",
-      P2PKHVersion: Buffer.from([0x1d, 0x25]),
-      P2SHVersion: Buffer.from([0x1c, 0xba]),
-      xpubVersion: Buffer.from([0x04, 0x35, 0x87, 0xcf]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "Zcash Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: ["ZIP"],
-    };
   } else if (networkName === "zencash") {
     return {
       identifier: "zen",

@@ -1,13 +1,9 @@
 import { track } from "@shared/analytics";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import type { Contact, ContactId } from "@domain/entity-contact";
 import { useContacts, useContactsMeContact } from "@features/platform-contacts";
-import {
-  useContactsSearchViewModel,
-  type ContactsListViewLabels,
-} from "@features/flow-contacts-list";
+import { useContactsSearchViewModel } from "@features/flow-contacts-list";
 import { useSendFlowTrackingProperties } from "LLM/features/Send/hooks/useSendFlowTrackingProperties";
-import { useTranslation } from "~/context/Locale";
 
 export type UseAddToExistingContactViewModelOptions = Readonly<{
   startForContact: (contact: Contact) => Promise<void>;
@@ -16,23 +12,10 @@ export type UseAddToExistingContactViewModelOptions = Readonly<{
 export function useAddToExistingContactViewModel({
   startForContact,
 }: UseAddToExistingContactViewModelOptions) {
-  const { t } = useTranslation();
   const contacts = useContacts();
   const meContact = useContactsMeContact();
   const trackingProperties = useSendFlowTrackingProperties();
   const [searchQuery, setSearchQuery] = useState("");
-
-  const labels = useMemo(
-    (): ContactsListViewLabels => ({
-      title: t("send.newSendFlow.addContact.selectContact"),
-      searchPlaceholder: t("contacts.searchPlaceholder"),
-      searchNoResults: t("contacts.searchNoResults"),
-      searchNoResultsDescription: t("contacts.searchNoResultsDescription"),
-      addContact: t("contacts.addContact"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
 
   const listViewModel = useContactsSearchViewModel(searchQuery);
 
@@ -66,7 +49,6 @@ export function useAddToExistingContactViewModel({
 
   return {
     listViewModel,
-    labels,
     searchQuery,
     onSearchQueryChange,
     onSelectContact,

@@ -21,8 +21,15 @@ type MarketBannerSurfaceProps = MarketBannerProps & {
 };
 
 const MarketBannerSurface = ({ items, isError, testID }: MarketBannerSurfaceProps) => {
-  const { range, showFilter, bannerFilter, onTilePress, onViewAllPress, onSectionTitlePress } =
-    useMarketBannerViewModel();
+  const {
+    range,
+    showFilter,
+    bannerFilter,
+    moodIndexAvailable,
+    onTilePress,
+    onViewAllPress,
+    onSectionTitlePress,
+  } = useMarketBannerViewModel();
 
   return (
     <MarketBannerView
@@ -31,6 +38,7 @@ const MarketBannerSurface = ({ items, isError, testID }: MarketBannerSurfaceProp
       range={range}
       showFilter={showFilter}
       bannerFilter={bannerFilter}
+      moodIndexAvailable={moodIndexAvailable}
       onTilePress={onTilePress}
       onViewAllPress={onViewAllPress}
       onSectionTitlePress={onSectionTitlePress}

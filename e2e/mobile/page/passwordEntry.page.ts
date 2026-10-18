@@ -1,7 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 export default class PasswordEntryPage {
-  getPasswordTextInput = () => getElementById("password-text-input");
+  private readonly passwordTextInputId = "password-text-input";
+
+  getPasswordTextInput = () => getElementById(this.passwordTextInputId);
   getLogin = () => getElementByText("Log in");
 
   @Step("Enter password")
@@ -23,7 +26,7 @@ export default class PasswordEntryPage {
 
   @Step("Expect no lock")
   async expectNoLock() {
-    await detoxExpect(this.getPasswordTextInput()).not.toBeVisible();
+    await waitForElementNotVisible(this.passwordTextInputId, TIMEOUT.medium);
     await detoxExpect(this.getPasswordTextInput()).not.toBeVisible();
   }
 }

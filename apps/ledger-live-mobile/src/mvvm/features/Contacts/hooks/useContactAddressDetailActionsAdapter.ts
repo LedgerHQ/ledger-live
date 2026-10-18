@@ -1,23 +1,25 @@
 import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/entity-contact";
 import {
-  type ContactAddressDetailSendIntent,
-  type ContactsDeleteAddressDrawerProps,
-  type ContactsEditSignerMismatchDrawerProps,
-  type ContactAddressDetailDialogNativeProps,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
+  useContactAddressEditAnalytics,
+  useContactsAddressDetailActionsPorts,
+  trackContactAddressDetailQuickAction,
+} from "@features/flow-contacts";
+import type { ContactsDeleteAddressDrawerProps } from "@features/flow-contacts-delete-address";
+import {
+  type ContactAddressDetailSendIntent,
+  type ContactsEditSignerMismatchDrawerProps,
+  type ContactAddressDetailDialogNativeProps,
   createActiveContactAddressDetailActionsUiState,
   createInactiveContactAddressDetailActionsUiState,
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
-  useContactAddressEditAnalytics,
-  useContactsAddressDetailActionsPorts,
-  trackContactAddressDetailQuickAction,
   resolveContactAddressSupportsDomain,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDrawerProps,
@@ -140,15 +142,7 @@ export function useContactAddressDetailActionsAdapter(
     currencyId,
     sendFeatures.supportsDomain,
   );
-  const labels = useMemo(
-    () =>
-      resolveContactAddressDetailActionsLabels({
-        t,
-        addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
-        supportsDomain,
-      }),
-    [t, supportsDomain],
-  );
+  const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const { onClose: closeRenameViewModel } = renameViewModel;
   const { editUiState } = flow;
   // Closing the edit sheet returns to the address detail it was opened from, the same way
@@ -189,11 +183,13 @@ export function useContactAddressDetailActionsAdapter(
   });
 
   if (!isSelectionActive) {
-    return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(labels));
+    return mapUiStateToFlowProps(
+      createInactiveContactAddressDetailActionsUiState(labels, supportsDomain),
+    );
   }
 
   const uiState = mapUiStateToFlowProps(
-    createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels),
+    createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels, supportsDomain),
   );
 
   return {

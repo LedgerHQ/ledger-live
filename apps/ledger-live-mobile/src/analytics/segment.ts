@@ -507,6 +507,7 @@ const extraProperties = async (store: AppStore) => {
     state,
     analyticsFeatureFlagMethod?.("lwmPasswordRevamp")?.enabled ?? false,
   );
+  const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
 
   return {
     ...mandatoryProperties,
@@ -563,6 +564,7 @@ const extraProperties = async (store: AppStore) => {
     ...appLockAttributes,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
+    accountDetail,
     ...remoteABTestingAttributes,
   };
 };

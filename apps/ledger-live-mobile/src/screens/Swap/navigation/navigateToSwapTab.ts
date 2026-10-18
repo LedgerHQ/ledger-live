@@ -26,11 +26,17 @@ export function navigateToSwapTab({
   navigation: SwapTabNavigation;
   params?: SwapTabParams;
 }): void {
-  navigation.navigate(NavigatorName.Main, {
-    screen: NavigatorName.Swap,
-    params: {
-      screen: ScreenName.SwapTab,
-      params,
+  navigation.navigate(
+    NavigatorName.Main,
+    {
+      screen: NavigatorName.Swap,
+      params: {
+        screen: ScreenName.SwapTab,
+        params,
+      },
     },
-  });
+    // Pop back to the existing Main instead of stacking a new one on top
+    // (React Navigation 7 `navigate` no longer goes back on its own).
+    { pop: true },
+  );
 }

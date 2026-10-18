@@ -1,12 +1,14 @@
+import { useAddAddressReviewLabels } from "../../copy/useAddAddressReviewLabels";
 import type { ContactsAddAddressReviewProps, ContactsAddAddressReviewViewProps } from "./types";
 
 export function useContactsAddAddressReviewViewModel({
   addressEntry,
   addressLabel,
   displayContext,
-  labels,
   onContinue,
 }: ContactsAddAddressReviewProps): ContactsAddAddressReviewViewProps {
+  const labels = useAddAddressReviewLabels();
+
   return {
     address: addressEntry.resolvedAddress,
     currency: displayContext.assetDisplayName,

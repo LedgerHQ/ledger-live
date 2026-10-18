@@ -417,17 +417,24 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.series).toHaveLength(1);
       expect(result.current.series[0]?.id).toBe("asset-detail-price");
-      expect(result.current.series[0]?.data).toEqual([100, 110, 120]);
+      expect(result.current.series[0]?.data).toEqual([100, 110, 120, 50000]);
+    });
+
+    it("should end the series on the header price", () => {
+      const { result } = renderVM();
+
+      expect(result.current.series[0]?.data.at(-1)).toBe(50000);
+      expect(result.current.price).toBe(50000);
     });
 
     it("rebuilds the series when the selected range changes", () => {
       const { result } = renderVM();
 
       act(() => result.current.onRangeChange("1w"));
-      expect(result.current.series[0]?.data).toEqual([200, 210]);
+      expect(result.current.series[0]?.data).toEqual([200, 210, 50000]);
 
       act(() => result.current.onRangeChange("1y"));
-      expect(result.current.series[0]?.data).toEqual([400, 410, 420, 430]);
+      expect(result.current.series[0]?.data).toEqual([400, 410, 420, 430, 50000]);
     });
 
     it("keeps a stable series identity across renders when inputs are unchanged", () => {
@@ -489,7 +496,7 @@ describe("useBalanceGraphViewModel", () => {
     it("serves the BTC-denominated series directly without rescaling", () => {
       const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
-      expect(result.current.series[0]?.data).toEqual([100, 110, 120]);
+      expect(result.current.series[0]?.data).toEqual([100, 110, 120, 50000]);
     });
   });
 
@@ -525,8 +532,8 @@ describe("useBalanceGraphViewModel", () => {
     it("exposes evenly spaced x-axis ticks covering every point when data is short", () => {
       const { result } = renderVM();
 
-      // 1d has 3 points (<= min ticks) → one tick per point.
-      expect(result.current.xAxis.ticks).toEqual([0, 1, 2]);
+      // 1d has 4 points (<= min ticks) → one tick per point.
+      expect(result.current.xAxis.ticks).toEqual([0, 1, 2, 3]);
     });
 
     it("pads the y-axis domain asymmetrically (more headroom at the bottom)", () => {
@@ -546,7 +553,7 @@ describe("useBalanceGraphViewModel", () => {
     it("drives the price, date and range-start variation from the hovered point", () => {
       const { result } = renderVM();
 
-      // 1d series data is [100, 110, 120] with timestamps [1, 2, 3].
+      // Historical 1d points stay [100, 110, 120]; the live price is appended after them.
       act(() => result.current.onScrubberPositionChange(1));
 
       expect(result.current.isScrubbing).toBe(true);
@@ -571,6 +578,20 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.isScrubbing).toBe(false);
       expect(result.current.price).toBe(50000);
       expect(result.current.timeLabel).toBe(rangeLabel);
+    });
+
+    it("should show the header price when scrubbing the last point and keep it after release", () => {
+      const { result } = renderVM();
+
+      const lastIndex = result.current.series[0].data.length - 1;
+      act(() => result.current.onScrubberPositionChange(lastIndex));
+
+      expect(result.current.price).toBe(50000);
+
+      act(() => result.current.onScrubberPositionChange(undefined));
+
+      expect(result.current.isScrubbing).toBe(false);
+      expect(result.current.price).toBe(50000);
     });
 
     it("ignores an out-of-range index (no scrub)", () => {
@@ -658,9 +679,8 @@ describe("useBalanceGraphViewModel", () => {
     it("exposes the extrema markers when there are no scoped operations", () => {
       const { result } = renderVM();
 
-      // 1d series data is [100, 110, 120] → min at index 0, max at index 2.
       expect(result.current.points).toEqual([
-        { index: 2, value: 120, color: "success", labelPosition: "top", hidePoint: true },
+        { index: 3, value: 50000, color: "success", labelPosition: "top", hidePoint: true },
         { index: 0, value: 100, color: "error", labelPosition: "bottom", hidePoint: true },
       ]);
     });

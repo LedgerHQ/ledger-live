@@ -65,6 +65,17 @@ export function useAssetsViewModel(): AssetsViewProps {
     return map;
   }, [assetsData]);
 
+  const marketDayChangeByCurrencyId = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!assetsData?.markets) return map;
+    for (const [currencyId, market] of Object.entries(assetsData.markets)) {
+      if (market?.priceChangePercentage24h != null) {
+        map.set(currencyId, market.priceChangePercentage24h);
+      }
+    }
+    return map;
+  }, [assetsData]);
+
   const getMarketPrice = useCallback(
     (currencyId: string): number | undefined => {
       if (rateStatus !== "ready" || rate == null) return undefined;
@@ -149,7 +160,7 @@ export function useAssetsViewModel(): AssetsViewProps {
   );
   useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
 
-  const trends = useAllCurrencyTrends(allItems, "day");
+  const trends = useAllCurrencyTrends(allItems, "day", marketDayChangeByCurrencyId);
 
   const cryptosWithTrend = useMemo(
     () =>

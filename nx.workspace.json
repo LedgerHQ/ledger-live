@@ -7,7 +7,7 @@
       "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/.npmrc",
+      "{workspaceRoot}/pnpm-workspace.yaml",
       "{workspaceRoot}/patches/**/*"
     ],
     "default": [
@@ -51,9 +51,6 @@
       },
       {
         "env": "BRAZE_CUSTOM_ENDPOINT"
-      },
-      {
-        "env": "BYPASS_CORS"
       },
       {
         "env": "CI_KEYCHAIN_NAME"
@@ -338,7 +335,8 @@
   },
   "plugins": [
     "./tools/nx-plugins/project-tags/plugin.js",
-    "./tools/nx-plugins/enforce-package-structure/plugin.js"
+    "./tools/nx-plugins/enforce-package-structure/plugin.js",
+    "./tools/nx-plugins/enforce-tool-config/plugin.mjs"
   ],
   "targetDefaults": {
     "build": {

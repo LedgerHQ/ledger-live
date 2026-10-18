@@ -4,7 +4,6 @@ import type {
   ContactsAddressInputPresentation,
   ContactsAddressValidationLabels,
 } from "@features/platform-contacts";
-import type { SanctionedAddressBannerProps } from "../screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.types";
 
 export function resolveAddAddressEntryPresentation(
   addressEntry: ContactsAddressEntryState,
@@ -18,11 +17,7 @@ export function resolveAddAddressEntryPresentation(
 
 export function shouldShowSanctionedAddressBanner(
   addressEntry: ContactsAddressEntryState,
-  sanctionedAddressBanner: SanctionedAddressBannerProps | undefined,
+  showLearnMore: boolean,
 ): boolean {
-  return (
-    addressEntry.status === "invalid" &&
-    addressEntry.error === "sanctioned" &&
-    sanctionedAddressBanner !== undefined
-  );
+  return addressEntry.status === "invalid" && addressEntry.error === "sanctioned" && showLearnMore;
 }

@@ -17,9 +17,9 @@ function buildSignedTxHex(): { txHex: string; address: string } {
   psbt.addInput({
     hash: Buffer.alloc(32, 0xab),
     index: 0,
-    witnessUtxo: { value: 100000, script: p2wpkhScript! },
+    witnessUtxo: { value: 100000n, script: p2wpkhScript! },
   });
-  psbt.addOutput({ address: address!, value: 10000 - 500 });
+  psbt.addOutput({ address: address!, value: 10000n - 500n });
 
   psbt.signInput(0, {
     publicKey,

@@ -115,17 +115,17 @@ describe("ActionConfirmationDialog", () => {
     expect(screen.getByTestId("spot-warning")).toBeTruthy();
   });
 
-  it("renders spot with info appearance when icon is not set", () => {
+  it("renders spot with muted appearance when icon is not set", () => {
     renderDialog({
       title: "Info",
       description: "Some info",
       ctaLabel: "OK",
     });
 
-    expect(screen.getByTestId("spot-info")).toBeTruthy();
+    expect(screen.getByTestId("spot-muted")).toBeTruthy();
   });
 
-  it("renders spot with check appearance for success icon", () => {
+  it("renders spot with success appearance for success icon", () => {
     renderDialog({
       title: "Success",
       description: "Done",
@@ -133,7 +133,7 @@ describe("ActionConfirmationDialog", () => {
       icon: "success",
     });
 
-    expect(screen.getByTestId("spot-check")).toBeTruthy();
+    expect(screen.getByTestId("spot-success")).toBeTruthy();
   });
 
   it("renders the Download symbol when the icon is withdraw", () => {
@@ -144,7 +144,6 @@ describe("ActionConfirmationDialog", () => {
       icon: "withdraw",
     });
 
-    expect(screen.getByTestId("spot-icon")).toBeTruthy();
     expect(screen.getByLabelText("Download")).toBeTruthy();
   });
 

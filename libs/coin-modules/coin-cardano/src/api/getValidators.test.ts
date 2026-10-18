@@ -1,6 +1,6 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import type { CardanoCoinConfig } from "../config";
+import { cardanoCoinConfig } from "../fixtures/config";
 import { getValidators } from "../logic/getValidators";
 import { createApi } from ".";
 
@@ -10,15 +10,9 @@ jest.mock("../logic/getValidators", () => ({
 
 const mockGetValidators = jest.mocked(getValidators);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
-const currency = getCryptoCurrencyById("cardano");
+const config = cardanoCoinConfig;
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({
-    ...config,
-    status: { type: "active" },
-    name: "Cardano",
-    unit: { name: "ada", code: "ADA", magnitude: 6 },
-  }),
+  config: async () => config,
   logger: () => {},
 };
 
@@ -27,7 +21,7 @@ describe("api.getValidators", () => {
     jest.clearAllMocks();
   });
 
-  it("delegates to the getValidators logic with the resolved currency", async () => {
+  it("delegates to the getValidators logic with the resolved config", async () => {
     const page = { items: [], next: undefined };
     mockGetValidators.mockResolvedValue(page);
     const api = createApi("cardano");
@@ -35,7 +29,7 @@ describe("api.getValidators", () => {
     const result = await api.getValidators(mockCtx);
 
     expect(mockGetValidators).toHaveBeenCalledTimes(1);
-    expect(mockGetValidators).toHaveBeenCalledWith(currency);
+    expect(mockGetValidators).toHaveBeenCalledWith(config);
     expect(result).toBe(page);
   });
 

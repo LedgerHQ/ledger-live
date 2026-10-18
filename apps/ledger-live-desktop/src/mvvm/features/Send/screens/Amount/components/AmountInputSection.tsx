@@ -65,9 +65,11 @@ export function AmountInputSection({
       <p className="mt-8 body-2 text-muted" data-testid="send-amount-secondary-value">
         {secondaryValue}
       </p>
-      <div className="mt-8 min-h-20">
-        <AmountMessageText message={amountMessage} onLinkPress={onMessageLinkPress} />
-      </div>
+      {amountMessage && (
+        <div className="mt-8">
+          <AmountMessageText message={amountMessage} onLinkPress={onMessageLinkPress} />
+        </div>
+      )}
     </section>
   );
 }

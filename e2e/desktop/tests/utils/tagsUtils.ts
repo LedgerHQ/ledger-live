@@ -1,4 +1,4 @@
-import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { isCurrencyUnsupportedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 export const DEVICE_TAGS = ["@Stax", "@Flex", "@NanoGen5", "@NanoSP", "@NanoX", "@LNS"] as const;
@@ -7,15 +7,8 @@ type DeviceTag = (typeof DEVICE_TAGS)[number];
 export const SCREEN_DEVICE_TAGS = ["@Stax", "@Flex", "@NanoGen5"] satisfies DeviceTag[];
 export const BUTTON_DEVICE_TAGS = ["@NanoSP", "@NanoX", "@LNS"] satisfies DeviceTag[];
 
-const LNS_UNSUPPORTED_CURRENCIES = new Set([
-  Currency.SUI.id,
-  Currency.VET.id,
-  Currency.HBAR.id,
-  Currency.ALEO.id,
-]);
-
 export function shouldSkipLNSTag(currencyId: string): boolean {
-  return LNS_UNSUPPORTED_CURRENCIES.has(currencyId);
+  return isCurrencyUnsupportedOnLNS(currencyId);
 }
 
 function deviceTags(): string[] {

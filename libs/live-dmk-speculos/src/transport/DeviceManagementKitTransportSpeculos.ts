@@ -25,6 +25,8 @@ export type SpeculosHttpTransportOpts = {
    * pass it explicitly (e.g. nanoX) for the app to behave like the right model.
    */
   model?: DeviceModelId;
+  /** Token of a protected Speculinho session. Defaults to `SPECULOS_SESSION_TOKEN`. */
+  bearerToken?: string;
 };
 
 export enum SpeculosButton {
@@ -55,6 +57,7 @@ export default class SpeculosHttpTransport extends Transport {
   static readonly byBase = new Map<string, DmkEntry>();
   private readonly options: SpeculosHttpTransportOpts;
   private readonly baseUrl: string;
+  private readonly bearerToken?: string;
   private readonly buttonEnumToControllerInput: Record<SpeculosButton, ControllerButton> = {
     [SpeculosButton.BOTH]: "both",
     [SpeculosButton.RIGHT]: "right",
@@ -75,6 +78,7 @@ export default class SpeculosHttpTransport extends Transport {
     super();
     this.options = options;
     this.baseUrl = SpeculosHttpTransport.resolveBaseFromEnv(options);
+    this.bearerToken = SpeculosHttpTransport.resolveBearerToken(options);
     this.dmk = dmk;
     this.sessionId = sessionId;
     this.automationEvents = this.createAutomationEvents$();
@@ -82,7 +86,7 @@ export default class SpeculosHttpTransport extends Transport {
 
   private createAutomationEvents$(): Observable<Record<string, unknown>> {
     return new Observable<Record<string, unknown>>(observer => {
-      const datasource = new HttpSpeculosDatasource(this.baseUrl);
+      const datasource = new HttpSpeculosDatasource(this.baseUrl, undefined, this.bearerToken);
       let stream: ReadableStream<Uint8Array> | null = null;
       let unsubscribed = false;
 
@@ -112,6 +116,10 @@ export default class SpeculosHttpTransport extends Transport {
     }).pipe(share({ resetOnRefCountZero: true }));
   }
 
+  private static resolveBearerToken(options: SpeculosHttpTransportOpts): string | undefined {
+    return options.bearerToken ?? process?.env?.SPECULOS_SESSION_TOKEN;
+  }
+
   private static resolveBaseFromEnv(options: SpeculosHttpTransportOpts): string {
     const configuredHostOrDefault =
       options.baseURL ?? process?.env?.SPECULOS_ADDRESS ?? "http://127.0.0.1";
@@ -136,12 +144,14 @@ export default class SpeculosHttpTransport extends Transport {
   private static ensureEntry(
     baseUrl: string,
     connectionTimeoutMs: number,
-    model?: DeviceModelId,
+    model: DeviceModelId | undefined,
+    bearerToken: string | undefined,
   ): DmkEntry {
-    let deviceManagementEntry = this.byBase.get(baseUrl);
+    const key = `${baseUrl}|${model ?? ""}|${bearerToken ?? ""}`;
+    let deviceManagementEntry = this.byBase.get(key);
     if (!deviceManagementEntry) {
       const deviceManagementKit = new DeviceManagementKitBuilder()
-        .addTransport(speculosTransportFactory(baseUrl, true, model))
+        .addTransport(speculosTransportFactory(baseUrl, true, model, { bearerToken }))
         .build();
 
       deviceManagementEntry = {
@@ -149,7 +159,7 @@ export default class SpeculosHttpTransport extends Transport {
         timeout: connectionTimeoutMs,
       };
 
-      this.byBase.set(baseUrl, deviceManagementEntry);
+      this.byBase.set(key, deviceManagementEntry);
     } else {
       deviceManagementEntry.timeout = connectionTimeoutMs;
     }
@@ -199,7 +209,12 @@ export default class SpeculosHttpTransport extends Transport {
   static async open(options: SpeculosHttpTransportOpts = {}): Promise<SpeculosHttpTransport> {
     const baseUrl = this.resolveBaseFromEnv(options);
     const connectTimeoutMs = options.timeout ?? 10_000;
-    const entry = this.ensureEntry(baseUrl, connectTimeoutMs, options.model);
+    const entry = this.ensureEntry(
+      baseUrl,
+      connectTimeoutMs,
+      options.model,
+      this.resolveBearerToken(options),
+    );
 
     await this.ensureSession(entry);
 
@@ -212,7 +227,9 @@ export default class SpeculosHttpTransport extends Transport {
 
   private getButtonClient() {
     if (!this.buttonClient) {
-      this.buttonClient = deviceControllerClientFactory(this.baseUrl).buttonFactory();
+      this.buttonClient = deviceControllerClientFactory(this.baseUrl, {
+        bearerToken: this.bearerToken,
+      }).buttonFactory();
     }
     return this.buttonClient;
   }
@@ -248,6 +265,7 @@ export default class SpeculosHttpTransport extends Transport {
         this.baseUrl,
         this.options.timeout ?? 10_000,
         this.options.model,
+        this.bearerToken,
       );
       deviceManagementEntry.sessionId = undefined;
       await SpeculosHttpTransport.ensureSession(deviceManagementEntry);

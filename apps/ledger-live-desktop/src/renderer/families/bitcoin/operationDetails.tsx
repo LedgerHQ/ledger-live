@@ -20,6 +20,7 @@ import { isZcashShieldedAddress } from "@ledgerhq/coin-zcash/logic/address";
 import type { AddressCellProps } from "~/renderer/families/types";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 /**
  * A send paying into a shielded pool stays typed `OUT` -- its transparent leg
@@ -94,7 +95,7 @@ const OperationDetailsExtra = ({
 }>) => {
   const i18nKey = getI18nKey(operation);
 
-  if (account.currency.id !== "zcash") {
+  if (!isZcashCurrencyId(account.currency.id)) {
     return null;
   }
 

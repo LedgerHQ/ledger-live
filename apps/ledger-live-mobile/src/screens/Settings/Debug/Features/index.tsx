@@ -106,6 +106,12 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.PostOnboardingDebugScreen)}
       />
       <SettingsRow
+        title="Device onboarding"
+        desc="Preview the checks screen states"
+        iconLeft={<IconsLegacy.NanoXFoldedMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugDeviceOnboarding)}
+      />
+      <SettingsRow
         title="Large-screen upsell"
         desc="Simulate and inspect the large-screen upsell show/throttle decision"
         iconLeft={<IconsLegacy.NanoXFoldedMedium size={24} color="black" />}

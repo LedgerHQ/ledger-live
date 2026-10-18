@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-multiversx",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",
@@ -63,7 +63,7 @@
     "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "catalog:",
-    "protobufjs": "^7.2.6",
+    "protobufjs": "^8.4.1",
     "rxjs": "catalog:"
   },
   "devDependencies": {

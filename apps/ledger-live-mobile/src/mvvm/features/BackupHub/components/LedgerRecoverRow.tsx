@@ -34,11 +34,7 @@ export function LedgerRecoverRow({
   return (
     <ListItem onPress={onPress} testID="backup-hub-recover-row">
       <ListItemLeading>
-        <Spot
-          appearance="icon"
-          icon={showNotificationDot ? ShieldCheckNotificationIcon : ShieldCheck}
-          size={48}
-        />
+        <Spot icon={showNotificationDot ? ShieldCheckNotificationIcon : ShieldCheck} size={48} />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription numberOfLines={2} lx={isWarning ? { color: "warning" } : undefined}>

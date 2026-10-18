@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { InfoState } from "@shared/ui-info-state";
 import type { SignRawTransactionIntentJobState } from "@ledgerhq/live-common/intents/signRawTransactionIntent";
-import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import TranslatedError from "~/components/TranslatedError";
 import type { RentSignatureExtraProps } from "../intents/signRawTransactionIntent/componentLWM";
 import type { SponsoredRentSignatureStep } from "../hooks/useSponsoredRentSignatureViewModel";
@@ -83,7 +83,7 @@ export function SponsoredRentSignatureView({
       );
     case "signing":
       return (
-        <DeviceIntentExecutorLWM
+        <DeviceIntentExecutor
           enabled
           sourceFlow="send"
           deviceConnectionParams={deviceConnectionParams}

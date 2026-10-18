@@ -1,4 +1,4 @@
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -32,13 +32,17 @@ const makeTokenAccount = (parentAccount: Account): TokenAccount =>
 
 const evmBridge = jest.fn();
 const bitcoinBridge = jest.fn();
+const zcashBridge = jest.fn();
 jest.mock("../coin-modules/registry", () => ({
+  isCoinModuleRegistered: () => true,
   loadWalletApiAdapterForFamily: (family: string) => {
     switch (family) {
       case "evm":
         return { getWalletAPITransactionSignFlowInfos: () => evmBridge() };
       case "bitcoin":
         return { getWalletAPITransactionSignFlowInfos: () => bitcoinBridge() };
+      case "zcash":
+        return { getWalletAPITransactionSignFlowInfos: () => zcashBridge() };
       default:
         return undefined;
     }
@@ -61,6 +65,41 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
   beforeEach(() => {
     evmBridge.mockClear();
     bitcoinBridge.mockClear();
+    zcashBridge.mockClear();
+  });
+
+  // A live app names Zcash's currency family, "bitcoin"; coin-zcash serves the account.
+  it.each(["zcash", "zcash_testnet"])(
+    "uses the zcash adapter for a bitcoin-family transaction on a %s account",
+    async currencyId => {
+      await getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: { family: "bitcoin", amount: new BigNumber(1), recipient: "t1" },
+        account: { type: "Account", currency: getCryptoCurrencyById(currencyId) } as Account,
+      });
+
+      expect(zcashBridge).toHaveBeenCalledTimes(1);
+      expect(bitcoinBridge).not.toHaveBeenCalled();
+    },
+  );
+
+  it("keeps the adapter of another family's transaction on a zcash account", async () => {
+    await getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: { family: "ethereum", amount: new BigNumber(1), recipient: "0x01" },
+      account: { type: "Account", currency: getCryptoCurrencyById("zcash") } as Account,
+    });
+
+    expect(evmBridge).toHaveBeenCalledTimes(1);
+    expect(zcashBridge).not.toHaveBeenCalled();
+  });
+
+  it("keeps the bitcoin adapter for a bitcoin account", async () => {
+    await getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: { family: "bitcoin", amount: new BigNumber(1), recipient: "bc1" },
+      account: { type: "Account", currency: getCryptoCurrencyById("bitcoin") } as Account,
+    });
+
+    expect(bitcoinBridge).toHaveBeenCalledTimes(1);
+    expect(zcashBridge).not.toHaveBeenCalled();
   });
 
   it("should call the bridge if the implementation exists", async () => {
@@ -196,6 +235,15 @@ const makeZcashAccount = (utxoValues: number[]): AccountLike =>
     bitcoinResources: { utxos: utxoValues.map(value => ({ value: new BigNumber(value) })) },
   }) as unknown as AccountLike;
 
+const pendingOut = (value: number, fee: number) =>
+  ({ type: "OUT", value: new BigNumber(value), fee: new BigNumber(fee) }) as Operation;
+
+const makeAccountWithPending = (
+  type: AccountLike["type"],
+  pendingOperations: Operation[],
+): AccountLike =>
+  ({ type, spendableBalance: new BigNumber(100), pendingOperations }) as AccountLike;
+
 describe("resolveWalletApiMaxSpendable", () => {
   const account = { spendableBalance: new BigNumber(100) } as AccountLike;
 
@@ -275,7 +323,7 @@ describe("resolveWalletApiMaxSpendable", () => {
     expect(mockLog).toHaveBeenCalledWith(
       "wallet-api/converters",
       expect.stringContaining("omitting ambiguous zero maxSpendable"),
-      { walletApiSpendableBalance: "100" },
+      { walletApiSpendableBalance: "100", pendingSpent: "0" },
     );
   });
 
@@ -288,8 +336,49 @@ describe("resolveWalletApiMaxSpendable", () => {
     expect(mockLog).toHaveBeenCalledWith(
       "wallet-api/converters",
       expect.stringContaining("omitting ambiguous zero maxSpendable"),
-      { walletApiSpendableBalance: "100" },
+      { walletApiSpendableBalance: "100", pendingSpent: "0" },
     );
+  });
+
+  describe("pending operations", () => {
+    beforeEach(() => {
+      mockEstimateBridge(new BigNumber(0));
+    });
+
+    it("keeps a zero estimate when pending sends commit the whole token balance", async () => {
+      const tokenAccount = makeAccountWithPending("TokenAccount", [pendingOut(100, 5)]);
+
+      const result = await resolveWalletApiMaxSpendable(tokenAccount);
+
+      expect(result).toEqual(new BigNumber(0));
+      expect(mockLog).not.toHaveBeenCalled();
+    });
+
+    it("omits a zero estimate for a native pending debit that includes its fee", async () => {
+      const mainAccount = makeAccountWithPending("Account", [pendingOut(95, 10)]);
+
+      const result = await resolveWalletApiMaxSpendable(mainAccount);
+
+      expect(result).toBeUndefined();
+      expect(mockLog).toHaveBeenCalledWith(
+        "wallet-api/converters",
+        expect.stringContaining("omitting ambiguous zero maxSpendable"),
+        { walletApiSpendableBalance: "100", pendingSpent: "0" },
+      );
+    });
+
+    it("omits a zero estimate when pending sends leave part of the token balance", async () => {
+      const tokenAccount = makeAccountWithPending("TokenAccount", [pendingOut(60, 5)]);
+
+      const result = await resolveWalletApiMaxSpendable(tokenAccount);
+
+      expect(result).toBeUndefined();
+      expect(mockLog).toHaveBeenCalledWith(
+        "wallet-api/converters",
+        expect.stringContaining("omitting ambiguous zero maxSpendable"),
+        { walletApiSpendableBalance: "100", pendingSpent: "60" },
+      );
+    });
   });
 
   describe("zcash", () => {
@@ -313,7 +402,7 @@ describe("resolveWalletApiMaxSpendable", () => {
       expect(mockLog).toHaveBeenCalledWith(
         "wallet-api/converters",
         expect.stringContaining("omitting ambiguous zero maxSpendable"),
-        { walletApiSpendableBalance: "500" },
+        { walletApiSpendableBalance: "500", pendingSpent: "0" },
       );
     });
   });

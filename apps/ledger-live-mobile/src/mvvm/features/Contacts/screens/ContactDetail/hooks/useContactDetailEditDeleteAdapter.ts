@@ -1,14 +1,16 @@
 import { type ContactId } from "@domain/entity-contact";
 import {
+  useContactDetailEditDeleteAnalytics,
+  useContactsMeContact,
+  useContactsEditDeletePorts,
+} from "@features/flow-contacts";
+import {
   type ContactsEditSignerMismatchDrawerProps,
   type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
   resolveContactDetailEditDeleteLabels,
-  useContactDetailEditDeleteAnalytics,
   useContactDetailEditDeleteFlowBindings,
-  useContactsMeContact,
-  useContactsEditDeletePorts,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import type { ContactsDeleteContactDrawerProps } from "@features/flow-contacts-delete-contact";
 import type { ContactsRenameContactDrawerProps } from "@features/flow-contacts-edit-contact";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
@@ -50,7 +52,6 @@ export function useContactDetailEditDeleteAdapter(
       resolveContactDetailEditDeleteLabels({
         t,
         editContactLabelKey: "contacts.detailActions.editName",
-        deleteDescriptionKey: "contacts.deleteContact.mobileDescription",
       }),
     [t],
   );

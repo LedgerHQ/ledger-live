@@ -41,6 +41,12 @@ Two kinds of preset:
 | [`lint-rules`](./lint-rules) | monorepo-wide custom ESLint rules |
 | [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
 
+## Conformance
+
+`pnpm lint:tool-config` checks that each package carries only what its tool cannot inherit from its
+preset, one rule per tool ([the plugin](../tools/nx-plugins/enforce-tool-config/)). Packages not on a
+preset yet are listed in its `exclusions.mjs`.
+
 ## Adding a package
 
 Follow [docs/new-library.md](../docs/new-library.md), then:

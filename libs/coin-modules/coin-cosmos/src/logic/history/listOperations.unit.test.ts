@@ -1,8 +1,10 @@
+import type { CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { CosmosTx } from "../../types";
 import { listOperations } from "./listOperations";
 
 const ADDR = "cosmos1sender";
+const config = { denom: "uatom" } as CosmosCoinConfig;
 
 const makeTx = (overrides: Partial<{ txhash: string; height: string }> = {}): CosmosTx =>
   ({
@@ -32,7 +34,6 @@ const makeTx = (overrides: Partial<{ txhash: string; height: string }> = {}): Co
 
 const apiWith = (txs: CosmosTx[], hasMore = false): CosmosAPI =>
   ({
-    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getTransactionsPage: jest.fn().mockResolvedValue({ txs, hasMore }),
   }) as unknown as CosmosAPI;
 
@@ -135,7 +136,6 @@ const makeRewardTx = (): CosmosTx =>
 // Models one newest-first stream that honours `count`, so the fetch window is actually bounded.
 const apiCounting = (allTxs: CosmosTx[]): CosmosAPI =>
   ({
-    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getTransactionsPage: jest.fn(async (_addr: string, count: number) => ({
       txs: allTxs.slice(0, count),
       hasMore: allTxs.length > count,
@@ -144,7 +144,7 @@ const apiCounting = (allTxs: CosmosTx[]): CosmosAPI =>
 
 describe("logic/history/listOperations", () => {
   it("maps a native send to an OUT framework operation", async () => {
-    const page = await listOperations(apiWith([makeTx()]), ADDR, { minHeight: 0 });
+    const page = await listOperations(config, apiWith([makeTx()]), ADDR, { minHeight: 0 });
 
     expect(page.items).toHaveLength(1);
     const op = page.items[0];
@@ -163,7 +163,7 @@ describe("logic/history/listOperations", () => {
   });
 
   it("serializes BigNumber amounts in familyExtra to JSON-safe strings", async () => {
-    const page = await listOperations(apiWith([makeDelegateTx()]), ADDR, {
+    const page = await listOperations(config, apiWith([makeDelegateTx()]), ADDR, {
       minHeight: 0,
     });
     const details = page.items[0].details as {
@@ -174,7 +174,7 @@ describe("logic/history/listOperations", () => {
   });
 
   it("nests staking extras under details.familyExtra for the generic framework's operation adapter", async () => {
-    const page = await listOperations(apiWith([makeDelegateTx()]), ADDR, {
+    const page = await listOperations(config, apiWith([makeDelegateTx()]), ADDR, {
       minHeight: 0,
     });
     const details = page.items[0].details as {
@@ -187,7 +187,7 @@ describe("logic/history/listOperations", () => {
   });
 
   it("mirrors primary validator into details.stake for the generic framework adapter", async () => {
-    const page = await listOperations(apiWith([makeDelegateTx()]), ADDR, {
+    const page = await listOperations(config, apiWith([makeDelegateTx()]), ADDR, {
       minHeight: 0,
     });
     const details = page.items[0].details as {
@@ -198,7 +198,7 @@ describe("logic/history/listOperations", () => {
   });
 
   it("carries sourceValidator in familyExtra for a redelegate", async () => {
-    const page = await listOperations(apiWith([makeRedelegateTx()]), ADDR, {
+    const page = await listOperations(config, apiWith([makeRedelegateTx()]), ADDR, {
       minHeight: 0,
     });
     const details = page.items[0].details as {
@@ -212,7 +212,7 @@ describe("logic/history/listOperations", () => {
   });
 
   it("carries all validators in familyExtra for a reward claim", async () => {
-    const page = await listOperations(apiWith([makeRewardTx()]), ADDR, {
+    const page = await listOperations(config, apiWith([makeRewardTx()]), ADDR, {
       minHeight: 0,
     });
     const details = page.items[0].details as {
@@ -225,7 +225,7 @@ describe("logic/history/listOperations", () => {
   });
 
   it("dedupes a tx returned in both the sender and recipient streams", async () => {
-    const page = await listOperations(apiWith([makeTx(), makeTx()]), ADDR, {
+    const page = await listOperations(config, apiWith([makeTx(), makeTx()]), ADDR, {
       minHeight: 0,
     });
     expect(page.items).toHaveLength(1);
@@ -237,12 +237,12 @@ describe("logic/history/listOperations", () => {
       makeTx({ txhash: "HASH2", height: "200" }),
     ]);
 
-    const first = await listOperations(api, ADDR, { minHeight: 0, limit: 1 });
+    const first = await listOperations(config, api, ADDR, { minHeight: 0, limit: 1 });
     expect(first.items).toHaveLength(1);
     expect(first.items[0].tx.hash).toBe("HASH2");
     expect(first.next).toBe("1");
 
-    const second = await listOperations(api, ADDR, {
+    const second = await listOperations(config, api, ADDR, {
       minHeight: 0,
       limit: 1,
       cursor: "1",
@@ -257,7 +257,7 @@ describe("logic/history/listOperations", () => {
       makeTx({ txhash: "HASH1", height: "100" }),
       makeTx({ txhash: "HASH2", height: "200" }),
     ]);
-    const page = await listOperations(api, ADDR, {
+    const page = await listOperations(config, api, ADDR, {
       minHeight: 0,
       limit: 1,
       cursor: "-1",
@@ -269,27 +269,27 @@ describe("logic/history/listOperations", () => {
 
   it("requests only offset+limit depth from the network", async () => {
     const api = apiWith([makeTx()]);
-    await listOperations(api, ADDR, { minHeight: 0, limit: 5, cursor: "10" });
+    await listOperations(config, api, ADDR, { minHeight: 0, limit: 5, cursor: "10" });
     expect(api.getTransactionsPage).toHaveBeenCalledWith(ADDR, 15);
   });
 
   it("propagates next when the node reports more and the page is full", async () => {
     const api = apiWith([makeTx({ txhash: "H1", height: "100" })], true);
-    const page = await listOperations(api, ADDR, { minHeight: 0, limit: 1 });
+    const page = await listOperations(config, api, ADDR, { minHeight: 0, limit: 1 });
     expect(page.items).toHaveLength(1);
     expect(page.next).toBe("1");
   });
 
   it("stops paginating on a short page even when hasMore is true (minHeight boundary)", async () => {
     const api = apiWith([makeTx({ txhash: "OLD", height: "50" })], true);
-    const page = await listOperations(api, ADDR, { minHeight: 100, limit: 5 });
+    const page = await listOperations(config, api, ADDR, { minHeight: 100, limit: 5 });
     expect(page.items).toHaveLength(0);
     expect(page.next).toBeUndefined();
   });
 
   it("keeps advancing on a short page when more txs exist and the floor isn't reached", async () => {
     const api = apiWith([makeTx({ txhash: "H1", height: "100" })], true);
-    const page = await listOperations(api, ADDR, { minHeight: 0, limit: 5 });
+    const page = await listOperations(config, api, ADDR, { minHeight: 0, limit: 5 });
     expect(page.items).toHaveLength(1);
     expect(page.next).toBe("5");
   });
@@ -308,7 +308,7 @@ describe("logic/history/listOperations", () => {
     let cursor: string | undefined;
     let guard = 0;
     do {
-      const page = await listOperations(api, ADDR, { minHeight: 0, limit: 2, cursor });
+      const page = await listOperations(config, api, ADDR, { minHeight: 0, limit: 2, cursor });
       seen.push(...page.items.map(o => o.tx.hash));
       cursor = page.next;
       if (++guard > 10) throw new Error("pagination did not terminate");
@@ -322,13 +322,13 @@ describe("logic/history/listOperations", () => {
       makeTx({ txhash: "BBB", height: "100" }),
       makeTx({ txhash: "AAA", height: "100" }),
     ]);
-    const page = await listOperations(api, ADDR, { minHeight: 0 });
+    const page = await listOperations(config, api, ADDR, { minHeight: 0 });
     expect(page.items.map(o => o.tx.hash)).toEqual(["AAA", "BBB"]);
   });
 
   it("rejects ascending order (backend pages newest-first)", async () => {
     await expect(
-      listOperations(apiWith([makeTx()]), ADDR, { minHeight: 0, order: "asc" }),
+      listOperations(config, apiWith([makeTx()]), ADDR, { minHeight: 0, order: "asc" }),
     ).rejects.toThrow("ascending order is not supported");
   });
 });

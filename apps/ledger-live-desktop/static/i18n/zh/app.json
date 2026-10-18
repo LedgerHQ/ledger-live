@@ -2989,6 +2989,46 @@
       "feesAmount" : "费用数额 ({{unit}})",
       "payFeesIn" : "手续费支付资产"
     },
+    "feePayment" : {
+      "title" : "选择费用支付方式",
+      "regular" : "普通转账",
+      "sponsored" : "使用 {{provider}} 支付",
+      "payIn" : "以 {{feeCurrency}} 支付网络费用",
+      "paidIn" : "已用 {{currency}} 支付",
+      "nudge" : "使用 {{provider}}，您可节省 {{amount}}",
+      "saved" : "已通过 {{provider}} 节省",
+      "confirm" : "确认",
+      "disclaimer" : "通过第三方能量提供商 {{provider}}，费用以 {{feeCurrency}} 支付。",
+      "insufficientFunds" : "您没有足够的 {{feeCurrency}} 来支付数额和 {{provider}} 能量租赁费用。"
+    },
+    "sponsoredRentSignature" : {
+      "title" : "第 1 步，共 2 步",
+      "strategy" : "能量租赁 - {{provider}}",
+      "crafting" : "正在准备能量租赁…",
+      "submitting" : "正在提交能量租赁付款…",
+      "feeLabel" : "租赁费用"
+    },
+    "sponsoredTransferSignature" : {
+      "title" : "第 2 步，共 2 步"
+    },
+    "sponsoredPolling" : {
+      "title" : "正在等待能量交付",
+      "waiting" : "{{provider}} 正在交付租用的能量。此过程可能需要片刻。",
+      "elapsed" : "已用时间：{{time}}"
+    },
+    "sponsoredFailure" : {
+      "title" : "出错了",
+      "rentPayment" : "费用支付失败——您的资金未被转移。",
+      "rentPaymentReportedFailed" : "{{provider}} 报告费用支付失败，但其可能仍会通过。",
+      "priceIncreased" : "能量租赁价格已上涨至 {{fee}}。您的资金未被转移。",
+      "deliveryFailed" : "能量未交付。您的租赁费付款已发送——请联系 {{provider}} 客服申请退款{{txidSuffix}}。",
+      "transfer" : "您的转账失败，但已租用的能量仍然有效——您可以重试该转账。",
+      "retryLocked" : "为避免您重复支付租赁费用，您可以在 {{time}} 后重试。",
+      "retry" : "重试",
+      "retryPaying" : "重新支付并重试",
+      "acceptPrice" : "接受新价格",
+      "cancel" : "取消"
+    },
     "coinControl" : {
       "title" : "币控制（UTXO 管理）",
       "strategy" : "策略",
@@ -5127,6 +5167,62 @@
       "OUT" : "提取"
     }
   },
+  "stacks" : {
+    "stake" : {
+      "flow" : {
+        "title" : "质押",
+        "preparingTransaction" : "正在准备交易……",
+        "steps" : {
+          "validator" : {
+            "title" : "质押池",
+            "description" : "选择一个质押池以委托您的 STX 进行质押。",
+            "poolAddressLabel" : "池地址",
+            "numCyclesLabel" : "周期数"
+          },
+          "amount" : {
+            "title" : "数额",
+            "disclaimer" : "您的 STX 将被锁定，直到质押池将其释放。"
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功质押资产",
+              "text" : "您已质押了 {{amount}} 。该交易一经区块链确认，就会更新您的账户余额。",
+              "cta" : "访问账户功能面板"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "解除质押",
+        "preparingTransaction" : "正在准备交易……",
+        "steps" : {
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "broadcastError" : "您的解除质押交易无法发送到网络。请重试。",
+            "success" : {
+              "title" : "已提交解除质押",
+              "text" : "您的 STX 解除委托已成功广播。",
+              "cta" : "查看详情"
+            }
+          }
+        }
+      }
+    },
+    "account" : {
+      "staked" : "已质押",
+      "unlockCycle" : "解锁周期"
+    }
+  },
   "tezos" : {
     "operationTypes" : {
       "UNSTAKE" : "解除质押",
@@ -5642,7 +5738,10 @@
         "eligibleAddressFamilies" : "符合条件的地址系列",
         "customFamiliesHint" : "用于自定义多系列测试的以逗号分隔的系列。",
         "customFamiliesPlaceholder" : "以太坊虚拟机 (EVM)、恒星币、阿普托斯币",
-        "applyFamilies" : "应用",
+        "apply" : "应用",
+        "newBadge" : "新徽章",
+        "excludedCurrencyIds" : "已排除的货币 ID",
+        "excludedCurrencyIdsPlaceholder" : "例如：以太坊、比特币",
         "contactsData" : "联系人数据",
         "loadPopulatedContacts" : "加载现有联系人",
         "loadFromSendHistory" : "从发送历史记录加载联系人",
@@ -5751,6 +5850,9 @@
       "featureFlagsOverride" : "覆盖",
       "featureFlagsRestoreAll" : "重置所有标志值",
       "flagHint" : "如果在目标 Firebase 环境中定义了功能标志，\n但以下列表中缺少该功能标志，您可以在搜索框中键入其**准确**名称，\n它将显示在列表中。以驼峰命名法（camelCase）输入\n标志名称，不带“功能”前缀。",
+      "contentAbTests" : {
+        "invalidPayload" : "有效负载无效。\"enabled\" 必须为布尔值，且 \"copy\" 必须将键映射到字符串。"
+      },
       "showButtonDesc" : "始终在侧边栏中显示功能标志按钮",
       "buttonTitle" : "已本地覆盖的标志",
       "overridden" : {
@@ -6770,6 +6872,7 @@
       "undelegate" : "请在您的设备上确认并完成操作",
       "redelegate" : "请在您的设备上确认并完成操作",
       "claimRewardCompound" : "请在您的设备上确认并完成操作",
+      "compoundReward" : "请在您的设备上确认并完成操作",
       "nominate" : "请在您的设备上确认并完成操作",
       "chill" : "请在您的设备上确认并完成操作",
       "bond" : "请在您的设备上确认并完成操作",
@@ -6796,7 +6899,9 @@
       "undelegate" : "验证者",
       "claimReward" : "奖励接收方",
       "claimRewardCompound" : "将接收奖励的验证者",
+      "compoundReward" : "将接收奖励的验证者",
       "optIn" : "接收方",
+      "tokenAssociate" : "接收方",
       "nominate" : "验证者",
       "stake" : "验证者",
       "unstake" : "验证者",
@@ -7248,6 +7353,10 @@
     "CosmosDelegateAllFundsWarning" : {
       "title" : "确保您有足够的剩余余额以用作未来的交易费"
     },
+    "CosmosMemoTooLong" : {
+      "title" : "备注长度超出最大限制",
+      "description" : "您的的备注长度为 {{memoLength}} 字节，但允许的最大长度为 {{maxLength}} 字节。请缩短备注长度。"
+    },
     "CurrencyNotSupported" : {
       "title" : "不支持 {{currencyName}}",
       "description" : "尚不支持该加密资产。请联系 Ledger 客服。"
@@ -7606,6 +7715,10 @@
     "TransactionRefusedOnDevice" : {
       "title" : "操作在设备上被拒绝",
       "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "TransferOfferExpiredError" : {
+      "title" : "此优惠已过期",
+      "description" : "该转账报价在被接受前已过期。请让发送方重新发送。"
     },
     "UserRefusedAddress" : {
       "title" : "接收地址被拒",
@@ -8133,6 +8246,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "质押已暂停，直至下一个奖励周期。",
+      "description" : "Stacks 网络在准备下一个奖励周期期间不接受新的质押。质押将在 {{blocksUntilReopen}} 个比特币区块后重新开放。"
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo 格式错误"
@@ -9528,7 +9645,7 @@
   "marketBanner" : {
     "title" : "市场",
     "genericError" : "连接失败",
-    "cta" : "查看全部",
+    "cta" : "更多",
     "ranking" : {
       "trending" : "热门",
       "gainers" : "获利者",

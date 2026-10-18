@@ -65,6 +65,17 @@ export function parseDecimalAmount(text: string, decimals: number, ticker: strin
   return value;
 }
 
+/** Inverse of {@link parseDecimalAmount}: exact decimal text for a base-unit integer string. */
+export function formatBaseUnits(amount: string, decimals: number): string {
+  const digits = BigInt(amount)
+    .toString()
+    .padStart(decimals + 1, "0");
+  const whole = digits.slice(0, digits.length - decimals);
+  let fraction = digits.slice(digits.length - decimals);
+  while (fraction.endsWith("0")) fraction = fraction.slice(0, -1);
+  return fraction ? `${whole}.${fraction}` : whole;
+}
+
 /** Splits `--amount` ("0.01 ETH" or "ETH 0.01") into its decimal part and ticker. */
 export function parseAmountWithTicker(input: string): { amount: string; ticker: string } {
   const parts = input.trim().split(/\s+/);

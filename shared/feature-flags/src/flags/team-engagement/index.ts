@@ -5,6 +5,7 @@ export * from "./deviceOnboarding";
 export * from "./lwdBackupHub";
 export * from "./lwdGenericAwarenessModal";
 export * from "./lwdOnboardingCounterfeitWarning";
+export * from "./lwdOnboardingCounterfeitWarningTouchscreens";
 export * from "./lwmAnalyticsConsentOnboarding";
 export * from "./lwmBackupHub";
 export * from "./lwmGenericAwarenessModal";

@@ -2,6 +2,7 @@ import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
 import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { resolveMarketListRefreshRate } from "@ledgerhq/live-common/market/utils/timers";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
 import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
@@ -15,12 +16,7 @@ import {
   localeSelector,
   starredMarketCoinsSelector,
 } from "~/renderer/reducers/settings";
-import {
-  BASIC_REFETCH,
-  REFETCH_TIME_ONE_MINUTE,
-  getCurrentPage,
-  isDataStale,
-} from "~/renderer/screens/market/utils";
+import { getCurrentPage } from "~/renderer/screens/market/utils";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { getCurrentTrackingPage, track } from "@shared/analytics";
 import { useMarketCategories } from "LLD/features/Market/hooks/useMarketCategories";
@@ -29,22 +25,6 @@ import {
   isBuiltInMarketListCategory,
   type MarketListCategory,
 } from "@ledgerhq/live-common/market/utils/category";
-
-const MARKET_PAGE_RESET_KEYS = new Set<keyof MarketListRequestParams>([
-  "order",
-  "search",
-  "range",
-  "starred",
-  "liveCompatible",
-  "filter",
-]);
-
-function shouldResetMarketPage(payload: MarketListRequestParams): boolean {
-  for (const key of MARKET_PAGE_RESET_KEYS) {
-    if (key in payload) return true;
-  }
-  return false;
-}
 
 function getDiscoverabilityCategoryFlags(enabled: boolean, selectedCategory: MarketListCategory) {
   if (!enabled) {
@@ -59,13 +39,6 @@ function getDiscoverabilityCategoryFlags(enabled: boolean, selectedCategory: Mar
     isStocksCategory: selectedCategory === "stocks",
     isTrendingCategory: !isBuiltInMarketListCategory(selectedCategory),
   };
-}
-
-function resolveRefreshRate(refreshTimeParam: number | undefined): number {
-  const multiplier = Number(refreshTimeParam);
-  return multiplier > 0
-    ? REFETCH_TIME_ONE_MINUTE * multiplier
-    : REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH;
 }
 
 function getMarketItemCount(
@@ -92,7 +65,9 @@ export function useMarket() {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const settingsCounterValue = counterValueCurrency.ticker.toLowerCase();
 
-  const REFRESH_RATE = resolveRefreshRate(lldRefreshMarketDataFeature?.params?.refreshTime);
+  const REFRESH_RATE = resolveMarketListRefreshRate(
+    lldRefreshMarketDataFeature?.params?.refreshTime,
+  );
 
   const { range, starred = [], liveCompatible, order, search = "" } = marketParams;
 
@@ -156,7 +131,7 @@ export function useMarket() {
         ? getMarketCategoriesParam(categories.selectedCategory)
         : undefined,
     },
-    { enabled: shouldFetchMarketData },
+    { enabled: shouldFetchMarketData, refreshRate: REFRESH_RATE },
   );
 
   const timeRanges = useMemo(
@@ -245,24 +220,21 @@ export function useMarket() {
 
   const refresh = useCallback(
     (payload: MarketListRequestParams) => {
-      const nextPayload = shouldResetMarketPage(payload) ? { ...payload, page: 1 } : payload;
-      dispatch(setMarketOptions(nextPayload));
+      dispatch(setMarketOptions(payload));
     },
     [dispatch],
   );
 
   const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
 
-  const resetMarketPageToInital = (page: number) => {
-    if (page > 1) {
-      dispatch(setMarketOptions({ page: 1 }));
-      dispatch(setMarketCurrentPage(1));
-    }
-  };
+  const { resetToFirstPage, fetchNextPage } = marketResult;
 
-  const onLoadNextPage = useCallback(() => {
-    dispatch(setMarketOptions({ page: (marketParams?.page || 1) + 1 }));
-  }, [dispatch, marketParams?.page]);
+  const resetMarketPage = useCallback(() => {
+    resetToFirstPage();
+    dispatch(setMarketCurrentPage(1));
+  }, [dispatch, resetToFirstPage]);
+
+  const onLoadNextPage = fetchNextPage;
 
   const updateSearch = useCallback(
     (value: string) => {
@@ -288,7 +260,7 @@ export function useMarket() {
     }
     if (starredMarketCoins.length > 0 || starFilterOn) {
       const starred = starFilterOn ? [] : starredMarketCoins;
-      refresh({ starred, page: 1 });
+      refresh({ starred });
     }
   }, [
     categories,
@@ -326,22 +298,6 @@ export function useMarket() {
     });
   }, [order, refresh]);
 
-  /**
-   *
-   * Refresh mechanism ----------------------------------------------
-   */
-
-  const refetchData = useCallback(
-    (pageToRefetch: number) => {
-      const page = pageToRefetch - 1 || 0;
-      const elem = marketResult.cachedMetadataMap.get(String(page));
-      if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
-        elem.refetch();
-      }
-    },
-    [marketResult.cachedMetadataMap, REFRESH_RATE],
-  );
-
   const checkIfDataIsStaleAndRefetch = useCallback(
     (scrollPosition: number) => {
       const newCurrentPage = getCurrentPage(scrollPosition, marketParams.limit || 50);
@@ -349,10 +305,8 @@ export function useMarket() {
       if (marketCurrentPage !== newCurrentPage) {
         dispatch(setMarketCurrentPage(newCurrentPage));
       }
-
-      refetchData(newCurrentPage);
     },
-    [marketParams.limit, marketCurrentPage, refetchData, dispatch],
+    [marketParams.limit, marketCurrentPage, dispatch],
   );
 
   /**
@@ -372,8 +326,7 @@ export function useMarket() {
     resetSearch,
     setCounterCurrency,
     checkIfDataIsStaleAndRefetch,
-    resetMarketPage: resetMarketPageToInital,
-    refetchData,
+    resetMarketPage,
     freshLoading,
     supportedCounterCurrencies,
     t,

@@ -1,6 +1,6 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import type { CardanoCoinConfig } from "../config";
+import { cardanoCoinConfig } from "../fixtures/config";
 import { getStakes } from "../logic/getStakes";
 import { createApi } from ".";
 
@@ -10,15 +10,9 @@ jest.mock("../logic/getStakes", () => ({
 
 const mockGetStakes = jest.mocked(getStakes);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
-const currency = getCryptoCurrencyById("cardano");
+const config = cardanoCoinConfig;
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({
-    ...config,
-    status: { type: "active" },
-    name: "Cardano",
-    unit: { name: "ada", code: "ADA", magnitude: 6 },
-  }),
+  config: async () => config,
   logger: () => {},
 };
 
@@ -27,7 +21,7 @@ describe("api.getStakes", () => {
     jest.clearAllMocks();
   });
 
-  it("delegates to the getStakes logic with the resolved currency, address and cursor", async () => {
+  it("delegates to the getStakes logic with the resolved config, address and cursor", async () => {
     const page = { items: [] };
     mockGetStakes.mockResolvedValue(page);
     const api = createApi("cardano");
@@ -35,7 +29,7 @@ describe("api.getStakes", () => {
     const result = await api.getStakes(mockCtx, "addr", { cursor: "cursor" });
 
     expect(mockGetStakes).toHaveBeenCalledTimes(1);
-    expect(mockGetStakes).toHaveBeenCalledWith(currency, "addr", "cursor");
+    expect(mockGetStakes).toHaveBeenCalledWith(config, "addr", "cursor");
     expect(result).toBe(page);
   });
 

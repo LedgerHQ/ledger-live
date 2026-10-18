@@ -27,11 +27,7 @@ export function DeviceCard({ selectableDevice }: Readonly<DeviceCardProps>): Rea
     <Card type="info" disabled={!isAvailable}>
       <CardHeader>
         <CardLeading>
-          <Spot
-            appearance="icon"
-            icon={getDeviceSymbolByModelId(device.deviceModelId)}
-            disabled={!isAvailable}
-          />
+          <Spot icon={getDeviceSymbolByModelId(device.deviceModelId)} disabled={!isAvailable} />
           <CardContent>
             <CardContentTitle>{deviceName}</CardContentTitle>
           </CardContent>

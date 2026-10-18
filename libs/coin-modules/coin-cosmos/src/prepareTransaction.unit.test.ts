@@ -45,6 +45,7 @@ describe("getEstimatedFees", () => {
       },
     });
     const { gasWanted } = await getEstimatedFees(
+      cosmosCoinConfig.getCoinConfig("cosmos"),
       messageParamsFromTransaction(account, transaction),
     );
     expect(gasWanted.gt(new BigNumber(gasSimulationMock))).toEqual(true);
@@ -60,6 +61,7 @@ describe("getEstimatedFees", () => {
       },
     });
     const { gasWantedFees, gasWanted } = await getEstimatedFees(
+      cosmosCoinConfig.getCoinConfig("cosmos"),
       messageParamsFromTransaction(account, transaction),
     );
     expect(gasWantedFees.gt(0)).toEqual(true);
@@ -220,5 +222,25 @@ describe("calculateFees", () => {
     tx.sourceValidator = "source";
     await calculateFees({ account: acc, transaction: tx });
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
+  });
+
+  it("should estimate croeseid fees with the crypto_org config", async () => {
+    cosmosCoinConfig.setCoinConfig(currencyId => {
+      const value = LiveConfig.getValueByKey(`config_currency_${currencyId}`);
+      if (!value) throw new Error(`No currency configuration available for ${currencyId}`);
+      return value;
+    });
+    const acc = createAccount();
+    acc.currency.id = "crypto_org_croeseid" as CryptoCurrencyId;
+
+    await calculateFees({ account: acc, transaction: createTransaction() });
+
+    expect(networkMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining(
+          (cosmosConfig.config_currency_crypto_org.default as { lcd: string }).lcd,
+        ),
+      }),
+    );
   });
 });

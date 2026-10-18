@@ -100,6 +100,12 @@ describe("SDK errors, as the real SDK throws them", () => {
 });
 
 describe("redactServiceText", () => {
+  it("strips terminal control sequences from a raw response body", () => {
+    const out = redactServiceText("boom\u001b[2J\u0007 done");
+
+    expect(out).toBe("boom[2J done");
+  });
+
   it("strips URL credentials, bearer tokens and long token-like runs", () => {
     const text =
       "failed for https://user:secret@bff.example.com/v1 with Bearer abc.def.ghi and " +

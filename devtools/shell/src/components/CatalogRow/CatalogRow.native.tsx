@@ -24,7 +24,7 @@ export function CatalogRow({ title, description, logo, count, onPress }: Catalog
   return (
     <ListItem onPress={onPress} lx={{ marginHorizontal: "-s8" }}>
       <ListItemLeading lx={{ paddingHorizontal: "s8" }}>
-        {logo && <Spot appearance="icon" icon={logo} />}
+        {logo && <Spot icon={logo} />}
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           {description && <ListItemDescription>{description}</ListItemDescription>}

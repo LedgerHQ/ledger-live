@@ -123,7 +123,7 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const { View } = jest.requireActual("react-native");
   return {
     ...actual,
-    DeviceIntentExecutorLWM: () =>
+    DeviceIntentExecutor: () =>
       ReactModule.createElement(View, { testID: "device-intent-executor" }),
   };
 });

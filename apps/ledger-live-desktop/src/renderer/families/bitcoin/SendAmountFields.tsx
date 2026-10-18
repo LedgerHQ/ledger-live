@@ -1,7 +1,7 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
-import { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -18,6 +18,7 @@ import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 import ZcashSyncStateBanner from "./ZcashSyncStateBanner";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 
@@ -43,7 +44,7 @@ const Fields: Props = ({
   // sat/vByte fee market, so the whole fee selector — the strategy list AND the
   // advanced/custom controls — is removed. The ZIP-317 fee is applied
   // automatically (see getAccountNetworkInfo).
-  const hideFeeSelection = account.currency.id === "zcash";
+  const hideFeeSelection = isZcashCurrencyId(account.currency.id);
   const zcashTx = transaction as unknown as ZcashTransaction;
   const { startShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
 

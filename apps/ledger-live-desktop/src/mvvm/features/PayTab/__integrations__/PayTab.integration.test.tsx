@@ -97,7 +97,7 @@ let capturedExecutor: CapturedExecutor | undefined;
 
 jest.mock("LLD/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
-  DeviceIntentExecutorLWD: (props: CapturedExecutor) => {
+  DeviceIntentExecutor: (props: CapturedExecutor) => {
     capturedExecutor = props;
     return <div data-testid="device-intent-executor" />;
   },

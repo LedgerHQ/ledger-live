@@ -12,7 +12,7 @@ import {
   revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { DEVICE_TAGS } from "tests/utils/tagsUtils";
+import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.ETHEREUM;
 
@@ -60,7 +60,11 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
     test(
       `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap DEX native flow with ${provider.uiName}`,
       {
-        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
+        tag: [
+          ...(provider.availableOnLns ? DEVICE_TAGS : deviceTagsWithoutLNS()),
+          "@ethereum",
+          "@family-evm",
+        ],
         annotation: [
           {
             type: "TMS",
@@ -70,6 +74,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         ],
       },
       async ({ app }) => {
+        await app.speculos.enableBlindSigningOnNanoS();
         await revokeTokenApproval(fromAccount, provider);
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);
