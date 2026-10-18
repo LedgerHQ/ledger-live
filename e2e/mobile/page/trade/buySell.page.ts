@@ -43,14 +43,48 @@ export default class BuySellPage {
   @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
     await openDeeplink(page.toLowerCase());
-    await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxxlarge, {
-      checkVisibility: false,
-    });
+    // A native wait would block on the Buy screen's CAL lookup and hit its 120s hard cap:
+    // expectBuyScreenToBeVisible waits for the Buy screen instead.
+    if (page === "Sell") {
+      await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxxlarge, {
+        checkVisibility: false,
+      });
+    }
   }
 
-  // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
-  // 60s flakes on that alone. Latency is tracked separately, not fixed here.
-  cryptoCurrencySelectorTimeout = TIMEOUT.xxxlarge;
+  // The Buy screen waits for a CAL lookup of every provider-supported currency (700+ ids), which
+  // takes up to ~3.5 min on CI emulators. A wait attempt blocks until that lookup ends, so the deadline
+  // must outlast it or the test fails on a race. Temporary until buy-sell-ui looks up only the currency
+  // it needs (LIVE-39040).
+  cryptoCurrencySelectorTimeout = TIMEOUT.xxxxlarge;
+
+  // The tap that opens the Buy screen starts that lookup, and Detox only returns from a tap once the
+  // app is idle again, so it can outlast the 120s hard cap of tapById. These mirror the portfolio,
+  // account and drawer steps with an uncapped tap, bounded by the buy tests' own timeout.
+  private async tapToOpenBuyScreen(id: string) {
+    await getElementById(id).tap();
+  }
+
+  @Step("Press quick action buy button")
+  async pressPortfolioQuickActionBuy() {
+    await app.portfolio.checkQuickActionBuyButtonVisibility();
+    await waitForFullyVisibleById(app.portfolio.quickActionsCtasContainerId);
+    await this.tapToOpenBuyScreen(app.portfolio.quickActionBuyButtonV4);
+  }
+
+  @Step("Tap Buy on the account page")
+  async tapAccountBuy() {
+    await scrollToId(app.account.buyButtonId, app.account.accountScreenScrollView);
+    await this.tapToOpenBuyScreen(app.account.buyButtonId);
+  }
+
+  @Step("Select first account in modular drawer if asked")
+  async selectFirstDrawerAccountIfAsked() {
+    if (await IsIdVisible(app.modularDrawer.accountScreenId)) {
+      await waitForElement(getElementById(app.modularDrawer.accountItem));
+      await this.tapToOpenBuyScreen(app.modularDrawer.accountItem);
+    }
+  }
 
   @Step("Close the Buy screen")
   async closeBuyScreen() {
