@@ -20,25 +20,28 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { ColumnDef } from "@tanstack/react-table";
-import { PriceCell } from "../components/Cells/PriceCell";
+import { PriceCell } from "./Cells/PriceCell";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
 import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
-import { TrendCell } from "../components/Cells/TrendCell";
+import { TrendCell } from "./Cells/TrendCell";
 import { TruncatedText } from "LLD/components/TruncatedText";
-import { sanitizeAssetNameForTestId } from "../utils/assetTableHelpers";
-import type { AssetTableItem } from "../types";
+import { sanitizeAssetNameForTestId } from "./utils/sanitizeAssetNameForTestId";
+import type { AssetTableItem } from "./types";
 
 export type UseAssetTableOptions = {
   /** When false, hides the info tooltip on the trend column header (e.g. full crypto assets page). */
   readonly showTrendColumnTooltip?: boolean;
+  /** When false, hides the price column (e.g. assets of a single account). */
+  readonly showPriceColumn?: boolean;
 };
 
 function columnHeader(label: string) {
   return () => <TruncatedText as="span" text={label} />;
 }
 
-export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
+export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
   const showTrendColumnTooltip = options?.showTrendColumnTooltip ?? true;
+  const showPriceColumn = options?.showPriceColumn ?? true;
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -163,6 +166,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
     data: assets,
     columns,
     autoResetPageIndex: false,
+    state: { columnVisibility: { price: showPriceColumn } },
   });
 
   return table;

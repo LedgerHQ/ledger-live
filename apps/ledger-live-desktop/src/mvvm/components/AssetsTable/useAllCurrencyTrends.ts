@@ -8,7 +8,7 @@ import {
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import type { AssetTableItem } from "../types";
+import type { AssetTableItem } from "./types";
 
 /**
  * Computes the trend percentage for all asset items in a single pass,

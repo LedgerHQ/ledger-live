@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import type { AssetTableItem } from "../../types";
+import type { AssetTableItem } from "../types";
 import { useAllCurrencyTrends } from "../useAllCurrencyTrends";
 
 jest.mock("@features/platform-market-countervalues", () => ({

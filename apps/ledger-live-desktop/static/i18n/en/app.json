@@ -10670,6 +10670,9 @@
   "accountDetail": {
     "header": {
       "settings": "Account settings"
+    },
+    "assets": {
+      "title": "Assets"
     }
   },
   "assetDetails": {
