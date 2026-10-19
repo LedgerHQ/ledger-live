@@ -14904,6 +14904,9 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^8.0.0
         version: 8.0.0
+      '@domain/api-account-data':
+        specifier: workspace:^
+        version: link:../../domain/api/account-data
       '@domain/api-aggregated-assets':
         specifier: workspace:^
         version: link:../../domain/api/aggregated-assets
@@ -14916,6 +14919,9 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account-data':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-data
       '@domain/entity-account-descriptor':
         specifier: workspace:^
         version: link:../../domain/entity/account-descriptor
