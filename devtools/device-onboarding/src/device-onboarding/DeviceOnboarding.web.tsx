@@ -2,7 +2,14 @@ import { Fragment, useState, type ReactNode } from "react";
 import { Button, SegmentedControl, SegmentedControlButton, Switch } from "@ledgerhq/lumen-ui-react";
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
-import { emptyLogCopy, headerCopy, featureFlagCopy, logCopy, overrideCopy } from "./configCopy";
+import {
+  emptyLogCopy,
+  headerCopy,
+  featureFlagCopy,
+  hostCopy,
+  logCopy,
+  overrideCopy,
+} from "./configCopy";
 import {
   useDeviceOnboardingViewModel,
   type DeviceOnboardingViewModel,
@@ -10,6 +17,7 @@ import {
   type EventRow,
   type NextStateGroup,
   type StateStep,
+  type SwitchRow,
 } from "./useDeviceOnboardingViewModel";
 
 function exportLogs(content: string) {
@@ -77,7 +85,10 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
 function ConfigTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
   return (
     <div className="flex flex-col">
-      {vm.featureFlagRows.length > 0 ? <FeatureFlagSection rows={vm.featureFlagRows} /> : null}
+      {vm.featureFlagRows.length > 0 ? (
+        <SwitchSection copy={featureFlagCopy} rows={vm.featureFlagRows} />
+      ) : null}
+      {vm.hostRows.length > 0 ? <SwitchSection copy={hostCopy} rows={vm.hostRows} /> : null}
       <OverrideSection vm={vm} />
     </div>
   );
@@ -130,12 +141,16 @@ function LogTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
   );
 }
 
-function FeatureFlagSection({
+function SwitchSection({
+  copy,
   rows,
-}: Readonly<{ rows: DeviceOnboardingViewModel["featureFlagRows"] }>) {
+}: Readonly<{
+  copy: { title: string; description: string };
+  rows: readonly SwitchRow[];
+}>) {
   return (
     <div className="px-16 py-12 border-b border-base flex flex-col gap-12">
-      <SectionHeader {...featureFlagCopy} />
+      <SectionHeader {...copy} />
       {rows.map(row => (
         <div key={row.key} className="flex items-center gap-8">
           <span className="body-3 text-base">{row.label}</span>
