@@ -28,13 +28,19 @@ export function AccountSettingsSheetView({
   onConfirmRemove,
   onShowMenu,
   onShowRemove,
+  onHidden,
   testID,
 }: AccountSettingsSheetViewProps) {
+  const onModalHide = () => {
+    onShowMenu();
+    onHidden?.();
+  };
+
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
-      onModalHide={onShowMenu}
+      onModalHide={onModalHide}
       hasBackButton={step === "remove"}
       onBack={onShowMenu}
       enableDynamicSizing
