@@ -135,13 +135,12 @@ export default class ContactDetailPage {
       await clearTextByElement(this.addAddressNameInput());
       await typeTextByElement(this.addAddressNameInput(), data.addressLabel, false);
     }
-
     await tapByElement(this.addAddressNameContinueButton());
+  }
 
-    // iOS Workaround: the mock device sheet never goes idle - disable sync for the wait
-    await app.common.disableSynchronizationForiOS();
+  @Step("Wait for the register address device confirmation")
+  async waitForRegisterAddressDeviceConfirmation() {
     await waitForElement(this.registerAddressDeviceConfirmation());
-    await app.common.enableSynchronization();
   }
 
   @Step("Expect {{{0}}} saved under {{1}}")
