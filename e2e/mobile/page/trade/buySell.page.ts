@@ -9,7 +9,7 @@ import {
   getExpectedQueryParams,
   urlMatchesProvider,
 } from "@ledgerhq/live-e2e-shared/buySellHandoff";
-import { openDeeplink, normalizeText } from "@e2e/helpers/commonHelpers";
+import { openDeeplink, normalizeText, isAndroid } from "@e2e/helpers/commonHelpers";
 import { getPtxHandoff } from "@e2e/bridge/server";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 
@@ -190,7 +190,12 @@ export default class BuySellPage {
   @Step("Select rotating provider")
   async selectRotatingProvider(): Promise<BuySellProvider> {
     const availableProviders = await this.getAvailableProviders();
-    const selected = pickRotatingProvider(availableProviders);
+    // Selecting Banxa segfaults the Android CI emulator's renderer (QAA-1509).
+    const selected = pickRotatingProvider(
+      isAndroid()
+        ? availableProviders.filter(uiName => uiName !== BuySellProvider.BANXA.uiName)
+        : availableProviders,
+    );
 
     await scrollToWebElement(getWebElementByTestId(this.provider(selected.name)));
     await tapWebElementByTestId(this.provider(selected.name));
