@@ -3,11 +3,7 @@ import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
-import {
-  getAccountCurrency,
-  getMainAccount,
-  getParentAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import type { PerpsWithdrawUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
@@ -144,10 +140,6 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   const destinationCurrency = destinationAccount
     ? getAccountCurrency(destinationAccount)
     : undefined;
-  const destinationAddress = destinationAccount
-    ? getMainAccount(destinationAccount, getParentAccount(destinationAccount, accounts))
-        .freshAddress
-    : undefined;
 
   const balanceError = validateWithdrawAmount({
     amount: new BigNumber(amount),
@@ -160,10 +152,10 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
     error: quoteError,
   } = usePerpsWithdrawQuote({
     amount: balanceError ? "" : amountText,
-    sourceAddress: getMainAccount(sourceAccount, getParentAccount(sourceAccount, accounts))
-      .freshAddress,
-    toCurrencyId: destinationCurrency?.id,
-    destinationAddress,
+    sourceAccount,
+    destinationAccount,
+    accounts,
+    counterValueCurrency: counterValueCurrency.ticker,
   });
 
   const counterValueUnit = counterValueCurrency.units[0];

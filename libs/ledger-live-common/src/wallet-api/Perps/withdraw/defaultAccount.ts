@@ -1,7 +1,6 @@
 import type BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "../../../account";
-import { toLedgerCurrencyId } from "./currencyMapping";
 
 /** The supported account with the highest fiat balance; unpriced accounts count as zero. */
 export function pickDefaultWithdrawAccount({
@@ -13,7 +12,7 @@ export function pickDefaultWithdrawAccount({
   supportedCurrencyIds: string[];
   getFiatBalance: (account: AccountLike) => BigNumber | undefined;
 }): AccountLike | undefined {
-  const supported = new Set(supportedCurrencyIds.map(toLedgerCurrencyId));
+  const supported = new Set(supportedCurrencyIds);
   let best: { account: AccountLike; fiat: BigNumber | undefined } | undefined;
 
   for (const account of accounts) {

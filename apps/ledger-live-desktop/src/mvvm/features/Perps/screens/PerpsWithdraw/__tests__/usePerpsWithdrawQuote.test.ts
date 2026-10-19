@@ -1,11 +1,12 @@
 import BigNumber from "bignumber.js";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { WithdrawLowLiquidityError } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
 import { usePerpsWithdrawQuote, type PerpsWithdrawQuoteParams } from "../usePerpsWithdrawQuote";
 
 const mockFetchWithdrawQuote = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/api", () => ({
-  fetchWithdrawQuote: (params: unknown) => mockFetchWithdrawQuote(params),
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/quote", () => ({
+  fetchPerpsWithdrawQuote: (params: unknown) => mockFetchWithdrawQuote(params),
 }));
 
 const quote = {
@@ -15,11 +16,15 @@ const quote = {
   expiry: 1792000000000,
 };
 
+const sourceAccount = { id: "source-1" } as AccountLike;
+const destinationAccount = { id: "destination-1" } as AccountLike;
+
 const baseParams: PerpsWithdrawQuoteParams = {
   amount: "500",
-  sourceAddress: "0xsource",
-  toCurrencyId: "ethereum",
-  destinationAddress: "0xdestination",
+  sourceAccount,
+  destinationAccount,
+  accounts: [],
+  counterValueCurrency: "USD",
 };
 
 function renderQuote(initialProps: PerpsWithdrawQuoteParams) {
@@ -45,10 +50,11 @@ describe("usePerpsWithdrawQuote", () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
     expect(mockFetchWithdrawQuote).toHaveBeenCalledWith({
-      amount: new BigNumber("500"),
-      sourceAddress: "0xsource",
-      toCurrencyId: "ethereum",
-      destinationAddress: "0xdestination",
+      accounts: [],
+      sourceAccount,
+      destinationAccount,
+      amount: "500",
+      counterValueCurrency: "USD",
     });
   });
 
@@ -61,7 +67,7 @@ describe("usePerpsWithdrawQuote", () => {
   it.each([
     ["no amount", { amount: "" }],
     ["a zero amount", { amount: "0" }],
-    ["no destination", { toCurrencyId: undefined, destinationAddress: undefined }],
+    ["no destination", { destinationAccount: undefined }],
   ])("stays idle with %s", async (_, overrides) => {
     const { result } = renderQuote({ ...baseParams, ...overrides });
 
@@ -84,12 +90,16 @@ describe("usePerpsWithdrawQuote", () => {
     const { rerender } = renderQuote(baseParams);
 
     rerender({ ...baseParams, amount: "600" });
-    rerender({ ...baseParams, amount: "600", toCurrencyId: "bitcoin" });
+    rerender({
+      ...baseParams,
+      amount: "600",
+      destinationAccount: { id: "destination-2" } as AccountLike,
+    });
     await passDebounce();
 
     expect(mockFetchWithdrawQuote).toHaveBeenCalledTimes(1);
     expect(mockFetchWithdrawQuote).toHaveBeenCalledWith(
-      expect.objectContaining({ amount: new BigNumber("600"), toCurrencyId: "bitcoin" }),
+      expect.objectContaining({ amount: "600", destinationAccount: { id: "destination-2" } }),
     );
   });
 });
