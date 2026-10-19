@@ -1,7 +1,7 @@
 import Config from "react-native-config";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { authApiExtra } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -43,6 +43,7 @@ import {
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { selectFeature } from "@shared/feature-flags";
+import { appConfig } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
@@ -98,12 +99,9 @@ export const store = configureStore({
                 selectFeature(store.getState(), "lwmAuth").enabled ?? false,
               authProvider: new AuthSDK(
                 {
-                  clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                  keycloakBaseUrl(): string | null {
-                    const environment = authEnvironmentSelector(store.getState());
-                    return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
-                  },
-                  keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                  clientId: appConfig.keycloakClientId,
+                  keycloakBaseUrl: appConfig.keycloakBaseUrl,
+                  keycloakRealm: appConfig.keycloakRealm,
                   disablePkce: true,
                 },
                 {

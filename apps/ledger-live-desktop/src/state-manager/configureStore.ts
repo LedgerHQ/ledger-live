@@ -2,7 +2,7 @@ import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/to
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
-import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
@@ -36,6 +36,7 @@ import { accountDataExtra } from "@domain/api-account-data";
 import { accountDataSources } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { selectFeature } from "@shared/feature-flags";
+import { loadAppConfig } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import {
   createDesktopFeatureFlagsMiddleware,
@@ -52,6 +53,7 @@ type Props = FeatureFlagsSources & {
   analyticsMiddleware?: Middleware;
   /** The countervalues loop's app wiring (window events, persistence); left out by unit tests. */
   countervalues?: CountervaluesSources;
+  appConfig?: ReturnType<typeof loadAppConfig>;
 };
 
 const customCreateStore = ({
@@ -61,6 +63,7 @@ const customCreateStore = ({
   fetchRemoteFlags,
   readCachedFlags,
   countervalues,
+  appConfig = loadAppConfig(),
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
@@ -106,12 +109,9 @@ const customCreateStore = ({
                   selectFeature(store.getState(), "lwdAuth").enabled ?? false,
                 authProvider: new AuthSDK(
                   {
-                    clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                    keycloakBaseUrl(): string | null {
-                      const environment = authEnvironmentSelector(store.getState());
-                      return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
-                    },
-                    keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                    clientId: appConfig.keycloakClientId,
+                    keycloakBaseUrl: appConfig.keycloakBaseUrl,
+                    keycloakRealm: appConfig.keycloakRealm,
                     disablePkce: true,
                   },
                   {
