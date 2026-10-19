@@ -1,7 +1,40 @@
-import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { Account } from "@ledgerhq/types-live";
+type Balance = {
+  gt: (value: number) => boolean;
+};
 
-export const getTokensWithFundsMap = (accounts: Account[]) => {
+type FundsCurrency = {
+  ticker: string;
+  name?: string;
+  id: string;
+};
+
+type FundsAccount = {
+  type?: string;
+  id?: string;
+  parentId?: string;
+  balance?: Balance;
+  currency?: FundsCurrency;
+  token?: { ticker: string; id: string };
+  subAccounts?: readonly FundsAccount[];
+};
+
+const getParentAccount = (account: FundsAccount, accounts: readonly FundsAccount[]) => {
+  switch (account.type) {
+    case "Account":
+      return account;
+    case "TokenAccount": {
+      const parentAccount = accounts.find(candidate => candidate.id == account.parentId);
+      if (!parentAccount) {
+        throw new Error("No 'parentAccount' account provided for token account");
+      }
+      return parentAccount;
+    }
+    default:
+      return undefined;
+  }
+};
+
+export const getTokensWithFundsMap = (accounts: readonly FundsAccount[]) => {
   const tokensMap = new Map<string, { ticker: string; networkName: string; id: string }>();
   for (const account of accounts) {
     const { balance, currency } = account || {};
@@ -19,8 +52,8 @@ export const getTokensWithFundsMap = (accounts: Account[]) => {
     });
 
     account.subAccounts?.forEach(subAccount => {
-      const { balance, token } = subAccount || {};
-      if (!balance?.gt(0) || !token) return;
+      const { balance: subBalance, token } = subAccount || {};
+      if (!subBalance?.gt(0) || !token) return;
 
       const subKey = `${token.ticker}:${networkName}`;
       tokensMap.set(subKey, {
@@ -32,9 +65,10 @@ export const getTokensWithFundsMap = (accounts: Account[]) => {
   }
   return tokensMap;
 };
-/** Format defaults to "USDT on Ethereum". format: "currencyId" returns the id of each token, e.g. "ethereum/erc20/usde". */
+
+/** Format defaults to "USDT on Ethereum". format: "currencyId" returns each currency id. */
 export const getTokensWithFunds = (
-  accounts: Account[],
+  accounts: readonly FundsAccount[] | undefined,
   customFormat: "currencyId" | "default" = "default",
 ) => {
   if (!accounts?.length) return [];

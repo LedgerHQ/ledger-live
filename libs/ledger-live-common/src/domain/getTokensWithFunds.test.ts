@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import BigNumber from "bignumber.js";
-import { getTokensWithFunds } from "./getTokensWithFunds";
+import { getTokensWithFunds } from "@features/platform-account-analytics";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests

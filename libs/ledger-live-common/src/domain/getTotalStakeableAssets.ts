@@ -1,4 +1,4 @@
-import { getTokensWithFundsMap } from "./getTokensWithFunds";
+import { getTokensWithFundsMap } from "@features/platform-account-analytics";
 import { Account } from "@ledgerhq/types-live";
 
 export function getTotalStakeableAssets(
