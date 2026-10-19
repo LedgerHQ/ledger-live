@@ -20476,8 +20476,8 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       danger:
-        specifier: 13.0.10
-        version: 13.0.10
+        specifier: 14.0.7
+        version: 14.0.7
       yaml:
         specifier: 2.8.3
         version: 2.8.3
@@ -30987,9 +30987,9 @@ packages:
     resolution: {integrity: sha512-VqKjzBLejbSMT4IgbmVgDjpkYrNWUYJnbCGo874u7MMKIWsILRX+OpX/gTk8MqjpT1A/c6HY2dCA77ZN0lkQ2Q==}
     engines: {node: '>=12'}
 
-  danger@13.0.10:
-    resolution: {integrity: sha512-qMa/YdfVP/a1HhuvMUsocTO0otgLphuiV5z4G5P7C4+qHvNtCSlzvZm3UuwBut2iwQ/r5NGcwcmD4t+8LjIS0A==}
-    engines: {node: '>=18'}
+  danger@14.0.7:
+    resolution: {integrity: sha512-tOPndifqtQchQxJ0Wfs7cr9s+cCVtt0RSUzaLEoL9quzLi2tDfa1POyqFF1f4bL7DNOgpNOKAIdP9lSlgksLhw==}
+    engines: {node: '>=18.17'}
     hasBin: true
 
   dashdash@1.14.1:
@@ -37993,10 +37993,6 @@ packages:
   undici@5.29.0:
     resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
     engines: {node: '>=14.0'}
-
-  undici@6.21.1:
-    resolution: {integrity: sha512-q/1rj5D0/zayJB2FraXdaWxbhWiNKDvu8naDT2dl1yTlvJp4BLtOcp2a5BvgGNQpYYJzau7tf1WgKv3b+7mqpQ==}
-    engines: {node: '>=18.17'}
 
   undici@6.28.1:
     resolution: {integrity: sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==}
@@ -53225,7 +53221,7 @@ snapshots:
     dependencies:
       d3-array: 3.2.4
 
-  danger@13.0.10:
+  danger@14.0.7:
     dependencies:
       '@gitbeaker/rest': 38.12.1
       '@octokit/rest': 20.1.2
@@ -53239,7 +53235,6 @@ snapshots:
       ini: 5.0.0
       json5: 2.2.3
       jsonpointer: 5.0.1
-      jsonwebtoken: 9.0.3
       lodash.includes: 4.3.0
       lodash.isobject: 3.0.2
       lodash.mapvalues: 4.6.0
@@ -53257,7 +53252,7 @@ snapshots:
       regenerator-runtime: 0.13.11
       require-from-string: 2.0.2
       supports-hyperlinks: 4.5.0
-      undici: 6.21.1
+      undici: 7.28.0
     transitivePeerDependencies:
       - supports-color
 
@@ -61824,8 +61819,6 @@ snapshots:
   undici@5.29.0:
     dependencies:
       '@fastify/busboy': 2.1.1
-
-  undici@6.21.1: {}
 
   undici@6.28.1: {}
 
