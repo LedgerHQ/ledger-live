@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
 import { ContactsFeatureIntroductionDialog } from "./ContactsFeatureIntroductionDialog";
 
@@ -9,16 +10,9 @@ function renderDialog() {
   const onClose = jest.fn();
 
   render(
-    <ContactsFeatureIntroductionDialog
-      isOpen
-      title="Add contacts"
-      highlights={[
-        { icon: "Contact", title: "Save recipients", description: "Reuse an address safely." },
-      ]}
-      primaryActionLabel="Get started"
-      onComplete={onComplete}
-      onClose={onClose}
-    />,
+    <I18nTestProvider>
+      <ContactsFeatureIntroductionDialog isOpen onComplete={onComplete} onClose={onClose} />
+    </I18nTestProvider>,
   );
 
   return { onComplete, onClose };
@@ -34,7 +28,9 @@ describe("ContactsFeatureIntroductionDialog", () => {
     expect(
       screen.getByTestId("contacts-feature-introduction-hero").querySelector("img"),
     ).toHaveAttribute("src", CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE);
-    expect(screen.getByText("Save recipients")).toBeVisible();
+    expect(
+      screen.getByText("contacts.featureIntroduction.highlights.saveAddresses.title"),
+    ).toBeVisible();
     expect(screen.queryByTestId("contacts-feature-introduction-secondary")).toBeNull();
 
     await user.click(screen.getByTestId("contacts-feature-introduction-primary"));

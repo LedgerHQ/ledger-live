@@ -7,15 +7,7 @@ describe("ContactsLedgerSyncIntroductionSheet", () => {
     const onActivate = jest.fn();
     const onDismiss = jest.fn();
     const { user } = render(
-      <ContactsLedgerSyncIntroductionSheet
-        isOpen
-        title="Sync your wallet to add a contact"
-        description="Your contacts are encrypted."
-        activateLabel="Sync my wallet"
-        dismissLabel="Not now"
-        onActivate={onActivate}
-        onDismiss={onDismiss}
-      />,
+      <ContactsLedgerSyncIntroductionSheet isOpen onActivate={onActivate} onDismiss={onDismiss} />,
     );
 
     await user.press(screen.getByRole("button", { name: "Sync my wallet" }));
@@ -28,15 +20,7 @@ describe("ContactsLedgerSyncIntroductionSheet", () => {
   it("should call the dismissal action once when the dismissed sheet closes", async () => {
     const onDismiss = jest.fn();
     const { user } = render(
-      <ContactsLedgerSyncIntroductionSheet
-        isOpen
-        title="Sync your wallet to add a contact"
-        description="Your contacts are encrypted."
-        activateLabel="Sync my wallet"
-        dismissLabel="Not now"
-        onActivate={jest.fn()}
-        onDismiss={onDismiss}
-      />,
+      <ContactsLedgerSyncIntroductionSheet isOpen onActivate={jest.fn()} onDismiss={onDismiss} />,
     );
 
     await user.press(screen.getByRole("button", { name: "Not now" }));
