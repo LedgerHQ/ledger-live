@@ -47,23 +47,28 @@ export type CalTokenCacheDispatch = ThunkDispatch<WithCryptoAssetsApi, CalApiExt
 const TOKEN_LOOKUP_ENDPOINTS = new Set<string>(["findTokenById", "findTokenByAddressInCurrency"]);
 
 type TokenLookupQuery = {
-  status?: string | undefined;
+  status?: string;
   data?: unknown;
-  endpointName?: string | undefined;
-  fulfilledTimeStamp?: number | undefined;
+  endpointName?: string;
+  fulfilledTimeStamp?: number;
   originalArgs?: unknown;
 };
 
 type ObservedSyncHash = { hash: string; at: number };
 
 function isFulfilledTokenLookup(
-  query: TokenLookupQuery | undefined,
+  query: unknown,
 ): query is TokenLookupQuery & { data: TokenCurrency; endpointName: string } {
+  if (!query || typeof query !== "object") {
+    return false;
+  }
+
+  const candidate = query as TokenLookupQuery;
   return (
-    query?.status === "fulfilled" &&
-    !!query.data &&
-    typeof query.endpointName === "string" &&
-    TOKEN_LOOKUP_ENDPOINTS.has(query.endpointName)
+    candidate.status === "fulfilled" &&
+    !!candidate.data &&
+    typeof candidate.endpointName === "string" &&
+    TOKEN_LOOKUP_ENDPOINTS.has(candidate.endpointName)
   );
 }
 
