@@ -154,6 +154,8 @@ jobs:
       android_runner_label: ledger-live-linux-8CPU-32RAM
       max_shards: 1
       check_pod_lockfile: true
+      js_bundle_hash_ios: ${{ needs.determine-affected.outputs.mobile_js_hash_ios }}
+      js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
 
   # Tests
   test-libraries:
