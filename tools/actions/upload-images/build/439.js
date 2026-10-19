@@ -1,20 +1,21 @@
 "use strict";
 exports.ids = [
-    178
+    439
 ];
 exports.modules = {
-    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-http@3.535.0/node_modules/@aws-sdk/credential-provider-http/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
+    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-http@3.972.26/node_modules/@aws-sdk/credential-provider-http/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
         __webpack_require__.d(__webpack_exports__, {
             fromHttp: ()=>fromHttp
         });
-        var dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+node-http-handler@2.5.0/node_modules/@smithy/node-http-handler/dist-es/index.js");
-        var property_provider_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+property-provider@2.2.0/node_modules/@smithy/property-provider/dist-es/index.js");
-        var promises_ = __webpack_require__("fs/promises");
+        var setCredentialFeature = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+core@3.973.26/node_modules/@aws-sdk/core/dist-es/submodules/client/setCredentialFeature.js");
+        var node_http_handler = __webpack_require__("../../../node_modules/.pnpm/@smithy+node-http-handler@4.5.1/node_modules/@smithy/node-http-handler/dist-es/node-http-handler.js");
+        var CredentialsProviderError = __webpack_require__("../../../node_modules/.pnpm/@smithy+property-provider@4.2.12/node_modules/@smithy/property-provider/dist-es/CredentialsProviderError.js");
+        var promises_ = __webpack_require__("node:fs/promises");
         var promises_default = /*#__PURE__*/ __webpack_require__.n(promises_);
         const ECS_CONTAINER_HOST = "169.254.170.2";
         const EKS_CONTAINER_HOST_IPv4 = "169.254.170.23";
         const EKS_CONTAINER_HOST_IPv6 = "[fd00:ec2::23]";
-        const checkUrl = (url)=>{
+        const checkUrl = (url, logger)=>{
             if ("https:" === url.protocol) return;
             if (url.hostname === ECS_CONTAINER_HOST || url.hostname === EKS_CONTAINER_HOST_IPv4 || url.hostname === EKS_CONTAINER_HOST_IPv6) return;
             if (url.hostname.includes("[")) {
@@ -28,16 +29,18 @@ exports.modules = {
                 };
                 if ("127" === ipComponents[0] && inRange(ipComponents[1]) && inRange(ipComponents[2]) && inRange(ipComponents[3]) && 4 === ipComponents.length) return;
             }
-            throw new property_provider_dist_es.C1(`URL not accepted. It must either be HTTPS or match one of the following:
+            throw new CredentialsProviderError.C(`URL not accepted. It must either be HTTPS or match one of the following:
   - loopback CIDR 127.0.0.0/8 or [::1/128]
   - ECS container host 169.254.170.2
-  - EKS container host 169.254.170.23 or [fd00:ec2::23]`);
+  - EKS container host 169.254.170.23 or [fd00:ec2::23]`, {
+                logger
+            });
         };
-        var protocol_http_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+protocol-http@3.3.0/node_modules/@smithy/protocol-http/dist-es/index.js");
-        var smithy_client_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+smithy-client@2.5.0/node_modules/@smithy/smithy-client/dist-es/index.js");
-        var util_stream_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+util-stream@2.2.0/node_modules/@smithy/util-stream/dist-es/index.js");
+        var httpRequest = __webpack_require__("../../../node_modules/.pnpm/@smithy+protocol-http@5.3.12/node_modules/@smithy/protocol-http/dist-es/httpRequest.js");
+        var date_utils = __webpack_require__("../../../node_modules/.pnpm/@smithy+core@3.23.13/node_modules/@smithy/core/dist-es/submodules/serde/date-utils.js");
+        var sdk_stream_mixin = __webpack_require__("../../../node_modules/.pnpm/@smithy+util-stream@4.5.21/node_modules/@smithy/util-stream/dist-es/sdk-stream-mixin.js");
         function createGetRequest(url) {
-            return new protocol_http_dist_es.Kd({
+            return new httpRequest.K({
                 protocol: url.protocol,
                 hostname: url.hostname,
                 port: Number(url.port),
@@ -49,19 +52,19 @@ exports.modules = {
                 fragment: url.hash
             });
         }
-        async function getCredentials(response) {
-            const contentType = response?.headers["content-type"] ?? response?.headers["Content-Type"] ?? "";
-            if (!contentType.includes("json")) console.warn("HTTP credential provider response header content-type was not application/json. Observed: " + contentType + ".");
-            const stream = (0, util_stream_dist_es.c9)(response.body);
+        async function getCredentials(response, logger) {
+            const stream = (0, sdk_stream_mixin.c)(response.body);
             const str = await stream.transformToString();
             if (200 === response.statusCode) {
                 const parsed = JSON.parse(str);
-                if ("string" != typeof parsed.AccessKeyId || "string" != typeof parsed.SecretAccessKey || "string" != typeof parsed.Token || "string" != typeof parsed.Expiration) throw new property_provider_dist_es.C1("HTTP credential provider response not of the required format, an object matching: { AccessKeyId: string, SecretAccessKey: string, Token: string, Expiration: string(rfc3339) }");
+                if ("string" != typeof parsed.AccessKeyId || "string" != typeof parsed.SecretAccessKey || "string" != typeof parsed.Token || "string" != typeof parsed.Expiration) throw new CredentialsProviderError.C("HTTP credential provider response not of the required format, an object matching: { AccessKeyId: string, SecretAccessKey: string, Token: string, Expiration: string(rfc3339) }", {
+                    logger
+                });
                 return {
                     accessKeyId: parsed.AccessKeyId,
                     secretAccessKey: parsed.SecretAccessKey,
                     sessionToken: parsed.Token,
-                    expiration: (0, smithy_client_dist_es.EI)(parsed.Expiration)
+                    expiration: (0, date_utils.EI)(parsed.Expiration)
                 };
             }
             if (response.statusCode >= 400 && response.statusCode < 500) {
@@ -69,12 +72,16 @@ exports.modules = {
                 try {
                     parsedBody = JSON.parse(str);
                 } catch (e) {}
-                throw Object.assign(new property_provider_dist_es.C1(`Server responded with status: ${response.statusCode}`), {
+                throw Object.assign(new CredentialsProviderError.C(`Server responded with status: ${response.statusCode}`, {
+                    logger
+                }), {
                     Code: parsedBody.Code,
                     Message: parsedBody.Message
                 });
             }
-            throw new property_provider_dist_es.C1(`Server responded with status: ${response.statusCode}`);
+            throw new CredentialsProviderError.C(`Server responded with status: ${response.statusCode}`, {
+                logger
+            });
         }
         const retryWrapper = (toRetry, maxRetries, delayMs)=>async ()=>{
                 for(let i = 0; i < maxRetries; ++i)try {
@@ -89,28 +96,31 @@ exports.modules = {
         const AWS_CONTAINER_CREDENTIALS_FULL_URI = "AWS_CONTAINER_CREDENTIALS_FULL_URI";
         const AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE = "AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE";
         const AWS_CONTAINER_AUTHORIZATION_TOKEN = "AWS_CONTAINER_AUTHORIZATION_TOKEN";
-        const fromHttp = (options)=>{
-            options.logger?.debug("@aws-sdk/credential-provider-http", "fromHttp");
+        const fromHttp = (options = {})=>{
+            options.logger?.debug("@aws-sdk/credential-provider-http - fromHttp");
             let host;
             const relative = options.awsContainerCredentialsRelativeUri ?? process.env[AWS_CONTAINER_CREDENTIALS_RELATIVE_URI];
             const full = options.awsContainerCredentialsFullUri ?? process.env[AWS_CONTAINER_CREDENTIALS_FULL_URI];
             const token = options.awsContainerAuthorizationToken ?? process.env[AWS_CONTAINER_AUTHORIZATION_TOKEN];
             const tokenFile = options.awsContainerAuthorizationTokenFile ?? process.env[AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE];
+            const warn = options.logger?.constructor?.name !== "NoOpLogger" && options.logger?.warn ? options.logger.warn.bind(options.logger) : console.warn;
             if (relative && full) {
-                console.warn("AWS SDK HTTP credentials provider:", "you have set both awsContainerCredentialsRelativeUri and awsContainerCredentialsFullUri.");
-                console.warn("awsContainerCredentialsFullUri will take precedence.");
+                warn("@aws-sdk/credential-provider-http: you have set both awsContainerCredentialsRelativeUri and awsContainerCredentialsFullUri.");
+                warn("awsContainerCredentialsFullUri will take precedence.");
             }
             if (token && tokenFile) {
-                console.warn("AWS SDK HTTP credentials provider:", "you have set both awsContainerAuthorizationToken and awsContainerAuthorizationTokenFile.");
-                console.warn("awsContainerAuthorizationToken will take precedence.");
+                warn("@aws-sdk/credential-provider-http: you have set both awsContainerAuthorizationToken and awsContainerAuthorizationTokenFile.");
+                warn("awsContainerAuthorizationToken will take precedence.");
             }
             if (full) host = full;
             else if (relative) host = `${DEFAULT_LINK_LOCAL_HOST}${relative}`;
-            else throw new property_provider_dist_es.C1(`No HTTP credential provider host provided.
-Set AWS_CONTAINER_CREDENTIALS_FULL_URI or AWS_CONTAINER_CREDENTIALS_RELATIVE_URI.`);
+            else throw new CredentialsProviderError.C(`No HTTP credential provider host provided.
+Set AWS_CONTAINER_CREDENTIALS_FULL_URI or AWS_CONTAINER_CREDENTIALS_RELATIVE_URI.`, {
+                logger: options.logger
+            });
             const url = new URL(host);
-            checkUrl(url);
-            const requestHandler = new dist_es.$c({
+            checkUrl(url, options.logger);
+            const requestHandler = node_http_handler.$.create({
                 requestTimeout: options.timeout ?? 1000,
                 connectionTimeout: options.timeout ?? 1000
             });
@@ -120,9 +130,11 @@ Set AWS_CONTAINER_CREDENTIALS_FULL_URI or AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
                 else if (tokenFile) request.headers.Authorization = (await promises_default().readFile(tokenFile)).toString();
                 try {
                     const result = await requestHandler.handle(request);
-                    return getCredentials(result.response);
+                    return getCredentials(result.response).then((creds)=>(0, setCredentialFeature.g)(creds, "CREDENTIALS_HTTP", "z"));
                 } catch (e) {
-                    throw new property_provider_dist_es.C1(String(e));
+                    throw new CredentialsProviderError.C(String(e), {
+                        logger: options.logger
+                    });
                 }
             }, options.maxRetries ?? 3, options.timeout ?? 1000);
         };
