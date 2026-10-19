@@ -5,7 +5,8 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { isAccountDetailEnabledFor } from "@features/flow-account-detail";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
@@ -15,6 +16,7 @@ import { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index
 import { computeBalanceSortCountervalueByAccountId } from "../../../utils/aggregateAccounts";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
+import { useAccountSettingsDialog } from "./useAccountSettingsDialog";
 import { useEditNameDialog } from "./useEditNameDialog";
 import {
   ActionCell,
@@ -44,6 +46,14 @@ export function useCryptoDataTable({
   const syncPhase = useSyncPhase();
   const isSyncing = syncPhase === "syncing";
   const { openEditName, editNameDialog } = useEditNameDialog(rows);
+  const { openSettings, settingsDialog } = useAccountSettingsDialog(rows);
+  const accountDetailFeature = useFeature("accountDetail");
+  const hasAccountSettings = useCallback(
+    (account: AccountLike) =>
+      account.type === "Account" &&
+      isAccountDetailEnabledFor(accountDetailFeature, account.currency.id),
+    [accountDetailFeature],
+  );
 
   const aggregatedDataByAccountId = useMemo(
     () =>
@@ -131,6 +141,8 @@ export function useCryptoDataTable({
       aggregatedDataByAccountId,
       isSyncing,
       onEditName: openEditName,
+      hasAccountSettings,
+      onOpenSettings: openSettings,
     }),
     [
       walletState,
@@ -140,6 +152,8 @@ export function useCryptoDataTable({
       aggregatedDataByAccountId,
       isSyncing,
       openEditName,
+      hasAccountSettings,
+      openSettings,
     ],
   );
 
@@ -189,5 +203,13 @@ export function useCryptoDataTable({
     [walletState],
   );
 
-  return { table, handleRowClick, getRowTestId, cellData, editNameDialog, isSyncing };
+  return {
+    table,
+    handleRowClick,
+    getRowTestId,
+    cellData,
+    editNameDialog,
+    settingsDialog,
+    isSyncing,
+  };
 }

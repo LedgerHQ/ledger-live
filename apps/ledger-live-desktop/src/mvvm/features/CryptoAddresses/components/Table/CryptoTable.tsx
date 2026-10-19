@@ -2,6 +2,8 @@ import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCryptoDataTable } from "./hooks/useCryptoDataTable";
 import { PlainCryptoTable } from "../PlainCryptoTable";
+import { AccountSettings } from "@features/flow-account-detail-settings";
+import { useAccountSettingsAdapter } from "LLD/hooks/useAccountSettingsAdapter";
 import { EditName } from "../EditName";
 import { CryptoTableCellDataProvider } from "./CryptoTableCells";
 
@@ -12,8 +14,16 @@ type CryptoTableProps = {
 };
 
 export function CryptoTable({ rows, lookupParentAccount, onRowClick }: CryptoTableProps) {
-  const { table, handleRowClick, getRowTestId, cellData, editNameDialog, isSyncing } =
-    useCryptoDataTable({ rows, lookupParentAccount, onRowClick });
+  const {
+    table,
+    handleRowClick,
+    getRowTestId,
+    cellData,
+    editNameDialog,
+    settingsDialog,
+    isSyncing,
+  } = useCryptoDataTable({ rows, lookupParentAccount, onRowClick });
+  const accountSettingsAdapter = useAccountSettingsAdapter();
 
   return (
     <CryptoTableCellDataProvider value={cellData}>
@@ -26,6 +36,15 @@ export function CryptoTable({ rows, lookupParentAccount, onRowClick }: CryptoTab
           open={editNameDialog.open}
           onOpenChange={editNameDialog.onOpenChange}
           isSyncing={isSyncing}
+        />
+      )}
+      {settingsDialog && (
+        <AccountSettings
+          account={settingsDialog.account}
+          adapter={accountSettingsAdapter}
+          isOpen={settingsDialog.isOpen}
+          onClose={settingsDialog.onClose}
+          testID="crypto-addresses-account-settings-dialog"
         />
       )}
     </CryptoTableCellDataProvider>

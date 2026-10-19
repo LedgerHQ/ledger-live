@@ -6359,6 +6359,9 @@ importers:
 
   features/flow/account-detail-settings:
     dependencies:
+      '@domain/entity-account-name':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-name
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
