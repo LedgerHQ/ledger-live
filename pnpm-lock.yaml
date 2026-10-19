@@ -312,9 +312,9 @@ catalogs:
     '@rsbuild/plugin-styled-components':
       specifier: 1.6.2
       version: 1.6.2
-    '@rsdoctor/rspack-plugin':
-      specifier: 2.0.0-alpha.0
-      version: 2.0.0-alpha.0
+    '@rsdoctor/core':
+      specifier: 2.0.0
+      version: 2.0.0
     '@rslib/core':
       specifier: 0.23.2
       version: 0.23.2
@@ -1245,7 +1245,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -1269,7 +1269,7 @@ importers:
         version: link:../../libs/live-dmk-speculos
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -1619,9 +1619,9 @@ importers:
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.63.0
-      '@rsdoctor/rspack-plugin':
+      '@rsdoctor/core':
         specifier: 'catalog:'
-        version: 2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 2.0.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@types/node@24.12.0)
       '@rspack/cli':
         specifier: 'catalog:'
         version: 2.1.10(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@rspack/dev-server@2.1.0(@rspack/core@2.1.10(@swc/helpers@0.5.23)))
@@ -2146,7 +2146,7 @@ importers:
         version: link:../../libs/ui/packages/icons
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -2170,7 +2170,7 @@ importers:
         version: link:../../libs/live-engagement
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -2700,9 +2700,9 @@ importers:
       '@rozenite/storage-plugin':
         specifier: 2.4.0
         version: 2.4.0(24267ffbcf82f7add0e56cf5996a32e4)
-      '@rsdoctor/rspack-plugin':
+      '@rsdoctor/core':
         specifier: 'catalog:'
-        version: 2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 2.0.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@types/node@24.12.0)
       '@rspack/core':
         specifier: 'catalog:'
         version: 2.1.10(@swc/helpers@0.5.23)
@@ -2921,7 +2921,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -3152,7 +3152,7 @@ importers:
         version: 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -6303,7 +6303,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -11034,7 +11034,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       command-line-args:
         specifier: 6.0.1
         version: 6.0.1
@@ -11107,7 +11107,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11180,7 +11180,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11265,7 +11265,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11356,7 +11356,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.1(@typescript/typescript6@6.0.2)
@@ -11510,7 +11510,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11589,7 +11589,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11674,7 +11674,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11768,7 +11768,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11865,7 +11865,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11965,7 +11965,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12059,7 +12059,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12153,7 +12153,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12238,7 +12238,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12390,7 +12390,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12493,7 +12493,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12581,7 +12581,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12657,7 +12657,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12745,7 +12745,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12818,7 +12818,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12930,7 +12930,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -13030,7 +13030,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -13133,7 +13133,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -13218,7 +13218,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -13297,7 +13297,7 @@ importers:
         version: 10.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -13370,7 +13370,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@vechain/sdk-core':
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)(zod@3.25.76)
@@ -13680,7 +13680,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.1(@typescript/typescript6@6.0.2)
@@ -13993,7 +13993,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../live-signer-evm
@@ -14851,7 +14851,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../../live-signer-zcash
@@ -14992,7 +14992,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -15553,7 +15553,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-promise':
         specifier: 'catalog:'
         version: 0.4.0
@@ -15929,7 +15929,7 @@ importers:
     dependencies:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -15978,7 +15978,7 @@ importers:
     dependencies:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -16045,7 +16045,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -19151,7 +19151,7 @@ importers:
         version: 10.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0)
+        version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@noble/curves':
         specifier: 'catalog:'
         version: 2.4.0
@@ -21275,10 +21275,6 @@ packages:
 
   '@babel/code-frame@7.10.4':
     resolution: {integrity: sha512-vG6SvB6oYEhvgisZNFRmRCUkLz11c7rp+tbNTynGqc6mS1d5ATd/sGyV6W0KZZnXRKMTzZDRgQT3Ou9jhpAfUg==}
-
-  '@babel/code-frame@7.26.2':
-    resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -25635,6 +25631,9 @@ packages:
     resolution: {integrity: sha512-QIjosiI1FYnHxxLSc+zsAToUr/NrJGzDvdI5LU2RlJ5dKnwVVhIndz/upPNGNKDaQWZsmFiu95q1pEzvSSHikA==}
     engines: {node: '>=18.12'}
 
+  '@polka/url@1.0.0-next.29':
+    resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
   '@polkadot-api/json-rpc-provider-proxy@0.1.0':
     resolution: {integrity: sha512-8GSFE5+EF73MCuLQm8tjrbCqlgclcHBSRaswvXziJ0ZW7iw3UEMsKkkKvELayWyBuOPa2T5i1nj6gFOeIsqvrg==}
 
@@ -26628,14 +26627,6 @@ packages:
       core-js:
         optional: true
 
-  '@rsbuild/plugin-check-syntax@1.6.1':
-    resolution: {integrity: sha512-26xtEYN0QjZYoyt0lWnvIztBWjEZJvcfw7MN4f5B4SpNggmnF7F7aNPrgkY3EccXVFx1VGQBhnCkBV//OoS07Q==}
-    peerDependencies:
-      '@rsbuild/core': ^1.0.0 || ^2.0.0-0
-    peerDependenciesMeta:
-      '@rsbuild/core':
-        optional: true
-
   '@rsbuild/plugin-node-polyfill@1.4.6':
     resolution: {integrity: sha512-uJHDmfinJe00h9JvZfzOeiYYpIkAOorMsX2nv9c6n+YQBFgQalJZ3O2q2CLoqtwspQl5Pa8WU1hsUvzRi1Ro3g==}
     peerDependencies:
@@ -26660,36 +26651,28 @@ packages:
       '@rsbuild/core':
         optional: true
 
-  '@rsdoctor/client@2.0.0-alpha.0':
-    resolution: {integrity: sha512-afWQfLPXcsxyN+/0T/ommhnGxdrUhpNGM3b2LLUNRdD+i6X+fHPdfNI2NBgyniLI3pcxFSyqeDuoBUDCkQQ55A==}
+  '@rsdoctor/client@2.0.0':
+    resolution: {integrity: sha512-gxtVkRkbJ+u/ZMlbac73cysgzqlA7cAQ8bwwHUqpfwu567Uzoe0JS4RGuZZt6eZjvM9VZkI9OLsmhlAuy4b3PQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
 
-  '@rsdoctor/core@2.0.0-alpha.0':
-    resolution: {integrity: sha512-p/7/86EBISJ7J/Sgu7sSKQAFV/YSOKFjQlQQjr8B5NUM1qBMZN7RCvHbLLyRX8Lf+4t7Kvxfv85o0dVvQl63Sg==}
-
-  '@rsdoctor/graph@2.0.0-alpha.0':
-    resolution: {integrity: sha512-ALLhzffqQvLof1dsaqH5xjvOHluq6+iwHdhJbkWfq1EwFtLS1tH50IYIexABhaxAiYcuKo+y7Tsl8/Z5gs0cig==}
-
-  '@rsdoctor/rspack-plugin@2.0.0-alpha.0':
-    resolution: {integrity: sha512-yls+jp5l3C7dEkhTVz7zMBZmzFwe03haXrOUXwzMFQ3QhF6QXFFaRgYslPq2M9A44zocHMcfMpfN6E62fY14Mw==}
+  '@rsdoctor/core@2.0.0':
+    resolution: {integrity: sha512-06W5FnBXZWMMDb6KY6N4RHmzF/hkV1h8dM2y5Sct4hqWGviZxsIcuiwcuK2GOcgEYIwo1jAd9GMgUPCOpOKSyw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      '@rspack/core': '*'
+      '@rspack/core': ^2.0.0
     peerDependenciesMeta:
       '@rspack/core':
         optional: true
 
-  '@rsdoctor/sdk@2.0.0-alpha.0':
-    resolution: {integrity: sha512-+bTlnJvd9aPEXars7+faN37Mho7JpxtJJM3DBSHSfTpiNuDD5L05TBUx4b4aFALq8NJOkhaeQqdL+MM9s6YbrQ==}
-
-  '@rsdoctor/types@2.0.0-alpha.0':
-    resolution: {integrity: sha512-4Bokg5PFlCUzJu0iO78pi1K02PwJ1L7N7QYeGyjTxLuXEn7xVdx7oisuxfYLpIue0nb3+luFLweh6VcJ8f4xKA==}
+  '@rsdoctor/shared@2.0.0':
+    resolution: {integrity: sha512-QMTGTSX17aI83m+N8iwqWc4GAS7Q57m4Bmo7ShxQ3G2bKqJxCyiCd579idXwviKCXY0iQuagjPDv0P60K4rj+A==}
+    engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      '@rspack/core': '*'
+      '@rspack/core': ^2.0.0
+      '@types/node': '>=20'
     peerDependenciesMeta:
       '@rspack/core':
         optional: true
-
-  '@rsdoctor/utils@2.0.0-alpha.0':
-    resolution: {integrity: sha512-RPwNhwZthQNx/5W+wRCuTPHMyZaCCXgiD4tgKfoArbSaixuhIO5CnUlMJSB8F0SX69QEVLy5Bpa+Rx6bRUSnRw==}
 
   '@rslib/core@0.23.2':
     resolution: {integrity: sha512-KxSp+/y0BJ1O4oKwxX4ydBY7/ZVeJCUpWAmQniCIct8mTxIQFPGO/ibKbKq2IxZYqRuRpM8g+Dtyq0VbEQf9HQ==}
@@ -26825,6 +26808,9 @@ packages:
       selfsigned:
         optional: true
 
+  '@rspack/lite-tapable@1.3.0':
+    resolution: {integrity: sha512-YQLaGRltBp5wzh9ee7PMmh1pErbx0E3zDlfO4K3iQpsEcJcBcgj3+9gq6/wqB/zbXbluoWoRCvL+odkft/Qt3A==}
+
   '@rspack/plugin-react-refresh@1.0.0':
     resolution: {integrity: sha512-WvXkLewW5G0Mlo5H1b251yDh5FFiH4NDAbYlFpvFjcuXX2AchZRf9zdw57BDE/ADyWsJgA8kixN/zZWBTN3iYA==}
     peerDependencies:
@@ -26841,63 +26827,6 @@ packages:
     peerDependenciesMeta:
       '@rspack/core':
         optional: true
-
-  '@rspack/resolver-binding-darwin-arm64@0.2.8':
-    resolution: {integrity: sha512-nTnK17kmxXEvR+WpOIZPSIzUFYeWCHoffgU9tvOLOwuTBH41kWnSQXXWu+AiMVwvJ6wdRO6Vo30hPhlXEG7Pyw==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@rspack/resolver-binding-darwin-x64@0.2.8':
-    resolution: {integrity: sha512-Aqr4TK2rA6XVYUOmM5YCtYyCMZhOIR53P4cOGgGARg99A7OuMBMzUL4r1n0M0Fx35v6/sSx1OBe+odHmPxksEg==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@rspack/resolver-binding-linux-arm64-gnu@0.2.8':
-    resolution: {integrity: sha512-wGvkxm2G4mNTztslaOzLzx5JuySQSy5DcOWEZxHcjJJzp5L3ODbYLK18HtUc6cvmaVOmjaGrrYPrqJJ0hHTVFg==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@rspack/resolver-binding-linux-arm64-musl@0.2.8':
-    resolution: {integrity: sha512-EqRJ9zLQsLAvyDKJKVZ45BSqRIMS12f5HtJdy3KkAHU14ZmsGv8e5IKkwUZN5CNBRad8xVlOMMx3dOfF4whJzg==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  '@rspack/resolver-binding-linux-x64-gnu@0.2.8':
-    resolution: {integrity: sha512-eXbeotNCTntL4/+mxJRVCxK63YeWzTfp0F3POeHJFSs6Nt0f2J/mZNFlasJmd6xm7zvE80h/HWOwbwjRBLcElA==}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@rspack/resolver-binding-linux-x64-musl@0.2.8':
-    resolution: {integrity: sha512-KWFHlOWGkT+eMngoUgPGXrDi+rU04VCh9jyk0U6Ot2RTWvhGxwKykjmLS+CWZI/EBrzr9A6g2U3jzKTMNz9oCw==}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@rspack/resolver-binding-wasm32-wasi@0.2.8':
-    resolution: {integrity: sha512-I6GIhgICFViE88jejIV74oiiWHnpLpQ5ogaZM1ozM9KDnfqcHoX0IVEyrIh5KqA8iLDyhuoFSW+Hf0qN7VTBBQ==}
-    engines: {node: '>=14.0.0'}
-    cpu: [wasm32]
-
-  '@rspack/resolver-binding-win32-arm64-msvc@0.2.8':
-    resolution: {integrity: sha512-ZXCt3qUfDAEbtc2sHpvxM7lNFZM+DxfblgXUIl3Jy6BuEZbHe1i6z+t9c34ayHoGTVbVSNCtaYuG/MaWdSnPHw==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@rspack/resolver-binding-win32-ia32-msvc@0.2.8':
-    resolution: {integrity: sha512-2LRymjDK8MpUERD8CL0PPae5y2crU5TAg4T4EzpeL5jLARVq6izsEruiWzB6Y+D15vUYlvmgs2370GXVSB861w==}
-    cpu: [ia32]
-    os: [win32]
-
-  '@rspack/resolver-binding-win32-x64-msvc@0.2.8':
-    resolution: {integrity: sha512-hzRpfbtvv4M4EVrKKIAaHDs5wT8lVcbSUjtwPs5u4IeLEix45nQPQ6ZQjmE4lIH0GP/3L3XQhZroYmTcH/xdsQ==}
-    cpu: [x64]
-    os: [win32]
-
-  '@rspack/resolver@0.2.8':
-    resolution: {integrity: sha512-FBWqdHhzS8mcf/WN4Ktzr7EaeaN+hsxbN98EweegX3924beZuY6H70CSFWCv1fIHAieCUv/9XCjKggHvhCsLwA==}
 
   '@sbaiahmed1/react-native-blur@4.5.5':
     resolution: {integrity: sha512-T9nBwgjpIi2kMX2GKEUFjQ9eD9LMng35J0wq8yteQ/ufjLaEmYjLawzWus9q1CBBuhIf8C9hz2n7MM/H+cUo9Q==}
@@ -29090,9 +29019,6 @@ packages:
   '@types/stylis@4.2.5':
     resolution: {integrity: sha512-1Xve+NMN7FWjY14vLoY5tL3BVEQ/n42YLwaqJIPYhotZ9uBHt87VceMwWQpzmdEt2TNXIorIFG+YeCUUW7RInw==}
 
-  '@types/tapable@2.3.0':
-    resolution: {integrity: sha512-oMnbAXeVo+KUnje3hzdORXUbfnzTfqD0H92mLl19NE5hFqH9Q4ktq+xehNSxcNeeLm1COopYwa0zeP6Iz+oIXg==}
-
   '@types/tinycolor2@1.4.6':
     resolution: {integrity: sha512-iEN8J0BoMnsWBqjVbWH/c0G0Hh7O21lpR2/+PrvAVgWdzL7eexIFm4JN/Wn10PTcmNdtS6U67r499mlWMXOxNw==}
 
@@ -29669,11 +29595,6 @@ packages:
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
     engines: {node: '>= 0.6'}
-
-  acorn-import-attributes@1.9.5:
-    resolution: {integrity: sha512-n02Vykv5uA3eHGM/Z2dQrcD56kL8TyDb2p1+0P83PClMnC/nc+anbQRhIOWnSq4Ke/KvDPrY3C9hDtC/A3eHnQ==}
-    peerDependencies:
-      acorn: ^8
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -30384,13 +30305,6 @@ packages:
   browserify-zlib@0.2.0:
     resolution: {integrity: sha512-Z942RysHXmJrhqk88FmKBVq/v5tqmSkDz7p54G/MGyjMnCFFnC79XWNbg+Vta8W6Wb2qtSZTSxIGkJrRpCFEiA==}
 
-  browserslist-load-config@1.0.1:
-    resolution: {integrity: sha512-orLR5HAoQugQNVUXUwNd+GAAwl3H64KLIwoMFBNW0AbMSqX2Lxs4ZV2/5UoNrVQlQqF9ygychiu7Svr/99bLtg==}
-
-  browserslist-to-es-version@1.4.1:
-    resolution: {integrity: sha512-1bYCrck5Qh5HUy7P+iDuK39v757/ry5PnQo20vf4sHGeUrYKL2N2OF05U9ARSGt06TpFDQiTv9MT+eitYgWWxA==}
-    hasBin: true
-
   browserslist@4.28.2:
     resolution: {integrity: sha512-48xSriZYYg+8qXna9kwqjIVzuQxi+KYWp2+5nCYnYKPTr0LvD89Jqk2Or5ogxz0NUMfIjhh2lIUX/LyX9B4oIg==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -30599,6 +30513,9 @@ packages:
 
   caniuse-lite@1.0.30001791:
     resolution: {integrity: sha512-yk0l/YSrOnFZk3UROpDLQD9+kC1l4meK/wed583AXrzoarMGJcbRi2Q4RaUYbKxYAsZ8sWmaSa/DsLmdBeI1vQ==}
+
+  caniuse-lite@1.0.30001817:
+    resolution: {integrity: sha512-uZ1JG80BwhtMalIAGPxPfmNhHyd/B/nTdr3hITWlRamSyAdUStP1Gop01e7SD5q6J90ixJvWDbvmiFVfDgn4bw==}
 
   caseless@0.12.0:
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
@@ -30945,6 +30862,10 @@ packages:
   conf@15.1.0:
     resolution: {integrity: sha512-Uy5YN9KEu0WWDaZAVJ5FAmZoaJt9rdK6kH+utItPyGsCqCgaTKkrmZx3zoE0/3q6S3bcp3Ihkk+ZqPxWxFK5og==}
     engines: {node: '>=20'}
+
+  connect-next@5.0.0:
+    resolution: {integrity: sha512-f8s8Vjzr46shiGeR6KIQxDy8i/PRw+cFpzDei9SHEv8C46WVpzfmKIIvYA6z9lkE7Qqiq+XcKlfdsU4MqcUl0w==}
+    engines: {node: ^20.19.0 || >=22.12.0}
 
   connect@3.7.0:
     resolution: {integrity: sha512-ZqRXc+tZukToSNmh5C2iWMSoV3X1YUcPbqEM4DkEG5tNQXrQUZCNVGGv3IuicnkMtPfGf3Xtp8WCXs295iQ1pQ==}
@@ -31738,10 +31659,6 @@ packages:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
 
-  entities@6.0.1:
-    resolution: {integrity: sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==}
-    engines: {node: '>=0.12'}
-
   env-cmd@10.1.0:
     resolution: {integrity: sha512-mMdWTT9XKN7yNth/6N6g2GuKuJTsKMDHlQFUDacb/heQRRWOTIZ42t1rMHnQu4jYxU1ajdTeJM+9eEETlqToMA==}
     engines: {node: '>=8.0.0'}
@@ -32308,10 +32225,6 @@ packages:
     resolution: {integrity: sha512-hcFKyUG57yWGAzu1CMt/dPzYZuv+jAJUT85bL8mrXvNe6hWj6yEHEc4EdcgiA6Z3oi1/9wXJdZPXF2dZNgwgOg==}
     engines: {node: '>=8'}
 
-  filesize@11.0.17:
-    resolution: {integrity: sha512-oHLTvMLw6imZUl1se/RBQrFlyy50nXce4sU7yGR6Qc0JgCwqnfiFsAnEwotdGmfKLD7SArGUk2/5STU0k8LOBQ==}
-    engines: {node: '>= 10.8.0'}
-
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
@@ -32593,10 +32506,6 @@ packages:
 
   get-params@0.1.2:
     resolution: {integrity: sha512-41eOxtlGgHQRbFyA8KTH+w+32Em3cRdfBud7j67ulzmIfmaHX9doq47s0fa4P5o9H64BZX9nrYI6sJvk46Op+Q==}
-
-  get-port@5.1.1:
-    resolution: {integrity: sha512-g/Q1aTSDOxFpchXC4i8ZWvxA1lnPqx/JHqcpIw0/LX9T8x/GBbi6YnlN5nhaKIFkT8oFsscUKgDJYxfwfS6QsQ==}
-    engines: {node: '>=8'}
 
   get-proto@1.0.1:
     resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
@@ -32925,9 +32834,6 @@ packages:
   html2canvas@1.4.1:
     resolution: {integrity: sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA==}
     engines: {node: '>=8.0.0'}
-
-  htmlparser2@10.0.0:
-    resolution: {integrity: sha512-TwAZM+zE5Tq3lrEHvOlvwgj1XLWQCtaaibSN11Q+gGBAS7Y1uZSWwXXRe4iF6OXnaq1riyQAPFOBtYc77Mxq0g==}
 
   htmlparser2@9.1.0:
     resolution: {integrity: sha512-5zfg6mHUoaer/97TxnGpxmbR7zJtPwIYFMZ/H5ucTlPZhKvtum05yiPK3Mgai3a0DyVxv7qYqoweaEd2nrYQzQ==}
@@ -33881,9 +33787,6 @@ packages:
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
-  json-stream-stringify@3.0.1:
-    resolution: {integrity: sha512-vuxs3G1ocFDiAQ/SX0okcZbtqXwgj1g71qE9+vrjJ2EkjKQlEFDAcUNRxRU8O+GekV4v5cM2qXP0Wyt/EMDBiQ==}
-
   json-stringify-safe@5.0.1:
     resolution: {integrity: sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA==}
 
@@ -34171,10 +34074,6 @@ packages:
 
   lines-and-columns@2.0.3:
     resolution: {integrity: sha512-cNOjgCnLB+FnvWWtyRTzmB3POJ+cXxTA81LoW7u8JdmhfXzriropYwpjShnz1QLLWsQwY7nIxoDmcPTwphDK9w==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
-  lines-and-columns@2.0.4:
-    resolution: {integrity: sha512-wM1+Z03eypVAVUCE7QdSqpVIvelbOakn1M0bPDoA4SGWPx3sNDVUiMo3L6To6WWGClB7VyXnhQ4Sn7gxiJbE6A==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   linkify-it@5.0.2:
@@ -34876,6 +34775,10 @@ packages:
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
+
+  mrmime@2.0.1:
+    resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
+    engines: {node: '>=10'}
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -36866,10 +36769,6 @@ packages:
       typescript:
         optional: true
 
-  rslog@2.1.2:
-    resolution: {integrity: sha512-jHUtwes07RKZ/UXJAqCKPViDEargkoCvTha+MuVXDc9xcSqXodHAu2B/QyAM+iRCEgHqQ7ztazH1rAtqD3WyNw==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-
   run-applescript@7.0.0:
     resolution: {integrity: sha512-9by4Ij99JUr/MCFBUkDKLWK3G9HVXmabKz9U5MlIAIuvuzkiOicRYs8XJLxX+xahD+mLiiCYDqF9dKAgtzKP1A==}
     engines: {node: '>=18'}
@@ -37125,6 +37024,10 @@ packages:
     resolution: {integrity: sha512-mz9VXphOxQWX3eQ/uXCtm6upltoN0DLx8Zb5T4TFC4FHB7S9FDPGre8CfLWqPWQQH/GrQYd2AXhhVM5LDpYx6Q==}
     engines: {node: '>=20.12.2'}
 
+  sirv@3.0.2:
+    resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
+    engines: {node: '>=18'}
+
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
@@ -37204,6 +37107,10 @@ packages:
 
   source-map@0.7.6:
     resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
+    engines: {node: '>= 12'}
+
+  source-map@0.8.0:
+    resolution: {integrity: sha512-d8EqvL+k/SOXCreS/SUzg2ciyHqBBLcN/yuRjFsbvVhHTE2pgei7oAhmPM7kWFbkX6OSMQfUq4KbkF3au9lhYQ==}
     engines: {node: '>= 12'}
 
   spark-md5@3.0.2:
@@ -37833,6 +37740,10 @@ packages:
 
   toml@3.0.0:
     resolution: {integrity: sha512-y/mWCZinnvxjTKYhJ+pYxwD0mRLVvOtdS2Awbgxln6iEnt4rk0yBxeSBHkGJcPucRiG0e55mwWp+g/05rsrd6w==}
+
+  totalist@3.0.1:
+    resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
+    engines: {node: '>=6'}
 
   tough-cookie@2.5.0:
     resolution: {integrity: sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g==}
@@ -38750,18 +38661,6 @@ packages:
 
   ws@8.18.3:
     resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
-  ws@8.20.1:
-    resolution: {integrity: sha512-It4dO0K5v//JtTXuPkfEOaI3uUN87iYPnqo/ZzqCoG3g8uhA66QUMs/SrM0YK7/NAu+r4LMh/9dq2A7k+rHs+w==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -40152,12 +40051,6 @@ snapshots:
   '@babel/code-frame@7.10.4':
     dependencies:
       '@babel/highlight': 7.24.6
-
-  '@babel/code-frame@7.26.2':
-    dependencies:
-      '@babel/helper-validator-identifier': 7.29.7
-      js-tokens: 4.0.0
-      picocolors: 1.1.1
 
   '@babel/code-frame@7.29.7':
     dependencies:
@@ -44286,7 +44179,7 @@ snapshots:
     dependencies:
       '@ethersproject/shims': 5.7.0
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       axios: 1.20.0(debug@4.4.3)
       bignumber.js: 9.1.2
       eip55: 2.1.1
@@ -44302,7 +44195,7 @@ snapshots:
   '@ledgerhq/coin-hypercore@4.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
 
   '@ledgerhq/coin-module-framework@10.0.0':
     dependencies:
@@ -44316,7 +44209,7 @@ snapshots:
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -44326,7 +44219,7 @@ snapshots:
   '@ledgerhq/coin-tezos@13.0.2(@ledgerhq/live-network@3.2.0(axios@1.20.0))(encoding@0.1.13)':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       '@taquito/ledger-signer': 23.0.1(encoding@0.1.13)
       '@taquito/rpc': 23.0.1(encoding@0.1.13)
       '@taquito/taquito': 23.0.1(encoding@0.1.13)
@@ -44337,7 +44230,7 @@ snapshots:
   '@ledgerhq/coin-xrp@12.1.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.3
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       bignumber.js: 9.1.2
       invariant: 2.2.4
       ripple-address-codec: 5.0.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -44750,12 +44643,12 @@ snapshots:
       '@types/react': 19.0.14
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/auth': 0.1.0
       '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.36.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs': 6.19.0
       base64-js: 1.5.1
       isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
@@ -44773,7 +44666,7 @@ snapshots:
       '@ledgerhq/auth': 0.1.0
       '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.36.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs': 6.19.0
       base64-js: 1.5.1
       isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
@@ -44801,7 +44694,7 @@ snapshots:
 
   '@ledgerhq/live-env@4.1.0': {}
 
-  '@ledgerhq/live-network@3.2.0(axios@1.20.0)':
+  '@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3))':
     dependencies:
       '@ledgerhq/live-promise': 0.4.0
       '@ledgerhq/logs': 6.19.0
@@ -45252,13 +45145,6 @@ snapshots:
     dependencies:
       '@emnapi/core': 1.11.2
       '@emnapi/runtime': 1.11.2
-      '@tybys/wasm-util': 0.10.3
-    optional: true
-
-  '@napi-rs/wasm-runtime@1.2.3(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
-    dependencies:
-      '@emnapi/core': 1.11.3
-      '@emnapi/runtime': 1.11.3
       '@tybys/wasm-util': 0.10.3
     optional: true
 
@@ -46026,6 +45912,8 @@ snapshots:
       json5: 2.2.3
       write-file-atomic: 5.0.1
       write-yaml-file: 5.0.0
+
+  '@polka/url@1.0.0-next.29': {}
 
   '@polkadot-api/json-rpc-provider-proxy@0.1.0':
     optional: true
@@ -47483,16 +47371,6 @@ snapshots:
     transitivePeerDependencies:
       - '@module-federation/runtime-tools'
 
-  '@rsbuild/plugin-check-syntax@1.6.1(@rsbuild/core@2.1.13(core-js@3.47.0))':
-    dependencies:
-      acorn: 8.15.0
-      browserslist-to-es-version: 1.4.1
-      htmlparser2: 10.0.0
-      picocolors: 1.1.1
-      source-map: 0.7.6
-    optionalDependencies:
-      '@rsbuild/core': 2.1.13(core-js@3.47.0)
-
   '@rsbuild/plugin-node-polyfill@1.4.6(@rsbuild/core@2.1.13(core-js@3.47.0))':
     dependencies:
       assert: 2.1.0
@@ -47537,99 +47415,31 @@ snapshots:
     optionalDependencies:
       '@rsbuild/core': 2.1.13(core-js@3.47.0)
 
-  '@rsdoctor/client@2.0.0-alpha.0': {}
+  '@rsdoctor/client@2.0.0': {}
 
-  '@rsdoctor/core@2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@rsdoctor/core@2.0.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@types/node@24.12.0)':
     dependencies:
-      '@rsbuild/plugin-check-syntax': 1.6.1(@rsbuild/core@2.1.13(core-js@3.47.0))
-      '@rsdoctor/graph': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/sdk': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/utils': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rspack/resolver': 0.2.8(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
-      browserslist-load-config: 1.0.1
-      es-toolkit: 1.47.0
-      filesize: 11.0.17
-      fs-extra: 11.3.5
-      semver: 7.8.1
-      source-map: 0.7.6
+      '@rsdoctor/client': 2.0.0
+      '@rsdoctor/shared': 2.0.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@types/node@24.12.0)
+      caniuse-lite: 1.0.30001817
+      sirv: 3.0.2
+      source-map: 0.8.0
+    optionalDependencies:
+      '@rspack/core': 2.1.10(@swc/helpers@0.5.23)
     transitivePeerDependencies:
-      - '@emnapi/core'
-      - '@emnapi/runtime'
-      - '@rsbuild/core'
-      - '@rspack/core'
-      - bufferutil
-      - utf-8-validate
+      - '@types/node'
 
-  '@rsdoctor/graph@2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))':
+  '@rsdoctor/shared@2.0.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@types/node@24.12.0)':
     dependencies:
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/utils': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      es-toolkit: 1.47.0
+      '@rspack/lite-tapable': 1.3.0
+      '@types/estree': 1.0.5
+      '@types/node': 24.12.0
+      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
+      connect-next: 5.0.0
       path-browserify: 1.0.1
-      source-map: 0.7.6
-    transitivePeerDependencies:
-      - '@rspack/core'
-
-  '@rsdoctor/rspack-plugin@2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@rsdoctor/core': 2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@rsdoctor/graph': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/sdk': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/utils': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
+      source-map: 0.8.0
     optionalDependencies:
       '@rspack/core': 2.1.10(@swc/helpers@0.5.23)
-    transitivePeerDependencies:
-      - '@emnapi/core'
-      - '@emnapi/runtime'
-      - '@rsbuild/core'
-      - bufferutil
-      - utf-8-validate
-
-  '@rsdoctor/sdk@2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@rsdoctor/client': 2.0.0-alpha.0
-      '@rsdoctor/graph': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/utils': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      launch-editor: 2.14.0
-      safer-buffer: 2.1.2
-      tapable: 2.3.3
-      ws: 8.20.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - '@rspack/core'
-      - bufferutil
-      - utf-8-validate
-
-  '@rsdoctor/types@2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))':
-    dependencies:
-      '@types/connect': 3.4.38
-      '@types/estree': 1.0.5
-      '@types/tapable': 2.3.0
-      source-map: 0.7.6
-    optionalDependencies:
-      '@rspack/core': 2.1.10(@swc/helpers@0.5.23)
-
-  '@rsdoctor/utils@2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))':
-    dependencies:
-      '@babel/code-frame': 7.26.2
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@types/estree': 1.0.5
-      acorn: 8.15.0
-      acorn-import-attributes: 1.9.5(acorn@8.15.0)
-      acorn-walk: 8.3.5
-      deep-eql: 4.1.4
-      envinfo: 7.21.0
-      fs-extra: 11.3.5
-      get-port: 5.1.1
-      json-stream-stringify: 3.0.1
-      lines-and-columns: 2.0.4
-      picocolors: 1.1.1
-      rslog: 2.1.2
-      strip-ansi: 6.0.1
-    transitivePeerDependencies:
-      - '@rspack/core'
 
   '@rslib/core@0.23.2(@typescript/typescript6@6.0.2)(core-js@3.47.0)':
     dependencies:
@@ -47726,6 +47536,8 @@ snapshots:
       '@rspack/core': 2.1.10(@swc/helpers@0.5.23)
       '@rspack/dev-middleware': 2.0.3(@rspack/core@2.1.10(@swc/helpers@0.5.23))
 
+  '@rspack/lite-tapable@1.3.0': {}
+
   '@rspack/plugin-react-refresh@1.0.0(react-refresh@0.14.2)':
     dependencies:
       error-stack-parser: 2.1.4
@@ -47738,57 +47550,6 @@ snapshots:
       react-refresh: 0.18.0
     optionalDependencies:
       '@rspack/core': 2.1.10(@swc/helpers@0.5.23)
-
-  '@rspack/resolver-binding-darwin-arm64@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-darwin-x64@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-linux-arm64-gnu@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-linux-arm64-musl@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-linux-x64-gnu@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-linux-x64-musl@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-wasm32-wasi@0.2.8(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
-    dependencies:
-      '@napi-rs/wasm-runtime': 1.2.3(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
-    transitivePeerDependencies:
-      - '@emnapi/core'
-      - '@emnapi/runtime'
-    optional: true
-
-  '@rspack/resolver-binding-win32-arm64-msvc@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-win32-ia32-msvc@0.2.8':
-    optional: true
-
-  '@rspack/resolver-binding-win32-x64-msvc@0.2.8':
-    optional: true
-
-  '@rspack/resolver@0.2.8(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
-    optionalDependencies:
-      '@rspack/resolver-binding-darwin-arm64': 0.2.8
-      '@rspack/resolver-binding-darwin-x64': 0.2.8
-      '@rspack/resolver-binding-linux-arm64-gnu': 0.2.8
-      '@rspack/resolver-binding-linux-arm64-musl': 0.2.8
-      '@rspack/resolver-binding-linux-x64-gnu': 0.2.8
-      '@rspack/resolver-binding-linux-x64-musl': 0.2.8
-      '@rspack/resolver-binding-wasm32-wasi': 0.2.8(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
-      '@rspack/resolver-binding-win32-arm64-msvc': 0.2.8
-      '@rspack/resolver-binding-win32-ia32-msvc': 0.2.8
-      '@rspack/resolver-binding-win32-x64-msvc': 0.2.8
-    transitivePeerDependencies:
-      - '@emnapi/core'
-      - '@emnapi/runtime'
 
   '@sbaiahmed1/react-native-blur@4.5.5(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
@@ -50596,10 +50357,6 @@ snapshots:
 
   '@types/stylis@4.2.5': {}
 
-  '@types/tapable@2.3.0':
-    dependencies:
-      tapable: 2.3.3
-
   '@types/tinycolor2@1.4.6': {}
 
   '@types/tough-cookie@4.0.5': {}
@@ -51366,10 +51123,6 @@ snapshots:
     dependencies:
       mime-types: 3.0.1
       negotiator: 1.0.0
-
-  acorn-import-attributes@1.9.5(acorn@8.15.0):
-    dependencies:
-      acorn: 8.15.0
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
@@ -52297,12 +52050,6 @@ snapshots:
     dependencies:
       pako: 1.0.11
 
-  browserslist-load-config@1.0.1: {}
-
-  browserslist-to-es-version@1.4.1:
-    dependencies:
-      browserslist: 4.28.2
-
   browserslist@4.28.2:
     dependencies:
       baseline-browser-mapping: 2.10.23
@@ -52557,6 +52304,8 @@ snapshots:
   camelize@1.0.1: {}
 
   caniuse-lite@1.0.30001791: {}
+
+  caniuse-lite@1.0.30001817: {}
 
   caseless@0.12.0: {}
 
@@ -52945,6 +52694,8 @@ snapshots:
       json-schema-typed: 8.0.1
       semver: 7.8.1
       uint8array-extras: 1.5.0
+
+  connect-next@5.0.0: {}
 
   connect@3.7.0:
     dependencies:
@@ -53870,8 +53621,6 @@ snapshots:
 
   entities@4.5.0: {}
 
-  entities@6.0.1: {}
-
   env-cmd@10.1.0:
     dependencies:
       commander: 4.1.1
@@ -54569,8 +54318,6 @@ snapshots:
       strip-outer: 1.0.1
       trim-repeated: 1.0.0
 
-  filesize@11.0.17: {}
-
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
@@ -54922,8 +54669,6 @@ snapshots:
   get-package-type@0.1.0: {}
 
   get-params@0.1.2: {}
-
-  get-port@5.1.1: {}
 
   get-proto@1.0.1:
     dependencies:
@@ -55326,13 +55071,6 @@ snapshots:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
-
-  htmlparser2@10.0.0:
-    dependencies:
-      domelementtype: 2.3.0
-      domhandler: 5.0.3
-      domutils: 3.2.2
-      entities: 6.0.1
 
   htmlparser2@9.1.0:
     dependencies:
@@ -56752,8 +56490,6 @@ snapshots:
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 
-  json-stream-stringify@3.0.1: {}
-
   json-stringify-safe@5.0.1: {}
 
   json-with-bigint@3.5.12: {}
@@ -57077,8 +56813,6 @@ snapshots:
   lines-and-columns@1.2.4: {}
 
   lines-and-columns@2.0.3: {}
-
-  lines-and-columns@2.0.4: {}
 
   linkify-it@5.0.2:
     dependencies:
@@ -58013,6 +57747,8 @@ snapshots:
       - supports-color
 
   mri@1.2.0: {}
+
+  mrmime@2.0.1: {}
 
   ms@2.0.0: {}
 
@@ -60393,8 +60129,6 @@ snapshots:
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
 
-  rslog@2.1.2: {}
-
   run-applescript@7.0.0: {}
 
   run-async@3.0.0: {}
@@ -60694,6 +60428,12 @@ snapshots:
 
   simple-xml-to-json@1.2.7: {}
 
+  sirv@3.0.2:
+    dependencies:
+      '@polka/url': 1.0.0-next.29
+      mrmime: 2.0.1
+      totalist: 3.0.1
+
   sisteransi@1.0.5: {}
 
   sjcl@1.0.8: {}
@@ -60766,6 +60506,8 @@ snapshots:
   source-map@0.6.1: {}
 
   source-map@0.7.6: {}
+
+  source-map@0.8.0: {}
 
   spark-md5@3.0.2: {}
 
@@ -61469,6 +61211,8 @@ snapshots:
       ieee754: 1.2.1
 
   toml@3.0.0: {}
+
+  totalist@3.0.1: {}
 
   tough-cookie@2.5.0:
     dependencies:
@@ -62362,11 +62106,6 @@ snapshots:
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 6.0.6
-
-  ws@8.20.1(bufferutil@4.1.0)(utf-8-validate@5.0.10):
-    optionalDependencies:
-      bufferutil: 4.1.0
-      utf-8-validate: 5.0.10
 
   ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
