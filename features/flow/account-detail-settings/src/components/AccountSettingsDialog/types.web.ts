@@ -1,4 +1,6 @@
-export type AccountSettingsDialogStep = "menu" | "changeName" | "remove";
+import type { AdvancedLogsContentProps } from "../AdvancedLogsContent/types";
+
+export type AccountSettingsDialogStep = "menu" | "changeName" | "advancedLogs" | "remove";
 
 export type AccountSettingsDialogProps = Readonly<{
   isOpen: boolean;
@@ -6,9 +8,9 @@ export type AccountSettingsDialogProps = Readonly<{
   ticker: string;
   nameMaxLength: number;
   isNameEditDisabled?: boolean;
+  advancedLogs: AdvancedLogsContentProps;
   onClose: () => void;
   onConfirmName: (name: string) => void;
-  onViewAdvancedLogs: () => void;
   onConfirmRemove: () => void;
   testID?: string;
 }>;
@@ -19,7 +21,9 @@ export type AccountSettingsDialogViewProps = AccountSettingsDialogProps &
     title: string;
     changeNameTitle: string;
     changeNameDescription: string;
+    advancedLogsTitle: string;
     onShowMenu: () => void;
     onShowChangeName: () => void;
+    onShowAdvancedLogs: () => void;
     onShowRemove: () => void;
   }>;

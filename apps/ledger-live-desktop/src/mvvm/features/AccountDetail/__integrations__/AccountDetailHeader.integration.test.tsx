@@ -3,6 +3,7 @@ import { Link, Route, Routes } from "react-router";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { parseAnyAccountId } from "@domain/entity-account";
+import { copyToClipboard } from "@shared/clipboard";
 import { render, screen, within, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";
@@ -10,6 +11,11 @@ import AccountDetailRoute from "../AccountDetailRoute";
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/bridge/react/index"),
   SyncOneAccountOnMount: () => null,
+}));
+
+jest.mock("@shared/clipboard", () => ({
+  ...jest.requireActual("@shared/clipboard"),
+  copyToClipboard: jest.fn().mockResolvedValue(true),
 }));
 
 const ethAccount = {
@@ -125,6 +131,29 @@ describe("AccountDetail header", () => {
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByTestId("page-header-title")).toHaveTextContent("Savings");
+  });
+
+  it("shows and copies the advanced logs from the settings dialog", async () => {
+    const { user } = renderFromPreviousPage();
+    await user.click(screen.getByText("Open account"));
+    await user.click(await screen.findByRole("button", { name: "Account settings" }));
+    await user.click(await screen.findByText("View advanced logs"));
+
+    const dialog = await screen.findByRole("dialog", { name: "Advanced logs" });
+    expect(within(dialog).getByText(/^Synchronised /)).toBeVisible();
+    const logs = within(dialog).getByTestId("account-settings-advanced-logs-json").textContent;
+    expect(JSON.parse(logs ?? "")).toEqual({
+      index: ethAccount.index,
+      freshAddressPath: ethAccount.freshAddressPath,
+      id: ethAccount.id,
+      blockHeight: ethAccount.blockHeight,
+      ...(ethAccount.xpub ? { xpub: ethAccount.xpub } : {}),
+    });
+
+    await user.click(within(dialog).getByRole("button", { name: "Copy logs" }));
+
+    expect(copyToClipboard).toHaveBeenCalledWith(logs);
+    expect(await within(dialog).findByRole("button", { name: "Copied" })).toBeVisible();
   });
 
   it("goes back to the settings menu from the change name step", async () => {

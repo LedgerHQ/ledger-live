@@ -1,29 +1,78 @@
 import React from "react";
-import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
-import { AccountSettingsMenu } from "../AccountSettingsMenu";
-import { ChangeNameContent } from "../ChangeNameContent/ChangeNameContent.web";
-import { RemoveAccountContent } from "../RemoveAccountContent";
+import { AdvancedLogsStep } from "./steps/AdvancedLogsStep.web";
+import { ChangeNameStep } from "./steps/ChangeNameStep.web";
+import { MenuStep } from "./steps/MenuStep.web";
+import { RemoveStep } from "./steps/RemoveStep.web";
 import type { AccountSettingsDialogViewProps } from "./types.web";
 
-export function AccountSettingsDialogView({
-  isOpen,
-  accountName,
-  nameMaxLength,
-  isNameEditDisabled,
+function getAriaLabel({
   step,
   title,
   changeNameTitle,
-  changeNameDescription,
-  onClose,
-  onConfirmName,
-  onViewAdvancedLogs,
-  onConfirmRemove,
-  onShowMenu,
-  onShowChangeName,
-  onShowRemove,
-  testID,
-}: AccountSettingsDialogViewProps) {
+  advancedLogsTitle,
+}: AccountSettingsDialogViewProps): string {
+  switch (step) {
+    case "changeName":
+      return changeNameTitle;
+    case "advancedLogs":
+      return advancedLogsTitle;
+    case "menu":
+    case "remove":
+      return title;
+  }
+}
+
+function StepContent(props: AccountSettingsDialogViewProps) {
+  switch (props.step) {
+    case "menu":
+      return (
+        <MenuStep
+          title={props.title}
+          accountName={props.accountName}
+          onClose={props.onClose}
+          onShowChangeName={props.onShowChangeName}
+          onShowAdvancedLogs={props.onShowAdvancedLogs}
+          onShowRemove={props.onShowRemove}
+        />
+      );
+    case "changeName":
+      return (
+        <ChangeNameStep
+          title={props.changeNameTitle}
+          description={props.changeNameDescription}
+          accountName={props.accountName}
+          nameMaxLength={props.nameMaxLength}
+          isNameEditDisabled={props.isNameEditDisabled}
+          onBack={props.onShowMenu}
+          onClose={props.onClose}
+          onConfirmName={props.onConfirmName}
+        />
+      );
+    case "advancedLogs":
+      return (
+        <AdvancedLogsStep
+          title={props.advancedLogsTitle}
+          advancedLogs={props.advancedLogs}
+          onBack={props.onShowMenu}
+          onClose={props.onClose}
+        />
+      );
+    case "remove":
+      return (
+        <RemoveStep
+          onBack={props.onShowMenu}
+          onClose={props.onClose}
+          onConfirmRemove={props.onConfirmRemove}
+        />
+      );
+  }
+}
+
+export function AccountSettingsDialogView(props: AccountSettingsDialogViewProps) {
+  const { isOpen, onClose, onShowMenu, testID } = props;
+
   const handleOpenChange = (open: boolean) => {
     if (!open) onClose();
   };
@@ -31,53 +80,14 @@ export function AccountSettingsDialogView({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        aria-label={step === "changeName" ? changeNameTitle : title}
+        aria-label={getAriaLabel(props)}
         aria-labelledby={undefined}
         aria-describedby={undefined}
         onCloseAutoFocus={onShowMenu}
         data-testid={testID}
       >
         <DialogBackgroundToneProvider>
-          {step === "menu" && (
-            <>
-              <DialogHeader density="expanded" title={title} onClose={onClose} />
-              <DialogBody>
-                <AccountSettingsMenu
-                  accountName={accountName}
-                  onChangeName={onShowChangeName}
-                  onViewAdvancedLogs={onViewAdvancedLogs}
-                  onRemoveAccount={onShowRemove}
-                />
-              </DialogBody>
-            </>
-          )}
-          {step === "changeName" && (
-            <>
-              <DialogHeader
-                density="expanded"
-                title={changeNameTitle}
-                description={changeNameDescription}
-                onBack={onShowMenu}
-                onClose={onClose}
-              />
-              <DialogBody>
-                <ChangeNameContent
-                  initialName={accountName}
-                  maxLength={nameMaxLength}
-                  isDisabled={isNameEditDisabled}
-                  onConfirm={onConfirmName}
-                />
-              </DialogBody>
-            </>
-          )}
-          {step === "remove" && (
-            <>
-              <DialogHeader density="compact" onBack={onShowMenu} onClose={onClose} />
-              <DialogBody>
-                <RemoveAccountContent onConfirm={onConfirmRemove} onCancel={onClose} />
-              </DialogBody>
-            </>
-          )}
+          <StepContent {...props} />
         </DialogBackgroundToneProvider>
       </DialogContent>
     </Dialog>

@@ -19,6 +19,7 @@ const resources = {
           submit: "Change name",
         },
         advancedLogs: {
+          title: "Advanced logs",
           derivationTip:
             "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
           synchronised: "Synchronised {{date}}",
