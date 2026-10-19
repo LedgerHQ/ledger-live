@@ -10426,6 +10426,10 @@
     "assets": {
       "title": "Assets"
     },
+    "refreshStatus": {
+      "upToDate": "Account up to date",
+      "syncError": "Account data couldn’t load"
+    },
     "transactions": {
       "title": "Transactions"
     },
