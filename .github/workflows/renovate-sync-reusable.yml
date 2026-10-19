@@ -86,11 +86,15 @@ jobs:
 
       # setup-ruby's prebuilt rubies need a writable /opt/hostedtoolcache, which these runners lack.
       - name: Set up Ruby
-        working-directory: apps/ledger-live-mobile
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mise install ruby@3.3
           echo "$(mise where ruby@3.3)/bin" >> "$GITHUB_PATH"
-          "$(mise where ruby@3.3)/bin/bundle" install --jobs 4
+
+      - name: Install gems
+        working-directory: apps/ledger-live-mobile
+        run: bundle install --jobs 4
 
       - name: Regenerate Podfile.lock
         working-directory: apps/ledger-live-mobile
@@ -144,14 +148,9 @@ jobs:
           name: renovate-fixup
           path: ${{ runner.temp }}/fixup
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-
-      # This push triggers a new run, whose concurrency group cancels this one.
-      - name: Commit and push
+      - name: Stage files
         env:
-          HEAD_REF: ${{ github.head_ref }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          TOKEN: ${{ steps.token.outputs.token }}
         run: |
           # Artifact and checkout are untrusted: copy only the expected files, no symlinks, no git hooks.
           for file in apps/ledger-live-mobile/ios/Podfile.lock ".changeset/renovate-pr-$PR_NUMBER.md"; do
@@ -159,5 +158,16 @@ jobs:
             if [ -f "$RUNNER_TEMP/fixup/$file" ]; then cp --remove-destination "$RUNNER_TEMP/fixup/$file" "$file"; else rm -f "$file"; fi
           done
           git add -A -- apps/ledger-live-mobile/ios/Podfile.lock .changeset/
-          git -c core.hooksPath=/dev/null commit -m "chore(deps): sync Podfile.lock and changeset"
-          git -c core.hooksPath=/dev/null push "https://x-access-token:$TOKEN@github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$HEAD_REF"
+          if git diff --cached --quiet; then echo "::error::generate reported changes but nothing is staged"; exit 1; fi
+
+      # Committed through the GraphQL API so GitHub signs it (the branch ruleset requires signed commits).
+      # This push triggers a new run, whose concurrency group cancels this one.
+      - name: Commit and push
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
+        with:
+          commit_message: "chore(deps): sync Podfile.lock and changeset"
+          repo: ${{ github.repository }}
+          branch: ${{ github.head_ref }}
+          file_pattern: apps/ledger-live-mobile/ios/Podfile.lock .changeset
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
