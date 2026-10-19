@@ -51,7 +51,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@pnpm/exportable-manifest": "1000.0.7",
+    "@pnpm/exportable-manifest": "1000.0.10",
     "@pnpm/read-project-manifest": "1000.0.6",
     "@types/command-line-args": "5.2.3",
     "@types/lodash": "catalog:",
