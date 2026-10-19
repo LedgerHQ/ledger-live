@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import type { QueryCacheKey } from "@reduxjs/toolkit/query";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { http, HttpResponse } from "msw";
@@ -378,6 +379,79 @@ describe("Token Persistence", () => {
         throw new Error("timed out waiting for the hash check");
       }
 
+      async function waitForStoredHash(store: Store, hash: string) {
+        for (let attempt = 0; attempt < 50; attempt += 1) {
+          if (extractHashesFromState(store.getState()).ethereum === hash) {
+            for (let tick = 0; tick < 5; tick += 1) {
+              await new Promise(resolve => setImmediate(resolve));
+            }
+            return;
+          }
+          await new Promise(resolve => setImmediate(resolve));
+        }
+        throw new Error("timed out waiting for the stored hash");
+      }
+
+      function holdResponse() {
+        let release: (response: Response) => void = () => undefined;
+        const pending = new Promise<Response>(resolve => {
+          release = resolve;
+        });
+        return {
+          pending,
+          release(response: Response) {
+            release(response);
+          },
+        };
+      }
+
+      const freshTicker = "USDT-LIVE";
+      const tokensUrl = "https://cal.test/v1/tokens";
+
+      function freshTokenResponse() {
+        return HttpResponse.json([
+          {
+            id: mockToken.id,
+            contract_address: mockToken.contractAddress,
+            standard: mockToken.tokenType,
+            decimals: mockToken.units[0].magnitude,
+            delisted: mockToken.delisted,
+            name: mockToken.name,
+            ticker: freshTicker,
+            units: mockToken.units,
+          },
+        ]);
+      }
+
+      function changedHashResponse() {
+        return HttpResponse.json([{ id: "ethereum" }], {
+          headers: { "X-Ledger-Commit": "hash456" },
+        });
+      }
+
+      function expireRestoredTokenEntries(store: Store) {
+        const queries = store.getState()[cryptoAssetsApi.reducerPath].queries;
+        for (const [queryCacheKey, query] of Object.entries(queries)) {
+          if (
+            query?.endpointName !== "findTokenById" &&
+            query?.endpointName !== "findTokenByAddressInCurrency"
+          ) {
+            continue;
+          }
+          store.dispatch(
+            cryptoAssetsApi.internalActions.removeQueryResult({
+              queryCacheKey: queryCacheKey as QueryCacheKey,
+            }),
+          );
+        }
+      }
+
+      function findTokenByIdEntry(store: Store) {
+        return Object.values(store.getState()[cryptoAssetsApi.reducerPath].queries).find(
+          query => query?.endpointName === "findTokenById",
+        );
+      }
+
       function restore(store: Store, hashes?: Record<string, string>) {
         const persistedData: PersistedCAL = {
           version: PERSISTENCE_VERSION,
@@ -442,6 +516,70 @@ describe("Token Persistence", () => {
             HttpResponse.json([{ id: "ethereum" }], { headers: { "X-Ledger-Commit": "hash456" } }),
           { ethereum: "hash456" },
         );
+      });
+
+      it("keeps a fulfilled lookup that replaced an expired restored token", async () => {
+        const hash = holdResponse();
+        respond(() => hash.pending);
+        server.use(http.get(tokensUrl, () => freshTokenResponse()));
+
+        const store = makeStore();
+        let unsubscribe: () => void = () => undefined;
+        try {
+          restore(store, { ethereum: "hash123" });
+          expireRestoredTokenEntries(store);
+
+          const lookup = store.dispatch(
+            cryptoAssetsApi.endpoints.findTokenById.initiate({ id: mockToken.id }),
+          );
+          unsubscribe = () => lookup.unsubscribe();
+          await lookup;
+
+          hash.release(changedHashResponse());
+          await waitForStoredHash(store, "hash456");
+
+          expect(findTokenByIdEntry(store)?.data).toMatchObject({ ticker: freshTicker });
+          expect(extractHashesFromState(store.getState())).toEqual({ ethereum: "hash456" });
+        } finally {
+          hash.release(HttpResponse.error());
+          unsubscribe();
+          store.dispatch(cryptoAssetsApi.util.resetApiState());
+        }
+      });
+
+      it("keeps an in-flight lookup that replaced an expired restored token", async () => {
+        const hash = holdResponse();
+        const tokenResponse = holdResponse();
+        respond(() => hash.pending);
+        server.use(http.get(tokensUrl, () => tokenResponse.pending));
+
+        const store = makeStore();
+        let unsubscribe: () => void = () => undefined;
+        try {
+          restore(store, { ethereum: "hash123" });
+          expireRestoredTokenEntries(store);
+
+          const lookup = store.dispatch(
+            cryptoAssetsApi.endpoints.findTokenById.initiate({ id: mockToken.id }),
+          );
+          unsubscribe = () => lookup.unsubscribe();
+          expect(findTokenByIdEntry(store)?.status).toBe("pending");
+
+          hash.release(changedHashResponse());
+          await waitForStoredHash(store, "hash456");
+          expect(findTokenByIdEntry(store)?.status).toBe("pending");
+
+          tokenResponse.release(freshTokenResponse());
+          await lookup;
+
+          expect(findTokenByIdEntry(store)?.status).toBe("fulfilled");
+          expect(findTokenByIdEntry(store)?.data).toMatchObject({ ticker: freshTicker });
+        } finally {
+          hash.release(HttpResponse.error());
+          tokenResponse.release(HttpResponse.error());
+          unsubscribe();
+          store.dispatch(cryptoAssetsApi.util.resetApiState());
+        }
       });
 
       it("evicts tokens when CAL no longer lists the currency", async () => {

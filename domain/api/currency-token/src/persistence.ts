@@ -1,4 +1,5 @@
 import isEqual from "lodash/isEqual";
+import type { QueryCacheKey } from "@reduxjs/toolkit/query";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { calApi } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
@@ -155,8 +156,8 @@ export function filterExpiredTokens(
  * Optimistically restores persisted tokens into the RTK Query cache without blocking loading,
  * and pins each stored hash onto that currency's in-flight check. Currencies are checked
  * independently: a changed hash drops that currency's restored entries, a currency CAL no
- * longer lists drops the hash too, and a failed check leaves both in place. Currencies with
- * no stored hash are never evicted.
+ * longer lists drops the hash too, and a failed check leaves both in place. A lookup that
+ * replaced a restored entry is left in place. Currencies with no stored hash are never evicted.
  */
 export function restoreTokensToCache(
   dispatch: CryptoAssetsDispatch,
@@ -168,10 +169,7 @@ export function restoreTokensToCache(
     return;
   }
 
-  const entries = buildRestoreCacheEntries(validTokens);
-  if (entries.length > 0) {
-    dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
-  }
+  const restoredRequestIds = snapshotRestoredRequestIds(dispatch, validTokens);
 
   const tokensByCurrency = groupTokensByCurrency(validTokens);
   const hashesToRestore = hashesForRestoredCurrencies(persistedData.hashes ?? {}, tokensByCurrency);
@@ -180,7 +178,7 @@ export function restoreTokensToCache(
     if (!storedHash) continue;
     void checkStoredHash(dispatch, currencyId, storedHash).then(verdict => {
       if (verdict.action === "keep") return;
-      dropRestoredCacheEntries(dispatch, tokens);
+      dropRestoredCacheEntries(dispatch, tokens, restoredRequestIds);
       if (verdict.action === "missing") dropHashCacheEntry(dispatch, currencyId);
     });
   }
@@ -206,8 +204,49 @@ function dropHashCacheEntry(dispatch: CryptoAssetsDispatch, currencyId: string) 
   );
 }
 
-function dropRestoredCacheEntries(dispatch: CryptoAssetsDispatch, tokens: PersistedTokenEntry[]) {
-  for (const queryCacheKey of restoreQueryCacheKeys(tokens)) {
-    dispatch(cryptoAssetsApi.internalActions.removeQueryResult({ queryCacheKey }));
-  }
+function snapshotRestoredRequestIds(
+  dispatch: CryptoAssetsDispatch,
+  tokens: PersistedTokenEntry[],
+): ReadonlyMap<QueryCacheKey, string> {
+  const restoredRequestIds = new Map<QueryCacheKey, string>();
+  const entries = buildRestoreCacheEntries(tokens);
+  if (entries.length === 0) return restoredRequestIds;
+
+  dispatch((thunkDispatch, getState) => {
+    thunkDispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
+    for (const queryCacheKey of restoreQueryCacheKeys(tokens)) {
+      const requestId = queryRequestId(getState(), queryCacheKey);
+      if (requestId !== undefined) restoredRequestIds.set(queryCacheKey, requestId);
+    }
+  });
+
+  return restoredRequestIds;
+}
+
+function dropRestoredCacheEntries(
+  dispatch: CryptoAssetsDispatch,
+  tokens: PersistedTokenEntry[],
+  restoredRequestIds: ReadonlyMap<QueryCacheKey, string>,
+) {
+  dispatch((thunkDispatch, getState) => {
+    for (const queryCacheKey of restoreQueryCacheKeys(tokens)) {
+      const restoredRequestId = restoredRequestIds.get(queryCacheKey);
+      if (restoredRequestId === undefined) continue;
+      if (queryRequestId(getState(), queryCacheKey) !== restoredRequestId) continue;
+      thunkDispatch(cryptoAssetsApi.internalActions.removeQueryResult({ queryCacheKey }));
+    }
+  });
+}
+
+function queryRequestId(state: unknown, queryCacheKey: QueryCacheKey): string | undefined {
+  if (!isRecord(state)) return undefined;
+  const slice = state[cryptoAssetsApi.reducerPath];
+  if (!isRecord(slice) || !isRecord(slice.queries)) return undefined;
+  const query = slice.queries[queryCacheKey];
+  if (!isRecord(query) || typeof query.requestId !== "string") return undefined;
+  return query.requestId;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
