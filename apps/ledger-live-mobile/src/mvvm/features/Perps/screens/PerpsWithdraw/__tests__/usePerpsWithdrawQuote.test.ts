@@ -1,11 +1,12 @@
 import BigNumber from "bignumber.js";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { WithdrawLowLiquidityError } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
 import { usePerpsWithdrawQuote, type PerpsWithdrawQuoteParams } from "../usePerpsWithdrawQuote";
 
 const mockFetchWithdrawQuote = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/api", () => ({
-  fetchWithdrawQuote: (params: unknown) => mockFetchWithdrawQuote(params),
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/quote", () => ({
+  fetchPerpsWithdrawQuote: (params: unknown) => mockFetchWithdrawQuote(params),
 }));
 
 const quote = {
@@ -15,11 +16,15 @@ const quote = {
   expiry: 1792000000000,
 };
 
+const sourceAccount = { id: "source-1" } as AccountLike;
+const destinationAccount = { id: "destination-1" } as AccountLike;
+
 const baseParams: PerpsWithdrawQuoteParams = {
   amount: "500",
-  sourceAddress: "0xsource",
-  toCurrencyId: "ethereum",
-  destinationAddress: "0xdestination",
+  sourceAccount,
+  destinationAccount,
+  accounts: [],
+  counterValueCurrency: "USD",
 };
 
 const renderQuote = (initialProps: PerpsWithdrawQuoteParams) =>
@@ -43,16 +48,17 @@ describe("usePerpsWithdrawQuote", () => {
 
     await waitFor(() => expect(result.current.quote).toBe(quote), { timeout: 2000 });
     expect(mockFetchWithdrawQuote).toHaveBeenCalledWith({
-      amount: new BigNumber("500"),
-      sourceAddress: "0xsource",
-      toCurrencyId: "ethereum",
-      destinationAddress: "0xdestination",
+      accounts: [],
+      sourceAccount,
+      destinationAccount,
+      amount: "500",
+      counterValueCurrency: "USD",
     });
   });
 
   it.each([
     ["no amount", { amount: "" }],
-    ["no destination", { toCurrencyId: undefined, destinationAddress: undefined }],
+    ["no destination", { destinationAccount: undefined }],
   ])("stays idle with %s", async (_, overrides) => {
     const { result } = renderQuote({ ...baseParams, ...overrides });
 
@@ -76,8 +82,6 @@ describe("usePerpsWithdrawQuote", () => {
     await passDebounce();
 
     expect(mockFetchWithdrawQuote).toHaveBeenCalledTimes(1);
-    expect(mockFetchWithdrawQuote).toHaveBeenCalledWith(
-      expect.objectContaining({ amount: new BigNumber("600") }),
-    );
+    expect(mockFetchWithdrawQuote).toHaveBeenCalledWith(expect.objectContaining({ amount: "600" }));
   });
 });

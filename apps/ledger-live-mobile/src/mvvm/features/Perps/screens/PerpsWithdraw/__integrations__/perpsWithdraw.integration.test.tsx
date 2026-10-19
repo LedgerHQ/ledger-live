@@ -135,12 +135,14 @@ describe("PerpsWithdraw integration", () => {
     expect(screen.getByText(/Withdraw ~0\.3/)).toBeOnTheScreen();
     expect(screen.getByText("Swap and withdraw via SwapKit")).toBeOnTheScreen();
     expect(reviewCta()).toBeEnabled();
-    expect(mockUsePerpsWithdrawQuote).toHaveBeenLastCalledWith({
-      amount: "500",
-      sourceAddress: sourceAccount.freshAddress,
-      toCurrencyId: "ethereum",
-      destinationAddress: ethAccount.freshAddress,
-    });
+    expect(mockUsePerpsWithdrawQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        amount: "500",
+        sourceAccount: expect.objectContaining({ id: sourceAccount.id }),
+        destinationAccount: expect.objectContaining({ id: ethAccount.id }),
+        counterValueCurrency: "USD",
+      }),
+    );
   });
 
   it("should flag an amount that leaves no room for the fee, without quoting it", async () => {
