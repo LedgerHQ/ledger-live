@@ -15,7 +15,6 @@
     "start:debug": "node --inspect-brk lib/cli.js"
   },
   "dependencies": {
-    "@datadog/datadog-api-client": "^1.40",
     "@domain/entity-currency-crypto": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
@@ -40,6 +39,7 @@
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "jest": "catalog:",
+    "nock": "14.0.3",
     "tsx": "^4.7.1",
     "typescript": "catalog:"
   },
