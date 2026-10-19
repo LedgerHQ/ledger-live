@@ -48,6 +48,7 @@ function tokenAccount({
   return {
     id: "aleo-token",
     type: "TokenAccount",
+    parentId: ALEO_ACCOUNT_1.id,
     token: { parentCurrencyId: "aleo" },
     transparentBalance: new BigNumber(7),
     privateBalance: privateBalance === null ? null : new BigNumber(privateBalance),
@@ -84,18 +85,18 @@ describe("aleo balance-type config", () => {
         "balanceType.aleoPrivate",
       ]);
       expect(options.map(option => option.icon)).toEqual(["check", "lock"]);
-      expect(options.map(option => option.balance.toNumber())).toEqual([100, 40]);
+      expect(options.map(option => option.balance?.toNumber())).toEqual([100, 40]);
       expect(options.map(option => option.hasPendingBalance)).toEqual([false, false]);
       expect(options.map(option => option.hideSubtitle)).toEqual([true, true]);
     });
 
-    it("offers the private balance at zero with no pending banner before the first private sync", () => {
+    it("offers the private balance as unknown with no pending banner before the first private sync", () => {
       const options = aleoBalanceTypeConfig.getOptions({
         account: account({ privateBalance: null }),
       });
 
       expect(options.map(option => option.id)).toEqual(["public", "private"]);
-      expect(options[1].balance.toNumber()).toBe(0);
+      expect(options[1].balance).toBeNull();
       expect(options[1].hasPendingBalance).toBe(false);
     });
 
@@ -103,15 +104,15 @@ describe("aleo balance-type config", () => {
       const options = aleoBalanceTypeConfig.getOptions({ account: tokenAccount() });
 
       expect(options.map(option => option.id)).toEqual(["public", "private"]);
-      expect(options.map(option => option.balance.toNumber())).toEqual([7, 3]);
+      expect(options.map(option => option.balance?.toNumber())).toEqual([7, 3]);
     });
 
-    it("offers the private token balance at zero before it is synced", () => {
+    it("offers the private token balance as unknown before it is synced", () => {
       const options = aleoBalanceTypeConfig.getOptions({
         account: tokenAccount({ privateBalance: null }),
       });
 
-      expect(options.map(option => option.balance.toNumber())).toEqual([7, 0]);
+      expect(options.map(option => option.balance?.toNumber())).toEqual([7, undefined]);
     });
 
     it("offers nothing for an Aleo account without resources", () => {
@@ -217,10 +218,40 @@ describe("aleo balance-type config", () => {
       ).toBeNull();
     });
 
-    it("has no target for a token account", () => {
+    it.each([
+      [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC, "recipient.selfTransfer.toPrivate", false],
+      [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, "recipient.selfTransfer.toPublic", true],
+    ])(
+      "targets the token's other balance at its parent's address from a %s spend",
+      (mode, translationKey, isDestinationPublic) => {
+        expect(
+          aleoBalanceTypeConfig.getSelfTransferTarget({
+            account: tokenAccount(),
+            parentAccount: account(),
+            transaction: transaction(mode, { subAccountId: "aleo-token" }),
+          }),
+        ).toEqual({ address: "aleo1self", translationKey, isDestinationPublic });
+      },
+    );
+
+    it("has no target until the token's private balance is synced", () => {
+      expect(
+        aleoBalanceTypeConfig.getSelfTransferTarget({
+          account: tokenAccount({ privateBalance: null }),
+          parentAccount: account(),
+          transaction: transaction(TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC),
+        }),
+      ).toBeNull();
+    });
+
+    it.each([
+      ["without its parent", undefined],
+      ["with another account as parent", { ...account(), id: "another-aleo-account" }],
+    ])("has no target for a token account %s", (_, parentAccount) => {
       expect(
         aleoBalanceTypeConfig.getSelfTransferTarget({
           account: tokenAccount(),
+          parentAccount,
           transaction: transaction(TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC),
         }),
       ).toBeNull();

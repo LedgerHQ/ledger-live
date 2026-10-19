@@ -169,9 +169,14 @@ export function useAddressValidation({
   const transactionForBridgeValidation = useMemo(
     () =>
       account && transaction
-        ? applyRecipientSelfTransferState(account, transaction, addressForBridgeValidation)
+        ? applyRecipientSelfTransferState(
+            account,
+            transaction,
+            addressForBridgeValidation,
+            parentAccount,
+          )
         : transaction,
-    [account, transaction, addressForBridgeValidation],
+    [account, transaction, addressForBridgeValidation, parentAccount],
   );
 
   // Bridge validation for recipient/sender errors and warnings
@@ -295,13 +300,13 @@ export function useAddressValidation({
   // shortcut already produces on click. Any other self-match (e.g. the pool
   // currently being spent from) keeps the account name.
   const selfTransferPoolLabel = useMemo(() => {
-    if (!currentAccountMatch) return undefined;
-    const target = getAccountSelfTransferTarget(currentAccountMatch, transaction);
+    if (!currentAccountMatch || !account) return undefined;
+    const target = getAccountSelfTransferTarget(account, transaction, parentAccount);
     if (!target || target.address.toLowerCase() !== addressForBridgeValidation.toLowerCase()) {
       return undefined;
     }
     return t(`newSendFlow.${target.translationKey}.label`);
-  }, [currentAccountMatch, transaction, addressForBridgeValidation]);
+  }, [currentAccountMatch, account, parentAccount, transaction, addressForBridgeValidation]);
 
   const accountName = selfTransferPoolLabel ?? matchedLedgerAccountName;
 

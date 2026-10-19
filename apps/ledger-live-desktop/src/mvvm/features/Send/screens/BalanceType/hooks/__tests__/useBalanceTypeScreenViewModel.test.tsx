@@ -185,15 +185,39 @@ describe("useBalanceTypeScreenViewModel", () => {
   test("formats each pool balance and flags the empty ones", () => {
     stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: new BigNumber(0) }]);
 
-    const vm = renderViewModel();
+    expect(renderViewModel()).toEqual(
+      expect.objectContaining({
+        ready: true,
+        options: [
+          expect.objectContaining({
+            formattedBalance: expect.stringContaining("ZEC"),
+            formattedCounterValue: expect.stringMatching(/.+/),
+            isZero: false,
+            requiresSync: false,
+          }),
+          expect.objectContaining({ isZero: true, requiresSync: false }),
+        ],
+      }),
+    );
+  });
 
-    expect(vm?.ready).toBe(true);
-    if (vm?.ready) {
-      expect(vm.options[0].formattedBalance).toBeTruthy();
-      expect(vm.options[0].formattedCounterValue).toBeTruthy();
-      expect(vm.options[0].isZero).toBe(false);
-      expect(vm.options[1].isZero).toBe(true);
-    }
+  test("shows a dash and flags a sync for a pool whose balance is unknown", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: null }]);
+
+    expect(renderViewModel()).toEqual(
+      expect.objectContaining({
+        ready: true,
+        options: [
+          expect.objectContaining({ requiresSync: false }),
+          expect.objectContaining({
+            formattedBalance: "-",
+            formattedCounterValue: "",
+            isZero: false,
+            requiresSync: true,
+          }),
+        ],
+      }),
+    );
   });
 
   test("propagates the pending-balance flag of a pool", () => {
