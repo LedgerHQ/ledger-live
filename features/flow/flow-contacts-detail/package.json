@@ -34,6 +34,7 @@
     "@features/platform-contacts": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@shared/clipboard": "workspace:*",
+    "@shared/i18n": "workspace:*",
     "@shared/ui-qr-code": "workspace:*"
   },
   "peerDependencies": {

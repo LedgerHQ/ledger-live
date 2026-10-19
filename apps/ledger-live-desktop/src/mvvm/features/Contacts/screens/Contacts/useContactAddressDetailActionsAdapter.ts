@@ -18,7 +18,6 @@ import {
   type ContactAddressDetailSendIntent,
   createActiveContactAddressDetailActionsUiState,
   createInactiveContactAddressDetailActionsUiState,
-  resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
   resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts-detail";
@@ -26,8 +25,7 @@ import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDialogProps,
 } from "@features/flow-contacts-edit-address";
-import { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useCallback } from "react";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
@@ -65,7 +63,6 @@ export function useContactAddressDetailActionsAdapter(
   asset?: string,
   network?: string,
 ): ContactAddressDetailActionsDialogProps {
-  const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const ports = useContactsAddressDetailActionsPorts(deviceIntents, resolveCurrencyConfig);
   const addressValidation = useContactsAddressValidationAdapter();
@@ -130,7 +127,6 @@ export function useContactAddressDetailActionsAdapter(
     currencyId,
     sendFeatures.supportsDomain,
   );
-  const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const onEdit = useCallback(() => {
     trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
     flow.onEditPress();
@@ -161,14 +157,13 @@ export function useContactAddressDetailActionsAdapter(
 
   if (!isSelectionActive) {
     return mapUiStateToDialogProps(
-      createInactiveContactAddressDetailActionsUiState(labels, supportsDomain),
+      createInactiveContactAddressDetailActionsUiState(supportsDomain),
     );
   }
 
   const uiState = createActiveContactAddressDetailActionsUiState(
     flow,
     renameViewModel,
-    labels,
     supportsDomain,
   );
 

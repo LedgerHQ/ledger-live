@@ -1,10 +1,9 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-react";
 import { ArrowUp, Check, Copy, PenEdit, Trash } from "@ledgerhq/lumen-ui-react/symbols";
-import type { ContactAddressDetailDialogLabels } from "./types";
+import { useTranslation } from "@shared/i18n";
 
 type ContactAddressDetailActionsProps = Readonly<{
-  labels: ContactAddressDetailDialogLabels;
   hasCopied: boolean;
   onCopy: () => void;
   onSend?: () => void;
@@ -16,7 +15,6 @@ type ContactAddressDetailActionsProps = Readonly<{
 }>;
 
 export function ContactAddressDetailActions({
-  labels,
   hasCopied,
   onCopy,
   onSend,
@@ -26,6 +24,8 @@ export function ContactAddressDetailActions({
   canEdit = false,
   canDelete = false,
 }: ContactAddressDetailActionsProps): React.ReactNode {
+  const { t } = useTranslation();
+
   return (
     <div className="grid w-full grid-cols-4 gap-8">
       <TileButton
@@ -35,7 +35,7 @@ export function ContactAddressDetailActions({
         onClick={onSend}
         data-testid="contacts-address-detail-send"
       >
-        {labels.send}
+        {t("contacts.addressDetail.send")}
       </TileButton>
       <TileButton
         icon={hasCopied ? Check : Copy}
@@ -43,7 +43,7 @@ export function ContactAddressDetailActions({
         data-testid="contacts-address-detail-copy"
         isFull
       >
-        {hasCopied ? labels.copied : labels.copy}
+        {hasCopied ? t("contacts.addressDetail.copied") : t("contacts.addressDetail.copy")}
       </TileButton>
       <TileButton
         icon={PenEdit}
@@ -52,7 +52,7 @@ export function ContactAddressDetailActions({
         onClick={onEdit}
         data-testid="contacts-address-detail-edit"
       >
-        {labels.edit}
+        {t("contacts.addressDetail.edit")}
       </TileButton>
       <TileButton
         icon={Trash}
@@ -62,7 +62,7 @@ export function ContactAddressDetailActions({
         disabled={!canDelete}
         onClick={onDelete}
       >
-        {labels.delete}
+        {t("contacts.addressDetail.delete")}
       </TileButton>
     </div>
   );

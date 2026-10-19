@@ -12,7 +12,6 @@ export function ContactAddressDetailDialog({
   contactName,
   row,
   network,
-  labels,
   bottomInset = 0,
   onCopyAddress,
   onShareAddress,
@@ -38,14 +37,9 @@ export function ContactAddressDetailDialog({
           <BottomSheetHeader title={contactName} />
           <Box testID="contacts-address-detail-dialog" lx={{ alignItems: "center" }}>
             <Box lx={{ paddingHorizontal: "s24" }}>
-              <ContactAddressDetailSummary
-                row={row}
-                network={network}
-                formatNetworkTag={labels.formatNetworkTag}
-              />
+              <ContactAddressDetailSummary row={row} network={network} />
             </Box>
             <ContactAddressDetailActions
-              labels={labels}
               hasCopied={hasCopied}
               onCopy={onCopy}
               onShare={onShare}

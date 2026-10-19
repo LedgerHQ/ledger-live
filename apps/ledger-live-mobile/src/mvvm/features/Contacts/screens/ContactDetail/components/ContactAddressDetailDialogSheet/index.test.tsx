@@ -15,7 +15,6 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
 
 const dialogProps = {
   contactName: "Ben",
-  labels: { formatNetworkTag: (name: string) => name },
   onClose: () => undefined,
 } as unknown as ContactAddressDetailDialogNativeProps;
 

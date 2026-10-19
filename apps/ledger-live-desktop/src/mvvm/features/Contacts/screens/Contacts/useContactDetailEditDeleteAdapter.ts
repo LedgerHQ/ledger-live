@@ -6,22 +6,18 @@ import {
 } from "@features/flow-contacts";
 import {
   type ContactsEditSignerMismatchDialogProps,
-  type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
-  resolveContactDetailEditDeleteLabels,
   useContactDetailEditDeleteFlowBindings,
 } from "@features/flow-contacts-detail";
 import type { ContactsDeleteContactDialogProps } from "@features/flow-contacts-delete-contact";
 import type { ContactsRenameContactDialogProps } from "@features/flow-contacts-edit-contact";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useContactsAnalytics } from "../../analytics";
 
 export type ContactDetailEditDeleteDialogProps = Readonly<{
   detailActions?: Readonly<{
     canDelete: boolean;
-    labels: ContactDetailActionsLabels;
     onEdit: () => void;
     onDelete: () => void;
   }>;
@@ -35,7 +31,6 @@ export function useContactDetailEditDeleteAdapter(
   onDeleteSuccess: () => void,
   deviceIntents: ContactDeviceIntentsPort,
 ): ContactDetailEditDeleteDialogProps {
-  const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
   const ports = useContactsEditDeletePorts(deviceIntents);
@@ -45,10 +40,9 @@ export function useContactDetailEditDeleteAdapter(
     ports,
     onDeleteSuccess,
   });
-  const labels = useMemo(() => resolveContactDetailEditDeleteLabels({ t }), [t]);
   const uiState = useMemo(
-    () => createContactDetailEditDeleteUiState(flow, renameViewModel, labels),
-    [flow, labels, renameViewModel],
+    () => createContactDetailEditDeleteUiState(flow, renameViewModel),
+    [flow, renameViewModel],
   );
   const { onEdit, onDelete, onConfirmDelete, onValidateEdit } = useContactDetailEditDeleteAnalytics(
     analytics,
@@ -61,7 +55,6 @@ export function useContactDetailEditDeleteAdapter(
     detailActions: contactId
       ? {
           canDelete: flow.canDelete,
-          labels: labels.actions,
           onEdit,
           onDelete,
         }

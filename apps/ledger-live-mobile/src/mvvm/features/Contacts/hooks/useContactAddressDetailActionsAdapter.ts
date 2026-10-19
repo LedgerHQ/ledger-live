@@ -16,7 +16,6 @@ import {
   type ContactAddressDetailDialogNativeProps,
   createActiveContactAddressDetailActionsUiState,
   createInactiveContactAddressDetailActionsUiState,
-  resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
   resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts-detail";
@@ -27,9 +26,8 @@ import type {
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { ScreenName } from "~/const";
-import { useTranslation } from "~/context/Locale";
 import {
   contactsCurrencyAnalyticsDependencies,
   resolveContactsCurrencyAnalytics,
@@ -69,7 +67,6 @@ export function useContactAddressDetailActionsAdapter(
   asset?: string,
   network?: string,
 ): ContactAddressDetailActionsFlowProps {
-  const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const ports = useContactsAddressDetailActionsPorts(deviceIntents, resolveCurrencyConfig);
   const addressValidation = useContactsAddressValidationAdapter();
@@ -142,7 +139,6 @@ export function useContactAddressDetailActionsAdapter(
     currencyId,
     sendFeatures.supportsDomain,
   );
-  const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const { onClose: closeRenameViewModel } = renameViewModel;
   const { editUiState } = flow;
   // Closing the edit sheet returns to the address detail it was opened from, the same way
@@ -183,13 +179,11 @@ export function useContactAddressDetailActionsAdapter(
   });
 
   if (!isSelectionActive) {
-    return mapUiStateToFlowProps(
-      createInactiveContactAddressDetailActionsUiState(labels, supportsDomain),
-    );
+    return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(supportsDomain));
   }
 
   const uiState = mapUiStateToFlowProps(
-    createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels, supportsDomain),
+    createActiveContactAddressDetailActionsUiState(flow, renameViewModel, supportsDomain),
   );
 
   return {

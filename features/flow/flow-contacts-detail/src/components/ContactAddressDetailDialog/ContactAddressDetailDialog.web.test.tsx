@@ -1,6 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { copyToClipboard } from "@shared/clipboard";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
@@ -37,14 +38,6 @@ function createProps(
     contactName: contact.name,
     row,
     network,
-    labels: {
-      send: "Send",
-      copy: "Copy",
-      copied: "Copied",
-      edit: "Edit",
-      delete: "Delete",
-      formatNetworkTag: name => `${name} Network`,
-    },
     onClose: jest.fn(),
     ...overrides,
   };
@@ -61,7 +54,7 @@ describe("ContactAddressDetailDialog", () => {
   });
 
   it("should render the selected address details", () => {
-    render(<ContactAddressDetailDialog {...createProps()} />);
+    render(<ContactAddressDetailDialog {...createProps()} />, { wrapper: I18nTestProvider });
 
     expect(screen.getByTestId("contacts-address-detail-dialog")).toBeVisible();
     expect(screen.getByTestId("contacts-address-detail-full-address")).toHaveTextContent(
@@ -69,12 +62,15 @@ describe("ContactAddressDetailDialog", () => {
     );
     expect(screen.getByTestId("contacts-address-detail-network-tag")).toHaveAttribute(
       "label",
-      "Ethereum Network",
+      "contacts.addressDetail.networkTag",
+    );
+    expect(screen.getByTestId("contacts-address-detail-send")).toHaveTextContent(
+      "contacts.addressDetail.send",
     );
   });
 
   it("should copy the address and show copied feedback", async () => {
-    render(<ContactAddressDetailDialog {...createProps()} />);
+    render(<ContactAddressDetailDialog {...createProps()} />, { wrapper: I18nTestProvider });
 
     fireEvent.click(screen.getByTestId("contacts-address-detail-copy"));
 
@@ -83,19 +79,24 @@ describe("ContactAddressDetailDialog", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
+      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
+        "contacts.addressDetail.copied",
+      );
     });
 
     jest.advanceTimersByTime(3000);
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copy");
+      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
+        "contacts.addressDetail.copy",
+      );
     });
   });
 
   it("should render nothing when row or network is missing", () => {
     const { container } = render(
       <ContactAddressDetailDialog {...createProps({ row: undefined })} />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(container).toBeEmptyDOMElement();

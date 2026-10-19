@@ -1,16 +1,13 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react-native";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactDetailActionsMenu } from "./ContactDetailActionsMenu.native";
 
-const labels = {
-  editContact: "Edit name",
-  deleteContact: "Delete contact",
-};
+const render = (ui: React.ReactElement) => renderWithoutI18n(ui, { wrapper: I18nTestProvider });
 
 const defaultProps = {
   isOpen: true,
   canDelete: true,
-  labels,
   onEdit: jest.fn(),
   onDelete: jest.fn(),
 };
@@ -24,8 +21,12 @@ describe("ContactDetailActionsMenu", () => {
     render(<ContactDetailActionsMenu {...defaultProps} />);
 
     expect(screen.getByTestId("contacts-detail-actions-menu")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-edit-action")).toHaveTextContent("Edit name");
-    expect(screen.getByTestId("contacts-detail-delete-action")).toHaveTextContent("Delete contact");
+    expect(screen.getByTestId("contacts-detail-edit-action")).toHaveTextContent(
+      "contacts.detailActions.editName",
+    );
+    expect(screen.getByTestId("contacts-detail-delete-action")).toHaveTextContent(
+      "contacts.detailActions.deleteContact",
+    );
   });
 
   it("should hide the delete action for Me contacts", () => {

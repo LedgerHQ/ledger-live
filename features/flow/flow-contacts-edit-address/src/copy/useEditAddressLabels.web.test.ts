@@ -8,7 +8,7 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import { useEditAddressLabels } from "./useEditAddressLabels";
 
 describe("useEditAddressLabels", () => {
-  it("resolves the domain placeholder and the desktop too-long key", () => {
+  it("resolves the domain placeholder and the label validation keys", () => {
     const { result } = renderHook(() => useEditAddressLabels(true), {
       wrapper: I18nTestProvider,
     });

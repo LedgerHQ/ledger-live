@@ -10,7 +10,6 @@ import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCar
 
 export function ContactDetailView({
   contact,
-  labels,
   onAddAddress,
   ledgerWalletAccountsIntent,
   onLedgerWalletAccountsPress,
@@ -28,17 +27,9 @@ export function ContactDetailView({
         contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom }}
         showsVerticalScrollIndicator={false}
       >
-        <ContactDetailHeader
-          contact={contact}
-          labels={labels}
-
-          onAddAddress={onAddAddress}
-        />
-        {ledgerWalletAccountsIntent &&
-        labels.ledgerWalletAddresses &&
-        onLedgerWalletAccountsPress ? (
+        <ContactDetailHeader contact={contact} onAddAddress={onAddAddress} />
+        {ledgerWalletAccountsIntent && onLedgerWalletAccountsPress ? (
           <LedgerWalletAddressesCard
-            label={labels.ledgerWalletAddresses}
             intent={ledgerWalletAccountsIntent}
             onPress={onLedgerWalletAccountsPress}
           />
@@ -49,7 +40,7 @@ export function ContactDetailView({
             onAddressRowPress={onAddressRowPress}
           />
         ) : (
-          <ContactDetailEmptyState contact={contact} labels={labels} />
+          <ContactDetailEmptyState contact={contact} />
         )}
       </ScrollView>
     </Box>

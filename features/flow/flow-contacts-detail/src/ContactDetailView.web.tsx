@@ -7,7 +7,6 @@ import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCar
 
 export function ContactDetailView({
   contact,
-  labels,
   onAddAddress,
   ledgerWalletAccountsIntent,
   onLedgerWalletAccountsPress,
@@ -30,17 +29,13 @@ export function ContactDetailView({
     return () => cancelAnimationFrame(id);
   }, [isContactSwitching]);
 
-  const hasCard = Boolean(
-    ledgerWalletAccountsIntent && labels.ledgerWalletAddresses && onLedgerWalletAccountsPress,
-  );
-
-  const ledgerWalletCard = hasCard ? (
-    <LedgerWalletAddressesCard
-      label={labels.ledgerWalletAddresses!}
-      intent={ledgerWalletAccountsIntent!}
-      onPress={onLedgerWalletAccountsPress!}
-    />
-  ) : null;
+  const ledgerWalletCard =
+    ledgerWalletAccountsIntent && onLedgerWalletAccountsPress ? (
+      <LedgerWalletAddressesCard
+        intent={ledgerWalletAccountsIntent}
+        onPress={onLedgerWalletAccountsPress}
+      />
+    ) : null;
 
   if (!hasPopulatedAddresses) {
     return (
@@ -50,14 +45,12 @@ export function ContactDetailView({
       >
         <ContactDetailHeader
           contact={contact}
-          labels={labels}
-
           onAddAddress={onAddAddress}
           detailActions={detailActions}
           isCollapsed={isHeaderCollapsed}
         />
         {ledgerWalletCard}
-        <ContactDetailEmptyState contact={contact} labels={labels} />
+        <ContactDetailEmptyState contact={contact} />
       </div>
     );
   }
@@ -72,8 +65,6 @@ export function ContactDetailView({
     <div className="flex flex-col gap-32 px-16 py-32">
       <ContactDetailHeader
         contact={contact}
-        labels={labels}
-
         onAddAddress={onAddAddress}
         detailActions={detailActions}
         isCollapsed={false}
@@ -92,8 +83,6 @@ export function ContactDetailView({
       >
         <ContactDetailHeader
           contact={contact}
-          labels={labels}
-
           onAddAddress={onAddAddress}
           detailActions={detailActions}
           isCollapsed={true}

@@ -17,9 +17,7 @@ import {
   trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
 import {
-  type ContactAddressDetailDialogNativeLabels,
   type ContactAddressDetailDialogNativeProps,
-  type ContactDetailLabels,
   type ContactDetailViewProps,
   useContactDetailSharedState,
   useContactAddressDetailDialog,
@@ -57,7 +55,6 @@ import {
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
-import { useTranslation } from "~/context/Locale";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
@@ -114,7 +111,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { ledgerSyncActivationDrawer, openLedgerSyncActivationDrawer } =
     useContactsLedgerSyncActivationDrawer();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
-  const { t } = useTranslation();
   const { deviceIntents, dieProps, isDeviceSheetRequested, dismissDeviceSheet } =
     useContactsIntentsOrchestrator({
       intents: contactsIntentLWMDefinitions,
@@ -338,35 +334,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     completeAddressConfirmation,
     continueFromName,
   ]);
-  const labels = useMemo<ContactDetailLabels>(
-    () => ({
-      addAddress: t("contacts.addAddress"),
-      addYourAddress: t("contacts.addYourAddress"),
-      emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
-      emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
-      emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
-      emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
-      ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      myAddresses: t("contacts.detail.myAddresses"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
   const detailSharedState = useContactDetailSharedState(route.params.contactId);
-  const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
-    () => ({
-      send: t("contacts.addressDetail.send"),
-      copy: t("contacts.addressDetail.copy"),
-      copyAddress: t("contacts.addressDetail.copyAddress"),
-      copied: t("contacts.addressDetail.copied"),
-      edit: t("contacts.addressDetail.edit"),
-      share: t("contacts.addressDetail.share"),
-      delete: t("contacts.addressDetail.delete"),
-      formatNetworkTag: networkName =>
-        t("contacts.addressDetail.networkTag", { name: networkName }),
-    }),
-    [t],
-  );
   const deleteSheetWasOpenRef = useRef(false);
   const contactMissingRef = useRef(false);
   const navigatedAfterDeleteRef = useRef(false);
@@ -508,7 +476,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
   const pageProps: ContactDetailViewProps = {
     contact,
-    labels,
     onAddAddress,
     ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
     onLedgerWalletAccountsPress,
@@ -541,7 +508,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       contactName: getDisplayName(contact),
       row: selection?.row,
       network: selection?.network,
-      labels: addressDetailDialogLabels,
       onClose: onCloseAddressDetailSheet,
       ...addressDetailActions.addressDetailDialog,
     },

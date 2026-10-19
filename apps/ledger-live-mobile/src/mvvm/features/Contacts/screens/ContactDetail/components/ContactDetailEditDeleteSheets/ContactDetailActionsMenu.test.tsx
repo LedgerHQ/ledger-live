@@ -20,13 +20,7 @@ describe("ContactDetailActionsMenu", () => {
   beforeEach(() => {
     render(
       <QueuedBottomSheet isRequestingToBeOpened onClose={jest.fn()} enableDynamicSizing>
-        <ContactDetailActionsMenu
-          isOpen
-          canDelete
-          labels={{ editContact: "Edit name", deleteContact: "Delete contact" }}
-          onEdit={jest.fn()}
-          onDelete={jest.fn()}
-        />
+        <ContactDetailActionsMenu isOpen canDelete onEdit={jest.fn()} onDelete={jest.fn()} />
       </QueuedBottomSheet>,
     );
   });

@@ -7468,6 +7468,9 @@ importers:
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
       '@shared/ui-qr-code':
         specifier: workspace:*
         version: link:../../../shared/ui-qr-code

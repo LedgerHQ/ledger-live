@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
@@ -20,9 +19,7 @@ import {
   useEmptyContactDetail,
   usePopulatedContactDetail,
   useContactAddressDetailDialog,
-  type ContactAddressDetailDialogLabels,
   type ContactAddressDetailDialogProps,
-  type ContactDetailLabels,
   type ContactDetailViewProps,
 } from "@features/flow-contacts-detail";
 import type { AddAddressContact } from "@features/flow-contacts-add-address";
@@ -48,7 +45,6 @@ export function useContactDetailPaneAdapter(
   onOpenContact: ContactsViewProps["onOpenContact"];
   onSelectContact: (contactId: ContactId) => void;
 }> {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
@@ -95,32 +91,7 @@ export function useContactDetailPaneAdapter(
     addressDetailAsset,
     addressDetailNetwork,
   );
-  const labels = useMemo<ContactDetailLabels>(
-    () => ({
-      addAddress: t("contacts.addAddress"),
-      addYourAddress: t("contacts.addYourAddress"),
-      emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
-      emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
-      emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
-      emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
-      ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
   const detailSharedState = useContactDetailSharedState(detailContactId);
-  const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogLabels>(
-    () => ({
-      send: t("contacts.addressDetail.send"),
-      copy: t("contacts.addressDetail.copy"),
-      copied: t("contacts.addressDetail.copied"),
-      edit: t("contacts.addressDetail.edit"),
-      delete: t("contacts.addressDetail.delete"),
-      formatNetworkTag: networkName =>
-        t("contacts.addressDetail.networkTag", { name: networkName }),
-    }),
-    [t],
-  );
   const onLedgerWalletAccountsPress = useCallback(() => {
     navigate(
       "/cryptos",
@@ -156,7 +127,6 @@ export function useContactDetailPaneAdapter(
     }
 
     return {
-      labels,
       contact,
       onAddAddress: () => handleAddAddress(contact),
       ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
@@ -174,7 +144,6 @@ export function useContactDetailPaneAdapter(
     emptyContact,
     editDeleteDialogs.detailActions,
     handleAddAddress,
-    labels,
     onLedgerWalletAccountsPress,
     onAddressRowPress,
     populatedContactDetail,
@@ -192,7 +161,6 @@ export function useContactDetailPaneAdapter(
       contactName: dialogContact ? getDisplayName(dialogContact) : "",
       row: selection?.row,
       network: selection?.network,
-      labels: addressDetailDialogLabels,
       onClose: onCloseAddressDetail,
       ...addressDetailActionsDialogs.addressDetailDialog,
     };
@@ -201,7 +169,6 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs.deleteDialog.isOpen,
     addressDetailActionsDialogs.renameDialog.isOpen,
     addressDetailActionsDialogs.signerMismatchDialog.isOpen,
-    addressDetailDialogLabels,
     dialogContact,
     getDisplayName,
     isOpen,

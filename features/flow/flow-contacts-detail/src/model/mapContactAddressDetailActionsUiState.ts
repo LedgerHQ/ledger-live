@@ -6,7 +6,6 @@ import type {
 } from "@features/flow-contacts-edit-address";
 import { EMPTY_ADDRESS_ENTRY_STATE } from "@features/platform-contacts";
 import type { UseContactAddressDetailActionsFlowViewModelResult } from "../useContactAddressDetailActionsFlowViewModel";
-import type { ContactAddressDetailActionsLabels } from "./resolveContactAddressDetailActionsLabels";
 
 export type ContactAddressDetailActionsUiState = Readonly<{
   addressDetailDialog: Readonly<{
@@ -23,7 +22,6 @@ export type ContactAddressDetailActionsUiState = Readonly<{
 }>;
 
 export function createInactiveContactAddressDetailActionsUiState(
-  labels: ContactAddressDetailActionsLabels,
   supportsDomain: boolean,
 ): ContactAddressDetailActionsUiState {
   return {
@@ -55,7 +53,6 @@ export function createInactiveContactAddressDetailActionsUiState(
     },
     signerMismatch: {
       isOpen: false,
-      labels: labels.signerMismatch,
       onConnectDifferentDevice: () => undefined,
       onCancel: () => undefined,
     },
@@ -65,7 +62,6 @@ export function createInactiveContactAddressDetailActionsUiState(
 export function createActiveContactAddressDetailActionsUiState(
   flow: UseContactAddressDetailActionsFlowViewModelResult,
   renameViewModel: RenameAddressDialogViewModel,
-  labels: ContactAddressDetailActionsLabels,
   supportsDomain: boolean,
 ): ContactAddressDetailActionsUiState {
   return {
@@ -90,7 +86,6 @@ export function createActiveContactAddressDetailActionsUiState(
     },
     signerMismatch: {
       isOpen: flow.editUiState === "signer-mismatch",
-      labels: labels.signerMismatch,
       onConnectDifferentDevice: flow.onConnectDifferentDevice,
       onCancel: flow.onSignerMismatchCancel,
     },

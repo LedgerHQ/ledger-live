@@ -5,19 +5,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
-import type { ContactDetailLabels } from "./types";
 import { ContactDetailView } from "./ContactDetailView.native";
-
-const labels: ContactDetailLabels = {
-  addAddress: "Add address",
-  addYourAddress: "Add your address",
-  emptyMeTitle: "Save your own addresses",
-  emptyContactTitle: name => `No saved addresses for ${name}`,
-  emptyMeDescription: "Save external addresses for Me.",
-  emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
-  ledgerWalletAddresses: "Ledger Wallet addresses",
-  formatAddressCount: count => `${count} address`,
-};
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
@@ -26,7 +14,6 @@ const onAddAddress = () => undefined;
 const onLedgerWalletAccountsPress = () => undefined;
 
 const defaultProps = {
-  labels,
   onAddAddress,
 };
 
@@ -42,12 +29,14 @@ describe("ContactDetailPage", () => {
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
     expect(screen.getByText("My addresses (Me)")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add your address");
-    expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
-      "Ledger Wallet addresses",
+    expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent(
+      "contacts.addYourAddress",
     );
-    expect(screen.getByText("Save your own addresses")).toBeVisible();
-    expect(screen.getByText("Save external addresses for Me.")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
+      "contacts.detail.ledgerWalletAddresses",
+    );
+    expect(screen.getByText("contacts.detail.emptyState.meTitle")).toBeVisible();
+    expect(screen.getByText("contacts.detail.emptyState.meDescription")).toBeVisible();
   });
 
   it("should render a custom Me display name with the Me suffix", () => {
@@ -66,35 +55,18 @@ describe("ContactDetailPage", () => {
 
     expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
     expect(screen.getByText("Benoit")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
+    expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent(
+      "contacts.addAddress",
+    );
     expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
-    expect(screen.getByText("No saved addresses for Benoit")).toBeVisible();
-    expect(
-      screen.getByText("Save their wallet addresses to send to them by name next time"),
-    ).toBeVisible();
+    expect(screen.getByText("contacts.detail.emptyState.contactTitle")).toBeVisible();
+    expect(screen.getByText("contacts.detail.emptyState.contactDescription")).toBeVisible();
   });
 
-  it("should keep the shared detail defaults without Mobile-specific props", () => {
-    const sharedLabels: ContactDetailLabels = {
-      addAddress: labels.addAddress,
-      emptyMeTitle: labels.emptyMeTitle,
-      emptyContactTitle: labels.emptyContactTitle,
-      emptyMeDescription: labels.emptyMeDescription,
-      emptyContactDescription: labels.emptyContactDescription,
-      formatAddressCount: labels.formatAddressCount,
-    };
-
-    render(
-      <ContactDetailView
-        contact={mockMeContact()}
-        labels={sharedLabels}
-
-        onAddAddress={onAddAddress}
-      />,
-    );
+  it("should hide the Ledger Wallet addresses entry without its intent", () => {
+    render(<ContactDetailView contact={mockMeContact()} onAddAddress={onAddAddress} />);
 
     expect(screen.getByText("My addresses (Me)")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
     expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
   });
 
@@ -134,7 +106,9 @@ describe("ContactDetailPage", () => {
     expect(screen.getByTestId("contacts-detail-address-list")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
     expect(screen.getByTestId(`contacts-detail-address-row-${address.id}`)).toBeVisible();
-    expect(screen.getByText("1 address")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-address-count")).toHaveTextContent(
+      "contacts.addressCount",
+    );
     expect(screen.queryByTestId("contacts-detail-empty-state")).toBeNull();
 
     fireEvent.press(screen.getByTestId(`contacts-detail-address-row-${address.id}`));
