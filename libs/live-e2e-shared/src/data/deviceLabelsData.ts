@@ -80,6 +80,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     delegateVerify: {
       [AppInfos.COSMOS.name]: DeviceLabels.TYPE_DELEGATE,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
+      [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
       [AppInfos.SOLANA.name]: DeviceLabels.DELEGATE_FROM,
       [AppInfos.TEZOS.name]: DeviceLabels.REVIEW_OPERATION,
       [AppInfos.INJECTIVE.name]: DeviceLabels.CHAIN_ID,
@@ -90,7 +91,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     delegateConfirm: {
       [AppInfos.CELO.name]: DeviceLabels.ACCEPT,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
-      [AppInfos.NEAR.name]: DeviceLabels.SIGN_TRANSACTION,
+      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTIONS,
       [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.SIGN,
       [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT,
