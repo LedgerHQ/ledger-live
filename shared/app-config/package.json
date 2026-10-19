@@ -16,7 +16,7 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/app-config",
-    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src"
   },
