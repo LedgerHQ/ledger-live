@@ -89,6 +89,7 @@ catalog:
   "@react-native/babel-plugin-codegen": 0.81.6
   "@react-native/babel-preset": 0.81.6
   "@react-native/codegen": 0.81.6
+  "@react-native/community-cli-plugin": 0.81.6
   "@react-native/dev-middleware": 0.81.6
   "@react-native/gradle-plugin": 0.81.6
   "@react-native/metro-config": 0.81.6

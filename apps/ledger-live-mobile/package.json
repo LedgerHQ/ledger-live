@@ -222,7 +222,7 @@
     "@react-native-firebase/remote-config": "22.2.0",
     "@react-native-masked-view/masked-view": "0.2.9",
     "@react-native/assets-registry": "catalog:",
-    "@react-native/community-cli-plugin": "0.77.3",
+    "@react-native/community-cli-plugin": "catalog:",
     "@react-native/gradle-plugin": "catalog:",
     "@react-navigation/bottom-tabs": "7.4.7",
     "@react-navigation/core": "7.12.4",
