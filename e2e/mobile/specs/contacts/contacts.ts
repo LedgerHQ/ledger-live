@@ -300,9 +300,11 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
       await app.contacts.detail.expectName(CONTACT_NAME);
       await app.contacts.detail.expectNoAddresses();
 
-      // iOS Workaround: the mock device sheet never goes idle
-      await app.common.disableSynchronizationForiOS();
       await app.contacts.detail.addAddress(ETHEREUM_ADDRESS);
+
+      // iOS Workaround: the mock device sheet never goes idle - disable sync for remainder of the spec
+      await app.common.disableSynchronizationForiOS();
+
       await mockServer.confirmDeviceIntent(REGISTER_DEVICE_PROMPT_ID);
       await app.contacts.detail.expectAddressSaved(
         ETHEREUM_ADDRESS.savedValue,

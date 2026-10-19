@@ -137,7 +137,11 @@ export default class ContactDetailPage {
     }
 
     await tapByElement(this.addAddressNameContinueButton());
+
+    // iOS Workaround: the mock device sheet never goes idle - disable sync for the wait
+    await app.common.disableSynchronizationForiOS();
     await waitForElement(this.registerAddressDeviceConfirmation());
+    await app.common.enableSynchronization();
   }
 
   @Step("Expect {{{0}}} saved under {{1}}")
