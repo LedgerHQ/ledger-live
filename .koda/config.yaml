@@ -1,4 +1,5 @@
 snapshot: ledger-live-desktop-agent-cde
+image: jfrog.ledgerlabs.net/daytona-oci-internal-green/ledger-live-desktop-agent-cde:main
 setup: |
   mise install
   pnpm i --frozen-lockfile
