@@ -27,9 +27,10 @@ describe("ContactsRenameContactFooter", () => {
   it("should confirm the rename", () => {
     const onConfirm = jest.fn(async () => undefined);
 
-    render(<ContactsRenameContactFooter {...createProps({ isConfirmEnabled: true, onConfirm })} />, {
-      wrapper: I18nTestProvider,
-    });
+    render(
+      <ContactsRenameContactFooter {...createProps({ isConfirmEnabled: true, onConfirm })} />,
+      { wrapper: I18nTestProvider },
+    );
 
     fireEvent.press(screen.getByTestId("contacts-rename-contact-confirm"));
 

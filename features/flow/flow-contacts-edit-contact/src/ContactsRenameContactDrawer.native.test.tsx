@@ -95,11 +95,7 @@ describe("ContactsRenameContactDrawer", () => {
 
     expect(mockFocus).not.toHaveBeenCalled();
 
-    rerender(
-      <I18nTestProvider>
-        <ContactsRenameContactDrawer {...createViewModel({ autoFocus: true })} />
-      </I18nTestProvider>,
-    );
+    rerender(<ContactsRenameContactDrawer {...createViewModel({ autoFocus: true })} />);
 
     expect(mockFocus).toHaveBeenCalledTimes(1);
   });
