@@ -31,6 +31,9 @@ import { preventAutoHideAsync, setOptions } from "expo-splash-screen";
 import App from "./src";
 import logReport from "./src/log-report";
 import { initDevServerAutoReload } from "./src/hooks/useDevServerAutoReload";
+import { RSDOCTOR_EVAL_PAYLOAD } from "./src/rsdoctorEval";
+
+Reflect.set(globalThis, "__RSDOCTOR_EVAL__", RSDOCTOR_EVAL_PAYLOAD);
 preventAutoHideAsync();
 setOptions({ fade: true, duration: 250 });
 logReport.logReportInit();
