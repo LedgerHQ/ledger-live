@@ -10,6 +10,10 @@ export type ChecksScreenState =
   | "updating"
   | "succeeded";
 
+export const seededFunnelEntrySource = "connect" as const;
+
+export type SeededFunnelEntrySource = typeof seededFunnelEntrySource;
+
 export type ChecksScreenProps = {
   device: Device;
   state: ChecksScreenState;

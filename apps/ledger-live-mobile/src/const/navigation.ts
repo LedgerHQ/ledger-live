@@ -505,6 +505,8 @@ export enum ScreenName {
   OnboardingInfoModal = "OnboardingInfoModal",
   OnboardingRecoveryPhrase = "OnboardingRecoveryPhrase",
   OnboardingPairNew = "OnboardingPairNew",
+  DeviceOnboardingFunnel = "DeviceOnboardingFunnel",
+  DeviceOnboardingSyncOffer = "DeviceOnboardingSyncOffer",
   OnboardingSecureYourCrypto = "OnboardingSecureYourCrypto",
   OnboardingFundSuccess = "OnboardingFundSuccess",
   OnboardingImportAccounts = "OnboardingImportAccounts",

@@ -8,19 +8,33 @@ import { exitActions } from "../utils/exitActions";
 type UseLeaveOnboardingInput = {
   device: Device | null;
   navigateOnExit: boolean;
+  wasReadOnlyAtEntry: boolean;
+  isGenuine: () => boolean;
 };
 
 /**
  * The action the machine runs once, on its final state. A new one each render is fine: the
  * bindings call the latest one, so it reads the current device and navigation.
  */
-export function useLeaveOnboarding({ device, navigateOnExit }: UseLeaveOnboardingInput) {
+export function useLeaveOnboarding({
+  device,
+  navigateOnExit,
+  wasReadOnlyAtEntry,
+  isGenuine,
+}: UseLeaveOnboardingInput) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   return (reason: DeviceOnboardingExitReason) => {
     if (!navigateOnExit || !device) return;
-    exitActions[reason]({ navigation, dispatch, shouldDisplayMyWallet, device });
+    exitActions[reason]({
+      navigation,
+      dispatch,
+      shouldDisplayMyWallet,
+      device,
+      wasReadOnlyAtEntry,
+      isGenuine: isGenuine(),
+    });
   };
 }

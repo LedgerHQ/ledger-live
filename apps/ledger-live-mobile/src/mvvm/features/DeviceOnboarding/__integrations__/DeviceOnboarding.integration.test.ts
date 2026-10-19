@@ -175,6 +175,8 @@ describe("useDeviceOnboarding", () => {
     expect(leaveOnboarding.mock.calls).toEqual([["userQuit"]]);
     expect(leaveHook).toHaveBeenLastCalledWith({
       navigateOnExit: true,
+      wasReadOnlyAtEntry: false,
+      isGenuine: expect.any(Function),
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",

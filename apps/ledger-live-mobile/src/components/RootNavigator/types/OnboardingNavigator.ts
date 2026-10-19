@@ -1,5 +1,7 @@
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorScreenParams } from "@react-navigation/native";
+import type { SeededFunnelEntrySource } from "LLM/features/DeviceOnboarding/types";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
@@ -48,6 +50,13 @@ export type OnboardingNavigatorParamList = {
     isProtectFlow?: boolean;
     fromAccessExistingWallet?: boolean;
     isRestoreSeed?: boolean;
+    connectSeededDevice?: boolean;
+  };
+  [ScreenName.DeviceOnboardingFunnel]: undefined;
+  [ScreenName.DeviceOnboardingSyncOffer]: {
+    device: Device;
+    entrySource: SeededFunnelEntrySource;
+    wasReadOnlyAtEntry: boolean;
   };
   [ScreenName.OnboardingSecureYourCrypto]: {
     deviceModelId?: DeviceModelId;
