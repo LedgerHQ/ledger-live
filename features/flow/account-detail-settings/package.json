@@ -28,6 +28,7 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-settings/knip.web.config.mjs -W features/flow/account-detail-settings --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-settings/knip.native.config.mjs -W features/flow/account-detail-settings --tsConfig tsconfig.native.json"
   },
   "dependencies": {
+    "@domain/entity-account-name": "workspace:*",
     "@shared/clipboard": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
