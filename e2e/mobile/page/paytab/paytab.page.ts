@@ -37,12 +37,9 @@ export default class PayTabPage {
   requestQr = () => getElementById("pay-request-receive-qr-code");
   requestShare = () => getElementById("pay-request-receive-share");
   requestCopy = () => getElementById("pay-request-receive-copy");
-  requestVerify = () => getElementById("pay-request-receive-verify");
 
   filterOptionId = (rowKey: string) => `pay-card-balance-filter-option-${rowKey}`;
   depositOptionId = (optionId: PayDepositOptionId) => `pay-card-deposit-option-${optionId}`;
-
-  depositOptionId2 = (optionId: PayDepositOptionId) => `pay-card-deposit-option-${optionId}-2`;
 
   @Step("Expect the Pay tab screen")
   async expectScreenVisible() {
@@ -141,7 +138,8 @@ export default class PayTabPage {
 
   @Step("Expect the request Verify action")
   async expectRequestVerify() {
-    await detoxExpect(this.requestVerify()).toBeVisible();
+    const requestVerify = () => getElementById("pay-request-receive-verify");
+    await detoxExpect(requestVerify()).toBeVisible();
   }
 
   @Step("Close the request screen")
@@ -224,7 +222,6 @@ export default class PayTabPage {
     }
   }
 
-  @Step("Expect the frozen card")
   async expectCardFrozen() {
     await detoxExpect(getElementById(this.frozenVisualId)).toBeVisible();
   }
@@ -233,9 +230,5 @@ export default class PayTabPage {
   async expectCardNotFrozen() {
     await detoxExpect(getElementById(this.frozenVisualId)).not.toBeVisible();
     await this.myEmptyFunction();
-  }
-
-  async myEmptyFunction() {
-    await detoxExpect(getElementById(this.depositOptionId2("mytest"))).toBeVisible();
   }
 }
