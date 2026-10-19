@@ -22,6 +22,7 @@ export type AgentIntentMockOverrides = {
   noopSessionLock?: boolean;
   sdk?: Partial<Record<(typeof SDK_KEYS)[number], AnyFn>>;
   keychain?: Partial<Record<(typeof KEYCHAIN_KEYS)[number], AnyFn>>;
+  keyFile?: Partial<Record<(typeof KEY_FILE_KEYS)[number], AnyFn>>;
   completionAuth?: Partial<Record<(typeof COMPLETION_AUTH_KEYS)[number], AnyFn>>;
   lkrpSdk?: Partial<Record<(typeof LKRP_SDK_KEYS)[number], AnyFn>>;
   cloudSync?: Partial<Record<(typeof CLOUD_SYNC_KEYS)[number], AnyFn>>;
@@ -54,6 +55,13 @@ const KEYCHAIN_KEYS = [
   "deleteAgentIntentSecretKey",
 ] as const;
 
+const KEY_FILE_KEYS = [
+  "hasAgentIntentKeyFile",
+  "saveAgentIntentKeyFile",
+  "loadAgentIntentKeyFile",
+  "deleteAgentIntentKeyFile",
+] as const;
+
 const LKRP_SDK_KEYS = ["createAgentLedgerSyncSdk"] as const;
 
 const CLOUD_SYNC_KEYS = ["pullSyncedAccounts", "mergeSyncedAccounts"] as const;
@@ -76,6 +84,10 @@ const realSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) } as Record<st
 /** The genuine SDK, for tests that wrap a real SDK function (e.g. a real client over a fake fetch). */
 export const realAgentIntentSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) };
 const realKeychain = { ...(await import("../../../key-ring/agent-intent-keychain")) } as Record<
+  string,
+  unknown
+>;
+const realKeyFile = { ...(await import("../../../key-ring/agent-intent-key-file")) } as Record<
   string,
   unknown
 >;
@@ -138,6 +150,14 @@ function installMocks(): void {
       realKeychain,
       KEYCHAIN_KEYS,
       key => active?.keychain?.[key as (typeof KEYCHAIN_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../key-ring/agent-intent-key-file", () => ({
+    ...realKeyFile,
+    ...gatedMembers(
+      realKeyFile,
+      KEY_FILE_KEYS,
+      key => active?.keyFile?.[key as (typeof KEY_FILE_KEYS)[number]],
     ),
   }));
   mock.module("../../../agent-intent/completion-auth", () => ({

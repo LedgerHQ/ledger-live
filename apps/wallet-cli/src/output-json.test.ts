@@ -451,6 +451,7 @@ describe("JsonCommandOutput", () => {
     environment: "staging" as const,
     bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
     publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+    keyStore: "os-keychain" as const,
     enrollmentExpiresAt: "2026-09-22T11:28:46.999Z",
     createdAt: "2026-09-22T10:58:47.007Z",
   };
@@ -521,6 +522,7 @@ describe("JsonCommandOutput", () => {
       profileId: "test-agent",
       trustchainId: "tc-1",
       accountAccessEnvironment: "staging",
+      keyStore: "plaintext-file",
     });
 
     const [line] = parseLines();
@@ -529,6 +531,7 @@ describe("JsonCommandOutput", () => {
       profileId: "test-agent",
       trustchainId: "tc-1",
       accountAccessEnvironment: "staging",
+      keyStore: "plaintext-file",
       enrolled: true,
     });
   });

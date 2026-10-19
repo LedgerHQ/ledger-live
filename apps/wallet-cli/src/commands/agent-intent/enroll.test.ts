@@ -47,9 +47,13 @@ let waitStarted: () => void;
 let authenticateOverride: ((input: Record<string, unknown>) => Promise<void>) | undefined;
 let authenticateInputs: Array<Record<string, unknown>>;
 let keychainProbe: () => unknown;
+let keyFileExists: boolean;
+let deleteKeyFileSucceeds: boolean;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
+const savedKeyFiles = new Set<string>();
+const deletedKeyFileCalls: string[] = [];
 
 function makeCompletion(environment: "staging" | "production" = "production"): Completion {
   return {
@@ -118,6 +122,17 @@ beforeAll(() =>
         return deleteSecretKeySucceeds;
       },
     },
+    keyFile: {
+      hasAgentIntentKeyFile: (_profileId: string) => keyFileExists,
+      saveAgentIntentKeyFile: (profileId: string, _secretKeyHex: string) => {
+        savedKeyFiles.add(profileId);
+      },
+      deleteAgentIntentKeyFile: (profileId: string) => {
+        deletedKeyFileCalls.push(profileId);
+        if (deleteKeyFileSucceeds) savedKeyFiles.delete(profileId);
+        return deleteKeyFileSucceeds;
+      },
+    },
     sdk: {
       createSoftwareAgentIdentity: () => ({
         publicKey: AGENT_PUBLIC_KEY,
@@ -167,6 +182,7 @@ type EnrollFlags = {
   "keycloak-url"?: string;
   "expires-in": string;
   environment: "staging" | "production";
+  "allow-plaintext-key": boolean;
   output?: "human" | "json";
 };
 
@@ -178,6 +194,7 @@ function runEnroll(overrides: Partial<EnrollFlags> = {}) {
     source: "openclaw",
     "expires-in": "30m",
     environment: "production",
+    "allow-plaintext-key": false,
     ...overrides,
   };
   return (
@@ -188,12 +205,17 @@ function runEnroll(overrides: Partial<EnrollFlags> = {}) {
 describe("agent-intent enroll", () => {
   let restore: () => void;
   let stdout: string[];
+  let stderr: string[];
   // The Secret Service probe only runs on Linux.
   const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
 
   beforeEach(() => {
     Object.defineProperty(process, "platform", { value: "linux" });
     keychainProbe = () => [];
+    keyFileExists = false;
+    deleteKeyFileSucceeds = true;
+    savedKeyFiles.clear();
+    deletedKeyFileCalls.length = 0;
     storedProfile = undefined;
     profileOnLockedRecheck = "same-as-stored";
     sessionReadCalls = 0;
@@ -217,7 +239,8 @@ describe("agent-intent enroll", () => {
     addAgentIntentProfileImpl = () => {};
     writeImpl = () => {};
     stdout = [];
-    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: () => {} });
+    stderr = [];
+    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: s => stderr.push(s) });
   });
 
   afterEach(() => {
@@ -295,6 +318,89 @@ describe("agent-intent enroll", () => {
       expect(sessionReadCalls).toBe(2);
       expect(savedSecretKeys.size).toBe(0);
       expect(stdout).toEqual([]);
+    });
+
+    it("stores the key in the OS keychain and records keyStore os-keychain when one is available", async () => {
+      await runEnroll({ output: "json" });
+
+      expect(savedSecretKeys.has("test-agent")).toBe(true);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "os-keychain" });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "os-keychain",
+      });
+      expect(stderr.join("")).not.toContain("--allow-plaintext-key");
+    });
+
+    it("stores the key in a plaintext file with --allow-plaintext-key when no OS keychain is available", async () => {
+      keychainProbe = () => {
+        throw new Error("no secret service provider or dbus session found");
+      };
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({
+        keyStore: "plaintext-file",
+        trustchainId: "app18-root",
+      });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "plaintext-file",
+        enrolled: true,
+      });
+    });
+
+    it("ignores --allow-plaintext-key with a stderr notice when the OS keychain is available", async () => {
+      await runEnroll({ "allow-plaintext-key": true });
+
+      expect(savedSecretKeys.has("test-agent")).toBe(true);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "os-keychain" });
+      expect(stderr.join("")).toContain(
+        "OS keychain is available: the agent key is stored in the OS keychain and " +
+          "--allow-plaintext-key was ignored.",
+      );
+    });
+
+    it("refuses to enroll when an agent key file already exists but isn't recorded in the session", async () => {
+      keyFileExists = true;
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toThrow(
+        /agent key file for profile "test-agent" already exists.*Remove it manually/s,
+      );
+      expect(savedKeyFiles.size).toBe(0);
+      expect(requestInputs).toEqual([]);
+    });
+
+    it("rolls back the key file when the session write fails after the file was written", async () => {
+      keychainProbe = () => {
+        throw new Error("no secret service provider or dbus session found");
+      };
+      const sessionError = new Error("disk full");
+      writeImpl = () => {
+        throw sessionError;
+      };
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toBe(sessionError);
+
+      expect(deletedKeyFileCalls).toEqual(["test-agent"]);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(deletedSecretKeyCalls).toEqual([]);
+    });
+
+    it("surfaces a combined error when the key file rollback itself fails", async () => {
+      keychainProbe = () => {
+        throw new Error("no secret service provider or dbus session found");
+      };
+      writeImpl = () => {
+        throw new Error("disk full");
+      };
+      deleteKeyFileSucceeds = false;
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toThrow(
+        /disk full.*Additionally, the key file rollback.*failed/s,
+      );
     });
 
     it("rejects an invalid --expires-in before touching the keychain or session", async () => {

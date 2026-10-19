@@ -57,7 +57,9 @@ const AgentIntentAccountAccessSchema = z.object({
 });
 
 // Non-secret Agent Intent profile metadata only. The profile's private key never lives here — it
-// is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
+// is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`), or,
+// for a profile enrolled with `--allow-plaintext-key` on a host without one, in an unencrypted 0600
+// file (see `key-ring/agent-intent-key-file.ts`). `keyStore` records which.
 const AgentIntentProfileSchema = z.object({
   profileId: z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE),
   displayName: z.string().min(1).max(80),
@@ -69,6 +71,8 @@ const AgentIntentProfileSchema = z.object({
   // SEC1-prefixed: 02/03 + 32-byte x-coordinate (compressed) or 04 + 64-byte x/y (uncompressed) —
   // not just any 66/130-char hex string, matching what secp256k1.getPublicKey() actually produces.
   publicKey: z.string().regex(/^0[23][0-9a-f]{64}$|^04[0-9a-f]{128}$/i),
+  // Defaulted so profiles enrolled before the plaintext fallback keep parsing.
+  keyStore: z.enum(["os-keychain", "plaintext-file"]).default("os-keychain"),
   trustchainId: z.string().optional(),
   accountAccess: AgentIntentAccountAccessSchema.optional(),
   // Set while `agent-intent recover` waits for approval; a bad value is dropped, not fatal.

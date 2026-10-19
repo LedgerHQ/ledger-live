@@ -9,13 +9,24 @@ import {
   AGENT_ENROLLMENT_CHANNEL_VERSION,
   AGENT_INTENT_FRONTEND_URLS,
 } from "@ledgerhq/agent-intent-sdk";
-import { Session, AGENT_INTENT_ENVIRONMENTS, withSessionLock } from "../../session/session-store";
+import {
+  Session,
+  AGENT_INTENT_ENVIRONMENTS,
+  withSessionLock,
+  type AgentIntentProfileMeta,
+} from "../../session/session-store";
 import {
   hasAgentIntentSecretKey,
   saveAgentIntentSecretKey,
   deleteAgentIntentSecretKey,
 } from "../../key-ring/agent-intent-keychain";
-import { assertOsKeychainAvailable } from "../../key-ring/keychain-entry";
+import {
+  agentIntentKeyFilePath,
+  hasAgentIntentKeyFile,
+  saveAgentIntentKeyFile,
+  deleteAgentIntentKeyFile,
+} from "../../key-ring/agent-intent-key-file";
+import { assertOsKeychainAvailable, KeychainUnavailableError } from "../../key-ring/keychain-entry";
 import { authenticateEnrollmentCompletion } from "../../agent-intent/completion-auth";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
@@ -27,11 +38,19 @@ import {
   waitForRelayCompletion,
 } from "../../agent-intent/relay";
 import { createCommandOutput } from "../../output";
+import { errMessage } from "../../shared/error-message";
+import { writeStderr } from "../../shared/ui";
+
+type KeyStore = AgentIntentProfileMeta["keyStore"];
 
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
  * right before writing — a concurrent enroll of the same profile id could pass the first check and
- * still lose the race to the second. */
-function assertProfileAvailable(session: Session, profileId: string): void {
+ * still lose the race to the second. Returns where the agent key will be stored. */
+function assertProfileAvailable(
+  session: Session,
+  profileId: string,
+  allowPlaintextKey: boolean,
+): KeyStore {
   if (session.getAgentIntentProfile(profileId)) {
     throw new Error(
       `Agent Intent profile "${profileId}" already exists. Choose a different --profile id, or ` +
@@ -44,16 +63,61 @@ function assertProfileAvailable(session: Session, profileId: string): void {
         "it in session.yaml (or choose a different --profile id) before re-enrolling.",
     );
   }
-  // Before anything is generated or printed, so the human never approves a link that can't be saved.
-  assertOsKeychainAvailable(
-    "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
-      "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
-      "unencrypted on this machine.",
-  );
-  if (hasAgentIntentSecretKey(profileId)) {
+  if (hasAgentIntentKeyFile(profileId)) {
+    throw new Error(
+      `An agent key file for profile "${profileId}" already exists ` +
+        `(${agentIntentKeyFilePath(profileId)}) but is not recorded in the session. Remove it ` +
+        "manually (or choose a different --profile id) before re-enrolling.",
+    );
+  }
+  const keyStore = chooseKeyStore(allowPlaintextKey);
+  if (keyStore === "os-keychain" && hasAgentIntentSecretKey(profileId)) {
     throw new Error(
       `A keychain entry for profile "${profileId}" already exists but is not recorded in the ` +
         "session. Remove it manually (or choose a different --profile id) before re-enrolling.",
+    );
+  }
+  return keyStore;
+}
+
+// The OS keychain always wins; the plaintext file is only a consented fallback. Runs before
+// anything is generated or printed, so the human never approves a link that can't be saved.
+function chooseKeyStore(allowPlaintextKey: boolean): KeyStore {
+  try {
+    assertOsKeychainAvailable(
+      "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
+        "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
+        "unencrypted on this machine.",
+    );
+    return "os-keychain";
+  } catch (e) {
+    if (allowPlaintextKey && e instanceof KeychainUnavailableError) return "plaintext-file";
+    throw e;
+  }
+}
+
+async function saveSecretKey(keyStore: KeyStore, profileId: string, secretKey: string) {
+  if (keyStore === "plaintext-file") {
+    try {
+      saveAgentIntentKeyFile(profileId, secretKey);
+    } catch (e) {
+      throw new Error(
+        `Could not write the agent key file ${agentIntentKeyFilePath(profileId)} ` +
+          `(${errMessage(e)}). Nothing was saved.`,
+        { cause: e },
+      );
+    }
+    return;
+  }
+  try {
+    await saveAgentIntentSecretKey(profileId, secretKey);
+  } catch (e) {
+    throw new Error(
+      `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +
+        "Intent needs a working OS keychain: macOS Keychain, Windows Credential Manager, or on " +
+        "Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an " +
+        "unlocked collection. Nothing was saved.",
+      { cause: e },
     );
   }
 }
@@ -104,6 +168,12 @@ export default defineCommand({
       description:
         "Keycloak base URL used to prove App-18 membership (default: the environment's).",
     }),
+    "allow-plaintext-key": option(z.boolean().default(false), {
+      description:
+        "Store the agent key unencrypted in a 0600 file when no OS keychain is available. Use " +
+        "only after the human explicitly agrees.",
+      argumentKind: "flag",
+    }),
     output: outputOption,
   },
   handler: async ({ flags }) => {
@@ -126,7 +196,7 @@ export default defineCommand({
       // Fast, unlocked precheck: fail on an obvious typo/duplicate before spending a keypair
       // generation + signature on it. Not a substitute for the recheck below — a concurrent enroll
       // of the same profile can still pass this one.
-      assertProfileAvailable(await Session.read(), profileId);
+      assertProfileAvailable(await Session.read(), profileId, flags["allow-plaintext-key"]);
 
       const identity = createSoftwareAgentIdentity();
       const host = createRelayHost(environment, expiresInMs);
@@ -145,22 +215,11 @@ export default defineCommand({
         const enrollmentUrl = createAgentEnrollmentUrl(appUrl, request);
 
         // Shared with every other command that mutates session.yaml — see withSessionLock's doc.
-        await withSessionLock(async () => {
+        const keyStore = await withSessionLock(async () => {
           const session = await Session.read();
-          assertProfileAvailable(session, profileId);
+          const keyStore = assertProfileAvailable(session, profileId, flags["allow-plaintext-key"]);
 
-          try {
-            await saveAgentIntentSecretKey(profileId, identity.exportSecretKey());
-          } catch (e) {
-            throw new Error(
-              `Could not store the agent's secret key in the OS keychain (` +
-                `${e instanceof Error ? e.message : String(e)}). Agent Intent needs a working OS ` +
-                "keychain: macOS Keychain, Windows Credential Manager, or on Linux a running Secret " +
-                "Service provider (e.g. gnome-keyring or KeePassXC) with an unlocked collection. " +
-                "Nothing was saved.",
-              { cause: e },
-            );
-          }
+          await saveSecretKey(keyStore, profileId, identity.exportSecretKey());
           try {
             session.addAgentIntentProfile({
               profileId,
@@ -171,18 +230,23 @@ export default defineCommand({
               bffBaseUrl,
               ...(keycloakBaseUrl === undefined ? {} : { keycloakBaseUrl }),
               publicKey: identity.publicKey,
+              keyStore,
               enrollmentExpiresAt,
               createdAt: new Date().toISOString(),
             });
             session.write();
           } catch (e) {
-            // Undo the keychain write so a retry doesn't hit "keychain entry exists but isn't
-            // recorded in the session". If the rollback itself fails, say so, so the user knows to
-            // remove the entry by hand instead of retrying forever.
-            const rolledBack = deleteAgentIntentSecretKey(profileId);
+            // Undo the key write so a retry doesn't hit "keychain entry exists but isn't recorded
+            // in the session". If the rollback itself fails, say so, so the user knows to remove
+            // the entry by hand instead of retrying forever.
+            const rolledBack =
+              keyStore === "plaintext-file"
+                ? deleteAgentIntentKeyFile(profileId)
+                : deleteAgentIntentSecretKey(profileId);
             if (!rolledBack) {
+              const store = keyStore === "plaintext-file" ? "key file" : "keychain";
               throw new Error(
-                `${e instanceof Error ? e.message : String(e)} Additionally, the keychain rollback ` +
+                `${e instanceof Error ? e.message : String(e)} Additionally, the ${store} rollback ` +
                   `for profile "${profileId}" failed — remove that entry manually before retrying, ` +
                   `or re-enrolling will refuse it as an orphaned duplicate.`,
                 { cause: e },
@@ -190,7 +254,14 @@ export default defineCommand({
             }
             throw e;
           }
+          return keyStore;
         });
+        if (flags["allow-plaintext-key"] && keyStore === "os-keychain") {
+          writeStderr(
+            "OS keychain is available: the agent key is stored in the OS keychain and " +
+              "--allow-plaintext-key was ignored.\n",
+          );
+        }
 
         out.agentIntentEnrollmentPending({
           profileId,
@@ -252,6 +323,7 @@ export default defineCommand({
           profileId,
           trustchainId: completion.trustchainId,
           accountAccessEnvironment: completion.accountAccess.environment,
+          keyStore,
         });
       } finally {
         host.close();

@@ -329,6 +329,7 @@ export type AgentIntentEnrolled = {
   profileId: string;
   trustchainId: string;
   accountAccessEnvironment: string;
+  keyStore: AgentIntentProfileMeta["keyStore"];
 };
 
 function formatAccountAccess(profile: AgentIntentProfileMeta): string {
@@ -894,10 +895,11 @@ class HumanCommandOutput implements CommandOutput {
     profileId,
     trustchainId,
     accountAccessEnvironment,
+    keyStore,
   }: AgentIntentEnrolled): void {
     writeStdout(
       `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ` +
-        `${trustchainId} (account access: ${accountAccessEnvironment})`,
+        `${trustchainId} (account access: ${accountAccessEnvironment}, key store: ${keyStore})`,
     );
   }
 
