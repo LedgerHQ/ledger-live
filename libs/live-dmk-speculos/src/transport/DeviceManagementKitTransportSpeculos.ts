@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/device-transport-kit-speculos";
 import { ButtonKey, deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
 import { withTransientHttpRetries } from "./speculosTransientHttpRetry";
+import { withSpeculosOsVersionNormalized } from "./speculosOsVersion";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
@@ -151,7 +152,11 @@ export default class SpeculosHttpTransport extends Transport {
     let deviceManagementEntry = this.byBase.get(key);
     if (!deviceManagementEntry) {
       const deviceManagementKit = new DeviceManagementKitBuilder()
-        .addTransport(speculosTransportFactory(baseUrl, true, model, { bearerToken }))
+        .addTransport(
+          withSpeculosOsVersionNormalized(
+            speculosTransportFactory(baseUrl, true, model, { bearerToken }),
+          ),
+        )
         .build();
 
       deviceManagementEntry = {
