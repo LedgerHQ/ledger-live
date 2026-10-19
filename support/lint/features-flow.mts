@@ -1,5 +1,24 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
+
+// Packages whose web components are checked against the Tailwind design tokens.
+const TAILWIND = [
+  "account-detail",
+  "account-detail-settings",
+  "market-banner",
+  "pay-balance",
+  "pay-bank-transfer",
+  "pay-card",
+  "pay-card-assets",
+  "pay-card-auth",
+  "pay-card-details",
+  "pay-card-transactions",
+  "pay-contact",
+  "pay-deposit",
+  "pay-feature-tour",
+  "pay-request",
+];
 
 const CLIPBOARD_MESSAGE = "Use copyToClipboard / readClipboard from @shared/clipboard instead of";
 
@@ -19,6 +38,16 @@ const FATAL_REACT_COMPILER = [
 
 export default defineConfig({
   extends: [base],
+  jsPlugins: [fileURLToPath(import.meta.resolve("eslint-plugin-better-tailwindcss"))],
+  settings: {
+    "better-tailwindcss": {
+      cwd: fileURLToPath(new URL(".", import.meta.url)),
+      entryPoint: fileURLToPath(
+        new URL("../../features/platform/style/tailwind.css", import.meta.url),
+      ),
+      callees: ["cn"],
+    },
+  },
   rules: {
     // features/flow is the strictest layer in the repo and wants `any` to be fatal.
     "typescript/no-explicit-any": "error",
@@ -73,6 +102,20 @@ export default defineConfig({
         "react/set-state-in-render": "error",
         "react/static-components": "error",
         "react/use-memo": "error",
+      },
+    },
+    {
+      files: TAILWIND.flatMap(pkg => [`${pkg}/src/**/*.web.ts`, `${pkg}/src/**/*.web.tsx`]),
+      rules: {
+        "better-tailwindcss/enforce-canonical-classes": "warn",
+        "better-tailwindcss/enforce-consistent-class-order": "warn",
+        "better-tailwindcss/no-concatenated-classes": "error",
+        "better-tailwindcss/no-conflicting-classes": "error",
+        "better-tailwindcss/no-deprecated-classes": "warn",
+        "better-tailwindcss/no-duplicate-classes": "warn",
+        // Lumen's theme switch is a base-layer selector, not a utility.
+        "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["^dark$"] }],
+        "better-tailwindcss/no-unnecessary-whitespace": "warn",
       },
     },
   ],

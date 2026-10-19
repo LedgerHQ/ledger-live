@@ -21,7 +21,9 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "eslint-plugin-better-tailwindcss": "catalog:",
     "oxlint": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:"
   }
 }

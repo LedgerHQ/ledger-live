@@ -29,7 +29,7 @@ rule that several packages of a layer need belongs in that layer's preset.
 | --- | --- | --- |
 | `base` | `domain/`, `shared/`, `features/platform/` | The baseline |
 | `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on |
-| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal |
+| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; Tailwind classes checked in the packages that use them |
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
 | `libs` | `libs/` | Correctness rules as warnings, suspicious off |
@@ -67,3 +67,7 @@ import Bar from "../bar.web";
 import Foo from "./foo";
 import Bar from "../bar";
 ```
+
+## Third-party plugins
+
+`features-flow` loads `eslint-plugin-better-tailwindcss` as a JS plugin and checks the `*.web.{ts,tsx}` files of the packages listed in its `TAILWIND` constant against `features/platform/style/tailwind.css`. Its `cwd` setting points at this package, so `tailwindcss` resolves whether oxlint runs from the package, the repo root or an editor.

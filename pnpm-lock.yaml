@@ -6333,15 +6333,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -6481,15 +6472,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8072,15 +8054,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8187,15 +8160,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8281,15 +8245,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8387,15 +8342,6 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8511,15 +8457,6 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8650,15 +8587,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8792,15 +8720,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8910,15 +8829,6 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -9186,15 +9096,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -9289,15 +9190,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -9389,15 +9281,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -9501,15 +9384,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-plugin-better-tailwindcss:
-        specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20237,9 +20111,15 @@ importers:
 
   support/lint:
     devDependencies:
+      eslint-plugin-better-tailwindcss:
+        specifier: 'catalog:'
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       oxlint:
         specifier: 'catalog:'
         version: 1.82.0
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
