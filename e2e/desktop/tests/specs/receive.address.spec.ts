@@ -10,6 +10,7 @@ import {
   addEmptyAccountCommand,
   liveDataCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { buildTags } from "tests/utils/tagsUtils";
 
 type ReceiveTestCase = {
@@ -63,6 +64,7 @@ for (const receive of nativeAccounts) {
       {
         tag: buildTags({
           currencyId: receive.account.currency.id,
+          skipLNS: isReceiveBlockedOnLNS(receive.account.currency.id),
           extraTags: receive.account === Account.ETH_1 ? ["@smoke"] : [],
         }),
         annotation: {
@@ -85,6 +87,35 @@ for (const receive of nativeAccounts) {
     );
   });
 }
+
+test.describe("Receive", () => {
+  const account = Account.ZEC_1;
+  test.use({
+    teamOwner: Team.COIN_INTEGRATION,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: account.currency.speculosApp,
+    cliCommands: [liveDataCommand(account)],
+  });
+
+  test(
+    `[${account.currency.testLabel}] - Receive blocked by device deprecation on Nano S`,
+    {
+      tag: buildTags({ currencyId: account.currency.id, onlyLNS: true }),
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-6604",
+      },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(account.accountName);
+      await app.account.expectAccountVisibility(account.accountName);
+      await app.account.clickReceive();
+      await app.receive.continue();
+      await app.receive.expectDeviceDeprecationError("Ledger Nano S");
+    },
+  );
+});
 
 test.describe("Receive", () => {
   const account = Account.TRX_3;

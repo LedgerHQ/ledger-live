@@ -17,6 +17,8 @@ export class ReceiveModal extends Modal {
   private receiveMenu = this.page.getByTestId("receive-step-options");
   private privateAddressBlock = this.page.getByTestId("receive-private-address-block");
   private privateAddressField = this.privateAddressBlock.locator("#address-field");
+  private deviceDeprecationTitle = this.page.getByTestId("warning-deprecation-title");
+  private deviceDeprecationContinueButton = this.page.getByTestId("warning-deprecation-continue");
   private receiveFundsOptionId = (receiveFundsOption: ReceiveFundsOptionsType) =>
     `receive-step-options-${receiveFundsOption}`;
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
@@ -86,5 +88,13 @@ export class ReceiveModal extends Modal {
   @step("Verify private/shielded address correctness $0")
   async expectValidPrivateAddress(address: string) {
     await expect(this.privateAddressField).toHaveText(address);
+  }
+
+  @step("Verify device deprecation error screen for $0")
+  async expectDeviceDeprecationError(deviceName: string) {
+    await expect(this.deviceDeprecationTitle).toHaveText(
+      `${deviceName}™ does not support this feature`,
+    );
+    await expect(this.deviceDeprecationContinueButton).toHaveCount(0);
   }
 }
