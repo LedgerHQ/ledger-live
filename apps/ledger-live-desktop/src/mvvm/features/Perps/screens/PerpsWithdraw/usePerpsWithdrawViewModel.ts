@@ -219,13 +219,13 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   const pickDestinationAccount = useCallback(() => {
     dispatch(setFlowValue(PERPS_UI_USE_CASE.withdraw));
     void openAssetAndAccountPromise({
+      useCase: "swap",
       uiUseCase: PERPS_UI_USE_CASE.withdraw,
-      currencies: currencyIds ?? [],
-      areCurrenciesFiltered: true,
+      areCurrenciesFiltered: false,
     })
       .then(({ account }) => setDestinationAccountId(account.id))
       .catch(() => undefined);
-  }, [currencyIds, dispatch, openAssetAndAccountPromise]);
+  }, [dispatch, openAssetAndAccountPromise]);
 
   // TODO(LIVE-39368): open the withdraw summary with the quote and this draft.
   const handleReview = useCallback(() => undefined, []);
