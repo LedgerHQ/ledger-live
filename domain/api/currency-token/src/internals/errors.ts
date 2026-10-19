@@ -17,6 +17,15 @@ export function currencyNotFoundError(currencyId: string): QueryFnError {
   };
 }
 
+/** True when `error` is the 404 result from {@link currencyNotFoundError}. */
+export function isCurrencyNotFoundError(error: unknown, currencyId: string): boolean {
+  if (!error || typeof error !== "object" || !("status" in error) || !("data" in error)) {
+    return false;
+  }
+  const expected = currencyNotFoundError(currencyId).error;
+  return error.status === expected.status && error.data === expected.data;
+}
+
 /** The CAL response was missing the `X-Ledger-Commit` header. */
 export function commitHeaderMissingError(): QueryFnError {
   const message = "X-Ledger-Commit header not found in response";

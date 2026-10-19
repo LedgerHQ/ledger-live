@@ -1,3 +1,4 @@
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { z } from "zod";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { ApiTokenResponseSchema, PersistedCALSchema, PersistedTokenEntrySchema } from "./schema";
@@ -57,3 +58,9 @@ export type PersistedTokenEntry = z.infer<typeof PersistedTokenEntrySchema>;
 
 /** The root persisted CAL blob (version pin + token entries + optional hash map). */
 export type PersistedCAL = z.infer<typeof PersistedCALSchema>;
+
+/**
+ * Dispatch from the host store, used to read and update the CAL token cache.
+ * The store's state and thunk extra are owned by the app, so both stay `unknown`.
+ */
+export type CryptoAssetsDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;

@@ -1,5 +1,6 @@
 import { token } from "@domain/entity-currency-token";
 import type { PersistedTokenEntry } from "../types";
+import { currencyNotFoundError, fetchCurrencyError } from "./errors";
 import {
   buildRestoreCacheEntries,
   groupTokensByCurrency,
@@ -120,8 +121,8 @@ describe("resolveCurrenciesToEvict", () => {
     expect(evict.has("ethereum")).toBe(true);
   });
 
-  it("evicts when the hash fetch fails", async () => {
-    const dispatch = jest.fn().mockRejectedValue(new Error("network"));
+  it("evicts when CAL no longer lists the currency", async () => {
+    const dispatch = jest.fn().mockResolvedValue(currencyNotFoundError("ethereum"));
     const evict = await resolveCurrenciesToEvict(
       dispatch as unknown as Dispatch,
       currencies("ethereum"),
@@ -131,5 +132,44 @@ describe("resolveCurrenciesToEvict", () => {
     );
 
     expect(evict.has("ethereum")).toBe(true);
+  });
+
+  it("does not evict when the hash fetch returns an HTTP 404", async () => {
+    const dispatch = jest.fn().mockResolvedValue(fetchCurrencyError(404, "Not Found"));
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum"),
+      {
+        ethereum: "hash1",
+      },
+    );
+
+    expect(evict.has("ethereum")).toBe(false);
+  });
+
+  it("does not evict when the hash fetch returns no hash", async () => {
+    const dispatch = jest.fn().mockResolvedValue({ error: { status: "FETCH_ERROR" } });
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum"),
+      {
+        ethereum: "hash1",
+      },
+    );
+
+    expect(evict.has("ethereum")).toBe(false);
+  });
+
+  it("does not evict when the hash fetch throws", async () => {
+    const dispatch = jest.fn().mockRejectedValue(new Error("network"));
+    const evict = await resolveCurrenciesToEvict(
+      dispatch as unknown as Dispatch,
+      currencies("ethereum"),
+      {
+        ethereum: "hash1",
+      },
+    );
+
+    expect(evict.has("ethereum")).toBe(false);
   });
 });

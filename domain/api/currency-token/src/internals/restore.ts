@@ -1,7 +1,8 @@
-import type { ThunkDispatch } from "@reduxjs/toolkit";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { QueryCacheKey } from "@reduxjs/toolkit/query";
 import { cryptoAssetsApi } from "../api";
-import type { PersistedTokenEntry } from "../types";
+import type { CryptoAssetsDispatch, PersistedTokenEntry } from "../types";
+import { isCurrencyNotFoundError } from "./errors";
 
 // Package-private cache-restoration helpers for `restoreTokensToCache`. Imported directly by
 // `persistence.ts` (not via the internals barrel) so `api.ts` → internals never forms a cycle.
@@ -25,12 +26,11 @@ export function groupTokensByCurrency(
 
 /**
  * For each currency that has a stored hash, fetches the current server hash and returns the set of
- * currencies whose hash changed (or whose fetch failed) — those must not be restored from cache.
+ * currencies whose hash changed or is no longer listed by CAL — those must not be restored from cache.
  * Currencies without a stored hash are never evicted.
  */
 export async function resolveCurrenciesToEvict(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<any, any, any>,
+  dispatch: CryptoAssetsDispatch,
   tokensByCurrency: Map<string, PersistedTokenEntry[]>,
   hashes: Record<string, string>,
 ): Promise<Set<string>> {
@@ -40,14 +40,17 @@ export async function resolveCurrenciesToEvict(
     if (!storedHash) continue;
 
     try {
-      const { data: currentHash } = await dispatch(
+      const { data: currentHash, error } = await dispatch(
         cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: false }),
       );
-      if (currentHash && currentHash !== storedHash) {
+      if (
+        isCurrencyNotFoundError(error, currencyId) ||
+        (currentHash && currentHash !== storedHash)
+      ) {
         toEvict.add(currencyId);
       }
     } catch {
-      toEvict.add(currencyId);
+      // A failed fetch does not evict currencies.
     }
   }
   return toEvict;
@@ -91,4 +94,39 @@ export function buildRestoreCacheEntries(tokens: PersistedTokenEntry[]): Restore
 
     return entries;
   });
+}
+
+/**
+ * Cache keys RTK Query assigns these restore entries. Read from the upsert action it would
+ * dispatch, which is the same serializer that inserted them.
+ */
+export function restoreQueryCacheKeys(tokens: PersistedTokenEntry[]): QueryCacheKey[] {
+  const entries = buildRestoreCacheEntries(tokens);
+  if (entries.length === 0) return [];
+
+  const keys = cryptoAssetsApi.util.upsertQueryEntries(entries).payload.flatMap(entry => {
+    const key = preparedQueryCacheKey(entry);
+    return key === undefined ? [] : [key];
+  });
+
+  if (keys.length !== entries.length) {
+    throw new Error("Could not resolve cache keys for restored token entries");
+  }
+
+  return keys;
+}
+
+function preparedQueryCacheKey(entry: unknown): QueryCacheKey | undefined {
+  if (!isRecord(entry) || !isRecord(entry.queryDescription)) return undefined;
+  return isQueryCacheKey(entry.queryDescription.queryCacheKey)
+    ? entry.queryDescription.queryCacheKey
+    : undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isQueryCacheKey(key: unknown): key is QueryCacheKey {
+  return typeof key === "string" && key.includes("(") && key.endsWith(")");
 }

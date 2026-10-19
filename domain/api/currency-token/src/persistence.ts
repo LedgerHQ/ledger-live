@@ -1,6 +1,5 @@
 import isEqual from "lodash/isEqual";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { ThunkDispatch } from "@reduxjs/toolkit";
 import { calApi } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
 import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
@@ -8,9 +7,15 @@ import {
   buildRestoreCacheEntries,
   groupTokensByCurrency,
   resolveCurrenciesToEvict,
+  restoreQueryCacheKeys,
 } from "./internals/restore";
 import { PersistedCALSchema } from "./schema";
-import type { PersistedCAL, PersistedTokenEntry, TokenByAddressInCurrencyParams } from "./types";
+import type {
+  CryptoAssetsDispatch,
+  PersistedCAL,
+  PersistedTokenEntry,
+  TokenByAddressInCurrencyParams,
+} from "./types";
 
 /**
  * Validates an untrusted persisted blob (e.g. read from localStorage) against
@@ -147,14 +152,13 @@ export function filterExpiredTokens(
 }
 
 /**
- * Restores persisted tokens into the RTK Query cache. For a currency with a stored hash, validates
- * it against the current server hash and skips restoring that currency when the hash changed or the
- * hash fetch failed. Currencies with no stored hash are restored unconditionally (backward-compatible
- * with pre-hash persisted blobs).
+ * Optimistically restores persisted tokens into the RTK Query cache without blocking loading.
+ * Then checks each stored hash one currency at a time; a changed hash drops that currency's
+ * restored entries, and a failed check leaves them in place. Currencies with no stored hash are
+ * never evicted.
  */
 export async function restoreTokensToCache(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<any, any, any>,
+  dispatch: CryptoAssetsDispatch,
   persistedData: PersistedCAL,
   ttl: number,
 ): Promise<void> {
@@ -163,22 +167,24 @@ export async function restoreTokensToCache(
     return;
   }
 
-  const tokensByCurrency = groupTokensByCurrency(validTokens);
-  const currencyIdsToEvict = await resolveCurrenciesToEvict(
-    dispatch,
-    tokensByCurrency,
-    persistedData.hashes ?? {},
-  );
-
-  const tokensToRestore = validTokens.filter(
-    entry => !currencyIdsToEvict.has(entry.data.parentCurrencyId),
-  );
-  if (tokensToRestore.length === 0) {
-    return;
-  }
-
-  const entries = buildRestoreCacheEntries(tokensToRestore);
+  const entries = buildRestoreCacheEntries(validTokens);
   if (entries.length > 0) {
     dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
+  }
+
+  const tokensByCurrency = groupTokensByCurrency(validTokens);
+  void resolveCurrenciesToEvict(dispatch, tokensByCurrency, persistedData.hashes ?? {}).then(
+    currencyIdsToEvict => {
+      const stale = validTokens.filter(entry =>
+        currencyIdsToEvict.has(entry.data.parentCurrencyId),
+      );
+      dropRestoredCacheEntries(dispatch, stale);
+    },
+  );
+}
+
+function dropRestoredCacheEntries(dispatch: CryptoAssetsDispatch, tokens: PersistedTokenEntry[]) {
+  for (const queryCacheKey of restoreQueryCacheKeys(tokens)) {
+    dispatch(cryptoAssetsApi.internalActions.removeQueryResult({ queryCacheKey }));
   }
 }
