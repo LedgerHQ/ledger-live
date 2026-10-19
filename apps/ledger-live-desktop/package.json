@@ -339,8 +339,6 @@
     "jest": "catalog:",
     "jest-canvas-mock": "2.5.2",
     "jest-environment-jsdom": "catalog:",
-    "listr": "0.14.3",
-    "listr-verbose-renderer": "0.6.0",
     "local-web-server": "4.2.1",
     "msw": "catalog:",
     "nock": "13.5.4",
