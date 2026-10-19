@@ -13,6 +13,7 @@ import {
   compareTxsByTimestamp,
   dropTxsAfterNextCursor,
   dropTxsBeforeCursor,
+  isEmptyTronGridPage,
   parseCursor,
 } from "./cursor";
 import { TronEmptyPage } from "../types/errors";
@@ -26,8 +27,8 @@ import { TronEmptyPage } from "../types/errors";
 //
 // To ensure no transactions are skipped when endpoints have different page boundaries,
 // we find the "boundary transaction" - the earliest (for asc) or latest (for desc) of
-// the last transactions from each endpoint - and only return transactions up to that
-// boundary. The next cursor points to this boundary transaction.
+// the last records from each endpoint, before filtering - and only return transactions up to
+// that boundary. The next cursor points to this boundary transaction.
 
 export type ListOperationsOptions = {
   limit: number;
@@ -71,7 +72,8 @@ export async function listOperations(
   // TronGrid occasionally returns an empty page for a valid cursor (transient API failure).
   // A cursor is only issued when TronGrid indicated hasNextPage=true, so 0 results here
   // is never a legitimate end-of-stream — throw so the client can retry with the same cursor.
-  if (parsedCursor && nativeTxs.txs.length === 0 && trc20Txs.txs.length === 0) {
+  // Only what TronGrid returned counts: a page whose records were all filtered out is not empty.
+  if (parsedCursor && isEmptyTronGridPage(nativeTxs, trc20Txs)) {
     throw new TronEmptyPage(
       `TronGrid returned empty page for cursor ${cursor} — transient failure, retry required`,
     );

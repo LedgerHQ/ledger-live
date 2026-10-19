@@ -732,9 +732,18 @@ export const defaultFetchParams: FetchParams = {
   order: "desc",
 } as const;
 
+export type PageBoundary = Pick<TrongridTxInfo, "txID" | "date">;
+
 export type TxPageResult = {
   txs: TrongridTxInfo[];
   hasNextPage: boolean;
+  /**
+   * Last record TronGrid returned for this page, before any filtering. Pagination has to advance
+   * from it: `txs` drops records (successful contract calls, TRC20 duplicates), so a page can be
+   * entirely filtered out while TronGrid still has older records. Falls back to the last of `txs`
+   * when absent.
+   */
+  lastRaw?: PageBoundary;
 };
 
 export type FetchTxsPageParams = {
@@ -807,9 +816,27 @@ export async function fetchTronAccountTxsPage(
     .filter(tx => !trc20TxIds.has(tx.txID))
     .filter(tx => !isSuccessfulTriggerSmartContract(tx));
 
+  const validNativeRaw = nativeResult.results.filter(isTransactionTronAPI).filter(isValidNativeTx);
+  const lastNativeRaw = validNativeRaw[validNativeRaw.length - 1];
+  const lastTrc20Raw = trc20Result.results[trc20Result.results.length - 1];
+
   return {
-    nativeTxs: { txs: nativeDeduped, hasNextPage: nativeResult.hasNextPage },
-    trc20Txs: { txs: trc20TxsFormatted, hasNextPage: trc20Result.hasNextPage },
+    nativeTxs: {
+      txs: nativeDeduped,
+      hasNextPage: nativeResult.hasNextPage,
+      lastRaw: lastNativeRaw && {
+        txID: lastNativeRaw.txID,
+        date: new Date(lastNativeRaw.block_timestamp),
+      },
+    },
+    trc20Txs: {
+      txs: trc20TxsFormatted,
+      hasNextPage: trc20Result.hasNextPage,
+      lastRaw: lastTrc20Raw && {
+        txID: lastTrc20Raw.transaction_id,
+        date: new Date(lastTrc20Raw.block_timestamp),
+      },
+    },
   };
 }
 

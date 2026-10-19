@@ -166,6 +166,31 @@ describe("listOperations", () => {
     ).rejects.toThrow(TronEmptyPage);
   });
 
+  it("should keep paginating when every record of the page was filtered out", async () => {
+    // TronGrid returned records (e.g. only successful contract calls) that the network layer
+    // filtered out: the page is empty for us, but it is not the end of the history.
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: {
+        txs: [],
+        hasNextPage: true,
+        lastRaw: { txID: "filteredTx", date: new Date("2023-01-01T00:00:00Z") },
+      },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+
+    const cursor = `${new Date("2023-01-01T01:00:00Z").getTime()}:tx1`;
+
+    const result = await listOperations(logger, config, mockAddress, {
+      ...defaultOptions,
+      order: "desc",
+      cursor,
+    });
+
+    expect(result.items).toHaveLength(0);
+    // desc: resumes from the filtered-out record, one millisecond back, with a timestamp-only position
+    expect(result.next).toBe(`${new Date("2023-01-01T00:00:00Z").getTime() + 1}:timestamp-only`);
+  });
+
   it("should return cursor when hasNextPage is true", async () => {
     const mockTxs: Partial<TrongridTxInfo>[] = [
       {
