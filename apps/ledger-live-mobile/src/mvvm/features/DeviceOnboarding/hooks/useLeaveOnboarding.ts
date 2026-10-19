@@ -3,7 +3,8 @@ import type { DeviceOnboardingExitReason } from "@features/platform-device-onboa
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { exitActions } from "../utils/exitActions";
 
 type UseLeaveOnboardingInput = {
@@ -11,6 +12,7 @@ type UseLeaveOnboardingInput = {
   navigateOnExit: boolean;
   wasReadOnlyAtEntry: boolean;
   isGenuine: () => boolean;
+  deviceWasSeeded: () => boolean;
 };
 
 /**
@@ -22,15 +24,18 @@ export function useLeaveOnboarding({
   navigateOnExit,
   wasReadOnlyAtEntry,
   isGenuine,
+  deviceWasSeeded,
 }: UseLeaveOnboardingInput) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { notifyFlowCompleted } = useNotificationsPrompt();
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   return (reason: DeviceOnboardingExitReason) => {
     if (!navigateOnExit || !device) return;
     const genuine = isGenuine();
+    const seeded = deviceWasSeeded();
     exitActions[reason]({
       navigation,
       dispatch,
@@ -38,8 +43,14 @@ export function useLeaveOnboarding({
       device,
       wasReadOnlyAtEntry,
       isGenuine: genuine,
+      deviceWasSeeded: seeded,
+      hasCompletedOnboarding,
     });
-    if (reason === "completed" || (reason === "userQuit" && genuine)) {
+    if (
+      reason === "completed" ||
+      (reason === "userQuit" && genuine) ||
+      (reason === "legacyFallback" && seeded)
+    ) {
       notifyFlowCompleted("onboarding");
     }
   };

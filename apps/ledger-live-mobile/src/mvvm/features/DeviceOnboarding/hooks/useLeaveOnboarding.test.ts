@@ -55,6 +55,23 @@ describe("useLeaveOnboarding", () => {
     expect(mockReset).not.toHaveBeenCalled();
   });
 
+  it("should ask for the notifications prompt when seeded firmware leaves through the legacy path", () => {
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({
+        device,
+        navigateOnExit: true,
+        wasReadOnlyAtEntry: false,
+        isGenuine: () => false,
+        deviceWasSeeded: () => true,
+      }),
+    );
+
+    act(() => result.current("legacyFallback"));
+
+    expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
+    expect(mockReset).toHaveBeenCalledTimes(1);
+  });
+
   it("should offer Ledger Sync without the notifications prompt", () => {
     leave("offerLedgerSync", true);
 
@@ -70,6 +87,7 @@ function leave(reason: DeviceOnboardingExitReason, genuine: boolean) {
       navigateOnExit: true,
       wasReadOnlyAtEntry: false,
       isGenuine: () => genuine,
+      deviceWasSeeded: () => false,
     }),
   );
 

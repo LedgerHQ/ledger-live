@@ -5,10 +5,11 @@ import {
   completeOnboarding,
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,
+  setIsReborn,
+  setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import { seededFunnelEntrySource } from "LLM/features/DeviceOnboarding/types";
 import { exitActions } from "./exitActions";
 
 type ExitDeps = Parameters<(typeof exitActions)[DeviceOnboardingExitReason]>[0];
@@ -47,6 +48,8 @@ describe("exitActions", () => {
     expect(opened?.path).toEqual(portfolio);
     expect(navigated).toBeNull();
     expect(dispatched).toEqual([
+      setIsReborn(false),
+      setOnboardingHasDevice(true),
       completeOnboarding(),
       setReadOnlyMode(false),
       setHasBeenUpsoldProtect(false),
@@ -55,9 +58,13 @@ describe("exitActions", () => {
   });
 
   it("should leave the post-onboarding redirect untouched when the user was not read-only", () => {
-    const { dispatched } = leave("completed", { wasReadOnlyAtEntry: false });
+    const { dispatched } = leave("completed", {
+      wasReadOnlyAtEntry: false,
+      hasCompletedOnboarding: true,
+    });
 
     expect(dispatched).toEqual([
+      setIsReborn(false),
       completeOnboarding(),
       setReadOnlyMode(false),
       setHasBeenUpsoldProtect(false),
@@ -75,7 +82,6 @@ describe("exitActions", () => {
       name: ScreenName.DeviceOnboardingSyncOffer,
       params: {
         device: stax,
-        entrySource: seededFunnelEntrySource,
         wasReadOnlyAtEntry: true,
       },
     });
@@ -113,10 +119,25 @@ describe("exitActions", () => {
     expect(wentBack).toBe(false);
     expect(opened?.path).toEqual(portfolio);
     expect(dispatched).toEqual([
+      setIsReborn(false),
+      setOnboardingHasDevice(true),
       completeOnboarding(),
       setReadOnlyMode(false),
       setHasBeenUpsoldProtect(false),
       setHasBeenRedirectedToPostOnboarding(false),
+    ]);
+  });
+
+  it("should finish an existing wallet when seeded firmware cannot use this funnel", () => {
+    const { opened, dispatched } = leave("legacyFallback", { deviceWasSeeded: true });
+
+    expect(opened?.path).toEqual(portfolio);
+    expect(dispatched).toEqual([
+      setIsReborn(false),
+      setOnboardingHasDevice(true),
+      completeOnboarding(),
+      setReadOnlyMode(false),
+      setHasBeenUpsoldProtect(false),
     ]);
   });
 });
@@ -143,6 +164,8 @@ function leave(reason: DeviceOnboardingExitReason, overrides: Partial<ExitDeps> 
     shouldDisplayMyWallet: false,
     wasReadOnlyAtEntry: false,
     isGenuine: false,
+    deviceWasSeeded: false,
+    hasCompletedOnboarding: false,
     ...overrides,
   });
 

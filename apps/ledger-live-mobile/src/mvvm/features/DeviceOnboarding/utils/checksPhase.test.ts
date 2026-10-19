@@ -23,6 +23,7 @@ describe("toChecksScreenState", () => {
     expect(toChecksScreenState("checks.genuineCheck.running", false)).toBe("checking");
     expect(toChecksScreenState("checks.firmwareCheck", false)).toBe("checking");
     expect(toChecksScreenState("checks.firmwareUpdateOffered", false)).toBe("updating");
+    expect(toChecksScreenState("checks.firmwareUpdateDelegated", false)).toBe("checking");
     expect(toChecksScreenState("checks.checksSucceeded", false)).toBe("succeeded");
     expect(toChecksScreenState("checks.checksIdle", true)).toBe("idle");
     expect(toChecksScreenState("checks.checksIdle", false)).toBe("checking");

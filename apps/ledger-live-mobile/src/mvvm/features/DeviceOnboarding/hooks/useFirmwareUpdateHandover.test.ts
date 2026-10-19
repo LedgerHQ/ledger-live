@@ -1,6 +1,7 @@
 import type { HostOnboardingEvent } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useLayoutEffect } from "react";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName, BASE_NAVIGATOR_ID } from "~/const";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
@@ -78,7 +79,7 @@ describe("useFirmwareUpdateHandover", () => {
     expect(mockCurrentPush).not.toHaveBeenCalled();
   });
 
-  it("keeps the apps backup when the delegated device is already seeded", async () => {
+  it("should guard the exit and keep the apps backup when the delegated device is already seeded", async () => {
     const { rerender } = renderDelegated(jest.fn(), { isDeviceOnboarded: true });
 
     reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
@@ -87,7 +88,11 @@ describe("useFirmwareUpdateHandover", () => {
     await waitFor(() =>
       expect(mockPush).toHaveBeenCalledWith(
         ScreenName.FirmwareUpdate,
-        expect.objectContaining({ device, isBeforeOnboarding: false }),
+        expect.objectContaining({
+          device,
+          isBeforeOnboarding: true,
+          isDeviceOnboarded: true,
+        }),
       ),
     );
   });
@@ -194,6 +199,36 @@ describe("useFirmwareUpdateHandover", () => {
 
     await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
     expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not open the updater when the user closes before its effect runs", () => {
+    const send = jest.fn();
+    const closeOnLayout = { current: false };
+    reportFirmware("ongoing");
+
+    const { rerender } = renderHook(() => {
+      const handover = useFirmwareUpdateHandover({
+        device,
+        isDeviceOnboarded: false,
+        machineState: delegated,
+        send,
+      });
+      useLayoutEffect(() => {
+        if (closeOnLayout.current) handover.close();
+      });
+      return handover;
+    });
+
+    expect(mockPush).not.toHaveBeenCalled();
+
+    closeOnLayout.current = true;
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({});
+
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(mockCurrentPush).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
   });
 
   it("does not fetch firmware metadata outside the delegated state", () => {

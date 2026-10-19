@@ -48,7 +48,6 @@ export function useDeviceOnboardingDebugViewModel() {
     onAcceptUpdate: () => setPreview("checking"),
     onDeclineUpdate: () => setPreview("checking"),
     onCloseSheet: () => setPreview("checking"),
-    onContinue: () => setPreview("idle"),
     onQuit: closePreview,
   };
 

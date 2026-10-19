@@ -3,7 +3,6 @@ import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType, type State } from "~/reducers/types";
-import { seededFunnelEntrySource } from "LLM/features/DeviceOnboarding/types";
 import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
 
 const device = {
@@ -44,7 +43,6 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: () => ({
     params: {
       device,
-      entrySource: seededFunnelEntrySource,
       wasReadOnlyAtEntry: true,
     },
   }),

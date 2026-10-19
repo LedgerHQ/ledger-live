@@ -78,14 +78,16 @@ const ConnectDevice = ({ onSuccess, keepReadOnlyMode = false }: Props) => {
           keepReadOnlyMode={keepReadOnlyMode}
         />
       </Flex>
-      <DeviceActionModal
-        onClose={() => setDevice(undefined)}
-        device={device}
-        onResult={onResult}
-        action={action}
-        request={null}
-        location={HOOKS_TRACKING_LOCATIONS.onboardingFlow}
-      />
+      {device ? (
+        <DeviceActionModal
+          onClose={() => setDevice(undefined)}
+          device={device}
+          onResult={onResult}
+          action={action}
+          request={null}
+          location={HOOKS_TRACKING_LOCATIONS.onboardingFlow}
+        />
+      ) : null}
       {__DEV__ ? (
         <Button
           mt={7}

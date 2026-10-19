@@ -12,25 +12,57 @@ jest.mock("LLM/features/NotificationsPrompt", () => ({
   useNotificationsPrompt: () => ({ notifyFlowCompleted: jest.fn() }),
 }));
 
-jest.mock("./setupDevice/scenes", () => {
-  const ReactActual = require("react") as typeof import("react");
-  const { Pressable, Text: Label } = require("react-native") as typeof import("react-native");
-  return {
-    ConnectDevice: ({
-      onSuccess,
-      keepReadOnlyMode,
-    }: {
-      onSuccess: (device?: { deviceId: string }) => void;
-      keepReadOnlyMode?: boolean;
-    }) =>
-      ReactActual.createElement(
-        Pressable,
-        {
-          accessibilityLabel: "finish pairing",
-          onPress: () => onSuccess({ deviceId: "paired-id" }),
-        },
-        ReactActual.createElement(Label, null, `keeps read-only: ${String(keepReadOnlyMode)}`),
-      ),
+jest.mock("~/hooks/deviceActions", () => ({
+  useManagerDeviceAction: () => ({}),
+}));
+
+jest.mock("~/components/SelectDevice2", () => {
+  const { Pressable, Text: Label } = jest.requireActual("react-native");
+
+  return function SelectDevice2Mock({
+    onSelect,
+  }: {
+    onSelect: (device: {
+      deviceId: string;
+      deviceName: string;
+      modelId: DeviceModelId;
+      wired: boolean;
+    }) => void;
+  }) {
+    return (
+      <Pressable
+        accessibilityLabel="select device"
+        onPress={() =>
+          onSelect({
+            deviceId: "paired-id",
+            deviceName: "Ledger Stax",
+            modelId: DeviceModelId.stax,
+            wired: false,
+          })
+        }
+      >
+        <Label>select device</Label>
+      </Pressable>
+    );
+  };
+});
+
+jest.mock("~/components/DeviceAction", () => {
+  const { Pressable, Text: Label } = jest.requireActual("react-native");
+
+  return function DeviceActionMock({
+    onResult,
+  }: {
+    onResult?: (payload: { result: { installed: string[] } }) => void;
+  }) {
+    return (
+      <Pressable
+        accessibilityLabel="finish pairing"
+        onPress={() => onResult?.({ result: { installed: [] } })}
+      >
+        <Label>finish pairing</Label>
+      </Pressable>
+    );
   };
 });
 
@@ -98,7 +130,7 @@ describe("PairNew", () => {
   ] as const)("should complete onboarding when %s", async (_, flagEnabled, connectSeededDevice) => {
     const { user, store } = renderPairNew(connectSeededDevice, flagEnabled);
 
-    await user.press(screen.getByLabelText("finish pairing"));
+    await pair(user);
 
     expect(await screen.findByText("portfolio")).toBeVisible();
     expect(screen.queryByText(/seeded funnel/)).toBeNull();
@@ -108,17 +140,23 @@ describe("PairNew", () => {
   it("should hand the paired device to the seeded funnel without completing", async () => {
     const { user, store } = renderPairNew(true, true, true);
 
-    expect(screen.getByText("keeps read-only: true")).toBeVisible();
-    await user.press(screen.getByLabelText("finish pairing"));
+    await pair(user);
 
     expect(await screen.findByText("seeded funnel paired-id true")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
   });
 
-  it("should let pairing clear read-only mode when the funnel is off", () => {
-    renderPairNew(true, false, true);
+  it("should let pairing clear read-only mode when the funnel is off", async () => {
+    const { user, store } = renderPairNew(true, false, true);
 
-    expect(screen.getByText("keeps read-only: false")).toBeVisible();
+    await user.press(screen.getByLabelText("select device"));
+
+    expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
   });
 });
+
+async function pair(user: ReturnType<typeof render>["user"]) {
+  await user.press(screen.getByLabelText("select device"));
+  await user.press(await screen.findByLabelText("finish pairing"));
+}

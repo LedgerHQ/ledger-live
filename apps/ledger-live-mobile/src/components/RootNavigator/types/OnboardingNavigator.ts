@@ -3,7 +3,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import { NavigatorScreenParams } from "@react-navigation/native";
-import type { SeededFunnelEntrySource } from "LLM/features/DeviceOnboarding/types";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
@@ -60,7 +59,6 @@ export type OnboardingNavigatorParamList = {
   };
   [ScreenName.DeviceOnboardingSyncOffer]: {
     device: Device;
-    entrySource: SeededFunnelEntrySource;
     wasReadOnlyAtEntry: boolean;
   };
   [ScreenName.FirmwareUpdate]: {
@@ -69,6 +67,7 @@ export type OnboardingNavigatorParamList = {
     device?: Device | null;
     onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
     isBeforeOnboarding?: boolean;
+    isDeviceOnboarded?: boolean;
   };
   [ScreenName.OnboardingSecureYourCrypto]: {
     deviceModelId?: DeviceModelId;

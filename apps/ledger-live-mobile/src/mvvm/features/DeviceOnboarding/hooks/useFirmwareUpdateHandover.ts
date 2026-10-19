@@ -35,6 +35,11 @@ export function useFirmwareUpdateHandover({
   const awaitingReturnRef = useRef(false);
   const closedRef = useRef(false);
   const freshResultRef = useRef(false);
+  const delegatedRef = useRef(false);
+  const wasDelegatedRef = useRef(false);
+  if (delegated && !wasDelegatedRef.current) closedRef.current = false;
+  wasDelegatedRef.current = delegated;
+  delegatedRef.current = delegated;
 
   const {
     state: { deviceInfo, firmwareUpdateContext, status },
@@ -62,9 +67,10 @@ export function useFirmwareUpdateHandover({
       freshResultRef.current = false;
       pushedRef.current = false;
       awaitingReturnRef.current = false;
-      closedRef.current = false;
       return;
     }
+
+    if (!delegatedRef.current || closedRef.current) return;
 
     if (status === "idle" || status === "ongoing") {
       freshResultRef.current = true;
@@ -81,8 +87,8 @@ export function useFirmwareUpdateHandover({
         deviceInfo,
         firmwareUpdateContext,
         onBackFromUpdate,
-        // A seeded device keeps its apps, image and language through the update.
-        isBeforeOnboarding: !isDeviceOnboarded,
+        isBeforeOnboarding: true,
+        isDeviceOnboarded,
       });
       return;
     }
@@ -107,4 +113,6 @@ export function useFirmwareUpdateHandover({
       if (awaitingReturnRef.current) closeHandoverOnce();
     }, [closeHandoverOnce]),
   );
+
+  return { close: closeHandoverOnce };
 }

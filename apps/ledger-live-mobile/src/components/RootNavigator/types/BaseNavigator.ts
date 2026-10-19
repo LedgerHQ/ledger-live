@@ -408,6 +408,7 @@ export type BaseNavigatorStackParamList = {
     device?: Device | null;
     onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
     isBeforeOnboarding?: boolean;
+    isDeviceOnboarded?: boolean;
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
   [ScreenName.Portfolio]: undefined;

@@ -1,6 +1,6 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, within } from "@tests/test-renderer";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type {
   ChecksScreenProps,
@@ -80,7 +80,6 @@ function renderChecks(state: ChecksScreenState, error: ChecksScreenProps["error"
   const onAcceptUpdate = jest.fn();
   const onDeclineUpdate = jest.fn();
   const onCloseSheet = jest.fn();
-  const onContinue = jest.fn();
   const onQuit = jest.fn();
   const props: ChecksScreenProps = {
     device,
@@ -92,7 +91,6 @@ function renderChecks(state: ChecksScreenState, error: ChecksScreenProps["error"
     onAcceptUpdate,
     onDeclineUpdate,
     onCloseSheet,
-    onContinue,
     onQuit,
   };
   const view = render(<ChecksScreen {...props} />);
@@ -104,7 +102,6 @@ function renderChecks(state: ChecksScreenState, error: ChecksScreenProps["error"
     onAcceptUpdate,
     onDeclineUpdate,
     onCloseSheet,
-    onContinue,
     onQuit,
     rerender(next: Partial<ChecksScreenProps> = {}) {
       Object.assign(props, next);
@@ -115,7 +112,7 @@ function renderChecks(state: ChecksScreenState, error: ChecksScreenProps["error"
 
 describe("ChecksView", () => {
   it("should only let the user leave while the device is synchronizing", async () => {
-    const { user, onQuit, onStart, onContinue } = renderChecks("synchronizing");
+    const { user, onQuit, onStart } = renderChecks("synchronizing");
 
     expect(screen.getByText("Synchronizing...")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Check my device" })).toBeNull();
@@ -125,11 +122,10 @@ describe("ChecksView", () => {
 
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onStart).not.toHaveBeenCalled();
-    expect(onContinue).not.toHaveBeenCalled();
   });
 
   it("should start the check from the idle call to action", async () => {
-    const { user, onStart, onContinue } = renderChecks("idle");
+    const { user, onStart } = renderChecks("idle");
 
     expect(
       screen.getByText("Let's confirm that your Ledger device is genuine and up-to-date."),
@@ -139,11 +135,10 @@ describe("ChecksView", () => {
     await user.press(screen.getByRole("button", { name: "Check my device" }));
 
     expect(onStart).toHaveBeenCalledTimes(1);
-    expect(onContinue).not.toHaveBeenCalled();
   });
 
   it("should leave the flow from the header while the check is running", async () => {
-    const { user, onQuit, onStart, onContinue } = renderChecks("checking");
+    const { user, onQuit, onStart } = renderChecks("checking");
 
     expect(screen.getByText("Check your device")).toBeVisible();
     expect(
@@ -155,44 +150,53 @@ describe("ChecksView", () => {
     await user.press(screen.getByText("Checking..."));
 
     expect(onStart).not.toHaveBeenCalled();
-    expect(onContinue).not.toHaveBeenCalled();
 
     await user.press(screen.getByRole("button", { name: "Close" }));
 
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onStart).not.toHaveBeenCalled();
-    expect(onContinue).not.toHaveBeenCalled();
   });
 
-  it("should close the allow prompt without leaving the check", async () => {
+  it("should quit from the allow sheet while approval is pending", async () => {
     const { user, onCloseSheet, onQuit, onStart } = renderChecks("awaitingAllow");
 
     expect(screen.getByText("Check your device")).toBeVisible();
     expect(screen.getByText("Tap on “Allow” to start Ledger Genuine Check")).toBeVisible();
     expect(screen.getByText("Lily's Stax")).toBeVisible();
-
     expect(screen.queryByTestId(`${checksTestIds.allowSheet}-dismiss`)).toBeNull();
 
     await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-header-close`));
 
-    expect(onCloseSheet).toHaveBeenCalledTimes(1);
-    expect(onStart).not.toHaveBeenCalled();
-
-    await user.press(screen.getByRole("button", { name: "Close" }));
-
+    expect(onCloseSheet).not.toHaveBeenCalled();
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onStart).not.toHaveBeenCalled();
   });
 
-  it("should continue only after the device is genuine and up to date", async () => {
-    const { user, onContinue, onStart } = renderChecks("succeeded");
+  it("should move on by itself once the device is genuine and up to date", async () => {
+    const { user, onQuit, onStart, onRetry, onCloseSheet, onAcceptUpdate, onDeclineUpdate } =
+      renderChecks("succeeded");
+    const continueButton = screen.getByRole("button", { name: "Continue" });
 
     expect(screen.getByText("Device genuine and up-to-date")).toBeVisible();
+    expect(within(continueButton).getByLabelText("Loading")).toBeVisible();
 
-    await user.press(screen.getByRole("button", { name: "Continue" }));
+    await user.press(continueButton);
 
-    expect(onContinue).toHaveBeenCalledTimes(1);
     expect(onStart).not.toHaveBeenCalled();
+    expect(onRetry).not.toHaveBeenCalled();
+    expect(onCloseSheet).not.toHaveBeenCalled();
+    expect(onAcceptUpdate).not.toHaveBeenCalled();
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it("should hide the close button while the onboarding cannot be left", () => {
+    const { rerender } = renderChecks("checking");
+    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+
+    rerender({ onQuit: undefined });
+
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
   });
 
   it("should offer the existing OS update sheet while the device needs an update", async () => {
@@ -201,16 +205,15 @@ describe("ChecksView", () => {
 
     expect(screen.getByText("Ledger OS update required")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+    expect(screen.queryByTestId(`${checksTestIds.updateSheet}-header-close`)).toBeNull();
 
     await user.press(screen.getByText("Update Ledger OS"));
     await user.press(screen.getByText("Cancel operation"));
     expect(screen.queryByTestId(`${checksTestIds.updateSheet}-dismiss`)).toBeNull();
 
-    await user.press(screen.getByTestId(`${checksTestIds.updateSheet}-header-close`));
-
     expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
     expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
-    expect(onCloseSheet).toHaveBeenCalledTimes(1);
+    expect(onCloseSheet).not.toHaveBeenCalled();
     expect(onQuit).not.toHaveBeenCalled();
     expect(onStart).not.toHaveBeenCalled();
   });
@@ -255,12 +258,9 @@ describe("ChecksView", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
-  it("should close the non genuine drawer without leaving onboarding", async () => {
-    const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
+  it("should leave onboarding when closing the non genuine drawer", async () => {
+    const { user, onCloseSheet, onQuit } = renderChecks("checking", {
       kind: "notGenuine",
-    });
-    onCloseSheet.mockImplementation(() => {
-      rerender({ error: null });
     });
 
     expect(screen.getByText("Check your device")).toBeVisible();
@@ -269,7 +269,7 @@ describe("ChecksView", () => {
 
     await user.press(screen.getByTestId("modal-close-button"));
 
-    expect(onCloseSheet).toHaveBeenCalledTimes(1);
-    expect(onQuit).not.toHaveBeenCalled();
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(onCloseSheet).not.toHaveBeenCalled();
   });
 });

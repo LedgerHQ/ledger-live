@@ -48,13 +48,16 @@ function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboar
     liveDevice: device,
     state: "checks.firmwareCheck",
     context: null,
-    events: [],
+    machineContext: null,
+    log: [],
     exit: null,
     sendableEvents: [],
+    nextStates: [],
     error: null,
     connect: jest.fn(),
     send,
     reset: jest.fn(),
+    closeFirmwareHandover: jest.fn(),
     ...overrides,
   };
 }
@@ -161,6 +164,110 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(goBack).not.toHaveBeenCalled();
   });
 
+  it("should block Android back without quitting while the update is offered", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareUpdateOffered" }));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+    const back = () =>
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    back();
+    back();
+
+    expect(preventDefault).toHaveBeenCalledTimes(2);
+    expect(send).not.toHaveBeenCalled();
+    expect(goBack).not.toHaveBeenCalled();
+
+    useSession.mock.calls[0][0].onLeave?.();
+    back();
+    expect(preventDefault).toHaveBeenCalledTimes(2);
+  });
+
+  it("should close the firmware handover when Android back happens while it opens", () => {
+    const closeFirmwareHandover = jest.fn();
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateDelegated", closeFirmwareHandover }),
+    );
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+    const back = () =>
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    back();
+    back();
+
+    expect(preventDefault).toHaveBeenCalledTimes(2);
+    expect(closeFirmwareHandover).toHaveBeenCalledTimes(2);
+    expect(send).not.toHaveBeenCalled();
+    expect(goBack).not.toHaveBeenCalled();
+
+    useSession.mock.calls[0][0].onLeave?.();
+    back();
+    expect(preventDefault).toHaveBeenCalledTimes(2);
+  });
+
+  it("should keep blocking Android back until the machine leaves", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck" }));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+    const back = () =>
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    back();
+    back();
+    expect(preventDefault).toHaveBeenCalledTimes(2);
+
+    useSession.mock.calls[0][0].onLeave?.();
+    back();
+    expect(preventDefault).toHaveBeenCalledTimes(2);
+  });
+
+  it("should close the firmware handover from the waiting screen", () => {
+    const closeFirmwareHandover = jest.fn();
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateDelegated", closeFirmwareHandover }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const checks = checksOf(result.current);
+
+    expect(checks.state).toBe("checking");
+    checks.onQuit?.();
+
+    expect(closeFirmwareHandover).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should quit the machine when closing while the device is locked", () => {
+    const reset = jest.fn();
+    useSession.mockReturnValue(session({ state: "deviceLocked", reset }));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    if (result.current.status !== "connecting") throw new Error(result.current.status);
+
+    result.current.onQuit();
+
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    expect(reset).not.toHaveBeenCalled();
+    expect(goBack).not.toHaveBeenCalled();
+  });
+
+  it("should leave the funnel when closing before the machine has a state", () => {
+    const reset = jest.fn();
+    useSession.mockReturnValue(
+      session({ status: "connecting", state: null, liveDevice: null, reset }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    if (result.current.status !== "connecting") throw new Error(result.current.status);
+
+    result.current.onQuit();
+
+    expect(reset).toHaveBeenCalledTimes(1);
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("should leave the funnel when Android back happens before the machine starts", () => {
     const reset = jest.fn();
     useSession.mockReturnValue(
@@ -223,7 +330,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
       const checks = checksOf(result.current);
 
-      checks.onQuit();
+      checks.onQuit?.();
 
       expect(send).toHaveBeenCalledWith({ type: "QUIT" });
       expect(checks.update).toEqual({ current: "1.0.0", available: "1.1.0" });
@@ -261,6 +368,24 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "RETRY" });
   });
 
+  it("should close a failed check with CLOSE", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.genuineFailed",
+        context: {
+          genuineFailureKind: "GENUINE_CHECK_REFUSED",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    checksOf(result.current).onCloseSheet();
+
+    expect(send).toHaveBeenCalledWith({ type: "CLOSE" });
+  });
+
   it("should forward each checks action as the event the machine already understands", () => {
     useSession.mockReturnValue(
       session({
@@ -276,17 +401,13 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const checks = checksOf(result.current);
 
     checks.onStart();
-    checks.onContinue();
     checks.onRetry();
-    checks.onCloseSheet();
     checks.onAcceptUpdate();
     checks.onDeclineUpdate();
 
     expect(send.mock.calls).toEqual([
       [{ type: "CONTINUE" }],
-      [{ type: "CONTINUE" }],
       [{ type: "RETRY" }],
-      [{ type: "CLOSE" }],
       [{ type: "USER_ACCEPT" }],
       [{ type: "USER_DECLINE" }],
     ]);

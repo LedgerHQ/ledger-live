@@ -23,6 +23,11 @@ import { toChecksError, toChecksScreenState, toFirmwareUpdate } from "../../util
 
 type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
+const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
+
+/** Back must not quit here: a quit would skip the update and complete onboarding. */
+const firmwareUpdateOfferState = "checks.firmwareUpdateOffered";
+
 export type DeviceOnboardingFunnelModel =
   | { status: "checks"; checks: ChecksScreenProps }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
@@ -46,15 +51,18 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const offerSync = useOfferSync();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { t } = useTranslation();
+  const allowLeave = useRef(false);
   const onboarding = useDeviceOnboarding({
     dmk,
     knownDevices,
     offerSync,
     navigateOnExit: true,
     wasReadOnlyAtEntry,
+    onLeave: () => {
+      allowLeave.current = true;
+    },
   });
   const started = useRef(false);
-  const allowLeave = useRef(false);
 
   useEffect(() => {
     if (started.current) return;
@@ -79,9 +87,18 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   }, [navigation, onboarding]);
 
   const quitMachine = useCallback(() => {
-    allowLeave.current = true;
     send({ type: "QUIT" });
   }, [send]);
+
+  const closeFirmwareHandover = onboarding.closeFirmwareHandover;
+
+  const quitOrLeave = useCallback(() => {
+    if (onboarding.status === "running" && onboarding.state) {
+      quitMachine();
+      return;
+    }
+    leave();
+  }, [leave, onboarding.state, onboarding.status, quitMachine]);
 
   const retry = useCallback(() => {
     onboarding.reset();
@@ -100,12 +117,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         if (action !== "GO_BACK" && action !== "POP") return;
         event.preventDefault();
         if (onboarding.status === "running" && onboarding.state) {
-          quitMachine();
+          if (onboarding.state === firmwareUpdateDelegatedState) closeFirmwareHandover();
+          else if (onboarding.state !== firmwareUpdateOfferState) quitMachine();
           return;
         }
         leave();
       }),
-    [leave, navigation, onboarding.state, onboarding.status, quitMachine],
+    [closeFirmwareHandover, leave, navigation, onboarding.state, onboarding.status, quitMachine],
   );
 
   const screenState = toChecksScreenState(
@@ -134,14 +152,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         retryLabel: t("common.retry"),
         closeLabel,
         onRetry: retry,
-        onQuit: leave,
+        onQuit: quitOrLeave,
       };
     }
     return {
       status: "connecting",
       title: t("deviceOnboarding.connection.connecting"),
       closeLabel,
-      onQuit: leave,
+      onQuit: quitOrLeave,
     };
   }
 
@@ -157,12 +175,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       ),
       onStart: () =>
         send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
-      onContinue: () => send({ type: "CONTINUE" }),
       onRetry: () => send({ type: "RETRY" }),
       onCloseSheet: () => send({ type: "CLOSE" }),
       onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
-      onQuit: quitMachine,
+      onQuit:
+        onboarding.state === firmwareUpdateDelegatedState ? closeFirmwareHandover : quitMachine,
     },
   };
 }

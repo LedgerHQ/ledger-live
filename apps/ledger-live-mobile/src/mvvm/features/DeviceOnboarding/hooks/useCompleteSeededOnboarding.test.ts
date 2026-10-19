@@ -18,6 +18,8 @@ describe("useCompleteSeededOnboarding", () => {
       hasCompletedOnboarding: false,
       hasBeenRedirectedToPostOnboarding: true,
       hasBeenUpsoldProtect: true,
+      isReborn: true,
+      onboardingHasDevice: null,
     });
 
     act(() => result.current());
@@ -27,6 +29,8 @@ describe("useCompleteSeededOnboarding", () => {
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(store.getState().settings.hasBeenUpsoldProtect).toBe(false);
     expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(false);
+    expect(store.getState().settings.isReborn).toBe(false);
+    expect(store.getState().settings.onboardingHasDevice).toBe(true);
   });
 
   it("should leave the post-onboarding redirect untouched when the user was already onboarded", () => {
@@ -41,5 +45,6 @@ describe("useCompleteSeededOnboarding", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(true);
+    expect(store.getState().settings.onboardingHasDevice).not.toBe(true);
   });
 });

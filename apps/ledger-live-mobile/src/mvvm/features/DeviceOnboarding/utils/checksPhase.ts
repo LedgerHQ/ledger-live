@@ -31,12 +31,7 @@ export function toChecksScreenState(
   if (!machineState?.startsWith("checks.")) return null;
 
   if (machineState === "checks.genuineCheck.awaitingApproval") return "awaitingAllow";
-  if (
-    machineState === "checks.firmwareUpdateOffered" ||
-    machineState === "checks.firmwareUpdateDelegated"
-  ) {
-    return "updating";
-  }
+  if (machineState === "checks.firmwareUpdateOffered") return "updating";
   if (
     machineState === "checks.checksSucceeded" ||
     machineState === "checks.checksDone" ||

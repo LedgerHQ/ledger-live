@@ -3,7 +3,6 @@ import type { DeviceOnboardingExitReason } from "@features/platform-device-onboa
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
-import { seededFunnelEntrySource } from "LLM/features/DeviceOnboarding/types";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
 
 type ExitDeps = {
@@ -13,29 +12,44 @@ type ExitDeps = {
   shouldDisplayMyWallet: boolean;
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
+  deviceWasSeeded: boolean;
+  hasCompletedOnboarding: boolean;
 };
 
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
-  completed: ({ dispatch, navigation, wasReadOnlyAtEntry }) => {
-    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry);
+  completed: ({ dispatch, navigation, wasReadOnlyAtEntry, hasCompletedOnboarding }) => {
+    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
   offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
-      entrySource: seededFunnelEntrySource,
       wasReadOnlyAtEntry,
     });
   },
   resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) =>
     resetToMyLedger(navigation, device, shouldDisplayMyWallet),
-  legacyFallback: ({ navigation, device }) => resetToLegacyOnboarding(navigation, device),
-  userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine }) => {
+  legacyFallback: ({
+    navigation,
+    device,
+    dispatch,
+    wasReadOnlyAtEntry,
+    deviceWasSeeded,
+    hasCompletedOnboarding,
+  }) => {
+    if (!deviceWasSeeded) {
+      resetToLegacyOnboarding(navigation, device);
+      return;
+    }
+    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
+    resetToPortfolio(navigation);
+  },
+  userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
     if (!isGenuine) {
       navigation.goBack();
       return;
     }
-    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry);
+    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
 };

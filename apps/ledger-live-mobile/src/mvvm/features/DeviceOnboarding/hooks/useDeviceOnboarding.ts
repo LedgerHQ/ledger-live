@@ -33,6 +33,8 @@ type UseDeviceOnboardingInput = {
   offerSync: boolean;
   navigateOnExit?: boolean;
   wasReadOnlyAtEntry?: boolean;
+  /** Runs right before the exit navigates, so the host can stop blocking back. */
+  onLeave?: () => void;
 };
 
 type GenuineActor = {
@@ -43,6 +45,8 @@ type StoppableActor = { stop(): void };
 
 export type DeviceOnboardingSession = DeviceOnboardingToolProps & {
   liveDevice: Device | null;
+  /** Drops a firmware lookup that has not opened its screen yet. */
+  closeFirmwareHandover: () => void;
 };
 
 function statusWithActor(
@@ -57,6 +61,7 @@ export function useDeviceOnboarding({
   offerSync,
   navigateOnExit = true,
   wasReadOnlyAtEntry = false,
+  onLeave,
 }: UseDeviceOnboardingInput): DeviceOnboardingSession {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
@@ -71,6 +76,7 @@ export function useDeviceOnboarding({
     navigateOnExit,
     wasReadOnlyAtEntry,
     isGenuine: () => isCurrentSessionGenuine(actorBridge.current?.current?.getSnapshot().context),
+    deviceWasSeeded: () => actorBridge.current?.current?.getSnapshot().context.isOnboarded === true,
   });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
@@ -108,7 +114,10 @@ export function useDeviceOnboarding({
     missingSessionMessage: "No mobile onboarding session",
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
-    leaveOnboarding,
+    leaveOnboarding: reason => {
+      onLeave?.();
+      leaveOnboarding(reason);
+    },
   });
 
   useEffect(() => {
@@ -161,7 +170,11 @@ export function useDeviceOnboarding({
         sessionId: result.sessionId,
         wired: result.compatDeviceWired,
       });
+      const previousPorts = portsRef.current;
       portsRef.current = nextPorts;
+      if (previousPorts && previousPorts.currentSessionId() !== nextPorts.currentSessionId()) {
+        await previousPorts.closeSession().catch(() => undefined);
+      }
       try {
         const session = await nextPorts.openSession();
 
@@ -312,7 +325,7 @@ export function useDeviceOnboarding({
     setError(null);
   }, [portsRef, resetActor]);
 
-  useFirmwareUpdateHandover({
+  const { close: closeFirmwareHandover } = useFirmwareUpdateHandover({
     device: liveDevice,
     isDeviceOnboarded: context?.isOnboarded ?? false,
     machineState: state,
@@ -326,8 +339,10 @@ export function useDeviceOnboarding({
       connectionRef.current?.unsubscribe();
       sessionActorRef.current?.stop();
       stopActor();
+      void portsRef.current?.closeSession();
+      portsRef.current = null;
     },
-    [stopActor],
+    [portsRef, stopActor],
   );
 
   return {
@@ -345,6 +360,7 @@ export function useDeviceOnboarding({
     connect,
     send,
     reset,
+    closeFirmwareHandover,
     featureFlag,
     setFeatureFlag,
     isFeatureFlagOverridden,
