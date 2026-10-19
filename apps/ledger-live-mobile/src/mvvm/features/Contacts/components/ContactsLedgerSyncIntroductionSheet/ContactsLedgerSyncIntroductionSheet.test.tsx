@@ -7,11 +7,7 @@ describe("ContactsLedgerSyncIntroductionSheet", () => {
     const onActivate = jest.fn();
     const onDismiss = jest.fn();
     const { user } = render(
-      <ContactsLedgerSyncIntroductionSheet
-        isOpen
-        onActivate={onActivate}
-        onDismiss={onDismiss}
-      />,
+      <ContactsLedgerSyncIntroductionSheet isOpen onActivate={onActivate} onDismiss={onDismiss} />,
     );
 
     await user.press(screen.getByRole("button", { name: "Sync my wallet" }));
