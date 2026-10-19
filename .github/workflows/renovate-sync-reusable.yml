@@ -27,7 +27,7 @@ jobs:
       - id: compare
         if: >-
           startsWith(github.head_ref, 'renovate/') &&
-          github.event.pull_request.user.login == 'renovate-operator[bot]' &&
+          contains(fromJSON('["renovate-operator[bot]","gre-ledger"]'), github.event.pull_request.user.login) &&
           github.event.sender.login != 'live-github-bot[bot]'
         env:
           GH_TOKEN: ${{ github.token }}
