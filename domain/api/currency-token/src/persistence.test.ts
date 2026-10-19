@@ -245,31 +245,31 @@ describe("Token Persistence", () => {
   describe("restoreTokensToCache", () => {
     const ttl = 24 * 60 * 60 * 1000;
 
-    it("should restore valid tokens to RTK Query cache", async () => {
+    it("should restore valid tokens to RTK Query cache", () => {
       const mockDispatch = jest.fn();
       const persistedData: PersistedCAL = {
         version: PERSISTENCE_VERSION,
         tokens: [{ data: mockToken, timestamp: Date.now() }],
       };
 
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
+      restoreTokensToCache(mockDispatch, persistedData, ttl);
 
       expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 
-    it("should skip expired tokens", async () => {
+    it("should skip expired tokens", () => {
       const mockDispatch = jest.fn();
       const persistedData: PersistedCAL = {
         version: PERSISTENCE_VERSION,
         tokens: [{ data: mockToken, timestamp: Date.now() - 25 * 60 * 60 * 1000 }],
       };
 
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
+      restoreTokensToCache(mockDispatch, persistedData, ttl);
 
       expect(mockDispatch).not.toHaveBeenCalled();
     });
 
-    it("should restore tokens even when the parent currency is unknown (guard moved to the converter)", async () => {
+    it("should restore tokens even when the parent currency is unknown (guard moved to the converter)", () => {
       const mockDispatch = jest.fn();
       const orphanToken = token({
         type: "TokenCurrency",
@@ -286,7 +286,7 @@ describe("Token Persistence", () => {
         tokens: [{ data: orphanToken, timestamp: Date.now() }],
       };
 
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
+      restoreTokensToCache(mockDispatch, persistedData, ttl);
 
       expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
@@ -378,13 +378,13 @@ describe("Token Persistence", () => {
         throw new Error("timed out waiting for the hash check");
       }
 
-      async function restore(store: Store, hashes?: Record<string, string>) {
+      function restore(store: Store, hashes?: Record<string, string>) {
         const persistedData: PersistedCAL = {
           version: PERSISTENCE_VERSION,
           tokens: [{ data: mockToken, timestamp: Date.now() }],
           ...(hashes === undefined ? {} : { hashes }),
         };
-        await restoreTokensToCache(store.dispatch, persistedData, ttl);
+        restoreTokensToCache(store.dispatch, persistedData, ttl);
       }
 
       async function expectRestoredCount(
@@ -396,7 +396,7 @@ describe("Token Persistence", () => {
         if (response) respond(response);
         const store = makeStore();
         try {
-          await restore(store, hashes);
+          restore(store, hashes);
           if (hashes) await waitForHashRequests(Object.keys(hashes).length);
           else await new Promise(resolve => setImmediate(resolve));
           expect(restoredTokenCount(store)).toBe(count);
@@ -415,7 +415,7 @@ describe("Token Persistence", () => {
 
         const store = makeStore();
         try {
-          await restore(store, { ethereum: "hash123" });
+          restore(store, { ethereum: "hash123" });
 
           expect(restoredTokenCount(store)).toBe(2);
           expect(extractHashesFromState(store.getState())).toEqual({ ethereum: "hash123" });
@@ -501,7 +501,7 @@ describe("Token Persistence", () => {
 
         const store = makeStore();
         try {
-          await restoreTokensToCache(
+          restoreTokensToCache(
             store.dispatch,
             {
               version: PERSISTENCE_VERSION,
@@ -695,7 +695,7 @@ describe("Token Persistence", () => {
       });
     }
 
-    it("should restore cache entry with token_identifier after extract → restore cycle", async () => {
+    it("should restore cache entry with token_identifier after extract → restore cycle", () => {
       const sourceState = {
         [cryptoAssetsApi.reducerPath]: {
           queries: {
@@ -719,7 +719,7 @@ describe("Token Persistence", () => {
       expect(persisted.tokens[0].token_identifier).toBe("MYTOKEN-abc123");
 
       const newStore = makeStore();
-      await restoreTokensToCache(newStore.dispatch, persisted, ttl);
+      restoreTokensToCache(newStore.dispatch, persisted, ttl);
 
       const newQueries = newStore.getState()[cryptoAssetsApi.reducerPath].queries;
       const restoredEntry = Object.values(newQueries).find(
@@ -733,7 +733,7 @@ describe("Token Persistence", () => {
       newStore.dispatch(cryptoAssetsApi.util.resetApiState());
     });
 
-    it("should restore cache entry without token_identifier unchanged after round-trip", async () => {
+    it("should restore cache entry without token_identifier unchanged after round-trip", () => {
       const sourceState = {
         [cryptoAssetsApi.reducerPath]: {
           queries: {
@@ -752,7 +752,7 @@ describe("Token Persistence", () => {
       expect(persisted.tokens[0].token_identifier).toBeUndefined();
 
       const newStore = makeStore();
-      await restoreTokensToCache(newStore.dispatch, persisted, ttl);
+      restoreTokensToCache(newStore.dispatch, persisted, ttl);
 
       const newQueries = newStore.getState()[cryptoAssetsApi.reducerPath].queries;
       const addressEntry = Object.values(newQueries).find(

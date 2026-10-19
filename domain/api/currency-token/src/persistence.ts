@@ -158,11 +158,11 @@ export function filterExpiredTokens(
  * longer lists drops the hash too, and a failed check leaves both in place. Currencies with
  * no stored hash are never evicted.
  */
-export async function restoreTokensToCache(
+export function restoreTokensToCache(
   dispatch: CryptoAssetsDispatch,
   persistedData: PersistedCAL,
   ttl: number,
-): Promise<void> {
+): void {
   const validTokens = filterExpiredTokens(persistedData.tokens, ttl);
   if (validTokens.length === 0) {
     return;

@@ -173,7 +173,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       const persistedCryptoAssets = parsePersistedCAL(cryptoAssetsCache);
       if (persistedCryptoAssets) {
         const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-        await restoreTokensToCache(store.dispatch, persistedCryptoAssets, TOKEN_CACHE_TTL);
+        restoreTokensToCache(store.dispatch, persistedCryptoAssets, TOKEN_CACHE_TTL);
       }
 
       // Handle account import with error recovery for async issues

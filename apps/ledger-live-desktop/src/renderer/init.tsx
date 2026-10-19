@@ -197,7 +197,7 @@ async function init() {
 
     if (persistedData) {
       const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-      await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
+      restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
     }
   } catch (error) {
     logger.error("Failed to load crypto assets tokens from app.json:", error);
