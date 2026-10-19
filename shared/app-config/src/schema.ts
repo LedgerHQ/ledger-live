@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { DuplicateConfigValueError } from "./errors";
-import type { ConfigSchema, ConfigSchemaSwitches, Zod } from "./types";
-import type { ValuesShape } from "./types.internals";
+import type { ConfigOptionId, ConfigSchema, ConfigSchemaSwitches, Zod } from "./types";
+import { optionIdSchema } from "./internals/options";
+import type { ValuesShape } from "./internals/types";
+
+/** The id of each option every switch declares, in display order. */
+export const APP_CONFIG_OPTION_IDS: readonly ConfigOptionId[] = optionIdSchema.options;
 
 /**
  * Declares, with zod, the value schemas of each switch and of the fixed values. A value name must be

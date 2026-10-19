@@ -149,7 +149,7 @@ async function init() {
         dateString: require("../../tests/time.js").default,
       });
     }
-    configStorage = { getAll: () => spectronData.appConfig, set() {}, clear() {} };
+    configStorage = { getAll: () => spectronData.appConfig, set() {}, remove() {}, clear() {} };
   }
   const store = createStore({
     dbMiddleware,

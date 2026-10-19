@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { InvalidConfigOptionError } from "./errors";
+import { optionIdSchema } from "./internals/options";
+import { APP_CONFIG_OPTION_IDS } from "./schema";
 import type {
   AppConfig,
+  AppConfigSession,
   ConfigOptionId,
   ConfigOptions,
   ConfigSchema,
@@ -15,7 +18,7 @@ import type {
  * option of each switch, merged with the fixed values. A switch without a valid selection resolves
  * to the default option. Every option of every switch is parsed with its switch schema, selected or
  * not, so a broken option fails at boot in every build. The merged values are then parsed strictly.
- * The result is frozen.
+ * The configuration is frozen. `session` holds what it was resolved from, for `createAppConfigMiddleware`.
  */
 export function resolveAppConfig<
   Switches extends ConfigSchemaSwitches,
@@ -34,13 +37,19 @@ export function resolveAppConfig<
   readonly storage: ConfigStorage;
   readonly switches: { readonly [Id in keyof Switches]: ConfigSwitch<ConfigOptions<Switches[Id]>> };
   readonly fixed: z.input<z.ZodObject<Fixed, z.core.$strict>>;
-}): AppConfig<ConfigSchema<Switches, Fixed>> {
+}): {
+  readonly config: AppConfig<ConfigSchema<Switches, Fixed>>;
+  readonly session: AppConfigSession;
+} {
   const selection = fromStorage(storage);
   const selectedValues = Object.entries(switches).map(
     ([switchId, configSwitch]: [string, ConfigSwitch<ConfigOptions<z.ZodRawShape>>]) =>
       parseOptions(configSwitch, schema.switches, switchId)[selection[switchId] ?? defaultOptionId],
   );
-  return Object.freeze(schema.values.parse(Object.assign({}, ...selectedValues, fixed)));
+  return {
+    config: Object.freeze(schema.values.parse(Object.assign({}, ...selectedValues, fixed))),
+    session: { switches, default: defaultOptionId, selections: selection, storage },
+  };
 }
 
 function fromStorage(storage: ConfigStorage) {
@@ -63,13 +72,9 @@ function parseOptions(
   switchId: string,
 ) {
   const optionSchema = z.strictObject(switches[switchId]);
-  for (const optionId of optionIdSchema.options) {
+  for (const optionId of APP_CONFIG_OPTION_IDS) {
     const result = optionSchema.safeParse(options[optionId]);
     if (!result.success) throw new InvalidConfigOptionError(switchId, optionId, result.error);
   }
   return options;
 }
-
-const optionIdSchema = z.enum({ prod: "prod", staging: "staging" } satisfies {
-  readonly [Id in ConfigOptionId]: Id;
-});

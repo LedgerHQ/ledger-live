@@ -20,6 +20,35 @@ describe("appConfigStorage", () => {
     );
   });
 
+  it("removes the selection of one switch, keeping the other switches", () => {
+    appConfigStorage.set("ledgerKeyRing", "staging");
+    appConfigStorage.set("otherSwitch", "prod");
+
+    appConfigStorage.remove("ledgerKeyRing");
+
+    expect(appConfigStorage.getAll()).toEqual({ otherSwitch: "prod" });
+  });
+
+  it("replaces unreadable selections when saving or removing one", () => {
+    localStorage.setItem("appConfigSelections", "{not json");
+
+    appConfigStorage.remove("ledgerKeyRing");
+
+    expect(appConfigStorage.getAll()).toEqual({});
+
+    localStorage.setItem("appConfigSelections", "{not json");
+
+    appConfigStorage.set("ledgerKeyRing", "prod");
+
+    expect(appConfigStorage.getAll()).toEqual({ ledgerKeyRing: "prod" });
+  });
+
+  it("throws on unreadable selections when reading them all, so the boot can clear them", () => {
+    localStorage.setItem("appConfigSelections", "{not json");
+
+    expect(() => appConfigStorage.getAll()).toThrow(SyntaxError);
+  });
+
   it("clears the selections", () => {
     appConfigStorage.set("ledgerKeyRing", "staging");
 

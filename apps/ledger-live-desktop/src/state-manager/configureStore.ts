@@ -63,7 +63,7 @@ const customCreateStore = ({
   fetchRemoteFlags,
   readCachedFlags,
   countervalues,
-  appConfig = loadAppConfig(),
+  appConfig: { config: appConfig } = loadAppConfig(),
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
