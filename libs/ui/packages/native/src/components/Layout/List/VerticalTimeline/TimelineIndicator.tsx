@@ -28,7 +28,7 @@ const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
   const strokeDashArray = status === "inactive" ? `${dashLength}` : undefined;
   return (
     <Flex height={height} width={"100%"} overflow="hidden">
-      <Flex style={StyleSheet.absoluteFillObject} alignItems="center">
+      <Flex style={StyleSheet.absoluteFill} alignItems="center">
         <Svg
           height={linesLength}
           width={linesWidth}
@@ -58,7 +58,7 @@ const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
   const strokeDashArray = status === "completed" ? undefined : `${dashLength}`;
   return (
     <Flex flex={1} width={"100%"} style={{ transform: [{ scaleY: -1 }] }} overflow="hidden">
-      <Flex style={StyleSheet.absoluteFillObject} alignItems="center">
+      <Flex style={StyleSheet.absoluteFill} alignItems="center">
         <Svg
           height={2 * Dimensions.get("screen").height}
           width={linesWidth}
