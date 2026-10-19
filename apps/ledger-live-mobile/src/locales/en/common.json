@@ -10423,6 +10423,9 @@
     }
   },
   "accountDetail": {
+    "assets": {
+      "title": "Assets"
+    },
     "transactions": {
       "title": "Transactions"
     },
