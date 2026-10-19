@@ -163,7 +163,7 @@ export async function setFeatureFlags(flags: PartialFeatures) {
   await getFlags();
 }
 
-export async function setFeatureFlag(flag: OverrideFeatureFlagPayload) {
+export function setFeatureFlag(flag: OverrideFeatureFlagPayload) {
   postMessage({ type: "overrideFeatureFlag", id: uniqueId(), payload: flag });
 }
 
