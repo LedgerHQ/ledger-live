@@ -14,6 +14,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   PerpsDepositUiParams,
   PerpsSignResult,
+  PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
 import type { DecodedURISchemePayment } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
@@ -383,6 +384,7 @@ export type BaseNavigatorStackParamList = {
     onCancel: () => void;
   };
   [ScreenName.PerpsDeposit]: PerpsDepositUiParams;
+  [ScreenName.PerpsWithdraw]: PerpsWithdrawUiParams;
   [ScreenName.PerpsTransactionSigned]: PerpsTransactionSignedParams;
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;
