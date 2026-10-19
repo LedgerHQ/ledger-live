@@ -35,7 +35,7 @@ jest.mock("../usePerpsWithdrawQuote", () => ({
   usePerpsWithdrawQuote: (params: unknown) => mockUsePerpsWithdrawQuote(params),
 }));
 
-function createAccount(id: string, currencyId: string, balance: number): Account {
+function createAccount(id: string, currencyId: string, balance: BigNumber.Value): Account {
   return {
     ...genAccount(id, { currency: getCryptoCurrencyById(currencyId), operationsSize: 0 }),
     spendableBalance: new BigNumber(balance),
@@ -43,7 +43,8 @@ function createAccount(id: string, currencyId: string, balance: number): Account
   };
 }
 
-const sourceAccount = createAccount("source-1", "ethereum", 0);
+// 1000.5 in the source currency's units; the screen reads it as USDC.
+const sourceAccount = createAccount("source-1", "ethereum", "1000500000000000000000");
 const ethAccount = createAccount("eth-1", "ethereum", 100_000);
 const btcAccount = createAccount("btc-1", "bitcoin", 50_000);
 const dogeAccount = createAccount("doge-1", "dogecoin", 900_000);
@@ -55,10 +56,7 @@ const quote = {
   expiry: 1792000000000,
 };
 
-const withdrawData: PerpsWithdrawData = {
-  sourceAccount,
-  availableBalance: new BigNumber("1000.5"),
-};
+const withdrawData: PerpsWithdrawData = { sourceAccount };
 
 function renderWithdraw() {
   return render(<PerpsWithdrawRoot />, {
@@ -94,6 +92,15 @@ describe("PerpsWithdraw integration", () => {
   it("should show the title and the available balance", () => {
     renderWithdraw();
     openWithdraw();
+
+    expect(screen.getByRole("dialog", { name: "Withdraw" })).toHaveAccessibleDescription(
+      /\$1,000\.50/,
+    );
+  });
+
+  it("should read the balance from the wallet's copy of the source account", () => {
+    renderWithdraw();
+    openWithdraw({ sourceAccount: { ...sourceAccount, spendableBalance: new BigNumber(0) } });
 
     expect(screen.getByRole("dialog", { name: "Withdraw" })).toHaveAccessibleDescription(
       /\$1,000\.50/,
