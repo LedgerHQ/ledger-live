@@ -24,7 +24,10 @@ beforeAll(() =>
         return keychainSecret;
       },
     },
-    keyFile: { loadAgentIntentKeyFile: () => keyFileSecret },
+    keyFile: {
+      hasAgentIntentKeyFile: () => keyFileSecret !== null,
+      loadAgentIntentKeyFile: () => keyFileSecret,
+    },
     keychainProbe: () => keychainProbe(),
   }),
 );
@@ -77,7 +80,21 @@ describe("loadProfileIdentity", () => {
     expect((err as Error).message).toMatch(
       /Profile "bot" keeps its agent key in the OS keychain.*new --profile id.*--allow-plaintext-key/s,
     );
+    expect((err as Error).message).not.toContain("plaintext agent key file exists");
     expect(keychainReads).toBe(0);
+  });
+
+  it("points at an existing key file, without reading it, when an os-keychain profile can't be read", async () => {
+    keyFileSecret = agent.exportSecretKey();
+    keychainProbe = failingKeychainProbe;
+
+    const err = await loadProfileIdentity(profile("os-keychain")).catch((e: unknown) => e);
+
+    expect(err).toBeInstanceOf(KeychainUnavailableError);
+    expect((err as Error).message).toMatch(
+      /plaintext agent key file exists at .*agent-intent-keys[/\\]bot\.key.*set `keyStore: plaintext-file`/s,
+    );
+    expect(stderr).toEqual([]);
   });
 
   it("reads a plaintext-file profile's key from the file and warns on stderr", async () => {

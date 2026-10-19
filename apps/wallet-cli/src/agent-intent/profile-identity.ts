@@ -4,7 +4,11 @@ import {
 } from "@ledgerhq/agent-intent-sdk";
 import type { AgentIntentProfileMeta } from "../session/session-store";
 import { loadAgentIntentSecretKey } from "../key-ring/agent-intent-keychain";
-import { agentIntentKeyFilePath, loadAgentIntentKeyFile } from "../key-ring/agent-intent-key-file";
+import {
+  agentIntentKeyFilePath,
+  hasAgentIntentKeyFile,
+  loadAgentIntentKeyFile,
+} from "../key-ring/agent-intent-key-file";
 import { assertOsKeychainAvailable } from "../key-ring/keychain-entry";
 import { errMessage } from "../shared/error-message";
 import { writeStderr } from "../shared/ui";
@@ -34,10 +38,16 @@ export async function loadProfileIdentity(
 }
 
 async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
+  // Points at the file but never falls back to it: only the human can confirm the profile's store.
+  const keyFileHint = hasAgentIntentKeyFile(profileId)
+    ? ` A plaintext agent key file exists at ${agentIntentKeyFilePath(profileId)}: if this ` +
+      "profile was enrolled with --allow-plaintext-key (an older wallet-cli rewrote session.yaml " +
+      "and dropped the field), set `keyStore: plaintext-file` for it in session.yaml."
+    : "";
   assertOsKeychainAvailable(
     `Profile "${profileId}" keeps its agent key in the OS keychain, so it can't be read here. ` +
       "Enroll a new profile (new --profile id) with --allow-plaintext-key, only after the human " +
-      "explicitly agrees to store the agent key unencrypted on this machine.",
+      `explicitly agrees to store the agent key unencrypted on this machine.${keyFileHint}`,
   );
   let secretKey: string | null;
   try {
