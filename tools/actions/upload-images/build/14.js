@@ -1,9 +1,9 @@
 "use strict";
 exports.ids = [
-    672
+    14
 ];
 exports.modules = {
-    "../../../node_modules/.pnpm/@smithy+credential-provider-imds@2.3.0/node_modules/@smithy/credential-provider-imds/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
+    "../../../node_modules/.pnpm/@smithy+credential-provider-imds@4.2.12/node_modules/@smithy/credential-provider-imds/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
         __webpack_require__.d(__webpack_exports__, {
             ENV_CMDS_FULL_URI: ()=>ENV_CMDS_FULL_URI,
             ENV_CMDS_RELATIVE_URI: ()=>ENV_CMDS_RELATIVE_URI,
@@ -12,8 +12,9 @@ exports.modules = {
             getInstanceMetadataEndpoint: ()=>getInstanceMetadataEndpoint,
             httpRequest: ()=>httpRequest
         });
-        var dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+property-provider@2.2.0/node_modules/@smithy/property-provider/dist-es/index.js");
+        var CredentialsProviderError = __webpack_require__("../../../node_modules/.pnpm/@smithy+property-provider@4.2.12/node_modules/@smithy/property-provider/dist-es/CredentialsProviderError.js");
         var external_url_ = __webpack_require__("url");
+        var ProviderError = __webpack_require__("../../../node_modules/.pnpm/@smithy+property-provider@4.2.12/node_modules/@smithy/property-provider/dist-es/ProviderError.js");
         var external_buffer_ = __webpack_require__("buffer");
         var external_http_ = __webpack_require__("http");
         function httpRequest(options) {
@@ -24,17 +25,17 @@ exports.modules = {
                     hostname: options.hostname?.replace(/^\[(.+)\]$/, "$1")
                 });
                 req.on("error", (err)=>{
-                    reject(Object.assign(new dist_es.mZ("Unable to connect to instance metadata service"), err));
+                    reject(Object.assign(new ProviderError.m("Unable to connect to instance metadata service"), err));
                     req.destroy();
                 });
                 req.on("timeout", ()=>{
-                    reject(new dist_es.mZ("TimeoutError from instance metadata service"));
+                    reject(new ProviderError.m("TimeoutError from instance metadata service"));
                     req.destroy();
                 });
                 req.on("response", (res)=>{
                     const { statusCode = 400 } = res;
                     if (statusCode < 200 || 300 <= statusCode) {
-                        reject(Object.assign(new dist_es.mZ("Error response received from instance metadata service"), {
+                        reject(Object.assign(new ProviderError.m("Error response received from instance metadata service"), {
                             statusCode
                         }));
                         req.destroy();
@@ -56,7 +57,10 @@ exports.modules = {
                 accessKeyId: creds.AccessKeyId,
                 secretAccessKey: creds.SecretAccessKey,
                 sessionToken: creds.Token,
-                expiration: new Date(creds.Expiration)
+                expiration: new Date(creds.Expiration),
+                ...creds.AccountId && {
+                    accountId: creds.AccountId
+                }
             });
         const DEFAULT_TIMEOUT = 1000;
         const DEFAULT_MAX_RETRIES = 0;
@@ -75,9 +79,13 @@ exports.modules = {
         const fromContainerMetadata = (init = {})=>{
             const { timeout, maxRetries } = providerConfigFromInit(init);
             return ()=>retry(async ()=>{
-                    const requestOptions = await getCmdsUri();
+                    const requestOptions = await getCmdsUri({
+                        logger: init.logger
+                    });
                     const credsResponse = JSON.parse(await requestFromEcsImds(timeout, requestOptions));
-                    if (!isImdsCredentials(credsResponse)) throw new dist_es.C1("Invalid response received from instance metadata service.");
+                    if (!isImdsCredentials(credsResponse)) throw new CredentialsProviderError.C("Invalid response received from instance metadata service.", {
+                        logger: init.logger
+                    });
                     return fromImdsCredentials(credsResponse);
                 }, maxRetries);
         };
@@ -101,32 +109,42 @@ exports.modules = {
             "http:": true,
             "https:": true
         };
-        const getCmdsUri = async ()=>{
+        const getCmdsUri = async ({ logger })=>{
             if (process.env[ENV_CMDS_RELATIVE_URI]) return {
                 hostname: CMDS_IP,
                 path: process.env[ENV_CMDS_RELATIVE_URI]
             };
             if (process.env[ENV_CMDS_FULL_URI]) {
                 const parsed = (0, external_url_.parse)(process.env[ENV_CMDS_FULL_URI]);
-                if (!parsed.hostname || !(parsed.hostname in GREENGRASS_HOSTS)) throw new dist_es.C1(`${parsed.hostname} is not a valid container metadata service hostname`, false);
-                if (!parsed.protocol || !(parsed.protocol in GREENGRASS_PROTOCOLS)) throw new dist_es.C1(`${parsed.protocol} is not a valid container metadata service protocol`, false);
+                if (!parsed.hostname || !(parsed.hostname in GREENGRASS_HOSTS)) throw new CredentialsProviderError.C(`${parsed.hostname} is not a valid container metadata service hostname`, {
+                    tryNextLink: false,
+                    logger
+                });
+                if (!parsed.protocol || !(parsed.protocol in GREENGRASS_PROTOCOLS)) throw new CredentialsProviderError.C(`${parsed.protocol} is not a valid container metadata service protocol`, {
+                    tryNextLink: false,
+                    logger
+                });
                 return {
                     ...parsed,
                     port: parsed.port ? parseInt(parsed.port, 10) : void 0
                 };
             }
-            throw new dist_es.C1(`The container metadata credential provider cannot be used unless the ${ENV_CMDS_RELATIVE_URI} or ${ENV_CMDS_FULL_URI} environment variable is set`, false);
+            throw new CredentialsProviderError.C(`The container metadata credential provider cannot be used unless the ${ENV_CMDS_RELATIVE_URI} or ${ENV_CMDS_FULL_URI} environment variable is set`, {
+                tryNextLink: false,
+                logger
+            });
         };
-        var node_config_provider_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+node-config-provider@2.3.0/node_modules/@smithy/node-config-provider/dist-es/index.js");
-        class InstanceMetadataV1FallbackError extends dist_es.C1 {
+        var configLoader = __webpack_require__("../../../node_modules/.pnpm/@smithy+node-config-provider@4.3.12/node_modules/@smithy/node-config-provider/dist-es/configLoader.js");
+        class InstanceMetadataV1FallbackError extends CredentialsProviderError.C {
+            tryNextLink;
+            name = "InstanceMetadataV1FallbackError";
             constructor(message, tryNextLink = true){
                 super(message, tryNextLink);
                 this.tryNextLink = tryNextLink;
-                this.name = "InstanceMetadataV1FallbackError";
                 Object.setPrototypeOf(this, InstanceMetadataV1FallbackError.prototype);
             }
         }
-        var url_parser_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+url-parser@2.2.0/node_modules/@smithy/url-parser/dist-es/index.js");
+        var dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+url-parser@4.2.12/node_modules/@smithy/url-parser/dist-es/index.js");
         var Endpoint_Endpoint;
         (function(Endpoint) {
             Endpoint["IPv4"] = "http://169.254.169.254";
@@ -151,10 +169,10 @@ exports.modules = {
             configFileSelector: (profile)=>profile[CONFIG_ENDPOINT_MODE_NAME],
             default: EndpointMode_EndpointMode.IPv4
         };
-        const getInstanceMetadataEndpoint = async ()=>(0, url_parser_dist_es.D)(await getFromEndpointConfig() || await getFromEndpointModeConfig());
-        const getFromEndpointConfig = async ()=>(0, node_config_provider_dist_es.Z)(ENDPOINT_CONFIG_OPTIONS)();
+        const getInstanceMetadataEndpoint = async ()=>(0, dist_es.D)(await getFromEndpointConfig() || await getFromEndpointModeConfig());
+        const getFromEndpointConfig = async ()=>(0, configLoader.Z)(ENDPOINT_CONFIG_OPTIONS)();
         const getFromEndpointModeConfig = async ()=>{
-            const endpointMode = await (0, node_config_provider_dist_es.Z)(ENDPOINT_MODE_CONFIG_OPTIONS)();
+            const endpointMode = await (0, configLoader.Z)(ENDPOINT_MODE_CONFIG_OPTIONS)();
             switch(endpointMode){
                 case EndpointMode_EndpointMode.IPv4:
                     return Endpoint_Endpoint.IPv4;
@@ -203,10 +221,10 @@ exports.modules = {
         const AWS_EC2_METADATA_V1_DISABLED = "AWS_EC2_METADATA_V1_DISABLED";
         const PROFILE_AWS_EC2_METADATA_V1_DISABLED = "ec2_metadata_v1_disabled";
         const X_AWS_EC2_METADATA_TOKEN = "x-aws-ec2-metadata-token";
-        const fromInstanceMetadata = (init = {})=>staticStabilityProvider(getInstanceImdsProvider(init), {
+        const fromInstanceMetadata = (init = {})=>staticStabilityProvider(getInstanceMetadataProvider(init), {
                 logger: init.logger
             });
-        const getInstanceImdsProvider = (init)=>{
+        const getInstanceMetadataProvider = (init = {})=>{
             let disableFetchToken = false;
             const { logger, profile } = init;
             const { timeout, maxRetries } = providerConfigFromInit(init);
@@ -215,11 +233,13 @@ exports.modules = {
                 if (isImdsV1Fallback) {
                     let fallbackBlockedFromProfile = false;
                     let fallbackBlockedFromProcessEnv = false;
-                    const configValue = await (0, node_config_provider_dist_es.Z)({
+                    const configValue = await (0, configLoader.Z)({
                         environmentVariableSelector: (env)=>{
                             const envValue = env[AWS_EC2_METADATA_V1_DISABLED];
                             fallbackBlockedFromProcessEnv = !!envValue && "false" !== envValue;
-                            if (void 0 === envValue) throw new dist_es.C1(`${AWS_EC2_METADATA_V1_DISABLED} not set in env, checking config file next.`);
+                            if (void 0 === envValue) throw new CredentialsProviderError.C(`${AWS_EC2_METADATA_V1_DISABLED} not set in env, checking config file next.`, {
+                                logger: init.logger
+                            });
                             return fallbackBlockedFromProcessEnv;
                         },
                         configFileSelector: (profile)=>{
@@ -252,7 +272,7 @@ exports.modules = {
                 return retry(async ()=>{
                     let creds;
                     try {
-                        creds = await getCredentialsFromProfile(imdsProfile, options);
+                        creds = await getCredentialsFromProfile(imdsProfile, options, init);
                     } catch (err) {
                         if (401 === err.statusCode) disableFetchToken = false;
                         throw err;
@@ -313,13 +333,15 @@ exports.modules = {
                 ...options,
                 path: IMDS_PATH
             })).toString();
-        const getCredentialsFromProfile = async (profile, options)=>{
-            const credsResponse = JSON.parse((await httpRequest({
+        const getCredentialsFromProfile = async (profile, options, init)=>{
+            const credentialsResponse = JSON.parse((await httpRequest({
                 ...options,
                 path: IMDS_PATH + profile
             })).toString());
-            if (!isImdsCredentials(credsResponse)) throw new dist_es.C1("Invalid response received from instance metadata service.");
-            return fromImdsCredentials(credsResponse);
+            if (!isImdsCredentials(credentialsResponse)) throw new CredentialsProviderError.C("Invalid response received from instance metadata service.", {
+                logger: init.logger
+            });
+            return fromImdsCredentials(credentialsResponse);
         };
     }
 };

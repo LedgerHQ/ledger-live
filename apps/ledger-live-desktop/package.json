@@ -297,7 +297,7 @@
     "@ledgerhq/test-quarantine": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@playwright/test": "catalog:",
-    "@rsdoctor/rspack-plugin": "catalog:",
+    "@rsdoctor/core": "catalog:",
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
     "@rspack/dev-server": "catalog:",
