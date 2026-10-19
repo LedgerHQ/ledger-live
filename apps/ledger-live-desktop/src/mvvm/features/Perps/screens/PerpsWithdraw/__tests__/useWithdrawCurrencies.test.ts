@@ -2,17 +2,15 @@ import { renderHook, waitFor } from "tests/testSetup";
 import { useWithdrawCurrencies } from "../useWithdrawCurrencies";
 
 const mockFetchWithdrawCurrencies = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/api", () => ({
-  fetchWithdrawCurrencies: () => mockFetchWithdrawCurrencies(),
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/currencies", () => ({
+  fetchPerpsWithdrawCurrencies: () => mockFetchWithdrawCurrencies(),
 }));
 
 describe("useWithdrawCurrencies", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("returns the Ledger Wallet ids of the assets a withdrawal can land in", async () => {
-    mockFetchWithdrawCurrencies.mockResolvedValue({
-      currencies: [{ id: "ethereum" }, { id: "bitcoin" }],
-    });
+    mockFetchWithdrawCurrencies.mockResolvedValue(["ethereum", "bitcoin"]);
 
     const { result } = renderHook(() => useWithdrawCurrencies());
 

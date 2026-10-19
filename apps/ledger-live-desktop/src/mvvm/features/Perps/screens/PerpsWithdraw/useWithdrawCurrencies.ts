@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchWithdrawCurrencies } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/api";
-import { toLedgerCurrencyId } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/currencyMapping";
+import { fetchPerpsWithdrawCurrencies } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/currencies";
 
 export type WithdrawCurrenciesState = {
   currencyIds: string[] | undefined;
@@ -16,14 +15,9 @@ export function useWithdrawCurrencies(): WithdrawCurrenciesState {
 
   useEffect(() => {
     let stale = false;
-    fetchWithdrawCurrencies()
-      .then(({ currencies }) => {
-        if (!stale) {
-          setState({
-            currencyIds: currencies.map(({ id }) => toLedgerCurrencyId(id)),
-            isError: false,
-          });
-        }
+    fetchPerpsWithdrawCurrencies()
+      .then(currencyIds => {
+        if (!stale) setState({ currencyIds, isError: false });
       })
       .catch(() => {
         if (!stale) setState({ currencyIds: undefined, isError: true });
