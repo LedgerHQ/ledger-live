@@ -3,6 +3,7 @@ import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
 import { authApiExtra } from "@shared/auth";
+import { createAppConfigMiddleware } from "@shared/app-config";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
@@ -63,7 +64,7 @@ const customCreateStore = ({
   fetchRemoteFlags,
   readCachedFlags,
   countervalues,
-  appConfig: { config: appConfig } = loadAppConfig(),
+  appConfig: { config: appConfig, session: appConfigSession } = loadAppConfig(),
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
@@ -134,6 +135,12 @@ const customCreateStore = ({
             pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
             getIdentitiesState: ({ identities }: State) => identities,
             getAnalyticsConsent: canPushDeviceIdsSelector,
+          }),
+        )
+        .concat(
+          createAppConfigMiddleware({
+            session: appConfigSession,
+            reload: () => window.api?.reloadRenderer(),
           }),
         )
         .concat(createDesktopFeatureFlagsMiddleware({ fetchRemoteFlags, readCachedFlags }))

@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import featureFlags, { type FeatureFlagsState } from "@shared/feature-flags";
+import { appConfigReducer, type AppConfigState } from "@shared/app-config";
 import accounts, { AccountsState } from "./accounts";
 import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
@@ -80,6 +81,7 @@ import knownDevices, { KnownDevicesState } from "./knownDevices";
 export type State = LLDRTKApiState & {
   accountAliases: AccountAliasState;
   accounts: AccountsState;
+  appConfig: AppConfigState;
   application: ApplicationState;
   countervalues: CountervaluesStoreState;
   devices: DevicesState;
@@ -129,6 +131,7 @@ export type State = LLDRTKApiState & {
 const appReducer = combineReducers({
   accountAliases: accountAliasSlice.reducer,
   accounts,
+  appConfig: appConfigReducer,
   application,
   countervalues: countervaluesReducer,
   devices,

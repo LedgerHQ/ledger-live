@@ -42,6 +42,7 @@ jest.mock("@devtools/bindings", () => ({
     instrument: (sources: unknown) => sources,
     middleware: () => (next: (action: unknown) => unknown) => next,
   }),
+  useAppConfigToolProps: () => ({ marker: "app-config-props" }),
 }));
 
 jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
@@ -76,6 +77,7 @@ describe("DevToolsScreen", () => {
         config: [
           { id: "feature-flags", config: { marker: "ff-props" } },
           { id: "env", config: { marker: "env-props" } },
+          { id: "app-config", config: { marker: "app-config-props" } },
           { id: "pay-card", config: { marker: "pay-card-props" } },
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
