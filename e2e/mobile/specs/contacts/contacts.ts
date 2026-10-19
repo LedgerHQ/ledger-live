@@ -317,6 +317,7 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
       await app.contacts.detail.expectName(RENAMED_CONTACT_NAME, TIMEOUT.xxlarge);
       await app.contacts.detail.expectRenameDeviceSheetClosed();
       await mockServer.dismissDeviceCompletionStatus();
+      await app.common.enableSynchronization();
 
       await app.contacts.detail.deleteContact();
       await app.contacts.expectScreenVisible(TIMEOUT.xxlarge);
