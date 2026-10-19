@@ -76,10 +76,9 @@ export function subscribeToRemoteFlags(callback: Subscriber): () => void {
  * no network access. Wired into `createFeatureFlagsMiddleware` as `readCachedFlags` so boot
  * resolves on the last values the backend actually sent instead of on compiled defaults.
  *
- * Never throws: both the singleton accessor (which throws `indexed-db-unavailable`
- * synchronously) and `ensureInitialized` (which rejects, and memoises that rejection) fail when
- * storage is refused. An unreadable cache is not an error, it just means there is nothing to
- * prime from, so the caller falls through to the network.
+ * Never throws: `ensureInitialized` rejects, and memoises that rejection, when storage is
+ * refused. An unreadable cache is not an error, it just means there is nothing to prime from,
+ * so the caller falls through to the network.
  */
 export async function readCachedFlags(): Promise<PartialFeatures> {
   try {
