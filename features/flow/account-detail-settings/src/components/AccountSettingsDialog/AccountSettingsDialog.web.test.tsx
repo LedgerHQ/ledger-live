@@ -1,9 +1,16 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { copyToClipboard } from "@shared/clipboard";
+import { advancedLogsInput } from "../../__tests__/fixtures";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
+import { buildAdvancedLogs } from "../../logic/buildAdvancedLogs";
 import { AccountSettingsDialog } from "./AccountSettingsDialog.web";
 import type { AccountSettingsDialogProps } from "./types.web";
+
+jest.mock("@shared/clipboard", () => ({ copyToClipboard: jest.fn() }));
+
+const mockCopyToClipboard = jest.mocked(copyToClipboard);
 
 function renderDialog(overrides: Partial<AccountSettingsDialogProps> = {}) {
   const props: AccountSettingsDialogProps = {
@@ -11,9 +18,9 @@ function renderDialog(overrides: Partial<AccountSettingsDialogProps> = {}) {
     accountName: "Bitcoin 1",
     ticker: "BTC",
     nameMaxLength: 50,
+    advancedLogs: { input: advancedLogsInput, locale: "en-US", derivationTag: "native segwit" },
     onClose: jest.fn(),
     onConfirmName: jest.fn(),
-    onViewAdvancedLogs: jest.fn(),
     onConfirmRemove: jest.fn(),
     ...overrides,
   };
@@ -37,12 +44,31 @@ describe("AccountSettingsDialog (Web)", () => {
     expect(screen.queryByTestId("dialog-status-gradient-error")).toBeNull();
   });
 
-  it("forwards the advanced logs action", async () => {
-    const { props, user } = renderDialog();
+  it("shows the advanced logs from their own step", async () => {
+    mockCopyToClipboard.mockResolvedValue(true);
+    const { json, syncDate } = buildAdvancedLogs(advancedLogsInput, "en-US");
+    const { user } = renderDialog();
 
     await user.click(screen.getByTestId("account-settings-advanced-logs"));
 
-    expect(props.onViewAdvancedLogs).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Advanced logs")).toBeVisible();
+    expect(screen.getByText(/This is a native segwit xpub/)).toBeVisible();
+    expect(screen.getByText(`Synchronised ${syncDate}`)).toBeVisible();
+    expect(screen.getByTestId("account-settings-advanced-logs-json").textContent).toBe(json);
+
+    await user.click(screen.getByRole("button", { name: "Copy logs" }));
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(json);
+    expect(await screen.findByRole("button", { name: "Copied" })).toBeVisible();
+  });
+
+  it("goes back to the menu from the advanced logs step", async () => {
+    const { user } = renderDialog();
+
+    await user.click(screen.getByTestId("account-settings-advanced-logs"));
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+
+    expect(screen.getByTestId("account-settings-menu")).toBeVisible();
   });
 
   it("changes the account name from its own step", async () => {

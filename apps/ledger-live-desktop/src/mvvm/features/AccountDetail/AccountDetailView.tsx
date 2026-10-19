@@ -8,7 +8,7 @@ type Props = Readonly<{ account: Account }>;
 
 export function AccountDetailView({ account }: Props) {
   return (
-    <div className="flex flex-col gap-24">
+    <div className="flex flex-col gap-24 pb-32">
       <Header account={account} />
       <AccountDetailLayout
         hero={<section className="rounded-md bg-error p-48" data-testid="account-detail-hero" />}
