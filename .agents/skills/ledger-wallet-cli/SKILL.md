@@ -319,7 +319,8 @@ pnpm --silent wallet-cli start ring destroy
 
 Agent Intent enrolls a remote agent (a bot proposing transaction intents for human review) as a
 software identity local to this machine — **no device required for enroll/recover/list/show/sync**. Each
-profile gets its own secp256k1 keypair; the private key never leaves the OS keychain and is never
+profile gets its own secp256k1 keypair; the private key never leaves the OS keychain (or a plaintext
+key file, only when the human explicitly allowed it — see **Keychain required**) and is never
 printed, logged, or included in any command's output (human or `--output json`).
 
 ```bash
@@ -378,14 +379,26 @@ against what the Agent Intent frontend/device displays before approving. A misma
 means the enrollment request was tampered with or sent to the wrong agent.
 
 **Duplicate protection:** `enroll` refuses to reuse a `--profile` id already recorded in the session,
-and separately refuses if a keychain entry for that id exists without a matching session record
-(an inconsistent state you must clear manually before re-enrolling under the same id).
+and separately refuses if a keychain entry or a stale key file for that id exists without a matching
+session record (an inconsistent state you must clear manually before re-enrolling under the same id).
 
 **Keychain required:** `enroll` needs a working OS keychain — macOS Keychain, Windows Credential
 Manager, or on Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an
-unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll` fails with
-`Could not store the agent's secret key in the OS keychain (…)` and saves nothing — fix the keychain
-and re-run the same command; there is no file-based fallback by design.
+unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll`, and every
+command reading an `os-keychain` profile, fails with `keychain_unavailable` (json `error.code`) and
+saves nothing. Make sure it ran with the sandbox bypass first; if it still fails, **stop and ask the
+human, verbatim:**
+
+> My environment doesn't support keychain access. To use and persist my access credentials I need to save passwords in plaintext in my environment. I won't be able to perform actions without your approval on Ledger Agent Intent. Can I proceed?
+
+Only after an explicit yes **in the current conversation** re-run the same `enroll` with
+`--allow-plaintext-key`. Never add the flag pre-emptively, and never on consent from an earlier or
+other session. The OS keychain still wins when available (a notice on stderr says the flag was
+ignored). Otherwise the key goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g.
+`~/.local/state/ledger-wallet-cli/…`), mode 0600 but **unencrypted**; every command reading it warns
+on stderr, and `show` reports `keyStore: plaintext-file`. An existing profile that fails with
+`keychain_unavailable` can't be read here — re-enroll it under a new `--profile` id (same consent
+rule).
 
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
 enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
