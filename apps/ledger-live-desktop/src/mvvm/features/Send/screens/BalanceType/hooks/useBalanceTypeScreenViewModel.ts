@@ -23,6 +23,8 @@ import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackin
 
 type FlowTransaction = NonNullable<SendFlowState["transaction"]["transaction"]>;
 
+const UNKNOWN_BALANCE = "-";
+
 export type BalanceTypeOption = {
   id: string;
   /** i18n key suffix under `newSendFlow.`, owned by the currency's send descriptor. */
@@ -30,6 +32,7 @@ export type BalanceTypeOption = {
   formattedBalance: string;
   formattedCounterValue: string;
   isZero: boolean;
+  requiresSync: boolean;
   hasPendingBalance: boolean;
   icon: "lock" | "check";
   hideSubtitle?: boolean;
@@ -122,14 +125,22 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   }
 
   const options = balanceTypeConfig.getOptions({ account }).map(option => {
-    const counterValue = calculateCountervalue(getAccountCurrency(account), option.balance);
+    const { balance } = option;
+    const counterValue = balance
+      ? calculateCountervalue(getAccountCurrency(account), balance)
+      : null;
+
+    let formattedBalance = UNKNOWN_BALANCE;
+    if (balance) {
+      formattedBalance = unit
+        ? formatCurrencyUnit(unit, balance, { showCode: true, locale, discreet })
+        : "";
+    }
 
     return {
       id: option.id,
       translationKey: option.translationKey,
-      formattedBalance: unit
-        ? formatCurrencyUnit(unit, option.balance, { showCode: true, locale, discreet })
-        : "",
+      formattedBalance,
       formattedCounterValue: counterValue
         ? formatCurrencyUnit(counterValueCurrency.units[0], counterValue, {
             showCode: true,
@@ -137,7 +148,8 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
             discreet,
           })
         : "",
-      isZero: option.balance.isZero(),
+      isZero: balance?.isZero() ?? false,
+      requiresSync: balance === null,
       hasPendingBalance: option.hasPendingBalance,
       icon: option.icon,
       hideSubtitle: option.hideSubtitle,

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
@@ -84,9 +84,18 @@ export function useSendBalanceTypeSyncViewModel({
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const [recordLimit, setRecordLimit] = useState<RecordLimit | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const onAccountUpdated = useCallback(
     (syncedAccount: Account) => {
+      if (!isMountedRef.current) return;
       if (!isAleoAccount(syncedAccount) || !syncedAccount.aleoResources?.provableApi) return;
       const sendingAccount = getSendingAccount(syncedAccount, transaction);
       const amount = sendingAccount ? getRecordLimitedAmount(sendingAccount) : null;
@@ -102,6 +111,7 @@ export function useSendBalanceTypeSyncViewModel({
   const { progress, error, start } = useAleoPrivateSync({
     account,
     autoStart: true,
+    keepAliveOnUnmount: true,
     onAccountUpdated,
   });
 

@@ -3100,6 +3100,9 @@
       },
       "zeroBalance": {
         "warning": "No available balance"
+      },
+      "requiresSync": {
+        "notice": "Sync required"
       }
     }
   },
