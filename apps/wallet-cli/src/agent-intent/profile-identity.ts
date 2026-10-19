@@ -4,7 +4,10 @@ import {
 } from "@ledgerhq/agent-intent-sdk";
 import type { AgentIntentProfileMeta } from "../session/session-store";
 import { loadAgentIntentSecretKey } from "../key-ring/agent-intent-keychain";
+import { agentIntentKeyFilePath, loadAgentIntentKeyFile } from "../key-ring/agent-intent-key-file";
+import { assertOsKeychainAvailable } from "../key-ring/keychain-entry";
 import { errMessage } from "../shared/error-message";
+import { writeStderr } from "../shared/ui";
 
 // A stored key that can never be read again: only a fresh enrollment gets the agent working.
 const UNUSABLE_KEY_ERRORS = new Set([
@@ -12,12 +15,30 @@ const UNUSABLE_KEY_ERRORS = new Set([
   "AgentIntentCorruptKeychainError",
 ]);
 
-/** Loads the profile's agent key from the OS keychain and checks it against the recorded public
- * key, so a keychain/session mix-up fails locally instead of as a remote auth error. */
+/** Loads the profile's agent key from the store it was enrolled with and checks it against the
+ * recorded public key, so a key/session mix-up fails locally instead of as a remote auth error. */
 export async function loadProfileIdentity(
-  profile: Pick<AgentIntentProfileMeta, "profileId" | "publicKey">,
+  profile: Pick<AgentIntentProfileMeta, "profileId" | "publicKey" | "keyStore">,
 ): Promise<SoftwareAgentIdentity> {
   const { profileId } = profile;
+  const plaintext = profile.keyStore === "plaintext-file";
+  const secretKey = plaintext ? loadKeyFromFile(profileId) : await loadKeyFromOsKeychain(profileId);
+  const identity = createSoftwareAgentIdentity(secretKey);
+  if (identity.publicKey.toLowerCase() !== profile.publicKey.toLowerCase()) {
+    throw new Error(
+      `The ${plaintext ? "agent key file" : "OS keychain key"} of profile "${profileId}" does ` +
+        "not match its recorded public key.",
+    );
+  }
+  return identity;
+}
+
+async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
+  assertOsKeychainAvailable(
+    `Profile "${profileId}" keeps its agent key in the OS keychain, so it can't be read here. ` +
+      "Enroll a new profile (new --profile id) with --allow-plaintext-key, only after the human " +
+      "explicitly agrees to store the agent key unencrypted on this machine.",
+  );
   let secretKey: string | null;
   try {
     secretKey = await loadAgentIntentSecretKey(profileId);
@@ -38,11 +59,27 @@ export async function loadProfileIdentity(
         "between machines or users — enroll a fresh profile here.",
     );
   }
-  const identity = createSoftwareAgentIdentity(secretKey);
-  if (identity.publicKey.toLowerCase() !== profile.publicKey.toLowerCase()) {
+  return secretKey;
+}
+
+function loadKeyFromFile(profileId: string): string {
+  const path = agentIntentKeyFilePath(profileId);
+  let secretKey: string | null;
+  try {
+    secretKey = loadAgentIntentKeyFile(profileId);
+  } catch (e) {
     throw new Error(
-      `The OS keychain key of profile "${profileId}" does not match its recorded public key.`,
+      `Could not read the agent key file of profile "${profileId}" (${errMessage(e)}).`,
+      { cause: e },
     );
   }
-  return identity;
+  if (!secretKey) {
+    throw new Error(
+      `No agent key file found for profile "${profileId}" at ${path}. Profiles don't move ` +
+        "between machines or users — enroll a fresh profile here.",
+    );
+  }
+  // stderr only, so JSON output on stdout is unchanged.
+  writeStderr(`⚠ Profile "${profileId}" stores its agent key unencrypted in ${path}.\n`);
+  return secretKey;
 }

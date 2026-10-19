@@ -805,6 +805,7 @@ class HumanCommandOutput implements CommandOutput {
       "Status",
       "Public key",
       "Fingerprint",
+      "Key store",
       "BFF URL",
       "Keycloak URL",
       "Trustchain ID",
@@ -824,6 +825,7 @@ class HumanCommandOutput implements CommandOutput {
         line("Status", agentIntentProfileStatus(profile)),
         line("Public key", profile.publicKey),
         line("Fingerprint", formatAgentPublicKeyFingerprint(profile.publicKey)),
+        line("Key store", profile.keyStore),
         line("BFF URL", redactUrlCredentials(profile.bffBaseUrl)),
         ...(profile.keycloakBaseUrl === undefined
           ? []

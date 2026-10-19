@@ -495,6 +495,14 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("agentIntentProfileShow reports the profile's key store", () => {
+    const out = createCommandOutput("json", { command: "agent-intent show", network: "all" });
+    out.agentIntentProfileShow({ ...baseAgentIntentProfile, keyStore: "plaintext-file" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ profile: { keyStore: "plaintext-file" } });
+  });
+
   it("agentIntentEnrollmentPending emits an enrollment-pending event, not a final envelope", () => {
     const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
     out.agentIntentEnrollmentPending({

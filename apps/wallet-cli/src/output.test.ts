@@ -744,6 +744,14 @@ describe("HumanCommandOutput", () => {
       expect(out).toContain(baseProfile.publicKey);
     });
 
+    it("agentIntentProfileShow shows the profile's key store", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        keyStore: "plaintext-file",
+      });
+      expect(writes.join("")).toMatch(/Key store:\s+plaintext-file/);
+    });
+
     it("agentIntentProfileShow redacts credentials embedded in the BFF URL", () => {
       createCommandOutput("human", ctx).agentIntentProfileShow({
         ...baseProfile,
