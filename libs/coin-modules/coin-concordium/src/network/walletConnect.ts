@@ -16,10 +16,34 @@ const CLIENT_CONFIG = {
   relayUrl: "wss://relay.walletconnect.com",
 };
 
+/**
+ * One SignClient per process, outliving clearWalletConnect(). WalletConnect Core is a
+ * process-wide singleton, and on each heartbeat every SignClient unsubscribes the shared
+ * relayer topics that are not its own sessions, its own pending sessions, a pairing or its
+ * auth response topic. Two SignClients would drop each other's session topics.
+ */
+let sharedSignClient: Promise<SignClient> | null = null;
+
+function getSharedSignClient(): Promise<SignClient> {
+  sharedSignClient ??= SignClient.init(CLIENT_CONFIG).catch((error: unknown) => {
+    sharedSignClient = null;
+    throw error;
+  });
+
+  return sharedSignClient;
+}
+
 export class ConcordiumWalletConnect {
   client: SignClient | null = null;
 
   private readonly namespace: string = "ccd";
+
+  /**
+   * Topics of the sessions approved through this instance, i.e. this onboarding attempt.
+   * The SignClient is shared, so an approval from an abandoned attempt can still settle in it;
+   * getSession must not pick that session.
+   */
+  private readonly approvedTopics = new Set<string>();
 
   async getClient(): Promise<SignClient> {
     if (this.client) {
@@ -27,7 +51,7 @@ export class ConcordiumWalletConnect {
     }
 
     try {
-      this.client = await SignClient.init(CLIENT_CONFIG);
+      this.client = await getSharedSignClient();
 
       return this.client;
     } catch (error) {
@@ -68,7 +92,12 @@ export class ConcordiumWalletConnect {
     const concordiumSessions = await this.getConcordiumSessions();
 
     const filteredSessions = concordiumSessions
-      .filter(s => this.getNetworksFromSession(s).includes(network) && this.isSessionValid(s))
+      .filter(
+        s =>
+          this.approvedTopics.has(s.topic) &&
+          this.getNetworksFromSession(s).includes(network) &&
+          this.isSessionValid(s),
+      )
       .sort((a, b) => b.expiry - a.expiry);
 
     return filteredSessions[0] ?? null;
@@ -144,7 +173,7 @@ export class ConcordiumWalletConnect {
         ),
       );
 
-      return await client.connect({
+      const pairing = await client.connect({
         requiredNamespaces: {
           ccd: {
             methods: ["create_account"],
@@ -153,6 +182,15 @@ export class ConcordiumWalletConnect {
           },
         },
       });
+
+      return {
+        ...pairing,
+        approval: async () => {
+          const session = await pairing.approval();
+          this.approvedTopics.add(session.topic);
+          return session;
+        },
+      };
     } catch (error) {
       log("concordium-onboarding", "Failed to initiate Wallet Connect pairing", { error });
       throw error;
