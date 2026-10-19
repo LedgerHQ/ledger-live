@@ -21,6 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   }

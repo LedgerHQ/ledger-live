@@ -33,6 +33,7 @@ function sortNames(items: Item[]) {
     middleware: getDefault => getDefault({ serializableCheck: false, immutableCheck: false }),
   });
   const wrapper = ({ children }: { children: React.ReactNode }) =>
+    // oxlint-disable-next-line react/no-children-prop
     React.createElement(Provider, { store, children });
   const { result } = renderHook(() => useSortByFiatValue(items, getEntry, usd), { wrapper });
   return result.current.map(item => item.name);
