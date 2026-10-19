@@ -214,7 +214,7 @@
     "@nx/s3-cache": "catalog:",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@support/fmt": "workspace:*",
-    "@ton/crypto": "^3.3.0",
+    "@ton/crypto": "3.3.0",
     "@typescript-eslint/parser": "catalog:",
     "chalk": "4.1.2",
     "eslint": "8.57.0",

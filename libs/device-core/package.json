@@ -36,7 +36,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
-    "@types/sha.js": "^2.4.4",
+    "@types/sha.js": "2.4.4",
     "axios": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
