@@ -98,14 +98,14 @@ describe("createApi (integration)", () => {
           type: "transfer",
           address: "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
           peer: "0x0fe6688548f0c303932bb197b0a96034f1d74dba",
-          asset: { type: "token", assetReference: VTHO_ADDRESS, name: "VTHO" },
+          asset: { type: "token", assetReference: VTHO_ADDRESS },
           amount: -BigInt("10000000000000000000"),
         },
         {
           type: "transfer",
           address: "0x0fe6688548f0c303932bb197b0a96034f1d74dba",
           peer: "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
-          asset: { type: "token", assetReference: VTHO_ADDRESS, name: "VTHO" },
+          asset: { type: "token", assetReference: VTHO_ADDRESS },
           amount: BigInt("10000000000000000000"),
         },
       ]);

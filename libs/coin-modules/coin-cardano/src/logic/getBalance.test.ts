@@ -62,7 +62,7 @@ describe("getBalance", () => {
     const [native] = await getBalance(config, ADDRESS);
 
     expect(mockFetchTxs).toHaveBeenCalledWith(config, [PAYMENT_KEY], 0);
-    expect(native).toEqual({ value: 5000000n, asset: { type: "native", name: "ADA" }, locked: 0n });
+    expect(native).toEqual({ value: 5000000n, asset: { type: "native" }, locked: 0n });
   });
 
   it("excludes outputs later spent as inputs", async () => {
@@ -139,7 +139,7 @@ describe("getBalance", () => {
     expect(balances[0].locked).toBe(1500000n);
     expect(stakeBalance).toMatchObject({
       value: 3500000n,
-      asset: { type: "native", name: "ADA" },
+      asset: { type: "native" },
       stake: {
         uid: expect.any(String),
         delegate: "pool1abc",
@@ -192,7 +192,7 @@ describe("getBalance", () => {
     const balances = await getBalance(config, "not-a-cardano-address");
 
     expect(mockFetchTxs).not.toHaveBeenCalled();
-    expect(balances).toEqual([{ value: 0n, asset: { type: "native", name: "ADA" }, locked: 0n }]);
+    expect(balances).toEqual([{ value: 0n, asset: { type: "native" }, locked: 0n }]);
   });
 
   it("rejects Byron addresses instead of misreporting a zero balance", async () => {

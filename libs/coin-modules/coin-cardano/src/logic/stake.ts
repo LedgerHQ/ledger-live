@@ -10,7 +10,7 @@ import { getDelegationInfo } from "../api/getDelegationInfo";
 import { extractStakeKeyFromAddress } from "../utils";
 import type { CardanoDelegation } from "../types";
 
-export const NATIVE_ASSET: AssetInfo = { type: "native", name: "ADA" };
+export const NATIVE_ASSET: AssetInfo = { type: "native" };
 
 /**
  * Resolve an address's stake credential and its on-chain delegation. Addresses with no
