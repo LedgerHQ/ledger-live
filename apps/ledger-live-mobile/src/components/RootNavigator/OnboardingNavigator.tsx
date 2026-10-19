@@ -43,12 +43,17 @@ import {
 import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
 import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 import NotificationsOptIn from "LLM/features/NotificationsOptIn";
+
+function FirmwareUpdateBackButton() {
+  return <NavigationHeaderBackButton />;
+}
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -219,6 +224,18 @@ export default function OnboardingNavigator() {
         name={ScreenName.DeviceOnboardingSyncOffer}
         component={SyncOfferRoute}
         options={{ headerShown: false, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.FirmwareUpdate}
+        component={FirmwareUpdateScreen}
+        options={{
+          gestureEnabled: false,
+          headerShown: true,
+          headerTitle: () => null,
+          title: "",
+          headerLeft: FirmwareUpdateBackButton,
+          headerRight: () => null,
+        }}
       />
 
       <Stack.Screen name={ScreenName.OnboardingProtectFlow} component={OnboardingProtectFlow} />

@@ -23,6 +23,7 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { useDeviceOnboardingFeatureFlag } from "./useDeviceOnboardingFeatureFlag";
+import { isCurrentSessionGenuine } from "../utils/genuineSession";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
@@ -69,8 +70,7 @@ export function useDeviceOnboarding({
     device: liveDevice,
     navigateOnExit,
     wasReadOnlyAtEntry,
-    isGenuine: () =>
-      actorBridge.current?.current?.getSnapshot().context.genuineVerdict?.isGenuine === true,
+    isGenuine: () => isCurrentSessionGenuine(actorBridge.current?.current?.getSnapshot().context),
   });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);

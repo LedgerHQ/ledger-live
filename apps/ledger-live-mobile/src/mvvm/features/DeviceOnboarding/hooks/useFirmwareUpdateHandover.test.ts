@@ -11,7 +11,12 @@ const mockGoBack = jest.fn();
 const mockCurrentPush = jest.fn();
 let mockFocusCallback: (() => void) | null = null;
 
-const mockGetParent = jest.fn((_id?: string) => ({
+type ParentNavigation = {
+  push: typeof mockPush;
+  goBack: typeof mockGoBack;
+};
+
+const mockGetParent = jest.fn((_id?: string): ParentNavigation | undefined => ({
   push: mockPush,
   goBack: mockGoBack,
 }));
@@ -71,6 +76,28 @@ describe("useFirmwareUpdateHandover", () => {
     expect(mockGetParent).toHaveBeenCalledWith(BASE_NAVIGATOR_ID);
     expect(send).not.toHaveBeenCalled();
     expect(mockCurrentPush).not.toHaveBeenCalled();
+  });
+
+  it("opens the update on the current navigator when Base is not mounted", async () => {
+    mockGetParent.mockImplementation(() => undefined);
+    const send = jest.fn();
+    const { rerender } = renderDelegated(send);
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+
+    await waitFor(() =>
+      expect(mockCurrentPush).toHaveBeenCalledWith(
+        ScreenName.FirmwareUpdate,
+        expect.objectContaining({ device, isBeforeOnboarding: true }),
+      ),
+    );
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+    mockGetParent.mockImplementation(() => ({
+      push: mockPush,
+      goBack: mockGoBack,
+    }));
   });
 
   it("closes the handover exactly once when callback and focus both report the return", async () => {

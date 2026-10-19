@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Linking } from "react-native";
 import {
   useNavigation,
   useRoute,
@@ -7,6 +8,7 @@ import {
   type RouteProp,
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
@@ -24,6 +26,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const completedOnSync = useRef(false);
   const allowLeave = useRef(false);
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
+  const learnMoreLink = useFeature("llmWalletSync")?.params?.learnMoreLink;
 
   useEffect(
     () =>
@@ -36,8 +39,10 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   useEffect(() => {
     if (!handoverStarted || !hasTrustchain || completedOnSync.current) return;
     completedOnSync.current = true;
+    allowLeave.current = true;
     complete();
-  }, [complete, handoverStarted, hasTrustchain]);
+    resetToPortfolio(navigation);
+  }, [complete, handoverStarted, hasTrustchain, navigation]);
 
   const leaveToPortfolio = useCallback(() => {
     complete();
@@ -53,10 +58,14 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     });
   }, [device, navigation]);
 
+  const onLearnMore = useCallback(() => {
+    if (learnMoreLink) Linking.openURL(learnMoreLink);
+  }, [learnMoreLink]);
+
   return {
     onActivate,
     onSkip: leaveToPortfolio,
     onQuit: leaveToPortfolio,
-    onLearnMore: () => undefined,
+    onLearnMore,
   };
 }

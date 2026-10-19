@@ -1,4 +1,5 @@
-import { act, renderHook } from "@tests/test-renderer";
+import { Linking } from "react-native";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -91,7 +92,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(false);
-    expect(reset).not.toHaveBeenCalled();
+    expect(reset).toHaveBeenCalledTimes(1);
   });
 
   it("should keep the offer in place when Ledger Sync is abandoned", () => {
@@ -124,5 +125,37 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(reset).toHaveBeenCalledTimes(1);
     expect(parentNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should let Ledger Sync leave once the trustchain has landed", () => {
+    const { result } = renderOffer(true);
+    const preventDefault = jest.fn();
+
+    act(() => result.current.onActivate());
+    act(() => listeners.get("beforeRemove")?.({ preventDefault }));
+
+    expect(preventDefault).not.toHaveBeenCalled();
+  });
+
+  it("should open the Ledger Sync learn more link", () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const { result } = renderHook(() => useSyncOfferRouteViewModel(), {
+      overrideInitialState: withFlagOverrides(
+        {
+          llmWalletSync: {
+            enabled: true,
+            params: { learnMoreLink: "https://ledger.com/sync" },
+          },
+        },
+        (state: State) => ({
+          ...state,
+          trustchain: { ...state.trustchain, trustchain: null },
+        }),
+      ),
+    });
+
+    act(() => result.current.onLearnMore());
+
+    expect(openURL).toHaveBeenCalledWith("https://ledger.com/sync");
   });
 });
