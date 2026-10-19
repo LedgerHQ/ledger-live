@@ -12,6 +12,17 @@ export function toGenuineError(kind: string | null): { kind: GenuineErrorKind } 
   return { kind: genuineErrorKinds[kind as keyof typeof genuineErrorKinds] };
 }
 
+export function toChecksError(
+  machineState: string | null,
+  genuineFailureKind: string | null,
+): { kind: GenuineErrorKind } | null {
+  if (machineState === "checks.firmwareCheckFailed") return { kind: "unknown" };
+  if (machineState === "checks.genuineFailed" || machineState === "checks.notGenuineSupport") {
+    return toGenuineError(genuineFailureKind);
+  }
+  return null;
+}
+
 export function toChecksScreenState(
   machineState: string | null,
   checksPaused: boolean,

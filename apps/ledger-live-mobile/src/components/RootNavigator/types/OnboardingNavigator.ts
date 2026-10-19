@@ -54,7 +54,10 @@ export type OnboardingNavigatorParamList = {
     isRestoreSeed?: boolean;
     connectSeededDevice?: boolean;
   };
-  [ScreenName.DeviceOnboardingFunnel]: undefined;
+  [ScreenName.DeviceOnboardingFunnel]: {
+    pairedDeviceId?: string;
+    wasReadOnlyAtEntry: boolean;
+  };
   [ScreenName.DeviceOnboardingSyncOffer]: {
     device: Device;
     entrySource: SeededFunnelEntrySource;

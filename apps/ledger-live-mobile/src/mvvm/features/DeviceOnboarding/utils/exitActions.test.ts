@@ -4,6 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   completeOnboarding,
   setHasBeenRedirectedToPostOnboarding,
+  setHasBeenUpsoldProtect,
   setReadOnlyMode,
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
@@ -48,6 +49,7 @@ describe("exitActions", () => {
     expect(dispatched).toEqual([
       completeOnboarding(),
       setReadOnlyMode(false),
+      setHasBeenUpsoldProtect(false),
       setHasBeenRedirectedToPostOnboarding(false),
     ]);
   });
@@ -55,7 +57,11 @@ describe("exitActions", () => {
   it("should leave the post-onboarding redirect untouched when the user was not read-only", () => {
     const { dispatched } = leave("completed", { wasReadOnlyAtEntry: false });
 
-    expect(dispatched).toEqual([completeOnboarding(), setReadOnlyMode(false)]);
+    expect(dispatched).toEqual([
+      completeOnboarding(),
+      setReadOnlyMode(false),
+      setHasBeenUpsoldProtect(false),
+    ]);
   });
 
   it("should open the sync offer instead of Ledger Sync", () => {
@@ -109,6 +115,7 @@ describe("exitActions", () => {
     expect(dispatched).toEqual([
       completeOnboarding(),
       setReadOnlyMode(false),
+      setHasBeenUpsoldProtect(false),
       setHasBeenRedirectedToPostOnboarding(false),
     ]);
   });

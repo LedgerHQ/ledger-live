@@ -2,6 +2,7 @@ import { useNavigation, type NavigationProp, type ParamListBase } from "@react-n
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch } from "~/context/hooks";
 import { exitActions } from "../utils/exitActions";
 
@@ -24,17 +25,22 @@ export function useLeaveOnboarding({
 }: UseLeaveOnboardingInput) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   return (reason: DeviceOnboardingExitReason) => {
     if (!navigateOnExit || !device) return;
+    const genuine = isGenuine();
     exitActions[reason]({
       navigation,
       dispatch,
       shouldDisplayMyWallet,
       device,
       wasReadOnlyAtEntry,
-      isGenuine: isGenuine(),
+      isGenuine: genuine,
     });
+    if (reason === "completed" || (reason === "userQuit" && genuine)) {
+      notifyFlowCompleted("onboarding");
+    }
   };
 }

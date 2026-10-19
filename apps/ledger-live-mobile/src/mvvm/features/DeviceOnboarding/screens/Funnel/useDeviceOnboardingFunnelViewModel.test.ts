@@ -1,13 +1,30 @@
 import { renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import type { State } from "~/reducers/types";
 import { useDeviceOnboarding, type DeviceOnboardingSession } from "../../hooks/useDeviceOnboarding";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
 const goBack = jest.fn();
+type RemovalEvent = {
+  preventDefault: () => void;
+  data: { action: { type: string } };
+};
+const listeners = new Map<string, (event: RemovalEvent) => void>();
+let mockRouteParams: { pairedDeviceId?: string; wasReadOnlyAtEntry: boolean } = {
+  wasReadOnlyAtEntry: true,
+};
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
-  useNavigation: () => ({ goBack }),
+  useNavigation: () => ({
+    goBack,
+    addListener: (event: string, handler: (event: RemovalEvent) => void) => {
+      listeners.set(event, handler);
+      return jest.fn();
+    },
+  }),
+  useRoute: () => ({ params: mockRouteParams }),
 }));
 
 jest.mock("../../hooks/useDeviceOnboarding", () => ({
@@ -50,6 +67,50 @@ function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) 
 describe("useDeviceOnboardingFunnelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    listeners.clear();
+    mockRouteParams = { wasReadOnlyAtEntry: true };
+  });
+
+  it.each([
+    ["the paired device", "paired-id", ["paired-id"]],
+    ["the USB device stored without its compatibility prefix", "usb|paired-id", ["paired-id"]],
+    ["every known device when the paired one is unknown", "other-id", ["paired-id", "nearby-id"]],
+  ])("should connect to %s", (_, pairedDeviceId, expectedIds) => {
+    mockRouteParams = { pairedDeviceId, wasReadOnlyAtEntry: false };
+    useSession.mockReturnValue(session());
+
+    renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        knownDevices: {
+          knownDevices: [
+            { id: "paired-id", name: "Paired Stax" },
+            { id: "nearby-id", name: "Nearby Stax" },
+          ] as KnownDevice[],
+        },
+      }),
+    });
+
+    const input = useSession.mock.calls[0][0];
+    expect(input.knownDevices.map(known => known.id)).toEqual(expectedIds);
+    expect(input.wasReadOnlyAtEntry).toBe(false);
+  });
+
+  it.each([
+    ["checks.genuineFailed", "GENUINE_CHECK_FAILED", { kind: "unknown" }],
+    ["checks.notGenuineSupport", "DEVICE_NOT_GENUINE", { kind: "notGenuine" }],
+    ["checks.firmwareCheckFailed", null, { kind: "unknown" }],
+  ])("should surface the stopped check in %s", (state, genuineFailureKind, error) => {
+    useSession.mockReturnValue(
+      session({
+        state,
+        context: { genuineFailureKind, checksPaused: false } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).error).toEqual(error);
   });
 
   it.each(["readingState", "legacyFallback", "done", "syncOffer"])(
@@ -69,6 +130,62 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     expect(result.current.status).toBe("connecting");
+  });
+
+  it("should reconnect a lost session without restarting onboarding", () => {
+    const connect = jest.fn();
+    const reset = jest.fn();
+    useSession.mockReturnValue(
+      session({ state: "awaitingSession", liveDevice: null, connect, reset }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    if (result.current.status !== "failed") throw new Error(result.current.status);
+
+    result.current.onRetry();
+
+    expect(connect).toHaveBeenCalledTimes(2);
+    expect(reset).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should quit the machine when Android back leaves a running check", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck" }));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    expect(goBack).not.toHaveBeenCalled();
+  });
+
+  it("should leave the funnel when Android back happens before the machine starts", () => {
+    const reset = jest.fn();
+    useSession.mockReturnValue(
+      session({ status: "connecting", state: null, liveDevice: null, reset }),
+    );
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "POP" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(reset).toHaveBeenCalledTimes(1);
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should let the machine reset the navigation when onboarding completes", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck" }));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "RESET" } } });
+
+    expect(preventDefault).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
   });
 
   it("should offer a way out when the connection fails", () => {
@@ -174,7 +291,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       [{ type: "USER_DECLINE" }],
     ]);
     expect(checks.state).toBe("awaitingAllow");
-    expect(checks.error).toEqual({ kind: "declined" });
+    expect(checks.error).toBeNull();
     expect(useSession).toHaveBeenCalledWith(
       expect.objectContaining({ navigateOnExit: true, wasReadOnlyAtEntry: true }),
     );

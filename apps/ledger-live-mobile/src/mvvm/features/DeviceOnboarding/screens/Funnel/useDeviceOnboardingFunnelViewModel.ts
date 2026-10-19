@@ -1,14 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
-import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  useNavigation,
+  useRoute,
+  type NavigationProp,
+  type ParamListBase,
+  type RouteProp,
+} from "@react-navigation/native";
+import {
+  USB_COMPAT_DEVICE_ID_PREFIX,
+  isUsbCompatDeviceId,
+  useDeviceManagementKit,
+} from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import type { ScreenName } from "~/const";
+import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import { useDeviceOnboarding } from "../../hooks/useDeviceOnboarding";
 import { useOfferSync } from "../../hooks/useOfferSync";
-import { toChecksScreenState, toFirmwareUpdate, toGenuineError } from "../../utils/checksPhase";
+import { toChecksError, toChecksScreenState, toFirmwareUpdate } from "../../utils/checksPhase";
+
+type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
 export type DeviceOnboardingFunnelModel =
   | { status: "checks"; checks: ChecksScreenProps }
@@ -24,10 +37,13 @@ export type DeviceOnboardingFunnelModel =
 
 export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelModel {
   const dmk = useDeviceManagementKit();
-  const knownDevices = useSelector(knownDevicesSelector);
+  const allKnownDevices = useSelector(knownDevicesSelector);
+  const { pairedDeviceId, wasReadOnlyAtEntry } = useRoute<FunnelRoute>().params;
+  const knownDevices = useMemo(() => {
+    const paired = allKnownDevices.filter(known => matchesPairedDevice(known.id, pairedDeviceId));
+    return paired.length > 0 ? paired : allKnownDevices;
+  }, [allKnownDevices, pairedDeviceId]);
   const offerSync = useOfferSync();
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const [wasReadOnlyAtEntry] = useState(readOnlyModeEnabled);
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { t } = useTranslation();
   const onboarding = useDeviceOnboarding({
@@ -38,6 +54,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     wasReadOnlyAtEntry,
   });
   const started = useRef(false);
+  const allowLeave = useRef(false);
 
   useEffect(() => {
     if (started.current) return;
@@ -56,14 +73,40 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   }, [send, sessionReady]);
 
   const leave = useCallback(() => {
+    allowLeave.current = true;
     onboarding.reset();
     navigation.goBack();
   }, [navigation, onboarding]);
+
+  const quitMachine = useCallback(() => {
+    allowLeave.current = true;
+    send({ type: "QUIT" });
+  }, [send]);
 
   const retry = useCallback(() => {
     onboarding.reset();
     onboarding.connect();
   }, [onboarding]);
+
+  const reconnect = useCallback(() => {
+    onboarding.connect();
+  }, [onboarding]);
+
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", event => {
+        if (allowLeave.current) return;
+        const action = event.data.action.type;
+        if (action !== "GO_BACK" && action !== "POP") return;
+        event.preventDefault();
+        if (onboarding.status === "running" && onboarding.state) {
+          quitMachine();
+          return;
+        }
+        leave();
+      }),
+    [leave, navigation, onboarding.state, onboarding.status, quitMachine],
+  );
 
   const screenState = toChecksScreenState(
     onboarding.state,
@@ -71,6 +114,17 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
+
+  if (onboarding.state === "awaitingSession") {
+    return {
+      status: "failed",
+      title: t("deviceOnboarding.connection.failed"),
+      retryLabel: t("common.retry"),
+      closeLabel,
+      onRetry: reconnect,
+      onQuit: quitMachine,
+    };
+  }
 
   if (!device || !screenState) {
     if (onboarding.error) {
@@ -96,7 +150,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     checks: {
       device,
       state: screenState,
-      error: toGenuineError(readString(onboarding.context?.genuineFailureKind)),
+      error: toChecksError(onboarding.state, readString(onboarding.context?.genuineFailureKind)),
       update: toFirmwareUpdate(
         readString(onboarding.context?.firmwareVersion),
         readString(onboarding.context?.availableFirmwareVersion),
@@ -108,9 +162,18 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onCloseSheet: () => send({ type: "CLOSE" }),
       onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
-      onQuit: () => send({ type: "QUIT" }),
+      onQuit: quitMachine,
     },
   };
+}
+
+function matchesPairedDevice(knownId: string, pairedDeviceId: string | undefined) {
+  if (!pairedDeviceId) return false;
+  if (knownId === pairedDeviceId) return true;
+  const discoveryId = isUsbCompatDeviceId(pairedDeviceId)
+    ? pairedDeviceId.slice(USB_COMPAT_DEVICE_ID_PREFIX.length)
+    : pairedDeviceId;
+  return knownId === discoveryId;
 }
 
 function readString(value: unknown): string | null {
