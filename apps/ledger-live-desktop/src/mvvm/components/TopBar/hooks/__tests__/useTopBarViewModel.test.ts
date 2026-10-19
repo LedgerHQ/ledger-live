@@ -1,7 +1,7 @@
 import { Devices, Eye, Experiment, Refresh, Tools } from "@ledgerhq/lumen-ui-react/symbols";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router";
-import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { renderHook } from "tests/testSetup";
 import useTopBarViewModel from "../useTopBarViewModel";
 import { useActivityIndicator } from "../useActivityIndicator";
 import { useDiscreetMode } from "../useDiscreetMode";
@@ -55,7 +55,6 @@ type SetupOptions = {
   experimentalVisible?: boolean;
   featureFlagsVisible?: boolean;
   mockServerVisible?: boolean;
-  operationsList?: boolean;
   route?: string;
 };
 
@@ -65,7 +64,6 @@ const setup = ({
   experimentalVisible = false,
   featureFlagsVisible = false,
   mockServerVisible = false,
-  operationsList = false,
   route,
 }: SetupOptions = {}) => {
   jest.mocked(useDiscreetMode).mockReturnValue(defaults.discreetMode);
@@ -87,22 +85,12 @@ const setup = ({
     isVisible: mockServerVisible,
   });
 
-  const initialState = operationsList
-    ? withFlagOverrides({
-        lwdWallet40: {
-          enabled: true,
-          params: { operationsList: true },
-        },
-      })
-    : undefined;
-
   const routeWrapper = route
     ? ({ children }: { children: React.ReactNode }) =>
         createElement(MemoryRouter, { initialEntries: [route] }, children)
     : undefined;
 
   return renderHook(() => useTopBarViewModel(), {
-    initialState,
     ...(routeWrapper ? { wrapper: routeWrapper, skipRouter: true } : {}),
   });
 };
@@ -120,11 +108,11 @@ describe("useTopBarViewModel", () => {
 
   describe("slot ordering", () => {
     it.each<[string, SetupOptions, string[]]>([
-      ["default (with accounts)", {}, ["synchronize", "discreet"]],
-      ["without accounts", { hasAccounts: false }, ["discreet"]],
+      ["default (with accounts)", {}, ["synchronize", "discreet", "history"]],
+      ["without accounts", { hasAccounts: false }, ["discreet", "history"]],
       [
         "all optional slots visible",
-        { experimentalVisible: true, featureFlagsVisible: true, operationsList: true },
+        { experimentalVisible: true, featureFlagsVisible: true },
         ["experimental", "feature flags", "synchronize", "discreet", "history"],
       ],
     ])("%s", (_name, options, expectedLabels) => {
@@ -149,7 +137,7 @@ describe("useTopBarViewModel", () => {
     });
 
     it("history slot is a dedicated slot type (not an action)", () => {
-      const { result } = setup({ operationsList: true });
+      const { result } = setup();
       const historySlot = result.current.topBarSlots.find(s => s.type === "history");
 
       expect(historySlot).toBeDefined();

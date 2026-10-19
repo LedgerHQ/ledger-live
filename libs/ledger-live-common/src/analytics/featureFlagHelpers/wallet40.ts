@@ -14,24 +14,20 @@ export const getWallet40Attributes = (
   const featureFlagKey = FEATURE_FLAG_KEYS[platform];
   const wallet40FeatureFlag = analyticsFeatureFlagMethod(featureFlagKey);
   const isEnabled = wallet40FeatureFlag?.enabled ?? false;
+  const params = wallet40FeatureFlag?.params;
 
   return {
     isEnabled,
-    lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
-    assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
-    brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
-    operationsList: wallet40FeatureFlag?.params?.operationsList ?? false,
-    myWallet:
-      platform === "lwd" ||
-      Boolean(
-        wallet40FeatureFlag?.params &&
-        "myWallet" in wallet40FeatureFlag.params &&
-        wallet40FeatureFlag.params.myWallet,
-      ),
-    assetDiscoverability: wallet40FeatureFlag?.params?.assetDiscoverability ?? false,
-    aggregatedAssets: wallet40FeatureFlag?.params?.aggregatedAssets ?? false,
-    pnl: wallet40FeatureFlag?.params?.pnl ?? false,
-    earnUpselling: wallet40FeatureFlag?.params?.earnUpselling ?? false,
-    earnSimulator: wallet40FeatureFlag?.params?.earnSimulator ?? false,
+    lazyOnboarding: params?.lazyOnboarding ?? false,
+    assetSection: params?.assetSection ?? false,
+    brazePlacement: params?.brazePlacement ?? false,
+    operationsList:
+      platform === "lwd" || Boolean(params && "operationsList" in params && params.operationsList),
+    myWallet: platform === "lwd" || Boolean(params && "myWallet" in params && params.myWallet),
+    assetDiscoverability: params?.assetDiscoverability ?? false,
+    aggregatedAssets: params?.aggregatedAssets ?? false,
+    pnl: params?.pnl ?? false,
+    earnUpselling: params?.earnUpselling ?? false,
+    earnSimulator: params?.earnSimulator ?? false,
   };
 };
