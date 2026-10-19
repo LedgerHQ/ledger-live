@@ -61,16 +61,24 @@ export function toWithdrawError({
   const message = (parsed.success && parsed.data.message) || `Withdraw API HTTP ${status}`;
   const fields = { status, code };
 
+  // Swap's off-limits error covers both bounds; only a minimum means "too low".
+  const isBelowMinimum =
+    code === "FROM_CURRENCY_MINIMUM_AMOUNT_ERROR" ||
+    (code === "amount_off_limits" &&
+      parsed.success &&
+      parsed.data.additionalFields?.minAmount !== undefined);
+
+  if (isBelowMinimum) {
+    const minAmount = DecimalSchema.safeParse(
+      parsed.success ? parsed.data.additionalFields?.minAmount : undefined,
+    );
+    return new WithdrawMinimumAmountError(message, {
+      ...fields,
+      minAmount: minAmount.success ? minAmount.data : undefined,
+    });
+  }
+
   switch (code) {
-    case "FROM_CURRENCY_MINIMUM_AMOUNT_ERROR": {
-      const minAmount = DecimalSchema.safeParse(
-        parsed.success ? parsed.data.additionalFields?.minAmount : undefined,
-      );
-      return new WithdrawMinimumAmountError(message, {
-        ...fields,
-        minAmount: minAmount.success ? minAmount.data : undefined,
-      });
-    }
     case "SWAP_QUOTE_LOW_LIQUIDITY":
       return new WithdrawLowLiquidityError(message, fields);
     case "ADDRESS_SCREENING_FAILED":

@@ -1,31 +1,10 @@
 import BigNumber from "bignumber.js";
-import {
-  WithdrawCurrenciesSchema,
-  WithdrawPayloadSchema,
-  WithdrawQuoteSchema,
-  WithdrawStatusSchema,
-  getWithdrawTypedData,
-} from "./schemas";
-import {
-  currenciesResponse,
-  finishedStatusResponse,
-  mayanPayloadResponse,
-  nearPayloadResponse,
-  quoteResponse,
-  statusResponse,
-} from "./__fixtures__/responses";
+import { DecimalSchema, WithdrawPayloadSchema, getWithdrawTypedData } from "./schemas";
+import { mayanPayloadResponse, nearPayloadResponse } from "./__fixtures__/responses";
 
 describe("withdraw schemas", () => {
-  it("parses the supported currencies", () => {
-    expect(WithdrawCurrenciesSchema.parse(currenciesResponse).currencies).toHaveLength(3);
-  });
-
-  it("parses a quote and reads its decimal string amounts as BigNumber", () => {
-    const quote = WithdrawQuoteSchema.parse(quoteResponse);
-
-    expect(quote.amountTo).toEqual(new BigNumber("0.3"));
-    expect(quote.payoutNetworkFees).toEqual(new BigNumber("0.0004"));
-    expect(quote.expiry).toBe(quoteResponse.expiry);
+  it("reads decimal string amounts as BigNumber", () => {
+    expect(DecimalSchema.parse("0.3")).toEqual(new BigNumber("0.3"));
   });
 
   it.each([
@@ -33,13 +12,8 @@ describe("withdraw schemas", () => {
     ["a hex string", "0x10"],
     ["Infinity", "Infinity"],
     ["an empty string", ""],
-  ])("rejects an amount sent as %s", (_, amountTo) => {
-    expect(WithdrawQuoteSchema.safeParse({ ...quoteResponse, amountTo }).success).toBe(false);
-  });
-
-  it("rejects a quote without amountTo", () => {
-    const { amountTo: _, ...withoutAmount } = quoteResponse;
-    expect(WithdrawQuoteSchema.safeParse(withoutAmount).success).toBe(false);
+  ])("rejects an amount sent as %s", (_, value) => {
+    expect(DecimalSchema.safeParse(value).success).toBe(false);
   });
 
   it("reads the typed data at the root for a Mayan payload", () => {
@@ -81,24 +55,5 @@ describe("withdraw schemas", () => {
 
   it("rejects a payload carrying no typed data", () => {
     expect(WithdrawPayloadSchema.safeParse({ swapId: "swap-1" }).success).toBe(false);
-  });
-
-  it.each(["READY", "PENDING", "UNKNOWN", "FINISHED", "REFUNDED", "EXPIRED"])(
-    "accepts the %s status",
-    status => {
-      expect(WithdrawStatusSchema.parse({ ...statusResponse, status }).status).toBe(status);
-    },
-  );
-
-  it("rejects a status outside the documented list", () => {
-    expect(WithdrawStatusSchema.safeParse({ ...statusResponse, status: "DONE" }).success).toBe(
-      false,
-    );
-  });
-
-  it("parses the explorer transaction ids of a finished withdrawal", () => {
-    const status = WithdrawStatusSchema.parse(finishedStatusResponse);
-    expect(status.payinTransactionId).toBe("0xpayin");
-    expect(status.payoutTransactionId).toBe("0xpayout");
   });
 });

@@ -9,21 +9,6 @@ export const DecimalSchema = z
   .regex(/^\d+(\.\d+)?$/, "Expected a decimal string")
   .transform(value => new BigNumber(value));
 
-// TODO(LIVE-39366): Ledger Wallet or SwapKit currency ids?
-export const WithdrawCurrenciesSchema = z.object({
-  currencies: z.array(z.looseObject({ id: z.string() })),
-});
-export type WithdrawCurrencies = z.infer<typeof WithdrawCurrenciesSchema>;
-
-export const WithdrawQuoteSchema = z.object({
-  quoteId: z.string().optional(),
-  amountTo: DecimalSchema,
-  payoutNetworkFees: DecimalSchema,
-  expiry: z.number(),
-  defaultSlippage: z.number().optional(),
-});
-export type WithdrawQuote = z.infer<typeof WithdrawQuoteSchema>;
-
 const TypedDataSchema = z.looseObject({
   domain: z.record(z.string(), z.unknown()),
   types: z.record(z.string(), z.array(z.looseObject({ name: z.string(), type: z.string() }))),
@@ -47,7 +32,6 @@ export const WithdrawPayloadSchema = z.union([NearPayloadSchema, MayanPayloadSch
 export type WithdrawPayload = z.infer<typeof WithdrawPayloadSchema>;
 
 export function getWithdrawTypedData(payload: WithdrawPayload): WithdrawTypedData {
-  // The HyperCore action wins: it is what NEAR executes.
   const near = NearPayloadSchema.safeParse(payload);
   if (near.success) return near.data.hyperCoreAction.typedData;
   return MayanPayloadSchema.parse(payload).typedData;
@@ -57,21 +41,3 @@ export const WithdrawSubmitResultSchema = z.object({
   swapId: z.string(),
 });
 export type WithdrawSubmitResult = z.infer<typeof WithdrawSubmitResultSchema>;
-
-export const WITHDRAW_STATUSES = [
-  "READY",
-  "PENDING",
-  "UNKNOWN",
-  "FINISHED",
-  "REFUNDED",
-  "EXPIRED",
-] as const;
-
-export const WithdrawStatusSchema = z.object({
-  swapId: z.string().optional(),
-  status: z.enum(WITHDRAW_STATUSES),
-  payoutNetworkFees: DecimalSchema.optional(),
-  payinTransactionId: z.string().optional(),
-  payoutTransactionId: z.string().optional(),
-});
-export type WithdrawStatus = z.infer<typeof WithdrawStatusSchema>;

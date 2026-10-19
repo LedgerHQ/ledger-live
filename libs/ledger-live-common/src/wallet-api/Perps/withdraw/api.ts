@@ -1,43 +1,22 @@
 import network from "@ledgerhq/live-network/network";
-import type BigNumber from "bignumber.js";
-import type { z } from "zod";
 import { getSwapAPIBaseURL, getSwapUserIP } from "../../../exchange/swap";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../../exchange/swap/const/timeout";
-import { PERPS_WITHDRAW_ENDPOINTS } from "./constants";
-import { toSwapKitCurrencyId } from "./currencyMapping";
+import { PERPS_WITHDRAW_SUBMIT_PATH } from "./constants";
 import { WithdrawApiError, WithdrawSubmitUnknownOutcomeError, toWithdrawError } from "./errors";
 import {
-  WithdrawCurrenciesSchema,
-  WithdrawPayloadSchema,
-  WithdrawQuoteSchema,
-  WithdrawStatusSchema,
   WithdrawSubmitResultSchema,
-  type WithdrawCurrencies,
   type WithdrawPayload,
-  type WithdrawQuote,
-  type WithdrawStatus,
   type WithdrawSubmitResult,
 } from "./schemas";
 
-// TODO(LIVE-39366): placeholder request bodies, confirm with the backend.
-export type WithdrawQuoteParams = {
-  amount: BigNumber;
-  sourceAddress: string;
-  toCurrencyId: string;
-  destinationAddress: string;
-};
-
-export type WithdrawPayloadParams = WithdrawQuoteParams & {
-  quoteId?: string;
-};
-
+// TODO(LIVE-39366): confirm the submit body with the backend.
 export type WithdrawSubmitParams = {
   payload: WithdrawPayload;
   signature: string;
 };
 
 type WithdrawRequest = {
-  method: "GET" | "POST";
+  method: "POST";
   path: string;
   data?: unknown;
 };
@@ -60,57 +39,12 @@ async function request({ method, path, data }: WithdrawRequest): Promise<unknown
   return response.data;
 }
 
-function parse<T>(schema: z.ZodType<T, unknown>, data: unknown, path: string): T {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    throw new WithdrawApiError(`Unexpected response from ${path}`);
-  }
-  return result.data;
-}
-
-function toQuoteBody({
-  amount,
-  sourceAddress,
-  toCurrencyId,
-  destinationAddress,
-}: WithdrawQuoteParams) {
-  return {
-    amount: amount.toFixed(),
-    sourceAddress,
-    toCurrencyId: toSwapKitCurrencyId(toCurrencyId),
-    destinationAddress,
-  };
-}
-
-export async function fetchWithdrawCurrencies(): Promise<WithdrawCurrencies> {
-  const path = PERPS_WITHDRAW_ENDPOINTS.currencies;
-  return parse(WithdrawCurrenciesSchema, await request({ method: "GET", path }), path);
-}
-
-export async function fetchWithdrawQuote(params: WithdrawQuoteParams): Promise<WithdrawQuote> {
-  const path = PERPS_WITHDRAW_ENDPOINTS.quote;
-  const data = await request({ method: "POST", path, data: toQuoteBody(params) });
-  return parse(WithdrawQuoteSchema, data, path);
-}
-
-export async function fetchWithdrawPayload(
-  params: WithdrawPayloadParams,
-): Promise<WithdrawPayload> {
-  const path = PERPS_WITHDRAW_ENDPOINTS.payload;
-  const data = await request({
-    method: "POST",
-    path,
-    data: { ...toQuoteBody(params), quoteId: params.quoteId },
-  });
-  return parse(WithdrawPayloadSchema, data, path);
-}
-
 /** Never retried: an unknown outcome throws `WithdrawSubmitUnknownOutcomeError`. */
 export async function submitWithdraw({
   payload,
   signature,
 }: WithdrawSubmitParams): Promise<WithdrawSubmitResult> {
-  const path = PERPS_WITHDRAW_ENDPOINTS.submit;
+  const path = PERPS_WITHDRAW_SUBMIT_PATH;
   let data: unknown;
   try {
     data = await request({ method: "POST", path, data: { ...payload, signature } });
@@ -136,9 +70,4 @@ function isDefiniteSubmitFailure(error: unknown): boolean {
     !(error instanceof WithdrawSubmitUnknownOutcomeError) &&
     !UNKNOWN_OUTCOME_STATUSES.includes(error.status ?? 0)
   );
-}
-
-export async function fetchWithdrawStatus(swapId: string): Promise<WithdrawStatus> {
-  const path = `${PERPS_WITHDRAW_ENDPOINTS.status}?swapId=${encodeURIComponent(swapId)}`;
-  return parse(WithdrawStatusSchema, await request({ method: "GET", path }), path);
 }
