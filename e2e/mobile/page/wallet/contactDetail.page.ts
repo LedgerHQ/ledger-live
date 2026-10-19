@@ -106,10 +106,8 @@ export default class ContactDetailPage {
     await app.modularDrawer.waitForSearchBar();
   }
 
-  @Step("Add {{0.networkName}} address {{{0.addressInput}}}")
-  async addAddressDetails(data: ContactAddressTestData) {
-    await this.openAddAddress();
-
+  @Step("Enter address {{{0.addressInput}}} for {{0.networkName}}")
+  async enterAddress(data: ContactAddressTestData) {
     // POL sits below the drawer's top assets. The search field is a single line; once the
     // sheet expands it sits under the header, and typing Enter there never lands.
     await app.modularDrawer.performSearchByTicker(data.ticker, false);
