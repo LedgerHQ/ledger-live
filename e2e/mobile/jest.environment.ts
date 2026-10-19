@@ -1,4 +1,5 @@
 import "@shared/env";
+process.env.BUYSELL_PROVIDER = "Simplex";
 import {
   cleanupAllSpeculos,
   attachSpeculinhoLogsToAllure,
