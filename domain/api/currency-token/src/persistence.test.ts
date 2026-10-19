@@ -313,7 +313,7 @@ describe("Token Persistence", () => {
       expect(mockDispatch).toHaveBeenCalled();
     });
 
-    it("should restore tokens then invalidate the cache when hash changed", async () => {
+    it("should restore tokens and check the hash without invalidating tags from persistence", async () => {
       const actionTypes: string[] = [];
       const mockDispatch = jest.fn(async action => {
         if (typeof action === "function") {
@@ -334,7 +334,8 @@ describe("Token Persistence", () => {
       expect(actionTypes.some(type => type.includes("invalidateTags"))).toBe(false);
 
       await new Promise(resolve => setTimeout(resolve, 0));
-      expect(actionTypes.some(type => type.includes("invalidateTags"))).toBe(true);
+      expect(mockDispatch.mock.calls.some(call => typeof call[0] === "function")).toBe(true);
+      expect(actionTypes.some(type => type.includes("invalidateTags"))).toBe(false);
     });
 
     it("should not wait for a hanging hash request", async () => {

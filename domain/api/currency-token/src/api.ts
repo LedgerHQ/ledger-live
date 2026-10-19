@@ -22,7 +22,11 @@ import {
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
-import { hashChanged, selectSyncHashBaseline } from "./internals/syncHashBaseline";
+import {
+  hashChanged,
+  selectSyncHashBaseline,
+  selectSyncHashChangedAt,
+} from "./internals/syncHashBaseline";
 
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
 
@@ -117,15 +121,16 @@ export const cryptoAssetsApi = calApi
           const extra = getCalExtra(api);
           try {
             const previousHash = api.getCacheEntry()?.data as string | undefined;
+            const state = api.getState();
+            const baselineHash = selectSyncHashBaseline(state)[currencyId];
+            const hashChangeAlreadyRecorded =
+              selectSyncHashChangedAt(state)[currencyId] !== undefined;
             const { data: newHash } = await api.queryFulfilled;
-            const referenceHash =
-              previousHash ?? selectSyncHashBaseline(api.getState())[currencyId];
+            const referenceHash = baselineHash ?? previousHash;
+            const sameHashAlreadyRecorded = hashChangeAlreadyRecorded && previousHash === newHash;
 
-            if (referenceHash && newHash && referenceHash !== newHash) {
+            if (referenceHash && newHash && referenceHash !== newHash && !sameHashAlreadyRecorded) {
               api.dispatch(hashChanged({ currencyId, at: Date.now() }));
-            }
-
-            if (referenceHash && newHash && referenceHash !== newHash) {
               extra.logger?.(
                 "cryptoassets",
                 `Hash changed for currencyId ${currencyId}: ${referenceHash} -> ${newHash}, evicting token cache`,

@@ -207,12 +207,19 @@ describe("restore → save → restart", () => {
     expect(tokenListRequests).toBe(1);
 
     await restoreTokensToCache(store.dispatch, persisted, TTL);
-    for (let attempt = 0; attempt < 20 && tokenListRequests < 2; attempt += 1) {
+    let stableTicks = 0;
+    for (let attempt = 0; attempt < 20 && stableTicks < 2; attempt += 1) {
+      const countBeforeTick = tokenListRequests;
       await tick();
+      if (tokenListRequests >= 2 && tokenListRequests === countBeforeTick) {
+        stableTicks += 1;
+      } else {
+        stableTicks = 0;
+      }
     }
     list.unsubscribe();
 
-    expect(tokenListRequests).toBeGreaterThanOrEqual(2);
+    expect(tokenListRequests).toBe(2);
     const cached = fulfilledTokenCurrencies(store);
     expect(cached).toContain("polygon");
     expect(cached).not.toContain("ethereum");
