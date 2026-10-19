@@ -146,7 +146,7 @@ flowchart LR
   end
   subgraph target["With one contract"]
     direction TB
-    c1["ContactsView.types.ts<br/>ContactsViewProps<br/>onSearchQueryChange(query)<br/>detail? tagged @platform web"]
+    c1["ContactsView.types.ts<br/>ContactsViewProps<br/>onSearchQueryChange(query)"]
     c2["ContactsView.web.tsx"]
     c3["ContactsView.native.tsx"]
     c2 --> c1

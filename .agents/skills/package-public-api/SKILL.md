@@ -62,7 +62,8 @@ import the original provider, and declare the dependency themselves. This holds 
 
 A React component exported from an entry with a `react-native` condition is universal: it takes
 one props contract on both platforms. The [ADR](../../../docs/adr/universal-components.md) holds
-the full rules and authoring steps; `lint:structure` checks them.
+the full rules and authoring steps. `lint:structure` checks them as each rule lands; until then,
+review checks them.
 
 - **R1 Parity.** Exported on both platforms under the same name.
 - **R2 One contract.** `X.web.tsx` and `X.native.tsx` annotate their props with the same type,
