@@ -3,11 +3,10 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { THOR_SOLO_RPC } from "../thorNode";
+import { THOR_SOLO_RPC, killThorNode, readGenesisChainTag, spawnThorNode } from "../thorNode";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { VECHAIN, VTHO, initMSW, makeAccount, registerVthoInMockStore } from "../fixtures";
 import { getBridges } from "../helpers";
-import { killThorNode, readGenesisChainTag, spawnThorNode } from "../thorNode";
 import { buildVechainTestSigner } from "../signer";
 
 /**

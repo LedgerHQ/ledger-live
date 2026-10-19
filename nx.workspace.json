@@ -318,6 +318,11 @@
     "formatConfig": [
       "{workspaceRoot}/oxfmt.config.mts",
       "{workspaceRoot}/support/fmt/oxfmt.config.mts"
+    ],
+    "lintConfig": [
+      "{workspaceRoot}/support/lint/**/*",
+      "{workspaceRoot}/*/oxlint.config.mts",
+      "{workspaceRoot}/*/*/oxlint.config.mts"
     ]
   },
   "pluginsConfig": {
@@ -346,6 +351,7 @@
       "inputs": [
         "default",
         "^default",
+        "lintConfig",
         {
           "env": "CI_OS"
         }

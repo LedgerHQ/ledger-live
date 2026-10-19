@@ -13,7 +13,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
-    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/app-update",
     "test": "jest",

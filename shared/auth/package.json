@@ -11,8 +11,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt ./src && oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm exec oxfmt ./src && oxlint ./src --fix --quiet",
     "format": "pnpm exec oxfmt ./src",
     "format:check": "pnpm exec oxfmt ./src --check",
     "typecheck": "tsc --noEmit",
