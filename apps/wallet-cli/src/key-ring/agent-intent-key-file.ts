@@ -23,7 +23,7 @@ export function loadAgentIntentKeyFile(profileId: string): string | null {
   try {
     return readFileSync(agentIntentKeyFilePath(profileId), "utf8").trim();
   } catch (e) {
-    if ((e as { code?: string } | null)?.code === "ENOENT") return null;
+    if (e instanceof Error && "code" in e && e.code === "ENOENT") return null;
     throw e;
   }
 }
@@ -34,7 +34,7 @@ export function deleteAgentIntentKeyFile(profileId: string): boolean {
     unlinkSync(agentIntentKeyFilePath(profileId));
     return true;
   } catch (e) {
-    return (e as { code?: string } | null)?.code === "ENOENT";
+    return e instanceof Error && "code" in e && e.code === "ENOENT";
   }
 }
 

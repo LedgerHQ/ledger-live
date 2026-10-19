@@ -45,8 +45,9 @@ type KeyStore = AgentIntentProfileMeta["keyStore"];
 
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
  * right before writing — a concurrent enroll of the same profile id could pass the first check and
- * still lose the race to the second. Returns where the agent key will be stored. */
-function assertProfileAvailable(
+ * still lose the race to the second. */
+// Also returns where the agent key will be stored.
+function checkProfileAndChooseKeyStore(
   session: Session,
   profileId: string,
   allowPlaintextKey: boolean,
@@ -196,7 +197,7 @@ export default defineCommand({
       // Fast, unlocked precheck: fail on an obvious typo/duplicate before spending a keypair
       // generation + signature on it. Not a substitute for the recheck below — a concurrent enroll
       // of the same profile can still pass this one.
-      assertProfileAvailable(await Session.read(), profileId, flags["allow-plaintext-key"]);
+      checkProfileAndChooseKeyStore(await Session.read(), profileId, flags["allow-plaintext-key"]);
 
       const identity = createSoftwareAgentIdentity();
       const host = createRelayHost(environment, expiresInMs);
@@ -217,7 +218,11 @@ export default defineCommand({
         // Shared with every other command that mutates session.yaml — see withSessionLock's doc.
         const keyStore = await withSessionLock(async () => {
           const session = await Session.read();
-          const keyStore = assertProfileAvailable(session, profileId, flags["allow-plaintext-key"]);
+          const keyStore = checkProfileAndChooseKeyStore(
+            session,
+            profileId,
+            flags["allow-plaintext-key"],
+          );
 
           await saveSecretKey(keyStore, profileId, identity.exportSecretKey());
           try {
@@ -236,9 +241,9 @@ export default defineCommand({
             });
             session.write();
           } catch (e) {
-            // Undo the key write so a retry doesn't hit "keychain entry exists but isn't recorded
-            // in the session". If the rollback itself fails, say so, so the user knows to remove
-            // the entry by hand instead of retrying forever.
+            // Undo the key write so a retry doesn't hit "keychain entry (or key file) exists but
+            // isn't recorded in the session". If the rollback itself fails, say so, so the user
+            // knows to remove the keychain entry or key file by hand instead of retrying forever.
             const rolledBack =
               keyStore === "plaintext-file"
                 ? deleteAgentIntentKeyFile(profileId)
@@ -246,7 +251,7 @@ export default defineCommand({
             if (!rolledBack) {
               const store = keyStore === "plaintext-file" ? "key file" : "keychain";
               throw new Error(
-                `${e instanceof Error ? e.message : String(e)} Additionally, the ${store} rollback ` +
+                `${errMessage(e)} Additionally, the ${store} rollback ` +
                   `for profile "${profileId}" failed — remove that entry manually before retrying, ` +
                   `or re-enrolling will refuse it as an orphaned duplicate.`,
                 { cause: e },

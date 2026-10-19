@@ -2,6 +2,7 @@ import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
 import { KeychainUnavailableError } from "../../key-ring/keychain-entry";
+import { failingKeychainProbe, overridePlatform } from "../../testing/os-keychain";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -206,11 +207,10 @@ describe("agent-intent enroll", () => {
   let restore: () => void;
   let stdout: string[];
   let stderr: string[];
-  // The Secret Service probe only runs on Linux.
-  const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
+  let restorePlatform: () => void;
 
   beforeEach(() => {
-    Object.defineProperty(process, "platform", { value: "linux" });
+    restorePlatform = overridePlatform("linux");
     keychainProbe = () => [];
     keyFileExists = false;
     deleteKeyFileSucceeds = true;
@@ -245,7 +245,7 @@ describe("agent-intent enroll", () => {
 
   afterEach(() => {
     restore();
-    Object.defineProperty(process, "platform", realPlatform);
+    restorePlatform();
   });
 
   describe("pre-checks and local persistence", () => {
@@ -265,9 +265,7 @@ describe("agent-intent enroll", () => {
     });
 
     it("fails closed before generating a key or printing a link when no OS keychain is available", async () => {
-      keychainProbe = () => {
-        throw new Error("no secret service provider or dbus session found");
-      };
+      keychainProbe = failingKeychainProbe;
 
       const err = await runEnroll().catch((e: unknown) => e);
 
@@ -281,9 +279,7 @@ describe("agent-intent enroll", () => {
     });
 
     it("reports keychain_unavailable in json mode without printing a link", async () => {
-      keychainProbe = () => {
-        throw new Error("no secret service provider or dbus session found");
-      };
+      keychainProbe = failingKeychainProbe;
 
       await expect(runEnroll({ output: "json" })).rejects.toThrow();
 
@@ -309,7 +305,7 @@ describe("agent-intent enroll", () => {
       let probeCalls = 0;
       keychainProbe = () => {
         probeCalls++;
-        if (probeCalls > 1) throw new Error("no secret service provider or dbus session found");
+        if (probeCalls > 1) failingKeychainProbe();
         return [];
       };
 
@@ -333,9 +329,7 @@ describe("agent-intent enroll", () => {
     });
 
     it("stores the key in a plaintext file with --allow-plaintext-key when no OS keychain is available", async () => {
-      keychainProbe = () => {
-        throw new Error("no secret service provider or dbus session found");
-      };
+      keychainProbe = failingKeychainProbe;
 
       await runEnroll({ "allow-plaintext-key": true, output: "json" });
 
@@ -374,9 +368,7 @@ describe("agent-intent enroll", () => {
     });
 
     it("rolls back the key file when the session write fails after the file was written", async () => {
-      keychainProbe = () => {
-        throw new Error("no secret service provider or dbus session found");
-      };
+      keychainProbe = failingKeychainProbe;
       const sessionError = new Error("disk full");
       writeImpl = () => {
         throw sessionError;
@@ -390,9 +382,7 @@ describe("agent-intent enroll", () => {
     });
 
     it("surfaces a combined error when the key file rollback itself fails", async () => {
-      keychainProbe = () => {
-        throw new Error("no secret service provider or dbus session found");
-      };
+      keychainProbe = failingKeychainProbe;
       writeImpl = () => {
         throw new Error("disk full");
       };

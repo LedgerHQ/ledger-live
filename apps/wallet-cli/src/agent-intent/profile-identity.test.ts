@@ -6,6 +6,7 @@ import {
   deactivateAgentIntentMocks,
   realAgentIntentSdk,
 } from "../commands/agent-intent/__test-helpers__/agent-intent-mocks";
+import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
 
 const agent = realAgentIntentSdk.createSoftwareAgentIdentity();
 const other = realAgentIntentSdk.createSoftwareAgentIdentity();
@@ -32,13 +33,12 @@ afterAll(() => deactivateAgentIntentMocks());
 const { loadProfileIdentity } = await import("./profile-identity");
 
 describe("loadProfileIdentity", () => {
-  const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
   let stderr: string[];
   let restore: () => void;
+  let restorePlatform: () => void;
 
   beforeEach(() => {
-    // The Secret Service probe only runs on Linux.
-    Object.defineProperty(process, "platform", { value: "linux" });
+    restorePlatform = overridePlatform("linux");
     keychainSecret = null;
     keyFileSecret = null;
     keychainProbe = () => [];
@@ -49,7 +49,7 @@ describe("loadProfileIdentity", () => {
 
   afterEach(() => {
     restore();
-    Object.defineProperty(process, "platform", realPlatform);
+    restorePlatform();
   });
 
   const profile = (keyStore: "os-keychain" | "plaintext-file") => ({
@@ -69,9 +69,7 @@ describe("loadProfileIdentity", () => {
 
   it("refuses an os-keychain profile with enroll-a-new-profile guidance when no OS keychain is available", async () => {
     keychainSecret = agent.exportSecretKey();
-    keychainProbe = () => {
-      throw new Error("no secret service provider or dbus session found");
-    };
+    keychainProbe = failingKeychainProbe;
 
     const err = await loadProfileIdentity(profile("os-keychain")).catch((e: unknown) => e);
 
@@ -84,9 +82,7 @@ describe("loadProfileIdentity", () => {
 
   it("reads a plaintext-file profile's key from the file and warns on stderr", async () => {
     keyFileSecret = agent.exportSecretKey();
-    keychainProbe = () => {
-      throw new Error("no secret service provider or dbus session found");
-    };
+    keychainProbe = failingKeychainProbe;
 
     const identity = await loadProfileIdentity(profile("plaintext-file"));
 

@@ -7,6 +7,7 @@ import {
   KeychainUnavailableError,
   _setTestKeychainProbe,
 } from "./keychain-entry";
+import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
 
 const KEY_HEX = "cafe".repeat(16);
 
@@ -66,21 +67,21 @@ describe("wrapSecret / unwrapSecret", () => {
 });
 
 describe("assertOsKeychainAvailable", () => {
-  const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
   const probedServices: string[] = [];
   const failingProbe = (service: string) => {
     probedServices.push(service);
-    throw new Error("no secret service provider or dbus session found");
+    failingKeychainProbe();
   };
+  let restorePlatform: () => void;
 
   afterEach(() => {
-    Object.defineProperty(process, "platform", realPlatform);
+    restorePlatform();
     _setTestKeychainProbe(null);
     probedServices.length = 0;
   });
 
   it("throws KeychainUnavailableError with the hint on Linux when the Secret Service probe fails", () => {
-    Object.defineProperty(process, "platform", { value: "linux" });
+    restorePlatform = overridePlatform("linux");
     _setTestKeychainProbe(failingProbe);
 
     expect(() => assertOsKeychainAvailable("Hint.")).toThrow(KeychainUnavailableError);
@@ -91,14 +92,14 @@ describe("assertOsKeychainAvailable", () => {
   });
 
   it("passes on Linux when the probe returns", () => {
-    Object.defineProperty(process, "platform", { value: "linux" });
+    restorePlatform = overridePlatform("linux");
     _setTestKeychainProbe(() => []);
 
     expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
   });
 
-  it.each(["darwin", "win32"])("never probes on %s", platform => {
-    Object.defineProperty(process, "platform", { value: platform });
+  it.each(["darwin", "win32"] as const)("never probes on %s", platform => {
+    restorePlatform = overridePlatform(platform);
     _setTestKeychainProbe(failingProbe);
 
     expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();

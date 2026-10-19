@@ -15,8 +15,8 @@ const UNUSABLE_KEY_ERRORS = new Set([
   "AgentIntentCorruptKeychainError",
 ]);
 
-/** Loads the profile's agent key from the store it was enrolled with and checks it against the
- * recorded public key, so a key/session mix-up fails locally instead of as a remote auth error. */
+// Loads the profile's agent key from the store it was enrolled with and checks it against the
+// recorded public key, so a key/session mix-up fails locally instead of as a remote auth error.
 export async function loadProfileIdentity(
   profile: Pick<AgentIntentProfileMeta, "profileId" | "publicKey" | "keyStore">,
 ): Promise<SoftwareAgentIdentity> {
