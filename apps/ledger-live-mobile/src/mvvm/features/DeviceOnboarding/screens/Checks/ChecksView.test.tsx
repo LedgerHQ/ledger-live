@@ -333,7 +333,9 @@ describe("ChecksView", () => {
   ])(
     "should open the $kind drawer over the current check",
     async ({ kind, title, showsSettings }) => {
-      const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", { error: { kind } });
+      const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
+        error: { kind },
+      });
       onCloseSheet.mockImplementation(() => {
         rerender({ error: null });
       });
