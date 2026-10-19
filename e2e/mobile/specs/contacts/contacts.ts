@@ -300,12 +300,11 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
       await app.contacts.detail.expectName(CONTACT_NAME);
       await app.contacts.detail.expectNoAddresses();
 
-      await app.contacts.detail.addAddress(ETHEREUM_ADDRESS);
+      await app.contacts.detail.addAddressDetails(ETHEREUM_ADDRESS);
 
       // iOS Workaround: the mock device sheet never goes idle - disable sync for remainder of the spec
       await app.common.disableSynchronizationForiOS();
-
-      await app.contacts.detail.waitForRegisterAddressDeviceConfirmation();
+      await app.contacts.detail.tapAddressNameContinue();
       await mockServer.confirmDeviceIntent(REGISTER_DEVICE_PROMPT_ID);
       await app.contacts.detail.expectAddressSaved(
         ETHEREUM_ADDRESS.savedValue,
@@ -341,8 +340,8 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
       const contactRowId = await addContactAndOpenIt(CONTACT_NAME);
 
       for (const [index, addressData] of CONTACT_ADDRESS_DATASET.entries()) {
-        await app.contacts.detail.addAddress(addressData);
-        await app.contacts.detail.waitForRegisterAddressDeviceConfirmation();
+        await app.contacts.detail.addAddressDetails(addressData);
+        await app.contacts.detail.tapAddressNameContinue();
         await app.speculos.confirmContactAction();
         await app.contacts.detail.expectAddressSaved(addressData.savedValue, addressData.networkId);
         await app.contacts.detail.expectAddressLabel(

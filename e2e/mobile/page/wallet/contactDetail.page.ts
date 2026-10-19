@@ -107,7 +107,7 @@ export default class ContactDetailPage {
   }
 
   @Step("Add {{0.networkName}} address {{{0.addressInput}}}")
-  async addAddress(data: ContactAddressTestData) {
+  async addAddressDetails(data: ContactAddressTestData) {
     await this.openAddAddress();
 
     // POL sits below the drawer's top assets. The search field is a single line; once the
@@ -135,11 +135,11 @@ export default class ContactDetailPage {
       await clearTextByElement(this.addAddressNameInput());
       await typeTextByElement(this.addAddressNameInput(), data.addressLabel, false);
     }
-    await tapByElement(this.addAddressNameContinueButton());
   }
 
-  @Step("Wait for the register address device confirmation")
-  async waitForRegisterAddressDeviceConfirmation() {
+  @Step("Tap address name continue button")
+  async tapAddressNameContinue() {
+    await tapByElement(this.addAddressNameContinueButton());
     await waitForElement(this.registerAddressDeviceConfirmation());
   }
 
