@@ -12,6 +12,8 @@ afterPack: scripts/afterPack.js
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
+  # zcash-utils ships per-arch .node files, identical in both universal slices
+  x64ArchFiles: "**/node_modules/@ledgerhq/zcash-utils/*.node"
   hardenedRuntime: true
   entitlements: build/mac/entitlements.plist
   entitlementsInherit: build/mac/entitlements.plist
@@ -59,7 +61,10 @@ files:
   # Include files
   - .webpack/**/*
   - "!.webpack/**/*.js.map"
-  - "node_modules/@ledgerhq/zcash-utils/**/*"
+  # Explicit mapping: beforeBuild disables electron-builder's node_modules collection
+  - from: "node_modules/@ledgerhq/zcash-utils"
+    to: "node_modules/@ledgerhq/zcash-utils"
+    filter: ["package.json", "index.js", "*.node"]
   - from: "dist/node_modules"
     to: "node_modules"
     filter:
@@ -94,9 +99,9 @@ files:
   # Exclude files
   - "!node_modules"
 
-# Disable native module rebuilding since we removed all native dependencies (node-hid, usb)
+# node_modules are bundled by rspack: beforeBuild skips electron-builder's rebuild and collection
 buildDependenciesFromSource: false
-npmRebuild: false
+beforeBuild: scripts/beforeBuild.js
 
 publish:
   - provider: generic
