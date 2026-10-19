@@ -44,7 +44,6 @@ import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
-import { authEnvironmentReducer } from "@shared/auth";
 import { identitiesSlice } from "@domain/entity-client-identity";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
@@ -80,7 +79,6 @@ const appReducer = combineReducers({
   identities: identitiesSlice.reducer,
   inView,
   knownDevices,
-  authEnvironment: authEnvironmentReducer,
   largeMover,
   market,
   marketListConfig: marketListConfigReducer,
