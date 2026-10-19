@@ -149,8 +149,10 @@ genuine difference from its archetype. The list of presets and how to pick one i
 [`support/tsconfig`](../support/tsconfig/README.md).
 
 `pnpm lint:tool-config` enforces it: a package config sets `extends`, `references`, `include`,
-`exclude`, `files` and `compilerOptions.types`, nothing that repeats what it inherits, and any other
-compiler option only while the rule's baseline lists it for that file.
+`exclude`, `files`, `compilerOptions.types` and `compilerOptions.paths`, nothing that repeats what it
+inherits. Every other compiler option belongs to a preset; a package that does not meet the
+strictness of its preset yet may relax it only while the rule's debt list names that option for
+the file.
 
 ---
 

@@ -1,15 +1,6 @@
 {
   "extends": "@support/tsconfig/lib",
   "compilerOptions": {
-    "types": ["node", "jest"],
-    "declarationMap": false,
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable",
-      "DOM.AsyncIterable",
-      "ScriptHost",
-      "WebWorker.ImportScripts"
-    ]
+    "types": ["node", "jest"]
   }
 }

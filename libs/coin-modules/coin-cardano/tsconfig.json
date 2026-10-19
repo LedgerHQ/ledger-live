@@ -1,9 +1,7 @@
 {
-  "extends": "@support/tsconfig/lib",
+  "extends": "@support/tsconfig/coin",
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "lib": ["es2020", "dom"],
+    "exactOptionalPropertyTypes": false,
     "types": ["node", "jest"]
   }
 }

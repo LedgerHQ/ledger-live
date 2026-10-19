@@ -1,7 +1,6 @@
 {
-  "extends": "@support/tsconfig/lib",
+  "extends": "@support/tsconfig/coin",
   "compilerOptions": {
-    "types": ["node", "jest"],
-    "exactOptionalPropertyTypes": true
+    "types": ["node", "jest"]
   }
 }

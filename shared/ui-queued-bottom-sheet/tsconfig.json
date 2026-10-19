@@ -1,7 +1,6 @@
 {
   "extends": "@support/tsconfig/native",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "types": ["jest"]
+    "types": ["jest", "node"]
   }
 }

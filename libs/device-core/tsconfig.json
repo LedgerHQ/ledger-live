@@ -1,9 +1,6 @@
 {
   "extends": "@support/tsconfig/lib",
   "compilerOptions": {
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "lib": ["es2020", "dom"],
     "paths": {
       "*": ["./*"]
     },

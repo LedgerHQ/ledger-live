@@ -1,8 +1,6 @@
 {
   "extends": "@support/tsconfig/lib-react",
   "compilerOptions": {
-    "noImplicitAny": true,
-    "noImplicitThis": true,
     "types": ["node", "jest"]
   }
 }

@@ -1,8 +1,7 @@
 {
-  "extends": "@support/tsconfig/lib",
+  "extends": "@support/tsconfig/coin",
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": false,
     "types": ["node", "jest"]
   }
 }

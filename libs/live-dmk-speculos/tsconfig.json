@@ -1,9 +1,6 @@
 {
   "extends": "@support/tsconfig/lib-react",
   "compilerOptions": {
-    "target": "ES2022",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
     "types": ["node", "jest", "@testing-library/jest-dom"]
   }
 }

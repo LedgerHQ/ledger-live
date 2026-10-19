@@ -1,7 +1,6 @@
 {
   "extends": "@support/tsconfig/client",
   "compilerOptions": {
-    "target": "ESNext",
     "types": ["node", "ws", "jest"]
   }
 }

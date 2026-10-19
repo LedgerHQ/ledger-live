@@ -1,14 +1,3 @@
 {
-  "extends": "@support/tsconfig/lib",
-  "compilerOptions": {
-    "declarationMap": false,
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable",
-      "DOM.AsyncIterable",
-      "ScriptHost",
-      "WebWorker.ImportScripts"
-    ]
-  }
+  "extends": "@support/tsconfig/lib"
 }

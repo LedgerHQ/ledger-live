@@ -767,6 +767,9 @@ importers:
       '@support/lint':
         specifier: workspace:*
         version: link:support/lint
+      '@support/tsconfig':
+        specifier: workspace:*
+        version: link:support/tsconfig
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -3793,6 +3796,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -3890,6 +3896,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -4025,6 +4034,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -4438,6 +4450,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -4558,6 +4573,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -6673,6 +6691,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -6734,6 +6755,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -6789,6 +6813,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -6856,6 +6883,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -6914,6 +6944,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -7797,6 +7830,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -8003,6 +8039,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -10134,6 +10173,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -10532,6 +10574,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -20128,6 +20173,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -20185,6 +20233,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -20313,6 +20364,8 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
+
+  support/tsconfig: {}
 
   tests/dummy-live-app:
     dependencies:

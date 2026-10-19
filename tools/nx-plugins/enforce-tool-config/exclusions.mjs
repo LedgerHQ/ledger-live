@@ -52,8 +52,13 @@ export const EXCLUSIONS = {
       "each package extends @support/tsconfig/lib.",
   },
   "libs/ui": {
-    rules: ["lint"],
-    reason: `TEMPORARY. The legacy UI packages ${LINT_LEAVES}`,
+    rules: ["lint", "tsconfig"],
+    reason:
+      `TEMPORARY. lint: the legacy UI packages ${LINT_LEAVES} ` +
+      "tsconfig: the design-system packages carry their own layouts: icons generates src/ and " +
+      "emits next to it, react builds ES2019 with preserveSymlinks, native extends nothing and " +
+      "shared emits without rootDir. Exit condition: each package builds from src/ to lib/ and " +
+      "extends a @support/tsconfig preset.",
   },
   "libs/wallet-btc": {
     rules: ["lint"],
@@ -74,35 +79,11 @@ export const EXCLUSIONS = {
       "package preset targets. Exit condition: a node tooling archetype in @support/tsconfig, " +
       "then each tool moved onto it.",
   },
-  "features/platform/card": {
+  "libs/coin-tester-modules": {
     rules: ["tsconfig"],
     reason:
-      "TEMPORARY. A web and native package without JSX: the dual, web and native presets all " +
-      "set `jsx`, so no preset reproduces its configs. Exit condition: the package enables JSX " +
-      "or a preset for dual packages without it exists.",
-  },
-  "shared/clipboard": {
-    rules: ["tsconfig"],
-    reason:
-      "TEMPORARY. Same as features/platform/card: a dual package without JSX. Exit condition: " +
-      "the package enables JSX or a preset for dual packages without it exists.",
-  },
-  "shared/network-status": {
-    rules: ["tsconfig"],
-    reason:
-      "TEMPORARY. Same as features/platform/card: a dual package without JSX. Exit condition: " +
-      "the package enables JSX or a preset for dual packages without it exists.",
-  },
-  "libs/ui/packages/native": {
-    rules: ["tsconfig"],
-    reason:
-      "TEMPORARY. Its tsconfig.json extends nothing and its build config re-enables emit over " +
-      "it. Exit condition: the package extends a @support/tsconfig preset.",
-  },
-  "libs/ui/packages/shared": {
-    rules: ["tsconfig"],
-    reason:
-      "TEMPORARY. It emits without `rootDir`, which every lib preset sets. Exit condition: the " +
-      "package sets its root to src/ and extends @support/tsconfig/lib.",
+      "TEMPORARY. The coin testers are composite projects, half of them typechecked with bundler " +
+      "resolution and built with NodeNext, which no preset reproduces. Exit condition: a preset " +
+      "for them in @support/tsconfig, then each coin tester moved onto it.",
   },
 };

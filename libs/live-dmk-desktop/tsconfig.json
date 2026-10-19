@@ -1,15 +1,9 @@
 {
-  "extends": "@support/tsconfig/lib-react",
+  "extends": ["@support/tsconfig/lib-react", "@support/tsconfig/lib/esm"],
   "compilerOptions": {
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "lib": ["es2020", "dom"],
-    "outDir": "lib-es",
     "paths": {
       "*": ["./*"]
     },
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "types": ["node", "jest", "@testing-library/jest-dom"]
   }
 }

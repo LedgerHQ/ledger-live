@@ -60,6 +60,7 @@
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",

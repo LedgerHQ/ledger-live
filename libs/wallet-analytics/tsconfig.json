@@ -1,16 +1,6 @@
 {
   "extends": "@support/tsconfig/lib",
   "compilerOptions": {
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "types": ["node", "jest"],
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable",
-      "DOM.AsyncIterable",
-      "ScriptHost",
-      "WebWorker.ImportScripts"
-    ]
+    "types": ["node", "jest"]
   }
 }

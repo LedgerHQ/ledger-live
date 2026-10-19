@@ -55,6 +55,7 @@
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",

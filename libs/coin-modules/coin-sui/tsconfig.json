@@ -1,10 +1,6 @@
 {
-  "extends": "@support/tsconfig/lib",
+  "extends": "@support/tsconfig/coin",
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "types": ["node", "jest"],
-    "exactOptionalPropertyTypes": true,
-    "typeRoots": ["./node_modules/@types", "index.d.ts"]
+    "types": ["node", "jest"]
   }
 }

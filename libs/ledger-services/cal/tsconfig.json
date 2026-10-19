@@ -1,7 +1,6 @@
 {
   "extends": "@support/tsconfig/lib",
   "compilerOptions": {
-    "lib": ["es2020", "dom"],
     "types": ["node", "jest"]
   }
 }

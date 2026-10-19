@@ -1,22 +1,23 @@
 // The tsconfig rule: every TypeScript config of a package extends an @support/tsconfig preset,
 // directly or through a sibling config, and carries only what a preset cannot know.
 //
-// A config may set `extends`, `references`, `include`, `exclude`, `files` and
-// `compilerOptions.types`. Any other compiler option is a departure from the archetype, accepted
-// only while tsconfig-baseline.mjs lists it for that file. The baseline only shrinks: an entry the
-// config no longer needs is reported too. A key whose value is what the config would inherit anyway
-// is rejected, whatever it is.
+// A config may set `extends`, `references`, `include`, `exclude`, `files`,
+// `compilerOptions.types` and `compilerOptions.paths`: what TypeScript replaces instead of merging,
+// or what only the package knows. Every other compiler option belongs to a preset. The one way
+// around it is a relaxation of the preset strictness that tsconfig-debt.mjs lists for that file,
+// with its relaxed value; that list only shrinks. A key whose value is what the config would
+// inherit anyway is rejected.
 
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
-import { TSCONFIG_BASELINE } from "./tsconfig-baseline.mjs";
+import { RELAXATIONS, TSCONFIG_DEBT } from "./tsconfig-debt.mjs";
 
 const require = createRequire(import.meta.url);
 
 const PRESET_PACKAGE = "@support/tsconfig";
 const PRESET_ROOT = "support/tsconfig";
-const BASELINE_FILE = "tools/nx-plugins/enforce-tool-config/rules/tsconfig-baseline.mjs";
+const DEBT_FILE = "tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs";
 
 const TOP_LEVEL_KEYS = new Set([
   "extends",
@@ -27,7 +28,9 @@ const TOP_LEVEL_KEYS = new Set([
   "files",
 ]);
 const FILE_KEYS = ["include", "exclude", "files"];
-const ALWAYS_ALLOWED_OPTIONS = new Set(["types"]);
+const ALLOWED_OPTIONS = new Set(["types", "paths"]);
+// Options `strict` turns on when they are not set.
+const STRICT_FAMILY = new Set(["noImplicitAny", "noImplicitThis"]);
 
 // Build outputs and installs, which hold copied configs that are not the package's own.
 const SKIP_DIRS = new Set(["node_modules", "lib", "lib-es", "dist", "build", "coverage", ".turbo"]);
@@ -115,8 +118,9 @@ function errorsOf(parsed) {
 }
 
 /**
- * What a parsed config resolves `key` to: the compiler option, or the file specs as absolute
- * paths (`${configDir}` substituted, relative specs resolved against the config).
+ * What a parsed config resolves `key` to: the compiler option, the value a relaxation takes when
+ * unset, or the file specs as absolute paths (`${configDir}` substituted, relative specs resolved
+ * against the config).
  *
  * @param {import("typescript").ParsedCommandLine | undefined} parsed
  * @param {string} key a compiler option, or one of FILE_KEYS
@@ -125,6 +129,10 @@ function errorsOf(parsed) {
  */
 function resolvedValue(parsed, key, configDir) {
   if (!parsed) return "unresolved";
+  if (Object.hasOwn(RELAXATIONS, key)) {
+    const { options } = parsed;
+    return String(options[key] ?? (STRICT_FAMILY.has(key) && options.strict === true));
+  }
   if (!FILE_KEYS.includes(key)) return JSON.stringify(parsed.options[key]);
   const specs = parsed.raw?.[key];
   if (!Array.isArray(specs)) return "unset";
@@ -172,10 +180,10 @@ function extendsProblem(entry, configDir, packageDir, presets) {
 
 /**
  * @param {import("./index.mjs").RuleContext} context
- * @param {{ baseline?: Record<string, string[]> }} [overrides] for tests
+ * @param {{ debt?: Record<string, string[]> }} [overrides] for tests
  * @returns {Violation[]}
  */
-export function check({ workspaceRoot, projectRoot }, { baseline = TSCONFIG_BASELINE } = {}) {
+export function check({ workspaceRoot, projectRoot }, { debt = TSCONFIG_DEBT } = {}) {
   const packageDir = path.join(workspaceRoot, projectRoot);
   const presets = presetSpecifiers(workspaceRoot);
   /** @type {Violation[]} */
@@ -207,19 +215,24 @@ export function check({ workspaceRoot, projectRoot }, { baseline = TSCONFIG_BASE
       .filter(Boolean);
     for (const problem of problems) report(`extends ${problem}`);
 
-    const allowed = new Set(baseline[name] ?? []);
+    const listed = new Set(debt[name] ?? []);
     const options = config.compilerOptions ?? {};
-    for (const key of Object.keys(options)) {
-      if (!ALWAYS_ALLOWED_OPTIONS.has(key) && !allowed.has(key)) {
+    for (const [key, value] of Object.entries(options)) {
+      if (ALLOWED_OPTIONS.has(key)) continue;
+      if (!Object.hasOwn(RELAXATIONS, key)) {
+        report(`compilerOptions.${key} belongs to a preset: extend the preset that sets it`);
+      } else if (value !== RELAXATIONS[key]) {
+        report(`compilerOptions.${key} may only relax the preset, to ${RELAXATIONS[key]}`);
+      } else if (!listed.has(key)) {
         report(
-          `compilerOptions.${key} is not the preset's: move it to a preset, or list it in ${BASELINE_FILE}`,
+          `compilerOptions.${key} relaxes the strictness of its preset: fix the code instead, or list it in ${DEBT_FILE}`,
         );
       }
     }
-    for (const key of allowed) {
-      if (!(key in options)) {
+    for (const key of listed) {
+      if (options[key] !== RELAXATIONS[key]) {
         report(
-          `${BASELINE_FILE} lists compilerOptions.${key}, which the config no longer sets; remove it`,
+          `${DEBT_FILE} lists compilerOptions.${key}, which the config no longer relaxes; remove it`,
         );
       }
     }
@@ -251,16 +264,16 @@ export function check({ workspaceRoot, projectRoot }, { baseline = TSCONFIG_BASE
     }
   }
 
-  // Entries for configs that are gone, so the baseline cannot keep a dead file alive.
+  // Entries for configs that are gone, so the debt list cannot keep a dead file alive.
   const present = new Set(configs.map(relative));
-  for (const name of Object.keys(baseline)) {
+  for (const name of Object.keys(debt)) {
     if (
       name.startsWith(`${projectRoot}/`) &&
       !present.has(name) &&
       !isInNestedPackage(workspaceRoot, projectRoot, name)
     ) {
       violations.push({
-        file: BASELINE_FILE,
+        file: DEBT_FILE,
         message: `lists ${name}, which does not exist; remove it`,
       });
     }

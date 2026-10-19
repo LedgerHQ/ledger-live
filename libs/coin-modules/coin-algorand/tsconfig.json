@@ -1,11 +1,7 @@
 {
-  "extends": "@support/tsconfig/lib",
+  "extends": "@support/tsconfig/coin",
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "lib": ["es2020", "dom"],
-    "types": ["node", "jest"],
-    "exactOptionalPropertyTypes": true
+    "types": ["node", "jest"]
   },
   "exclude": [
     "src/api/subscan.ts",

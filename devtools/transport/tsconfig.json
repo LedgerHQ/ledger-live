@@ -1,7 +1,6 @@
 {
   "extends": "@support/tsconfig/web",
   "compilerOptions": {
-    "target": "ESNext",
     "types": ["jest"]
   }
 }

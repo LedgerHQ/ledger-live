@@ -1,8 +1,6 @@
 {
   "extends": "@support/tsconfig/client",
   "compilerOptions": {
-    "target": "ESNext",
-    "moduleSuffixes": [".web", ""],
     "types": ["jest"]
   }
 }

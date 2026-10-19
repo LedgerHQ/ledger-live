@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { TSCONFIG_BASELINE } from "./tsconfig-baseline.mjs";
+import { TSCONFIG_DEBT } from "./tsconfig-debt.mjs";
 import rule, { check } from "./tsconfig.mjs";
 
 const WORKSPACE_ROOT = path.resolve(import.meta.dirname, "../../../..");
@@ -58,10 +58,10 @@ function workspace(files) {
 
 /**
  * @param {Record<string, unknown>} files the package's files, relative to `shared/pkg`
- * @param {Record<string, string[]>} [baseline]
+ * @param {Record<string, string[]>} [debt]
  * @returns {string[]} "file: message" lines, file relative to the package
  */
-function violations(files, baseline = {}) {
+function violations(files, debt = {}) {
   const root = workspace(
     Object.fromEntries(
       Object.entries({ "package.json": "{}", ...files }).map(([file, content]) => [
@@ -70,7 +70,7 @@ function violations(files, baseline = {}) {
       ]),
     ),
   );
-  return check({ workspaceRoot: root, projectRoot: "shared/pkg" }, { baseline }).map(
+  return check({ workspaceRoot: root, projectRoot: "shared/pkg" }, { debt }).map(
     ({ file, message }) => `${file.replace("shared/pkg/", "")}: ${message}`,
   );
 }
@@ -122,7 +122,26 @@ test("only the allowed top-level keys may appear", () => {
   );
 });
 
-test("a compiler option other than types needs a baseline entry", () => {
+test("compiler options other than types and paths belong to a preset", () => {
+  assert.deepEqual(
+    violations(
+      {
+        "tsconfig.json": {
+          extends: "@support/tsconfig/logic",
+          compilerOptions: { target: "ESNext", paths: { "*": ["./*"] }, types: ["jest"] },
+        },
+      },
+      { "shared/pkg/tsconfig.json": ["target"] },
+    ),
+    [
+      "tsconfig.json: compilerOptions.target belongs to a preset: extend the preset that sets it",
+      "tsconfig.json: tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs lists " +
+        "compilerOptions.target, which the config no longer relaxes; remove it",
+    ],
+  );
+});
+
+test("a relaxation of the preset strictness needs a debt entry", () => {
   const files = {
     "tsconfig.json": {
       extends: "@support/tsconfig/logic",
@@ -130,49 +149,62 @@ test("a compiler option other than types needs a baseline entry", () => {
     },
   };
   assert.deepEqual(violations(files), [
-    "tsconfig.json: compilerOptions.noImplicitAny is not the preset's: move it to a preset, or " +
-      "list it in tools/nx-plugins/enforce-tool-config/rules/tsconfig-baseline.mjs",
+    "tsconfig.json: compilerOptions.noImplicitAny relaxes the strictness of its preset: fix the " +
+      "code instead, or list it in tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs",
   ]);
   assert.deepEqual(violations(files, { "shared/pkg/tsconfig.json": ["noImplicitAny"] }), []);
 });
 
-test("the baseline only shrinks: entries the configs no longer need are reported", () => {
+test("a relaxation only takes its relaxed value, and not when strict already sets it", () => {
+  assert.deepEqual(
+    violations({
+      "tsconfig.json": {
+        extends: "@support/tsconfig/logic",
+        compilerOptions: { noImplicitAny: true, noImplicitThis: true },
+      },
+    }),
+    [
+      "tsconfig.json: compilerOptions.noImplicitAny may only relax the preset, to false",
+      "tsconfig.json: compilerOptions.noImplicitThis may only relax the preset, to false",
+      "tsconfig.json: compilerOptions.noImplicitAny repeats what the config inherits; remove it",
+      "tsconfig.json: compilerOptions.noImplicitThis repeats what the config inherits; remove it",
+    ],
+  );
+});
+
+test("the debt list only shrinks: entries the configs no longer need are reported", () => {
   assert.deepEqual(
     violations(
       { "tsconfig.json": { extends: "@support/tsconfig/logic" } },
       {
         "shared/pkg/tsconfig.json": ["noImplicitAny"],
-        "shared/pkg/tsconfig.gone.json": ["lib"],
+        "shared/pkg/tsconfig.gone.json": ["noImplicitThis"],
       },
     ),
     [
-      "tsconfig.json: tools/nx-plugins/enforce-tool-config/rules/tsconfig-baseline.mjs lists " +
-        "compilerOptions.noImplicitAny, which the config no longer sets; remove it",
-      "tools/nx-plugins/enforce-tool-config/rules/tsconfig-baseline.mjs: lists " +
+      "tsconfig.json: tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs lists " +
+        "compilerOptions.noImplicitAny, which the config no longer relaxes; remove it",
+      "tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs: lists " +
         "shared/pkg/tsconfig.gone.json, which does not exist; remove it",
     ],
   );
 });
 
-test("a key equal to what the config inherits is rejected, baseline or not", () => {
+test("a key equal to what the config inherits is rejected", () => {
   assert.deepEqual(
-    violations(
-      {
-        "tsconfig.json": {
-          extends: "@support/tsconfig/logic",
-          compilerOptions: { lib: ["ES2022"], types: ["jest"] },
-          include: ["src/**/*"],
-        },
-        "tsconfig.web.json": {
-          extends: ["./tsconfig.json", "@support/tsconfig/web"],
-          compilerOptions: { types: ["jest"] },
-          exclude: ["src/**/*.native.*"],
-        },
+    violations({
+      "tsconfig.json": {
+        extends: "@support/tsconfig/logic",
+        compilerOptions: { types: ["jest"] },
+        include: ["src/**/*"],
       },
-      { "shared/pkg/tsconfig.json": ["lib"] },
-    ),
+      "tsconfig.web.json": {
+        extends: ["./tsconfig.json", "@support/tsconfig/web"],
+        compilerOptions: { types: ["jest"] },
+        exclude: ["src/**/*.native.*"],
+      },
+    }),
     [
-      "tsconfig.json: compilerOptions.lib repeats what the config inherits; remove it",
       "tsconfig.json: include repeats what the config inherits; remove it",
       "tsconfig.web.json: compilerOptions.types repeats what the config inherits; remove it",
       "tsconfig.web.json: exclude repeats what the config inherits; remove it",
@@ -205,8 +237,8 @@ test("configs of a nested package and of build outputs are left to their owner",
   );
 });
 
-test("every baseline entry names an existing config", () => {
-  for (const file of Object.keys(TSCONFIG_BASELINE)) {
+test("every debt entry names an existing config", () => {
+  for (const file of Object.keys(TSCONFIG_DEBT)) {
     assert.ok(fs.existsSync(path.join(WORKSPACE_ROOT, file)), `${file} must exist`);
   }
 });

@@ -1,6 +1,3 @@
 {
-  "extends": ["./tsconfig.json", "@support/tsconfig/native"],
-  "compilerOptions": {
-    "customConditions": ["react-native", "@ledgerhq/source"]
-  }
+  "extends": ["./tsconfig.json", "@support/tsconfig/native"]
 }
