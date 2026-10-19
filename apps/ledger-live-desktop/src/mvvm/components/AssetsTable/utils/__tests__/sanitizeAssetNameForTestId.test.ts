@@ -1,4 +1,4 @@
-import { sanitizeAssetNameForTestId } from "../assetTableHelpers";
+import { sanitizeAssetNameForTestId } from "../sanitizeAssetNameForTestId";
 
 describe("sanitizeAssetNameForTestId", () => {
   it("lowercases and replaces spaces with hyphens", () => {
