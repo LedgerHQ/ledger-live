@@ -169,7 +169,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@gql.tada/internal": "1.0.9",
+    "@gql.tada/internal": "1.0.10",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
