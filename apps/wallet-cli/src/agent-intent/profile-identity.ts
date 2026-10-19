@@ -27,7 +27,18 @@ export async function loadProfileIdentity(
   const { profileId } = profile;
   const plaintext = profile.keyStore === "plaintext-file";
   const secretKey = plaintext ? loadKeyFromFile(profileId) : await loadKeyFromOsKeychain(profileId);
-  const identity = createSoftwareAgentIdentity(secretKey);
+  let identity: SoftwareAgentIdentity;
+  try {
+    identity = createSoftwareAgentIdentity(secretKey);
+  } catch (e) {
+    if (!plaintext) throw e;
+    // The SDK's message names what's wrong with the key, never the key itself.
+    throw new Error(
+      `The agent key file of profile "${profileId}" (${agentIntentKeyFilePath(profileId)}) does ` +
+        `not hold a valid agent key (${errMessage(e)}) — enroll a fresh profile here.`,
+      { cause: e },
+    );
+  }
   if (identity.publicKey.toLowerCase() !== profile.publicKey.toLowerCase()) {
     throw new Error(
       `The ${plaintext ? "agent key file" : "OS keychain key"} of profile "${profileId}" does ` +

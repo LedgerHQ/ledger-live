@@ -116,6 +116,17 @@ describe("loadProfileIdentity", () => {
     );
   });
 
+  it("names the profile and path, never the content, when the key file is corrupt", async () => {
+    keyFileSecret = "not-a-hex-key-zzzz";
+
+    const err = await loadProfileIdentity(profile("plaintext-file")).catch((e: unknown) => e);
+
+    expect((err as Error).message).toMatch(
+      /agent key file of profile "bot" \(.*bot\.key\) does not hold a valid agent key \(/,
+    );
+    expect((err as Error).message).not.toContain("not-a-hex-key-zzzz");
+  });
+
   it("checks a key file against the recorded public key", async () => {
     keyFileSecret = other.exportSecretKey();
 

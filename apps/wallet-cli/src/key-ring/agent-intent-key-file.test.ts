@@ -9,6 +9,7 @@ import {
   loadAgentIntentKeyFile,
   saveAgentIntentKeyFile,
 } from "./agent-intent-key-file";
+import { installOutputCapture } from "../shared/ui";
 
 const origStateHome = process.env.XDG_STATE_HOME;
 let stateHome: string;
@@ -58,6 +59,33 @@ describe("agent-intent key file", () => {
     writeFileSync(agentIntentKeyFilePath("bot"), "deadbeef\r\n");
 
     expect(loadAgentIntentKeyFile("bot")).toBe("deadbeef");
+  });
+
+  it("warns on stderr, but still reads the key, when the file is readable by others", () => {
+    saveAgentIntentKeyFile("bot", "deadbeef");
+    chmodSync(agentIntentKeyFilePath("bot"), 0o644);
+    const stderr: string[] = [];
+    const restore = installOutputCapture({ stderr: s => stderr.push(s) });
+    try {
+      expect(loadAgentIntentKeyFile("bot")).toBe("deadbeef");
+    } finally {
+      restore();
+    }
+
+    expect(stderr.join("")).toMatch(/Permissions 644 for .*bot\.key are too open/);
+  });
+
+  it("reads a 0600 key file without a permissions warning", () => {
+    saveAgentIntentKeyFile("bot", "deadbeef");
+    const stderr: string[] = [];
+    const restore = installOutputCapture({ stderr: s => stderr.push(s) });
+    try {
+      loadAgentIntentKeyFile("bot");
+    } finally {
+      restore();
+    }
+
+    expect(stderr).toEqual([]);
   });
 
   it("returns null and reports absence when no file exists", () => {

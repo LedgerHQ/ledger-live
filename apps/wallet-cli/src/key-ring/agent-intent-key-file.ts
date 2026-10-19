@@ -1,14 +1,17 @@
-import { chmodSync, existsSync, mkdirSync, readFileSync, unlinkSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, statSync, unlinkSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import { writeSecureFile } from "../shared/secure-file";
+import { writeStderr } from "../shared/ui";
 
 // Unencrypted fallback for an Agent Intent profile's secret key, used only on a host without an OS
 // keychain and only after the human explicitly agreed (`agent-intent enroll --allow-plaintext-key`).
+export const agentIntentKeyDir = (): string => join(stateDir(APP_NAME), "agent-intent-keys");
+
 // The profile id regex allows no path separators, so the id is safe as a file name.
 export function agentIntentKeyFilePath(profileId: string): string {
-  return join(stateDir(APP_NAME), "agent-intent-keys", `${profileId}.key`);
+  return join(agentIntentKeyDir(), `${profileId}.key`);
 }
 
 export function saveAgentIntentKeyFile(profileId: string, secretKeyHex: string): void {
@@ -20,8 +23,17 @@ export function saveAgentIntentKeyFile(profileId: string, secretKeyHex: string):
 }
 
 export function loadAgentIntentKeyFile(profileId: string): string | null {
+  const path = agentIntentKeyFilePath(profileId);
   try {
-    return readFileSync(agentIntentKeyFilePath(profileId), "utf8").trim();
+    const secretKey = readFileSync(path, "utf8").trim();
+    // Like ssh's "permissions are too open", but only a warning: the human already chose plaintext.
+    const mode = statSync(path).mode & 0o777;
+    if (mode & 0o077) {
+      writeStderr(
+        `⚠ Permissions ${mode.toString(8)} for ${path} are too open: run \`chmod 600 ${path}\`.\n`,
+      );
+    }
+    return secretKey;
   } catch (e) {
     if (e instanceof Error && "code" in e && e.code === "ENOENT") return null;
     throw e;
