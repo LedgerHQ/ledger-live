@@ -42,7 +42,7 @@ export default class PayTabPage {
   filterOptionId = (rowKey: string) => `pay-card-balance-filter-option-${rowKey}`;
   depositOptionId = (optionId: PayDepositOptionId) => `pay-card-deposit-option-${optionId}`;
 
-  depositOptionId2 = (optionId: PayDepositOptionId) => `pay-card-deposit-option2-${optionId}`;
+  depositOptionId2 = (optionId: PayDepositOptionId) => `pay-card-deposit-option-${optionId}-2`;
 
   @Step("Expect the Pay tab screen")
   async expectScreenVisible() {
@@ -236,6 +236,6 @@ export default class PayTabPage {
   }
 
   async myEmptyFunction() {
-    await detoxExpect(getElementById(this.depositOptionId2(optionId))).toBeVisible();
+    await detoxExpect(getElementById(this.depositOptionId2("mytest"))).toBeVisible();
   }
 }
