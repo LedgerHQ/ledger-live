@@ -109,6 +109,9 @@ export interface DeviceOnboardingViewModel {
   readonly reset: () => void;
   /** Empty when the host has no feature flag: the section is hidden. */
   readonly featureFlagRows: readonly SwitchRow[];
+  /** Null when the host does not say whether a mock replaces the flag. */
+  readonly featureFlagSource: "flag" | "mock" | null;
+  readonly resetFeatureFlag: (() => void) | null;
   readonly overrideRows: readonly OverrideRow[];
 }
 
@@ -198,6 +201,14 @@ function isPlainList(
   value: DeviceOnboardingToolPayload & object,
 ): value is readonly (string | number | boolean | null)[] {
   return Array.isArray(value) && value.every(item => item === null || typeof item !== "object");
+}
+
+function featureFlagSourceOf(
+  flag: DeviceOnboardingFeatureFlag | undefined,
+  isOverridden: boolean | undefined,
+): "flag" | "mock" | null {
+  if (flag === undefined || isOverridden === undefined) return null;
+  return isOverridden ? "mock" : "flag";
 }
 
 export function featureFlagRows(
@@ -302,6 +313,8 @@ export function useDeviceOnboardingViewModel(
     error,
     featureFlag,
     setFeatureFlag,
+    isFeatureFlagOverridden,
+    resetFeatureFlag,
     send,
   } = props;
 
@@ -364,6 +377,8 @@ export function useDeviceOnboardingViewModel(
     send,
     reset: props.reset,
     featureFlagRows: featureFlagRows(featureFlag, setFeatureFlag),
+    featureFlagSource: featureFlagSourceOf(featureFlag, isFeatureFlagOverridden),
+    resetFeatureFlag: resetFeatureFlag ?? null,
     overrideRows: [
       {
         key: "genuine",

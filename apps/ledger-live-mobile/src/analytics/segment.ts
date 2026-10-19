@@ -174,6 +174,9 @@ const getFeatureFlagProperties = () => {
     const connectSeededDevice = Boolean(
       deviceOnboardingFlag?.enabled && deviceOnboardingFlag.params?.connectSeededDevice,
     );
+    const connectUnseededDevice = Boolean(
+      deviceOnboardingFlag?.enabled && deviceOnboardingFlag.params?.connectUnseededDevice,
+    );
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -213,6 +216,7 @@ const getFeatureFlagProperties = () => {
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
       connectSeededDevice,
+      connectUnseededDevice,
     });
   })();
 };

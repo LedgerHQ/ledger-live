@@ -19,7 +19,13 @@ export const emptyLogCopy = {
 export const featureFlagCopy = {
   title: "Feature flag deviceOnboarding",
   description:
-    "Overrides the flag on this app. A new run reads the new value. The override stays after a restart: reset it in the Feature flags tool.",
+    "A switch writes a local mock. A new run reads the new value. The mock stays after a restart until it is reset.",
+};
+
+export const featureFlagSourceCopy = {
+  flag: "Feature flag",
+  mock: "Local mock",
+  reset: "Reset mock",
 };
 
 export const headerCopy = {

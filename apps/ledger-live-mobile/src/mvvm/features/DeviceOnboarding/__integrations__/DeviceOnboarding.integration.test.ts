@@ -2,7 +2,7 @@ import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { activeHidDeviceSessionSubject } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
-import { act, renderHook, waitFor } from "@tests/test-renderer";
+import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
 import { createTestDevice, knownStax } from "../testing/testDevice";
@@ -182,6 +182,37 @@ describe("useDeviceOnboarding", () => {
         wired: false,
       },
     });
+  });
+
+  it("tells the machine the host can set up an unseeded device when that flag is on", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(
+      () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      {
+        overrideInitialState: withFlagOverrides({
+          deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+        }),
+      },
+    );
+
+    await connectStax(result, device);
+
+    expect(result.current.machineContext).toEqual(
+      expect.objectContaining({ hostsSeedSetup: true }),
+    );
+  });
+
+  it("leaves seed setup to legacy when the unseeded flag is off", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+
+    expect(result.current.machineContext).toEqual(
+      expect.objectContaining({ hostsSeedSetup: false }),
+    );
   });
 
   it("keeps the screen awake from connect until reset", async () => {
