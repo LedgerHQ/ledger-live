@@ -171,11 +171,13 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
+    await revealForTap(this.receiveButtonId, { container: this.accountScreenScrollView });
     await tapById(this.receiveButtonId);
   }
 
   @Step("Tap on send button")
   async tapSend() {
+    await revealForTap(this.sendButtonId, { container: this.accountScreenScrollView });
     await tapById(this.sendButtonId);
   }
 
