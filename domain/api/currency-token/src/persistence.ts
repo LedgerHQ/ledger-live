@@ -5,8 +5,9 @@ import { cryptoAssetsApi } from "./api";
 import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
 import {
   buildRestoreCacheEntries,
+  checkStoredHash,
   groupTokensByCurrency,
-  resolveCurrenciesToEvict,
+  hashQueryCacheKey,
   restoreQueryCacheKeys,
 } from "./internals/restore";
 import { PersistedCALSchema } from "./schema";
@@ -82,7 +83,10 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
   return tokens;
 }
 
-/** Extracts the `currencyId → hash` map from fulfilled `getTokensSyncHash` queries. */
+/**
+ * Extracts the `currencyId → hash` map from `getTokensSyncHash` cache entries that still hold a hash.
+ * A refetch can be pending or rejected while the previous hash is still the baseline worth saving.
+ */
 export function extractHashesFromState(state: WithCryptoAssetsApi): Record<string, string> {
   const rtkState = state[cryptoAssetsApi.reducerPath];
 
@@ -93,17 +97,13 @@ export function extractHashesFromState(state: WithCryptoAssetsApi): Record<strin
   const hashes: Record<string, string> = {};
 
   for (const [queryKey, query] of Object.entries(rtkState.queries)) {
-    if (
-      query?.status === "fulfilled" &&
-      query.endpointName === "getTokensSyncHash" &&
-      query.data &&
-      typeof query.data === "string"
-    ) {
-      // Query key format: 'getTokensSyncHash("ethereum")'
-      const match = SYNC_HASH_QUERY_KEY.exec(queryKey);
-      if (match?.[1]) {
-        hashes[match[1]] = query.data;
-      }
+    if (query?.endpointName !== "getTokensSyncHash" || typeof query.data !== "string") {
+      continue;
+    }
+    // Query key format: 'getTokensSyncHash("ethereum")'
+    const match = SYNC_HASH_QUERY_KEY.exec(queryKey);
+    if (match?.[1]) {
+      hashes[match[1]] = query.data;
     }
   }
 
@@ -152,10 +152,11 @@ export function filterExpiredTokens(
 }
 
 /**
- * Optimistically restores persisted tokens into the RTK Query cache without blocking loading.
- * Then checks each stored hash one currency at a time; a changed hash drops that currency's
- * restored entries, and a failed check leaves them in place. Currencies with no stored hash are
- * never evicted.
+ * Optimistically restores persisted tokens into the RTK Query cache without blocking loading,
+ * and pins each stored hash onto that currency's in-flight check. Currencies are checked
+ * independently: a changed hash drops that currency's restored entries, a currency CAL no
+ * longer lists drops the hash too, and a failed check leaves both in place. Currencies with
+ * no stored hash are never evicted.
  */
 export async function restoreTokensToCache(
   dispatch: CryptoAssetsDispatch,
@@ -173,13 +174,35 @@ export async function restoreTokensToCache(
   }
 
   const tokensByCurrency = groupTokensByCurrency(validTokens);
-  void resolveCurrenciesToEvict(dispatch, tokensByCurrency, persistedData.hashes ?? {}).then(
-    currencyIdsToEvict => {
-      const stale = validTokens.filter(entry =>
-        currencyIdsToEvict.has(entry.data.parentCurrencyId),
-      );
-      dropRestoredCacheEntries(dispatch, stale);
-    },
+  const hashesToRestore = hashesForRestoredCurrencies(persistedData.hashes ?? {}, tokensByCurrency);
+  for (const [currencyId, tokens] of tokensByCurrency) {
+    const storedHash = hashesToRestore[currencyId];
+    if (!storedHash) continue;
+    void checkStoredHash(dispatch, currencyId, storedHash).then(verdict => {
+      if (verdict.action === "keep") return;
+      dropRestoredCacheEntries(dispatch, tokens);
+      if (verdict.action === "missing") dropHashCacheEntry(dispatch, currencyId);
+    });
+  }
+}
+
+function hashesForRestoredCurrencies(
+  hashes: Record<string, string>,
+  tokensByCurrency: Map<string, PersistedTokenEntry[]>,
+): Record<string, string> {
+  const restored: Record<string, string> = {};
+  for (const currencyId of tokensByCurrency.keys()) {
+    const hash = hashes[currencyId];
+    if (hash) restored[currencyId] = hash;
+  }
+  return restored;
+}
+
+function dropHashCacheEntry(dispatch: CryptoAssetsDispatch, currencyId: string) {
+  dispatch(
+    cryptoAssetsApi.internalActions.removeQueryResult({
+      queryCacheKey: hashQueryCacheKey(currencyId),
+    }),
   );
 }
 

@@ -300,6 +300,7 @@ describe("Token Persistence", () => {
       });
 
       afterEach(() => {
+        hashRequests = 0;
         server.resetHandlers();
       });
 
@@ -333,10 +334,48 @@ describe("Token Persistence", () => {
         ).length;
       }
 
-      function hashCheckStatus(store: Store) {
-        return Object.values(store.getState()[cryptoAssetsApi.reducerPath].queries).find(
-          query => query?.endpointName === "getTokensSyncHash",
-        )?.status;
+      function tokenCount(store: Store, currencyId: string) {
+        return Object.values(store.getState()[cryptoAssetsApi.reducerPath].queries).filter(
+          query => {
+            if (
+              query?.endpointName !== "findTokenById" &&
+              query?.endpointName !== "findTokenByAddressInCurrency"
+            ) {
+              return false;
+            }
+            const data: unknown = query.data;
+            return (
+              typeof data === "object" &&
+              data !== null &&
+              "parentCurrencyId" in data &&
+              data.parentCurrencyId === currencyId
+            );
+          },
+        ).length;
+      }
+
+      let hashRequests = 0;
+
+      function respond(response: () => Response | Promise<Response>) {
+        server.use(
+          http.get(currenciesUrl, () => {
+            hashRequests += 1;
+            return response();
+          }),
+        );
+      }
+
+      async function waitForHashRequests(count: number) {
+        for (let attempt = 0; attempt < 50; attempt += 1) {
+          if (hashRequests >= count) {
+            for (let tick = 0; tick < 5; tick += 1) {
+              await new Promise(resolve => setImmediate(resolve));
+            }
+            return;
+          }
+          await new Promise(resolve => setImmediate(resolve));
+        }
+        throw new Error("timed out waiting for the hash check");
       }
 
       async function restore(store: Store, hashes?: Record<string, string>) {
@@ -348,34 +387,20 @@ describe("Token Persistence", () => {
         await restoreTokensToCache(store.dispatch, persistedData, ttl);
       }
 
-      function respond(response: () => Response | Promise<Response>) {
-        server.use(http.get(currenciesUrl, response));
-      }
-
-      async function waitForHashCheck(store: Store) {
-        for (let attempt = 0; attempt < 50; attempt += 1) {
-          const status = hashCheckStatus(store);
-          if (status === "fulfilled" || status === "rejected") {
-            await new Promise(resolve => setImmediate(resolve));
-            return;
-          }
-          await new Promise(resolve => setImmediate(resolve));
-        }
-        throw new Error("timed out waiting for the hash check");
-      }
-
       async function expectRestoredCount(
         count: number,
         hashes: Record<string, string> | undefined,
         response?: () => Response,
+        remainingHashes?: Record<string, string>,
       ) {
         if (response) respond(response);
         const store = makeStore();
         try {
           await restore(store, hashes);
-          if (hashes) await waitForHashCheck(store);
+          if (hashes) await waitForHashRequests(Object.keys(hashes).length);
           else await new Promise(resolve => setImmediate(resolve));
           expect(restoredTokenCount(store)).toBe(count);
+          expect(extractHashesFromState(store.getState())).toEqual(remainingHashes ?? hashes ?? {});
         } finally {
           store.dispatch(cryptoAssetsApi.util.resetApiState());
         }
@@ -393,7 +418,16 @@ describe("Token Persistence", () => {
           await restore(store, { ethereum: "hash123" });
 
           expect(restoredTokenCount(store)).toBe(2);
-          expect(hashCheckStatus(store)).toBe("pending");
+          expect(extractHashesFromState(store.getState())).toEqual({ ethereum: "hash123" });
+
+          let joinedCheckSettled = false;
+          void store
+            .dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"))
+            .then(() => {
+              joinedCheckSettled = true;
+            });
+          await new Promise(resolve => setImmediate(resolve));
+          expect(joinedCheckSettled).toBe(false);
         } finally {
           release(HttpResponse.error());
           store.dispatch(cryptoAssetsApi.util.resetApiState());
@@ -401,13 +435,17 @@ describe("Token Persistence", () => {
       });
 
       it("evicts tokens when the hash changes", async () => {
-        await expectRestoredCount(0, { ethereum: "hash123" }, () =>
-          HttpResponse.json([{ id: "ethereum" }], { headers: { "X-Ledger-Commit": "hash456" } }),
+        await expectRestoredCount(
+          0,
+          { ethereum: "hash123" },
+          () =>
+            HttpResponse.json([{ id: "ethereum" }], { headers: { "X-Ledger-Commit": "hash456" } }),
+          { ethereum: "hash456" },
         );
       });
 
       it("evicts tokens when CAL no longer lists the currency", async () => {
-        await expectRestoredCount(0, { ethereum: "hash123" }, () => HttpResponse.json([]));
+        await expectRestoredCount(0, { ethereum: "hash123" }, () => HttpResponse.json([]), {});
       });
 
       it("does not evict tokens when the hash matches", async () => {
@@ -428,6 +466,68 @@ describe("Token Persistence", () => {
 
       it("does not evict tokens when there is no stored hash", async () => {
         await expectRestoredCount(2, undefined);
+      });
+
+      it("evicts a changed currency while another currency's check is still hung", async () => {
+        const polygonToken: TokenCurrency = token({
+          type: "TokenCurrency",
+          id: "polygon/erc20/usdt",
+          contractAddress: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+          parentCurrencyId: "polygon",
+          tokenType: "erc20",
+          name: "Tether USD",
+          ticker: "USDT",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+        });
+        let releaseEthereum: () => void = () => undefined;
+        const ethereumPending = new Promise<void>(resolve => {
+          releaseEthereum = resolve;
+        });
+        server.use(
+          http.get(currenciesUrl, async ({ request }) => {
+            hashRequests += 1;
+            const id = new URL(request.url).searchParams.get("id");
+            if (id === "ethereum") {
+              await ethereumPending;
+              return HttpResponse.error();
+            }
+            return HttpResponse.json([{ id: "polygon" }], {
+              headers: { "X-Ledger-Commit": "hash-new" },
+            });
+          }),
+        );
+
+        const store = makeStore();
+        try {
+          await restoreTokensToCache(
+            store.dispatch,
+            {
+              version: PERSISTENCE_VERSION,
+              tokens: [
+                { data: mockToken, timestamp: Date.now() },
+                { data: polygonToken, timestamp: Date.now() },
+              ],
+              hashes: { ethereum: "hash123", polygon: "hash-old" },
+            },
+            ttl,
+          );
+
+          for (let attempt = 0; attempt < 50 && tokenCount(store, "polygon") !== 0; attempt += 1) {
+            await new Promise(resolve => setImmediate(resolve));
+          }
+
+          expect(tokenCount(store, "polygon")).toBe(0);
+          expect(tokenCount(store, "ethereum")).toBe(2);
+          expect(extractHashesFromState(store.getState())).toEqual({
+            ethereum: "hash123",
+            polygon: "hash-new",
+          });
+        } finally {
+          releaseEthereum();
+          store.dispatch(cryptoAssetsApi.util.resetApiState());
+        }
       });
     });
   });
@@ -455,6 +555,54 @@ describe("Token Persistence", () => {
         ethereum: "hash123",
         polygon: "hash456",
       });
+    });
+
+    it("reads a hash that is still in flight", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'getTokensSyncHash("ethereum")': {
+              status: "pending",
+              data: "hash123",
+              endpointName: "getTokensSyncHash",
+            },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      expect(extractHashesFromState(mockState)).toEqual({ ethereum: "hash123" });
+    });
+
+    it("reads a hash left behind by a failed refetch", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'getTokensSyncHash("ethereum")': {
+              status: "rejected",
+              data: "hash123",
+              error: { status: "FETCH_ERROR" },
+              endpointName: "getTokensSyncHash",
+            },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      expect(extractHashesFromState(mockState)).toEqual({ ethereum: "hash123" });
+    });
+
+    it("ignores an in-flight hash check that has no cached value", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'getTokensSyncHash("ethereum")': {
+              status: "pending",
+              endpointName: "getTokensSyncHash",
+            },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      expect(extractHashesFromState(mockState)).toEqual({});
     });
 
     it("should return empty object when no hash queries exist", () => {

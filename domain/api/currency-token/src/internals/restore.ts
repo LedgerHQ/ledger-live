@@ -24,36 +24,70 @@ export function groupTokensByCurrency(
   return byCurrency;
 }
 
-/**
- * For each currency that has a stored hash, fetches the current server hash and returns the set of
- * currencies whose hash changed or is no longer listed by CAL — those must not be restored from cache.
- * Currencies without a stored hash are never evicted.
- */
-export async function resolveCurrenciesToEvict(
-  dispatch: CryptoAssetsDispatch,
-  tokensByCurrency: Map<string, PersistedTokenEntry[]>,
-  hashes: Record<string, string>,
-): Promise<Set<string>> {
-  const toEvict = new Set<string>();
-  for (const currencyId of tokensByCurrency.keys()) {
-    const storedHash = hashes[currencyId];
-    if (!storedHash) continue;
+export type StoredHashVerdict =
+  | { action: "keep" }
+  | { action: "changed"; hash: string }
+  | { action: "missing" };
 
-    try {
-      const { data: currentHash, error } = await dispatch(
-        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: false }),
-      );
-      if (
-        isCurrencyNotFoundError(error, currencyId) ||
-        (currentHash && currentHash !== storedHash)
-      ) {
-        toEvict.add(currencyId);
-      }
-    } catch {
-      // A failed fetch does not evict currencies.
-    }
+/**
+ * Decides what a restored currency should do with one hash response.
+ * A failed or incomplete response keeps both the tokens and the stored hash.
+ */
+export function decideHashCheck(
+  currencyId: string,
+  storedHash: string,
+  result: { data?: unknown; error?: unknown },
+): StoredHashVerdict {
+  if (isCurrencyNotFoundError(result.error, currencyId)) return { action: "missing" };
+  if (typeof result.data === "string" && result.data !== storedHash) {
+    return { action: "changed", hash: result.data };
   }
-  return toEvict;
+  return { action: "keep" };
+}
+
+/**
+ * Starts one currency's hash check and writes `storedHash` onto that in-flight entry.
+ * The entry stays pending, so a later `getTokensSyncHash` joins the request instead of
+ * treating the stored hash as a fresh server result. A thrown request keeps the baseline.
+ */
+export async function checkStoredHash(
+  dispatch: CryptoAssetsDispatch,
+  currencyId: string,
+  storedHash: string,
+): Promise<StoredHashVerdict> {
+  try {
+    const request = dispatch(
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: true }),
+    );
+    dispatch(
+      cryptoAssetsApi.internalActions.queryResultPatched({
+        queryCacheKey: hashQueryCacheKey(currencyId),
+        patches: [{ op: "replace", path: [], value: storedHash }],
+      }),
+    );
+    return decideHashCheck(currencyId, storedHash, await request);
+  } catch {
+    return { action: "keep" };
+  }
+}
+
+type HashCacheEntry = { endpointName: "getTokensSyncHash"; arg: string; value: string };
+
+function buildHashCacheEntries(hashes: Record<string, string>): HashCacheEntry[] {
+  return Object.entries(hashes).map(([currencyId, hash]) => ({
+    endpointName: "getTokensSyncHash",
+    arg: currencyId,
+    value: hash,
+  }));
+}
+
+/** Cache key RTK Query assigns a `getTokensSyncHash` entry for this currency. */
+export function hashQueryCacheKey(currencyId: string): QueryCacheKey {
+  const [key] = queryCacheKeys(buildHashCacheEntries({ [currencyId]: currencyId }));
+  if (key === undefined) {
+    throw new Error("Could not resolve cache key for stored hash");
+  }
+  return key;
 }
 
 type RestoreCacheEntry =
@@ -101,7 +135,10 @@ export function buildRestoreCacheEntries(tokens: PersistedTokenEntry[]): Restore
  * dispatch, which is the same serializer that inserted them.
  */
 export function restoreQueryCacheKeys(tokens: PersistedTokenEntry[]): QueryCacheKey[] {
-  const entries = buildRestoreCacheEntries(tokens);
+  return queryCacheKeys(buildRestoreCacheEntries(tokens));
+}
+
+function queryCacheKeys(entries: Array<RestoreCacheEntry | HashCacheEntry>): QueryCacheKey[] {
   if (entries.length === 0) return [];
 
   const keys = cryptoAssetsApi.util.upsertQueryEntries(entries).payload.flatMap(entry => {
@@ -110,7 +147,7 @@ export function restoreQueryCacheKeys(tokens: PersistedTokenEntry[]): QueryCache
   });
 
   if (keys.length !== entries.length) {
-    throw new Error("Could not resolve cache keys for restored token entries");
+    throw new Error("Could not resolve cache keys for restored entries");
   }
 
   return keys;

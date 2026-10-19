@@ -3,8 +3,9 @@ import type { PersistedTokenEntry } from "../types";
 import { currencyNotFoundError, fetchCurrencyError } from "./errors";
 import {
   buildRestoreCacheEntries,
+  checkStoredHash,
+  decideHashCheck,
   groupTokensByCurrency,
-  resolveCurrenciesToEvict,
 } from "./restore";
 
 function entry(
@@ -74,102 +75,45 @@ describe("buildRestoreCacheEntries", () => {
   });
 });
 
-describe("resolveCurrenciesToEvict", () => {
-  type Dispatch = Parameters<typeof resolveCurrenciesToEvict>[0];
-
-  function currencies(...ids: string[]): Map<string, PersistedTokenEntry[]> {
-    const map = new Map<string, PersistedTokenEntry[]>();
-    for (const id of ids) map.set(id, []);
-    return map;
-  }
-
-  it("does not evict currencies without a stored hash", async () => {
-    const dispatch = jest.fn();
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {},
-    );
-
-    expect(evict.size).toBe(0);
-    expect(dispatch).not.toHaveBeenCalled();
+describe("decideHashCheck", () => {
+  it("keeps the currency when the current hash matches the stored one", () => {
+    expect(decideHashCheck("ethereum", "hash1", { data: "hash1" })).toEqual({ action: "keep" });
   });
 
-  it("does not evict when the current hash matches the stored one", async () => {
-    const dispatch = jest.fn().mockResolvedValue({ data: "hash1" });
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(false);
+  it("replaces the stored hash when the current hash differs", () => {
+    expect(decideHashCheck("ethereum", "hash1", { data: "hash2" })).toEqual({
+      action: "changed",
+      hash: "hash2",
+    });
   });
 
-  it("evicts when the current hash differs", async () => {
-    const dispatch = jest.fn().mockResolvedValue({ data: "hash2" });
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(true);
+  it("drops the currency when CAL no longer lists it", () => {
+    expect(decideHashCheck("ethereum", "hash1", currencyNotFoundError("ethereum"))).toEqual({
+      action: "missing",
+    });
   });
 
-  it("evicts when CAL no longer lists the currency", async () => {
-    const dispatch = jest.fn().mockResolvedValue(currencyNotFoundError("ethereum"));
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(true);
+  it("keeps the currency when the hash fetch returns an HTTP 404", () => {
+    expect(decideHashCheck("ethereum", "hash1", fetchCurrencyError(404, "Not Found"))).toEqual({
+      action: "keep",
+    });
   });
 
-  it("does not evict when the hash fetch returns an HTTP 404", async () => {
-    const dispatch = jest.fn().mockResolvedValue(fetchCurrencyError(404, "Not Found"));
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(false);
+  it("keeps the currency when the hash fetch returns no hash", () => {
+    expect(decideHashCheck("ethereum", "hash1", { error: { status: "FETCH_ERROR" } })).toEqual({
+      action: "keep",
+    });
   });
+});
 
-  it("does not evict when the hash fetch returns no hash", async () => {
-    const dispatch = jest.fn().mockResolvedValue({ error: { status: "FETCH_ERROR" } });
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
+describe("checkStoredHash", () => {
+  it("keeps the stored hash when the request throws", async () => {
+    const dispatch = jest.fn(() => {
+      throw new Error("network");
+    });
 
-    expect(evict.has("ethereum")).toBe(false);
-  });
-
-  it("does not evict when the hash fetch throws", async () => {
-    const dispatch = jest.fn().mockRejectedValue(new Error("network"));
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(false);
+    await expect(checkStoredHash(dispatch, "ethereum", "hash1")).resolves.toEqual({
+      action: "keep",
+    });
   });
 });

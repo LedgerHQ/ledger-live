@@ -1,5 +1,5 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { calApi, getCalExtra, HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
+import { calApi, getCalExtra } from "@shared/api-services";
 import { ApiTokenResponseSchema } from "./schema";
 import {
   type GetTokensDataParams,
@@ -9,12 +9,8 @@ import {
   type TokensDataWithPagination,
 } from "./types";
 import {
-  commitHeaderMissingError,
-  currencyNotFoundError,
   DEFAULT_PAGE_SIZE,
-  fetchCurrencyError,
-  fetchError,
-  HEADER_X_LEDGER_COMMIT,
+  fetchTokensSyncHash,
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
@@ -69,40 +65,7 @@ export const cryptoAssetsApi = calApi
 
       getTokensSyncHash: build.query<string, string>({
         async queryFn(currencyId, queryApi) {
-          const extra = getCalExtra(queryApi);
-          try {
-            const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
-            url.searchParams.set("output", "id");
-            url.searchParams.set("limit", "1");
-            url.searchParams.set("id", currencyId);
-
-            const response = await fetch(url, {
-              headers: {
-                "Content-Type": "application/json",
-                [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
-              },
-            });
-
-            if (!response.ok) {
-              return fetchCurrencyError(response.status, response.statusText);
-            }
-
-            // Check if the response contains data (not an empty array)
-            const responseData = await response.json();
-            if (Array.isArray(responseData) && responseData.length === 0) {
-              return currencyNotFoundError(currencyId);
-            }
-
-            const hash = response.headers.get(HEADER_X_LEDGER_COMMIT);
-
-            if (!hash) {
-              return commitHeaderMissingError();
-            }
-
-            return { data: hash };
-          } catch (error) {
-            return fetchError(error);
-          }
+          return fetchTokensSyncHash(currencyId, getCalExtra(queryApi));
         },
         async onQueryStarted(currencyId, api) {
           const extra = getCalExtra(api);
