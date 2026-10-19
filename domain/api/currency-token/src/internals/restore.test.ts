@@ -6,6 +6,7 @@ import {
   checkStoredHash,
   decideHashCheck,
   groupTokensByCurrency,
+  restoreQueryCacheKeys,
 } from "./restore";
 
 function entry(
@@ -72,6 +73,27 @@ describe("buildRestoreCacheEntries", () => {
       ),
     ).toBe(true);
     expect(addressEntries.some(e => !("token_identifier" in e.arg))).toBe(true);
+  });
+});
+
+describe("restoreQueryCacheKeys", () => {
+  it("returns no keys for no tokens", () => {
+    expect(restoreQueryCacheKeys([])).toEqual([]);
+  });
+
+  it("returns the id and address keys RTK Query assigns a token", () => {
+    expect(restoreQueryCacheKeys([entry("ethereum/erc20/a", "ethereum")])).toEqual([
+      'findTokenById({"id":"ethereum/erc20/a"})',
+      'findTokenByAddressInCurrency({"contract_address":"0xabc","network":"ethereum"})',
+    ]);
+  });
+
+  it("returns the address key with token_identifier and the address-only key", () => {
+    expect(restoreQueryCacheKeys([entry("elrond/esdt/a", "elrond", "MYTOKEN-1")])).toEqual([
+      'findTokenById({"id":"elrond/esdt/a"})',
+      'findTokenByAddressInCurrency({"contract_address":"0xabc","network":"elrond","token_identifier":"MYTOKEN-1"})',
+      'findTokenByAddressInCurrency({"contract_address":"0xabc","network":"elrond"})',
+    ]);
   });
 });
 
