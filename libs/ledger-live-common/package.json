@@ -277,6 +277,7 @@
     "@domain/entity-interest-rate": "workspace:^",
     "@domain/entity-market-countervalues": "workspace:*",
     "@domain/entity-recent-addresses": "workspace:^",
+    "@features/platform-account-analytics": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:^",

@@ -1,5 +1,9 @@
 import { AnalyticsBrowser } from "@segment/analytics-next";
-import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import {
+  getAccountsWithFunds,
+  getBlockchainsWithFunds,
+  getTokensWithFunds,
+} from "@features/platform-account-analytics";
 import {
   getStablecoinYieldSetting,
   getBitcoinYieldSetting,
@@ -334,16 +338,8 @@ const extraProperties = (store: ReduxStore) => {
     asset => `${asset.ticker} on ${asset.networkName}`,
   );
 
-  const accountsWithFunds = accounts
-    ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
-    : [];
-
+  const accountsWithFunds = getAccountsWithFunds(accounts);
+  const blockchainWithFunds = getBlockchainsWithFunds(accounts);
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
@@ -377,6 +373,7 @@ const extraProperties = (store: ReduxStore) => {
     sessionId,
     sidebarCollapsed,
     accountsWithFunds,
+    blockchainWithFunds,
     ContactsAttributes: contactsFeature,
     ...contactsAttributes,
     tokenWithFunds,

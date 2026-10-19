@@ -31,7 +31,11 @@ import {
   getBitcoinYieldSetting,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
-import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import {
+  getAccountsWithFunds,
+  getBlockchainsWithFunds,
+  getTokensWithFunds,
+} from "@features/platform-account-analytics";
 import { getEnv } from "@shared/env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
@@ -360,17 +364,6 @@ const getLdmkAndSyncFlags = () => ({
   },
 });
 
-const getAccountsWithFunds = (accounts: ReturnType<typeof accountsSelector>) =>
-  accounts
-    ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
-    : [];
-
 const getStakingCurrenciesFromFlags = () => {
   const stakePrograms = analyticsFeatureFlagMethod?.("stakePrograms");
   const stakingCurrenciesEnabled =
@@ -449,6 +442,8 @@ const extraProperties = async (store: AppStore) => {
     .map(([key]) => key);
 
   const accountsWithFunds = getAccountsWithFunds(accounts);
+  const blockchainWithFunds = getBlockchainsWithFunds(accounts);
+  const tokenWithFunds = getTokensWithFunds(accounts);
 
   const stakingProviders = analyticsFeatureFlagMethod?.("ethStakingProviders");
   const stakingProvidersCount =
@@ -474,7 +469,6 @@ const extraProperties = async (store: AppStore) => {
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
-  const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
   const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
@@ -537,6 +531,7 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
+    blockchainWithFunds,
     ContactsAttributes: contactsFeature,
     ...contactsAttributes,
     appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
