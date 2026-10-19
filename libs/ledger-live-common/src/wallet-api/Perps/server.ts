@@ -10,10 +10,8 @@ import {
   createUnknownError,
   ServerError,
 } from "@ledgerhq/wallet-api-core";
-import type BigNumber from "bignumber.js";
 import { z } from "zod";
 import { HYPERCORE_CURRENCY_ID } from "./constants";
-import { DecimalSchema } from "./withdraw/schemas";
 import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
 import type Transport from "@ledgerhq/hw-transport";
@@ -52,7 +50,6 @@ export type PerpsDepositReviewParams = PerpsDepositUiParams & {
 
 export type PerpsWithdrawParams = {
   sourceAccountId: string;
-  availableBalance: string;
 };
 
 export type PerpsWithdrawResult = {
@@ -64,15 +61,10 @@ export type PerpsWithdrawResult = {
 
 export type PerpsWithdrawUiParams = {
   sourceAccount: AccountLike;
-  availableBalance: BigNumber;
 };
 
 const PerpsWithdrawParamsSchema = z.object({
   sourceAccountId: z.string().min(1),
-  availableBalance: DecimalSchema.refine(
-    value => value.isGreaterThan(0),
-    "Expected a positive amount",
-  ),
 });
 
 export type PerpsUiHooks = {
@@ -229,12 +221,7 @@ export const handlers = ({
         }
 
         try {
-          return (
-            (await uiWithdrawExecute({
-              sourceAccount,
-              availableBalance: parsed.data.availableBalance,
-            })) ?? {}
-          );
+          return (await uiWithdrawExecute({ sourceAccount })) ?? {};
         } catch (error) {
           console.warn("[perps] Withdraw request rejected", error);
           throw error;

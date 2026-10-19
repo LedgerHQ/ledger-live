@@ -76,7 +76,13 @@ const baseHyperCoreAccount = createFixtureAccount("hc");
 const mockHyperCoreAccount = {
   ...baseHyperCoreAccount,
   id: "js:2:hypercore:0x0hc:",
-  currency: { ...baseHyperCoreAccount.currency, id: "hypercore" },
+  currency: {
+    ...baseHyperCoreAccount.currency,
+    id: "hypercore",
+    units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+  },
+  // accountValue − usedMargin, in USDC atomic units.
+  spendableBalance: new BigNumber("1000500000"),
 };
 const HYPERCORE_WALLET_ACCOUNT_ID = `wallet:${mockHyperCoreAccount.id}`;
 
@@ -312,7 +318,6 @@ describe("Perps handlers", () => {
   describe("custom.perps.withdraw", () => {
     const withdrawParams: PerpsWithdrawParams = {
       sourceAccountId: HYPERCORE_WALLET_ACCOUNT_ID,
-      availableBalance: "1000.5",
     };
 
     beforeEach(() => {
@@ -323,13 +328,10 @@ describe("Perps handlers", () => {
         );
     });
 
-    it("should call withdraw.execute with the source account and its available balance", async () => {
+    it("should hand only the source account to withdraw.execute", async () => {
       await serverHandlers["custom.perps.withdraw"](withdrawParams);
 
-      expect(mockUiWithdrawExecute).toHaveBeenCalledWith({
-        sourceAccount: mockHyperCoreAccount,
-        availableBalance: new BigNumber("1000.5"),
-      });
+      expect(mockUiWithdrawExecute).toHaveBeenCalledWith({ sourceAccount: mockHyperCoreAccount });
     });
 
     it("should resolve with the outcome the withdraw flow settles with", async () => {
@@ -356,15 +358,8 @@ describe("Perps handlers", () => {
 
     it.each([
       ["undefined params", undefined],
-      ["a missing source account", { availableBalance: "10" }],
-      ["a missing balance", { sourceAccountId: HYPERCORE_WALLET_ACCOUNT_ID }],
-      ["a non numeric balance", { ...withdrawParams, availableBalance: "abc" }],
-      ["a negative balance", { ...withdrawParams, availableBalance: "-1" }],
-      ["a zero balance", { ...withdrawParams, availableBalance: "0" }],
-      ["an infinite balance", { ...withdrawParams, availableBalance: "Infinity" }],
-      ["a hex balance", { ...withdrawParams, availableBalance: "0x10" }],
-      ["an exponent balance", { ...withdrawParams, availableBalance: "1e2" }],
-      ["a padded balance", { ...withdrawParams, availableBalance: " 10" }],
+      ["a missing source account", {}],
+      ["an empty source account id", { sourceAccountId: "" }],
     ])("should throw a ServerError for %s", async (_, params) => {
       await expect(serverHandlers["custom.perps.withdraw"](params)).rejects.toThrow("ServerError");
       expect(mockUiWithdrawExecute).not.toHaveBeenCalled();
