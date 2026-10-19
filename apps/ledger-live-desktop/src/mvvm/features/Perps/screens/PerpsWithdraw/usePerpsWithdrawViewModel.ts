@@ -11,6 +11,7 @@ import {
   getWithdrawMaxAmount,
   validateWithdrawAmount,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/amount";
+import { getPerpsAvailableBalance } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/availableBalance";
 import { pickDefaultWithdrawAccount } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/defaultAccount";
 import {
   WithdrawAddressScreeningError,
@@ -96,9 +97,13 @@ export type PerpsWithdrawViewModel = Readonly<{
 }>;
 
 export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdrawViewModel {
-  const { sourceAccount, availableBalance, draft } = data;
+  const { draft } = data;
   const walletState = useSelector(walletSelector);
   const accounts = useSelector(flattenAccountsSelector);
+  // The store copy stays in sync while the screen is open.
+  const sourceAccount =
+    accounts.find(({ id }) => id === data.sourceAccount.id) ?? data.sourceAccount;
+  const availableBalance = useMemo(() => getPerpsAvailableBalance(sourceAccount), [sourceAccount]);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);

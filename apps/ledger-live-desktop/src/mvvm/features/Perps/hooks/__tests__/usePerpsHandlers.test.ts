@@ -100,7 +100,7 @@ describe("usePerpsHandlers", () => {
 
   it("should open the withdraw dialog and resolve once the withdrawal settles", async () => {
     const accounts = [{ id: "acc-1" }] as never[];
-    const params = { sourceAccount: { id: "hl-1" }, availableBalance: "1000" } as never;
+    const params = { sourceAccount: { id: "hl-1" } } as never;
 
     renderHook(() => usePerpsHandlers(accounts));
 
@@ -114,7 +114,7 @@ describe("usePerpsHandlers", () => {
 
   it("should reject an in-flight withdrawal when the live app unmounts", async () => {
     const accounts = [{ id: "acc-1" }] as never[];
-    const params = { sourceAccount: { id: "hl-1" }, availableBalance: "1000" } as never;
+    const params = { sourceAccount: { id: "hl-1" } } as never;
 
     const { unmount } = renderHook(() => usePerpsHandlers(accounts));
 
