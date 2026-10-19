@@ -134,9 +134,6 @@ export default class ContactDetailPage {
       await typeTextByElement(this.addAddressNameInput(), data.addressLabel, false);
     }
 
-    // iOS Detox waits for idle, and the device sheet never settles, so the continue tap hangs.
-    // Sync stays off for the rest of this spec. The next spec launches a fresh app.
-    await app.common.disableSynchronizationForiOS();
     await tapByElement(this.addAddressNameContinueButton());
     await waitForElement(this.registerAddressDeviceConfirmation());
   }
