@@ -884,7 +884,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -1182,7 +1182,7 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
+        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -1254,7 +1254,7 @@ importers:
         version: link:../../libs/live-dmk-speculos
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -1693,7 +1693,7 @@ importers:
         version: 10.4.22(postcss@8.5.6)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       chalk:
         specifier: 4.1.2
         version: 4.1.2
@@ -2074,7 +2074,7 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
+        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -2152,7 +2152,7 @@ importers:
         version: link:../../libs/live-engagement
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -2308,7 +2308,7 @@ importers:
         version: 1.3.1
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -2900,7 +2900,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -2978,7 +2978,7 @@ importers:
         version: 1.4.2
       debug:
         specifier: 4.4.3
-        version: 4.4.3(supports-color@5.5.0)
+        version: 4.4.3(supports-color@7.2.0)
       fetch-cookie:
         specifier: 3.2.0
         version: 3.2.0
@@ -3215,7 +3215,7 @@ importers:
         version: 4.25.4(@codemirror/view@6.39.5)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -5961,7 +5961,7 @@ importers:
         version: 3.13.0(@playwright/test@1.63.0)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -6007,7 +6007,7 @@ importers:
         version: 6.19.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       invariant:
         specifier: 2.2.4
         version: 2.2.4
@@ -10651,7 +10651,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       command-line-args:
         specifier: 6.0.1
         version: 6.0.1
@@ -10694,7 +10694,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10724,7 +10724,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10733,7 +10733,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10797,7 +10797,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10806,7 +10806,7 @@ importers:
         version: 3.5.2
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10882,7 +10882,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10894,7 +10894,7 @@ importers:
         version: 1.8.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10973,7 +10973,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.1(@typescript/typescript6@6.0.2)
@@ -10988,7 +10988,7 @@ importers:
         version: 1.8.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11124,7 +11124,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11133,7 +11133,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11203,7 +11203,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11221,7 +11221,7 @@ importers:
         version: 3.0.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -11288,7 +11288,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11297,7 +11297,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11361,7 +11361,7 @@ importers:
         version: 14.0.1
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
+        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 10.0.0
@@ -11382,7 +11382,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11391,7 +11391,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11479,7 +11479,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11494,7 +11494,7 @@ importers:
         version: 2.23.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11561,7 +11561,7 @@ importers:
         version: 0.36.2
       '@cosmjs/stargate':
         specifier: ^0.37.0
-        version: 0.37.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 0.37.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@keplr-wallet/proto-types':
         specifier: ^0.12.300
         version: 0.12.306
@@ -11579,7 +11579,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11588,7 +11588,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -11673,7 +11673,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11685,7 +11685,7 @@ importers:
         version: 8.1.0-zondax-no-bigint
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11767,7 +11767,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11776,7 +11776,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11852,7 +11852,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11861,7 +11861,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11989,7 +11989,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -12019,7 +12019,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12028,7 +12028,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12122,7 +12122,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12131,7 +12131,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12210,7 +12210,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12250,7 +12250,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -12286,7 +12286,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12298,7 +12298,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@8.4.1)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -12374,7 +12374,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12386,7 +12386,7 @@ importers:
         version: 1.8.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12447,7 +12447,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12474,7 +12474,7 @@ importers:
         version: 14.0.1(@polkadot/util@14.0.1)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12559,7 +12559,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12574,7 +12574,7 @@ importers:
         version: 1.99.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12659,7 +12659,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12677,7 +12677,7 @@ importers:
         version: 1.0.4(encoding@0.1.13)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12762,7 +12762,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12780,7 +12780,7 @@ importers:
         version: 2.11.1
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12847,7 +12847,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -12865,7 +12865,7 @@ importers:
         version: 15.4.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12926,10 +12926,10 @@ importers:
         version: 10.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -12999,7 +12999,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@vechain/sdk-core':
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)(zod@3.25.76)
@@ -13008,7 +13008,7 @@ importers:
         version: 2.0.0(@typescript/typescript6@6.0.2)(zod@3.25.76)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -13172,7 +13172,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -13300,7 +13300,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.1(@typescript/typescript6@6.0.2)
@@ -13349,7 +13349,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13598,7 +13598,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
+        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -13613,7 +13613,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../live-signer-evm
@@ -13653,7 +13653,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14152,7 +14152,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14447,7 +14447,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14483,7 +14483,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../../live-signer-zcash
@@ -14541,7 +14541,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bs58check:
         specifier: ^4.0.0
         version: 4.0.0
@@ -14624,7 +14624,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -14667,7 +14667,7 @@ importers:
         version: 2.4.4
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14749,7 +14749,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14866,7 +14866,7 @@ importers:
         version: 6.19.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -15008,7 +15008,7 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
+        version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -15179,7 +15179,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/live-promise':
         specifier: 'catalog:'
         version: 0.4.0
@@ -15308,7 +15308,7 @@ importers:
         version: 3.2.5
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -15555,7 +15555,7 @@ importers:
     dependencies:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -15577,7 +15577,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -15604,7 +15604,7 @@ importers:
     dependencies:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -15626,7 +15626,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -15671,7 +15671,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -15680,7 +15680,7 @@ importers:
         version: link:../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -15768,7 +15768,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -15949,7 +15949,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16141,7 +16141,7 @@ importers:
         version: link:../../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -16386,7 +16386,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@8.4.1)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -17256,7 +17256,7 @@ importers:
         version: link:../../shared/feature-flags
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       ethers:
         specifier: 6.15.0
         version: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -18595,7 +18595,7 @@ importers:
     dependencies:
       '@ledgerhq/icons-ui':
         specifier: workspace:^
-        version: file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)
+        version: file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4))(styled-system@5.1.5)
       '@ledgerhq/ui-shared':
         specifier: workspace:^
         version: link:../shared
@@ -18686,7 +18686,7 @@ importers:
         version: 4.4.1
       styled-components:
         specifier: ^5.3.3
-        version: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
+        version: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4)
       stylelint:
         specifier: ^14.9.1
         version: 14.16.1
@@ -18771,7 +18771,7 @@ importers:
         version: 10.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.2.0(axios@1.20.0(debug@4.4.3))
+        version: 3.2.0(axios@1.20.0)
       '@noble/curves':
         specifier: 'catalog:'
         version: 1.9.7
@@ -18780,7 +18780,7 @@ importers:
         version: 1.8.0
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3)
+        version: 1.20.0
       bchaddrjs:
         specifier: ^0.5.2
         version: 0.5.2
@@ -21026,6 +21026,11 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
+  '@babel/parser@7.29.9':
+    resolution: {integrity: sha512-CjXrNHTnvqBVqHgdBysY3vk2T8tpJHb5/RMeHJBTyVa9xgugCB0CJTx/3oO8RV2QRQP391RWpB7D6hLjm8V9uA==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.28.5':
     resolution: {integrity: sha512-87GDMS3tsmMSi/3bWOte1UblL+YUTFMV8SZPZ2eSEL17s74Cw/l63rR6NmGVKMYW2GYi85nE+/d6Hw5N0bEk2Q==}
     engines: {node: '>=6.9.0'}
@@ -21611,6 +21616,10 @@ packages:
     resolution: {integrity: sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/traverse@7.29.10':
+    resolution: {integrity: sha512-B3lYAs2nkKskbgQ1nfy8Ma9ao9Q1rntTAQHrzzyDuj+TSO+X3le6PfWwqDvodsb+OumE10eMFfuMCTQSQ5iuIQ==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/traverse@7.29.8':
     resolution: {integrity: sha512-I5z7H3bf/41ktsNVLtpN0wAa336HkqIHQ5BuPLEhTkt1jVSyZpeNKIzTgEWmlxjdg81R0IgUCcaE+Ok3NvrfZg==}
     engines: {node: '>=6.9.0'}
@@ -21918,50 +21927,50 @@ packages:
   '@cosmjs/amino@0.36.2':
     resolution: {integrity: sha512-r4yV1bhl412gwHGlyaUaJHIJnmldtyGsAwyz3oHHVxduiECj06Rv6wqeyLZfQa9W6hU+MlZwy7LabSUkkyGwjA==}
 
-  '@cosmjs/amino@0.37.0':
-    resolution: {integrity: sha512-Qjg3vx0V907ICYr9wTFuF55+P2F7FuVuVdV8WsBJC6G9ekS5nbi7Z4+YsoJf3JEp5WApVgcX3HmAWZhziayxzw==}
+  '@cosmjs/amino@0.37.1':
+    resolution: {integrity: sha512-z3QSfw2S2kGbi5XBahOdAIu2Nnb7XiLgTOphZQoOJXJcTQemAG/wYHLJD9TcQ48SX+eDTJ4i7XRyJaIdg0ClcA==}
 
   '@cosmjs/crypto@0.36.2':
     resolution: {integrity: sha512-QL4NHtcqR6DEKIN200aLeR8gKO433K0f5avKV0TVFP/g12UtnEGSk79PJq5Gv1PLc9GtATHgLLQI/3D8TEe+ig==}
 
-  '@cosmjs/crypto@0.37.0':
-    resolution: {integrity: sha512-rjnU7SEgNTUQAUotG686m7ahYSWgHh3J6n2JXoWoHJz0uVv4o4P+pbAFklyQ1PcPIR7u6LezCKDB5tP5Y5PeYQ==}
+  '@cosmjs/crypto@0.37.1':
+    resolution: {integrity: sha512-CdLOKQVJM422UegKpi4T/xkdNwvLZwJwSC7NyYi7tAyty0NzP67u+vNqar7Ok22ECkKLj6N9uRcIl4g62oZThA==}
 
   '@cosmjs/encoding@0.36.2':
     resolution: {integrity: sha512-i3+P1EKYoLcONAsmpJPhDAc3Wh3ajZNRHt/hczi/JEQXmleTJLVzv2mXUyllM6Qa+B6ybbr3Z2lnEFa8L3yLqg==}
 
-  '@cosmjs/encoding@0.37.0':
-    resolution: {integrity: sha512-xtdC0w+iVFOrod9a5RLJULUECv+6AvZr5FkD8AFr2vD853n7Z89/AVuEiJzd4GdUwlPzxcaamhAtmI+IB9DYvg==}
+  '@cosmjs/encoding@0.37.1':
+    resolution: {integrity: sha512-ylV0RjaN1fdB539dUT7mxg+iwL7t0qmUF+xnqPDL0iwOWpHZIajMHMaOtNaqOvD+r/XekaT39rXZP01WDdbQIg==}
 
-  '@cosmjs/json-rpc@0.37.0':
-    resolution: {integrity: sha512-MzuVu2hUmY6uOhn2ezoe9AhR/WBIKYYWarr8QazVnM2N5gZQnfL3Pg/i+f2f4lhacSwYVnJXfqF1CZJoDi0AUg==}
+  '@cosmjs/json-rpc@0.37.1':
+    resolution: {integrity: sha512-yaMtOSC2ObZFAINTj82vpotBqnNsOHZzBUYfaoLDEDNWF/3WitFzvlozWsVQFjAsYvn+TlCnj2g9mlRhFekaTg==}
 
   '@cosmjs/math@0.36.2':
     resolution: {integrity: sha512-uJZRzxqnBk3MgxFgeyUwLgUzWkAIcmznWSB/tgGCjGCnUNebzI+44dA3ncEDCMqQysi/MZ+cSwAcDU7IY2PFeA==}
 
-  '@cosmjs/math@0.37.0':
-    resolution: {integrity: sha512-FI+Tq8mhW0tuDawRvPdyX3K7qDZD2v1keRhiK/zHisvtQVzqoRRoOS1g5P9Pc7gWLQ1jPS15gDMYBu5+UYJ1+g==}
+  '@cosmjs/math@0.37.1':
+    resolution: {integrity: sha512-GJ+vObNquSz/xfLtdFCdqzype5KnCf1fWXqcBxUftnboGo8YfYf/OIUjrHBZuTapwrGVsGmBhhl9lGjiGoA64A==}
 
-  '@cosmjs/proto-signing@0.37.0':
-    resolution: {integrity: sha512-Ir/nPyrKIlFKsNAfUPVAfgNj0NBEHyryzIPJbCebTK9fBuAyQ3LXn+QfiFYR58/kVp63gEdIlADMQGGBS5ZF+w==}
+  '@cosmjs/proto-signing@0.37.1':
+    resolution: {integrity: sha512-cCUfejHOfjx6L/noF9QnXIy4dKoTKl56NFIqz2cizx+kZKszdL0yOtQlu0dD9nR+uMafRHU7aok6v5HH4RZIDw==}
 
-  '@cosmjs/socket@0.37.0':
-    resolution: {integrity: sha512-v07ufhrGXgja8O7ZTkUn66WJ2uWjtnH6F4KFNxI1XayrrHpVExlKS7BQIr5pKY1XUkKHCIcahuN4sRiPOOE38Q==}
+  '@cosmjs/socket@0.37.1':
+    resolution: {integrity: sha512-slMETIDYPEXoAcLcX++eu6BXAHnpVQtP5wX00M6zSmeeEBKO9ND976uNBmiu7WLhfOkUEhKaP7m2YRNSlBxsOw==}
 
-  '@cosmjs/stargate@0.37.0':
-    resolution: {integrity: sha512-accDRW9QvMbWf6zrg/YHR/E8UCDr1q2gu8zUI7Hdn8KjhO4yO/+Ry119Lqr8FRNxCJ4DvLe8yhYDLk5FFKuQCQ==}
+  '@cosmjs/stargate@0.37.1':
+    resolution: {integrity: sha512-nQgaJB7A81cRYtmDrcIySq8hbd+QLXJTGFEs6R1xMdxascaABX0x86nS44ALk+EZojQQRnwupOsw1dKLlQmIFg==}
 
-  '@cosmjs/stream@0.37.0':
-    resolution: {integrity: sha512-xMfNL6GNCe08erwEJ6W7Oj34VqdCmCTyB/d68DIjgcXczOxndNHsldKyZLcLQse7jbwtDegYY68hW1OqikwWwg==}
+  '@cosmjs/stream@0.37.1':
+    resolution: {integrity: sha512-ILwIeROwpHvfAEXU5w7QgMivPEmubf3Hd+/+qyrfKdrvyVYmAggmNsMyi5pF5cmOPpf4JajS/DMN1CfO6Z+11A==}
 
-  '@cosmjs/tendermint-rpc@0.37.0':
-    resolution: {integrity: sha512-TTLJwiA9FLLrQ7OIJxo2vt+HoTW54IUaBx7tptOvwCilYFQDNWYQaC22ACLF9sOPx3PtDqDpDDqDHfRbODD1sw==}
+  '@cosmjs/tendermint-rpc@0.37.1':
+    resolution: {integrity: sha512-OJi9CejXr7+CwCFfdRF116O2rWgjQKJGCrgG6MbQR6e2U+51a03/BQT8Uoj8/jJwU3LHtj6w7upCO8c4d5r+Tg==}
 
   '@cosmjs/utils@0.36.2':
     resolution: {integrity: sha512-OOr2HU/Ph+/GI1Fx2UCf3LOyX9YTCP51d2HitTOjjEJRYnkfKXP3lMBl1FZo5QaFWxnfuBc+Cj+cSoiQUJRyzQ==}
 
-  '@cosmjs/utils@0.37.0':
-    resolution: {integrity: sha512-j46yZg+cLBpANGc5sCxtQHJgPGBt5zSKlU+KX9FlDS6JU6q2vZYCpKgucFFpjekEiMagU1eu8cDSCRjTthEM6w==}
+  '@cosmjs/utils@0.37.1':
+    resolution: {integrity: sha512-WPDPtHRxhG1xR/3H7xtNtWGgpYdnYj4tTC+nmavuOcPRjyowCS7jZXoi+LWJVKHJoj/s/G/3hH7WW/dqbBygwA==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -26599,8 +26608,8 @@ packages:
       react: 19.1.4
       react-native: '*'
 
-  '@scure/base@1.1.6':
-    resolution: {integrity: sha512-ok9AWwhcgYuGG3Zfhyqg+zwl+Wn5uE+dwC0NV/2qQkx4dABbb/bx96vWu8NSj+BNjjSjno+JRYRjle1jV08k3g==}
+  '@scure/base@1.1.9':
+    resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
 
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
@@ -26610,6 +26619,9 @@ packages:
 
   '@scure/base@2.3.0':
     resolution: {integrity: sha512-NsG6Y03tY6R5BUis4FdVtHVkur0U6FOzskgs9ZXNl78CUc9fkZ78HmENUle1nSOkCasDmbubmWD9qwB7mm4PZA==}
+
+  '@scure/base@2.4.0':
+    resolution: {integrity: sha512-thZ1TuJwFwBblOhgsjDKvvGirBxNp+wSvY/DR6tJBJOTDhdAAcHJ8Vbr2eFnqaxeca4+t0i9KBf+uHYGWwZORg==}
 
   '@scure/bip32@1.4.0':
     resolution: {integrity: sha512-sVUpc0Vq3tXCkDGYVWGIZTRfnvu8LoTDaev7vbwh0omSvVORONr960MQWdKqJDCReIEmTj3PAr73O3aoxz7OPg==}
@@ -28444,8 +28456,8 @@ packages:
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
     engines: {node: '>= 6'}
 
-  '@tootallnate/once@2.0.0':
-    resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
+  '@tootallnate/once@2.0.1':
+    resolution: {integrity: sha512-HqmEUIGRJ5fSXchkVgR5F7qn48bDBzv0kWj/Kfu5e6uci4UlEeng4331LnBkWffb++Ei3FOVLxo8JJWMFBDMeQ==}
     engines: {node: '>= 10'}
 
   '@trust/keyto@1.0.1':
@@ -32770,6 +32782,9 @@ packages:
   http-cache-semantics@4.2.0:
     resolution: {integrity: sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ==}
 
+  http-cache-semantics@4.3.0:
+    resolution: {integrity: sha512-M5t5LlJpS1UHMjvwRQVdFHvPISGeLAxNcrWuJkeGh0KxsqCHZ1O3NXZU/8x7cD0BDcGW8kapxMKTvwlqrNkHkA==}
+
   http-errors@1.6.3:
     resolution: {integrity: sha512-lks+lVC8dgGyh97jxvxeYTWQFvh4uw4yC12gVl63Cg30sjPX4wuGcdkICVXDAESr6OJGjqGA8Iz5mkeN6zlD7A==}
     engines: {node: '>= 0.6'}
@@ -33001,8 +33016,8 @@ packages:
     peerDependencies:
       reflect-metadata: ~0.2.2
 
-  ip-address@10.7.0:
-    resolution: {integrity: sha512-BGFsyJd5mpXp3rK6jIdADLNgpJUK1jnjzvYF8lK+VyDab9JAmqN0YOKDdP17HlgKb2+ehPgDc8EtnRLbGCAMhA==}
+  ip-address@10.7.4:
+    resolution: {integrity: sha512-DWBMKyeM25D70nrIiTkgQth59/G+naKOTep6huF9j+GmeK3DMD60Zvxg5d5qQnz+38AHgou6ean2LECX+lrKDg==}
     engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
@@ -36169,6 +36184,9 @@ packages:
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
 
+  react-is@19.3.1:
+    resolution: {integrity: sha512-RRieF6IyxQBkcK6pP8xOHprLTPW6QjRkbGdImtqNme+/hYVwCZkLQLdlZGOhUqXwkS9IEynaGvPJtv6XB/cz0Q==}
+
   react-lifecycles-compat@3.0.4:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
 
@@ -37250,8 +37268,8 @@ packages:
     resolution: {integrity: sha512-Fgl0YPZ902wEsAyiQ+idGd1A7rSFx/ayC1CQVMw5P+EQx2V0SgpGtf6OKFhVjPflPUl9YMmEOnmfjCdMUsygww==}
     engines: {node: '>= 10'}
 
-  socks@2.8.9:
-    resolution: {integrity: sha512-LJhUYUvItdQ0LkJTmPeaEObWXAqFyfmP85x0tch/ez9cahmhlBBLbIqDFnvBnUJGagb0JbIQrkBs1wJ+yRYpEw==}
+  socks@2.8.10:
+    resolution: {integrity: sha512-e0VyvkVTwVYViNovRkZ9aodhxVlyoMn7eJhVUPxZ+eK9P/7CBkxvvsBOHqFPEH416726W8tLXXXjKwqgTErrCQ==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
   sonic-boom@4.0.1:
@@ -38856,6 +38874,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@7.5.13:
+    resolution: {integrity: sha512-rsKI6xDBFVf4r/x8XyChGK04QR/XHroxs/jUcoWvtEZM8TPU/X/uIY9B1CsSzYws9ZJb/6bbBu7dPhFW00CAoA==}
+    engines: {node: '>=8.3.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   ws@8.17.1:
     resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
     engines: {node: '>=10.0.0'}
@@ -40302,11 +40332,11 @@ snapshots:
       '@babel/helpers': 7.28.4
       '@babel/parser': 7.29.8
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -40349,7 +40379,7 @@ snapshots:
       '@babel/helper-optimise-call-expression': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
       '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -40366,7 +40396,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       lodash.debounce: 4.0.8
       resolve: 1.22.12
     transitivePeerDependencies:
@@ -40376,7 +40406,14 @@ snapshots:
 
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
+      '@babel/types': 7.29.8
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/helper-module-imports@7.27.1':
+    dependencies:
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
@@ -40391,9 +40428,9 @@ snapshots:
   '@babel/helper-module-transforms@7.28.3(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/helper-validator-identifier': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40408,7 +40445,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-wrap-function': 7.27.1
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40417,13 +40454,13 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-member-expression-to-functions': 7.28.5
       '@babel/helper-optimise-call-expression': 7.27.1
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
@@ -40437,7 +40474,7 @@ snapshots:
   '@babel/helper-wrap-function@7.27.1':
     dependencies:
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
@@ -40458,11 +40495,15 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.8
 
+  '@babel/parser@7.29.9':
+    dependencies:
+      '@babel/types': 7.29.8
+
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.28.5(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40489,7 +40530,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40637,14 +40678,14 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
   '@babel/plugin-transform-async-to-generator@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1(@babel/core@7.28.5)
     transitivePeerDependencies:
@@ -40684,7 +40725,7 @@ snapshots:
       '@babel/helper-globals': 7.29.7
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40698,7 +40739,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40761,7 +40802,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40807,7 +40848,7 @@ snapshots:
       '@babel/helper-module-transforms': 7.28.3(@babel/core@7.28.5)
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-validator-identifier': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40847,7 +40888,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-transform-destructuring': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-parameters': 7.27.7(@babel/core@7.28.5)
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -40925,7 +40966,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       '@babel/types': 7.29.8
@@ -40957,7 +40998,7 @@ snapshots:
   '@babel/plugin-transform-runtime@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       babel-plugin-polyfill-corejs2: 0.4.14(@babel/core@7.28.5)
       babel-plugin-polyfill-corejs3: 0.10.6(@babel/core@7.28.5)
@@ -41165,6 +41206,30 @@ snapshots:
       '@babel/parser': 7.29.8
       '@babel/types': 7.29.8
 
+  '@babel/traverse@7.29.10':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.8
+      '@babel/helper-globals': 7.29.7
+      '@babel/parser': 7.29.9
+      '@babel/template': 7.29.7
+      '@babel/types': 7.29.8
+      debug: 4.4.3(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/traverse@7.29.8':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.8
+      '@babel/helper-globals': 7.29.7
+      '@babel/parser': 7.29.8
+      '@babel/template': 7.29.7
+      '@babel/types': 7.29.8
+      debug: 4.4.3(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/traverse@7.29.8(supports-color@5.5.0)':
     dependencies:
       '@babel/code-frame': 7.29.7
@@ -41241,7 +41306,7 @@ snapshots:
       '@standard-schema/utils': 0.3.0
       '@toon-format/toon': 2.1.0
       better-result: 2.8.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       yaml: 2.8.3
       zod: 4.4.3
     transitivePeerDependencies:
@@ -41261,7 +41326,7 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       better-result: 2.8.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fuse.js: 7.1.0
       react: 19.1.4
       zod: 4.4.3
@@ -41735,12 +41800,12 @@ snapshots:
       '@cosmjs/math': 0.36.2
       '@cosmjs/utils': 0.36.2
 
-  '@cosmjs/amino@0.37.0':
+  '@cosmjs/amino@0.37.1':
     dependencies:
-      '@cosmjs/crypto': 0.37.0
-      '@cosmjs/encoding': 0.37.0
-      '@cosmjs/math': 0.37.0
-      '@cosmjs/utils': 0.37.0
+      '@cosmjs/crypto': 0.37.1
+      '@cosmjs/encoding': 0.37.1
+      '@cosmjs/math': 0.37.1
+      '@cosmjs/utils': 0.37.1
 
   '@cosmjs/crypto@0.36.2':
     dependencies:
@@ -41752,11 +41817,11 @@ snapshots:
       '@noble/hashes': 1.8.0
       hash-wasm: 4.12.0
 
-  '@cosmjs/crypto@0.37.0':
+  '@cosmjs/crypto@0.37.1':
     dependencies:
-      '@cosmjs/encoding': 0.37.0
-      '@cosmjs/math': 0.37.0
-      '@cosmjs/utils': 0.37.0
+      '@cosmjs/encoding': 0.37.1
+      '@cosmjs/math': 0.37.1
+      '@cosmjs/utils': 0.37.1
       '@noble/ciphers': 1.3.0
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
@@ -41769,67 +41834,67 @@ snapshots:
       bech32: 1.1.4
       readonly-date: 1.0.0
 
-  '@cosmjs/encoding@0.37.0':
+  '@cosmjs/encoding@0.37.1':
     dependencies:
-      '@scure/base': 2.3.0
+      '@scure/base': 2.4.0
       base64-js: 1.5.1
       readonly-date: 1.0.0
 
-  '@cosmjs/json-rpc@0.37.0':
+  '@cosmjs/json-rpc@0.37.1':
     dependencies:
-      '@cosmjs/stream': 0.37.0
+      '@cosmjs/stream': 0.37.1
       xstream: 11.14.0
 
   '@cosmjs/math@0.36.2': {}
 
-  '@cosmjs/math@0.37.0': {}
+  '@cosmjs/math@0.37.1': {}
 
-  '@cosmjs/proto-signing@0.37.0':
+  '@cosmjs/proto-signing@0.37.1':
     dependencies:
-      '@cosmjs/amino': 0.37.0
-      '@cosmjs/crypto': 0.37.0
-      '@cosmjs/encoding': 0.37.0
-      '@cosmjs/math': 0.37.0
-      '@cosmjs/utils': 0.37.0
+      '@cosmjs/amino': 0.37.1
+      '@cosmjs/crypto': 0.37.1
+      '@cosmjs/encoding': 0.37.1
+      '@cosmjs/math': 0.37.1
+      '@cosmjs/utils': 0.37.1
       cosmjs-types: 0.10.1
 
-  '@cosmjs/socket@0.37.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@cosmjs/socket@0.37.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@cosmjs/stream': 0.37.0
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@cosmjs/stream': 0.37.1
+      isomorphic-ws: 4.0.1(ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xstream: 11.14.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@cosmjs/stargate@0.37.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@cosmjs/stargate@0.37.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@cosmjs/amino': 0.37.0
-      '@cosmjs/encoding': 0.37.0
-      '@cosmjs/math': 0.37.0
-      '@cosmjs/proto-signing': 0.37.0
-      '@cosmjs/stream': 0.37.0
-      '@cosmjs/tendermint-rpc': 0.37.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@cosmjs/utils': 0.37.0
+      '@cosmjs/amino': 0.37.1
+      '@cosmjs/encoding': 0.37.1
+      '@cosmjs/math': 0.37.1
+      '@cosmjs/proto-signing': 0.37.1
+      '@cosmjs/stream': 0.37.1
+      '@cosmjs/tendermint-rpc': 0.37.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@cosmjs/utils': 0.37.1
       cosmjs-types: 0.10.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@cosmjs/stream@0.37.0':
+  '@cosmjs/stream@0.37.1':
     dependencies:
       xstream: 11.14.0
 
-  '@cosmjs/tendermint-rpc@0.37.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@cosmjs/tendermint-rpc@0.37.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@cosmjs/crypto': 0.37.0
-      '@cosmjs/encoding': 0.37.0
-      '@cosmjs/json-rpc': 0.37.0
-      '@cosmjs/math': 0.37.0
-      '@cosmjs/socket': 0.37.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@cosmjs/stream': 0.37.0
-      '@cosmjs/utils': 0.37.0
+      '@cosmjs/crypto': 0.37.1
+      '@cosmjs/encoding': 0.37.1
+      '@cosmjs/json-rpc': 0.37.1
+      '@cosmjs/math': 0.37.1
+      '@cosmjs/socket': 0.37.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@cosmjs/stream': 0.37.1
+      '@cosmjs/utils': 0.37.1
       readonly-date: 1.0.0
       xstream: 11.14.0
     transitivePeerDependencies:
@@ -41838,7 +41903,7 @@ snapshots:
 
   '@cosmjs/utils@0.36.2': {}
 
-  '@cosmjs/utils@0.37.0': {}
+  '@cosmjs/utils@0.37.1': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -42039,7 +42104,7 @@ snapshots:
 
   '@electron/get@5.0.0':
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       env-paths: 3.0.0
       graceful-fs: 4.2.11
       progress: 2.0.3
@@ -42059,7 +42124,7 @@ snapshots:
       make-fetch-happen: 10.2.1
       nopt: 6.0.0
       proc-log: 2.0.1
-      semver: 7.8.1
+      semver: 7.7.3
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -42068,7 +42133,7 @@ snapshots:
 
   '@electron/notarize@2.5.0':
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fs-extra: 9.1.0
       promise-retry: 2.0.1
     transitivePeerDependencies:
@@ -42076,7 +42141,7 @@ snapshots:
 
   '@electron/notarize@3.1.1':
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       promise-retry: 2.0.1
     transitivePeerDependencies:
       - supports-color
@@ -42084,7 +42149,7 @@ snapshots:
   '@electron/osx-sign@1.3.1':
     dependencies:
       compare-version: 0.1.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fs-extra: 10.1.0
       isbinaryfile: 4.0.10
       minimist: 1.2.8
@@ -42097,7 +42162,7 @@ snapshots:
       '@electron/node-gyp': https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2
       '@malept/cross-spawn-promise': 2.0.0
       chalk: 4.1.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       detect-libc: 2.1.2
       fs-extra: 10.1.0
       got: 11.8.5
@@ -42116,7 +42181,7 @@ snapshots:
     dependencies:
       '@electron/asar': 3.4.1
       '@malept/cross-spawn-promise': 2.0.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       dir-compare: 4.2.0
       fs-extra: 11.3.5
       minimatch: 9.0.5
@@ -42184,7 +42249,7 @@ snapshots:
 
   '@emotion/babel-plugin@11.13.5':
     dependencies:
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/runtime': 7.28.4
       '@emotion/hash': 0.9.2
       '@emotion/memoize': 0.9.0
@@ -42368,7 +42433,7 @@ snapshots:
   '@eslint/eslintrc@2.1.4':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       espree: 9.6.1
       globals: 13.24.0
       ignore: 5.3.1
@@ -42548,7 +42613,7 @@ snapshots:
       ci-info: 3.9.0
       compression: 1.7.4
       connect: 3.7.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       env-editor: 0.4.2
       expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10)
       expo-server: 1.0.7
@@ -42602,7 +42667,7 @@ snapshots:
       '@expo/plist': 0.4.9
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       getenv: 2.0.0
       glob: 13.0.6
       resolve-from: 5.0.0
@@ -42651,7 +42716,7 @@ snapshots:
   '@expo/env@2.0.11':
     dependencies:
       chalk: 4.1.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       dotenv: 16.4.7
       dotenv-expand: 11.0.6
       getenv: 2.0.0
@@ -42663,7 +42728,7 @@ snapshots:
       '@expo/spawn-async': 1.8.0
       arg: 5.0.2
       chalk: 4.1.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       getenv: 2.0.0
       glob: 13.0.6
       ignore: 5.3.1
@@ -42709,7 +42774,7 @@ snapshots:
       '@expo/spawn-async': 1.8.0
       browserslist: 4.28.2
       chalk: 4.1.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       dotenv: 16.4.7
       dotenv-expand: 11.0.6
       getenv: 2.0.0
@@ -42776,7 +42841,7 @@ snapshots:
       '@expo/image-utils': 0.8.14(@typescript/typescript6@6.0.2)
       '@expo/json-file': 10.2.0
       '@react-native/normalize-colors': 0.81.5
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10)
       resolve-from: 5.0.0
       semver: 7.8.1
@@ -43727,7 +43792,7 @@ snapshots:
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -44528,10 +44593,27 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@ledgerhq/coin-evm@15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)':
+    dependencies:
+      '@ethersproject/shims': 5.7.0
+      '@ledgerhq/coin-module-framework': 10.0.0
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      axios: 1.20.0
+      bignumber.js: 9.1.2
+      eip55: 2.1.1
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - react-native
+      - supports-color
+      - utf-8-validate
+
   '@ledgerhq/coin-hypercore@4.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
 
   '@ledgerhq/coin-module-framework@10.0.0':
     dependencies:
@@ -44541,7 +44623,7 @@ snapshots:
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -44551,7 +44633,7 @@ snapshots:
   '@ledgerhq/coin-tezos@13.0.2(@ledgerhq/live-network@3.2.0(axios@1.20.0))(encoding@0.1.13)':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       '@taquito/ledger-signer': 23.0.1(encoding@0.1.13)
       '@taquito/rpc': 23.0.1(encoding@0.1.13)
       '@taquito/taquito': 23.0.1(encoding@0.1.13)
@@ -44562,7 +44644,7 @@ snapshots:
   '@ledgerhq/coin-xrp@12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       bignumber.js: 9.1.2
       invariant: 2.2.4
       ripple-address-codec: 5.0.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -44922,7 +45004,7 @@ snapshots:
   '@ledgerhq/domain-service@1.9.1(react@19.1.4)':
     dependencies:
       '@ledgerhq/logs': 6.19.0
-      axios: 1.20.0(debug@4.4.3)
+      axios: 1.20.0
       eip55: 2.1.1
       react: 19.1.4
     transitivePeerDependencies:
@@ -44937,7 +45019,7 @@ snapshots:
       '@ethersproject/hash': 5.8.0
       '@ledgerhq/live-env': 4.1.0
       '@noble/hashes': 2.4.0
-      axios: 1.20.0(debug@4.4.3)
+      axios: 1.20.0
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -44965,17 +45047,17 @@ snapshots:
       '@ledgerhq/logs': 6.19.0
       events: 3.3.0
 
-  '@ledgerhq/icons-ui@file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)':
+  '@ledgerhq/icons-ui@file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4))(styled-system@5.1.5)':
     dependencies:
       react: 19.1.4
       react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
+      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4)
       styled-system: 5.1.5
     optionalDependencies:
       '@types/react': 19.0.14
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/auth': 0.1.0
       '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
@@ -44993,12 +45075,30 @@ snapshots:
       - typescript
       - utf-8-validate
 
+  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@ledgerhq/auth': 0.1.0
+      '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
+      '@ledgerhq/hw-transport': 6.36.0
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      '@ledgerhq/logs': 6.19.0
+      base64-js: 1.5.1
+      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      rxjs: 7.8.2
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - axios
+      - bufferutil
+      - typescript
+      - utf-8-validate
+
   '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/auth': 0.1.0
       '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.36.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       '@ledgerhq/logs': 6.19.0
       base64-js: 1.5.1
       isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
@@ -45031,6 +45131,13 @@ snapshots:
       '@ledgerhq/live-promise': 0.4.0
       '@ledgerhq/logs': 6.19.0
       axios: 1.20.0(debug@4.4.3)
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-network@3.2.0(axios@1.20.0)':
+    dependencies:
+      '@ledgerhq/live-promise': 0.4.0
+      '@ledgerhq/logs': 6.19.0
+      axios: 1.20.0
       lru-cache: 7.18.3
 
   '@ledgerhq/live-promise@0.4.0':
@@ -45234,7 +45341,7 @@ snapshots:
 
   '@malept/flatpak-bundler@0.4.0':
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fs-extra: 9.1.0
       lodash: 4.17.21
       tmp-promise: 3.0.3
@@ -45307,7 +45414,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.20.0(debug@4.4.3)
+      axios: 1.20.0
       bip39: 3.1.0
     transitivePeerDependencies:
       - debug
@@ -45553,7 +45660,7 @@ snapshots:
   '@npmcli/fs@2.1.2':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.8.1
+      semver: 7.7.3
 
   '@npmcli/move-file@2.0.1':
     dependencies:
@@ -47150,7 +47257,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))':
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@react-native/codegen': 0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))
     transitivePeerDependencies:
       - '@babel/preset-env'
@@ -47158,7 +47265,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.81.5(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@react-native/codegen': 0.81.5(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -47166,7 +47273,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.81.6(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@react-native/codegen': 0.81.6(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -47339,7 +47446,7 @@ snapshots:
   '@react-native/codegen@0.81.5(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.8
+      '@babel/parser': 7.29.9
       glob: 7.2.3
       hermes-parser: 0.29.1
       invariant: 2.2.4
@@ -47380,7 +47487,7 @@ snapshots:
   '@react-native/community-cli-plugin@0.81.6(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@react-native/dev-middleware': 0.81.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       invariant: 2.2.4
       metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -47425,7 +47532,7 @@ snapshots:
       chrome-launcher: 0.15.2
       chromium-edge-launcher: 0.2.0
       connect: 3.7.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       invariant: 2.2.4
       nullthrows: 1.1.1
       open: 7.4.2
@@ -47443,7 +47550,7 @@ snapshots:
       chrome-launcher: 0.15.2
       chromium-edge-launcher: 0.2.0
       connect: 3.7.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       invariant: 2.2.4
       nullthrows: 1.1.1
       open: 7.4.2
@@ -48116,7 +48223,7 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  '@scure/base@1.1.6': {}
+  '@scure/base@1.1.9': {}
 
   '@scure/base@1.2.6': {}
 
@@ -48124,11 +48231,13 @@ snapshots:
 
   '@scure/base@2.3.0': {}
 
+  '@scure/base@2.4.0': {}
+
   '@scure/bip32@1.4.0':
     dependencies:
       '@noble/curves': 1.4.2
       '@noble/hashes': 1.4.0
-      '@scure/base': 1.1.6
+      '@scure/base': 1.1.9
 
   '@scure/bip32@1.7.0':
     dependencies:
@@ -48145,7 +48254,7 @@ snapshots:
   '@scure/bip39@1.3.0':
     dependencies:
       '@noble/hashes': 1.4.0
-      '@scure/base': 1.1.6
+      '@scure/base': 1.1.9
 
   '@scure/bip39@1.6.0':
     dependencies:
@@ -49969,7 +50078,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.20.0(debug@4.4.3)
+      axios: 1.20.0
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -50468,7 +50577,7 @@ snapshots:
       react-test-renderer: 19.1.4(react@19.1.4)
       redent: 3.0.0
     optionalDependencies:
-      jest: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest: 30.5.0(@types/node@24.12.0)
 
   '@testing-library/react@16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
@@ -50522,7 +50631,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.20.0(debug@4.4.3)
+      axios: 1.20.0
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -50535,7 +50644,7 @@ snapshots:
 
   '@tootallnate/once@1.1.2': {}
 
-  '@tootallnate/once@2.0.0': {}
+  '@tootallnate/once@2.0.1': {}
 
   '@trust/keyto@1.0.1':
     dependencies:
@@ -50970,7 +51079,7 @@ snapshots:
       '@typescript-eslint/types': 8.48.1
       '@typescript-eslint/typescript-estree': 8.48.1(@typescript/typescript6@6.0.2)
       '@typescript-eslint/visitor-keys': 8.48.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       eslint: 8.57.0
       typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
@@ -50980,7 +51089,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.48.1(@typescript/typescript6@6.0.2)
       '@typescript-eslint/types': 8.48.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
       - supports-color
@@ -51002,7 +51111,7 @@ snapshots:
       '@typescript-eslint/tsconfig-utils': 8.48.1(@typescript/typescript6@6.0.2)
       '@typescript-eslint/types': 8.48.1
       '@typescript-eslint/visitor-keys': 8.48.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       minimatch: 9.0.5
       semver: 7.8.1
       tinyglobby: 0.2.17
@@ -51680,7 +51789,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.36.0
       '@zondax/ledger-js': 0.8.2
-      axios: 1.20.0(debug@4.4.3)
+      axios: 1.20.0
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -51748,12 +51857,6 @@ snapshots:
   acorn@8.15.0: {}
 
   aes-js@4.0.0-beta.5: {}
-
-  agent-base@6.0.2:
-    dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
-    transitivePeerDependencies:
-      - supports-color
 
   agent-base@6.0.2(supports-color@7.2.0):
     dependencies:
@@ -51912,7 +52015,7 @@ snapshots:
       builder-util-runtime: 9.3.1
       chromium-pickle-js: 0.2.0
       config-file-ts: 0.2.8-rc1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       dmg-builder: 26.0.1
       dotenv: 16.4.7
       dotenv-expand: 11.0.6
@@ -52107,7 +52210,7 @@ snapshots:
 
   axios@1.16.0:
     dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -52115,9 +52218,9 @@ snapshots:
 
   axios@1.18.0:
     dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@7.2.0)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -52133,11 +52236,21 @@ snapshots:
       - debug
       - supports-color
 
+  axios@1.20.0:
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
+      form-data: 4.0.6
+      https-proxy-agent: 5.0.1(supports-color@7.2.0)
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
   axios@1.20.0(debug@4.4.3):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@7.2.0)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -52272,14 +52385,14 @@ snapshots:
 
   babel-plugin-react-native-web@0.21.2: {}
 
-  babel-plugin-styled-components@2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(supports-color@5.5.0):
+  babel-plugin-styled-components@2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4))(supports-color@5.5.0):
     dependencies:
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
+      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -52321,7 +52434,7 @@ snapshots:
 
   babel-preset-expo@54.0.11(@babel/core@7.28.5)(@babel/runtime@7.28.4)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10))(react-refresh@0.14.2):
     dependencies:
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/plugin-proposal-decorators': 7.24.1(@babel/core@7.28.5)
       '@babel/plugin-proposal-export-default-from': 7.25.9(@babel/core@7.28.5)
       '@babel/plugin-syntax-export-default-from': 7.25.9(@babel/core@7.28.5)
@@ -52341,7 +52454,7 @@ snapshots:
       babel-plugin-react-native-web: 0.21.2
       babel-plugin-syntax-hermes-parser: 0.29.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       react-refresh: 0.14.2
       resolve-from: 5.0.0
     optionalDependencies:
@@ -52570,7 +52683,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       http-errors: 2.0.0
       iconv-lite: 0.7.0
       on-finished: 2.4.1
@@ -52760,7 +52873,7 @@ snapshots:
 
   builder-util-runtime@9.3.1:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       sax: 1.6.1
     transitivePeerDependencies:
       - supports-color
@@ -52773,7 +52886,7 @@ snapshots:
       builder-util-runtime: 9.3.1
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fs-extra: 10.1.0
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -52983,7 +53096,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@noble/secp256k1': 1.7.2
       asn1.js: 5.4.1
-      axios: 1.20.0(debug@4.4.3)
+      axios: 1.20.0
       bn.js: 5.2.5
       eventsource: 2.0.2
       humanize-duration: 3.35.0
@@ -53701,7 +53814,7 @@ snapshots:
       chalk: 4.1.2
       commander: 2.20.3
       core-js: 3.47.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fast-json-patch: 3.1.1
       hyperlinker: 1.0.0
       ini: 5.0.0
@@ -54505,7 +54618,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
       eslint-scope: 7.2.2
@@ -54834,7 +54947,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.7.2
       cookie-signature: 1.2.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       depd: 2.0.0
       encodeurl: 2.0.0
       escape-html: 1.0.3
@@ -55080,7 +55193,7 @@ snapshots:
 
   finalhandler@2.1.0:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -55249,7 +55362,7 @@ snapshots:
 
   follow-redirects@1.16.0(debug@4.4.3):
     optionalDependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
 
   fontfaceobserver@2.3.0: {}
 
@@ -55841,6 +55954,8 @@ snapshots:
 
   http-cache-semantics@4.2.0: {}
 
+  http-cache-semantics@4.3.0: {}
+
   http-errors@1.6.3:
     dependencies:
       depd: 1.1.2
@@ -55869,36 +55984,44 @@ snapshots:
   http-proxy-agent@4.0.1:
     dependencies:
       '@tootallnate/once': 1.1.2
-      agent-base: 6.0.2
-      debug: 4.4.3(supports-color@5.5.0)
+      agent-base: 6.0.2(supports-color@7.2.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
   http-proxy-agent@5.0.0:
     dependencies:
-      '@tootallnate/once': 2.0.0
-      agent-base: 6.0.2
-      debug: 4.4.3(supports-color@5.5.0)
+      '@tootallnate/once': 2.0.1
+      agent-base: 6.0.2(supports-color@7.2.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
   http-proxy-middleware@3.0.5:
     dependencies:
       '@types/http-proxy': 1.17.17
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       http-proxy: 1.18.1(debug@4.4.3)
       is-glob: 4.0.3
       is-plain-object: 5.0.0
       micromatch: 4.0.8
     transitivePeerDependencies:
       - supports-color
+
+  http-proxy@1.18.1:
+    dependencies:
+      eventemitter3: 4.0.7
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
+      requires-port: 1.0.0
+    transitivePeerDependencies:
+      - debug
 
   http-proxy@1.18.1(debug@4.4.3):
     dependencies:
@@ -55915,7 +56038,7 @@ snapshots:
       corser: 2.0.1
       he: 1.2.0
       html-encoding-sniffer: 3.0.0
-      http-proxy: 1.18.1(debug@4.4.3)
+      http-proxy: 1.18.1
       mime: 1.6.0
       minimist: 1.2.8
       opener: 1.5.2
@@ -55940,13 +56063,6 @@ snapshots:
 
   https-browserify@1.0.0: {}
 
-  https-proxy-agent@5.0.1:
-    dependencies:
-      agent-base: 6.0.2
-      debug: 4.4.3(supports-color@5.5.0)
-    transitivePeerDependencies:
-      - supports-color
-
   https-proxy-agent@5.0.1(supports-color@7.2.0):
     dependencies:
       agent-base: 6.0.2(supports-color@7.2.0)
@@ -55957,7 +56073,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -56120,7 +56236,7 @@ snapshots:
       '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
-  ip-address@10.7.0: {}
+  ip-address@10.7.4: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -56354,6 +56470,10 @@ snapshots:
     dependencies:
       ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
+  isomorphic-ws@4.0.1(ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
+    dependencies:
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+
   isomorphic-ws@5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
     dependencies:
       ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -56420,7 +56540,7 @@ snapshots:
 
   istanbul-lib-source-maps@4.0.1:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       istanbul-lib-coverage: 3.2.2
       source-map: 0.6.1
     transitivePeerDependencies:
@@ -56429,7 +56549,7 @@ snapshots:
   istanbul-lib-source-maps@5.0.6:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       istanbul-lib-coverage: 3.2.2
     transitivePeerDependencies:
       - supports-color
@@ -57042,6 +57162,20 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
+  jest@30.5.0(@types/node@24.12.0):
+    dependencies:
+      '@jest/core': 30.5.0(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      '@jest/types': 30.5.0
+      import-local: 3.2.0
+      jest-cli: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+    transitivePeerDependencies:
+      - '@types/node'
+      - babel-plugin-macros
+      - esbuild-register
+      - supports-color
+      - ts-node
+    optional: true
+
   jest@30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)):
     dependencies:
       '@jest/core': 30.5.0(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -57479,7 +57613,7 @@ snapshots:
 
   koa-route@3.2.0:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       methods: 1.1.2
       path-to-regexp: 1.8.0
     transitivePeerDependencies:
@@ -57487,7 +57621,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -57507,7 +57641,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -57966,7 +58100,7 @@ snapshots:
     dependencies:
       array-back: 4.0.2
       http-proxy-agent: 4.0.1
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@7.2.0)
       koa-route: 3.2.0
       path-to-regexp: 6.3.0
     transitivePeerDependencies:
@@ -58029,9 +58163,9 @@ snapshots:
     dependencies:
       agentkeepalive: 4.6.0
       cacache: 16.1.3
-      http-cache-semantics: 4.2.0
+      http-cache-semantics: 4.3.0
       http-proxy-agent: 5.0.0
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@7.2.0)
       is-lambda: 1.0.1
       lru-cache: 7.18.3
       minipass: 3.3.6
@@ -58308,7 +58442,7 @@ snapshots:
 
   metro-file-map@0.83.3:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fb-watchman: 2.0.2
       flow-enums-runtime: 0.0.6
       graceful-fs: 4.2.11
@@ -58322,7 +58456,7 @@ snapshots:
 
   metro-file-map@0.83.7:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fb-watchman: 2.0.2
       flow-enums-runtime: 0.0.6
       graceful-fs: 4.2.11
@@ -58378,8 +58512,8 @@ snapshots:
 
   metro-source-map@0.81.5:
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.8(supports-color@5.5.0)'
+      '@babel/traverse': 7.29.8
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.8'
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -58393,8 +58527,8 @@ snapshots:
 
   metro-source-map@0.83.3:
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.8(supports-color@5.5.0)'
+      '@babel/traverse': 7.29.8
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.10'
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -58408,7 +58542,7 @@ snapshots:
 
   metro-source-map@0.83.7:
     dependencies:
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -58458,7 +58592,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -58469,7 +58603,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -58480,7 +58614,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.29.8
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -58553,7 +58687,7 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.8
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
       accepts: 1.3.8
       chalk: 4.1.2
@@ -58600,13 +58734,13 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.8
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
       accepts: 1.3.8
       chalk: 4.1.2
       ci-info: 2.0.0
       connect: 3.7.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       error-stack-parser: 2.1.4
       flow-enums-runtime: 0.0.6
       graceful-fs: 4.2.11
@@ -58647,12 +58781,12 @@ snapshots:
       '@babel/generator': 7.29.8
       '@babel/parser': 7.29.8
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
       accepts: 2.0.0
       ci-info: 2.0.0
       connect: 3.7.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       error-stack-parser: 2.1.4
       flow-enums-runtime: 0.0.6
       graceful-fs: 4.2.11
@@ -58990,7 +59124,7 @@ snapshots:
 
   nock@13.5.4:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
     transitivePeerDependencies:
@@ -58998,7 +59132,7 @@ snapshots:
 
   nock@13.5.6:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
     transitivePeerDependencies:
@@ -60063,7 +60197,7 @@ snapshots:
   pretty-format@30.5.0:
     dependencies:
       '@jest/react-is-18': react-is@18.3.1
-      '@jest/react-is-19': react-is@19.2.8
+      '@jest/react-is-19': react-is@19.3.1
       '@jest/schemas': 30.5.0
       ansi-styles: 5.2.0
 
@@ -60410,6 +60544,8 @@ snapshots:
   react-is@19.0.0: {}
 
   react-is@19.2.8: {}
+
+  react-is@19.3.1: {}
 
   react-lifecycles-compat@3.0.4: {}
 
@@ -60854,7 +60990,7 @@ snapshots:
 
   read-binary-file-arch@1.0.6:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -61217,7 +61353,7 @@ snapshots:
 
   router@2.2.0:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -61381,7 +61517,7 @@ snapshots:
 
   send@1.2.0:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -61608,15 +61744,15 @@ snapshots:
 
   socks-proxy-agent@7.0.0:
     dependencies:
-      agent-base: 6.0.2
-      debug: 4.4.3(supports-color@5.5.0)
-      socks: 2.8.9
+      agent-base: 6.0.2(supports-color@7.2.0)
+      debug: 4.4.3(supports-color@7.2.0)
+      socks: 2.8.10
     transitivePeerDependencies:
       - supports-color
 
-  socks@2.8.9:
+  socks@2.8.10:
     dependencies:
-      ip-address: 10.7.0
+      ip-address: 10.7.4
       smart-buffer: 4.2.0
 
   sonic-boom@4.0.1:
@@ -61924,19 +62060,19 @@ snapshots:
 
   style-search@0.1.0: {}
 
-  styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4):
+  styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4):
     dependencies:
       '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
       '@babel/traverse': 7.29.8(supports-color@5.5.0)
       '@emotion/is-prop-valid': 1.4.0
       '@emotion/stylis': 0.8.5
       '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(supports-color@5.5.0)
+      babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.1)(react@19.1.4))(supports-color@5.5.0)
       css-to-react-native: 3.2.0
       hoist-non-react-statics: 3.3.2
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      react-is: 19.2.8
+      react-is: 19.3.1
       shallowequal: 1.1.0
       supports-color: 5.5.0
     transitivePeerDependencies:
@@ -61981,7 +62117,7 @@ snapshots:
   stylelint-processor-styled-components@1.10.0:
     dependencies:
       '@babel/parser': 7.29.8
-      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/traverse': 7.29.8
       micromatch: 4.0.8
       postcss: 7.0.39
     transitivePeerDependencies:
@@ -61994,7 +62130,7 @@ snapshots:
       colord: 2.9.3
       cosmiconfig: 7.1.0
       css-functions-list: 3.2.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       fast-glob: 3.3.2
       fastest-levenshtein: 1.0.16
       file-entry-cache: 6.0.1
@@ -62048,7 +62184,7 @@ snapshots:
 
   sumchecker@3.0.1:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -62192,7 +62328,7 @@ snapshots:
   teeny-request@10.1.0:
     dependencies:
       http-proxy-agent: 5.0.0
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@7.2.0)
       node-fetch: 3.3.2
       stream-events: 1.0.5
     transitivePeerDependencies:
@@ -63237,6 +63373,11 @@ snapshots:
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 6.0.6
+
+  ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10):
+    optionalDependencies:
+      bufferutil: 4.1.0
+      utf-8-validate: 5.0.10
 
   ws@8.17.1(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
