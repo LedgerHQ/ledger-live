@@ -33,8 +33,8 @@ it("should show an error when the push fails", async () => {
 
 - App jest-setup resets handlers after each test: register them with `server.use` in `beforeEach`.
 - App servers use `onUnhandledRequest: "bypass"`. A handler returning `undefined` still counts as a
-  call, but the request goes on to the default `tests/handlers` or the real network. Always set a
-  default implementation.
+  call (`toHaveBeenCalled` passes), but the request goes on to the default `tests/handlers` or the
+  real network. Always set a default implementation.
 - Packages without an app server (`shared/*`, `libs/*`) call `setupServer` themselves, with
   `onUnhandledRequest: "error"`.
 
