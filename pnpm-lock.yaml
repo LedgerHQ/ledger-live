@@ -3720,6 +3720,9 @@ importers:
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
+      '@shared/app-config':
+        specifier: workspace:*
+        version: link:../../shared/app-config
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env

@@ -45,6 +45,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
+    "@shared/app-config": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "bignumber.js": "catalog:",
