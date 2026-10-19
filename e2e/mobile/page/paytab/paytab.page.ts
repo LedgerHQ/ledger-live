@@ -232,10 +232,10 @@ export default class PayTabPage {
   @Step("Expect the card not to be frozen")
   async expectCardNotFrozen() {
     await detoxExpect(getElementById(this.frozenVisualId)).not.toBeVisible();
-    this.myEmptyFunction();
+    await this.myEmptyFunction();
   }
 
   async myEmptyFunction() {
-    // naan
+    await detoxExpect(getElementById(this.depositOptionId2(optionId))).toBeVisible();
   }
 }
