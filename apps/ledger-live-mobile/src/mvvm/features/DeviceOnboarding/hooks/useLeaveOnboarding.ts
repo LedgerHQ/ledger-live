@@ -1,18 +1,21 @@
 import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
-import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
+import {
+  requiresLegacyFlow,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { exitActions } from "../utils/exitActions";
+import { isCurrentSessionGenuine } from "../utils/genuineSession";
 
 type UseLeaveOnboardingInput = {
   device: Device | null;
   navigateOnExit: boolean;
   wasReadOnlyAtEntry: boolean;
-  isGenuine: () => boolean;
-  deviceWasSeeded: () => boolean;
 };
 
 /**
@@ -23,8 +26,6 @@ export function useLeaveOnboarding({
   device,
   navigateOnExit,
   wasReadOnlyAtEntry,
-  isGenuine,
-  deviceWasSeeded,
 }: UseLeaveOnboardingInput) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
@@ -32,10 +33,17 @@ export function useLeaveOnboarding({
   const { notifyFlowCompleted } = useNotificationsPrompt();
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
-  return (reason: DeviceOnboardingExitReason) => {
+  return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
     if (!navigateOnExit || !device) return;
-    const genuine = isGenuine();
-    const seeded = deviceWasSeeded();
+    const genuine = isCurrentSessionGenuine(context);
+    const seeded = context.isOnboarded === true;
+    const firmwareNeedsLegacyFlow =
+      seeded &&
+      (context.firmwareVersion === null ||
+        requiresLegacyFlow({
+          currentVersion: context.firmwareVersion,
+          deviceModelId: context.deviceModelId,
+        }));
     exitActions[reason]({
       navigation,
       dispatch,
@@ -44,12 +52,13 @@ export function useLeaveOnboarding({
       wasReadOnlyAtEntry,
       isGenuine: genuine,
       deviceWasSeeded: seeded,
+      firmwareNeedsLegacyFlow,
       hasCompletedOnboarding,
     });
     if (
       reason === "completed" ||
       (reason === "userQuit" && genuine) ||
-      (reason === "legacyFallback" && seeded)
+      (reason === "legacyFallback" && seeded && genuine)
     ) {
       notifyFlowCompleted("onboarding");
     }

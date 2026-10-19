@@ -128,9 +128,42 @@ describe("exitActions", () => {
     ]);
   });
 
-  it("should finish an existing wallet when seeded firmware cannot use this funnel", () => {
-    const { opened, dispatched } = leave("legacyFallback", { deviceWasSeeded: true });
+  it("should leave without completing when a seeded read fails after a supported firmware", () => {
+    const { opened, dispatched, wentBack } = leave("legacyFallback", {
+      deviceWasSeeded: true,
+      firmwareNeedsLegacyFlow: false,
+    });
 
+    expect(opened).toBeNull();
+    expect(dispatched).toEqual([]);
+    expect(wentBack).toBe(true);
+  });
+
+  it("should open the old checks when seeded firmware cannot be verified here", () => {
+    const { opened, dispatched, wentBack } = leave("legacyFallback", {
+      deviceWasSeeded: true,
+      firmwareNeedsLegacyFlow: true,
+    });
+
+    expect(wentBack).toBe(false);
+    expect(dispatched).toEqual([]);
+    expect(opened).toEqual({
+      path: [
+        NavigatorName.BaseOnboarding,
+        NavigatorName.SyncOnboarding,
+        ScreenName.SyncOnboardingCompanion,
+      ],
+      params: { device: stax },
+    });
+  });
+
+  it("should finish a seeded fallback only after a current genuine verdict", () => {
+    const { opened, dispatched, wentBack } = leave("legacyFallback", {
+      deviceWasSeeded: true,
+      isGenuine: true,
+    });
+
+    expect(wentBack).toBe(false);
     expect(opened?.path).toEqual(portfolio);
     expect(dispatched).toEqual([
       setIsReborn(false),
@@ -165,6 +198,7 @@ function leave(reason: DeviceOnboardingExitReason, overrides: Partial<ExitDeps> 
     wasReadOnlyAtEntry: false,
     isGenuine: false,
     deviceWasSeeded: false,
+    firmwareNeedsLegacyFlow: false,
     hasCompletedOnboarding: false,
     ...overrides,
   });

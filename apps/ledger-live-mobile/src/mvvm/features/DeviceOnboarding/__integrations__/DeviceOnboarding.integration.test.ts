@@ -118,7 +118,10 @@ describe("useDeviceOnboarding", () => {
     await connectStax(result, device);
     await quit(result);
 
-    expect(leaveOnboarding).toHaveBeenCalledWith("userQuit");
+    expect(leaveOnboarding).toHaveBeenCalledWith(
+      "userQuit",
+      expect.objectContaining({ sessionId: "session-2", isOnboarded: false }),
+    );
     expect(leaveHook).toHaveBeenLastCalledWith(
       expect.objectContaining({
         device: expect.objectContaining({ deviceId: "device-id-2", wired: false }),
@@ -186,11 +189,12 @@ describe("useDeviceOnboarding", () => {
       sessionId: device.sessionId,
       modelId: DeviceModelId.STAX,
     });
-    expect(leaveOnboarding.mock.calls).toEqual([["userQuit"]]);
+    expect(leaveOnboarding.mock.calls).toEqual([
+      ["userQuit", expect.objectContaining({ sessionId: device.sessionId })],
+    ]);
     expect(leaveHook).toHaveBeenLastCalledWith({
       navigateOnExit: true,
       wasReadOnlyAtEntry: false,
-      isGenuine: expect.any(Function),
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",

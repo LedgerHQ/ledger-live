@@ -1,4 +1,8 @@
-import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import type {
+  DeviceOnboardingContext,
+  DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook } from "@tests/test-renderer";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
@@ -55,18 +59,68 @@ describe("useLeaveOnboarding", () => {
     expect(mockReset).not.toHaveBeenCalled();
   });
 
-  it("should ask for the notifications prompt when seeded firmware leaves through the legacy path", () => {
+  it("should leave a seeded fallback without the notifications prompt when a supported read fails", () => {
     const { result } = renderHook(() =>
       useLeaveOnboarding({
         device,
         navigateOnExit: true,
         wasReadOnlyAtEntry: false,
-        isGenuine: () => false,
-        deviceWasSeeded: () => true,
       }),
     );
 
-    act(() => result.current("legacyFallback"));
+    act(() =>
+      result.current(
+        "legacyFallback",
+        machineContext({
+          seeded: true,
+          genuine: null,
+          firmwareVersion: "2.4.0",
+          deviceModelId: DmkDeviceModelId.NANO_X,
+        }),
+      ),
+    );
+
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+    expect(mockGoBack).toHaveBeenCalledTimes(1);
+    expect(mockReset).not.toHaveBeenCalled();
+  });
+
+  it("should go back when a seeded device on an old firmware leaves through the legacy path", () => {
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({
+        device,
+        navigateOnExit: true,
+        wasReadOnlyAtEntry: false,
+      }),
+    );
+
+    act(() =>
+      result.current(
+        "legacyFallback",
+        machineContext({
+          seeded: true,
+          genuine: null,
+          firmwareVersion: "1.0.0",
+          deviceModelId: DmkDeviceModelId.NANO_X,
+        }),
+      ),
+    );
+
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+    expect(mockGoBack).toHaveBeenCalledTimes(1);
+    expect(mockReset).not.toHaveBeenCalled();
+  });
+
+  it("should ask for the notifications prompt when a genuine seeded device leaves through the legacy path", () => {
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({
+        device,
+        navigateOnExit: true,
+        wasReadOnlyAtEntry: false,
+      }),
+    );
+
+    act(() => result.current("legacyFallback", machineContext({ seeded: true, genuine: true })));
 
     expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
     expect(mockReset).toHaveBeenCalledTimes(1);
@@ -86,10 +140,28 @@ function leave(reason: DeviceOnboardingExitReason, genuine: boolean) {
       device,
       navigateOnExit: true,
       wasReadOnlyAtEntry: false,
-      isGenuine: () => genuine,
-      deviceWasSeeded: () => false,
     }),
   );
 
-  act(() => result.current(reason));
+  act(() => result.current(reason, machineContext({ genuine })));
+}
+
+function machineContext({
+  genuine,
+  seeded = false,
+  firmwareVersion = "2.4.0",
+  deviceModelId = DmkDeviceModelId.STAX,
+}: {
+  genuine: boolean | null;
+  seeded?: boolean;
+  firmwareVersion?: string | null;
+  deviceModelId?: DmkDeviceModelId;
+}): DeviceOnboardingContext {
+  return {
+    sessionId: "session-1",
+    isOnboarded: seeded,
+    firmwareVersion,
+    deviceModelId,
+    genuineVerdict: genuine === null ? null : { sessionId: "session-1", isGenuine: genuine },
+  } as DeviceOnboardingContext;
 }

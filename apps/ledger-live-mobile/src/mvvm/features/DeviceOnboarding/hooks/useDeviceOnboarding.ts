@@ -3,7 +3,6 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
-  type DeviceOnboardingContext,
   type OnboardingEvent,
   type SessionEvent,
 } from "@features/platform-device-onboarding";
@@ -23,7 +22,6 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { useDeviceOnboardingFeatureFlag } from "./useDeviceOnboardingFeatureFlag";
-import { isCurrentSessionGenuine } from "../utils/genuineSession";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
@@ -35,10 +33,6 @@ type UseDeviceOnboardingInput = {
   wasReadOnlyAtEntry?: boolean;
   /** Runs right before the exit navigates, so the host can stop blocking back. */
   onLeave?: () => void;
-};
-
-type GenuineActor = {
-  getSnapshot(): { context: DeviceOnboardingContext };
 };
 
 type StoppableActor = { stop(): void };
@@ -70,13 +64,10 @@ export function useDeviceOnboarding({
   const { featureFlag, setFeatureFlag, isFeatureFlagOverridden, resetFeatureFlag } =
     useDeviceOnboardingFeatureFlag();
   const hostsSeedSetup = Boolean(featureFlag?.enabled && featureFlag.params.connectUnseededDevice);
-  const actorBridge = useRef<{ current: GenuineActor | null } | null>(null);
   const leaveOnboarding = useLeaveOnboarding({
     device: liveDevice,
     navigateOnExit,
     wasReadOnlyAtEntry,
-    isGenuine: () => isCurrentSessionGenuine(actorBridge.current?.current?.getSnapshot().context),
-    deviceWasSeeded: () => actorBridge.current?.current?.getSnapshot().context.isOnboarded === true,
   });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
@@ -114,15 +105,11 @@ export function useDeviceOnboarding({
     missingSessionMessage: "No mobile onboarding session",
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
-    leaveOnboarding: reason => {
+    leaveOnboarding: (reason, context) => {
       onLeave?.();
-      leaveOnboarding(reason);
+      leaveOnboarding(reason, context);
     },
   });
-
-  useEffect(() => {
-    actorBridge.current = actorRef;
-  }, [actorRef]);
 
   const dropLostTransport = useCallback(() => {
     setSessionReady(false);

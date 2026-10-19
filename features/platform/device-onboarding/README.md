@@ -99,8 +99,8 @@ The machine output also carries the session id, the device and the reason.
 
 | Reason | Meaning |
 |---|---|
-| `completed` | The setup is done, or the device was already set up and there is nothing to offer. |
-| `offerLedgerSync` | The device was already set up when the flow started, and the app passed `offerSync`. |
+| `completed` | The setup is done, or the device was already set up. A seeded device is not offered Ledger Sync. |
+| `offerLedgerSync` | The device was just set up, and the app passed `offerSync`. |
 | `legacyFallback` | The device needs the old onboarding flow. |
 | `resumeFirmwareUpdate` | The device is in bootloader or OSU mode: a firmware update was interrupted. |
 | `userQuit` | The user quit. |
@@ -113,8 +113,8 @@ The session stays open after the exit, so the app can keep using it.
 - `stampSession` — adds the live session id to the session events. The app calls it, not the machine
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
-- `rules.ts` — the pure decisions the transitions ask. Only the Nano SP and Nano X have a firmware
-  floor; every other model takes the flow whatever it runs
+- `rules.ts` — the pure decisions the transitions ask. Every model takes the flow on any firmware
+  version that can be read
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
   `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`, `unlockPolling`. Each gets the session id as
   input and reports through events only

@@ -13,6 +13,7 @@ type ExitDeps = {
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
   deviceWasSeeded: boolean;
+  firmwareNeedsLegacyFlow: boolean;
   hasCompletedOnboarding: boolean;
 };
 
@@ -34,11 +35,21 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     device,
     dispatch,
     wasReadOnlyAtEntry,
+    isGenuine,
     deviceWasSeeded,
+    firmwareNeedsLegacyFlow,
     hasCompletedOnboarding,
   }) => {
     if (!deviceWasSeeded) {
       resetToLegacyOnboarding(navigation, device);
+      return;
+    }
+    if (!isGenuine) {
+      if (firmwareNeedsLegacyFlow) {
+        resetToLegacySeededChecks(navigation, device);
+        return;
+      }
+      navigation.goBack();
       return;
     }
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
@@ -117,6 +128,32 @@ function resetToMyLedger(
         state: {
           index: 1,
           routes: [{ name: NavigatorName.Main }, managerRoute],
+        },
+      },
+    ],
+  });
+}
+
+function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, device: Device) {
+  getRootNavigation(navigation).reset({
+    index: 0,
+    routes: [
+      {
+        name: NavigatorName.BaseOnboarding,
+        state: {
+          routes: [
+            {
+              name: NavigatorName.SyncOnboarding,
+              state: {
+                routes: [
+                  {
+                    name: ScreenName.SyncOnboardingCompanion,
+                    params: { device },
+                  },
+                ],
+              },
+            },
+          ],
         },
       },
     ],
