@@ -55,7 +55,6 @@
       ],
       "ignoreDependencies": [
         "prop-types",
-        "allure-commandline",
         "ws",
         "@electron/fuses",
         "embla-carousel-autoplay",

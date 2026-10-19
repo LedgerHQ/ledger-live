@@ -125,8 +125,7 @@
         "@playwright/test",
         "playwright",
         "allure-js-commons",
-        "allure-playwright",
-        "allure-commandline"
+        "allure-playwright"
       ],
       "commitMessagePrefix": "chore(e2e):",
       "labels": ["dependencies", "e2e"],
