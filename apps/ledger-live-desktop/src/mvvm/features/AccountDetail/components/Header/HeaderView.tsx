@@ -17,6 +17,7 @@ export function HeaderView({ viewModel }: Props) {
     <PageHeader
       title={title}
       onBack={onBack}
+      className="sticky top-0 z-20 bg-canvas pb-12"
       extra={
         <span className="flex items-center gap-4">
           <span data-testid="account-detail-header-address">{address}</span>
