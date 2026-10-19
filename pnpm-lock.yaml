@@ -1399,9 +1399,6 @@ importers:
       '@xstate/react':
         specifier: 'catalog:'
         version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)
-      allure-commandline:
-        specifier: 2.28.0
-        version: 2.28.0
       assert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -6120,9 +6117,6 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
-      allure-commandline:
-        specifier: 2.28.0
-        version: 2.28.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -29445,10 +29439,6 @@ packages:
     resolution: {integrity: sha512-frhGtZl1JvfrLRKmMvUm880wj4OiWsWo2FhbreNWh7pdFsKuWPj60fV682wt/CYefLI70iwHavPOwGBkTVt0VA==}
     engines: {node: '>=18.0.0'}
 
-  allure-commandline@2.28.0:
-    resolution: {integrity: sha512-TZ3oxop0zseJp2bRKb8Zzkxa4/aB+RvKEMnhylbY6UiOkqhNAHovRJx03bFA9bbvE/nsR70sX+ktU5xI2WJiqQ==}
-    hasBin: true
-
   allure-js-commons@3.13.0:
     resolution: {integrity: sha512-NC4qcbmfpuYTstdw+EgimzhpHD2T85wzBNWRMPpu9rukkLzRlLvSmUCo5hy6vEvwQd9BUQh2yMFplJ+shIpVrA==}
     peerDependencies:
@@ -51369,8 +51359,6 @@ snapshots:
       json-bigint: 1.0.0
       tweetnacl: 1.0.3
       vlq: 2.0.4
-
-  allure-commandline@2.28.0: {}
 
   allure-js-commons@3.13.0(allure-playwright@3.13.0(@playwright/test@1.63.0)):
     dependencies:
