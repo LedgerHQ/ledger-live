@@ -6,6 +6,7 @@ import {
   persistedCALContentEqual,
   type PersistedCAL,
 } from "@domain/api-currency-token";
+import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
@@ -401,14 +402,12 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("persists the CAL token cache on actions of the registered CAL api", () => {
-    const persisted = { tokens: [{ id: "ethereum/erc20/usd__coin" }] } as unknown as PersistedCAL;
+    const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
     jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
     jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
     const state = baseState();
 
-    runMiddleware([state, state], {
-      type: `${cryptoAssetsApi.reducerPath}/executeQuery/fulfilled`,
-    });
+    runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", persisted);
   });
