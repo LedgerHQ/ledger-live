@@ -217,13 +217,12 @@ describe("PerpsWithdraw integration", () => {
     await user.type(input(), "500");
     await user.click(screen.getByTestId("perps-withdraw-select-currency"));
 
-    expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
-      expect.objectContaining({
-        uiUseCase: "perpetuals:withdraw",
-        currencies: ["ethereum", "bitcoin"],
-        areCurrenciesFiltered: true,
-      }),
-    );
+    // Like swap, the backend filters to swappable assets: listing every id would overflow the URL.
+    expect(mockOpenAssetAndAccount).toHaveBeenCalledWith({
+      useCase: "swap",
+      uiUseCase: "perpetuals:withdraw",
+      areCurrenciesFiltered: false,
+    });
     expect(await screen.findByText("Withdraw to BTC")).toBeVisible();
     expect(input()).toHaveValue("500");
   });
