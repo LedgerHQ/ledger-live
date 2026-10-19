@@ -168,12 +168,9 @@ describe("PortfolioView", () => {
     hasExchangeBannerCTA: true,
     shouldDisplayAssetSection: true,
     shouldDisplayAssetDiscoverability: false,
-    shouldDisplayOperationsList: true,
     shouldDisplayBorrowSection: false,
     shouldDisplayBrazePlacement: false,
     isClearCacheBannerVisible: false,
-    filterOperations: () => true,
-    accounts: [],
     t: i18next.t,
   };
 
