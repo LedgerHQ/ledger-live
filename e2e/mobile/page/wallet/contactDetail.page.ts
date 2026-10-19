@@ -135,13 +135,10 @@ export default class ContactDetailPage {
     }
 
     // iOS Detox waits for idle, and the device sheet never settles, so the continue tap hangs.
+    // Sync stays off for the rest of this spec. The next spec launches a fresh app.
     await app.common.disableSynchronizationForiOS();
-    try {
-      await tapByElement(this.addAddressNameContinueButton());
-      await waitForElement(this.registerAddressDeviceConfirmation());
-    } finally {
-      await app.common.enableSynchronization();
-    }
+    await tapByElement(this.addAddressNameContinueButton());
+    await waitForElement(this.registerAddressDeviceConfirmation());
   }
 
   @Step("Add {{0.networkName}} address {{{0.addressInput}}}")
