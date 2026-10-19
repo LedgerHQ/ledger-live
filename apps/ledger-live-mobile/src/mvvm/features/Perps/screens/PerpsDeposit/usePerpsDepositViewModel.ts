@@ -34,7 +34,7 @@ import type { PerpsDepositOutcome } from "../../hooks/usePerpsDepositExecution";
 import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
-import { applyAmountKey, toAmountText } from "./utils/amountKeys";
+import { applyAmountKey, toAmountText } from "../../utils/amountKeys";
 import { toAmountValue } from "./utils/toAmountValue";
 import { validateDepositFlow, type DepositFormError } from "./utils/validateDepositFlow";
 
