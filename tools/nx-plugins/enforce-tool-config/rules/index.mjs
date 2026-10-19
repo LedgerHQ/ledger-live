@@ -9,6 +9,8 @@
 //
 // Add the module here to enable it. Packages that do not conform yet go in ../exclusions.mjs.
 
+import fmt from "./fmt.mjs";
+
 /**
  * @typedef {{ file: string, message: string }} Violation
  * @typedef {{ workspaceRoot: string, projectRoot: string }} RuleContext
@@ -16,4 +18,4 @@
  */
 
 /** @type {Rule[]} */
-export const RULES = [];
+export const RULES = [fmt];

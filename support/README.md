@@ -35,6 +35,7 @@ Two kinds of preset:
 
 | Package | Applies to |
 | --- | --- |
+| [`fmt`](./fmt) | every package: the repository's only oxfmt config, re-exported by the root `oxfmt.config.mts`. Packages carry none and pass no `-c` |
 | [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
 | [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
 | [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
