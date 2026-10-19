@@ -5,11 +5,9 @@ import {
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
 import { useTranslation } from "@shared/i18n";
-import { useAddressLabelTooLong } from "./useAddressLabelTooLong";
 
 export function useEditAddressLabels(supportsDomain: boolean) {
   const { t } = useTranslation();
-  const addressLabelTooLong = useAddressLabelTooLong();
 
   return useMemo(
     () => ({
@@ -19,7 +17,7 @@ export function useEditAddressLabels(supportsDomain: boolean) {
       labelValidationErrors: {
         [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.editAddress.invalidLabelError"),
         [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.addAddressName.duplicateLabel"),
-        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: addressLabelTooLong,
+        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t("contacts.addAddressName.tooLongLabel"),
       },
       addressValidation: {
         addressPlaceholder: t(
@@ -39,6 +37,6 @@ export function useEditAddressLabels(supportsDomain: boolean) {
           t("contacts.addAddressEntry.duplicateAddress", { contactName }),
       },
     }),
-    [addressLabelTooLong, supportsDomain, t],
+    [supportsDomain, t],
   );
 }

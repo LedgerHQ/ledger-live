@@ -51,27 +51,8 @@ export type PopulatedContactDetailViewModel = Readonly<{
   addressGroups: readonly ContactDetailAddressNetworkGroup[];
 }>;
 
-export type ContactDetailLabels = Readonly<{
-  addAddress: string;
-  addExternalAddress?: string;
-  addYourAddress?: string;
-  emptyMeTitle: string;
-  emptyContactTitle: (name: string) => string;
-  emptyMeDescription: string;
-  emptyContactDescription: (name: string) => string;
-  ledgerWalletAddresses?: string;
-  myAddresses?: string;
-  formatAddressCount: (count: number) => string;
-}>;
-
-export type ContactDetailActionsLabels = Readonly<{
-  editContact: string;
-  deleteContact: string;
-}>;
-
 export type ContactDetailViewProps = Readonly<{
   contact: Contact;
-  labels: ContactDetailLabels;
   onAddAddress: () => void;
   ledgerWalletAccountsIntent?: ContactDetailLedgerWalletAccountsIntent;
   onLedgerWalletAccountsPress?: (intent: ContactDetailLedgerWalletAccountsIntent) => void;
@@ -79,7 +60,6 @@ export type ContactDetailViewProps = Readonly<{
   onAddressRowPress?: (intent: ContactDetailAddressRowIntent) => void;
   detailActions?: Readonly<{
     canDelete: boolean;
-    labels: ContactDetailActionsLabels;
     onEdit: () => void;
     onDelete: () => void;
   }>;

@@ -8,14 +8,15 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
+import { useEditSignerMismatchCopy } from "../../copy/useEditSignerMismatchCopy";
 import type { ContactsEditSignerMismatchDialogProps } from "./types";
 
 export function ContactsEditSignerMismatchDialog({
   isOpen,
-  labels,
   onConnectDifferentDevice,
   onCancel,
 }: ContactsEditSignerMismatchDialogProps): React.ReactNode {
+  const labels = useEditSignerMismatchCopy();
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       onCancel();

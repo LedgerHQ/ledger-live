@@ -1,6 +1,7 @@
 import React from "react";
 import { useContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../../types";
+import { useContactDetailHeaderCopy } from "../../copy/useContactDetailHeaderCopy";
 import {
   ContactDetailActions,
   type ContactDetailActionsProps,
@@ -8,10 +9,7 @@ import {
 import { ContactDetailHeaderAddAddress } from "./ContactDetailHeaderAddAddress.web";
 import { ContactDetailHeaderIdentity } from "./ContactDetailHeaderIdentity.web";
 
-type ContactDetailHeaderProps = Pick<
-  ContactDetailViewProps,
-  "contact" | "labels" | "onAddAddress"
-> &
+type ContactDetailHeaderProps = Pick<ContactDetailViewProps, "contact" | "onAddAddress"> &
   Readonly<{
     detailActions?: ContactDetailActionsProps;
     isCollapsed: boolean;
@@ -43,15 +41,12 @@ function getCompactHeaderLayout(detailActions?: ContactDetailActionsProps): Read
 
 export function ContactDetailHeader({
   contact,
-  labels,
   onAddAddress,
   detailActions,
   isCollapsed,
 }: ContactDetailHeaderProps): React.ReactNode {
   const getDisplayName = useContactDisplayName();
-  const addAddressLabel = contact.isMe
-    ? (labels.addYourAddress ?? labels.addAddress)
-    : labels.addAddress;
+  const copy = useContactDetailHeaderCopy(contact);
   const { addAddressOffset, contentRight } = getCompactHeaderLayout(detailActions);
 
   return (
@@ -66,12 +61,12 @@ export function ContactDetailHeader({
         contact={contact}
 
         name={getDisplayName(contact)}
-        addressCount={labels.formatAddressCount(contact.addresses.length)}
+        addressCount={copy.addressCount}
         isCollapsed={isCollapsed}
         compactContentRight={contentRight}
       />
       <ContactDetailHeaderAddAddress
-        label={addAddressLabel}
+        label={copy.addAddress}
         onAddAddress={onAddAddress}
         isCollapsed={isCollapsed}
         compactOffset={addAddressOffset}

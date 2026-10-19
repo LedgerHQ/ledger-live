@@ -1,6 +1,12 @@
 import React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
+import {
+  fireEvent,
+  render as renderWithoutI18n,
+  screen,
+  waitFor,
+} from "@testing-library/react-native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
 import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog.native";
@@ -14,6 +20,8 @@ jest.mock("./ContactAddressDetailQrCode.native", () => ({
     return React.createElement(Text, { testID: "contacts-address-detail-qr-code" }, "QR");
   },
 }));
+
+const render = (ui: React.ReactElement) => renderWithoutI18n(ui, { wrapper: I18nTestProvider });
 
 function createProps(
   overrides: Partial<ContactAddressDetailDialogNativeProps> = {},
@@ -43,16 +51,6 @@ function createProps(
     contactName: contact.name,
     row,
     network,
-    labels: {
-      send: "Send",
-      copy: "Copy",
-      copyAddress: "Copy address",
-      copied: "Copied",
-      edit: "Edit",
-      share: "Share",
-      delete: "Delete",
-      formatNetworkTag: name => `${name} Network`,
-    },
     onClose: jest.fn(),
     onCopyAddress: jest.fn().mockResolvedValue(true),
     ...overrides,
@@ -77,7 +75,10 @@ describe("ContactAddressDetailDialog", () => {
     );
     expect(screen.getByTestId("contacts-address-detail-network-tag")).toHaveProp(
       "label",
-      "Ethereum Network",
+      "contacts.addressDetail.networkTag",
+    );
+    expect(screen.getByTestId("contacts-address-detail-share")).toHaveTextContent(
+      "contacts.addressDetail.share",
     );
     expect(screen.getByTestId("contacts-address-detail-qr-code")).toBeVisible();
   });
@@ -91,13 +92,17 @@ describe("ContactAddressDetailDialog", () => {
     expect(onCopyAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
+      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
+        "contacts.addressDetail.copied",
+      );
     });
 
     jest.advanceTimersByTime(3000);
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copy address");
+      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
+        "contacts.addressDetail.copyAddress",
+      );
     });
   });
 
@@ -122,12 +127,16 @@ describe("ContactAddressDetailDialog", () => {
     fireEvent.press(screen.getByTestId("contacts-address-detail-copy"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
+      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
+        "contacts.addressDetail.copied",
+      );
     });
 
     rerender(<ContactAddressDetailDialog {...createProps({ isOpen: false })} />);
     rerender(<ContactAddressDetailDialog {...createProps()} />);
 
-    expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copy address");
+    expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
+      "contacts.addressDetail.copyAddress",
+    );
   });
 });

@@ -12,7 +12,6 @@ export function ContactAddressDetailDialog({
   contactName,
   row,
   network,
-  labels,
   onClose,
   onSend,
   onEdit,
@@ -66,13 +65,8 @@ export function ContactAddressDetailDialog({
       >
         <DialogHeader title={contactName} onClose={onClose} />
         <DialogBody className="flex flex-col items-center gap-40 p-24">
-          <ContactAddressDetailSummary
-            row={row}
-            network={network}
-            formatNetworkTag={labels.formatNetworkTag}
-          />
+          <ContactAddressDetailSummary row={row} network={network} />
           <ContactAddressDetailActions
-            labels={labels}
             hasCopied={hasCopied}
             onCopy={() => void handleCopy()}
             onSend={onSend}

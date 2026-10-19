@@ -1,10 +1,9 @@
 import React from "react";
 import { Box, Link, TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowUp, Check, Copy, PenEdit, Share, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { ContactAddressDetailDialogNativeLabels } from "./types";
+import { useTranslation } from "@shared/i18n";
 
 type ContactAddressDetailActionsProps = Readonly<{
-  labels: ContactAddressDetailDialogNativeLabels;
   hasCopied: boolean;
   onCopy: () => void;
   onShare?: () => void;
@@ -17,7 +16,6 @@ type ContactAddressDetailActionsProps = Readonly<{
 }>;
 
 export function ContactAddressDetailActions({
-  labels,
   hasCopied,
   onCopy,
   onShare,
@@ -28,6 +26,8 @@ export function ContactAddressDetailActions({
   canEdit = false,
   canDelete = false,
 }: ContactAddressDetailActionsProps): React.JSX.Element {
+  const { t } = useTranslation();
+
   return (
     <Box lx={{ marginTop: "s16", gap: "s32", width: "full", alignItems: "center" }}>
       <Link
@@ -37,7 +37,7 @@ export function ContactAddressDetailActions({
         onPress={onCopy}
         testID="contacts-address-detail-copy"
       >
-        {hasCopied ? labels.copied : labels.copyAddress}
+        {hasCopied ? t("contacts.addressDetail.copied") : t("contacts.addressDetail.copyAddress")}
       </Link>
       <Box lx={{ flexDirection: "row", gap: "s8", width: "full" }}>
         <TileButton
@@ -48,7 +48,7 @@ export function ContactAddressDetailActions({
           lx={{ flex: 1 }}
           numberOfLines={1}
         >
-          {labels.send}
+          {t("contacts.addressDetail.send")}
         </TileButton>
         <TileButton
           icon={PenEdit}
@@ -59,7 +59,7 @@ export function ContactAddressDetailActions({
           testID="contacts-address-detail-edit"
           numberOfLines={1}
         >
-          {labels.edit}
+          {t("contacts.addressDetail.edit")}
         </TileButton>
         <TileButton
           icon={Share}
@@ -70,7 +70,7 @@ export function ContactAddressDetailActions({
           testID="contacts-address-detail-share"
           numberOfLines={1}
         >
-          {labels.share}
+          {t("contacts.addressDetail.share")}
         </TileButton>
         <TileButton
           icon={Trash}
@@ -82,7 +82,7 @@ export function ContactAddressDetailActions({
           testID="contacts-address-detail-delete"
           numberOfLines={1}
         >
-          {labels.delete}
+          {t("contacts.addressDetail.delete")}
         </TileButton>
       </Box>
     </Box>

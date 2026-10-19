@@ -12,18 +12,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
-import type { ContactDetailLabels } from "./types";
 import { ContactDetailView } from "./ContactDetailView.web";
-
-const labels: ContactDetailLabels = {
-  addAddress: "Add address",
-  addYourAddress: "Add your address",
-  emptyMeTitle: "No saved addresses for you",
-  emptyContactTitle: name => `No saved addresses for ${name}`,
-  emptyMeDescription: "Save your wallet addresses to receive crypto by name next time.",
-  emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
-  formatAddressCount: count => `${count} address`,
-};
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
@@ -31,7 +20,6 @@ const render = (ui: React.ReactElement) =>
 const onAddAddress = () => undefined;
 
 const defaultProps = {
-  labels,
   onAddAddress,
 };
 
@@ -58,11 +46,9 @@ describe("ContactDetailView", () => {
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses (Me)");
-    expect(screen.getByText("Add your address")).toBeInTheDocument();
-    expect(screen.getByText("No saved addresses for you")).toBeInTheDocument();
-    expect(
-      screen.getByText("Save your wallet addresses to receive crypto by name next time."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("contacts.addYourAddress")).toBeInTheDocument();
+    expect(screen.getByText("contacts.detail.emptyState.meTitle")).toBeInTheDocument();
+    expect(screen.getByText("contacts.detail.emptyState.meDescription")).toBeInTheDocument();
   });
 
   it("should render a custom Me display name with the Me suffix", () => {
@@ -81,10 +67,8 @@ describe("ContactDetailView", () => {
 
     expect(screen.getByTestId("contacts-detail-avatar")).toBeInTheDocument();
     expect(screen.getByText("Benoit")).toBeInTheDocument();
-    expect(screen.getByText("No saved addresses for Benoit")).toBeInTheDocument();
-    expect(
-      screen.getByText("Save their wallet addresses to send to them by name next time"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("contacts.detail.emptyState.contactTitle")).toBeInTheDocument();
+    expect(screen.getByText("contacts.detail.emptyState.contactDescription")).toBeInTheDocument();
   });
 
   it("should preserve the saved contact name truncation styles", () => {
@@ -144,7 +128,7 @@ describe("ContactDetailView", () => {
     const addressRow = screen.getByTestId(`contacts-detail-address-row-${address.id}`);
     expect(addressRow).toBeVisible();
     expect(addressRow).toHaveAttribute("data-address", address.address);
-    expect(within(addressList).getByText("1 address")).toBeVisible();
+    expect(within(addressList).getByText("contacts.addressCount")).toBeVisible();
     expect(screen.queryByTestId("contacts-detail-empty-state")).not.toBeInTheDocument();
 
     fireEvent.click(addressRow);
@@ -171,7 +155,7 @@ describe("ContactDetailView", () => {
     expect(handleAddAddress).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveAttribute(
       "aria-label",
-      "Add your address",
+      "contacts.addYourAddress",
     );
   });
 
@@ -227,10 +211,10 @@ describe("ContactDetailView", () => {
     expect(within(stickyBar).getByTestId("contacts-detail-name")).toHaveClass(
       "heading-5-semi-bold",
     );
-    expect(within(stickyBar).getByText("1 address")).toHaveClass("body-2");
+    expect(within(stickyBar).getByText("contacts.addressCount")).toHaveClass("body-2");
     expect(within(stickyBar).getByTestId("contacts-detail-add-address-icon")).toHaveAttribute(
       "aria-label",
-      "Add address",
+      "contacts.addAddress",
     );
 
     // Header scrolls back into view → sticky bar hides.
@@ -343,7 +327,6 @@ describe("ContactDetailView", () => {
         onAddressRowPress={jest.fn()}
         detailActions={{
           canDelete: true,
-          labels: { editContact: "Edit contact", deleteContact: "Delete contact" },
           onEdit,
           onDelete,
         }}
@@ -357,6 +340,10 @@ describe("ContactDetailView", () => {
     fireEvent.click(within(stickyBar).getByTestId("contacts-detail-edit-action"));
     fireEvent.click(within(stickyBar).getByTestId("contacts-detail-delete-action"));
 
+    expect(within(stickyBar).getByTestId("contacts-detail-edit-action")).toHaveAttribute(
+      "aria-label",
+      "contacts.detailActions.editContact",
+    );
     expect(onCompactAddAddress).toHaveBeenCalledTimes(1);
     expect(onEdit).toHaveBeenCalledTimes(1);
     expect(onDelete).toHaveBeenCalledTimes(1);
@@ -369,14 +356,13 @@ describe("ContactDetailView", () => {
       <ContactDetailView
         {...defaultProps}
         contact={mockMeContact()}
-        labels={{ ...labels, ledgerWalletAddresses: "Ledger Wallet addresses" }}
         ledgerWalletAccountsIntent={createContactDetailLedgerWalletAccountsIntent(mockMeContact())}
         onLedgerWalletAccountsPress={handleLedgerWalletAccountsPress}
       />,
     );
 
     expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
-      "Ledger Wallet addresses",
+      "contacts.detail.ledgerWalletAddresses",
     );
 
     fireEvent.click(screen.getByTestId("contacts-detail-ledger-wallet-addresses"));
@@ -391,7 +377,6 @@ describe("ContactDetailView", () => {
       <ContactDetailView
         {...defaultProps}
         contact={mockMeContact()}
-        labels={{ ...labels, ledgerWalletAddresses: "Ledger Wallet addresses" }}
         ledgerWalletAccountsIntent={createContactDetailLedgerWalletAccountsIntent(mockMeContact())}
         onLedgerWalletAccountsPress={() => undefined}
       />,
@@ -409,7 +394,6 @@ describe("ContactDetailView", () => {
       <ContactDetailView
         {...defaultProps}
         contact={mockContact({ id: "contact-benoit", name: "Benoit" })}
-        labels={{ ...labels, ledgerWalletAddresses: "Ledger Wallet addresses" }}
         ledgerWalletAccountsIntent={undefined}
         onLedgerWalletAccountsPress={() => undefined}
       />,

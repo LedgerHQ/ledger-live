@@ -11913,7 +11913,6 @@
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
-      "labelTooLong": "This address name is too long.",
       "tooLongLabel": "This address name is too long.",
       "privacyPolicy": "Learn more about Ledger's Privacy Policy."
     },
@@ -11934,7 +11933,6 @@
     "detail": {
       "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
-      "myAddresses": "My addresses",
       "emptyState": {
         "contactTitle": "No saved addresses for {{name}}",
         "meTitle": "Save your own addresses",

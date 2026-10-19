@@ -19,8 +19,8 @@ with List and Introduction. Mobile mounts `ContactDetailView` from the Contact D
 ## Public API
 
 Import `@features/flow-contacts-detail` from both platforms. The package root resolves the Web or
-React Native implementation. `ContactDetailView` is the screen; dialogs, drawers, view models, and
-labels are exported beside it.
+React Native implementation. `ContactDetailView` is the screen; dialogs, drawers, and view models
+are exported beside it. The package resolves its own copy with `@shared/i18n`.
 
 Consumers must not import files under `src/`.
 

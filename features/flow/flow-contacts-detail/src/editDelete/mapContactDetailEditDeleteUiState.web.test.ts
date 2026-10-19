@@ -5,7 +5,6 @@ import { createMockContactSignerValidationPort } from "../platform/contactSigner
 import { makeContactsWrapper } from "../__tests__/contactsStoreTestUtils";
 import type { ContactDetailActionsPorts } from "../model/ports";
 import { createContactDetailEditDeleteUiState } from "./mapContactDetailEditDeleteUiState";
-import { resolveContactDetailEditDeleteLabels } from "./resolveContactDetailEditDeleteLabels";
 import { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
 
 function createPorts(
@@ -30,7 +29,6 @@ describe("createContactDetailEditDeleteUiState", () => {
     const mismatchPort = createMockContactSignerValidationPort({
       currentSignerId: "signer-b",
     });
-    const labels = resolveContactDetailEditDeleteLabels({ t: key => key });
     const { result } = renderHook(
       () =>
         useContactDetailEditDeleteFlowViewModel({
@@ -58,12 +56,11 @@ describe("createContactDetailEditDeleteUiState", () => {
       await result.current.requestSaveApproval();
     });
 
-    const uiState = createContactDetailEditDeleteUiState(result.current, renameViewModel, labels);
+    const uiState = createContactDetailEditDeleteUiState(result.current, renameViewModel);
 
     expect(uiState.rename.isDeviceRequired).toBe(true);
     expect(uiState.signerMismatch).toEqual({
       isOpen: true,
-      labels: labels.signerMismatch,
       onConnectDifferentDevice: result.current.onConnectDifferentDevice,
       onCancel: result.current.onSignerMismatchCancel,
     });

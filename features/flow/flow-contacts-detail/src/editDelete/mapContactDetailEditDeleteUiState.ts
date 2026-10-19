@@ -5,7 +5,6 @@ import type {
   RenameContactDialogViewModel,
 } from "@features/flow-contacts-edit-contact";
 import type { UseContactDetailEditDeleteFlowViewModelResult } from "./useContactDetailEditDeleteFlowViewModel";
-import type { ContactDetailEditDeleteLabels } from "./resolveContactDetailEditDeleteLabels";
 
 export type ContactDetailEditDeleteUiState = Readonly<{
   rename: ContactsRenameContactDialogProps;
@@ -16,7 +15,6 @@ export type ContactDetailEditDeleteUiState = Readonly<{
 export function createContactDetailEditDeleteUiState(
   flow: UseContactDetailEditDeleteFlowViewModelResult,
   renameViewModel: RenameContactDialogViewModel,
-  labels: ContactDetailEditDeleteLabels,
 ): ContactDetailEditDeleteUiState {
   return {
     rename: {
@@ -31,7 +29,6 @@ export function createContactDetailEditDeleteUiState(
     },
     signerMismatch: {
       isOpen: flow.editUiState === "signer-mismatch",
-      labels: labels.signerMismatch,
       onConnectDifferentDevice: flow.onConnectDifferentDevice,
       onCancel: flow.onSignerMismatchCancel,
     },

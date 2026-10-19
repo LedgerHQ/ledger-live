@@ -1,6 +1,7 @@
 import React from "react";
 import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { ContactConfirmationBottomSheet } from "@features/platform-contacts/native";
+import { useEditSignerMismatchCopy } from "../../copy/useEditSignerMismatchCopy";
 import type { ContactsEditSignerMismatchDialogProps } from "./types";
 
 export type ContactsEditSignerMismatchDrawerProps = ContactsEditSignerMismatchDialogProps &
@@ -11,10 +12,11 @@ export type ContactsEditSignerMismatchDrawerProps = ContactsEditSignerMismatchDi
 export function ContactsEditSignerMismatchDialog({
   isOpen,
   bottomInset = 0,
-  labels,
   onConnectDifferentDevice,
   onCancel,
 }: ContactsEditSignerMismatchDrawerProps): React.JSX.Element {
+  const labels = useEditSignerMismatchCopy();
+
   return (
     <ContactConfirmationBottomSheet
       isOpen={isOpen}

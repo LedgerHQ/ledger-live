@@ -1,11 +1,10 @@
 import React from "react";
 import { IconButton } from "@ledgerhq/lumen-ui-react";
 import { PenEdit, Trash } from "@ledgerhq/lumen-ui-react/symbols";
-import type { ContactDetailActionsLabels } from "../../types";
+import { useTranslation } from "@shared/i18n";
 
 export type ContactDetailActionsProps = Readonly<{
   canDelete: boolean;
-  labels: ContactDetailActionsLabels;
   onEdit: () => void;
   onDelete: () => void;
   isCollapsed?: boolean;
@@ -13,11 +12,12 @@ export type ContactDetailActionsProps = Readonly<{
 
 export function ContactDetailActions({
   canDelete,
-  labels,
   onEdit,
   onDelete,
   isCollapsed = false,
 }: ContactDetailActionsProps): React.ReactNode {
+  const { t } = useTranslation();
+
   return (
     <div
       className={`absolute flex gap-8 motion-safe:transition-[top,right,transform] motion-safe:duration-[400ms] motion-safe:ease-in-out motion-reduce:transition-none ${
@@ -29,7 +29,7 @@ export function ContactDetailActions({
         appearance="transparent"
         size="sm"
         icon={PenEdit}
-        aria-label={labels.editContact}
+        aria-label={t("contacts.detailActions.editContact")}
         onClick={onEdit}
         data-testid="contacts-detail-edit-action"
       />
@@ -38,7 +38,7 @@ export function ContactDetailActions({
           appearance="transparent"
           size="sm"
           icon={Trash}
-          aria-label={labels.deleteContact}
+          aria-label={t("contacts.detailActions.deleteContact")}
           onClick={onDelete}
           data-testid="contacts-detail-delete-action"
         />

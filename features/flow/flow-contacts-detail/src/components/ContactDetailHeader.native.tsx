@@ -3,16 +3,17 @@ import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../types";
+import { useContactDetailHeaderCopy } from "../copy/useContactDetailHeaderCopy";
 import { ContactDetailAvatar } from "./ContactDetailAvatar.native";
 
-type ContactDetailHeaderProps = Pick<ContactDetailViewProps, "contact" | "labels" | "onAddAddress">;
+type ContactDetailHeaderProps = Pick<ContactDetailViewProps, "contact" | "onAddAddress">;
 
 export function ContactDetailHeader({
   contact,
-  labels,
   onAddAddress,
 }: ContactDetailHeaderProps): React.JSX.Element {
   const getDisplayName = useContactDisplayName();
+  const copy = useContactDetailHeaderCopy(contact);
 
   return (
     <Box lx={{ alignItems: "center", gap: "s24", paddingTop: "s24" }}>
@@ -23,7 +24,7 @@ export function ContactDetailHeader({
             {getDisplayName(contact)}
           </Text>
           <Text testID="contacts-detail-address-count" typography="body2" lx={{ color: "muted" }}>
-            {labels.formatAddressCount(contact.addresses.length)}
+            {copy.addressCount}
           </Text>
         </Box>
       </Box>
@@ -34,7 +35,7 @@ export function ContactDetailHeader({
         onPress={onAddAddress}
         testID="contacts-detail-add-address"
       >
-        {contact.isMe ? (labels.addYourAddress ?? labels.addAddress) : labels.addAddress}
+        {copy.addAddress}
       </Button>
     </Box>
   );

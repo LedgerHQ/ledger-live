@@ -1,6 +1,7 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Tag } from "@ledgerhq/lumen-ui-react";
+import { useTranslation } from "@shared/i18n";
 import { resolveContactAddressIconProps } from "../../model/resolveContactAddressIcon";
 import type { ContactAddressDetailDialogProps } from "./types";
 
@@ -9,14 +10,13 @@ const ADDRESS_ICON_SIZE = 64;
 type ContactAddressDetailSummaryProps = Readonly<{
   row: NonNullable<ContactAddressDetailDialogProps["row"]>;
   network: NonNullable<ContactAddressDetailDialogProps["network"]>;
-  formatNetworkTag: ContactAddressDetailDialogProps["labels"]["formatNetworkTag"];
 }>;
 
 export function ContactAddressDetailSummary({
   row,
   network,
-  formatNetworkTag,
 }: ContactAddressDetailSummaryProps): React.ReactNode {
+  const { t } = useTranslation();
   const iconProps = resolveContactAddressIconProps(row.currencyId, row.label, network.networkId);
 
   return (
@@ -32,7 +32,7 @@ export function ContactAddressDetailSummary({
         <Tag
           appearance="gray"
           size="sm"
-          label={formatNetworkTag(network.networkName)}
+          label={t("contacts.addressDetail.networkTag", { name: network.networkName })}
           data-testid="contacts-address-detail-network-tag"
         />
         <div className="flex flex-col items-center text-center">
