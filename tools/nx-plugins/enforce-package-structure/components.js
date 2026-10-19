@@ -2,9 +2,10 @@
 
 // Public components of a dual-platform package, per entry and per platform.
 //
-// A universal entry (an `exports` entry with a `react-native` condition) is resolved twice, the
-// way the app bundlers do: Rspack on desktop, Re.Pack on mobile. A platform entry (`./web` or
-// `./native` without a condition) is resolved once, for its platform. Re-exports are followed to
+// A universal entry (an `exports` entry with a `react-native` condition, or one without a
+// condition whose exports resolve to different modules on each platform) is resolved twice, the way the app
+// bundlers do: Rspack on desktop, Re.Pack on mobile. A platform entry (`./web` or `./native`
+// without a condition) is resolved once, for its platform. Re-exports are followed to
 // the declaring module, parsed with the TypeScript parser alone: no program, no type checker.
 //
 // R1: a universal component is exported on both platforms under the same name.
@@ -37,6 +38,7 @@ const PLATFORM_SUFFIX = {
   native: /\.(?:native|ios|android)\.[cm]?[jt]sx?$/,
 };
 
+const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const COMPONENT_WRAPPERS = new Set(["memo", "forwardRef"]);
 
@@ -70,17 +72,21 @@ function selectTarget(target, conditions) {
 }
 
 /**
- * Universal and platform entries of a `package.json#exports`, with the file each platform selects.
+ * Entries of a `package.json#exports`, with the file each platform selects. `unconditioned`
+ * entries become universal when their exports resolve to different modules on each platform.
  *
  * @param {unknown} exportsField
- * @returns {{ universal: Array<{ subpath: string, web: string | null, native: string | null }>, platform: Array<{ subpath: string, platform: Platform, target: string }> }}
+ * @returns {{ universal: Array<{ subpath: string, web: string | null, native: string | null }>, platform: Array<{ subpath: string, platform: Platform, target: string }>, unconditioned: Array<{ subpath: string, target: string }> }}
  */
 function classifyEntries(exportsField) {
   const universal = [];
   const platform = [];
-  if (exportsField === null || typeof exportsField !== "object") return { universal, platform };
+  const unconditioned = [];
+  const entries = typeof exportsField === "string" ? { ".": exportsField } : exportsField;
+  if (entries === null || typeof entries !== "object")
+    return { universal, platform, unconditioned };
 
-  for (const [subpath, target] of Object.entries(exportsField)) {
+  for (const [subpath, target] of Object.entries(entries)) {
     if (hasReactNativeCondition(target)) {
       universal.push({
         subpath,
@@ -89,9 +95,11 @@ function classifyEntries(exportsField) {
       });
     } else if (typeof target === "string" && Object.hasOwn(PLATFORM_ENTRIES, subpath)) {
       platform.push({ subpath, platform: PLATFORM_ENTRIES[subpath], target });
+    } else if (typeof target === "string" && SOURCE_FILE.test(target)) {
+      unconditioned.push({ subpath, target });
     }
   }
-  return { universal, platform };
+  return { universal, platform, unconditioned };
 }
 
 /**
@@ -376,7 +384,7 @@ function createExportCollector(platform) {
    * @param {string} entryFile absolute path
    * @returns {Map<string, ExportInfo>}
    */
-  return function collect(entryFile) {
+  function exportsOf(entryFile) {
     /** @type {Map<string, ExportInfo>} */
     const out = new Map();
     for (const name of namesOf(entryFile, new Set())) {
@@ -385,7 +393,9 @@ function createExportCollector(platform) {
       if (info) out.set(name, info);
     }
     return out;
-  };
+  }
+
+  return exportsOf;
 }
 
 /**
@@ -405,15 +415,28 @@ function componentsOf(exported) {
  * @param {unknown} exportsField
  */
 function collectEntryComponents(packageDir, exportsField) {
-  const { universal, platform } = classifyEntries(exportsField);
+  const { universal, platform, unconditioned } = classifyEntries(exportsField);
   const collectors = { web: createExportCollector("web"), native: createExportCollector("native") };
 
   function absolute(target) {
     return target ? path.resolve(packageDir, target) : null;
   }
 
+  function resolvesPerPlatform(target) {
+    const web = collectors.web(absolute(target));
+    const native = collectors.native(absolute(target));
+    return (
+      web.size !== native.size ||
+      [...web].some(([name, info]) => native.get(name)?.file !== info.file)
+    );
+  }
+
+  const perPlatform = unconditioned
+    .filter(entry => resolvesPerPlatform(entry.target))
+    .map(entry => ({ subpath: entry.subpath, web: entry.target, native: entry.target }));
+
   return {
-    universal: universal.map(entry => ({
+    universal: [...universal, ...perPlatform].map(entry => ({
       subpath: entry.subpath,
       files: { web: absolute(entry.web), native: absolute(entry.native) },
       components: {

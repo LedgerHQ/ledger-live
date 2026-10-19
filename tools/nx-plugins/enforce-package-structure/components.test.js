@@ -260,7 +260,7 @@ test("native resolution follows Re.Pack: .ios or .android, then .native, then un
 });
 
 test("classifyEntries: a react-native condition makes a universal entry, a bare ./web or ./native a platform one", () => {
-  const { universal, platform } = classifyEntries({
+  const { universal, platform, unconditioned } = classifyEntries({
     ".": { "react-native": "./src/index.native.ts", default: "./src/index.ts" },
     "./hooks": {
       types: "./x.d.ts",
@@ -281,14 +281,44 @@ test("classifyEntries: a react-native condition makes a universal entry, a bare 
   assert.deepEqual(platform, [
     { subpath: "./native", platform: "native", target: "./src/nativeExports.native.ts" },
   ]);
+  assert.deepEqual(unconditioned, [
+    { subpath: "./state", target: "./src/state/index.ts" },
+    { subpath: "./jest.native", target: "./src/jest.native.ts" },
+  ]);
+  assert.deepEqual(classifyEntries("./src/index.ts").unconditioned, [
+    { subpath: ".", target: "./src/index.ts" },
+  ]);
 });
 
-test("a package without a universal or platform entry is not checked", () => {
+test("R1 passes: an entry without a condition whose modules differ per platform, same names", () => {
+  assert.deepEqual(
+    check({
+      "package.json": { exports: { ".": "./src/index.ts" } },
+      "src/index.ts": 'export { TrackPage } from "./TrackPage";\n',
+      "src/TrackPage.web.tsx": button("TrackPage"),
+      "src/TrackPage.native.tsx": button("TrackPage"),
+    }),
+    [],
+  );
+});
+
+test("R1 fails: an entry without a condition whose modules differ per platform, one-sided", () => {
   assert.deepEqual(
     check({
       "package.json": { exports: { ".": "./src/index.ts" } },
       "src/index.ts": 'export * from "./Only";\n',
       "src/Only.native.tsx": button("Only"),
+    }),
+    ["R1 universal-parity Only"],
+  );
+});
+
+test("an entry without a condition that resolves the same on both platforms is not checked", () => {
+  assert.deepEqual(
+    check({
+      "package.json": { exports: { ".": "./src/index.ts" } },
+      "src/index.ts": 'export * from "./View.web";\n',
+      "src/View.web.tsx": button("View"),
     }),
     [],
   );
