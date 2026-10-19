@@ -1,0 +1,56 @@
+---
+"@ledgerhq/coin-aleo": patch
+"@ledgerhq/coin-algorand": patch
+"@ledgerhq/coin-aptos": patch
+"@ledgerhq/coin-bitcoin": patch
+"@ledgerhq/coin-canton": patch
+"@ledgerhq/coin-cardano": patch
+"@ledgerhq/coin-casper": patch
+"@ledgerhq/coin-celo": patch
+"@ledgerhq/coin-concordium": patch
+"@ledgerhq/coin-cosmos": patch
+"@ledgerhq/coin-filecoin": patch
+"@ledgerhq/coin-hedera": patch
+"@ledgerhq/coin-icon": patch
+"@ledgerhq/coin-kaspa": patch
+"@ledgerhq/coin-mina": patch
+"@ledgerhq/coin-module-boilerplate": patch
+"@ledgerhq/coin-modules-monitoring": patch
+"@ledgerhq/coin-multiversx": patch
+"@ledgerhq/coin-near": patch
+"@ledgerhq/coin-polkadot": patch
+"@ledgerhq/coin-solana": patch
+"@ledgerhq/coin-stacks": patch
+"@ledgerhq/coin-sui": patch
+"@ledgerhq/coin-tester": patch
+"@ledgerhq/coin-tester-bitcoin": patch
+"@ledgerhq/coin-tester-evm": patch
+"@ledgerhq/coin-tester-multiversx": patch
+"@ledgerhq/coin-tester-zcash": patch
+"@ledgerhq/coin-ton": patch
+"@ledgerhq/coin-tron": patch
+"@ledgerhq/coin-vechain": patch
+"@ledgerhq/device-core": patch
+"@ledgerhq/hw-app-eth": patch
+"@ledgerhq/hw-app-multiversx": patch
+"@ledgerhq/hw-transport-http": patch
+"@ledgerhq/ledger-cal-service": patch
+"@ledgerhq/ledger-libs": patch
+"@ledgerhq/ledger-trust-service": patch
+"@ledgerhq/ledger-wallet-framework": patch
+"@ledgerhq/live-cli": patch
+"@ledgerhq/live-common": patch
+"@ledgerhq/live-e2e-shared": patch
+"@ledgerhq/react-ui": patch
+"@ledgerhq/wallet-btc": patch
+"@ledgerhq/wallet-cli": patch
+"@ledgerhq/web-tools": patch
+"ledger-live-desktop": minor
+"ledger-live-desktop-e2e-tests": patch
+"ledger-live-mobile-e2e-tests": patch
+"live-mobile": minor
+---
+
+chore(deps): update dependency @multiversx/sdk-core to v13.17.2
+
+- Updated `@multiversx/sdk-core` to `13.17.2`
