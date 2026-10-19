@@ -1,11 +1,43 @@
-import { Entry } from "@napi-rs/keyring";
+import { Entry, findCredentials } from "@napi-rs/keyring";
 import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
+import { errMessage } from "../shared/error-message";
 import { encryptData, decryptData, hexToBytes } from "./crypto";
 
 const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
+// Never holds entries, so probing it decrypts no real secret.
+const PROBE_SERVICE = `${APP_NAME}-probe`;
+
+// Reported as `keychain_unavailable` in the JSON error envelope.
+export class KeychainUnavailableError extends Error {
+  override name = "KeychainUnavailableError";
+}
+
+let findProbeCredentials: (service: string) => unknown = findCredentials;
+
+// Test seam — keeps tests off the OS keychain; `null` restores it.
+export function _setTestKeychainProbe(find: ((service: string) => unknown) | null): void {
+  findProbeCredentials = find ?? findCredentials;
+}
+
+// todo: probe via findCredentials because @napi-rs/keyring 1.3.0 can't pin the Linux store; pin { linux: { store: "secret-service" } } after upgrading to >= 2.1
+// On Linux `new Entry()` silently falls back to the kernel keyring when no Secret Service is
+// reachable, while `findCredentials` talks to Secret Service directly and throws. Not memoized:
+// callers probe right before they read or write.
+export function assertOsKeychainAvailable(hint: string): void {
+  if (process.platform !== "linux") return;
+  try {
+    findProbeCredentials(PROBE_SERVICE);
+  } catch (e) {
+    throw new KeychainUnavailableError(
+      `No OS keychain is available: no Secret Service provider (e.g. gnome-keyring or KeePassXC) ` +
+        `is reachable (${errMessage(e)}). ${hint}`,
+      { cause: e },
+    );
+  }
+}
 
 /**
  * A namespaced OS-keychain entry. `hashParts` are hashed together with the state dir so distinct

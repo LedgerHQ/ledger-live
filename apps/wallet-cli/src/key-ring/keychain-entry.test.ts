@@ -1,6 +1,12 @@
-import { describe, it, expect } from "bun:test";
+import { afterEach, describe, it, expect } from "bun:test";
 import { deriveDomainKey } from "./crypto";
-import { wrapSecret, unwrapSecret } from "./keychain-entry";
+import {
+  wrapSecret,
+  unwrapSecret,
+  assertOsKeychainAvailable,
+  KeychainUnavailableError,
+  _setTestKeychainProbe,
+} from "./keychain-entry";
 
 const KEY_HEX = "cafe".repeat(16);
 
@@ -56,5 +62,46 @@ describe("wrapSecret / unwrapSecret", () => {
     await expect(unwrapSecret(wrapped, otherKey, onPasswordRequired, onCorrupt)).rejects.toThrow(
       "Wrong password",
     );
+  });
+});
+
+describe("assertOsKeychainAvailable", () => {
+  const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
+  const probedServices: string[] = [];
+  const failingProbe = (service: string) => {
+    probedServices.push(service);
+    throw new Error("no secret service provider or dbus session found");
+  };
+
+  afterEach(() => {
+    Object.defineProperty(process, "platform", realPlatform);
+    _setTestKeychainProbe(null);
+    probedServices.length = 0;
+  });
+
+  it("throws KeychainUnavailableError with the hint on Linux when the Secret Service probe fails", () => {
+    Object.defineProperty(process, "platform", { value: "linux" });
+    _setTestKeychainProbe(failingProbe);
+
+    expect(() => assertOsKeychainAvailable("Hint.")).toThrow(KeychainUnavailableError);
+    expect(() => assertOsKeychainAvailable("Hint.")).toThrow(
+      /no Secret Service provider.*\(no secret service provider or dbus session found\)\. Hint\./,
+    );
+    expect(probedServices[0]).toBe("ledger-wallet-cli-probe");
+  });
+
+  it("passes on Linux when the probe returns", () => {
+    Object.defineProperty(process, "platform", { value: "linux" });
+    _setTestKeychainProbe(() => []);
+
+    expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
+  });
+
+  it.each(["darwin", "win32"])("never probes on %s", platform => {
+    Object.defineProperty(process, "platform", { value: platform });
+    _setTestKeychainProbe(failingProbe);
+
+    expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
+    expect(probedServices).toEqual([]);
   });
 });

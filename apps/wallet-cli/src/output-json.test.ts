@@ -419,6 +419,30 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("emits a missing OS keychain as a keychain_unavailable error envelope with exit code 1", async () => {
+    const { KeychainUnavailableError } = await import("./key-ring/keychain-entry");
+    const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
+
+    const err = await out
+      .run(async () => {
+        throw new KeychainUnavailableError("No OS keychain is available.");
+      })
+      .catch((e: unknown) => e);
+
+    expect(err).toBeInstanceOf(CliProcessExitError);
+    expect((err as CliProcessExitError).code).toBe(1);
+    expect(parseLines()).toEqual([
+      {
+        ok: false,
+        error: {
+          command: "agent-intent enroll",
+          code: "keychain_unavailable",
+          message: "No OS keychain is available.",
+        },
+      },
+    ]);
+  });
+
   const baseAgentIntentProfile = {
     profileId: "test-agent",
     displayName: "Test Agent",

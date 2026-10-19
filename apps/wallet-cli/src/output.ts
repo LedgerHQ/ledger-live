@@ -1112,6 +1112,13 @@ class JsonCommandOutput implements CommandOutput {
         },
       };
     }
+    // Matched by name: importing the class would load the native keyring module for every command.
+    if (e instanceof Error && e.name === "KeychainUnavailableError") {
+      return {
+        ok: false,
+        error: { command: this._ctx.command, code: "keychain_unavailable", message: e.message },
+      };
+    }
     return {
       ok: false,
       error: { command: this._ctx.command, message: HumanFormatter.formatError(e) },

@@ -15,6 +15,7 @@ import {
   saveAgentIntentSecretKey,
   deleteAgentIntentSecretKey,
 } from "../../key-ring/agent-intent-keychain";
+import { assertOsKeychainAvailable } from "../../key-ring/keychain-entry";
 import { authenticateEnrollmentCompletion } from "../../agent-intent/completion-auth";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
@@ -43,6 +44,12 @@ function assertProfileAvailable(session: Session, profileId: string): void {
         "it in session.yaml (or choose a different --profile id) before re-enrolling.",
     );
   }
+  // Before anything is generated or printed, so the human never approves a link that can't be saved.
+  assertOsKeychainAvailable(
+    "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
+      "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
+      "unencrypted on this machine.",
+  );
   if (hasAgentIntentSecretKey(profileId)) {
     throw new Error(
       `A keychain entry for profile "${profileId}" already exists but is not recorded in the ` +

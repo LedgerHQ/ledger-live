@@ -1,4 +1,5 @@
 import { mock } from "bun:test";
+import { _setTestKeychainProbe } from "../../../key-ring/keychain-entry";
 
 /**
  * Shared, flag-gated module mocks for the `agent-intent` command unit tests.
@@ -27,6 +28,8 @@ export type AgentIntentMockOverrides = {
   tokenLookup?: Partial<Record<(typeof TOKEN_LOOKUP_KEYS)[number], AnyFn>>;
   swapQuote?: Partial<Record<(typeof SWAP_QUOTE_KEYS)[number], AnyFn>>;
   confirmPrompt?: Partial<Record<(typeof CONFIRM_PROMPT_KEYS)[number], AnyFn>>;
+  // Replaces the Linux Secret Service probe; defaults to one that always passes.
+  keychainProbe?: (service: string) => unknown;
 };
 
 const SDK_KEYS = [
@@ -194,8 +197,11 @@ installMocks();
 export function activateAgentIntentMocks(overrides: AgentIntentMockOverrides): void {
   active = overrides;
   installMocks();
+  // Not a module mock: the probe is a seam, so the real OS keychain is never queried.
+  _setTestKeychainProbe(overrides.keychainProbe ?? (() => []));
 }
 
 export function deactivateAgentIntentMocks(): void {
   active = null;
+  _setTestKeychainProbe(null);
 }

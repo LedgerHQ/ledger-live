@@ -1,6 +1,7 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
+import { KeychainUnavailableError } from "../../key-ring/keychain-entry";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -45,6 +46,7 @@ let hostWait: (input: WaitInput) => Promise<Completion>;
 let waitStarted: () => void;
 let authenticateOverride: ((input: Record<string, unknown>) => Promise<void>) | undefined;
 let authenticateInputs: Array<Record<string, unknown>>;
+let keychainProbe: () => unknown;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
@@ -103,6 +105,7 @@ beforeAll(() =>
     sessionRead: async () => makeSession(),
     // The real lock does mkdirSync + a real file lock — irrelevant to these checks/rollback tests.
     noopSessionLock: true,
+    keychainProbe: () => keychainProbe(),
     keychain: {
       hasAgentIntentSecretKey: (_profileId: string) => keychainHasEntry,
       saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
@@ -185,8 +188,12 @@ function runEnroll(overrides: Partial<EnrollFlags> = {}) {
 describe("agent-intent enroll", () => {
   let restore: () => void;
   let stdout: string[];
+  // The Secret Service probe only runs on Linux.
+  const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
 
   beforeEach(() => {
+    Object.defineProperty(process, "platform", { value: "linux" });
+    keychainProbe = () => [];
     storedProfile = undefined;
     profileOnLockedRecheck = "same-as-stored";
     sessionReadCalls = 0;
@@ -213,7 +220,10 @@ describe("agent-intent enroll", () => {
     restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: () => {} });
   });
 
-  afterEach(() => restore());
+  afterEach(() => {
+    restore();
+    Object.defineProperty(process, "platform", realPlatform);
+  });
 
   describe("pre-checks and local persistence", () => {
     it("refuses to overwrite a profile id already recorded in the session", async () => {
@@ -229,6 +239,62 @@ describe("agent-intent enroll", () => {
       await expect(runEnroll()).rejects.toThrow(
         /keychain entry for profile "test-agent" already exists/,
       );
+    });
+
+    it("fails closed before generating a key or printing a link when no OS keychain is available", async () => {
+      keychainProbe = () => {
+        throw new Error("no secret service provider or dbus session found");
+      };
+
+      const err = await runEnroll().catch((e: unknown) => e);
+
+      expect(err).toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /No OS keychain is available.*--allow-plaintext-key only after the human explicitly agrees/s,
+      );
+      expect(requestInputs).toEqual([]);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(stdout).toEqual([]);
+    });
+
+    it("reports keychain_unavailable in json mode without printing a link", async () => {
+      keychainProbe = () => {
+        throw new Error("no secret service provider or dbus session found");
+      };
+
+      await expect(runEnroll({ output: "json" })).rejects.toThrow();
+
+      const lines = stdout
+        .join("")
+        .trim()
+        .split("\n")
+        .map(l => JSON.parse(l));
+      expect(lines).toEqual([
+        {
+          ok: false,
+          error: {
+            command: "agent-intent enroll",
+            code: "keychain_unavailable",
+            message: expect.stringContaining("No OS keychain is available"),
+          },
+        },
+      ]);
+      expect(savedSecretKeys.size).toBe(0);
+    });
+
+    it("probes the keychain again inside the session lock, right before writing", async () => {
+      let probeCalls = 0;
+      keychainProbe = () => {
+        probeCalls++;
+        if (probeCalls > 1) throw new Error("no secret service provider or dbus session found");
+        return [];
+      };
+
+      await expect(runEnroll()).rejects.toThrow(KeychainUnavailableError);
+      expect(probeCalls).toBe(2);
+      expect(sessionReadCalls).toBe(2);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(stdout).toEqual([]);
     });
 
     it("rejects an invalid --expires-in before touching the keychain or session", async () => {
