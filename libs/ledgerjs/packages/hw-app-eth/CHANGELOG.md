@@ -204,24 +204,4 @@
   - @ledgerhq/domain-service@1.8.13
   - @ledgerhq/evm-tools@1.13.2
 
-## 7.8.13-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @ledgerhq/types-live@6.118.0-next.0
-  - @ledgerhq/domain-service@1.8.13-next.0
-  - @ledgerhq/evm-tools@1.13.2
-
-## 7.8.12
-
-### Patch Changes
-
-- Updated dependencies [[`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
-  - @ledgerhq/types-live@6.117.0
-  - @ledgerhq/domain-service@1.8.12
-  - @ledgerhq/hw-transport@6.35.7
-  - @ledgerhq/evm-tools@1.13.2
-  - @ledgerhq/hw-transport-mocker@6.34.7
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

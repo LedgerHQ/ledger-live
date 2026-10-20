@@ -1,5 +1,5 @@
 ---
-"@domain/entity-account": patch
+"@domain/entity-account": minor
 ---
 
 Move the legacy account ids to src/legacy/

@@ -528,25 +528,4 @@
 
 - [#21570](https://github.com/LedgerHQ/ledger-live/pull/21570) [`368b26e`](https://github.com/LedgerHQ/ledger-live/commit/368b26e4908c8d8956b0739938fc3607ac6d9435) Thanks [@martijnhjk](https://github.com/martijnhjk)! - Point the Solana GIGA 1 token account constant at the account that exists on-chain
 
-## 0.10.0-next.3
-
-### Patch Changes
-
-- Updated dependencies [[`dab00b6`](https://github.com/LedgerHQ/ledger-live/commit/dab00b64ef4bff300010e258465db60b3c696b9e)]:
-  - @ledgerhq/live-common@37.5.0-next.3
-
-## 0.10.0-next.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/live-common@37.5.0-next.2
-
-## 0.10.0-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/live-common@37.5.0-next.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

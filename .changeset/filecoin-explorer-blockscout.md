@@ -1,8 +1,8 @@
 ---
-"@domain/entity-currency-crypto": patch
-"@ledgerhq/coin-filecoin": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@domain/entity-currency-crypto": minor
+"@ledgerhq/coin-filecoin": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 fix(filecoin): open transactions on Blockscout from operation details

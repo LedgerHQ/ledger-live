@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 stop listing the zcash currencies in the bitcoin coin module loader and build the bitcoin signer without a chain adapter

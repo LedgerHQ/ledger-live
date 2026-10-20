@@ -1,9 +1,9 @@
 ---
 "@features/platform-device-onboarding": minor
-"live-mobile": patch
-"ledger-live-desktop": patch
-"@devtools/device-onboarding": patch
-"@devtools/bindings": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
+"@devtools/device-onboarding": minor
+"@devtools/bindings": minor
 ---
 
 Move the shared device onboarding machine to features/platform

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/wallet-cli": patch
+"@ledgerhq/wallet-cli": minor
 ---
 
 fix(wallet-cli): keep swap quotes authenticated while the keychain dialog is open

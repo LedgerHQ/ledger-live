@@ -1,6 +1,6 @@
 ---
 "@shared/feature-flags": minor
-"@devtools/bindings": patch
+"@devtools/bindings": minor
 "@devtools/device-onboarding": minor
 "live-mobile": minor
 ---

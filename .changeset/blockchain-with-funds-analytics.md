@@ -1,6 +1,6 @@
 ---
 "@features/platform-account-analytics": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

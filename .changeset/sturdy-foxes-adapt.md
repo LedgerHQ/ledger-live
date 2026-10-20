@@ -1,8 +1,8 @@
 ---
-"@ledgerhq/live-common": patch
-"@ledgerhq/coin-celo": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-celo": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Adapt to `@ledgerhq/coin-evm` 15

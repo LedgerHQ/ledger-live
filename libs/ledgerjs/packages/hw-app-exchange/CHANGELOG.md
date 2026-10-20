@@ -162,20 +162,4 @@
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.3-next.0
 
-## 0.22.2
-
-### Patch Changes
-
-- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
-  - @ledgerhq/errors@6.35.0
-  - @ledgerhq/hw-transport@6.35.2
-
-## 0.22.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
-  - @ledgerhq/errors@6.35.0-next.0
-  - @ledgerhq/hw-transport@6.35.2-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

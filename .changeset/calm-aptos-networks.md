@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-aptos": patch
+"@ledgerhq/coin-aptos": minor
 ---
 
 fix(coin-aptos): stop resolving the currency with `getCryptoCurrencyById` in `isTestnet`
