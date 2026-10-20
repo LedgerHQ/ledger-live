@@ -1,7 +1,7 @@
 import { Observable, throwError } from "rxjs";
 import { type DerivationMode, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { AppOp, SkippedAppOp } from "../apps/types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { withDevice } from "./deviceAccess";
 import getAddress from "./getAddress";
 import { getMinVersion, getDeprecationConfig } from "../apps";
