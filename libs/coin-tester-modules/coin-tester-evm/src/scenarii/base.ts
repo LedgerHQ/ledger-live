@@ -54,9 +54,9 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     const signer = await buildSigner();
 
-    // Forks the latest block: an old fork block needs archive reads, which the public node refuses
-    // from CI runners. The scenario only sends ETH, so it needs no historical state.
-    await spawnAnvil("https://mainnet.base.org", signer.exportMnemonic());
+    // Forks the latest block: the scenario only sends ETH, and public nodes refuse archive reads.
+    // mainnet.base.org rate-limits CI runners and publicnode refuses topic-only eth_getLogs.
+    await spawnAnvil("https://base.drpc.org", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
