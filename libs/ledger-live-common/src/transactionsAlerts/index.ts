@@ -50,20 +50,33 @@ export const resolveTransactionsAlertsAddressesByAccount = async (
     ),
   );
 
+const maxRememberedAddressesPerAccount = 100;
+
 /**
  * Adds the resolved addresses of each account to the ones already watched for it, so an address
  * stays watched after the account stops returning it (e.g. once emptied by a pending send).
- * Accounts missing from `resolved` were removed from the wallet: their addresses are dropped.
+ * Only the 100 addresses most recently returned are remembered per account; resolved addresses
+ * are always kept. Accounts missing from `resolved` were removed from the wallet: their addresses
+ * are dropped.
  */
 export const mergeTransactionsAlertsAddresses = (
   watched: TransactionsAlertsAddressesByAccount,
   resolved: TransactionsAlertsAddressesByAccount,
 ): TransactionsAlertsAddressesByAccount =>
   Object.fromEntries(
-    Object.entries(resolved).map(([accountId, addresses]) => [
-      accountId,
-      deduplicateTransactionsAlertsAddresses([...(watched[accountId] ?? []), ...addresses]),
-    ]),
+    Object.entries(resolved).map(([accountId, addresses]) => {
+      const resolvedKeys = new Set(addresses.map(getAddressKey));
+      const remembered = (watched[accountId] ?? []).filter(
+        address => !resolvedKeys.has(getAddressKey(address)),
+      );
+      return [
+        accountId,
+        deduplicateTransactionsAlertsAddresses([
+          ...remembered.slice(-maxRememberedAddressesPerAccount),
+          ...addresses,
+        ]),
+      ];
+    }),
   );
 
 export const flattenTransactionsAlertsAddresses = (

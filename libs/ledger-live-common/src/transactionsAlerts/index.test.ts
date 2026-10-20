@@ -95,6 +95,35 @@ describe("mergeTransactionsAlertsAddresses", () => {
     ).toEqual({ account: [makeAddress("0x01"), makeAddress("0x02"), makeAddress("0x03")] });
   });
 
+  it("should only remember the 100 addresses most recently returned", () => {
+    const remembered = Array.from({ length: 101 }, (_, index) => makeAddress(`0x${index + 1}`));
+
+    const merged = mergeTransactionsAlertsAddresses(
+      { account: [makeAddress("0xa"), ...remembered] },
+      { account: [makeAddress("0xa"), makeAddress("0xb")] },
+    );
+
+    expect(merged.account).toEqual([
+      ...remembered.slice(1),
+      makeAddress("0xa"),
+      makeAddress("0xb"),
+    ]);
+  });
+
+  it("should treat an address returned again as the most recent", () => {
+    const remembered = Array.from({ length: 100 }, (_, index) => makeAddress(`0x${index + 1}`));
+    const watched = mergeTransactionsAlertsAddresses(
+      { account: remembered },
+      { account: [makeAddress("0x1"), makeAddress("0xb")] },
+    );
+
+    const merged = mergeTransactionsAlertsAddresses(watched, { account: [makeAddress("0xc")] });
+
+    expect(merged.account).toHaveLength(101);
+    expect(merged.account).toContainEqual(makeAddress("0x1"));
+    expect(merged.account).not.toContainEqual(makeAddress("0x2"));
+  });
+
   it("should drop the addresses of removed accounts", () => {
     expect(
       mergeTransactionsAlertsAddresses(
