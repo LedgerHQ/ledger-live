@@ -114,6 +114,9 @@ inputs:
   row3_status:
     required: false
     default: ""
+  row3_qaa_url:
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -155,6 +158,7 @@ runs:
         ROW3_SUMMARY: ${{ inputs.row3_summary }}
         ROW3_REPORT_URL: ${{ inputs.row3_report_url }}
         ROW3_STATUS: ${{ inputs.row3_status }}
+        ROW3_QAA_URL: ${{ inputs.row3_qaa_url }}
       with:
         script: |
           const path = require("path");
