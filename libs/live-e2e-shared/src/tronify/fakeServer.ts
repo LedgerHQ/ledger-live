@@ -200,6 +200,11 @@ type Order = {
 type Json = Record<string, unknown>;
 type Account = { address: string; balance?: number; trc20?: Record<string, string>[] };
 
+const stringField = (body: Json | undefined, key: string): string => {
+  const value = body?.[key];
+  return typeof value === "string" ? value : "";
+};
+
 const success = (data: unknown) => ({ resCode: 100, resMsg: "Success", data });
 const failure = (message: string) => ({
   resCode: 500,
@@ -561,9 +566,7 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
       const viaHex = path.endsWith("/broadcasthex");
       const rawDataHex = viaHex
         ? signedTransactionRawDataHex(String(body?.transaction))
-        : typeof body?.raw_data_hex === "string"
-          ? body.raw_data_hex
-          : "";
+        : stringField(body, "raw_data_hex");
       const txid = viaHex ? tronTxId(rawDataHex) : String(body?.txID);
       broadcasts.push({ txid, rawDataHex });
       return send(res, 200, { result: true, code: "SUCCESS", txid });
