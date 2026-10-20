@@ -36,7 +36,10 @@ type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OsUpdat
 const props = { route: { params: { device } } } as Props;
 
 const withOsUpdates = (osUpdates: OsUpdate[]) => ({
-  overrideInitialState: (state: State): State => ({ ...state, osUpdate: { osUpdates } }),
+  overrideInitialState: (state: State): State => ({
+    ...state,
+    osUpdate: { osUpdates, hasBackup: false },
+  }),
 });
 
 describe("OsUpdateFlow", () => {
