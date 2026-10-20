@@ -3,7 +3,7 @@ import { render, screen } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import type { Account } from "@ledgerhq/types-live";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { FamilyAppEffects } from "./FamilyAppEffects";
+import { FamilyAppEffects } from "../index";
 
 jest.mock("~/renderer/families", () => ({
   useLLDCoinFamily: jest.fn(() => ({})),

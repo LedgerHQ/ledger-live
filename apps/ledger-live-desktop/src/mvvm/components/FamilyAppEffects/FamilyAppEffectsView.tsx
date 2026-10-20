@@ -1,8 +1,7 @@
-import React, { Component, Suspense, useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { accountsSelector } from "~/renderer/reducers/accounts";
+import React, { Component, Suspense } from "react";
 import { useLLDCoinFamily } from "~/renderer/families";
 import logger from "~/renderer/logger";
+import type { FamilyAppEffectsViewModel } from "./types";
 
 // A family that fails to load only loses its effect, never the app.
 class FamilyAppEffectBoundary extends Component<
@@ -29,17 +28,10 @@ function FamilyAppEffect({ family }: { family: string }) {
   return AppEffect ? <AppEffect /> : null;
 }
 
-/** Mounts the app-wide effect of every coin family the user holds an account of. */
-export function FamilyAppEffects() {
-  const accounts = useSelector(accountsSelector);
-  const families = useMemo(
-    () => [...new Set(accounts.map(account => account.currency.family))].sort(),
-    [accounts],
-  );
-
+export function FamilyAppEffectsView({ viewModel }: { viewModel: FamilyAppEffectsViewModel }) {
   return (
     <>
-      {families.map(family => (
+      {viewModel.families.map(family => (
         <FamilyAppEffectBoundary key={family} family={family}>
           <Suspense fallback={null}>
             <FamilyAppEffect family={family} />
