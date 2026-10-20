@@ -10,4 +10,16 @@ describe("SimplifiedTransactionConfirm", () => {
     expect(screen.getByText(/^Continue\s+on\s+your\s+Ledger\s+Flex$/)).toBeVisible();
     expect(screen.queryByText(/^Continue\s+on\s+your\s+Ledger\s+Ledger\s+Flex$/)).toBeNull();
   });
+
+  it("shows the given title in place of the device prompt", () => {
+    render(
+      <SimplifiedTransactionConfirm
+        deviceModelId={DeviceModelId.europa}
+        title="Confirm transfer"
+      />,
+    );
+
+    expect(screen.getByText("Confirm transfer")).toBeVisible();
+    expect(screen.queryByText(/^Continue\s+on\s+your/)).toBeNull();
+  });
 });

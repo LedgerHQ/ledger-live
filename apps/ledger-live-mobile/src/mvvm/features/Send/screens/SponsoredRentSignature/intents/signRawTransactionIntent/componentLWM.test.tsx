@@ -13,6 +13,10 @@ const extraProps = {
 };
 
 describe("SignRawTransactionIntentComponentLWM", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("names the provider and the rent while waiting on the device", () => {
     render(
       <SignRawTransactionIntentComponentLWM

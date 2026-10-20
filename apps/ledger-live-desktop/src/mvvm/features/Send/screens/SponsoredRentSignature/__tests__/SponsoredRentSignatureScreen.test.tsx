@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { fireEvent, render, screen } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
 import {
   useSponsoredRentSignatureViewModel,
   type SponsoredRentSignatureViewModel,
@@ -107,15 +107,15 @@ describe("SponsoredRentSignatureScreen", () => {
     expect(screen.queryByTestId("device-action")).toBeNull();
   });
 
-  it("tells the user that signing accepts the provider's terms, and opens them", () => {
-    render(<SponsoredRentSignatureScreen />);
+  it("tells the user that signing accepts the provider's terms, and opens them", async () => {
+    const { user } = render(<SponsoredRentSignatureScreen />);
 
     expect(screen.getByTestId("send-sponsored-rent-signature-terms")).toHaveTextContent(
       "By signing this transaction, you agree to Provider's Terms and Conditions.",
     );
-    const link = screen.getByTestId("send-sponsored-rent-signature-terms-link");
+    const link = screen.getByRole("link", { name: "Provider's Terms and Conditions" });
     expect(link).toHaveAttribute("href", "https://provider.example/terms");
-    fireEvent.click(link);
+    await user.click(link);
     expect(viewModel.onOpenTerms).toHaveBeenCalledTimes(1);
   });
 
