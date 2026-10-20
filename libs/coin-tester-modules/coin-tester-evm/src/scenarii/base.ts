@@ -54,9 +54,9 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     const signer = await buildSigner();
 
-    // Forks the latest block: the scenario only sends ETH, and public nodes refuse archive reads.
-    // mainnet.base.org rate-limits CI runners and publicnode refuses topic-only eth_getLogs.
-    await spawnAnvil("https://base.drpc.org", signer.exportMnemonic());
+    // Ledger's own node, as the free public Base RPCs rate-limit or refuse CI runners. Forks the
+    // latest block: the scenario only sends ETH, so it needs no historical state.
+    await spawnAnvil("https://base.coin.ledger.com", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
