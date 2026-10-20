@@ -1,6 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getCurrencyBridge } from "../impl";
 import { isZcashShieldedEnabled, resolveFamily } from "../zcashRouting";
 import { descriptor as aleoDescriptor } from "../../families/aleo/descriptor";
 import { descriptor as algorandDescriptor } from "../../families/algorand/descriptor";
@@ -69,7 +68,9 @@ const descriptorRegistry: Record<string, CoinDescriptor> = {
 };
 
 /**
- * Get the full descriptor for a given currency via the CurrencyBridge
+ * Get the full descriptor for a given currency from the descriptor registry.
+ * Synchronous on purpose: send and stake callers read it inline, so it cannot go through the
+ * async getCurrencyBridge.
  */
 export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): CoinDescriptor | null {
   if (!currency) {
@@ -78,15 +79,9 @@ export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): Coin
 
   const cryptoCurrency =
     currency.type === "TokenCurrency" ? getCryptoCurrencyById(currency.parentCurrencyId) : currency;
-  const bridge = getCurrencyBridge(cryptoCurrency);
 
-  // Check if bridge implements getDescriptor directly
-  if ("getDescriptor" in bridge && typeof bridge.getDescriptor === "function") {
-    return bridge.getDescriptor(cryptoCurrency) as CoinDescriptor;
-  }
-
-  // Fallback: same family resolution as the bridge layer. Zcash without its shielded
-  // engine sends transparent only.
+  // Same family resolution as the bridge layer. Zcash without its shielded engine sends
+  // transparent only.
   const family = resolveFamily(cryptoCurrency);
   if (family === "zcash" && !isZcashShieldedEnabled()) return zcashTransparentOnlyDescriptor;
   const fullDescriptor = descriptorRegistry[family];
