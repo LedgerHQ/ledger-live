@@ -9,6 +9,11 @@ type MyLedgerNavigationParams = {
   firmwareUpdate?: boolean;
 };
 
+type ResetToMyLedgerParams = {
+  device?: Device;
+  shouldDisplayMyWallet: boolean;
+};
+
 /**
  * Goes to the My Ledger connection screen with the device to reconnect to, so that the OS
  * updates path is resolved again. Which screen it is depends on the Wallet 4.0 config.
@@ -19,7 +24,10 @@ export function navigateToMyLedger(
 ) {
   const params = { device, firmwareUpdate };
   if (shouldDisplayMyWallet) {
-    navigation.navigate(NavigatorName.MyWallet, { screen: ScreenName.MyWallet, params });
+    navigation.navigate(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
+      params,
+    });
   } else {
     navigation.navigate(NavigatorName.MyLedger, {
       screen: ScreenName.MyLedgerChooseDevice,
@@ -28,10 +36,13 @@ export function navigateToMyLedger(
   }
 }
 
-/** Same as `navigateToMyLedger`, but drops the current stack (e.g. when leaving the OS update). */
+/**
+ * Same as `navigateToMyLedger`, but drops the current stack (e.g. when leaving the OS update).
+ * Without a `device`, My Ledger opens with no device selected.
+ */
 export function resetToMyLedger(
   navigation: BaseNavigation,
-  { device, shouldDisplayMyWallet }: MyLedgerNavigationParams,
+  { device, shouldDisplayMyWallet }: ResetToMyLedgerParams,
 ) {
   if (shouldDisplayMyWallet) {
     navigation.reset({
@@ -40,7 +51,9 @@ export function resetToMyLedger(
         { name: NavigatorName.Main },
         {
           name: NavigatorName.MyWallet,
-          state: { routes: [{ name: ScreenName.MyWallet, params: { device } }] },
+          state: {
+            routes: [{ name: ScreenName.MyWallet, params: device ? { device } : {} }],
+          },
         },
       ],
     });
@@ -53,7 +66,14 @@ export function resetToMyLedger(
       { name: NavigatorName.Main },
       {
         name: NavigatorName.MyLedger,
-        state: { routes: [{ name: ScreenName.MyLedgerChooseDevice, params: { device } }] },
+        state: {
+          routes: [
+            {
+              name: ScreenName.MyLedgerChooseDevice,
+              params: device ? { device } : {},
+            },
+          ],
+        },
       },
     ],
   });
