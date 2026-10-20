@@ -19,8 +19,10 @@ import {
   useAccountBalanceToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useAccountDiscoveryToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
+import { useAccountDiscoveryToolInputs } from "./useAccountDiscoveryToolInputs";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
 import { accountDataRecorder } from "~/config/account-data-setup";
@@ -89,6 +91,7 @@ export function useDevToolsScreenViewModel() {
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const accountDiscoveryToolProps = useAccountDiscoveryToolProps(useAccountDiscoveryToolInputs());
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -100,6 +103,7 @@ export function useDevToolsScreenViewModel() {
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-data", config: accountDataToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
+      { id: "account-discovery", config: accountDiscoveryToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
     ],
     [
@@ -112,6 +116,7 @@ export function useDevToolsScreenViewModel() {
       accountDescriptorToolProps,
       accountBalanceToolProps,
       accountDataToolProps,
+      accountDiscoveryToolProps,
     ],
   );
 

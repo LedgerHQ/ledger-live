@@ -7,6 +7,7 @@ import {
 } from "@domain/entity-account";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { createFullSyncSource } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import { createLegacyExistenceSource } from "@ledgerhq/live-common/account-data/discovery/createLegacyExistenceSource";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import { accountsSelector, type AccountsState } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
@@ -28,6 +29,10 @@ export function accountDataSources(getState: () => State): readonly AccountDataS
           ? undefined
           : accountsSelector(state).find(account => account.id === legacyId);
       },
+      prepareCurrency,
+      blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()),
+    }),
+    createLegacyExistenceSource({
       prepareCurrency,
       blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()),
     }),

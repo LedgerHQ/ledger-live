@@ -1,0 +1,3 @@
+{
+  "extends": "@support/tsconfig/logic"
+}
