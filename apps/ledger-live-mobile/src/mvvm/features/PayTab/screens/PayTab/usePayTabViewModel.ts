@@ -22,13 +22,11 @@ import {
   type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
 import useEnv from "@features/platform-env";
-import { useFeature } from "@features/platform-feature-flags";
 import { useContactsFeature } from "@features/platform-contacts";
 import { useTranslation } from "@shared/i18n";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
-import { NavigatorName, ScreenName } from "~/const";
-import { CL_CARD_APP_ID } from "LLM/features/Card";
+import { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
 import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
 import { useLocale } from "~/context/Locale";
@@ -160,36 +158,13 @@ export function usePayTabViewModel() {
     [openHostedWith, openInSecureBrowser],
   );
 
-  const payTab = useFeature("lwmPayTab");
-  const isLegacyTopUp = !!payTab?.params?.legacyTopUp;
-
-  // The legacy live app has its own top-up flow and its own login. It opens as every other live
-  // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
-  // the fallback opens it at its root from every top-up entry point.
-  const openInDiscoverOrLegacyApp = useCallback(
-    async (buildPath: CardAssetPathBuilder, currency?: string) => {
-      if (isLegacyTopUp) {
-        navigation.navigate(NavigatorName.Base, {
-          screen: ScreenName.PlatformApp,
-          params: { platform: CL_CARD_APP_ID },
-        });
-        return;
-      }
-
-      await openHostedWith(
-        openInDiscover,
-        buildPath,
-        "the hosted asset page did not open",
-        currency,
-      );
-    },
-    [isLegacyTopUp, navigation, openHostedWith, openInDiscover],
+  const openHostedInDiscover = useCallback(
+    (buildPath: CardAssetPathBuilder, currency?: string) =>
+      openHostedWith(openInDiscover, buildPath, "the hosted asset page did not open", currency),
+    [openHostedWith, openInDiscover],
   );
 
-  const onTopUp = useCallback(
-    () => openInDiscoverOrLegacyApp(buildTopUpPath),
-    [openInDiscoverOrLegacyApp],
-  );
+  const onTopUp = useCallback(() => openHostedInDiscover(buildTopUpPath), [openHostedInDiscover]);
 
   const onChooseCardType = useCallback(
     () => openHosted(buildOrderCardPath, "order card page did not open"),
@@ -235,11 +210,11 @@ export function usePayTabViewModel() {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openInDiscoverOrLegacyApp(buildTopUpPath, asset.currency),
-      onWithdraw: asset => void openInDiscoverOrLegacyApp(buildWithdrawalPath, asset.currency),
+      onTopUp: asset => void openHostedInDiscover(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openHostedInDiscover(buildWithdrawalPath, asset.currency),
       onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openInDiscoverOrLegacyApp, onAddAsset],
+    [payCardAssets, onShowAssetHistory, openHostedInDiscover, onAddAsset],
   );
 
   const formatCountervalue = useCountervalueFormatter();

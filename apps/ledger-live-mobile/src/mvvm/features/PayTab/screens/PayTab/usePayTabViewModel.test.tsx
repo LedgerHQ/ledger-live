@@ -160,12 +160,6 @@ function renderViewModel(
   );
 }
 
-function renderViewModelWithLegacyTopUp() {
-  return renderViewModel(undefined, {
-    overrideInitialState: withFlagOverrides({ lwmPayTab: { params: { legacyTopUp: true } } }),
-  });
-}
-
 async function expectHostedPage(url: string) {
   await waitFor(() => expect(screen.getByTestId("base-goto")).toHaveTextContent(url));
   expect(screen.getByTestId("base-screen")).toHaveTextContent("PlatformApp");
@@ -290,25 +284,6 @@ describe("usePayTabViewModel", () => {
     await expectHostedPage("https://ledger.baanxapi.test/topup?currency=btc");
   });
 
-  it("should open the legacy card live app on top up when the legacyTopUp param is on", async () => {
-    const { user } = renderViewModelWithLegacyTopUp();
-
-    await user.press(screen.getByTestId("top-up"));
-
-    await waitFor(() => expect(screen.getByTestId("base-screen")).toHaveTextContent("PlatformApp"));
-    expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card");
-    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
-  });
-
-  it("should open the legacy card live app from an asset too, and drop its currency", async () => {
-    const { user } = renderViewModelWithLegacyTopUp();
-
-    await user.press(screen.getByTestId("asset-top-up"));
-
-    await waitFor(() => expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card"));
-    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
-  });
-
   it("should open the withdrawal page of the hosted UI on the Baanx manifest", async () => {
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
@@ -317,16 +292,6 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("asset-withdraw"));
 
     await expectHostedPage("https://ledger.baanxapi.test/withdrawal?app_id=LEDGERUS&currency=btc");
-    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
-  });
-
-  it("should open the legacy card live app on withdraw when the legacyTopUp param is on", async () => {
-    const { user } = renderViewModelWithLegacyTopUp();
-
-    await user.press(screen.getByTestId("asset-withdraw"));
-
-    await waitFor(() => expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card"));
-    expect(screen.getByTestId("base-goto")).toHaveTextContent("undefined");
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
