@@ -169,7 +169,7 @@ export class Account {
     accountName: "Bitcoin 2",
     index: 1,
     accountPath: "44'/0'/1'/0/0",
-    ensName: "",
+    derivationMode: "",
   });
 
   static readonly BTC_NATIVE_SEGWIT_1 = new Account({
