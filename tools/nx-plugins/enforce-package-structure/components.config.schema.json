@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "components.config.schema.json",
   "title": "Universal components check",
-  "description": "Settings of the universal components check run by `lint:structure` (components.js). The check reads each package's `package.json#exports`, resolves every entry the way the app bundlers do, follows re-exports to the declaring module and collects the public components per entry and per platform. R1: a universal component is exported on both platforms under the same name. R5: a component is exported from universal entries or from platform entries, never both. Waivers live in exceptions.js, not here. See docs/adr/universal-components.md.",
+  "description": "Settings of the universal components check run by `lint:structure` (components.js). The check reads each package's `package.json#exports`, resolves every entry the way the app bundlers do, follows re-exports to the declaring module and collects the public components per entry and per platform. R1: a universal component is exported on both platforms under the same name. R2: both implementations of a universal component take one props type, declared in one unsuffixed module, the contract. R3: the contract is neutral: no platform import, type, prop or gesture name. R4: a platform module that declares a universal component exports components only. R5: a component is exported from universal entries or from platform entries, never both. Waivers live in exceptions.js, not here. See docs/adr/universal-components.md.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -10,13 +10,23 @@
     "platformEntries",
     "conditions",
     "extensions",
-    "componentWrappers"
+    "componentWrappers",
+    "bannedImportPrefixes",
+    "bannedTypeNames",
+    "bannedPropNames",
+    "gestureWords",
+    "bannedCallbackNames"
   ],
   "definitions": {
     "extension": {
       "type": "string",
       "pattern": "^(\\.[a-z]+)+$",
       "examples": [".tsx", ".native.ts", ".web.tsx"]
+    },
+    "camelCaseGlob": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_$*]+$",
+      "examples": ["ChangeEvent", "HTML*Element", "onKey*"]
     },
     "conditionList": {
       "type": "array",
@@ -88,6 +98,41 @@
       "uniqueItems": true,
       "items": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*$" },
       "examples": [["memo", "forwardRef"]]
+    },
+    "bannedImportPrefixes": {
+      "description": "R3. Module specifiers a contract may not import or re-export from, matched as prefixes: `react-native` also covers `react-native-svg`. An `import(\"...\")` type counts too. A contract holds the props of both platforms, so it cannot depend on one platform's packages.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "examples": [["react-native", "@ledgerhq/lumen-ui-", "react-dom"]]
+    },
+    "bannedTypeNames": {
+      "description": "R3. DOM and React Native type names a contract may not reference anywhere, matched on the rightmost name, so `React.ChangeEvent` counts as `ChangeEvent`. `*` stands for zero or more camelCase words: `HTML*Element` matches `HTMLElement` and `HTMLInputElement`. The check reads names, not types: an alias declared in another module escapes it.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/camelCaseGlob" },
+      "examples": [["ChangeEvent", "CSSProperties", "HTML*Element", "ViewStyle"]]
+    },
+    "bannedPropNames": {
+      "description": "R3. Props a contract may not declare, matched exactly. Each implementation styles its own surface.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "examples": [["className", "style"]]
+    },
+    "gestureWords": {
+      "description": "R3. Words a callback prop may not contain, matched on whole camelCase words: `Press` rejects `onPress` and `onEditPress`, not `onPressureChange`. A callback prop is one named `on` plus an uppercase letter, a method or a property with a function type. Callbacks name the user's intent instead, such as `onEdit`.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+      "examples": [["Click", "Press", "Tap", "Touch", "Mouse", "Pointer"]]
+    },
+    "bannedCallbackNames": {
+      "description": "R3. DOM event names a callback prop may not take, matched on the whole name. `*` stands for zero or more camelCase words: `onKey*` matches `onKeyDown`, not `onKeyboardShow`.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/camelCaseGlob" },
+      "examples": [["onChange", "onChangeText", "onSubmit", "onFocus", "onBlur", "onKey*"]]
     }
   }
 }

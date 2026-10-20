@@ -376,6 +376,373 @@ test("an entry without a condition that resolves the same on both platforms is n
   assert.deepEqual(checkComponents(empty, "shared/none"), []);
 });
 
+/**
+ * A universal `Card` whose implementations import their props from `importFrom`.
+ *
+ * @param {Record<string, string>} files contract modules and overrides, relative to src/
+ * @param {{ web?: string, native?: string }} [props] the props annotation per platform
+ */
+function card(files, props = {}) {
+  const web = props.web ?? "Readonly<CardProps>";
+  const native = props.native ?? "CardProps";
+  return {
+    "package.json": { exports: UNIVERSAL },
+    "src/index.ts": 'export * from "./Card";\n',
+    "src/index.native.ts": 'export * from "./Card";\n',
+    "src/Card.web.tsx": `import type { CardProps } from "./Card.types";\nexport function Card(props: ${web}) { return null; }\n`,
+    "src/Card.native.tsx": `import type { CardProps } from "./Card.types";\nexport function Card(props: ${native}) { return null; }\n`,
+    ...Object.fromEntries(Object.entries(files).map(([file, content]) => [`src/${file}`, content])),
+  };
+}
+
+/**
+ * @param {string} props members of `CardProps`
+ * @param {string} [header] lines above the type
+ */
+function contract(props, header = "") {
+  return { "Card.types.ts": `${header}export type CardProps = Readonly<{\n${props}\n}>;\n` };
+}
+
+test("R2 passes: both implementations take one contract, Readonly accepted", () => {
+  assert.deepEqual(check(card(contract("title: string;"))), []);
+});
+
+test("R2 passes: no props on either platform, forwardRef props, one shared implementation", () => {
+  assert.deepEqual(
+    check({
+      "package.json": { exports: UNIVERSAL },
+      "src/index.ts":
+        'export * from "./Banner";\nexport * from "./Field";\nexport * from "./Shared";\n',
+      "src/index.native.ts":
+        'export * from "./Banner";\nexport * from "./Field";\nexport * from "./Shared";\n',
+      "src/Banner.web.tsx": button("Banner"),
+      "src/Banner.native.tsx": button("Banner"),
+      "src/Field.types.ts": "export interface FieldProps { label: string }\n",
+      "src/Field.web.tsx":
+        'import { forwardRef } from "react";\nimport type { FieldProps } from "./Field.types";\nexport const Field = forwardRef<unknown, FieldProps>((props, ref) => null);\n',
+      "src/Field.native.tsx":
+        'import { forwardRef } from "react";\nimport type { FieldProps } from "./Field.types";\nexport const Field = forwardRef<unknown, FieldProps>((props, ref) => null);\n',
+      "src/Shared.tsx": "export const Shared = ({ a }: { a: string }) => null;\n",
+    }),
+    [],
+  );
+});
+
+test("R2 fails: props on one platform, two names, an inline type", () => {
+  assert.deepEqual(
+    check({
+      ...card(contract("title: string;"), { native: "CardNativeProps" }),
+      "src/Card.native.tsx":
+        'import type { CardNativeProps } from "./Card.types";\nexport function Card(props: CardNativeProps) { return null; }\n',
+    }),
+    ["R2 props-name-mismatch Card"],
+  );
+  assert.deepEqual(
+    check({ ...card(contract("title: string;")), "src/Card.native.tsx": button("Card") }),
+    ["R2 props-parameter-mismatch Card"],
+  );
+  assert.deepEqual(check(card(contract("title: string;"), { native: "{ title: string }" })), [
+    "R2 props-unnamed Card",
+  ]);
+});
+
+test("R2 fails: a props type declared in each implementation, or out of reach", () => {
+  const local = "export type CardProps = { title: string };\n";
+  assert.deepEqual(
+    check({
+      ...card({}),
+      "src/Card.web.tsx": `${local}export function Card(props: CardProps) { return null; }\n`,
+      "src/Card.native.tsx": `${local}export function Card(props: CardProps) { return null; }\n`,
+    }),
+    [
+      "R2 contract-mismatch Card",
+      "R4 platform-module-export Card",
+      "R4 platform-module-export Card",
+    ],
+  );
+  assert.deepEqual(
+    check({
+      ...card({}),
+      "src/Card.web.tsx": "export function Card(props: CardProps) { return null; }\n",
+    }),
+    ["R2 contract-not-found Card"],
+  );
+  assert.deepEqual(
+    check({
+      ...card({}),
+      "src/Card.web.tsx":
+        'import type { CardProps } from "@shared/cards";\nexport function Card(props: CardProps) { return null; }\n',
+    }),
+    ["R2 contract-outside-package Card"],
+  );
+});
+
+test("R2 fails: a contract that re-exports, carries a suffix or has a suffixed sibling", () => {
+  assert.deepEqual(
+    check(
+      card({
+        "Card.types.ts": 'export type { CardProps } from "./props";\n',
+        "props.ts": "export type CardProps = { title: string };\n",
+      }),
+    ),
+    ["R2 contract-reexported Card"],
+  );
+  assert.deepEqual(
+    check({
+      ...card({ "types.web.ts": "export type CardProps = { title: string };\n" }),
+      "src/Card.web.tsx":
+        'import type { CardProps } from "./types.web";\nexport function Card(props: CardProps) { return null; }\n',
+      "src/Card.native.tsx":
+        'import type { CardProps } from "./types.web";\nexport function Card(props: CardProps) { return null; }\n',
+    }),
+    ["R2 contract-suffixed Card"],
+  );
+  assert.deepEqual(
+    check(
+      card({
+        ...contract("title: string;"),
+        "Card.types.native.ts": "export type CardProps = { title: string };\n",
+      }),
+    ),
+    ["R2 contract-mismatch Card"],
+  );
+  // Re.Pack ranks `.ts` before `.native.tsx`, so this sibling waits for a rename to shadow it.
+  assert.deepEqual(
+    check(card({ ...contract("title: string;"), "Card.types.native.tsx": "export {};\n" })),
+    ["R2 contract-shadowed Card"],
+  );
+});
+
+test("R3 fails: a contract that imports a platform package", () => {
+  for (const specifier of [
+    "react-native",
+    "react-native-svg",
+    "@ledgerhq/lumen-ui-react",
+    "react-dom",
+  ]) {
+    assert.deepEqual(
+      check(card(contract("title: string;", `import type { X } from "${specifier}";\n`))),
+      ["R3 contract-platform-import Card"],
+      specifier,
+    );
+  }
+  assert.deepEqual(check(card(contract('icon: import("@ledgerhq/lumen-ui-rnative").Icon;'))), [
+    "R3 contract-platform-import Card",
+  ]);
+});
+
+test("R3 fails: a contract that references a DOM or React Native type", () => {
+  assert.deepEqual(
+    check(
+      card(
+        contract(
+          [
+            "onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;",
+            "ref?: Ref<HTMLElement>;",
+            "layout: CSSProperties;",
+            "inset: ViewStyle;",
+          ].join("\n"),
+        ),
+      ),
+    ).toSorted(),
+    [
+      "R3 contract-platform-type Card",
+      "R3 contract-platform-type Card",
+      "R3 contract-platform-type Card",
+      "R3 contract-platform-type Card",
+      "R3 contract-platform-type Card",
+    ],
+  );
+});
+
+test("R3 passes: neutral types that share a word with a banned one", () => {
+  assert.deepEqual(
+    check(card(contract("ref?: Ref<CardHandle>;\nevent: TrackingEvent;\nnode: ReactNode;"))),
+    [],
+  );
+});
+
+test("R3 fails: a contract that declares className or style", () => {
+  assert.deepEqual(check(card(contract("className?: string;\nstyle?: object;"))), [
+    "R3 contract-platform-prop Card",
+    "R3 contract-platform-prop Card",
+  ]);
+});
+
+test("R3 fails: gesture and DOM event callback names, on whole camelCase words", () => {
+  const rejected = [
+    "onPress",
+    "onEditPress",
+    "onClick",
+    "onDoubleTap",
+    "onTouchStart",
+    "onMouseEnter",
+    "onPointerDown",
+    "onChange",
+    "onChangeText",
+    "onSubmit",
+    "onFocus",
+    "onBlur",
+    "onKey",
+    "onKeyDown",
+  ];
+  for (const name of rejected) {
+    assert.deepEqual(
+      check(card(contract(`${name}: () => void;`))),
+      ["R3 contract-gesture-callback Card"],
+      name,
+    );
+  }
+  assert.deepEqual(check(card(contract("select(): void;"))), []);
+  assert.deepEqual(check(card(contract("press(): void;"))), ["R3 contract-gesture-callback Card"]);
+});
+
+test("R3 passes: intent callbacks, and gesture words inside a longer word or outside callbacks", () => {
+  const accepted = [
+    "onEdit: () => void;",
+    "onPressureChange: (value: number) => void;",
+    "onKeyboardShow: () => void;",
+    "onSearchQueryChange: (query: string) => void;",
+    "onTapestryOpen: () => void;",
+    "touchCount: number;",
+  ];
+  assert.deepEqual(check(card(contract(accepted.join("\n")))), []);
+});
+
+test("R3 follows the contract's own types, not imported ones", () => {
+  assert.deepEqual(
+    check(
+      card({
+        "Card.types.ts": [
+          'import type { Remote } from "./remote";',
+          "type Base = { onPress: () => void };",
+          "interface Extra extends Base { className?: string }",
+          "export type CardProps = Readonly<Extra & Remote & { title: string }>;",
+        ].join("\n"),
+        "remote.ts": "export type Remote = { onClick: () => void };\n",
+      }),
+    ),
+    ["R3 contract-platform-prop Card", "R3 contract-gesture-callback Card"],
+  );
+});
+
+test("R3 passes: platform-only props that are optional primitives or string literal unions", () => {
+  assert.deepEqual(
+    check(
+      card(
+        contract(
+          [
+            "/** @platform native Space above the tab bar, in px. */",
+            "bottomOffset?: number;",
+            "/** @platform web */",
+            "autoFocus?: boolean;",
+            "/** @platform native */",
+            "label?: string;",
+            "/** @platform web */",
+            'placement?: "top" | "bottom";',
+          ].join("\n"),
+        ),
+      ),
+    ),
+    [],
+  );
+});
+
+test("R3 fails: a platform-only prop that is required, not a primitive or wrongly tagged", () => {
+  assert.deepEqual(
+    check(
+      card(
+        contract(
+          [
+            "/** @platform native */",
+            "bottomInset: number;",
+            "/** @platform web */",
+            "anchor?: { x: number };",
+            "/** @platform native */",
+            "onReady?(): void;",
+            "/** @platform mobile */",
+            "inset?: number;",
+          ].join("\n"),
+        ),
+      ),
+    ),
+    [
+      "R3 platform-prop-shape Card",
+      "R3 platform-prop-shape Card",
+      "R3 platform-prop-shape Card",
+      "R3 platform-prop-tag Card",
+    ],
+  );
+});
+
+test("R3 checks a component found on one platform only", () => {
+  assert.deepEqual(
+    check({
+      ...card(contract("onPress: () => void;")),
+      "src/index.ts": "export {};\n",
+    }),
+    ["R1 universal-parity Card", "R3 contract-gesture-callback Card"],
+  );
+});
+
+test("R4 passes: a platform module that exports its component, also as default", () => {
+  assert.deepEqual(
+    check({
+      ...card(contract("title: string;")),
+      "src/Card.web.tsx":
+        'import type { CardProps } from "./Card.types";\nfunction Card(props: CardProps) { return null; }\nexport { Card };\nexport default Card;\n',
+    }),
+    [],
+  );
+});
+
+test("R4 fails: a platform module that exports a type, a hook or a re-export", () => {
+  const found = checkComponents(
+    workspace({
+      ...card(contract("title: string;")),
+      "src/Card.native.tsx": [
+        'import type { CardProps } from "./Card.types";',
+        "export function Card(props: CardProps) { return null; }",
+        "export type CardLabels = { title: string };",
+        "export function useCard() { return null; }",
+        'export type { CardProps } from "./Card.types";',
+      ].join("\n"),
+    }),
+    "shared/thing",
+  );
+  assert.deepEqual(
+    found.map(v => `${v.rule} ${v.line} ${v.message.split(" ")[4]}`),
+    ["R4 3 `CardLabels`", "R4 4 `useCard`", "R4 5 `CardProps`"],
+  );
+  assert.equal(found[0].file, "shared/thing/src/Card.native.tsx");
+});
+
+test("R2 to R4 skip the components of platform entries and test entries", () => {
+  assert.deepEqual(
+    check({
+      "package.json": {
+        exports: {
+          "./web": "./src/index.web.ts",
+          "./native": "./src/index.native.ts",
+          "./testing": { "react-native": "./src/testing.native.ts", default: "./src/testing.ts" },
+        },
+      },
+      "src/index.web.ts": 'export * from "./Lottie";\n',
+      "src/index.native.ts": 'export * from "./Lottie";\n',
+      "src/Lottie.web.tsx":
+        'import type { CSSProperties } from "react";\nexport type LottieProps = { style: CSSProperties; onClick(): void };\nexport function Lottie(props: LottieProps) { return null; }\n',
+      "src/Lottie.native.tsx":
+        "export type LottieNativeProps = { onPress(): void };\nexport function Lottie(props: LottieNativeProps) { return null; }\n",
+      "src/testing.ts": 'export * from "./Mock.web";\n',
+      "src/testing.native.ts": 'export * from "./Mock.native";\n',
+      "src/Mock.web.tsx":
+        "export type MockProps = { a: 1 };\nexport function Mock(props: MockProps) { return null; }\n",
+      "src/Mock.native.tsx": "export function Mock() { return null; }\n",
+    }),
+    [],
+  );
+});
+
 test("the config sets every setting its schema requires, and nothing else", () => {
   const schema = require("./components.config.schema.json");
   const config = require("./components.config.json");

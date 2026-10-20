@@ -14,19 +14,28 @@
 // (apps/ledger-live-desktop/tools/rspack/rspack.renderer.ts for web,
 // Repack.getResolveOptions(platform, { preferNativePlatform: true }) for native), `conditions`
 // pick an entry's file per platform, `platformEntries` name the platform subpaths and
-// `componentWrappers` the calls that still return a component.
+// `componentWrappers` the calls that still return a component. The `banned*` settings and
+// `gestureWords` list what a contract may not import, reference or name (R3).
 //
 // R1: a universal component is exported on both platforms under the same name.
+// R2: both implementations annotate their first parameter with one props type name, declared in
+// one unsuffixed module, the contract, with no platform-suffixed sibling.
+// R3: the contract imports no platform package, references no DOM or React Native type, and
+// declares no `className`, `style` or gesture callback; a `@platform` prop is an optional primitive.
+// R4: a platform module that declares a universal component exports components only.
 // R5: a component is exported from universal entries or from platform entries, never both, and a
 // platform entry points at a module of its own that carries its platform's suffix.
+//
+// R2 to R4 read names and modules, not types: a contract's props are followed through its own
+// type declarations only.
 
 const fs = require("node:fs");
 const path = require("node:path");
 const ts = require("typescript");
 
 /** @typedef {"web" | "native"} Platform */
-/** @typedef {{ file: string, line: number, isComponent: boolean }} ExportInfo */
-/** @typedef {{ rule: "R1" | "R5", subject: string, file: string, line: number, code: string, message: string, text: string }} ComponentViolation */
+/** @typedef {{ file: string, line: number, isComponent: boolean, node: ts.Node | undefined }} ExportInfo */
+/** @typedef {{ rule: "R1" | "R2" | "R3" | "R4" | "R5", subject: string, file: string, line: number, code: string, message: string, text: string }} ComponentViolation */
 
 const CONFIG = require("./components.config.json");
 
@@ -45,6 +54,21 @@ const IGNORED_ENTRY_PREFIXES = CONFIG.ignoredEntryPrefixes;
 const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const COMPONENT_WRAPPERS = new Set(CONFIG.componentWrappers);
+
+const PLATFORM_SUFFIXES = [".web", ".native", ".ios", ".android"];
+const CONTRACT_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx"];
+const BANNED_IMPORT_PREFIXES = CONFIG.bannedImportPrefixes;
+const BANNED_TYPE_NAMES = CONFIG.bannedTypeNames.map(camelCaseGlob);
+const BANNED_PROP_NAMES = new Set(CONFIG.bannedPropNames);
+const BANNED_CALLBACK_NAMES = CONFIG.bannedCallbackNames.map(camelCaseGlob);
+const GESTURE_WORDS = new Set(CONFIG.gestureWords);
+const CALLBACK_NAME = /^on[A-Z]/;
+const CAMEL_CASE_WORD = /[A-Z]+(?![a-z])|[A-Z]?[a-z0-9]+/g;
+const PRIMITIVE_KEYWORDS = new Set([
+  ts.SyntaxKind.BooleanKeyword,
+  ts.SyntaxKind.NumberKeyword,
+  ts.SyntaxKind.StringKeyword,
+]);
 
 /**
  * @param {unknown} target
@@ -215,9 +239,10 @@ function hasDefaultModifier(node) {
 /**
  * The syntactic export table of one module.
  *
- * `declarations` holds the top-level declarations, `bindings` maps a local name to the import it
- * comes from, `localExports` maps an exported name to a local name, `named` maps an exported name
- * to a re-export, `stars` lists the `export * from` specifiers.
+ * `declarations` holds the top-level declarations, `bindings` maps a local name to the value import
+ * it comes from, `localExports` maps an exported name to a local name, `named` maps an exported name
+ * to a re-export, `stars` lists the `export * from` specifiers. `types` holds the top-level type
+ * aliases and interfaces, `imports` maps a local name to any import, type-only ones included.
  *
  * @param {string} file
  * @param {string} source
@@ -231,8 +256,12 @@ function parseModule(file, source) {
     return sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
   }
 
-  /** @type {Map<string, { line: number, isFunction: boolean }>} */
+  /** @type {Map<string, { line: number, isFunction: boolean, node: ts.Node | undefined }>} */
   const declarations = new Map();
+  /** @type {Map<string, ts.TypeAliasDeclaration | ts.InterfaceDeclaration>} */
+  const types = new Map();
+  /** @type {Map<string, { specifier: string, imported: string }>} */
+  const imports = new Map();
   /** @type {Map<string, { specifier: string, imported: string }>} */
   const bindings = new Map();
   /** @type {Map<string, string>} exported name to local name */
@@ -245,16 +274,16 @@ function parseModule(file, source) {
   for (const statement of sourceFile.statements) {
     if (ts.isFunctionDeclaration(statement) && statement.name) {
       const name = statement.name.text;
-      declarations.set(name, { line: lineOf(statement), isFunction: true });
+      declarations.set(name, { line: lineOf(statement), isFunction: true, node: statement });
       if (hasExportModifier(statement)) {
         localExports.set(hasDefaultModifier(statement) ? "default" : name, name);
       }
     } else if (ts.isFunctionDeclaration(statement) && hasDefaultModifier(statement)) {
-      declarations.set("*default*", { line: lineOf(statement), isFunction: true });
+      declarations.set("*default*", { line: lineOf(statement), isFunction: true, node: statement });
       localExports.set("default", "*default*");
     } else if (ts.isClassDeclaration(statement) && statement.name) {
       const name = statement.name.text;
-      declarations.set(name, { line: lineOf(statement), isFunction: false });
+      declarations.set(name, { line: lineOf(statement), isFunction: false, node: statement });
       if (hasExportModifier(statement)) {
         localExports.set(hasDefaultModifier(statement) ? "default" : name, name);
       }
@@ -265,6 +294,7 @@ function parseModule(file, source) {
         declarations.set(name, {
           line: lineOf(declaration),
           isFunction: isFunctionExpression(declaration.initializer),
+          node: declaration.initializer,
         });
         if (hasExportModifier(statement)) localExports.set(name, name);
       }
@@ -276,18 +306,25 @@ function parseModule(file, source) {
         declarations.set("*default*", {
           line: lineOf(statement),
           isFunction: isFunctionExpression(statement.expression),
+          node: statement.expression,
         });
         localExports.set("default", "*default*");
       }
+    } else if (ts.isTypeAliasDeclaration(statement) || ts.isInterfaceDeclaration(statement)) {
+      types.set(statement.name.text, statement);
     } else if (ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier)) {
       const clause = statement.importClause;
-      if (!clause || clause.isTypeOnly) continue;
+      if (!clause) continue;
       const specifier = statement.moduleSpecifier.text;
-      if (clause.name) bindings.set(clause.name.text, { specifier, imported: "default" });
+      if (clause.name) {
+        imports.set(clause.name.text, { specifier, imported: "default" });
+        if (!clause.isTypeOnly) bindings.set(clause.name.text, { specifier, imported: "default" });
+      }
       if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
         for (const element of clause.namedBindings.elements) {
-          if (element.isTypeOnly) continue;
           const imported = (element.propertyName ?? element.name).text;
+          imports.set(element.name.text, { specifier, imported });
+          if (clause.isTypeOnly || element.isTypeOnly) continue;
           bindings.set(element.name.text, { specifier, imported });
         }
       }
@@ -312,11 +349,12 @@ function parseModule(file, source) {
     }
   }
 
-  return { declarations, bindings, localExports, named, stars };
+  return { sourceFile, lineOf, declarations, types, bindings, imports, localExports, named, stars };
 }
 
 /**
- * Follows the re-exports of a platform's module graph, parsing each module once.
+ * Follows the re-exports of a platform's module graph, parsing each module once. `exportsOf` maps
+ * the named exports of an entry module to their declarations, `load` parses one module.
  *
  * @param {Platform} platform
  */
@@ -358,6 +396,7 @@ function createExportCollector(platform) {
           file,
           line: declaration.line,
           isComponent: declaration.isFunction && file.endsWith(".tsx"),
+          node: declaration.node,
         };
       }
       const binding = module.bindings.get(local);
@@ -404,8 +443,6 @@ function createExportCollector(platform) {
   }
 
   /**
-   * Named exports of an entry module, each mapped to its declaration.
-   *
    * @param {string} entryFile absolute path
    * @returns {Map<string, ExportInfo>}
    */
@@ -420,7 +457,7 @@ function createExportCollector(platform) {
     return out;
   }
 
-  return exportsOf;
+  return { exportsOf, load };
 }
 
 /**
@@ -448,8 +485,8 @@ function collectEntryComponents(packageDir, exportsField) {
   }
 
   function resolvesPerPlatform(target) {
-    const web = collectors.web(absolute(target));
-    const native = collectors.native(absolute(target));
+    const web = collectors.web.exportsOf(absolute(target));
+    const native = collectors.native.exportsOf(absolute(target));
     return (
       web.size !== native.size ||
       [...web].some(([name, info]) => native.get(name)?.file !== info.file)
@@ -465,21 +502,562 @@ function collectEntryComponents(packageDir, exportsField) {
       subpath: entry.subpath,
       files: { web: absolute(entry.web), native: absolute(entry.native) },
       components: {
-        web: entry.web ? componentsOf(collectors.web(absolute(entry.web))) : new Map(),
-        native: entry.native ? componentsOf(collectors.native(absolute(entry.native))) : new Map(),
+        web: entry.web ? componentsOf(collectors.web.exportsOf(absolute(entry.web))) : new Map(),
+        native: entry.native
+          ? componentsOf(collectors.native.exportsOf(absolute(entry.native)))
+          : new Map(),
       },
     })),
     platform: platform.map(entry => ({
       subpath: entry.subpath,
       platform: entry.platform,
       file: absolute(entry.target),
-      components: componentsOf(collectors[entry.platform](absolute(entry.target))),
+      components: componentsOf(collectors[entry.platform].exportsOf(absolute(entry.target))),
     })),
+    load: { web: collectors.web.load, native: collectors.native.load },
   };
 }
 
 /**
- * R1 and the export side of R5 for one package.
+ * @param {string} glob `*` stands for zero or more camelCase words, as in `HTML*Element`
+ * @returns {RegExp}
+ */
+function camelCaseGlob(glob) {
+  const parts = glob.split("*").map(part => part.replace(/[$()+.?[\\\]^{|}]/g, "\\$&"));
+  return new RegExp(`^${parts.join("(?:[A-Z][A-Za-z0-9]*)?")}$`);
+}
+
+/**
+ * @param {ts.Node | undefined} node
+ * @param {ReturnType<typeof parseModule>} module
+ * @param {Set<string>} [seen]
+ * @returns {{ fn: ts.SignatureDeclaration, typeArgument?: ts.TypeNode } | null} the function a
+ *   component evaluates to, with the props type a `forwardRef<Ref, Props>` call names
+ */
+function componentFunction(node, module, seen = new Set()) {
+  if (!node) return null;
+  if (ts.isFunctionDeclaration(node)) return { fn: node };
+  const expression = unwrap(/** @type {ts.Expression} */ (node));
+  if (ts.isArrowFunction(expression) || ts.isFunctionExpression(expression)) {
+    return { fn: expression };
+  }
+  if (ts.isIdentifier(expression)) {
+    if (seen.has(expression.text)) return null;
+    seen.add(expression.text);
+    return componentFunction(module.declarations.get(expression.text)?.node, module, seen);
+  }
+  if (!ts.isCallExpression(expression)) return null;
+  const callee = expression.expression;
+  const name = ts.isPropertyAccessExpression(callee)
+    ? callee.name.text
+    : ts.isIdentifier(callee)
+      ? callee.text
+      : "";
+  const inner = COMPONENT_WRAPPERS.has(name)
+    ? componentFunction(expression.arguments[0], module, seen)
+    : null;
+  if (!inner) return null;
+  const typeArgument = name === "forwardRef" ? expression.typeArguments?.[1] : undefined;
+  return { fn: inner.fn, typeArgument: inner.typeArgument ?? typeArgument };
+}
+
+/**
+ * @param {ts.TypeNode | undefined} type
+ * @returns {string | null} the type name a props annotation names, `Readonly<X>` read as `X`
+ */
+function propsTypeName(type) {
+  if (!type || !ts.isTypeReferenceNode(type) || !ts.isIdentifier(type.typeName)) return null;
+  if (type.typeName.text === "Readonly" && type.typeArguments?.length === 1) {
+    return propsTypeName(type.typeArguments[0]);
+  }
+  return type.typeName.text;
+}
+
+/**
+ * The props a component takes: none, a type name, or something else.
+ *
+ * @param {ExportInfo} info
+ * @param {ReturnType<typeof parseModule>} module
+ * @returns {{ kind: "none" } | { kind: "unnamed" } | { kind: "named", name: string } | null} null
+ *   when the component's function is out of reach, such as `memo` around an imported function
+ */
+function propsOf(info, module) {
+  const component = componentFunction(info.node, module);
+  if (!component) return null;
+  const [parameter] = component.fn.parameters;
+  if (!parameter) return { kind: "none" };
+  const name = propsTypeName(parameter.type ?? component.typeArgument);
+  return name ? { kind: "named", name } : { kind: "unnamed" };
+}
+
+/**
+ * The module that declares a props type, followed from the implementation that names it.
+ *
+ * @param {string} file implementation, absolute path
+ * @param {string} name the props type name
+ * @param {Platform} platform
+ * @param {(file: string) => ReturnType<typeof parseModule> | null} load
+ * @returns {{ file: string, declaration: ts.TypeAliasDeclaration | ts.InterfaceDeclaration } | { code: string, imported?: string }}
+ */
+function contractOf(file, name, platform, load) {
+  const module = load(file);
+  const local = module?.types.get(name);
+  if (local) return { file, declaration: local };
+  const imported = module?.imports.get(name);
+  if (!imported) return { code: "contract-not-found" };
+  if (!imported.specifier.startsWith(".")) {
+    return { code: "contract-outside-package", imported: imported.specifier };
+  }
+  const target = resolveRelative(file, imported.specifier, platform);
+  const declaration = target ? load(target)?.types.get(imported.imported) : undefined;
+  if (!target || !declaration) return { code: "contract-reexported", imported: target ?? "" };
+  return { file: target, declaration };
+}
+
+/**
+ * @param {string} file
+ * @returns {boolean}
+ */
+function isPlatformModule(file) {
+  return PLATFORM_SUFFIX.web.test(file) || PLATFORM_SUFFIX.native.test(file);
+}
+
+/**
+ * @param {string} file
+ * @returns {string[]} the platform-suffixed files that shadow `file` on one platform
+ */
+function suffixedSiblings(file) {
+  const base = file.slice(0, -path.extname(file).length);
+  return PLATFORM_SUFFIXES.flatMap(suffix =>
+    CONTRACT_EXTENSIONS.map(extension => `${base}${suffix}${extension}`),
+  ).filter(isFile);
+}
+
+/**
+ * @param {ts.Node} node
+ * @returns {string | null} the rightmost name of a type reference, `React.ChangeEvent` read as
+ *   `ChangeEvent`
+ */
+function referencedTypeName(node) {
+  let name;
+  if (ts.isTypeReferenceNode(node)) name = node.typeName;
+  else if (ts.isImportTypeNode(node)) name = node.qualifier;
+  else if (ts.isExpressionWithTypeArguments(node)) name = node.expression;
+  if (!name) return null;
+  if (ts.isQualifiedName(name)) return name.right.text;
+  if (ts.isPropertyAccessExpression(name)) return name.name.text;
+  return ts.isIdentifier(name) ? name.text : null;
+}
+
+/**
+ * The props of a contract type, following `Readonly`, intersections, unions and the types the
+ * contract module declares. Types from other modules are not followed.
+ *
+ * @param {ts.Node | undefined} node
+ * @param {ReturnType<typeof parseModule>} module
+ * @param {Set<string>} seen
+ * @returns {Array<ts.PropertySignature | ts.MethodSignature>}
+ */
+function propsOfContract(node, module, seen = new Set()) {
+  if (!node) return [];
+  function local(name) {
+    if (seen.has(name)) return [];
+    seen.add(name);
+    return propsOfContract(module.types.get(name), module, seen);
+  }
+  if (ts.isTypeAliasDeclaration(node) || ts.isParenthesizedTypeNode(node)) {
+    return propsOfContract(node.type, module, seen);
+  }
+  if (ts.isInterfaceDeclaration(node) || ts.isTypeLiteralNode(node)) {
+    const heritage = ts.isInterfaceDeclaration(node)
+      ? (node.heritageClauses ?? []).flatMap(clause =>
+          clause.types.flatMap(type =>
+            ts.isIdentifier(type.expression) ? local(type.expression.text) : [],
+          ),
+        )
+      : [];
+    const members = node.members.filter(
+      member => ts.isPropertySignature(member) || ts.isMethodSignature(member),
+    );
+    return [...members, ...heritage];
+  }
+  if (ts.isIntersectionTypeNode(node) || ts.isUnionTypeNode(node)) {
+    return node.types.flatMap(type => propsOfContract(type, module, seen));
+  }
+  if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+    if (node.typeName.text === "Readonly" && node.typeArguments?.length === 1) {
+      return propsOfContract(node.typeArguments[0], module, seen);
+    }
+    return local(node.typeName.text);
+  }
+  return [];
+}
+
+/**
+ * @param {string} name
+ * @returns {boolean} true for a gesture or DOM event name, such as `onPress` or `onEditPress`
+ */
+function isGestureName(name) {
+  if (BANNED_CALLBACK_NAMES.some(pattern => pattern.test(name))) return true;
+  return (name.match(CAMEL_CASE_WORD) ?? []).some(word =>
+    GESTURE_WORDS.has(word[0].toUpperCase() + word.slice(1)),
+  );
+}
+
+/**
+ * @param {ts.TypeNode | undefined} type
+ * @returns {boolean} true for `boolean`, `number`, `string` or a union of string literals
+ */
+function isPlatformPropType(type) {
+  if (!type) return false;
+  if (ts.isParenthesizedTypeNode(type)) return isPlatformPropType(type.type);
+  const types = (ts.isUnionTypeNode(type) ? type.types : [type]).filter(
+    member => member.kind !== ts.SyntaxKind.UndefinedKeyword,
+  );
+  if (types.length === 1 && PRIMITIVE_KEYWORDS.has(types[0].kind)) return true;
+  return (
+    types.length > 0 &&
+    types.every(member => ts.isLiteralTypeNode(member) && ts.isStringLiteral(member.literal))
+  );
+}
+
+/**
+ * R3 for a contract module: what it imports and the types it references.
+ *
+ * @param {ReturnType<typeof parseModule>} module
+ * @returns {Array<{ line: number, code: string, message: string }>}
+ */
+function checkContractModule(module) {
+  const found = [];
+  function report(node, code, message) {
+    found.push({ line: module.lineOf(node), code, message });
+  }
+  const reportedTypes = new Set();
+  function visit(node) {
+    const specifier =
+      (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+        ? node.moduleSpecifier.text
+        : ts.isImportTypeNode(node) &&
+            ts.isLiteralTypeNode(node.argument) &&
+            ts.isStringLiteral(node.argument.literal)
+          ? node.argument.literal.text
+          : null;
+    if (specifier && BANNED_IMPORT_PREFIXES.some(prefix => specifier.startsWith(prefix))) {
+      report(node, "contract-platform-import", `the contract imports \`${specifier}\``);
+    }
+    const typeName = referencedTypeName(node);
+    if (
+      typeName &&
+      !reportedTypes.has(typeName) &&
+      BANNED_TYPE_NAMES.some(pattern => pattern.test(typeName))
+    ) {
+      reportedTypes.add(typeName);
+      report(node, "contract-platform-type", `the contract references \`${typeName}\``);
+    }
+    ts.forEachChild(node, visit);
+  }
+  ts.forEachChild(module.sourceFile, visit);
+  return found;
+}
+
+/**
+ * R3 for a props type: its prop names, and the shape of its platform-only props.
+ *
+ * @param {ReturnType<typeof parseModule>} module the contract module
+ * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
+ * @returns {Array<{ line: number, code: string, message: string }>}
+ */
+function checkContractProps(module, declaration) {
+  const found = [];
+  function report(node, code, message) {
+    found.push({ line: module.lineOf(node), code, message });
+  }
+  for (const prop of propsOfContract(declaration, module)) {
+    if (!ts.isIdentifier(prop.name) && !ts.isStringLiteral(prop.name)) continue;
+    const name = prop.name.text;
+    if (BANNED_PROP_NAMES.has(name)) {
+      report(prop, "contract-platform-prop", `the contract declares \`${name}\``);
+    }
+    const isCallback =
+      CALLBACK_NAME.test(name) ||
+      ts.isMethodSignature(prop) ||
+      Boolean(prop.type && ts.isFunctionTypeNode(prop.type));
+    if (isCallback && isGestureName(name)) {
+      report(
+        prop,
+        "contract-gesture-callback",
+        `the callback \`${name}\` names a gesture or DOM event instead of the user's intent`,
+      );
+    }
+    const tag = ts.getJSDocTags(prop).find(t => t.tagName.text === "platform");
+    if (!tag) continue;
+    const [value = ""] = (ts.getTextOfJSDocComment(tag.comment) ?? "").trim().split(/\s+/);
+    if (value !== "web" && value !== "native") {
+      report(
+        prop,
+        "platform-prop-tag",
+        `\`${name}\` is tagged \`@platform ${value}\`, not web or native`,
+      );
+    } else if (
+      !ts.isPropertySignature(prop) ||
+      !prop.questionToken ||
+      !isPlatformPropType(prop.type)
+    ) {
+      report(
+        prop,
+        "platform-prop-shape",
+        `the ${value}-only prop \`${name}\` must be optional and typed boolean, number, string or a union of string literals`,
+      );
+    }
+  }
+  return found;
+}
+
+/**
+ * R4: what a platform module exports besides its components.
+ *
+ * @param {string} file absolute path
+ * @param {ReturnType<typeof parseModule>} module
+ * @returns {Array<{ name: string, line: number }>}
+ */
+function extraExportsOf(file, module) {
+  function isComponent(local) {
+    const declaration = module.declarations.get(local);
+    return Boolean(
+      declaration?.isFunction &&
+      file.endsWith(".tsx") &&
+      (local === "*default*" || PASCAL_CASE.test(local)),
+    );
+  }
+  const extra = [];
+  for (const statement of module.sourceFile.statements) {
+    const line = module.lineOf(statement);
+    if (ts.isExportDeclaration(statement)) {
+      const clause = statement.exportClause;
+      if (!clause) {
+        extra.push({ name: "*", line });
+      } else if (ts.isNamespaceExport(clause)) {
+        extra.push({ name: clause.name.text, line });
+      } else {
+        for (const element of clause.elements) {
+          const local = (element.propertyName ?? element.name).text;
+          const reexport = statement.isTypeOnly || element.isTypeOnly || statement.moduleSpecifier;
+          if (reexport || !isComponent(local)) extra.push({ name: element.name.text, line });
+        }
+      }
+    } else if (ts.isExportAssignment(statement)) {
+      const expression = unwrap(statement.expression);
+      const local = ts.isIdentifier(expression) ? expression.text : "*default*";
+      if (statement.isExportEquals || !isComponent(local)) extra.push({ name: "default", line });
+    } else if (hasExportModifier(statement)) {
+      const names = ts.isVariableStatement(statement)
+        ? statement.declarationList.declarations.flatMap(d =>
+            ts.isIdentifier(d.name) ? [d.name.text] : [],
+          )
+        : [statement.name?.text ?? "*default*"];
+      for (const name of names) {
+        const isValue =
+          !ts.isTypeAliasDeclaration(statement) && !ts.isInterfaceDeclaration(statement);
+        if (!isValue || !isComponent(name)) {
+          extra.push({ name: hasDefaultModifier(statement) ? "default" : name, line });
+        }
+      }
+    }
+  }
+  return extra;
+}
+
+/**
+ * R2 to R4 for the universal components of one package.
+ *
+ * @param {ReturnType<typeof collectEntryComponents>["universal"]} universal
+ * @param {Record<Platform, (file: string) => ReturnType<typeof parseModule> | null>} load
+ * @param {(file: string) => string} relative
+ * @returns {ComponentViolation[]}
+ */
+function checkContracts(universal, load, relative) {
+  /** @type {Map<string, Partial<Record<Platform, ExportInfo>>>} */
+  const components = new Map();
+  for (const entry of universal) {
+    for (const platform of /** @type {Platform[]} */ (["web", "native"])) {
+      for (const [name, info] of entry.components[platform]) {
+        const sides = components.get(name) ?? {};
+        sides[platform] ??= info;
+        components.set(name, sides);
+      }
+    }
+  }
+
+  /** @type {ComponentViolation[]} */
+  const violations = [];
+  function report(rule, subject, file, line, code, message) {
+    violations.push({ rule, subject, file: relative(file), line, code, message, text: "" });
+  }
+  /** @type {Map<string, Array<{ line: number, code: string, message: string }>>} */
+  const checked = new Map();
+  function cached(key, check) {
+    if (!checked.has(key)) checked.set(key, check());
+    return checked.get(key);
+  }
+
+  for (const [name, sides] of components) {
+    /** @type {Partial<Record<Platform, { info: ExportInfo, props: NonNullable<ReturnType<typeof propsOf>>, contract?: ReturnType<typeof contractOf> }>>} */
+    const implementations = {};
+    for (const platform of /** @type {Platform[]} */ (["web", "native"])) {
+      const info = sides[platform];
+      const module = info && load[platform](info.file);
+      const props = info && module ? propsOf(info, module) : null;
+      if (!info || !props) continue;
+      const contract =
+        props.kind === "named"
+          ? contractOf(info.file, props.name, platform, load[platform])
+          : undefined;
+      implementations[platform] = { info, props, contract };
+    }
+
+    const r2 = checkOneContract(name, implementations, relative);
+    if (r2) report("R2", name, r2.file, r2.line, r2.code, r2.message);
+
+    // A props type in a platform module is not a contract: R2 reports it, and R3 waits for it to
+    // move to an unsuffixed module.
+    const keys = new Map();
+    for (const [platform, implementation] of Object.entries(implementations)) {
+      const contract = implementation.contract;
+      if (!contract || !("declaration" in contract) || isPlatformModule(contract.file)) continue;
+      const module = load[platform](contract.file);
+      const declaration = contract.declaration;
+      keys.set(contract.file, { file: contract.file, check: () => checkContractModule(module) });
+      keys.set(`${contract.file}#${declaration.name.text}`, {
+        file: contract.file,
+        check: () => checkContractProps(module, declaration),
+      });
+    }
+    for (const [key, { file, check }] of keys) {
+      for (const found of cached(key, check)) {
+        report("R3", name, file, found.line, found.code, `\`${name}\`: ${found.message}`);
+      }
+    }
+  }
+
+  /** @type {Map<string, { platform: Platform, names: string[] }>} */
+  const platformModules = new Map();
+  for (const [name, sides] of components) {
+    for (const [platform, info] of Object.entries(sides)) {
+      if (!isPlatformModule(info.file)) continue;
+      const module = platformModules.get(info.file) ?? { platform, names: [] };
+      module.names.push(name);
+      platformModules.set(info.file, module);
+    }
+  }
+  for (const [file, { platform, names }] of platformModules) {
+    for (const extra of extraExportsOf(file, load[platform](file))) {
+      for (const name of names) {
+        report(
+          "R4",
+          name,
+          file,
+          extra.line,
+          "platform-module-export",
+          `the platform module exports \`${extra.name}\` next to its component \`${name}\`: move it to the contract or to an unsuffixed module`,
+        );
+      }
+    }
+  }
+  return violations;
+}
+
+/**
+ * R2 for one universal component: the first way its two implementations miss one contract.
+ *
+ * @returns {{ file: string, line: number, code: string, message: string } | null}
+ */
+function checkOneContract(name, { web, native }, relative) {
+  if (!web || !native) return null;
+  // One unsuffixed implementation serves both platforms: one contract by construction.
+  if (web.info.file === native.info.file && web.info.line === native.info.line) return null;
+  for (const [platform, implementation] of Object.entries({ web, native })) {
+    if (implementation.props.kind !== "unnamed") continue;
+    return {
+      file: implementation.info.file,
+      line: implementation.info.line,
+      code: "props-unnamed",
+      message: `the first parameter of \`${name}\` on ${platform} is not annotated with a props type name`,
+    };
+  }
+  if (web.props.kind !== native.props.kind) {
+    const withProps = web.props.kind === "named" ? web : native;
+    return {
+      file: withProps.info.file,
+      line: withProps.info.line,
+      code: "props-parameter-mismatch",
+      message: `\`${name}\` takes props on ${withProps === web ? "web" : "native"} only`,
+    };
+  }
+  if (web.props.kind === "none") return null;
+  if (web.props.name !== native.props.name) {
+    return {
+      file: web.info.file,
+      line: web.info.line,
+      code: "props-name-mismatch",
+      message: `\`${name}\` takes \`${web.props.name}\` on web and \`${native.props.name}\` on native`,
+    };
+  }
+  const type = web.props.name;
+  for (const [platform, implementation] of Object.entries({ web, native })) {
+    const contract = implementation.contract;
+    if ("declaration" in contract) continue;
+    const messages = {
+      "contract-not-found": `\`${type}\` is neither declared in nor imported by the ${platform} implementation of \`${name}\``,
+      "contract-outside-package": `\`${type}\` comes from \`${contract.imported}\`, outside the package`,
+      "contract-reexported": `the ${platform} implementation of \`${name}\` imports \`${type}\` from a module that does not declare it${contract.imported ? `: ${relative(contract.imported)}` : ""}`,
+    };
+    return {
+      file: implementation.info.file,
+      line: implementation.info.line,
+      code: contract.code,
+      message: messages[contract.code],
+    };
+  }
+  if (
+    web.contract.file !== native.contract.file ||
+    web.contract.declaration.name.text !== native.contract.declaration.name.text
+  ) {
+    return {
+      file: web.info.file,
+      line: web.info.line,
+      code: "contract-mismatch",
+      message: `the props of \`${name}\` come from ${relative(web.contract.file)} on web and ${relative(native.contract.file)} on native`,
+    };
+  }
+  const contractFile = web.contract.file;
+  const declaration = web.contract.declaration;
+  const sourceFile = declaration.getSourceFile();
+  const contractLine =
+    sourceFile.getLineAndCharacterOfPosition(declaration.getStart(sourceFile)).line + 1;
+  if (isPlatformModule(contractFile)) {
+    return {
+      file: contractFile,
+      line: contractLine,
+      code: "contract-suffixed",
+      message: `\`${type}\`, the props of \`${name}\`, is declared in a platform module`,
+    };
+  }
+  const [sibling] = suffixedSiblings(contractFile);
+  if (sibling) {
+    return {
+      file: contractFile,
+      line: contractLine,
+      code: "contract-shadowed",
+      message: `${relative(sibling)} shadows the contract of \`${name}\` on one platform`,
+    };
+  }
+  return null;
+}
+
+/**
+ * R1 to R4, and the export side of R5, for one package.
  *
  * @param {string} workspaceRoot
  * @param {string} projectRoot posix-style
@@ -496,7 +1074,7 @@ function checkComponents(workspaceRoot, projectRoot) {
     return [];
   }
   const manifestLines = raw.split("\n");
-  const { universal, platform } = collectEntryComponents(packageDir, manifest.exports);
+  const { universal, platform, load } = collectEntryComponents(packageDir, manifest.exports);
 
   function lineOfSubpath(subpath) {
     return manifestLines.findIndex(text => text.includes(`"${subpath}"`)) + 1 || 1;
@@ -527,6 +1105,8 @@ function checkComponents(workspaceRoot, projectRoot) {
       }
     }
   }
+
+  violations.push(...checkContracts(universal, load, relative));
 
   const universalFiles = new Set(
     universal.flatMap(entry => [entry.files.web, entry.files.native]).filter(Boolean),

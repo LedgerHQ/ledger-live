@@ -38,7 +38,7 @@ const PACKAGE_EXCEPTIONS = {
   },
 };
 
-// Public components allowed to break R1 or R5, keyed by project root, then by component name or,
+// Public components allowed to break R1 to R5, keyed by project root, then by component name or,
 // for a check on the entry itself, by subpath. `skip` above does not reach these rules.
 //
 // Each package that adopts the convention deletes its entries in the same change, so this list is
@@ -49,6 +49,19 @@ const COMPONENT_REASONS = {
     "It is exported from a universal entry on one platform only, or under another name on each. " +
     "Exit condition: export it on both platforms under the same name, or move it to a platform " +
     "entry, make it internal or move it to the app that renders it, then delete this entry.",
+  R2:
+    "Its two implementations do not take one props type from one unsuffixed module. Exit " +
+    "condition: declare the props once in a contract module both implementations import, with " +
+    "no platform-suffixed sibling, annotate each first parameter with it, then delete this entry.",
+  R3:
+    "Its contract depends on a platform: a platform import or type, a className or style prop, " +
+    "a gesture callback name, or a platform-only prop that is not an optional primitive. Exit " +
+    "condition: keep platform types in the implementations, name callbacks after the user's " +
+    "intent, then delete this entry.",
+  R4:
+    "A platform module that declares it also exports something else, such as its props type. " +
+    "Exit condition: move the props type to the contract and anything else to an unsuffixed " +
+    "module, then delete this entry.",
   R5:
     "It is exported from both a universal entry and a platform entry. Exit condition: keep one " +
     "kind of entry for it, then delete this entry.",
@@ -61,7 +74,7 @@ const ENTRY_REASON =
   "only, then delete this entry.";
 
 /**
- * @param {...("R1" | "R5")} rules
+ * @param {...("R1" | "R2" | "R3" | "R4" | "R5")} rules
  * @returns {{ rules: string[], reason: string }}
  */
 function componentWaiver(...rules) {
@@ -80,27 +93,40 @@ const COMPONENT_EXCEPTIONS = {
     AccountSettingsDialog: componentWaiver("R1"),
     AccountSettingsSheet: componentWaiver("R1"),
   },
+  "features/flow/contacts": {
+    ContactsButton: componentWaiver("R2", "R4"),
+    ContactsView: componentWaiver("R2", "R3"),
+  },
   "features/flow/flow-contacts-add-address": {
     "./native": entryWaiver(),
-    ContactsAddAddressEntry: componentWaiver("R5"),
-    ContactsAddAddressFlowContent: componentWaiver("R5"),
-    ContactsAddAddressName: componentWaiver("R5"),
-    ContactsAddAddressNameInput: componentWaiver("R1"),
-    ContactsAddAddressReview: componentWaiver("R5"),
+    ContactsAddAddressEntry: componentWaiver("R2", "R3", "R4", "R5"),
+    ContactsAddAddressFlowContent: componentWaiver("R2", "R4", "R5"),
+    ContactsAddAddressName: componentWaiver("R2", "R3", "R4", "R5"),
+    ContactsAddAddressNameInput: componentWaiver("R1", "R3", "R4"),
+    ContactsAddAddressReview: componentWaiver("R2", "R4", "R5"),
   },
   "features/flow/flow-contacts-add-contact": {
     "./native": entryWaiver(),
-    ContactsAddContactContent: componentWaiver("R5"),
+    ContactsAddContactContent: componentWaiver("R2", "R5"),
     ContactsAddContactDialog: componentWaiver("R1"),
     ContactsAddContactFooter: componentWaiver("R1", "R5"),
   },
+  "features/flow/flow-contacts-delete-address": {
+    ContactsDeleteAddressDialog: componentWaiver("R2"),
+  },
+  "features/flow/flow-contacts-delete-contact": {
+    ContactsDeleteContactDialog: componentWaiver("R2"),
+  },
   "features/flow/flow-contacts-detail": {
     "./native": entryWaiver(),
-    ContactAddressDetailDialog: componentWaiver("R5"),
-    ContactDetailActions: componentWaiver("R1"),
-    ContactDetailActionsMenu: componentWaiver("R1", "R5"),
-    ContactDetailView: componentWaiver("R5"),
-    ContactsEditSignerMismatchDialog: componentWaiver("R5"),
+    ContactAddressDetailDialog: componentWaiver("R2", "R4", "R5"),
+    ContactDetailActions: componentWaiver("R1", "R4"),
+    ContactDetailActionsMenu: componentWaiver("R1", "R4", "R5"),
+    ContactDetailView: componentWaiver("R3", "R5"),
+    ContactsEditSignerMismatchDialog: componentWaiver("R2", "R4", "R5"),
+  },
+  "features/flow/flow-contacts-edit-address": {
+    ContactsRenameAddressDialog: componentWaiver("R2"),
   },
   "features/flow/flow-contacts-edit-contact": {
     "./native": entryWaiver(),
@@ -117,50 +143,66 @@ const COMPONENT_EXCEPTIONS = {
   },
   "features/flow/flow-contacts-list": {
     "./native": entryWaiver(),
-    ContactsAddContactHeaderButton: componentWaiver("R1", "R5"),
-    ContactsCompactList: componentWaiver("R5"),
-    ContactsCompactRow: componentWaiver("R1", "R5"),
-    ContactsListView: componentWaiver("R5"),
+    ContactsAddContactHeaderButton: componentWaiver("R1", "R4", "R5"),
+    ContactsCompactList: componentWaiver("R3", "R5"),
+    ContactsCompactRow: componentWaiver("R1", "R3", "R5"),
+    ContactsListView: componentWaiver("R2", "R3", "R5"),
     ContactsSearchNoResults: componentWaiver("R1", "R5"),
   },
   "features/flow/lazy-onboarding-banner": {
-    LazyOnboardingBannerView: componentWaiver("R1"),
+    LazyOnboardingBannerView: componentWaiver("R1", "R3"),
   },
   "features/flow/pay-card-assets": {
     CardAssetDetailsDrawer: componentWaiver("R1"),
     CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
+    CardAssets: componentWaiver("R3"),
     CardAssetsManageDrawer: componentWaiver("R1"),
     CardAssetsManageFooter: componentWaiver("R1"),
-    CardAssetsView: componentWaiver("R1"),
+    CardAssetsView: componentWaiver("R1", "R3"),
     CardAssetTransactionDetailDrawer: componentWaiver("R1"),
   },
   "features/flow/pay-card-details": {
+    CardArtwork: componentWaiver("R2"),
     CardPrimaryActionButton: componentWaiver("R1"),
     CardTopUpButton: componentWaiver("R1"),
   },
+  "features/flow/pay-card-transactions": {
+    CardTransactionDetail: componentWaiver("R2"),
+    CardTransactions: componentWaiver("R3"),
+    CategoryIcon: componentWaiver("R4"),
+    ListItem: componentWaiver("R3"),
+  },
+  "features/flow/pay-contact": {
+    Contacts: componentWaiver("R2", "R3"),
+    PaySuccess: componentWaiver("R2", "R4"),
+  },
   "features/platform/app-lock": {
     PasswordDraftProvider: componentWaiver("R1"),
-    PasswordField: componentWaiver("R1"),
+    PasswordField: componentWaiver("R1", "R3"),
   },
   "features/platform/contacts": {
     "./native": entryWaiver(),
     "./web": entryWaiver(),
-    ContactAvatar: componentWaiver("R5"),
-    ContactConfirmationBottomSheet: componentWaiver("R1", "R5"),
+    ContactAvatar: componentWaiver("R2", "R4", "R5"),
+    ContactConfirmationBottomSheet: componentWaiver("R1", "R4", "R5"),
     ContactConfirmationDialog: componentWaiver("R1"),
     ContactNameDisclaimer: componentWaiver("R1", "R5"),
-    ContactNameInput: componentWaiver("R5"),
+    ContactNameInput: componentWaiver("R2", "R5"),
+  },
+  "features/platform/style": {
+    StyleProvider: componentWaiver("R2"),
   },
   "shared/analytics-react": {
-    TrackPage: componentWaiver("R1"),
-    TrackScreen: componentWaiver("R1"),
+    TrackPage: componentWaiver("R1", "R4"),
+    TrackScreen: componentWaiver("R1", "R4"),
   },
   "shared/ui-info-state": {
     DialogBackgroundGradient: componentWaiver("R1"),
     DialogBackgroundToneProvider: componentWaiver("R1"),
+    InfoState: componentWaiver("R2"),
   },
   "shared/ui-queued-bottom-sheet": {
-    QueuedBottomSheet: componentWaiver("R1"),
+    QueuedBottomSheet: componentWaiver("R1", "R3"),
   },
 };
 
