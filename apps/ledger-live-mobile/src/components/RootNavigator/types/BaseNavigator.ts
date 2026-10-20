@@ -410,6 +410,9 @@ export type BaseNavigatorStackParamList = {
     isBeforeOnboarding?: boolean;
     isDeviceOnboarded?: boolean;
   };
+  [ScreenName.OsUpdate]: {
+    device: Device;
+  };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
   [ScreenName.Portfolio]: undefined;
   [NavigatorName.DeviceSelection]?: Partial<
