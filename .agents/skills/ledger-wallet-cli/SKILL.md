@@ -353,7 +353,7 @@ value outside this list.
 signed request. The frontend delivers the completion over that channel; there is no `complete`
 command and no manual JSON fallback. **Keep the process running** until it prints the final
 `enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
-`accountAccessEnvironment`). The wait is bounded by `--expires-in` (default 30m).
+`accountAccessEnvironment`, `keyStore`). The wait is bounded by `--expires-in` (default 30m).
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
@@ -366,7 +366,7 @@ cannot be resumed — start a fresh enrollment with a **new** `--profile` id.
 **Recovery reuses the same key.** `recover --profile <id>` signs a recovery request for the
 profile's existing key and Trustchain (no new key, `accountAccess` untouched), then waits on the relay
 exactly like `enroll` (json: a `recovery-pending` event, then `status: "success"`, `recovered: true`,
-`trustchainId`). Any enrolled profile whose keychain key matches the recorded public key can be
+`trustchainId`). Any enrolled profile whose agent key matches the recorded public key can be
 recovered, whatever its `--source`. The completion must name the same agent key, the same signed request
 and the same Trustchain, and the agent key must obtain an App-18 token for it (App-16 is not
 re-checked). While it waits, `list`/`show` report `recovering`; on timeout, Ctrl+C, or a failed
@@ -396,7 +396,7 @@ Only after an explicit yes **in the current conversation** re-run the same `enro
 other session. The OS keychain still wins when available (a notice on stderr says the flag was
 ignored). Otherwise the key goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g.
 `~/.local/state/ledger-wallet-cli/…`), mode 0600 but **unencrypted**; every command reading it warns
-on stderr, and `show` reports `keyStore: plaintext-file`. An existing profile that fails with
+on stderr, and `show` reports it (json `keyStore: "plaintext-file"`, human "Key store" line). An existing profile that fails with
 `keychain_unavailable` can't be read here — re-enroll it under a new `--profile` id (same consent
 rule).
 
@@ -413,12 +413,12 @@ App-16 application path) once enrolled.
 
 `agent-intent sync --profile <id>` imports the accounts synchronized from your other Ledger Wallet
 instances (desktop, mobile) so they can be referenced by label. It authenticates with the **agent's
-own key** (from the OS keychain), which the frontend added to the App-16 stream at enrollment — it
+own key** (from the OS keychain or its key file), which the frontend added to the App-16 stream at enrollment — it
 never opens the device and there is no separate Ledger Sync enrollment. The environment comes from
 the profile's `accountAccess`.
 
 - **Requires an enrolled profile:** a `pending`/`expired` profile (no `accountAccess`) or a missing
-  keychain key fails with a clear error.
+  agent key fails with a clear error.
 - **Lost access is reported, not repaired:** if the agent was removed from Ledger Sync, `sync`
   reports "no longer has Ledger Sync access" and deletes nothing.
 - **Key rotation is followed:** if Ledger Sync rotated its key (a member was removed), the profile's
@@ -461,7 +461,7 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 
 - **Enrolled profile only** (its `agent-intent enroll` approval went through). It uses the
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
-  `--bff-url`/`--keycloak-url` override carries over), and its key in the OS keychain.
+  `--bff-url`/`--keycloak-url` override carries over), and its agent key (OS keychain or key file).
 - **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
   the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `SOL`
   → Solana and any other ticker → Ethereum. A `--account` label must be a mainnet account of that
