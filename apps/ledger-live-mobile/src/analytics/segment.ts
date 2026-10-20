@@ -81,6 +81,7 @@ import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakeProgr
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
+import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { AuthorizationStatus, type FirebaseMessagingTypes } from "@react-native-firebase/messaging";
@@ -506,6 +507,7 @@ const extraProperties = async (store: AppStore) => {
     analyticsFeatureFlagMethod?.("lwmPasswordRevamp")?.enabled ?? false,
   );
   const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
+  const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
 
   return {
     ...mandatoryProperties,
@@ -564,6 +566,7 @@ const extraProperties = async (store: AppStore) => {
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     accountDetail,
+    recoverV2,
     ...remoteABTestingAttributes,
   };
 };

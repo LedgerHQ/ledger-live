@@ -67,6 +67,7 @@ import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalSt
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
+import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { scrubAccountId } from "../helpers/scrubAccountId";
 import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
@@ -349,6 +350,7 @@ const extraProperties = (store: ReduxStore) => {
     "lwd",
   );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
+  const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
   const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   const payAttributes = getPayAttributes(
@@ -406,6 +408,7 @@ const extraProperties = (store: ReduxStore) => {
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
+    recoverV2,
     accountDetail,
     ...remoteABTestingAttributes,
   };
