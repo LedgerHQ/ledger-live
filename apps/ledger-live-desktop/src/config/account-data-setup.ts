@@ -1,3 +1,4 @@
+import { createAccountDataRecorder } from "@devtools/bindings";
 import type { AccountDataSource } from "@domain/api-account-data";
 import {
   accountsSlice,
@@ -13,9 +14,12 @@ import type { State } from "~/renderer/reducers";
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
+/** What the account data layer does, for the DevTools account-data page. */
+export const accountDataRecorder = createAccountDataRecorder();
+
 /** The app's account data sources, in rank order: for each account, the first that serves it answers. */
 export function accountDataSources(getState: () => State): readonly AccountDataSource[] {
-  return [
+  return accountDataRecorder.instrument([
     createFullSyncSource({
       findAccount: accountUUID => {
         const state = getState();
@@ -27,7 +31,7 @@ export function accountDataSources(getState: () => State): readonly AccountDataS
       prepareCurrency,
       blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()),
     }),
-  ];
+  ]);
 }
 
 /** Keeps `accountEntries` in step with the legacy accounts. */
