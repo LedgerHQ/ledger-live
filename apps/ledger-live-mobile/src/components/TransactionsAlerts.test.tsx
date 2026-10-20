@@ -281,6 +281,29 @@ describe("TransactionsAlerts", () => {
     await waitFor(() => expect(chainwatch.getAccountDeletes()).toBe(1));
   });
 
+  it("should not register again an account removed while alerts were disabled", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01, account02]),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01", "0x02"]]));
+
+    act(() => {
+      store.dispatch(setNotifications({ transactionsAlertsCategory: false }));
+    });
+    await waitFor(() => expect(chainwatch.getAccountDeletes()).toBe(1));
+    act(() => {
+      store.dispatch(replaceAccounts([account02]));
+    });
+    act(() => {
+      store.dispatch(setNotifications({ transactionsAlertsCategory: true }));
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01", "0x02"], ["0x02"]]));
+    expect(chainwatch.addressDeletes).toHaveLength(0);
+    expect(chainwatch.getRemote().suffixes).toEqual(["0x02"]);
+  });
+
   it("should wait for reconciliation before deleting disabled alerts", async () => {
     let releaseAddressPut = () => {};
     const addressPutGate = new Promise<void>(resolve => {

@@ -46,8 +46,15 @@ const TransactionsAlerts = () => {
   const [watchedAddressesByAccount, setWatchedAddressesByAccount] =
     useState<TransactionsAlertsAddressesByAccount>({});
   const transactionsAlertsAddresses = useMemo(
-    () => flattenTransactionsAlertsAddresses(watchedAddressesByAccount),
-    [watchedAddressesByAccount],
+    () =>
+      flattenTransactionsAlertsAddresses(
+        Object.fromEntries(
+          accountsFilteredBySupportedChains
+            .filter(account => watchedAddressesByAccount[account.id])
+            .map(account => [account.id, watchedAddressesByAccount[account.id]]),
+        ),
+      ),
+    [accountsFilteredBySupportedChains, watchedAddressesByAccount],
   );
   const refActive = useRef(false);
   const refAddresses = useRef<TransactionsAlertsAddress[]>([]);
