@@ -95,6 +95,14 @@ describe("mapOutputs", () => {
     expect(mapOutputs(tx({ memo: "" }))[0]).toHaveProperty("memo", "");
     expect(mapOutputs(tx())[0]).not.toHaveProperty("memo");
   });
+
+  it("declares the recipient account only when the transaction carries one", () => {
+    expect(mapOutputs(tx({ recipientAccountIndex: 4 }))).toEqual([
+      { address: T_ADDRESS, valueZat: "12345", account: 4 },
+    ]);
+    expect(mapOutputs(tx({ recipientAccountIndex: 0 }))[0]).toHaveProperty("account", 0);
+    expect(mapOutputs(tx())[0]).not.toHaveProperty("account");
+  });
 });
 
 describe("mapTransparentInputs", () => {

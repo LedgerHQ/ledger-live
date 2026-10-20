@@ -899,6 +899,29 @@ describe("buildTransactionJob", () => {
     expect(pcztTransaction.orchardBundle?.actions[0].value).toBe(30000n);
   });
 
+  it("keeps the output account derivation of Orchard and Ironwood actions", async () => {
+    const derivation = { path: "m/32'/133'/3'", seedFingerprint: new Uint8Array([1, 2, 3]) };
+    const raw = makeRawPczt();
+    const ironwood = makeRawIronwoodBundle();
+    mockBuildTransaction.mockResolvedValue(nativeBuildResult);
+    mockParsePczt.mockReturnValue({
+      ...raw,
+      orchardBundle: {
+        ...raw.orchardBundle,
+        actions: [{ ...raw.orchardBundle.actions[0], outputZip32Derivation: derivation }],
+      },
+      ironwoodBundle: {
+        ...ironwood,
+        actions: [{ ...ironwood.actions[0], outputZip32Derivation: derivation }],
+      },
+    });
+
+    const { pcztTransaction } = await buildTransactionJob(buildArgs);
+
+    expect(pcztTransaction.orchardBundle?.actions[0].outputZip32Derivation).toEqual(derivation);
+    expect(pcztTransaction.ironwoodBundle?.actions[0].outputZip32Derivation).toEqual(derivation);
+  });
+
   it("passes a null orchardBundle through unchanged", async () => {
     mockBuildTransaction.mockResolvedValue(nativeBuildResult);
     mockParsePczt.mockReturnValue(makeRawPczt({ orchardBundle: null }));

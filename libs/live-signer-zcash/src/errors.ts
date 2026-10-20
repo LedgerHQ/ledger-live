@@ -36,3 +36,42 @@ export class UnsupportedV6SourceTransaction extends Error {
     );
   }
 }
+
+/**
+ * `errorCode` and `_tag` the Zcash signer kit reports when the Zcash app installed on the
+ * device cannot read the account declaration carried by an output. Raised by the kit from
+ * the app version, before any APDU is sent. As with the V6 error above, the kit does not
+ * export them, so both are matched here.
+ */
+export const UNSUPPORTED_OUTPUT_ACCOUNT_ERROR_CODE = "unsupported_output_account";
+export const UNSUPPORTED_OUTPUT_ACCOUNT_ERROR_TAG = "UnsupportedOutputAccountDeclarationError";
+
+/**
+ * `errorCode` and `_tag` the Zcash signer kit reports when the device refuses the account
+ * declared on an output.
+ */
+export const OUTPUT_ACCOUNT_REFUSED_ERROR_CODE = "output_account_refused";
+export const OUTPUT_ACCOUNT_REFUSED_ERROR_TAG = "OutputAccountRefusedError";
+
+/**
+ * The Zcash app on the device cannot read the account declared on an output. The same
+ * transfer can be signed without the declaration, which the device then reviews as a
+ * transfer to an external address.
+ */
+export class ZcashOutputAccountNotSupported extends Error {
+  override name = "ZcashOutputAccountNotSupported";
+  constructor(message?: string) {
+    super(
+      message ||
+        "The Zcash app version installed on the device does not support declaring the account of an output.",
+    );
+  }
+}
+
+/** The device refused the account declared on an output. Never retried. */
+export class ZcashOutputAccountRefused extends Error {
+  override name = "ZcashOutputAccountRefused";
+  constructor(message?: string) {
+    super(message || "The device refused the account declared on the transaction output.");
+  }
+}

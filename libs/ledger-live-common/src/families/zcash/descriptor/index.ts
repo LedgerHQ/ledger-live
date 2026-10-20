@@ -3,7 +3,7 @@ import type {
   ZcashTransferType,
 } from "@ledgerhq/coin-zcash/types";
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
-import { zcashBalanceTypeConfig } from "./balanceType";
+import { zcashBalanceTypeConfig, zcashRecipientAccount } from "./balanceType";
 import { memo } from "./memo";
 
 type ZcashTransferFlow =
@@ -68,6 +68,7 @@ export const descriptor: CoinDescriptor = {
     },
     selfTransfer: "free",
     balanceType: zcashBalanceTypeConfig,
+    recipientAccount: zcashRecipientAccount,
     getTrackingAttributes: transaction => getPrivacyAttributes(transaction) ?? {},
   },
 };

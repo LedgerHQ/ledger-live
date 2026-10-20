@@ -125,6 +125,12 @@ export type Transaction = TransactionCommon & {
    * Never inferred from the recipient value.
    */
   selfTransfer?: boolean;
+  /**
+   * ZIP 32 account index of the recipient when it is another account of the same
+   * seed, set by the send flow. When defined, it is declared on the output so the
+   * device can recognize the transfer as one between the user's own accounts.
+   */
+  recipientAccountIndex?: number;
   /** Optional 512-byte memo field for shielded outputs. */
   memo?: string;
   // Coin selection results (populated by prepareTransaction)
@@ -145,6 +151,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   sender?: "public" | "private";
   recipientType?: "public" | "private";
   selfTransfer?: boolean;
+  recipientAccountIndex?: number;
   memo?: string;
   zcashFee?: string;
   changeAmount?: string;

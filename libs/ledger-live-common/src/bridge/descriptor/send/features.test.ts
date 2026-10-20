@@ -90,3 +90,21 @@ describe("sendFeatures.getTrackingAttributes", () => {
     expect(sendFeatures.getTrackingAttributes(undefined, {})).toEqual({});
   });
 });
+
+describe("sendFeatures.getRecipientAccountPatchBuilder", () => {
+  const params = { account: {} as never, recipient: "addr", accounts: [], transaction: {} };
+
+  it("EVM: returns a builder yielding an empty patch (no declaration)", () => {
+    expect(sendFeatures.getRecipientAccountPatchBuilder(ethereum)(params)).toEqual({});
+  });
+
+  it("returns the empty-patch builder for an undefined currency", () => {
+    expect(sendFeatures.getRecipientAccountPatchBuilder(undefined)(params)).toEqual({});
+  });
+
+  it("Zcash: returns the descriptor's builder, clearing the index for a non-sibling recipient", () => {
+    expect(sendFeatures.getRecipientAccountPatchBuilder(zcash)(params)).toEqual({
+      recipientAccountIndex: undefined,
+    });
+  });
+});

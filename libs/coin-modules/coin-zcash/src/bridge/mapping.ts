@@ -89,6 +89,7 @@ export function mapOutputs(tx: Transaction): OutputRequestJs[] {
       address: tx.recipient,
       valueZat: tx.amount.toFixed(0),
       ...(tx.memo !== undefined && { memo: tx.memo }),
+      ...(tx.recipientAccountIndex !== undefined && { account: tx.recipientAccountIndex }),
     },
   ];
 }

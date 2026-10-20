@@ -266,7 +266,7 @@ export type BuildTransactionArgs = {
     derivationScope: number;
     addressIndex: number;
   }>;
-  outputs: Array<{ address: string; valueZat: string; memo?: string }>;
+  outputs: Array<{ address: string; valueZat: string; memo?: string; account?: number }>;
   anchorHeight?: number;
 };
 

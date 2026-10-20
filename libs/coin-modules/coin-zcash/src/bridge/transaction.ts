@@ -35,6 +35,9 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     ...(tr.sender !== undefined && { sender: tr.sender }),
     ...(tr.recipientType !== undefined && { recipientType: tr.recipientType }),
     ...(tr.selfTransfer !== undefined && { selfTransfer: tr.selfTransfer }),
+    ...(tr.recipientAccountIndex !== undefined && {
+      recipientAccountIndex: tr.recipientAccountIndex,
+    }),
     ...(tr.memo !== undefined && { memo: tr.memo }),
     ...(tr.zcashFee !== undefined && { zcashFee: new BigNumber(tr.zcashFee) }),
     ...(tr.changeAmount !== undefined && { changeAmount: new BigNumber(tr.changeAmount) }),
@@ -50,6 +53,9 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...(t.sender !== undefined && { sender: t.sender }),
     ...(t.recipientType !== undefined && { recipientType: t.recipientType }),
     ...(t.selfTransfer !== undefined && { selfTransfer: t.selfTransfer }),
+    ...(t.recipientAccountIndex !== undefined && {
+      recipientAccountIndex: t.recipientAccountIndex,
+    }),
     ...(t.memo !== undefined && { memo: t.memo }),
     ...(t.zcashFee !== undefined && { zcashFee: t.zcashFee.toString() }),
     ...(t.changeAmount !== undefined && { changeAmount: t.changeAmount.toString() }),
