@@ -8,6 +8,7 @@ import { TrackScreen } from "@shared/analytics-react";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
 import type { Account } from "@ledgerhq/types-live";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../testIds";
+import { AssetsSection } from "./components/AssetsSection";
 import { Transactions } from "./components/Transactions";
 
 type Props = Readonly<{ account: Account }>;
@@ -31,7 +32,7 @@ export function AccountDetailView({ account }: Props) {
           <AccountDetailLayout
             hero={<Box testID={ACCOUNT_DETAIL_TEST_IDS.hero} lx={heroStyle} />}
             customPlace={<Box testID={ACCOUNT_DETAIL_TEST_IDS.customPlace} lx={customPlaceStyle} />}
-            assets={<Box testID={ACCOUNT_DETAIL_TEST_IDS.assets} lx={assetsStyle} />}
+            assets={<AssetsSection account={account} />}
             transactions={<Transactions account={account} />}
           />
         </Box>
@@ -50,4 +51,3 @@ const customPlaceStyle: LumenViewStyle = {
   padding: "s32",
   backgroundColor: "warning",
 };
-const assetsStyle: LumenViewStyle = { ...sectionStyle, backgroundColor: "success" };
