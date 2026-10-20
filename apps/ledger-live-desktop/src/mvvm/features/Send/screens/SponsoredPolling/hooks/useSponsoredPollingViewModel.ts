@@ -10,13 +10,14 @@ export type SponsoredPollingViewModel = Readonly<{
 
 export function useSponsoredPollingViewModel(): SponsoredPollingViewModel {
   const { t } = useTranslation();
-  const { state } = useSponsoredSend();
+  const { state, providerName } = useSponsoredSend();
 
   const elapsed = useSponsoredPollingElapsed(state.phase);
 
   return {
     title: t("newSendFlow.sponsoredPolling.title"),
-    waitingLabel: t("newSendFlow.sponsoredPolling.waiting"),
+    // The English copy no longer names the provider; translations that still do need the value.
+    waitingLabel: t("newSendFlow.sponsoredPolling.waiting", { provider: providerName }),
     elapsedLabel: t("newSendFlow.sponsoredPolling.elapsed", { time: elapsed }),
   };
 }

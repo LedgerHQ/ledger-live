@@ -62,6 +62,7 @@ type ExecutorKind = "rent" | "transfer";
 type ExecutorProps = Readonly<{
   enabled: boolean;
   intent: { input: { transaction: unknown } };
+  intentComponentExtraProps: unknown;
   onIntentJobStateChanged: (jobState: { type: "signed"; signedOperation: SignedOperation }) => void;
   onIntentJobError: (error: unknown) => void;
   onUserCancel: () => void;
@@ -395,6 +396,11 @@ describe("Sponsored send flow integration tests", () => {
     const { user } = renderSponsoredSend(100 * ONE_USDT);
 
     await reviewHalfTheBalance(user);
+    await screen.findByTestId("device-intent-executor-rent");
+    expect(executor("rent").intentComponentExtraProps).toMatchObject({
+      providerName: "Tronify",
+      termsUrl: "https://tronify.example/terms",
+    });
     await signRent();
 
     expect(await screen.findByTestId("send-sponsored-polling")).toBeOnTheScreen();
@@ -410,6 +416,7 @@ describe("Sponsored send flow integration tests", () => {
 
     await deliverEnergy();
     await screen.findByTestId("device-intent-executor-transfer");
+    expect(executor("transfer").intentComponentExtraProps).toEqual({ sponsoredTransfer: true });
     await act(async () => {
       executor("transfer").onIntentJobStateChanged({
         type: "signed",
@@ -603,6 +610,7 @@ describe("Sponsored send flow integration tests", () => {
     await reviewHalfTheBalance(user, { sponsored: false });
 
     expect(await screen.findByTestId("device-intent-executor-transfer")).toBeOnTheScreen();
+    expect(executor("transfer").intentComponentExtraProps).toEqual({ sponsoredTransfer: false });
     expect(screen.queryByTestId("device-intent-executor-rent")).not.toBeOnTheScreen();
     expect(seam.craftEnergyRentTransaction).not.toHaveBeenCalled();
   });

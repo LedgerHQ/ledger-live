@@ -5438,6 +5438,9 @@
           "description": "You rejected the rental fee payment. Your funds won't be affected."
         }
       },
+      "sponsoredTransferSignature": {
+        "title": "Confirm transfer"
+      },
       "sponsoredPolling": {
         "title": "Your energy is being delivered",
         "waiting": "This usually takes up to 30 seconds.",
