@@ -49,7 +49,7 @@ export default class SpeculosPage {
 
   @Step("Clear the device screen events")
   async resetSpeculosEvents() {
-    await resetSpeculosEvents();
+    await resetSpeculosEvents(Number(process.env.SPECULOS_API_PORT));
   }
 
   @Step("Sign Delegation Transaction on Speculos {{{0.amount}}} to {{{0.provider}}}")
