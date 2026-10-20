@@ -225,6 +225,7 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
         "ton",
         "internet_computer",
         "filecoin",
+        "aleo",
       ],
       excludedCurrencyIds: ["zcash", "dash"],
     },
