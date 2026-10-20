@@ -140,13 +140,7 @@ describe("evm bridge", () => {
     expect(getAssetFromToken(ethereum, token, "owner")).toEqual({
       assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       assetOwner: "owner",
-      name: "USD Coin",
       type: "erc20",
-      unit: {
-        code: "USDC",
-        magnitude: 6,
-        name: "USD Coin",
-      },
     });
   });
 
@@ -167,13 +161,7 @@ describe("evm bridge", () => {
     expect(getAssetFromToken(flare, token, "owner")).toEqual({
       assetReference: "0xAd552A648C74D49E10027AB8a618A3ad4901c5bE",
       assetOwner: "owner",
-      name: "FXRP",
       type: "erc20",
-      unit: {
-        code: "FXRP",
-        magnitude: 6,
-        name: "FXRP",
-      },
     });
   });
 
