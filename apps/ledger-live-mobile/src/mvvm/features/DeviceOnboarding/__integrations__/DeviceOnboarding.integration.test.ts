@@ -411,6 +411,36 @@ describe("scripted device onboarding", () => {
     await finishSetup(result, device);
     expect(result.current.exit).toMatchObject({ reason: "completed", sessionId: "session-2" });
   });
+
+  it("retries a failed firmware check and finishes setup", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.passGenuineCheck());
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheck"));
+
+    act(() => device.failFirmwareCheck());
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheckFailed"));
+
+    act(() => result.current.send({ type: "RETRY" }));
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheck"));
+
+    device.acceptToggle();
+    act(() => device.reportFirmwareUpToDate());
+    await waitFor(() => expect(result.current.state).toBe("deviceSetup.waiting"));
+
+    act(() =>
+      device.answerState({
+        onboardingState: OnboardingStep.Ready,
+        numberOfWords: 24,
+        currentWordIndex: 0,
+        isOnboarded: true,
+      }),
+    );
+    await waitFor(() => expect(result.current.status).toBe("exited"));
+    expect(result.current.exit?.reason).toBe("completed");
+  });
 });
 
 type ScriptedHook = { current: ReturnType<typeof useDeviceOnboarding> };

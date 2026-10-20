@@ -83,6 +83,7 @@ export type ScriptedTestDevice = {
   passGenuineCheck(): void;
   failGenuineCheck(): void;
   reportFirmwareUpToDate(): void;
+  failFirmwareCheck(): void;
   isWatching(sessionId: string): boolean;
 };
 
@@ -184,6 +185,12 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
           firmwareVersion: { os: "1.4.0", mcu: "1.0.0", bootloader: "1.0.0" },
           firmwareUpdateContext: { availableUpdate: undefined },
         } as GetDeviceMetadataDAOutput,
+      });
+    },
+    failFirmwareCheck() {
+      last(firmwareChecks).push({
+        status: DeviceActionStatus.Error,
+        error: new UnknownDAError(),
       });
     },
     isWatching(id: string) {
