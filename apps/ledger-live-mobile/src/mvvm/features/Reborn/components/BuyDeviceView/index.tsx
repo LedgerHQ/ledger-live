@@ -118,6 +118,7 @@ function View({ t, setupDevice, buyLedger, colors, videoMounted }: Readonly<View
             type="default"
             border={1}
             borderColor="neutral.c50"
+            testID="getDevice-setup-button"
             onPress={setupDevice}
             size="large"
           >
