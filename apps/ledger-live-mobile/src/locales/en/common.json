@@ -10453,6 +10453,18 @@
       }
     }
   },
+  "accountDetailHero": {
+    "actions": {
+      "transfer": "Transfer",
+      "receive": "Receive",
+      "send": "Send",
+      "swap": "Swap",
+      "buy": "Buy",
+      "sell": "Sell",
+      "earn": "Earn",
+      "more": "More"
+    }
+  },
   "accountDetail": {
     "assets": {
       "title": "Assets"
