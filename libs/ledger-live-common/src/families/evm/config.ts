@@ -1277,6 +1277,12 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer.testnet.alpen.org/api",
       },
+      // Alpen's fee market is sparse: the base fee holds at 0.000875-0.001 gwei and
+      // eth_feeHistory reports no tips, so EIP-1559 estimation falls back to a 1 gwei tip
+      // (~1000x the real cost). Zero-tip transactions are included, so price as legacy from
+      // eth_gasPrice with a 2x-base-fee floor. Re-measure after a regenesis and at mainnet.
+      forceLegacyTransactions: true,
+      minGasPrice: "2000000",
     },
   },
 };
