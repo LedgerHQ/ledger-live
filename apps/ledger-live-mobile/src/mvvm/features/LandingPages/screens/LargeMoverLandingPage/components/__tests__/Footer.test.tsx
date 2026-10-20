@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { Footer } from "../Footer";
 
 const solana = getCryptoCurrencyById("solana");
