@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import { getAddressesToWatch } from "@ledgerhq/coin-zcash/bridge/addressesToWatch";
 import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
 import { boundTransparentUtxos } from "@ledgerhq/coin-zcash/bridge/statusHelpers";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
@@ -39,6 +40,7 @@ const extensions: AccountBridgeExtensions = {
     const utxos = account.bitcoinResources?.utxos ?? [];
     return getTransparentBalance(isZcashShieldedEnabled() ? boundTransparentUtxos(utxos) : utxos);
   },
+  getAddressesToWatch,
 };
 
 export default extensions;

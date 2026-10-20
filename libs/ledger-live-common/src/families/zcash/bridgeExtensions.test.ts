@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { ZCASH_MAX_TRANSPARENT_INPUTS } from "@ledgerhq/coin-zcash/constants";
 import { setZcashShieldedEnabled } from "../../bridge/zcashRouting";
 import extensions from "./bridgeExtensions";
@@ -119,6 +119,16 @@ describe("zcash bridgeExtensions", () => {
       expect(() => extensions.getWalletApiSpendableBalance?.(account)).toThrow(
         "zcash: invalid account in bridgeExtensions",
       );
+    });
+  });
+
+  describe("getAddressesToWatch", () => {
+    it("watches the transparent fresh address of an account not synced yet", async () => {
+      const account = makeAccount({ freshAddress: "t1fresh", bitcoinResources: undefined });
+
+      await expect(extensions.getAddressesToWatch?.(account as Account)).resolves.toEqual([
+        "t1fresh",
+      ]);
     });
   });
 });
