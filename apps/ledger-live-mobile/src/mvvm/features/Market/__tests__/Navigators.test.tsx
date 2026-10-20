@@ -8,7 +8,7 @@ import { ScreenName } from "~/const";
 import MarketNavigator from "../Navigator";
 import MarketWalletTabNavigator from "../WalletTabNavigator";
 
-const COUNTERVALUES_API = "https://countervalues.live.ledger.com";
+const COUNTERVALUES_API = "https://global.api.prd.ledger.com/countervalue";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 

@@ -1,10 +1,10 @@
 import { http, HttpResponse } from "msw";
 
 const supportedCvsHandlers = [
-  http.get("https://countervalues.live.ledger.com/v3/supported/crypto", () =>
+  http.get("https://global.api.prd.ledger.com/countervalue/v3/supported/crypto", () =>
     HttpResponse.json([]),
   ),
-  http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () =>
+  http.get("https://global.api.prd.ledger.com/countervalue/v3/supported/fiat", () =>
     HttpResponse.json([
       "AED",
       "AUD",
