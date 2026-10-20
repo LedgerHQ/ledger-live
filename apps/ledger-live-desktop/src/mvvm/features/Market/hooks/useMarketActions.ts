@@ -20,7 +20,6 @@ import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useSwapNavigation } from "./useSwapNavigation";
 import { useBuyNavigation } from "./useBuyNavigation";
 import { useSellNavigation } from "./useSellNavigation";
-import { getNetworkId, getSwapCurrencyIds } from "../utils/getSwapCurrencyIds";
 
 export enum Page {
   Market = "Page Market",
@@ -49,7 +48,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
   const isCurrencySupported =
-    currency?.ledgerIds.some(lrId => !deactivatedCurrencyIds.has(getNetworkId(lrId))) || false;
+    currency?.ledgerIds.some(lrId => !deactivatedCurrencyIds.has(lrId)) || false;
   const { getLedgerCurrency } = useLazyLedgerCurrency(
     {
       product: "lld",
@@ -112,20 +111,9 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
       setTrackingSource(page);
 
-      navigateToSwap(ledgerCurrency, {
-        currencyIds: getSwapCurrencyIds(currency?.ledgerIds, currenciesAll, deactivatedCurrencyIds),
-      });
+      navigateToSwap(ledgerCurrency);
     },
-    [
-      getLedgerCurrency,
-      currency?.ticker,
-      currency?.ledgerIds,
-      page,
-      swapDefaultTrack,
-      navigateToSwap,
-      currenciesAll,
-      deactivatedCurrencyIds,
-    ],
+    [getLedgerCurrency, currency?.ticker, page, swapDefaultTrack, navigateToSwap],
   );
 
   const onStake = useCallback(

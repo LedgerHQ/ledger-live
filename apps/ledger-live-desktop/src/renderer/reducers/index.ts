@@ -14,7 +14,6 @@ import market, { MarketState } from "./market";
 import marketBanner, { MarketBannerState } from "./marketBanner";
 import wallet from "./wallet";
 import type { WalletState } from "./wallet";
-import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -32,6 +31,7 @@ import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-ide
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
+import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import { accountsSlice, type AccountsState as AccountEntriesState } from "@domain/entity-account";
 import {
   largeScreenUpsellModalSlice,
@@ -87,7 +87,6 @@ export type State = LLDRTKApiState & {
   featureFlags: FeatureFlagsState;
   history: HistoryState;
   identities: IdentitiesState;
-  authEnvironment: AuthEnvironmentState;
   market: MarketState;
   marketBanner: MarketBannerState;
   modals: ModalsState;
@@ -116,6 +115,7 @@ export type State = LLDRTKApiState & {
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   accountData: AccountDataState;
+  accountBalances: AccountBalancesState;
   accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
@@ -136,7 +136,6 @@ const appReducer = combineReducers({
   featureFlags,
   history,
   identities: identitiesSlice.reducer,
-  authEnvironment: authEnvironmentReducer,
   modals,
   modularDialog,
   sendFlow,
@@ -165,6 +164,7 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountBalances: accountBalancesSlice.reducer,
   accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
