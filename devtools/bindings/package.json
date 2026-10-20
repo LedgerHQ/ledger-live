@@ -23,9 +23,17 @@
   "dependencies": {
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
+    "@domain/api-account-data": "workspace:*",
     "@domain/api-card-management": "workspace:*",
+    "@domain/api-currency-token": "workspace:*",
+    "@domain/entity-account": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
     "@domain/entity-currency": "workspace:^",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-unit": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
@@ -34,9 +42,12 @@
     "@features/platform-card": "workspace:*",
     "@features/platform-device-onboarding": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@ledgerhq/coin-module-framework": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
+    "bignumber.js": "catalog:",
     "xstate": "catalog:"
   },
   "peerDependencies": {
@@ -45,7 +56,6 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

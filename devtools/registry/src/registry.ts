@@ -9,6 +9,9 @@ export const tools = {
   trustchain: platform.trustchain,
   "cloud-sync": platform.cloudSync,
   "device-onboarding": engagement.deviceOnboarding,
+  "account-balance": platform.accountBalance,
+  "account-descriptor": platform.accountDescriptor,
+  "account-data": platform.accountData,
 } as const;
 
 /**
@@ -32,4 +35,7 @@ export type DevToolConfig =
   | { id: "pay-card"; config: walletXp.PayCardToolProps }
   | { id: "trustchain"; config: platform.TrustchainDevToolProps }
   | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps }
-  | { id: "device-onboarding"; config: engagement.DeviceOnboardingToolProps };
+  | { id: "device-onboarding"; config: engagement.DeviceOnboardingToolProps }
+  | { id: "account-balance"; config: platform.AccountBalanceToolProps }
+  | { id: "account-descriptor"; config: platform.AccountDescriptorToolProps }
+  | { id: "account-data"; config: platform.AccountDataToolProps };
