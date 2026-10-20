@@ -566,25 +566,28 @@ export class CosmosAPI {
 
   /**
    * Bounded fetch for the Alpaca `listOperations`: at most `count` most-recent txs per stream
-   * (one query each, no fetch-all loop). The existing `getTransactions` keeps its full-history behaviour.
+   * (one query each, no fetch-all loop), reported per stream so the caller can tell which streams
+   * still have older txs. The existing `getTransactions` keeps its full-history behaviour.
    */
   getTransactionsPage = async (
     address: string,
     count: number,
-  ): Promise<{ txs: CosmosTx[]; hasMore: boolean }> => {
-    const [sender, recipient] = await Promise.all([
+  ): Promise<{ streams: { txs: CosmosTx[]; hasMore: boolean }[] }> => {
+    const pages = await Promise.all([
       this.fetchTransactionsPage(address, "message.sender", count),
       this.fetchTransactionsPage(address, "transfer.recipient", count),
+      this.fetchTransactionsPage(address, "tx.fee_payer", count),
     ]);
     return {
-      txs: [...sender.txs, ...recipient.txs],
-      hasMore: Number(sender.total) > count || Number(recipient.total) > count,
+      streams: pages.map(({ txs, total }) => {
+        return { txs, hasMore: Number(total) > count };
+      }),
     };
   };
 
   private async fetchTransactionsPage(
     address: string,
-    filterOn: "message.sender" | "transfer.recipient",
+    filterOn: "message.sender" | "transfer.recipient" | "tx.fee_payer",
     count: number,
   ): Promise<{ txs: CosmosTx[]; total: number }> {
     try {
