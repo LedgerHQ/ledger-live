@@ -17,6 +17,11 @@ const TRANSACTION_PATH_METHODS = new Set([
 
 const FAILURE_WINDOW_MS = 60 * 60 * 1000;
 
+// Resolved at call time rather than captured as default values: a transmitter is built at module
+// load, and a captured `Math.random` would ignore any later stub of it.
+const defaultRandom = (): number => Math.random();
+const defaultClock = (): number => Date.now();
+
 /**
  * Default transmission policy for a sink that leaves the process: every failure and every
  * transaction-path call, and a sample of the sync-path successes. The failure rate stays exact
@@ -24,7 +29,7 @@ const FAILURE_WINDOW_MS = 60 * 60 * 1000;
  */
 export function shouldTransmitCoinModuleCall(
   event: CoinModuleCallEvent,
-  { syncPathSampleRate = DEFAULT_SYNC_PATH_SAMPLE_RATE, random = Math.random } = {},
+  { syncPathSampleRate = DEFAULT_SYNC_PATH_SAMPLE_RATE, random = defaultRandom } = {},
 ): boolean {
   if (event.status === "failure") return true;
   if (TRANSACTION_PATH_METHODS.has(event.method)) return true;
@@ -43,7 +48,7 @@ export function shouldTransmitCoinModuleCall(
  */
 export function createCoinModuleCallTransmitter(
   readConfig: () => CoinModuleCallTransmissionConfig | null,
-  { random = Math.random, clock = Date.now } = {},
+  { random = defaultRandom, clock = defaultClock } = {},
 ): (event: CoinModuleCallEvent) => boolean {
   const failures = new Map<string, { count: number; windowStart: number }>();
 

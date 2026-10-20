@@ -1,17 +1,33 @@
 import { createCoinModuleCallTransmitter, shouldTransmitCoinModuleCall } from "./transmission";
 import type { CoinModuleCallEvent } from "./coinModuleCall";
 
-describe("shouldTransmitCoinModuleCall", () => {
-  const event = (method: string, status: CoinModuleCallEvent["status"]): CoinModuleCallEvent => ({
-    method,
-    network: "ripple",
-    family: "xrp",
-    durationMs: 1,
-    status,
-  });
-  const never = () => 0.99;
-  const always = () => 0;
+const event = (method: string, status: CoinModuleCallEvent["status"]): CoinModuleCallEvent => ({
+  method,
+  network: "ripple",
+  family: "xrp",
+  durationMs: 1,
+  status,
+});
+const failure = (method = "getBalance", errorName = "NetworkDown"): CoinModuleCallEvent => ({
+  method,
+  network: "ripple",
+  family: "xrp",
+  durationMs: 1,
+  status: "failure",
+  errorName,
+});
+const call = (status: CoinModuleCallEvent["status"]): CoinModuleCallEvent => ({
+  method: "getBalance",
+  network: "ripple",
+  family: "xrp",
+  durationMs: 1,
+  status,
+  errorName: "NetworkDown",
+});
+const never = () => 0.99;
+const always = () => 0;
 
+describe("shouldTransmitCoinModuleCall", () => {
   it("always transmits a failure, even on the sync path", () => {
     expect(shouldTransmitCoinModuleCall(event("getBalance", "failure"), { random: never })).toBe(
       true,
@@ -51,14 +67,6 @@ describe("shouldTransmitCoinModuleCall", () => {
 });
 
 describe("createCoinModuleCallTransmitter", () => {
-  const failure = (method = "getBalance", errorName = "NetworkDown"): CoinModuleCallEvent => ({
-    method,
-    network: "ripple",
-    family: "xrp",
-    durationMs: 1,
-    status: "failure",
-    errorName,
-  });
   const config = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 2 };
 
   it("transmits nothing when the config reader returns null", () => {
@@ -136,5 +144,32 @@ describe("createCoinModuleCallTransmitter", () => {
     expect(transmit({ ...failure("broadcast"), status: "success" })).toBe(true);
     current = null;
     expect(transmit({ ...failure("broadcast"), status: "success" })).toBe(false);
+  });
+});
+
+describe("default randomness and clock", () => {
+  const config = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 1 };
+
+  afterEach(() => jest.restoreAllMocks());
+
+  // A sink builds its transmitter at module load, before any test stubs the globals.
+  it("reads Math.random at call time, so a later stub is honoured", () => {
+    const transmit = createCoinModuleCallTransmitter(() => config);
+    const random = jest.spyOn(Math, "random");
+
+    random.mockReturnValue(0.99);
+    expect(transmit(call("success"))).toBe(false);
+    random.mockReturnValue(0);
+    expect(transmit(call("success"))).toBe(true);
+  });
+
+  it("reads Date.now at call time, so a later stub is honoured", () => {
+    const transmit = createCoinModuleCallTransmitter(() => config);
+    const now = jest.spyOn(Date, "now").mockReturnValue(0);
+
+    expect(transmit(call("failure"))).toBe(true);
+    expect(transmit(call("failure"))).toBe(false);
+    now.mockReturnValue(60 * 60 * 1000);
+    expect(transmit(call("failure"))).toBe(true);
   });
 });
