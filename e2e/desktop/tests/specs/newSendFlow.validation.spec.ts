@@ -110,7 +110,7 @@ test.describe("Send - new flow - max amount", () => {
     `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) max amount`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-473" },
+      annotation: { type: "TMS", description: "B2CQA-6124" },
     },
     async ({ app }) => {
       await reachAmountStep(app, tx);

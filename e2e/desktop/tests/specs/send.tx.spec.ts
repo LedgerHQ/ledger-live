@@ -202,7 +202,7 @@ test.describe("Send - legacy families - Concordium testnet", () => {
     `[${tx.accountToDebit.currency.testLabel}] - Send (legacy flow)`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-2949" },
+      annotation: { type: "TMS", description: "B2CQA-6118" },
     },
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
