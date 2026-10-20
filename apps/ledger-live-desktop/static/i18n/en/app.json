@@ -9505,7 +9505,7 @@
           "steps": {
             "step1": "Make sure Ledger Sync is activated on one of your apps.",
             "step2": "Open the Ledger Wallet app you want to sync.",
-            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Show QR</0>",
             "step4": "Scan QR code."
           }
         },
@@ -9514,7 +9514,7 @@
           "steps": {
             "step1": "Make sure Ledger Sync is activated on one of your apps.",
             "step2": "Open the Ledger Wallet app you want to sync.",
-            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Use your Ledger</0>",
             "step4": "Connect your Ledger."
           }
         }
