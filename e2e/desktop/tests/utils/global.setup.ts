@@ -4,7 +4,7 @@ import { FullConfig } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { responseLogfilePath } from "tests/utils/networkResponseLogger";
 import { mkdirSync, promises as fs, unlink, writeFileSync } from "fs";
-import os from "os";
+import os from "node:os";
 import {
   createNanoAppJsonFile,
   getDeviceFirmwareVersion,
