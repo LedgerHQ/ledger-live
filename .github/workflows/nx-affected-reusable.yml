@@ -146,4 +146,11 @@ jobs:
       - name: Compute mobile JS bundle Nx hashes
         id: mobile-js-hash
         if: ${{ env.IS_SMARTLING != 'true' && contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
-        run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"
+        run: |
+          # Fallback for hotfix checkouts that predate the script (#23487): without hashes the
+          # bundles are always built. Remove it once those branches have the script.
+          if [ ! -f tools/nx/task-hash.mjs ]; then
+            echo "tools/nx/task-hash.mjs is not in this checkout; the JS bundles will be built"
+            exit 0
+          fi
+          node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"

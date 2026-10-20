@@ -256,10 +256,15 @@ jobs:
       - name: Remove the dev .env
         run: rm -f apps/ledger-live-mobile/.env
 
+      # Fallback for hotfix and main checkouts that predate the e2e:bundle target (#23487); remove it once
+      # those branches have the target.
       - name: Build JS bundle
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run live-mobile:e2e:bundle:ios
+          command: >-
+            if grep -q '"e2e:bundle"' apps/ledger-live-mobile/project.json;
+            then pnpm exec nx run live-mobile:e2e:bundle:ios;
+            else pnpm exec nx run live-mobile:e2e:ci -- -p ios --bundle; fi
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox JS Build
