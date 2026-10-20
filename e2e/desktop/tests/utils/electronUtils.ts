@@ -26,6 +26,7 @@ export async function launchApp({
       "--disable-dev-shm-usage",
       "--no-sandbox",
       "--enable-logging",
+      ...(process.platform === "darwin" ? ["--use-mock-keychain"] : []),
 
       ...(simulateCamera
         ? [
