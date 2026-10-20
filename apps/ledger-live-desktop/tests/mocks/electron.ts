@@ -11,13 +11,13 @@ export const shell: jest.Mocked<{ openExternal: () => unknown }> = {
 let clipboardText = "";
 
 export const clipboard: jest.Mocked<{
-  writeText: (text: string) => void;
-  readText: () => string;
+  writeText: (text: string) => Promise<void>;
+  readText: () => Promise<string>;
 }> = {
-  writeText: jest.fn((text: string) => {
+  writeText: jest.fn(async (text: string) => {
     clipboardText = text;
   }),
-  readText: jest.fn(() => clipboardText),
+  readText: jest.fn(async () => clipboardText),
 };
 
 export const app: jest.Mocked<{ getPath: () => unknown }> = {
