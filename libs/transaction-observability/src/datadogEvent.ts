@@ -4,8 +4,6 @@ export type DatadogBroadcastLog = {
   message: "tx_broadcast";
   status: "success" | "failure";
   attributes: Record<string, unknown>;
-  /** Present on failure, for the host to attach as the log's error. */
-  error?: Error;
 };
 
 /**
@@ -17,9 +15,11 @@ export type DatadogBroadcastLog = {
  * The bridge seam sees every family and every route, which is what the screen-level
  * `broadcastLogger` cannot guarantee.
  *
- * The attributes are an allow-list. `txPayload` (the signed transaction) and validators are
- * left out; the error goes to the host as an `Error` so its name, message and stack land in
- * Datadog's error fields.
+ * Everything sent is in an allow-list of attributes. `txPayload` (the signed transaction) and
+ * validators are left out, and so are the error's message and stack: their text comes from the
+ * node or the coin module and can quote the transaction (coin-zcash redacts long hex runs in its
+ * own log, then rethrows the original error). A failure carries its name and normalized category
+ * instead, which is what a broadcast dashboard groups on.
  */
 export function toDatadogBroadcastLog(event: LogEvent): DatadogBroadcastLog | null {
   // Intents only exist at the sign stage, so this also leaves success and failure only.
@@ -44,7 +44,10 @@ export function toDatadogBroadcastLog(event: LogEvent): DatadogBroadcastLog | nu
   return {
     message: "tx_broadcast",
     status: "failure",
-    attributes: { ...attributes, error_category: event.errorCategory },
-    error: event.error,
+    attributes: {
+      ...attributes,
+      error_name: event.error.name,
+      error_category: event.errorCategory,
+    },
   };
 }

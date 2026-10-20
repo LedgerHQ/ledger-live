@@ -259,10 +259,8 @@ export function transactionBroadcastLogger(event: TransactionLogEvent): void {
   if (log.status === "success") {
     DdLogs.info(log.message, { broadcast: log.attributes });
   } else {
-    const error = log.error;
-    DdLogs.error(log.message, error?.name ?? "Error", error?.message ?? "", error?.stack ?? "", {
-      broadcast: log.attributes,
-    });
+    // No error kind, message or stack: the mapper keeps only the error's name and category.
+    DdLogs.error(log.message, { broadcast: log.attributes });
   }
 }
 

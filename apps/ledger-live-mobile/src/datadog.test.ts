@@ -203,8 +203,10 @@ describe("transactionBroadcastLogger", () => {
     );
   });
 
-  it("logs a broadcast failure as an error without the signed payload", () => {
-    const error = Object.assign(new Error("nonce too low"), { name: "NonceTooLow" });
+  it("logs a broadcast failure by name and category, never its text or the signed payload", () => {
+    const error = Object.assign(new Error("rejected 0xRAW_TX_IN_MESSAGE: nonce too low"), {
+      name: "NonceTooLow",
+    });
     transactionBroadcastLogger({
       status: "failure",
       stage: TransactionStage.Broadcast,
@@ -213,14 +215,17 @@ describe("transactionBroadcastLogger", () => {
       txPayload: { signature: "0xSIGNED" },
       ...common,
     });
-    expect(DdLogs.error).toHaveBeenCalledWith(
-      "tx_broadcast",
-      "NonceTooLow",
-      "nonce too low",
-      expect.any(String),
-      { broadcast: expect.objectContaining({ error_category: ErrorCategory.Blockchain }) },
-    );
-    expect(JSON.stringify(jest.mocked(DdLogs.error).mock.calls[0][4])).not.toContain("0xSIGNED");
+    expect(DdLogs.error).toHaveBeenCalledWith("tx_broadcast", {
+      broadcast: expect.objectContaining({
+        error_name: "NonceTooLow",
+        error_category: ErrorCategory.Blockchain,
+      }),
+    });
+    // Every argument handed to the SDK, not only the context.
+    const sent = JSON.stringify(jest.mocked(DdLogs.error).mock.calls[0]);
+    expect(sent).not.toContain("0xRAW_TX_IN_MESSAGE");
+    expect(sent).not.toContain("nonce too low");
+    expect(sent).not.toContain("0xSIGNED");
   });
 
   it("ignores sign-stage events", () => {

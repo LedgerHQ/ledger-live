@@ -93,7 +93,8 @@ export function transactionBroadcastLogger(event: TransactionLogEvent): void {
   if (log.status === "success") {
     datadogLogs.logger.info(log.message, { broadcast: log.attributes });
   } else {
-    datadogLogs.logger.error(log.message, { broadcast: log.attributes }, log.error);
+    // No `Error` argument: the mapper keeps only the error's name and category.
+    datadogLogs.logger.error(log.message, { broadcast: log.attributes });
   }
 }
 

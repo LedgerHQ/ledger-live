@@ -375,8 +375,10 @@ describe("datadog logs", () => {
       );
     });
 
-    it("logs a broadcast failure as an error without the signed payload", () => {
-      const error = new Error("nonce too low");
+    it("logs a broadcast failure by name and category, never its text or the signed payload", () => {
+      const error = Object.assign(new Error("rejected 0xRAW_TX_IN_MESSAGE: nonce too low"), {
+        name: "NonceTooLow",
+      });
       transactionBroadcastLogger({
         status: "failure",
         stage: TransactionStage.Broadcast,
@@ -385,12 +387,18 @@ describe("datadog logs", () => {
         txPayload: { signature: "0xSIGNED" },
         ...common,
       });
-      expect(datadogLogs.logger.error).toHaveBeenCalledWith(
-        "tx_broadcast",
-        { broadcast: expect.objectContaining({ error_category: ErrorCategory.Blockchain }) },
-        error,
-      );
-      expect(JSON.stringify(datadogLogs.logger.error.mock.calls[0][1])).not.toContain("0xSIGNED");
+      expect(datadogLogs.logger.error).toHaveBeenCalledWith("tx_broadcast", {
+        broadcast: expect.objectContaining({
+          error_name: "NonceTooLow",
+          error_category: ErrorCategory.Blockchain,
+        }),
+      });
+      // Every argument handed to the SDK: no `Error` object, so no message or stack.
+      const sent = datadogLogs.logger.error.mock.calls[0];
+      expect(sent).toHaveLength(2);
+      expect(JSON.stringify(sent)).not.toContain("0xRAW_TX_IN_MESSAGE");
+      expect(JSON.stringify(sent)).not.toContain("nonce too low");
+      expect(JSON.stringify(sent)).not.toContain("0xSIGNED");
     });
 
     it("ignores sign-stage events", () => {

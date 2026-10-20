@@ -59,8 +59,11 @@ describe("toDatadogBroadcastLog", () => {
     });
   });
 
-  it("reports a broadcast failure with its category and error, but never the signed payload", () => {
-    const error = Object.assign(new Error("nonce too low"), { name: "NonceTooLow" });
+  it("reports a broadcast failure by name and category, never its text or the signed payload", () => {
+    // The node controls the message, and it can quote the transaction.
+    const error = Object.assign(new Error("rejected 0xRAW_TX_IN_MESSAGE: nonce too low"), {
+      name: "NonceTooLow",
+    });
     const event: LogEvent = {
       status: "failure",
       stage: TransactionStage.Broadcast,
@@ -75,12 +78,19 @@ describe("toDatadogBroadcastLog", () => {
     expect(log).toMatchObject({
       message: "tx_broadcast",
       status: "failure",
-      attributes: { error_category: ErrorCategory.Blockchain, family: "evm" },
+      attributes: {
+        error_name: "NonceTooLow",
+        error_category: ErrorCategory.Blockchain,
+        family: "evm",
+      },
     });
-    expect(log?.error).toBe(error);
-    const serialized = JSON.stringify(log?.attributes);
+    // The whole log, not only `attributes`: it is everything a host can send.
+    const serialized = JSON.stringify(log);
+    expect(serialized).not.toContain("0xRAW_TX_IN_MESSAGE");
+    expect(serialized).not.toContain("nonce too low");
     expect(serialized).not.toContain("0xSIGNED_TX");
     expect(serialized).not.toContain("0xRAW");
     expect(serialized).not.toContain("0xVALIDATOR");
+    expect(Object.keys(log ?? {})).toEqual(["message", "status", "attributes"]);
   });
 });
