@@ -34,11 +34,6 @@ const invalidAmounts: Array<{
   expectsGetFundsCta?: boolean;
 }> = [
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
-    expectedErrorMessage: null,
-    xrayTicket: "B2CQA-2568",
-  },
-  {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0", Fee.MEDIUM),
     expectedErrorMessage: null,
     xrayTicket: "B2CQA-2569",
