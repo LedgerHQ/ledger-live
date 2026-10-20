@@ -161,9 +161,10 @@ function without(config, key, isOption) {
  * @param {string} configDir absolute
  * @param {string} packageDir absolute
  * @param {Set<string>} presets
+ * @param {Set<string>} checked absolute paths of the package configs this rule checks
  * @returns {string | undefined} why the entry is not allowed
  */
-function extendsProblem(entry, configDir, packageDir, presets) {
+function extendsProblem(entry, configDir, packageDir, presets, checked) {
   if (typeof entry !== "string") return "must be a string";
   if (entry.startsWith(`${PRESET_PACKAGE}/`)) {
     return presets.has(entry) ? undefined : `"${entry}" is not a preset ${PRESET_PACKAGE} exports`;
@@ -174,8 +175,12 @@ function extendsProblem(entry, configDir, packageDir, presets) {
   const inside = target.startsWith(`${packageDir}${path.sep}`);
   if (!inside)
     return `"${entry}" points outside the package; extend a ${PRESET_PACKAGE} preset instead`;
-  const exists = [target, `${target}.json`].some(candidate => fs.existsSync(candidate));
-  return exists ? undefined : `"${entry}" does not exist`;
+  const found = [target, `${target}.json`].find(candidate => fs.existsSync(candidate));
+  if (!found) return `"${entry}" does not exist`;
+  // A parent the rule never reads could carry any option past the whitelist and the debt list.
+  return checked.has(found)
+    ? undefined
+    : `"${entry}" is not a tsconfig*.json this rule checks; name the parent tsconfig.<name>.json`;
 }
 
 /**
@@ -190,6 +195,7 @@ export function check({ workspaceRoot, projectRoot }, { debt = TSCONFIG_DEBT } =
   const violations = [];
 
   const configs = findConfigs(packageDir);
+  const checked = new Set(configs);
   const relative = file => path.relative(workspaceRoot, file).split(path.sep).join("/");
 
   for (const file of configs) {
@@ -211,7 +217,7 @@ export function check({ workspaceRoot, projectRoot }, { debt = TSCONFIG_DEBT } =
     const entries = config.extends === undefined ? [] : [config.extends].flat();
     if (entries.length === 0) report(`must extend a ${PRESET_PACKAGE} preset`);
     const problems = entries
-      .map(entry => extendsProblem(entry, configDir, packageDir, presets))
+      .map(entry => extendsProblem(entry, configDir, packageDir, presets, checked))
       .filter(Boolean);
     for (const problem of problems) report(`extends ${problem}`);
 

@@ -102,12 +102,15 @@ test("extends must name a preset or a config of the same package", () => {
       "tsconfig.b.json": { extends: "@support/tsconfig/nope" },
       "tsconfig.c.json": { extends: "some-package/tsconfig.json" },
       "tsconfig.d.json": { extends: "./missing.json" },
+      "tsconfig.e.json": { extends: ["@support/tsconfig/logic", "./options.json"] },
+      "options.json": { compilerOptions: { strict: false } },
     }),
     [
       'tsconfig.a.json: extends "../../tsconfig.base.json" points outside the package; extend a @support/tsconfig preset instead',
       'tsconfig.b.json: extends "@support/tsconfig/nope" is not a preset @support/tsconfig exports',
       'tsconfig.c.json: extends "some-package/tsconfig.json" is neither a @support/tsconfig preset nor a sibling config',
       'tsconfig.d.json: extends "./missing.json" does not exist',
+      'tsconfig.e.json: extends "./options.json" is not a tsconfig*.json this rule checks; name the parent tsconfig.<name>.json',
       "tsconfig.json: must extend a @support/tsconfig preset",
     ],
   );
