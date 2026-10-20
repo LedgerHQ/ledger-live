@@ -36,7 +36,7 @@ export const resolveTransactionsAlertsAddresses = async (accounts: Account[]) =>
   const addressesByAccount = await Promise.all(
     accounts.map(async account => {
       const bridge = await getAccountBridge(account);
-      const addresses = await bridge.getOwnedAddresses(account);
+      const addresses = await bridge.getAddressesToWatch(account);
       return addresses.map(address => ({ currencyId: account.currency.id, address }));
     }),
   );

@@ -335,10 +335,10 @@ export interface AccountBridgeExtensions<T extends TransactionCommon = Transacti
   isTransactionConfirmed?: (args: { account: AccountLike; hash: string }) => Promise<boolean>;
   getWalletApiSpendableBalance?: (account: AccountLike) => BigNumber;
   /**
-   * Every address the account owns, including the ones it is about to use (next receive and change),
-   * for services that watch an account by its addresses.
+   * The addresses of the account that services watching it by address (e.g. transaction alerts)
+   * must register, including the ones it is about to use (next receive and change).
    */
-  getOwnedAddresses?: (account: Account) => Promise<string[]>;
+  getAddressesToWatch?: (account: Account) => Promise<string[]>;
 }
 
 export type AccountBridge<
