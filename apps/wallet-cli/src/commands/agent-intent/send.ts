@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createNonce, encodeSendIntentTlv, type FeeStrategy } from "@ledgerhq/agent-intent-sdk";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
 import { resolveOutputFormat } from "../inputs";
