@@ -14,7 +14,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 
 type ArcTestnetScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
-const ARC_TESTNET_RPC = "https://rpc.testnet.arc.network";
+const ARC_TESTNET_RPC = "https://rpc.testnet.arc.io";
 const ARC_TESTNET_EXPLORER = "https://proxyblockscout.api.live.ledger.com/5042002/api";
 
 // USDC is the chain's native unit on Arc, exposed as ERC20 at this precompile address.

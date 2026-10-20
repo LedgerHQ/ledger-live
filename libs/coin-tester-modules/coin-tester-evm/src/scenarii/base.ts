@@ -54,8 +54,9 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     const signer = await buildSigner();
 
-    // 2797222 = deployment block of USDC on Base + 1
-    await spawnAnvil("https://mainnet.base.org", signer.exportMnemonic(), 2797222);
+    // Forks the latest block: an old fork block needs archive reads, which the public node refuses
+    // from CI runners. The scenario only sends ETH, so it needs no historical state.
+    await spawnAnvil("https://mainnet.base.org", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
