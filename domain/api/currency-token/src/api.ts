@@ -9,10 +9,14 @@ import {
   type TokensDataWithPagination,
 } from "./types";
 import {
+  commitHeaderMissingError,
+  currencyNotFoundError,
   DEFAULT_PAGE_SIZE,
   EMPTY_TOKEN_LIST_HASH,
+  fetchCurrencyError,
   fetchError,
   fetchNetworkError,
+  HEADER_X_LEDGER_COMMIT,
   invalidNetworkResponseError,
   networkNotFoundError,
   TOKEN_TAGS,
@@ -68,11 +72,72 @@ export const cryptoAssetsApi = calApi
       }),
 
       /**
-       * The CAL's hash of the token list of one network. It changes only when a token of that
-       * network is added or removed, unlike the `X-Ledger-Commit` header, which changes on any CAL
-       * deployment and would make every account of every network resync from scratch.
+       * The CAL commit, which changes on any CAL deployment. It validates the token cache, since a
+       * token's metadata (decimals, name, signature) can change without a token being added or
+       * removed. Account sync uses {@link getTokenListHash} instead.
        */
       getTokensSyncHash: build.query<string, string>({
+        async queryFn(currencyId, queryApi) {
+          const extra = getCalExtra(queryApi);
+          try {
+            const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
+            url.searchParams.set("output", "id");
+            url.searchParams.set("limit", "1");
+            url.searchParams.set("id", currencyId);
+
+            const response = await fetch(url, {
+              headers: {
+                "Content-Type": "application/json",
+                [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
+              },
+            });
+
+            if (!response.ok) {
+              return fetchCurrencyError(response.status, response.statusText);
+            }
+
+            // Check if the response contains data (not an empty array)
+            const responseData = await response.json();
+            if (Array.isArray(responseData) && responseData.length === 0) {
+              return currencyNotFoundError(currencyId);
+            }
+
+            const hash = response.headers.get(HEADER_X_LEDGER_COMMIT);
+
+            if (!hash) {
+              return commitHeaderMissingError();
+            }
+
+            return { data: hash };
+          } catch (error) {
+            return fetchError(error);
+          }
+        },
+        async onQueryStarted(currencyId, api) {
+          const extra = getCalExtra(api);
+          try {
+            const previousHash = api.getCacheEntry()?.data as string | undefined;
+            const { data: newHash } = await api.queryFulfilled;
+
+            if (previousHash && newHash && previousHash !== newHash) {
+              extra.logger?.(
+                "cryptoassets",
+                `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
+              );
+              api.dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
+            }
+          } catch {
+            // Query failed, skip eviction
+          }
+        },
+      }),
+
+      /**
+       * The CAL's hash of the token list of one network. It changes only when a token of that
+       * network is added or removed, so an account resyncs its history only when its own network's
+       * token list changed, not on every CAL deployment.
+       */
+      getTokenListHash: build.query<string, string>({
         async queryFn(currencyId, queryApi) {
           const extra = getCalExtra(queryApi);
           try {
@@ -105,23 +170,6 @@ export const cryptoAssetsApi = calApi
             return { data: network.token_list_hash ?? EMPTY_TOKEN_LIST_HASH };
           } catch (error) {
             return fetchError(error);
-          }
-        },
-        async onQueryStarted(currencyId, api) {
-          const extra = getCalExtra(api);
-          try {
-            const previousHash = api.getCacheEntry()?.data as string | undefined;
-            const { data: newHash } = await api.queryFulfilled;
-
-            if (previousHash && newHash && previousHash !== newHash) {
-              extra.logger?.(
-                "cryptoassets",
-                `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
-              );
-              api.dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
-            }
-          } catch {
-            // Query failed, skip eviction
           }
         },
       }),
@@ -161,6 +209,7 @@ export const {
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
   useGetTokensSyncHashQuery,
+  useGetTokenListHashQuery,
 } = cryptoAssetsApi;
 
 export type CryptoAssetsApi = typeof cryptoAssetsApi;

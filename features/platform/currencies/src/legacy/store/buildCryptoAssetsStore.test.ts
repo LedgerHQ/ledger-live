@@ -14,12 +14,14 @@ function setup() {
       arg,
     })),
     getTokensSyncHash: jest.fn((arg: unknown) => ({ thunk: "getTokensSyncHash", arg })),
+    getTokenListHash: jest.fn((arg: unknown) => ({ thunk: "getTokenListHash", arg })),
   };
   const api = {
     endpoints: {
       findTokenById: { initiate: initiate.findTokenById },
       findTokenByAddressInCurrency: { initiate: initiate.findTokenByAddressInCurrency },
       getTokensSyncHash: { initiate: initiate.getTokensSyncHash },
+      getTokenListHash: { initiate: initiate.getTokenListHash },
     },
   } as unknown as CryptoAssetsApi;
   const dispatch = jest.fn();
@@ -61,14 +63,28 @@ describe("buildCryptoAssetsStore", () => {
       });
     });
 
-    it("getTokensSyncHash initiates with the currencyId and returns the hash", async () => {
+    it("getTokensSyncHash returns the token list hash and still queries the commit", async () => {
       const { store, dispatch, initiate } = setup();
-      dispatch.mockResolvedValue({ data: "abc123" });
+      dispatch.mockImplementation(async (action: { thunk: string }) => ({
+        data: action.thunk === "getTokenListHash" ? "list-hash" : "commit",
+      }));
 
       const result = await store.getTokensSyncHash("ethereum");
 
+      expect(initiate.getTokenListHash).toHaveBeenCalledWith("ethereum");
       expect(initiate.getTokensSyncHash).toHaveBeenCalledWith("ethereum");
-      expect(result).toBe("abc123");
+      expect(result).toBe("list-hash");
+    });
+
+    it("getTokensSyncHash ignores a failed commit query", async () => {
+      const { store, dispatch } = setup();
+      dispatch.mockImplementation(async (action: { thunk: string }) =>
+        action.thunk === "getTokenListHash"
+          ? { data: "list-hash" }
+          : { error: { status: 500, data: "boom" } },
+      );
+
+      await expect(store.getTokensSyncHash("ethereum")).resolves.toBe("list-hash");
     });
 
     it("returns undefined when the token is not found", async () => {

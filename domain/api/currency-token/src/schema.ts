@@ -52,6 +52,6 @@ export const PersistedCALSchema = z.object({
   version: z.literal(PERSISTENCE_VERSION),
   /** The persisted token entries. */
   tokens: z.array(PersistedTokenEntrySchema),
-  /** Mapping of currencyId to its token list hash (see `getTokensSyncHash`). */
+  /** Mapping of currencyId to its `X-Ledger-Commit` hash. */
   hashes: z.record(z.string(), z.string()).optional(),
 });

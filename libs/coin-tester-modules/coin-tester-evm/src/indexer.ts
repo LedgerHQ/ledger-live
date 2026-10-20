@@ -765,6 +765,27 @@ const getEtherscanOpsMap = (action: string) => {
 let server: SetupServerApi;
 export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
   const handlers = [
+    http.get("https://global.api.prd.ledger.com/cal/v1/currencies", ({ request }) => {
+      const response: Array<{ id: string; type: string }> = [];
+      const url = new URL(request.url);
+      const id = url.searchParams.get("id");
+
+      switch (id) {
+        case "ethereum":
+        case "sonic":
+        case "polygon":
+        case "core":
+        case "blast":
+        case "base":
+        case "scroll":
+        case "bsc":
+        case "robinhood":
+        case "robinhood_testnet":
+          response.push({ id, type: "coin" });
+      }
+
+      return HttpResponse.json(response, { headers: { "X-Ledger-Commit": "hash" } });
+    }),
     http.get("https://global.api.prd.ledger.com/cal/v1/networks", ({ request }) => {
       const response: Array<{ id: string; token_list_hash: string }> = [];
       const url = new URL(request.url);

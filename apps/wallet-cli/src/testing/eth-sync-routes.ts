@@ -30,6 +30,12 @@ export const ETH_SYNC_ROUTES: Route[] = [
   },
   {
     method: "GET",
+    match: /\/v1\/currencies/,
+    response: [{ id: "ethereum" }],
+    headers: { "X-Ledger-Commit": "mock-sync-hash-0000000000000000" },
+  },
+  {
+    method: "GET",
     match: /\/v1\/networks/,
     response: [{ id: "ethereum", token_list_hash: "mock-sync-hash-0000000000000000" }],
   },
