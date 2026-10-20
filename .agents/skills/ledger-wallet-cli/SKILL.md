@@ -386,21 +386,23 @@ session record (an inconsistent state you must clear manually before re-enrollin
 Manager, or on Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an
 unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll`, and every
 command reading an `os-keychain` profile, fails with `keychain_unavailable` (json `error.code`) and
-saves nothing. Make sure it ran with the sandbox bypass first; if it still fails, **stop and ask the
-human, verbatim:**
+saves nothing. Make sure it ran with the sandbox bypass first. If the message says the OS keychain
+refused to store the agent key (e.g. a locked collection), ask the human to unlock it and re-run
+the same `enroll`. If it still fails, or the human can't unlock it, **stop and ask the human,
+verbatim:**
 
 > My environment doesn't support keychain access. To use and persist my access credentials I need to save passwords in plaintext in my environment. I won't be able to perform actions without your approval on Ledger Agent Intent. Can I proceed?
 
 Only after an explicit yes **in the current conversation** re-run the same `enroll` with
 `--allow-plaintext-key`. On a no (or anything short of a clear yes), stop: don't enroll, and
 report that enrollment can't be completed in this environment. Never add the flag pre-emptively,
-and never on consent from an earlier or other session. The OS keychain still wins when available
-(a notice on stderr says the flag was ignored).
-Otherwise the key goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g.
-`~/.local/state/ledger-wallet-cli/…`), mode 0600 but **unencrypted**; every command reading it warns
-on stderr, and `show` reports it (json `keyStore: "plaintext-file"`, human "Key store" line). An existing profile that fails with
-`keychain_unavailable` can't be read here — re-enroll it under a new `--profile` id (same consent
-rule).
+and never on consent from an earlier or other session. The OS keychain still wins when it is
+available and accepts the write (a notice on stderr says the flag was ignored). Otherwise the key
+goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g. `~/.local/state/ledger-wallet-cli/…`),
+mode 0600 but **unencrypted**, with a stderr notice if the keychain refused the write; every
+command reading it warns on stderr, and `show` reports it (json `keyStore: "plaintext-file"`,
+human "Key store" line). An existing profile that fails with `keychain_unavailable` can't be read
+here — re-enroll it under a new `--profile` id (same consent rule).
 
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
 enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
@@ -415,7 +417,7 @@ App-16 application path) once enrolled.
 
 `agent-intent sync --profile <id>` imports the accounts synchronized from your other Ledger Wallet
 instances (desktop, mobile) so they can be referenced by label. It authenticates with the **agent's
-own key** (from the OS keychain or its key file), which the frontend added to the App-16 stream at enrollment — it
+own key** (keychain or key file), which the frontend added to the App-16 stream at enrollment — it
 never opens the device and there is no separate Ledger Sync enrollment. The environment comes from
 the profile's `accountAccess`.
 
@@ -691,3 +693,4 @@ Get the Solana `--stake-account` address from `earn positions <account>` (its `s
 | `[object Object]` or garbled APDU output                                                              | two device commands running in parallel (contention)                                                                                                   | Run device-touching commands sequentially — never in parallel tool calls.                                                                                                                                                                                                                                                                                                             |
 | `[✖] Ledger not detected. Plug in, unlock, retry.` (exit code 3)                                     | device powered off or unplugged                                                                                                                        | Ask the user to power on the device, unlock it, and connect via USB, then re-run the command.                                                                                                                                                                                                                                                                                         |
 | `device-state … awaiting_approval … reason: unlock` (JSON stream)                                     | device locked                                                                                                                                          | Keep the command running — the CLI resumes automatically once unlocked. Ask the user to unlock the device with their PIN.                                                                                                                                                                                                                                                             |
+| `keychain_unavailable` (json `error.code`) | `agent-intent enroll`: no Secret Service on Linux, or the OS keychain refused to store the agent key (e.g. a locked collection). Other `agent-intent` commands: the profile's keychain can't be reached | Follow **Keychain required**: when the keychain refused the write, ask the human to unlock it first; never add `--allow-plaintext-key` without the human's explicit yes. |
