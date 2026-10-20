@@ -552,10 +552,29 @@ export function publicKeyAccountIdBasis(
 }
 
 /**
- * Whether a stored sync hash differs from the current one by its token list part alone. The token
- * part comes from `getSyncHash` and holds no `-`, so whatever follows the first `-` is the
- * `syncVersion` the account was synced under. A missing hash (an account a legacy bridge synced)
- * is not a token list change.
+ * Whether the stored sync hash was written under the current `syncVersion`, so that a difference
+ * from the current hash can only come from its token list part. The caller checks that the two
+ * hashes differ.
+ *
+ * Relies on the format `genericGetAccountShape` writes: `<tokens>` without a `syncVersion`,
+ * `<tokens>-<syncVersion>` with one. `<tokens>` is the output of `getSyncHash`, `0x` followed by hex
+ * digits, which never holds a `-`. So the stored `syncVersion` is whatever follows the first `-`,
+ * and a hash without `-` has none. A `syncVersion` that holds a `-` is kept whole.
+ *
+ * A false result makes the caller resync from scratch, so the format assumption fails safe: if a
+ * token part ever held a `-`, its tail would read as a `syncVersion` that does not match, and the
+ * account would resync rather than skip a needed resync. A missing hash (an account a legacy bridge
+ * synced) also returns false.
+ *
+ * If `getSyncHash` or the `syncHash` composition in `genericGetAccountShape` changes format, update
+ * this function.
+ *
+ * @example
+ * isTokenListChangeOnly("0x1a2b", undefined) // true: no syncVersion before or now
+ * isTokenListChangeOnly("0x1a2b-2", "2") // true: same syncVersion
+ * isTokenListChangeOnly("0x1a2b", "2") // false: the syncVersion was added
+ * isTokenListChangeOnly("0x1a2b-1", "2") // false: the syncVersion changed
+ * isTokenListChangeOnly(undefined, undefined) // false: never synced by this bridge
  */
 function isTokenListChangeOnly(
   storedSyncHash: string | undefined,
@@ -671,6 +690,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
     const tokensSyncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    // `isTokenListChangeOnly` reads this format back: keep the two in step.
     const syncHash = bridgeApi.syncVersion
       ? `${tokensSyncHash}-${bridgeApi.syncVersion}`
       : tokensSyncHash;
