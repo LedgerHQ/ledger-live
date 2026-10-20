@@ -7,6 +7,14 @@
 // bundlers do: Rspack on desktop, Re.Pack on mobile. A platform entry (`./web` or `./native`
 // without a condition) is resolved once, for its platform. Re-exports are followed to
 // the declaring module, parsed with the TypeScript parser alone: no program, no type checker.
+// Entries whose subpath has a segment starting with one of `ignoredEntryPrefixes` (test support)
+// are not checked.
+//
+// Settings live in components.config.json: `extensions` mirror the bundlers
+// (apps/ledger-live-desktop/tools/rspack/rspack.renderer.ts for web,
+// Repack.getResolveOptions(platform, { preferNativePlatform: true }) for native), `conditions`
+// pick an entry's file per platform, `platformEntries` name the platform subpaths and
+// `componentWrappers` the calls that still return a component.
 //
 // R1: a universal component is exported on both platforms under the same name.
 // R5: a component is exported from universal entries or from platform entries, never both, and a
@@ -20,27 +28,23 @@ const ts = require("typescript");
 /** @typedef {{ file: string, line: number, isComponent: boolean }} ExportInfo */
 /** @typedef {{ rule: "R1" | "R5", subject: string, file: string, line: number, code: string, message: string, text: string }} ComponentViolation */
 
-// apps/ledger-live-desktop/tools/rspack/rspack.renderer.ts
-const WEB_EXTENSIONS = [".web.tsx", ".web.ts", ".tsx", ".ts", ".js", ".jsx"];
-// Repack.getResolveOptions(platform, { preferNativePlatform: true }), for either native platform.
-const NATIVE_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"].flatMap(ext => [
-  `.ios${ext}`,
-  `.android${ext}`,
-  `.native${ext}`,
-  ext,
-]);
-const EXTENSIONS = { web: WEB_EXTENSIONS, native: NATIVE_EXTENSIONS };
-const CONDITIONS = { web: ["default"], native: ["react-native", "default"] };
+const CONFIG = require("./components.config.json");
 
-const PLATFORM_ENTRIES = { "./web": "web", "./native": "native" };
+/** @type {Record<Platform, string[]>} */
+const EXTENSIONS = CONFIG.extensions;
+/** @type {Record<Platform, string[]>} */
+const CONDITIONS = CONFIG.conditions;
+/** @type {Record<string, Platform>} */
+const PLATFORM_ENTRIES = CONFIG.platformEntries;
 const PLATFORM_SUFFIX = {
   web: /\.web\.[cm]?[jt]sx?$/,
   native: /\.(?:native|ios|android)\.[cm]?[jt]sx?$/,
 };
 
+const IGNORED_ENTRY_PREFIXES = CONFIG.ignoredEntryPrefixes;
 const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
-const COMPONENT_WRAPPERS = new Set(["memo", "forwardRef"]);
+const COMPONENT_WRAPPERS = new Set(CONFIG.componentWrappers);
 
 /**
  * @param {unknown} target
@@ -72,8 +76,19 @@ function selectTarget(target, conditions) {
 }
 
 /**
- * Entries of a `package.json#exports`, with the file each platform selects. `unconditioned`
- * entries become universal when their exports resolve to different modules on each platform.
+ * @param {string} subpath
+ * @returns {boolean}
+ */
+function isIgnoredEntry(subpath) {
+  return subpath
+    .split("/")
+    .some(segment => IGNORED_ENTRY_PREFIXES.some(prefix => segment.startsWith(prefix)));
+}
+
+/**
+ * Entries of a `package.json#exports`, with the file each platform selects, ignored entries left
+ * out. `unconditioned` entries become universal when their exports resolve to different
+ * modules on each platform.
  *
  * @param {unknown} exportsField
  * @returns {{ universal: Array<{ subpath: string, web: string | null, native: string | null }>, platform: Array<{ subpath: string, platform: Platform, target: string }>, unconditioned: Array<{ subpath: string, target: string }> }}
@@ -87,6 +102,7 @@ function classifyEntries(exportsField) {
     return { universal, platform, unconditioned };
 
   for (const [subpath, target] of Object.entries(entries)) {
+    if (isIgnoredEntry(subpath)) continue;
     if (hasReactNativeCondition(target)) {
       universal.push({
         subpath,

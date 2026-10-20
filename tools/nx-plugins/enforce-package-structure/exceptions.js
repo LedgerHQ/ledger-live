@@ -163,7 +163,6 @@ const COMPONENT_EXCEPTIONS = {
   },
   "shared/ui-queued-bottom-sheet": {
     QueuedBottomSheet: componentWaiver("R1"),
-    QueuedBottomSheetMock: componentWaiver("R1"),
   },
 };
 

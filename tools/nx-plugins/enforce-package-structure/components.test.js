@@ -271,6 +271,10 @@ test("classifyEntries: a react-native condition makes a universal entry, a bare 
     "./web": { "react-native": "./src/a.native.ts", default: "./src/a.ts" },
     "./state": "./src/state/index.ts",
     "./jest.native": "./src/jest.native.ts",
+    "./testing": { "react-native": "./src/testing/index.native.ts", default: "./src/testing.ts" },
+    "./testing/module-mock": "./src/testing/moduleMock.ts",
+    "./mock/stocks": "./src/mock/stocks.ts",
+    "./test": "./src/test.ts",
     "./package.json": "./package.json",
   });
   assert.deepEqual(universal, [
@@ -288,6 +292,26 @@ test("classifyEntries: a react-native condition makes a universal entry, a bare 
   assert.deepEqual(classifyEntries("./src/index.ts").unconditioned, [
     { subpath: ".", target: "./src/index.ts" },
   ]);
+});
+
+test("test support entries are not checked", () => {
+  assert.deepEqual(
+    check({
+      "package.json": {
+        exports: {
+          ...UNIVERSAL,
+          "./testing": { "react-native": "./src/testing.native.ts", default: "./src/testing.ts" },
+        },
+      },
+      "src/index.ts": 'export * from "./Sheet";\n',
+      "src/index.native.ts": 'export * from "./Sheet";\n',
+      "src/Sheet.tsx": button("Sheet"),
+      "src/testing.ts": "export {};\n",
+      "src/testing.native.ts": 'export * from "./SheetMock";\n',
+      "src/SheetMock.native.tsx": button("SheetMock"),
+    }),
+    [],
+  );
 });
 
 test("R1 passes: an entry without a condition whose modules differ per platform, same names", () => {
