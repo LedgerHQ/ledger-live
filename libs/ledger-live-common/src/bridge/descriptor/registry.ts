@@ -128,12 +128,7 @@ const noAccountTrackingAttributes: Readonly<Record<string, string | boolean>> = 
 export function getAccountTrackingAttributes(
   account: AccountLike,
 ): Record<string, string | boolean> {
-  const currency =
-    account.type === "TokenAccount"
-      ? account.token
-      : account.type === "Account"
-        ? account.currency
-        : undefined;
+  const currency = account.type === "TokenAccount" ? account.token : account.currency;
   const descriptor = getDescriptor(currency);
   return descriptor?.getAccountTrackingAttributes?.(account) ?? noAccountTrackingAttributes;
 }
