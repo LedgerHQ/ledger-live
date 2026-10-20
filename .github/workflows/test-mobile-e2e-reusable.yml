@@ -188,6 +188,16 @@ on:
         required: false
         type: boolean
         default: false
+      js_bundle_hash_ios:
+        description: "Nx hash of live-mobile:e2e:bundle:ios; when set, the iOS JS build is skipped if the Nx cache has it"
+        required: false
+        type: string
+        default: ""
+      js_bundle_hash_android:
+        description: "Nx hash of live-mobile:e2e:bundle:android; when set, the Android JS build is skipped if the Nx cache has it"
+        required: false
+        type: string
+        default: ""
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -306,9 +316,9 @@ jobs:
       ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
-      ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
+      ios_js_exists: ${{ steps.check-js.outputs.ios }}
       android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
-      android_js_exists: ${{ steps.check-android-js.outputs.cache-hit }}
+      android_js_exists: ${{ steps.check-js.outputs.android }}
       ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
       ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -360,6 +370,23 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # The hashes come from the affected job (nx-affected-reusable.yml); without them the bundles are built
+      - name: Check if JS bundles exist in the Nx cache
+        id: check-js
+        env:
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          IOS_HASH: ${{ inputs.js_bundle_hash_ios }}
+          ANDROID_HASH: ${{ inputs.js_bundle_hash_android }}
+        run: |
+          # @nx/s3-cache stores each task result at <cacheKeyPrefix>/<hash>
+          exists() {
+            [ -n "$1" ] &&
+              aws s3api head-object --bucket "$CACHE_BUCKET" --key "${NX_CACHE_KEY_PREFIX}/$1" > /dev/null 2>&1 &&
+              echo true || echo false
+          }
+          echo "ios=$(exists "$IOS_HASH")" | tee -a "$GITHUB_OUTPUT"
+          echo "android=$(exists "$ANDROID_HASH")" | tee -a "$GITHUB_OUTPUT"
 
       - name: Resolve per-platform Speculos device
         id: devices
@@ -550,34 +577,6 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-      - name: Check if iOS JS Build exists already
-        id: check-ios-js
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
-        with:
-          path: apps/ledger-live-mobile/main.jsbundle
-          key: ${{ steps.cache-keys.outputs.ios_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
-
-      - name: Check if Android JS Build exists already
-        id: check-android-js
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
-        with:
-          path: apps/ledger-live-mobile/main.jsbundle
-          key: ${{ steps.cache-keys.outputs.android_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
-
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ inputs.tests_type != 'iOS Only' }}
@@ -736,7 +735,7 @@ jobs:
       id-token: write
       contents: read
     needs: [build-ios, determine-builds]
-    if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    if: ${{ always() && !cancelled() && contains(fromJSON('["success","skipped"]'), needs.build-ios.result) && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: ${{ fromJSON(inputs.macos_runner_label && format('["{0}","macOS","ARM64"]', inputs.macos_runner_label) || '["qaa","macOS","ARM64","performance-pool"]') }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -828,6 +827,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
+        if: ${{ needs.determine-builds.outputs.ios_js_exists != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
@@ -838,9 +838,18 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Fetch JS Build from the Nx cache
+        if: ${{ needs.determine-builds.outputs.ios_js_exists == 'true' }}
+        env:
+          ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          REGION: ${{ secrets.AWS_CACHE_REGION }}
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          HASH: ${{ inputs.js_bundle_hash_ios }}
+        run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" apps/ledger-live-mobile/main.jsbundle
+
       - name: Copy JS build
         run: |
-          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }}
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Build e2e dependencies (CLI + libs)
@@ -936,7 +945,7 @@ jobs:
       id-token: write
       contents: read
     needs: [build-android, determine-builds, setup-android-avd]
-    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
+    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && contains(fromJSON('["success","skipped"]'), needs.build-android.result) && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: ${{ inputs.android_runner_label || 'ledger-live-linux-e2e-8CPU-32RAM' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -1015,6 +1024,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
+        if: ${{ needs.determine-builds.outputs.android_js_exists != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
@@ -1023,6 +1033,14 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Fetch JS Bundle from the Nx cache
+        if: ${{ needs.determine-builds.outputs.android_js_exists == 'true' }}
+        env:
+          REGION: ${{ secrets.AWS_CACHE_REGION }}
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          HASH: ${{ inputs.js_bundle_hash_android }}
+        run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" apps/ledger-live-mobile/main.jsbundle
 
       - name: Prepare APK
         run: |
