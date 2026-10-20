@@ -74,7 +74,7 @@ describe("AnalyticsMain Integration Tests", () => {
       overrideInitialState: mockState,
     });
 
-    expect(screen.getByText(/swap/i)).toBeVisible();
+    expect(screen.getByText("Swap")).toBeVisible();
   });
 
   it("should not display swap button if exchange is disabled", () => {
@@ -82,7 +82,7 @@ describe("AnalyticsMain Integration Tests", () => {
       overrideInitialState: state => mockState(state, false),
     });
 
-    expect(screen.queryByText(/swap/i)).toBeNull();
+    expect(screen.queryByText("Swap")).toBeNull();
   });
 
   it("should track and navigate to swap tab when swap button is pressed", async () => {
@@ -90,7 +90,7 @@ describe("AnalyticsMain Integration Tests", () => {
       overrideInitialState: mockState,
     });
 
-    await user.press(screen.getByText(/swap/i));
+    await user.press(screen.getByText("Swap"));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Swap",
