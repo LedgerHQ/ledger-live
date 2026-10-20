@@ -561,7 +561,9 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
       const viaHex = path.endsWith("/broadcasthex");
       const rawDataHex = viaHex
         ? signedTransactionRawDataHex(String(body?.transaction))
-        : String(body?.raw_data_hex ?? "");
+        : typeof body?.raw_data_hex === "string"
+          ? body.raw_data_hex
+          : "";
       const txid = viaHex ? tronTxId(rawDataHex) : String(body?.txID);
       broadcasts.push({ txid, rawDataHex });
       return send(res, 200, { result: true, code: "SUCCESS", txid });
