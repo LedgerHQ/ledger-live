@@ -1,5 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { activeHidDeviceSessionSubject } from "@ledgerhq/live-dmk-mobile";
+import {
+  DeviceManagementKitBLETransport,
+  activeHidDeviceSessionSubject,
+} from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
@@ -15,7 +18,7 @@ jest.mock("../hooks/useLeaveOnboarding", () => ({
 }));
 
 jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
-  useFirmwareUpdateHandover: jest.fn(),
+  useFirmwareUpdateHandover: jest.fn(() => ({ close: jest.fn() })),
 }));
 
 const leaveHook = jest.mocked(useLeaveOnboarding);
@@ -25,6 +28,10 @@ describe("useDeviceOnboarding", () => {
     jest.clearAllMocks();
     activeDeviceSessionSubject.next(null);
     activeHidDeviceSessionSubject.next(null);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("saves each event on the state it led to", async () => {
@@ -111,7 +118,10 @@ describe("useDeviceOnboarding", () => {
     await connectStax(result, device);
     await quit(result);
 
-    expect(leaveOnboarding).toHaveBeenCalledWith("userQuit");
+    expect(leaveOnboarding).toHaveBeenCalledWith(
+      "userQuit",
+      expect.objectContaining({ sessionId: "session-2", isOnboarded: false }),
+    );
     expect(leaveHook).toHaveBeenLastCalledWith(
       expect.objectContaining({
         device: expect.objectContaining({ deviceId: "device-id-2", wired: false }),
@@ -159,22 +169,32 @@ describe("useDeviceOnboarding", () => {
 
   // Quit ends the run. The machine leaves once, and the app gets its device, not the devtool text.
   it("leaves with the screen device when the user quits", async () => {
+    const onLeave = jest.fn();
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useDeviceOnboarding({
+        dmk: device.dmk,
+        knownDevices: [knownStax],
+        offerSync: false,
+        onLeave,
+      }),
     );
 
     await connectStax(result, device);
     await quit(result);
+    expect(onLeave).toHaveBeenCalledTimes(1);
 
     expect(result.current.exit).toEqual({
       reason: "userQuit",
       sessionId: device.sessionId,
       modelId: DeviceModelId.STAX,
     });
-    expect(leaveOnboarding.mock.calls).toEqual([["userQuit"]]);
+    expect(leaveOnboarding.mock.calls).toEqual([
+      ["userQuit", expect.objectContaining({ sessionId: device.sessionId })],
+    ]);
     expect(leaveHook).toHaveBeenLastCalledWith({
       navigateOnExit: true,
+      wasReadOnlyAtEntry: false,
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",
@@ -229,6 +249,40 @@ describe("useDeviceOnboarding", () => {
     expect(deactivateKeepAwake).toHaveBeenCalledTimes(1);
   });
 
+  it("closes the device session when the screen goes away", async () => {
+    const closedSessionIds = closedSessions();
+    const device = createTestDevice();
+    const { result, unmount } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    await quit(result);
+    expect(closedSessionIds).toEqual([]);
+
+    unmount();
+
+    expect(closedSessionIds).toEqual(["session-1"]);
+    expect(activeDeviceSessionSubject.value).toBeNull();
+  });
+
+  it("closes the lost session before using the new one", async () => {
+    const closedSessionIds = closedSessions();
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    act(() => device.unplug());
+    device.setSession("session-2");
+    await connectStax(result, device);
+
+    expect(closedSessionIds).toEqual(["session-1"]);
+    expect(activeDeviceSessionSubject.value?.sessionId).toBe("session-2");
+    expect(canSend(result, "SESSION_READY")).toBe(true);
+  });
+
   // A new run must drop the old exit. Otherwise the next screen can open again.
   it("clears the old exit when a new run starts", async () => {
     const device = createTestDevice();
@@ -243,6 +297,17 @@ describe("useDeviceOnboarding", () => {
     expect(result.current.exit).toBeNull();
   });
 });
+
+function closedSessions() {
+  const ids: string[] = [];
+  jest
+    .spyOn(DeviceManagementKitBLETransport.prototype, "close")
+    .mockImplementation(function closeSession(this: DeviceManagementKitBLETransport) {
+      ids.push(this.sessionId);
+      return Promise.resolve();
+    });
+  return ids;
+}
 
 function canSend(
   result: { current: ReturnType<typeof useDeviceOnboarding> },

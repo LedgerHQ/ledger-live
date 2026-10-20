@@ -30,9 +30,18 @@ type UseDeviceOnboardingInput = {
   knownDevices: KnownDevice[];
   offerSync: boolean;
   navigateOnExit?: boolean;
+  wasReadOnlyAtEntry?: boolean;
+  /** Runs right before the exit navigates, so the host can stop blocking back. */
+  onLeave?: () => void;
 };
 
 type StoppableActor = { stop(): void };
+
+export type DeviceOnboardingSession = DeviceOnboardingToolProps & {
+  liveDevice: Device | null;
+  /** Drops a firmware lookup that has not opened its screen yet. */
+  closeFirmwareHandover: () => void;
+};
 
 function statusWithActor(
   actor: { getSnapshot(): unknown } | null,
@@ -45,7 +54,9 @@ export function useDeviceOnboarding({
   knownDevices,
   offerSync,
   navigateOnExit = true,
-}: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
+  wasReadOnlyAtEntry = false,
+  onLeave,
+}: UseDeviceOnboardingInput): DeviceOnboardingSession {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,8 +64,11 @@ export function useDeviceOnboarding({
   const { featureFlag, setFeatureFlag, isFeatureFlagOverridden, resetFeatureFlag } =
     useDeviceOnboardingFeatureFlag();
   const hostsSeedSetup = Boolean(featureFlag?.enabled && featureFlag.params.connectUnseededDevice);
-
-  const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
+  const leaveOnboarding = useLeaveOnboarding({
+    device: liveDevice,
+    navigateOnExit,
+    wasReadOnlyAtEntry,
+  });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -91,7 +105,10 @@ export function useDeviceOnboarding({
     missingSessionMessage: "No mobile onboarding session",
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
-    leaveOnboarding,
+    leaveOnboarding: (reason, context) => {
+      onLeave?.();
+      leaveOnboarding(reason, context);
+    },
   });
 
   const dropLostTransport = useCallback(() => {
@@ -140,7 +157,11 @@ export function useDeviceOnboarding({
         sessionId: result.sessionId,
         wired: result.compatDeviceWired,
       });
+      const previousPorts = portsRef.current;
       portsRef.current = nextPorts;
+      if (previousPorts && previousPorts.currentSessionId() !== nextPorts.currentSessionId()) {
+        await previousPorts.closeSession().catch(() => undefined);
+      }
       try {
         const session = await nextPorts.openSession();
 
@@ -291,8 +312,9 @@ export function useDeviceOnboarding({
     setError(null);
   }, [portsRef, resetActor]);
 
-  useFirmwareUpdateHandover({
+  const { close: closeFirmwareHandover } = useFirmwareUpdateHandover({
     device: liveDevice,
+    isDeviceOnboarded: context?.isOnboarded ?? false,
     machineState: state,
     send,
   });
@@ -304,13 +326,16 @@ export function useDeviceOnboarding({
       connectionRef.current?.unsubscribe();
       sessionActorRef.current?.stop();
       stopActor();
+      void portsRef.current?.closeSession();
+      portsRef.current = null;
     },
-    [stopActor],
+    [portsRef, stopActor],
   );
 
   return {
     status,
     device,
+    liveDevice,
     state,
     context,
     machineContext,
@@ -322,6 +347,7 @@ export function useDeviceOnboarding({
     connect,
     send,
     reset,
+    closeFirmwareHandover,
     featureFlag,
     setFeatureFlag,
     isFeatureFlagOverridden,

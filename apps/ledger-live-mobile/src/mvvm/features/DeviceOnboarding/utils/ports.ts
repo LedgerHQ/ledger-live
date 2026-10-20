@@ -58,7 +58,17 @@ export function createDeviceOnboardingPorts({
       return liveTransport()?.sessionId ?? sessionId;
     },
     async closeSession() {
-      await heldTransport?.close();
+      const closing = heldTransport;
+      if (!closing) return;
+      heldTransport = null;
+      if (wired) {
+        if (activeHidDeviceSessionSubject.value?.transport === closing) {
+          activeHidDeviceSessionSubject.next(null);
+        }
+      } else if (activeDeviceSessionSubject.value?.transport === closing) {
+        activeDeviceSessionSubject.next(null);
+      }
+      await closing.close();
     },
   };
 }

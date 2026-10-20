@@ -126,6 +126,7 @@ export function ChecksView({
       {allowSheet ? (
         <QueuedBottomSheet
           isRequestingToBeOpened
+          noCloseButton={!allowSheet.onClose}
           onHeaderClosePressed={allowSheet.onClose}
           preventBackdropClick
           enablePanDownToClose={false}
@@ -149,7 +150,7 @@ export function ChecksView({
       {updateSheet ? (
         <QueuedBottomSheet
           isRequestingToBeOpened
-          onHeaderClosePressed={updateSheet.onClose}
+          noCloseButton
           preventBackdropClick
           enablePanDownToClose={false}
           testID={checksTestIds.updateSheet}

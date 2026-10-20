@@ -17,7 +17,12 @@ import {
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
-const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
+type Props = {
+  onSuccess: (device?: Device) => void;
+  keepReadOnlyMode?: boolean;
+};
+
+const ConnectDevice = ({ onSuccess, keepReadOnlyMode = false }: Props) => {
   const action = useManagerDeviceAction();
   const dispatch = useDispatch();
   const [device, setDevice] = useState<Device | undefined>();
@@ -26,16 +31,20 @@ const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
   // Keeping the header (back arrow and information button) from the onboarding.
   const requestToSetHeaderOptions = useCallback(() => undefined, []);
 
+  const leaveReadOnlyMode = useCallback(() => {
+    if (!keepReadOnlyMode) dispatch(setReadOnlyMode(false));
+  }, [dispatch, keepReadOnlyMode]);
+
   const onSelectDevice = useCallback(
     (device: Device) => {
       const isUsbDevice = device.wired;
       trace({ type: "onboarding", message: "Selected device", data: { isUsbDevice } });
       dispatch(setLastConnectedDevice(device));
-      dispatch(setReadOnlyMode(false));
+      leaveReadOnlyMode();
       dispatch(setHasOrderedNano(false));
       setDevice(device);
     },
-    [dispatch],
+    [dispatch, leaveReadOnlyMode],
   );
 
   const onResult = useCallback(
@@ -50,12 +59,12 @@ const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
 
         dispatch(setHasInstalledAnyApp(hasAnyAppinstalled));
         setDevice(undefined);
-        dispatch(setReadOnlyMode(false));
+        leaveReadOnlyMode();
         dispatch(setHasOrderedNano(false));
-        onSuccess();
+        onSuccess(device);
       }
     },
-    [dispatch, onSuccess],
+    [device, dispatch, leaveReadOnlyMode, onSuccess],
   );
 
   return (
@@ -66,23 +75,26 @@ const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           isChoiceDrawerDisplayedOnAddDevice={false}
+          keepReadOnlyMode={keepReadOnlyMode}
         />
       </Flex>
-      <DeviceActionModal
-        onClose={() => setDevice(undefined)}
-        device={device}
-        onResult={onResult}
-        action={action}
-        request={null}
-        location={HOOKS_TRACKING_LOCATIONS.onboardingFlow}
-      />
+      {device ? (
+        <DeviceActionModal
+          onClose={() => setDevice(undefined)}
+          device={device}
+          onResult={onResult}
+          action={action}
+          request={null}
+          location={HOOKS_TRACKING_LOCATIONS.onboardingFlow}
+        />
+      ) : null}
       {__DEV__ ? (
         <Button
           mt={7}
           type="color"
           outline
           onPress={() => {
-            dispatch(setReadOnlyMode(false));
+            leaveReadOnlyMode();
             dispatch(setHasOrderedNano(false));
             onSuccess();
           }}

@@ -11,6 +11,7 @@ const delegatedState = "checks.firmwareUpdateDelegated";
 
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
+  isDeviceOnboarded: boolean;
   machineState: string | null;
   send: (event: HostOnboardingEvent) => void;
 };
@@ -23,6 +24,7 @@ type BaseNavigation = NativeStackNavigationProp<
 
 export function useFirmwareUpdateHandover({
   device,
+  isDeviceOnboarded,
   machineState,
   send,
 }: UseFirmwareUpdateHandoverInput) {
@@ -33,6 +35,11 @@ export function useFirmwareUpdateHandover({
   const awaitingReturnRef = useRef(false);
   const closedRef = useRef(false);
   const freshResultRef = useRef(false);
+  const delegatedRef = useRef(false);
+  const wasDelegatedRef = useRef(false);
+  if (delegated && !wasDelegatedRef.current) closedRef.current = false;
+  wasDelegatedRef.current = delegated;
+  delegatedRef.current = delegated;
 
   const {
     state: { deviceInfo, firmwareUpdateContext, status },
@@ -60,9 +67,10 @@ export function useFirmwareUpdateHandover({
       freshResultRef.current = false;
       pushedRef.current = false;
       awaitingReturnRef.current = false;
-      closedRef.current = false;
       return;
     }
+
+    if (!delegatedRef.current || closedRef.current) return;
 
     if (status === "idle" || status === "ongoing") {
       freshResultRef.current = true;
@@ -80,6 +88,7 @@ export function useFirmwareUpdateHandover({
         firmwareUpdateContext,
         onBackFromUpdate,
         isBeforeOnboarding: true,
+        isDeviceOnboarded,
       });
       return;
     }
@@ -93,6 +102,7 @@ export function useFirmwareUpdateHandover({
     device,
     deviceInfo,
     firmwareUpdateContext,
+    isDeviceOnboarded,
     baseNavigation,
     onBackFromUpdate,
     status,
@@ -103,4 +113,6 @@ export function useFirmwareUpdateHandover({
       if (awaitingReturnRef.current) closeHandoverOnce();
     }, [closeHandoverOnce]),
   );
+
+  return { close: closeHandoverOnce };
 }

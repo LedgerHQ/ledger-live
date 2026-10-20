@@ -13,13 +13,12 @@ type AllowSheetProps = Readonly<{
   deviceModelId: Device["modelId"];
   deviceName?: string;
   title: string;
-  onClose: () => void;
+  onClose?: () => void;
 }>;
 
 type UpdateSheetProps = Readonly<{
   onUpdate: () => void;
   onCancel: () => void;
-  onClose: () => void;
 }>;
 
 type RecoverableErrorKind = Exclude<GenuineErrorKind, "notGenuine">;
@@ -81,7 +80,6 @@ export function useChecksScreenViewModel({
   onStart,
   onRetry,
   onCloseSheet,
-  onContinue,
   onQuit,
   onAcceptUpdate,
   onDeclineUpdate,
@@ -95,6 +93,8 @@ export function useChecksScreenViewModel({
     setRetainedRecoverableKind(recoverableKind);
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
+  const [allowClosed, setAllowClosed] = useState(false);
+  if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
 
   const layouts: Record<ChecksLayout, LayoutProps> = {
     synchronizing: {
@@ -121,7 +121,7 @@ export function useChecksScreenViewModel({
       title: t("deviceOnboarding.checks.succeeded.title"),
       primaryLabel: t("deviceOnboarding.checks.succeeded.cta"),
       primaryTestID: checksTestIds.continue,
-      onPrimary: onContinue,
+      primaryLoading: true,
     },
   };
 
@@ -130,12 +130,15 @@ export function useChecksScreenViewModel({
     closeLabel: t("deviceOnboarding.checks.close"),
     onQuit: state === "updating" ? undefined : onQuit,
     allowSheet:
-      state === "awaitingAllow"
+      state === "awaitingAllow" && !allowClosed
         ? {
             deviceModelId: device.modelId,
             deviceName: device.deviceName ?? undefined,
             title: t("earlySecurityCheck.allowManagerDrawer.title"),
-            onClose: onCloseSheet,
+            onClose: () => {
+              setAllowClosed(true);
+              onQuit?.();
+            },
           }
         : undefined,
     updateSheet:
@@ -143,7 +146,6 @@ export function useChecksScreenViewModel({
         ? {
             onUpdate: onAcceptUpdate,
             onCancel: onDeclineUpdate,
-            onClose: onCloseSheet,
           }
         : undefined,
     errorDrawer: {
@@ -162,7 +164,7 @@ export function useChecksScreenViewModel({
       productName,
       onClose: () => {
         if (error?.kind !== "notGenuine") return;
-        onCloseSheet();
+        onQuit?.();
       },
     },
   };

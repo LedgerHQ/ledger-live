@@ -1,6 +1,7 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { render } from "@tests/test-renderer";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import DevToolsScreen from "../screens/DevToolsScreen";
 
 const devToolsSpy = jest.fn();
@@ -77,7 +78,13 @@ function withBottomInset(children: React.ReactNode) {
 
 describe("DevToolsScreen", () => {
   it("mounts DevTools with the configured tools and stack screen options padded by the bottom inset", () => {
-    render(withBottomInset(<DevToolsScreen />));
+    render(
+      withBottomInset(
+        <NotificationsPromptProvider>
+          <DevToolsScreen />
+        </NotificationsPromptProvider>,
+      ),
+    );
 
     expect(devToolsSpy).toHaveBeenCalled();
     const props = devToolsSpy.mock.lastCall![0];

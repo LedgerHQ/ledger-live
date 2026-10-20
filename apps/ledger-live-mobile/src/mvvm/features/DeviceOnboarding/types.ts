@@ -20,6 +20,6 @@ export type ChecksScreenProps = {
   onAcceptUpdate: () => void;
   onDeclineUpdate: () => void;
   onCloseSheet: () => void;
-  onContinue: () => void;
-  onQuit: () => void;
+  /** Missing while the machine cannot be left, so the close button is hidden. */
+  onQuit?: () => void;
 };

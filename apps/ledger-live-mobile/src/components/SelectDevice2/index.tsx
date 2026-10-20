@@ -115,6 +115,10 @@ type Props = {
    * If the device is locked of if any other error occurs, there will be an error drawer displayed to the user until the device is unlocked, the error is resolved or the user closes the drawer.
    */
   performDeviceLockedCheck?: boolean;
+  /**
+   * If true, selecting a device leaves read-only mode as is, for flows that clear it themselves.
+   */
+  keepReadOnlyMode?: boolean;
 };
 
 /**
@@ -132,6 +136,7 @@ export default function SelectDevice({
   stopBleScanning,
   autoSelectLastConnectedDevice,
   performDeviceLockedCheck = true,
+  keepReadOnlyMode = false,
 }: Props) {
   const { t } = useTranslation();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
@@ -211,7 +216,7 @@ export default function SelectDevice({
       dispatch(setLastConnectedDevice(device));
       dispatch(setHasConnectedDevice(true));
       onSelect(device, discoveredDevice);
-      dispatch(setReadOnlyMode(false));
+      if (!keepReadOnlyMode) dispatch(setReadOnlyMode(false));
       dispatch(updateKnownDevice(mapDiscoveredDeviceToKnownDevice(discoveredDevice)));
       if (!device.wired) {
         dispatch(
@@ -223,7 +228,7 @@ export default function SelectDevice({
         );
       }
     },
-    [dispatch, onSelect],
+    [dispatch, keepReadOnlyMode, onSelect],
   );
 
   const checkDeviceStatus = useCallback(

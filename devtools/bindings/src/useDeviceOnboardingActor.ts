@@ -8,6 +8,7 @@ import {
   stateValueToString,
   toolContext,
   userEvents,
+  type DeviceOnboardingContext,
   type DeviceOnboardingInput,
   type DeviceOnboardingExitReason,
   type DeviceOnboardingOutput,
@@ -33,8 +34,11 @@ type UseDeviceOnboardingActorOptions = {
   onSnapshot?: (next: OnboardingActorSnapshot, previous: OnboardingActorSnapshot | null) => void;
   onDone?: (output: DeviceOnboardingOutput) => void;
   onEvent?: (event: OnboardingEvent) => void;
-  /** Runs once, when the machine enters a final state. The app's exit effects go here. */
-  leaveOnboarding?: (reason: DeviceOnboardingExitReason) => void;
+  /**
+   * Runs once, when the machine enters a final state. The context is the one this transition
+   * produced: the published snapshot can still be the previous one.
+   */
+  leaveOnboarding?: (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => void;
 };
 
 function availableEvents(
@@ -181,7 +185,8 @@ export function useDeviceOnboardingActor({
       const run: { actor: OnboardingActor | null } = { actor: null };
       const machine = deviceOnboardingMachine.provide({
         actions: {
-          leaveOnboarding: (_, params) => leaveOnboardingRef.current?.(params.reason),
+          leaveOnboarding: ({ context }, params) =>
+            leaveOnboardingRef.current?.(params.reason, context),
         },
       });
       const actor = createActor(machine, {

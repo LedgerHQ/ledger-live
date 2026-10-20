@@ -6,24 +6,8 @@ export type FirmwareVersionInput = {
   deviceModelId: DeviceModelId;
 };
 
-export const minimumNanoVersions = new Map<DeviceModelId, string>([
-  [DeviceModelId.NANO_SP, "1.1.0"],
-  [DeviceModelId.NANO_X, "2.2.0"],
-]);
-
-export function requiresLegacyFlow({
-  currentVersion,
-  deviceModelId,
-}: FirmwareVersionInput): boolean {
-  const minimum = minimumNanoVersions.get(deviceModelId);
-
-  if (minimum === undefined) {
-    return false;
-  }
-
-  const coerced = semver.coerce(currentVersion);
-
-  return coerced === null || semver.lt(coerced, minimum);
+export function requiresLegacyFlow({ currentVersion }: FirmwareVersionInput): boolean {
+  return semver.coerce(currentVersion) === null;
 }
 
 const touchscreenModels = new Set<DeviceModelId>([
