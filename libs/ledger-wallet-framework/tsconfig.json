@@ -1,26 +1,7 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/tsconfig/coin",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "lib": [
-      "es2022",
-      "dom"
-    ],
-    "types": [
-      "node",
-      "jest"
-    ],
-    "outDir": "lib",
-    "rootDir": "src",
-    "exactOptionalPropertyTypes": true,
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ]
+    "types": ["node", "jest"]
   },
-  "include": [
-    "src/**/*",
-    "types/*.d.ts"
-  ]
+  "include": ["src/**/*", "types/*.d.ts"]
 }

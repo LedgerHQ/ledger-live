@@ -1,7 +1,6 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": ["../tsconfig.json", "@support/tsconfig/lib/tests"],
   "compilerOptions": {
-    "outDir": null,
     "types": ["node", "jest"]
   },
   "include": ["."]

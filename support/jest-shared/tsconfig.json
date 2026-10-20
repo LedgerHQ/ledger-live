@@ -1,12 +1,4 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "allowJs": true,
-    "checkJs": false,
-    "noEmit": true
-  },
-  "include": ["index.js", "mocks/**/*.js", "setup/**/*.js"],
-  "exclude": ["node_modules"]
+  "extends": "@support/tsconfig/node",
+  "include": ["index.js", "mocks/**/*.js", "setup/**/*.js"]
 }

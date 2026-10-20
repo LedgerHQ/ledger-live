@@ -64,7 +64,7 @@ class Decred extends Base {
 
   // get address given an address type
   async customGetAddress(
-    derivationMode: string,
+    _derivationMode: string,
     xpub: string,
     account: number,
     index: number,

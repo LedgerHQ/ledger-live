@@ -1,12 +1,5 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "customConditions": [],
-    "types": [
-      "node",
-      "jest"
-    ]
-  },
+  "extends": ["./tsconfig.json", "@support/tsconfig/lib/build"],
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx",

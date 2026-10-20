@@ -35,6 +35,7 @@
     "@support/jest-devtools": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
+    "@types/node": "catalog:",
     "react-test-renderer": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",

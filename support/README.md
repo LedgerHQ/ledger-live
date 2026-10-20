@@ -41,6 +41,7 @@ Two kinds of preset:
 | [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
 | [`lint`](./lint) | oxlint presets, one per layer that differs, and the monorepo-wide custom rules |
 | [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
+| [`tsconfig`](./tsconfig) | every package: TypeScript presets, one per project archetype |
 
 ## Conformance
 

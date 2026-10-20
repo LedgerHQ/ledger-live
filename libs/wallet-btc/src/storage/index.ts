@@ -197,7 +197,7 @@ class BitcoinLikeStorage implements IStorage {
     );
   }
 
-  removeTxs(logger: Logger, txsFilter: { account: number; index: number }): void {
+  removeTxs(_logger: Logger, txsFilter: { account: number; index: number }): void {
     const newTxs: TX[] = [];
     this.primaryIndex = {};
     this.accountIndex = {};

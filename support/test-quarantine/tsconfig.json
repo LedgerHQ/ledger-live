@@ -1,11 +1,7 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/tsconfig/node",
   "compilerOptions": {
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "types": ["node"],
-    "lib": ["ESNext"],
-    "customConditions": []
+    "types": ["node"]
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }

@@ -3,7 +3,7 @@ import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/error
 import { broadcast } from "./broadcast";
 import wallet from "@ledgerhq/wallet-btc/index";
 import { getWalletAccount } from "./getWalletAccount";
-import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Account, SignedOperation } from "@ledgerhq/types-live";
 
 jest.mock("@ledgerhq/wallet-btc/index");
 jest.mock("./getWalletAccount");

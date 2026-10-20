@@ -12,39 +12,78 @@ const LINT_LEAVES =
 /** @type {Record<string, { rules: string[], reason: string }>} */
 export const EXCLUSIONS = {
   apps: {
-    rules: ["lint"],
-    reason: `TEMPORARY. The applications ${LINT_LEAVES}`,
+    rules: ["lint", "tsconfig"],
+    reason:
+      `TEMPORARY. lint: the applications ${LINT_LEAVES} ` +
+      "tsconfig: application configs carry bundler, platform and build settings no preset " +
+      "covers yet. Exit condition: an application archetype in @support/tsconfig, then each " +
+      "application moved onto it.",
   },
   e2e: {
-    rules: ["lint"],
-    reason: `TEMPORARY. The end-to-end suites ${LINT_LEAVES}`,
+    rules: ["lint", "tsconfig"],
+    reason:
+      `TEMPORARY. lint: the end-to-end suites ${LINT_LEAVES} ` +
+      "tsconfig: end-to-end suites run their own TypeScript setups (Playwright, Detox). Exit " +
+      "condition: the suites moved onto a @support/tsconfig preset.",
   },
   "libs/coin-modules": {
     rules: ["lint"],
     reason: `TEMPORARY. The coin modules, and coin-bitcoin on top of them, ${LINT_LEAVES}`,
   },
   "libs/ledger-live-common": {
-    rules: ["lint"],
-    reason: `TEMPORARY. live-common and its tools ${LINT_LEAVES}`,
+    rules: ["lint", "tsconfig"],
+    reason:
+      `TEMPORARY. lint: live-common and its tools ${LINT_LEAVES} ` +
+      "tsconfig: a composite project rooted at the package directory, with a nested src/ " +
+      "project that references it; no lib preset emits from that layout. Exit condition: the " +
+      "package builds from src/ like the other libs, then extends @support/tsconfig/lib.",
   },
   "libs/ledger-services": {
     rules: ["lint"],
     reason: `TEMPORARY. The ledger-services packages ${LINT_LEAVES}`,
   },
   "libs/ledgerjs": {
-    rules: ["lint"],
-    reason: `TEMPORARY. The ledgerjs packages ${LINT_LEAVES}`,
+    rules: ["lint", "tsconfig"],
+    reason:
+      `TEMPORARY. lint: the ledgerjs packages ${LINT_LEAVES} ` +
+      "tsconfig: the 22 ledgerjs packages extend the shared libs/ledgerjs/tsconfig.json across " +
+      "package boundaries; moving them onto the lib preset would spell its six options out in " +
+      "each package. Exit condition: those options are dropped or folded into a preset, then " +
+      "each package extends @support/tsconfig/lib.",
   },
   "libs/ui": {
-    rules: ["lint"],
-    reason: `TEMPORARY. The legacy UI packages ${LINT_LEAVES}`,
+    rules: ["lint", "tsconfig"],
+    reason:
+      `TEMPORARY. lint: the legacy UI packages ${LINT_LEAVES} ` +
+      "tsconfig: the design-system packages carry their own layouts: icons generates src/ and " +
+      "emits next to it, react builds ES2019 with preserveSymlinks, native extends nothing and " +
+      "shared emits without rootDir. Exit condition: each package builds from src/ to lib/ and " +
+      "extends a @support/tsconfig preset.",
   },
   "libs/wallet-btc": {
     rules: ["lint"],
     reason: `TEMPORARY. wallet-btc ${LINT_LEAVES}`,
   },
   tests: {
-    rules: ["lint"],
-    reason: `TEMPORARY. The test apps ${LINT_LEAVES}`,
+    rules: ["lint", "tsconfig"],
+    reason:
+      `TEMPORARY. lint: the test apps ${LINT_LEAVES} ` +
+      "tsconfig: the dummy apps the end-to-end suites load are standalone web apps with their " +
+      "own compiler options. Exit condition: they move onto a @support/tsconfig preset with the " +
+      "e2e suites.",
+  },
+  tools: {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. Repository tooling runs as Node scripts on the NodeNext defaults, which no " +
+      "package preset targets. Exit condition: a node tooling archetype in @support/tsconfig, " +
+      "then each tool moved onto it.",
+  },
+  "libs/coin-tester-modules": {
+    rules: ["tsconfig"],
+    reason:
+      "TEMPORARY. The coin testers are composite projects, half of them typechecked with bundler " +
+      "resolution and built with NodeNext, which no preset reproduces. Exit condition: a preset " +
+      "for them in @support/tsconfig, then each coin tester moved onto it.",
   },
 };
