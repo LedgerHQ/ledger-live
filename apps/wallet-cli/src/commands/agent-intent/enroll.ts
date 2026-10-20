@@ -39,12 +39,16 @@ import {
 } from "../../agent-intent/relay";
 import { createCommandOutput } from "../../output";
 import { errMessage } from "../../shared/error-message";
+import { walletCliDebug } from "../../shared/log";
 import { writeStderr } from "../../shared/ui";
 
 const NO_KEYCHAIN_HINT =
   "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
   "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
   "unencrypted on this machine.";
+const REFUSED_WRITE_HINT =
+  "Unlock the keychain collection and re-run, or re-run with --allow-plaintext-key only after " +
+  "the human explicitly agrees to store the agent key unencrypted on this machine.";
 
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
  * right before writing — a concurrent enroll of the same profile id could pass the first check and
@@ -95,33 +99,61 @@ function chooseKeyStore(allowPlaintextKey: boolean): AgentIntentKeyStore {
   }
 }
 
-async function saveSecretKey(keyStore: AgentIntentKeyStore, profileId: string, secretKey: string) {
+function saveKeyFile(profileId: string, secretKey: string): void {
+  try {
+    saveAgentIntentKeyFile(profileId, secretKey);
+  } catch (e) {
+    throw new Error(
+      `Could not write the agent key file ${agentIntentKeyFilePath(profileId)} ` +
+        `(${errMessage(e)}). Nothing was saved.`,
+      { cause: e },
+    );
+  }
+}
+
+// Returns the store the key actually went to: a keychain that refuses the write falls back to the
+// key file only on Linux and only with --allow-plaintext-key.
+async function saveSecretKey(
+  keyStore: AgentIntentKeyStore,
+  profileId: string,
+  secretKey: string,
+  allowPlaintextKey: boolean,
+): Promise<AgentIntentKeyStore> {
   if (keyStore === "plaintext-file") {
-    try {
-      saveAgentIntentKeyFile(profileId, secretKey);
-    } catch (e) {
-      throw new Error(
-        `Could not write the agent key file ${agentIntentKeyFilePath(profileId)} ` +
-          `(${errMessage(e)}). Nothing was saved.`,
-        { cause: e },
-      );
-    }
-    return;
+    saveKeyFile(profileId, secretKey);
+    return keyStore;
   }
   try {
     await saveAgentIntentSecretKey(profileId, secretKey);
+    return keyStore;
   } catch (e) {
-    // Secret Service gone since the probe is the same condition the probe reports; a locked
-    // keychain still passes it and keeps the error below, so the human unlocks it instead of going
-    // plaintext.
+    walletCliDebug("agent-intent: keychain write failed", e);
+    // Secret Service gone since the probe is the same condition the probe reports.
     assertOsKeychainAvailable(NO_KEYCHAIN_HINT);
-    throw new Error(
-      `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +
-        "Intent needs a working OS keychain: macOS Keychain, Windows Credential Manager, or on " +
-        "Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an " +
-        "unlocked collection. Nothing was saved.",
-      { cause: e },
+    if (process.platform !== "linux") {
+      throw new Error(
+        `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +
+          "Intent needs a working OS keychain: macOS Keychain, Windows Credential Manager, or on " +
+          "Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an " +
+          "unlocked collection. Nothing was saved.",
+        { cause: e },
+      );
+    }
+    // Reachable but refusing the write, e.g. a locked collection with no one to unlock it.
+    if (!allowPlaintextKey) {
+      throw new KeychainUnavailableError(
+        `The OS keychain refused to store the agent key (${errMessage(e)}), so nothing was ` +
+          `saved. ${REFUSED_WRITE_HINT}`,
+        { cause: e },
+      );
+    }
+    saveKeyFile(profileId, secretKey);
+    writeStderr(
+      `⚠ The OS keychain refused the write (${errMessage(e)}); the agent key went to the ` +
+        `plaintext file ${agentIntentKeyFilePath(profileId)} because --allow-plaintext-key was ` +
+        "passed.\n",
     );
+    return "plaintext-file";
   }
 }
 
@@ -173,8 +205,8 @@ export default defineCommand({
     }),
     "allow-plaintext-key": option(z.boolean().default(false), {
       description:
-        "Store the agent key unencrypted in a 0600 file when no OS keychain is available. Use " +
-        "only after the human explicitly agrees.",
+        "Store the agent key unencrypted in a 0600 file when no OS keychain is available or it " +
+        "refuses the write. Use only after the human explicitly agrees.",
       argumentKind: "flag",
     }),
     output: outputOption,
@@ -220,13 +252,18 @@ export default defineCommand({
         // Shared with every other command that mutates session.yaml — see withSessionLock's doc.
         const keyStore = await withSessionLock(async () => {
           const session = await Session.read();
-          const keyStore = checkProfileAndChooseKeyStore(
+          const chosenKeyStore = checkProfileAndChooseKeyStore(
             session,
             profileId,
             flags["allow-plaintext-key"],
           );
 
-          await saveSecretKey(keyStore, profileId, identity.exportSecretKey());
+          const keyStore = await saveSecretKey(
+            chosenKeyStore,
+            profileId,
+            identity.exportSecretKey(),
+            flags["allow-plaintext-key"],
+          );
           try {
             session.addAgentIntentProfile({
               profileId,

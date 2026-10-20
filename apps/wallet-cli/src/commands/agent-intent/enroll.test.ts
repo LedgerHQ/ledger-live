@@ -430,7 +430,7 @@ describe("agent-intent enroll", () => {
       expect(savedSecretKeys.has("test-agent")).toBe(true);
     });
 
-    it("keeps the generic error and saves no profile when the write fails but the keychain stays reachable (e.g. locked)", async () => {
+    it("reports keychain_unavailable with the write error when the keychain refuses the write", async () => {
       saveSecretKeyError = new Error(
         "Couldn't access platform storage: Secret Service: object locked",
       );
@@ -439,14 +439,76 @@ describe("agent-intent enroll", () => {
         profileAdded = true;
       };
 
-      const err = await runEnroll().catch((e: unknown) => e);
+      await expect(runEnroll({ output: "json" })).rejects.toThrow();
+
+      const lines = stdout
+        .join("")
+        .trim()
+        .split("\n")
+        .map(l => JSON.parse(l));
+      expect(lines).toEqual([
+        {
+          ok: false,
+          error: {
+            command: "agent-intent enroll",
+            code: "keychain_unavailable",
+            message: expect.stringMatching(
+              /The OS keychain refused to store the agent key \(Couldn't access platform storage: Secret Service: object locked\).*Unlock the keychain collection and re-run.*--allow-plaintext-key only after the human explicitly agrees/s,
+            ),
+          },
+        },
+      ]);
+      expect(profileAdded).toBe(false);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(deletedSecretKeyCalls).toEqual([]);
+      expect(deletedKeyFileCalls).toEqual([]);
+    });
+
+    it("stores the key in the plaintext file with --allow-plaintext-key when the keychain refuses the write", async () => {
+      saveSecretKeyError = new Error("Couldn't access platform storage: Prompt dismissed");
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "plaintext-file" });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "plaintext-file",
+        enrolled: true,
+      });
+      expect(stderr.join("")).toMatch(
+        /The OS keychain refused the write \(Couldn't access platform storage: Prompt dismissed\); the agent key went to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
+      expect(stderr.join("")).not.toContain("was ignored");
+    });
+
+    it("rolls back the fallback key file when the session write fails", async () => {
+      saveSecretKeyError = new Error("Couldn't access platform storage: Prompt dismissed");
+      const sessionError = new Error("disk full");
+      writeImpl = () => {
+        throw sessionError;
+      };
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toBe(sessionError);
+
+      expect(deletedKeyFileCalls).toEqual(["test-agent"]);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(deletedSecretKeyCalls).toEqual([]);
+    });
+
+    it("keeps the generic error and never falls back to the key file off Linux", async () => {
+      overridePlatform("darwin"); // afterEach restores the real platform
+      saveSecretKeyError = new Error("User canceled the operation.");
+
+      const err = await runEnroll({ "allow-plaintext-key": true }).catch((e: unknown) => e);
 
       expect(err).not.toBeInstanceOf(KeychainUnavailableError);
       expect((err as Error).message).toMatch(
-        /Could not store the agent's secret key in the OS keychain \(Couldn't access platform storage: Secret Service: object locked\).*Nothing was saved/s,
+        /Could not store the agent's secret key in the OS keychain \(User canceled the operation\.\)/,
       );
-      expect(profileAdded).toBe(false);
-      expect(deletedSecretKeyCalls).toEqual([]);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(savedSecretKeys.size).toBe(0);
     });
 
     it("reports keychain_unavailable when the Secret Service disappears before the write", async () => {

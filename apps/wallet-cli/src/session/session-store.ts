@@ -61,8 +61,8 @@ const AgentIntentAccountAccessSchema = z.object({
 
 // Non-secret Agent Intent profile metadata only. The profile's private key never lives here — it
 // is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`), or,
-// for a profile enrolled with `--allow-plaintext-key` on a host without one, in an unencrypted 0600
-// file (see `key-ring/agent-intent-key-file.ts`). `keyStore` records which.
+// for a profile enrolled with `--allow-plaintext-key` on a host without a usable OS keychain, in an
+// unencrypted 0600 file (see `key-ring/agent-intent-key-file.ts`). `keyStore` records which.
 const AgentIntentProfileSchema = z.object({
   profileId: z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE),
   displayName: z.string().min(1).max(80),

@@ -5,8 +5,9 @@ import { APP_NAME } from "../session/session-store";
 import { writeSecureFile } from "../shared/secure-file";
 import { writeStderr } from "../shared/ui";
 
-// Unencrypted fallback for an Agent Intent profile's secret key, used only on a host without an OS
-// keychain and only after the human explicitly agreed (`agent-intent enroll --allow-plaintext-key`).
+// Unencrypted fallback for an Agent Intent profile's secret key, used only on a host without a
+// usable OS keychain and only after the human explicitly agreed
+// (`agent-intent enroll --allow-plaintext-key`).
 export const agentIntentKeyDir = (): string => join(stateDir(APP_NAME), "agent-intent-keys");
 
 // The profile id regex allows no path separators, so the id is safe as a file name.
