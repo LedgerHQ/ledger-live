@@ -79,7 +79,7 @@ export function useZcashFirstSyncTracking() {
   useEffect(() => {
     if (pendingFirstSync.size === 0) return;
     const now = Date.now();
-    for (const [accountId, enabledAt] of [...pendingFirstSync]) {
+    for (const [accountId, enabledAt] of pendingFirstSync) {
       const account = accounts.find(a => a.id === accountId) as ZcashAccount | undefined;
       if (!account) {
         pendingFirstSync.delete(accountId);

@@ -28,7 +28,9 @@ function FamilyAppEffect({ family }: { family: string }) {
   return AppEffect ? <AppEffect /> : null;
 }
 
-export function FamilyAppEffectsView({ viewModel }: { viewModel: FamilyAppEffectsViewModel }) {
+export function FamilyAppEffectsView({
+  viewModel,
+}: Readonly<{ viewModel: FamilyAppEffectsViewModel }>) {
   return (
     <>
       {viewModel.families.map(family => (

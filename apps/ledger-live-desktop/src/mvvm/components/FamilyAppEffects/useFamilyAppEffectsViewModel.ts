@@ -6,7 +6,10 @@ import type { FamilyAppEffectsViewModel } from "./types";
 export function useFamilyAppEffectsViewModel(): FamilyAppEffectsViewModel {
   const accounts = useSelector(accountsSelector);
   const families = useMemo(
-    () => [...new Set(accounts.map(account => account.currency.family))].sort(),
+    () =>
+      [...new Set(accounts.map(account => account.currency.family))].sort((a, b) =>
+        a.localeCompare(b),
+      ),
     [accounts],
   );
   return { families };
