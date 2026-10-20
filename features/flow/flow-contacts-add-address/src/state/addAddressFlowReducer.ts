@@ -91,6 +91,144 @@ function limitAddressLabelLength(value: string): string {
   return value.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH);
 }
 
+type AddAddressFlowActionOf<Type extends AddAddressFlowAction["type"]> = Extract<
+  AddAddressFlowAction,
+  { type: Type }
+>;
+
+function reduceStart(action: AddAddressFlowActionOf<"start">): AddAddressFlowState {
+  return {
+    status: "selectingCurrency",
+    selectedContactId: action.contact.id,
+    existingAddressLabels: action.contact.addresses.map(address => address.label),
+  };
+}
+
+function reduceStartWithPrefilled(
+  action: AddAddressFlowActionOf<"startWithPrefilled">,
+): AddAddressFlowState {
+  const { contact, currency, network } = action.params;
+  const existingAddressLabels = contact.addresses.map(address => address.label);
+  return {
+    status: "namingAddress",
+    selectedContactId: contact.id,
+    existingAddressLabels,
+    selectedCurrencyId: currency.currencyId,
+    entryMode: "prefilled",
+    displayContext: { assetDisplayName: currency.assetDisplayName, network },
+    addressEntry: action.addressEntry,
+    addressLabel: createDefaultAddressLabelState(currency.assetDisplayName, existingAddressLabels),
+  };
+}
+
+function reduceCompleteCurrencySelection(
+  state: AddAddressFlowState,
+  action: AddAddressFlowActionOf<"completeCurrencySelection">,
+): AddAddressFlowState {
+  if (state.status !== "selectingCurrency" || state.selectedContactId !== action.contactId) {
+    return state;
+  }
+  return {
+    ...state,
+    status: "enteringAddress",
+    selectedCurrencyId: action.selection.currencyId,
+    entryMode: "mad",
+    displayContext: null,
+    addressEntry: EMPTY_ADDRESS_ENTRY_STATE,
+    addressLabel: createDefaultAddressLabelState(
+      action.selection.assetDisplayName,
+      state.existingAddressLabels,
+    ),
+  };
+}
+
+function reduceUpdateAddressEntry(
+  state: AddAddressFlowState,
+  action: AddAddressFlowActionOf<"updateAddressEntry">,
+): AddAddressFlowState {
+  if (
+    state.status !== "enteringAddress" ||
+    state.selectedCurrencyId !== action.selectedCurrencyId ||
+    (action.expectedValue !== undefined && state.addressEntry.value !== action.expectedValue)
+  ) {
+    return state;
+  }
+  return { ...state, addressEntry: action.addressEntry };
+}
+
+function reduceUpdateAddressLabel(
+  state: AddAddressFlowState,
+  action: AddAddressFlowActionOf<"updateAddressLabel">,
+): AddAddressFlowState {
+  if (state.status !== "enteringAddress" && state.status !== "namingAddress") {
+    return state;
+  }
+  return {
+    ...state,
+    addressLabel: createAddressLabelState(
+      limitAddressLabelLength(action.value),
+      state.existingAddressLabels,
+    ),
+  };
+}
+
+function reduceConfirmAddress(state: AddAddressFlowState): AddAddressFlowState {
+  if (state.status !== "enteringAddress" || state.addressEntry.status !== "valid") {
+    return state;
+  }
+  return { ...state, status: "namingAddress", addressEntry: state.addressEntry };
+}
+
+function reduceContinueFromAddressDetails(state: AddAddressFlowState): AddAddressFlowState {
+  if (
+    state.status !== "enteringAddress" ||
+    state.addressEntry.status !== "valid" ||
+    state.addressLabel.status !== "valid"
+  ) {
+    return state;
+  }
+  return {
+    ...state,
+    status: "reviewingAddress",
+    origin: "addressDetails",
+    addressEntry: state.addressEntry,
+    addressLabel: state.addressLabel,
+  };
+}
+
+function reduceContinueFromName(state: AddAddressFlowState): AddAddressFlowState {
+  if (state.status !== "namingAddress" || state.addressLabel.status !== "valid") {
+    return state;
+  }
+  return state.entryMode === "prefilled"
+    ? {
+        ...state,
+        status: "reviewingAddress",
+        origin: "addressName",
+        addressLabel: state.addressLabel,
+      }
+    : { ...state, status: "confirmationRequired", addressLabel: state.addressLabel };
+}
+
+function reduceContinueFromReview(state: AddAddressFlowState): AddAddressFlowState {
+  if (state.status !== "reviewingAddress") {
+    return state;
+  }
+  const { origin: _origin, ...session } = state;
+  return { ...session, status: "success" };
+}
+
+function reduceCompleteConfirmation(state: AddAddressFlowState): AddAddressFlowState {
+  if (state.status !== "confirmationRequired") {
+    return state;
+  }
+  return {
+    ...state,
+    status: "success",
+    target: { type: "contactDetail", contactId: state.selectedContactId },
+  };
+}
+
 function goBack(state: AddAddressFlowState): AddAddressFlowState {
   switch (state.status) {
     case "closed":
@@ -125,112 +263,25 @@ export function addAddressFlowReducer(
 ): AddAddressFlowState {
   switch (action.type) {
     case "start":
-      return {
-        status: "selectingCurrency",
-        selectedContactId: action.contact.id,
-        existingAddressLabels: action.contact.addresses.map(address => address.label),
-      };
-    case "startWithPrefilled": {
-      const { contact, currency, network } = action.params;
-      const existingAddressLabels = contact.addresses.map(address => address.label);
-      return {
-        status: "namingAddress",
-        selectedContactId: contact.id,
-        existingAddressLabels,
-        selectedCurrencyId: currency.currencyId,
-        entryMode: "prefilled",
-        displayContext: { assetDisplayName: currency.assetDisplayName, network },
-        addressEntry: action.addressEntry,
-        addressLabel: createDefaultAddressLabelState(
-          currency.assetDisplayName,
-          existingAddressLabels,
-        ),
-      };
-    }
+      return reduceStart(action);
+    case "startWithPrefilled":
+      return reduceStartWithPrefilled(action);
     case "completeCurrencySelection":
-      if (state.status !== "selectingCurrency" || state.selectedContactId !== action.contactId) {
-        return state;
-      }
-      return {
-        ...state,
-        status: "enteringAddress",
-        selectedCurrencyId: action.selection.currencyId,
-        entryMode: "mad",
-        displayContext: null,
-        addressEntry: EMPTY_ADDRESS_ENTRY_STATE,
-        addressLabel: createDefaultAddressLabelState(
-          action.selection.assetDisplayName,
-          state.existingAddressLabels,
-        ),
-      };
+      return reduceCompleteCurrencySelection(state, action);
     case "updateAddressEntry":
-      if (
-        state.status !== "enteringAddress" ||
-        state.selectedCurrencyId !== action.selectedCurrencyId ||
-        (action.expectedValue !== undefined && state.addressEntry.value !== action.expectedValue)
-      ) {
-        return state;
-      }
-      return { ...state, addressEntry: action.addressEntry };
+      return reduceUpdateAddressEntry(state, action);
     case "updateAddressLabel":
-      if (state.status !== "enteringAddress" && state.status !== "namingAddress") {
-        return state;
-      }
-      return {
-        ...state,
-        addressLabel: createAddressLabelState(
-          limitAddressLabelLength(action.value),
-          state.existingAddressLabels,
-        ),
-      };
+      return reduceUpdateAddressLabel(state, action);
     case "confirmAddress":
-      if (state.status !== "enteringAddress" || state.addressEntry.status !== "valid") {
-        return state;
-      }
-      return { ...state, status: "namingAddress", addressEntry: state.addressEntry };
+      return reduceConfirmAddress(state);
     case "continueFromAddressDetails":
-      if (
-        state.status !== "enteringAddress" ||
-        state.addressEntry.status !== "valid" ||
-        state.addressLabel.status !== "valid"
-      ) {
-        return state;
-      }
-      return {
-        ...state,
-        status: "reviewingAddress",
-        origin: "addressDetails",
-        addressEntry: state.addressEntry,
-        addressLabel: state.addressLabel,
-      };
+      return reduceContinueFromAddressDetails(state);
     case "continueFromName":
-      if (state.status !== "namingAddress" || state.addressLabel.status !== "valid") {
-        return state;
-      }
-      return state.entryMode === "prefilled"
-        ? {
-            ...state,
-            status: "reviewingAddress",
-            origin: "addressName",
-            addressLabel: state.addressLabel,
-          }
-        : { ...state, status: "confirmationRequired", addressLabel: state.addressLabel };
-    case "continueFromReview": {
-      if (state.status !== "reviewingAddress") {
-        return state;
-      }
-      const { origin: _origin, ...session } = state;
-      return { ...session, status: "success" };
-    }
+      return reduceContinueFromName(state);
+    case "continueFromReview":
+      return reduceContinueFromReview(state);
     case "completeConfirmation":
-      if (state.status !== "confirmationRequired") {
-        return state;
-      }
-      return {
-        ...state,
-        status: "success",
-        target: { type: "contactDetail", contactId: state.selectedContactId },
-      };
+      return reduceCompleteConfirmation(state);
     case "goBack":
       return goBack(state);
     case "close":
