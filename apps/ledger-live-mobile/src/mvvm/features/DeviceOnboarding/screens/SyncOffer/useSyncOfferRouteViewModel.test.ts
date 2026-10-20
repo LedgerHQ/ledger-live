@@ -1,5 +1,5 @@
 import { Linking } from "react-native";
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType, type State } from "~/reducers/types";
@@ -146,25 +146,14 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(preventDefault).not.toHaveBeenCalled();
   });
 
-  it("should open the Ledger Sync learn more link", () => {
+  it("should open the Ledger Sync Academy page from learn more", () => {
     const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { result } = renderHook(() => useSyncOfferRouteViewModel(), {
-      overrideInitialState: withFlagOverrides(
-        {
-          llmWalletSync: {
-            enabled: true,
-            params: { learnMoreLink: "https://ledger.com/sync" },
-          },
-        },
-        (state: State) => ({
-          ...state,
-          trustchain: { ...state.trustchain, trustchain: null },
-        }),
-      ),
-    });
+    const { result } = renderOffer(false);
 
     act(() => result.current.onLearnMore());
 
-    expect(openURL).toHaveBeenCalledWith("https://ledger.com/sync");
+    expect(openURL).toHaveBeenCalledWith(
+      "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
+    );
   });
 });
