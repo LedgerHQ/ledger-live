@@ -77,7 +77,7 @@ async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
   if (!secretKey) {
     throw new Error(
       `No agent key found in the OS keychain for profile "${profileId}". Profiles don't move ` +
-        "between machines or users — re-enroll under a new --profile id.",
+        `between machines or users — re-enroll under a new --profile id.${keyFileHint}`,
     );
   }
   return secretKey;

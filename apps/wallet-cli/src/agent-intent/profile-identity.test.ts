@@ -136,6 +136,27 @@ describe("loadProfileIdentity", () => {
     );
   });
 
+  it("points at an existing key file, without reading it, when an os-keychain profile has no keychain entry", async () => {
+    keyFileSecret = agent.exportSecretKey();
+
+    const err = await loadProfileIdentity(profile("os-keychain")).catch((e: unknown) => e);
+
+    expect(err).not.toBeInstanceOf(KeychainUnavailableError);
+    expect((err as Error).message).toMatch(
+      /No agent key found in the OS keychain for profile "bot".*plaintext agent key file exists at .*agent-intent-keys[/\\]bot\.key.*set `keyStore: plaintext-file`/s,
+    );
+    expect(stderr).toEqual([]);
+  });
+
+  it("reports a missing keychain entry without a key file hint when no key file exists", async () => {
+    const err = await loadProfileIdentity(profile("os-keychain")).catch((e: unknown) => e);
+
+    expect((err as Error).message).toMatch(
+      /No agent key found in the OS keychain for profile "bot"/,
+    );
+    expect((err as Error).message).not.toContain("plaintext agent key file exists");
+  });
+
   it("checks an OS keychain key against the recorded public key", async () => {
     keychainSecret = other.exportSecretKey();
 
