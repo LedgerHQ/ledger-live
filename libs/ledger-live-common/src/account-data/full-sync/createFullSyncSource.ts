@@ -3,6 +3,7 @@ import type { AccountDataSource, AccountTarget } from "@domain/api-account-data"
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
 import { getEnv } from "@shared/env";
+import { toAccountBalances } from "./balance";
 import { dedupeInFlight } from "./dedupeInFlight";
 import { FullSyncAccountNotFoundError } from "./errors";
 import { isFullSyncSupported } from "./supports";
@@ -43,8 +44,10 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
     id: AccountDataSourceIdSchema.parse("full-sync"),
     concurrency: getEnv("SYNC_MAX_CONCURRENT"),
     supports: isFullSyncSupported,
-    // One line per kind, mapping the synced account with its own file (LIVE-39358, LIVE-39359).
-    read: {},
+    // One line per kind, mapping the synced account with its own file (LIVE-39359).
+    read: {
+      balance: target => sync(target).then(toAccountBalances),
+    },
     sync,
   };
 }
