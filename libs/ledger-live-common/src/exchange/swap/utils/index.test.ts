@@ -1,5 +1,5 @@
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { type CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";

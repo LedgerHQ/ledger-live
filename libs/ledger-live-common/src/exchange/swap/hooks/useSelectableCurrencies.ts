@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
