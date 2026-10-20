@@ -440,7 +440,7 @@ jobs:
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@feat/qaa-1660-allure-run-context
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
         with:
           path: e2e/desktop/allure-results
           context: |

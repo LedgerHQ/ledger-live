@@ -910,7 +910,7 @@ jobs:
       - name: Add workflow inputs to Allure environment
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && matrix.shard == 1
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@feat/qaa-1660-allure-run-context
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           context: |
@@ -1310,7 +1310,7 @@ jobs:
       - name: Add workflow inputs to Allure environment
         if: (!cancelled() || steps.run-android.outcome == 'cancelled') && matrix.shard == 1
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@feat/qaa-1660-allure-run-context
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           context: |
