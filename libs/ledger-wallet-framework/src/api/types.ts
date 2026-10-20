@@ -236,6 +236,16 @@ export type BridgeApi = {
    */
   syncVersion?: string;
   /**
+   * When true, `getBalance` lists every token the address can have a sub-account for, without any
+   * scan of its history (Solana lists every associated token account, a zero balance included). A
+   * change of the currency's token list then resyncs from scratch only when one of those tokens
+   * becomes newly listed (or no longer blacklisted): that is the only case where the stored
+   * history misses the operations a sub-account needs. Otherwise the sync resumes from its
+   * watermark, as the from-scratch walk would rebuild the same sub-accounts at a far higher cost.
+   * Ignored when the family declares `balanceOptions`, whose scan depends on the sync hash.
+   */
+  balanceListsEveryToken?: boolean;
+  /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
