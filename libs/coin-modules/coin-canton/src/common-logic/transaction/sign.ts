@@ -17,14 +17,14 @@ export async function signTransaction(
   // OnboardingPrepareResponse — sign topology transactions as untyped versioned messages
   if ("transactions" in transactionData && transactionData.transactions) {
     const challenge = getTransactionChallenge(transactionData);
-    const { transactions } = transactionData;
+    const { namespace_transaction, party_to_key_transaction, party_to_participant_transaction } =
+      transactionData.transactions;
+    const legacyTransactions = [namespace_transaction, party_to_key_transaction].flatMap(
+      transaction => (transaction ? [transaction.serialized] : []),
+    );
 
     signPayload = {
-      transactions: [
-        transactions.namespace_transaction.serialized,
-        transactions.party_to_key_transaction.serialized,
-        transactions.party_to_participant_transaction.serialized,
-      ],
+      transactions: [...legacyTransactions, party_to_participant_transaction.serialized],
       ...(challenge && { challenge }),
     };
   } else {
