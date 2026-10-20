@@ -25,8 +25,9 @@ export default class ReceivePage {
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   private readonly receiveNetworkWarningId = "receive-network-warning";
   private readonly deviceDeprecationTitleId = "warning-deprecation-title";
+  // Button prefixes its testID with enabled- or disabled-.
   private readonly deviceDeprecationContinueButton = () =>
-    getElementById("warning-deprecation-continue");
+    getElementById(/^(enabled|disabled)-warning-deprecation-continue$/);
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {

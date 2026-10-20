@@ -11,6 +11,8 @@ import {
   liveDataCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
+import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { buildTags } from "tests/utils/tagsUtils";
 
 type ReceiveTestCase = {
@@ -90,6 +92,7 @@ for (const receive of nativeAccounts) {
 
 test.describe("Receive", () => {
   const account = Account.ZEC_1;
+  test.skip(getSpeculosModel() !== DeviceModelId.nanoS, "Nano S only");
   test.use({
     teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
