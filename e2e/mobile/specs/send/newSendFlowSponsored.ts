@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import { allure } from "jest-allure2-reporter/api";
-import { setEnv } from "@shared/env";
 import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
@@ -19,7 +18,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/tronify/index";
 import { deviceShowsTronifyService } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { fakeTronifyPort, isAndroid } from "@e2e/helpers/commonHelpers";
+import { allowBroadcastToFakeNodes, fakeTronifyPort, isAndroid } from "@e2e/helpers/commonHelpers";
 import { overrideLiveConfig } from "@e2e/bridge/server";
 import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 import { beforeAllTokenFunction } from "@e2e/specs/send/newSendFlow";
@@ -27,7 +26,7 @@ import { beforeAllTokenFunction } from "@e2e/specs/send/newSendFlow";
 const FEATURE_FLAGS = { ...FF_NEW_SEND_FLOW_ENABLED, gasSponsorship: { enabled: true } };
 
 // Broadcasts reach the fake TronGrid, which answers them and never forwards them.
-setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+allowBroadcastToFakeNodes();
 
 // The device shows the rent in full; the app rounds it the way it rounds every fee.
 const appFee = (usdt: string) =>

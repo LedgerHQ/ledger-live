@@ -90,6 +90,17 @@ export function fakeTronifyPort(): number {
   return FAKE_TRONIFY_PORT + Number(process.env.JEST_WORKER_ID ?? 1) - 1;
 }
 
+// Jest gives each spec file its own module registry, so this applies to the declaring file only.
+let broadcastsReachOnlyFakeNodes = false;
+
+/**
+ * Lets the app launched for this spec file broadcast: call it at the top of a spec whose
+ * transactions only reach a local fake node, which answers them without forwarding them.
+ */
+export function allowBroadcastToFakeNodes() {
+  broadcastsReachOnlyFakeNodes = true;
+}
+
 /** Creates a regex string for Detox URL blacklisting. */
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
@@ -125,7 +136,8 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       wsToken,
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
-      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
+      disable_broadcast:
+        getEnv("DISABLE_TRANSACTION_BROADCAST") && !broadcastsReachOnlyFakeNodes ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
       ...cardSession,
