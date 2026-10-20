@@ -37,7 +37,8 @@ export function setupWalletCliStore() {
               ledgerClientVersion,
             }),
             ...authApiExtra({
-              isFeatureEnabled: () => true,
+              // Without a kept API auth key, skip the token fetch: it could only fail.
+              isFeatureEnabled: () => loadApiAuthIdentity().memberCredentials !== null,
               authProvider: new AuthSDK(
                 { ...auth, disablePkce: true },
                 {
