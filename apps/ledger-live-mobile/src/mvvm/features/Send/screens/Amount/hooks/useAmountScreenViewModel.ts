@@ -2,6 +2,8 @@ import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   SendFlowTransactionActions,
@@ -232,8 +234,7 @@ export function useAmountScreenViewModel({
   ]);
 
   // Not on `sponsoredFee`: that is null while the option is held back, which is when this shows.
-  // Only a TRC-20 transfer burns energy: the landed rent won't change a TRX or TRC-10 send's fee.
-  const rentChangesFee = account.type === "TokenAccount" && account.token.tokenType === "trc20";
+  const rentChangesFee = sendFeatures.rentChangesFee(getAccountCurrency(account));
   const sponsoredRentNotice =
     rentArriving && rentChangesFee ? t("send.newSendFlow.feePayment.rentArriving") : null;
 
