@@ -21,3 +21,7 @@ runs:
         npmrc-location: "$HOME/.npmrc"
         # Hardlink imports only on self-hosted Linux runners; 'false' leaves the pnpm default.
         package-import-method: ${{ runner.os == 'Linux' && runner.environment == 'self-hosted' && 'hardlink' || 'false' }}
+    # pnpm 11 only reads auth and registry from .npmrc, so the import method must also go through env.
+    - if: ${{ inputs.registry != '' && runner.os == 'Linux' && runner.environment == 'self-hosted' }}
+      shell: bash
+      run: echo "pnpm_config_package_import_method=hardlink" >> "$GITHUB_ENV"

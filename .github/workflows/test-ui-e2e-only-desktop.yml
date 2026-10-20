@@ -228,6 +228,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       npm_config_loglevel: warn
+      pnpm_config_loglevel: warn
       DO_NOT_TRACK: 1
       SPECULOS_DEVICE: ${{ matrix.device }}
       REMOTE_SPECULOS: ${{ inputs.remote_speculos }}
