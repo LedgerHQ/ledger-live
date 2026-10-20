@@ -150,18 +150,8 @@ describe("quote command — API auth key", () => {
     expect(await storedApiAuthPubkey(fixture.env)).toBe(signature.credential.publicKey);
   });
 
-  it("signs every challenge of a run with the same one-off key when the keychain is unavailable", async () => {
-    const signingKeys: string[] = [];
-    const quote = makeSwapQuoteRoutes({ rejectTokens: true });
-    const rejectingServer = new MockServer([
-      ...makeAuthRoutes({
-        onAuthenticateRequest: ({ signature }) => {
-          signingKeys.push(signature.credential.publicKey);
-        },
-      }),
-      ...quote.routes,
-    ]);
-    rejectingServer.start();
+  it("sends the quote without a token, and signs no challenge, when the keychain is unavailable", async () => {
+    let signed = 0;
     useApiAuthKeychain({
       getPassword: () => {
         throw new Error("no secret service");
@@ -169,17 +159,14 @@ describe("quote command — API auth key", () => {
       setPassword: () => {},
     });
     try {
-      const { exitCode, stdout } = await runCli(JSON_QUOTE_ARGS, {
-        WALLET_CLI_MOCK_PORT: String(rejectingServer.port),
-        ...fixture.env,
-      });
+      const authorizations = await expectUnauthenticatedQuote(
+        makeAuthRoutes({ onAuthenticateRequest: () => signed++ }),
+      );
 
-      expect(exitCode).toBe(1);
-      expect(JSON.parse(stdout).error.message).toBe("No quotes available: noQuotes");
-      expect(signingKeys).toEqual([expect.any(String), signingKeys[0]]);
+      expect(authorizations).toEqual([null]);
+      expect(signed).toBe(0);
     } finally {
       useApiAuthKeychain(null);
-      rejectingServer.stop();
     }
   });
 
