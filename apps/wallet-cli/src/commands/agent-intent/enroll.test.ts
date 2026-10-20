@@ -430,18 +430,62 @@ describe("agent-intent enroll", () => {
       expect(savedSecretKeys.has("test-agent")).toBe(true);
     });
 
-    it("reports an actionable error and saves no profile when the OS keychain is unavailable", async () => {
-      saveSecretKeyError = new Error("Platform secure storage failure: no Secret Service provider");
+    it("keeps the generic error and saves no profile when the write fails but the keychain stays reachable (e.g. locked)", async () => {
+      saveSecretKeyError = new Error(
+        "Couldn't access platform storage: Secret Service: object locked",
+      );
       let profileAdded = false;
       addAgentIntentProfileImpl = () => {
         profileAdded = true;
       };
 
-      await expect(runEnroll()).rejects.toThrow(
-        /Could not store the agent's secret key in the OS keychain \(Platform secure storage failure.*Secret Service provider.*Nothing was saved/s,
+      const err = await runEnroll().catch((e: unknown) => e);
+
+      expect(err).not.toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /Could not store the agent's secret key in the OS keychain \(Couldn't access platform storage: Secret Service: object locked\).*Nothing was saved/s,
       );
       expect(profileAdded).toBe(false);
       expect(deletedSecretKeyCalls).toEqual([]);
+    });
+
+    it("reports keychain_unavailable when the Secret Service disappears before the write", async () => {
+      let probeCalls = 0;
+      // Precheck and locked recheck pass; the probe after the failed write does not.
+      keychainProbe = () => {
+        probeCalls++;
+        if (probeCalls > 2) failingKeychainProbe();
+        return [];
+      };
+      saveSecretKeyError = new Error("Platform secure storage failure: zbus error");
+      let profileAdded = false;
+      addAgentIntentProfileImpl = () => {
+        profileAdded = true;
+      };
+
+      await expect(runEnroll({ output: "json" })).rejects.toThrow();
+
+      expect(probeCalls).toBe(3);
+      const lines = stdout
+        .join("")
+        .trim()
+        .split("\n")
+        .map(l => JSON.parse(l));
+      expect(lines).toEqual([
+        {
+          ok: false,
+          error: {
+            command: "agent-intent enroll",
+            code: "keychain_unavailable",
+            message: expect.stringContaining("No OS keychain is available"),
+          },
+        },
+      ]);
+      expect(profileAdded).toBe(false);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(deletedSecretKeyCalls).toEqual([]);
+      expect(deletedKeyFileCalls).toEqual([]);
     });
 
     it("rolls back the keychain entry when addAgentIntentProfile itself throws", async () => {

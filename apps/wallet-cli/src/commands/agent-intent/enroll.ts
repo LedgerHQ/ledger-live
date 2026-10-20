@@ -41,6 +41,11 @@ import { createCommandOutput } from "../../output";
 import { errMessage } from "../../shared/error-message";
 import { writeStderr } from "../../shared/ui";
 
+const NO_KEYCHAIN_HINT =
+  "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
+  "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
+  "unencrypted on this machine.";
+
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
  * right before writing — a concurrent enroll of the same profile id could pass the first check and
  * still lose the race to the second. Also returns where the agent key will be stored. */
@@ -82,11 +87,7 @@ function checkProfileAndChooseKeyStore(
 // anything is generated or printed, so the human never approves a link that can't be saved.
 function chooseKeyStore(allowPlaintextKey: boolean): AgentIntentKeyStore {
   try {
-    assertOsKeychainAvailable(
-      "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
-        "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
-        "unencrypted on this machine.",
-    );
+    assertOsKeychainAvailable(NO_KEYCHAIN_HINT);
     return "os-keychain";
   } catch (e) {
     if (allowPlaintextKey && e instanceof KeychainUnavailableError) return "plaintext-file";
@@ -110,6 +111,10 @@ async function saveSecretKey(keyStore: AgentIntentKeyStore, profileId: string, s
   try {
     await saveAgentIntentSecretKey(profileId, secretKey);
   } catch (e) {
+    // Secret Service gone since the probe is the same condition the probe reports; a locked
+    // keychain still passes it and keeps the error below, so the human unlocks it instead of going
+    // plaintext.
+    assertOsKeychainAvailable(NO_KEYCHAIN_HINT);
     throw new Error(
       `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +
         "Intent needs a working OS keychain: macOS Keychain, Windows Credential Manager, or on " +
