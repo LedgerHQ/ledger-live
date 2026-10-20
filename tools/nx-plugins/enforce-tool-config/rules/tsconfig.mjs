@@ -196,6 +196,7 @@ export function check({ workspaceRoot, projectRoot }, { debt = TSCONFIG_DEBT } =
 
   const configs = findConfigs(packageDir);
   const checked = new Set(configs);
+  const basePreset = realpath(path.join(workspaceRoot, PRESET_ROOT, "base.json"));
   const relative = file => path.relative(workspaceRoot, file).split(path.sep).join("/");
 
   for (const file of configs) {
@@ -254,6 +255,14 @@ export function check({ workspaceRoot, projectRoot }, { debt = TSCONFIG_DEBT } =
       report(`does not resolve: ${reason}`);
       continue;
     }
+    // The lib/build, lib/esm and lib/tests mixins only add to an archetype: on their own they
+    // leave out the base options, `strict` among them.
+    const chain = parsed.options.configFile?.extendedSourceFiles ?? [];
+    if (entries.length > 0 && !chain.some(parent => realpath(parent) === basePreset)) {
+      report(
+        `inherits no ${PRESET_PACKAGE} archetype: extend one before a lib/build, lib/esm or lib/tests mixin`,
+      );
+    }
     const keys = [
       ...Object.keys(options).map(key => ({
         key,
@@ -286,6 +295,18 @@ export function check({ workspaceRoot, projectRoot }, { debt = TSCONFIG_DEBT } =
   }
 
   return violations;
+}
+
+/**
+ * @param {string} file
+ * @returns {string} `file` with symlinks resolved, or as given when it does not exist
+ */
+function realpath(file) {
+  try {
+    return fs.realpathSync(file);
+  } catch {
+    return file;
+  }
 }
 
 /**

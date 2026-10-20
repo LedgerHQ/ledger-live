@@ -116,6 +116,19 @@ test("extends must name a preset or a config of the same package", () => {
   );
 });
 
+test("a mixin alone does not count as a preset", () => {
+  assert.deepEqual(
+    violations({
+      "tsconfig.json": { extends: "@support/tsconfig/lib/build" },
+      "tsconfig.build.json": { extends: ["./tsconfig.json", "@support/tsconfig/lib/build"] },
+    }),
+    [
+      "tsconfig.build.json: inherits no @support/tsconfig archetype: extend one before a lib/build, lib/esm or lib/tests mixin",
+      "tsconfig.json: inherits no @support/tsconfig archetype: extend one before a lib/build, lib/esm or lib/tests mixin",
+    ],
+  );
+});
+
 test("only the allowed top-level keys may appear", () => {
   assert.deepEqual(
     violations({
