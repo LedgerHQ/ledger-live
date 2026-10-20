@@ -444,6 +444,23 @@ jobs:
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
 
+      - name: Add workflow inputs to Allure environment
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
+        with:
+          path: e2e/desktop/allure-results
+          context: |
+            ref=${{ inputs.ref || github.ref_name }}
+            broadcast=${{ env.E2E_BROADCAST_ENABLED }}
+            firebase_env=${{ inputs.build_type || 'testing' }}
+            speculos=${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
+            team=${{ inputs.team || 'all' }}
+            test_filter=${{ inputs.test_filter }}
+            invert_filter=${{ inputs.invert_filter || false }}
+            smoke_tests=${{ inputs.smoke_tests || false }}
+            repeat_each=${{ inputs.repeat_each }}
+
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
