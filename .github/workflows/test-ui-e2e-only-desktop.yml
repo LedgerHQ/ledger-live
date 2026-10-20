@@ -455,15 +455,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows, macos]
+        os: [macos]
         shard: [1]
         include:
-          - os: windows
-            runner: '["windows-2022"]'
-            workers: 2
           - os: macos
             runner: '["macOS", "ARM64", "general-pool"]'
-            workers: 4
+            workers: 6
     timeout-minutes: 120
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -506,12 +503,21 @@ jobs:
         shell: bash
         run: |
           case "$RUNNER_OS" in
-            Windows) os_name=$(powershell -NoProfile -Command "(Get-CimInstance Win32_OperatingSystem).Caption + ' ' + (Get-CimInstance Win32_OperatingSystem).Version") ;;
-            macOS) os_name="$(sw_vers -productName) $(sw_vers -productVersion)" ;;
-            *) os_name=$(uname -sr) ;;
+            Windows)
+              os_name=$(powershell -NoProfile -Command "(Get-CimInstance Win32_OperatingSystem).Caption + ' ' + (Get-CimInstance Win32_OperatingSystem).Version")
+              hw=$(powershell -NoProfile -Command "'{0} CPU, {1:N0} GB RAM' -f [Environment]::ProcessorCount, ((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB)")
+              ;;
+            macOS)
+              os_name="$(sw_vers -productName) $(sw_vers -productVersion)"
+              hw="$(sysctl -n hw.ncpu) CPU, $(($(sysctl -n hw.memsize) / 1073741824)) GB RAM"
+              ;;
+            *)
+              os_name=$(uname -sr)
+              hw="$(nproc) CPU"
+              ;;
           esac
-          echo "Runner OS: $os_name ($(uname -m)) on $RUNNER_NAME"
-          echo "### Runner OS: $os_name ($(uname -m)) on \`$RUNNER_NAME\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Runner OS: $os_name ($(uname -m)), $hw on $RUNNER_NAME"
+          echo "### Runner OS: $os_name ($(uname -m)), $hw on \`$RUNNER_NAME\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Check out with LF line endings (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -601,6 +607,22 @@ jobs:
         shell: pwsh
         run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
 
+      - name: Start resource sampler (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        shell: bash
+        run: |
+          sample() {
+            while true; do
+              load=$(sysctl -n vm.loadavg | awk '{print $2}')
+              free=$(memory_pressure -Q | awk -F': ' '/percentage/ {print $2}')
+              swap=$(sysctl -n vm.swapusage | awk '{print $6}')
+              echo "$(date +%T) load=$load free=$free swap=$swap"
+              sleep 30
+            done
+          }
+          sample > "$RUNNER_TEMP/resources.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/sampler.pid"
+
       - name: Run Playwright E2E tests
         uses: ./tools/actions/composites/run-e2e-playwright-tests
         with:
@@ -622,6 +644,25 @@ jobs:
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
 
+      - name: Report resource usage (macOS)
+        if: ${{ always() && runner.os == 'macOS' }}
+        shell: bash
+        run: |
+          kill "$(cat "$RUNNER_TEMP/sampler.pid")" 2>/dev/null || true
+          log="$RUNNER_TEMP/resources.log"
+          [ -s "$log" ] || exit 0
+          cat "$log"
+          summary=$(awk '/ load=[0-9]/ {
+            split($2, l, "="); split($3, f, "="); split($4, s, "=")
+            sub("%", "", f[2]); sub("M", "", s[2])
+            n++
+            if (l[2] + 0 > ml) ml = l[2] + 0
+            if (n == 1 || f[2] + 0 < mf) mf = f[2] + 0
+            if (s[2] + 0 > ms) ms = s[2] + 0
+          } END { printf "peak load %.1f, min free memory %d%%, peak swap %.0f MB (%d samples)", ml, mf, ms, n }' "$log")
+          echo "Resources: $summary"
+          echo "### Resources: $summary" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -642,7 +683,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows, macos]
+        os: [macos]
     env:
       ALLURE_RESULTS: "allure-results"
     steps:
