@@ -36,6 +36,32 @@ function hasShieldedViewingKey(account: ZcashAccount): boolean {
   return Boolean(account.privateInfo?.ufvk);
 }
 
+/**
+ * Account-level tracking attributes: whether the shielded balance is enabled, i.e. the
+ * viewing key is present. Only the boolean leaves the account, never the key itself.
+ */
+export function getShieldedAccountAttributes(
+  account: AccountLike,
+): { shieldedEnabled: boolean } | Record<string, never> {
+  if (!isZcashMainAccount(account)) return {};
+  return { shieldedEnabled: hasShieldedViewingKey(account) };
+}
+
+/**
+ * User-level tracking attributes: how many Zcash accounts have their shielded balance
+ * enabled. Derived from the account state, so it also counts accounts enabled before
+ * this was tracked.
+ */
+export function getShieldedUserAttributes(accounts: AccountLike[]): {
+  zcashShieldedEnabledAccounts: number;
+} {
+  return {
+    zcashShieldedEnabledAccounts: accounts.filter(
+      account => isZcashMainAccount(account) && hasShieldedViewingKey(account),
+    ).length,
+  };
+}
+
 function isZcashTransaction(transaction: unknown): transaction is ZcashTransaction {
   return (
     typeof transaction === "object" &&
