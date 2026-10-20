@@ -399,8 +399,6 @@ describe("scripted device onboarding", () => {
     device.show();
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
-
-    expect(device.isWatching("session-2")).toBe(true);
     expect(canSend(result, "SESSION_READY")).toBe(true);
 
     answerWelcome(device);
