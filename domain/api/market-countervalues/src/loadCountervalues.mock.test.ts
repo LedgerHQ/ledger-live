@@ -6,7 +6,7 @@ import timemachine from "timemachine";
 
 timemachine.config({ dateString: "March 14, 2018 13:34:42" });
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { calculate, initialState } from "@domain/entity-market-countervalues";
 import type { TokenCurrency } from "@domain/entity-currency-token";

@@ -7,11 +7,10 @@ import {
   FeatureId,
   FeatureIdSchema,
   featureFlagsBannerVisibleSelector,
-  groupedFeatures,
-  type GroupedFeature,
   setAllOverrides,
   setBannerVisible,
 } from "@shared/feature-flags";
+import { groupedFeatures, type GroupedFeature } from "@shared/feature-flags/legacy";
 import { useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import {
   clearContentAbTestOverrides,

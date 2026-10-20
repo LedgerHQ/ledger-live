@@ -4,7 +4,7 @@
 
 import { hasAccountsWithFundsChanged } from "./useAccountsWithFundsListener";
 import { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import BigNumber from "bignumber.js";
 
 const eth = getCryptoCurrencyById("ethereum");

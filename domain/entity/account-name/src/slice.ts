@@ -4,7 +4,7 @@ import {
   parseAnyAccountId,
   safeParseAnyAccountId,
   type AnyAccountId,
-} from "@domain/entity-account";
+} from "@domain/entity-account/legacy";
 import { getDefaultAccountName, type AccountForName } from "./accountName";
 import { initialAccountNamesState, type AccountNamesState } from "./schema";
 

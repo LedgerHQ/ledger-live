@@ -1,4 +1,5 @@
-import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 const mockInjectiveCurrency = getCryptoCurrencyById("injective");
 

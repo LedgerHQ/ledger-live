@@ -1,4 +1,5 @@
-import { groupedFeatures, type GroupedFeature, setOverride } from "@shared/feature-flags";
+import { setOverride } from "@shared/feature-flags";
+import { groupedFeatures, type GroupedFeature } from "@shared/feature-flags/legacy";
 import { useFeatureFlags } from "@features/platform-feature-flags";
 import { useDispatch } from "LLD/hooks/redux";
 import { Flex, Link, Tag, Box, Text } from "@ledgerhq/react-ui";

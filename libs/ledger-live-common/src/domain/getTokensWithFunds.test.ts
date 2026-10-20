@@ -1,5 +1,6 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
