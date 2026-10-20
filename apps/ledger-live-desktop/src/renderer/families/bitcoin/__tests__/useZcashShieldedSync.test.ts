@@ -113,6 +113,33 @@ describe("useZcashShieldedSync", () => {
     });
   });
 
+  it("records the error when the sync fails, so the stop is not taken for a user stop", async () => {
+    const account = buildAccount();
+    mockedGetAccountBridge.mockReturnValue({
+      sync: jest.fn(
+        () =>
+          new Observable<(a: unknown) => unknown>(subscriber => {
+            subscriber.error(new Error("engine down"));
+          }),
+      ),
+    } as unknown as ReturnType<typeof getAccountBridge>);
+
+    const { result } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { shieldedSyncSubscriptions: [] },
+    });
+
+    act(() => {
+      result.current.startShieldedSync();
+    });
+
+    await waitFor(() => {
+      expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
+        expect.objectContaining({ id: account.id }),
+        { syncState: "stopped", progress: 0, lastSyncError: "Error: engine down" },
+      );
+    });
+  });
+
   it("is a no-op when a sync is already in flight for the account", () => {
     const account = buildAccount();
     const existingUnsubscribe = jest.fn();

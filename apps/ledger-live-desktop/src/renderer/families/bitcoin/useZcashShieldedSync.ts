@@ -85,8 +85,10 @@ export function useZcashShieldedSync(account: ZcashAccount) {
           console.warn("Zcash shielded sync error:", err);
           dispatch(removeShieldedSubscription(currentAccount.id));
           // Reset to "stopped" so the banner exposes a retry CTA instead of
-          // staying stuck on the running spinner.
-          saveSyncState({ syncState: "stopped", progress: 0 });
+          // staying stuck on the running spinner. The error is recorded, as the
+          // coin module does for its own failures, so this stop is not mistaken
+          // for one the user asked for.
+          saveSyncState({ syncState: "stopped", progress: 0, lastSyncError: String(err) });
         },
         complete() {
           console.log(`Zcash shielded sync completed on account ${currentAccount.id}`);

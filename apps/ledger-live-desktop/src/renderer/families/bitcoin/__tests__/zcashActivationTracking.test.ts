@@ -133,6 +133,19 @@ describe("useZcashFirstSyncTracking", () => {
     );
   });
 
+  it("reports a failed manual sync as a failure, not a later retry as a success", () => {
+    markPrivateBalanceEnabled("a6");
+    mount([zcashAccount("a6", { syncState: "running", lastSyncError: null })]);
+    mount([zcashAccount("a6", { syncState: "stopped", lastSyncError: "Error: engine down" })]);
+    mount([zcashAccount("a6", { syncState: "complete" })]);
+
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "zcash_private_balance_first_sync_failed",
+      expect.objectContaining({ reason: "sync_error" }),
+    );
+  });
+
   it("never tracks an account that was not marked", () => {
     mount([zcashAccount("a4", { syncState: "complete" })]);
     expect(mockedTrack).not.toHaveBeenCalled();
