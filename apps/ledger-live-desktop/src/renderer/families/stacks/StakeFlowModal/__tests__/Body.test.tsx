@@ -79,6 +79,7 @@ type StepperPropsShape = {
   onTransactionError: (e: Error) => void;
   transaction: Transaction | null | undefined;
   setSigned: (signed: boolean) => void;
+  hideBreadcrumb: boolean;
 };
 
 const stepperPropsCapture = jest.fn<void, [StepperPropsShape]>();
@@ -142,6 +143,8 @@ const setTransaction = jest.fn((tx: Transaction) => {
   currentTransaction = tx;
 });
 
+let bridgeError: Error | null = null;
+
 const setupHooks = () => {
   baseBridge.createTransaction.mockClear();
   baseBridge.updateTransaction.mockClear();
@@ -165,7 +168,7 @@ const setupHooks = () => {
       updateTransaction: jest.fn(),
       account: currentAccount,
       status,
-      bridgeError: null,
+      bridgeError,
       bridgePending: false,
     };
   }) as unknown as typeof useBridgeTransaction);
@@ -175,6 +178,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   stepperPropsCapture.mockClear();
   fetchPoxInfoMock.mockReturnValue(new Promise(() => {})); // never resolves unless overridden
+  bridgeError = null;
   setupHooks();
 });
 
@@ -208,6 +212,19 @@ const seedDelegateTransaction = () => {
 };
 
 describe("StakeFlowModal/Body", () => {
+  it.each([
+    ["validator", false],
+    ["amount", false],
+    ["connectDevice", true],
+    ["confirmation", true],
+  ] as const)("on an error, the %s step hides the steps: %s", (stepId, expectedHidden) => {
+    bridgeError = new Error("fee estimation failed");
+    renderBody({ stepId });
+    expect(stepperPropsCapture).toHaveBeenLastCalledWith(
+      expect.objectContaining({ hideBreadcrumb: expectedHidden }),
+    );
+  });
+
   it("renders the four-step Stepper in the documented order", () => {
     renderBody();
     expect(screen.getByTestId("stepper-step-ids")).toHaveTextContent(

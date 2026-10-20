@@ -17,6 +17,12 @@ describe("isPoolAddress", () => {
     },
   );
 
+  it("accepts a pool used by mainnet pox-5 stakes", () => {
+    expect(isPoolAddress("SP8HK160YD5GHXP69VGA0TC7AQJ1X4CDW3XVERSE.xverse-signer-manager-2")).toBe(
+      true,
+    );
+  });
+
   it.each([
     ["undefined", undefined],
     ["empty", ""],
@@ -27,6 +33,8 @@ describe("isPoolAddress", () => {
     ["an invalid address", "SP1not-an-address.pool"],
     ["a contract name starting with an underscore", `${ADDRESS}._pool`],
     ["a 41-character contract name", `${ADDRESS}.p${"o".repeat(40)}`],
+    ["the mainnet pox-5 boot contract", "SP000000000000000000002Q6VF78.pox-5"],
+    ["the testnet pox-5 boot contract", "ST000000000000000000002AMW42H.pox-5"],
   ])("rejects %s", (_, value) => {
     expect(isPoolAddress(value)).toBe(false);
   });

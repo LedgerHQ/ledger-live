@@ -1,3 +1,4 @@
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ResponseAddress } from "@zondax/ledger-stacks";
 import {
   isValidHex,
@@ -88,6 +89,26 @@ describe("Stacks utils", () => {
       } as ResponseAddress;
 
       expect(() => throwIfError(response)).toThrow("27013 - Condition not satisfied");
+    });
+
+    test("should throw UserRefusedOnDevice when the user rejects on the device", () => {
+      const response = {
+        returnCode: 0x6986,
+        errorMessage: "Transaction rejected",
+        address: "",
+      } as ResponseAddress;
+
+      expect(() => throwIfError(response)).toThrow(UserRefusedOnDevice);
+    });
+
+    test("should throw LockedDeviceError when the device is locked", () => {
+      const response = {
+        returnCode: 0x5515,
+        errorMessage: "Unknown Status Code: 0x5515",
+        address: "",
+      } as ResponseAddress;
+
+      expect(() => throwIfError(response)).toThrow(LockedDeviceError);
     });
   });
 

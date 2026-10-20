@@ -59,6 +59,42 @@ describe("stacks generic-bridge hooks", () => {
       expect(revived.amount).toEqual(new BigNumber(1_000_000));
     });
 
+    it.each(["stake", "unstake", "swap-x-for-y", "constructor", "toString", "__proto__"])(
+      "retypes a contract call stored under its function name %s as CONTRACT_CALL",
+      async functionName => {
+        const base = genAccount("stacks", { currency, operationsSize: 1 });
+        const account = {
+          ...base,
+          operations: [{ ...base.operations[0], type: functionName }],
+        } as unknown as Account;
+        const hooks = await loadAccountRawAssignForFamily("stacks");
+
+        hooks?.assignFromAccountRaw?.({} as AccountRaw, account);
+
+        expect(account.operations[0].type).toBe("CONTRACT_CALL");
+      },
+    );
+
+    it("keeps valid operation types and token state when retyping stored contract calls", async () => {
+      const base = genAccount("stacks", { currency, operationsSize: 2 });
+      const swapHistory = [{ swapId: "swap-1" }];
+      const tokenAccount = { id: "token-account", swapHistory, operations: [] };
+      const account = {
+        ...base,
+        operations: [
+          { ...base.operations[0], type: "OUT" },
+          { ...base.operations[1], type: "DELEGATE" },
+        ],
+        subAccounts: [tokenAccount],
+      } as unknown as Account;
+      const hooks = await loadAccountRawAssignForFamily("stacks");
+
+      hooks?.assignFromAccountRaw?.({} as AccountRaw, account);
+
+      expect(account.operations.map(op => op.type)).toEqual(["OUT", "DELEGATE"]);
+      expect(account.subAccounts?.[0].swapHistory).toBe(swapHistory);
+    });
+
     it("leaves an unknown (never fetched) position list absent", async () => {
       const account = genAccount("stacks", { currency }) as StacksAccount;
 
