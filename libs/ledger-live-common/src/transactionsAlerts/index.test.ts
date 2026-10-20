@@ -45,17 +45,17 @@ describe("getTransactionsAlertsAddresses", () => {
 });
 
 describe("resolveTransactionsAlertsAddresses", () => {
-  const mockOwnedAddresses = (ownedAddresses: Record<string, string[]>) => {
+  const mockAddressesToWatch = (addressesToWatch: Record<string, string[]>) => {
     mockedGetAccountBridge.mockImplementation(
       async () =>
         ({
-          getOwnedAddresses: async (account: Account) => ownedAddresses[account.freshAddress],
+          getAddressesToWatch: async (account: Account) => addressesToWatch[account.freshAddress],
         }) as unknown as Awaited<ReturnType<typeof getAccountBridge>>,
     );
   };
 
-  it("should return every address owned by each account", async () => {
-    mockOwnedAddresses({
+  it("should return the addresses to watch of each account", async () => {
+    mockAddressesToWatch({
       "0x01": ["0x01", "0x0a"],
       "0x02": ["0x02"],
     });
@@ -69,7 +69,7 @@ describe("resolveTransactionsAlertsAddresses", () => {
   });
 
   it("should return an address shared by several accounts once", async () => {
-    mockOwnedAddresses({ "0x01": ["0x01", "0xAB"], "0x02": ["0x02", "0xab"] });
+    mockAddressesToWatch({ "0x01": ["0x01", "0xAB"], "0x02": ["0x02", "0xab"] });
 
     const addresses = await resolveTransactionsAlertsAddresses([
       makeAccount("account-1", "0x01"),
