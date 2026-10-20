@@ -10,6 +10,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { getUserTrackingAttributes } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
 import {
@@ -403,6 +404,7 @@ const extraProperties = (store: ReduxStore) => {
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
     ...payAttributes,
+    ...getUserTrackingAttributes(accounts),
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,

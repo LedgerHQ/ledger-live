@@ -4,12 +4,19 @@ import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fix
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { track } from "@shared/analytics";
 import ExportKeyModal from "../index";
 import { StepId } from "../types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
 const mockedUseAccountBridge = jest.mocked(useAccountBridge);
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
+const mockedTrack = jest.mocked(track);
 
 const mockDispatch = jest.fn();
 const mockSyncStateUpdater = jest.fn();
@@ -56,7 +63,7 @@ jest.mock("../Body", () => {
     handleEnableShieldedBalance,
     invalidBirthday,
   }: {
-    onUfvkChanged: (ufvk: string) => void;
+    onUfvkChanged: (ufvk: string, shieldedAddress?: string | null, error?: Error | null) => void;
     handleBirthdayChange: (birthday: string) => void;
     handleSyncFromZero: () => void;
     handleEnableShieldedBalance: (options: { startSyncNow: boolean }) => void;
@@ -66,6 +73,19 @@ jest.mock("../Body", () => {
       <div>
         <button type="button" onClick={() => onUfvkChanged("test-ufvk")}>
           set ufvk
+        </button>
+        <button type="button" onClick={() => onUfvkChanged("test-ufvk", "u1test-shielded-address")}>
+          export with address
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const refused = new Error("refused by the user on the device");
+            refused.name = "UserRefusedOnDevice";
+            onUfvkChanged("", null, refused);
+          }}
+        >
+          refuse export
         </button>
         <button type="button" onClick={() => handleBirthdayChange("2026-08-01")}>
           set birthday
@@ -610,5 +630,79 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
         );
       });
     });
+  });
+});
+
+describe("ZCash Export UFVK Flow - activation tracking", () => {
+  const account = createFixtureAccount();
+  const trackedCalls = (name: string) => mockedTrack.mock.calls.filter(([n]) => n === name);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSyncStateUpdater.mockReturnValue({ type: "TEST_SYNC_STATE_ACTION" });
+  });
+
+  it.each([
+    ["Close", false],
+    ["Start sync", true],
+  ])("tracks one enabled event when clicking %s", async (label, startSyncNow) => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /set ufvk/i }));
+    await userEvent.click(screen.getByRole("button", { name: new RegExp(label, "i") }));
+
+    expect(trackedCalls("zcash_private_balance_enabled")).toEqual([
+      [
+        "zcash_private_balance_enabled",
+        { flow: "exportUfvk", currency: "zcash", syncFromZero: false, startSyncNow },
+      ],
+    ]);
+  });
+
+  it("reports syncFromZero as a boolean", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /set ufvk/i }));
+    await userEvent.click(screen.getByRole("button", { name: /sync from zero/i }));
+    await userEvent.click(screen.getByRole("button", { name: /close/i }));
+
+    expect(trackedCalls("zcash_private_balance_enabled")[0][1]).toMatchObject({
+      syncFromZero: true,
+    });
+  });
+
+  it("tracks a failed enable with the reason when the export is refused on the device", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /refuse export/i }));
+
+    expect(trackedCalls("zcash_private_balance_enable_failed")).toEqual([
+      [
+        "zcash_private_balance_enable_failed",
+        { flow: "exportUfvk", currency: "zcash", reason: "user_refused" },
+      ],
+    ]);
+    expect(trackedCalls("zcash_private_balance_enabled")).toHaveLength(0);
+  });
+
+  it("never puts the key, the address, the birthday or a balance in a tracked payload", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /refuse export/i }));
+    await userEvent.click(screen.getByRole("button", { name: /export with address/i }));
+    await userEvent.click(screen.getByRole("button", { name: /set birthday/i }));
+    await userEvent.click(screen.getByRole("button", { name: /start sync/i }));
+
+    expect(mockedTrack).toHaveBeenCalled();
+    for (const [, properties] of mockedTrack.mock.calls) {
+      const payload = JSON.stringify(properties);
+      expect(payload).not.toContain("test-ufvk");
+      expect(payload).not.toContain("u1test-shielded-address");
+      expect(payload).not.toContain("2026-08-01");
+      expect(payload).not.toContain("refused by the user");
+      for (const key of ["ufvk", "shieldedAddress", "birthday", "balance"]) {
+        expect(properties).not.toHaveProperty(key);
+      }
+    }
   });
 });
