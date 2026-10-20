@@ -3031,18 +3031,19 @@
       "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
     },
     "sponsoredRentSignature": {
-      "title": "Step 1 of 2",
+      "title": "Approve network fees sponsoring",
       "strategy": "Energy rental - {{provider}}",
       "crafting": "Preparing energy rental…",
       "submitting": "Submitting energy rental payment…",
-      "feeLabel": "Rental fee"
+      "feeLabel": "Rental fee",
+      "terms": "By signing this transaction, you agree to <0>{{provider}}'s Terms and Conditions</0>."
     },
     "sponsoredTransferSignature": {
-      "title": "Step 2 of 2"
+      "title": "Confirm transfer"
     },
     "sponsoredPolling": {
-      "title": "Waiting for energy delivery",
-      "waiting": "{{provider}} is delivering the rented energy. This can take a moment.",
+      "title": "Your energy is being delivered",
+      "waiting": "This usually takes up to 30 seconds.",
       "elapsed": "Elapsed: {{time}}"
     },
     "sponsoredFailure": {

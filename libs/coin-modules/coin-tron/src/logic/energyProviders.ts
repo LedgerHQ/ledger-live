@@ -4,7 +4,11 @@ import type { EnergyProviderInfo } from "../types";
 // registry keeps the module vendor-agnostic-ready (PRD Workstream A) and gives the front end a
 // stable id -> display name so it can disclose the third party. No network fetch — a tiny static
 // disclosure map, mirroring coin-solana's LEDGER_VALIDATOR_LIST.
-export const TRONIFY_PROVIDER: Readonly<EnergyProviderInfo> = { id: "tronify", name: "Tronify" };
+export const TRONIFY_PROVIDER: Readonly<EnergyProviderInfo> = {
+  id: "tronify",
+  name: "Tronify",
+  termsUrl: "https://www.tronify.io/#/Terms?sourceFlag=tronify",
+};
 
 export const ENERGY_PROVIDERS: ReadonlyArray<Readonly<EnergyProviderInfo>> = [TRONIFY_PROVIDER];
 
