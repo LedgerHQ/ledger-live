@@ -170,6 +170,10 @@ const getProductTourAttributes = () => {
   };
 };
 
+const getRecoverV2Attributes = () => ({
+  recoverV2: !!analyticsFeatureFlagMethod?.("recoverV2")?.enabled,
+});
+
 const getLargeScreenUpsellAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const flag = analyticsFeatureFlagMethod("largeScreenUpsell");
@@ -310,6 +314,7 @@ const extraProperties = (store: ReduxStore) => {
   const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
+  const recoverV2Attributes = getRecoverV2Attributes();
   const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
 
   const deviceInfo = device
@@ -385,6 +390,7 @@ const extraProperties = (store: ReduxStore) => {
     ...addAccountAttributes,
     ...backupHubAttributes,
     ...productTourAttributes,
+    ...recoverV2Attributes,
     largeScreenUpsellAttributes,
     madAttributes,
     // For tracking receive flow events during onboarding

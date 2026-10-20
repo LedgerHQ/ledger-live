@@ -336,6 +336,10 @@ const getProductTourAttributes = () => {
   };
 };
 
+const getRecoverV2Attributes = () => ({
+  recoverV2: !!analyticsFeatureFlagMethod?.("recoverV2")?.enabled,
+});
+
 const getLazyOnboardingBannerAttributes = () => {
   if (!analyticsFeatureFlagMethod) {
     return { lazyOnboardingBanner: false, lazyOnboardingBannerMode: null };
@@ -496,6 +500,7 @@ const extraProperties = async (store: AppStore) => {
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
   const lazyOnboardingBannerAttributes = getLazyOnboardingBannerAttributes();
+  const recoverV2Attributes = getRecoverV2Attributes();
   const payAttributes = getPayAttributes(
     state,
     analyticsFeatureFlagMethod?.("lwmPayTab")?.enabled ?? false,
@@ -547,6 +552,7 @@ const extraProperties = async (store: AppStore) => {
     ...backupHubAttributes,
     ...productTourAttributes,
     ...lazyOnboardingBannerAttributes,
+    ...recoverV2Attributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
