@@ -139,21 +139,38 @@ describe("exitActions", () => {
     expect(wentBack).toBe(true);
   });
 
-  it("should open the old checks when seeded firmware cannot be verified here", () => {
-    const { opened, dispatched, wentBack } = leave("legacyFallback", {
+  it("should open the old checks above onboarding when seeded firmware cannot be verified here", () => {
+    const { dispatched, wentBack, reset } = leave("legacyFallback", {
       deviceWasSeeded: true,
       firmwareNeedsLegacyFlow: true,
     });
 
     expect(wentBack).toBe(false);
     expect(dispatched).toEqual([]);
-    expect(opened).toEqual({
-      path: [
-        NavigatorName.BaseOnboarding,
-        NavigatorName.SyncOnboarding,
-        ScreenName.SyncOnboardingCompanion,
+    expect(reset).toEqual({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.BaseOnboarding,
+          state: {
+            index: 1,
+            routes: [
+              { name: NavigatorName.Onboarding },
+              {
+                name: NavigatorName.SyncOnboarding,
+                state: {
+                  routes: [
+                    {
+                      name: ScreenName.SyncOnboardingCompanion,
+                      params: { device: stax },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
       ],
-      params: { device: stax },
     });
   });
 
@@ -204,10 +221,11 @@ function leave(reason: DeviceOnboardingExitReason, overrides: Partial<ExitDeps> 
   });
 
   expect(inner.reset).not.toHaveBeenCalled();
-  const reset = outer.reset.mock.calls[0]?.[0] as { routes: Route[] } | undefined;
+  const reset = outer.reset.mock.calls[0]?.[0] as { index: number; routes: Route[] } | undefined;
 
   return {
     dispatched: dispatch.mock.calls.map(([action]) => action),
+    reset: reset ?? null,
     opened: reset ? lastRoute(reset.routes) : null,
     navigated: (inner.navigate.mock.calls[0]?.[0]
       ? { name: inner.navigate.mock.calls[0][0], params: inner.navigate.mock.calls[0][1] }

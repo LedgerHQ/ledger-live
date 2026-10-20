@@ -141,7 +141,9 @@ function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, de
       {
         name: NavigatorName.BaseOnboarding,
         state: {
+          index: 1,
           routes: [
+            { name: NavigatorName.Onboarding },
             {
               name: NavigatorName.SyncOnboarding,
               state: {
