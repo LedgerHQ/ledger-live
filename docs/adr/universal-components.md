@@ -251,6 +251,7 @@ flowchart LR
 
 - Internal components, which no entry of `package.json#exports` reaches.
 - Single-platform packages, such as the native-only `features/flow/app-*` packages.
+- Test support entries, whose subpath has a segment starting with `test` or `mock`, such as `./testing` or `./testing/module-mock`. They serve test setups, not app code.
 - A `@shared/ui` package that re-exports Lumen per platform. It removes duplicated import lines inside implementations and leaves the public contract unchanged, so it needs a decision of its own.
 - Suffixed import specifiers, such as `./X.native` or a relative `native.ts` barrel, which the platform-suffix cleanup removes. A platform entry is a package subpath, not a suffix, and the cleanup's subpath check allows it from code of the same platform (R5).
 
