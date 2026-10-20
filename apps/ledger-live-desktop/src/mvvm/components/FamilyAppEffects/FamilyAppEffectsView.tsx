@@ -1,9 +1,8 @@
 import React, { Component, Suspense } from "react";
-import { useLLDCoinFamily } from "~/renderer/families";
 import logger from "~/renderer/logger";
 import type { FamilyAppEffectsViewModel } from "./types";
 
-// A family that fails to load only loses its effect, never the app.
+// A family whose effect fails to load or run only loses its effect, never the app.
 class FamilyAppEffectBoundary extends Component<
   { family: string; children: React.ReactNode },
   { failed: boolean }
@@ -23,20 +22,15 @@ class FamilyAppEffectBoundary extends Component<
   }
 }
 
-function FamilyAppEffect({ family }: { family: string }) {
-  const { AppEffect } = useLLDCoinFamily(family);
-  return AppEffect ? <AppEffect /> : null;
-}
-
 export function FamilyAppEffectsView({
   viewModel,
 }: Readonly<{ viewModel: FamilyAppEffectsViewModel }>) {
   return (
     <>
-      {viewModel.families.map(family => (
+      {viewModel.effects.map(({ family, AppEffect }) => (
         <FamilyAppEffectBoundary key={family} family={family}>
           <Suspense fallback={null}>
-            <FamilyAppEffect family={family} />
+            <AppEffect />
           </Suspense>
         </FamilyAppEffectBoundary>
       ))}

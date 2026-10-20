@@ -431,14 +431,6 @@ export type LLDCoinFamily<
   SendAmountEffect?: React.ComponentType<{ account: A; transaction: T }>;
 
   /**
-   * Rendered for its side effects only, once for the whole app while the user holds an
-   * account of the family, whatever page is open (e.g. to observe account state changes
-   * that happen in the background). A component, like `SendAmountEffect`, so the family
-   * owns its hooks inside its own render boundary.
-   */
-  AppEffect?: React.ComponentType;
-
-  /**
    * Rendered as its own step of the new send flow, right after the user picks a
    * balance pool and before the recipient step (e.g. Aleo refreshes its private
    * records when the private balance is picked). The flow moves on only when

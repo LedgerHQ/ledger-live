@@ -13,7 +13,6 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import PostBroadcastEffect from "./ZcashPostBroadcastSync";
 import { ZcashAmountStepSync } from "./ZcashAmountStepSync";
 import { ZcashSyncNotice } from "./ZcashSyncNotice";
-import { ZcashFirstSyncTracking } from "./zcashActivationTracking";
 import { getAccountRecipientAddresses } from "./getAccountRecipientAddresses";
 import { BitcoinFamily } from "./types";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
@@ -46,7 +45,6 @@ const family: BitcoinFamily = {
   AccountBodyHeader,
   PostBroadcastEffect,
   SendAmountEffect: ZcashAmountStepSync,
-  AppEffect: ZcashFirstSyncTracking,
   handlesEditTransaction: ({ account, parentAccount, mainAccount, operation, featureFlags }) => {
     const isPending = !operation.blockHeight;
     const isCurrencySupported =
