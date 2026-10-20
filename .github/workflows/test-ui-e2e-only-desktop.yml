@@ -7,7 +7,7 @@ on:
     # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
     # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
     # broadcast from the shared QAA accounts on the same day.
-    # The device rotates per weekday, shared with mobile: e2e/tooling/nightly-devices/rotation.json.
+    # The device rotates per weekday, shared with mobile: tools/actions/composites/nightly-devices.
     # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
     - cron: "0 1 * * 1"
     - cron: "0 1 * * 2-5"
@@ -171,24 +171,16 @@ jobs:
       is_dual: ${{ steps.parse.outputs.is_dual }}
       e2e_matrix: ${{ steps.parse.outputs.e2e_matrix }}
     steps:
-      - name: Checkout nightly device rotation
+      - name: Resolve nightly devices
+        id: nightly-devices
         if: ${{ github.event_name == 'schedule' }}
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          persist-credentials: false
-          sparse-checkout: e2e/tooling/nightly-devices
-
-      - name: Resolve nightly device
-        id: rotation
-        if: ${{ github.event_name == 'schedule' }}
-        run: node e2e/tooling/nightly-devices/resolve.mjs >> "$GITHUB_OUTPUT"
-        shell: bash
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nightly-devices@develop
 
       - name: Parse speculos device input
         id: parse
         env:
           EVENT_NAME: ${{ github.event_name }}
-          NIGHTLY_DEVICE: ${{ steps.rotation.outputs.desktop_device }}
+          NIGHTLY_DEVICE: ${{ steps.nightly-devices.outputs.desktop_device }}
           SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoSP' }}
         run: |
           if [ "$EVENT_NAME" = "schedule" ]; then

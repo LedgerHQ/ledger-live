@@ -20,25 +20,23 @@ export function isoWeek(date) {
   return Math.ceil(((thursday.getTime() - yearStart) / 86_400_000 + 1) / 7);
 }
 
-function pickDevice(entry, week) {
-  return typeof entry === "string" ? entry : entry[week % 2 === 0 ? "evenWeek" : "oddWeek"];
-}
-
 export function resolveDevices(date = new Date(), rotation = loadRotation()) {
-  const day = rotation.weekdays[WEEKDAYS[date.getUTCDay()]] ?? rotation.fallback;
-  const week = isoWeek(date);
-  return Object.fromEntries(PLATFORMS.map(platform => [platform, pickDevice(day[platform], week)]));
+  const weekday = WEEKDAYS[date.getUTCDay()];
+  const day = rotation[weekday];
+  if (!day) throw new Error(`No nightly rotation for ${weekday ?? "an invalid date"}`);
+  const parity = isoWeek(date) % 2 === 0 ? "evenWeek" : "oddWeek";
+  return Object.fromEntries(
+    PLATFORMS.map(platform => {
+      const entry = day[platform];
+      return [platform, typeof entry === "string" ? entry : entry[parity]];
+    }),
+  );
 }
 
 const currentFile = fileURLToPath(import.meta.url);
 if (process.argv[1] === currentFile) {
   // Optional YYYY-MM-DD (UTC) to preview another day; defaults to now.
-  const dateArg = process.argv[2];
-  const date = dateArg ? new Date(`${dateArg}T00:00:00Z`) : new Date();
-  if (Number.isNaN(date.getTime())) {
-    console.error(`Invalid date "${dateArg}", expected YYYY-MM-DD`);
-    process.exit(1);
-  }
+  const date = process.argv[2] ? new Date(`${process.argv[2]}T00:00:00Z`) : new Date();
   for (const [platform, device] of Object.entries(resolveDevices(date))) {
     console.log(`${platform}_device=${device}`);
   }

@@ -103,3 +103,7 @@ jobs:
 
       - name: Run actionlint
         run: actionlint -color -shellcheck ''
+
+      - name: Test composite action scripts
+        if: ${{ !cancelled() }}
+        run: node --test "tools/actions/composites/**/*.test.{js,mjs}"

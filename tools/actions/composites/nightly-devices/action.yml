@@ -1,0 +1,21 @@
+name: "Nightly E2E devices"
+description: "Speculos device per platform for today's scheduled E2E run, from rotation.json"
+
+outputs:
+  desktop_device:
+    description: "Device for the desktop nightly"
+    value: ${{ steps.resolve.outputs.desktop_device }}
+  ios_device:
+    description: "Device for the iOS nightly"
+    value: ${{ steps.resolve.outputs.ios_device }}
+  android_device:
+    description: "Device for the Android nightly"
+    value: ${{ steps.resolve.outputs.android_device }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Resolve nightly devices
+      id: resolve
+      shell: bash
+      run: node "${{ github.action_path }}/resolve.mjs" >> "$GITHUB_OUTPUT"

@@ -20,7 +20,7 @@ on:
     # One broadcast nightly per platform: iOS on Wednesday, Android on Friday. Both platforms still
     # run every weekday, only broadcast rotates — a single broadcasting platform per run keeps the
     # shared QAA on-chain accounts free of allowance/nonce races (desktop broadcasts on Monday).
-    # Each platform's device rotates per weekday: e2e/tooling/nightly-devices/rotation.json.
+    # Each platform's device rotates per weekday: tools/actions/composites/nightly-devices.
     # These cron expressions are matched verbatim in the env block below — keep both in sync.
     - cron: "0 0 * * 3"
     - cron: "0 0 * * 5"
@@ -338,7 +338,6 @@ jobs:
             apps/ledger-live-mobile
             e2e/mobile
             e2e/tooling/filter
-            e2e/tooling/nightly-devices
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
             pnpm-workspace.yaml
             tools
@@ -362,20 +361,22 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      # Per-platform rotation shared with desktop (QAA-1193).
+      - name: Resolve nightly devices
+        id: nightly-devices
+        if: ${{ env.NIGHTLY_RUN == 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nightly-devices@develop
+
       - name: Resolve per-platform Speculos device
         id: devices
         shell: bash
         env:
-          SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoX' }}
+          # The nightly outputs are empty on other runs, which use the dispatched device on both platforms.
+          IOS_DEVICE: ${{ steps.nightly-devices.outputs.ios_device || inputs.speculos_device || 'nanoX' }}
+          ANDROID_DEVICE: ${{ steps.nightly-devices.outputs.android_device || inputs.speculos_device || 'nanoX' }}
         run: |
-          if [ "$NIGHTLY_RUN" = "true" ]; then
-            # Per-platform rotation shared with desktop (QAA-1193): e2e/tooling/nightly-devices/rotation.json
-            node e2e/tooling/nightly-devices/resolve.mjs >> "$GITHUB_OUTPUT"
-          else
-            INPUT_DEVICE="$SPECULOS_DEVICE_INPUT"
-            echo "ios_device=$INPUT_DEVICE"     >> $GITHUB_OUTPUT
-            echo "android_device=$INPUT_DEVICE" >> $GITHUB_OUTPUT
-          fi
+          echo "ios_device=$IOS_DEVICE" >> "$GITHUB_OUTPUT"
+          echo "android_device=$ANDROID_DEVICE" >> "$GITHUB_OUTPUT"
 
       - name: Write summary
         env:
