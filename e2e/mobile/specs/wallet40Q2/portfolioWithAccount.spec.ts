@@ -3,7 +3,6 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2, FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const testConfig = {
-  tmsLinks: ["B2CQA-4345", "B2CQA-4339", "B2CQA-4346", "B2CQA-4341", "B2CQA-4340", "B2CQA-4351"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
@@ -29,9 +28,9 @@ describe("Portfolio with account", () => {
     await app.mainNavigation.tapWallet40Tab("home");
   });
 
-  testConfig.tmsLinks.forEach(link => $TmsLink(link));
   testConfig.tags.forEach(tag => $Tag(tag));
 
+  ["B2CQA-4339", "B2CQA-4346"].forEach(link => $TmsLink(link));
   it("Portfolio with funds shows balance and quick actions", async () => {
     await app.portfolio.checkQuickActionTransferButtonVisibility();
     await app.portfolio.checkQuickActionSwapButtonVisibility();
@@ -40,18 +39,21 @@ describe("Portfolio with account", () => {
     await app.portfolio.checkPortfolioBalanceAnalyticsPillVisibility();
   });
 
+  ["B2CQA-4340", "B2CQA-4341", "B2CQA-4345"].forEach(link => $TmsLink(link));
   it("Navigate to the analytics screen", async () => {
     await app.portfolio.tapPortfolioBalanceAnalyticsPill();
     await app.portfolio.expectBalanceToBeVisible();
     await app.common.goToPreviousPage();
   });
 
+  $TmsLink("B2CQA-4351");
   it("Navigate to the buy screen", async () => {
     await app.portfolio.pressQuickActionBuyButton();
     await app.buySell.expectBuyScreenToBeVisible();
   });
 
   setTeamOwner(Team.SWAP);
+  $TmsLink("B2CQA-4346");
   it("Navigate to the swap screen", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
 
@@ -59,6 +61,7 @@ describe("Portfolio with account", () => {
     await app.swapLiveApp.expectSwapLiveApp();
   });
 
+  $TmsLink("B2CQA-4346");
   it("Transfer bottom sheet actions", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.pressQuickActionTransferButton();

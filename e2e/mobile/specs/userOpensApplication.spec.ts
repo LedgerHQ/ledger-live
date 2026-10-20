@@ -15,12 +15,12 @@ const FF_DISABLE_NOTIFICATIONS_OPT_IN: PartialFeatures = {
 
 setTeamOwner(Team.ENGAGEMENT);
 describe("User opens the application after installation", () => {
-  testConfig.tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-  testConfig.tags.forEach(tag => $Tag(tag));
-
   beforeAll(async () => {
     await app.init({ userdata: null, featureFlags: FF_DISABLE_NOTIFICATIONS_OPT_IN });
   });
+
+  testConfig.tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  testConfig.tags.forEach(tag => $Tag(tag));
 
   test("Get started lands on an empty Wallet without a device", async () => {
     await app.onboarding.waitForOnboardingToLoad();
