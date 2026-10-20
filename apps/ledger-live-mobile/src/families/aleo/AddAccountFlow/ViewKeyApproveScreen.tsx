@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.flatten(StyleSheet.absoluteFill),
     paddingTop: 16,
   },
   contentContainer: {

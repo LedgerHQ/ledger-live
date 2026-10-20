@@ -54,6 +54,11 @@ describe("getIncrementalFeeFloorSatVb", () => {
     expect((await getIncrementalFeeFloorSatVb({}, new BigNumber(15))).toNumber()).toBe(2);
   });
 
+  it("bumps by a caller-provided ratio", async () => {
+    // 15 sat/vB → 50% = 7.5 → ceil 8
+    expect((await getIncrementalFeeFloorSatVb({}, new BigNumber(15), 0.5)).toNumber()).toBe(8);
+  });
+
   it("floors to 1 sat/vB when 10% of original is below 1", async () => {
     // 5 sat/vB → 10% = 0.5 → ceil 1
     expect((await getIncrementalFeeFloorSatVb({}, new BigNumber(5))).toNumber()).toBe(1);

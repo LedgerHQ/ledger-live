@@ -11,7 +11,7 @@ import { useTranslation } from "~/context/Locale";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { DefaultAccountSwapParamList } from "../../types";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "@shared/network-status";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -54,7 +54,7 @@ const isDefaultAccountSwapParamsList = (
 export function useSwapLiveAppState(params: unknown) {
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
-  const { isConnected } = useNetInfo();
+  const { isConnected } = useNetworkState();
   const [webviewState, setWebviewStateInternal] = useState<WebviewState>(initialWebviewState);
   const isWebviewError = webviewState?.url.includes("/unknown-error");
 
@@ -63,6 +63,15 @@ export function useSwapLiveAppState(params: unknown) {
   // Incrementing this key remounts SwapWebviewContent, resetting the webview to
   // its initial URL regardless of where it has navigated internally.
   const [webviewResetKey, setWebviewResetKey] = useState(0);
+
+  // Swap params reach the live app through its URL, so new params on the same webview
+  // load a new page on top of the old one and pile up back/forward history. A new swap
+  // entry (new route params) remounts the webview instead, on a fresh history.
+  const [lastParams, setLastParams] = useState(params);
+  if (params !== lastParams) {
+    setLastParams(params);
+    setWebviewResetKey(k => k + 1);
+  }
 
   // Latest webview URL, mirrored in a ref so ensureWebviewReset can read it without
   // being re-created on every navigation inside the live app.

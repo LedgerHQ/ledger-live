@@ -24,8 +24,6 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
     type: token.tokenType,
     assetReference: `${token.contractAddress}:${token.tokenIdentifier}`,
     assetOwner: owner,
-    name: token.name,
-    unit: token.units[0],
   };
 }
 
@@ -68,6 +66,7 @@ export default {
   getTokenFromAsset,
   getAssetFromToken,
   usesStakingPositions: true,
+  partitionsNativeBalance: true,
   computeIntentType,
   getAccountReadiness,
 } satisfies BridgeApi;

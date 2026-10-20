@@ -1,5 +1,5 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import cosmosCoinConfig, { cosmosConfig } from "../config";
+import cosmosCoinConfig, { cosmosConfig, type CosmosCoinConfig } from "../config";
 import cryptoFactory from "./chain";
 
 describe("cryptoFactory test", () => {
@@ -22,14 +22,12 @@ describe("cryptoFactory test", () => {
       "dydx",
       "nyx",
       "persistence",
-      "quicksilver",
       "secret_network",
       "stargaze",
       "stride",
       "mantra",
       "crypto_org",
       "xion",
-      "zenrock",
       "babylon",
       "gonka",
     ];
@@ -42,6 +40,22 @@ describe("cryptoFactory test", () => {
     const chain = cryptoFactory("crypto_org_croeseid");
     expect(chain.prefix).toBe("cro");
     expect(chain.unbondingPeriod).toBe(28);
+  });
+
+  it("should apply an explicit config on every call instead of the cached chain params", () => {
+    cryptoFactory("cosmos");
+    const first = { lcd: "https://first.example", minGasPrice: 1 } as unknown as CosmosCoinConfig;
+    const second = { lcd: "https://second.example", minGasPrice: 2 } as unknown as CosmosCoinConfig;
+
+    expect(cryptoFactory("cosmos", first)).toMatchObject({
+      lcd: "https://first.example",
+      minGasPrice: 1,
+    });
+    expect(cryptoFactory("cosmos", second)).toMatchObject({
+      lcd: "https://second.example",
+      minGasPrice: 2,
+    });
+    expect(cryptoFactory("cosmos").lcd).not.toBe("https://second.example");
   });
 
   it("should resolve gonka with its parameters", () => {

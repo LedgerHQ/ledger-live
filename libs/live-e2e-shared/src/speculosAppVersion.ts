@@ -8,6 +8,7 @@ import * as path from "path";
 
 const liveCommonVersion = "34.64.0"; // live-common version isn't really necessary here, so we can hardcode it
 const nanoAppProviderId = 1;
+const BASELINE_CATALOG_APP = "Bitcoin";
 
 type CatalogApp = { versionDisplayName: string; version: string };
 
@@ -53,11 +54,12 @@ function getDeviceTargetId(device: DeviceModelId): number {
 export async function getNanoAppCatalog(
   device: DeviceModelId,
   deviceFirmware: string,
+  provider = nanoAppProviderId,
 ): Promise<ApplicationV2Entity[]> {
   const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
   const targetId = getDeviceTargetId(device);
   return await repository.catalogForDevice({
-    provider: nanoAppProviderId,
+    provider,
     targetId: targetId,
     firmwareVersion: deviceFirmware,
   });
@@ -100,15 +102,36 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
     );
   }
 
-  // Latest is chosen by highest numeric ID
-  const firmware = providerFirmwares.reduce((latest, current) =>
-    current.id > latest.id ? current : latest,
+  // Highest id is not always bootable. A new OS can land on provider 1 before its app
+  // catalog does (Nano S Plus 1.7.0 shipped with only Solana), and this runs from desktop
+  // global setup, so every Speculos test would otherwise start on that catalog.
+  const firmware = await latestFirmwareWithBaselineApp(device, providerFirmwares);
+
+  firmwareVersionCache.set(device, firmware);
+  process.env.SPECULOS_FIRMWARE_VERSION = firmware;
+
+  return firmware;
+}
+
+async function latestFirmwareWithBaselineApp(
+  device: DeviceModelId,
+  firmwares: readonly { id: number; version: string }[],
+): Promise<string> {
+  const newestFirst = [...firmwares].sort((left, right) => right.id - left.id);
+
+  for (const firmware of newestFirst) {
+    const catalog = await getNanoAppCatalog(device, firmware.version);
+    const publishesBaseline = catalog.some(app => app.versionDisplayName === BASELINE_CATALOG_APP);
+    if (publishesBaseline) return firmware.version;
+
+    console.warn(
+      `Skipping firmware ${firmware.version} for ${device}: provider ${nanoAppProviderId} catalog has no ${BASELINE_CATALOG_APP} app`,
+    );
+  }
+
+  throw new Error(
+    `No provider ${nanoAppProviderId} firmware for ${device} publishes a ${BASELINE_CATALOG_APP} app`,
   );
-
-  firmwareVersionCache.set(device, firmware.version);
-  process.env.SPECULOS_FIRMWARE_VERSION = firmware.version;
-
-  return firmware.version;
 }
 
 export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {

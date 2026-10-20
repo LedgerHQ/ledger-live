@@ -11,9 +11,8 @@ import type {
 } from "./types";
 import wallet from "@ledgerhq/wallet-btc/index";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { getChainAdapter } from "./chain-adapters/registry";
-import { walletBtcCurrencyById } from "./walletBtcCurrency";
-import type { CoinConfig } from "./config";
+import { walletBtcCurrencyById, type ExplorerConfig } from "./walletBtcCurrency";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 export function toBitcoinInputRaw({
   address,
@@ -74,20 +73,19 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
   };
 }
 
-export function fromBitcoinResourcesRaw(
-  r: BitcoinResourcesRaw,
-  coinConfig: CoinConfig,
-): BitcoinResources {
+// No explorer endpoint at deserialization: the bridge binds it from the coin config before first
+// use (see explorer.ts), so a remote endpoint change is not frozen here.
+const UNBOUND_EXPLORER: ExplorerConfig = { explorer: { url: "" } };
+
+export function fromBitcoinResourcesRaw(logger: Logger, r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     walletAccount:
       r.walletAccount &&
       wallet.importFromSerializedAccountSync(
+        logger,
         r.walletAccount,
-        walletBtcCurrencyById(
-          r.walletAccount.params.currency,
-          coinConfig(r.walletAccount.params.currency).info,
-        ),
+        walletBtcCurrencyById(r.walletAccount.params.currency, UNBOUND_EXPLORER),
       ),
   };
 }
@@ -99,19 +97,15 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
       bitcoinAccount.bitcoinResources,
     );
   }
-
-  getChainAdapter(account.currency?.id ?? "").assignToAccountRaw?.(account, accountRaw);
 }
 
 export const makeAssignFromAccountRaw =
-  (coinConfig: CoinConfig) =>
+  (logger: Logger) =>
   (accountRaw: AccountRaw, account: Account): void => {
     const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
     if (bitcoinResourcesRaw)
       (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
+        logger,
         bitcoinResourcesRaw,
-        coinConfig,
       );
-
-    getChainAdapter(account.currency?.id ?? "").assignFromAccountRaw?.(accountRaw, account);
   };

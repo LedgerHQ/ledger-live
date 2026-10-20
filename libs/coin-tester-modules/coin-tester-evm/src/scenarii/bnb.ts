@@ -94,7 +94,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
         type: "active",
       },
       chainId: 56,
-      name: "BNB Chain",
+      name: "BNB Smart Chain",
       unit: { name: "BNB", code: "BNB", magnitude: 18 },
       gasTracker: {
         type: "ledger",

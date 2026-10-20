@@ -142,6 +142,9 @@ async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
   throw new Error(`Failed to find an available port after ${MAX_PORT_RETRIES} attempts`);
 }
 
+/** Password of the VNC server each local Speculos runs on `ports.vncPort`. */
+export const SPECULOS_VNC_PASSWORD = "live";
+
 const getPorts = async (wantedApiPort?: number) => {
   const usedPorts: number[] = [];
   const getPort = async () => {
@@ -225,7 +228,7 @@ export async function createSpeculosDevice(
     if (process.env.CI) {
       return [];
     }
-    return ["-p", `${ports.apiPort}:40000`, "-p", `${ports.vncPort}:41000`];
+    return ["-p", `${ports.apiPort}:40000`, "-p", `127.0.0.1:${ports.vncPort}:41000`];
   };
 
   const params = [
@@ -258,7 +261,10 @@ export async function createSpeculosDevice(
     "--display",
     "headless",
     ...(pki ? ["-p"] : []),
-    ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", `${ports.vncPort}`] : []),
+    "--vnc-password",
+    SPECULOS_VNC_PASSWORD,
+    "--vnc-port",
+    process.env.CI ? `${ports.vncPort}` : "41000",
     "--api-port",
     process.env.CI ? `${ports.apiPort}` : "40000",
   ];

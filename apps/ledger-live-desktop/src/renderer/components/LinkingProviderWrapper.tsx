@@ -1,6 +1,6 @@
 import React, { useMemo, type ReactNode } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { shell } from "electron";
+import { shell } from "~/renderer/bridge";
 import {
   LinkingProvider,
   LEDGER_URL_LANGUAGES,

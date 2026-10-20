@@ -103,6 +103,16 @@ const FAMILY_ACTIONS: Record<string, Record<string, EarnTransactionType>> = {
     redelegate: "redelegate",
     "claim-rewards": "claimReward",
   },
+  // payload.type. `jetton-burn` is left out: a Tonstakers unstake burns its jetton, but so
+  // does any other burn, and only the destination tells them apart.
+  ton: {
+    "tonstakers-deposit": "deposit",
+    "tonwhales-pool-deposit": "deposit",
+    "tonwhales-pool-withdraw": "withdraw",
+    "single-nominator-withdraw": "withdraw",
+    // A nominator-pool comment, read only inside a staking app — see `getTonPoolAction`.
+    "pool-comment-deposit": "deposit",
+  },
   // optIn is an asset opt-in, not staking.
   algorand: { claimreward: "claimReward" },
   sui: { delegate: "delegate", undelegate: "undelegate" },

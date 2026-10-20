@@ -3,6 +3,7 @@ import { bitcoinPickingStrategy, UtxoStrategy } from "@ledgerhq/coin-bitcoin/typ
 import type { Transaction as BtcTransaction, NetworkInfo } from "@ledgerhq/coin-bitcoin/types";
 import { getAmountAndRecipient, getRbfContext } from "@ledgerhq/coin-bitcoin/rbfContext";
 import { Account } from "@ledgerhq/types-live";
+import { getBoundWalletAccount } from "../coinConfig";
 
 const resolveFeesStrategy = (feePerByte: BigNumber, networkInfo: NetworkInfo) => {
   const fast = networkInfo?.feeItems.items.find(item => item.speed === "fast");
@@ -14,7 +15,7 @@ export async function buildRbfSpeedUpTx(
   originalTxId: string,
 ): Promise<BtcTransaction> {
   const { walletAccount, originalTx, feePerByte, networkInfo, changeAddress, excludeUTXOs } =
-    await getRbfContext(account, originalTxId);
+    await getRbfContext(getBoundWalletAccount(account).config, account, originalTxId);
 
   // Try to find the pending operation to get the known recipient
   const pendingOp = account.pendingOperations.find(op => op.hash === originalTxId);
@@ -50,7 +51,7 @@ export async function buildRbfCancelTx(
   originalTxId: string,
 ): Promise<BtcTransaction> {
   const { walletAccount, originalTx, feePerByte, networkInfo, changeAddress, excludeUTXOs } =
-    await getRbfContext(account, originalTxId);
+    await getRbfContext(getBoundWalletAccount(account).config, account, originalTxId);
 
   // Get the original external recipient from the pending operation
   const pendingOp = account.pendingOperations.find(op => op.hash === originalTxId);
@@ -64,8 +65,9 @@ export async function buildRbfCancelTx(
   );
   // Cancel-of-cancel may have no external output and no persisted recipient.
   // In that case, preserve editable intent by using the first spendable output amount.
-  const fallbackAmountFromFirstSpendableOutput =
-    originalTx.outs.find(out => out.value > 0)?.value ?? 0;
+  const fallbackAmountFromFirstSpendableOutput = Number(
+    originalTx.outs.find(out => out.value > 0)?.value ?? 0,
+  );
   const amountSent =
     detectedAmountSent > 0 ? detectedAmountSent : fallbackAmountFromFirstSpendableOutput;
 

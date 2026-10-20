@@ -42,7 +42,10 @@ import "@mocks/console";
 import { server } from "./server";
 import { NativeModules } from "react-native";
 import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
-import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js";
+import {
+  useNetworkState as mockUseNetworkState,
+  connectedNetworkState,
+} from "@shared/network-status";
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";
@@ -67,12 +70,7 @@ beforeAll(() =>
 afterEach(() => {
   server.resetHandlers();
   // Reset shared mocks to prevent state leaking between tests (mock cannibalization)
-  mockRNCNetInfo.useNetInfo.mockReturnValue({
-    type: "cellular",
-    isConnected: true,
-    isInternetReachable: true,
-    details: { isConnectionExpensive: true, cellularGeneration: "3g" },
-  });
+  mockUseNetworkState.mockReturnValue(connectedNetworkState);
   mockUseCameraPermission.mockReturnValue({
     hasPermission: true,
     requestPermission: jest.fn(() => Promise.resolve(true)),
@@ -207,7 +205,7 @@ jest.mock("react-native-view-shot", () => ({
 }));
 
 // Global mocks for Lottie and env config (used by LaunchScreen and other components)
-jest.mock("lottie-react-native", () => {
+jest.mock("@shared/lottie", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
   const MockLottie = ({ source, testID }) =>
@@ -216,7 +214,7 @@ jest.mock("lottie-react-native", () => {
       { testID: testID ?? "lottie-mock" },
       React.createElement(Text, { testID: "lottie-source" }, JSON.stringify(source)),
     );
-  return MockLottie;
+  return { Lottie: MockLottie };
 });
 
 jest.mock("react-native-config");
@@ -325,16 +323,14 @@ jest.mock("@gorhom/bottom-sheet", () => {
   };
 });
 
-jest.mock("react-native-version-number", () => ({
-  appVersion: "1.0.0",
-  buildVersion: "1",
+jest.mock("expo-application", () => ({
+  nativeApplicationVersion: "1.0.0",
+  nativeBuildVersion: "1",
 }));
 
 jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
-
-jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
 
 jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
@@ -430,22 +426,10 @@ jest.mock("@braze/react-native-sdk", () => ({
 
 jest.mock("react-native-webview", () => jest.fn());
 
-jest.mock("react-native-linear-gradient", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("react-native-device-info", () => ({
-  getDeviceNameSync: jest.fn(() => "Mocked Device"),
+jest.mock("expo-device", () => ({
+  deviceName: "Mocked Device",
+  isDevice: true,
 }));
-
-jest.mock("react-native-linear-gradient", () => {
-  const React = require("react");
-  return {
-    __esModule: true,
-    default: jest.fn(({ children, ...props }) => React.createElement("View", props, children)),
-  };
-});
 
 const originalError = console.error;
 const originalWarn = console.warn;

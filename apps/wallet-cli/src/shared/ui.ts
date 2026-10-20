@@ -81,7 +81,7 @@ export function hyperlink(url: string, label: string = url): string {
 /** Remove C0/C1 control characters (incl. ESC and BEL) that could break out of an escape sequence. */
 // eslint-disable-next-line no-control-regex
 const CONTROL_CHARS = /[\x00-\x1f\x7f-\x9f]/g;
-function stripControlChars(value: string): string {
+export function stripControlChars(value: string): string {
   return value.replace(CONTROL_CHARS, "");
 }
 

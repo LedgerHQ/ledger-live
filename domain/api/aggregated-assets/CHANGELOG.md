@@ -1,5 +1,65 @@
 # @domain/api-aggregated-assets
 
+## 0.6.0
+
+### Minor Changes
+
+- [#22596](https://github.com/LedgerHQ/ledger-live/pull/22596) [`7ff8f5b`](https://github.com/LedgerHQ/ledger-live/commit/7ff8f5b518a19e73005ef974121ce21e593a8e99) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): read `chainId` from config
+
+### Patch Changes
+
+- Updated dependencies [[`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`c9b7594`](https://github.com/LedgerHQ/ledger-live/commit/c9b75949c8f01cade6b061bd5b6ecb0af5b0ec5f), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9)]:
+  - @domain/entity-currency-crypto@0.15.0
+  - @shared/api-services@0.10.0
+  - @shared/env@0.10.0
+  - @domain/api-currency-token@0.6.4
+  - @domain/entity-currency@0.4.6
+  - @domain/entity-currency-token@0.5.5
+  - @domain/entity-aggregated-asset@0.3.0
+  - @domain/entity-interest-rate@0.3.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#22596](https://github.com/LedgerHQ/ledger-live/pull/22596) [`7ff8f5b`](https://github.com/LedgerHQ/ledger-live/commit/7ff8f5b518a19e73005ef974121ce21e593a8e99) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): read `chainId` from config
+
+### Patch Changes
+
+- Updated dependencies [[`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`c9b7594`](https://github.com/LedgerHQ/ledger-live/commit/c9b75949c8f01cade6b061bd5b6ecb0af5b0ec5f), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9)]:
+  - @domain/entity-currency-crypto@0.15.0-next.0
+  - @shared/api-services@0.10.0-next.0
+  - @shared/env@0.10.0-next.0
+  - @domain/api-currency-token@0.6.4-next.0
+  - @domain/entity-currency@0.4.6-next.0
+  - @domain/entity-currency-token@0.5.5-next.0
+  - @domain/entity-aggregated-asset@0.3.0
+  - @domain/entity-interest-rate@0.3.0
+
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies [[`5adf8f3`](https://github.com/LedgerHQ/ledger-live/commit/5adf8f3b844e21895aa17f96a620a2dfa6b679ad), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43)]:
+  - @shared/env@0.9.0
+  - @domain/entity-currency-crypto@0.14.0
+  - @shared/api-services@0.9.0
+  - @domain/api-currency-token@0.6.3
+  - @domain/entity-currency@0.4.5
+  - @domain/entity-currency-token@0.5.4
+
+## 0.5.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5adf8f3`](https://github.com/LedgerHQ/ledger-live/commit/5adf8f3b844e21895aa17f96a620a2dfa6b679ad), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43)]:
+  - @shared/env@0.9.0-next.0
+  - @domain/entity-currency-crypto@0.14.0-next.0
+  - @shared/api-services@0.9.0-next.0
+  - @domain/api-currency-token@0.6.3-next.0
+  - @domain/entity-currency@0.4.5-next.0
+  - @domain/entity-currency-token@0.5.4-next.0
+
 ## 0.5.2
 
 ### Patch Changes

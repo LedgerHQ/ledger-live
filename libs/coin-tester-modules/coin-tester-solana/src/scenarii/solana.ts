@@ -1,7 +1,6 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import {
   RECIPIENT,
   SOLANA,
@@ -19,13 +18,6 @@ import BigNumber from "bignumber.js";
 import { setEnv } from "@shared/env";
 import { type AgaveCluster, airdrop, killAgave, spawnAgave } from "../agave";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { encodeAccountIdWithTokenAccountAddress } from "@ledgerhq/coin-solana/logic";
-import {
-  getAssociatedTokenAddressSync,
-  TOKEN_PROGRAM_ID,
-  TOKEN_2022_PROGRAM_ID,
-} from "@solana/spl-token";
-import { PublicKey } from "@solana/web3.js";
 import {
   PAYER,
   STAKE_ACCOUNT,
@@ -44,22 +36,7 @@ jest.setTimeout(100_000);
 
 type SolanaScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
-function computeSubAccountId(
-  parentAccountId: string,
-  address: string,
-  token: TokenCurrency,
-  programId: PublicKey,
-  strategy: BridgeStrategy,
-): string {
-  if (strategy === "legacy") {
-    const ata = getAssociatedTokenAddressSync(
-      new PublicKey(token.contractAddress),
-      new PublicKey(address),
-      undefined,
-      programId,
-    );
-    return encodeAccountIdWithTokenAccountAddress(parentAccountId, ata.toBase58());
-  }
+function computeSubAccountId(parentAccountId: string, token: TokenCurrency): string {
   return encodeTokenAccountId(parentAccountId, token);
 }
 
@@ -83,10 +60,50 @@ function expectStakingResourcesDefined(account: Account): void {
   expect((account as SolanaAccount).stakingResources).toBeDefined();
 }
 
-function makeScenarioTransactions(
-  address: string,
-  strategy: BridgeStrategy,
-): SolanaScenarioTransaction[] {
+function expectStakedFundsCountedInBalanceButNotSpendable(account: Account): void {
+  const stakedAmount = getSolanaPositions(account).reduce(
+    (total, position) => total.plus(position.amount),
+    new BigNumber(0),
+  );
+  expect(stakedAmount.isGreaterThan(0)).toBe(true);
+  expect(account.balance.minus(account.spendableBalance).isGreaterThanOrEqualTo(stakedAmount)).toBe(
+    true,
+  );
+}
+
+function expectTokenSendParentOperation(
+  previousAccount: Account,
+  currentAccount: Account,
+  tokenOperation: Operation,
+): Operation {
+  const [parent] = currentAccount.operations;
+  expect(parent.fee.isGreaterThan(0)).toBe(true);
+  expect(parent.subOperations?.map(operation => operation.id)).toEqual([tokenOperation.id]);
+  expect(parent.internalOperations ?? []).toEqual([]);
+  expect(currentAccount.balance).toStrictEqual(previousAccount.balance.minus(parent.value));
+  return parent;
+}
+
+function expectTokenSendToExistingAta(
+  previousAccount: Account,
+  currentAccount: Account,
+  tokenOperation: Operation,
+): void {
+  const parent = expectTokenSendParentOperation(previousAccount, currentAccount, tokenOperation);
+  expect(parent).toMatchObject({ type: "FEES", value: parent.fee });
+}
+
+function expectTokenSendCreatingAta(
+  previousAccount: Account,
+  currentAccount: Account,
+  tokenOperation: Operation,
+): void {
+  const parent = expectTokenSendParentOperation(previousAccount, currentAccount, tokenOperation);
+  expect(parent.type).toEqual("OUT");
+  expect(parent.value.isGreaterThan(parent.fee)).toBe(true);
+}
+
+function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] {
   if (!VOTE_ACCOUNT) {
     throw new Error("Vote account not initialized");
   }
@@ -114,13 +131,7 @@ function makeScenarioTransactions(
 
   const parentAccountId = `js:2:solana:${address}:solanaSub`;
 
-  const usdcSubAccountId = computeSubAccountId(
-    parentAccountId,
-    address,
-    SOLANA_USDC,
-    TOKEN_PROGRAM_ID,
-    strategy,
-  );
+  const usdcSubAccountId = computeSubAccountId(parentAccountId, SOLANA_USDC);
 
   const scenarioSendUsdcTransaction: SolanaScenarioTransaction = {
     name: "Send 1 USDC",
@@ -138,6 +149,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e6));
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -164,6 +180,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
@@ -174,13 +195,7 @@ function makeScenarioTransactions(
     },
   };
 
-  const cwifSubAccountId = computeSubAccountId(
-    parentAccountId,
-    address,
-    SOLANA_CWIF,
-    TOKEN_2022_PROGRAM_ID,
-    strategy,
-  );
+  const cwifSubAccountId = computeSubAccountId(parentAccountId, SOLANA_CWIF);
 
   const scenarioSendCwifTransaction: SolanaScenarioTransaction = {
     name: "Send 1 CWIF",
@@ -198,6 +213,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e2 + 5)); // amount + transfer fee
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -224,6 +244,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
@@ -233,13 +258,7 @@ function makeScenarioTransactions(
     },
   };
 
-  const virtualSubAccountId = computeSubAccountId(
-    parentAccountId,
-    address,
-    SOLANA_VIRTUAL,
-    TOKEN_PROGRAM_ID,
-    strategy,
-  );
+  const virtualSubAccountId = computeSubAccountId(parentAccountId, SOLANA_VIRTUAL);
 
   const scenarioSendVirtualTransaction: SolanaScenarioTransaction = {
     name: "Send 1 VIRTUAL",
@@ -257,6 +276,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e9));
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -283,6 +307,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
@@ -292,13 +321,7 @@ function makeScenarioTransactions(
       expect(currentAssociatedTokenAccount?.spendableBalance).toStrictEqual(new BigNumber(0));
     },
   };
-  const tslaxSubAccountId = computeSubAccountId(
-    parentAccountId,
-    address,
-    SOLANA_TSLAX,
-    TOKEN_2022_PROGRAM_ID,
-    strategy,
-  );
+  const tslaxSubAccountId = computeSubAccountId(parentAccountId, SOLANA_TSLAX);
 
   const scenarioSendTslaxTransaction: SolanaScenarioTransaction = {
     name: "Send 1 TSLAx",
@@ -316,6 +339,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e8));
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -340,6 +368,11 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
@@ -378,10 +411,8 @@ function makeScenarioTransactions(
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("DELEGATE");
       expect(latestOperation.value).toStrictEqual(latestOperation.fee);
-      if (strategy === "generic-adapter") {
-        expect(latestOperation.senders).toStrictEqual([]);
-        expect(latestOperation.recipients).toStrictEqual([]);
-      }
+      expect(latestOperation.senders).toStrictEqual([]);
+      expect(latestOperation.recipients).toStrictEqual([]);
       expect(latestOperation.extra).toMatchObject({
         stake: { address: VOTE_ACCOUNT?.votePubkey, amount: new BigNumber(1e9 + 2287880) }, // amount + rent exempt reserve + fee
       });
@@ -394,6 +425,7 @@ function makeScenarioTransactions(
       );
       // Verify staking resources are populated after sync with delegation to the validator
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
+      expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
     },
   };
 
@@ -418,6 +450,7 @@ function makeScenarioTransactions(
       );
       // Verify the stake account is now delegated
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
+      expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
     },
   };
 
@@ -451,10 +484,8 @@ function makeScenarioTransactions(
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("WITHDRAW_UNBONDED");
       expect(latestOperation.value).toStrictEqual(latestOperation.fee);
-      if (strategy === "generic-adapter") {
-        expect(latestOperation.senders).toStrictEqual([]);
-        expect(latestOperation.recipients).toStrictEqual([]);
-      }
+      expect(latestOperation.senders).toStrictEqual([]);
+      expect(latestOperation.recipients).toStrictEqual([]);
       expect(latestOperation.extra).toStrictEqual({
         stake: {
           address: STAKE_ACCOUNT?.publicKey.toBase58(),
@@ -483,10 +514,8 @@ function makeScenarioTransactions(
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("DELEGATE");
       expect(latestOperation.value).toStrictEqual(latestOperation.fee);
-      if (strategy === "generic-adapter") {
-        expect(latestOperation.senders).toStrictEqual([]);
-        expect(latestOperation.recipients).toStrictEqual([]);
-      }
+      expect(latestOperation.senders).toStrictEqual([]);
+      expect(latestOperation.recipients).toStrictEqual([]);
       expect(latestOperation.extra).toMatchObject({
         stake: { address: VOTE_ACCOUNT?.votePubkey },
       });
@@ -496,6 +525,7 @@ function makeScenarioTransactions(
       expect(currentAccount.spendableBalance).toStrictEqual(new BigNumber(0));
       // Verify staking resources reflect the new stake
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
+      expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
     },
   };
 
@@ -522,7 +552,7 @@ let closeMSW: (() => void) | null = null;
 
 export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransaction, Account> => ({
   name: `Ledger Live Basic Solana Transactions (${cluster})`,
-  setup: async strategy => {
+  setup: async () => {
     await spawnAgave(cluster);
 
     setEnv("API_SOLANA_PROXY", "http://localhost:8899");
@@ -541,7 +571,7 @@ export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransacti
     });
 
     const signers = await buildSigners();
-    const { accountBridge, currencyBridge, getAddress } = await getBridges(strategy, signers);
+    const { accountBridge, currencyBridge, getAddress } = await getBridges(signers);
 
     const { address } = await getAddress("", {
       path: "44'/501'/0'",
@@ -568,7 +598,7 @@ export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransacti
       currencyBridge,
     };
   },
-  getTransactions: (address, strategy) => makeScenarioTransactions(address, strategy),
+  getTransactions: address => makeScenarioTransactions(address),
   teardown: async () => {
     closeMSW?.();
     closeMSW = null;

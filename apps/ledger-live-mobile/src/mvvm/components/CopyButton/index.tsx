@@ -1,4 +1,4 @@
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import React, { memo, useCallback, useMemo } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
@@ -14,8 +14,8 @@ type Props = Omit<ButtonProps, "Icon" | "isNewIcon" | "onPress"> & {
 
 function CopyButton({ text, ...props }: Props) {
   const transition = useSharedValue(0);
-  const handleCopy = useCallback(() => {
-    Clipboard.setString(text);
+  const handleCopy = useCallback(async () => {
+    if (!(await copyToClipboard(text))) return;
 
     transition.value = withTiming(1, { duration: 200 });
     setTimeout(() => (transition.value = withTiming(0, { duration: 200 })), 1200);

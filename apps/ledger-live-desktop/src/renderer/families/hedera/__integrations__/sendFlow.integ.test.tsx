@@ -11,6 +11,7 @@ import {
   subjectRefs,
   getTransactionStatusSpy,
   prepareTransactionSpy,
+  signOperationSpy,
 } from "../__mocks__/bridge.mock";
 import {
   createModalsContainer,
@@ -106,7 +107,7 @@ describe("Hedera send flow — full modal", () => {
     });
   }, 20_000);
 
-  it("carries the typed memo through to the prepared transaction", async () => {
+  it("carries the typed memo through to the signed transaction", async () => {
     setupModal();
 
     const recipientInput = await screen.findByTestId("send-recipient-input");
@@ -117,14 +118,30 @@ describe("Hedera send flow — full modal", () => {
 
     await waitFor(() => {
       const lastTx = prepareTransactionSpy.mock.calls.at(-1)?.[1];
-      expect(lastTx).toMatchObject({ memo: "ref-42" });
+      expect(lastTx).toMatchObject({ memoType: "string", memoValue: "ref-42" });
     });
-  });
 
-  it("disables Continue in the recipient step when missingAssociation warning is present", async () => {
+    await clickContinueWhenEnabled(); // recipient
+    await clickContinueWhenEnabled(); // amount
+    await clickContinueWhenEnabled(); // summary
+
+    await waitFor(() =>
+      expect(signOperationSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          transaction: expect.objectContaining({ memoType: "string", memoValue: "ref-42" }),
+        }),
+      ),
+    );
+  }, 20_000);
+
+  it("disables Continue and shows the alert in the recipient step when missingAssociation warning is present", async () => {
     getTransactionStatusSpy.mockResolvedValue({
       ...defaultStatus,
-      warnings: { missingAssociation: new Error("MissingAssociation") },
+      warnings: {
+        missingAssociation: Object.assign(new Error(), {
+          name: "HederaRecipientTokenAssociationRequired",
+        }),
+      },
     });
 
     setupModal();
@@ -132,7 +149,7 @@ describe("Hedera send flow — full modal", () => {
     const recipientInput = await screen.findByTestId("send-recipient-input");
     await userEvent.type(recipientInput, HEDERA_RECIPIENT_ADDRESS);
 
-    await waitFor(() => expect(getTransactionStatusSpy).toHaveBeenCalled());
+    expect(await screen.findByText(/not associated with the destination account/i)).toBeVisible();
     expect(getContinueButton()).toBeDisabled();
   });
 

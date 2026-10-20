@@ -2,12 +2,18 @@ import type { StakingMethod } from "./stakingApps";
 
 type StakingContract = {
   /** Receipt token handed back for a deposit. Reported as `output_currency`. */
-  outputCurrency: string;
+  outputCurrency?: string;
+  /**
+   * Token staked, for calls sent from the parent account. Reported as `input_currency`, which
+   * would otherwise name the network coin.
+   */
+  inputCurrency?: string;
   /** Set where the contract identifies the product more precisely than the manifest can. */
   method?: StakingMethod;
   /**
-   * Whether this address is the receipt token itself, rather than a pool that mints it.
-   * Only these can be checked against CAL, which lists tokens and not pool contracts.
+   * Set only for a receipt token that CAL lists: the drift guard checks each one against CAL.
+   * Leave it unset for a pool contract, and for a receipt token that CAL does not list, such as
+   * stk-USDe. Its `outputCurrency` is still reported, but nothing checks it.
    */
   isReceiptToken?: boolean;
 };
@@ -32,7 +38,7 @@ type StakingContract = {
  * the ETH2 deposit contract and hand back no token, so they have no entry here and take their
  * method from the manifest.
  */
-const STAKING_CONTRACTS: Record<string, StakingContract> = {
+export const STAKING_CONTRACTS: Readonly<Record<string, StakingContract>> = {
   // Observed: a Lido stake calls `submit(address)` on exactly this address, which is stETH.
   "0xae7ab96520de3a18e5e111b5eaab095312d7fe84": {
     outputCurrency: "stETH",
@@ -73,6 +79,20 @@ const STAKING_CONTRACTS: Record<string, StakingContract> = {
     method: "pooling",
     isReceiptToken: true,
   },
+  // Observed on avalanche_c_chain: a StakeKit AVAX stake calls `submit` on sAVAX itself, as Lido
+  // does on stETH. This is what gives StakeKit, which has no manifest method, a method here.
+  "0x2b2c81e08f1af8835a78bb2a90ae924ace0ea4be": {
+    outputCurrency: "sAVAX",
+    method: "liquid",
+    isReceiptToken: true,
+  },
+  // StakeKit USDe vault. Not in CAL, so the drift guard cannot check it.
+  "0x2d152fb171353e70e45322d32bc748f8a61d9971": {
+    inputCurrency: "USDe",
+    outputCurrency: "stk-USDe",
+  },
+  // One Polygon validator's ValidatorShare: other validators have their own.
+  "0x2ea3c215daeacc1c90b51443ab5d08a9ad816138": { inputCurrency: "POL" },
 };
 
 function lookup(contract: string | undefined): StakingContract | undefined {
@@ -84,25 +104,23 @@ export function outputCurrencyOf(contract: string | undefined): string | undefin
   return lookup(contract)?.outputCurrency;
 }
 
+/** The token staked into this contract, when the call comes from the parent account. */
+export function inputCurrencyOf(contract: string | undefined): string | undefined {
+  return lookup(contract)?.inputCurrency;
+}
+
 /** How this contract stakes, where the contract says it more precisely than the manifest. */
 export function stakingMethodOfContract(contract: string | undefined): StakingMethod | undefined {
   return lookup(contract)?.method;
 }
 
-/** The addresses this package knows about — read by the drift guard. */
-export function knownStakingContracts(): string[] {
-  return Object.keys(STAKING_CONTRACTS);
-}
-
 /**
- * Only the addresses that are receipt tokens, with the ticker they should resolve to.
- *
- * The drift guard checks these against CAL. A pool contract such as Stader's is deliberately
- * excluded: CAL lists tokens, so asking it about a pool returns nothing and would fail a guard
- * that assumed every entry were a token.
+ * The receipt tokens that CAL lists, with the ticker they should resolve to. The drift guard
+ * checks these against CAL. Pools and unlisted receipt tokens are left out: CAL returns nothing
+ * for them, so the guard would fail.
  */
 export function tokenBackedContracts(): Array<[string, string]> {
-  return Object.entries(STAKING_CONTRACTS)
-    .filter(([, c]) => c.isReceiptToken)
-    .map(([address, c]) => [address, c.outputCurrency]);
+  return Object.entries(STAKING_CONTRACTS).flatMap(([address, c]) =>
+    c.isReceiptToken && c.outputCurrency ? [[address, c.outputCurrency] as [string, string]] : [],
+  );
 }

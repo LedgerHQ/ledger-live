@@ -5,6 +5,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import {
   FEATURE_INTRO_CAMPAIGN_ID,
   genericAwarenessModalTestContentCards,
@@ -19,8 +20,13 @@ jest.mock("~/renderer/actions/modals", () => ({
 
 jest.mock("~/renderer/actions/walletSync");
 
+jest.mock("~/renderer/drawers/Provider", () => ({
+  setDrawer: jest.fn(),
+}));
+
 const mockOpenModal = jest.mocked(openModal);
 const mockCloseAllModal = jest.mocked(closeAllModal);
+const mockSetDrawer = jest.mocked(setDrawer);
 
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
@@ -145,6 +151,46 @@ describe("useDeepLinkHandler", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("open overlays", () => {
+    it("closes the send flow dialog before handling the deeplink", async () => {
+      const { result, store } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          sendFlow: { isOpen: true, data: { params: {} } },
+        },
+      });
+
+      result.current.handler("ledgerwallet://swap", false);
+
+      await waitFor(() => {
+        expect(store.getState().sendFlow.isOpen).toBe(false);
+      });
+      expect(store.getState().sendFlow.data).toBeNull();
+    });
+
+    it("closes the modular dialog, modals and drawer before handling the deeplink", async () => {
+      const { result, store } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          modularDialog: {
+            isDebuggingDuplicates: false,
+            flow: "add_account",
+            source: "",
+            isOpen: true,
+            dialogParams: { presentation: "dialog" },
+          },
+        },
+      });
+
+      result.current.handler("ledgerwallet://swap", false);
+
+      await waitFor(() => {
+        expect(store.getState().modularDialog.isOpen).toBe(false);
+      });
+      expect(store.getState().modularDialog.dialogParams).toBeNull();
+      expect(mockCloseAllModal).toHaveBeenCalled();
+      expect(mockSetDrawer).toHaveBeenCalledWith();
+    });
   });
 
   describe("add-account flow", () => {

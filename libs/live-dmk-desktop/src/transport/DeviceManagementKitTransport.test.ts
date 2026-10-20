@@ -307,26 +307,4 @@ describe("DeviceManagementKitTransport", () => {
       mockObserver.next.mock.calls[1][0].descriptor,
     );
   });
-
-  it("listenLegacyConnectApp should also emit the discovered device's own id as descriptor", async () => {
-    const mockAvailableDevices = new Observable<DiscoveredDevice[]>(subscriber => {
-      subscriber.next([testDevice1]);
-      subscriber.next([testDevice1, testDevice2]);
-      subscriber.complete();
-    });
-
-    jest
-      .spyOn(deviceManagementKit, "listenToAvailableDevices")
-      .mockReturnValue(mockAvailableDevices);
-
-    DeviceManagementKitTransport.listenLegacyConnectApp(mockObserver);
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    expect(mockObserver.next.mock.calls[0][0]).toEqual(
-      expect.objectContaining({ type: "add", descriptor: testDevice1.id }),
-    );
-    expect(mockObserver.next.mock.calls[1][0]).toEqual(
-      expect.objectContaining({ type: "add", descriptor: testDevice2.id }),
-    );
-  });
 });

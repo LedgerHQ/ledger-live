@@ -4,13 +4,13 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import {
-  getDefaultValidator,
-  isStakingTransaction,
-} from "@ledgerhq/live-common/families/hedera/utils";
+import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaGenericTransaction,
+  HederaValidator,
+} from "@ledgerhq/live-common/families/hedera/types";
 import type { AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -46,7 +46,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");
 
-  const bridge: AccountBridge<Transaction> = useAccountBridge(account);
+  const bridge: AccountBridge<HederaGenericTransaction> = useAccountBridge(account);
   const queryValidators = useHederaValidators(account.currency.id);
   const validators = queryValidators.validators;
   const defaultValidator = getDefaultValidator(validators);
@@ -56,10 +56,8 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: {
-          stakingNodeId: defaultValidator ? Number(defaultValidator.id) : null,
-        },
+        mode: "delegate",
+        valId: defaultValidator?.id,
       });
 
       return {
@@ -70,7 +68,6 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
     });
 
   invariant(transaction, "transaction must be defined");
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
 
   const { rotate, resetRotation } = useChangeValidatorRotateAnim();
 
@@ -91,10 +88,8 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const txStakingNodeId = transaction.properties?.stakingNodeId;
-  const selectedValidatorId = typeof txStakingNodeId === "number" ? String(txStakingNodeId) : null;
   const selectedValidator =
-    validators.find(v => v.id === selectedValidatorId) ?? defaultValidator ?? undefined;
+    validators.find(v => v.id === transaction.valId) ?? defaultValidator ?? undefined;
   const hasErrors = Object.keys(status.errors).length > 0;
   const error = Object.values(status.errors)[0];
 
@@ -105,10 +100,8 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
     updateTransaction(prev => {
       return {
         ...prev,
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: {
-          stakingNodeId: validator ? Number(validator.id) : null,
-        },
+        mode: "delegate",
+        valId: validator?.id,
       };
     });
   }, [updateTransaction, defaultValidator, route.params]);

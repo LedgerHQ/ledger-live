@@ -1,23 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { v4 as uuid } from "uuid";
-import {
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  addAddress,
-  contactAddress,
-  type ContactId,
-} from "@domain/entity-contact";
+import { addAddress, contactAddress, type ContactId } from "@domain/entity-contact";
 import {
   createContactsListViewModel,
   createContactsSearchViewModel,
-  type ContactAddressDetailDialogProps,
-  type ContactsListViewLabels,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
@@ -27,19 +17,18 @@ import {
   useContactsListPageAnalytics,
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncDismiss,
-  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
+import {
+  type ContactAddressDetailDialogProps,
+  resolveContactAddressSupportsDomain,
+} from "@features/flow-contacts-detail";
 import {
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
   type AddAddressContact,
-  type AddAddressEntryLabels,
   type AddAddressFlowState,
-  type ContactsAddAddressNameLabels,
-  type ContactsAddAddressReviewLabels,
 } from "@features/flow-contacts-add-address";
 import {
-  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   isContactsLedgerSyncActivationRequired,
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
@@ -82,7 +71,6 @@ export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "ad
 
 export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const { openDrawer } = useActivationDrawer();
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
@@ -317,74 +305,16 @@ export function useContactsViewModel(): ContactsPageViewModel {
       : undefined,
     sendFeatures.supportsDomain,
   );
-  const addAddressEntryLabels = useMemo<AddAddressEntryLabels>(
-    () => ({
-      title: t("contacts.addAddressEntry.title"),
-      addressPlaceholder: t(
-        addAddressSupportsDomain
-          ? "contacts.addAddressEntry.addressPlaceholder"
-          : "contacts.addAddressEntry.addressPlaceholderNoENS",
-      ),
-      confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
-      validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
-      validAddress: t("contacts.addAddressEntry.validAddress"),
-      invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
-      domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
-      sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
-      validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
-      ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
-      ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
-      duplicateAddress: (contactName: string) =>
-        t("contacts.addAddressEntry.duplicateAddress", { contactName }),
-    }),
-    [addAddressSupportsDomain, t],
-  );
-  const addAddressNameLabels = useMemo<ContactsAddAddressNameLabels>(
-    () => ({
-      inputLabel: t("contacts.addAddressName.inputLabel"),
-      namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
-      namingDisclaimerAccessibilityLabel: t(
-        "contacts.addAddressName.namingDisclaimerAccessibilityLabel",
-      ),
-      continueToReview: t("contacts.addAddressName.continueToReview"),
-      validAddress: t("contacts.addAddressEntry.validAddress"),
-      validationErrors: {
-        [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.addAddressName.invalidLabel"),
-        [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.addAddressName.duplicateLabel"),
-        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t("contacts.addAddressName.tooLongLabel"),
-      },
-    }),
-    [t],
-  );
-  const addAddressReviewLabels = useMemo<ContactsAddAddressReviewLabels>(
-    () => ({
-      title: t("contacts.addAddressReview.title"),
-      addressLabel: t("contacts.addAddressReview.addressLabel"),
-      currencyLabel: t("contacts.addAddressReview.currencyLabel"),
-      networkLabel: t("contacts.addAddressReview.networkLabel"),
-      nameLabel: t("contacts.addAddressReview.nameLabel"),
-      continue: t("contacts.addAddressReview.continue"),
-    }),
-    [t],
-  );
-  const isMeContactForAddAddress =
+  const showAddAddressPrivacyPolicy =
     addAddressFlowState.status !== "closed" &&
     meContact !== undefined &&
     addAddressFlowState.selectedContactId === meContact.id;
   const addAddressFlowDialog = useMemo<ContactsAddAddressFlowDialogProps>(
     () => ({
       state: addAddressFlowState,
-      entryLabels: addAddressEntryLabels,
-      privacyLink: isMeContactForAddAddress
-        ? { label: t("contacts.addAddressEntry.privacyPolicy") }
-        : undefined,
-      sanctionedAddressBanner: {
-        description: t("contacts.addAddressEntry.sanctioned.description"),
-        actionLabel: t("contacts.addAddressEntry.sanctioned.learnMore"),
-        onAction: handleSanctionedAddressLearnMore,
-      },
-      nameLabels: addAddressNameLabels,
-      reviewLabels: addAddressReviewLabels,
+      supportsDomain: addAddressSupportsDomain,
+      showPrivacyPolicy: showAddAddressPrivacyPolicy,
+      onSanctionedAddressLearnMore: handleSanctionedAddressLearnMore,
       onAddressChange: (address, inputMethod) => {
         void updateAddress(address, inputMethod);
       },
@@ -396,12 +326,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
       onClose: onCloseAddAddress,
     }),
     [
-      addAddressEntryLabels,
-      handleSanctionedAddressLearnMore,
-      addAddressNameLabels,
-      addAddressReviewLabels,
       addAddressFlowState,
-      isMeContactForAddAddress,
+      addAddressSupportsDomain,
+      showAddAddressPrivacyPolicy,
+      handleSanctionedAddressLearnMore,
       onBackAddAddress,
       onCloseAddAddress,
       updateAddress,
@@ -409,7 +337,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
       continueFromAddressDetailsAndConfirm,
       continueFromNameAndConfirm,
       saveAddressFromReview,
-      t,
     ],
   );
   const {
@@ -427,25 +354,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
       isContactsEntryAvailable: true,
       preference,
     });
-  const labels = useMemo<ContactsListViewLabels>(
-    () => ({
-      title: t("contacts.title"),
-      searchPlaceholder: t("contacts.searchPlaceholder"),
-      searchNoResults: t("contacts.searchNoResults"),
-      addContact: t("contacts.addContact"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
-  const featureIntroductionHighlights = useMemo(
-    () =>
-      CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({
-        icon,
-        title: t(`contacts.featureIntroduction.highlights.${translationKey}.title`),
-        description: t(`contacts.featureIntroduction.highlights.${translationKey}.description`),
-      })),
-    [t],
-  );
   const getDisplayName = useContactDisplayName();
   const viewModel = useMemo(() => {
     if (searchQuery.trim().length > 0) {
@@ -509,7 +417,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     editDeleteDialogs,
     addressDetailActionsDialogs,
     viewModel,
-    labels,
     searchQuery,
     onSearchInputChange,
     onClearSearch,
@@ -522,18 +429,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
     dieProps,
     featureIntroduction: {
       isOpen: isFeatureIntroductionRequested,
-      title: t("contacts.featureIntroduction.title"),
-      highlights: featureIntroductionHighlights,
-      primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       onComplete: dismissFeatureIntroduction,
       onClose: dismissFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
-      title: t("contacts.ledgerSyncIntroduction.title"),
-      description: t("contacts.ledgerSyncIntroduction.description"),
-      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-      dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onActivate: onActivateLedgerSyncIntroduction,
       onDismiss: onDismissLedgerSyncIntroduction,
     },

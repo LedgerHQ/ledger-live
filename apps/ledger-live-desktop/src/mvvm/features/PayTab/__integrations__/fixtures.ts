@@ -29,11 +29,6 @@ export const fundedState = {
   accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC],
 };
 
-export const dieEnabledState = {
-  ...fundedState,
-  ...withFlagOverrides({ ldmkTransport: { enabled: true } }),
-};
-
 export const newSendFlowEnabledState = {
   ...fundedState,
   ...withFlagOverrides({

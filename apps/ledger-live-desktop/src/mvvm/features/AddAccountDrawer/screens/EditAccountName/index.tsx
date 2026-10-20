@@ -5,7 +5,7 @@ import {
 } from "~/renderer/reducers/wallet";
 import { MAX_ACCOUNT_NAME_LENGTH } from "@domain/entity-account-name";
 import { Button, Flex, Text } from "@ledgerhq/react-ui/index";
-import { TextInput } from "@ledgerhq/react-ui/pre-ldls/index";
+import { TextInput } from "@ledgerhq/lumen-ui-react";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -76,13 +76,11 @@ const EditAccountName = ({ account, navigateBack }: Props) => {
       <Flex flex={1} marginBottom={24}>
         <TextInput
           aria-label="account name"
-          defaultValue={name}
+          value={name}
           label={t("modularAssetDrawer.editAccountName.input.name")}
           name="accountName"
           onChange={e => setName(e.target.value)}
-          style={{
-            width: "100%",
-          }}
+          className="w-full"
           maxLength={MAX_ACCOUNT_NAME_LENGTH}
         />
       </Flex>

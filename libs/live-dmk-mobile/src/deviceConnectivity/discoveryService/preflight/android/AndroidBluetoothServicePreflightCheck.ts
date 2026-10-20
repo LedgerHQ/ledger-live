@@ -7,6 +7,7 @@ import {
   buildBluetoothDisabledPromptableError,
   buildBluetoothStateError,
 } from "../discoveryErrorBuilders";
+import { getSettledBleState } from "../getSettledBleState";
 import { getBluetoothHelperModule, getNativeErrorCode } from "../nativeModules";
 import {
   mapDiscoveryErrorToPreflightResult,
@@ -36,7 +37,7 @@ export class AndroidBluetoothServicePreflightCheck {
   ) {}
 
   async run(_requirements: AndroidPreflightRequirements): Promise<DiscoveryPreflightResult> {
-    const state = await this.bleStateProvider.getState();
+    const state = await this.getSettledState();
 
     if (state === BlePlxState.PoweredOn) {
       return successPreflightResult;
@@ -63,7 +64,7 @@ export class AndroidBluetoothServicePreflightCheck {
 
     try {
       await bluetoothHelperModule.prompt();
-      const state = await this.bleStateProvider.getState();
+      const state = await this.getSettledState();
       return this.mapStateAfterBluetoothPrompt(state);
     } catch (error) {
       return mapDiscoveryErrorToPreflightResult(
@@ -72,6 +73,10 @@ export class AndroidBluetoothServicePreflightCheck {
           : buildBluetoothDisabledManualActionError(this.retry, error),
       );
     }
+  }
+
+  private getSettledState(): Promise<BlePlxState> {
+    return getSettledBleState(() => this.bleStateProvider.getState());
   }
 
   private mapStateAfterBluetoothPrompt(state: BlePlxState): DiscoveryPreflightResult {

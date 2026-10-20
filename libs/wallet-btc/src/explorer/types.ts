@@ -19,6 +19,8 @@ export type UtxoTx = {
 // abstract explorer api used, abstract batching logic, pagination, and retries
 export interface IExplorer {
   baseUrl: string;
+  /** Transactions requested per page; `Xpub` falls back to `DEFAULT_EXPLORER_BATCH_SIZE`. */
+  batchSize?: number;
   broadcast(
     tx: string,
     broadcastConfig?: Pick<BroadcastConfig, "source">,

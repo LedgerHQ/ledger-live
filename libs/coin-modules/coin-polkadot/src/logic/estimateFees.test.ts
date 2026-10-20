@@ -1,4 +1,4 @@
-import coinConfig from "../config";
+import type { PolkadotCoinConfig } from "../config";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,
@@ -28,36 +28,33 @@ jest.mock("../network/sidecar", () => ({
   getTransactionParams: () => mockTransactionParams(),
 }));
 
+const config: PolkadotCoinConfig = {
+  status: {
+    type: "active",
+  },
+  name: "Polkadot",
+  unit: { name: "DOT", code: "DOT", magnitude: 10 },
+  node: {
+    url: "https://polkadot-rpc.publicnode.com",
+  },
+  sidecar: {
+    url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
+  },
+  indexer: {
+    url: "https://polkadot.coin.ledger.com",
+  },
+  staking: {
+    electionStatusThreshold: 25,
+  },
+};
+
 describe("estimatedFees", () => {
   beforeEach(() => {
     mockPaymentInfo.mockClear();
   });
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: {
-        url: "https://polkadot-rpc.publicnode.com",
-      },
-      sidecar: {
-        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-      },
-      indexer: {
-        url: "https://polkadot.coin.ledger.com",
-      },
-      staking: {
-        electionStatusThreshold: 25,
-      },
-    }));
-  });
-
   it("calls loadPolkadotCrypto (WASM check)", async () => {
     // Given
     const account = createFixtureAccount();
-    const config = coinConfig.getCoinConfig("polkadot");
     const mockLoadPolkadotCrypto = jest.mocked(loadPolkadotCrypto);
     const tx = await craftEstimationTransaction(config, account.freshAddress, BigInt(1000));
 
@@ -80,7 +77,6 @@ describe("estimatedFees", () => {
       class: "WHATEVER",
       partialFee,
     });
-    const config = coinConfig.getCoinConfig("polkadot");
     const tx = await craftEstimationTransaction(config, account.freshAddress, BigInt(10000));
 
     // When

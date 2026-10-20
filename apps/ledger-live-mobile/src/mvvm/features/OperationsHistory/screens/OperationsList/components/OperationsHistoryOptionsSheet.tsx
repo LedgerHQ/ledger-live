@@ -42,7 +42,7 @@ export function OperationsHistoryOptionsSheet({
         <BottomSheetHeader />
         <ListItem onPress={onToggle} testID="operations-history-toggle-dust-filter">
           <ListItemLeading>
-            <Spot appearance="icon" icon={Icon} />
+            <Spot icon={Icon} />
             <ListItemContent>
               <ListItemTitle>{title}</ListItemTitle>
               <ListItemDescription numberOfLines={2}>{description}</ListItemDescription>

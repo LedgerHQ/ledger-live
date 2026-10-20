@@ -1,0 +1,259 @@
+import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  createOnboardingEventLog,
+  deviceOnboardingMachine,
+  flattenDeviceOnboardingContext,
+  nextStatesFrom,
+  stampSession,
+  stateValueToString,
+  toolContext,
+  userEvents,
+  type DeviceOnboardingInput,
+  type DeviceOnboardingExitReason,
+  type DeviceOnboardingOutput,
+  type HostLogRow,
+  type HostOnboardingEvent,
+  type HostToolEvent,
+  type OnboardingEvent,
+} from "@features/platform-device-onboarding";
+import { createActor, type ActorRefFrom } from "xstate";
+import type { DeviceOnboardingPorts } from "./ports";
+
+type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
+
+export type OnboardingActorSnapshot = ReturnType<OnboardingActor["getSnapshot"]>;
+
+type StartOnboardingActorInput = Pick<
+  DeviceOnboardingInput,
+  "dmk" | "deviceId" | "deviceModelId" | "offerSync" | "hostsSeedSetup"
+>;
+
+type UseDeviceOnboardingActorOptions = {
+  missingSessionMessage: string;
+  onSnapshot?: (next: OnboardingActorSnapshot, previous: OnboardingActorSnapshot | null) => void;
+  onDone?: (output: DeviceOnboardingOutput) => void;
+  onEvent?: (event: OnboardingEvent) => void;
+  /** Runs once, when the machine enters a final state. The app's exit effects go here. */
+  leaveOnboarding?: (reason: DeviceOnboardingExitReason) => void;
+};
+
+function availableEvents(
+  snapshot: OnboardingActorSnapshot,
+  sessionReady: boolean,
+  sessionId: () => string,
+) {
+  const candidates: HostOnboardingEvent[] = sessionReady
+    ? [{ type: "SESSION_READY" }, ...userEvents]
+    : [...userEvents];
+  return candidates
+    .filter(event => snapshot.can(stampSession(event, sessionId)))
+    .map(event => ({ event }));
+}
+
+/**
+ * The log keeps the newest rows only. A long run (lock loops, reconnects) must not grow without end,
+ * and the export goes through the phone's share sheet, which has a size limit.
+ */
+const maxLogRows = 200;
+
+export function useDeviceOnboardingActor({
+  missingSessionMessage,
+  onSnapshot,
+  onDone,
+  onEvent,
+  leaveOnboarding,
+}: UseDeviceOnboardingActorOptions) {
+  const [snapshot, setSnapshot] = useState<OnboardingActorSnapshot | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [log, setLog] = useState<HostLogRow[]>([]);
+  const [exit, setExit] = useState<{
+    reason: DeviceOnboardingOutput["reason"];
+    sessionId: string;
+    modelId: string;
+  } | null>(null);
+
+  const actorRef = useRef<OnboardingActor | null>(null);
+  const portsRef = useRef<DeviceOnboardingPorts | null>(null);
+  const eventSequence = useRef(0);
+  const lastLoggedStep = useRef<string | null>(null);
+  const previousSnapshotRef = useRef<OnboardingActorSnapshot | null>(null);
+  const onSnapshotRef = useRef(onSnapshot);
+  const onDoneRef = useRef(onDone);
+  const onEventRef = useRef(onEvent);
+  const leaveOnboardingRef = useRef(leaveOnboarding);
+  onSnapshotRef.current = onSnapshot;
+  onDoneRef.current = onDone;
+  onEventRef.current = onEvent;
+  leaveOnboardingRef.current = leaveOnboarding;
+
+  // The machine holds the session as data. The host is the one place that reads the live one.
+  const currentSessionId = useCallback(() => {
+    const ports = portsRef.current;
+    if (!ports) throw new Error(missingSessionMessage);
+    return ports.currentSessionId();
+  }, [missingSessionMessage]);
+
+  const state = snapshot ? stateValueToString(snapshot.value) : null;
+  /** @deprecated Read `machineContext`. Kept while app code still reads these flat names. */
+  const context = useMemo(
+    () => (snapshot ? flattenDeviceOnboardingContext(snapshot) : null),
+    [snapshot],
+  );
+  // Copies and walks of the machine: once per update, not on every render of the host.
+  const machineContext = useMemo(
+    () => (snapshot ? toolContext(snapshot.context) : null),
+    [snapshot],
+  );
+  const nextStates = useMemo(() => nextStatesFrom(snapshot), [snapshot]);
+  const sendableEvents = snapshot ? availableEvents(snapshot, sessionReady, currentSessionId) : [];
+
+  // One row per machine update. An internal xstate event, or a STEP_CHANGED that repeats the
+  // logged step, adds no event: the row then only marks a new state.
+  const logUpdate = useCallback((state: string, event: OnboardingEvent | null) => {
+    const entries: HostToolEvent[] = [];
+    if (event) {
+      createOnboardingEventLog({
+        currentSessionId: () => portsRef.current?.currentSessionId(),
+        lastLoggedStep,
+        sequence: eventSequence,
+        push: entry => entries.push(entry),
+      })(event);
+    }
+    const [entry] = entries;
+    setLog(current => {
+      if (entry) return [...current.slice(1 - maxLogRows), { state, event: entry }];
+      if (current.at(-1)?.state === state) return current;
+      return [...current.slice(1 - maxLogRows), { state }];
+    });
+  }, []);
+
+  const sendToActor = useCallback(
+    (event: HostOnboardingEvent) => {
+      const actor = actorRef.current;
+      if (!actor) return;
+      if (event.type === "SESSION_READY") setSessionReady(false);
+      actor.send(stampSession(event, currentSessionId));
+    },
+    [currentSessionId],
+  );
+
+  const send = useCallback(
+    (event: HostOnboardingEvent) => {
+      const actor = actorRef.current;
+      if (!actor?.getSnapshot().can(stampSession(event, currentSessionId))) return;
+      sendToActor(event);
+    },
+    [currentSessionId, sendToActor],
+  );
+
+  const stopActor = useCallback(() => {
+    const current = actorRef.current;
+    actorRef.current = null;
+    current?.stop();
+  }, []);
+
+  const discardActor = useCallback(() => {
+    stopActor();
+    previousSnapshotRef.current = null;
+    setLog([]);
+    setExit(null);
+    setSessionReady(false);
+  }, [stopActor]);
+
+  const resetActor = useCallback(() => {
+    stopActor();
+    previousSnapshotRef.current = null;
+    lastLoggedStep.current = null;
+    setSnapshot(null);
+    setSessionReady(false);
+    setLog([]);
+    setExit(null);
+  }, [stopActor]);
+
+  const startActor = useCallback(
+    (input: StartOnboardingActorInput, hooks?: { beforeStart?: () => void }) => {
+      lastLoggedStep.current = null;
+      previousSnapshotRef.current = null;
+      setSessionReady(false);
+      setLog([]);
+      setExit(null);
+      // The last update reaches inspection after `actorRef` is cleared, so the run keeps its own.
+      const run: { actor: OnboardingActor | null } = { actor: null };
+      const machine = deviceOnboardingMachine.provide({
+        actions: {
+          leaveOnboarding: (_, params) => leaveOnboardingRef.current?.(params.reason),
+        },
+      });
+      const actor = createActor(machine, {
+        input: {
+          dmk: input.dmk,
+          sessionId: currentSessionId(),
+          deviceId: input.deviceId,
+          deviceModelId: input.deviceModelId,
+          offerSync: input.offerSync,
+          hostsSeedSetup: input.hostsSeedSetup,
+        },
+        // Each snapshot update carries the event that led to it, including the ones child
+        // actors send back. The log keeps both, so a row shows where the event took the machine.
+        inspect: inspectionEvent => {
+          if (inspectionEvent.type !== "@xstate.snapshot") return;
+          if (inspectionEvent.actorRef !== run.actor) return;
+          if (!("value" in inspectionEvent.snapshot)) return;
+          const event = inspectionEvent.event.type.startsWith("xstate.")
+            ? null
+            : (inspectionEvent.event as OnboardingEvent);
+          // The log must never break the run it records: a failure here only costs a log row.
+          try {
+            logUpdate(stateValueToString(inspectionEvent.snapshot.value), event);
+          } catch {
+            // Nothing to do: the machine goes on without this row.
+          }
+          // A discarded run still finishes its log, but the host only hears the current run.
+          if (event && actorRef.current === run.actor) onEventRef.current?.(event);
+        },
+      });
+      run.actor = actor;
+      actorRef.current = actor;
+      actor.subscribe(nextSnapshot => {
+        if (actorRef.current !== actor) return;
+        const previous = previousSnapshotRef.current;
+        previousSnapshotRef.current = nextSnapshot;
+        onSnapshotRef.current?.(nextSnapshot, previous);
+        setSnapshot(nextSnapshot);
+
+        if (nextSnapshot.status === "done") {
+          const output = nextSnapshot.output;
+          setExit({
+            reason: output.reason,
+            sessionId: output.sessionId,
+            modelId: String(output.device.modelId),
+          });
+          onDoneRef.current?.(output);
+          if (actorRef.current === actor) actorRef.current = null;
+        }
+      });
+      hooks?.beforeStart?.();
+      actor.start();
+    },
+    [currentSessionId, logUpdate],
+  );
+
+  return {
+    state,
+    context,
+    machineContext,
+    log,
+    exit,
+    sendableEvents,
+    nextStates,
+    setSessionReady,
+    actorRef,
+    portsRef,
+    send,
+    sendToActor,
+    startActor,
+    discardActor,
+    resetActor,
+    stopActor,
+  };
+}

@@ -17,7 +17,6 @@ import ExperimentalFloat from "./ExperimentalFloat";
 import LottieTester from "../Developer/LottieTester";
 import PostOnboardingHubTester from "../Developer/PostOnboardingHubTester";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
-import { useFeature } from "@features/platform-feature-flags";
 
 const experimentalTypesMap = {
   toggle: ExperimentalSwitch,
@@ -81,19 +80,18 @@ const ForceProviderFeatureRow = ({
 }) => {
   const { dirty } = feature;
   const dmk = useDeviceManagementKit();
-  const ldmkFeatureFlag = useFeature("ldmkTransport");
 
   const onChange = useCallback(
     (name: EnvName, value: unknown) => {
       if (dirty) {
         onDirtyChange();
       }
-      if (dmk && ldmkFeatureFlag?.enabled && typeof value === "number") {
+      if (typeof value === "number") {
         dmk.setProvider(value);
       }
       setEnvOnAllThreads(name, value);
     },
-    [dirty, onDirtyChange, dmk, ldmkFeatureFlag],
+    [dirty, onDirtyChange, dmk],
   );
 
   return <BaseExperimentalFeatureRow feature={feature} onChange={onChange} />;

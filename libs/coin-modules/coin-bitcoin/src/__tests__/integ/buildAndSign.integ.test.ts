@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
 import BigNumber from "bignumber.js";
 import { script } from "bitcoinjs-lib";
 import BitcoinLikeWallet from "@ledgerhq/wallet-btc/wallet";
@@ -26,16 +27,19 @@ describe("buildAccountTx / signAccountTx", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
+      walletBtcCurrencyById("bitcoin", {
+        explorerId: "btc",
+        explorer: { url: "https://explorers.api.live.ledger.com" },
+      }),
     );
-    await wallet.syncAccount(account);
+    await wallet.syncAccount(jest.fn(), account);
   });
 
   it("should allow to build a transaction", async () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
-    const txInfo = await buildAccountTx({
+    const txInfo = await buildAccountTx(jest.fn(), TEST_CONFIG, {
       fromAccount: account,
       dest: receiveAddress.address,
       amount: new BigNumber(100000),
@@ -44,7 +48,7 @@ describe("buildAccountTx / signAccountTx", () => {
       sequence: 0,
     });
 
-    const tx = await signAccountTx({
+    const tx = await signAccountTx(TEST_LOGGER, {
       btc: new MockBtcSigner(),
       fromAccount: account,
       txInfo,
@@ -56,7 +60,7 @@ describe("buildAccountTx / signAccountTx", () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
-    const { outputs } = await buildAccountTx({
+    const { outputs } = await buildAccountTx(jest.fn(), TEST_CONFIG, {
       fromAccount: account,
       dest: receiveAddress.address,
       amount: new BigNumber(100000),
@@ -87,7 +91,7 @@ describe("buildAccountTx / signAccountTx", () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
     account.xpub.OUTPUT_VALUE_MAX = 60000;
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
-    const txInfo = await buildAccountTx({
+    const txInfo = await buildAccountTx(jest.fn(), TEST_CONFIG, {
       fromAccount: account,
       dest: receiveAddress.address,
       amount: new BigNumber(100000),
@@ -95,7 +99,7 @@ describe("buildAccountTx / signAccountTx", () => {
       utxoPickingStrategy,
       sequence: 0,
     });
-    const tx = await signAccountTx({
+    const tx = await signAccountTx(TEST_LOGGER, {
       btc: new MockBtcSigner(),
       fromAccount: account,
       txInfo,
@@ -108,15 +112,19 @@ describe("buildAccountTx / signAccountTx", () => {
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
     const changeAddress = await wallet.getAccountNewChangeAddress(account);
 
-    const { outputs, changeAddress: changeAddressOutput } = await buildAccountTx({
-      fromAccount: account,
-      dest: receiveAddress.address,
-      amount: new BigNumber(100000),
-      feePerByte: 5,
-      utxoPickingStrategy,
-      sequence: 0,
-      changeAddress: changeAddress.address,
-    });
+    const { outputs, changeAddress: changeAddressOutput } = await buildAccountTx(
+      jest.fn(),
+      TEST_CONFIG,
+      {
+        fromAccount: account,
+        dest: receiveAddress.address,
+        amount: new BigNumber(100000),
+        feePerByte: 5,
+        utxoPickingStrategy,
+        sequence: 0,
+        changeAddress: changeAddress.address,
+      },
+    );
 
     expect(changeAddressOutput).toEqual(changeAddress);
 
@@ -133,7 +141,7 @@ describe("buildAccountTx / signAccountTx", () => {
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
     await expect(
-      buildAccountTx({
+      buildAccountTx(jest.fn(), TEST_CONFIG, {
         fromAccount: account,
         dest: receiveAddress.address,
         amount: new BigNumber(100000),

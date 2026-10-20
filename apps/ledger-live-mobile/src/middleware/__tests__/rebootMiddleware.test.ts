@@ -1,10 +1,8 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
 import { rebootMiddleware } from "../rebootMiddleware";
 import { reboot } from "~/actions/appstate";
-import { setCountervaluesState } from "~/actions/countervalues";
-import { AppStateActionTypes, CountervaluesActionTypes } from "~/actions/types";
-
-jest.mock("react-native-splash-screen", () => ({ show: jest.fn() }));
+import { setCountervaluesState, wipeCountervalues } from "@domain/entity-market-countervalues";
+import { AppStateActionTypes } from "~/actions/types";
 
 function buildStore() {
   const dispatched: string[] = [];
@@ -31,10 +29,7 @@ describe("rebootMiddleware", () => {
 
     store.dispatch(reboot());
 
-    expect(dispatched).toEqual([
-      AppStateActionTypes.INCREMENT_REBOOT_ID,
-      CountervaluesActionTypes.COUNTERVALUES_WIPE,
-    ]);
+    expect(dispatched).toEqual([AppStateActionTypes.INCREMENT_REBOOT_ID, wipeCountervalues.type]);
   });
 
   it("does not dispatch wipeCountervalues for unrelated actions", () => {
@@ -42,6 +37,6 @@ describe("rebootMiddleware", () => {
 
     store.dispatch(setCountervaluesState({} as never));
 
-    expect(dispatched).not.toContain(CountervaluesActionTypes.COUNTERVALUES_WIPE);
+    expect(dispatched).not.toContain(wipeCountervalues.type);
   });
 });

@@ -24,8 +24,8 @@ wiring, `renderAddresses`). Keys read from the host app's **default** namespace 
 | `payTab.contacts.addressPicker.{title,addAddress}` | Address picker (web dialog, native sheet) |
 
 Both apps must carry these keys at the same path until translation keys are colocated per feature
-(a follow-up of [LIVE-36540](https://ledgerhq.atlassian.net/browse/LIVE-36540)). The add-contact
-dialog copy stays owned by `@features/flow-contacts-add-contact` and is passed via `addContact.labels`.
+(a follow-up of [LIVE-36540](https://ledgerhq.atlassian.net/browse/LIVE-36540)). Add-contact dialog
+copy is resolved inside `@features/flow-contacts-add-contact`.
 
 ## Web
 
@@ -33,7 +33,7 @@ dialog copy stays owned by `@features/flow-contacts-add-contact` and is passed v
 import { Contacts } from "@features/flow-pay-contact";
 
 <Contacts
-  addContact={{ labels, contactCreation, onRequestAddContact, onSaveSuccess, callbacks }}
+  addContact={{ contactCreation, onRequestAddContact, onSaveSuccess, callbacks }}
   renderAddresses={addresses => <PayContactAddresses addresses={addresses} />}
   onContactPress={openNewPayment}
   onViewContact={openContactDetail}
@@ -55,7 +55,7 @@ a contact is pressed so the user can pick which address to pay. `useContactAddre
 builds the presentation groups (addresses segmented by network with asset-aware icons and truncated
 display), owns visibility and the selected contact, and resolves its own copy through
 `@shared/i18n`. The host injects behavior only — no labels. Grouping, icon resolution and
-truncation are shared from [`@features/flow-contacts`](../contacts).
+truncation are shared from [`@features/flow-contacts-detail`](../flow-contacts-detail).
 
 ```tsx
 import { ContactAddressPicker, useContactAddressPickerViewModel } from "@features/flow-pay-contact";

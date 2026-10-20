@@ -19,7 +19,7 @@ describe("ViewAllTile", () => {
   it("should render correctly", () => {
     render(<ViewAllTile />);
 
-    expect(screen.getByText("View all")).toBeInTheDocument();
+    expect(screen.getByText("More")).toBeInTheDocument();
   });
 
   it("should render ChevronRight icon", () => {
@@ -32,7 +32,7 @@ describe("ViewAllTile", () => {
   it("should navigate to market page when clicked", async () => {
     const { user } = render(<ViewAllTile />);
 
-    const tile = screen.getByText("View all").closest("div[role='button']");
+    const tile = screen.getByText("More").closest("div[role='button']");
     if (tile) {
       await user.click(tile);
       expect(mockNavigate).toHaveBeenCalledWith("/market");

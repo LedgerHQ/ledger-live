@@ -18,6 +18,7 @@ import "./config/bridge-setup";
 import "./analytics/registerTransactionObserver";
 import Config from "react-native-config";
 import useEnv from "@features/platform-env";
+import { AppAvailability } from "@features/flow-app-availability";
 import { init } from "~/e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
@@ -79,7 +80,6 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
-import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
 import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
@@ -154,6 +154,7 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const datadogFF = useFeature("llmDatadog");
   const providerNumber = useEnv("FORCE_PROVIDER");
+  const baseSocketUrl = useEnv("BASE_SOCKET_URL");
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
   const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
   const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
@@ -239,6 +240,12 @@ function App() {
     // setting provider only at initialisation
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk, providerNumber]);
+
+  useEffect(() => {
+    if (baseSocketUrl) {
+      dmk?.setWebSocketUrl(baseSocketUrl);
+    }
+  }, [dmk, baseSocketUrl]);
 
   useEffect(() => registerTransports(), []);
 
@@ -398,7 +405,7 @@ export default class Root extends Component {
     logStartupEvent("Root render");
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-        {({ ready, initialCountervalues, currencyInitialized }) =>
+        {({ ready, currencyInitialized }) =>
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
@@ -425,14 +432,14 @@ export default class Root extends Component {
                                 <NavBarColorHandler />
                                 <GestureHandlerRootView style={styles.root}>
                                   <WaitForAppReady currencyInitialized={currencyInitialized}>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <AppGeoBlocker>
+                                    <AppProviders>
+                                      <AppAvailability>
                                         <AppVersionBlocker>
                                           <BridgeSyncProvider>
                                             <App />
                                           </BridgeSyncProvider>
                                         </AppVersionBlocker>
-                                      </AppGeoBlocker>
+                                      </AppAvailability>
                                     </AppProviders>
                                   </WaitForAppReady>
                                 </GestureHandlerRootView>

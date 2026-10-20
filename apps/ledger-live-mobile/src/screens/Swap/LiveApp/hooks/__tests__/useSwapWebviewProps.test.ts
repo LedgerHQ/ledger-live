@@ -15,6 +15,12 @@ jest.mock("@react-navigation/native", () => ({
   })),
 }));
 
+let mockSwapApiBase = "https://swap.ledger.com/v5";
+jest.mock("@features/platform-env", () => ({
+  __esModule: true,
+  default: (name: string) => (name === "SWAP_API_BASE" ? mockSwapApiBase : ""),
+}));
+
 jest.mock("../../customHandlers", () => ({
   useSwapCustomHandlers: jest.fn(() => ({ "custom.getFee": jest.fn() })),
 }));
@@ -221,5 +227,52 @@ describe("useSwapWebviewProps", () => {
 
     expect(result.current.inputs.llmWalletApiDeviceIntentSignVariant).toBe("control");
     expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("false");
+  });
+
+  describe("swapApiEnv", () => {
+    afterEach(() => {
+      mockSwapApiBase = "https://swap.ledger.com/v5";
+    });
+
+    it("should pass stg when the swap backend is staging", () => {
+      mockSwapApiBase = "https://swap-stg.ledger-test.com/v5";
+
+      const { result } = renderHook(() =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      );
+
+      expect(result.current.inputs.swapApiEnv).toBe("stg");
+    });
+
+    it("should pass prd when the swap backend is production", () => {
+      const { result } = renderHook(() =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      );
+
+      expect(result.current.inputs.swapApiEnv).toBe("prd");
+      expect(result.current.inputs).not.toHaveProperty("swapApiBase");
+    });
+
+    it("should omit swapApiEnv when the swap backend host is unknown", () => {
+      mockSwapApiBase = "http://localhost:3000/v5";
+
+      const { result } = renderHook(() =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      );
+
+      expect(result.current.inputs.swapApiEnv).toBeUndefined();
+    });
   });
 });

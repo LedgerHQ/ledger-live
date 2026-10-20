@@ -1,4 +1,5 @@
 import type { DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
 import {
@@ -9,16 +10,19 @@ import {
 
 import { BaseConnectionErrorTypes, type DesktopConnectionError } from "./types";
 
+const MATCHABLE_TRANSPORTS = new Set<string>([
+  webHidTransportIdentifier,
+  speculosIdentifier,
+  mockserverIdentifier,
+]);
+
 export const filterMatchedDevices = (
   discoveredDevices: DiscoveredDevice[],
   knownDevices: KnownDevice[],
 ): MatchedDevice[] => {
   return discoveredDevices
     .map(device => {
-      if (
-        device.transport !== webHidTransportIdentifier &&
-        device.transport !== speculosIdentifier
-      ) {
+      if (!MATCHABLE_TRANSPORTS.has(device.transport)) {
         return null;
       }
 

@@ -5,7 +5,7 @@ import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "./errors";
-import varuint from "varuint-bitcoin";
+import { encode as encodeVarInt } from "varuint-bitcoin";
 import { NetworkInfoResponse } from "./explorer/types";
 import { bech32m } from "./crypto/bech32m";
 
@@ -236,9 +236,8 @@ export function scriptToAddress(script: Buffer, crypto: ICrypto): string {
 
 export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/1f44f722d30cd14a1861c8546e6b455f73862c1e/src/bufferutils.js#L78
-  varuint.encode(i, buffer, offset);
-  offset += varuint.encode.bytes;
-  return offset;
+  const { bytes } = encodeVarInt(i, buffer, offset);
+  return offset + bytes;
 }
 
 /**
@@ -367,28 +366,32 @@ export async function getRelayFeeFloorSatVb(
   }
 }
 
+/** Minimum fee-rate increase of an RBF replacement over the original, as a ratio: +10 %. */
+export const DEFAULT_RBF_MIN_BUMP_RATIO = 0.1;
+
 /**
  * Incremental relay fee (sat/vB) for RBF: replacement must increase fee by at least this much
  * per vB (and in total). When the explorer does not provide incremental_fee, use a safer
  * default (1 sat/vB) so replacements are accepted by stricter nodes.
  *
- * When originalFeeRateSatVb is provided, the returned bump is: if 10% of original > 1 sat/vB
- * then use 10%, otherwise use 1 sat/vB (e.g. 15 sat/vB → 10% = 1.5 → bump 2; 5 sat/vB → 10% = 0.5 → bump 1).
+ * When originalFeeRateSatVb is provided, the returned bump is: if `minBumpRatio` of original > 1 sat/vB
+ * then use it, otherwise use 1 sat/vB (with the default 10%: 15 sat/vB → 1.5 → bump 2; 5 sat/vB → 0.5 → bump 1).
  */
 export async function getIncrementalFeeFloorSatVb(
   explorer: unknown,
   originalFeeRateSatVb?: BigNumber,
+  minBumpRatio = DEFAULT_RBF_MIN_BUMP_RATIO,
 ): Promise<BigNumber> {
   const defaultBump = new BigNumber(1);
 
-  // Minimum bump: max(ceil(10% of original), 1 sat/vB)
-  const tenPercentBump =
+  // Minimum bump: max(ceil(minBumpRatio of original), 1 sat/vB)
+  const ratioBump =
     originalFeeRateSatVb !== undefined &&
     originalFeeRateSatVb.isFinite() &&
     originalFeeRateSatVb.gte(0)
-      ? originalFeeRateSatVb.times(0.1).integerValue(BigNumber.ROUND_CEIL)
+      ? originalFeeRateSatVb.times(minBumpRatio).integerValue(BigNumber.ROUND_CEIL)
       : defaultBump;
-  const minBumpFromRule = BigNumber.max(tenPercentBump, defaultBump);
+  const minBumpFromRule = BigNumber.max(ratioBump, defaultBump);
 
   try {
     const maybeExplorer = explorer as { getNetwork?: () => Promise<NetworkInfoResponse> };

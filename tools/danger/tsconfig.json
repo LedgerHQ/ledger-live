@@ -6,10 +6,12 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "types": []
+    "types": ["node"]
   },
   "include": ["**/*.ts"]
 }

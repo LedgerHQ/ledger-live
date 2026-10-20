@@ -27,40 +27,15 @@ const teamCoinIntegration = {
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
-  BITCOIN_STUCK_TRANSACTION_TIMEOUT: {
-    def: 20 * 60 * 1000,
-    parser: intParser,
-    desc: "Time after which an optimistic operation is considered stuck",
-  },
   COSMOS_GAS_AMPLIFIER: {
     def: 1.3, // Same as Keplr
     parser: floatParser,
     desc: "Cosmos gas estimate multiplier",
   },
-  API_POLKADOT_INDEXER: {
-    parser: stringParser,
-    def: "https://polkadot.coin.ledger.com",
-    desc: "Explorer API for polkadot",
-  },
-  API_POLKADOT_SIDECAR: {
-    parser: stringParser,
-    def: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc",
-    desc: "Polkadot rest-api base URL",
-  },
   API_POLKADOT_SIDECAR_CREDENTIALS: {
     parser: stringParser,
     def: "",
     desc: "Polkadot Sidecar API credentials",
-  },
-  API_POLKADOT_NODE: {
-    parser: stringParser,
-    def: "https://polkadot-fullnodes.api.live.ledger.com",
-    desc: "Polkadot Node",
-  },
-  POLKADOT_ELECTION_STATUS_THRESHOLD: {
-    def: 25,
-    parser: intParser,
-    desc: "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
   },
   MULTIVERSX_API_ENDPOINT: {
     parser: stringParser,
@@ -311,11 +286,6 @@ const teamCoinIntegration = {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "Ledger generic explorer API",
-  },
-  EXPLORER_REGTEST: {
-    def: "http://localhost:9876",
-    parser: stringParser,
-    desc: "Ledger regtest Bitcoin explorer API",
   },
   LEDGER_REST_API_BASE: {
     def: "https://explorers.api.live.ledger.com",

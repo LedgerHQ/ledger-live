@@ -38,13 +38,19 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber | null;
   nonce?: BigNumber;
   memo?: string;
-  network: keyof typeof StacksNetwork;
-  anchorMode: AnchorMode;
+  /** Set by the legacy bridge's `createTransaction`; absent on a generic-bridge transaction, which
+   * reads the configured network instead. Classic consumers narrow it before use. */
+  network?: keyof typeof StacksNetwork;
+  anchorMode?: AnchorMode;
   /** pox-5 staking mode; unset (or "send") on a classic transfer. */
   mode?: StacksTransactionMode;
   /** pox-5 signer-manager contract principal (the staking pool); unused on a transfer. */
   valAddress?: string;
   familySpecificData?: StacksFamilySpecificData;
+  /** The generic bridge's token selector (SIP-010 `CONTRACT_ID::ASSET_NAME`); unset on the legacy
+   * bridge, which selects the token through `subAccountId`. */
+  assetReference?: string;
+  assetOwner?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -53,11 +59,14 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   nonce?: string;
   memo?: string;
-  network: string;
-  anchorMode: number;
+  /** Absent on a generic-bridge transaction (see `Transaction.assetReference`). */
+  network?: string;
+  anchorMode?: number;
   mode?: StacksTransactionMode;
   valAddress?: string;
   familySpecificData?: StacksFamilySpecificData;
+  assetReference?: string;
+  assetOwner?: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

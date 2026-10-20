@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
-import { closeAllModal, openModal } from "~/renderer/actions/modals";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import { openModal } from "~/renderer/actions/modals";
 import { sendHandler, receiveHandler, delegateHandler } from "../transactionFlow.handler";
 import { createMockContext } from "./test-utils";
 
@@ -23,11 +22,6 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
 
 jest.mock("~/renderer/actions/modals", () => ({
   openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
-  closeAllModal: jest.fn(() => ({ type: "CLOSE_ALL_MODAL" })),
-}));
-
-jest.mock("~/renderer/drawers/Provider", () => ({
-  setDrawer: jest.fn(),
 }));
 
 jest.mock("../../utils", () => ({
@@ -39,8 +33,6 @@ import { getAccountsOrSubAccountsByCurrency } from "../../utils";
 const mockFindCryptoCurrencyByKeyword = jest.mocked(findCryptoCurrencyByKeyword);
 const mockGetAccountsOrSubAccountsByCurrency = jest.mocked(getAccountsOrSubAccountsByCurrency);
 const mockOpenModal = jest.mocked(openModal);
-const mockCloseAllModal = jest.mocked(closeAllModal);
-const mockSetDrawer = jest.mocked(setDrawer);
 
 const createMockAccount = (currencyId: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
@@ -65,8 +57,6 @@ describe("transactionFlow.handler", () => {
 
       await sendHandler({ type: "send" }, context);
 
-      expect(mockCloseAllModal).toHaveBeenCalled();
-      expect(mockSetDrawer).toHaveBeenCalled();
       expect(context.openSendFlow).toHaveBeenCalledWith({
         recipient: undefined,
         amount: undefined,
@@ -143,7 +133,6 @@ describe("transactionFlow.handler", () => {
 
       await receiveHandler({ type: "receive" }, context);
 
-      expect(mockCloseAllModal).toHaveBeenCalled();
       expect(context.dispatch).toHaveBeenCalledWith(
         mockOpenModal("MODAL_RECEIVE", { shouldUseReceiveOptions: false }),
       );
@@ -176,7 +165,6 @@ describe("transactionFlow.handler", () => {
 
       await delegateHandler({ type: "delegate", currency: "ethereum" }, context);
 
-      expect(mockCloseAllModal).not.toHaveBeenCalled();
       expect(context.dispatch).not.toHaveBeenCalled();
     });
 
@@ -185,7 +173,6 @@ describe("transactionFlow.handler", () => {
 
       await delegateHandler({ type: "delegate" }, context);
 
-      expect(mockCloseAllModal).not.toHaveBeenCalled();
       expect(context.dispatch).not.toHaveBeenCalled();
     });
 
@@ -198,7 +185,6 @@ describe("transactionFlow.handler", () => {
 
       await delegateHandler({ type: "delegate", currency: "tezos" }, context);
 
-      expect(mockCloseAllModal).toHaveBeenCalled();
       expect(context.dispatch).toHaveBeenCalledWith(
         mockOpenModal("MODAL_DELEGATE", {
           recipient: undefined,

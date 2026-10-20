@@ -1,4 +1,4 @@
-import os from "os";
+import { osHostname, osPlatform } from "~/system";
 
 const platformMap: Record<string, string | undefined> = {
   darwin: "Mac",
@@ -7,8 +7,8 @@ const platformMap: Record<string, string | undefined> = {
 };
 
 export function useInstanceName(): string {
-  const platform = os.platform();
-  const hostname = os.hostname();
+  const platform = osPlatform();
+  const hostname = osHostname();
   const name = `${platformMap[platform] || platform}${hostname ? " " + hostname : ""}`;
   return name;
 }

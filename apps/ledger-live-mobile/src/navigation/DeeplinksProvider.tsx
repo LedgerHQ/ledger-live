@@ -430,6 +430,14 @@ export const DeeplinksProvider = ({
                         },
                       },
                       /**
+                       * ie: "ledgerlive://borrow" will open the borrow screen
+                       */
+                      [NavigatorName.Borrow]: {
+                        screens: {
+                          [ScreenName.Borrow]: "borrow",
+                        },
+                      },
+                      /**
                        * ie: "ledgerlive://swap/history?swapId=XXXX" -> will open the swap history with that swap's status drawer
                        */
                       [NavigatorName.SwapSubScreens]: {
@@ -510,14 +518,6 @@ export const DeeplinksProvider = ({
                                   },
                                 },
                               }),
-                          [NavigatorName.Borrow]: {
-                            screens: {
-                              /**
-                               * ie: "ledgerlive://borrow" will open the borrow screen
-                               */
-                              [ScreenName.Borrow]: "borrow",
-                            },
-                          },
                           ...(lwmPayTabFlag?.enabled && {
                             /**
                              * ie: "ledgerlive://paytab" will open the Pay tab

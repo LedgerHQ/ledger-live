@@ -1,5 +1,109 @@
 # @ledgerhq/live-dmk
 
+## 0.35.0
+
+### Minor Changes
+
+- [#22776](https://github.com/LedgerHQ/ledger-live/pull/22776) [`d33fd72`](https://github.com/LedgerHQ/ledger-live/commit/d33fd721a5d1a9363f820738f6aadbeb0a8b3cad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the connectNewDevice state machine. It discovers devices, lets the user select one, connects to it, and reports the result, with a device not found delay and a success delay. `DeviceDiscoveryService` now exposes the `transportIds` it discovers on.
+
+- [#22599](https://github.com/LedgerHQ/ledger-live/pull/22599) [`d819300`](https://github.com/LedgerHQ/ledger-live/commit/d819300df11d1e58ad33dbb8d0dbdb6f20c8dd93) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add failureType and subError properties to Device Intent Executor deviceflow_failed and deviceflow_aborted events
+
+- [#23178](https://github.com/LedgerHQ/ledger-live/pull/23178) [`e308deb`](https://github.com/LedgerHQ/ledger-live/commit/e308deb3e4f812f01166de17bb28c587a290b9bb) Thanks [@benruseau](https://github.com/benruseau)! - Add the OS updates orchestrator React layer: a generic `OsUpdatesOrchestratorComponent` and `useOsUpdatesOrchestrator` hook in live-common that render platform-injected components for each step
+
+  Add the mobile pre-checks, create backup, apply updates and restore backup components, and persist the device backup in the app storage
+
+  Use the real components in the OS updates orchestrator debug screen
+
+  Fix the OS updates apply step after a bootloader recovery: when the device comes back on an OS, install the first update of the resolved path from its OSU firmware instead of its final firmware, which skipped an update
+
+- [#23121](https://github.com/LedgerHQ/ledger-live/pull/23121) [`3a45eb3`](https://github.com/LedgerHQ/ledger-live/commit/3a45eb3e29f417f24570787e76d977cefa5090d9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the optional `filterListedDevices` input to the connectNewDevice state machine. It selects the listed devices that `Discovering` shows, and a hidden device keeps its position in the list.
+
+- [#22995](https://github.com/LedgerHQ/ledger-live/pull/22995) [`3444d16`](https://github.com/LedgerHQ/ledger-live/commit/3444d16d5159b6e415b4dd0ab4fedfbf4cbeb260) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Connected` and `Done` UI states now carry the connected `device`, so that the UI can show the transport that was used.
+
+- [#22765](https://github.com/LedgerHQ/ledger-live/pull/22765) [`e3e6c22`](https://github.com/LedgerHQ/ledger-live/commit/e3e6c222ddba748a7e9e03e85f5919ce8e5c28bd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract the device discovery service and the connectivity types shared by device connection flows into a `deviceConnectivity` folder. The discovery, connection and unknown error UI states now use the shared `ConnectivityUIStateTypes` enum. `ConnectDeviceUIStateTypes` becomes a const object that includes these shared members, so type positions use `typeof ConnectDeviceUIStateTypes.X` or the new `ConnectDeviceUIStateType` type. The device type moves to the shared part as `Device`, and connectDevice keeps `KnownDevice` as an alias of it. connectDevice behaviour is unchanged.
+
+- [#22847](https://github.com/LedgerHQ/ledger-live/pull/22847) [`1a9b21e`](https://github.com/LedgerHQ/ledger-live/commit/1a9b21e6cc971d5e5b069cab968826b15332024b) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectNewDeviceUseCase`, which exposes the connectNewDevice state machine as an `Observable` of UI states, and the mobile `connectNewDevice`, which discovers on RN_BLE and Speculos on iOS and also on RN_HID on Android.
+
+- [#22950](https://github.com/LedgerHQ/ledger-live/pull/22950) [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Keep the DMK firmware distribution salt in sync with the user ID of the identities store, so DMK flows follow the progressive OS rollout on desktop and mobile
+
+- [#22846](https://github.com/LedgerHQ/ledger-live/pull/22846) [`42d4dc2`](https://github.com/LedgerHQ/ledger-live/commit/42d4dc25044dceb9936c1907fb5ea0838fa0a64b) Thanks [@benruseau](https://github.com/benruseau)! - Add the apply updates sub-step to the OS updates orchestrator, covering the OSU install, the MCU flash loop and the final firmware install
+
+  Wait out the device reboots each install and flash leaves behind, reconnecting under the same session id
+
+  Add the restore backup step, which runs as the last tenth of the bar when it follows an update and on its own when there is nothing left to update
+
+  Sync `BASE_SOCKET_URL` to the DMK secure channel WebSocket URL
+
+- [#23056](https://github.com/LedgerHQ/ledger-live/pull/23056) [`9a39ad5`](https://github.com/LedgerHQ/ledger-live/commit/9a39ad5eeeaefff74791ec01db8c62c102b6e54a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Discovering` UI state now keeps the devices in the order in which they were first discovered. A device that discovery no longer reports stays at its position with `isAvailable: false` and no `onSelect`. It becomes available again at the same position when discovery reports it again. The state machine takes a new `getDiscoveredDeviceKey` input to identify a device from one discovery update to the next: on mobile, a Bluetooth device by its id and a USB device by its model. Each device of the list has this `key`, to use as its row key.
+
+### Patch Changes
+
+- Updated dependencies [[`d1eeaab`](https://github.com/LedgerHQ/ledger-live/commit/d1eeaabf43a54a3d2c4796ea1c5b11a0b9202814), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be)]:
+  - @domain/entity-client-identity@0.3.0
+  - @ledgerhq/types-devices@7.1.0
+
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#22776](https://github.com/LedgerHQ/ledger-live/pull/22776) [`d33fd72`](https://github.com/LedgerHQ/ledger-live/commit/d33fd721a5d1a9363f820738f6aadbeb0a8b3cad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the connectNewDevice state machine. It discovers devices, lets the user select one, connects to it, and reports the result, with a device not found delay and a success delay. `DeviceDiscoveryService` now exposes the `transportIds` it discovers on.
+
+- [#22599](https://github.com/LedgerHQ/ledger-live/pull/22599) [`d819300`](https://github.com/LedgerHQ/ledger-live/commit/d819300df11d1e58ad33dbb8d0dbdb6f20c8dd93) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add failureType and subError properties to Device Intent Executor deviceflow_failed and deviceflow_aborted events
+
+- [#23178](https://github.com/LedgerHQ/ledger-live/pull/23178) [`e308deb`](https://github.com/LedgerHQ/ledger-live/commit/e308deb3e4f812f01166de17bb28c587a290b9bb) Thanks [@benruseau](https://github.com/benruseau)! - Add the OS updates orchestrator React layer: a generic `OsUpdatesOrchestratorComponent` and `useOsUpdatesOrchestrator` hook in live-common that render platform-injected components for each step
+
+  Add the mobile pre-checks, create backup, apply updates and restore backup components, and persist the device backup in the app storage
+
+  Use the real components in the OS updates orchestrator debug screen
+
+  Fix the OS updates apply step after a bootloader recovery: when the device comes back on an OS, install the first update of the resolved path from its OSU firmware instead of its final firmware, which skipped an update
+
+- [#23121](https://github.com/LedgerHQ/ledger-live/pull/23121) [`3a45eb3`](https://github.com/LedgerHQ/ledger-live/commit/3a45eb3e29f417f24570787e76d977cefa5090d9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the optional `filterListedDevices` input to the connectNewDevice state machine. It selects the listed devices that `Discovering` shows, and a hidden device keeps its position in the list.
+
+- [#22995](https://github.com/LedgerHQ/ledger-live/pull/22995) [`3444d16`](https://github.com/LedgerHQ/ledger-live/commit/3444d16d5159b6e415b4dd0ab4fedfbf4cbeb260) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Connected` and `Done` UI states now carry the connected `device`, so that the UI can show the transport that was used.
+
+- [#22765](https://github.com/LedgerHQ/ledger-live/pull/22765) [`e3e6c22`](https://github.com/LedgerHQ/ledger-live/commit/e3e6c222ddba748a7e9e03e85f5919ce8e5c28bd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract the device discovery service and the connectivity types shared by device connection flows into a `deviceConnectivity` folder. The discovery, connection and unknown error UI states now use the shared `ConnectivityUIStateTypes` enum. `ConnectDeviceUIStateTypes` becomes a const object that includes these shared members, so type positions use `typeof ConnectDeviceUIStateTypes.X` or the new `ConnectDeviceUIStateType` type. The device type moves to the shared part as `Device`, and connectDevice keeps `KnownDevice` as an alias of it. connectDevice behaviour is unchanged.
+
+- [#22847](https://github.com/LedgerHQ/ledger-live/pull/22847) [`1a9b21e`](https://github.com/LedgerHQ/ledger-live/commit/1a9b21e6cc971d5e5b069cab968826b15332024b) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectNewDeviceUseCase`, which exposes the connectNewDevice state machine as an `Observable` of UI states, and the mobile `connectNewDevice`, which discovers on RN_BLE and Speculos on iOS and also on RN_HID on Android.
+
+- [#22950](https://github.com/LedgerHQ/ledger-live/pull/22950) [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Keep the DMK firmware distribution salt in sync with the user ID of the identities store, so DMK flows follow the progressive OS rollout on desktop and mobile
+
+- [#22846](https://github.com/LedgerHQ/ledger-live/pull/22846) [`42d4dc2`](https://github.com/LedgerHQ/ledger-live/commit/42d4dc25044dceb9936c1907fb5ea0838fa0a64b) Thanks [@benruseau](https://github.com/benruseau)! - Add the apply updates sub-step to the OS updates orchestrator, covering the OSU install, the MCU flash loop and the final firmware install
+
+  Wait out the device reboots each install and flash leaves behind, reconnecting under the same session id
+
+  Add the restore backup step, which runs as the last tenth of the bar when it follows an update and on its own when there is nothing left to update
+
+  Sync `BASE_SOCKET_URL` to the DMK secure channel WebSocket URL
+
+- [#23056](https://github.com/LedgerHQ/ledger-live/pull/23056) [`9a39ad5`](https://github.com/LedgerHQ/ledger-live/commit/9a39ad5eeeaefff74791ec01db8c62c102b6e54a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Discovering` UI state now keeps the devices in the order in which they were first discovered. A device that discovery no longer reports stays at its position with `isAvailable: false` and no `onSelect`. It becomes available again at the same position when discovery reports it again. The state machine takes a new `getDiscoveredDeviceKey` input to identify a device from one discovery update to the next: on mobile, a Bluetooth device by its id and a USB device by its model. Each device of the list has this `key`, to use as its row key.
+
+### Patch Changes
+
+- Updated dependencies [[`d1eeaab`](https://github.com/LedgerHQ/ledger-live/commit/d1eeaabf43a54a3d2c4796ea1c5b11a0b9202814), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be)]:
+  - @domain/entity-client-identity@0.3.0-next.0
+  - @ledgerhq/types-devices@7.1.0
+
+## 0.34.0
+
+### Minor Changes
+
+- [#22653](https://github.com/LedgerHQ/ledger-live/pull/22653) [`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump DMK dependencies: device-management-kit 1.10.0, device-signer-kit-solana 1.13.3, device-signer-kit-ethereum 1.18.1, context-module 2.6.0, dmk-ledger-wallet 0.6.0, device-contacts-kit 0.5.0, signer-utils 1.3.0, device-transport-kit-mockserver 1.1.2
+
+- [#22503](https://github.com/LedgerHQ/ledger-live/pull/22503) [`33b4952`](https://github.com/LedgerHQ/ledger-live/commit/33b4952ef04d4e0528d2735ba299b4a8073e447e) Thanks [@daniel-choinski-ledger](https://github.com/daniel-choinski-ledger)! - Inject the Tron address book into the DMK Tron signer so Tron transactions can clear-sign saved contact names.
+
+  Adds a generic `AddressBookProvider<T>` in `live-dmk-shared` (the EVM provider is refactored onto it), a `tronAddressBookProvider` instance, a pure `toTronAddressBook` mapper (`Contact[] -> TronAddressBook`, Tron-family only, no chain id, `ledgerAccounts` always empty), and registers the source at each app's composition root. An absent or empty book leaves signing behavior unchanged.
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#22653](https://github.com/LedgerHQ/ledger-live/pull/22653) [`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump DMK dependencies: device-management-kit 1.10.0, device-signer-kit-solana 1.13.3, device-signer-kit-ethereum 1.18.1, context-module 2.6.0, dmk-ledger-wallet 0.6.0, device-contacts-kit 0.5.0, signer-utils 1.3.0, device-transport-kit-mockserver 1.1.2
+
+- [#22503](https://github.com/LedgerHQ/ledger-live/pull/22503) [`33b4952`](https://github.com/LedgerHQ/ledger-live/commit/33b4952ef04d4e0528d2735ba299b4a8073e447e) Thanks [@daniel-choinski-ledger](https://github.com/daniel-choinski-ledger)! - Inject the Tron address book into the DMK Tron signer so Tron transactions can clear-sign saved contact names.
+
+  Adds a generic `AddressBookProvider<T>` in `live-dmk-shared` (the EVM provider is refactored onto it), a `tronAddressBookProvider` instance, a pure `toTronAddressBook` mapper (`Contact[] -> TronAddressBook`, Tron-family only, no chain id, `ledgerAccounts` always empty), and registers the source at each app's composition root. An absent or empty book leaves signing behavior unchanged.
+
 ## 0.33.0
 
 ### Minor Changes
@@ -189,53 +293,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.4-next.0
-
-## 0.25.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.3
-
-## 0.25.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.3-next.0
-
-## 0.25.0
-
-### Minor Changes
-
-- [#17583](https://github.com/LedgerHQ/ledger-live/pull/17583) [`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix sticky user interaction state in EnsureAppReady pending mapping: when ConnectApp reports `UserInteractionRequired.None` without an install plan, emit a generic loading state instead of returning null so the UI no longer remains stuck on the previous interaction prompt.
-
-- [#17617](https://github.com/LedgerHQ/ledger-live/pull/17617) [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Improve console log readability when debugging via Chrome / React Native DevTools: mobile's `ConsoleLogger` now uses `console.groupCollapsed` with raw objects instead of stringifying everything to JSON, and the DMK logger emits a clearer `DMK[tag]` log type (with backward-compatible filtering in the logs viewer) instead of the generic `live-dmk-logger`.
-
-- [#17436](https://github.com/LedgerHQ/ledger-live/pull/17436) [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Reduce `EnsureAppReadyState` installing-app variant to `{ type }` only so consecutive emissions during installation dedupe via deep-equality and render at most once
-
-- [#17578](https://github.com/LedgerHQ/ledger-live/pull/17578) [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66) Thanks [@qperrot](https://github.com/qperrot)! - fix(live-dmk-shared): handle Node.js 22 ESM/CJS interop for hw-transport default import
-
-  When loaded via require() in Node.js 22, @ledgerhq/hw-transport resolves to its
-  CJS build where the class is exposed as `module.exports.default`. Unwrap the
-  default export with a fallback so DmkCompatTransport can correctly extend Transport
-  in both ESM and CJS environments.
-
-## 0.25.0-next.0
-
-### Minor Changes
-
-- [#17583](https://github.com/LedgerHQ/ledger-live/pull/17583) [`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix sticky user interaction state in EnsureAppReady pending mapping: when ConnectApp reports `UserInteractionRequired.None` without an install plan, emit a generic loading state instead of returning null so the UI no longer remains stuck on the previous interaction prompt.
-
-- [#17617](https://github.com/LedgerHQ/ledger-live/pull/17617) [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Improve console log readability when debugging via Chrome / React Native DevTools: mobile's `ConsoleLogger` now uses `console.groupCollapsed` with raw objects instead of stringifying everything to JSON, and the DMK logger emits a clearer `DMK[tag]` log type (with backward-compatible filtering in the logs viewer) instead of the generic `live-dmk-logger`.
-
-- [#17436](https://github.com/LedgerHQ/ledger-live/pull/17436) [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Reduce `EnsureAppReadyState` installing-app variant to `{ type }` only so consecutive emissions during installation dedupe via deep-equality and render at most once
-
-- [#17578](https://github.com/LedgerHQ/ledger-live/pull/17578) [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66) Thanks [@qperrot](https://github.com/qperrot)! - fix(live-dmk-shared): handle Node.js 22 ESM/CJS interop for hw-transport default import
-
-  When loaded via require() in Node.js 22, @ledgerhq/hw-transport resolves to its
-  CJS build where the class is exposed as `module.exports.default`. Unwrap the
-  default export with a fallback so DmkCompatTransport can correctly extend Transport
-  in both ESM and CJS environments.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

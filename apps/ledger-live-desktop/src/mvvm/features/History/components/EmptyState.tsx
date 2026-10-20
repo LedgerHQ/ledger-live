@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Spot } from "@ledgerhq/lumen-ui-react";
+import { InformationFill } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 
 export function EmptyState() {
@@ -10,7 +11,7 @@ export function EmptyState() {
       className="flex flex-col items-center justify-center min-h-0 flex-1"
       data-testid="history-empty-state"
     >
-      <Spot appearance="info" />
+      <Spot appearance="muted" icon={InformationFill} />
       <span className="heading-4-semi-bold text-base mt-24 mb-8">
         {t("history.emptyState.title")}
       </span>

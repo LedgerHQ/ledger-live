@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { Transaction as SDKTransaction, TransactionId } from "@hashgraph/sdk";
+import { Transaction as SDKTransaction, TransactionId } from "@hiero-ledger/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
@@ -147,11 +147,15 @@ describe("logic utils", () => {
         fee: BigNumber(100),
       });
 
-      expect(getOperationValue({ asset: nativeAsset, operation })).toBe(BigInt(0));
-      expect(getOperationValue({ asset: tokenAsset, operation })).toBe(BigInt(0));
+      expect(getOperationValue({ asset: nativeAsset, operation, accountAddress: "0.0.1234" })).toBe(
+        BigInt(0),
+      );
+      expect(getOperationValue({ asset: tokenAsset, operation, accountAddress: "0.0.1234" })).toBe(
+        BigInt(0),
+      );
     });
 
-    it("should subtract fee from native operations that exclude fees", () => {
+    it("should subtract fee from self-paid native operations that exclude fees", () => {
       OP_TYPES_EXCLUDING_FEES.forEach(type => {
         const operation = getMockedOperation({
           type,
@@ -159,8 +163,32 @@ describe("logic utils", () => {
           fee: BigNumber(100),
         });
 
-        expect(getOperationValue({ asset: nativeAsset, operation })).toBe(BigInt(900));
+        expect(
+          getOperationValue({
+            asset: nativeAsset,
+            operation,
+            accountAddress: "0.0.1234",
+            feesPayer: "0.0.1234",
+          }),
+        ).toBe(BigInt(900));
       });
+    });
+
+    it("should not subtract an external payer's fee from a native OUT operation", () => {
+      const operation = getMockedOperation({
+        type: "OUT",
+        value: BigNumber(10000),
+        fee: BigNumber(1056079),
+      });
+
+      expect(
+        getOperationValue({
+          asset: nativeAsset,
+          operation,
+          accountAddress: "0.0.453351",
+          feesPayer: "0.0.356354",
+        }),
+      ).toBe(BigInt(10000));
     });
 
     it("should return value for other operations", () => {
@@ -176,9 +204,27 @@ describe("logic utils", () => {
         fee: BigNumber(30),
       });
 
-      expect(getOperationValue({ asset: tokenAsset, operation: operationOut })).toBe(BigInt(500));
-      expect(getOperationValue({ asset: tokenAsset, operation: operationIn })).toBe(BigInt(800));
-      expect(getOperationValue({ asset: nativeAsset, operation: operationIn })).toBe(BigInt(800));
+      expect(
+        getOperationValue({
+          asset: tokenAsset,
+          operation: operationOut,
+          accountAddress: "0.0.1234",
+        }),
+      ).toBe(BigInt(500));
+      expect(
+        getOperationValue({
+          asset: tokenAsset,
+          operation: operationIn,
+          accountAddress: "0.0.1234",
+        }),
+      ).toBe(BigInt(800));
+      expect(
+        getOperationValue({
+          asset: nativeAsset,
+          operation: operationIn,
+          accountAddress: "0.0.1234",
+        }),
+      ).toBe(BigInt(800));
     });
   });
 
@@ -359,6 +405,27 @@ describe("logic utils", () => {
 
       const newUrl = getTransactionExplorer(explorerView, mockedOperation);
       expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/0.0.1234567-123-123");
+    });
+
+    it.each([
+      ["standard", Buffer.alloc(48, 0xfb).toString("base64")],
+      ["url-safe", base64ToUrlSafeBase64(Buffer.alloc(48, 0xfb).toString("base64"))],
+    ])(
+      "Tx explorer URL uses the hex hash (decoded from %s base64) if no id is available",
+      (_, hash) => {
+        const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+        const mockedOperation = getMockedOperation({ hash });
+
+        const newUrl = getTransactionExplorer(explorerView, mockedOperation);
+        expect(newUrl).toBe(`https://hashscan.io/mainnet/transaction/${"fb".repeat(48)}`);
+      },
+    );
+
+    it("Tx explorer URL is undefined if neither id nor a valid hash is available", () => {
+      const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+      const mockedOperation = getMockedOperation({ hash: "" });
+
+      expect(getTransactionExplorer(explorerView, mockedOperation)).toBeUndefined();
     });
   });
 

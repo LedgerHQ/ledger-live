@@ -41,6 +41,32 @@ describe("ActionConfirmationDialog Integration", () => {
       expect(screen.getByText("You need to swap first")).toBeVisible();
       expect(screen.getByText("Go to Swap")).toBeVisible();
     });
+
+    it("should render the Download symbol when the icon is withdraw", async () => {
+      const { store } = render(<ActionConfirmationDialog />);
+
+      act(() => {
+        store.dispatch(
+          setActionDialog({
+            title: "Withdraw USD Coin",
+            description: "Your position will be closed",
+            ctaLabel: "Withdraw in full",
+            icon: "withdraw",
+          }),
+        );
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole("dialog")).toBeVisible();
+      });
+
+      const spot = screen.getByRole("dialog").querySelector(".spot-h-72");
+      expect(spot).toBeVisible();
+      expect(spot?.querySelector("path")).toHaveAttribute(
+        "d",
+        "M5.63 7.407 8 9.778l2.37-2.37M8 9.777V2.667m5.333 8.296a2.37 2.37 0 0 1-2.37 2.37H5.037a2.37 2.37 0 0 1-2.37-2.37",
+      );
+    });
   });
 
   describe("user interactions", () => {

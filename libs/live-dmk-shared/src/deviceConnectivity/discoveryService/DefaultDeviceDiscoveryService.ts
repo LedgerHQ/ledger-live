@@ -40,6 +40,10 @@ export class DefaultDeviceDiscoveryService<
     >,
   ) {}
 
+  get transportIds(): Array<TransportIdentifier> {
+    return [...this.discoverySources.keys()];
+  }
+
   start({ ignoreTransportIdentifiers = [] }: DeviceDiscoveryStartArgs = {}): void {
     if (this.subscription) {
       return;

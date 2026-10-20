@@ -6,8 +6,8 @@ import logger from "~/renderer/logger";
 import { saveLogs } from "~/helpers/saveLogs";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesPolling: () => ({}),
 }));
 
@@ -22,13 +22,6 @@ jest.mock("~/renderer/logger", () => ({
 
 jest.mock("~/renderer/hooks/useDateFormatter", () => ({
   useTechnicalDateTimeFn: () => () => "2020-01-01T00:00:00.000Z",
-}));
-
-jest.mock("electron", () => ({
-  webFrame: { getResourceUsage: jest.fn(() => ({})) },
-  ipcRenderer: {
-    invoke: jest.fn(() => Promise.resolve(undefined)),
-  },
 }));
 
 jest.mock("~/helpers/saveLogs", () => ({
@@ -69,7 +62,22 @@ describe("useExportLogs", () => {
         userAnonymousId: testUserId.exportUserIdForUserLogs(),
       }),
     );
-    expect(mockSaveLogs).not.toHaveBeenCalled(); // dialog returns undefined so no path to save
+  });
+
+  it("asks the main process to prompt for a location and write the logs", async () => {
+    const { result } = renderHook(() => useExportLogs(), {
+      initialState: defaultInitialState,
+    });
+
+    await act(async () => {
+      await result.current.handleExportLogs();
+    });
+
+    expect(mockSaveLogs).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({ title: "Export logs" }),
+      }),
+    );
   });
 
   it("includes accountsIds and env in the exported meta payload", async () => {

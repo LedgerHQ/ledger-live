@@ -1,4 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { getAllDerivationModes } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   CloudSyncSDK,
   type UpdateEvent,
@@ -131,6 +133,9 @@ function entryId(raw: unknown): string {
 // much smaller set) but would be unusable the moment any other command tried to act on it.
 const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 
+// Not `isDerivationMode`: it checks `mode in modes`, so inherited keys such as "toString" pass it.
+const KNOWN_DERIVATION_MODES = new Set<string>(getAllDerivationModes());
+
 function issues(error: { issues: ReadonlyArray<{ message: string }> }): string {
   return error.issues.map(i => i.message).join("; ");
 }
@@ -145,6 +150,29 @@ function unsupportedFamily(currencyId: string): string | undefined {
     return undefined;
   }
   return SUPPORTED_FAMILIES.has(family) ? undefined : family;
+}
+
+/**
+ * Ledger Sync carries live-common's raw `seedIdentifier`: the public key of the seed derivation,
+ * shared by every account of that currency (e.g. `04…` for Ethereum), not the account's address.
+ * toV1() expects the xpub/address encoded in the account id instead — same normalization as
+ * BridgeAdapter.toDescriptor for accounts discovered on the device.
+ */
+function withSeedIdentifierFromId(descriptor: AccountDescriptorV0): AccountDescriptorV0 {
+  let decoded;
+  try {
+    decoded = decodeAccountId(descriptor.id);
+  } catch (cause) {
+    throw new Error(`Invalid account id "${descriptor.id}": ${errMessage(cause)}.`, { cause });
+  }
+  const { currencyId, derivationMode, xpubOrAddress } = decoded;
+  if (currencyId !== descriptor.currencyId || derivationMode !== descriptor.derivationMode) {
+    throw new Error(
+      `Invalid account id "${descriptor.id}": it names (${currencyId}, "${derivationMode}") but ` +
+        `the entry has (${descriptor.currencyId}, "${descriptor.derivationMode}").`,
+    );
+  }
+  return { ...descriptor, seedIdentifier: xpubOrAddress };
 }
 
 /** Validates and converts one synced entry, isolating any failure to that entry. */
@@ -172,9 +200,19 @@ function convertSyncedAccount(
     };
   }
 
+  // A newer Ledger Wallet may sync a derivation mode this version can't decode: skip it rather
+  // than report it as invalid, which would keep every later sync re-pulling it.
+  if (!KNOWN_DERIVATION_MODES.has(descriptor.derivationMode)) {
+    return {
+      status: "skipped",
+      id: descriptor.id,
+      reason: `Derivation mode "${descriptor.derivationMode}" is not supported by this wallet-cli version.`,
+    };
+  }
+
   let v1: unknown;
   try {
-    v1 = toV1(descriptor);
+    v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
     return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
       ? { status: "skipped", id: descriptor.id, reason: e.message }

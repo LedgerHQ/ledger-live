@@ -1,5 +1,5 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type QueryableConsts } from "@polkadot/api/types";
+import { type PolkadotCoinConfig } from "../../config";
 import getApiPromise from "./apiPromise";
 
 /**
@@ -10,9 +10,9 @@ import getApiPromise from "./apiPromise";
  * @returns {Promise<QueryableConsts<"promise">>}
  */
 export const fetchConstants = async (
-  currency?: CryptoCurrency,
+  config: PolkadotCoinConfig,
 ): Promise<QueryableConsts<"promise">> => {
-  const api = await getApiPromise(currency);
+  const api = await getApiPromise(config);
 
   return api.consts;
 };

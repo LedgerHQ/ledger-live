@@ -1,14 +1,14 @@
 import React, { useCallback } from "react";
 import type { Row } from "@tanstack/react-table";
-import { useTable } from "LLD/features/Assets/hooks/useTable";
-import type { AssetTableItem } from "LLD/features/Assets/types";
+import { useAssetsTable } from "LLD/components/AssetsTable/useAssetsTable";
+import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 import { CryptoAssetsView } from "./CryptoAssetsView";
 import useCryptoAssetsViewModel from "./hooks/useCryptoAssetsViewModel";
 
 export default function CryptoAssets() {
   const { items, title, isLoading, onAssetRowClick, onBack, trackingType } =
     useCryptoAssetsViewModel();
-  const table = useTable(items, { showTrendColumnTooltip: false });
+  const table = useAssetsTable(items, { showTrendColumnTooltip: false });
 
   const onRowClick = useCallback(
     (row: Row<AssetTableItem>) => {

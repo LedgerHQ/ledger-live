@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-swap-quotes",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain API client for the swap quotes aggregator: RTK Query endpoint for the /quote request",
   "main": "src/index.ts",
@@ -8,7 +8,6 @@
   "exports": {
     ".": "./src/index.ts",
     "./store": "./src/store/store.ts",
-    "./store.standalone": "./src/store/store.standalone.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -22,7 +21,6 @@
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:^",
-    "@shared/auth": "workspace:^",
     "zod": "catalog:"
   },
   "devDependencies": {

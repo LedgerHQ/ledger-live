@@ -40,7 +40,7 @@ const buildIos = (envFile, configuration) => ({
 
 const buildAndroid = (envFile, gradleTaskSuffix, testBuildType) => ({
   type: "android.apk",
-  build: `${syncAppVersion("android")} && cd android && ENVFILE=${envFile} SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assemble${gradleTaskSuffix} app:assembleAndroidTest -DtestBuildType=${testBuildType} -PreactNativeArchitectures=${androidArch} && cd ..`,
+  build: `${syncAppVersion("android")} && cd android && ENVFILE=${envFile} ./gradlew app:assemble${gradleTaskSuffix} app:assembleAndroidTest -DtestBuildType=${testBuildType} -PreactNativeArchitectures=${androidArch} && cd ..`,
   binaryPath: getAndroidBinary(testBuildType),
   testBinaryPath: getAndroidTestBinary(testBuildType),
 });

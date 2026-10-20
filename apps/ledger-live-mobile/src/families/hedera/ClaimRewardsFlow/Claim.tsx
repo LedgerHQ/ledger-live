@@ -7,7 +7,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import Button from "~/components/Button";
@@ -34,12 +34,12 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
 
   const { selectedDelegation } = route.params;
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = useAccountBridge(account);
+  const bridge: AccountBridge<HederaGenericTransaction> = useAccountBridge(account);
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {
-      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      mode: "claimReward",
     });
 
     return {

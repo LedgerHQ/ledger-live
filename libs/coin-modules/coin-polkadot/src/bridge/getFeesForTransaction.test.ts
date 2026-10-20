@@ -1,13 +1,11 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getEstimatedFees from "./getFeesForTransaction";
 
@@ -18,32 +16,14 @@ const mockRegistry = jest
 const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
-  paymentInfo: (_config: unknown, signedTx: string, currency: CryptoCurrency | undefined) =>
-    mockPaymentInfo(signedTx, currency),
+  paymentInfo: (_config: unknown, signedTx: string, currencyId: string | undefined) =>
+    mockPaymentInfo(signedTx, currencyId),
   getTransactionParams: () => mockTransactionParams(),
 }));
 
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
-
 describe("getEstimatedFees", () => {
   const transaction = createFixtureTransaction();
-  beforeAll(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        status: {
-          type: "active",
-        },
-        sidecar: {
-          url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-          credentials: "",
-        },
-        staking: {
-          electionStatusThreshold: 25,
-        },
-      };
-    });
-  });
+  const context = createMockPolkadotContext();
 
   beforeEach(() => {
     mockPaymentInfo.mockClear();
@@ -61,7 +41,7 @@ describe("getEstimatedFees", () => {
     });
 
     // When
-    const result = await getEstimatedFees({
+    const result = await getEstimatedFees(context, {
       account,
       transaction,
     });
@@ -70,8 +50,7 @@ describe("getEstimatedFees", () => {
     expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
     expect(mockPaymentInfo.mock.lastCall).not.toBeNull();
 
-    const currency = getCryptoCurrencyById(account.currency.id);
-    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(currency);
+    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(account.currency.id);
 
     expect(result).toEqual(new BigNumber(partialFee));
   });

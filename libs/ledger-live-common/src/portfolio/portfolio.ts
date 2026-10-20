@@ -1,4 +1,5 @@
 import {
+  type CounterValuesCacheView,
   type CounterValuesState,
   calculate,
   calculateMany,
@@ -24,6 +25,7 @@ import type {
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Currency } from "@domain/entity-currency";
+import { getFiatPriceVariationFromPercentChange } from "../market/utils/resolveRangePriceChange";
 import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./ranges";
 import { defaultAssetsDistribution } from "./assetsDistribution";
 import type { AssetsDistributionOpts } from "./assetsDistribution";
@@ -70,6 +72,10 @@ export function getBalanceHistory(
   return history;
 }
 
+/**
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
+ */
 export function getBalanceHistoryWithCountervalue(
   ...args: Parameters<typeof getBalanceHistoryWithChanges>
 ): AccountPortfolio {
@@ -164,6 +170,8 @@ export type GetPortfolioOptionsType = {
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
  * NB the last item of the array is actually the current total balance.
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
  * @memberof account
  */
 export function getPortfolio(
@@ -249,6 +257,10 @@ export function getPortfolio(
   };
 }
 
+/**
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
+ */
 export function getCurrencyPortfolio(
   accounts: AccountLike[],
   range: PortfolioRange,
@@ -296,11 +308,49 @@ export function getCurrencyPortfolio(
   };
 }
 
+export function alignFlatDayCountervalueChange({
+  range,
+  countervalueChange,
+  balanceAtRangeStart,
+  balanceAtRangeEnd,
+  currentCountervalue,
+  marketDayChangePercentPoints,
+}: {
+  range: PortfolioRange;
+  countervalueChange: ValueChange;
+  balanceAtRangeStart: number;
+  balanceAtRangeEnd: number;
+  currentCountervalue: number | null | undefined;
+  marketDayChangePercentPoints: number | null | undefined;
+}): ValueChange {
+  if (
+    range !== "day" ||
+    balanceAtRangeStart !== balanceAtRangeEnd ||
+    marketDayChangePercentPoints == null ||
+    !Number.isFinite(marketDayChangePercentPoints)
+  ) {
+    return countervalueChange;
+  }
+
+  const value = getFiatPriceVariationFromPercentChange(
+    currentCountervalue ?? undefined,
+    marketDayChangePercentPoints,
+  );
+  if (value == null || !Number.isFinite(value)) return countervalueChange;
+
+  return {
+    percentage: marketDayChangePercentPoints / 100,
+    value,
+  };
+}
+
 /**
  * Countervalue change of the CURRENT balance over a range, i.e. the asset's price move expressed
  * in the counter-value currency. Unlike getCurrencyPortfolio (which weights by the historical
  * balance and yields no percentage for freshly-held positions), this applies the current balance
  * to both the start and end rates, so the percentage reduces to (rateNow - rateThen) / rateThen.
+ * Reads the clock: takes the full state, which changes on every load, so a hook rendering it
+ * recomputes as time moves.
  */
 export function getCurrentBalanceCountervalueChange(
   accounts: AccountLike[],
@@ -344,7 +394,7 @@ export function getCurrentBalanceCountervalueChange(
 
 export function getAssetsDistribution(
   topAccounts: Account[],
-  cvState: CounterValuesState,
+  cvState: CounterValuesCacheView,
   cvCurrency: Currency,
   opts?: AssetsDistributionOpts,
 ): AssetsDistribution {
@@ -456,7 +506,7 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
 
 export const orderAccountsByFiatValue = (
   accounts: AccountLike[],
-  counterValueState: CounterValuesState,
+  counterValueState: CounterValuesCacheView,
   to: Currency,
   fullBalance: boolean = true,
 ) => {

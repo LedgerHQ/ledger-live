@@ -64,6 +64,10 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   // Tracks the connected device's identity across renders. See DONJON-1409.
   const previousDeviceIdRef = useRef<string | null>(device?.deviceId ?? null);
 
+  // Only the device that passed the genuine check may run the companion. See DONJON-1409.
+  const [verifiedDeviceId, setVerifiedDeviceId] = useState<string | null>(null);
+  const isLastSeenDeviceVerified = !!lastSeenDevice && lastSeenDevice.deviceId === verifiedDeviceId;
+
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
@@ -78,8 +82,9 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const [appsToRestoreAfterFwUpdate, setAppsToRestoreAfterFwUpdate] = useState<string[]>([]);
   const [isRestoringAppsAfterFwUpdate, setIsRestoringAppsAfterFwUpdate] = useState(false);
 
-  // True when the device reported isOnboarded=true during polling. Used to bypass
-  // the exit toggle after ESC (the device was never put into ESC mode via toggle).
+  // True when the device reported isOnboarded=true during polling, or when the ESC was forced
+  // for an unverified device. Used to bypass the exit toggle after ESC (the device was never
+  // put into ESC mode via toggle).
   const [deviceDetectedOnboarded, setDeviceDetectedOnboarded] = useState<boolean>(false);
 
   /* The early security checks are run again after a firmware update. */
@@ -135,6 +140,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
       // Device identity changed since the last render. See DONJON-1409.
       log("SyncOnboarding", "Device identity changed, resetting onboarding state");
       notifyOnboardingEarlyCheckShouldReset();
+      setVerifiedDeviceId(null);
       setIsInitialRunOfSecurityChecks(true);
       setDeviceDetectedOnboarded(false);
       setFwUpdateInterrupted(null);
@@ -252,6 +258,14 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     }
   }, [onboardingState]);
 
+  useEffect(() => {
+    if (currentStep !== "companion" || isLastSeenDeviceVerified) return;
+    log("SyncOnboarding", "Device not verified, forcing the early security checks");
+    setDeviceDetectedOnboarded(true);
+    setCurrentStep("early-security-check");
+    setMustRecoverIfBootloader(false);
+  }, [currentStep, isLastSeenDeviceVerified]);
+
   // A fatal error during polling triggers directly an error message
   useEffect(() => {
     if (fatalError?.name === "UnexpectedBootloader") {
@@ -361,7 +375,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         })}
       </Flex>
     );
-  } else if (isRestoringAppsAfterFwUpdate && lastSeenDevice) {
+  } else if (isRestoringAppsAfterFwUpdate && lastSeenDevice && isLastSeenDeviceVerified) {
     stepContent = (
       <Flex height="100%" width="100%" justifyContent="center" alignItems="center" px={8}>
         <Flex width="100%" maxWidth="432px">
@@ -383,6 +397,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         device={lastSeenDevice}
         isDeviceConnected={!!device}
         onComplete={notifyOnboardingEarlyCheckEnded}
+        onGenuineCheckPassed={setVerifiedDeviceId}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
         onFirmwareUpdateClose={handleFirmwareUpdateClose}
         isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}
@@ -390,7 +405,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         fwUpdateInterrupted={fwUpdateInterrupted}
       />
     );
-  } else if (currentStep === "companion" && lastSeenDevice) {
+  } else if (currentStep === "companion" && lastSeenDevice && isLastSeenDeviceVerified) {
     stepContent = (
       <SyncOnboardingCompanion
         key={lastSeenDevice.deviceId}

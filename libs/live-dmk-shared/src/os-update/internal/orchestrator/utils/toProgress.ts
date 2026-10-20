@@ -1,7 +1,9 @@
-import { OsUpdatesSteps } from "../../../api/model/OsUpdatesSteps";
+import type { ApplyUpdatesState } from "../../../api/model/ApplyUpdatesState";
 import type { CreateBackupState } from "../../../api/model/CreateBackupState";
 import type { OsUpdatesProgress } from "../../../api/model/OsUpdatesProgress";
+import { OsUpdatesSteps } from "../../../api/model/OsUpdatesSteps";
 import type { PreChecksState } from "../../../api/model/PreChecksState";
+import type { RestoreBackupState } from "../../../api/model/RestoreBackupState";
 import type { OsUpdatesOrchestratorStateMachineContext } from "../types";
 
 export const toProgress = ({
@@ -16,6 +18,10 @@ export const toProgress = ({
       return { step: currentStep, state: currentState as PreChecksState };
     case OsUpdatesSteps.CREATE_BACKUP:
       return { step: currentStep, state: currentState as CreateBackupState };
+    case OsUpdatesSteps.APPLY_UPDATES:
+      return { step: currentStep, state: currentState as ApplyUpdatesState };
+    case OsUpdatesSteps.RESTORE_BACKUP:
+      return { step: currentStep, state: currentState as RestoreBackupState };
     default: {
       const unhandled: never = currentStep;
       return unhandled;

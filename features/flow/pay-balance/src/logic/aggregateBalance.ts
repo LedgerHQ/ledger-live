@@ -1,5 +1,4 @@
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../state";
-import { tickerForFilter } from "./buildBalanceFilterOptions";
 import { resolveSelection } from "./resolveSelection";
 import type { BalanceData, BalanceStatus, PortfolioPort, Stablecoin } from "../types";
 
@@ -16,22 +15,8 @@ export function aggregateBalance({
   const optionIds = filterOptions.map(option => option.id);
   const effectiveFilter = resolveSelection(filter, optionIds);
 
-  // Defaults (USDC/USDT) are keyed by market id; held rows may use a different currencyId.
-  // Match by ticker so the filtered total stays correct across those ids, falling back to id.
-  const ticker =
-    effectiveFilter === PAY_CARD_BALANCE_FILTER_ALL
-      ? undefined
-      : tickerForFilter(effectiveFilter, filterOptions);
-
-  const matchesFilter = ({ currency }: Stablecoin): boolean => {
-    if (effectiveFilter === PAY_CARD_BALANCE_FILTER_ALL) {
-      return true;
-    }
-    if (ticker == null) {
-      return currency.id === effectiveFilter;
-    }
-    return currency.ticker.toUpperCase() === ticker.toUpperCase();
-  };
+  const matchesFilter = ({ currency }: Stablecoin): boolean =>
+    effectiveFilter === PAY_CARD_BALANCE_FILTER_ALL || currency.id === effectiveFilter;
 
   const stableBalance = stablecoins
     .filter(matchesFilter)

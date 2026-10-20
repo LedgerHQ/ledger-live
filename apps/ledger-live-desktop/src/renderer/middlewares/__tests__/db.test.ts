@@ -1,5 +1,12 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
 import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
+import {
+  cryptoAssetsApi,
+  extractPersistedCALFromState,
+  persistedCALContentEqual,
+  type PersistedCAL,
+} from "@domain/api-currency-token";
+import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
@@ -33,6 +40,7 @@ jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
 }));
 
 jest.mock("@domain/api-currency-token", () => ({
+  ...jest.requireActual("@domain/api-currency-token"),
   extractPersistedCALFromState: jest.fn(() => ({ tokens: [] })),
   persistedCALContentEqual: jest.fn(() => true),
 }));
@@ -385,5 +393,22 @@ describe("DBMiddleware - trustchain branch", () => {
     runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
 
     expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+});
+
+describe("DBMiddleware - crypto assets cache branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists the CAL token cache on actions of the registered CAL api", () => {
+    const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
+    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
+    jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
+    const state = baseState();
+
+    runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", persisted);
   });
 });

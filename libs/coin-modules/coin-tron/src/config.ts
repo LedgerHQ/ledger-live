@@ -20,6 +20,15 @@ export type TronifyProviderConfig = {
    * [0.8, 500]; 0 is rejected because a rental without a top-up is priced in TRX, not USDT.
    */
   rentalExtraTrx?: number;
+  /**
+   * Base58 addresses the rent payment may go to; Tronify rotates through the list in its API docs.
+   * Remote coin-config only: missing, empty or any invalid entry disables the option.
+   */
+  paymentAddresses?: string[];
+  /** Most one rental may cost, in USDT, whatever Tronify quotes. Optional — defaults to 10. */
+  maxRentAmount?: number;
+  /** How far the order may exceed the fee approved on Review, as a fraction. Optional — defaults to 0.05. */
+  rentPriceMargin?: number;
 };
 
 /**

@@ -1,11 +1,11 @@
 import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
@@ -35,7 +35,7 @@ export function useGlobalSearchResults(): GlobalSearchResults {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
-  const version = VersionNumber.appVersion ?? "";
+  const version = appVersion;
 
   const modularDrawer = useFeature("llmModularDrawer");
   const isStaging = modularDrawer?.params?.backendEnvironment === "STAGING";

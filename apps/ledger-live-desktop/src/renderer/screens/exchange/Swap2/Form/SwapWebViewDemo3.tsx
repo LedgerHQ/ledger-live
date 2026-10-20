@@ -1,3 +1,4 @@
+import { getSwapAPIEnv } from "@ledgerhq/live-common/exchange/swap/index";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
@@ -36,7 +37,7 @@ import {
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { context } from "~/renderer/drawers/Provider";
-import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
+import { useNetworkState } from "@shared/network-status";
 import useTheme from "~/renderer/hooks/useTheme";
 import logger from "~/renderer/logger";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -123,6 +124,7 @@ const SwapWebAppWrapper = styled.div`
 `;
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
+const SWAP_API_ENV = getSwapAPIEnv(SWAP_API_BASE);
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 
 const SwapWebView = ({
@@ -163,8 +165,8 @@ const SwapWebView = ({
     resolvedDefaultToAccount,
     resolvedDefaultToParentAccount,
   } = useSwapDefaultAccounts(state);
-  const { networkStatus } = useNetworkStatus();
-  const isOffline = networkStatus === NetworkStatus.OFFLINE;
+  const { isConnected } = useNetworkState();
+  const isOffline = isConnected === false;
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
@@ -373,10 +375,10 @@ const SwapWebView = ({
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const evmCtx = buildContext<EvmConfigInfo>(mainAccount.currency.id);
         const config = await evmCtx.config();
-        const nodeAPI = getNodeApi(config, mainAccount.currency.id, evmCtx.logger);
+        const nodeAPI = getNodeApi(config, evmCtx.logger);
 
         try {
-          const tx = await nodeAPI.getTransaction(mainAccount.currency.id, params.transactionHash);
+          const tx = await nodeAPI.getTransaction(params.transactionHash);
           return Promise.resolve(tx);
         } catch {
           // not a real error, the node just didn't find the transaction yet
@@ -541,7 +543,7 @@ const SwapWebView = ({
             theme,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
-            swapApiBase: SWAP_API_BASE,
+            swapApiEnv: SWAP_API_ENV,
             swapUserIp: SWAP_USER_IP,
             devMode,
             lastSeenDevice: lastSeenDevice?.modelId,

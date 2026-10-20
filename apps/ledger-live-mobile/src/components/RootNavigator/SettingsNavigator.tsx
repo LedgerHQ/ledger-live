@@ -15,7 +15,7 @@ import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceI
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
 import DeviceSimulationDevToolScreen from "~/screens/Settings/Debug/Configuration/DeviceSimulationDevTool";
 import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
-import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug/screens/OsUpdatesOrchestratorDebugScreen";
+import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugStartTour from "~/screens/Settings/Debug/Features/StartTour";
@@ -34,6 +34,7 @@ import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
 import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
 import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
 import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
+import DebugDeviceOnboarding from "LLM/features/DeviceOnboarding/Debug";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
 import DebugPayContactSuccess from "~/screens/Settings/Debug/Features/PayContactSuccess";
@@ -52,6 +53,8 @@ import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
 import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
 import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
 import DebugConnectDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectDeviceScreen";
+import DebugConnectNewDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectNewDeviceScreen";
+import DebugConnectNewDeviceAnimationsScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectNewDeviceAnimationsScreen";
 import DebugDeviceIntentExecutorContactsValidation from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ContactsValidationScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
 import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
@@ -351,6 +354,20 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorConnectNewDevice}
+        component={DebugConnectNewDeviceScreen}
+        options={{
+          title: "Connect New Device",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorConnectNewDeviceAnimations}
+        component={DebugConnectNewDeviceAnimationsScreen}
+        options={{
+          title: "Connect New Device animations",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorContactsValidation}
         component={DebugDeviceIntentExecutorContactsValidation}
         options={{
@@ -444,6 +461,13 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugDevTools}
         component={DebugDevTools}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceOnboarding}
+        component={DebugDeviceOnboarding}
         options={{
           headerShown: false,
         }}

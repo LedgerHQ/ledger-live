@@ -31,7 +31,9 @@ describe("RequestReceiveView (Native)", () => {
     expect(screen.getByTestId("pay-request-receive")).toBeVisible();
     expect(screen.getByTestId("pay-request-receive-close")).toBeVisible();
     expect(screen.getByTestId("pay-request-receive-summary")).toBeVisible();
-    expect(screen.getByText(REQUEST_RECEIVE_TITLE)).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-title")).toHaveTextContent(
+      REQUEST_RECEIVE_TITLE,
+    );
     expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
     expect(screen.getByTestId("pay-request-receive-address")).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_ACTIONS.share)).toBeVisible();
@@ -52,7 +54,7 @@ describe("RequestReceiveView (Native)", () => {
 
   it("invokes onCopy when the copy button is pressed", async () => {
     const user = userEvent.setup();
-    const onCopy = jest.fn();
+    const onCopy = jest.fn().mockResolvedValue(true);
     renderView({ visibleActions: ["share", "copy", "verify"], onCopy });
 
     await user.press(screen.getByTestId("pay-request-receive-copy"));

@@ -3,6 +3,7 @@
 import Ada, { Networks, AddressType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import Transport from "@ledgerhq/hw-transport";
+import invariant from "invariant";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createBridges } from "@ledgerhq/coin-cardano/bridge";
 import cardanoResolver from "@ledgerhq/coin-cardano/hw-getAddress";
@@ -82,8 +83,9 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
   };
 };
 
-const getCurrencyConfig = () => {
-  return getCurrencyConfiguration<CardanoCoinConfig>("cardano");
+const getCurrencyConfig = (currencyId?: string) => {
+  invariant(currencyId, "cardano: currencyId is required in getCurrencyConfig");
+  return getCurrencyConfiguration<CardanoCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBridges(

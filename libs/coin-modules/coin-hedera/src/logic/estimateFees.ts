@@ -1,7 +1,5 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import {
   BASE_USD_FEE_BY_OPERATION_TYPE,
   DEFAULT_GAS_LIMIT,
@@ -26,12 +24,18 @@ const estimateContractCallFees = async ({
   let gas = new BigNumber(0);
 
   const tokenEvmAddress = "assetReference" in txIntent.asset ? txIntent.asset.assetReference : null;
+  if (!tokenEvmAddress || !txIntent.recipient) {
+    return {
+      tinybars,
+    };
+  }
+
   const [senderEvmAddress, recipientEvmAddress] = await Promise.all([
     toEVMAddress({ configOrCurrencyId, accountId: txIntent.sender }),
     toEVMAddress({ configOrCurrencyId, accountId: txIntent.recipient }),
   ]);
 
-  if (!tokenEvmAddress || !senderEvmAddress || !recipientEvmAddress) {
+  if (!senderEvmAddress || !recipientEvmAddress) {
     return {
       tinybars,
     };
@@ -74,11 +78,8 @@ const estimateStandardFees = async ({
   currencyId: string;
   operationType: HEDERA_OPERATION_TYPES;
 }): Promise<EstimateFeesResult> => {
-  const currency = findCryptoCurrencyById(currencyId);
-  invariant(currency, `hedera: currency with id ${currencyId} not found`);
-
   let tinybars: BigNumber;
-  const usdRate = await getCurrencyToUSDRate(currency).catch(() => null);
+  const usdRate = await getCurrencyToUSDRate(currencyId).catch(() => null);
 
   if (usdRate) {
     tinybars = new BigNumber(BASE_USD_FEE_BY_OPERATION_TYPE[operationType])

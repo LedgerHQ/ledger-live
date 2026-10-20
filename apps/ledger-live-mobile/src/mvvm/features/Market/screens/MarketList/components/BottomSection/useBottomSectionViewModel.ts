@@ -22,7 +22,6 @@ function useBottomSectionViewModel() {
 
   const resetMarketPage = useCallback(() => {
     dispatch(setMarketCurrentPage(1));
-    dispatch(setMarketRequestParams({ page: 1 }));
   }, [dispatch]);
 
   const toggleFilterByStarredCurrencies = useCallback(() => {

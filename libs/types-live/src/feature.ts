@@ -96,7 +96,6 @@ export type CurrencyFeatures = {
   currencyMantleSepolia: DefaultFeature;
   currencyBoba: DefaultFeature;
   currencyMoonriver: DefaultFeature;
-  currencyVelasEvm: DefaultFeature;
   currencySyscoin: DefaultFeature;
   currencyAptos: DefaultFeature;
   currencyAptosTestnet: DefaultFeature;
@@ -106,7 +105,6 @@ export type CurrencyFeatures = {
   currencyDydx: DefaultFeature;
   currencyStargaze: DefaultFeature;
   currencyPersistence: DefaultFeature;
-  currencyQuicksilver: DefaultFeature;
   currencyInternetComputer: DefaultFeature;
   currencyInjective: DefaultFeature;
   currencyTelosEvm: DefaultFeature;
@@ -137,7 +135,6 @@ export type CurrencyFeatures = {
   currencyZkSyncSepolia: DefaultFeature;
   currencyMantra: DefaultFeature;
   currencyXion: DefaultFeature;
-  currencyZenrock: DefaultFeature;
   currencySonic: DefaultFeature;
   currencySui: DefaultFeature;
   currencySuiTestnet: DefaultFeature;
@@ -243,7 +240,6 @@ export type Features = CurrencyFeatures & {
   web3hub: Feature_web3hub;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
-  ldmkTransport: Feature_LdmkTransport;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
@@ -266,7 +262,6 @@ export type Features = CurrencyFeatures & {
   ldmkPolkadotSigner: DefaultFeature;
   ldmkXrpSigner: DefaultFeature;
   ldmkTronSigner: DefaultFeature;
-  ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
@@ -304,7 +299,6 @@ export type Features = CurrencyFeatures & {
     }>;
   };
   llmNanoSDeprecation: DefaultFeature;
-  llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
   onboardingWidget: DefaultFeature;
@@ -324,7 +318,6 @@ export type Features = CurrencyFeatures & {
   lwmProductTour: DefaultFeature;
   lwmBackupHub: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
-  lwmQuickActionsCtasVariant: DefaultFeature;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   concordiumIdAppLinks: Feature_ConcordiumIdAppLinks;
@@ -613,11 +606,6 @@ export type Feature_EditBitcoinTx = Feature<{
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ldmkTransport"]` from `@shared/feature-flags` instead. */
-export type Feature_LdmkTransport = Feature<{
-  warningVisible: boolean;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ratingsPrompt"]` from `@shared/feature-flags` instead. */

@@ -1,7 +1,7 @@
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import type { Unit } from "@domain/entity-currency-unit";
 import { Account } from "@ledgerhq/types-live";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useCallback } from "react";
 import { type ProcessedProposal, type TransferProposalAction } from "./types";
@@ -38,8 +38,8 @@ export function usePendingTransferProposalsDetailsViewModel({
     [onOpenModal, proposal],
   );
 
-  const handleCopy = useCallback((text: string) => {
-    Clipboard.setString(text);
+  const handleCopy = useCallback(async (text: string) => {
+    await copyToClipboard(text);
   }, []);
 
   return {

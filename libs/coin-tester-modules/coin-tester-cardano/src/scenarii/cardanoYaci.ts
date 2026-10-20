@@ -47,6 +47,7 @@ export const scenarioCardanoYaci: Scenario<GenericTransaction, Account> = {
           unit: { name: "ada", code: "tADA", magnitude: 6 },
           maxFeesWarning: 0,
           maxFeesError: 0,
+          testnet: true,
         },
       },
     });

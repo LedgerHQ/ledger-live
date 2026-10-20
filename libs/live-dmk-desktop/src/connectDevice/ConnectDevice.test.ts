@@ -9,6 +9,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
 import { connectDevice } from "./connectDevice";
+import { MockServerDeviceDiscoverySource } from "./discoveryService/sources/MockServerDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "./discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { WebHidDeviceDiscoverySource } from "./discoveryService/sources/WebHidDeviceDiscoverySource";
 import { createConnectionError, filterMatchedDevices } from "./utils";
@@ -29,6 +30,13 @@ jest.mock("./discoveryService/sources/WebHidDeviceDiscoverySource", () => ({
   WebHidDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
     listen: mockWebHidListen,
     transportId: "WEB-HID",
+  })),
+}));
+
+jest.mock("./discoveryService/sources/MockServerDeviceDiscoverySource", () => ({
+  MockServerDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
+    listen: jest.fn(() => EMPTY),
+    transportId: "MOCKSERVER",
   })),
 }));
 
@@ -98,5 +106,18 @@ describe("desktop connectDevice", () => {
     expect(SpeculosDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
     expect(mockWebHidListen).toHaveBeenCalled();
     expect(mockSpeculosListen).toHaveBeenCalled();
+  });
+
+  it("GIVEN the mock server transport is enabled, WHEN connecting, THEN it should register the mock server source", () => {
+    const dmk = {} as DeviceManagementKit;
+
+    connectDevice({
+      dmk,
+      knownDevices: [knownDevice],
+      onConnected: jest.fn(),
+      mockServerTransportEnabled: true,
+    });
+
+    expect(MockServerDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
   });
 });

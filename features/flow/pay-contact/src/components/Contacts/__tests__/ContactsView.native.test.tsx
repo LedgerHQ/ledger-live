@@ -38,7 +38,7 @@ describe("ContactsView (Native)", () => {
   it("should render no contact tiles when there are no contacts", () => {
     render(<ContactsView {...makeProps()} />);
 
-    expect(screen.queryByTestId("pay-contacts-tile-0")).toBeNull();
+    expect(screen.queryAllByTestId(/^pay-contacts-tile-/)).toHaveLength(0);
   });
 
   it("should render a tile for each contact", () => {
@@ -49,9 +49,9 @@ describe("ContactsView (Native)", () => {
 
     render(<ContactsView {...makeProps({ contacts })} />);
 
-    expect(screen.getByTestId("pay-contacts-tile-0")).toBeVisible();
+    expect(screen.getByTestId("pay-contacts-tile-contact-ada")).toBeVisible();
     expect(screen.getByText("Ada")).toBeTruthy();
-    expect(screen.getByTestId("pay-contacts-tile-1")).toBeVisible();
+    expect(screen.getByTestId("pay-contacts-tile-contact-bob")).toBeVisible();
     expect(screen.getByText("Bob")).toBeTruthy();
   });
 
@@ -86,7 +86,7 @@ describe("ContactsView (Native)", () => {
 
     render(<ContactsView {...makeProps({ contacts })} />);
 
-    expect(screen.getByTestId("pay-contacts-tile-0").props.onPress).toBeUndefined();
+    expect(screen.getByTestId("pay-contacts-tile-contact-ada").props.onPress).toBeUndefined();
   });
 
   it("should forward the pressed contact when onContactPress is provided", () => {
@@ -94,7 +94,7 @@ describe("ContactsView (Native)", () => {
     const onContactPress = jest.fn();
 
     render(<ContactsView {...makeProps({ contacts, onContactPress })} />);
-    screen.getByTestId("pay-contacts-tile-0").props.onPress();
+    screen.getByTestId("pay-contacts-tile-contact-ada").props.onPress();
 
     expect(onContactPress).toHaveBeenCalledWith(contacts[0]);
   });

@@ -14,13 +14,14 @@ import {
   mergeExtra,
   nextSequenceWithPending,
   optionalNumeric,
+  sumBalance,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
 import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, Operation, StakingDelegation, StakingUnbonding } from "@ledgerhq/types-live";
 import {
   GenericTransaction,
   GenericTransactionMode,
@@ -734,6 +735,32 @@ describe("coin-framework utils", () => {
             memoValue: "",
           } as GenericTransaction),
         ).toMatchObject({ memo: { type: "none" } });
+      });
+    });
+
+    describe("asset", () => {
+      it("describes the native asset by its type only", () => {
+        const account = { currency: { name: "solana", units: [{}] } } as Account;
+
+        expect(transactionToIntent(account, { mode: "send" } as GenericTransaction).asset).toEqual({
+          type: "native",
+        });
+      });
+
+      it("describes a token by its type, reference and owner only", () => {
+        const account = {
+          currency: { name: "stellar", units: [{}] },
+          subAccounts: [{ id: "sub-1", token: { tokenType: "stellar", name: "USDC" } }],
+        } as unknown as Account;
+
+        expect(
+          transactionToIntent(account, {
+            mode: "send",
+            subAccountId: "sub-1",
+            assetReference: "USDC",
+            assetOwner: "issuer",
+          } as GenericTransaction).asset,
+        ).toEqual({ type: "stellar", assetReference: "USDC", assetOwner: "issuer" });
       });
     });
 
@@ -1530,6 +1557,30 @@ describe("coin-framework utils", () => {
     });
   });
 
+  describe("sumBalance", () => {
+    it("sums value and locked over every entry of the type", () => {
+      expect(
+        sumBalance(
+          [
+            { value: 60n, asset: { type: "native" } },
+            { value: 30n, locked: 30n, asset: { type: "native" } },
+            { value: 10n, locked: 10n, asset: { type: "native" } },
+            { value: 500n, asset: { type: "fa2", assetReference: "KT1:0" } },
+          ],
+          "native",
+        ),
+      ).toEqual({ value: 100n, locked: 40n, asset: { type: "native" } });
+    });
+
+    it("generates an empty balance for a missing type", () => {
+      expect(sumBalance([{ value: 4n, asset: { type: "type1" } }], "type2")).toEqual({
+        value: 0n,
+        locked: 0n,
+        asset: { type: "type2" },
+      });
+    });
+  });
+
   // No module mock needed: encodeOperationId is deterministic in @ledgerhq/ledger-wallet-framework/operation.
 
   describe("adaptCoreOperationToLiveOperation", () => {
@@ -1594,6 +1645,12 @@ describe("coin-framework utils", () => {
         transactionSequenceNumber: undefined,
         hasFailed: false,
       });
+    });
+
+    it.each(["CONTRACT_CALL", "UPDATE_ACCOUNT"])("includes fees in native %s value", type => {
+      const result = adaptCoreOperationToLiveOperation(accountId, { ...baseOp, type });
+
+      expect(result.value).toEqual(new BigNumber(110));
     });
 
     it("adapts a basic OUT operation", () => {
@@ -2107,5 +2164,121 @@ describe("extractBalances", () => {
 
   it("returns only the native balance for an account with no staking resources", () => {
     expect(extractBalances({ ...account, stakingResources: undefined } as Account)).toHaveLength(1);
+  });
+
+  describe("with a stake account that holds lamports outside the wallet account", () => {
+    const stakedAccount = {
+      balance: new BigNumber(3_002_282_880),
+      spendableBalance: new BigNumber(999_099_120),
+      freshAddress: "owner",
+      stakingResources: {
+        delegations: [
+          {
+            positionId: "stake-acc-1",
+            validatorAddress: "vote-acc",
+            amount: new BigNumber(2_000_000_000),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(2_000_000_000),
+            lockedReserve: new BigNumber(2_282_880),
+          },
+        ],
+        unbondings: [],
+      },
+    } as unknown as Account;
+
+    it("keeps the total on the first native entry and repeats the stake when the native balance is not partitioned", () => {
+      expect(extractBalances(stakedAccount)).toEqual([
+        { value: 3_002_282_880n, locked: 2_003_183_760n, asset: { type: "native" } },
+        expect.objectContaining({ value: 2_002_282_880n, stake: expect.anything() }),
+      ]);
+    });
+
+    it("carves the stake out of the first native entry when the native balance is partitioned", () => {
+      expect(extractBalances(stakedAccount, undefined, true)).toEqual([
+        { value: 1_000_000_000n, locked: 900_880n, asset: { type: "native" } },
+        expect.objectContaining({
+          value: 2_002_282_880n,
+          locked: 2_002_282_880n,
+          stake: expect.anything(),
+        }),
+      ]);
+    });
+
+    it("leaves an account that carries staking positions instead of staking resources untouched, as Tezos is", () => {
+      const tezosAccount = {
+        balance: new BigNumber(1_000),
+        spendableBalance: new BigNumber(600),
+        freshAddress: "owner",
+        stakingPositions: [{ positionId: "delegation-1", amount: new BigNumber(400) }],
+      } as unknown as Account;
+
+      expect(extractBalances(tezosAccount, undefined, true)).toEqual(extractBalances(tezosAccount));
+      expect(extractBalances(tezosAccount, undefined, true)).toEqual([
+        { value: 1_000n, locked: 400n, asset: { type: "native" } },
+      ]);
+    });
+
+    const getHeldNativeAmount = (position: StakingDelegation | StakingUnbonding) =>
+      position.activeAmount && position.inactiveAmount
+        ? position.activeAmount.plus(position.inactiveAmount).plus(position.lockedReserve ?? 0)
+        : position.amount.plus(position.lockedReserve ?? 0);
+
+    it.each([
+      [
+        "active, with rewards above the delegation",
+        "delegations",
+        "bonded",
+        2_000_000_000,
+        2_000_000_000,
+        5_000_000,
+      ],
+      ["activating", "delegations", "activating", 1_000_000_000, 300_000_000, 700_000_000],
+      ["deactivating", "unbondings", "deactivating", 500_000_000, 500_000_000, 0],
+      ["inactive", "unbondings", "withdrawable", 0, 0, 3_000_000_000],
+    ])(
+      "rebuilds the lamports of a %s stake account exactly",
+      (_state, list, status, amount, active, inactive) => {
+        const account = {
+          balance: new BigNumber(1_000_000_000 + active + inactive + 2_282_880),
+          spendableBalance: new BigNumber(999_099_120),
+          freshAddress: "owner",
+          stakingResources: {
+            delegations: [],
+            unbondings: [],
+            [list]: [
+              {
+                positionId: "stake-acc-1",
+                validatorAddress: "vote-acc",
+                amount: new BigNumber(amount),
+                pendingRewards: new BigNumber(0),
+                completionDate: new Date(0),
+                status,
+                activeAmount: new BigNumber(active),
+                inactiveAmount: new BigNumber(inactive),
+                lockedReserve: new BigNumber(2_282_880),
+              },
+            ],
+          },
+        } as unknown as Account;
+
+        expect(extractBalances(account, undefined, true, getHeldNativeAmount)).toEqual([
+          { value: 1_000_000_000n, locked: 900_880n, asset: { type: "native" } },
+          expect.objectContaining({
+            value: BigInt(active + inactive + 2_282_880),
+            locked: BigInt(active + inactive + 2_282_880),
+          }),
+        ]);
+      },
+    );
+
+    it("keeps the native entries adding up to the account balance and spendable once partitioned", () => {
+      const natives = extractBalances(stakedAccount, undefined, true, getHeldNativeAmount);
+
+      expect(natives.reduce((total, entry) => total + entry.value, 0n)).toBe(3_002_282_880n);
+      expect(natives.reduce((total, entry) => total + entry.value - (entry.locked ?? 0n), 0n)).toBe(
+        999_099_120n,
+      );
+    });
   });
 });

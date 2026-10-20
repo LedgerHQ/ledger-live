@@ -2,7 +2,7 @@ import type { TFunction } from "i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   HederaAccount,
-  Transaction,
+  HederaGenericTransaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/hedera/types";
 import type { Operation } from "@ledgerhq/types-live";
@@ -23,10 +23,10 @@ export type StepProps = {
   optimisticOperation: Operation;
   error: Error;
   signed: boolean;
-  transaction: Transaction | undefined | null;
+  transaction: HederaGenericTransaction | undefined | null;
   status: TransactionStatus;
-  onChangeTransaction: (a: Transaction) => void;
-  onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;
+  onChangeTransaction: (a: HederaGenericTransaction) => void;
+  onUpdateTransaction: (a: (a: HederaGenericTransaction) => HederaGenericTransaction) => void;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;

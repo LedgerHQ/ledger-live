@@ -12,6 +12,7 @@ import {
   getPortfolio,
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
+  alignFlatDayCountervalueChange,
   getAssetsDistribution,
   orderAccountsByFiatValue,
 } from "../portfolio";
@@ -441,6 +442,70 @@ describe("Portfolio", () => {
         expect(match).toBe(true);
       });
     });
+  });
+});
+
+describe("alignFlatDayCountervalueChange", () => {
+  const portfolioChange = { percentage: 0.02, value: 20 };
+  const flatHolding = {
+    range: "day" as const,
+    countervalueChange: portfolioChange,
+    balanceAtRangeStart: 1,
+    balanceAtRangeEnd: 1,
+    currentCountervalue: 110,
+    marketDayChangePercentPoints: 10,
+  };
+
+  it("should use the market 24h ratio when the holding total is unchanged", () => {
+    const change = alignFlatDayCountervalueChange(flatHolding);
+    expect(change.percentage).toBe(0.1);
+    expect(change.value).toBeCloseTo(10);
+  });
+
+  it("should use the market 24h ratio when an internal transfer leaves the asset total unchanged", () => {
+    const change = alignFlatDayCountervalueChange({
+      ...flatHolding,
+      balanceAtRangeStart: 4,
+      balanceAtRangeEnd: 4,
+    });
+    expect(change.percentage).toBe(0.1);
+    expect(change.value).toBeCloseTo(10);
+  });
+
+  it("should keep the portfolio variation when the holding total changes", () => {
+    expect(
+      alignFlatDayCountervalueChange({
+        ...flatHolding,
+        balanceAtRangeEnd: 2,
+      }),
+    ).toBe(portfolioChange);
+  });
+
+  it("should keep the portfolio variation when the market 24h change is missing", () => {
+    expect(
+      alignFlatDayCountervalueChange({
+        ...flatHolding,
+        marketDayChangePercentPoints: null,
+      }),
+    ).toBe(portfolioChange);
+  });
+
+  it("should keep the portfolio variation when the range is not a day", () => {
+    expect(
+      alignFlatDayCountervalueChange({
+        ...flatHolding,
+        range: "week",
+      }),
+    ).toBe(portfolioChange);
+  });
+
+  it("should keep the portfolio variation when the market change cannot imply a previous value", () => {
+    expect(
+      alignFlatDayCountervalueChange({
+        ...flatHolding,
+        marketDayChangePercentPoints: -100,
+      }),
+    ).toBe(portfolioChange);
   });
 });
 

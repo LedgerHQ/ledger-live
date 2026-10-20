@@ -1,4 +1,0 @@
-{
-  "entry": ["src/Solana.ts"],
-  "ignoreUnused": ["jest-sonar"]
-}

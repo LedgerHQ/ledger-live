@@ -1,7 +1,10 @@
 import { getEnv, getEnvDefault, setEnv, setEnvUnsafe } from "@shared/env";
+import { mockserverIdentifier } from "@ledgerhq/live-dmk-desktop";
 import network from "@ledgerhq/live-network";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   bootstrapMockServerTransport,
+  mockServerKnownDevice,
   MOCK_SERVER_TRANSPORT_STORAGE_KEY,
 } from "./mockServerTransport";
 
@@ -14,6 +17,7 @@ const mockSetMockServerSessionToken = jest.fn();
 let storedSessionToken: string | undefined;
 
 jest.mock("@ledgerhq/live-dmk-desktop", () => ({
+  mockserverIdentifier: "MOCKSERVER",
   getMockServerTransportUrl: () => "https://mock.example",
   getMockServerSessionToken: () => storedSessionToken,
   setMockServerSessionToken: (token: string) => mockSetMockServerSessionToken(token),
@@ -32,6 +36,17 @@ const mockedNetwork = jest.mocked(network);
 
 const requestsTo = (path: string) =>
   mockedNetwork.mock.calls.map(([config]) => config).filter(config => config.url?.endsWith(path));
+
+describe("mockServerKnownDevice", () => {
+  it("maps the mock server Nano Gen5 type apexp to the apex model", () => {
+    expect(mockServerKnownDevice("apexp")).toEqual({
+      transport: mockserverIdentifier,
+      deviceModelId: DeviceModelId.apex,
+      id: "",
+      name: null,
+    });
+  });
+});
 
 describe("bootstrapMockServerTransport", () => {
   const defaultSession = getEnv("MOCK_SERVER_SESSION");
@@ -154,7 +169,7 @@ describe("bootstrapMockServerTransport", () => {
     mockedNetwork.mockRejectedValue(new Error("unreachable"));
     jest.spyOn(console, "warn").mockImplementation(() => {});
 
-    await bootstrapMockServerTransport();
+    await expect(bootstrapMockServerTransport()).resolves.toBeNull();
 
     expect(mockSetMockServerSessionToken).not.toHaveBeenCalled();
   });

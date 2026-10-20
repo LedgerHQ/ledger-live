@@ -4,6 +4,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { setEnv } from "@ledgerhq/live-env";
 import { createStxTransferTransaction, createTokenTransferTransaction } from "../../common-logic";
+import { STACKS_DUMMY_PUBLIC_KEY } from "../../constants";
 import type { StacksTxData } from "../../types";
 import { getBalance } from "../getBalance";
 import { buildUnsignedTx } from "../buildUnsignedTx";
@@ -60,6 +61,50 @@ describe("buildUnsignedTx", () => {
       expect(getBalance).toHaveBeenCalledWith(SENDER);
       const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
       expect(call[0].toString()).toBe("99700");
+    });
+  });
+
+  describe("zero-amount sweep", () => {
+    beforeEach(() => {
+      (getBalance as jest.Mock).mockResolvedValue([{ value: 0n, asset: { type: "native" } }]);
+    });
+
+    it("rejects it when crafting", async () => {
+      await expect(
+        buildUnsignedTx(transferIntent({ useAllAmount: true, amount: 0n }), 300n, 5n),
+      ).rejects.toThrow("amount must be positive");
+    });
+
+    it("builds it for a fee estimate, so an empty account's max spendable can be estimated", async () => {
+      await buildUnsignedTx(transferIntent({ useAllAmount: true, amount: 0n }), 0n, 5n, {
+        forEstimation: true,
+      });
+
+      const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
+      expect(call[0].toString()).toBe("0");
+    });
+  });
+
+  describe("sender public key", () => {
+    it("uses a dummy key for fee estimation when a pre-heal account stores its address as xpub", async () => {
+      await buildUnsignedTx(transferIntent({ senderPublicKey: SENDER }), 0n, 5n, {
+        forEstimation: true,
+      });
+
+      expect(createStxTransferTransaction).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        STACKS_DUMMY_PUBLIC_KEY,
+        expect.anything(),
+      );
+    });
+
+    it("rejects an address in place of the public key when crafting", async () => {
+      await expect(
+        buildUnsignedTx(transferIntent({ senderPublicKey: SENDER }), 300n, 5n),
+      ).rejects.toThrow("senderPublicKey is required");
     });
   });
 

@@ -19,9 +19,7 @@ const LockedDeviceDrawer = ({ deviceModelId }: Props) => {
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100%">
-      <Animation
-        animation={getDeviceAnimation(deviceModelId, theme.theme, "enterPinCode") as object}
-      />
+      <Animation animation={getDeviceAnimation(deviceModelId, theme.theme, "enterPinCode")} />
       <Text variant="h5Inter" fontWeight="semiBold" mt={6}>
         {t("syncOnboarding.manual.softwareCheckLockedDeviceDrawer.title", {
           deviceName: productName,

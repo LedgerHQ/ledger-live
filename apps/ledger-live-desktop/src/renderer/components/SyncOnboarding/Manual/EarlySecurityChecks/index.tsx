@@ -25,7 +25,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useNavigate } from "react-router";
 import { NetworkDown } from "@ledgerhq/live-common/errors";
-import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
+import { useNetworkState } from "@shared/network-status";
 import { urls } from "~/config/urls";
 import { normalizeGenuineCheckError } from "./normalizeGenuineCheckError";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
@@ -42,6 +42,7 @@ import { renderAllowManager } from "../../../DeviceAction/rendering";
 
 export type Props = {
   onComplete: () => void;
+  onGenuineCheckPassed: (deviceId: string) => void;
   device: Device;
   /**
    * Security checks re-run after a firmware update.
@@ -76,6 +77,7 @@ const commonDrawerProps = {
  */
 const EarlySecurityChecks = ({
   onComplete,
+  onGenuineCheckPassed,
   device,
   restartChecksAfterUpdate,
   isInitialRunOfSecurityChecks,
@@ -121,7 +123,7 @@ const EarlySecurityChecks = ({
     deviceName: device.deviceName ?? null,
   });
 
-  const { networkStatus } = useNetworkStatus();
+  const { isConnected } = useNetworkState();
 
   const {
     state: {
@@ -331,6 +333,10 @@ const EarlySecurityChecks = ({
   }, [genuineCheckStatus, genuineState, devicePermissionState, genuineCheckError]);
 
   useEffect(() => {
+    if (genuineState === "genuine") onGenuineCheckPassed(deviceId);
+  }, [genuineState, deviceId, onGenuineCheckPassed]);
+
+  useEffect(() => {
     /**
      * for infinite loop firmware, we arbitrarily decide that the il2 -> il0
      * path does not exist. It allows testing this flow without being stuck
@@ -417,10 +423,7 @@ const EarlySecurityChecks = ({
         },
         commonDrawerProps,
       );
-    } else if (
-      networkStatus === NetworkStatus.OFFLINE &&
-      genuineCheckStatus !== SoftwareCheckStatus.inactive
-    ) {
+    } else if (isConnected === false && genuineCheckStatus !== SoftwareCheckStatus.inactive) {
       setDrawer(
         ErrorDrawer,
         {
@@ -469,7 +472,7 @@ const EarlySecurityChecks = ({
     productName,
     resetGenuineCheckState,
     navigate,
-    networkStatus,
+    isConnected,
     genuineCheckStatus,
   ]);
 

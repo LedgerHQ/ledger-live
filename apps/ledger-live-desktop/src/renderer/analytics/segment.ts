@@ -1,5 +1,9 @@
 import { AnalyticsBrowser } from "@segment/analytics-next";
-import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import {
+  getAccountsWithFunds,
+  getBlockchainsWithFunds,
+  getTokensWithFunds,
+} from "@features/platform-account-analytics";
 import {
   getStablecoinYieldSetting,
   getBitcoinYieldSetting,
@@ -30,6 +34,7 @@ import { v4 as uuid } from "uuid";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
+import { osRelease as getOsRelease, osType as getOsType } from "~/system";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
@@ -62,6 +67,7 @@ import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalSt
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
+import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { scrubAccountId } from "../helpers/scrubAccountId";
 import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
@@ -69,10 +75,8 @@ import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const os = require("os");
-const osType = os.type();
-const osVersion = os.release();
+const osType = getOsType();
+const osVersion = getOsRelease();
 const sessionId = uuid();
 const getContext = () => ({
   ip: "0.0.0.0",
@@ -288,12 +292,6 @@ const extraProperties = (store: ReduxStore) => {
   const hasCompletedOnboarding = hasCompletedOnboardingSelector(state);
 
   const ptxAttributes = getPtxAttributes();
-  const ldmkTransport = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("ldmkTransport")
-    : { enabled: false };
-  const ldmkConnectApp = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("ldmkConnectApp")
-    : { enabled: false };
   const ldmkSolanaSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
     : { enabled: false };
@@ -341,16 +339,8 @@ const extraProperties = (store: ReduxStore) => {
     asset => `${asset.ticker} on ${asset.networkName}`,
   );
 
-  const accountsWithFunds = accounts
-    ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
-    : [];
-
+  const accountsWithFunds = getAccountsWithFunds(accounts);
+  const blockchainWithFunds = getBlockchainsWithFunds(accounts);
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
@@ -360,6 +350,8 @@ const extraProperties = (store: ReduxStore) => {
     "lwd",
   );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
+  const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
+  const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   const payAttributes = getPayAttributes(
     state,
@@ -383,6 +375,7 @@ const extraProperties = (store: ReduxStore) => {
     sessionId,
     sidebarCollapsed,
     accountsWithFunds,
+    blockchainWithFunds,
     ContactsAttributes: contactsFeature,
     ...contactsAttributes,
     tokenWithFunds,
@@ -396,8 +389,6 @@ const extraProperties = (store: ReduxStore) => {
     ...productTourAttributes,
     largeScreenUpsellAttributes,
     madAttributes,
-    isLDMKTransportEnabled: ldmkTransport?.enabled,
-    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     // For tracking receive flow events during onboarding
     ...getOnboardingStatusAttributes(
       postOnboardingInProgress,
@@ -417,6 +408,8 @@ const extraProperties = (store: ReduxStore) => {
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
+    recoverV2,
+    accountDetail,
     ...remoteABTestingAttributes,
   };
 };

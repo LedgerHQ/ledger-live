@@ -44,6 +44,12 @@ const CONFIRMATION_POLL_INTERVAL_MS = 3_000;
 const MIN_PRIORITY_FEE_WEI = 100_000_000n;
 const BASE_FEE_HEADROOM = 4n;
 
+/**
+ * Partner gas limits and `eth_estimateGas` are exact for the block they were estimated on, and the
+ * partner has quoted `withdrawCollateral` ~15% under what it used. Unused gas is not charged.
+ */
+const GAS_LIMIT_HEADROOM_PERCENT = 150n;
+
 function atLeast(suggested: bigint | null, floor: bigint): bigint {
   return suggested !== null && suggested > floor ? suggested : floor;
 }
@@ -232,9 +238,10 @@ export class EvmSpeculosExecutor {
       maxFeePerGas ??= (block?.baseFeePerGas ?? 0n) * BASE_FEE_HEADROOM + maxPriorityFeePerGas;
     }
 
-    const gasLimit = payload.gasLimit
+    const estimate = payload.gasLimit
       ? BigInt(payload.gasLimit)
       : await withRpcRetry(() => this.provider.estimateGas({ from, to, data, value }));
+    const gasLimit = (estimate * GAS_LIMIT_HEADROOM_PERCENT) / 100n;
 
     const tx = Transaction.from({
       type: 2,

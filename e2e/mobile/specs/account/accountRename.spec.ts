@@ -43,10 +43,10 @@ describe("Rename account", () => {
     await app.common.expectAccountName(newAccountName);
     await device.terminateApp();
     await launchApp({ newInstance: true });
-    await device.disableSynchronization();
+    await app.common.disableSynchronization();
     await loadConfig("skip-onboarding", true);
     await app.mainNavigation.waitForWallet40Ready();
-    await device.enableSynchronization();
+    await app.common.enableSynchronization();
     await app.portfolio.goToSpecificAsset(account.currency.name);
     await app.common.expectAccountName(newAccountName);
   });

@@ -1,4 +1,6 @@
-module.exports = {
+const { withEsmDeps } = require("@support/jest-shared");
+
+const config = {
   passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
@@ -6,10 +8,9 @@ module.exports = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
     "!src/__tests__/**/*.ts",
+    "!src/logic/tests/**/*.ts",
     "!src/datasets/**/*.ts",
     "!src/wallet-btc/__tests__/**/*.ts",
-    "!src/chain-adapters/zcash/ipc/**/*.ts",
-    "!src/chain-adapters/zcash/stubs/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
@@ -39,3 +40,5 @@ module.exports = {
     "@ledgerhq/test-quarantine/jest-retries",
   ],
 };
+
+module.exports = withEsmDeps(config);

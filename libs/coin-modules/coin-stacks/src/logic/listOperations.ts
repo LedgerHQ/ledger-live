@@ -8,7 +8,8 @@ import { cvToJSON, deserializeCV } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { hexMemoToString, bufferMemoToString } from "../common-logic";
 import { MAX_STACKS_PAGE_LIMIT, SEND_MANY_MEMO_CONTRACT_ID } from "../constants";
-import { fetchAllTransactions } from "../network/api";
+import { fetchAllTransactions, fetchFungibleTokenMetadataCached } from "../network/api";
+import { findFinalTokenId, resolveTokenId } from "../network/transformers";
 import type { DecodedSendManyFunctionArgsCV, TransactionResponse } from "../types/api";
 import { NATIVE_ASSET, tokenAsset } from "./getBalance";
 
@@ -25,7 +26,12 @@ function toOperation(params: {
   fees: bigint;
   date: Date;
   failed: boolean;
+  nonce: number;
+  // The sender pays the fee unless a sponsor does; the sponsor's address isn't needed, only that
+  // the account didn't pay, so a sponsored transaction has no `feesPayer`.
+  feesPayer?: string;
   memo?: string;
+  internal?: boolean;
 }): Operation {
   return {
     id: params.id,
@@ -39,46 +45,62 @@ function toOperation(params: {
     // above (`op.extra?.ledgerOpType`, generic-coin-framework/utils.ts) -- without it every SIP-010
     // sub-account operation's type is silently `undefined`. Same convention as coin-vechain/
     // coin-multiversx's own `listOperations.ts`.
-    details: { ledgerOpType: params.type, ...(params.memo ? { memo: params.memo } : {}) },
+    details: {
+      ledgerOpType: params.type,
+      sequence: BigInt(params.nonce),
+      ...(params.memo ? { memo: params.memo } : {}),
+      ...(params.internal ? { internal: true } : {}),
+    },
     tx: {
       hash: params.hash,
       block: { height: params.blockHeight, hash: params.blockHash, time: params.date },
       fees: params.fees,
+      ...(params.feesPayer ? { feesPayer: params.feesPayer } : {}),
       date: params.date,
       failed: params.failed,
     },
   };
 }
 
+/** The fields every operation of `tx` shares, whatever its direction or asset. */
+function txFields(tx: TransactionResponse) {
+  const { tx_id, fee_rate, nonce, block_height, block_hash, burn_block_time, tx_status } = tx.tx;
+  return {
+    hash: tx_id,
+    blockHeight: block_height,
+    blockHash: block_hash,
+    // A sponsored transaction's fee is paid by the sponsor, so it is reported as zero: the framework
+    // adds `fees` to an outgoing native value, and values a failed operation at `fees`, whoever
+    // paid them -- omitting `feesPayer` alone would still charge the sender the sponsor's fee.
+    fees: tx.tx.sponsored ? 0n : BigInt(fee_rate || "0"),
+    date: new Date(burn_block_time * 1000),
+    failed: tx_status !== "success",
+    nonce,
+    feesPayer: tx.tx.sponsored ? undefined : tx.tx.sender_address,
+  };
+}
+
 function nativeTransferOperations(tx: TransactionResponse, address: string): Operation[] {
-  const { tx_id, fee_rate, block_height, block_hash, burn_block_time, sender_address, tx_status } =
-    tx.tx;
-  const { stx_received, stx_sent } = tx;
+  const { tx_id, sender_address } = tx.tx;
+  const { stx_received } = tx;
   if (!tx.tx.token_transfer) return [];
 
   const recipient = tx.tx.token_transfer.recipient_address;
   const memo = hexMemoToString(tx.tx.token_transfer.memo);
-  const fees = BigInt(fee_rate || "0");
-  const date = new Date(burn_block_time * 1000);
-  const failed = tx_status !== "success";
-  const blockHeight = block_height;
 
   const ops: Operation[] = [];
   if (address === sender_address) {
     ops.push(
       toOperation({
+        ...txFields(tx),
         id: `${tx_id}-OUT`,
         type: "OUT",
         senders: [sender_address],
         recipients: [recipient],
-        value: BigInt(new BigNumber(stx_sent).toFixed(0)),
+        // The transferred amount alone: the framework adds the fee to an outgoing native value, and
+        // `stx_sent` already includes it, so using it would count the fee twice.
+        value: BigInt(tx.tx.token_transfer.amount),
         asset: NATIVE_ASSET,
-        hash: tx_id,
-        blockHeight,
-        blockHash: block_hash,
-        fees,
-        date,
-        failed,
         memo,
       }),
     );
@@ -86,18 +108,13 @@ function nativeTransferOperations(tx: TransactionResponse, address: string): Ope
   if (address === recipient) {
     ops.push(
       toOperation({
+        ...txFields(tx),
         id: `${tx_id}-IN`,
         type: "IN",
         senders: [sender_address],
         recipients: [recipient],
         value: BigInt(new BigNumber(stx_received).toFixed(0)),
         asset: NATIVE_ASSET,
-        hash: tx_id,
-        blockHeight,
-        blockHash: block_hash,
-        fees,
-        date,
-        failed,
         memo,
       }),
     );
@@ -105,69 +122,102 @@ function nativeTransferOperations(tx: TransactionResponse, address: string): Ope
   return ops;
 }
 
+/** A send-many is one transaction, so it yields one OUT for the whole batch (as the legacy bridge
+ * does), with one `internal` operation per recipient carrying that recipient's amount and memo, and
+ * at most one IN for a recipient, summing every entry addressed to it. One operation per entry
+ * would not work: the framework keys operations by hash and type, so they would overwrite each
+ * other and leave only the last recipient's amount. */
 function sendManyOperations(tx: TransactionResponse, address: string): Operation[] {
-  const { tx_id, fee_rate, block_height, block_hash, burn_block_time, sender_address, tx_status } =
-    tx.tx;
+  const { tx_id, sender_address } = tx.tx;
   if (!tx.tx.contract_call) return [];
-
-  const fees = BigInt(fee_rate || "0");
-  const date = new Date(burn_block_time * 1000);
-  const failed = tx_status !== "success";
 
   const decoded: DecodedSendManyFunctionArgsCV = cvToJSON(
     deserializeCV(tx.tx.contract_call.function_args[0].hex),
   );
+  const entries = decoded.value.map(entry => ({
+    recipient: entry.value.to.value,
+    value: BigInt(entry.value.ustx.value),
+    memo: entry.value.memo ? hexMemoToString(entry.value.memo.value) : undefined,
+  }));
 
   const ops: Operation[] = [];
-  decoded.value.forEach((entry, idx) => {
-    const recipient = entry.value.to.value;
-    const value = BigInt(entry.value.ustx.value);
-    const memo = entry.value.memo ? hexMemoToString(entry.value.memo.value) : undefined;
-
-    if (address === sender_address) {
-      ops.push(
+  if (address === sender_address) {
+    ops.push(
+      toOperation({
+        ...txFields(tx),
+        id: `${tx_id}-OUT`,
+        type: "OUT",
+        senders: [sender_address],
+        recipients: [],
+        value: entries.reduce((sum, entry) => sum + entry.value, 0n),
+        asset: NATIVE_ASSET,
+      }),
+      ...entries.map((entry, idx) =>
         toOperation({
+          ...txFields(tx),
           id: `${tx_id}-OUT-${idx}`,
           type: "OUT",
           senders: [sender_address],
-          recipients: [recipient],
-          value,
+          recipients: [entry.recipient],
+          value: entry.value,
           asset: NATIVE_ASSET,
-          hash: tx_id,
-          blockHeight: block_height,
-          blockHash: block_hash,
-          fees,
-          date,
-          failed,
-          memo,
+          memo: entry.memo,
+          internal: true,
         }),
-      );
-    }
-    if (address === recipient) {
-      ops.push(
-        toOperation({
-          id: `${tx_id}-IN-${idx}`,
-          type: "IN",
-          senders: [sender_address],
-          recipients: [recipient],
-          value,
-          asset: NATIVE_ASSET,
-          hash: tx_id,
-          blockHeight: block_height,
-          blockHash: block_hash,
-          fees,
-          date,
-          failed,
-          memo,
-        }),
-      );
-    }
-  });
+      ),
+    );
+  }
+
+  const received = entries.filter(entry => entry.recipient === address);
+  if (received.length > 0) {
+    ops.push(
+      toOperation({
+        ...txFields(tx),
+        id: `${tx_id}-IN`,
+        type: "IN",
+        senders: [sender_address],
+        recipients: [address],
+        value: received.reduce((sum, entry) => sum + entry.value, 0n),
+        asset: NATIVE_ASSET,
+      }),
+    );
+  }
   return ops;
 }
 
-function sip010TransferOperations(tx: TransactionResponse, address: string): Operation[] {
-  const { tx_id, fee_rate, block_height, block_hash, burn_block_time, tx_status } = tx.tx;
+/** The token's registry key (`CONTRACT_ID::ASSET_NAME`, lowercased), resolved exactly as the
+ * legacy bridge does (`network/transformers.ts`'s `extractContractTransactions`): the asset name
+ * comes from the transfer's Fungible post-condition, or from the contract's FT metadata when there
+ * is none (common for liquid-staking tokens), then is canonicalized against the registry.
+ *
+ * A failing FT-metadata lookup propagates, as on the legacy bridge: the generic sync is incremental
+ * (it resumes above the newest stored operation), so swallowing it would permanently drop the
+ * transfer, or store it under an uncanonicalized id, instead of retrying on the next sync. */
+async function resolveSip010AssetReference(
+  contractId: string,
+  tx: TransactionResponse,
+  resolvedTokenIds: Record<string, string>,
+): Promise<string | undefined> {
+  const assetName = tx.tx.post_conditions?.find(p => p.type === "fungible")?.asset.asset_name;
+  const tokenId = await resolveTokenId(contractId, fetchFungibleTokenMetadataCached, assetName);
+  if (!tokenId) return undefined;
+  const finalTokenId = await findFinalTokenId(
+    tokenId,
+    resolvedTokenIds,
+    fetchFungibleTokenMetadataCached,
+  );
+  resolvedTokenIds[tokenId] = finalTokenId;
+  // Lowercased to match `fetchAllTokenBalances`'s own normalization (network/api.ts) -- otherwise
+  // an operation's assetReference wouldn't match the balance/registry key for the same token.
+  return finalTokenId.toLowerCase();
+}
+
+async function sip010TransferOperations(
+  tx: TransactionResponse,
+  address: string,
+  resolvedTokenIds: Record<string, string>,
+): Promise<Operation[]> {
+  const { tx_id } = tx.tx;
   const contractCall = tx.tx.contract_call;
   if (!contractCall) return [];
 
@@ -182,34 +232,25 @@ function sip010TransferOperations(tx: TransactionResponse, address: string): Ope
 
   if (address !== sender && address !== receiver) return [];
 
-  // The asset name comes from the transfer's own Fungible post-condition, same source
-  // `network/transformers.ts`'s `getAssetNameFromPostConditions` uses -- a `transfer` call
-  // without one cannot be identified without an extra FT-metadata round trip, so it's dropped.
-  const assetName = tx.tx.post_conditions?.find(p => p.type === "fungible")?.asset.asset_name;
-  if (!assetName) return [];
+  const assetReference = await resolveSip010AssetReference(
+    contractCall.contract_id,
+    tx,
+    resolvedTokenIds,
+  );
+  if (!assetReference) return [];
 
-  // Lowercased to match `fetchAllTokenBalances`'s own normalization (network/api.ts) -- otherwise
-  // an operation's assetReference wouldn't match the balance/registry key for the same token.
-  const asset = tokenAsset(`${contractCall.contract_id}::${assetName}`.toLowerCase(), address);
-  const fees = BigInt(fee_rate || "0");
-  const date = new Date(burn_block_time * 1000);
-  const failed = tx_status !== "success";
+  const asset = tokenAsset(assetReference, address);
   const type = address === sender ? "OUT" : "IN";
 
   return [
     toOperation({
+      ...txFields(tx),
       id: `${tx_id}-${type}`,
       type,
       senders: [sender],
       recipients: [receiver],
       value,
       asset,
-      hash: tx_id,
-      blockHeight: block_height,
-      blockHash: block_hash,
-      fees,
-      date,
-      failed,
       memo,
     }),
   ];
@@ -219,30 +260,28 @@ function sip010TransferOperations(tx: TransactionResponse, address: string): Ope
  * operation carrying the function name as `type`, following Tron's `hasFailed`-independent
  * pattern of classifying every contract-call kind rather than only known transfer shapes. */
 function genericContractCallOperations(tx: TransactionResponse, address: string): Operation[] {
-  const { tx_id, fee_rate, block_height, block_hash, burn_block_time, sender_address, tx_status } =
-    tx.tx;
+  const { tx_id, sender_address } = tx.tx;
   const contractCall = tx.tx.contract_call;
   if (!contractCall || sender_address !== address) return [];
 
   return [
     toOperation({
+      ...txFields(tx),
       id: `${tx_id}-${contractCall.function_name}`,
       type: contractCall.function_name,
       senders: [sender_address],
       recipients: [],
       value: 0n,
       asset: NATIVE_ASSET,
-      hash: tx_id,
-      blockHeight: block_height,
-      blockHash: block_hash,
-      fees: BigInt(fee_rate || "0"),
-      date: new Date(burn_block_time * 1000),
-      failed: tx_status !== "success",
     }),
   ];
 }
 
-function toOperations(tx: TransactionResponse, address: string): Operation[] {
+async function toOperations(
+  tx: TransactionResponse,
+  address: string,
+  resolvedTokenIds: Record<string, string>,
+): Promise<Operation[]> {
   if (tx.tx.tx_type === "token_transfer") {
     return nativeTransferOperations(tx, address);
   }
@@ -253,7 +292,7 @@ function toOperations(tx: TransactionResponse, address: string): Operation[] {
     if (functionName === "send-many" && contractId === SEND_MANY_MEMO_CONTRACT_ID) {
       return sendManyOperations(tx, address);
     }
-    if (functionName === "transfer") return sip010TransferOperations(tx, address);
+    if (functionName === "transfer") return sip010TransferOperations(tx, address, resolvedTokenIds);
     return genericContractCallOperations(tx, address);
   }
 
@@ -271,21 +310,27 @@ export async function listOperations(
     throw new Error("cursor is not supported for Stacks: the full history is fetched in one page");
   }
 
-  const transactions = await fetchAllTransactions(address);
-  const sorted = transactions
-    .flatMap(tx => toOperations(tx, address))
-    // No incremental fetch on the indexer side (the full history is always pulled above), so
-    // minHeight is applied here instead of being rejected -- getAccountShape's re-sync always
-    // passes a non-zero minHeight once an account has any operation.
-    .filter(op => op.tx.block.height >= minHeight)
-    .sort((a, b) =>
-      order === "asc"
-        ? a.tx.date.getTime() - b.tx.date.getTime()
-        : b.tx.date.getTime() - a.tx.date.getTime(),
-    );
+  // No incremental fetch on the indexer side (the full history is always pulled), so minHeight is
+  // applied here instead of being rejected -- getAccountShape's re-sync always passes a non-zero
+  // minHeight once an account has any operation. It filters transactions before they are converted,
+  // so a token-metadata lookup that fails for an already-synced transfer cannot abort the sync.
+  const transactions = (await fetchAllTransactions(address)).filter(
+    tx => tx.tx.block_height >= minHeight,
+  );
+  // Sequential, so each token id is resolved (and its metadata fetched) once per call.
+  const resolvedTokenIds: Record<string, string> = {};
+  const operations: Operation[] = [];
+  for (const tx of transactions) {
+    operations.push(...(await toOperations(tx, address, resolvedTokenIds)));
+  }
+  operations.sort((a, b) =>
+    order === "asc"
+      ? a.tx.date.getTime() - b.tx.date.getTime()
+      : b.tx.date.getTime() - a.tx.date.getTime(),
+  );
   // No cursor support (the full history is always fetched above), so a limit only caps the
   // returned page size -- it does not enable fetching the remainder via `next`.
-  const items = limit !== undefined ? sorted.slice(0, limit) : sorted;
+  const items = limit !== undefined ? operations.slice(0, limit) : operations;
 
   return { items, next: undefined };
 }

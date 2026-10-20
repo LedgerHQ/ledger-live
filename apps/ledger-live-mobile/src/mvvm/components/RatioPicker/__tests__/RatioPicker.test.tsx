@@ -42,6 +42,16 @@ describe("RatioPicker", () => {
     expect(onChange).toHaveBeenCalledWith(10);
   });
 
+  it("holds the buffer back from the max pill only", async () => {
+    const { onChange, user } = renderPicker({ maxValue: 100, maxBuffer: 0.25 });
+
+    await user.press(screen.getByTestId("ratio-MAX"));
+    await user.press(screen.getByTestId("ratio-50%"));
+
+    expect(onChange).toHaveBeenNthCalledWith(1, 99.75);
+    expect(onChange).toHaveBeenNthCalledWith(2, 50);
+  });
+
   it("disables the pill whose value the field already holds", async () => {
     const { onChange, user } = renderPicker({ value: 50 });
 

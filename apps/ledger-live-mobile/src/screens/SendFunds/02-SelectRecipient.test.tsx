@@ -17,7 +17,6 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: jest.fn().mockReturnValue({}),
 }));
-jest.mock("@react-native-clipboard/clipboard", () => ({}));
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useScrollToTop: jest.fn(),

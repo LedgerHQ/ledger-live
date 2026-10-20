@@ -11,6 +11,8 @@ import { UseMarketBannerViewModelResult } from "../types";
 import { useMarketBannerFilter } from "./useMarketBannerFilter";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TIME_RANGE } from "@ledgerhq/live-common/market/constants";
+import { isMoodIndexAvailable } from "@features/flow-fear-and-greed";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 
 /**
  * Shared market banner presentation logic (range, filter trigger, navigation/tracking
@@ -65,6 +67,7 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   return {
     showFilter: shouldDisplayAssetDiscoverability,
     bannerFilter,
+    moodIndexAvailable: isMoodIndexAvailable(getCountryLocale()),
     range: TIME_RANGE,
     onTilePress,
     onViewAllPress,

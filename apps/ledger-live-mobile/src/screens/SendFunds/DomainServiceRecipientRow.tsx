@@ -7,7 +7,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Platform, StyleSheet, View } from "react-native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { readClipboard } from "@shared/clipboard";
 import { Trans } from "~/context/Locale";
 import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientInput from "~/components/RecipientInput";
@@ -108,7 +108,7 @@ const DomainServiceRecipientInput = ({
       <View style={styles.inputWrapper}>
         <RecipientInput
           onPaste={async () => {
-            const text = await Clipboard.getString();
+            const text = await readClipboard();
             onChangeText(text);
           }}
           onFocus={onRecipientFieldFocus}

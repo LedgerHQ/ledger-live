@@ -83,9 +83,12 @@ test.describe("Swap - entry points", () => {
     },
     async ({ app }) => {
       await app.marketBanner.clickExploreMarketHeader();
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
-      );
+      await app.swap.goAndWaitForSwapToBeReady(async () => {
+        await app.market.startSwapForSelectedTicker(
+          swapEntryPoint.swap.accountToDebit.currency.ticker,
+        );
+        await app.modularDialog.selectAccountByName(swapEntryPoint.swap.accountToDebit);
+      });
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
       await app.swap.checkAssetToAccountNameContains(
         swapEntryPoint.swap.accountToDebit.accountName,
@@ -265,7 +268,7 @@ test.describe("Swap - history", () => {
     addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
     addressTo: Addresses.SWAP_HISTORY_ETH_TO,
     details: {
-      date: "July 15, 2025",
+      date: "December 31, 2025",
       sentAmount: "0.07 SOL",
       receivedAmount: "751.0672 ETH",
       networkFees: "0.000005 SOL",

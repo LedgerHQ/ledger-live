@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 jest.mock("@ledgerhq/device-transport-kit-speculos", () => {
-  class HttpSpeculosDatasource {
-    openEventStream() {
-      return Promise.resolve({ cancel: jest.fn() });
-    }
-  }
+  const HttpSpeculosDatasource = jest.fn();
+  HttpSpeculosDatasource.prototype.openEventStream = () => Promise.resolve({ cancel: jest.fn() });
 
   return {
     __esModule: true,
@@ -31,6 +28,8 @@ import * as speculosDeviceControllerModule from "@ledgerhq/speculos-device-contr
 import { Subject } from "rxjs";
 
 const flushPromises = () => new Promise<void>(resolve => setImmediate(resolve));
+
+const remoteBaseURL = "https://run.speculos.example:443";
 
 const fakeDevice: DiscoveredDevice = {
   id: "dev-1",
@@ -97,7 +96,7 @@ beforeAll(() => {
       openEventHandlers.onEvent = onEvent;
       openEventHandlers.onClose = onClose;
       // Return an object that has a cancel() method so transport.close() is safe
-      return { cancel: jest.fn() } as any;
+      return { cancel: jest.fn().mockResolvedValue(undefined) } as any;
     });
 });
 
@@ -130,6 +129,52 @@ describe("DeviceManagementKitTransportSpeculos", () => {
 
     // then
     expect(transport).toBeInstanceOf(DeviceManagementKitTransportSpeculos);
+  });
+
+  it("open() reuses the DMK of a session and builds another for a new token", async () => {
+    // given
+    const factory = jest.mocked(speculosTransportFactoryModule.speculosTransportFactory);
+    const target = { baseURL: remoteBaseURL, model: DeviceModelId.NANO_X };
+
+    // when
+    await openTransport({ ...target, bearerToken: "token-1" });
+    await openTransport({ ...target, bearerToken: "token-1" });
+    await openTransport({ ...target, bearerToken: "token-2" });
+
+    // then
+    expect(factory.mock.calls).toEqual([
+      [remoteBaseURL, true, DeviceModelId.NANO_X, { bearerToken: "token-1" }],
+      [remoteBaseURL, true, DeviceModelId.NANO_X, { bearerToken: "token-2" }],
+    ]);
+  });
+
+  it("automationEvents opens the event stream with the session token", async () => {
+    // given
+    const transport = await openTransport({ baseURL: remoteBaseURL, bearerToken: "token-1" });
+
+    // when
+    transport.automationEvents.subscribe().unsubscribe();
+
+    // then
+    expect(speculosTransportFactoryModule.HttpSpeculosDatasource).toHaveBeenCalledWith(
+      remoteBaseURL,
+      undefined,
+      "token-1",
+    );
+  });
+
+  it("button() presses through a controller holding the session token", async () => {
+    // given
+    const transport = await openTransport({ baseURL: remoteBaseURL, bearerToken: "token-1" });
+
+    // when
+    await transport.button(SpeculosButton.LEFT);
+
+    // then
+    expect(speculosDeviceControllerModule.deviceControllerClientFactory).toHaveBeenCalledWith(
+      remoteBaseURL,
+      { bearerToken: "token-1" },
+    );
   });
 
   it.each([

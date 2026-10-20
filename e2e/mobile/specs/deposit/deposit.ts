@@ -16,7 +16,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export async function runSelectCryptoNetworkTest(
+export function runSelectCryptoNetworkTest(
   account: Account,
   networks: string[],
   withAccount: boolean,
@@ -39,7 +39,6 @@ export async function runSelectCryptoNetworkTest(
       await app.portfolio.pressQuickActionTransferButton();
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 
-      await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
       await app.modularDrawer.validateNetworksScreen(networks);
       await app.modularDrawer.selectNetwork(account.currency.networks[0]);
@@ -49,7 +48,7 @@ export async function runSelectCryptoNetworkTest(
   });
 }
 
-export async function runSelectCryptoWithoutNetworkAndAccountTest(
+export function runSelectCryptoWithoutNetworkAndAccountTest(
   account: Account,
   tmsLinks: string[],
   tags: string[],
@@ -69,7 +68,6 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 
       await app.modularDrawer.validateAssetsScreen([account.currency.ticker]);
-      await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.receive.expectDeviceConnectionScreen();

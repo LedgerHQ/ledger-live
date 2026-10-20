@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Link } from "@ledgerhq/lumen-ui-rnative";
+import { isSendConfirmationRetryable } from "@ledgerhq/live-common/flows/send/presentBroadcastError";
 import TranslatedError from "~/components/TranslatedError";
 import { ConfirmationStatusLayout } from "../ConfirmationStatusLayout";
 
@@ -40,7 +41,7 @@ export function ConfirmationErrorView({
         </Link>
       }
       actions={
-        <>
+        error && isSendConfirmationRetryable(error) ? (
           <Button
             appearance="base"
             size="lg"
@@ -50,8 +51,9 @@ export function ConfirmationErrorView({
           >
             {retryLabel}
           </Button>
+        ) : (
           <Button
-            appearance="gray"
+            appearance="base"
             size="lg"
             lx={{ width: "full" }}
             onPress={onClose}
@@ -59,7 +61,7 @@ export function ConfirmationErrorView({
           >
             {closeLabel}
           </Button>
-        </>
+        )
       }
     />
   );

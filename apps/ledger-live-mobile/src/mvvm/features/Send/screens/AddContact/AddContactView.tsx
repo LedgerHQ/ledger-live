@@ -25,7 +25,7 @@ export function AddContactView({
     <>
       <ListItem onPress={onAddNewContact} testID="send-add-contact-new">
         <ListItemLeading>
-          <Spot appearance="icon" icon={Plus} />
+          <Spot icon={Plus} />
           <ListItemContent>
             <ListItemTitle>{newContactLabel}</ListItemTitle>
           </ListItemContent>
@@ -33,7 +33,7 @@ export function AddContactView({
       </ListItem>
       <ListItem onPress={onAddToExistingContact} testID="send-add-contact-existing">
         <ListItemLeading>
-          <Spot appearance="icon" icon={Contact} />
+          <Spot icon={Contact} />
           <ListItemContent>
             <ListItemTitle>{existingContactLabel}</ListItemTitle>
           </ListItemContent>

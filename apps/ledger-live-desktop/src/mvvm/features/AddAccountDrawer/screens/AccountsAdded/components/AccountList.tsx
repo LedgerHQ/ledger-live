@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { useTheme } from "styled-components";
 import { Box, Flex } from "@ledgerhq/react-ui";
 import { FormattedAccountItem } from "../../../components/FormattedAccountItem";
 import { Account } from "@ledgerhq/types-live";
@@ -14,7 +13,6 @@ export const AccountList = ({
   navigateToEditAccountName,
   isAccountSelectionFlow,
 }: AccountListProps) => {
-  const { colors } = useTheme();
   const navigate = useNavigate();
 
   const handleAccountClick = useCallback(
@@ -37,14 +35,10 @@ export const AccountList = ({
         return (
           <Box mb={16} key={account.id}>
             <FormattedAccountItem
-              aria-label={`account item ${account.id}`}
               account={formattedAccount}
-              backgroundColor={colors.opacityDefault.c05}
               onClick={() => handleAccountClick(account)}
-              rightElement={{
-                type: isAccountSelectionFlow ? "arrow" : "edit",
-                onClick: () => navigateToEditAccountName(account),
-              }}
+              onEdit={() => navigateToEditAccountName(account)}
+              trailing={isAccountSelectionFlow ? "arrow" : "edit"}
             />
           </Box>
         );
@@ -52,7 +46,6 @@ export const AccountList = ({
     [
       accounts,
       formatAccount,
-      colors.opacityDefault.c05,
       navigateToEditAccountName,
       isAccountSelectionFlow,
       handleAccountClick,

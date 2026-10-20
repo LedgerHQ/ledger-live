@@ -4,7 +4,6 @@ import {
   isCoingeckoStyleMarketId,
   MAX_MARKET_LEDGER_IDS,
   resolveCoingeckoIdForIdsQuery,
-  shouldFetchMarketByLedgerIds,
 } from "../resolveMarketCurrencyQuery";
 
 describe("isCoingeckoStyleMarketId", () => {
@@ -34,35 +33,6 @@ describe("resolveCoingeckoIdForIdsQuery", () => {
   });
 });
 
-describe("shouldFetchMarketByLedgerIds", () => {
-  it("returns false when no ledger ids are known", () => {
-    expect(shouldFetchMarketByLedgerIds("shiba-inu", undefined)).toBe(false);
-    expect(shouldFetchMarketByLedgerIds("shiba-inu", [])).toBe(false);
-  });
-
-  it("returns true when the market api id is missing", () => {
-    expect(shouldFetchMarketByLedgerIds(undefined, ["solana/spl/bonk"])).toBe(true);
-  });
-
-  it("returns true when the market api id is a ledger id", () => {
-    expect(
-      shouldFetchMarketByLedgerIds("ethereum/erc20/shiba_inu", ["ethereum/erc20/shiba_inu"]),
-    ).toBe(true);
-    expect(shouldFetchMarketByLedgerIds("solana/spl/bonk", ["solana/spl/bonk"])).toBe(true);
-  });
-
-  it("returns false when a coingecko id can be queried via ids (legacy / v3 filter)", () => {
-    expect(shouldFetchMarketByLedgerIds("shiba-inu", ["ethereum/erc20/shiba_inu"])).toBe(false);
-    expect(shouldFetchMarketByLedgerIds("bitcoin", ["bitcoin"])).toBe(false);
-  });
-
-  it("returns false for DADA urns that convert to a coingecko slug (backward compatible)", () => {
-    expect(shouldFetchMarketByLedgerIds("urn:crypto:meta-currency:bonk", ["solana/spl/bonk"])).toBe(
-      false,
-    );
-  });
-});
-
 describe("getMarketLedgerIdsForQuery", () => {
   it("caps the number of ledger ids sent in the query string", () => {
     const ledgerIds = Array.from(
@@ -75,7 +45,7 @@ describe("getMarketLedgerIdsForQuery", () => {
 });
 
 describe("buildMarketCurrencyQueryArgs", () => {
-  it("uses the legacy ids filter for coingecko ids", () => {
+  it("uses ledgerIds whenever they are known, even for coingecko-style ids", () => {
     expect(
       buildMarketCurrencyQueryArgs({
         marketApiId: "bitcoin",
@@ -83,33 +53,32 @@ describe("buildMarketCurrencyQueryArgs", () => {
         counterCurrency: "usd",
       }),
     ).toEqual({
-      args: { id: "bitcoin", counterCurrency: "usd" },
+      args: { ledgerIds: ["bitcoin"], counterCurrency: "usd" },
       skip: false,
     });
   });
 
-  it("uses the legacy ids filter for DADA urns", () => {
+  it("uses ledgerIds for a DADA slug that is not a coingecko id", () => {
+    expect(
+      buildMarketCurrencyQueryArgs({
+        marketApiId: "avalanche",
+        knownLedgerIds: ["avalanche_c_chain"],
+        counterCurrency: "usd",
+      }),
+    ).toEqual({
+      args: { ledgerIds: ["avalanche_c_chain"], counterCurrency: "usd" },
+      skip: false,
+    });
+  });
+
+  it("falls back to the legacy ids filter when no ledger id is known", () => {
     expect(
       buildMarketCurrencyQueryArgs({
         marketApiId: "urn:crypto:meta-currency:shiba_inu",
-        knownLedgerIds: ["ethereum/erc20/shiba_inu"],
         counterCurrency: "eur",
       }),
     ).toEqual({
       args: { id: "shiba-inu", counterCurrency: "eur" },
-      skip: false,
-    });
-  });
-
-  it("uses ledgerIds when only a ledger id is available", () => {
-    expect(
-      buildMarketCurrencyQueryArgs({
-        marketApiId: "ethereum/erc20/shiba_inu",
-        knownLedgerIds: ["ethereum/erc20/shiba_inu"],
-        counterCurrency: "usd",
-      }),
-    ).toEqual({
-      args: { ledgerIds: ["ethereum/erc20/shiba_inu"], counterCurrency: "usd" },
       skip: false,
     });
   });

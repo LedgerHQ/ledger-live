@@ -12,6 +12,9 @@ export enum ScreenName {
   Account = "Account",
   Accounts = "Accounts",
   AccountSettingsMain = "AccountSettingsMain",
+  AccountDetail = "AccountDetail",
+  AccountDetailAdvancedLogs = "AccountDetailAdvancedLogs",
+  AccountDetailEditName = "AccountDetailEditName",
   AccountsSettings = "AccountsSettings",
   AddAccountsAccounts = "AddAccountsAccounts",
   AddAccountsSelectDevice = "AddAccountsSelectDevice",
@@ -51,6 +54,8 @@ export enum ScreenName {
   DebugDeviceIntentExecutorContent = "DebugDeviceIntentExecutorContent",
   DebugDeviceIntentExecutorInfoState = "DebugDeviceIntentExecutorInfoState",
   DebugDeviceIntentExecutorConnectDevice = "DebugDeviceIntentExecutorConnectDevice",
+  DebugDeviceIntentExecutorConnectNewDevice = "DebugDeviceIntentExecutorConnectNewDevice",
+  DebugDeviceIntentExecutorConnectNewDeviceAnimations = "DebugDeviceIntentExecutorConnectNewDeviceAnimations",
   DebugDeviceIntentExecutorContactsValidation = "DebugDeviceIntentExecutorContactsValidation",
   DebugDeviceIntentExecutorInitialization = "DebugDeviceIntentExecutorInitialization",
   DebugDeviceIntentExecutorInitializerStates = "DebugDeviceIntentExecutorInitializerStates",
@@ -79,6 +84,7 @@ export enum ScreenName {
   DebugWallet40 = "DebugWallet40",
   DebugContacts = "DebugContacts",
   DebugDevTools = "DebugDevTools",
+  DebugDeviceOnboarding = "DebugDeviceOnboarding",
   DebugProductTour = "DebugProductTour",
   DebugQ2WalletV4Tour = "DebugQ2WalletV4Tour",
   DebugQ3WalletV4Tour = "DebugQ3WalletV4Tour",
@@ -561,6 +567,20 @@ export enum ScreenName {
 
   // stacks
   StacksEditMemo = "StacksEditMemo",
+  // Stacks staking. ConnectDevice derives its sibling screens by string replacement
+  // (`route.name.replace("ConnectDevice", …)`), so each flow's device/validation screens must
+  // share a prefix and differ only by that suffix.
+  StacksStakingPool = "StacksStakingPool",
+  StacksStakingAmount = "StacksStakingAmount",
+  StacksStakingSelectDevice = "StacksStakingSelectDevice",
+  StacksStakingConnectDevice = "StacksStakingConnectDevice",
+  StacksStakingValidationError = "StacksStakingValidationError",
+  StacksStakingValidationSuccess = "StacksStakingValidationSuccess",
+  StacksUnstakingSummary = "StacksUnstakingSummary",
+  StacksUnstakingSelectDevice = "StacksUnstakingSelectDevice",
+  StacksUnstakingConnectDevice = "StacksUnstakingConnectDevice",
+  StacksUnstakingValidationError = "StacksUnstakingValidationError",
+  StacksUnstakingValidationSuccess = "StacksUnstakingValidationSuccess",
   // casper
   CasperEditTransferId = "CasperEditTransferId",
   // hedera
@@ -833,6 +853,9 @@ export enum NavigatorName {
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",
+  // Stacks
+  StacksStakingFlow = "StacksStakingFlow",
+  StacksUnstakingFlow = "StacksUnstakingFlow",
   // MINA
   MinaStakingFlow = "MinaStakingFlow",
 

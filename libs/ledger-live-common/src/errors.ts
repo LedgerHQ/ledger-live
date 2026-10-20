@@ -13,6 +13,13 @@ export class ConnectManagerTimeout extends Error {
   }
 }
 
+export class DmkTransportRequired extends Error {
+  override name = "DmkTransportRequired";
+  constructor(message?: string) {
+    super(message || "DmkTransportRequired");
+  }
+}
+
 export class GetAppAndVersionUnsupportedFormat extends Error {
   override name = "GetAppAndVersionUnsupportedFormat";
   constructor(message?: string) {
@@ -1100,4 +1107,13 @@ export class CurrencyRegionRestrictedError extends Error {
     super("CurrencyRegionRestrictedError", { cause });
     this.currencyName = currencyName;
   }
+}
+
+/**
+ * Thrown when an operation walk cannot be trusted rather than when it cannot be served: a cursor
+ * served twice, or a run of empty pages long enough to be a defect. Distinct from a transport
+ * failure so a caller does not log a malformed history as a network blip.
+ */
+export class PaginationIntegrityError extends Error {
+  override name = "PaginationIntegrityError";
 }

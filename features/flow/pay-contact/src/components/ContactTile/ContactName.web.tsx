@@ -35,7 +35,7 @@ export function ContactName({ name }: ContactNameProps) {
           {name}
         </TableCellContentTitle>
       </TooltipTrigger>
-      <TooltipContent>{name}</TooltipContent>
+      <TooltipContent className="wrap-anywhere">{name}</TooltipContent>
     </Tooltip>
   );
 }

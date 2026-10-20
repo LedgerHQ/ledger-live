@@ -9,7 +9,7 @@ import type {
 import { trackEvent } from "@features/platform-pay-analytics";
 import {
   buildDeviceInitializationInput,
-  DeviceIntentExecutorLWD,
+  DeviceIntentExecutor,
   type InitializationInput,
 } from "LLD/components/DeviceIntentExecutor";
 import type { PayVerifyOutcome, PayVerifySelection } from "../hooks/usePayTabVerifyAddress";
@@ -131,7 +131,7 @@ export function VerifyAddressExecutorLWD({
   if (!initInput) return null;
 
   return (
-    <DeviceIntentExecutorLWD<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
+    <DeviceIntentExecutor<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
       enabled
       sourceFlow="receive"
       deviceConnectionParams={CONNECTION_PARAMS}

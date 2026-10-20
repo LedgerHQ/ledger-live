@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.29.0
+
+### Minor Changes
+
+- [#23021](https://github.com/LedgerHQ/ledger-live/pull/23021) [`3dacfc2`](https://github.com/LedgerHQ/ledger-live/commit/3dacfc29377ad8a8ac25ad51f2207c882491bb7e) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Bump `@ledgerhq/device-management-kit` to 1.11.0 and `@ledgerhq/dmk-ledger-wallet` to 0.7.0.
+
+- [#23225](https://github.com/LedgerHQ/ledger-live/pull/23225) [`1731458`](https://github.com/LedgerHQ/ledger-live/commit/17314582789efaad9ba35a5cf5e434a3140d6132) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `protobufjs` to 8.4.1 and `protobufjs-cli` to 2.4.1 (security), regenerate hw-app-exchange protobuf bindings. Absent protobuf string fields now decode as `undefined` instead of `""`.
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#23021](https://github.com/LedgerHQ/ledger-live/pull/23021) [`3dacfc2`](https://github.com/LedgerHQ/ledger-live/commit/3dacfc29377ad8a8ac25ad51f2207c882491bb7e) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Bump `@ledgerhq/device-management-kit` to 1.11.0 and `@ledgerhq/dmk-ledger-wallet` to 0.7.0.
+
+- [#23225](https://github.com/LedgerHQ/ledger-live/pull/23225) [`1731458`](https://github.com/LedgerHQ/ledger-live/commit/17314582789efaad9ba35a5cf5e434a3140d6132) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `protobufjs` to 8.4.1 and `protobufjs-cli` to 2.4.1 (security), regenerate hw-app-exchange protobuf bindings. Absent protobuf string fields now decode as `undefined` instead of `""`.
+
 ## 0.28.0
 
 ### Minor Changes
@@ -161,21 +177,5 @@
 - Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
   - @ledgerhq/errors@6.35.0-next.0
   - @ledgerhq/hw-transport@6.35.2-next.0
-
-## 0.22.2
-
-### Patch Changes
-
-- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
-  - @ledgerhq/errors@6.34.1
-  - @ledgerhq/hw-transport@6.35.2
-
-## 0.22.2-hotfix.0
-
-### Patch Changes
-
-- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
-  - @ledgerhq/errors@6.34.1-hotfix.0
-  - @ledgerhq/hw-transport@6.35.2-hotfix.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

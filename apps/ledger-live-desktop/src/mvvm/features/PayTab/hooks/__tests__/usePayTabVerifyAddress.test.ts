@@ -1,5 +1,5 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { usePayTabVerifyAddress, type PayVerifySelection } from "../usePayTabVerifyAddress";
 
 const SELECTION: PayVerifySelection = {
@@ -7,10 +7,8 @@ const SELECTION: PayVerifySelection = {
   parentAccount: { type: "Account" } as unknown as Account,
 };
 
-function renderVerifyAddress(ldmkEnabled = false) {
-  return renderHook(() => usePayTabVerifyAddress(), {
-    initialState: withFlagOverrides({ ldmkTransport: { enabled: ldmkEnabled } }),
-  });
+function renderVerifyAddress() {
+  return renderHook(() => usePayTabVerifyAddress());
 }
 
 describe("usePayTabVerifyAddress", () => {
@@ -32,7 +30,7 @@ describe("usePayTabVerifyAddress", () => {
   });
 
   it("mounts the DIE but keeps the intro visible until the executor is ready", () => {
-    const { result, store } = renderVerifyAddress(true);
+    const { result, store } = renderVerifyAddress();
 
     act(() => result.current.openIntro(SELECTION));
     act(() => result.current.verifyAddress.onVerify());
@@ -49,27 +47,8 @@ describe("usePayTabVerifyAddress", () => {
     expect(result.current.deviceIntent.active).toBe(true);
   });
 
-  it("opens the legacy Receive modal and restores the card on verify when ldmkTransport is disabled", () => {
-    const onDone = jest.fn();
-    const { result, store } = renderVerifyAddress(false);
-
-    act(() => result.current.openIntro(SELECTION, onDone));
-    act(() => result.current.verifyAddress.onVerify());
-
-    expect(result.current.phase).toBe("hidden");
-    expect(result.current.deviceIntent.active).toBe(false);
-    expect(store.getState().modals.MODAL_RECEIVE).toEqual({
-      isOpened: true,
-      data: {
-        account: SELECTION.account,
-        parentAccount: SELECTION.parentAccount,
-      },
-    });
-    expect(onDone).toHaveBeenCalledTimes(1);
-  });
-
   it("does nothing on verify when no selection was made", () => {
-    const { result, store } = renderVerifyAddress(true);
+    const { result, store } = renderVerifyAddress();
 
     act(() => result.current.verifyAddress.onVerify());
 
@@ -81,7 +60,7 @@ describe("usePayTabVerifyAddress", () => {
     "brings the receive summary back when the device flow exits with %s",
     outcome => {
       const onDone = jest.fn();
-      const { result } = renderVerifyAddress(true);
+      const { result } = renderVerifyAddress();
 
       act(() => result.current.openIntro(SELECTION, onDone));
       act(() => result.current.verifyAddress.onVerify());
@@ -95,7 +74,7 @@ describe("usePayTabVerifyAddress", () => {
 
   it("closes the whole flow without restoring the card on mismatch", () => {
     const onDone = jest.fn();
-    const { result } = renderVerifyAddress(true);
+    const { result } = renderVerifyAddress();
 
     act(() => result.current.openIntro(SELECTION, onDone));
     act(() => result.current.verifyAddress.onVerify());
@@ -108,7 +87,7 @@ describe("usePayTabVerifyAddress", () => {
 
   it("consumes the restore callback at most once across repeated exits", () => {
     const onDone = jest.fn();
-    const { result } = renderVerifyAddress(true);
+    const { result } = renderVerifyAddress();
 
     act(() => result.current.openIntro(SELECTION, onDone));
     act(() => result.current.verifyAddress.onVerify());

@@ -1,13 +1,14 @@
 import { intParser, floatParser, boolParser, stringParser, jsonParser } from "@ledgerhq/live-env";
 
-// Firmware 1.9.1 leaves an OS update available, so the firmware-update flow can be exercised.
+// Seeded on the latest firmware: the mock server does not walk through the OSU and
+// bootloader states the firmware-update flow expects, so an update would never complete.
 const DEFAULT_MOCK_SERVER_SESSION = {
   devices: [
     {
       name: "Ledger Stax",
       device_type: "stax",
       connectivity_type: "USB",
-      firmware_version: "1.9.1",
+      firmware_version: "1.11.0",
       apps: [{ name: "BOLOS", version: "1.4.0" }],
     },
   ],
@@ -137,7 +138,7 @@ const teamLiveDevices = {
   MOCK_SERVER_SESSION: {
     def: DEFAULT_MOCK_SERVER_SESSION,
     parser: jsonParser,
-    desc: '(dev feature) JSON session imported into the mock server at boot: {"devices":[{name,device_type,connectivity_type,firmware_version,apps,mocks,catalog}]}. Defaults to a single USB Stax on firmware 1.9.1',
+    desc: '(dev feature) JSON session imported into the mock server at boot: {"devices":[{name,device_type,connectivity_type,firmware_version,apps,mocks,catalog}]}. Defaults to a single USB Stax on firmware 1.11.0',
   },
 };
 

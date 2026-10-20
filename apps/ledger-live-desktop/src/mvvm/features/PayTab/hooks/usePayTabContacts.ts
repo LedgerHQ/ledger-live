@@ -1,13 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-  type Contact,
-  type ContactAddress,
-} from "@domain/entity-contact";
+import { type Contact, type ContactAddress } from "@domain/entity-contact";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import {
   useContactsAddContactAnalytics,
@@ -43,7 +37,6 @@ export type UsePayTabContactsResult = Readonly<{
 export function usePayTabContacts(
   onSelectAddress: (address: ContactAddress) => void,
 ): UsePayTabContactsResult {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname: payTabPath } = useLocation();
@@ -101,19 +94,6 @@ export function usePayTabContacts(
     [dispatch],
   );
   const { callbacks, onSaveSuccess } = useContactsAddContactAnalytics(analytics, () => undefined);
-  const labels = useMemo(
-    () => ({
-      title: t("contacts.addContact"),
-      namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
-      namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
-      confirmAddContact: t("contacts.addContact"),
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
-      },
-    }),
-    [t],
-  );
   const onRequestAddContact = useCallback(
     (onAllowed: () => void) => {
       const result = requestMutation({ kind: "addContact" }, ledgerSyncStatus);
@@ -144,7 +124,6 @@ export function usePayTabContacts(
     () => ({
       contacts: {
         addContact: {
-          labels,
           contactCreation,
           onRequestAddContact,
           onSaveSuccess,
@@ -158,18 +137,12 @@ export function usePayTabContacts(
       },
       ledgerSyncIntroduction: {
         open: isLedgerSyncIntroductionOpen,
-        title: t("contacts.ledgerSyncIntroduction.title"),
-        description: t("contacts.ledgerSyncIntroduction.description"),
-        activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-        dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
         onActivate: onActivateLedgerSyncIntroduction,
         onDismiss: onDismissLedgerSyncIntroduction,
       },
       contactAddressPicker,
     }),
     [
-      t,
-      labels,
       contactCreation,
       onRequestAddContact,
       onSaveSuccess,

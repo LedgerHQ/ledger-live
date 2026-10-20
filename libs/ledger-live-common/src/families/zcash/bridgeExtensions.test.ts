@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { ZCASH_MAX_TRANSPARENT_INPUTS } from "@ledgerhq/coin-zcash/constants";
+import { setZcashShieldedEnabled } from "../../bridge/zcashRouting";
 import extensions from "./bridgeExtensions";
 
 // Only the fields the extension reads: the account type, the currency, and the
@@ -43,9 +45,61 @@ describe("zcash bridgeExtensions", () => {
       expect(result).toEqual(new BigNumber(0));
     });
 
+    describe("with the shielded engine on", () => {
+      beforeEach(() => setZcashShieldedEnabled(true));
+      afterEach(() => setZcashShieldedEnabled(false));
+
+      it("reports every UTXO when the account holds exactly as many as one transaction can spend", () => {
+        const utxos = Array.from({ length: ZCASH_MAX_TRANSPARENT_INPUTS }, (_, i) => ({
+          value: new BigNumber(1_000 + i),
+        }));
+
+        const result = extensions.getWalletApiSpendableBalance?.(
+          makeAccount({ bitcoinResources: { utxos } }),
+        );
+
+        expect(result).toEqual(utxos.reduce((sum, utxo) => sum.plus(utxo.value), new BigNumber(0)));
+      });
+
+      it("caps the balance at the largest UTXOs one transaction can spend", () => {
+        // Two small UTXOs first, so a bound that kept the first N instead of the
+        // largest N would report a different figure.
+        const small = [{ value: new BigNumber(10) }, { value: new BigNumber(20) }];
+        const large = Array.from({ length: ZCASH_MAX_TRANSPARENT_INPUTS }, () => ({
+          value: new BigNumber(100_000),
+        }));
+
+        const result = extensions.getWalletApiSpendableBalance?.(
+          makeAccount({ bitcoinResources: { utxos: [...small, ...large] } }),
+        );
+
+        expect(result).toEqual(new BigNumber(100_000 * ZCASH_MAX_TRANSPARENT_INPUTS));
+      });
+    });
+
+    it("reports every UTXO past the input ceiling on the transparent-only path", () => {
+      const utxos = Array.from({ length: ZCASH_MAX_TRANSPARENT_INPUTS + 2 }, () => ({
+        value: new BigNumber(100_000),
+      }));
+
+      const result = extensions.getWalletApiSpendableBalance?.(
+        makeAccount({ bitcoinResources: { utxos } }),
+      );
+
+      expect(result).toEqual(new BigNumber(100_000 * (ZCASH_MAX_TRANSPARENT_INPUTS + 2)));
+    });
+
     it("answers for an account whose shielded sync was never activated", () => {
       const result = extensions.getWalletApiSpendableBalance?.(
         makeAccount({ privateInfo: undefined }),
+      );
+
+      expect(result).toEqual(new BigNumber(4_590_920));
+    });
+
+    it("answers for a zcash testnet account", () => {
+      const result = extensions.getWalletApiSpendableBalance?.(
+        makeAccount({ currency: { id: "zcash_testnet" } }),
       );
 
       expect(result).toEqual(new BigNumber(4_590_920));

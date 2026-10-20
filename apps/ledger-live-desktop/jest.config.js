@@ -25,7 +25,7 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
 
 const testPathIgnorePatterns = [
   "benchmark/",
-  "tools/",
+  "tools/(?!rspack/)",
   "mobile-test-app/",
   "lib/",
   "lib-es/",
@@ -37,6 +37,8 @@ const testPathIgnorePatterns = [
 
 const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
+  // Must precede the "~/*" rules: moduleNameMapper applies in insertion order.
+  "^~/renderer/bridge$": "<rootDir>/tests/mocks/bridge.ts",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
@@ -98,6 +100,7 @@ const commonConfig = {
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
     __BUILD_ENVS__: {},
+    __FIREBASE_ENV_CONFIGS__: null,
   },
   moduleNameMapper,
   testPathIgnorePatterns,
@@ -127,6 +130,9 @@ const commonConfig = {
     customExportConditions: [""],
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  // CI restores this directory from S3 so Jest reuses transforms and per-file timings.
+  // Must live in the project config: Jest ignores a top-level cacheDirectory when `projects` is set.
+  ...(process.env.JEST_CACHE_DIRECTORY ? { cacheDirectory: process.env.JEST_CACHE_DIRECTORY } : {}),
 };
 
 module.exports = {
@@ -158,7 +164,7 @@ module.exports = {
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
-      testMatch: ["**/src/**/*.test.(ts|tsx)"],
+      testMatch: ["**/src/**/*.test.(ts|tsx)", "**/tools/rspack/*.test.ts"],
       setupFilesAfterEnv: [
         ...commonConfig.setupFilesAfterEnv,
         "@ledgerhq/test-quarantine/jest-retries",

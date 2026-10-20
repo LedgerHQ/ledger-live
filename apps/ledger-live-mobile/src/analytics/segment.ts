@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import Config from "react-native-config";
 import { AppState, Linking, Platform, type NativeEventSubscription } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
-import VersionNumber from "react-native-version-number";
+import { appVersion as nativeAppVersion, buildVersion } from "LLM/utils/appVersion";
 import RNLocalize from "react-native-localize";
 import {
   getFocusedRouteNameFromRoute,
@@ -31,7 +31,11 @@ import {
   getBitcoinYieldSetting,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
-import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import {
+  getAccountsWithFunds,
+  getBlockchainsWithFunds,
+  getTokensWithFunds,
+} from "@features/platform-account-analytics";
 import { getEnv } from "@shared/env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
@@ -77,6 +81,7 @@ import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakeProgr
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
+import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { AuthorizationStatus, type FirebaseMessagingTypes } from "@react-native-firebase/messaging";
@@ -86,7 +91,7 @@ import { DdLogs } from "@datadog/mobile-react-native";
 import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 
 const sessionId = uuid();
-const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
+const appVersion = `${nativeAppVersion} (${buildVersion})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 type MaybeAppStore = Maybe<AppStore>;
@@ -153,6 +158,7 @@ const getFeatureFlagProperties = () => {
       "lwmAnalyticsConsentOnboarding",
     );
     const lwmNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
+    const deviceOnboardingFlag = analyticsFeatureFlagMethod("deviceOnboarding");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -170,6 +176,12 @@ const getFeatureFlagProperties = () => {
     const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
+    const connectSeededDevice = Boolean(
+      deviceOnboardingFlag?.enabled && deviceOnboardingFlag.params?.connectSeededDevice,
+    );
+    const connectUnseededDevice = Boolean(
+      deviceOnboardingFlag?.enabled && deviceOnboardingFlag.params?.connectUnseededDevice,
+    );
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -208,6 +220,8 @@ const getFeatureFlagProperties = () => {
       ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
+      connectSeededDevice,
+      connectUnseededDevice,
     });
   })();
 };
@@ -337,12 +351,6 @@ const getLazyOnboardingBannerAttributes = () => {
 };
 
 const getLdmkAndSyncFlags = () => ({
-  ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? {
-    enabled: false,
-  },
-  ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? {
-    enabled: false,
-  },
   ldmkSolanaSigner: analyticsFeatureFlagMethod?.("ldmkSolanaSigner") ?? {
     enabled: false,
   },
@@ -356,17 +364,6 @@ const getLdmkAndSyncFlags = () => ({
     enabled: false,
   },
 });
-
-const getAccountsWithFunds = (accounts: ReturnType<typeof accountsSelector>) =>
-  accounts
-    ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
-    : [];
 
 const getStakingCurrenciesFromFlags = () => {
   const stakePrograms = analyticsFeatureFlagMethod?.("stakePrograms");
@@ -411,14 +408,8 @@ const extraProperties = async (store: AppStore) => {
   });
   const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const {
-    ldmkTransport,
-    ldmkConnectApp,
-    ldmkSolanaSigner,
-    ldmkCosmosSigner,
-    ldmkPolkadotSigner,
-    ldmkTronSigner,
-  } = getLdmkAndSyncFlags();
+  const { ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner, ldmkTronSigner } =
+    getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -452,6 +443,8 @@ const extraProperties = async (store: AppStore) => {
     .map(([key]) => key);
 
   const accountsWithFunds = getAccountsWithFunds(accounts);
+  const blockchainWithFunds = getBlockchainsWithFunds(accounts);
+  const tokenWithFunds = getTokensWithFunds(accounts);
 
   const stakingProviders = analyticsFeatureFlagMethod?.("ethStakingProviders");
   const stakingProvidersCount =
@@ -477,10 +470,8 @@ const extraProperties = async (store: AppStore) => {
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
-  const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
-  const quickActionsCtasVariantFlag = analyticsFeatureFlagMethod?.("lwmQuickActionsCtasVariant");
   const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
   const onboardingCounterfeitWarningAttributes = getOnboardingCounterfeitWarningAttributes(
     analyticsFeatureFlagMethod,
@@ -515,12 +506,14 @@ const extraProperties = async (store: AppStore) => {
     state,
     analyticsFeatureFlagMethod?.("lwmPasswordRevamp")?.enabled ?? false,
   );
+  const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
+  const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
 
   return {
     ...mandatoryProperties,
     appVersion,
-    androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
-    androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
+    androidVersionCode: getAndroidVersionCode(buildVersion),
+    androidArchitecture: getAndroidArchitecture(buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
     platform: "mobile",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
@@ -540,6 +533,7 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
+    blockchainWithFunds,
     ContactsAttributes: contactsFeature,
     ...contactsAttributes,
     appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
@@ -557,8 +551,6 @@ const extraProperties = async (store: AppStore) => {
     ...lazyOnboardingBannerAttributes,
     migrationToMMKV,
     tokenWithFunds,
-    isLDMKTransportEnabled: ldmkTransport?.enabled,
-    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
@@ -571,9 +563,10 @@ const extraProperties = async (store: AppStore) => {
     wallet40Attributes,
     ...payAttributes,
     ...appLockAttributes,
-    quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
+    accountDetail,
+    recoverV2,
     ...remoteABTestingAttributes,
   };
 };

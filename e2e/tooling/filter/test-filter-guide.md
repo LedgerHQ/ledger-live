@@ -48,7 +48,7 @@ Both workflows have a **`team`** dropdown next to `test_filter`. It **narrows** 
 ANDed with `test_filter`, Smoke and the device, so `team=swap` + `test_filter=@solana` runs the specs
 that are **both**. (`test_filter` itself is still an OR across its own patterns.)
 
-Teams: `bst`, `buy-and-sell`, `coin-integration`, `earn`, `engagement`, `swap`, `wallet-xp`
+Teams: `bst`, `buy-and-sell`, `coin-integration`, `earn`, `engagement`, `my-ledger-onboarding`, `swap`, `wallet-xp`
 (the dropdown's `all` is the default and changes nothing). List them with their spec counts:
 
 ```bash

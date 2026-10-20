@@ -39,7 +39,7 @@ const mockSignatureIntent = {
   input: mockRequest,
 } satisfies SignTransactionIntent;
 
-const mockDeviceIntentExecutorLWM = jest.fn();
+const mockDeviceIntentExecutor = jest.fn();
 const mockSignatureDeviceActionView = jest.fn();
 
 jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
@@ -57,14 +57,19 @@ jest.mock("@features/platform-feature-flags", () => ({
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => ({
   __esModule: true,
-  DeviceIntentExecutorLWM: (props: unknown) => {
-    mockDeviceIntentExecutorLWM(props);
+  DeviceIntentExecutor: (props: unknown) => {
+    mockDeviceIntentExecutor(props);
     return null;
   },
 }));
 
 jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
   useSendFlowTrackingProperties: jest.fn(() => ({ flow: "send" })),
+}));
+
+let mockSponsoredPhase = "IDLE";
+jest.mock("../../../context/SponsoredSendContext", () => ({
+  useSponsoredSend: () => ({ state: { phase: mockSponsoredPhase } }),
 }));
 
 jest.mock("../hooks/useSignatureViewModel", () => ({
@@ -127,6 +132,7 @@ function buildDeviceActionViewModel(
 describe("SignatureScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSponsoredPhase = "IDLE";
     jest.mocked(useFeature).mockReturnValue({ enabled: false });
     jest
       .mocked(UseSignatureViewModelModule.useSignatureViewModel)
@@ -170,7 +176,7 @@ describe("SignatureScreen", () => {
     });
   });
 
-  it("should render DeviceIntentExecutorLWM when useDeviceActionSignatureSend is disabled", () => {
+  it("should render DeviceIntentExecutor when useDeviceActionSignatureSend is disabled", () => {
     const viewModel = buildViewModel();
     jest.mocked(UseSignatureViewModelModule.useSignatureViewModel).mockReturnValue(viewModel);
 
@@ -179,7 +185,7 @@ describe("SignatureScreen", () => {
     expect(useFeature).toHaveBeenCalledWith("useDeviceActionSignatureSend");
     expect(screen.getByTestId("send-signature-step")).toBeOnTheScreen();
     expect(mockSignatureDeviceActionView).not.toHaveBeenCalled();
-    expect(mockDeviceIntentExecutorLWM).toHaveBeenCalledWith(
+    expect(mockDeviceIntentExecutor).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: true,
         sourceFlow: "send",
@@ -205,7 +211,7 @@ describe("SignatureScreen", () => {
 
     expect(useFeature).toHaveBeenCalledWith("useDeviceActionSignatureSend");
     expect(screen.getByTestId("send-signature-device-action-step")).toBeOnTheScreen();
-    expect(mockDeviceIntentExecutorLWM).not.toHaveBeenCalled();
+    expect(mockDeviceIntentExecutor).not.toHaveBeenCalled();
     expect(mockSignatureDeviceActionView).toHaveBeenCalledWith(
       expect.objectContaining({
         account: viewModel.account,
@@ -219,5 +225,19 @@ describe("SignatureScreen", () => {
         onUserCancel: viewModel.onUserCancel,
       }),
     );
+  });
+
+  // Only the executor path reports the transfer's outcome to the sponsored orchestration.
+  it("should keep a sponsored transfer on DeviceIntentExecutor even with the flag on", () => {
+    mockSponsoredPhase = "TRANSFER";
+    jest.mocked(useFeature).mockReturnValue({ enabled: true });
+    jest
+      .mocked(UseSignatureViewModelModule.useSignatureViewModel)
+      .mockReturnValue(buildViewModel());
+
+    render(<SignatureScreen />);
+
+    expect(screen.getByTestId("send-signature-step")).toBeOnTheScreen();
+    expect(mockSignatureDeviceActionView).not.toHaveBeenCalled();
   });
 });

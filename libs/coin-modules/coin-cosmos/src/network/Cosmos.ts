@@ -1,9 +1,7 @@
 import { SequenceNumberError } from "../errors";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { AxiosError } from "axios";
 import BigNumber from "bignumber.js";
@@ -58,7 +56,6 @@ export class CosmosAPI {
   private readonly version: string;
   private readonly chainInstance: cosmosBase;
   private readonly currencyId: string;
-  private _currency?: CryptoCurrency;
   private _cosmosSDKVersion: Promise<string> | null = null;
   private get cosmosSDKVersion(): Promise<string> {
     if (!this._cosmosSDKVersion) {
@@ -79,16 +76,9 @@ export class CosmosAPI {
     this.version = options?.version ?? crypto.version;
   }
 
-  /**
-   * Resolve the `CryptoCurrency` once, behind the API boundary, so the logic layer stays free of the
-   * `@ledgerhq/ledger-wallet-framework` currency registry (which the coin-module import allowlist forbids
-   * under src/logic, src/api and src/network). Memoized — the registry lookup runs at most once per API.
-   */
-  getCurrency = (): CryptoCurrency => (this._currency ??= getCryptoCurrencyById(this.currencyId));
-
   getAccountInfo = async (
     address: string,
-    currency: CryptoCurrency,
+    denom: string,
   ): Promise<{
     balances: BigNumber;
     blockHeight: number;
@@ -102,10 +92,10 @@ export class CosmosAPI {
       const [accountInfo, balances, blockHeight, txs, delegations, redelegations, unbondings] =
         await Promise.all([
           this.getAccount(address),
-          this.getAllBalances(address, currency),
+          this.getAllBalances(address, denom),
           this.getHeight(),
           this.getTransactions(address, 100),
-          this.getDelegations(address, currency),
+          this.getDelegations(address, denom),
           this.getRedelegations(address),
           this.getUnbondings(address),
         ]);
@@ -113,7 +103,7 @@ export class CosmosAPI {
       const staking = await this.mergeQueuedStaking(
         { delegations, redelegations, unbondings },
         address,
-        currency,
+        denom,
         blockHeight,
       );
 
@@ -128,10 +118,10 @@ export class CosmosAPI {
       const error = e as AxiosError;
       if (error.isAxiosError) {
         throw new Error(
-          `Error during ${currency.id} synchronization: ${JSON.stringify(error.toJSON())}`,
+          `Error during ${this.currencyId} synchronization: ${JSON.stringify(error.toJSON())}`,
         );
       } else {
-        throw new Error(`Error during ${currency.id} synchronization: ${error.message}`);
+        throw new Error(`Error during ${this.currencyId} synchronization: ${error.message}`);
       }
     }
   };
@@ -147,16 +137,14 @@ export class CosmosAPI {
       unbondings: CosmosUnbonding[];
     },
     address: string,
-    currency: CryptoCurrency,
+    denom: string,
     blockHeight?: number,
   ): Promise<{
     delegations: CosmosDelegation[];
     redelegations: CosmosRedelegation[];
     unbondings: CosmosUnbonding[];
   }> => {
-    if (!this.chainInstance.epochedStaking) return staking;
-    const denom = currency.units[1]?.code;
-    if (!denom) return staking;
+    if (!this.chainInstance.epochedStaking || !denom) return staking;
     const [height, queued] = await Promise.all([
       blockHeight !== undefined ? Promise.resolve(blockHeight) : this.getHeight(),
       fetchQueuedStakingMessages(this.defaultEndpoint, address, denom),
@@ -191,16 +179,16 @@ export class CosmosAPI {
 
   getStakingPositions = async (
     address: string,
-    currency: CryptoCurrency,
+    denom: string,
   ): Promise<{ delegations: CosmosDelegation[]; unbondings: CosmosUnbonding[] }> => {
     const [delegations, unbondings] = await Promise.all([
-      this.getDelegations(address, currency),
+      this.getDelegations(address, denom),
       this.getUnbondings(address),
     ]);
     const merged = await this.mergeQueuedStaking(
       { delegations, redelegations: [], unbondings },
       address,
-      currency,
+      denom,
     );
     return { delegations: merged.delegations, unbondings: merged.unbondings };
   };
@@ -211,18 +199,18 @@ export class CosmosAPI {
    */
   getRedelegationsWithQueued = async (
     address: string,
-    currency: CryptoCurrency,
+    denom: string,
   ): Promise<CosmosRedelegation[]> => {
     const executed = await this.getRedelegations(address);
     if (!this.chainInstance.epochedStaking) return executed;
     const [delegations, unbondings] = await Promise.all([
-      this.getDelegations(address, currency),
+      this.getDelegations(address, denom),
       this.getUnbondings(address),
     ]);
     const merged = await this.mergeQueuedStaking(
       { delegations, redelegations: executed, unbondings },
       address,
-      currency,
+      denom,
     );
     return merged.redelegations;
   };
@@ -357,7 +345,7 @@ export class CosmosAPI {
    * @notice query params { pagination: { ..., reverse } } (Since: cosmos-sdk 0.43)
    * @notice query params { pagination: {..., resolve_denom } } (Since: cosmos-sdk 0.50)
    */
-  getAllBalances = async (address: string, currency: CryptoCurrency): Promise<BigNumber> => {
+  getAllBalances = async (address: string, denom: string): Promise<BigNumber> => {
     const {
       data: { balances },
     } = await network<CosmosSDKTypes.GetAllBalancesSDK>({
@@ -366,9 +354,9 @@ export class CosmosAPI {
     });
 
     let totalAmount = new BigNumber(0);
-    for (const { denom, amount } of balances) {
-      if (denom === currency.units[1].code) {
-        totalAmount = totalAmount.plus(amount);
+    for (const balance of balances) {
+      if (balance.denom === denom) {
+        totalAmount = totalAmount.plus(balance.amount);
       }
     }
 
@@ -383,10 +371,7 @@ export class CosmosAPI {
    *
    * @warning This call should use a Promise.all on all non dependent requests in order to improve performances
    */
-  getDelegations = async (
-    address: string,
-    currency: CryptoCurrency,
-  ): Promise<CosmosDelegation[]> => {
+  getDelegations = async (address: string, denom: string): Promise<CosmosDelegation[]> => {
     const delegations: Array<CosmosDelegation> = [];
 
     const {
@@ -420,10 +405,7 @@ export class CosmosAPI {
 
       delegations.push({
         validatorAddress: delegation.validator_address,
-        amount:
-          balance.denom === currency.units[1].code
-            ? new BigNumber(balance.amount)
-            : new BigNumber(0),
+        amount: balance.denom === denom ? new BigNumber(balance.amount) : new BigNumber(0),
         pendingRewards: new BigNumber(0),
         status: status as CosmosDelegationStatus,
       });
@@ -441,7 +423,7 @@ export class CosmosAPI {
       for (const d of delegations) {
         if (r.validator_address === d.validatorAddress) {
           for (const reward of r.reward) {
-            if (reward.denom === currency.units[1].code)
+            if (reward.denom === denom)
               d.pendingRewards = d.pendingRewards.plus(
                 new BigNumber(reward.amount).integerValue(BigNumber.ROUND_CEIL),
               );

@@ -105,13 +105,18 @@ export async function getSendTransactionStatus(
     );
   }
 
+  const amountBoundedByBuilder = useAllAmount;
+  const exceedsAvailable = tokenAccount
+    ? totalSpent.gt(tokenAccount.balance)
+    : !amountBoundedByBuilder && totalSpent.gt(account.spendableBalance);
+
   if (!amount.gt(0)) {
     errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
   } else if (!isTokenTx && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
       amount: minTransactionAmount.div(1e6).toString(),
     });
-  } else if (tokenAccount ? totalSpent.gt(tokenAccount.balance) : totalSpent.gt(account.balance)) {
+  } else if (exceedsAvailable) {
     errors.amount = new NotEnoughBalance();
   } else {
     try {

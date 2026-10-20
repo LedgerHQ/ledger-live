@@ -1,0 +1,89 @@
+import type { FeeStrategy, SendIntent } from "@ledgerhq/agent-intent-sdk";
+
+export const FEE_STRATEGIES = ["slow", "medium", "fast"] as const satisfies readonly FeeStrategy[];
+// `satisfies` only rules out extra values; this fails to compile if the SDK adds a strategy the
+// list above doesn't offer (same check as AGENT_INTENT_ENVIRONMENTS in session-store.ts).
+type AssertTrue<T extends true> = T;
+type _FeeStrategiesExhaustive = AssertTrue<
+  FeeStrategy extends (typeof FEE_STRATEGIES)[number] ? true : false
+>;
+
+/** The networks `agent-intent send` proposes on: always mainnet, whatever the profile's environment. */
+export type IntentNetwork = "ethereum" | "solana";
+
+type NativeAsset = { type: "native"; ticker: string; decimals: number };
+export type EthereumAsset =
+  | NativeAsset
+  | { type: "erc20"; ticker: string; decimals: number; contract: string };
+export type SolanaAsset =
+  | NativeAsset
+  | { type: "spl-token"; ticker: string; decimals: number; mint: string };
+
+/** A network with an asset it can send, so an ERC-20 never reaches Solana or an SPL token Ethereum. */
+export type NetworkAsset =
+  | { network: "ethereum"; asset: EthereumAsset }
+  | { network: "solana"; asset: SolanaAsset };
+
+/** Everything `agent-intent send` validated, before (or without, for --dry-run) submitting it. */
+export type SendIntentSummary = {
+  profileId: string;
+  environment: "staging" | "production";
+  sender: string;
+  recipient: string;
+  /** Exact base-unit integer, as decimal digits (never a JS number). */
+  amount: string;
+  /** The amount as the user typed it, for display only. */
+  displayAmount: string;
+  description?: string;
+} & (
+  | { network: "ethereum"; asset: EthereumAsset; feeStrategy: FeeStrategy }
+  /** No fee strategy: on Solana the service sets the priority fee. The memo goes on chain. */
+  | { network: "solana"; asset: SolanaAsset; memo?: string }
+);
+
+export const NETWORK_LABELS: Record<IntentNetwork, string> = {
+  ethereum: "Ethereum mainnet",
+  solana: "Solana mainnet",
+};
+
+export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
+  if (summary.network === "solana") {
+    return {
+      type: "send",
+      network: "solana",
+      sender: summary.sender,
+      recipient: summary.recipient,
+      amount: summary.amount,
+      asset:
+        summary.asset.type === "native"
+          ? { type: "native" }
+          : { type: "spl-token", assetReference: summary.asset.mint },
+      ...(summary.memo ? { memo: summary.memo } : {}),
+      ...(summary.description ? { description: summary.description } : {}),
+    };
+  }
+  return {
+    type: "send",
+    network: "ethereum",
+    sender: summary.sender,
+    recipient: summary.recipient,
+    amount: summary.amount,
+    asset:
+      summary.asset.type === "native"
+        ? { type: "native" }
+        : { type: "erc20", assetReference: summary.asset.contract },
+    feeStrategy: summary.feeStrategy,
+    ...(summary.description ? { description: summary.description } : {}),
+  };
+}
+
+/** The service answers with `<frontend>/intents/<id>`; returns that id, or null for any other
+ * shape (the intent exists either way — see `agent-intent send`). */
+export function intentIdFromDeeplink(deeplink: string): string | null {
+  try {
+    const match = /\/intents\/([^/]+)\/?$/.exec(new URL(deeplink).pathname);
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
+  }
+}

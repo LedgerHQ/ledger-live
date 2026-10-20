@@ -209,11 +209,13 @@ export default function DebugFeatureFlags() {
               {t("settings.debug.featureFlagsTitle")}
             </Alert>
             <Box lx={{ flexDirection: "row", alignItems: "center", marginTop: "s4" }}>
-              <Text typography="body2">Legend: </Text>
+              <Text typography="body2" lx={{ color: "base" }}>
+                Legend:
+              </Text>
               <TagEnabled mx={2}>enabled flag</TagEnabled>
               <TagDisabled mx={2}>disabled flag</TagDisabled>
             </Box>
-            <Text typography="body2" lx={{ marginVertical: "s12" }}>
+            <Text typography="body2" lx={{ color: "base", marginVertical: "s12" }}>
               {t("settings.debug.firebaseProject")}
             </Text>
             <Tag label={project} appearance="accent" lx={{ alignSelf: "flex-start" }} />
@@ -226,7 +228,7 @@ export default function DebugFeatureFlags() {
                 marginTop: "s12",
               }}
             >
-              <Text typography="body2" lx={{ flexShrink: 1 }}>
+              <Text typography="body2" lx={{ color: "base", flexShrink: 1 }}>
                 {t("settings.debug.showBannerDesc")}
               </Text>
               <Switch
@@ -272,7 +274,10 @@ export default function DebugFeatureFlags() {
               <>
                 {filteredFlags.length === 0 && filteredContentAbTests.length === 0 ? (
                   <>
-                    <Text typography="body2">{`No flag matching "${searchInput}"`}</Text>
+                    <Text
+                      typography="body2"
+                      lx={{ color: "base" }}
+                    >{`No flag matching "${searchInput}"`}</Text>
                     {additionalInfo}
                   </>
                 ) : null}

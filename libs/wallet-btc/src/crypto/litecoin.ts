@@ -13,7 +13,7 @@ class Litecoin extends Base {
   }
 
   toOutputScript(address: string): Buffer {
-    return btcAddress.toOutputScript(address, this.network);
+    return Buffer.from(btcAddress.toOutputScript(address, this.network));
   }
 
   validateAddress(address: string): boolean {

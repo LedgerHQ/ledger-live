@@ -3,15 +3,15 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 // The drawer keys its options by the language id, while the trigger renders the localized label.
-const TARGET_LANGUAGE = "french";
-const TARGET_LABEL = "Français";
+const TARGET_LANGUAGE = "german";
+const TARGET_LABEL = "Deutsch";
 const DEFAULT_LABEL = "English";
 
 // isDeviceLocalizationSupported has no range for nanoS, so the LNS tag is dropped.
 test.describe("My Ledger — device language", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
-    teamOwner: Team.WALLET_XP,
+    teamOwner: Team.MY_LEDGER_ONBOARDING,
   });
 
   test(

@@ -1,4 +1,4 @@
-import "react-native-get-random-values";
+import "./src/getRandomValuesPolyfill";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
 import "node-libs-react-native/globals";
@@ -6,6 +6,12 @@ import "node-libs-react-native/globals";
 // Fix for crash with `Unsupported top level event type "onGestureHandlerStateChange" dispatched`
 // https://github.com/kmagiera/react-native-gesture-handler/issues/320#issuecomment-443815828
 import "react-native-gesture-handler";
+
+// Expo's runtime installs its own URL + URLSearchParams globals (whatwg-url-without-unicode, which
+// has no `URLSearchParams.size`) when `expo` is first imported, replacing whatever is already there.
+// Load it before the polyfill below so the polyfill is the implementation that stays installed:
+// libraries that gate on `size` (e.g. @aptos-labs/aptos-client) otherwise drop their query string.
+import "expo";
 
 // Polyfill URL + URLSearchParams — React Native's native URL doesn't support URLSearchParams.
 // https://github.com/facebook/react-native/issues/23922
@@ -21,9 +27,12 @@ if (process.env.MSW_ENABLED === "true") {
 }
 
 import { AppRegistry } from "react-native";
+import { preventAutoHideAsync, setOptions } from "expo-splash-screen";
 import App from "./src";
 import logReport from "./src/log-report";
 import { initDevServerAutoReload } from "./src/hooks/useDevServerAutoReload";
+preventAutoHideAsync();
+setOptions({ fade: true, duration: 250 });
 logReport.logReportInit();
 initDevServerAutoReload();
 

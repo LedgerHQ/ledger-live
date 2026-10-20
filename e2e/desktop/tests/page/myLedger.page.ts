@@ -5,6 +5,7 @@ import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 
 type CatalogFilter = "all" | "not_installed" | "supported";
 type CatalogSort = "marketcap_desc" | "name_asc" | "name_desc";
+type StorageSnapshot = { used: string; free: string };
 
 const FILTER_LABEL: Record<CatalogFilter, string> = {
   all: "All",
@@ -35,6 +36,10 @@ export class MyLedgerPage extends AppPage {
   private readonly storageCapacity = this.page.getByTestId("device-storage-capacity");
   private readonly storageAppsCount = this.page.getByTestId("device-storage-apps-count");
   private readonly storageFree = this.page.getByTestId("device-storage-free");
+  private readonly installSuccessBanner = this.page.getByTestId("install-success-banner");
+  private readonly manageAccountsButton = this.page.getByTestId(
+    "install-success-manage-accounts-button",
+  );
 
   private readonly catalogTab = this.page.getByTestId("manager-app-catalog-tab");
   private readonly installedAppsTab = this.page.getByTestId("manager-installed-apps-tab");
@@ -59,6 +64,8 @@ export class MyLedgerPage extends AppPage {
 
   private readonly uninstallAllButton = this.page.getByTestId("manager-uninstall-all-apps-button");
   private readonly confirmModalButton = this.page.getByTestId("modal-confirm-button");
+  private readonly cancelModalButton = this.page.getByTestId("modal-cancel-button");
+  private readonly modal = this.page.getByTestId("modal-container");
   private readonly updateAllButton = this.page.getByTestId("manager-update-all-apps-button");
   private readonly updateAllProgressBar = this.page.getByTestId("manager-update-all-progress-bar");
 
@@ -69,6 +76,10 @@ export class MyLedgerPage extends AppPage {
   private readonly languageOption = (language: string) =>
     this.page.getByTestId(`manager-language-option-${language}`);
   private readonly installLanguageButton = this.page.getByTestId("install-language-button");
+  private readonly languageInstalled = this.page.getByTestId("language-installed");
+  private readonly closeLanguageInstallationButton = this.page.getByTestId(
+    "close-language-installation-button",
+  );
 
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
@@ -77,6 +88,13 @@ export class MyLedgerPage extends AppPage {
 
   private readonly updateFirmwareButton = this.page.getByTestId("manager-update-firmware-button");
 
+  private readonly customImageInput = this.page.getByTestId("custom-image-import-image-input");
+  private readonly cropContinueButton = this.page.getByTestId("custom-image-crop-continue-button");
+  private readonly contrastContinueButton = this.page.getByTestId(
+    "custom-image-contrast-continue-button",
+  );
+  private readonly customImageFinishButton = this.page.getByTestId("custom-image-finish-button");
+
   /**
    * `/manager` renders a DeviceAction that connects and runs `listApps` before the
    * dashboard exists, so every My Ledger test starts by waiting on the storage card.
@@ -84,7 +102,7 @@ export class MyLedgerPage extends AppPage {
   @step("Wait for My Ledger to finish connecting")
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
-    await expect(this.deviceOptions).toBeVisible();
+    await expect(this.deviceOptions).toBeAttached();
   }
 
   /** The submit button becomes the close button once the rename lands, so both are needed. */
@@ -119,6 +137,17 @@ export class MyLedgerPage extends AppPage {
     await expect(this.storageUsed).toHaveText(BYTE_SIZE);
     await expect(this.storageCapacity).toHaveText(BYTE_SIZE);
     await expect(this.storageFree).toContainText(BYTE_SIZE);
+  }
+
+  @step("Read the device storage figures")
+  async readStorage(): Promise<StorageSnapshot> {
+    return { used: await this.storageUsed.innerText(), free: await this.storageFree.innerText() };
+  }
+
+  @step("Expect the device storage to have moved from the snapshot")
+  async expectStorageChangedFrom(before: StorageSnapshot) {
+    await expect(this.storageUsed).not.toHaveText(before.used);
+    await expect(this.storageFree).not.toHaveText(before.free);
   }
 
   @step("Open the app catalog tab")
@@ -193,6 +222,26 @@ export class MyLedgerPage extends AppPage {
     await this.installButton(app).click();
   }
 
+  /** Installing a child app opens the shared ConfirmModal, naming the parent it pulls in. */
+  @step("Install $0 together with the app it depends on")
+  async installAppWithDependency(app: AppInfos, dependency: AppInfos) {
+    await this.installButton(app).click();
+    await this.expectDependencyInstallModal(app, dependency);
+    await this.confirmModalButton.click();
+  }
+
+  /** The two images are the app icons the modal links together. */
+  @step("Expect the modal to ask to install the app $0 depends on")
+  async expectDependencyInstallModal(app: AppInfos, dependency: AppInfos) {
+    await expect(this.modal).toContainText(`${dependency.name} app is required`);
+    await expect(this.modal).toContainText(
+      `The ${dependency.name} app will also be installed because the ${app.name} app needs it.`,
+    );
+    await expect(this.modal.locator("img")).toHaveCount(2);
+    await expect(this.confirmModalButton).toHaveText("Install apps");
+    await expect(this.cancelModalButton).toHaveText("Cancel");
+  }
+
   @step("Uninstall $0")
   async uninstallApp(app: AppInfos) {
     await this.uninstallButton(app).click();
@@ -203,6 +252,21 @@ export class MyLedgerPage extends AppPage {
   async expectAppInstalled(app: AppInfos) {
     await expect(this.appProgressBar(app)).toBeHidden();
     await expect(this.uninstallButton(app)).toBeVisible();
+  }
+
+  @step("Expect the install success banner to offer to add $0 accounts")
+  async expectInstallSuccessBanner(app: AppInfos) {
+    await expect(this.installSuccessBanner).toContainText(app.name);
+    await expect(this.manageAccountsButton).toBeVisible();
+    await expect(this.manageAccountsButton).toContainText("Manage my accounts");
+  }
+
+  /** A supported asset reads supported and offers Add account where an unsupported one offers Learn more. */
+  @step("Expect $0 to offer Add account rather than Learn more")
+  async expectAddAccountOffered(app: AppInfos) {
+    await expect(this.appRow(app)).toContainText("Ledger Wallet supported");
+    await expect(this.appRow(app).getByRole("button", { name: "Add account" })).toBeVisible();
+    await expect(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeHidden();
   }
 
   @step("Expect $0 to be uninstalled")
@@ -216,6 +280,32 @@ export class MyLedgerPage extends AppPage {
   async uninstallAllApps() {
     await this.uninstallAllButton.click();
     await this.confirmModalButton.click();
+  }
+
+  /** Uninstalling a parent app opens the same ConfirmModal, listing the apps that go with it. */
+  @step("Uninstall $0 together with the apps that depend on it")
+  async uninstallAppWithDependents(app: AppInfos, dependents: AppInfos[]) {
+    await this.uninstallButton(app).click();
+    await this.expectDependentsUninstallModal(app, dependents);
+    await this.confirmModalButton.click();
+  }
+
+  /** The list of apps to uninstall only mounts once "Show apps to uninstall" is opened. */
+  @step("Expect the modal to ask to uninstall the apps that depend on $0")
+  async expectDependentsUninstallModal(app: AppInfos, dependents: AppInfos[]) {
+    await expect(this.modal).toContainText(`Uninstall ${app.name} and its related apps?`);
+    await expect(this.modal).toContainText(
+      `Some of your installed apps are linked to ${app.name} app. They will be uninstalled as well.`,
+    );
+    await expect(this.confirmModalButton).toHaveText(`Uninstall ${app.name} and other apps`);
+    await expect(this.cancelModalButton).toHaveText("Cancel");
+
+    await this.modal.getByText("Show apps to uninstall").click();
+    await Promise.all(
+      [app, ...dependents].map(listed =>
+        expect(this.modal.getByText(listed.name, { exact: true })).toBeVisible(),
+      ),
+    );
   }
 
   @step("Expect no app to be installed")
@@ -236,6 +326,8 @@ export class MyLedgerPage extends AppPage {
     await expect(this.languageInstallation).toBeVisible();
     await this.languageOption(language).click();
     await this.installLanguageButton.click();
+    await expect(this.languageInstalled).toBeVisible();
+    await this.closeLanguageInstallationButton.click();
   }
 
   /** The trigger renders the installed language, so it doubles as the read back. */
@@ -247,6 +339,21 @@ export class MyLedgerPage extends AppPage {
   @step("Open the custom lock screen manager")
   async openCustomLockScreen() {
     await this.customImageButton.click();
+  }
+
+  /** Each step only renders once the previous one is confirmed, so the flow is driven in order. */
+  @step("Set the custom lock screen from $0")
+  async setCustomLockScreen(imagePath: string) {
+    await this.openCustomLockScreen();
+    await this.customImageInput.setInputFiles(imagePath);
+    await this.cropContinueButton.click();
+    await this.contrastContinueButton.click();
+    await this.customImageFinishButton.click();
+  }
+
+  @step("Expect the custom lock screen action to read $0")
+  async expectCustomLockScreenAction(label: string) {
+    await expect(this.customImageButton).toContainText(label);
   }
 
   @step("Expect a firmware update to be offered")

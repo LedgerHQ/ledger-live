@@ -398,6 +398,39 @@ describe("getNearStakingPositions", () => {
   });
 });
 
+describe("canStake with an unseeded preload cache", () => {
+  // The generic-coin-framework bridge never runs preload(), so the cache keeps its initial values
+  // for the whole session. Seeding gasPrice with zero used to collapse the fee estimate to zero
+  // and offer staking to accounts that cannot cover it.
+  const account = (spendableBalance: string) =>
+    ({
+      spendableBalance: new BigNumber(spendableBalance),
+      pendingOperations: [],
+      stakingPositions: [],
+    }) as unknown as NearAccount;
+
+  it("rejects an account that cannot cover the staking fees", () => {
+    // 0.006772 NEAR, the dust account observed on the generic route
+    expect(canStake(account("6772452918750000000000"))).toBe(false);
+  });
+
+  it("allows an account with a comfortable balance", () => {
+    expect(canStake(account("2280000000000000000000000"))).toBe(true);
+  });
+
+  it("rejects an empty account", () => {
+    expect(canStake(account("0"))).toBe(false);
+  });
+
+  // Same boundary as the seeded suite below: three staking fees at the 10^9 purchase floor come to
+  // 0.165 NEAR. Seeding only gasPrice priced them at 10^8, a tenth of that, and let accounts with
+  // 0.0165–0.165 NEAR stake on the generic route while the legacy route refused them.
+  it("prices the staking fees at the purchase floor, not the current gas price", () => {
+    expect(canStake(account("165000000000000000000000"))).toBe(false);
+    expect(canStake(account("165000000000000000000001"))).toBe(true);
+  });
+});
+
 describe("getTotalSpent", () => {
   it.each([
     {

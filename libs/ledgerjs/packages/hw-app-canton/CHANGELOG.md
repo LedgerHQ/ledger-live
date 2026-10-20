@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-canton
 
+## 0.15.0
+
+### Minor Changes
+
+- [#23225](https://github.com/LedgerHQ/ledger-live/pull/23225) [`1731458`](https://github.com/LedgerHQ/ledger-live/commit/17314582789efaad9ba35a5cf5e434a3140d6132) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `protobufjs` to 8.4.1 and `protobufjs-cli` to 2.4.1 (security), regenerate hw-app-exchange protobuf bindings. Absent protobuf string fields now decode as `undefined` instead of `""`.
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#23225](https://github.com/LedgerHQ/ledger-live/pull/23225) [`1731458`](https://github.com/LedgerHQ/ledger-live/commit/17314582789efaad9ba35a5cf5e434a3140d6132) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `protobufjs` to 8.4.1 and `protobufjs-cli` to 2.4.1 (security), regenerate hw-app-exchange protobuf bindings. Absent protobuf string fields now decode as `undefined` instead of `""`.
+
 ## 0.14.0
 
 ### Minor Changes
@@ -221,29 +233,5 @@
 - Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
   - @ledgerhq/errors@6.34.0-next.0
   - @ledgerhq/hw-transport@6.35.1-next.0
-
-## 0.11.0
-
-### Minor Changes
-
-- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
-
-### Patch Changes
-
-- Updated dependencies [[`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
-  - @ledgerhq/errors@6.33.0
-  - @ledgerhq/hw-transport@6.35.0
-
-## 0.11.0-next.0
-
-### Minor Changes
-
-- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
-
-### Patch Changes
-
-- Updated dependencies [[`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
-  - @ledgerhq/errors@6.33.0-next.0
-  - @ledgerhq/hw-transport@6.35.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

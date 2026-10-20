@@ -1,15 +1,8 @@
 import { track } from "@shared/analytics";
 import { Linking } from "react-native";
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ShieldCheck, ShieldCheckNotification } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { State } from "~/reducers/types";
+import { act, renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
-import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
-import { PROTECT_ID, withRecoverState } from "LLM/features/Portfolio/utils/recoverTestHelpers";
-import { ShieldCheckNotificationIcon } from "LLM/features/BackupHub/components/ShieldCheckNotificationIcon";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 import { useQuickActionsRowViewModel } from "../useQuickActionsRowViewModel";
 
@@ -20,41 +13,14 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-const mockDevice: Device = {
-  modelId: DeviceModelId.nanoX,
-  deviceId: "test-device-id",
-  deviceName: "Nano X",
-  wired: false,
-};
-
-const withDevice = (state: State): State => ({
-  ...state,
-  settings: { ...state.settings, lastConnectedDevice: mockDevice },
-});
-
-const withHasClickedRecover = (state: State): State => ({
-  ...state,
-  settings: { ...state.settings, hasClickedRecover: true },
-});
-
-const withBackupHubOn = (subscriptionState: LedgerRecoverSubscriptionStateEnum) =>
-  withFlagOverrides(
-    {
-      lwmBackupHub: { enabled: true },
-      protectServicesMobile: { enabled: true, params: { protectId: PROTECT_ID } },
-    },
-    withRecoverState(subscriptionState, true),
-  );
-
 describe("useQuickActionsRowViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should return three actions", () => {
+  it("should return the help and referral actions", () => {
     const { result } = renderHook(() => useQuickActionsRowViewModel());
-    expect(result.current.actions).toHaveLength(3);
-    expect(result.current.actions.map(a => a.id)).toEqual(["recover", "help", "referral"]);
+    expect(result.current.actions.map(a => a.id)).toEqual(["help", "referral"]);
   });
 
   describe("help action", () => {
@@ -85,136 +51,6 @@ describe("useQuickActionsRowViewModel", () => {
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Referral",
         page: MY_WALLET_TRACKING_PAGE_NAME,
-      });
-    });
-  });
-
-  describe("recover action", () => {
-    it("should navigate to Recover screen and track event on press", () => {
-      const { result } = renderHook(() => useQuickActionsRowViewModel());
-      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-      act(() => recoverAction.onPress());
-
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Recover, {
-        platform: "protect-simu",
-        device: undefined,
-      });
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Recover",
-        page: MY_WALLET_TRACKING_PAGE_NAME,
-      });
-    });
-
-    it('should display "Backup" label when no device is connected', () => {
-      const { result } = renderHook(() => useQuickActionsRowViewModel());
-      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-      expect(recoverAction.label).toBe("Backup");
-    });
-
-    it('should display "[L] Recover" label when a device is connected', () => {
-      const { result } = renderHook(() => useQuickActionsRowViewModel(), {
-        overrideInitialState: withDevice,
-      });
-      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-      expect(recoverAction.label).toBe("[L] Recover");
-    });
-
-    it("should show notification icon when recover has not been clicked yet", () => {
-      const { result } = renderHook(() => useQuickActionsRowViewModel());
-      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-      expect(recoverAction.icon).toBe(ShieldCheckNotification);
-    });
-
-    it("should show plain icon when recover has already been clicked", () => {
-      const { result } = renderHook(() => useQuickActionsRowViewModel(), {
-        overrideInitialState: withHasClickedRecover,
-      });
-      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-      expect(recoverAction.icon).toBe(ShieldCheck);
-    });
-
-    it("should persist hasClickedRecover in the store after the first press", () => {
-      const { result, store } = renderHook(() => useQuickActionsRowViewModel());
-
-      expect(store.getState().settings.hasClickedRecover).toBe(false);
-
-      act(() => {
-        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-        recoverAction.onPress();
-      });
-
-      expect(store.getState().settings.hasClickedRecover).toBe(true);
-    });
-
-    it("should not dispatch again when recover has already been clicked", () => {
-      const { result, store } = renderHook(() => useQuickActionsRowViewModel(), {
-        overrideInitialState: withHasClickedRecover,
-      });
-
-      const dispatchSpy = jest.spyOn(store, "dispatch");
-
-      act(() => {
-        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-        recoverAction.onPress();
-      });
-
-      const hasClickedRecoverDispatches = dispatchSpy.mock.calls.filter(
-        ([action]) => action.type === "SET_HAS_CLICKED_RECOVER",
-      );
-      expect(hasClickedRecoverDispatches).toHaveLength(0);
-    });
-
-    describe("with lwmBackupHub enabled", () => {
-      it('should always display the "Backup" label, even with a device connected', () => {
-        const { result } = renderHook(() => useQuickActionsRowViewModel(), {
-          overrideInitialState: state =>
-            withBackupHubOn(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION)(withDevice(state)),
-        });
-        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-        expect(recoverAction.label).toBe("Backup");
-      });
-
-      it("should show the red-dot notification icon when the backup is not done", () => {
-        const { result } = renderHook(() => useQuickActionsRowViewModel(), {
-          overrideInitialState: withBackupHubOn(
-            LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY,
-          ),
-        });
-        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-        expect(recoverAction.icon).toBe(ShieldCheckNotificationIcon);
-      });
-
-      it("should show the plain icon (no red dot) when the backup is done", () => {
-        const { result } = renderHook(() => useQuickActionsRowViewModel(), {
-          overrideInitialState: withBackupHubOn(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE),
-        });
-        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-        expect(recoverAction.icon).toBe(ShieldCheck);
-      });
-
-      it("should open the Backup Hub navigator and track the event on press", () => {
-        const { result } = renderHook(() => useQuickActionsRowViewModel(), {
-          overrideInitialState: withBackupHubOn(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION),
-        });
-        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
-
-        act(() => recoverAction.onPress());
-
-        expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.BackupHub, {
-          screen: ScreenName.BackupHub,
-        });
-        expect(track).toHaveBeenCalledWith("button_clicked", {
-          button: "Backup",
-          page: MY_WALLET_TRACKING_PAGE_NAME,
-        });
       });
     });
   });

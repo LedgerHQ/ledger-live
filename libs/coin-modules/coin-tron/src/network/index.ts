@@ -1,4 +1,3 @@
-import { stringify } from "querystring";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
@@ -59,6 +58,11 @@ function isValidNativeTx(tx: TransactionTronAPI): boolean {
   return !tx.tx_id;
 }
 
+// TronGrid reports errors as a plain string or as an object
+function formatTronError(error: unknown): string {
+  return typeof error === "string" ? error : JSON.stringify(error);
+}
+
 function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
   return tx.type === "TriggerSmartContract" && !tx.hasFailed;
 }
@@ -77,11 +81,9 @@ export async function post<T, U extends object = any>(
 
   // Ugly but trongrid send a 200 status event if there are errors
   if ("Error" in data) {
-    const error = data.Error as any;
-    const message = stringify(error);
-    const nonEmptyMessage = message === "" ? error.toString() : message;
-    logger("tron-error", nonEmptyMessage, { endPoint, body });
-    throw new Error(nonEmptyMessage);
+    const message = formatTronError(data.Error);
+    logger("tron-error", message, { endPoint, body });
+    throw new Error(message);
   }
 
   return data;
@@ -100,8 +102,9 @@ async function fetchWithBaseUrl<T extends object = any>(logger: Logger, url: str
 
   // Ugly but trongrid send a 200 status event if there are errors
   if ("Error" in data) {
-    logger("tron-error", stringify(data.Error as any), { url });
-    throw new Error(stringify(data.Error as any));
+    const message = formatTronError(data.Error);
+    logger("tron-error", message, { url });
+    throw new Error(message);
   }
 
   return data;

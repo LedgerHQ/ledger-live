@@ -4,6 +4,8 @@ import { getWalletAccount } from "./getWalletAccount";
 import type { Account } from "@ledgerhq/types-live";
 import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/account";
 import { getIncrementalFeeFloorSatVb } from "@ledgerhq/wallet-btc/utils";
+import type { BitcoinCoinConfig } from "./config";
+import { DEFAULT_RBF_MIN_BUMP_RATIO } from "./constants";
 
 const ZERO = new BigNumber(0);
 export const RBF_SEQUENCE_THRESHOLD = 0xfffffffe;
@@ -34,7 +36,7 @@ export async function getUtxoValue(
   const tx = Transaction.fromHex(rawHex);
   const output = tx.outs[index];
   if (!output) throw new Error(`Output index ${index} does not exist`);
-  return output.value;
+  return Number(output.value);
 }
 
 type OriginalTxFeeContext = {
@@ -46,6 +48,7 @@ type OriginalTxFeeContext = {
 };
 
 export async function getOriginalTxFeeContext(
+  config: BitcoinCoinConfig,
   walletAccount: WalletAccount,
   originalTxId: string,
 ): Promise<OriginalTxFeeContext | null> {
@@ -63,7 +66,7 @@ export async function getOriginalTxFeeContext(
   );
 
   const totalInputSat = inputValues.reduce((a, b) => a + b, 0);
-  const totalOutputSat = tx.outs.reduce((a, o) => a + o.value, 0);
+  const totalOutputSat = tx.outs.reduce((a, o) => a + Number(o.value), 0);
 
   const oldFeeSatNumber = totalInputSat - totalOutputSat;
   if (oldFeeSatNumber < 0) return null;
@@ -76,6 +79,7 @@ export async function getOriginalTxFeeContext(
   const incrementalFeeRateSatVb = await getIncrementalFeeFloorSatVb(
     walletAccount.xpub.explorer,
     oldFeeRateSatVb,
+    config.fees?.rbfMinBumpRatio ?? DEFAULT_RBF_MIN_BUMP_RATIO,
   );
   return { tx, vsize, oldFeeSat, oldFeeRateSatVb, incrementalFeeRateSatVb };
 }
@@ -88,10 +92,11 @@ export async function getOriginalTxFeeContext(
  * must take the max over all conflicting unconfirmed txs so the replacement beats every one.
  */
 export const getMinReplacementFeeSat = async (
+  config: BitcoinCoinConfig,
   walletAccount: WalletAccount,
   originalTxId: string,
 ): Promise<BigNumber> => {
-  const ctx = await getOriginalTxFeeContext(walletAccount, originalTxId);
+  const ctx = await getOriginalTxFeeContext(config, walletAccount, originalTxId);
   if (!ctx) return ZERO;
 
   const { vsize, oldFeeSat, oldFeeRateSatVb, incrementalFeeRateSatVb } = ctx;
@@ -114,15 +119,18 @@ export const getMinReplacementFeeSat = async (
  * Minimum replacement feerate (sat/vB) implied by RBF policy for the original tx.
  * Useful for building a speedup transaction.
  */
-export const getMinReplacementFeeRateSatVb = async ({
-  account,
-  originalTxId,
-}: {
-  account: Account;
-  originalTxId: string;
-}): Promise<BigNumber> => {
+export const getMinReplacementFeeRateSatVb = async (
+  config: BitcoinCoinConfig,
+  {
+    account,
+    originalTxId,
+  }: {
+    account: Account;
+    originalTxId: string;
+  },
+): Promise<BigNumber> => {
   const walletAccount = getWalletAccount(account);
-  const ctx = await getOriginalTxFeeContext(walletAccount, originalTxId);
+  const ctx = await getOriginalTxFeeContext(config, walletAccount, originalTxId);
   if (!ctx) return ZERO;
 
   const { vsize, oldFeeSat, oldFeeRateSatVb, incrementalFeeRateSatVb } = ctx;

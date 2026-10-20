@@ -4,13 +4,6 @@ import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
-// The Wallet 4.0 market & global-search screens run continuous animations, so Detox
-// never reaches idle (iOS) and matchers time out. Disable synchronization once for the
-// whole suite (same approach as the swap specs).
-beforeAll(async () => {
-  await app.common.disableSynchronizationForiOS();
-});
-
 afterEach(async () => {
   await app.portfolio.openViaDeeplink();
 });

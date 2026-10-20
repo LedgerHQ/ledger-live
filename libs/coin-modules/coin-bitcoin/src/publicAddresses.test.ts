@@ -8,7 +8,6 @@ const SUPPORTED_BITCOIN_COINS = [
   "bitcoin_cash",
   "dogecoin",
   "dash",
-  "zcash",
   "decred",
   "digibyte",
   "qtum",

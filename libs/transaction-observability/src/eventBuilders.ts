@@ -20,8 +20,8 @@ import type { EarnTransactionType } from "./earnTransactionType";
 import { deriveFromOperationType } from "./operationType";
 import { getStakeTarget, type TransactionLike } from "./transactionShape";
 import { isStakingApp, stakingMethodOf } from "./stakingApps";
-import { outputCurrencyOf, stakingMethodOfContract } from "./stakingContracts";
-import { readAction } from "./resolveAction";
+import { inputCurrencyOf, outputCurrencyOf, stakingMethodOfContract } from "./stakingContracts";
+import { isContractFamily, readAction } from "./resolveAction";
 import { recallSignContext } from "./signContext";
 import { classifyTransactionError, ErrorCategory, toError, unwrapRpcError } from "./errorCategory";
 
@@ -48,6 +48,8 @@ function buildCommon(attribution: Attribution, action: ActionFields): CommonLogE
   const { account, mainAccount, pathway, manifestId, source } = attribution;
   const stakingMethod = stakingMethodOfContract(action.dappContract) ?? stakingMethodOf(manifestId);
   const outputCurrency = outputCurrencyOf(action.dappContract);
+  const tokenTicker =
+    account.type === "TokenAccount" ? account.token.ticker : inputCurrencyOf(action.dappContract);
   return {
     appVersion: getEnv("LEDGER_CLIENT_VERSION"),
     pathway,
@@ -67,9 +69,8 @@ function buildCommon(attribution: Attribution, action: ActionFields): CommonLogE
     ...(action.rawTransactionType ? { rawTransactionType: action.rawTransactionType } : {}),
     ...(action.dappContract ? { dappContract: action.dappContract } : {}),
     ...(action.validators?.length ? { validators: action.validators } : {}),
-    ...(account.type === "TokenAccount"
-      ? { tokenId: account.token.id, tokenTicker: account.token.ticker }
-      : {}),
+    ...(account.type === "TokenAccount" ? { tokenId: account.token.id } : {}),
+    ...(tokenTicker ? { tokenTicker } : {}),
   };
 }
 
@@ -185,9 +186,11 @@ export function buildBroadcastCommonEvent(
  * The called contract, read off the optimistic operation.
  *
  * Gated on the manifest for the same reason the sign stage is: a plain send's recipient is the
- * user's own payee, and must never be reported as a staking contract.
+ * user's own payee, and must never be reported as a staking contract. Gated on EVM too: a
+ * native or TON stake inside an allow-listed app has a recipient, but it is not a contract.
  */
 function contractFromOperation(attribution: Attribution, operation: Operation): string | undefined {
+  if (!isContractFamily(attribution.mainAccount.currency.family)) return undefined;
   if (!isStakingApp(attribution.manifestId)) return undefined;
   const recipient = operation.recipients?.[0];
   return typeof recipient === "string" ? recipient.toLowerCase() : undefined;

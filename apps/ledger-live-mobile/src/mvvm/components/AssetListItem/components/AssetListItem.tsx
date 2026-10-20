@@ -22,7 +22,7 @@ import type { MarketAssetDisplayData } from "../types";
 
 interface PortfolioRowProps {
   asset: Asset;
-  onPress: (asset: Asset) => void;
+  onPress?: (asset: Asset) => void;
   precomputed: AssetListItemViewModelResult;
   lx?: LumenViewStyle;
   hideNetwork?: boolean;
@@ -45,11 +45,15 @@ const trailingStyle: LumenViewStyle = {
 };
 
 const PortfolioRow = memo(({ asset, onPress, precomputed, lx, hideNetwork }: PortfolioRowProps) => {
-  const handlePress = useCallback(() => onPress(asset), [asset, onPress]);
+  const handlePress = useCallback(() => onPress?.(asset), [asset, onPress]);
   const { formattedBalance, formattedCounterValue, countervalueChange } = precomputed;
 
   return (
-    <LumenListItem onPress={handlePress} testID={`assetItem-${asset.currency.name}`} lx={lx}>
+    <LumenListItem
+      onPress={onPress ? handlePress : undefined}
+      testID={`assetItem-${asset.currency.name}`}
+      lx={lx}
+    >
       <ListItemLeading>
         <CurrencyIcon currency={asset.currency} size={48} hideNetwork={hideNetwork} />
         <ListItemContent style={{ flex: 1, minWidth: 0 }}>

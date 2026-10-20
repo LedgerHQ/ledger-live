@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
-import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
+import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";

@@ -8,6 +8,8 @@ const swapTestConfig = {
   userData: "speculos-x-other-account",
   errorMessage:
     "This sending account does not belong to the connected device. Please change and retry.",
+  lnsErrorMessage:
+    "This receiving account does not belong to the connected device. Please change and retry.",
   addressFrom: Addresses.ETH_OTHER_SEED,
   addressTo: Addresses.SOL_OTHER_SEED,
   tags: [
@@ -32,4 +34,5 @@ runSwapWithDifferentSeedTest(
   swapTestConfig.addressTo,
   swapTestConfig.tmsLinks,
   swapTestConfig.tags,
+  swapTestConfig.lnsErrorMessage,
 );

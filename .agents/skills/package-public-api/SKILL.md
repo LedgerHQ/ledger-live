@@ -58,6 +58,25 @@ Two import paths for the same symbol, and a reader who cannot tell who provides 
 import the original provider, and declare the dependency themselves. This holds for `@shared/*`,
 `@domain/*`, `@features/*`, `@support/*` and `@ledgerhq/*` alike.
 
+## Universal components
+
+A React component exported from an entry with a `react-native` condition is universal: it takes
+one props contract on both platforms. The [ADR](../../../docs/adr/universal-components.md) holds
+the full rules and authoring steps. `lint:structure` checks them as each rule lands; until then,
+review checks them.
+
+- **R1 Parity.** Exported on both platforms under the same name.
+- **R2 One contract.** `X.web.tsx` and `X.native.tsx` annotate their props with the same type,
+  declared in an unsuffixed `X.types.ts` with no `.web` / `.native` sibling.
+- **R3 Neutral contract.** No `react-native*`, `@ledgerhq/lumen-ui-*` or `react-dom` import, no DOM
+  or native type, no `className` / `style`. Callbacks name the intent (`onOpenContacts`, never
+  `onPress` or `onClick`) and receive values, not events. The test id is `testID`. A platform-only
+  prop is optional, primitive and tagged `@platform native` or `@platform web`.
+- **R4 Types in the contract only.** A `.web` / `.native` module exports its component, nothing else.
+- **R5 One entry per component.** A component that cannot be universal goes behind a `./web` or
+  `./native` subpath that points at a suffixed module of its own, and is never also exported from a
+  universal entry. Only code of that platform imports it.
+
 **Facade is not proxy.** Wrapping a legacy lib behind a typed API — as `shared/env` does over
 `@ledgerhq/live-env` — is legitimate: it owns real code and holds a declared
 [`BOUNDARY_EXCEPTION`](../../../tools/nx-plugins/enforce-boundaries/constraints.js). Keeping that

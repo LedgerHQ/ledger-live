@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/live-common/portfolio/portfolioReact", () => ({
   ...jest.requireActual("@ledgerhq/live-common/portfolio/portfolioReact"),
   usePortfolioThrottled: jest.fn(),
 }));
-import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
+import * as countervaluesReact from "@features/platform-market-countervalues";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { createMockCategorizedAssets } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
@@ -96,10 +96,12 @@ let mockUseCountervaluesPolling: jest.SpyInstance<
   ReturnType<typeof countervaluesReact.useCountervaluesPolling>,
   Parameters<typeof countervaluesReact.useCountervaluesPolling>
 >;
+let mockUseCountervaluesLoadStatus: jest.SpyInstance<
+  ReturnType<typeof countervaluesReact.useCountervaluesLoadStatus>,
+  Parameters<typeof countervaluesReact.useCountervaluesLoadStatus>
+>;
 
 const defaultPollingMock = {
-  pending: false,
-  error: null,
   poll: jest.fn(),
   start: jest.fn(),
   stop: jest.fn(),
@@ -132,8 +134,8 @@ jest.mock("~/renderer/hooks/usePrice", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculate: () => undefined,
 }));
 
@@ -179,6 +181,8 @@ describe("PortfolioView", () => {
     jest.clearAllMocks();
     mockUsePortfolioThrottled = jest.mocked(portfolioReact.usePortfolioThrottled);
     mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
+    mockUseCountervaluesLoadStatus = jest.spyOn(countervaluesReact, "useCountervaluesLoadStatus");
+    mockUseCountervaluesLoadStatus.mockReturnValue({ pending: false, error: null });
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
     mockedUseNavigate.mockReturnValue(mockNavigate);
@@ -310,10 +314,7 @@ describe("PortfolioView", () => {
     });
 
     it("should display loading state when countervalues are being polled", () => {
-      mockUseCountervaluesPolling.mockReturnValue({
-        ...defaultPollingMock,
-        pending: true,
-      });
+      mockUseCountervaluesLoadStatus.mockReturnValue({ pending: true, error: null });
 
       render(<PortfolioView {...defaultProps} />, {
         initialState: {

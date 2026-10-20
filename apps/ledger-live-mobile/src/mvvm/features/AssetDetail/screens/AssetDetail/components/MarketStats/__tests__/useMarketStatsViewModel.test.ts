@@ -15,6 +15,7 @@ function mockMarketData(overrides?: Partial<ReturnType<typeof useAssetMarketData
   mockUseAssetMarketData.mockReturnValue({
     marketCurrency: marketCurrencyData as any,
     marketId: "bitcoin",
+    ledgerCurrencyFromDada: undefined,
     counterCurrency: "usd",
     counterValueUnit: usdUnit,
     ledgerIds: ["bitcoin"],

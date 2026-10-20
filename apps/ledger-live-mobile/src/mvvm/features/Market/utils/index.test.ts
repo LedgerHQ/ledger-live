@@ -1,11 +1,5 @@
 import i18next from "~/i18n/instance";
-import {
-  counterValueFormatter,
-  getDateFormatter,
-  getAnalyticsProperties,
-  isDataStale,
-  getCurrentPage,
-} from ".";
+import { counterValueFormatter, getDateFormatter, getAnalyticsProperties, getCurrentPage } from ".";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 
 // The app instance already carries `en/common.json`; it just has no language until
@@ -477,24 +471,6 @@ describe("getAnalyticsProperties", () => {
     );
 
     expect(result).toHaveProperty("currencies", ["bitcoin", "ethereum"]);
-  });
-});
-
-describe("isDataStale", () => {
-  it("should return true when elapsed time exceeds refreshRate", () => {
-    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-    const threeMinuteRate = 3 * 60 * 1000;
-    expect(isDataStale(fiveMinutesAgo, threeMinuteRate)).toBe(true);
-  });
-
-  it("should return false when elapsed time is within refreshRate", () => {
-    const oneMinuteAgo = Date.now() - 1 * 60 * 1000;
-    const threeMinuteRate = 3 * 60 * 1000;
-    expect(isDataStale(oneMinuteAgo, threeMinuteRate)).toBe(false);
-  });
-
-  it("should return false when lastUpdate is now", () => {
-    expect(isDataStale(Date.now(), 60000)).toBe(false);
   });
 });
 

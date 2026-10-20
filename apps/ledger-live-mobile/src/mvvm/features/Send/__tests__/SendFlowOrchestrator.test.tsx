@@ -51,10 +51,19 @@ jest.mock("../../FlowWizard/FlowStackNavigator", () => ({
   },
 }));
 
-// Keep this unit test focused on orchestration: the real overlay host pulls in the whole Device
+// Keep this unit test focused on orchestration: the real overlay hosts pull in the whole Device
 // Intent Executor chain (expo-keep-awake, DMK, …) which this suite does not exercise.
 jest.mock("../components/SignatureOverlayHost", () => ({
   SignatureOverlayHost: () => null,
+}));
+
+jest.mock("../components/SponsoredFlowHost", () => ({
+  SponsoredFlowHost: () => null,
+}));
+
+jest.mock("../context/SponsoredSendContext", () => ({
+  SponsoredSendProvider: ({ children }: { children: React.ReactNode }) => children,
+  useSponsoredSend: jest.fn(),
 }));
 
 function createStepRegistry(): StepRegistry<SendFlowStep> {
@@ -81,6 +90,10 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
     ],
     stepConfigs: {
       [SEND_FLOW_STEP.BALANCE_TYPE]: { id: SEND_FLOW_STEP.BALANCE_TYPE, canGoBack: false },
+      [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: {
+        id: SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
+        canGoBack: false,
+      },
       [SEND_FLOW_STEP.RECIPIENT]: {
         id: SEND_FLOW_STEP.RECIPIENT,
         canGoBack: false,

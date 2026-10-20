@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
 import { type PolkadotCoinConfig } from "../config";
@@ -6,16 +7,22 @@ import { listOperations } from "./listOperations";
 
 const config = {} as PolkadotCoinConfig;
 const mockGetOperations = jest.fn();
+const mockOperationsLogger = jest.fn();
+const logger = jest.fn();
 jest.mock("../network", () => {
   return {
     getOperations: (
+      logger: Logger,
       _config: PolkadotCoinConfig,
       accountId: string,
       addr: string,
       currency?: CryptoCurrency,
       startAt = 0,
       limit = 200,
-    ) => mockGetOperations(accountId, addr, currency, startAt, limit),
+    ) => {
+      mockOperationsLogger(logger);
+      return mockGetOperations(accountId, addr, currency, startAt, limit);
+    },
   };
 });
 
@@ -63,7 +70,7 @@ describe("listOperations", () => {
 
     mockGetOperations.mockResolvedValue(mockOperations);
 
-    const result = await listOperations(config, fakeAddress, { limit, startAt });
+    const result = await listOperations(logger, config, fakeAddress, { limit, startAt });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
@@ -113,13 +120,21 @@ describe("listOperations", () => {
     ]);
   });
 
+  it("passes the injected logger to the network layer", async () => {
+    mockGetOperations.mockResolvedValue([]);
+
+    await listOperations(logger, config, fakeAddress, { limit: 5, startAt: 0 });
+
+    expect(mockOperationsLogger).toHaveBeenCalledWith(logger);
+  });
+
   it("should handle empty operations array", async () => {
     const limit = 5;
     const startAt = 0;
 
     mockGetOperations.mockResolvedValue([]);
 
-    const result = await listOperations(config, fakeAddress, { limit, startAt });
+    const result = await listOperations(logger, config, fakeAddress, { limit, startAt });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
@@ -149,7 +164,7 @@ describe("listOperations", () => {
 
     mockGetOperations.mockResolvedValue(mockOperations);
 
-    const result = await listOperations(config, fakeAddress, { limit, startAt });
+    const result = await listOperations(logger, config, fakeAddress, { limit, startAt });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
@@ -202,7 +217,7 @@ describe("listOperations", () => {
 
     mockGetOperations.mockResolvedValue(mockOperations);
 
-    const result = await listOperations(config, fakeAddress, { limit });
+    const result = await listOperations(logger, config, fakeAddress, { limit });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);

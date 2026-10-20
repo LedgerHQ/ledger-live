@@ -12,6 +12,7 @@ import {
   type RawTransaction,
   type SimpleTransaction,
   type TransactionResponse,
+  TransactionResponseType,
   type UserTransactionResponse,
   type Block,
   type AptosSettings,
@@ -111,7 +112,7 @@ export class AptosAPI {
     });
   }
 
-  async getAccount(address: string): Promise<AccountData> {
+  getAccount(address: string): Promise<AccountData> {
     return this.aptosClient.getAccountInfo({ accountAddress: address });
   }
 
@@ -128,7 +129,7 @@ export class AptosAPI {
     };
   }
 
-  async estimateGasPrice(): Promise<GasEstimation> {
+  estimateGasPrice(): Promise<GasEstimation> {
     return this.aptosClient.getGasPriceEstimation();
   }
 
@@ -165,7 +166,7 @@ export class AptosAPI {
       });
   }
 
-  async simulateTransaction(
+  simulateTransaction(
     address: Ed25519PublicKey,
     tx: RawTransaction,
     options = {
@@ -360,11 +361,18 @@ export class AptosAPI {
       const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
         ledgerVersion: version,
       });
+      if (tx.type !== TransactionResponseType.User) {
+        log("info", "richItemByVersion: skipping non-user transaction", {
+          version,
+          type: tx.type,
+        });
+        return null;
+      }
       const block = await this.getBlock(version);
       return {
         ...tx,
         block,
-      } as AptosTransaction;
+      };
     } catch (error) {
       log("error", "richItemByVersion", {
         error,

@@ -9,7 +9,7 @@ import {
   filterTokenOperationsZeroAmountEnabledSelector,
   hideSmallValueTokenOperationsEffectiveSelector,
 } from "~/reducers/settings";
-import { countervaluesStateSelector } from "~/reducers/countervalues";
+import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "LLM/features/OperationsHistory/constants";
 

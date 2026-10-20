@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-e2e-shared",
-  "version": "0.13.0",
+  "version": "0.15.0",
   "private": true,
   "description": "Shared E2E test-support code (enums, models, families, speculos/device helpers) for Ledger Live Desktop & Mobile E2E suites",
   "repository": {
@@ -16,6 +16,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/coin-zcash": "workspace:^",
@@ -44,12 +45,12 @@
     "expect": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:",
-    "uuid": "^9.0.0"
+    "undici": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "2.2.37",
     "@types/node": "catalog:",
-    "@types/uuid": "^9.0.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "tsx": "^4.19.3"
@@ -60,10 +61,11 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint .",
-    "lint:fix": "oxfmt . && oxlint . --fix",
+    "lint": "oxlint . -A no-console",
+    "lint:fix": "oxfmt . && pnpm lint --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
+    "test": "tsx --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json --customConditions node",
     "e2e-cli": "tsx src/cli/e2e-cli.ts"
   },

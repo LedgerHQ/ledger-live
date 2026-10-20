@@ -2,6 +2,7 @@ import {
   DeviceModelId as DMKDeviceModelId,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
@@ -96,6 +97,20 @@ describe("desktop connectDevice utils", () => {
         name: null,
       };
       const discoveredDevice = makeDiscoveredDevice({ transport: speculosIdentifier });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
+        { knownDevice, discoveredDevice },
+      ]);
+    });
+
+    it("GIVEN a mock server known device with the same model, WHEN filtering, THEN it should match", () => {
+      const knownDevice: KnownDevice = {
+        transport: mockserverIdentifier,
+        deviceModelId: DeviceModelId.nanoX,
+        id: "",
+        name: null,
+      };
+      const discoveredDevice = makeDiscoveredDevice({ transport: mockserverIdentifier });
 
       expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
         { knownDevice, discoveredDevice },

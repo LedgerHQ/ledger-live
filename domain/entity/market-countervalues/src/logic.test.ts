@@ -642,6 +642,35 @@ describe("applyRatePatches", () => {
     expect(state.cache[btcUsd]).toBeDefined();
   });
 
+  it("copies a patched pair's Map instead of writing into the one it was given", () => {
+    const btcMap = new Map([["2018-03-01", 9000]]);
+    const ethMap = new Map([["2018-03-01", 600]]);
+    const previous: CounterValuesState = {
+      data: { [btcUsd]: btcMap, [ethUsd]: ethMap },
+      cache: {},
+      status: {},
+    };
+    const next = { data: { ...previous.data }, cache: {}, status: {} };
+
+    const state = applyRatePatches(
+      previous,
+      next,
+      [{ [btcUsd]: { "2018-03-02": 9100 } }, { [btcUsd]: { latest: 9200 } }],
+      settings,
+    );
+
+    expect([...btcMap]).toEqual([["2018-03-01", 9000]]);
+    expect(next.data).toEqual({ [btcUsd]: btcMap, [ethUsd]: ethMap });
+    expect(next.cache).toEqual({});
+    expect(state.data[btcUsd]).not.toBe(btcMap);
+    expect([...(state.data[btcUsd]?.entries() ?? [])]).toEqual([
+      ["2018-03-01", 9000],
+      ["2018-03-02", 9100],
+      ["latest", 9200],
+    ]);
+    expect(state.data[ethUsd]).toBe(ethMap);
+  });
+
   it("clears checkHolesOnNextLoad once the patches are applied", () => {
     const state = applyRatePatches(
       { ...initialState, checkHolesOnNextLoad: true },

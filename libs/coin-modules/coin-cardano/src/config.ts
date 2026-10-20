@@ -6,6 +6,7 @@ import buildCoinConfig, {
 export type CardanoConfig = {
   maxFeesWarning: number;
   maxFeesError: number;
+  testnet: boolean;
 };
 
 export type CardanoCoinConfig = CurrencyConfig & CardanoConfig;

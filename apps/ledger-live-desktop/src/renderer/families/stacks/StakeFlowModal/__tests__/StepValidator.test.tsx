@@ -133,6 +133,27 @@ describe("StakeFlowModal/StepValidator", () => {
       familySpecificData: { numCycles: 6 },
     });
   });
+
+  it.each(["1.5", "-1", "6 cycles"])(
+    "leaves numCycles unset for %s instead of turning it into another number of cycles",
+    raw => {
+      const props = makeProps();
+      act(() => {
+        render(<StepValidator {...props} />);
+      });
+
+      act(() => {
+        fireEvent.change(screen.getByTestId("stacks-stake-num-cycles-input"), {
+          target: { value: raw },
+        });
+      });
+
+      expect(screen.getByTestId("stacks-stake-num-cycles-input")).toHaveValue(raw);
+      expect(updateTransactionMock).toHaveBeenLastCalledWith(props.transaction, {
+        familySpecificData: { numCycles: undefined },
+      });
+    },
+  );
 });
 
 // Real, checksum-valid mainnet address (reused, unmocked, from coin-stacks's own

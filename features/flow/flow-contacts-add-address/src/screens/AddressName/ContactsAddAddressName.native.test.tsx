@@ -7,7 +7,8 @@ import {
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
-import type { AddAddressLabelState, AddAddressNameLabels } from "../../state/types";
+import { I18nTestProvider } from "@shared/i18n/testing";
+import type { AddAddressLabelState } from "../../state/types";
 import { ContactsAddAddressName } from "./ContactsAddAddressName";
 import { urls } from "../../urls";
 
@@ -18,18 +19,9 @@ jest.mock("@shared/linking", () => ({
   useLocalizedUrl: (url: string) => url,
 }));
 
-const labels: AddAddressNameLabels = {
-  title: "Name address",
-  inputLabel: "Address name",
-  namingDisclaimer: "Only you can see this name.",
-  continueToReview: "Continue to review",
-  validationErrors: {
-    [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Special characters are not allowed.",
-    [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]:
-      "This address name is already used for this contact.",
-    [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "This address name is too long.",
-  },
-};
+function renderName(ui: React.ReactElement) {
+  return render(ui, { wrapper: I18nTestProvider });
+}
 
 describe("ContactsAddAddressName", () => {
   beforeEach(() => {
@@ -40,7 +32,7 @@ describe("ContactsAddAddressName", () => {
     const onChangeText = jest.fn();
     const onContinue = jest.fn();
 
-    render(
+    renderName(
       <ContactsAddAddressName
         addressLabel={{
           status: "valid",
@@ -48,21 +40,22 @@ describe("ContactsAddAddressName", () => {
           label: ContactAddressLabelSchema.parse("Ethereum"),
           validationError: null,
         }}
-        labels={labels}
         onChangeText={onChangeText}
         onContinue={onContinue}
       />,
     );
 
-    expect(screen.UNSAFE_getByProps({ title: "Name address" }).props.title).toBe("Name address");
+    expect(screen.UNSAFE_getByProps({ title: "contacts.addAddressName.title" }).props.title).toBe(
+      "contacts.addAddressName.title",
+    );
     expect(screen.getByTestId("contacts-add-address-name-input").props).toMatchObject({
-      label: "Address name",
+      label: "contacts.addAddressName.inputLabel",
       maxLength: CONTACT_ADDRESS_LABEL_MAX_LENGTH,
       value: "Ethereum",
     });
     expect(screen.getByTestId("contacts-add-address-name-count")).toHaveTextContent("8/32");
     expect(screen.getByTestId("contacts-add-address-name-disclaimer").props.description).toBe(
-      "Only you can see this name.",
+      "contacts.addAddressName.namingDisclaimer",
     );
     expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
     expect(screen.getByTestId("contacts-add-address-name-continue").props.icon).toEqual(
@@ -76,8 +69,8 @@ describe("ContactsAddAddressName", () => {
     expect(onContinue).toHaveBeenCalledTimes(1);
   });
 
-  it("should keep the continuation above the keyboard inset", () => {
-    render(
+  it("should use the short continue label when the next step is confirmation", () => {
+    renderName(
       <ContactsAddAddressName
         addressLabel={{
           status: "valid",
@@ -85,7 +78,26 @@ describe("ContactsAddAddressName", () => {
           label: ContactAddressLabelSchema.parse("Ethereum"),
           validationError: null,
         }}
-        labels={labels}
+        nextStep="confirmation"
+        onChangeText={jest.fn()}
+        onContinue={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-add-address-name-continue")).toHaveTextContent(
+      "common.continue",
+    );
+  });
+
+  it("should keep the continuation above the keyboard inset", () => {
+    renderName(
+      <ContactsAddAddressName
+        addressLabel={{
+          status: "valid",
+          value: "Ethereum",
+          label: ContactAddressLabelSchema.parse("Ethereum"),
+          validationError: null,
+        }}
         bottomOffset={320}
         onChangeText={jest.fn()}
         onContinue={jest.fn()}
@@ -107,7 +119,7 @@ describe("ContactsAddAddressName", () => {
         label: null,
         validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
-      helperText: "Special characters are not allowed.",
+      helperText: "contacts.addAddressName.invalidLabel",
     },
     {
       name: "duplicate label",
@@ -117,7 +129,7 @@ describe("ContactsAddAddressName", () => {
         label: null,
         validationError: DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
-      helperText: "This address name is already used for this contact.",
+      helperText: "contacts.addAddressName.duplicateLabel",
     },
     {
       name: "too long label",
@@ -127,7 +139,7 @@ describe("ContactsAddAddressName", () => {
         label: null,
         validationError: CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
       },
-      helperText: "This address name is too long.",
+      helperText: "contacts.addAddressName.tooLongLabel",
     },
     {
       name: "empty label",
@@ -144,10 +156,9 @@ describe("ContactsAddAddressName", () => {
     addressLabel: AddAddressLabelState;
     helperText: string | undefined;
   }>)("should block the $name state", ({ addressLabel, helperText }) => {
-    render(
+    renderName(
       <ContactsAddAddressName
         addressLabel={addressLabel}
-        labels={labels}
         onChangeText={jest.fn()}
         onContinue={jest.fn()}
       />,
@@ -161,7 +172,7 @@ describe("ContactsAddAddressName", () => {
   });
 
   it("should not render the privacy policy link when label is absent", () => {
-    render(
+    renderName(
       <ContactsAddAddressName
         addressLabel={{
           status: "valid",
@@ -169,7 +180,6 @@ describe("ContactsAddAddressName", () => {
           label: ContactAddressLabelSchema.parse("Ethereum"),
           validationError: null,
         }}
-        labels={labels}
         onChangeText={jest.fn()}
         onContinue={jest.fn()}
       />,
@@ -179,7 +189,7 @@ describe("ContactsAddAddressName", () => {
   });
 
   it("should render and open the privacy policy link for MeContact", () => {
-    render(
+    renderName(
       <ContactsAddAddressName
         addressLabel={{
           status: "valid",
@@ -187,7 +197,7 @@ describe("ContactsAddAddressName", () => {
           label: ContactAddressLabelSchema.parse("Ethereum"),
           validationError: null,
         }}
-        labels={{ ...labels, privacyPolicy: "Learn more about Ledger's Privacy Policy." }}
+        showPrivacyPolicy
         onChangeText={jest.fn()}
         onContinue={jest.fn()}
       />,

@@ -119,6 +119,104 @@ describe("useContactsIntentsOrchestrator", () => {
     expect(result.current.dieProps).toBeUndefined();
   });
 
+  it("GIVEN retainUntilSheetDismissed WHEN success THEN the executor stays until the sheet is dismissed", async () => {
+    const { result, unmount } = renderHook(() =>
+      useContactsIntentsOrchestrator({ intents, retainUntilSheetDismissed: true }),
+    );
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+    const dieProps = getActiveDieProps(result.current);
+
+    act(() => {
+      dieProps.intent.onResult?.(registerExternalAddressSuccessResult(request));
+      dieProps.intent.onJobComplete?.();
+    });
+
+    await expect(request.promise).resolves.toEqual({
+      deviceCredentials: request.credentials,
+      addressDeviceContext: request.address.device,
+    });
+    expect(result.current.dieProps?.enabled).toBe(true);
+    expect(result.current.isDeviceSheetRequested).toBe(false);
+
+    act(() => {
+      result.current.dieProps?.onUserCancel();
+    });
+    expect(result.current.dieProps?.enabled).toBe(true);
+    expect(result.current.isDeviceSheetRequested).toBe(false);
+
+    act(() => {
+      result.current.dismissDeviceSheet();
+    });
+    expect(result.current.dieProps).toBeUndefined();
+    expect(result.current.isDeviceSheetRequested).toBe(false);
+    unmount();
+  });
+
+  it("GIVEN a newer operation WHEN the previous sheet dismisses THEN that operation stays", () => {
+    const { result } = renderHook(() =>
+      useContactsIntentsOrchestrator({ intents, retainUntilSheetDismissed: true }),
+    );
+    let first!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      first = startRegisterExternalAddress(result.current);
+    });
+    const firstDieProps = getActiveDieProps(result.current);
+
+    act(() => {
+      firstDieProps.intent.onResult?.(registerExternalAddressSuccessResult(first));
+    });
+
+    act(() => {
+      const second = startRegisterExternalAddress(result.current);
+      second.promise.catch(() => undefined);
+    });
+    expect(result.current.isDeviceSheetRequested).toBe(true);
+
+    act(() => {
+      result.current.dismissDeviceSheet();
+    });
+
+    expect(result.current.dieProps?.enabled).toBe(true);
+    expect(result.current.isDeviceSheetRequested).toBe(true);
+    expect(result.current.dieProps?.intent).not.toBe(firstDieProps.intent);
+  });
+
+  it("GIVEN retainUntilSheetDismissed WHEN dismissal is delayed THEN the executor stays mounted", () => {
+    jest.useFakeTimers();
+    try {
+      const { result } = renderHook(() =>
+        useContactsIntentsOrchestrator({ intents, retainUntilSheetDismissed: true }),
+      );
+      let request!: ReturnType<typeof startRegisterExternalAddress>;
+      act(() => {
+        request = startRegisterExternalAddress(result.current);
+      });
+      const dieProps = getActiveDieProps(result.current);
+
+      act(() => {
+        dieProps.intent.onResult?.(registerExternalAddressSuccessResult(request));
+      });
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      expect(result.current.dieProps?.enabled).toBe(true);
+      expect(result.current.isDeviceSheetRequested).toBe(false);
+
+      act(() => {
+        result.current.dismissDeviceSheet();
+      });
+
+      expect(result.current.dieProps).toBeUndefined();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("GIVEN an active operation WHEN its intent reports failure THEN it rejects with that failure and keeps the DIE open", async () => {
     // GIVEN
     const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));

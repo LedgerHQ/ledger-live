@@ -27,5 +27,6 @@ describe("PostOnboardingAction integration", () => {
       "data-post-onboarding-action-id",
       PostOnboardingActionId.assetsTransfer,
     );
+    expect(row).toHaveAttribute("data-post-onboarding-action-completed", "false");
   });
 });

@@ -36,8 +36,8 @@ catalog:
   "@ledgerhq/context-module": 2.6.0
   "@ledgerhq/crypto-icons": "2.0.6"
   "@ledgerhq/device-contacts-kit": 0.5.0
-  "@ledgerhq/device-management-kit": 1.10.0
-  "@ledgerhq/dmk-ledger-wallet": 0.6.0
+  "@ledgerhq/device-management-kit": 1.11.0
+  "@ledgerhq/dmk-ledger-wallet": 0.7.1
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.5.0
   "@ledgerhq/device-signer-kit-ethereum": 1.18.1
@@ -51,11 +51,12 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
   "@ledgerhq/device-mockserver-client": 1.3.0
+  "@ledgerhq/device-mockserver-react": 0.1.0
   "@ledgerhq/device-transport-kit-mockserver": 1.1.2
-  "@ledgerhq/device-transport-kit-speculos": 1.2.1
+  "@ledgerhq/device-transport-kit-speculos": 1.3.0
   "@ledgerhq/signer-utils": 1.3.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
-  "@ledgerhq/speculos-device-controller": 0.3.0
+  "@ledgerhq/speculos-device-controller": 0.4.0
   "@ledgerhq/logs": 6.19.0
   "@ledgerhq/auth": 0.1.0
   "@ledgerhq/devices": 8.18.0
@@ -63,31 +64,32 @@ catalog:
   "@ledgerhq/hw-transport-mocker": 6.35.0
   "@ledgerhq/live-network": 3.2.0
   "@ledgerhq/live-promise": 0.4.0
-  "@ledgerhq/psbtv2": 0.6.0
-  "@ledgerhq/hw-ledger-key-ring-protocol": 0.14.0
-  "@ledgerhq/ledger-key-ring-protocol": 0.24.0
+  "@ledgerhq/psbtv2": 0.6.1
+  "@ledgerhq/hw-ledger-key-ring-protocol": 1.0.0
+  "@ledgerhq/ledger-key-ring-protocol": 1.0.0
   "@ledgerhq/live-config": 3.9.0
   "@ledgerhq/live-env": 4.1.0
   "@ledgerhq/live-currency-format": 0.16.0
   "@ledgerhq/domain-service": 1.9.1
-  "@ledgerhq/evm-tools": 1.15.1
-  "@ledgerhq/lumen-design-core": 0.1.30
-  "@ledgerhq/lumen-ui-react": 0.1.61
-  "@ledgerhq/lumen-ui-rnative": 0.1.64
-  "@ledgerhq/lumen-utils-shared": 0.1.14
+  "@ledgerhq/evm-tools": 2.0.0
+  "@ledgerhq/lumen-design-core": 0.1.32
+  "@ledgerhq/lumen-ui-react": 0.1.64
+  "@ledgerhq/lumen-ui-rnative": 0.1.67
+  "@ledgerhq/lumen-utils-shared": 0.1.16
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.16.0
   "@ledgerhq/wallet-api-client-react": 1.4.35
   "@ledgerhq/wallet-api-core": 2.1.0
   "@ledgerhq/wallet-api-server": 3.5.0
   "@ledgerhq/wallet-api-simulator": 2.4.0
-  "@ledgerhq/zcash-utils": 2.5.0
+  "@ledgerhq/zcash-utils": 2.7.0
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
   "@react-native/babel-plugin-codegen": 0.81.6
   "@react-native/babel-preset": 0.81.6
   "@react-native/codegen": 0.81.6
+  "@react-native/community-cli-plugin": 0.81.6
   "@react-native/dev-middleware": 0.81.6
   "@react-native/gradle-plugin": 0.81.6
   "@react-native/metro-config": 0.81.6
@@ -99,19 +101,24 @@ catalog:
   "@react-native-community/cli": 18.0.1
   "@react-native-community/cli-platform-android": 18.0.1
   "@react-native-community/cli-platform-ios": 18.0.1
-  "@react-native-clipboard/clipboard": 1.16.2
   # Expo
   expo: 54.0.33
   expo-constants: 18.0.13
   expo-asset: 12.0.12
+  expo-application: 7.0.8
+  expo-clipboard: 8.0.8
   expo-font: 14.0.11
   expo-crypto: 15.0.8
+  expo-device: 8.0.10
   expo-document-picker: 13.1.6
   expo-file-system: 19.0.21
   expo-image-loader: 6.0.0
   expo-image-manipulator: 14.0.8
+  expo-image-picker: 17.0.11
   expo-haptics: 15.0.8
   expo-keep-awake: 15.0.8
+  expo-network: 8.0.8
+  expo-splash-screen: 31.0.13
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
   "@jest/reporters": 30.5.0
@@ -159,7 +166,7 @@ catalog:
   eslint-plugin-better-tailwindcss: 4.7.0
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
-  "@noble/curves": 1.9.7
+  "@noble/curves": 2.4.0
   "@noble/hashes": 1.8.0
   "@solana/spl-token": ^0.4.14
   "@solana/web3.js": ^1.99.0
@@ -192,7 +199,7 @@ catalog:
   react-native-fast-crypto: "3"
   react-native-gesture-handler: 2.28.0
   react-native-keychain: 10.0.0
-  react-native-reanimated: 4.3.0
+  react-native-reanimated: 4.3.4
   react-native-worklets: 0.8.1
   react-native-safe-area-context: 5.6.1
   react-native-svg: 15.15.1
@@ -208,7 +215,7 @@ catalog:
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
   tsx: 4.20.6
-  ws: 8.18.3
+  ws: 8.22.0
   qrcode: 1.5.4
   "@types/qrcode": 1.5.5
   otpauth: 9.5.1
@@ -217,6 +224,7 @@ catalog:
   "@types/semver": 7.7.1
   "@types/ws": ^8.5.10
   undici: 7.18.2
+  uuid: 11.1.0
   "styled-components": 6.1.19
   "styled-system": 5.1.5
   "stylis": 4.0.0
@@ -229,26 +237,112 @@ catalog:
   "@radix-ui/react-switch": 1.2.6
   "@radix-ui/react-tooltip": 1.2.8
   "@tanstack/react-table": 8.5.11
-  "@playwright/test": 1.60.0
-  playwright: 1.60.0
-  allure-playwright: 3.9.0
-  allure-js-commons: 3.9.0
-  nx: 22.7.8
-  "@nx/devkit": 22.7.8
+  "@playwright/test": 1.63.0
+  playwright: 1.63.0
+  allure-playwright: 3.13.0
+  allure-js-commons: 3.13.0
+  nx: 22.7.12
+  "@nx/devkit": 22.7.12
   detox: 20.51.3
   # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
-  "@nx/nx-linux-x64-gnu": 22.7.8
+  "@nx/nx-linux-x64-gnu": 22.7.12
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
   oxfmt: 0.67.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 10.0.0
+  "@ledgerhq/coin-evm": 15.0.0
   "@ledgerhq/coin-hypercore": 4.0.1
   "@ledgerhq/coin-module-framework": 10.0.0
-  "@ledgerhq/coin-stellar": 11.0.1
-  "@ledgerhq/coin-tezos": 13.0.1
+  "@ledgerhq/coin-stellar": 12.0.0
+  "@ledgerhq/coin-tezos": 13.0.2
   "@ledgerhq/coin-xrp": 12.0.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+
+autoInstallPeers: false
+enablePrePostScripts: true
+saveExact: true
+# Workaround for Prefab 2.1.0 / Clikt bug splitting paths at '='
+# See: https://github.com/google/prefab/issues/187
+virtualStoreDirMaxLength: 80
+
+overrides:
+  # Older npm-only releases of our own libs: JFrog does not list them, so CI re-resolution fails
+  "@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos": "workspace:^"
+  "@mysten/ledgerjs-hw-app-sui>@ledgerhq/ledger-cal-service": "workspace:^"
+  react: "catalog:"
+  react-dom: "catalog:"
+  "@types/react": "catalog:"
+  "@types/react-dom": "catalog:"
+  csstype: "3.2.3"
+  "stellar-base>sodium-native": "^3.2.1"
+  "remove-flow-types-loader>flow-remove-types": "^2"
+  "remove-flow-types-loader>loader-utils": "*"
+  "@ledgerhq/devices": "catalog:"
+  "@ledgerhq/hw-transport": "catalog:"
+  "@ledgerhq/context-module": "catalog:"
+  tslib: "2.6.2"
+  "@ethersproject/providers>ws": "7.5.10"
+  elliptic: "6.6.1"
+  use-latest-callback: "0.1.9"
+  use-isomorphic-layout-effect: "^1.2.1"
+  use-sync-external-store: "^1.6.0"
+  ethers: "6.15.0"
+  "bignumber.js": "9.1.2"
+  "@radix-ui/react-slot": "^1.2.4"
+  "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3"
+  "@ton/ton>zod": "catalog:"
+  jest-environment-node: "30.5.0"
+  jest-mock: "30.5.0"
+  jest-matcher-utils: "30.5.0"
+  jest-diff: "30.5.0"
+  jest-message-util: "30.5.0"
+  jest-util: "30.5.0"
+  "@jest/expect-utils": "30.5.0"
+  "@jest/create-cache-key-function": "30.5.0"
+  "@jest/types": "30.5.0"
+  expect: "30.5.0"
+  "pretty-format@^30.0.0": "30.5.0"
+
+patchedDependencies:
+  "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch"
+  "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch"
+  "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch"
+  "buffer@6.0.3": "patches/buffer@6.0.3.patch"
+  "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch"
+  "@ton/core": "patches/@ton__core.patch"
+  "detox@20.51.3": "patches/detox@20.51.3.patch"
+  "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch"
+  "@taquito/http-utils": "patches/@taquito__http-utils.patch"
+  "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch"
+  "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch"
+  "styled-components@6.1.19": "patches/styled-components@6.1.19.patch"
+  "react-native@0.81.6": "patches/react-native@0.81.6.patch"
+  "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch"
+  "@callstack/repack@5.2.5": "patches/@callstack__repack@5.2.5.patch"
+  "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch"
+  "usb@2.17.0": "patches/usb@2.17.0.patch"
+  "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+
+onlyBuiltDependencies:
+  - "@apollo/protobufjs"
+  - "@datadog/mobile-react-native"
+  - "@swc/core"
+  - "@taquito/taquito"
+  - "bigint-buffer"
+  - "bufferutil"
+  - "core-js"
+  - "core-js-pure"
+  - "detox"
+  - "dtrace-provider"
+  - "electron"
+  - "esbuild"
+  - "keccak"
+  - "msw"
+  - "nx"
+  - "protobufjs"
+  - "sqlite3"
+  - "utf-8-validate"
+  - "usb"

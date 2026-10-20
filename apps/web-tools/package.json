@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.58.0",
+  "version": "0.59.0",
   "private": true,
   "engines": {
     "node": "24.x"
@@ -109,7 +109,7 @@
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",
     "utf-8-validate": "^5.0.10",
-    "uuid": "^9.0.0",
+    "uuid": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -120,6 +120,7 @@
     "@rsbuild/plugin-react": "catalog:",
     "@rsbuild/plugin-styled-components": "catalog:",
     "@rspack/core": "catalog:",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@tailwindcss/postcss": "^4.1.0",
@@ -136,7 +137,6 @@
     "@types/react-inspector": "^4.0.6",
     "@types/react-table": "^7.7.20",
     "@types/semver": "catalog:",
-    "@types/uuid": "^9.0.0",
     "autoprefixer": "^10.4.21",
     "concurrently": "^8.0.0",
     "jest": "catalog:",

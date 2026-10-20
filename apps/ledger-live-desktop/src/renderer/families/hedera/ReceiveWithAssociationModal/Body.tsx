@@ -8,8 +8,7 @@ import invariant from "invariant";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -105,6 +104,26 @@ const createSteps = (isAssociationFlow: boolean): Array<St> => [
   },
 ];
 
+const getTransactionProperties = (
+  account: Account | TokenAccount,
+  parentAccount: Account | null | undefined,
+  token: TokenCurrency | null | undefined,
+): Partial<HederaGenericTransaction> => {
+  if (!token || !isTokenAssociationRequired(account, token)) {
+    return {
+      mode: "send",
+      assetReference: undefined,
+      assetOwner: undefined,
+    };
+  }
+
+  return {
+    mode: "tokenAssociate",
+    assetReference: token.contractAddress,
+    assetOwner: getMainAccount(account, parentAccount).freshAddress,
+  };
+};
+
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
   accounts: accountsSelector,
@@ -143,9 +162,8 @@ const Body = ({
 
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
-  const mainAccount = getMainAccount(account, parentAccount);
 
-  const bridgeInstance = useAccountBridge<Transaction>(account, parentAccount);
+  const bridgeInstance = useAccountBridge<HederaGenericTransaction>(account, parentAccount);
   const {
     transaction,
     status,
@@ -165,49 +183,30 @@ const Body = ({
     };
   });
 
-  const getTransactionProperties = useCallback(
-    (token: TokenCurrency | undefined | null): Partial<Transaction> => {
-      if (!token) {
-        return {};
-      }
-
-      return {
-        mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
-        assetReference: token.contractAddress,
-        assetOwner: mainAccount.freshAddress,
-        properties: {
-          token,
-        },
-      };
-    },
-    [mainAccount],
-  );
-
   const handleChangeAccount = useCallback(
     (account: Account | TokenAccount, parentAccount?: Account | null) => {
       setAccount(account);
       setParentAccount(parentAccount);
 
       updateTransactionAccount(account, parentAccount);
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
+      updateTransaction(prev => ({
+        ...prev,
+        ...getTransactionProperties(account, parentAccount, token),
+      }));
     },
-    [
-      token,
-      updateTransaction,
-      updateTransactionAccount,
-      getTransactionProperties,
-      setParentAccount,
-      setAccount,
-    ],
+    [token, updateTransaction, updateTransactionAccount, setParentAccount, setAccount],
   );
 
   const handleChangeToken = useCallback(
     (token?: TokenCurrency | null) => {
       setToken(token ?? null);
 
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
+      updateTransaction(prev => ({
+        ...prev,
+        ...getTransactionProperties(account, parentAccount, token),
+      }));
     },
-    [getTransactionProperties, updateTransaction],
+    [account, parentAccount, updateTransaction],
   );
 
   const handleCloseModal = useCallback(() => {

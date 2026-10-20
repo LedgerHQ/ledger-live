@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { createContactEditPort, type ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { createContactDeletePort } from "@features/flow-contacts-delete-contact";
-import type { ContactDetailActionsPorts } from "../steps/Detail/model/ports";
 import {
   createMockContactSignerValidationPort,
+  type ContactDetailActionsPorts,
   type ContactSignerValidationPort,
-} from "../platform/contactSignerValidationPort";
+} from "@features/flow-contacts-detail";
 import { useContactsReduxContext } from "./useContactsReduxContext";
 
 export function useContactsEditDeletePorts(

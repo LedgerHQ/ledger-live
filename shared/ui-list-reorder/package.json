@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-list-reorder",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Reorder a list by index — shared by native (react-native-draggable-flatlist) and web (dnd-kit) drag-and-drop.",
   "main": "src/index.ts",

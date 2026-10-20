@@ -2,7 +2,7 @@ import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/to
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
-import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
@@ -32,18 +32,28 @@ import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
+import { accountDataExtra } from "@domain/api-account-data";
+import { accountDataSources } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { selectFeature } from "@shared/feature-flags";
+import { loadAppConfig } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import {
   createDesktopFeatureFlagsMiddleware,
   type FeatureFlagsSources,
 } from "./middleware/feature-flags";
+import {
+  createDesktopCountervaluesMiddleware,
+  type CountervaluesSources,
+} from "./middleware/countervalues";
 
 type Props = FeatureFlagsSources & {
   state?: State;
   dbMiddleware?: Middleware;
   analyticsMiddleware?: Middleware;
+  /** The countervalues loop's app wiring (window events, persistence); left out by unit tests. */
+  countervalues?: CountervaluesSources;
+  appConfig?: ReturnType<typeof loadAppConfig>;
 };
 
 const customCreateStore = ({
@@ -52,6 +62,8 @@ const customCreateStore = ({
   analyticsMiddleware,
   fetchRemoteFlags,
   readCachedFlags,
+  countervalues,
+  appConfig = loadAppConfig(),
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
@@ -63,6 +75,7 @@ const customCreateStore = ({
           immutableCheck: false,
           thunk: {
             extraArgument: {
+              ...accountDataExtra(accountDataSources((): State => store.getState())),
               ...calApiExtra({
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -96,12 +109,9 @@ const customCreateStore = ({
                   selectFeature(store.getState(), "lwdAuth").enabled ?? false,
                 authProvider: new AuthSDK(
                   {
-                    clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                    keycloakBaseUrl(): string | null {
-                      const environment = authEnvironmentSelector(store.getState());
-                      return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
-                    },
-                    keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                    clientId: appConfig.keycloakClientId,
+                    keycloakBaseUrl: appConfig.keycloakBaseUrl,
+                    keycloakRealm: appConfig.keycloakRealm,
                     disablePkce: true,
                   },
                   {
@@ -127,7 +137,8 @@ const customCreateStore = ({
           }),
         )
         .concat(createDesktopFeatureFlagsMiddleware({ fetchRemoteFlags, readCachedFlags }))
-        .concat(sleepingListener.middleware),
+        .concat(sleepingListener.middleware)
+        .concat(createDesktopCountervaluesMiddleware(countervalues)),
     devTools: __DEV__
       ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
       : false,

@@ -39,13 +39,20 @@ export const ENERGY_RENT_POLL_TIMEOUT_MS = 120_000;
 // it. `network()` retries GETs only and Tronify's status call is a POST, so the tolerance lives here.
 export const ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS = 5;
 
-// Tronify builds payments that expire about a minute out. One valid for longer could be held and
-// broadcast after the poll gave up and a retry paid again; the margin absorbs a skewed local clock.
+// Tronify builds payments that expire about six minutes out. Retry stays off until a sent payment
+// expires, so this also bounds that wait; the slack absorbs a slow local clock.
 export const ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS = ENERGY_RENT_POLL_TIMEOUT_MS + 5 * 60_000;
 
 // Tronify builds its payments with fee_limit 100 TRX, above the 50 TRX coin-tron gives its own
 // TRC-20 transfers, so the payment needs its own bound.
 export const ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT = 100_000_000;
+
+// About 1.5× what burning TRX for a USDT transfer to an empty recipient cost in October 2026
+// (195k energy at 100 sun, TRX at $0.34), so a real rental clears it with room to spare.
+export const DEFAULT_TRONIFY_MAX_RENT_AMOUNT = 10;
+
+// Tronify's price can move between the Review quote and the order.
+export const DEFAULT_TRONIFY_RENT_PRICE_MARGIN = 0.05;
 
 /** What Tronify rent is paid in: coin-tron always sends `extraTrxNum`, which selects Tronify's USDT
  * payment ("Flow 2"). */

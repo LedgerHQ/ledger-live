@@ -1,6 +1,7 @@
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 import wallet, { type BitcoinLikeWallet } from "@ledgerhq/wallet-btc/index";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { getBoundWalletAccount } from "../coinConfig";
 
 jest.mock("@ledgerhq/wallet-btc/index", () => ({
   __esModule: true,
@@ -9,15 +10,28 @@ jest.mock("@ledgerhq/wallet-btc/index", () => ({
   },
 }));
 
+jest.mock("../coinConfig", () => ({
+  getBoundWalletAccount: jest.fn(),
+}));
+
 const mockedWallet = wallet as jest.Mocked<BitcoinLikeWallet>;
+const mockedGetBoundWalletAccount = jest.mocked(getBoundWalletAccount);
 
 describe("isTransactionConfirmed", () => {
   const walletAccount = {} as any;
+  const boundWalletAccount = { bound: true } as any;
   const account = {
     type: "Account",
     bitcoinResources: { walletAccount },
   } as unknown as AccountLike;
   const txid = "test-tx-id";
+
+  beforeEach(() => {
+    mockedGetBoundWalletAccount.mockReturnValue({
+      config: {} as any,
+      walletAccount: boundWalletAccount,
+    });
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -29,7 +43,9 @@ describe("isTransactionConfirmed", () => {
     const result = await isTransactionConfirmed({ account, hash: txid });
 
     expect(result).toBe(true);
-    expect(mockedWallet.getAccountTxBlockHeight).toHaveBeenCalledWith(walletAccount, txid);
+    // looked up on the account bound to the configured explorer (a deserialized one has none)
+    expect(mockedGetBoundWalletAccount).toHaveBeenCalledWith(account);
+    expect(mockedWallet.getAccountTxBlockHeight).toHaveBeenCalledWith(boundWalletAccount, txid);
   });
 
   it("returns false when transaction exists but has no block", async () => {
@@ -46,5 +62,16 @@ describe("isTransactionConfirmed", () => {
     const result = await isTransactionConfirmed({ account, hash: txid });
 
     expect(result).toBe(false);
+  });
+
+  it("returns false without a lookup when the account has no wallet-btc account", async () => {
+    const result = await isTransactionConfirmed({
+      account: { type: "Account" } as unknown as AccountLike,
+      hash: txid,
+    });
+
+    expect(result).toBe(false);
+    expect(mockedGetBoundWalletAccount).not.toHaveBeenCalled();
+    expect(mockedWallet.getAccountTxBlockHeight).not.toHaveBeenCalled();
   });
 });

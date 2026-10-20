@@ -27,18 +27,22 @@ export function BalanceFundedState({
 }: BalanceFundedStateProps) {
   return (
     <Box
-      lx={{ alignItems: "center", justifyContent: "center", gap: "s16" }}
+      collapsable={false}
+      lx={{ alignItems: "center", justifyContent: "center", gap: "s16", overflow: "hidden" }}
       testID="pay-card-balance-funded-state"
     >
       <Pressable onPress={onToggleDiscreetMode} testID="pay-card-balance-toggle">
-        <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
+        <Box
+          collapsable={false}
+          lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14", overflow: "hidden" }}
+          testID="pay-card-balance-amount"
+        >
           <AmountDisplay
             value={balance}
             formatter={formatCountervalue}
             loading={isLoading}
             hidden={discreet}
             size="md"
-            testID="pay-card-balance-amount"
           />
           {discreet ? <Eye size={20} color="base" /> : null}
         </Box>

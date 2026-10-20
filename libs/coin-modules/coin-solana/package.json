@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "2.2.0",
+  "version": "2.4.0",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -75,10 +75,9 @@
     "invariant": "^2.2.2",
     "ky": "1.7.5",
     "lodash": "catalog:",
-    "rxjs": "catalog:",
     "semver": "catalog:",
     "superstruct": "0.16.7",
-    "uuid": "11.1.0"
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
@@ -110,7 +109,6 @@
     "test-integ": "jest --config=jest.integ.config.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

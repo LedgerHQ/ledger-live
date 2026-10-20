@@ -42,6 +42,7 @@ import EarnV2DashboardPage from "@e2e/page/trade/earnV2Dashboard.page";
 import ModularDrawer from "@e2e/page/drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "@e2e/page/drawer/swapTransactionStatus.drawer";
 import UndelegatePage from "@e2e/page/trade/undelegate.page";
+import WalletApiSignatureDrawer from "@e2e/page/drawer/walletApiSignature.drawer";
 import Wallet40DrawersPage from "@e2e/page/drawer/wallet40Drawers.drawer";
 import PayTabPage from "@e2e/page/paytab/paytab.page";
 
@@ -69,6 +70,7 @@ export class Application {
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
   private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
+  private walletApiSignatureDrawerInstance = lazyInit(WalletApiSignatureDrawer);
   private commonPageInstance = lazyInit(CommonPage);
   private customLockscreenPageInstance = lazyInit(CustomLockscreenPage);
   private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
@@ -125,6 +127,10 @@ export class Application {
     } finally {
       fs.unlinkSync(userdataPath);
     }
+  }
+
+  public get walletApiSignatureDrawer() {
+    return this.walletApiSignatureDrawerInstance();
   }
 
   public get assetAccountsPage() {

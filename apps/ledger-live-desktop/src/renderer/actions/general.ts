@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { createSelector } from "reselect";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
-import { useFeature } from "@features/platform-feature-flags";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@ledgerhq/live-countervalues-react";
-import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
-import { resolveTrackingPairs } from "@domain/entity-market-countervalues";
+import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@features/platform-market-countervalues";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
@@ -27,8 +23,6 @@ import {
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
-import { countervaluesActions } from "./countervalues";
-import { selectExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
 
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
@@ -115,40 +109,3 @@ export const themeSelector = createSelector(
   userThemeSelector,
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
 );
-
-export function useCalculateCountervaluesUserSettings() {
-  const dispatch = useDispatch();
-  const countervalue = useSelector(counterValueCurrencySelector);
-
-  // countervalues for accounts
-  const accounts = useSelector(accountsSelector);
-  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
-
-  // countervalues for on demand session tracking pairs
-  const extraSessionTrackingPairs = useSelector(selectExtraTrackingPairs);
-
-  const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
-
-  useEffect(() => {
-    const trackingPairs = resolveTrackingPairs(extraSessionTrackingPairs.concat(trPairs));
-
-    const granularitiesRates = granularitiesRatesConfig?.enabled
-      ? {
-          daily: Number(granularitiesRatesConfig.params?.daily),
-          hourly: Number(granularitiesRatesConfig.params?.hourly),
-        }
-      : undefined;
-
-    dispatch(
-      countervaluesActions.COUNTERVALUES_USER_SETTINGS_SET({
-        trackingPairs,
-        autofillGaps: true,
-        refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
-        marketCapBatchingAfterRank: LiveConfig.getValueByKey(
-          "config_countervalues_marketCapBatchingAfterRank",
-        ),
-        granularitiesRates,
-      }),
-    );
-  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs]);
-}

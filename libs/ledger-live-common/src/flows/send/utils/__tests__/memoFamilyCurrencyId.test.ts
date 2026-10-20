@@ -13,6 +13,15 @@ describe("getMemoFamilyCurrencyId", () => {
     expect(getMemoFamilyCurrencyId(stellar)).toBe("stellar");
   });
 
+  it("returns the mainnet id for a testnet currency", () => {
+    const rippleTestnet = {
+      type: "CryptoCurrency",
+      id: "ripple_testnet",
+      isTestnetFor: "ripple",
+    } as CryptoCurrency;
+    expect(getMemoFamilyCurrencyId(rippleTestnet)).toBe("ripple");
+  });
+
   it("returns the parent currency id for a token currency", () => {
     const usdc = {
       type: "TokenCurrency",

@@ -1,5 +1,56 @@
 # @features/platform-currencies
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [[`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`ff5e1b0`](https://github.com/LedgerHQ/ledger-live/commit/ff5e1b0f5a315aaccd3e23aeb8ccd2c7d48730f4), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9)]:
+  - @domain/entity-currency-crypto@0.15.0
+  - @shared/api-services@0.10.0
+  - @features/platform-feature-flags@0.9.0
+  - @domain/api-currency-token@0.6.4
+  - @domain/entity-currency-token@0.5.5
+
+## 0.9.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`ff5e1b0`](https://github.com/LedgerHQ/ledger-live/commit/ff5e1b0f5a315aaccd3e23aeb8ccd2c7d48730f4), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9)]:
+  - @domain/entity-currency-crypto@0.15.0-next.0
+  - @shared/api-services@0.10.0-next.0
+  - @features/platform-feature-flags@0.9.0-next.0
+  - @domain/api-currency-token@0.6.4-next.0
+  - @domain/entity-currency-token@0.5.5-next.0
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43)]:
+  - @domain/entity-currency-crypto@0.14.0
+  - @shared/api-services@0.9.0
+  - @features/platform-feature-flags@0.8.1
+  - @domain/api-currency-token@0.6.3
+  - @domain/entity-currency-token@0.5.4
+
+## 0.9.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.8.1-next.1
+
+## 0.9.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43)]:
+  - @domain/entity-currency-crypto@0.14.0-next.0
+  - @shared/api-services@0.9.0-next.0
+  - @features/platform-feature-flags@0.8.1-next.0
+  - @domain/api-currency-token@0.6.3-next.0
+  - @domain/entity-currency-token@0.5.4-next.0
+
 ## 0.9.0
 
 ### Minor Changes
@@ -281,85 +332,5 @@
   - @domain/api-currency-token@0.3.0
   - @domain/entity-currency-crypto@0.9.0
   - @features/platform-feature-flags@0.6.4
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#20341](https://github.com/LedgerHQ/ledger-live/pull/20341) [`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e) Thanks [@ysitbon](https://github.com/ysitbon)! - Split backend access from use case in the RTK Query layer
-
-  `@shared/api-services` now holds one endpoint-less `createApi` per backend (CAL, CoinMarketCap,
-  Countervalues, Push Devices), owning its base query, `extraArgument` contract and reducer path.
-  `domain/api/*` packages add their endpoints with `injectEndpoints` and their own cache tags with
-  `enhanceEndpoints`, so one reducer, middleware and cache now serve every use case on a backend — the two
-  CoinMarketCap packages previously had one each. Apps register the service apis.
-
-  `extraArgument` builder names are unchanged, so only import paths move. Reducer paths are renamed after
-  their backend (`calApi`, `coinMarketCapApi`, `countervaluesApi`); no persisted data and no endpoint
-  behaviour is affected.
-
-- [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
-
-### Patch Changes
-
-- Updated dependencies [[`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002)]:
-  - @shared/api-services@0.2.0-next.0
-  - @domain/api-currency-token@0.3.0-next.0
-  - @domain/entity-currency-crypto@0.9.0-next.0
-  - @features/platform-feature-flags@0.6.4-next.0
-
-## 0.4.1
-
-### Patch Changes
-
-- Updated dependencies [[`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c)]:
-  - @domain/entity-currency-crypto@0.8.0
-  - @domain/entity-currency-token@0.3.0
-  - @domain/api-currency-token@0.2.3
-  - @features/platform-feature-flags@0.6.3
-
-## 0.4.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c)]:
-  - @domain/entity-currency-crypto@0.8.0-next.0
-  - @domain/entity-currency-token@0.3.0-next.0
-  - @domain/api-currency-token@0.2.3-next.0
-  - @features/platform-feature-flags@0.6.3-next.0
-
-## 0.4.0
-
-### Minor Changes
-
-- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
-
-- [#19771](https://github.com/LedgerHQ/ledger-live/pull/19771) [`6b75426`](https://github.com/LedgerHQ/ledger-live/commit/6b7542690a99a365c4b80dfd1fe65e2be594494b) Thanks [@ysitbon](https://github.com/ysitbon)! - Declare `@reduxjs/toolkit` as a runtime dependency (moved from `devDependencies`). `buildStandaloneCryptoAssetsStore` calls `configureStore` at runtime, so consumers building a standalone store need RTK resolvable as a real dependency.
-
-- [#19798](https://github.com/LedgerHQ/ledger-live/pull/19798) [`a55b810`](https://github.com/LedgerHQ/ledger-live/commit/a55b81007d49369f18b7ff15b6579c9a0d5de876) Thanks [@ysitbon](https://github.com/ysitbon)! - Add useCurrencyById and useTokenByAddressInCurrency hooks; repoint mobile from @ledgerhq/cryptoassets to @features/platform-currencies and @domain/entity-currency-crypto
-
-### Patch Changes
-
-- Updated dependencies [[`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6)]:
-  - @domain/entity-currency-crypto@0.7.0
-  - @domain/api-currency-token@0.2.2
-  - @features/platform-feature-flags@0.6.2
-
-## 0.4.0-next.0
-
-### Minor Changes
-
-- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
-
-- [#19771](https://github.com/LedgerHQ/ledger-live/pull/19771) [`6b75426`](https://github.com/LedgerHQ/ledger-live/commit/6b7542690a99a365c4b80dfd1fe65e2be594494b) Thanks [@ysitbon](https://github.com/ysitbon)! - Declare `@reduxjs/toolkit` as a runtime dependency (moved from `devDependencies`). `buildStandaloneCryptoAssetsStore` calls `configureStore` at runtime, so consumers building a standalone store need RTK resolvable as a real dependency.
-
-- [#19798](https://github.com/LedgerHQ/ledger-live/pull/19798) [`a55b810`](https://github.com/LedgerHQ/ledger-live/commit/a55b81007d49369f18b7ff15b6579c9a0d5de876) Thanks [@ysitbon](https://github.com/ysitbon)! - Add useCurrencyById and useTokenByAddressInCurrency hooks; repoint mobile from @ledgerhq/cryptoassets to @features/platform-currencies and @domain/entity-currency-crypto
-
-### Patch Changes
-
-- Updated dependencies [[`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6)]:
-  - @domain/entity-currency-crypto@0.7.0-next.0
-  - @domain/api-currency-token@0.2.2-next.0
-  - @features/platform-feature-flags@0.6.2-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

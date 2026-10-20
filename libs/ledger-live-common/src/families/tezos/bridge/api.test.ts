@@ -2,7 +2,7 @@ import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import {
+import tezosBridgeApi, {
   computeIntentType,
   getAccountReadiness,
   getAssetFromToken,
@@ -173,8 +173,6 @@ describe("generic-coin-framework Tezos token", () => {
         type: "fa2",
         assetReference: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o:0",
         assetOwner: "tz1owner",
-        name: "Tether USD",
-        unit: { name: "Tether USD", code: "USDt", magnitude: 6 },
       });
     });
 
@@ -199,8 +197,6 @@ describe("generic-coin-framework Tezos token", () => {
         type: "fa2",
         assetReference: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ:17",
         assetOwner: "tz1owner",
-        name: "Wrapped USDC",
-        unit: { name: "Wrapped USDC", code: "wUSDC", magnitude: 6 },
       });
     });
 
@@ -268,5 +264,11 @@ describe("getAccountReadiness", () => {
       reason: "unrevealed",
     });
     expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1unrevealed");
+  });
+});
+
+describe("bridge api", () => {
+  it("sums the native balance partitions coin-tezos returns", () => {
+    expect(tezosBridgeApi.partitionsNativeBalance).toBe(true);
   });
 });

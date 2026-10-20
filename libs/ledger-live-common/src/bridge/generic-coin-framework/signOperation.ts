@@ -63,8 +63,10 @@ export const genericSignOperation =
         // amount is already finalized by prepareTransaction; sign it as-is
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
+          // Resolved once: `applyDeviceSignResult` is handed this very object after signing.
+          const deviceSignOptions = bridgeApi.getDeviceSignOptions?.(transaction, account);
           const { publicKey } = (await signer.getAddress(derivationPath, {
-            ...bridgeApi.getDeviceSignOptions?.(transaction, account),
+            ...deviceSignOptions,
             derivationMode: account.derivationMode,
           })) as GetAddressResult;
 
@@ -102,11 +104,12 @@ export const genericSignOperation =
           /* Sign on Ledger device */
           const txnSig = await signer.signTransaction(derivationPath, unsigned, {
             ...transaction.recipientDomain,
-            ...bridgeApi.getDeviceSignOptions?.(transaction, account),
+            ...deviceSignOptions,
             derivationMode: account.derivationMode,
           });
           return {
-            unsigned,
+            // What the device signed can differ from what was crafted (see `applyDeviceSignResult`).
+            unsigned: bridgeApi.applyDeviceSignResult?.(unsigned, deviceSignOptions) ?? unsigned,
             txnSig,
             publicKey,
             sequence: transactionIntent.sequence,

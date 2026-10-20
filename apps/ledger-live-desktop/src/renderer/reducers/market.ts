@@ -15,6 +15,21 @@ export type MarketState = {
   category: MarketListCategory;
 };
 
+const MARKET_LIST_IDENTITY_KEYS = new Set<keyof MarketListRequestParams>([
+  "order",
+  "search",
+  "range",
+  "starred",
+  "liveCompatible",
+  "filter",
+]);
+
+function changesMarketList(payload: MarketListRequestParams): boolean {
+  return Object.keys(payload).some(key =>
+    MARKET_LIST_IDENTITY_KEYS.has(key as keyof MarketListRequestParams),
+  );
+}
+
 const initialState: MarketState = {
   marketParams: {
     range: "24h",
@@ -23,7 +38,6 @@ const initialState: MarketState = {
     order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
-    page: 1,
     counterCurrency: "USD",
   },
   currentPage: 1,
@@ -43,18 +57,14 @@ type HandlersPayloads = {
 type MarketHandlers<PreciseKey = true> = Handlers<MarketState, HandlersPayloads, PreciseKey>;
 
 const handlers: MarketHandlers = {
-  MARKET_SET_VALUES: (state: MarketState, { payload }: { payload: MarketListRequestParams }) => {
-    const nextMarketParams = {
+  MARKET_SET_VALUES: (state: MarketState, { payload }: { payload: MarketListRequestParams }) => ({
+    ...state,
+    marketParams: {
       ...state.marketParams,
       ...payload,
-    };
-
-    return {
-      ...state,
-      marketParams: nextMarketParams,
-      ...(nextMarketParams.page === 1 ? { currentPage: 1 } : {}),
-    };
-  },
+    },
+    ...(changesMarketList(payload) ? { currentPage: 1 } : {}),
+  }),
   MARKET_SET_CURRENT_PAGE: (state: MarketState, { payload }: { payload: number }) => ({
     ...state,
     currentPage: payload,
@@ -78,7 +88,6 @@ const handlers: MarketHandlers = {
       marketParams: {
         ...state.marketParams,
         order: Order.MarketCapDesc,
-        page: 1,
       },
     };
   },

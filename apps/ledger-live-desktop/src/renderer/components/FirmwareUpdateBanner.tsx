@@ -117,6 +117,8 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
         size="sm"
         icon={DeviceIcon}
         onClick={onClick}
+        title={t("manager.firmware.banner.wallet40.warning.default")}
+        className="min-w-0 shrink [&>span]:block [&>span]:truncate"
         data-testid="topbar-os-update-button"
       >
         {t("manager.firmware.banner.wallet40.warning.default")}

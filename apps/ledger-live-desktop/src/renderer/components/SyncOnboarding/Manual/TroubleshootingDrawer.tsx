@@ -45,9 +45,7 @@ const TroubleshootingDrawer: React.FC<Props> = ({ onClose, lastKnownDeviceId }) 
       <Flex flexDirection="column" height="100%" px={14}>
         <Flex flexDirection="column" flex={1} justifyContent={"center"}>
           <Animation
-            animation={
-              getDeviceAnimation(lastKnownDeviceId, theme.theme, "plugAndPinCode") as object
-            }
+            animation={getDeviceAnimation(lastKnownDeviceId, theme.theme, "plugAndPinCode")}
           />
           <Text mt={12} variant="h5Inter" textAlign="center" fontWeight="semiBold">
             {t("syncOnboarding.manual.troubleshootingDrawer.title")}

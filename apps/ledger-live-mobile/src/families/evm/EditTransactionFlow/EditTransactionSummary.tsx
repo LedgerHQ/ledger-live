@@ -58,7 +58,10 @@ function EditTransactionSummaryContent({ navigation, route, transactionToUpdate 
     parentAccount,
   }));
 
+  const mainAccount = getMainAccount(account, parentAccount);
+
   const status = bridge.getEditTransactionStatus({
+    mainAccount,
     transaction: transaction as EvmTransaction,
     transactionToUpdate,
     status: txStatus as TransactionStatus,
@@ -79,7 +82,6 @@ function EditTransactionSummaryContent({ navigation, route, transactionToUpdate 
     },
   );
 
-  const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
 
   const hasNonEmptySubAccounts =

@@ -15,6 +15,7 @@ import {
   CONTACTS_NATIVE_NAME_INPUT_PROPS,
 } from "@features/platform-contacts";
 import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
+import { useEditAddressLabels } from "./copy/useEditAddressLabels";
 import type { ContactsRenameAddressDrawerProps } from "./types";
 import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation.native";
 
@@ -27,7 +28,7 @@ export function ContactsRenameAddressDialog({
   isDeviceRequired,
   autoFocus = false,
   bottomInset = 0,
-  labels,
+  supportsDomain,
   onDraftLabelChange,
   onAddressChange,
   onConfirm,
@@ -46,6 +47,7 @@ export function ContactsRenameAddressDialog({
     }
   }, [autoFocus]);
 
+  const labels = useEditAddressLabels(supportsDomain);
   const labelValidationError =
     invalidLabelError === null ? undefined : labels.labelValidationErrors[invalidLabelError];
   const addressInput = useEditAddressAddressEntryPresentation({

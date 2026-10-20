@@ -42,6 +42,7 @@ test.describe("Swap - deeplinks", () => {
   const btcAccount = Account.BTC_NATIVE_SEGWIT_2;
   const ethAccount = Account.ETH_3;
   const usdtAccount = TokenAccount.ETH_USDT_1;
+  const usdtOnEthAccount = TokenAccount.ETH_USDT_3;
 
   test.use({
     teamOwner: Team.SWAP,
@@ -209,7 +210,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("Mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins", async () => {
+      await test.step("Mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — fromAccountId wins, USDT on toAccountId", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
             `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
@@ -217,9 +218,9 @@ test.describe("Swap - deeplinks", () => {
         // fromAccountId takes precedence over conflicting fromToken
         await app.swap.checkAssetFromContains(btcAccount.currency.ticker);
         await app.swap.checkAssetFromAccountNameContains(getParentAccountName(btcAccount));
-        // toAccountId takes precedence over conflicting toToken
-        await app.swap.checkAssetToContains(ethAccount.currency.ticker);
-        await app.swap.checkAssetToAccountNameContains(getParentAccountName(ethAccount));
+        // toToken on the toAccountId network is received on that account
+        await app.swap.checkAssetToContains(usdtOnEthAccount.currency.ticker);
+        await app.swap.checkAssetToAccountNameContains(getParentAccountName(usdtOnEthAccount));
         // no reset needed after last step
       });
     },

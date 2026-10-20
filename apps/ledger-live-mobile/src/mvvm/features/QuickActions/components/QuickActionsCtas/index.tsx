@@ -4,9 +4,9 @@ import { useQuickActionsCtasViewModel } from "./useQuickActionsCtasViewModel";
 import { QuickActionsCtasProps } from "../../types";
 
 export const QuickActionsCtas = ({ sourceScreenName }: QuickActionsCtasProps) => {
-  const { quickActions, isVariant } = useQuickActionsCtasViewModel({
+  const { quickActions } = useQuickActionsCtasViewModel({
     sourceScreenName,
   });
 
-  return <QuickActionsCtasView quickActions={quickActions} isVariant={isVariant} />;
+  return <QuickActionsCtasView quickActions={quickActions} />;
 };

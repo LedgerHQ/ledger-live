@@ -1,9 +1,9 @@
-import { ipcRenderer, webFrame } from "electron";
+import { getResourceUsage } from "~/renderer/webFrame";
 import React, { useContext, useState, useCallback } from "react";
 import { ReactReduxContext } from "react-redux";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { getAllEnvs, getEnv } from "@shared/env";
+import { getAllEnvs } from "@shared/env";
 import { Account } from "@ledgerhq/types-live";
 import { type UserId, userIdSelector } from "@domain/entity-client-identity";
 import logger from "~/renderer/logger";
@@ -75,7 +75,7 @@ const ExportLogsBtnInner = ({
   const [exporting, setExporting] = useState(false);
   const getDateTxt = useTechnicalDateTimeFn();
   const exportLogs = useCallback(async () => {
-    const resourceUsage = webFrame.getResourceUsage();
+    const resourceUsage = getResourceUsage();
     logger.log("exportLogsMeta", {
       resourceUsage,
       release: __APP_VERSION__,
@@ -89,9 +89,8 @@ const ExportLogsBtnInner = ({
       accountsIds: accounts.map(a => a.id),
     });
 
-    let path;
-    if (!getEnv("PLAYWRIGHT_RUN")) {
-      path = await ipcRenderer.invoke("show-save-dialog", {
+    await saveLogs({
+      options: {
         title: "Export logs",
         defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
         filters: [
@@ -100,17 +99,9 @@ const ExportLogsBtnInner = ({
             extensions: ["txt"],
           },
         ],
-      });
-    } else {
-      path = {
-        canceled: false,
-        filePath: "./ledgerwallet-logs.txt",
-      };
-    }
-
-    if (path) {
-      await saveLogs(path);
-    }
+      },
+      e2ePath: "./ledgerwallet-logs.txt",
+    });
   }, [accounts, getDateTxt, userId]);
   const handleExportLogs = useCallback(async () => {
     if (exporting) return;

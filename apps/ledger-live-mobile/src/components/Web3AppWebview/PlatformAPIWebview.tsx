@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "~/context/hooks";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
@@ -64,7 +64,7 @@ import {
 } from "~/e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 
-const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
+const APPLICATION_NAME = `ledgerlivemobile/${appVersion} llm-${Platform.OS}/${appVersion}`;
 
 function renderLoading() {
   return (

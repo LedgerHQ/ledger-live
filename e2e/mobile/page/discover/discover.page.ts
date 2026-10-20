@@ -63,6 +63,11 @@ export default class DiscoverPage {
     await typeTextByElement(this.catalogSearchBar(), text);
   }
 
+  @Step("Tap catalog search cancel button")
+  async tapCatalogSearchCancel() {
+    await tapByElement(this.catalogSearchCancelButton());
+  }
+
   @Step("Expect catalog app card {{{0}}}")
   async expectCatalogAppCard(appName: DiscoverAppName) {
     await detoxExpect(this.catalogAppCard(appName)).toBeVisible();

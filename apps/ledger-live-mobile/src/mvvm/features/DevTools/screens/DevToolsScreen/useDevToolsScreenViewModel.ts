@@ -105,6 +105,7 @@ export function useDevToolsScreenViewModel() {
     dmk,
     knownDevices,
     offerSync,
+    navigateOnExit: false,
   });
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();

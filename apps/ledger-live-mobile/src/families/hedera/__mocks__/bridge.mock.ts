@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import type { AccountLike, SignOperationEvent } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { HEDERA_ACCOUNT_1 } from "./account.mock";
 
 export const mockSignedOperation = {
@@ -24,8 +24,8 @@ export const mockSignedOperation = {
 };
 
 export function makeMockAccountBridge(
-  mode: Transaction["mode"],
-  properties?: Record<string, unknown>,
+  mode: HederaGenericTransaction["mode"],
+  fields: Partial<HederaGenericTransaction> = {},
   errors: Record<string, Error> = {},
 ) {
   return {
@@ -35,7 +35,7 @@ export function makeMockAccountBridge(
       amount: new BigNumber(0),
       recipient: "",
       useAllAmount: false,
-      ...(properties !== undefined ? { properties } : {}),
+      ...fields,
     })),
     updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })),
     prepareTransaction: async (_account: AccountLike, tx: unknown) => tx,

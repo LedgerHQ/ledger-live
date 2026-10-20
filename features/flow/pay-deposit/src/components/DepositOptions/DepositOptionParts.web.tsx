@@ -42,5 +42,5 @@ export function DepositOptionListItem({
 }
 
 export function DepositOptionIcon({ optionId }: Readonly<{ optionId: DepositOptionId }>) {
-  return <Spot appearance="icon" icon={OPTION_ICONS[optionId]} size={48} />;
+  return <Spot icon={OPTION_ICONS[optionId]} size={48} />;
 }

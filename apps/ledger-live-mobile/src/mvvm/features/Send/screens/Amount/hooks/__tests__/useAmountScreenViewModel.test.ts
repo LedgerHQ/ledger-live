@@ -34,10 +34,24 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
   })),
 }));
 
+jest.mock("../../../../context/SponsoredSendContext", () => ({
+  useSponsoredSend: jest.fn(),
+}));
+
 const { useSendFlowAmountReviewCore } = jest.requireMock(
   "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore",
 );
 const { useAmountInputController } = jest.requireMock("../useAmountInputController");
+const { useSponsoredSend } = jest.requireMock("../../../../context/SponsoredSendContext");
+
+function mockSponsored({ waivesNativeFee = false, reviewReady = true } = {}) {
+  (useSponsoredSend as jest.Mock).mockReturnValue({
+    waivesNativeFee,
+    reviewReady,
+    waivesErrorKeys: ["gasPrice"],
+    waivesWarningKeys: ["amount"],
+  });
+}
 
 const mockAccount = {
   id: "mock-account",
@@ -107,6 +121,81 @@ describe("useAmountScreenViewModel", () => {
     });
 
     (useAmountInputController as jest.Mock).mockReturnValue(baseAmountInputController);
+    mockSponsored();
+  });
+
+  const renderViewModel = (status: TransactionStatus) =>
+    renderHook(() =>
+      useAmountScreenViewModel({
+        account: mockAccount,
+        parentAccount: null,
+        transaction: baseTransaction,
+        status,
+        bridgePending: false,
+        bridgeError: null,
+        uiConfig: { hasFeePresets: false } as never,
+        transactionActions: { updateTransaction: jest.fn() } as never,
+        onReview: jest.fn(),
+        onGetFunds: jest.fn(),
+        onSelectCoinControl: jest.fn(),
+      }),
+    );
+
+  describe("with the sponsored fee", () => {
+    const nativeFeeError = createNamedError("NotEnoughGas");
+    const energyWarning = createNamedError("TronNotEnoughEnergy");
+    const recipientError = createNamedError("InvalidAddress");
+    const statusWithWaivable = () =>
+      createBaseStatus({
+        errors: { gasPrice: nativeFeeError, recipient: recipientError },
+        warnings: { amount: energyWarning },
+      });
+
+    it("drops the errors and warnings it pays for", () => {
+      mockSponsored({ waivesNativeFee: true });
+
+      renderViewModel(statusWithWaivable());
+
+      const coreStatus = (useSendFlowAmountReviewCore as jest.Mock).mock.calls[0][0].status;
+      expect(Object.keys(coreStatus.errors)).toEqual(["recipient"]);
+      expect(coreStatus.warnings).toEqual({});
+    });
+
+    it("keeps them while it doesn't pay the native fee", () => {
+      mockSponsored({ waivesNativeFee: false });
+      const status = statusWithWaivable();
+
+      renderViewModel(status);
+
+      expect((useSendFlowAmountReviewCore as jest.Mock).mock.calls[0][0].status).toBe(status);
+    });
+
+    it.each([
+      [true, null],
+      [false, "error"],
+    ])("shows no native-fee message when waived (%s)", (waivesNativeFee, expectedType) => {
+      mockSponsored({ waivesNativeFee });
+
+      const { result } = renderViewModel(
+        createBaseStatus({
+          errors: { gasPrice: nativeFeeError },
+          warnings: { amount: energyWarning },
+        }),
+      );
+
+      if (!result.current.ready) throw new Error("view model should be ready");
+      expect(result.current.message?.type ?? null).toBe(expectedType);
+    });
+
+    it("holds Review until the sponsored pick is ready", () => {
+      mockSponsored({ reviewReady: false });
+
+      const { result } = renderViewModel(createBaseStatus());
+
+      if (!result.current.ready) throw new Error("view model should be ready");
+      expect(result.current.reviewButton.disabled).toBe(true);
+      expect(result.current.reviewButton.loading).toBe(true);
+    });
   });
 
   it("prioritizes blocking errors over fee info messages", () => {

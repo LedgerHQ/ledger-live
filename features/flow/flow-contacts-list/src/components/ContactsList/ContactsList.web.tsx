@@ -3,6 +3,7 @@ import { SearchInput, SectionHeader, SectionHeaderTitle } from "@ledgerhq/lumen-
 import {
   isContactsSearchNoResultsViewModel,
   isPopulatedContactsListViewModel,
+  type ContactsListViewLabels,
   type ContactsListViewProps,
 } from "../../types";
 import { ContactsAddContactListItem } from "./ListItems/ContactsAddContactListItem.web";
@@ -13,13 +14,15 @@ import { ContactsSearchNoResults } from "./Search/ContactsSearchNoResults.web";
 type ContactsListProps = Pick<
   ContactsListViewProps,
   | "viewModel"
-  | "labels"
   | "searchQuery"
   | "onSearchInputChange"
   | "onOpenMe"
   | "onOpenContact"
   | "onAddContact"
->;
+> &
+  Readonly<{
+    labels: ContactsListViewLabels;
+  }>;
 
 export function ContactsList({
   viewModel,

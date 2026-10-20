@@ -1,9 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { toWalletBtcCurrency } from "./walletBtcCurrency";
-import type { CoinConfig } from "./config";
+import type { BitcoinContext } from "./config";
+import { bindExplorer } from "./explorer";
+import { DEFAULT_REPLACED_OPERATION_EXPIRY_MS } from "./constants";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
@@ -25,9 +26,7 @@ import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic, mapTxToOperations } from "./logic";
 import { BitcoinXPub, SignerContext } from "./signer";
 import { merge, Observable } from "rxjs";
-import { getChainAdapter } from "./chain-adapters/registry";
 import { getNetworkParameters } from "./networks";
-import type { ResolvedTransactions } from "./chain-adapters/types";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -61,40 +60,13 @@ export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>)
   };
 };
 
-/**
- * Replaces the recipients of an operation whose real destination the explorer
- * could not see.
- *
- * A transaction paying only into a shielded pool has no transparent output but
- * its own change, which `mapTxToOperations` lists as the recipient for want of
- * anything better. Once the chain has recovered who was actually paid, that
- * fallback is no longer the best answer available and gives way — while any
- * genuine transparent recipient of the same transaction is kept.
- *
- * Only the outgoing leg is concerned. A transaction can also credit the account
- * it debits, and the recipient of that incoming leg is an address of ours, not
- * whoever we paid in the same breath.
- */
-function withRecoveredRecipients(
-  op: BtcOperation,
-  payeesByTxId: Map<string, string[]> | undefined,
-  changeAddresses: Set<string>,
-): BtcOperation {
-  if (op.type !== "OUT") return op;
-
-  const payees = payeesByTxId?.get(op.hash);
-  if (!payees?.length) return op;
-
-  const transparentRecipients = op.recipients.filter(recipient => !changeAddresses.has(recipient));
-  return { ...op, recipients: [...transparentRecipients, ...payees] };
-}
-
 export async function performTransparentSync(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): Promise<Partial<BitcoinAccount>> {
   const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
+  const config = await context.config(currency.id);
 
   // In case we get a full derivation path, extract the seed identification part
   // 44'/0'/0'/0/0 --> 44'/0'
@@ -122,25 +94,31 @@ export async function performTransparentSync(
   const walletNetwork = toWalletNetwork(currency.id);
   const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
-  const walletAccount =
+  // Bound in both cases: wallet-btc caches one explorer per currency id, first set wins, and
+  // deserialization seeds that cache unbound, so a freshly generated account can come back
+  // with a stale explorer too.
+  const walletAccount = bindExplorer(
     initialAccount?.bitcoinResources?.walletAccount ||
-    (await wallet.generateAccount(
-      {
-        xpub,
-        path: rootPath,
-        index,
-        currency: <Currency>currency.id,
-        network: walletNetwork,
-        derivationMode: walletDerivationMode,
-      },
-      toWalletBtcCurrency(currency, coinConfig(currency.id).info),
-    ));
+      (await wallet.generateAccount(
+        {
+          xpub,
+          path: rootPath,
+          index,
+          currency: <Currency>currency.id,
+          network: walletNetwork,
+          derivationMode: walletDerivationMode,
+        },
+        toWalletBtcCurrency(currency, config),
+      )),
+    currency,
+    config,
+  );
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
   const blockHeight = currentBlock?.height || 0;
-  await wallet.syncAccount(walletAccount, blockHeight);
+  await wallet.syncAccount(context.logger, walletAccount, blockHeight);
 
   const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
@@ -154,33 +132,17 @@ export async function performTransparentSync(
   });
   changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
 
-  const adapter = getChainAdapter(currency.id);
-
-  // The explorer cannot always see enough of a transaction to report its fee or
-  // its destination. Give the chain a chance to recover both before operations
-  // are derived, so that senders and recipients agree on the fee.
-  //
-  // This reaches the network, and it is an enrichment: a sync that already holds
-  // the explorer's answer must not be lost because that reach failed.
-  let resolved: ResolvedTransactions | undefined;
-  try {
-    resolved = await adapter.resolveTransactionDetails?.(transactions, initialAccount);
-  } catch (error) {
-    log("bitcoin/performTransparentSync", `Keeping the explorer's view of ${currency.id}`, {
-      error,
-    });
-  }
-
-  const newOperations = (resolved?.transactions ?? transactions)
+  const newOperations = transactions
     ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
-    .flat()
-    .map(op => (op ? withRecoveredRecipients(op, resolved?.payeesByTxId, changeAddresses) : op));
+    .flat();
 
   const newUniqueOperations = deduplicateOperations(newOperations);
 
   const _operations = mergeOps(oldOperations, newUniqueOperations);
-  const operations = removeReplaced(_operations as BtcOperation[]);
-  const balanceOperations = removeReplaced(_operations as BtcOperation[], Date.now(), true);
+  const now = Date.now();
+  const expiryMs = config.sync?.replacedOperationExpiryMs ?? DEFAULT_REPLACED_OPERATION_EXPIRY_MS;
+  const operations = removeReplaced(_operations as BtcOperation[], now, false, expiryMs);
+  const balanceOperations = removeReplaced(_operations as BtcOperation[], now, true, expiryMs);
   const keptOperationHashes = new Set(balanceOperations.map(op => op.hash));
   const removedOperationHashes = new Set(
     (_operations as BtcOperation[])
@@ -241,25 +203,12 @@ export async function performTransparentSync(
       ? utxos.filter(utxo => finalOperationHashes.has(utxo.hash))
       : utxos;
 
-  const transparentBalance = finalUtxos.reduce(
-    (total, utxo) => total.plus(utxo.value),
-    new BigNumber(0),
-  );
-
-  // Chains with off-transparent funds (e.g. Zcash shielded notes) combine them
-  // into `account.balance` via their chain adapter; others use the transparent
-  // balance as-is.
-  const balance = adapter.computeAccountBalance
-    ? adapter.computeAccountBalance(initialAccount, transparentBalance)
-    : transparentBalance;
+  const balance = finalUtxos.reduce((total, utxo) => total.plus(utxo.value), new BigNumber(0));
 
   return {
     id: accountId,
     xpub,
     balance,
-    // Every pool counted in `balance` is spendable — Zcash Orchard notes as much
-    // as transparent UTXOs. Reporting only the transparent balance here would
-    // show an account holding nothing but notes as having nothing to spend.
     spendableBalance: balance,
     operations,
     operationsCount: operations.length,
@@ -276,14 +225,17 @@ export async function performTransparentSync(
 export function createTransparentSyncObservable(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): Observable<Partial<BitcoinAccount>> {
   const currencyId = info.currency.id;
-  log("bitcoin/createTransparentSyncObservable", `Initiating transparent sync for ${currencyId}`);
+  context.logger(
+    "bitcoin/createTransparentSyncObservable",
+    `Initiating transparent sync for ${currencyId}`,
+  );
   return new Observable<Partial<BitcoinAccount>>(subscriber => {
-    performTransparentSync(info, signerContext, coinConfig)
+    performTransparentSync(info, signerContext, context)
       .then(result => {
-        log(
+        context.logger(
           "bitcoin/createTransparentSyncObservable",
           `Transparent sync completed for ${currencyId}`,
           {
@@ -297,9 +249,13 @@ export function createTransparentSyncObservable(
         subscriber.complete();
       })
       .catch(error => {
-        log("bitcoin/createTransparentSyncObservable", `Transparent sync error for ${currencyId}`, {
-          error: error.message,
-        });
+        context.logger(
+          "bitcoin/createTransparentSyncObservable",
+          `Transparent sync error for ${currencyId}`,
+          {
+            error: error.message,
+          },
+        );
         subscriber.error(error);
       });
   });
@@ -309,22 +265,14 @@ export function buildSyncObservables(
   info: AccountShapeInfo<BitcoinAccount>,
   syncConfig: SyncConfig,
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): { syncs: Observable<Partial<BitcoinAccount>>[]; syncType: number } {
-  const { currency } = info;
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
 
   const syncs: Observable<Partial<BitcoinAccount>>[] = [];
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
-    syncs.push(createTransparentSyncObservable(info, signerContext, coinConfig));
-  }
-
-  // Chain adapter guards (syncType flags, ufvk, syncState) are checked internally
-  const adapter = getChainAdapter(currency.id);
-  const extraSync = adapter.buildExtraSyncObservable?.(info, syncConfig);
-  if (extraSync) {
-    syncs.push(extraSync);
+    syncs.push(createTransparentSyncObservable(info, signerContext, context));
   }
 
   return { syncs, syncType };
@@ -332,27 +280,31 @@ export function buildSyncObservables(
 
 export function makeGetAccountShape(
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): GetAccountShapeStream<BitcoinAccount> {
   return (info: AccountShapeInfo<BitcoinAccount>, syncConfig: SyncConfig) =>
     new Observable(o => {
       const { currency } = info;
-      const { syncs, syncType } = buildSyncObservables(info, syncConfig, signerContext, coinConfig);
+      const { syncs, syncType } = buildSyncObservables(info, syncConfig, signerContext, context);
 
       if (syncs.length === 0) {
-        log("bitcoin/makeGetAccountShape", `No syncs to perform for ${currency.id}`);
+        context.logger("bitcoin/makeGetAccountShape", `No syncs to perform for ${currency.id}`);
         o.complete();
         return;
       }
 
-      log("bitcoin/makeGetAccountShape", `Merging ${syncs.length} sync(s) for ${currency.id}`, {
-        hasTransparent: !!(syncType & SYNC_TYPE_TRANSPARENT),
-        syncCount: syncs.length,
-      });
+      context.logger(
+        "bitcoin/makeGetAccountShape",
+        `Merging ${syncs.length} sync(s) for ${currency.id}`,
+        {
+          hasTransparent: !!(syncType & SYNC_TYPE_TRANSPARENT),
+          syncCount: syncs.length,
+        },
+      );
 
       const sub = merge(...syncs).subscribe({
         next: result => {
-          log("bitcoin/makeGetAccountShape", `Sync update received for ${currency.id}`, {
+          context.logger("bitcoin/makeGetAccountShape", `Sync update received for ${currency.id}`, {
             blockHeight: result.blockHeight,
             operationsCount: result.operationsCount,
             hasBitcoinResources: !!result.bitcoinResources,
@@ -360,11 +312,11 @@ export function makeGetAccountShape(
           o.next(result);
         },
         complete: () => {
-          log("bitcoin/makeGetAccountShape", `All syncs completed for ${currency.id}`);
+          context.logger("bitcoin/makeGetAccountShape", `All syncs completed for ${currency.id}`);
           o.complete();
         },
         error: error => {
-          log("bitcoin/makeGetAccountShape", `Sync error for ${currency.id}`, {
+          context.logger("bitcoin/makeGetAccountShape", `Sync error for ${currency.id}`, {
             error: error.message,
           });
           o.error(error);
@@ -399,16 +351,6 @@ async function generateXpubIfNeeded(
   }
   const xpubVersion = getNetworkParameters(currency.id).xpubVersion.readUInt32BE(0);
 
-  const adapter = getChainAdapter(currency.id);
-  const custom = adapter.getWalletXpub?.(
-    deviceId,
-    { currency, accountPath, xpubVersion },
-    signerContext,
-  );
-  if (custom) {
-    return custom;
-  }
-
   return signerContext(deviceId, currency, signer =>
     signer.getWalletXpub({
       path: accountPath,
@@ -422,16 +364,13 @@ async function generateXpubIfNeeded(
  *
  * `shouldRetainPendingOperation` matches on operation id, and an id embeds the
  * operation type: the optimistic operation created at signing time is an `OUT`,
- * while the confirmed one a sync produces may carry a chain-specific type (a
- * Zcash shielded send, for instance). The two never match, so the pending entry
+ * while the confirmed one a sync produces may carry another type. The two never
+ * match, so the pending entry
  * survives next to its own confirmed counterpart until the optimistic retention
  * window expires. The transaction hash is what actually identifies them.
  *
  * Before dropping the optimistic operation, take from it the address the user
- * actually entered. It is the most faithful answer available — a chain that
- * recovers a destination from the transaction can only report the receiver it
- * finds there, which for a unified address bundling several receivers is the
- * same destination written differently.
+ * actually entered: it is the most faithful answer available.
  */
 function reconcileConfirmedPendingOperations(account: BitcoinAccount): BitcoinAccount {
   if (account.pendingOperations.length === 0) return account;
@@ -453,31 +392,36 @@ function reconcileConfirmedPendingOperations(account: BitcoinAccount): BitcoinAc
   return { ...account, operations, pendingOperations };
 }
 
-export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
-  log("bitcoin/postSync", "bitcoinResources");
-  const perCoin = perCoinLogic[synced.currency.id];
-  let syncedBtc = synced;
-  if (perCoin) {
-    const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
+export const makePostSync =
+  (context: BitcoinContext) =>
+  (_initial: BitcoinAccount, synced: BitcoinAccount): BitcoinAccount => {
+    context.logger("bitcoin/postSync", "bitcoinResources");
+    const perCoin = perCoinLogic[synced.currency.id];
+    let syncedBtc = synced;
+    if (perCoin) {
+      const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
-    // FIXME: unused, can remove?
-    if (postBuildBitcoinResources) {
-      syncedBtc.bitcoinResources = postBuildBitcoinResources(syncedBtc, syncedBtc.bitcoinResources);
-    }
+      // FIXME: unused, can remove?
+      if (postBuildBitcoinResources) {
+        syncedBtc.bitcoinResources = postBuildBitcoinResources(
+          syncedBtc,
+          syncedBtc.bitcoinResources,
+        );
+      }
 
-    if (syncReplaceAddress) {
-      syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
-      if (syncedBtc.bitcoinResources) {
-        syncedBtc.bitcoinResources.utxos = syncedBtc.bitcoinResources?.utxos.map(u => ({
-          ...u,
-          address: u.address && syncReplaceAddress(u.address),
-        }));
+      if (syncReplaceAddress) {
+        syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
+        if (syncedBtc.bitcoinResources) {
+          syncedBtc.bitcoinResources.utxos = syncedBtc.bitcoinResources?.utxos.map(u => ({
+            ...u,
+            address: u.address && syncReplaceAddress(u.address),
+          }));
+        }
       }
     }
-  }
 
-  syncedBtc = reconcileConfirmedPendingOperations(syncedBtc);
+    syncedBtc = reconcileConfirmedPendingOperations(syncedBtc);
 
-  log("bitcoin/postSync", "bitcoinResources DONE");
-  return syncedBtc;
-};
+    context.logger("bitcoin/postSync", "bitcoinResources DONE");
+    return syncedBtc;
+  };

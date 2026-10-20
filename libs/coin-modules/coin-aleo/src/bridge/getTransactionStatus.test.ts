@@ -295,6 +295,28 @@ describe("getTransactionStatus", () => {
 
       expect(result.errors.amount).toBeUndefined();
     });
+
+    it.each([
+      ["a sponsored send-max from an empty balance", true, new BigNumber(0)],
+      ["a send-max whose balance only covers the fee", false, mockFees],
+    ])("adds error for %s", async (_label, isFeeSponsored, balance) => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored });
+      mockCalculateAmount.mockReturnValue({ amount: new BigNumber(0), totalSpent: balance });
+      const account = getMockedAccount({
+        balance,
+        aleoResources: { ...mockAleoResources, transparentBalance: balance, privateBalance: null },
+      });
+
+      const transaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        useAllAmount: true,
+      };
+
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
   });
 
   describe("private record validation", () => {
@@ -327,6 +349,23 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(privateAccount, transaction);
 
       expect(result.errors.amountRecord).toBeInstanceOf(AleoAmountRecordRequired);
+    });
+
+    it("reports only the missing record for a private send-max with no record selected", async () => {
+      mockCalculateAmount.mockReturnValue({ amount: new BigNumber(0), totalSpent: mockFees });
+      const transaction: Transaction = {
+        ...privateTransaction,
+        useAllAmount: true,
+        properties: {
+          ...privateTransaction.properties,
+          amountRecordCommitments: [],
+        },
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.amountRecord).toBeInstanceOf(AleoAmountRecordRequired);
+      expect(result.errors.amount).toBeUndefined();
     });
 
     it("adds error when private amount record cannot be resolved", async () => {

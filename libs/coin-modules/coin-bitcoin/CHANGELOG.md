@@ -1,5 +1,169 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.55.0
+
+### Minor Changes
+
+- [#23189](https://github.com/LedgerHQ/ledger-live/pull/23189) [`d6e7695`](https://github.com/LedgerHQ/ledger-live/commit/d6e7695bf15852c7b0cd2a97aa0a3a0c4d047d74) Thanks [@cted-ledger](https://github.com/cted-ledger)! - serve the zcash testnet currency through the zcash chain adapter and network parameters
+
+- [#22759](https://github.com/LedgerHQ/ledger-live/pull/22759) [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): read the explorer and tuning values from the injected coin config
+
+  The module no longer keeps configuration in module state. `createBridges` takes a `Context`
+  (ADR-019) and every bridge method resolves `config_currency_<id>` from `context.config()` at call
+  time. The endpoint `explorer.url` is required and defaults to today's production host in each
+  served `config_currency_<id>` (`http://localhost:9876` for `bitcoin_regtest`, whose `btc_regtest`
+  explorer id also moves to its config). The optional fields fall back to named module defaults:
+  `explorer.batchSize` (`DEFAULT_EXPLORER_BATCH_SIZE`, 1000), `fees.stuckTransactionTimeoutMs`
+  (`DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS`, 20 min), `fees.rbfMinBumpRatio`
+  (`DEFAULT_RBF_MIN_BUMP_RATIO`, 0.1), `fees.calculationCacheTtlMs` and `fees.feeRatesCacheTtlMs`
+  (5 min each) and `sync.replacedOperationExpiryMs` (`DEFAULT_REPLACED_OPERATION_EXPIRY_MS`, 2 h).
+  The explorer is bound to a wallet-btc account from the config at use, so deserialization stays
+  config-free and a remote change applies on the next call. wallet-btc still reads no configuration:
+  the batch size is injected through `WalletBtcCurrency.explorerBatchSize`, and the RBF ratio and
+  the unconfirmed-operation expiry are parameters.
+
+  Breaking: `createBridges(signerContext, context)` takes a `Context` instead of a config getter;
+  `setCoinConfig`, `getCoinConfig`, `CoinConfig`, `BitcoinConfigInfo`, `makeAssignFromAccountRaw`
+  and `getMinRelayFee` are removed in favour of `BitcoinCoinConfig` / `BitcoinContext` and
+  `assignFromAccountRaw`, and `postSync` becomes `makePostSync(context)`. The module logs only
+  through `context.logger`: `buildTransaction`, `getTransactionStatus`, `prepareTransaction`,
+  `calculateFees`, `signAccountTx`, `ChainAdapter.resolveFeePerByte`, `buildSignRawOperation` and the
+  `hw-getAddress` / `hw-getFullViewingKey` resolvers take a `Logger`. `prepareTransaction`, `getTransactionStatus`, `buildTransaction`,
+  `buildAccountTx`, `getOriginalTxFeeContext`, `getMinReplacementFeeSat`,
+  `getMinReplacementFeeRateSatVb` and `getRbfContext` take the coin config as first parameter. The
+  `getEditTransactionStatus` and `isStrategyDisabled` bridge extensions require the `mainAccount`. The `EXPLORER_REGTEST` and `BITCOIN_STUCK_TRANSACTION_TIMEOUT` envs are
+  removed, as are the `config_currency_<id>` defaults of the bitcoin-family currencies no loader
+  serves (`bitcoin_private`, `game_credits`, `gochain`, `lbry`, `nix`, `ravencoin`, `resistance`,
+  `zclassic`, `zcoin`).
+
+### Patch Changes
+
+- Updated dependencies [[`6e3211f`](https://github.com/LedgerHQ/ledger-live/commit/6e3211f6c887211d4ecfbf58d909f49c31df6179), [`20484ff`](https://github.com/LedgerHQ/ledger-live/commit/20484ff8d7cc0aab2e4b8448c7e8ce9ebf6840fe), [`f047501`](https://github.com/LedgerHQ/ledger-live/commit/f047501381efde857b48c1314d2de637fdce8ade), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`9c9cae5`](https://github.com/LedgerHQ/ledger-live/commit/9c9cae5ab492b74d52b13e0a5b0673bd681f8d9d), [`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`18166fb`](https://github.com/LedgerHQ/ledger-live/commit/18166fbe8719d50c911aa0ab349e68c414f8fc62), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`6d744e0`](https://github.com/LedgerHQ/ledger-live/commit/6d744e0d30b4480282d35c359d096f3f6d6602af), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e), [`8312d68`](https://github.com/LedgerHQ/ledger-live/commit/8312d6818aa5fa37f523352f81f51a61dd502bf2), [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4)]:
+  - @ledgerhq/wallet-btc@0.7.0
+  - @ledgerhq/ledger-wallet-framework@3.7.0
+  - @ledgerhq/types-live@6.127.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+
+## 0.55.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef)]:
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.1
+  - @ledgerhq/wallet-btc@0.7.0-next.0
+
+## 0.55.0-next.0
+
+### Minor Changes
+
+- [#23189](https://github.com/LedgerHQ/ledger-live/pull/23189) [`d6e7695`](https://github.com/LedgerHQ/ledger-live/commit/d6e7695bf15852c7b0cd2a97aa0a3a0c4d047d74) Thanks [@cted-ledger](https://github.com/cted-ledger)! - serve the zcash testnet currency through the zcash chain adapter and network parameters
+
+- [#22759](https://github.com/LedgerHQ/ledger-live/pull/22759) [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): read the explorer and tuning values from the injected coin config
+
+  The module no longer keeps configuration in module state. `createBridges` takes a `Context`
+  (ADR-019) and every bridge method resolves `config_currency_<id>` from `context.config()` at call
+  time. The endpoint `explorer.url` is required and defaults to today's production host in each
+  served `config_currency_<id>` (`http://localhost:9876` for `bitcoin_regtest`, whose `btc_regtest`
+  explorer id also moves to its config). The optional fields fall back to named module defaults:
+  `explorer.batchSize` (`DEFAULT_EXPLORER_BATCH_SIZE`, 1000), `fees.stuckTransactionTimeoutMs`
+  (`DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS`, 20 min), `fees.rbfMinBumpRatio`
+  (`DEFAULT_RBF_MIN_BUMP_RATIO`, 0.1), `fees.calculationCacheTtlMs` and `fees.feeRatesCacheTtlMs`
+  (5 min each) and `sync.replacedOperationExpiryMs` (`DEFAULT_REPLACED_OPERATION_EXPIRY_MS`, 2 h).
+  The explorer is bound to a wallet-btc account from the config at use, so deserialization stays
+  config-free and a remote change applies on the next call. wallet-btc still reads no configuration:
+  the batch size is injected through `WalletBtcCurrency.explorerBatchSize`, and the RBF ratio and
+  the unconfirmed-operation expiry are parameters.
+
+  Breaking: `createBridges(signerContext, context)` takes a `Context` instead of a config getter;
+  `setCoinConfig`, `getCoinConfig`, `CoinConfig`, `BitcoinConfigInfo`, `makeAssignFromAccountRaw`
+  and `getMinRelayFee` are removed in favour of `BitcoinCoinConfig` / `BitcoinContext` and
+  `assignFromAccountRaw`, and `postSync` becomes `makePostSync(context)`. The module logs only
+  through `context.logger`: `buildTransaction`, `getTransactionStatus`, `prepareTransaction`,
+  `calculateFees`, `signAccountTx`, `ChainAdapter.resolveFeePerByte`, `buildSignRawOperation` and the
+  `hw-getAddress` / `hw-getFullViewingKey` resolvers take a `Logger`. `prepareTransaction`, `getTransactionStatus`, `buildTransaction`,
+  `buildAccountTx`, `getOriginalTxFeeContext`, `getMinReplacementFeeSat`,
+  `getMinReplacementFeeRateSatVb` and `getRbfContext` take the coin config as first parameter. The
+  `getEditTransactionStatus` and `isStrategyDisabled` bridge extensions require the `mainAccount`. The `EXPLORER_REGTEST` and `BITCOIN_STUCK_TRANSACTION_TIMEOUT` envs are
+  removed, as are the `config_currency_<id>` defaults of the bitcoin-family currencies no loader
+  serves (`bitcoin_private`, `game_credits`, `gochain`, `lbry`, `nix`, `ravencoin`, `resistance`,
+  `zclassic`, `zcoin`).
+
+### Patch Changes
+
+- Updated dependencies [[`6e3211f`](https://github.com/LedgerHQ/ledger-live/commit/6e3211f6c887211d4ecfbf58d909f49c31df6179), [`20484ff`](https://github.com/LedgerHQ/ledger-live/commit/20484ff8d7cc0aab2e4b8448c7e8ce9ebf6840fe), [`f047501`](https://github.com/LedgerHQ/ledger-live/commit/f047501381efde857b48c1314d2de637fdce8ade), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`9c9cae5`](https://github.com/LedgerHQ/ledger-live/commit/9c9cae5ab492b74d52b13e0a5b0673bd681f8d9d), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`18166fb`](https://github.com/LedgerHQ/ledger-live/commit/18166fbe8719d50c911aa0ab349e68c414f8fc62), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`6d744e0`](https://github.com/LedgerHQ/ledger-live/commit/6d744e0d30b4480282d35c359d096f3f6d6602af), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e), [`8312d68`](https://github.com/LedgerHQ/ledger-live/commit/8312d6818aa5fa37f523352f81f51a61dd502bf2), [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4)]:
+  - @ledgerhq/wallet-btc@0.7.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.0
+  - @ledgerhq/types-live@6.127.0-next.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+
+## 0.54.0
+
+### Minor Changes
+
+- [#22561](https://github.com/LedgerHQ/ledger-live/pull/22561) [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore(currency): drop `CryptoCurrency#bitcoinLikeInfo`
+
+  coin-bitcoin now reads the xpub version from its own `getNetworkParameters`, and coin-zcash from a local `ZCASH_XPUB_VERSION` constant. The unused `bitcoinLikeInfo` field (and `BitcoinLikeInfoSchema`) is removed from the currency types and registry.
+
+- [#21953](https://github.com/LedgerHQ/ledger-live/pull/21953) [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/live-config`, `@ledgerhq/live-env`, `@ledgerhq/live-currency-format`,
+  `@ledgerhq/domain-service` and `@ledgerhq/evm-tools` from npm instead of the workspace — they
+  now live in the `ts-libs` repository. No API change.
+
+- [#22589](https://github.com/LedgerHQ/ledger-live/pull/22589) [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5) Thanks [@qperrot](https://github.com/qperrot)! - Remove the deprecated `CryptoCurrency.explorerId` field and the `LedgerExplorerId` type.
+
+  Bitcoin-like explorer ids now come from the coin config (`config_currency_<id>.explorerId`), as EVM already does, and fall back to the currency id. The config is passed in rather than read from a module global: `toWalletBtcCurrency`, `walletBtcCurrencyById` and coin-bitcoin's `blockchainBaseURL` take it as an argument, the sync functions take the `coinConfig` resolver given to `createBridges`, and `assignFromAccountRaw` is now built with `makeAssignFromAccountRaw(coinConfig)`.
+
+  Adds `config_currency_bitcoin_testnet`, `config_currency_bitcoin_regtest` and `config_currency_zcash_regtest` so every bitcoin-like currency resolves a config entry.
+
+- [#22279](https://github.com/LedgerHQ/ledger-live/pull/22279) [`62cc42f`](https://github.com/LedgerHQ/ledger-live/commit/62cc42f32d041e0e1081e7fdaca04169581429ec) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash mock-bridge and serialization so shielded send still works
+
+  Persisting a _mock_ Zcash account (under `MOCK=true`) routed `toAccountRaw` through coin-bitcoin's mock bridge, which declares no assign hooks at all and so dropped both the viewing key/`privateInfo` and the transparent `bitcoinResources` the load path had just restored. A real account was never affected: coin-bitcoin's real bridge already round-trips `privateInfo` unconditionally via its Zcash chain-adapter. Mock account ids now resolve through the standalone Zcash serialization family instead — unless the host never registered that coin module (wallet-cli registers bitcoin, evm and solana only), in which case they keep coin-bitcoin's adapter instead of failing to resolve a bridge. A real account id keeps resolving through `currency.family` as before, so it never eager-loads the standalone module merely by being deserialized.
+
+  The mock bridge also omitted `getFullViewingKey`, `deriveShieldedAddress`, and `getShieldedAddress`, so activating the private balance under `MOCK=true` threw a TypeError. Those methods now return device-free stand-ins, including a well-formed unified address so the send flow still classifies a self-transfer as a private recipient.
+
+  `@ledgerhq/coin-bitcoin`'s Zcash chain-adapter (`chain-adapters/zcash/serialization.ts`, the bridge a real account id always resolves to) also dropped `lastSyncError` on every round-trip: the field exists on `ZcashPrivateInfoRaw` but neither `toZcashPrivateInfoRaw` nor `fromZcashPrivateInfoRaw` mapped it, so a failed shielded sync lost its retry marker on save/load. Both directions now carry it, matching `@ledgerhq/coin-zcash`'s own serializer.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+  - @ledgerhq/wallet-btc@0.6.0
+
+## 0.54.0-next.0
+
+### Minor Changes
+
+- [#22561](https://github.com/LedgerHQ/ledger-live/pull/22561) [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore(currency): drop `CryptoCurrency#bitcoinLikeInfo`
+
+  coin-bitcoin now reads the xpub version from its own `getNetworkParameters`, and coin-zcash from a local `ZCASH_XPUB_VERSION` constant. The unused `bitcoinLikeInfo` field (and `BitcoinLikeInfoSchema`) is removed from the currency types and registry.
+
+- [#21953](https://github.com/LedgerHQ/ledger-live/pull/21953) [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/live-config`, `@ledgerhq/live-env`, `@ledgerhq/live-currency-format`,
+  `@ledgerhq/domain-service` and `@ledgerhq/evm-tools` from npm instead of the workspace — they
+  now live in the `ts-libs` repository. No API change.
+
+- [#22589](https://github.com/LedgerHQ/ledger-live/pull/22589) [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5) Thanks [@qperrot](https://github.com/qperrot)! - Remove the deprecated `CryptoCurrency.explorerId` field and the `LedgerExplorerId` type.
+
+  Bitcoin-like explorer ids now come from the coin config (`config_currency_<id>.explorerId`), as EVM already does, and fall back to the currency id. The config is passed in rather than read from a module global: `toWalletBtcCurrency`, `walletBtcCurrencyById` and coin-bitcoin's `blockchainBaseURL` take it as an argument, the sync functions take the `coinConfig` resolver given to `createBridges`, and `assignFromAccountRaw` is now built with `makeAssignFromAccountRaw(coinConfig)`.
+
+  Adds `config_currency_bitcoin_testnet`, `config_currency_bitcoin_regtest` and `config_currency_zcash_regtest` so every bitcoin-like currency resolves a config entry.
+
+- [#22279](https://github.com/LedgerHQ/ledger-live/pull/22279) [`62cc42f`](https://github.com/LedgerHQ/ledger-live/commit/62cc42f32d041e0e1081e7fdaca04169581429ec) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash mock-bridge and serialization so shielded send still works
+
+  Persisting a _mock_ Zcash account (under `MOCK=true`) routed `toAccountRaw` through coin-bitcoin's mock bridge, which declares no assign hooks at all and so dropped both the viewing key/`privateInfo` and the transparent `bitcoinResources` the load path had just restored. A real account was never affected: coin-bitcoin's real bridge already round-trips `privateInfo` unconditionally via its Zcash chain-adapter. Mock account ids now resolve through the standalone Zcash serialization family instead — unless the host never registered that coin module (wallet-cli registers bitcoin, evm and solana only), in which case they keep coin-bitcoin's adapter instead of failing to resolve a bridge. A real account id keeps resolving through `currency.family` as before, so it never eager-loads the standalone module merely by being deserialized.
+
+  The mock bridge also omitted `getFullViewingKey`, `deriveShieldedAddress`, and `getShieldedAddress`, so activating the private balance under `MOCK=true` threw a TypeError. Those methods now return device-free stand-ins, including a well-formed unified address so the send flow still classifies a self-transfer as a private recipient.
+
+  `@ledgerhq/coin-bitcoin`'s Zcash chain-adapter (`chain-adapters/zcash/serialization.ts`, the bridge a real account id always resolves to) also dropped `lastSyncError` on every round-trip: the field exists on `ZcashPrivateInfoRaw` but neither `toZcashPrivateInfoRaw` nor `fromZcashPrivateInfoRaw` mapped it, so a failed shielded sync lost its retry marker on save/load. Both directions now carry it, matching `@ledgerhq/coin-zcash`'s own serializer.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0-next.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+  - @ledgerhq/wallet-btc@0.6.0
+
 ## 0.53.0
 
 ### Minor Changes
@@ -317,96 +481,5 @@
   - @ledgerhq/wallet-btc@0.3.0
   - @ledgerhq/live-env@3.0.0
   - @ledgerhq/types-live@6.117.0
-
-## 0.49.0-next.1
-
-### Minor Changes
-
-- [#20349](https://github.com/LedgerHQ/ledger-live/pull/20349) [`f79de59`](https://github.com/LedgerHQ/ledger-live/commit/f79de59f95ed384fc2b2e49dfa28efb1a0493d4a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix Zcash transparent sends being rejected from the mempool for "unpaid actions is higher than the limit" (LIVE-35152).
-
-  ZIP-317 charges per logical action — `max(inputs, outputs)`, floored at two actions, so 10 000 zats minimum — while the shared Bitcoin path prices transactions in sat/vByte. The account-wide rate was derived from the marginal fee spread over one input (5000 zats over ~148 vBytes ⇒ 34 sat/vB), which billed only 7684 zats on a one-input, two-output send: below the floor, and rejected by the node.
-
-  A single rate cannot express ZIP-317, since the floor stays flat while the byte count grows — a rate covering a one-input send would charge nearly double the fee owed on a two-input one. The rate is now chosen per transaction: `getAccountNetworkInfo` provides the rate that covers ZIP-317 for any layout (~53 sat/vB, set by the smallest transaction), and the Zcash chain adapter tightens it to the transaction's actual layout through the new `ChainAdapter.resolveFeePerByte` hook, falling back to the safe rate whenever the tighter one cannot be confirmed. Resulting fees land within ~2% above the ZIP-317 amount instead of under it.
-
-  Only the legacy transparent path is affected — the flows routed to the PCZT builder already compute their ZIP-317 fee directly.
-
-### Patch Changes
-
-- Updated dependencies [[`f715aa5`](https://github.com/LedgerHQ/ledger-live/commit/f715aa516225f72124e083e3ffa0f254b9d5df4f)]:
-  - @ledgerhq/live-signer-zcash@0.7.0-next.1
-
-## 0.49.0-next.0
-
-### Minor Changes
-
-- [#19980](https://github.com/LedgerHQ/ledger-live/pull/19980) [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert error classes from createCustomErrorClass factory to native extends Error (LIVE-32915 tier 1a)
-
-- [#20070](https://github.com/LedgerHQ/ledger-live/pull/20070) [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove the now-dead `@ledgerhq/cryptoassets` currency/fiat store injection from the app bootstraps. Nothing reads the legacy currency/fiat accessors anymore (the runtime source of truth is the domain-backed wallet-framework currency resolver), so `setCryptoCurrenciesStore` / `setFiatCurrenciesStore` injected a store no consumer queried. Drop the calls, drop the `@ledgerhq/cryptoassets` dependency from the apps, and remove the remaining stale references to the package in comments.
-
-- [#20114](https://github.com/LedgerHQ/ledger-live/pull/20114) [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa) Thanks [@semeano](https://github.com/semeano)! - Add Ironwood support to Zcash
-
-- [#20021](https://github.com/LedgerHQ/ledger-live/pull/20021) [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report what a Zcash transaction actually did, rather than what an explorer can infer from its transparent bundle. An explorer that sees only the transparent side is wrong about two things whenever value crosses a shielded boundary:
-
-  - **The fee**, derived as `Σ transparent inputs − Σ transparent outputs`, swallows any value that entered a shielded pool: a transparent-to-shielded send of 0.1 ZEC paying 0.00055 in fees was reported as having paid 0.10055.
-  - **The destination**, since the payee lives in an encrypted output, fell back to the transparent change address — which pays the sender back rather than the payee.
-
-  Both are now recovered from the raw transaction in a single fetch, through a `transactionDetails` method on the ZCash client (native and IPC) backed by `@ledgerhq/zcash-utils`: the fee from the value balance of every pool, the payee by trial-decrypting our own outputs with the account's viewing key.
-
-  A new `resolveTransactionDetails` chain-adapter hook applies fees to transactions before operations are derived, so a transaction's sender and recipient agree on its cost, and supersedes the change address with the recovered payee while keeping any genuine transparent recipient. When an optimistic operation is reconciled with its confirmed counterpart, the address the user actually entered is preferred over the recovered one, which is the same destination but not necessarily the same string. A transaction that cannot be resolved keeps the fee and recipients the explorer reported.
-
-- [#20021](https://github.com/LedgerHQ/ledger-live/pull/20021) [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix how a Zcash account holding shielded funds accounts for its own history. The account is described by two syncs that see different things — the transparent one reads an explorer, the shielded one scans compact blocks with the viewing key — and where they meet, five things were wrong:
-
-  - **A shielded-to-transparent send looked like an internal transfer of 0 ZEC.** Classification only looked at the shielded pools, where such a send nets out; the value that left had gone to a transparent output nobody was reading. It is now classified on what left the pools _and_ what reached the transparent bundle, using the transparent totals the native scanner reports.
-  - **An outgoing shielded operation reported an amount excluding the fee**, unlike every other outgoing operation and unlike the optimistic operation shown before confirmation — so the displayed amount changed once the transaction confirmed. The fee is now counted in the amount.
-  - **Spendable balance dropped to the transparent balance** each time a transparent sync landed, then recovered on the next shielded sync. The chain now states its balance once and it serves as both balance and spendable balance.
-  - **The shielded scan cursor could move backwards**, notably to zero when the scanner was already at the tip, triggering a full rescan on the next sync. The cursor now only ever advances.
-  - **The optimistic operation was never reconciled**, since a confirmed shielded operation carries a different identifier than the pending one it replaces, leaving the send listed twice. Pending operations are now matched by transaction hash.
-
-- [#20188](https://github.com/LedgerHQ/ledger-live/pull/20188) [`f8b5b51`](https://github.com/LedgerHQ/ledger-live/commit/f8b5b51856c57c68ca50d13b00d124d261c26504) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash fee pricing calculations and max estimation.
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa), [`0afef49`](https://github.com/LedgerHQ/ledger-live/commit/0afef49b60283afb44172de65891e435c2f0d637)]:
-  - @ledgerhq/errors@7.0.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
-  - @ledgerhq/live-network@3.0.0-next.0
-  - @ledgerhq/wallet-btc@0.3.0-next.0
-  - @ledgerhq/live-env@3.0.0-next.0
-  - @ledgerhq/types-live@6.117.0-next.0
-  - @ledgerhq/live-signer-zcash@0.7.0-next.0
-
-## 0.48.0
-
-### Minor Changes
-
-- [#19736](https://github.com/LedgerHQ/ledger-live/pull/19736) [`2eac6a1`](https://github.com/LedgerHQ/ledger-live/commit/2eac6a17b629be3f8ba08cdf650413083b89476e) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Extract the shared UTXO engine (xpub scanning, coin-selection, storage, address crypto) into a standalone `@ledgerhq/wallet-btc` package, dependency-inverted so it no longer imports `@ledgerhq/cryptoassets` or `@ledgerhq/ledger-wallet-framework`: the currency is injected as a typed `WalletBtcCurrency`. Transaction build/sign, RBF fee computation, the device signer, and the `getWalletAccount` resolver stay in `@ledgerhq/coin-bitcoin`. Internal refactor with no behavior change; consumers (`@ledgerhq/live-common`, `ledger-live-desktop`) are rewired to the new import paths.
-
-- [#19727](https://github.com/LedgerHQ/ledger-live/pull/19727) [`887f8c9`](https://github.com/LedgerHQ/ledger-live/commit/887f8c93e66c2730cbecc1adc09b6a2faa95bba6) Thanks [@semeano](https://github.com/semeano)! - Fix wrong ZIP-244 txid
-
-### Patch Changes
-
-- Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`2eac6a1`](https://github.com/LedgerHQ/ledger-live/commit/2eac6a17b629be3f8ba08cdf650413083b89476e), [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`887f8c9`](https://github.com/LedgerHQ/ledger-live/commit/887f8c93e66c2730cbecc1adc09b6a2faa95bba6), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/types-live@6.116.0
-  - @ledgerhq/wallet-btc@0.2.0
-  - @ledgerhq/live-network@2.7.0
-  - @ledgerhq/live-signer-zcash@0.6.0
-  - @ledgerhq/ledger-wallet-framework@2.5.0
-
-## 0.48.0-next.0
-
-### Minor Changes
-
-- [#19736](https://github.com/LedgerHQ/ledger-live/pull/19736) [`2eac6a1`](https://github.com/LedgerHQ/ledger-live/commit/2eac6a17b629be3f8ba08cdf650413083b89476e) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Extract the shared UTXO engine (xpub scanning, coin-selection, storage, address crypto) into a standalone `@ledgerhq/wallet-btc` package, dependency-inverted so it no longer imports `@ledgerhq/cryptoassets` or `@ledgerhq/ledger-wallet-framework`: the currency is injected as a typed `WalletBtcCurrency`. Transaction build/sign, RBF fee computation, the device signer, and the `getWalletAccount` resolver stay in `@ledgerhq/coin-bitcoin`. Internal refactor with no behavior change; consumers (`@ledgerhq/live-common`, `ledger-live-desktop`) are rewired to the new import paths.
-
-- [#19727](https://github.com/LedgerHQ/ledger-live/pull/19727) [`887f8c9`](https://github.com/LedgerHQ/ledger-live/commit/887f8c93e66c2730cbecc1adc09b6a2faa95bba6) Thanks [@semeano](https://github.com/semeano)! - Fix wrong ZIP-244 txid
-
-### Patch Changes
-
-- Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`2eac6a1`](https://github.com/LedgerHQ/ledger-live/commit/2eac6a17b629be3f8ba08cdf650413083b89476e), [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`887f8c9`](https://github.com/LedgerHQ/ledger-live/commit/887f8c93e66c2730cbecc1adc09b6a2faa95bba6), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/types-live@6.116.0-next.0
-  - @ledgerhq/wallet-btc@0.2.0-next.0
-  - @ledgerhq/live-network@2.7.0-next.0
-  - @ledgerhq/live-signer-zcash@0.6.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.5.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

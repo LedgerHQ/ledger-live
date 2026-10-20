@@ -1,7 +1,14 @@
 import { expect, type Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { OnboardingPage } from "tests/page/onboarding.page";
+import { PortfolioPage } from "tests/page/portfolio.page";
+import type { MockServerDevicePage } from "tests/page/mockServerDevice.page";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import {
+  CHARON_STATUS,
+  ONBOARDING_STEP,
+} from "@ledgerhq/live-e2e-shared/mockServer/onboardingFlags";
 
 /** Resolves with `outcome` once the locator is visible, or "timeout" if it never is. */
 async function appeared<T extends string>(locator: Locator, outcome: T) {
@@ -14,6 +21,8 @@ async function appeared<T extends string>(locator: Locator, outcome: T) {
 }
 
 export class SyncOnboardingPage extends AppPage {
+  private readonly onboarding = new OnboardingPage(this.page);
+  private readonly portfolio = new PortfolioPage(this.page);
   private readonly genuineCheckButton = this.page.getByRole("button", {
     name: /^Check Ledger/i,
   });
@@ -70,6 +79,25 @@ export class SyncOnboardingPage extends AppPage {
     await expect(this.osUpToDate).toBeVisible();
   }
 
+  /** Get started and accept analytics, connect the device, then pass its genuine check. */
+  @step("Start onboarding $0 from a fresh install")
+  async startOnboardingFromFreshInstall(device: DeviceModelId) {
+    await this.onboarding.waitForLaunch();
+    await this.onboarding.getStarted();
+    await this.onboarding.acceptAnalytics();
+    await this.portfolio.startConnectDeviceFlow();
+    await this.onboarding.selectDevice(device);
+    await this.expectCompanionReached(device);
+    await this.passGenuineCheck();
+  }
+
+  @step("Pass the genuine check")
+  async passGenuineCheck() {
+    await this.runGenuineCheck();
+    await this.expectDeviceGenuine();
+    await this.expectOsUpToDate();
+  }
+
   @step("Continue to setup")
   async continueToSetup() {
     await this.continueToSetupButton.click();
@@ -83,6 +111,36 @@ export class SyncOnboardingPage extends AppPage {
   @step("Expect the restore-seed path to be shown")
   async expectRestoreSeedPath() {
     await expect(this.restoreSeedStep).toBeVisible();
+  }
+
+  @step("Set the device up as new")
+  async setUpAsNewDevice(mockServer: MockServerDevicePage) {
+    await mockServer.pinOnboardingStep(ONBOARDING_STEP.newDevice);
+    await this.continueToSetup();
+    await this.expectNewSeedPath();
+  }
+
+  @step("Restore the device from a seed")
+  async restoreFromSeed(mockServer: MockServerDevicePage) {
+    await mockServer.pinOnboardingStep(ONBOARDING_STEP.restoreSeed);
+    await this.continueToSetup();
+    await this.expectRestoreSeedPath();
+  }
+
+  /**
+   * The device offers the backup once the seed is set, writes it once accepted, then asks for a
+   * name for the key.
+   */
+  @step("Back up the seed on a Ledger Recovery Key")
+  async backUpOnRecoveryKey(mockServer: MockServerDevicePage) {
+    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.choice);
+    await this.expectRecoveryKeyBackupScreen();
+    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.running);
+    await this.expectRecoveryKeyBackupScreen();
+    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.naming);
+    await this.expectRecoveryKeyBackupScreen();
+    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.ready);
+    await this.expectRecoveryKeyBackupComplete();
   }
 
   /**

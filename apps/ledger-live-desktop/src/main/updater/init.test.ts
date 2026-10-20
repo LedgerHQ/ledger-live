@@ -1,5 +1,7 @@
 import { autoUpdater } from "electron-updater";
+import { CHANNELS } from "~/bridge/contract";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
+import { getMainWindow } from "~/main/window-lifecycle";
 import { init } from "./init";
 
 jest.mock("electron-updater", () => ({
@@ -72,5 +74,22 @@ describe("updater init", () => {
         "error",
       ]),
     );
+  });
+
+  it("should send the updater status to the main window", () => {
+    const send = jest.fn();
+    jest.mocked(getMainWindow).mockReturnValue({ webContents: { send } } as never);
+    mockedIsStoreDistribution.mockReturnValue(false);
+
+    init();
+    const [, listener] = mockedAutoUpdater.on.mock.calls.find(
+      ([event]) => event === "update-available",
+    )!;
+    (listener as (info: unknown) => void)({ version: "9.9.9" });
+
+    expect(send).toHaveBeenCalledWith(CHANNELS.updater, {
+      status: "update-available",
+      payload: { version: "9.9.9" },
+    });
   });
 });

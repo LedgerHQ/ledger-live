@@ -21,6 +21,7 @@ import {
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { WARNING_REASON, WarningReason } from "../../domain";
 import { computeSelectedIdsFromScan, getGroupedAccounts } from "./utils/processAccounts";
+import { normalizeScanError } from "./utils/normalizeScanError";
 import { useConcordiumCreatableAccounts } from "./hooks/concordium/useConcordiumCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
@@ -135,7 +136,9 @@ export function useScanAccounts({
             );
             setScanning(true);
           },
-          error: setError,
+          error: e => {
+            setError(normalizeScanError(e));
+          },
           complete: () => setScanning(false),
         });
     })();

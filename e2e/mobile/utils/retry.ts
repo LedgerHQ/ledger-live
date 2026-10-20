@@ -4,7 +4,7 @@ export async function retryUntilTimeout<T>(
   fn: (signal: AbortSignal) => Promise<T>,
   timeout = TIMEOUT.xxlarge,
   interval = INTERVAL.short,
-  options: { cancellable?: boolean } = {},
+  options: { cancellable?: boolean; messageOnError?: string } = {},
 ): Promise<T> {
   const cancellable = options.cancellable ?? false;
   const start = Date.now();
@@ -35,9 +35,8 @@ export async function retryUntilTimeout<T>(
         ? lastError
         : JSON.stringify(lastError);
 
-  throw new Error(
-    [`❌ [retryUntilTimeout] Timed out after ${timeout}ms`, `🧪 ${errMsg}`].join("\n"),
-  );
+  const headline = options.messageOnError ?? `[retryUntilTimeout] Timed out after ${timeout}ms`;
+  throw new Error([`❌ ${headline}`, `🧪 ${errMsg}`].join("\n"));
 }
 
 /**

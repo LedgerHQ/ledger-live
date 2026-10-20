@@ -73,10 +73,17 @@ export function AnalyticsConsentScreen({
             size="md"
             className="min-w-[248px]"
             onClick={onRefuseAll}
+            data-testid="analytics-opt-in-screen-refuse-all"
           >
             {t("analyticsOptInScreen.main.ctaRefuseAll")}
           </Button>
-          <Button appearance="base" size="md" className="min-w-[248px]" onClick={onAcceptAll}>
+          <Button
+            appearance="base"
+            size="md"
+            className="min-w-[248px]"
+            onClick={onAcceptAll}
+            data-testid="analytics-opt-in-screen-accept-all"
+          >
             {t("analyticsOptInScreen.main.ctaAcceptAll")}
           </Button>
         </div>

@@ -1,3 +1,5 @@
+import { TEST_CONFIG } from "./__tests__/fixtures/coinConfig";
+import { DEFAULT_RBF_MIN_BUMP_RATIO } from "./constants";
 import { BigNumber } from "bignumber.js";
 import { Transaction as BitcoinTransaction } from "bitcoinjs-lib";
 import { getWalletAccount } from "./getWalletAccount";
@@ -17,6 +19,7 @@ jest.mock("./getWalletAccount", () => ({
 }));
 
 jest.mock("@ledgerhq/wallet-btc/utils", () => ({
+  ...jest.requireActual("@ledgerhq/wallet-btc/utils"),
   getIncrementalFeeFloorSatVb: jest.fn(),
 }));
 
@@ -105,12 +108,16 @@ describe("rbfFees", () => {
 
       (getIncrementalFeeFloorSatVb as jest.Mock).mockResolvedValue(new BigNumber(2));
 
-      const result = await getMinReplacementFeeRateSatVb({
+      const result = await getMinReplacementFeeRateSatVb(TEST_CONFIG, {
         account: {} as any,
         originalTxId: "orig-txid",
       });
       expect(result.toNumber()).toBe(12);
-      expect(getIncrementalFeeFloorSatVb).toHaveBeenCalledWith(mockExplorer, new BigNumber(10));
+      expect(getIncrementalFeeFloorSatVb).toHaveBeenCalledWith(
+        mockExplorer,
+        new BigNumber(10),
+        DEFAULT_RBF_MIN_BUMP_RATIO,
+      );
       expect(mockExplorer.getTxHex).toHaveBeenCalledWith("orig-txid");
       expect(mockExplorer.getTxHex).toHaveBeenCalledWith("030201");
     });
@@ -142,7 +149,7 @@ describe("rbfFees", () => {
 
       (getIncrementalFeeFloorSatVb as jest.Mock).mockResolvedValue(new BigNumber(0));
 
-      const result = await getMinReplacementFeeRateSatVb({
+      const result = await getMinReplacementFeeRateSatVb(TEST_CONFIG, {
         account: {} as any,
         originalTxId: "orig-txid",
       });
@@ -159,7 +166,7 @@ describe("rbfFees", () => {
       mockedFromHex.mockReturnValue(nonRbfTx);
       (getIncrementalFeeFloorSatVb as jest.Mock).mockResolvedValue(new BigNumber(2));
 
-      const result = await getMinReplacementFeeRateSatVb({
+      const result = await getMinReplacementFeeRateSatVb(TEST_CONFIG, {
         account: {} as any,
         originalTxId: "orig-txid",
       });

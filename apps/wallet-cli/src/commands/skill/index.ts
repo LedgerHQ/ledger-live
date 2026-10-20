@@ -3,9 +3,10 @@ import ListCommand from "./list";
 import RetrieveCommand from "./retrieve";
 import InstallCommand from "./install";
 import DoctorCommand from "./doctor";
+import { commandDescription } from "../registry";
 
 export default defineGroup({
   name: "skill",
-  description: "Ledger wallet-cli agent skills (list, retrieve, install, doctor)",
+  description: commandDescription("skill"),
   commands: [ListCommand, RetrieveCommand, InstallCommand, DoctorCommand],
 });

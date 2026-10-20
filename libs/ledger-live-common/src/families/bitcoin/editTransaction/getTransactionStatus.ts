@@ -1,6 +1,6 @@
 import { AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ReplacementTransactionUnderpriced } from "../../../errors";
-import type { TransactionStatusCommon } from "@ledgerhq/types-live";
+import type { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 import { getMinFees } from "./getMinEditTransactionFees";
 import type {
@@ -27,11 +27,13 @@ type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
  * originalFeePerByte from getOriginalTxFeeRateSatVb(account, transactionToUpdate.replaceTxId).
  */
 export const validateEditTransaction = ({
+  mainAccount,
   transaction,
   transactionToUpdate,
   editType,
   originalFeePerByte: originalFeePerByteParam,
 }: {
+  mainAccount: Account;
   transaction: BitcoinTransaction;
   transactionToUpdate: BitcoinTransaction;
   editType?: EditType;
@@ -72,7 +74,10 @@ export const validateEditTransaction = ({
     return { errors, warnings };
   }
 
-  const { feePerByte: minNewFeePerByte } = getMinFees({ feePerByte: originalFeePerByte });
+  const { feePerByte: minNewFeePerByte } = getMinFees({
+    mainAccount,
+    feePerByte: originalFeePerByte,
+  });
   if (
     newFeePerByte.isLessThan(minNewFeePerByte) ||
     newFeePerByte.isLessThanOrEqualTo(originalFeePerByte)
@@ -85,6 +90,8 @@ export const validateEditTransaction = ({
 };
 
 export type GetEditTransactionStatusParams = {
+  /** Account the edited transaction is sent from; its coin config sets the minimum RBF bump. */
+  mainAccount: Account;
   transaction: BitcoinTransaction;
   transactionToUpdate: BitcoinTransaction;
   status: TransactionStatus;
@@ -96,6 +103,7 @@ export type GetEditTransactionStatusParams = {
 const ERROR_AMOUNT_REQUIRED = new AmountRequired();
 
 export const getEditTransactionStatus = ({
+  mainAccount,
   transaction,
   transactionToUpdate,
   status,
@@ -103,6 +111,7 @@ export const getEditTransactionStatus = ({
   originalFeePerByte,
 }: GetEditTransactionStatusParams): TransactionStatus => {
   const { errors: editTxErrors } = validateEditTransaction({
+    mainAccount,
     transaction,
     transactionToUpdate,
     ...(editType === undefined ? {} : { editType }),

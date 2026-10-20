@@ -1,123 +1,62 @@
-import {
-  initialState,
-  CountervaluesSettings,
-  CounterValuesState,
-} from "@domain/entity-market-countervalues";
-import { useSelector } from "~/context/hooks";
-import { Action, handleActions, ReducerMap } from "redux-actions";
-import {
-  CountervaluesActionTypes,
-  CountervaluesPayload,
-  CountervaluesPollingSetIsPollingPayload,
-  CountervaluesPollingSetTriggerLoadPayload,
-  CountervaluesStateSetErrorPayload,
-  CountervaluesStateSetPayload,
-  CountervaluesStateSetPendingPayload,
-} from "~/actions/types";
-import { State } from "./types";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { inferTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/trackingPairs";
+import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
+import { haveSameTrackingPairs } from "@features/platform-market-countervalues";
+import { selectFeature } from "@shared/feature-flags";
+import { createSelector } from "~/context/selectors";
+import { accountsSelector } from "./accounts";
+import { extraSessionTrackingPairsSelector } from "./countervaluesExtraSessionTracking";
+import { counterValueCurrencySelector } from "./settings";
+import type { State } from "./types";
 
-/// State
+function createTrackingPairsSelector() {
+  // The same pairs while accounts resynchronize without changing them.
+  const accountsTrackingPairsSelector = createSelector(
+    [accountsSelector, counterValueCurrencySelector],
+    (accounts, countervalue) => inferTrackingPairForAccounts(accounts, countervalue),
+    { memoizeOptions: { resultEqualityCheck: haveSameTrackingPairs } },
+  );
 
-export interface CountervaluesState {
-  countervalues: {
-    state: CounterValuesState;
-    pending: boolean;
-    error: Error | null;
-  };
-  polling: {
-    isPolling: boolean;
-    triggerLoad: boolean;
-  };
-  userSettings: CountervaluesSettings;
+  return createSelector(
+    [extraSessionTrackingPairsSelector, accountsTrackingPairsSelector],
+    (extraSessionTrackingPairs, accountsTrackingPairs) =>
+      extraSessionTrackingPairs.concat(accountsTrackingPairs),
+  );
 }
 
-export const INITIAL_STATE: CountervaluesState = {
-  countervalues: {
-    state: initialState,
-    pending: false,
-    error: null,
-  },
-  polling: {
-    isPolling: true,
-    triggerLoad: false,
-  },
-  // dummy values that should be overriden by the context provider
-  userSettings: {
-    trackingPairs: [],
-    autofillGaps: true,
-    refreshRate: 0,
-    marketCapBatchingAfterRank: 0,
-  },
-};
+/** The pairs to track: the session's extra pairs, then the accounts' own. */
+export const trackingPairsSelector = createTrackingPairsSelector();
 
-/// Selectors
+function granularitiesRatesFlagSelector(state: State) {
+  return selectFeature(state, "llCounterValueGranularitiesRates");
+}
 
-export const countervaluesStateSelector = (s: State) => s.countervalues.countervalues.state;
-export const countervaluesPendingSelector = (s: State) => s.countervalues.countervalues.pending;
-export const countervaluesErrorSelector = (s: State) => s.countervalues.countervalues.error;
+/**
+ * Creates the countervalues settings selector: a new object only when an input changes, since each
+ * one reloads. The countervalues loop creates one per start, so its memo starts fresh.
+ */
+export function createCountervaluesSettingsSelector() {
+  const granularitiesRatesSelector = createSelector(
+    [granularitiesRatesFlagSelector],
+    granularitiesRatesConfig =>
+      granularitiesRatesConfig?.enabled
+        ? {
+            daily: Number(granularitiesRatesConfig.params?.daily),
+            hourly: Number(granularitiesRatesConfig.params?.hourly),
+          }
+        : undefined,
+  );
 
-// Hooks
-
-export const useCountervaluesStateError = () => useSelector(countervaluesErrorSelector);
-export const useCountervaluesStatePending = () => useSelector(countervaluesPendingSelector);
-export const useCountervaluesState = () => useSelector(countervaluesStateSelector);
-
-export const useCountervaluesPollingIsPolling = () =>
-  useSelector((s: State) => s.countervalues.polling.isPolling);
-export const useCountervaluesPollingTriggerLoad = () =>
-  useSelector((s: State) => s.countervalues.polling.triggerLoad);
-
-/// Handlers
-
-const handlers: ReducerMap<CountervaluesState, CountervaluesPayload> = {
-  [CountervaluesActionTypes.COUNTERVALUES_STATE_SET]: (state, action) => ({
-    ...state,
-    countervalues: {
-      ...state.countervalues,
-      state: (action as Action<CountervaluesStateSetPayload>).payload,
-    },
-  }),
-  [CountervaluesActionTypes.COUNTERVALUES_STATE_SET_PENDING]: (state, action) => ({
-    ...state,
-    countervalues: {
-      ...state.countervalues,
-      pending: (action as Action<CountervaluesStateSetPendingPayload>).payload,
-      error: (action as Action<CountervaluesStateSetPendingPayload>).payload
-        ? null
-        : state.countervalues.error,
-    },
-  }),
-  [CountervaluesActionTypes.COUNTERVALUES_STATE_SET_ERROR]: (state, action) => ({
-    ...state,
-    countervalues: {
-      ...state.countervalues,
-      error: (action as Action<CountervaluesStateSetErrorPayload>).payload,
-      pending: false,
-    },
-  }),
-  [CountervaluesActionTypes.COUNTERVALUES_WIPE]: (state, _) => ({
-    ...state,
-    countervalues: {
-      ...state.countervalues,
-      state: initialState,
-      pending: false,
-      error: null,
-    },
-  }),
-  [CountervaluesActionTypes.COUNTERVALUES_POLLING_SET_IS_POLLING]: (state, action) => ({
-    ...state,
-    polling: {
-      ...state.polling,
-      isPolling: (action as Action<CountervaluesPollingSetIsPollingPayload>).payload,
-    },
-  }),
-  [CountervaluesActionTypes.COUNTERVALUES_POLLING_SET_TRIGGER_LOAD]: (state, action) => ({
-    ...state,
-    polling: {
-      ...state.polling,
-      triggerLoad: (action as Action<CountervaluesPollingSetTriggerLoadPayload>).payload,
-    },
-  }),
-};
-
-export default handleActions<CountervaluesState, CountervaluesPayload>(handlers, INITIAL_STATE);
+  return createSelector(
+    [granularitiesRatesSelector, createTrackingPairsSelector()],
+    (granularitiesRates, trackingPairs): CountervaluesSettings => ({
+      trackingPairs,
+      autofillGaps: true,
+      refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
+      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
+        "config_countervalues_marketCapBatchingAfterRank",
+      ),
+      granularitiesRates,
+    }),
+  );
+}

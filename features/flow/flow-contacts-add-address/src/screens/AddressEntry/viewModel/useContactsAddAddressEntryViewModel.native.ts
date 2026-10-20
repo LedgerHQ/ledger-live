@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+import { classifyNativeAddressInputMethod } from "@features/platform-contacts";
+import { useAddAddressEntryCopy } from "../../../copy/useAddAddressEntryCopy";
 import {
   resolveAddAddressEntryPresentation,
   shouldShowSanctionedAddressBanner,
@@ -7,21 +9,22 @@ import type {
   ContactsAddAddressEntryProps,
   ContactsAddAddressEntryViewProps,
 } from "../components/ContactsAddAddressEntry/ContactsAddAddressEntry.types";
-import { classifyNativeAddressInputMethod } from "@features/platform-contacts";
 
 export function useContactsAddAddressEntryViewModel({
   addressEntry,
-  labels,
-  sanctionedAddressBanner,
+  supportsDomain,
+  onSanctionedAddressLearnMore,
   bottomOffset = 0,
   onChangeText,
   onConfirm,
   onQrCodeClick,
 }: ContactsAddAddressEntryProps): ContactsAddAddressEntryViewProps {
+  const { labels, sanctionedDescription, sanctionedLearnMore } =
+    useAddAddressEntryCopy(supportsDomain);
   const presentation = resolveAddAddressEntryPresentation(addressEntry, labels);
   const showSanctionedAddressBanner = shouldShowSanctionedAddressBanner(
     addressEntry,
-    sanctionedAddressBanner,
+    onSanctionedAddressLearnMore !== undefined,
   );
   const onAddressChange = useCallback(
     (value: string) => {
@@ -37,7 +40,14 @@ export function useContactsAddAddressEntryViewModel({
     bottomPadding: 32,
     inputStatus: presentation.inputStatus,
     helperText: showSanctionedAddressBanner ? undefined : presentation.helperText,
-    sanctionedAddressBanner: showSanctionedAddressBanner ? sanctionedAddressBanner : undefined,
+    sanctionedAddressBanner:
+      showSanctionedAddressBanner && onSanctionedAddressLearnMore
+        ? {
+            description: sanctionedDescription,
+            actionLabel: sanctionedLearnMore,
+            onAction: onSanctionedAddressLearnMore,
+          }
+        : undefined,
     showEnsDisclaimer: presentation.showEnsDisclaimer,
     isConfirmEnabled: presentation.isConfirmEnabled,
     onAddressChange,

@@ -25,7 +25,7 @@ export const AddressValidationError = (props: AddressValidationErrorProps) => {
 
   return (
     <Box lx={{ alignItems: "center", marginTop: "s16" }}>
-      <Spot appearance="icon" icon={Search} size={72} />
+      <Spot icon={Search} size={72} />
       {"error" in props && props.error !== null && props.error !== "sanctioned" && (
         <Text
           typography={"error" in props ? "heading4SemiBold" : "body2"}

@@ -12,7 +12,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe("listOperations via MSW", () => {
-  it("maps an OUT transaction and propagates the X-Next-Page-After cursor", async () => {
+  it("maps an OUT transaction and propagates the X-Next-Page-Before cursor", async () => {
     server.use(
       http.get(TX_URL, () =>
         HttpResponse.json(
@@ -34,7 +34,7 @@ describe("listOperations via MSW", () => {
               ],
             },
           ],
-          { headers: { "X-Next-Page-After": "12345" } },
+          { headers: { "X-Next-Page-Before": "12345" } },
         ),
       ),
     );
@@ -59,5 +59,23 @@ describe("listOperations via MSW", () => {
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
+  });
+
+  it("requests the newest page first and walks back with `before`", async () => {
+    const seen: URL[] = [];
+    server.use(
+      http.get(TX_URL, ({ request }) => {
+        seen.push(new URL(request.url));
+        return HttpResponse.json([]);
+      }),
+    );
+
+    await listOperations(ADDRESS, { minHeight: 0 });
+    await listOperations(ADDRESS, { minHeight: 0, cursor: "1720440515512" });
+
+    expect(seen[0].searchParams.get("before")).toBeNull();
+    expect(seen[0].searchParams.get("after")).toBeNull();
+    expect(seen[1].searchParams.get("before")).toBe("1720440515512");
+    expect(seen[1].searchParams.get("after")).toBeNull();
   });
 });

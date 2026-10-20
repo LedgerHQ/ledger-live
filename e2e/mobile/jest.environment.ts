@@ -34,7 +34,11 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI } from "@e2e/utils/cliUtils";
 import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { NativeElementHelpers, WebElementHelpers } from "@e2e/helpers/elementHelpers";
+import {
+  NativeElementHelpers,
+  WebElementHelpers,
+  isUnansweredDetoxRequestError,
+} from "@e2e/helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "@e2e/page/index";
 import type { ServerData } from "~/e2e/bridge/types";
@@ -42,6 +46,7 @@ import type { ServerData } from "~/e2e/bridge/types";
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
+import { armWorkerWatchdog, setWatchdogState, watchdogPhase } from "@e2e/helpers/workerWatchdog";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
@@ -58,6 +63,9 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
 /**
  * Mark every test that is not in `names` (so passed in the previous attempt) as skipped.
  * Skipped tests write no Allure result, so the previous attempt's verdict remains.
+ *
+ * A block that keeps nothing is skipped as a block: jest-circus gates beforeAll/afterAll on the
+ * block's own mode, so marking only its tests still runs every unrelated block's setup.
  */
 const skipToRetrySet = (
   block: Circus.DescribeBlock,
@@ -67,7 +75,9 @@ const skipToRetrySet = (
   let kept = 0;
   for (const child of block.children) {
     if (child.type === "describeBlock") {
-      kept += skipToRetrySet(child, names, [...path, child.name]);
+      const keptInBlock = skipToRetrySet(child, names, [...path, child.name]);
+      if (keptInBlock === 0) child.mode = "skip";
+      kept += keptInBlock;
       // Mirrors jest-circus getTestID: the names path minus the root block, space-joined.
     } else if (names.has([...path, child.name].join(" "))) {
       kept++;
@@ -78,7 +88,22 @@ const skipToRetrySet = (
   return kept;
 };
 
-async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap): Promise<void> {
+const JEST_TIMEOUT_PATTERN = /Exceeded timeout of .+ for a (test|hook)/;
+
+/**
+ * A Jest timeout leaves the test body running, and an unanswered Detox request stays in flight.
+ * Either way the next atomic Detox call (disableSynchronization) makes Detox reject what is in
+ * flight, which resumes the body and reports its next action's error instead of the real failure.
+ */
+function failureLeavesDetoxBusy(failure: unknown): boolean {
+  const message = failure instanceof Error ? failure.message : String(failure);
+  return JEST_TIMEOUT_PATTERN.test(message) || isUnansweredDetoxRequestError(failure);
+}
+
+async function captureFailureDiagnostics(
+  mergedFeatureFlags: OptionalFeatureMap | undefined,
+  failure: unknown,
+): Promise<void> {
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),
@@ -120,11 +145,15 @@ async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap
     );
   logs = "";
 
-  await withTimeout(
-    captureNativeViewHierarchy(),
-    SLOW_DIAGNOSTIC_TIMEOUT_MS,
-    "captureNativeViewHierarchy",
-  );
+  if (failureLeavesDetoxBusy(failure)) {
+    console.info("Skipping native view hierarchy capture: Detox may still be busy with the test");
+  } else {
+    await withTimeout(
+      captureNativeViewHierarchy(),
+      SLOW_DIAGNOSTIC_TIMEOUT_MS,
+      "captureNativeViewHierarchy",
+    );
+  }
   console.info("Failure diagnostics capture completed");
 }
 
@@ -166,8 +195,12 @@ function installSpeculosTerminationHandlers() {
 
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
+  declare readonly testPath: string;
 
   async setup() {
+    await armWorkerWatchdog();
+    setWatchdogState({ spec: this.testPath, phase: "environment setup" });
+
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
     await super.setup();
@@ -302,6 +335,8 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   async teardown() {
+    setWatchdogState({ phase: "teardown" });
+
     try {
       await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
     } catch (error) {
@@ -337,19 +372,23 @@ export default class TestEnvironment extends DetoxEnvironment {
     }
 
     await super.teardown();
+    setWatchdogState({ spec: "<idle>", phase: "idle" });
   }
 
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
+    const phase = watchdogPhase(event, state);
+    if (phase) setWatchdogState({ phase });
+
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags, event.error);
     }
 
     await super.handleTestEvent(event, state);
 
     if (event.name === "test_fn_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags, event.error);
     }
 
     if (event.name === "run_start") {

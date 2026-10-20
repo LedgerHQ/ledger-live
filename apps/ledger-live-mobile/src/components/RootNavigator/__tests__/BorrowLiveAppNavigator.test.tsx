@@ -64,12 +64,16 @@ describe("BorrowLiveAppNavigator", () => {
 
     await user.press(screen.getByTestId("go-to-swap"));
 
-    expect(baseNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
-      screen: NavigatorName.Swap,
-      params: {
-        screen: ScreenName.SwapTab,
-        params: expectedSwapParams,
+    expect(baseNavigate).toHaveBeenCalledWith(
+      NavigatorName.Main,
+      {
+        screen: NavigatorName.Swap,
+        params: {
+          screen: ScreenName.SwapTab,
+          params: expectedSwapParams,
+        },
       },
-    });
+      { pop: true },
+    );
   });
 });

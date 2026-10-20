@@ -4,7 +4,7 @@ import type { Step } from "~/renderer/components/Stepper";
 import type { Operation } from "@ledgerhq/types-live";
 import type {
   HederaAccount,
-  Transaction,
+  HederaGenericTransaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/hedera/types";
 import type { OpenModal } from "~/renderer/actions/modals";
@@ -23,10 +23,10 @@ export type StepProps = {
   optimisticOperation: Operation | undefined;
   error: Error | undefined;
   signed: boolean;
-  transaction: Transaction | undefined | null;
+  transaction: HederaGenericTransaction | undefined | null;
   status: TransactionStatus;
-  onChangeTransaction: (a: Transaction) => void;
-  onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;
+  onChangeTransaction: (a: HederaGenericTransaction) => void;
+  onUpdateTransaction: (a: (a: HederaGenericTransaction) => HederaGenericTransaction) => void;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;

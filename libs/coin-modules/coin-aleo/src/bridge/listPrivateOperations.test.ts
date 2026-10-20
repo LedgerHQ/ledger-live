@@ -1,5 +1,9 @@
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getMockedEnrichedPrivateRecord, getMockedRecord } from "../__tests__/fixtures/api.fixture";
+import {
+  getMockedEnrichedPrivateRecord,
+  getMockedRecord,
+  getMockedTransactionDetails,
+} from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
 import { enrichPrivateRecords } from "../network/utils";
@@ -180,6 +184,20 @@ describe("buildConsumedRecordTags", () => {
     expect(buildConsumedRecordTags([enriched], mockAddress)).toEqual(
       new Set(["consumed-token-tag"]),
     );
+  });
+
+  it("should collect execution tags from a transaction with no fee", () => {
+    const { fee: _, ...details } = getMockedTransactionDetails(undefined, {
+      execution: {
+        transitions: [getMockedTransition([{ id: "in0", type: "record", tag: "consumed-tag-1" }])],
+      },
+    });
+    const enriched = {
+      ...getMockedEnrichedPrivateRecord({ rawRecord: { sender: mockAddress } }),
+      details,
+    };
+
+    expect(buildConsumedRecordTags([enriched], mockAddress)).toEqual(new Set(["consumed-tag-1"]));
   });
 
   it("should ignore transactions this address did not send", () => {

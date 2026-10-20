@@ -4,7 +4,7 @@ import { useSelector } from "~/context/hooks";
 import {
   useSendAmount,
   useCalculateCountervalueCallback,
-} from "@ledgerhq/live-countervalues-react";
+} from "@features/platform-market-countervalues";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { counterValueCurrencySelector } from "~/reducers/settings";

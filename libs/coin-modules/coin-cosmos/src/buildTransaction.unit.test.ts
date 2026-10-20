@@ -25,7 +25,6 @@ import {
 } from "./buildTransaction";
 import Babylon, { BABYLON_STAKING_MESSAGES } from "./chain/Babylon";
 import Cosmos from "./chain/Cosmos";
-import Zenrock from "./chain/Zenrock";
 import { CosmosAccount, CosmosDelegationInfo, Transaction } from "./types";
 
 const veryBigNumber = new BigNumber(3333300000000000000000);
@@ -1212,80 +1211,6 @@ describe("txToMessages — babylon epoching wrapping", () => {
     expect(BABYLON_STAKING_MESSAGES.beginRedelegate.aminoType).toEqual(
       BABYLON_STAKING_MESSAGES.beginRedelegate.protoTypeUrl,
     );
-  });
-});
-
-describe("txToMessages — zenrock relabels staking msgs without wrapping", () => {
-  const zenrock = new Zenrock();
-  const validatorAddress = "zenvaloper1validatorvalidatorvalidatorvalida";
-  const account = {
-    freshAddress: "zen1delegatordelegatordelegatordelegator",
-    currency: { id: "zenrock", units: [{ code: "ZEN" }, { code: "uzen" }] },
-  } as CosmosAccount;
-
-  it("delegate: zrchain labels and a bare (non-wrapped) value", () => {
-    const transaction = {
-      mode: "delegate",
-      amount: new BigNumber(100),
-      validators: [
-        { address: validatorAddress, amount: new BigNumber(100) } as CosmosDelegationInfo,
-      ],
-    } as Transaction;
-    const { aminoMsgs, protoMsgs } = txToMessages(
-      messageParamsFromTransaction(account, transaction),
-      zenrock,
-    );
-    expect(aminoMsgs[0].type).toEqual("zrchain/MsgDelegate");
-    expect(aminoMsgs[0].value.msg).toBeUndefined();
-    expect(aminoMsgs[0].value.validator_address).toEqual(validatorAddress);
-    expect(protoMsgs[0].typeUrl).toEqual("/zrchain.validation.MsgDelegate");
-    const decoded = MsgDelegate.decode(protoMsgs[0].value);
-    expect(decoded.validatorAddress).toEqual(validatorAddress);
-    expect(decoded.amount).toEqual({ denom: "uzen", amount: "100" });
-  });
-
-  it("undelegate: zrchain labels and a bare (non-wrapped) value", () => {
-    const transaction = {
-      mode: "undelegate",
-      validators: [
-        { address: validatorAddress, amount: new BigNumber(100) } as CosmosDelegationInfo,
-      ],
-    } as Transaction;
-    const { aminoMsgs, protoMsgs } = txToMessages(
-      messageParamsFromTransaction(account, transaction),
-      zenrock,
-    );
-    expect(aminoMsgs[0].type).toEqual("zrchain/MsgUndelegate");
-    expect(aminoMsgs[0].value.msg).toBeUndefined();
-    expect(aminoMsgs[0].value.validator_address).toEqual(validatorAddress);
-    expect(protoMsgs[0].typeUrl).toEqual("/zrchain.validation.MsgUndelegate");
-    const decoded = MsgUndelegate.decode(protoMsgs[0].value);
-    expect(decoded.validatorAddress).toEqual(validatorAddress);
-    expect(decoded.amount).toEqual({ denom: "uzen", amount: "100" });
-  });
-
-  it("redelegate: zrchain labels and a bare (non-wrapped) value", () => {
-    const sourceValidator = "zenvaloper1sourcesourcesourcesourcesourcesrc";
-    const transaction = {
-      mode: "redelegate",
-      sourceValidator,
-      validators: [
-        { address: validatorAddress, amount: new BigNumber(100) } as CosmosDelegationInfo,
-      ],
-    } as Transaction;
-    const { aminoMsgs, protoMsgs } = txToMessages(
-      messageParamsFromTransaction(account, transaction),
-      zenrock,
-    );
-    expect(aminoMsgs[0].type).toEqual("zrchain/MsgBeginRedelegate");
-    expect(aminoMsgs[0].value.msg).toBeUndefined();
-    expect(aminoMsgs[0].value.validator_src_address).toEqual(sourceValidator);
-    expect(aminoMsgs[0].value.validator_dst_address).toEqual(validatorAddress);
-    expect(protoMsgs[0].typeUrl).toEqual("/zrchain.validation.MsgBeginRedelegate");
-    const decoded = MsgBeginRedelegate.decode(protoMsgs[0].value);
-    expect(decoded.validatorSrcAddress).toEqual(sourceValidator);
-    expect(decoded.validatorDstAddress).toEqual(validatorAddress);
-    expect(decoded.amount).toEqual({ denom: "uzen", amount: "100" });
   });
 });
 

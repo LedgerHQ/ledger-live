@@ -1,3 +1,4 @@
+export * from "./accountDetail";
 export * from "./counterValue";
 export * from "./disableNftLedgerMarket";
 export * from "./disableNftRaribleOpensea";
@@ -19,7 +20,6 @@ export * from "./lwmContacts";
 export * from "./lwmDustFiltering";
 export * from "./lwmPasswordRevamp";
 export * from "./lwmWallet40";
-export * from "./lwmQuickActionsCtasVariant";
 export * from "./llmTransferButtonCopyVariant";
 export * from "./llRobinhoodDisclaimer";
 export * from "./lwdPayTab";

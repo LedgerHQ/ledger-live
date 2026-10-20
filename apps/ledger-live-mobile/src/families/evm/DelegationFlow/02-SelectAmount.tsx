@@ -97,7 +97,6 @@ export default function SelectAmount({ navigation, route }: Props) {
     setCheckingSeiAssociation(true);
     isSeiAccountUnassociated(
       getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency.id,
       account.freshAddress,
     )
       .then(unassociated => {

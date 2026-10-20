@@ -35,6 +35,7 @@ import { getBalance } from "./getBalance";
 import { findBalance } from "./utils";
 import { getEnergyRentQuote } from "./energyRent";
 import type { EnergyRentRequest } from "./energyRent";
+import { maxRentBaseUnits, rentPriceMargin } from "./energyRent/paymentPolicy";
 
 type TronIntent = TransactionIntent<TronMemo, TronTxData>;
 
@@ -479,7 +480,14 @@ async function quoteTronifyRent(
     }),
   ]);
 
-  const { payCoinAmt } = parseUsdtQuote(quote);
+  const value = payAssetBaseUnits(parseUsdtQuote(quote));
+  // Withdraws the option on Review rather than offering a rent the craft would refuse.
+  const cap = maxRentBaseUnits(logger, config);
+  if (value.isGreaterThan(cap)) {
+    throw new TronifyApiError(
+      `Tronify quoted ${value.toFixed()} USDT base units, above the ${cap.toFixed()} cap`,
+    );
+  }
 
   // Populate a breakdown so validateIntent/resolveFeeContext doesn't fire an extra estimateFees
   // RPC on every keystroke for the Tronify path (resolveFeeContext gates re-estimation on whether
@@ -495,7 +503,7 @@ async function quoteTronifyRent(
     feeLimit: trc20FeeLimit(new BigNumber(energyNeeded).multipliedBy(chainParams.energyFee)),
   };
 
-  return { value: BigInt(payAssetBaseUnits(payCoinAmt).toFixed()), originalValue, breakdown };
+  return { value: BigInt(value.toFixed()), originalValue, breakdown };
 }
 
 /**
@@ -525,11 +533,13 @@ export async function estimateSponsoredFeeQuote(
 }
 
 /** Builds the energy-rent request so the app can hand it straight to `craftEnergyRentTransaction`
- * without computing energy or reading coin-config itself. */
+ * without computing energy or reading coin-config itself. `approvedFee` is the rent approved on
+ * Review, in USDT base units. */
 export async function buildEnergyRentRequest(
   logger: Logger,
   config: TronCoinConfig,
   intent: TronIntent,
+  approvedFee: bigint,
 ): Promise<EnergyRentRequest> {
   if (intent.type !== "send" || intent.asset.type !== "trc20" || !intent.asset.assetReference) {
     throw new EnergyRentUnsupportedIntent("Energy rent is only available for TRC-20 send intents");
@@ -541,6 +551,17 @@ export async function buildEnergyRentRequest(
   if (intent.useAllAmount) {
     throw new EnergyRentUnsupportedIntent("Energy rent requires a resolved amount, not a max send");
   }
+  if (approvedFee <= 0n) {
+    throw new EnergyRentUnsupportedIntent("Energy rent requires the fee approved on Review");
+  }
+  const approved = new BigNumber(approvedFee.toString());
+  const cap = maxRentBaseUnits(logger, config);
+  if (approved.isGreaterThan(cap)) {
+    throw new TronifyApiError(
+      `The approved rent of ${approved.toFixed()} USDT base units is above the ${cap.toFixed()} cap`,
+    );
+  }
+
   const tronifyConfig = config.energyRent?.tronify;
   const durationSeconds = readRentalParam(
     logger,
@@ -551,23 +572,9 @@ export async function buildEnergyRentRequest(
   );
   const extraTrx = readExtraTrx(logger, tronifyConfig?.rentalExtraTrx);
   const energyNeeded = await estimateEnergy(logger, config, intent);
-  const request: EnergyRentRequest = {
-    payerAddress: intent.sender,
-    receiverAddress: intent.sender,
-    energy: BigInt(energyNeeded),
-    durationSeconds,
-    extraTrx,
-  };
-
-  // A quote failure propagates: crafting without a ceiling is the unbounded case the ceiling guards against.
-  const quote = await getEnergyRentQuote(logger, config, request);
-  // Validate before this becomes the signing ceiling: assertOrderWithinApprovedCost skips its check
-  // when maxPayCoinAmt is undefined.
-  const { payCoinCode, payCoinAmt } = parseUsdtQuote(quote);
 
   // Checked on-chain before any order exists: a balance short of amount + rent would pay for energy
   // the transfer can never use.
-  const rent = BigInt(payAssetBaseUnits(payCoinAmt).toFixed());
   const sending =
     intent.asset.assetReference === TRONIFY_PAY_ASSET.assetReference ? intent.amount : 0n;
   const balance = await tokenBalance(
@@ -576,20 +583,31 @@ export async function buildEnergyRentRequest(
     intent.sender,
     TRONIFY_PAY_ASSET.assetReference,
   );
-  if (balance.isLessThan((rent + sending).toString())) {
+  const leftForRent = balance.minus(sending.toString());
+  if (leftForRent.isLessThan(approved)) {
     throw new EnergyRentInsufficientBalance(
       "USDT balance does not cover the transfer amount plus the energy rent",
     );
   }
-  return { ...request, maxPayCoinAmt: payCoinAmt.toFixed(), maxPayCoinCode: payCoinCode };
+
+  const withMargin = approved
+    .multipliedBy(new BigNumber(1).plus(rentPriceMargin(logger, config)))
+    .integerValue(BigNumber.ROUND_FLOOR);
+  const ceiling = BigNumber.min(withMargin, cap, leftForRent);
+  return {
+    payerAddress: intent.sender,
+    receiverAddress: intent.sender,
+    energy: BigInt(energyNeeded),
+    durationSeconds,
+    extraTrx,
+    maxPayCoinAmt: ceiling.shiftedBy(-TRONIFY_PAY_ASSET.unit.magnitude).toFixed(),
+    maxPayCoinCode: TRONIFY_PAY_ASSET.unit.code,
+  };
 }
 
 // Only USDT-denominated rent is supported (see TRONIFY_PAY_ASSET); fails clearly rather than
 // opaquely downstream (ADR-050 Option 3).
-function parseUsdtQuote(quote: { payCoinCode?: unknown; payCoinAmt?: unknown }): {
-  payCoinCode: typeof TRONIFY_PAY_ASSET.unit.code;
-  payCoinAmt: BigNumber;
-} {
+function parseUsdtQuote(quote: { payCoinCode?: unknown; payCoinAmt?: unknown }): BigNumber {
   const { payCoinCode } = quote;
   if (
     typeof payCoinCode !== "string" ||
@@ -605,5 +623,5 @@ function parseUsdtQuote(quote: { payCoinCode?: unknown; payCoinAmt?: unknown }):
       `Tronify returned an invalid payCoinAmt: ${String(quote.payCoinAmt)}`,
     );
   }
-  return { payCoinCode: TRONIFY_PAY_ASSET.unit.code, payCoinAmt };
+  return payCoinAmt;
 }

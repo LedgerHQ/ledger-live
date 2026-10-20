@@ -13,6 +13,7 @@ if (!process.env.NODE_OPTIONS?.includes(tsconfigPathsRegister)) {
     .join(" ");
 }
 
+const fs = require("node:fs");
 const path = require("node:path");
 const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
 // Node strips the types at require time, so specs that extend the default budget read the same value.
@@ -45,6 +46,29 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
 // jest-allure2-reporter appends descriptions rather than replacing — QAA-1547
 const dedupeParagraphs = paragraphs => [...new Set(paragraphs ?? [])];
 
+// Each issue/TMS link is also tagged `issue:<KEY>` / `tms:<KEY>`, for the Allure 3 Tags filter.
+const TAGGED_LINK_TYPES = new Set(["issue", "tms"]);
+const linkTags = links =>
+  (links ?? [])
+    .filter(link => TAGGED_LINK_TYPES.has(link.type) && (link.name || link.url))
+    .map(link => `${link.type}:${link.name || link.url}`);
+
+const WORKER_KILLED = /A jest worker process \(pid=(?<pid>\d+)\) was terminated/;
+
+function stallReportFor(testFile) {
+  const pid = WORKER_KILLED.exec(testFile.testExecError?.message ?? "")?.groups?.pid;
+  if (!pid) return undefined;
+  try {
+    const report = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "artifacts", `stall-watchdog-${pid}.json`), "utf8"),
+    );
+    const reportNamesThisSpec = path.resolve(report.spec) === testFile.testFilePath;
+    return reportNamesThisSpec ? report : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 const jestAllure2ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
@@ -59,6 +83,9 @@ const jestAllure2ReporterOptions = {
     },
     labels: {
       host: process.env.RUNNER_NAME,
+      tag: ({ value, testCaseMetadata }) => [
+        ...new Set([...[value ?? []].flat(), ...linkTags(testCaseMetadata.links)]),
+      ],
       // Bare spec-file basename (never a directory) so the rerun filter stays portable:
       // `filePath` may be an array of path segments or an absolute/relative path string.
       sourceFile: ({ filePath }) => {
@@ -76,6 +103,28 @@ const jestAllure2ReporterOptions = {
     // Inert outside a retry pass, when retryTestNames is undefined.
     ignored: ({ value, testCase }) =>
       value || (!!retryTestNames && !retryTestNames.has(testCase.fullName)),
+  },
+  testFile: {
+    statusDetails: ({ testFile, value }) => {
+      const report = stallReportFor(testFile);
+      if (!report) return value;
+      return {
+        message: `Stall watchdog: event loop frozen for ${report.staleSeconds}s during "${report.phase}", so the worker was killed and Detox retried the spec.`,
+        trace: report.stack.length
+          ? report.stack.join("\n")
+          : "no JS frames (blocked in native code)",
+      };
+    },
+    labels: {
+      host: process.env.RUNNER_NAME,
+      tag: ({ testFile, testFileMetadata, value }) => [
+        ...new Set([
+          ...[value ?? []].flat(),
+          ...linkTags(testFileMetadata.links),
+          ...(stallReportFor(testFile) ? ["stall-watchdog"] : []),
+        ]),
+      ],
+    },
   },
   overwrite: false,
   environment: async ({ $ }) => ({
@@ -140,15 +189,15 @@ const config = {
       prefix: "<rootDir>/",
     }),
   },
-  transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/)`],
+  transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/|(\\.pnpm/)?@noble)`],
 
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
-  // CI shards exclude `.skip.spec.ts` (apps/ledger-live-mobile/scripts/shard-tests.mjs).
+  // CI shards exclude `.skip.spec.ts` (e2e/mobile/scripts/shard-tests.mjs).
   testPathIgnorePatterns: ["\\.skip\\.spec\\.ts$"],
   testTimeout: TEST_TIMEOUT,
   reporters: [
-    "detox/runners/jest/reporter",
+    "<rootDir>/jest.reporter.js",
     ["jest-allure2-reporter", jestAllure2ReporterOptions],
     ...(process.env.CI ? [["github-actions", { silent: false }]] : []),
   ],

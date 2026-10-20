@@ -1,11 +1,9 @@
 import invariant from "invariant";
-import { AccountBridge } from "@ledgerhq/types-live";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { BitcoinAccount, Transaction } from "./types";
 import { inferFeePerByte } from "./logic";
 import { getWalletAccount } from "./getWalletAccount";
-import { getChainAdapter } from "./chain-adapters/registry";
 /**
  * Build a list of UTXOs to exclude because their transactions can't be fetched.
  * This includes UTXOs from pending operations that were replaced, and any other
@@ -68,14 +66,10 @@ export function sameExcludeUTXOs(
   return true;
 }
 
-export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
-  account,
-  transaction,
-) => {
-  const adapter = getChainAdapter(account.currency.id);
-  const custom = adapter.prepareTransaction?.(account, transaction);
-  if (custom) return custom;
-
+export const prepareTransaction = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<Transaction> => {
   let networkInfo = transaction.networkInfo;
 
   if (!networkInfo) {
@@ -100,21 +94,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   const utxoStrategy = { ...transaction.utxoStrategy, excludeUTXOs: mergedExclusions };
 
-  const inferredFeePerByte = inferFeePerByte(transaction, networkInfo);
-
-  // A chain whose fee is not a rate per vByte resolves the rate from the layout
-  // this transaction resolves to (see ChainAdapter.resolveFeePerByte). It runs on
-  // the merged exclusions, so the rate is resolved against the very UTXO set the
-  // transaction will be built from, and before the change detection below, so
-  // repeated preparations settle at a fixed point instead of re-deriving a rate
-  // that inferFeePerByte would discard.
-  const feePerByte =
-    (await adapter.resolveFeePerByte?.(account, {
-      ...transaction,
-      networkInfo,
-      feePerByte: inferredFeePerByte,
-      utxoStrategy,
-    })) ?? inferredFeePerByte;
+  const feePerByte = inferFeePerByte(transaction, networkInfo);
 
   if (
     transaction.networkInfo === networkInfo &&

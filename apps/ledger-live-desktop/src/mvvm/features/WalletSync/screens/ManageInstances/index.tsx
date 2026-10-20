@@ -73,7 +73,8 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
   return (
     <Flex
       flexDirection="column"
-      height="100%"
+      flex={1}
+      minHeight={0}
       rowGap="48px"
       paddingX={isStepImpacted ? "64px" : undefined}
       alignItems={isStepImpacted ? "center" : undefined}

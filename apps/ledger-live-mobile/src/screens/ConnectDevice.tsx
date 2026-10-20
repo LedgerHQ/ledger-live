@@ -66,6 +66,8 @@ import type { EvmWithdrawFlowParamList } from "~/families/evm/WithdrawFlow/types
 import type { AleoBondPublicFlowParamList } from "~/families/aleo/BondPublicFlow/types";
 import type { AleoClaimUnbondFlowParamList } from "~/families/aleo/ClaimUnbondFlow/types";
 import type { AleoUnbondFlowParamList } from "~/families/aleo/UnbondFlow/types";
+import type { StacksStakingFlowParamList } from "~/families/stacks/StakingFlow/types";
+import type { StacksUnstakingFlowParamList } from "~/families/stacks/UnstakingFlow/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
@@ -142,7 +144,9 @@ type Props =
   | StackNavigatorProps<EvmWithdrawFlowParamList, ScreenName.EvmWithdrawConnectDevice>
   | StackNavigatorProps<AleoBondPublicFlowParamList, ScreenName.AleoBondPublicConnectDevice>
   | StackNavigatorProps<AleoClaimUnbondFlowParamList, ScreenName.AleoClaimUnbondConnectDevice>
-  | StackNavigatorProps<AleoUnbondFlowParamList, ScreenName.AleoUnbondConnectDevice>;
+  | StackNavigatorProps<AleoUnbondFlowParamList, ScreenName.AleoUnbondConnectDevice>
+  | StackNavigatorProps<StacksStakingFlowParamList, ScreenName.StacksStakingConnectDevice>
+  | StackNavigatorProps<StacksUnstakingFlowParamList, ScreenName.StacksUnstakingConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

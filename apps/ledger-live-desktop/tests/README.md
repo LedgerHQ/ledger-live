@@ -381,6 +381,8 @@ _I want Chrome DevTools._
 
     DEV_TOOLS=1 pnpm desktop test:playwright
 
+Add `DEV_TOOLS_MODE=detach` (or `right`, `left`, `bottom`, `undocked`) to choose where they open.
+
 _I want verbose logging._
 
     DEBUG=pw:api pnpm desktop test:playwright

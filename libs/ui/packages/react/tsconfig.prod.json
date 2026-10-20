@@ -6,14 +6,5 @@
     "declaration": true,
     "customConditions": []
   },
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js",
-    "./scripts",
-    "./lib",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+  "exclude": ["node_modules", "./scripts", "./lib"]
 }

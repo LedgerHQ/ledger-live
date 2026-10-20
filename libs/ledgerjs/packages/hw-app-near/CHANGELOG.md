@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-near
 
+## 6.37.0
+
+### Minor Changes
+
+- [#22668](https://github.com/LedgerHQ/ledger-live/pull/22668) [`05d636b`](https://github.com/LedgerHQ/ledger-live/commit/05d636b6722285001b62bb4ea30bad32a65c5a9a) Thanks [@qperrot](https://github.com/qperrot)! - Bump near-api-js from v3 to v7 and migrate to its new API
+
+## 6.37.0-next.0
+
+### Minor Changes
+
+- [#22668](https://github.com/LedgerHQ/ledger-live/pull/22668) [`05d636b`](https://github.com/LedgerHQ/ledger-live/commit/05d636b6722285001b62bb4ea30bad32a65c5a9a) Thanks [@qperrot](https://github.com/qperrot)! - Bump near-api-js from v3 to v7 and migrate to its new API
+
 ## 6.36.0
 
 ### Minor Changes
@@ -145,19 +157,5 @@
 
 - Updated dependencies [[`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
   - @ledgerhq/hw-transport@6.35.0-next.0
-
-## 6.34.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.34.1
-
-## 6.34.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.34.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

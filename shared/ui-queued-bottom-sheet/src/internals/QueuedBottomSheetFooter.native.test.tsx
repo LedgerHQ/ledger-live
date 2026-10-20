@@ -1,7 +1,25 @@
 import React from "react";
-import { Keyboard, Platform, View, type KeyboardEvent, type KeyboardEventName } from "react-native";
+import {
+  Keyboard,
+  Platform,
+  View,
+  type KeyboardEvent,
+  type KeyboardEventName,
+  type KeyboardMetrics,
+} from "react-native";
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import { QueuedBottomSheetFooter } from "./QueuedBottomSheetFooter.native";
+
+const KEYBOARD_SHOWN = 1;
+
+let gorhomKeyboard: { status: number; heightWithinContainer: number } | null = null;
+let keyboardMetrics: KeyboardMetrics | undefined;
+
+jest.mock("@gorhom/bottom-sheet", () => ({
+  KEYBOARD_STATUS: { UNDETERMINED: 0, SHOWN: 1, HIDDEN: 2 },
+  useBottomSheetInternal: () =>
+    gorhomKeyboard === null ? null : { animatedKeyboardState: { get: () => gorhomKeyboard } },
+}));
 
 const BOTTOM_INSET = 48;
 
@@ -15,6 +33,9 @@ describe("QueuedBottomSheetFooter (native)", () => {
 
   beforeEach(() => {
     listeners.clear();
+    gorhomKeyboard = null;
+    keyboardMetrics = undefined;
+    Keyboard.metrics = () => keyboardMetrics;
     jest.spyOn(Keyboard, "addListener").mockImplementation(((
       event: KeyboardEventName,
       listener: (event: KeyboardEvent) => void,
@@ -68,12 +89,67 @@ describe("QueuedBottomSheetFooter (native)", () => {
     expect(footerPaddingBottom()).toBeGreaterThanOrEqual(BOTTOM_INSET);
   });
 
-  it("stays put on iOS, where gorhom already offsets the keyboard", () => {
+  it("stays put on iOS while the keyboard is closed", () => {
     Platform.OS = "ios";
     renderFooter();
 
-    expect(listeners.size).toBe(0);
     expect(footerTranslateY()).toBe(0);
+  });
+
+  it("rises on iOS over a keyboard gorhom never offset", () => {
+    Platform.OS = "ios";
+    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
+    renderFooter();
+
+    expect(footerTranslateY()).toBe(-320);
+  });
+
+  it("keeps the iOS footer down when the keyboard hides during sampling", () => {
+    Platform.OS = "ios";
+    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
+    const pending: Array<(time: number) => void> = [];
+    const runtime = globalThis as unknown as {
+      requestAnimationFrame: (callback: (time: number) => void) => number;
+    };
+    const originalFrame = runtime.requestAnimationFrame;
+    runtime.requestAnimationFrame = callback => {
+      pending.push(callback);
+      return pending.length;
+    };
+
+    try {
+      renderFooter();
+      expect(footerTranslateY()).toBe(-320);
+
+      act(() => {
+        listeners.get("keyboardWillHide")?.({ endCoordinates: { height: 0 } } as KeyboardEvent);
+      });
+      act(() => {
+        pending.splice(0).forEach(callback => callback(0));
+      });
+
+      expect(footerTranslateY()).toBe(0);
+    } finally {
+      runtime.requestAnimationFrame = originalFrame;
+    }
+  });
+
+  it("leaves an iOS keyboard gorhom already cleared alone", () => {
+    Platform.OS = "ios";
+    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
+    gorhomKeyboard = { status: KEYBOARD_SHOWN, heightWithinContainer: 320 };
+    renderFooter();
+
+    expect(footerTranslateY()).toBe(0);
+  });
+
+  it("closes only the iOS gap gorhom left", () => {
+    Platform.OS = "ios";
+    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
+    gorhomKeyboard = { status: KEYBOARD_SHOWN, heightWithinContainer: 100 };
+    renderFooter();
+
+    expect(footerTranslateY()).toBe(-220);
   });
 
   function showKeyboard(height: number) {

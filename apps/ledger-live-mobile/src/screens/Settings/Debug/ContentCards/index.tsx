@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Alert } from "react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { GenericAwarenessModalLayout } from "@ledgerhq/live-common/genericAwarenessModal";
 import { Box, Button as LumenButton } from "@ledgerhq/lumen-ui-rnative";
 import useEnv from "@features/platform-env";
@@ -396,8 +396,8 @@ export default function DebugContentCards() {
     buckets.rawCards.find(card => card.id === selectedRawCardId) ??
     localCards.find(card => card.id === selectedRawCardId);
 
-  const copyJson = (id: string, value: unknown) => {
-    Clipboard.setString(JSON.stringify(value, null, 2));
+  const copyJson = async (id: string, value: unknown) => {
+    if (!(await copyToClipboard(JSON.stringify(value, null, 2)))) return;
     pushToast({
       id,
       type: "success",

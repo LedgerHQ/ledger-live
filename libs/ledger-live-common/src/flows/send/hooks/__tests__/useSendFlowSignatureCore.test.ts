@@ -267,6 +267,64 @@ describe("useSendFlowSignatureCore", () => {
     expect(params.statusActions.setSuccess).toHaveBeenCalledTimes(1);
   });
 
+  it("should present a broadcast rejection as a transaction broadcast error", async () => {
+    const broadcastError = Object.assign(new Error("Insufficient funds for gas * price + value"), {
+      name: "LedgerAPI4xx",
+    });
+    const params = createParams({
+      account: { ...createAccount(), currency: { ...currency, name: "Bitcoin" } } as Account,
+      broadcast: jest.fn().mockRejectedValue(broadcastError),
+    });
+
+    const { result } = renderHook(() => useSendFlowSignatureCore(params));
+
+    act(() => {
+      result.current.onDeviceActionResult({
+        signedOperation: createSignedOperation(),
+        device: {},
+      });
+    });
+
+    await waitFor(() => expect(params.operation.onTransactionError).toHaveBeenCalledTimes(1));
+    expect(params.operation.onTransactionError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "TransactionBroadcastError",
+        message: broadcastError.message,
+        coin: "BTC",
+        networkName: "Bitcoin",
+      }),
+    );
+    expect(params.operation.onSigned).toHaveBeenCalledTimes(1);
+    expect(params.onFinish).toHaveBeenCalledWith(
+      SEND_FLOW_COMPLETION.FAILURE,
+      expect.objectContaining({ name: "TransactionBroadcastError" }),
+    );
+  });
+
+  it("should keep a serialized network rejection retryable", async () => {
+    const params = createParams({
+      broadcast: jest.fn().mockRejectedValue({ name: "NetworkDown", message: "offline" }),
+    });
+
+    const { result } = renderHook(() => useSendFlowSignatureCore(params));
+
+    act(() => {
+      result.current.onDeviceActionResult({
+        signedOperation: createSignedOperation(),
+        device: {},
+      });
+    });
+
+    await waitFor(() => expect(params.operation.onTransactionError).toHaveBeenCalledTimes(1));
+    expect(params.operation.onTransactionError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "TransactionBroadcastError",
+        message: "offline",
+        retryable: true,
+      }),
+    );
+  });
+
   it("should finish with an error when the device action result has no signed operation", () => {
     const params = createParams();
 

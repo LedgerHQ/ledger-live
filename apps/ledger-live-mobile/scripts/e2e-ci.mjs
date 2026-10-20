@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 import { basename } from "path";
 
-let platform, test, build, bundle, bundleSize;
+let platform, test, build, bundle;
 let testType = "mock";
 let cache = true;
 let shard = "";
@@ -19,7 +19,7 @@ const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(
       __filename,
-    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--bundle-size] [--cache | --no-cache] [--testType] [--shard] [--production]`,
+    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--testType] [--shard] [--production]`,
   );
   process.exit(exitCode);
 };
@@ -40,11 +40,6 @@ const bundle_android = async () => {
   // Hermes doesn't require JS minification - it optimizes during bytecode compilation
   // Using Repack with --minify true causes parsing errors with Hermes
   await $`pnpm mobile bundle:android --dev false --minify false`;
-};
-
-// Minified bundle for size reporting (not used for E2E tests)
-const minify_existing_bundle = async () => {
-  await $`pnpm mobile minify:bundle`;
 };
 
 const bundle_ios_with_cache = async () => {
@@ -70,7 +65,7 @@ const test_ios = async () => {
       --take-screenshots failing \
       --forceExit \
       --headless \
-      --retries ${testType === "mock" ? 1 : 2} \
+      --retries 1 \
       --cleanup \
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;
@@ -88,7 +83,7 @@ const test_android = async () => {
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
-      --retries ${testType === "mock" ? 1 : 2} \\
+      --retries 1 \\
       --cleanup \\
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;
@@ -98,13 +93,11 @@ const getTasksFrom = {
   ios: {
     build: build_ios,
     bundle: async () => (cache ? await bundle_ios_with_cache() : await bundle_ios()),
-    bundleSize: minify_existing_bundle,
     test: test_ios,
   },
   android: {
     build: build_android,
     bundle: async () => await bundle_android(),
-    bundleSize: minify_existing_bundle,
     test: test_android,
   },
 };
@@ -134,8 +127,8 @@ for (const argName in argv) {
     case "bundle":
       bundle = true;
       break;
+    // No-op: still passed by the develop workflows until this change lands there
     case "bundle-size":
-      bundleSize = true;
       break;
     case "cache":
       cache = argv[argName];
@@ -198,9 +191,6 @@ within(async () => {
   }
   if (bundle) {
     await getTasksFrom[platform].bundle();
-  }
-  if (bundleSize) {
-    await getTasksFrom[platform].bundleSize();
   }
   if (test) {
     await getTasksFrom[platform].test();

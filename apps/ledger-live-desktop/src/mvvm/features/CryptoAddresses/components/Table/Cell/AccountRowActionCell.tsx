@@ -1,24 +1,25 @@
 import React from "react";
 import { IconButton, Tooltip, TooltipTrigger, TooltipContent } from "@ledgerhq/lumen-ui-react";
-import { PenEdit } from "@ledgerhq/lumen-ui-react/symbols";
+import type { IconButtonProps } from "@ledgerhq/lumen-ui-react";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useTranslation } from "react-i18next";
-import { EditName } from "../../EditName";
 
 type AccountRowActionCellProps = {
   readonly account: AccountLike;
-  readonly editNameAriaLabel: string;
+  readonly icon: IconButtonProps["icon"];
+  readonly ariaLabel: string;
   readonly isSyncing: boolean;
+  readonly onAction: (account: AccountLike) => void;
 };
 
 export function AccountRowActionCell({
   account,
-  editNameAriaLabel,
+  icon,
+  ariaLabel,
   isSyncing,
+  onAction,
 }: AccountRowActionCellProps) {
   const { t } = useTranslation();
-  const currency = getAccountCurrency(account);
 
   return (
     <div className="flex justify-end" onClick={e => e.stopPropagation()}>
@@ -29,8 +30,8 @@ export function AccountRowActionCell({
               <IconButton
                 appearance="transparent"
                 size="sm"
-                icon={PenEdit}
-                aria-label={editNameAriaLabel}
+                icon={icon}
+                aria-label={ariaLabel}
                 disabled
               />
             </span>
@@ -40,14 +41,13 @@ export function AccountRowActionCell({
           </TooltipContent>
         </Tooltip>
       ) : (
-        <EditName account={account} asset={currency.name}>
-          <IconButton
-            appearance="transparent"
-            size="sm"
-            icon={PenEdit}
-            aria-label={editNameAriaLabel}
-          />
-        </EditName>
+        <IconButton
+          appearance="transparent"
+          size="sm"
+          icon={icon}
+          aria-label={ariaLabel}
+          onClick={() => onAction(account)}
+        />
       )}
     </div>
   );

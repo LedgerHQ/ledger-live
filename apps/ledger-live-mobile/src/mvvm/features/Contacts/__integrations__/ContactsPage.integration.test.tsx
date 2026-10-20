@@ -24,14 +24,6 @@ function renderContactsPage(
     >
       <ContactsView
         viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
-        labels={{
-          title: "Contacts",
-          searchPlaceholder: "Search contact",
-          searchNoResults: "No contact found",
-          addContact: "Add contact",
-          ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
-          formatAddressCount: count => `${count} address`,
-        }}
         searchQuery=""
         onSearchQueryChange={jest.fn()}
         onOpenContact={onOpenContact}
@@ -40,10 +32,6 @@ function renderContactsPage(
         featureIntroduction={createClosedContactsFeatureIntroduction()}
         ledgerSyncIntroduction={{
           isOpen: false,
-          title: "Sync your wallet to add a contact",
-          description: "Contacts are encrypted.",
-          activateLabel: "Sync my wallet",
-          dismissLabel: "Not now",
           onActivate: jest.fn(),
           onDismiss: jest.fn(),
         }}

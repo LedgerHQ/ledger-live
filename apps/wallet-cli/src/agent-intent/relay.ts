@@ -46,6 +46,24 @@ export function assertServiceUrl(value: string, flagName: string): void {
   }
 }
 
+/** Re-checks a service URL read back from session.yaml, which can be edited by hand. */
+export function assertStoredServiceUrl(
+  profileId: string,
+  value: string,
+  flagName: string,
+  label: string,
+): void {
+  try {
+    assertServiceUrl(value, flagName);
+  } catch (e) {
+    throw new Error(
+      `Agent Intent profile "${profileId}" has an invalid stored ${label} — fix the record in ` +
+        "session.yaml before using it.",
+      { cause: e },
+    );
+  }
+}
+
 /** Relay timers default to 15 min; stretched so only the signed expiry bounds the wait. */
 export function createRelayHost(
   environment: AgentIntentEnvironment,

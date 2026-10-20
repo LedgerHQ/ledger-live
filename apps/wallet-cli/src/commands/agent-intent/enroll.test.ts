@@ -554,3 +554,31 @@ describe("agent-intent enroll", () => {
     });
   });
 });
+
+describe("agent-intent enroll --source", () => {
+  const sourceSchema = (
+    enrollCommand as unknown as {
+      options: {
+        source: { schema: { safeParse: (value: unknown) => { success: boolean; data?: unknown } } };
+      };
+    }
+  ).options.source.schema;
+
+  it("defaults to other when the agent doesn't declare its runtime", () => {
+    expect(sourceSchema.safeParse(undefined)).toEqual({ success: true, data: "other" });
+  });
+
+  it.each(["openclaw", "hermes", "claude-code", "codex", "cursor", "muse", "grok-bot", "other"])(
+    "accepts the controlled source %s",
+    source => {
+      expect(sourceSchema.safeParse(source).success).toBe(true);
+    },
+  );
+
+  it.each(["trading", "Claude Code", "ledger-official", ""])(
+    "rejects the uncontrolled source %s",
+    source => {
+      expect(sourceSchema.safeParse(source).success).toBe(false);
+    },
+  );
+});

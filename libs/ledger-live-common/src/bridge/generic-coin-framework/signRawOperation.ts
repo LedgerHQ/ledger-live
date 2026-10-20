@@ -29,7 +29,7 @@ async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDe
   const bridgeApi = await getBridgeApi(account.currency, network);
   const signedInfo = await signerContext(deviceId, async signer => {
     const derivationPath = account.freshAddressPath;
-    const deviceSignOptions = bridgeApi.getDeviceSignOptions?.({}, account);
+    const deviceSignOptions = bridgeApi.getDeviceSignOptions?.({ raw: transaction }, account);
     const { publicKey } = (await signer.getAddress(
       derivationPath,
       deviceSignOptions,
@@ -53,7 +53,12 @@ async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDe
     o.next({ type: "device-signature-requested" });
     /* Sign on Ledger device */
     const txnSig = await signer.signTransaction(derivationPath, unsigned, deviceSignOptions);
-    return { unsigned, txnSig, publicKey, sequence: sequenceNumber };
+    return {
+      unsigned: bridgeApi.applyDeviceSignResult?.(unsigned, deviceSignOptions) ?? unsigned,
+      txnSig,
+      publicKey,
+      sequence: sequenceNumber,
+    };
   });
 
   /* If the user cancelled inside signerContext */

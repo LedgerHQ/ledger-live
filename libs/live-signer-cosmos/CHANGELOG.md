@@ -1,5 +1,50 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`0f401bb`](https://github.com/LedgerHQ/ledger-live/commit/0f401bb6289b6e78fbd05b6f98977bde4999d22a), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`0a65851`](https://github.com/LedgerHQ/ledger-live/commit/0a65851ea6de6228030a2c94f0cad2234903db2b), [`77d202b`](https://github.com/LedgerHQ/ledger-live/commit/77d202b1930715ed30b62521fbc5692969b6ec47), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`99b54cd`](https://github.com/LedgerHQ/ledger-live/commit/99b54cdac46807286d75caa1a94e61a37606c18f), [`3cdcba9`](https://github.com/LedgerHQ/ledger-live/commit/3cdcba9252780b413452cb100682cf08041d966e)]:
+  - @ledgerhq/coin-cosmos@1.6.0
+  - @ledgerhq/hw-app-cosmos@6.37.0
+
+## 0.6.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-cosmos@1.6.0-next.1
+
+## 0.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0f401bb`](https://github.com/LedgerHQ/ledger-live/commit/0f401bb6289b6e78fbd05b6f98977bde4999d22a), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`0a65851`](https://github.com/LedgerHQ/ledger-live/commit/0a65851ea6de6228030a2c94f0cad2234903db2b), [`77d202b`](https://github.com/LedgerHQ/ledger-live/commit/77d202b1930715ed30b62521fbc5692969b6ec47), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`99b54cd`](https://github.com/LedgerHQ/ledger-live/commit/99b54cdac46807286d75caa1a94e61a37606c18f), [`3cdcba9`](https://github.com/LedgerHQ/ledger-live/commit/3cdcba9252780b413452cb100682cf08041d966e)]:
+  - @ledgerhq/coin-cosmos@1.6.0-next.0
+  - @ledgerhq/hw-app-cosmos@6.37.0
+
+## 0.6.0
+
+### Minor Changes
+
+- [#22410](https://github.com/LedgerHQ/ledger-live/pull/22410) [`4efbefe`](https://github.com/LedgerHQ/ledger-live/commit/4efbefe6bf557124596a33f4a94849056953c391) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore: bump tronweb to 6.5.1 and @zondax/ledger-cosmos-js to 4.2.0, and drop their pnpmfile patches
+
+### Patch Changes
+
+- Updated dependencies [[`e046686`](https://github.com/LedgerHQ/ledger-live/commit/e046686befa308188170ac9950eae394863c76a5), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d)]:
+  - @ledgerhq/coin-cosmos@1.5.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#22410](https://github.com/LedgerHQ/ledger-live/pull/22410) [`4efbefe`](https://github.com/LedgerHQ/ledger-live/commit/4efbefe6bf557124596a33f4a94849056953c391) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore: bump tronweb to 6.5.1 and @zondax/ledger-cosmos-js to 4.2.0, and drop their pnpmfile patches
+
+### Patch Changes
+
+- Updated dependencies [[`e046686`](https://github.com/LedgerHQ/ledger-live/commit/e046686befa308188170ac9950eae394863c76a5), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d)]:
+  - @ledgerhq/coin-cosmos@1.5.0-next.0
+
 ## 0.5.1
 
 ### Patch Changes
@@ -162,36 +207,5 @@
   - @ledgerhq/coin-cosmos@0.41.0
   - @ledgerhq/hw-app-cosmos@6.36.7
   - @ledgerhq/hw-transport@6.35.7
-
-## 0.4.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004), [`d7600fb`](https://github.com/LedgerHQ/ledger-live/commit/d7600fb21e73581fbfb20019a78109b9a5c9abff)]:
-  - @ledgerhq/errors@7.0.0-next.0
-  - @ledgerhq/coin-cosmos@0.41.0-next.0
-  - @ledgerhq/hw-app-cosmos@6.36.7-next.0
-  - @ledgerhq/hw-transport@6.35.7-next.0
-
-## 0.4.2
-
-### Patch Changes
-
-- Updated dependencies [[`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`d50d169`](https://github.com/LedgerHQ/ledger-live/commit/d50d16989e968fbb3ff45f6c463cae886e0e566a)]:
-  - @ledgerhq/coin-cosmos@0.40.0
-
-## 0.4.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`d50d169`](https://github.com/LedgerHQ/ledger-live/commit/d50d16989e968fbb3ff45f6c463cae886e0e566a)]:
-  - @ledgerhq/coin-cosmos@0.40.0-next.0
-
-## 0.4.1
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`25fd71b`](https://github.com/LedgerHQ/ledger-live/commit/25fd71b4caaa8781101dad205669773b234d86c0), [`9824fc8`](https://github.com/LedgerHQ/ledger-live/commit/9824fc8e03b55afe020e87a7f55fe44104f69e1b), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10)]:
-  - @ledgerhq/coin-cosmos@0.39.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

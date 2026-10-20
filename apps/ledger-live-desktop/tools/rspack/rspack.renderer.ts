@@ -1,6 +1,9 @@
+import fs from "fs";
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ProcessReadGuard = require("./processReadGuard.cjs");
 import { commonConfig, rootFolder } from "./rspack.common";
 import {
   buildRendererEnv,
@@ -11,15 +14,19 @@ import {
   isRsdoctorEnabled,
 } from "./utils";
 
-/**
- * Creates the rspack configuration for the Electron renderer process
- */
+const rendererCrashHandler = path.resolve(rootFolder, "src", "renderer", "pre.ts");
+const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
+// Node conditions pick the `main` build; resolving avoids pinning the peer-suffixed .pnpm dir name
+const resolveFromLib = (lib: string, request: string) =>
+  require.resolve(request, { paths: [path.resolve(rootFolder, "..", "..", "libs", lib)] });
+
 export function createRendererConfig(
   mode: "development" | "production",
   options?: { devServer?: boolean },
 ): RspackOptions {
   const isDev = mode === "development";
   const useDevServer = options?.devServer ?? isDev;
+  const devtool = isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map";
 
   // Ensure single instance of styled-components (avoid theme context issues)
   const styledComponentsPath = require.resolve("styled-components");
@@ -28,18 +35,24 @@ export function createRendererConfig(
     ...commonConfig,
     name: "renderer",
     mode,
-    // Use electron-renderer target - ElectronTargetPlugin handles node builtins
-    target: "electron-renderer",
+    target: ["web", "es2022"],
     entry: {
-      renderer: path.resolve(rootFolder, "src", "renderer", "index.ts"),
+      // Order matters: crash screen, then the process shim, then the app.
+      renderer: [
+        rendererCrashHandler,
+        rendererProcessShim,
+        path.resolve(rootFolder, "src", "renderer", "index.ts"),
+      ],
     },
     output: {
       ...commonConfig.output,
       filename: "renderer.bundle.js",
+      // Otherwise the chunk runtime emits `global[...]`, which the renderer does not have.
+      globalObject: "globalThis",
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
     },
-    devtool: isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map",
+    devtool,
     resolve: {
       ...commonConfig.resolve,
       // Platform-specific file resolution:
@@ -71,6 +84,25 @@ export function createRendererConfig(
             ".lottie",
           ],
       mainFields: ["browser", "module", "main"],
+      aliasFields: ["browser"],
+      fallback: {
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("readable-stream"),
+        string_decoder: require.resolve("string_decoder/"),
+        url: require.resolve("url/"),
+        querystring: require.resolve("querystring-es3"),
+        path: require.resolve("path-browserify"),
+        util: require.resolve("util/"),
+        assert: require.resolve("assert/"),
+        buffer: require.resolve("buffer/"),
+        http: false,
+        https: false,
+        net: false,
+        tls: false,
+        zlib: false,
+        fs: false,
+        child_process: false,
+      },
       // Don't require file extensions in imports for ESM modules
       fullySpecified: false,
       // Module resolution paths - needed for features folder to find react, etc.
@@ -87,78 +119,34 @@ export function createRendererConfig(
         // .node addon stays out of the bundle: it is hosted in a UtilityProcess,
         // reached over the `zcash:*` channels the main process registers (see
         // `@ledgerhq/coin-zcash/network/ipc/main-host`).
-        "@ledgerhq/coin-zcash/network/ZCash$": "@ledgerhq/coin-zcash/network/ZCashIPC",
+        "@ledgerhq/coin-zcash/network/ZCash$": path.resolve(lldRoot, "src", "renderer", "zcash.ts"),
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
-        // Force rspack to use node/esm builds for these packages to reduce bundle size
-        // These packages have browser field pointing to larger UMD/web bundles
-        "icon-sdk-js": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "icon-sdk-js@1.5.2",
-          "node_modules",
-          "icon-sdk-js",
-          "build",
-          "icon-sdk-js.node.min.js",
-        ),
         // @stellar/stellar-sdk: browser field is dist/stellar-sdk.min.js (915KB), main is lib/index.js (smaller, tree-shakeable)
-        "@stellar/stellar-sdk": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "@stellar+stellar-sdk@14.0.0",
-          "node_modules",
-          "@stellar",
-          "stellar-sdk",
-          "lib",
-          "index.js",
-        ),
+        "@stellar/stellar-sdk": resolveFromLib("ledger-live-common", "@stellar/stellar-sdk"),
         // casper-js-sdk: browser field is dist/lib.web.js (1MB), main is dist/lib.node.js (smaller)
-        "casper-js-sdk": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "casper-js-sdk@5.1.1",
-          "node_modules",
-          "casper-js-sdk",
-          "dist",
-          "lib.node.js",
-        ),
-        // web3: browser field is dist/web3.min.js (1.3MB UMD), main is lib/index.js (tree-shakeable)
-        // LIVE-23059: long term solution is to get rid of this deprecated lib
-        web3: path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "web3@1.10.4",
-          "node_modules",
-          "web3",
-          "lib",
-          "index.js",
-        ),
+        "casper-js-sdk": resolveFromLib("coin-modules/coin-casper", "casper-js-sdk"),
         // Deduplicate @scure/bip39: multiple versions (1.x from cosmos/casper/filecoin, 2.x from @mysten/sui).
-        // The path pins an exact version, so a @mysten/sui bump that moves its 2.x needs it updated.
         // V2 is backward-compatible and shares @noble/hashes@2.x already in the bundle
-        "@scure/bip39": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "@scure+bip39@2.3.0",
-          "node_modules",
-          "@scure",
-          "bip39",
+        "@scure/bip39": path.dirname(
+          require.resolve("@scure/bip39", {
+            paths: [
+              fs.realpathSync(
+                path.resolve(
+                  rootFolder,
+                  "..",
+                  "..",
+                  "libs",
+                  "coin-modules",
+                  "coin-sui",
+                  "node_modules",
+                  "@mysten",
+                  "sui",
+                ),
+              ),
+            ],
+          }),
         ),
       },
     },
@@ -269,15 +257,31 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
+        {
+          test: /\.js$/,
+          include:
+            /[\\/]node_modules[\\/](assert|vfile|path-browserify|randombytes|randomfill|eventsource|icon-sdk-js|util)[\\/]/,
+          use: [path.resolve(__dirname, "processShimLoader.cjs")],
+        },
       ],
     },
     plugins: [
       ...getRsdoctorPlugin("renderer"),
-      // ElectronTargetPlugin for proper node/electron module handling
-      new rspack.electron.ElectronTargetPlugin("renderer"),
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),
+        // Set by src/renderer/bootstrap/process.ts.
+        "process.env": "globalThis.__LLD_PROCESS_ENV__",
+        "process.platform": "globalThis.__LLD_PROCESS_PLATFORM__",
+        "process.mas": "globalThis.__LLD_PROCESS_MAS__",
+        "process.windowsStore": "globalThis.__LLD_PROCESS_WINDOWS_STORE__",
+        "process.type": JSON.stringify("renderer"),
+        "process.release": "undefined",
+        "process.browser": "true",
+        global: "globalThis",
+      }),
+      new rspack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
       }),
       new rspack.HtmlRspackPlugin({
         template: path.resolve(rootFolder, "src", "renderer", "index.html"),
@@ -288,6 +292,7 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
+      ...(devtool === "source-map" ? [new ProcessReadGuard()] : []),
     ],
     optimization: {
       minimize: !isDev,

@@ -19,10 +19,12 @@ import {
   lastBlock,
   listFeeOptions,
   listOperations,
+  buildEnergyRentRequest,
 } from "../logic";
 import { TRONIFY_FEE_OPTION_ID } from ".";
 
 jest.mock("../logic", () => ({
+  buildEnergyRentRequest: jest.fn(),
   broadcast: jest.fn(),
   combine: jest.fn(),
   craftRawTransaction: jest.fn((rawDataHex: string) => ({ transaction: rawDataHex })),
@@ -303,10 +305,29 @@ test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
   expect(typeof seam.buildSignedEnergyRentTransaction).toBe("function");
   expect(typeof seam.rentPayment).toBe("function");
   expect(typeof seam.reservationDedupKey).toBe("function");
+  expect(typeof seam.classifyRentOrderError).toBe("function");
   expect(seam).toMatchObject({
     feeOptionId: TRONIFY_FEE_OPTION_ID,
     providerName: "Tronify",
     waivesErrorKeys: ["gasLimit"],
     waivesWarningKeys: ["amount"],
   });
+});
+
+test("createSponsoredSendApi hands the fee approved on Review to the energy-rent request", async () => {
+  const config = {} as TronCoinConfig;
+  const seamContext: TronContext = {
+    logger: jest.fn(),
+    config: jest.fn<Promise<TronCoinConfig>, []>().mockResolvedValue(config),
+  };
+  const intent = { type: "send" } as unknown as TransactionIntent<TronMemo, TronTxData>;
+
+  await createSponsoredSendApi(seamContext).buildEnergyRentRequest(intent, 3_210_580n);
+
+  expect(jest.mocked(buildEnergyRentRequest)).toHaveBeenCalledWith(
+    seamContext.logger,
+    config,
+    intent,
+    3_210_580n,
+  );
 });

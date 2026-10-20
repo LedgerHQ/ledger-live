@@ -29,7 +29,7 @@ jest.mock("../logic", () => ({
 }));
 
 function generateApi() {
-  return createApi();
+  return createApi("polkadot");
 }
 
 describe("index", () => {
@@ -97,6 +97,18 @@ describe("index", () => {
         "polkadot",
       );
     });
+
+    it("forwards the currency id the api was created with", async () => {
+      mockBroadcast.mockResolvedValueOnce("");
+
+      await createApi("westend").broadcast(context, "some random string");
+
+      expect(mockBroadcast).toHaveBeenCalledWith(
+        polkadotMainnetConfigValue,
+        "some random string",
+        "westend",
+      );
+    });
   });
 
   describe("craftTransaction", () => {
@@ -124,6 +136,24 @@ describe("index", () => {
       const tx = await api.craftTransaction(context, intent);
       expect(tx).toEqual({ transaction: extrinsic.toHex() });
     });
+
+    it("forwards the currency id the api was created with", async () => {
+      mockCraftTransaction.mockClear();
+      const registry = new TypeRegistry();
+      jest
+        .spyOn(registry, "createType")
+        .mockReturnValue({ toHex: () => "0x1234" } as unknown as GenericExtrinsic<AnyTuple>);
+      mockCraftTransaction.mockResolvedValue({ unsigned: { version: 0 }, registry });
+
+      await createApi("westend").craftTransaction(context, {
+        amount: 1n,
+        sender: "sender",
+        recipient: "recipient",
+      } as TransactionIntent);
+
+      expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
+      expect(mockCraftTransaction.mock.lastCall?.[4]).toBe("westend");
+    });
   });
 
   describe("estimateFees", () => {
@@ -143,6 +173,25 @@ describe("index", () => {
       const feeEstimation = await api.estimateFees(context, intent);
       expect(feeEstimation.value).toEqual(fees);
     });
+
+    it("forwards the currency id the api was created with", async () => {
+      const tx = {} as CoreTransaction;
+      mockCraftEstimationTransaction.mockResolvedValue(tx);
+      mockEstimateFees.mockResolvedValue(1n);
+
+      await createApi("westend").estimateFees(context, {
+        amount: 1n,
+        sender: "sender",
+      } as TransactionIntent);
+
+      expect(mockCraftEstimationTransaction).toHaveBeenCalledWith(
+        polkadotMainnetConfigValue,
+        "sender",
+        1n,
+        "westend",
+      );
+      expect(mockEstimateFees).toHaveBeenCalledWith(polkadotMainnetConfigValue, tx, "westend");
+    });
   });
 
   describe("listOperations", () => {
@@ -152,6 +201,20 @@ describe("index", () => {
       mockListOperations.mockResolvedValue([[], 2]);
       const result = await api.listOperations(context, "some random address", { minHeight: 0 });
       expect(result).toEqual({ items: [], next: "2" });
+    });
+
+    it("passes the context logger to the logic layer", async () => {
+      const api = generateApi();
+      const logger = jest.fn();
+      mockListOperations.mockResolvedValue([[], 2]);
+
+      await api.listOperations(
+        createMockPolkadotContext(polkadotMainnetConfigValue, logger),
+        "some random address",
+        { minHeight: 0 },
+      );
+
+      expect(mockListOperations.mock.lastCall[0]).toBe(logger);
     });
   });
 

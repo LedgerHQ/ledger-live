@@ -7,7 +7,7 @@ const HINT_SHOW_DELAY_MS = 500;
 type UseRequestReceiveViewParams = Readonly<{
   isOpen: boolean;
   onClose: () => void;
-  onCopy: () => void;
+  onCopy: () => Promise<boolean>;
   verifyHint?: RequestReceiveVerifyHint;
 }>;
 
@@ -66,8 +66,8 @@ export function useRequestReceiveView({
     [onClose, verifyHint?.open],
   );
 
-  const handleCopy = useCallback(() => {
-    onCopy();
+  const handleCopy = useCallback(async () => {
+    if (!(await onCopy())) return;
     setHasCopied(true);
   }, [onCopy]);
 

@@ -19,6 +19,7 @@ import { BLOCK_HEIGHT } from "../constants";
 import { getAccountBalances, getOperations, getDelegatedStakes } from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
+import { toLongStructTag, toShortStructTag } from "../utils";
 
 export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -125,8 +126,10 @@ async function buildSubAccounts({
   }
 
   await promiseAllBatched(3, subAccountsBalances, async accountBalance => {
+    if (accountBalance.coinType === DEFAULT_COIN_TYPE) return;
+
     const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      accountBalance.coinType,
+      toLongStructTag(accountBalance.coinType),
       currencyId,
     );
 
@@ -172,8 +175,9 @@ function buildSubAccount({
 }) {
   const subAccountId = encodeTokenAccountId(accountId, token);
   const oldOperations = initialTokenAccount?.operations || [];
+  const shortCoinType = toShortStructTag(token.contractAddress);
   const newOperations = operations
-    .filter(({ extra }) => (extra as SuiOperationExtra).coinType === token.contractAddress)
+    .filter(({ extra }) => (extra as SuiOperationExtra).coinType === shortCoinType)
     .map(op => ({
       ...op,
       accountId: subAccountId,

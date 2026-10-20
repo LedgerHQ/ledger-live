@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@features/platform-market-countervalues";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";

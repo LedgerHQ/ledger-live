@@ -7,6 +7,7 @@ export { applyRatio };
 type RatioPickerProps = Readonly<{
   value: number;
   maxValue: number;
+  maxBuffer?: number;
   decimalPlaces: number;
   onChange: (value: number) => void;
   testIDPrefix: string;
@@ -28,12 +29,13 @@ const MAX_LABEL = "MAX";
 export function RatioPicker({
   value,
   maxValue,
+  maxBuffer = 0,
   decimalPlaces,
   onChange,
   testIDPrefix,
   disabled,
 }: RatioPickerProps) {
-  const maxOption = applyRatio(maxValue, 1, decimalPlaces);
+  const maxOption = applyRatio(maxValue, 1, decimalPlaces, maxBuffer);
 
   return (
     <Box lx={{ flexDirection: "row", gap: "s12" }}>

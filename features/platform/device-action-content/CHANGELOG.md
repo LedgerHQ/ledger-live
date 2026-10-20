@@ -1,5 +1,53 @@
 # @features/platform-device-action-content
 
+## 0.4.0
+
+### Minor Changes
+
+- [#22781](https://github.com/LedgerHQ/ledger-live/pull/22781) [`6c8bd31`](https://github.com/LedgerHQ/ledger-live/commit/6c8bd31900a6b6aa8987cc82f6d907bbc3611fc1) Thanks [@KVNLS](https://github.com/KVNLS)! - Build the desktop renderer as a web target instead of `electron-renderer`: Node builtins resolve at build time rather than as runtime `require()` calls, and the bundle has no externals. `process` reads are supplied from a snapshot captured in main at startup, deliberately not a `process/browser` polyfill, which would report `platform === "browser"`. A build-time guard fails the build on an unguarded `process` read or a bare `setImmediate`/`clearImmediate`, rather than letting it surface as a runtime crash.
+
+  ZCash shielded sync receives its IPC channel through `setZCashIpcRenderer` instead of reaching for `electron`; the desktop app supplies it over the preload bridge.
+
+  `@ledgerhq/transaction-observability` (the dApp intent's `app_version`) and `@features/platform-device-action-content` (the E2E animation switch) read `process.env` directly instead of `globalThis.process`, which the web-target renderer does not have.
+
+- [#23140](https://github.com/LedgerHQ/ledger-live/pull/23140) [`b99f923`](https://github.com/LedgerHQ/ledger-live/commit/b99f923997846b785c348006c5b434104c04f4a2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Play Lottie animations through the new `@shared/lottie` package: dotlottie on web (replacing the unmaintained `react-lottie` / `lottie-web`), `lottie-react-native` on mobile.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/lottie@0.0.0
+  - @features/platform-style@0.4.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#22781](https://github.com/LedgerHQ/ledger-live/pull/22781) [`6c8bd31`](https://github.com/LedgerHQ/ledger-live/commit/6c8bd31900a6b6aa8987cc82f6d907bbc3611fc1) Thanks [@KVNLS](https://github.com/KVNLS)! - Build the desktop renderer as a web target instead of `electron-renderer`: Node builtins resolve at build time rather than as runtime `require()` calls, and the bundle has no externals. `process` reads are supplied from a snapshot captured in main at startup, deliberately not a `process/browser` polyfill, which would report `platform === "browser"`. A build-time guard fails the build on an unguarded `process` read or a bare `setImmediate`/`clearImmediate`, rather than letting it surface as a runtime crash.
+
+  ZCash shielded sync receives its IPC channel through `setZCashIpcRenderer` instead of reaching for `electron`; the desktop app supplies it over the preload bridge.
+
+  `@ledgerhq/transaction-observability` (the dApp intent's `app_version`) and `@features/platform-device-action-content` (the E2E animation switch) read `process.env` directly instead of `globalThis.process`, which the web-target renderer does not have.
+
+- [#23140](https://github.com/LedgerHQ/ledger-live/pull/23140) [`b99f923`](https://github.com/LedgerHQ/ledger-live/commit/b99f923997846b785c348006c5b434104c04f4a2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Play Lottie animations through the new `@shared/lottie` package: dotlottie on web (replacing the unmaintained `react-lottie` / `lottie-web`), `lottie-react-native` on mobile.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/lottie@0.0.0
+  - @features/platform-style@0.4.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#22563](https://github.com/LedgerHQ/ledger-live/pull/22563) [`3e7af98`](https://github.com/LedgerHQ/ledger-live/commit/3e7af98196476c04a97522109fded33cc17dc868) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump react-native-config to 1.7.2 and drop its pnpmfile peer patch
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#22563](https://github.com/LedgerHQ/ledger-live/pull/22563) [`3e7af98`](https://github.com/LedgerHQ/ledger-live/commit/3e7af98196476c04a97522109fded33cc17dc868) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump react-native-config to 1.7.2 and drop its pnpmfile peer patch
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
-import { View, Pressable } from "react-native";
+import { Text as RNText, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Text,
@@ -8,6 +8,11 @@ import {
   BottomSheetView,
   BottomSheetHeader,
   Divider,
+  DescriptionItem,
+  DescriptionItemLabel,
+  DescriptionItemLeading,
+  DescriptionItemTrailing,
+  DescriptionItemValue,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Information, ChevronDown, Check } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -32,24 +37,18 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
 
   const styles = useStyleSheet(
     theme => ({
-      row: {
-        flexDirection: "row",
+      feesItem: {
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: theme.spacings.s12,
-        marginBottom: theme.spacings.s8,
+        paddingVertical: theme.spacings.s16,
       },
-      leftSection: {
+      infoTrigger: {
         flexDirection: "row",
         alignItems: "center",
+        flexShrink: 1,
         gap: theme.spacings.s4,
+        minWidth: 0,
       },
-      rightSection: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: theme.spacings.s4,
-      },
-      feeValue: {
+      valueTrigger: {
         flexDirection: "row",
         alignItems: "center",
         gap: theme.spacings.s4,
@@ -130,42 +129,37 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
 
   return (
     <>
-      <View style={styles.row}>
-        <Pressable onPress={handleOpenInfo} style={styles.leftSection}>
-          <Text typography="body3" lx={{ color: "base" }}>
-            {viewModel.label}
-          </Text>
-          <Information size={16} lx={{ color: "muted" }} />
-        </Pressable>
-        <Pressable
-          style={styles.rightSection}
-          onPress={handleOpenSelector}
-          disabled={!canOpenFeeSelector}
-        >
-          <View style={styles.feeValue}>
-            <Text typography="body3" lx={{ color: "base" }}>
-              {viewModel.value}
-            </Text>
-            {viewModel.secondaryValue ? (
-              <Text typography="body3" lx={{ color: "muted" }}>
-                {viewModel.secondaryValue}
-              </Text>
-            ) : null}
-            {/* A read-only fee has no strategy to name. */}
-            {canOpenFeeSelector ? (
-              <>
+      <DescriptionItem size="sm" style={styles.feesItem}>
+        <DescriptionItemLeading>
+          <Pressable accessibilityRole="button" onPress={handleOpenInfo} style={styles.infoTrigger}>
+            <DescriptionItemLabel>{viewModel.label}</DescriptionItemLabel>
+            <Information size={16} lx={{ color: "muted" }} />
+          </Pressable>
+        </DescriptionItemLeading>
+        <DescriptionItemTrailing>
+          {canOpenFeeSelector ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={handleOpenSelector}
+              style={styles.valueTrigger}
+            >
+              <DescriptionItemValue>
+                {viewModel.value} • <RNText>{viewModel.strategyLabel}</RNText>
+              </DescriptionItemValue>
+              <ChevronDown size={16} lx={{ color: "muted" }} />
+            </Pressable>
+          ) : (
+            <>
+              <DescriptionItemValue>{viewModel.value}</DescriptionItemValue>
+              {viewModel.secondaryValue ? (
                 <Text typography="body3" lx={{ color: "muted" }}>
-                  •
+                  {viewModel.secondaryValue}
                 </Text>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {viewModel.strategyLabel}
-                </Text>
-              </>
-            ) : null}
-          </View>
-          {canOpenFeeSelector ? <ChevronDown size={16} /> : null}
-        </Pressable>
-      </View>
+              ) : null}
+            </>
+          )}
+        </DescriptionItemTrailing>
+      </DescriptionItem>
 
       <BottomSheet
         ref={infoBottomSheetRef}

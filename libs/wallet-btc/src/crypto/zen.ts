@@ -34,7 +34,7 @@ class Zen extends Base {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
-    pk.copy(payload, 2);
+    payload.set(pk, 2);
     return bs58check.encode(payload);
   }
 
@@ -55,14 +55,14 @@ class Zen extends Base {
     const version = Number("0x" + bs58check.decode(address).slice(0, 2).toString("hex"));
     if (version === this.network.pubKeyHash) {
       //Pay-to-PubkeyHash
-      outputScript = bjs.payments.p2pkh({
-        hash: bs58check.decode(address).slice(2),
-      }).output as Buffer;
+      outputScript = Buffer.from(
+        bjs.payments.p2pkh({ hash: bs58check.decode(address).slice(2) }).output ?? [],
+      );
     } else if (version === this.network.scriptHash) {
       //Pay-to-Script-Hash
-      outputScript = bjs.payments.p2sh({
-        hash: bs58check.decode(address).slice(2),
-      }).output as Buffer;
+      outputScript = Buffer.from(
+        bjs.payments.p2sh({ hash: bs58check.decode(address).slice(2) }).output ?? [],
+      );
     } else {
       throw new InvalidAddress();
     }

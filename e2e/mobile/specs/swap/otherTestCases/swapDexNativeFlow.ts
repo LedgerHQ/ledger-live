@@ -6,6 +6,7 @@ import { setEnv } from "@shared/env";
 import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -16,7 +17,7 @@ export function runSwapDexNativeFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - DEX native flow", () => {
+  (provider.availableOnLns ? describe : describeIfNotNanoS)("Swap - DEX native flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -44,6 +45,7 @@ export function runSwapDexNativeFlow(
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
       }
       const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
+      await app.speculos.enableBlindSigningOnNanoS();
       await ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
 
       await performSwapUntilQuoteSelectionStep(
@@ -57,8 +59,7 @@ export function runSwapDexNativeFlow(
       await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
-      await app.send.summaryContinue();
-      await app.send.dismissHighFeeModal();
+      await app.walletApiSignatureDrawer.expectVisible();
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, Number(amountToSwap).toFixed(8));
       await app.swapLiveApp.expectExecuteSwapOnStepApproval();

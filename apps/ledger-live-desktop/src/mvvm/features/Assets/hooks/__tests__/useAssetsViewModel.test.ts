@@ -22,7 +22,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { AssetTableItem } from "../../types";
+import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import useCryptoAssetsViewModel from "LLD/features/CryptoAddresses/hooks/useCryptoAssetsViewModel";
@@ -62,7 +62,8 @@ jest.mock("@features/platform-aggregated-assets", () => ({
 }));
 
 const mockUseUsdToFiatRate = jest.fn();
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: (...args: unknown[]) => mockUseUsdToFiatRate(...args),
 }));
 

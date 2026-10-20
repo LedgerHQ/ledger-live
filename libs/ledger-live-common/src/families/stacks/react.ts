@@ -1,7 +1,8 @@
 import type { StacksAccount, StacksStakeDetails, StakingPosition } from "./types";
 
-// Re-exported so LLD can resolve pox info / validate an address through live-common rather than
-// depending directly on @ledgerhq/coin-stacks, which it does not declare as a dependency.
+// Re-exported for the existing live-common consumers (LLD's StakeFlowModal and LLM's staking flow
+// resolve pox info through here). Both apps now also depend on @ledgerhq/coin-stacks directly, and
+// new coin-stacks helpers are imported from there rather than added to live-common.
 export { fetchPoxInfo } from "@ledgerhq/coin-stacks/network/pox";
 // Same c32-checksum decoder getTransactionStatus.ts uses for the send recipient -- reused here so a
 // pool address is validated the same way, rather than a hand-rolled shape check that can diverge.

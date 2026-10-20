@@ -39,6 +39,8 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugDeviceIntentExecutorContent]: undefined;
   [ScreenName.DebugDeviceIntentExecutorInfoState]: undefined;
   [ScreenName.DebugDeviceIntentExecutorConnectDevice]: undefined;
+  [ScreenName.DebugDeviceIntentExecutorConnectNewDevice]: undefined;
+  [ScreenName.DebugDeviceIntentExecutorConnectNewDeviceAnimations]: undefined;
   [ScreenName.DebugDeviceIntentExecutorContactsValidation]: undefined;
   [ScreenName.DebugDeviceIntentExecutorInitialization]: undefined;
   [ScreenName.DebugDeviceIntentExecutorInitializerStates]: undefined;
@@ -77,6 +79,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugWallet40]: undefined;
   [ScreenName.DebugContacts]: undefined;
   [ScreenName.DebugDevTools]: undefined;
+  [ScreenName.DebugDeviceOnboarding]: undefined;
   [ScreenName.DebugPayContactSuccess]: { recipient?: "me" } | undefined;
   [ScreenName.DebugSendSuccess]: undefined;
   [ScreenName.DebugPlayground]: undefined;

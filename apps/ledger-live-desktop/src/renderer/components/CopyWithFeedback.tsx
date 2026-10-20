@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { clipboard } from "electron";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { darken, lighten } from "~/renderer/styles/helpers";
 import IconCopy from "~/renderer/icons/Copy";
 import Box from "~/renderer/components/Box";
+import { copyToClipboard } from "@shared/clipboard";
 type Props = {
   text: string;
 };
@@ -24,8 +24,8 @@ const CopyWithFeedback = ({ text }: Props) => {
     };
   }, []);
 
-  const handleCopy = () => {
-    clipboard.writeText(text);
+  const handleCopy = async () => {
+    if (!(await copyToClipboard(text))) return;
     setIsCopied(true);
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);

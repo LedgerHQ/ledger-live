@@ -15,6 +15,8 @@ export type PerpsDepositSignViewModel = {
   deviceStep: PerpsDepositDeviceStep;
   retry: () => void;
   onClose: () => void;
+  onDismiss: () => void;
+  /** Errors raised while connecting to the device, which never reach the execution. */
   onDeviceError: (error: Error) => void;
   onOpenManager: () => void;
 };
@@ -46,7 +48,7 @@ export function usePerpsDepositSignViewModel(
     [handleRefused],
   );
 
-  const onOpenManager = useCallback(() => {
+  const onDismiss = useCallback(() => {
     cancelDepositRequest();
     onClose();
   }, [onClose]);
@@ -62,7 +64,9 @@ export function usePerpsDepositSignViewModel(
     deviceStep,
     retry,
     onClose,
+    onDismiss,
     onDeviceError,
-    onOpenManager,
+    // Opening My Ledger leaves the flow, like a dismiss.
+    onOpenManager: onDismiss,
   };
 }

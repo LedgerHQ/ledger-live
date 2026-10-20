@@ -13,10 +13,6 @@ export type ContactsLedgerSyncIntroductionSheetProps = Omit<
 
 export function ContactsLedgerSyncIntroductionSheet({
   isOpen,
-  title,
-  description,
-  activateLabel,
-  dismissLabel,
   onActivate,
   onDismiss,
 }: ContactsLedgerSyncIntroductionSheetProps): React.JSX.Element {
@@ -56,10 +52,6 @@ export function ContactsLedgerSyncIntroductionSheet({
     >
       <ContactsLedgerSyncIntroductionContent
         isOpen={isOpen}
-        title={title}
-        description={description}
-        activateLabel={activateLabel}
-        dismissLabel={dismissLabel}
         bottomInset={bottomInset}
         onActivate={handleActivate}
         onDismiss={handleDismiss}

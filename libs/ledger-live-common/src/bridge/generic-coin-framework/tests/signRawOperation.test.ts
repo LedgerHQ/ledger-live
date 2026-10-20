@@ -65,6 +65,31 @@ describe("genericSignRawOperation", () => {
     expect(signed).toMatchObject({ signedOperation: { signature: "signedTx" } });
   });
 
+  it("should combine with the payload the device signed, from the options built for the raw", async () => {
+    const deviceSignOptions = {};
+    const getDeviceSignOptions = jest.fn().mockReturnValue(deviceSignOptions);
+    const applyDeviceSignResult = jest.fn().mockReturnValue("resignedTx");
+    (getBridgeApi as jest.Mock).mockResolvedValue({ getDeviceSignOptions, applyDeviceSignResult });
+
+    await lastValueFrom(
+      genericSignRawOperation(
+        "ripple",
+        "local",
+      )(signerContext)({ account, transaction: "rawTx", deviceId: "" }).pipe(toArray()),
+    );
+
+    expect(getDeviceSignOptions).toHaveBeenCalledWith({ raw: "rawTx" }, account);
+    expect(signer.signTransaction).toHaveBeenCalledWith(
+      expect.any(String),
+      "unsignedTx",
+      deviceSignOptions,
+    );
+    expect(applyDeviceSignResult).toHaveBeenCalledWith("unsignedTx", deviceSignOptions);
+    expect(combine).toHaveBeenCalledWith(expect.anything(), "resignedTx", ["sig"], {
+      pubkey: "pubKey",
+    });
+  });
+
   it("should hand the request to the family's signRawOperation when present", async () => {
     const signed = { type: "signed", signedOperation: { signature: "detached" } };
     const signRawOperation = jest.fn().mockReturnValue(of(signed));

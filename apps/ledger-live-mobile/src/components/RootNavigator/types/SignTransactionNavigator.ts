@@ -22,7 +22,7 @@ import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
-import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
@@ -234,7 +234,7 @@ export type SignTransactionNavigatorParamList = {
     accountId: string;
     parentId?: string;
     account: Account;
-    transaction: HederaTransaction;
+    transaction: HederaGenericTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

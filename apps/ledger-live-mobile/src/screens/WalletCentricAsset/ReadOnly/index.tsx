@@ -12,7 +12,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { Loading } from "~/components/Loading";
 import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -56,7 +56,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
   const { data: assetData, isLoading: isLoadingAssetData } = useAssetsData({
     currencyIds: currencyId ? [currencyId] : undefined,
     product: "llm",
-    version: VersionNumber.appVersion,
+    version: appVersion,
     areCurrenciesFiltered: true,
     skip: !!preloadedCurrency,
   });

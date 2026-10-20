@@ -1,11 +1,9 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { cardanoCoinConfig as config } from "../fixtures/config";
 import { lastBlock } from "./lastBlock";
 
 describe("lastBlock (integration)", () => {
   it("fetches the current tip height from the Cardano API", async () => {
-    const currency = getCryptoCurrencyById("cardano");
-
-    const result = await lastBlock(currency);
+    const result = await lastBlock(config);
 
     expect(result.height).toBeGreaterThan(0);
     // The Ledger Cardano API exposes only the tip height, so hash is intentionally empty

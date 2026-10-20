@@ -38,7 +38,7 @@ const TopBarView = ({
       />
       <NavBar className="w-full min-w-0 items-center px-32 pt-32 pb-24">
         {renderTitle()}
-        <NavBarTrailing className="h-48 gap-12">
+        <NavBarTrailing className="h-48 min-w-0 shrink gap-12">
           <LiveAppDrawer />
           {shouldShowFirmwareUpdateBanner && <FirmwareUpdateBanner />}
           <Updater />

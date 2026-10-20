@@ -12,6 +12,7 @@ import { ScreenName } from "~/const";
 import { getSendSuccessScreenName } from "../../../utils/getSendSuccessScreenName";
 import type { SendFlowNavigationProp } from "../../../types";
 import { useSendSignature } from "../../../context/SendSignatureContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
@@ -47,6 +48,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { startSigning } = useSendSignature();
   const { flowSessionId, recipientType } = useSendFlowTracking();
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const { reviewReady: sponsoredReviewReady } = useSponsoredSend();
 
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
@@ -73,6 +75,8 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   const onReview = useCallback(() => {
+    // Wait: the rent screen would craft TX-A without an intent, or for a pick about to revert.
+    if (!sponsoredReviewReady) return;
     track("button_clicked", {
       ...trackingProperties,
       button: "review",
@@ -90,6 +94,7 @@ export function useAmountScreen(): AmountScreenViewModel {
     trackingProperties,
     inputMode,
     source,
+    sponsoredReviewReady,
   ]);
 
   const onSelectCoinControl = useCallback(() => {

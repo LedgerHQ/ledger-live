@@ -1,4 +1,3 @@
-import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -35,6 +34,9 @@ import {
   Transaction,
   TransactionStatus,
 } from "./types";
+
+// Legacy currency-registry keys whose canonical id differs (mirrors CRYPTO_CURRENCY_ALIASES).
+const LEGACY_ID_ALIASES: Record<string, string> = { osmosis: "osmo" };
 
 export class CosmosTransactionStatusManager {
   getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
@@ -212,11 +214,13 @@ export class CosmosTransactionStatusManager {
       } catch {
         isValid = false;
       }
-      const currency = findCryptoCurrencyById(account.currency.name.toLowerCase());
-      let prefix = "";
-      if (currency) {
-        prefix = cryptoFactory(currency.id as string).prefix;
-      }
+      // Only enforced when the lowercased name resolves to the currency id (e.g. "Cosmos" → "cosmos",
+      // "Osmosis" → "osmo"), matching the former registry lookup by name.
+      const nameKey = account.currency.name.toLowerCase();
+      const prefix =
+        (LEGACY_ID_ALIASES[nameKey] ?? nameKey) === account.currency.id
+          ? cryptoFactory(account.currency.id).prefix
+          : "";
       isValid = isValid && transaction.recipient.startsWith(prefix);
       if (!isValid) {
         errors.recipient = new InvalidAddress(undefined, {

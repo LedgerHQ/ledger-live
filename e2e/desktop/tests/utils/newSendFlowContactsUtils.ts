@@ -12,9 +12,10 @@ import { test } from "tests/fixtures/common";
 import { Application } from "tests/page";
 import {
   FF_LWD_CONTACTS_ENABLED,
+  FF_NEW_SEND_FLOW_ENABLED,
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
-import { NEW_SEND_FLOW_FAMILIES, type NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
+import { type NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 export type ContactsEntry = NewSendFlowEntry & {
@@ -28,10 +29,7 @@ export type ContactsEntry = NewSendFlowEntry & {
 const FEATURE_FLAGS = {
   ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
   ...FF_LWD_CONTACTS_ENABLED,
-  newSendFlow: {
-    enabled: true,
-    params: { families: NEW_SEND_FLOW_FAMILIES },
-  },
+  ...FF_NEW_SEND_FLOW_ENABLED,
 };
 
 /** `test.use` replaces the fixture's settings, so its analytics defaults are restated here. */

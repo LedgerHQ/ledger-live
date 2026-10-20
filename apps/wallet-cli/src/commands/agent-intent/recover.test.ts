@@ -230,16 +230,6 @@ describe("agent-intent recover", () => {
       expect(hostOptions).toBeUndefined();
     });
 
-    it("rejects a source that does not support recovery", async () => {
-      storedProfile = makeProfile({ source: "codex" });
-
-      await expect(runRecover()).rejects.toThrow(
-        'Agent Intent recovery supports only openclaw, hermes agents; profile "test-agent" is a ' +
-          "codex agent.",
-      );
-      expect(hostOptions).toBeUndefined();
-    });
-
     it.each(["https://user:secret@keycloak.example.com/", "file:///etc/keycloak", "not a url"])(
       "rejects a stored keycloak override %p before authenticating against it",
       async url => {
@@ -306,8 +296,19 @@ describe("agent-intent recover", () => {
         previousTrustchainId: "app18-root",
         channel: { environment: "production", hostPublicKey: HOST_PUBLIC_KEY },
       });
-      expect(recoveryUrlInputs).toEqual(["https://agent-intent.ledger.com/"]);
+      expect(recoveryUrlInputs).toEqual(["https://app.agents.ledger.com/"]);
     });
+
+    it.each(["hermes", "claude-code", "codex", "other"] as const)(
+      "signs a recovery for a %s profile",
+      async source => {
+        storedProfile = makeProfile({ source });
+
+        await runRecover();
+
+        expect(requestInputs[0]).toMatchObject({ source, previousTrustchainId: "app18-root" });
+      },
+    );
 
     it("uses the profile's staging relay", async () => {
       storedProfile = makeProfile({ environment: "staging" });

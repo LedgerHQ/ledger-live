@@ -5,18 +5,264 @@
         "title" : "质押 ICP",
         "description" : "质押 ICP 并通过参与其治理获得奖励。",
         "cta" : "质押 ICP"
+      },
+      "confirmFollowing" : {
+        "description" : "您的其中一个神经元正在失去投票权。确认其跟随以将其恢复。",
+        "cta" : "确认跟随"
+      },
+      "syncNeurons" : {
+        "description" : "您的神经元数据已过时。连接您的设备以将其刷新。",
+        "cta" : "刷新神经元"
+      },
+      "lockNeurons" : {
+        "description" : "神经元需要更长的解锁延迟才能进行投票并获得奖励。",
+        "cta" : "管理神经元"
+      },
+      "addFollowees" : {
+        "description" : "在治理主题上跟随其他神经元，以便您的神经元投票并获得奖励。",
+        "cta" : "管理神经元"
       }
     },
     "headerManageActions" : {
       "manageNeurons" : {
-        "title" : "管理神经元"
+        "title" : "神经元"
       }
     },
     "summaryFooter" : {
+      "availableBalanceTooltip" : "您当前可以消费或质押的 ICP。不包括已锁定在神经元中的 ICP。",
       "stakedBalance" : "已质押余额",
       "stakedBalanceTooltip" : "当前在神经元中质押的 ICP 代币总额。质押的 ICP 可获得投票奖励，且可用于治理。",
       "totalMaturity" : "总成熟度",
       "totalMaturityTooltip" : "累积的总质押奖励，包括已质押成熟度和流动成熟度。这些奖励可以再质押或以流动 ICP 的形式领取。"
+    },
+    "duration" : {
+      "years_one" : "{{count}} 年",
+      "years_other" : "{{count}} 年",
+      "months_one" : "{{count}} 个月",
+      "months_other" : "{{count}} 个月",
+      "days_one" : "{{count}} 天",
+      "days_other" : "{{count}} 天",
+      "hours_one" : "{{count}} 小时",
+      "hours_other" : "{{count}} 小时",
+      "minutes_one" : "{{count}} 分钟",
+      "minutes_other" : "{{count}} 分钟",
+      "lessThanAMinute" : "少于 1 分钟"
+    },
+    "neuronState" : {
+      "Locked" : "已锁定",
+      "Dissolving" : "正在溶解",
+      "Dissolved" : "已溶解",
+      "Spawning" : "生成中",
+      "Unknown" : "未知"
+    },
+    "common" : {
+      "neuronId" : "神经元 ID",
+      "stake" : "质押",
+      "maturity" : "成熟度",
+      "dissolveDelay" : "溶解延迟",
+      "state" : "州/省/直辖市/自治区",
+      "action" : "操作",
+      "none" : "无",
+      "disburse" : "解散",
+      "startDissolving" : "开始溶解",
+      "stopDissolving" : "停止溶解",
+      "enabled" : "已启用",
+      "disabled" : "已禁用",
+      "enable" : "启用",
+      "disable" : "禁用"
+    },
+    "stakingFlow" : {
+      "started" : {
+        "title" : "质押 ICP",
+        "description" : "质押 ICP 会创建一个神经元：一个在治理中投票并赚取奖励的锁定仓位。",
+        "steps" : {
+          "0" : "您的 ICP 将锁定在神经元中，直到您将其溶解。",
+          "1" : "更长的解锁延迟可赚取更多的投票权和更多的奖励。",
+          "2" : "该神经元通过跟随其他神经元进行投票，因此无需您手动投票即可获得收益。"
+        },
+        "cta" : "质押 ICP"
+      },
+      "amount" : {
+        "minimum" : "最低质押量"
+      },
+      "success" : {
+        "title" : "神经元已创建",
+        "description" : "打开“管理神经元”并刷新以进行查看——神经元数据仅通过您的设备提取。"
+      }
+    },
+    "manageNeuronFlow" : {
+      "title" : "管理神经元",
+      "confirmation" : {
+        "backToNeurons" : "返回神经元",
+        "success" : {
+          "title" : "完成",
+          "default" : "您的神经元已更新。",
+          "list_neurons" : "您的神经元已是最新。",
+          "start_dissolving" : "您的神经元已开始溶解。",
+          "stop_dissolving" : "您的神经元已停止溶解。",
+          "disburse" : "您的神经元质押已发放至您的账户。",
+          "set_dissolve_delay" : "您的神经元的解锁延迟已设置。",
+          "increase_dissolve_delay" : "您的神经元的解锁延迟已增加。",
+          "add_hot_key" : "热键已添加到您的神经元。",
+          "remove_hot_key" : "热键已从您的神经元中移除。",
+          "follow" : "您的神经元的跟随已更新。",
+          "refresh_voting_power" : "您的神经元投票权重已刷新。",
+          "stake_maturity" : "您的神经元的成熟度已质押。",
+          "auto_stake_maturity" : "自动成熟度质押已更新。",
+          "spawn_neuron" : "一个新的神经元正从您的成熟度中产生。",
+          "split_neuron" : "您的神经元已拆分。",
+          "increase_stake" : "您的神经元的质押已增加。"
+        }
+      },
+      "listNeuron" : {
+        "title" : "神经元",
+        "empty" : "您暂无神经元。质押 ICP 以创建神经元。",
+        "lastSynced" : "上次同步：",
+        "never" : "从不",
+        "decayingTitle" : "您的其中一个神经元正在失去投票权。",
+        "decayingDescription" : "确认该跟随设置,可使其有效期再延长六个月。",
+        "sync" : "刷新神经元"
+      },
+      "manage" : {
+        "title" : "管理",
+        "neuron" : "神经元",
+        "hotKeyOnly" : "您在此神经元上持有热密钥。您可以投票并设置跟随，但无法移动其质押。",
+        "missingNeuron" : "此神经元已不在您的同步快照中。请返回您的神经元并进行同步，以选择另一个。",
+        "votingPower" : {
+          "title" : "投票权",
+          "tooltip" : "投票权决定了您的神经元在治理中所占的权重，以及该神经元能获得多少奖励。",
+          "staked" : "已质押",
+          "increaseStake" : "增加质押",
+          "state" : "状态",
+          "bonusValue" : "+{{percent}}%",
+          "ageBonus" : "年龄奖励",
+          "ageBonusTooltip" : "随着账龄增长，神经元最多可获得 +25% 的投票权重，并在四年后达到最大值。",
+          "dissolveDelayBonus" : "溶解延迟奖励：+{{percent}}%",
+          "dissolveDelayBonusTooltip" : "更长的解锁延迟可赚取高达 +200% 的投票权，并在两年时达到最大值。",
+          "noDissolveDelay" : "无解锁延迟",
+          "setDissolveDelay" : "设置溶解延迟",
+          "increaseDissolveDelay" : "增加解锁延迟",
+          "decayStartsIn" : "投票权将在 {{duration}} 后开始衰减",
+          "decaying" : "投票权正在衰减——将在 {{duration}} 后归零",
+          "expired" : "投票权重已丧失——跟随设置已被清除",
+          "confirmFollowing" : "确认跟随",
+          "confirmFollowingTooltip" : "请至少每六个月确认一次您的跟随设置，否则您的神经元将逐渐失去其投票权。"
+        },
+        "maturity" : {
+          "title" : "成熟度",
+          "tooltip" : "成熟度是神经元累积的奖励。将其重新质押回该神经元，或将其孵化为新神经元。",
+          "available" : "可用成熟度",
+          "staked" : "已质押成熟度",
+          "stakedTooltip" : "成熟度已质押至该神经元。其计入投票权，且无法再生成新的神经元。",
+          "stake" : "质押成熟度",
+          "spawn" : "生成神经元",
+          "autoStake" : "自动成熟度质押",
+          "autoStakeTooltip" : "启用后，成熟度将在累积时重新质押回该神经元。"
+        },
+        "following" : {
+          "title" : "跟随",
+          "tooltip" : "跟随其他神经元的神经元会随之投票，该神经元正是以此在无需手动投票的情况下赚取奖励。",
+          "count_one" : "{{count}} 个主题",
+          "count_other" : "{{count}} 个主题",
+          "edit" : "跟随某一治理主题下的神经元",
+          "follow" : "编辑跟随设置"
+        },
+        "hotKeys" : {
+          "title" : "热键",
+          "tooltip" : "热密钥可以代表您进行投票并设置跟随，但绝不能移动该神经元的质押。",
+          "add" : "向另一个主体授予热密钥访问权限",
+          "addAction" : "添加热键",
+          "remove" : "删除"
+        },
+        "advanced" : {
+          "title" : "高级",
+          "split" : "将该神经元拆分为两个",
+          "splitTooltip" : "原始神经元和新神经元都必须保留至少 1 ICP 的最低质押量。",
+          "splitAction" : "拆分神经元"
+        }
+      },
+      "increaseStake" : {
+        "title" : "增加质押",
+        "description" : "向此神经元添加 ICP。转账将转入该神经元自己的账户，因此无需选择接收者。"
+      },
+      "setDissolveDelay" : {
+        "title" : "溶解延迟",
+        "setDescription" : "选择该神经元解锁所需的时间。在 {{min}} 至 {{max}} 天之间。",
+        "increaseDescription" : "增加神经元的解锁延迟。您最多可再增加 {{remaining}} 天，总计 {{max}}，且无法调低。",
+        "days" : "天",
+        "resulting" : "新的解锁延迟：{{duration}}",
+        "belowVotingThreshold" : "少于 {{days}} 天，该神经元将无法投票且无法获得奖励。"
+      },
+      "stakeMaturity" : {
+        "title" : "质押成熟度",
+        "description" : "将该神经元的部分成熟度重新质押其中，以增加其投票权。",
+        "percentage" : "要质押的百分比",
+        "selected" : "要权益质押的数额"
+      },
+      "splitNeuron" : {
+        "title" : "拆分神经元",
+        "description" : "将该神经元的部分质押移至新神经元。新神经元在开始时没有解锁延迟或年龄加成 (Age Bonus)。",
+        "amount" : "要拆分的数额",
+        "range" : "允许范围："
+      },
+      "addHotKey" : {
+        "title" : "添加热键",
+        "description" : "向另一个主体授予对此神经元进行投票和设置跟随的权限。其绝不能移动质押。",
+        "principal" : "Principal ID",
+        "ownPrincipal" : "此账户的 Principal ID（身份标识）",
+        "ownPrincipalHint" : "请输入其他身份标识，通常是您登录 NNS dApp 时使用的 Principal ID。此账户已控制该神经元，添加其自身的 Principal ID 不会增加任何权限。"
+      },
+      "followTopic" : {
+        "title" : "主题",
+        "description" : "选择您想要更改其跟随设置的治理主题。",
+        "followeeCount_one" : "{{count}} 个跟随对象",
+        "followeeCount_other" : "{{count}} 个跟随对象"
+      },
+      "selectFollowees" : {
+        "title" : "跟随对象",
+        "description" : "您的神经元将针对 {{topic}} 进行与这些神经元完全一致的投票。",
+        "neuronId" : "要跟随的神经元 ID",
+        "add" : "添加",
+        "remove" : "删除",
+        "empty" : "暂无关注的神经元。您的神经元将不会对此主题进行投票。",
+        "clearsFollowing" : "继续操作将提交一个空列表，这会使该神经元停止在 {{topic}} 上跟随任何其他神经元。该神经元当前正在跟随 {{count}}。",
+        "notANeuronId" : "神经元 ID 仅限数字。",
+        "outOfRange" : "这不是有效的神经元 ID。",
+        "duplicate" : "此神经元在此主题上已是被跟随者。",
+        "self" : "神经元无法跟随自身。",
+        "unadded" : "点击“添加”以包含此神经元 ID，或清除该字段。",
+        "atCapacity" : "每个主题最多可关注 {{max}} 个神经元。请移除一个以添加另一个。"
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "所有其他主题",
+      "NeuronManagement" : "神经元管理",
+      "ExchangeRate" : "互换费用",
+      "NetworkEconomics" : "网络经济学",
+      "Governance" : "治理",
+      "NodeAdmin" : "节点管理",
+      "ParticipantManagement" : "参与管理",
+      "SubnetManagement" : "子网管理",
+      "NetworkCanisterManagement" : "应用容器管理",
+      "Kyc" : "客户身份核实 (KYC)",
+      "NodeProviderRewards" : "节点提供方奖励",
+      "SnsDecentralizationSale" : "SNS 去中心化销售",
+      "IcOsVersionDeployment" : "IC OS 版本部署",
+      "IcOsVersionElection" : "IC OS 版本选举",
+      "SnsAndCommunityFund" : "SNS 和社区资金",
+      "ApiBoundaryNodeManagement" : "API 边界节点管理",
+      "SubnetRental" : "子网租赁",
+      "ProtocolCanisterManagement" : "协议容器管理",
+      "ServiceNervousSystemManagement" : "服务神经系统管理"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "确认跟随",
+      "description" : "确认您的跟随可使神经元的投票权重再恢复六个月。",
+      "timeUntilLoss" : "投票权流失于",
+      "losing" : "{{duration}} — 正在断电",
+      "expired" : "已丢失",
+      "confirm" : "确认",
+      "empty" : "您的神经元目前均不在确认数时钟上。"
     }
   },
   "buyCurrency" : {
@@ -1476,6 +1722,136 @@
     "CurrencyRegionRestrictedError" : {
       "title" : "{{currencyName}} 在您所在的地区不可用",
       "description" : "您所在的地区限制访问 {{currencyName}}。"
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "数额太小",
+      "description" : "神经元必须持有至少 1 ICP，因此数额必须涵盖该数额加上网络费用。"
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "解锁延迟过短",
+      "description_one" : "Internet Computer 要求解锁延迟至少为 {{minDays}} 天。",
+      "description_other" : "Internet Computer 要求解锁延迟至少为 {{minDays}} 天。"
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "天数无效",
+      "description" : "请输入大于零的整数天数。"
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "解锁延迟过长",
+      "description_one" : "Internet Computer 将神经元的解锁延迟上限设为 {{maxDays}} 天。",
+      "description_other" : "Internet Computer 将神经元的解锁延迟上限设为 {{maxDays}} 天。"
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "无法缩短解锁延迟",
+      "description" : "神经元的解锁延迟只能增加。若要缩短该延迟，请改为开始解锁该神经元。"
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "未找到神经元",
+      "description" : "您最近一次同步的快照中缺少此神经元。请同步您的神经元并重试。"
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "无效的主体",
+      "description" : "热键必须是有效的 Internet Computer Principal。"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "热键已添加",
+      "description" : "此 Principal 已是该神经元的热键。"
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "此身份标识已控制该神经元",
+      "description" : "输入不同的身份标识。热密钥只能进行投票和设置跟随，而控制者已可执行这些操作。"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "数额超出该神经元可拆分的范围",
+      "description" : "原始神经元和新神经元都必须保持质押至少 1 ICP，外加所转移数额的网络费用。"
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "无法从此神经元生成",
+      "description" : "正在生成新神经元的神经元无法再次生成，且生成的成熟度在网络成熟度调整后必须至少剩余 1 ICP。请同步您的神经元以查看其当前状态。"
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "无法质押此神经元的成熟度",
+      "description" : "当神经元正在生成、一旦其已完全溶解，或当该神经元没有成熟度时，无法质押成熟度。请同步您的神经元以查看其当前状态。"
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "此主题不支持跟随",
+      "description" : "该主题已被 Internet Computer 弃用，或 Ledger Internet Computer 应用程序尚不支持对该主题签署跟随操作。请选择其他主题。"
+    },
+    "ICPTooManyFollowees" : {
+      "title" : "已达到跟随对象上限",
+      "description" : "每个主题最多可跟随 {{max}} 个神经元。请移除神经元，直至列表中包含 {{max}} 个或更少。"
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "无效的神经元 ID",
+      "description" : "{{id}} 不是有效的神经元 ID。将其从列表中移除。"
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "神经元列出两次",
+      "description" : "神经元 {{id}} 被多次列出。请移除副本。"
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "神经元无法跟随自身。",
+      "description" : "{{id}} 是该神经元自身的 ID。将其从列表中移除。"
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "无法开始溶解该神经元",
+      "description" : "只有锁定的神经元才能开始溶解。请同步您的神经元以查看其当前状态。"
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "无法停止溶解此神经元",
+      "description" : "只有正在溶解的神经元才能停止溶解，而该神经元可能已经完成溶解。请同步您的神经元以查看其当前状态。"
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "无法支取该神经元",
+      "description" : "一旦神经元完全解锁且其质押大于网络费用，即可将其赎回。请同步您的神经元以查看其当前状态。"
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "已达到热键数量上限",
+      "description" : "一个神经元最多可持有 {{max}} 个热键。请移除一个以添加另一个。"
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "充值金额过小",
+      "description" : "充值后，神经元的余额必须达到 1 ICP。截至上一次同步，此神经元还需要至少 {{missing}} ICP。较小金额的转账会结算至该神经元账户，但在随后的充值使余额达到最低数额之前，此笔转账将不予计算。"
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "质押已转账，神经元未更新",
+      "description" : "ICP 已转移至该神经元账户，但 Internet Computer 治理拒绝据此更新该神经元。{{reason}} 没有任何损失：该数额仍保留在该神经元账户中，并会计入下一次使余额达到至少 1 ICP 的充值中。Ledger Wallet 尚无法在此处查看到该数额，因此数额字段仍会要求补足上一次同步中显示的全部差额。"
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "无法为该神经元充值",
+      "description" : "为神经元充值需要创建该神经元之交易的 Memo 备注，但该交易不在该账户的历史记录中。请通过创建该神经元的账户进行充值。"
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "结果未知",
+      "description" : "互联网计算机已接受该请求，但未返回任何结果，因此该请求可能已生效，也可能未生效。请在重试前同步您的神经元以进行检查。"
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "百分比超出范围",
+      "description" : "请输入 1–100 之间的整数。"
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "神经元未刷新",
+      "description" : "Internet Computer 未返回您的神经元信息，因此您的神经元保持不变。请重试。"
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "网络拒绝了此操作。",
+      "description" : "Internet Computer 治理系统拒绝了该请求，因此神经元保持不变。请同步您的神经元以查看其当前状态。{{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "请求未被接受",
+      "description" : "Internet Computer 在该请求运行前已将其拒绝，因此未发生任何更改。请重试。{{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "请求未发送",
+      "description" : "Internet Computer 未接受该请求，因此未发送任何内容，也未发生任何更改。请重试。{{reason}}"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "这会将您的 ICP 锁定在新的神经元中",
+      "description" : "该神经元的初始解锁延迟最短，因时间过短而无法进行投票或赚取奖励。ß您可以在“管理神经元”中延长该延迟，且需在延迟结束之后，该质押才可再次使用。"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "此操作会增加已锁定的质押。",
+      "description" : "该数额将并入该神经元现有的质押中，并遵循其解锁延迟，因此在神经元解锁前，这部分资金无法动用。"
     }
   },
   "crash" : {
@@ -1647,6 +2023,23 @@
       "saveFailed" : "无法保存您的密码。请再次尝试。",
       "cta" : "确认"
     },
+    "longerPassword" : {
+      "prompt" : {
+        "title" : "更改您的密码",
+        "description" : "为了提高安全性，请输入至少 6 个字符的密码。",
+        "cta" : "更改密码"
+      },
+      "enter" : {
+        "title" : "输入新密码"
+      },
+      "confirm" : {
+        "title" : "确认新密码"
+      },
+      "changed" : {
+        "title" : "密码已更改",
+        "cta" : "知道了"
+      }
+    },
     "unlock" : {
       "wrongPassword" : "密码错误",
       "forgotPassword" : "忘记了密码？",
@@ -1682,6 +2075,17 @@
       },
       "description" : "您现在可以注册以获取卡",
       "cta" : "继续"
+    },
+    "keepProtection" : {
+      "password" : {
+        "title" : "您无法关闭密码",
+        "description" : "您需要密码或生物识别来保护您对 Ledger Wallet 的访问。"
+      },
+      "biometrics" : {
+        "title" : "您无法关闭 {{biometricsType}}",
+        "description" : "您需要 {{biometricsType}} 或密码来保护您对 Ledger Wallet 的访问。"
+      },
+      "cta" : "知道了"
     },
     "biometrics" : {
       "title" : "{{biometricsType}}",
@@ -10384,6 +10788,9 @@
     "paytab" : "付款"
   },
   "payTab" : {
+    "disclaimer" : "由 Monavate Onchain 提供",
+    "cardDisclaimer" : "正在寻找您的加密货币卡？",
+    "cardDisclaimerLink" : "前往 CL 卡",
     "featureTour" : {
       "title" : "一站式管理您的所有付款",
       "description" : "为您带来全新的\"支付\"选项卡，让您的加密货币随时准备好应对日常用钱时刻。",
@@ -10429,14 +10836,23 @@
       "balanceLabel" : "余额",
       "assets" : {
         "title" : "资产",
-        "empty" : "暂无资产",
-        "error" : "无法加载资产",
+        "empty" : {
+          "title" : "暂无资产",
+          "description" : "添加资产以开始使用您的卡。",
+          "cta" : "添加资产"
+        },
+        "error" : {
+          "title" : "无法加载资产",
+          "description" : "出错了。",
+          "cta" : "重试"
+        },
         "info" : "这些资产为您的卡提供资金。设置其扣款顺序，或添加更多。",
         "manage" : "管理",
         "manageDialog" : {
           "title" : "管理资产",
           "description" : "您的资产按扣款顺序排列。如果某一资产余额不足，将自动使用下一资产。",
-          "addAssetCaption" : "您将被重定向至 Baanx 页面以添加资产。",
+          "reorder" : "重新排序 {{asset}}。长按并拖动，或使用可访问性操作进行上下移动。",
+          "addAssetCaption" : "您将被重定向至 Monavate 以添加资产。",
           "addAsset" : "添加资产"
         },
         "details" : {
@@ -10445,13 +10861,14 @@
           "transactions" : "交易"
         },
         "withdraw" : {
-          "title" : "您将被重定向至 Baanx",
-          "description" : "将资金从您的 Baanx 账户提取到您的 Ledger 钱包地址。",
+          "title" : "您将被重定向至 Monavate",
+          "description" : "将资金从您的 Monavate 账户提取到您的 Ledger 钱包地址。",
           "continue" : "继续"
         }
       },
       "title" : "加密货币卡",
       "topUp" : "充值",
+      "chooseCardType" : "选择卡类型",
       "details" : "详情",
       "addToWallet" : "添加到 {{wallet}} Pay",
       "freeze" : "冻结",
@@ -10479,7 +10896,7 @@
         "imageAlt" : "卡号"
       },
       "reward" : {
-        "title" : "返现总额"
+        "title" : "返现总额 · 以 {{ticker}} 返现 {{ratePercent}}%"
       }
     },
     "cardTransactions" : {
@@ -10499,7 +10916,9 @@
         "status" : "状态",
         "card" : "卡",
         "cardInfo" : "用于此笔付款的卡的后四位数字。",
-        "fundingSource" : "资金来源",
+        "fundingSource_one" : "资金来源",
+        "fundingSource_other" : "资金来源",
+        "cashback" : "返现",
         "transactionId" : "交易 ID",
         "copyTransactionId" : "复制交易 ID",
         "today" : "今天 {{time}}",
@@ -10527,6 +10946,10 @@
           "title" : "登录后查看卡片交易记录",
           "description" : "登录后，您的卡片交易记录将显示在此处。"
         },
+        "unclaimed" : {
+          "title" : "加密货币卡",
+          "description" : "前往“支付”以设置您的卡。"
+        },
         "empty" : {
           "title" : "暂无卡片交易记录",
           "description" : "请稍后再来查看您的卡片交易记录。"
@@ -10536,9 +10959,6 @@
           "description" : "请检查您的连接并重试。"
         }
       }
-    },
-    "selectContact" : {
-      "placeholder" : "输入联系人"
     },
     "actions" : {
       "deposit" : "添加稳定币",
@@ -10564,8 +10984,9 @@
         "verifyCta" : "核实地址",
         "successTitle" : "设备安全屏幕上显示的地址",
         "nextStepsLabel" : "后续步骤",
-        "nextStepShare" : "通过您所需的应用程序共享您的地址",
-        "nextStepMatch" : "请确保共享地址与您的 Ledger 设备上的地址一致。",
+        "nextStepKeepDisplayed" : "请保持您的地址显示在 Ledger 设备上。先不要确认。",
+        "nextStepPaste" : "点击“我知道了”，然后将您的地址粘贴到您要分享该地址的应用程序中。",
+        "nextStepCheckMatch" : "发送前，请检查并确认其与您 Ledger 设备上的地址一致。",
         "gotItCta" : "知道了",
         "device" : {
           "cancelledTitle" : "地址验证已取消",
@@ -10634,19 +11055,39 @@
         "action" : "登录"
       },
       "errors" : {
-        "pkce_failed" : "无法开始登录。请重试。",
-        "browser_open_failed" : "无法打开登录页面。请重试。",
-        "missing_attempt" : "此登录已失效。请重新登录。",
-        "exchange_failed" : "无法完成登录。请重试。",
-        "persist_failed" : "无法保存您的会话。请重试。",
-        "fetch_user_failed" : "无法加载您的卡。请重试。"
+        "pkce_failed" : {
+          "title" : "无法开始登录。",
+          "description" : "请重试。"
+        },
+        "browser_open_failed" : {
+          "title" : "无法打开登录页面。",
+          "description" : "请重试。"
+        },
+        "missing_attempt" : {
+          "title" : "此登录已失效。",
+          "description" : "请重新登录。"
+        },
+        "exchange_failed" : {
+          "title" : "无法完成登录。",
+          "description" : "请重试。"
+        },
+        "persist_failed" : {
+          "title" : "无法保存您的会话。",
+          "description" : "请重试。"
+        },
+        "fetch_user_failed" : {
+          "title" : "无法加载您的卡。",
+          "description" : "请重试。"
+        },
+        "retryLogin" : "重试",
+        "retryUser" : "重试"
       }
     },
     "cardLoginIntro" : {
       "title" : "消费加密货币，赚取返现",
-      "providedBy" : "卡由 Baanx 提供",
+      "providedBy" : "卡由 Monavate 提供",
       "createAccount" : "创建账户",
-      "logIn" : "登录 Baanx",
+      "logIn" : "登录 Monavate",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -10671,12 +11112,14 @@
       "title" : "付款",
       "pay" : "新",
       "seeAllTitle" : "向联系人付款",
+      "me" : "我",
       "addressPicker" : {
         "title" : "选择 {{name}} 的地址",
+        "meTitle" : "选择我的地址",
         "addAddress" : "添加地址"
       },
       "paySuccess" : {
-        "title" : "您已向 ({{recipient}}) 支付",
+        "title" : "您已向 {{recipient}} 付款",
         "amount" : "数额",
         "estimatedTime" : "预估时间",
         "from" : "来自",
@@ -10947,43 +11390,62 @@
       }
     },
     "stake" : {
-      "sectionTitle" : "Staking",
-      "staked" : "Staked",
-      "unstaking" : "Unstaking",
-      "claimable" : "Claimable",
-      "estimatedRate" : "{{rate}}% est.",
+      "sectionTitle" : "质押",
+      "staked" : "已质押",
+      "unstaking" : "解除质押",
+      "claimable" : "可领取",
+      "estimatedRate" : "预计 {{rate}}%",
       "fallbackValidator" : "Aleo",
       "status" : {
-        "earning" : "Earning rewards",
-        "unknown" : "Status unavailable"
+        "earning" : "赚取奖励",
+        "unknown" : "状态不可用"
       },
       "nonEarning" : {
-        "fullCommission" : "This validator takes 100% commission, so you keep nothing.",
-        "overConcentrated" : "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
-        "leftCommittee" : "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
-        "ownStakeBelowMinimum" : "Your stake is below the 10,000 ALEO minimum, so it earns nothing. Add to it to start earning again."
+        "fullCommission" : "该验证者收取 100% 的佣金，因此您无法获得任何收益。",
+        "overConcentrated" : "该验证者持有超过所有已质押 ALEO 的 25%。对于超出该上限的部分，协议不会向其支付任何费用，因此您无法赚取任何收益。",
+        "leftCommittee" : "该验证者已不在委员会中，因此您的质押无法获得任何收益。解除质押并绑定至另一个验证者，以重新开始赚取收益。",
+        "ownStakeBelowMinimum" : "您的质押低于 10,000 ALEO 的最低限额，因此无法产生收益。增加质押以重新开始赚取收益。"
       },
       "emptyState" : {
-        "description" : "You can earn rewards by staking your {{name}}.",
-        "cta" : "Earn rewards",
+        "description" : "您可以通过质押您的 {{name}} 来赚取奖励。",
+        "cta" : "赚取奖励",
         "bondPending" : "一笔质押已发送，正在等待确认。Aleo 每个账户仅持有一个质押仓位，因此在当前质押完成前，质押功能不可用。"
       },
       "unstakingRow" : {
         "settling" : "即将完成…",
         "claimPending" : "正在领取…",
         "unbondPending" : "正在解除质押…",
-        "blocksRemaining_one" : "~{{count}} block left",
-        "blocksRemaining_other" : "~{{count}} blocks left"
+        "blocksRemaining_one" : "约剩 {{count}} 个区块",
+        "blocksRemaining_other" : "约剩 {{count}} 个区块"
       }
     },
     "manage" : {
-      "bond" : "Bond",
+      "bond" : "绑定",
       "claim" : "领取",
-      "status" : "Status",
-      "estimatedRate" : "Est. rewards rate",
-      "unbondPendingInfo" : "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
-      "claimPendingInfo" : "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
-      "unlockBlock" : "Unlocks at block"
+      "unbond" : "解绑",
+      "status" : "状态",
+      "estimatedRate" : "预估奖励率",
+      "unbondPendingInfo" : "有一笔解除质押正在等待确认。Aleo 一次仅追踪一个解绑仓位，因此在该解绑完成前，解绑和领取均不可用。",
+      "claimPendingInfo" : "有一笔领取正在等待确认。Aleo 一次仅追踪一个解绑仓位，因此在该解绑完成前，解绑和领取均不可用。",
+      "unlockBlock" : "解锁于区块"
+    },
+    "unbond" : {
+      "stepperHeader" : {
+        "amount" : "确认解除质押",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "amount" : {
+        "bondedAmount" : "要取消权益质押的数额",
+        "belowMinimum" : "此数额将被冻结约 360 个区块（约 1 小时）。如果解绑会导致已绑定数额少于 <minimum/> 已绑定，您的全部已绑定余额将改为已解绑，因为届时将不再满足最低质押要求。",
+        "max" : "最大值"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "已提交解除质押",
+          "description" : "您的绑定交易正在 Aleo 网络上处理。"
+        }
+      }
     },
     "send" : {
       "balanceSelection" : {
@@ -11030,8 +11492,8 @@
     "balancesSection" : "余额类型",
     "info" : {
       "available" : {
-        "title" : "Available balance",
-        "description" : "The balance you can spend right now: transparent funds plus any private records already synced. Staked and unstaking amounts are not included."
+        "title" : "可用余额",
+        "description" : "您当前可使用的余额：透明资金加上任何已同步的私有记录。已质押和正在解除质押的数额不包括在内。"
       },
       "transparent" : {
         "title" : "透明余额",
@@ -11042,16 +11504,16 @@
         "description" : "Aleo 网络上屏蔽隐藏的余额。此余额仅对您可见，并且需要为隐私交易生成证明。"
       },
       "staked" : {
-        "title" : "Staked",
-        "description" : "The amount currently bonded to a validator. It earns rewards but cannot be spent until you unstake it and the unbonding period ends."
+        "title" : "已质押",
+        "description" : "当前已绑定至验证者的数额。该数额可赚取奖励，但在您解除质押且解绑期结束前无法使用。"
       },
       "unstaking" : {
-        "title" : "Unstaking",
-        "description" : "The amount you have unstaked that is still locked. It stops earning rewards immediately and becomes claimable once the unbonding period ends."
+        "title" : "解除质押",
+        "description" : "您已解除质押但仍处于锁定状态的数额。会立即停止产生奖励，并在解绑期结束后可供申领。"
       },
       "claimable" : {
-        "title" : "Claimable",
-        "description" : "The unstaked amount whose unbonding period has ended. Claim it to move it back to your available balance."
+        "title" : "可领取",
+        "description" : "解绑期已结束的已解除质押数额。领取即可将其转回您的可用余额。"
       }
     },
     "account" : {
@@ -11066,6 +11528,13 @@
       "type" : {
         "public" : "公开",
         "private" : "私密"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "验证者",
+        "bondedAmount" : "已质押数额",
+        "unbondedAmount" : "已解除质押的数额"
       }
     },
     "shared" : {
@@ -11123,6 +11592,7 @@
     "addAddressEntry" : {
       "title" : "输入地址",
       "addressPlaceholder" : "地址或 ENS",
+      "addressPlaceholderNoENS" : "地址",
       "confirmAddress" : "确认地址",
       "validatingAddress" : "正在验证地址",
       "validAddress" : "有效地址",
@@ -11234,7 +11704,7 @@
       "highlights" : {
         "saveAddresses" : {
           "title" : "使用您选择的名称保存地址",
-          "description" : "兑换、朋友，以及您自己的外部账户。"
+          "description" : "交易所、朋友或您自己的外部账户。"
         },
         "sendToRightAddress" : {
           "title" : "转账至正确地址",

@@ -1,15 +1,14 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
+import { copyToClipboard } from "@shared/clipboard";
 import CopyButton from "./CopyButton";
+
+jest.mock("@shared/clipboard");
 
 describe("CopyButton", () => {
   const testText = "Text to copy";
-  beforeAll(() => {
-    Object.assign(navigator, {
-      clipboard: {
-        writeText: jest.fn().mockResolvedValue(undefined),
-      },
-    });
+  beforeEach(() => {
+    jest.mocked(copyToClipboard).mockResolvedValue(true);
   });
 
   afterAll(() => {
@@ -25,8 +24,6 @@ describe("CopyButton", () => {
   });
 
   it("copies text to clipboard when clicked", async () => {
-    jest.spyOn(navigator.clipboard, "writeText").mockImplementation(() => Promise.resolve());
-
     const { user } = render(<CopyButton text={testText} />);
     const button = screen.getByRole("button", { name: "Copy" });
 
@@ -34,7 +31,7 @@ describe("CopyButton", () => {
     expect(button).toBeVisible();
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(testText);
+      expect(copyToClipboard).toHaveBeenCalledWith(testText);
     });
   });
 

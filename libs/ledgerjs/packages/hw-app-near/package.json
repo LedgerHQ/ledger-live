@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-near",
-  "version": "6.36.0",
+  "version": "6.37.0",
   "description": "Ledger Hardware Wallet Near Application API",
   "keywords": [
     "Ledger",
@@ -53,7 +53,6 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported",
     "format": "oxfmt src tests",
     "format:check": "oxfmt --check src tests"
   },

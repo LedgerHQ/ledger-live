@@ -28,6 +28,12 @@ on:
       paths:
         description: "Newline-separated list of affected paths"
         value: ${{ jobs.nx-affected.outputs.paths }}
+      mobile_js_hash_ios:
+        description: "Nx hash of live-mobile:e2e:bundle:ios, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_js_hash_ios }}
+      mobile_js_hash_android:
+        description: "Nx hash of live-mobile:e2e:bundle:android, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_js_hash_android }}
 
 permissions:
   contents: read
@@ -35,13 +41,15 @@ permissions:
 jobs:
   nx-affected:
     name: "Determine Affected (Nx)"
-    runs-on: ledger-wallet-2cpu-aws-public
+    runs-on: ledger-wallet-4cpu-aws-public-cached
     permissions:
       contents: read
       id-token: write # needed for the OIDC login to JFrog
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}
+      mobile_js_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
+      mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
     steps:
       - name: Check for a Smartling branch
         if: ${{ inputs.close_smartling_pr }}
@@ -118,9 +126,11 @@ jobs:
             core.exportVariable("base_branch", newBaseBranch);
             core.setOutput("base_ref", "origin/" + newBaseBranch);
 
-      - name: Install dev dependencies for root workspace
+      # Same filters as the mobile Build JS jobs: Nx resolves package versions through node_modules,
+      # so the e2e:bundle hash computed below only matches theirs with the same install
+      - name: Install dependencies for the root workspace and mobile
         if: ${{ env.IS_SMARTLING != 'true' }}
-        run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
+        run: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="ledger-live" --ignore-scripts
 
       - name: Get affected packages and paths
         id: nx-affected
@@ -129,3 +139,11 @@ jobs:
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD
+
+      # Reuses the project graph the affected step just built, so the mobile e2e workflow can look the
+      # JS bundles up in the Nx cache without its own install. Like the Build JS jobs, it sets no sharedEnv
+      # variables, which are part of the e2e:bundle hash.
+      - name: Compute mobile JS bundle Nx hashes
+        id: mobile-js-hash
+        if: ${{ env.IS_SMARTLING != 'true' && contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
+        run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"

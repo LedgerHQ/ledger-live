@@ -1,12 +1,11 @@
 /* eslint-disable no-console */
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { hexToU8a } from "@polkadot/util";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import coinConfig from "../config";
+import type { PolkadotContext } from "../config";
 import { signExtrinsic } from "../logic";
 import polkadotAPI from "../network";
 import type { PolkadotAccount, PolkadotSigner, Transaction } from "../types";
@@ -20,6 +19,7 @@ import { calculateAmount } from "./utils";
 export const buildSignOperation =
   (
     signerContext: SignerContext<PolkadotSigner>,
+    context: PolkadotContext,
   ): AccountBridge<Transaction, PolkadotAccount>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
@@ -32,15 +32,18 @@ export const buildSignOperation =
           throw new FeeNotLoaded();
         }
 
+        const config = await context.config(account.currency.id);
+
         // Ensure amount is filled when useAllAmount
         const transactionToSign = {
           ...transaction,
           amount: calculateAmount({
+            config,
             account,
             transaction,
           }),
         };
-        const { unsigned, registry } = await buildTransaction(account, transactionToSign);
+        const { unsigned, registry } = await buildTransaction(context, account, transactionToSign);
         const payload = registry
           .createType("ExtrinsicPayload", unsigned, {
             version: unsigned.version,
@@ -48,8 +51,6 @@ export const buildSignOperation =
           .toU8a({
             method: true,
           });
-        const currency = getCryptoCurrencyById(account.currency.id);
-        const config = coinConfig.getCoinConfig(account.currency.id);
         // Decompose the ExtrinsicPayload into its three parts for the sidecar metadata-blob endpoint
         // payload = callData ++ includedInExtrinsic (extra) ++ includedInSignedData (additional_signed)
         const callData = unsigned.method;
@@ -79,7 +80,7 @@ export const buildSignOperation =
           callData,
           includedInExtrinsic,
           includedInSignedData,
-          currency,
+          account.currency.id,
         );
 
         // Rebuild unsigned and payload with the real metadataHash
@@ -105,7 +106,7 @@ export const buildSignOperation =
           callData,
           includedInExtrinsic,
           finalIncludedInSignedData,
-          currency,
+          account.currency.id,
         );
 
         const r = await signerContext(deviceId, signer =>

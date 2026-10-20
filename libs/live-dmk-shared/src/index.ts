@@ -38,6 +38,25 @@ export {
   connectDeviceUseCase,
   type ConnectDeviceUseCaseInput,
 } from "./connectDevice/connectDeviceUseCase";
+export { ConnectNewDeviceUIStateTypes } from "./connectNewDevice/types";
+export type {
+  ConnectNewDeviceFilterListedDevices,
+  ConnectNewDeviceGetDiscoveredDeviceKey,
+  ConnectNewDeviceMapConnectionError,
+  ConnectNewDeviceStateMachineInput,
+  ConnectNewDeviceUIState,
+  ConnectNewDeviceUIStateType,
+  ListedDevice,
+  SelectableDevice,
+} from "./connectNewDevice/types";
+export {
+  DefaultConnectNewDeviceStateMachine,
+  type ConnectNewDeviceStateMachine,
+} from "./connectNewDevice/ConnectNewDeviceStateMachine";
+export {
+  connectNewDeviceUseCase,
+  type ConnectNewDeviceUseCaseInput,
+} from "./connectNewDevice/connectNewDeviceUseCase";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export {
@@ -74,6 +93,7 @@ export { AddressBookProvider } from "./services/AddressBookProvider";
 export type { AddressBookSource } from "./services/AddressBookProvider";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
 export { UserHashService } from "./services/UserHashService";
+export { syncFirmwareDistributionSalt } from "./services/syncFirmwareDistributionSalt";
 export {
   LiveBlindSigningReporter,
   liveBlindSigningReporter,

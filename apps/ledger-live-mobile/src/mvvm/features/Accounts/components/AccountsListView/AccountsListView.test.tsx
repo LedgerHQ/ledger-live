@@ -6,8 +6,8 @@ import { render, screen } from "@tests/test-renderer";
 import AccountsListView from ".";
 import { Text } from "@ledgerhq/native-ui";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculate: ({ value }: { value: number }) => value,
 }));
 

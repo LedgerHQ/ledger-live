@@ -27,13 +27,27 @@ ${mode.toUpperCase()} ${
         })
 }${recipient ? `\nTO ${recipient}` : ""}`;
 
+// `fees` and `nonce` round-trip verbatim, including the `null` the generic-coin-framework's
+// `createTransaction` starts them at. Coercing an unestimated fee to zero, or dropping the nonce,
+// makes `fromTransactionRaw(toTransactionRaw(t))` differ from `t` — and a lost nonce sends
+// `signOperation` into `getNextSequence`, which this module does not implement. Same shape as the
+// other generic-route families (tezos, xrp).
+//
+// `toFixed`, not `toString`, on the way out: BigNumber switches to exponential notation above 1e21
+// and a NEAR fee is denominated in yocto, so every estimated fee clears that. `toString` persisted
+// "1.5e+22" instead of the digits, which `BigInt` cannot parse.
 export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(transactionRaw);
   return {
     ...common,
     family: transactionRaw.family,
     mode: transactionRaw.mode,
-    fees: new BigNumber(transactionRaw?.fees || 0),
+    fees: transactionRaw.fees ? new BigNumber(transactionRaw.fees) : null,
+    // Zero, not absent, when the raw carries no nonce: the generic `createTransaction` seeds NEAR
+    // with a synthetic zero so `signOperation` can skip `getNextSequence`, and `transactionToIntent`
+    // leaves `sequence` undefined for a nullish nonce. A transaction persisted by the legacy bridge,
+    // or built by an external caller, has no nonce and would otherwise revive into that throwing path.
+    nonce: transactionRaw.nonce ? new BigNumber(transactionRaw.nonce) : new BigNumber(0),
   };
 };
 
@@ -43,10 +57,9 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
     ...common,
     family: transaction.family,
     mode: transaction.mode,
+    fees: transaction.fees ? transaction.fees.toFixed() : null,
+    ...(transaction.nonce ? { nonce: transaction.nonce.toFixed() } : {}),
   };
-  if (transaction.fees) {
-    transactionRaw.fees = transaction.fees.toString();
-  }
 
   return transactionRaw;
 };

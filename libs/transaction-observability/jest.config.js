@@ -1,4 +1,6 @@
-module.exports = {
+const { withEsmDeps } = require("@support/jest-shared");
+
+const config = {
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
@@ -18,3 +20,5 @@ module.exports = {
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
 };
+
+module.exports = withEsmDeps(config);

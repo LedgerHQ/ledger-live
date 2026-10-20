@@ -8,7 +8,7 @@ import {
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@features/platform-market-countervalues";
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { SendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";

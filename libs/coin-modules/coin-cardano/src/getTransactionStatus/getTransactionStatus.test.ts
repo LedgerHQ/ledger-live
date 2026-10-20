@@ -4,6 +4,8 @@ import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig, { CardanoCoinConfig } from "../config";
 import { CardanoMemoExceededSizeError } from "../errors";
+import { getCardanoAccountFixture } from "../fixtures/accounts";
+import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { CardanoAccount, CardanoOutput, Transaction } from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
@@ -43,27 +45,17 @@ describe("getTransactionStatus", () => {
     spiedGetCoinConfig.mockReturnValue({
       maxFeesWarning: BigNumber(0),
       maxFeesError: BigNumber(0),
+      testnet: false,
     } as unknown as CardanoCoinConfig);
   });
 
-  it("should return not enough funds error when there are no utxos", async () => {
+  it("should return not enough funds error for staking flows when there are no utxos", async () => {
     const initialAccount = {
       pendingOperations: [],
       cardanoResources: {
         utxos: [],
       },
     } as unknown as CardanoAccount;
-
-    const sendTx: Transaction = {
-      amount: new BigNumber(1000000),
-      recipient:
-        "addr1qxqm3nxwzf70ke9jqa2zrtrevjznpv6yykptxnv34perjc8a7zgxmpv5pgk4hhhe0m9kfnlsf5pt7d2ahkxaul2zygrq3nura9",
-      mode: "send",
-      family: "cardano",
-      poolId: undefined,
-    };
-    const sendTxRes = await getTransactionStatus(initialAccount, sendTx);
-    expect(sendTxRes.errors.amount.name).toBe("CardanoNotEnoughFunds");
 
     const delegateTx: Transaction = {
       amount: new BigNumber(0),
@@ -84,6 +76,36 @@ describe("getTransactionStatus", () => {
     };
     const undelegateTxRes = await getTransactionStatus(initialAccount, undelegateTx);
     expect(undelegateTxRes.errors.amount.name).toBe("CardanoNotEnoughFunds");
+  });
+
+  it("should return NotEnoughBalance for a send when the account only holds rewards", async () => {
+    spiedGetTransactionStatusByTransactionMode.mockImplementation(
+      jest.requireActual("./handler").getTransactionStatusByTransactionMode,
+    );
+    spiedGetCoinConfig.mockReturnValue({
+      maxFeesWarning: BigNumber(5e6),
+      maxFeesError: BigNumber(10e6),
+    } as unknown as CardanoCoinConfig);
+    const account = getCardanoAccountFixture({
+      delegation: { dRepHex: "drepHex", rewards: BigNumber(17.4e6) },
+      utxos: [],
+    });
+    account.balance = BigNumber(17.4e6);
+    account.spendableBalance = BigNumber(0);
+    account.cardanoResources.protocolParams = getProtocolParamsFixture();
+
+    const status = await getTransactionStatus(account, {
+      family: "cardano",
+      mode: "send",
+      recipient:
+        "addr_test1qz7jw975stagnvs00wsjny6y6gpazn86yvwcm2vy02j3up7mt68vuzvz4nzgs00x0shrgywvy674v6r2zcs8fxvvq27qfjq8np",
+      amount: BigNumber(16e6),
+      fees: BigNumber(170_000),
+      poolId: undefined,
+      protocolParams: getProtocolParamsFixture(),
+    });
+
+    expect(status.errors.amount?.name).toBe("NotEnoughBalance");
   });
 
   it("should return as sender error only sanctioned utxo addresses", async () => {
@@ -116,6 +138,7 @@ describe("getTransactionStatus", () => {
     ] as unknown as CardanoOutput[];
 
     const account = {
+      currency: { id: "cardano" },
       pendingOperations: [],
       cardanoResources: {
         utxos: utxos,
@@ -149,6 +172,7 @@ describe("getTransactionStatus", () => {
     ] as unknown as CardanoOutput[];
 
     const account = {
+      currency: { id: "cardano" },
       pendingOperations: [],
       cardanoResources: {
         utxos: utxos,
@@ -168,6 +192,7 @@ describe("getTransactionStatus", () => {
     spiedValidateMemo.mockReturnValueOnce(true);
 
     const account = {
+      currency: { id: "cardano" } as CardanoAccount["currency"],
       pendingOperations: [] as Operation[],
       cardanoResources: {
         utxos: [{} as CardanoOutput],
@@ -185,6 +210,7 @@ describe("getTransactionStatus", () => {
     spiedValidateMemo.mockReturnValueOnce(false);
 
     const account = {
+      currency: { id: "cardano" } as CardanoAccount["currency"],
       pendingOperations: [] as Operation[],
       cardanoResources: {
         utxos: [{} as CardanoOutput],

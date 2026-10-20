@@ -3,29 +3,29 @@ import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@polkadot/util-crypto";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { PolkadotAccount, Transaction } from "../types";
-import { broadcast } from "./broadcast";
+import { buildBroadcast } from "./broadcast";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
-describe("broadcast", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: {
-        url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
-      },
-      sidecar: {
-        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-      },
-      indexer: {
-        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
-      },
-    }));
-  });
+const broadcast = buildBroadcast(
+  createMockPolkadotContext({
+    status: { type: "active" },
+    name: "Polkadot",
+    unit: { name: "DOT", code: "DOT", magnitude: 10 },
+    node: {
+      url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
+    },
+    sidecar: {
+      url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
+    },
+    indexer: {
+      url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
+    },
+  }),
+);
 
+describe("broadcast", () => {
   it("throws on not deployed and empty account", async () => {
     const senderSeed = mnemonicGenerate(24);
     const receiverSeed = mnemonicGenerate(24);

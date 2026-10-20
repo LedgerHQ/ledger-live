@@ -29,7 +29,6 @@ import {
   INIT_INPUT,
   USDC_TOKEN,
   defaultPayStablecoins,
-  dieEnabledState,
   fundedState,
   newSendFlowEnabledState,
   onboardedState,
@@ -98,7 +97,7 @@ let capturedExecutor: CapturedExecutor | undefined;
 
 jest.mock("LLD/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
-  DeviceIntentExecutorLWD: (props: CapturedExecutor) => {
+  DeviceIntentExecutor: (props: CapturedExecutor) => {
     capturedExecutor = props;
     return <div data-testid="device-intent-executor" />;
   },
@@ -406,7 +405,7 @@ describe("PayTab integration", () => {
   it("should mount the DIE on verify and restore the request card once the address is confirmed", async () => {
     mockFundedPayStablecoins();
     const { user } = renderWithMockedCounterValuesProvider(<PayTab />, {
-      initialState: dieEnabledState,
+      initialState: fundedState,
     });
 
     await openRequestReceive(user);

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Spot } from "@ledgerhq/lumen-ui-react";
+import { DeleteCircleFill } from "@ledgerhq/lumen-ui-react/symbols";
 
 export function SearchErrorState() {
   const { t } = useTranslation();
@@ -10,7 +11,7 @@ export function SearchErrorState() {
       className="flex flex-col items-center justify-center gap-16 py-40"
       data-testid="search-error-state"
     >
-      <Spot appearance="error" />
+      <Spot appearance="error" icon={DeleteCircleFill} />
       <span className="heading-4-semi-bold text-base">{t("topBar.search.error")}</span>
     </div>
   );

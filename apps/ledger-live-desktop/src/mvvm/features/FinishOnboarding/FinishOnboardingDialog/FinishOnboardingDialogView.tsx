@@ -35,7 +35,11 @@ const FinishOnboardingDialogView = ({
         className="bg-canvas flex h-auto max-h-[90vh] flex-col gap-0 overflow-hidden rounded-2xl"
         aria-describedby={undefined}
       >
-        <DialogHeader onClose={onClose} className="!mb-0 shrink-0" />
+        <DialogHeader
+          onClose={onClose}
+          className="!mb-0 shrink-0"
+          data-testid="finish-onboarding-dialog-header"
+        />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-0 overflow-y-auto p-16 pt-0">
           <div className="flex flex-col p-8 gap-16">
             <Stepper

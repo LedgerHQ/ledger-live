@@ -38,7 +38,7 @@ import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import Account from "~/screens/Account";
+import Account from "LLM/features/AccountDetail/AccountScreen";
 import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 import styles from "~/navigation/styles";
@@ -318,7 +318,7 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.Recover}
           component={RecoverPlayer}
-          options={{ headerStyle: styles.headerNoShadow }}
+          options={{ headerShown: false, headerStyle: styles.headerNoShadow }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen

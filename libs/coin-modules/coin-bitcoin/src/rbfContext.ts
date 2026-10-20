@@ -9,6 +9,7 @@ import type { NetworkInfo } from "./types";
 import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfFees";
 import { Address } from "@ledgerhq/wallet-btc/storage/types";
 import { scriptToAddress } from "@ledgerhq/wallet-btc/utils";
+import type { BitcoinCoinConfig } from "./config";
 
 export async function getAmountAndRecipient(
   tx: Transaction,
@@ -21,7 +22,7 @@ export async function getAmountAndRecipient(
   if (knownRecipient) {
     const recipientOutput = tx.outs.find(out => {
       try {
-        const address = scriptToAddress(out.script, crypto);
+        const address = scriptToAddress(Buffer.from(out.script), crypto);
         return address === knownRecipient;
       } catch {
         return false;
@@ -29,7 +30,7 @@ export async function getAmountAndRecipient(
     });
 
     if (recipientOutput) {
-      return { amountSent: recipientOutput.value, recipient: knownRecipient };
+      return { amountSent: Number(recipientOutput.value), recipient: knownRecipient };
     }
   }
 
@@ -45,8 +46,8 @@ export async function getAmountAndRecipient(
   const externalOutputs = tx.outs
     .map(out => {
       try {
-        const address = scriptToAddress(out.script, crypto);
-        return { address, value: out.value };
+        const address = scriptToAddress(Buffer.from(out.script), crypto);
+        return { address, value: Number(out.value) };
       } catch {
         return null;
       }
@@ -93,6 +94,7 @@ const buildExcludeUtxos = async (walletAccount: WalletAccount) => {
 };
 
 export const getRbfContext = async (
+  config: BitcoinCoinConfig,
   account: Account,
   originalTxId: string,
 ): Promise<RbfTxContext> => {
@@ -107,7 +109,7 @@ export const getRbfContext = async (
   const originalTx = Transaction.fromHex(hexTx);
   assertRbfEnabled(originalTx);
 
-  const minFeeRateSatVb = await getMinReplacementFeeRateSatVb({
+  const minFeeRateSatVb = await getMinReplacementFeeRateSatVb(config, {
     account,
     originalTxId,
   });

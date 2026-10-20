@@ -12,10 +12,11 @@ import {
   resolveOutputFormat,
 } from "./inputs";
 import { trackOperationViewed } from "./accounts-analytics";
+import { commandDescription } from "./registry";
 
 export default defineCommand({
   name: "operations",
-  description: "List operations for an account (no device required)",
+  description: commandDescription("operations"),
   options: {
     account: accountOption,
     limit: option(z.coerce.number().int().min(1).optional(), {

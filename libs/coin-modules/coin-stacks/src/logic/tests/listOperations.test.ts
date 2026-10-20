@@ -7,11 +7,13 @@ import {
   tupleCV,
   uintCV,
 } from "@stacks/transactions";
-import { fetchAllTransactions } from "../../network/api";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { fetchAllTransactions, fetchFungibleTokenMetadataCached } from "../../network/api";
 import type { TransactionResponse } from "../../types/api";
 import { listOperations } from "../listOperations";
 
 jest.mock("../../network/api");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const SENDER = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 const RECIPIENT = "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA";
@@ -68,8 +70,52 @@ function baseTx(overrides: Partial<TransactionResponse["tx"]>): TransactionRespo
   };
 }
 
+const OTHER_RECIPIENT = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
+
+function sendManyTx(entries: { to: string; ustx: number; memo?: string }[]): TransactionResponse {
+  const functionArgsHex = hex(
+    listCV(
+      entries.map(entry =>
+        tupleCV({
+          memo: bufferCV(Buffer.from(entry.memo ?? "")),
+          to: standardPrincipalCV(entry.to),
+          ustx: uintCV(entry.ustx),
+        }),
+      ),
+    ),
+  );
+  return baseTx({
+    tx_type: "contract_call",
+    contract_call: {
+      contract_id: "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.send-many-memo",
+      function_name: "send-many",
+      function_signature: "",
+      function_args: [{ hex: functionArgsHex, repr: "", name: "", type: "" }],
+    },
+  });
+}
+
+const findTokenByAddressInCurrency = jest.fn();
+const mockFetchFungibleTokenMetadataCached =
+  fetchFungibleTokenMetadataCached as unknown as jest.Mock;
+
+function sip010TransferArgs() {
+  return [
+    { hex: hex(uintCV(2500)), repr: "", name: "", type: "" },
+    { hex: hex(standardPrincipalCV(SENDER)), repr: "", name: "", type: "" },
+    { hex: hex(standardPrincipalCV(RECIPIENT)), repr: "", name: "", type: "" },
+    { hex: hex(someCV(bufferCV(Buffer.from("memo")))), repr: "", name: "", type: "" },
+  ];
+}
+
 describe("listOperations", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Registered by default, so a post-condition's token id is already canonical.
+    findTokenByAddressInCurrency.mockResolvedValue({ id: "registered" });
+    (getCryptoAssetsStore as jest.Mock).mockReturnValue({ findTokenByAddressInCurrency });
+    mockFetchFungibleTokenMetadataCached.mockResolvedValue({ results: [] });
+  });
 
   it("rejects a limit above the Stacks page-size cap", async () => {
     await expect(listOperations(SENDER, { minHeight: 0, limit: 51 })).rejects.toThrow(
@@ -94,6 +140,34 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(SENDER, { minHeight: 150 });
 
+    expect(items).toHaveLength(1);
+    expect(items[0].tx.hash).toBe("0xtx-new");
+  });
+
+  it("skips a transfer below minHeight before resolving its token, so a failing lookup cannot abort the sync", async () => {
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_id: "0xtoken-old",
+        block_height: 100,
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+      baseTx({
+        tx_id: "0xtx-new",
+        block_height: 200,
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 150 });
+
+    expect(mockFetchFungibleTokenMetadataCached).not.toHaveBeenCalled();
     expect(items).toHaveLength(1);
     expect(items[0].tx.hash).toBe("0xtx-new");
   });
@@ -131,9 +205,12 @@ describe("listOperations", () => {
 
   it("maps a native STX transfer to an OUT operation from the sender's perspective", async () => {
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
-      baseTx({
-        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
-      }),
+      {
+        ...baseTx({
+          token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+        }),
+        stx_sent: "2000",
+      },
     ]);
 
     const { items } = await listOperations(SENDER, { minHeight: 0 });
@@ -144,6 +221,146 @@ describe("listOperations", () => {
       senders: [SENDER],
       recipients: [RECIPIENT],
       asset: { type: "native" },
+    });
+  });
+
+  it("values a native STX send at the amount alone, since stx_sent already includes the fee", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      {
+        ...baseTx({
+          fee_rate: "180",
+          token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+        }),
+        stx_sent: "1180",
+      },
+    ]);
+
+    const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+    expect(items[0].value).toBe(1000n);
+    expect(items[0].tx.fees).toBe(180n);
+  });
+
+  it("carries the transaction nonce as the operation sequence", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        nonce: 42,
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+    expect(items[0].details?.sequence).toBe(42n);
+  });
+
+  it("names the sender as fee payer", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(items[0].tx.feesPayer).toBe(SENDER);
+  });
+
+  it("names no fee payer for a sponsored transaction", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        sponsored: true,
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+    expect(items[0].tx.feesPayer).toBeUndefined();
+  });
+
+  // The framework adds `tx.fees` to an outgoing native value and values a failed operation at it,
+  // so a sponsor-paid fee must not reach `tx.fees`.
+  describe("sponsored transactions report no fee, so the sender is not charged the sponsor's", () => {
+    it("on a native STX transfer", async () => {
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([
+        baseTx({
+          sponsored: true,
+          fee_rate: "180",
+          token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+        }),
+      ]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items[0]).toMatchObject({ type: "OUT", value: 1000n });
+      expect(items[0].tx.fees).toBe(0n);
+    });
+
+    it("on a failed native STX transfer", async () => {
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([
+        baseTx({
+          sponsored: true,
+          fee_rate: "180",
+          tx_status: "abort_by_response",
+          token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+        }),
+      ]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items[0].tx.failed).toBe(true);
+      expect(items[0].tx.fees).toBe(0n);
+    });
+
+    it("on a send-many, for the batch OUT and each internal operation", async () => {
+      const tx = sendManyTx([
+        { to: RECIPIENT, ustx: 5000 },
+        { to: OTHER_RECIPIENT, ustx: 3000 },
+      ]);
+      tx.tx.sponsored = true;
+      tx.tx.fee_rate = "180";
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([tx]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items).toHaveLength(3);
+      expect(items[0].value).toBe(8000n);
+      expect(items.map(op => op.tx.fees)).toEqual([0n, 0n, 0n]);
+    });
+
+    it("on a SIP-010 transfer, whose value is unchanged", async () => {
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([
+        baseTx({
+          sponsored: true,
+          fee_rate: "180",
+          tx_type: "contract_call",
+          post_conditions: [
+            {
+              type: "fungible",
+              condition_code: "eq",
+              amount: "2500",
+              principal: { type_id: "principal_standard", address: SENDER },
+              asset: {
+                asset_name: "token-x",
+                contract_address: "SP_CONTRACT",
+                contract_name: "token-x",
+              },
+            },
+          ],
+          contract_call: {
+            contract_id: "SP_CONTRACT.token-x",
+            function_name: "transfer",
+            function_signature: "",
+            function_args: sip010TransferArgs(),
+          },
+        }),
+      ]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items[0]).toMatchObject({ type: "OUT", value: 2500n, asset: { type: "token" } });
+      expect(items[0].tx.fees).toBe(0n);
     });
   });
 
@@ -195,38 +412,62 @@ describe("listOperations", () => {
     expect(items).toHaveLength(0);
   });
 
-  it("maps a send-many contract call to per-recipient operations", async () => {
-    const functionArgsHex = hex(
-      listCV([
-        tupleCV({
-          memo: bufferCV(Buffer.from("hi")),
-          to: standardPrincipalCV(RECIPIENT),
-          ustx: uintCV(5000),
-        }),
-      ]),
-    );
-
+  it("maps a send-many contract call to one OUT for the batch, with an internal operation per recipient", async () => {
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
-      baseTx({
-        tx_type: "contract_call",
-        contract_call: {
-          contract_id: "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.send-many-memo",
-          function_name: "send-many",
-          function_signature: "",
-          function_args: [{ hex: functionArgsHex, repr: "", name: "", type: "" }],
-        },
-      }),
+      sendManyTx([
+        { to: RECIPIENT, ustx: 5000, memo: "hi" },
+        { to: OTHER_RECIPIENT, ustx: 3000, memo: "yo" },
+      ]),
     ]);
 
     const { items } = await listOperations(SENDER, { minHeight: 0 });
 
-    expect(items).toHaveLength(1);
+    expect(items).toHaveLength(3);
     expect(items[0]).toMatchObject({
+      id: "0xtx1-OUT",
       type: "OUT",
       senders: [SENDER],
-      recipients: [RECIPIENT],
-      value: 5000n,
+      recipients: [],
+      value: 8000n,
       asset: { type: "native" },
+    });
+    expect(items[0].details?.internal).toBeUndefined();
+    expect(items.slice(1)).toMatchObject([
+      {
+        id: "0xtx1-OUT-0",
+        type: "OUT",
+        recipients: [RECIPIENT],
+        value: 5000n,
+        details: { internal: true, memo: "hi" },
+      },
+      {
+        id: "0xtx1-OUT-1",
+        type: "OUT",
+        recipients: [OTHER_RECIPIENT],
+        value: 3000n,
+        details: { internal: true, memo: "yo" },
+      },
+    ]);
+  });
+
+  it("sums every send-many entry addressed to the recipient into a single IN", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      sendManyTx([
+        { to: RECIPIENT, ustx: 5000 },
+        { to: OTHER_RECIPIENT, ustx: 3000 },
+        { to: RECIPIENT, ustx: 1000 },
+      ]),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      id: "0xtx1-IN",
+      type: "IN",
+      senders: [SENDER],
+      recipients: [RECIPIENT],
+      value: 6000n,
     });
   });
 
@@ -340,14 +581,10 @@ describe("listOperations", () => {
     });
   });
 
-  it("drops a SIP-010 transfer with no Fungible post-condition (asset name unresolvable)", async () => {
-    const functionArgs = [
-      { hex: hex(uintCV(2500)), repr: "", name: "", type: "" },
-      { hex: hex(standardPrincipalCV(SENDER)), repr: "", name: "", type: "" },
-      { hex: hex(standardPrincipalCV(RECIPIENT)), repr: "", name: "", type: "" },
-      { hex: hex(someCV(bufferCV(Buffer.from("memo")))), repr: "", name: "", type: "" },
-    ];
-
+  it("resolves a SIP-010 transfer with no Fungible post-condition from the contract's FT metadata", async () => {
+    mockFetchFungibleTokenMetadataCached.mockResolvedValue({
+      results: [{ asset_identifier: "SP_CONTRACT.token-x::token-x" }],
+    });
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
       baseTx({
         tx_type: "contract_call",
@@ -355,7 +592,31 @@ describe("listOperations", () => {
           contract_id: "SP_CONTRACT.token-x",
           function_name: "transfer",
           function_signature: "",
-          function_args: functionArgs,
+          function_args: sip010TransferArgs(),
+        },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(mockFetchFungibleTokenMetadataCached).toHaveBeenCalledWith("SP_CONTRACT.token-x");
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      type: "IN",
+      value: 2500n,
+      asset: { type: "token", assetReference: "sp_contract.token-x::token-x" },
+    });
+  });
+
+  it("drops a SIP-010 transfer whose asset neither a post-condition nor FT metadata identifies", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
         },
       }),
     ]);
@@ -363,6 +624,102 @@ describe("listOperations", () => {
     const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
 
     expect(items).toHaveLength(0);
+  });
+
+  it("canonicalizes an unregistered SIP-010 token id against the contract's FT metadata", async () => {
+    findTokenByAddressInCurrency.mockResolvedValue(null);
+    mockFetchFungibleTokenMetadataCached.mockResolvedValue({
+      results: [{ asset_identifier: "SP_CONTRACT.token-x::Token-X" }],
+    });
+    (fetchAllTransactions as jest.Mock).mockResolvedValue(
+      ["0xtx1", "0xtx2"].map(tx_id =>
+        baseTx({
+          tx_id,
+          tx_type: "contract_call",
+          post_conditions: [
+            {
+              type: "fungible",
+              condition_code: "eq",
+              amount: "2500",
+              principal: { type_id: "principal_standard", address: SENDER },
+              asset: {
+                asset_name: "tkn",
+                contract_address: "SP_CONTRACT",
+                contract_name: "token-x",
+              },
+            },
+          ],
+          contract_call: {
+            contract_id: "SP_CONTRACT.token-x",
+            function_name: "transfer",
+            function_signature: "",
+            function_args: sip010TransferArgs(),
+          },
+        }),
+      ),
+    );
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(items.map(op => op.asset)).toEqual([
+      expect.objectContaining({ assetReference: "sp_contract.token-x::token-x" }),
+      expect.objectContaining({ assetReference: "sp_contract.token-x::token-x" }),
+    ]);
+    // Resolved once, then reused for the second transfer of the same token.
+    expect(mockFetchFungibleTokenMetadataCached).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails instead of storing an uncanonicalized token id when canonicalization metadata is unavailable", async () => {
+    findTokenByAddressInCurrency.mockResolvedValue(null);
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_type: "contract_call",
+        post_conditions: [
+          {
+            type: "fungible",
+            condition_code: "eq",
+            amount: "2500",
+            principal: { type_id: "principal_standard", address: SENDER },
+            asset: {
+              asset_name: "tkn",
+              contract_address: "SP_CONTRACT",
+              contract_name: "token-x",
+            },
+          },
+        ],
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+    ]);
+
+    await expect(listOperations(RECIPIENT, { minHeight: 0 })).rejects.toThrow("metadata API down");
+  });
+
+  it("fails instead of dropping a transfer when FT metadata is unavailable", async () => {
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_id: "0xtoken",
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+      baseTx({
+        tx_id: "0xnative",
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    await expect(listOperations(RECIPIENT, { minHeight: 0 })).rejects.toThrow("metadata API down");
   });
 
   it("maps any other contract call (e.g. pox-5 stake) to a generic operation", async () => {

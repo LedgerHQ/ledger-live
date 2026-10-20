@@ -23,7 +23,7 @@ export async function estimateFees(
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
   const nonce = intent.sequence ?? (await getNextSequence(intent.sender));
-  const tx = await buildUnsignedTx(intent, 0n, nonce);
+  const tx = await buildUnsignedTx(intent, 0n, nonce, { forEstimation: true });
 
   const [lowFee] = await fetchFeeEstimateTransaction({
     payload: serializePayload(tx.payload),

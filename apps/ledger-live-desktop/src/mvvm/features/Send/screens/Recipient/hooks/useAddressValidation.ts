@@ -26,7 +26,10 @@ import { t } from "~/renderer/i18n/init";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
+import {
+  applyRecipientSelfTransferState,
+  getAccountSelfTransferTarget,
+} from "../../../utils/selfTransferTarget";
 import { useFormattedAccountBalance } from "./useFormattedAccountBalance";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
@@ -163,12 +166,25 @@ export function useAddressValidation({
   }, [ensResolution?.address, matchedContact?.address, searchValue]);
   const validationKey = `${sanctionCurrency?.id ?? ""}:${addressForBridgeValidation}`;
 
+  const transactionForBridgeValidation = useMemo(
+    () =>
+      account && transaction
+        ? applyRecipientSelfTransferState(
+            account,
+            transaction,
+            addressForBridgeValidation,
+            parentAccount,
+          )
+        : transaction,
+    [account, transaction, addressForBridgeValidation, parentAccount],
+  );
+
   // Bridge validation for recipient/sender errors and warnings
   const bridgeValidation = useBridgeRecipientValidation({
     recipient: addressForBridgeValidation,
     account: account ?? null,
     parentAccount: parentAccount ?? null,
-    transaction,
+    transaction: transactionForBridgeValidation,
     enabled: Boolean(
       addressForBridgeValidation &&
       account &&
@@ -284,13 +300,13 @@ export function useAddressValidation({
   // shortcut already produces on click. Any other self-match (e.g. the pool
   // currently being spent from) keeps the account name.
   const selfTransferPoolLabel = useMemo(() => {
-    if (!currentAccountMatch) return undefined;
-    const target = getAccountSelfTransferTarget(currentAccountMatch, transaction);
+    if (!currentAccountMatch || !account) return undefined;
+    const target = getAccountSelfTransferTarget(account, transaction, parentAccount);
     if (!target || target.address.toLowerCase() !== addressForBridgeValidation.toLowerCase()) {
       return undefined;
     }
     return t(`newSendFlow.${target.translationKey}.label`);
-  }, [currentAccountMatch, transaction, addressForBridgeValidation]);
+  }, [currentAccountMatch, account, parentAccount, transaction, addressForBridgeValidation]);
 
   const accountName = selfTransferPoolLabel ?? matchedLedgerAccountName;
 

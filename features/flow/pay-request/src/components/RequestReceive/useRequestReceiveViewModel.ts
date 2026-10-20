@@ -29,9 +29,9 @@ export function useRequestReceiveViewModel({
   const addressParts = useMemo(() => splitAddress(address), [address]);
 
   const runAction = useCallback(
-    (id: RequestReceiveActionId, callback?: (address: string) => void) => {
+    <T>(id: RequestReceiveActionId, callback?: (address: string) => T): T | undefined => {
       if (!callback) {
-        return;
+        return undefined;
       }
       trackButtonClicked({
         button: TRACK_BUTTON[id],
@@ -39,13 +39,16 @@ export function useRequestReceiveViewModel({
         page,
         flow: "request",
       });
-      callback(address);
+      return callback(address);
     },
     [address, page],
   );
 
   const handleShare = useCallback(() => runAction("share", onShare), [runAction, onShare]);
-  const handleCopy = useCallback(() => runAction("copy", onCopy), [runAction, onCopy]);
+  const handleCopy = useCallback(
+    async () => (await runAction("copy", onCopy)) ?? false,
+    [runAction, onCopy],
+  );
   const handleSave = useCallback(() => runAction("save", onSave), [runAction, onSave]);
   const handleVerify = useCallback(() => runAction("verify", onVerify), [runAction, onVerify]);
 

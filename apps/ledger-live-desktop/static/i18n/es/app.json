@@ -857,6 +857,9 @@
     "exploreCryptoCardsDescription" : "Explora nuestras tarjetas cripto y elige la que mejor se ajuste a tus necesidades."
   },
   "payTab" : {
+    "disclaimer" : "Ofrecido por Monavate OnChain",
+    "cardDisclaimer" : "¿Buscas tu tarjeta cripto?",
+    "cardDisclaimerLink" : "Ve a la tarjeta CL",
     "featureTour" : {
       "title" : "Todos tus pagos, en un mismo lugar",
       "description" : "Descubre la nueva pestaña Pay, que prepara tus cripto para el uso cotidiano de dinero.",
@@ -901,6 +904,7 @@
     "card" : {
       "title" : "Tarjeta cripto",
       "topUp" : "Recargar",
+      "chooseCardType" : "Elige el tipo de tarjeta",
       "balanceLabel" : "Saldo",
       "freeze" : "Inmovilizar",
       "unfreeze" : "Desinmovilizar",
@@ -922,14 +926,23 @@
       },
       "assets" : {
         "title" : "Activos",
-        "empty" : "Aún no hay activos",
-        "error" : "No se pudieron cargar los activos",
+        "empty" : {
+          "title" : "Aún no hay activos",
+          "description" : "Añade un activo para empezar a usar la tarjeta.",
+          "cta" : "Añadir activo"
+        },
+        "error" : {
+          "title" : "No fue posible cargar los activos",
+          "description" : "Se ha producido un error.",
+          "cta" : "Reintentar"
+        },
         "info" : "Estos activos aportan fondos a la tarjeta. Establece el orden de cobro o añade más.",
         "manage" : "Administrar",
         "manageDialog" : {
           "title" : "Administrar activos",
           "description" : "Arrastra para establecer el orden de fondos. Si un activo se está agotando, el siguiente se utiliza automáticamente.",
-          "addAssetCaption" : "Se te redirigirá a la página de Baanx para añadir activos.",
+          "reorder" : "Reordenar {{asset}}. Pulsa Espacio o Enter para seleccionar, las teclas de flecha para desplazarte y Escape para cancelar.",
+          "addAssetCaption" : "Se te redirigirá a Monavate para añadir un activo.",
           "addAsset" : "Añadir activo"
         },
         "details" : {
@@ -938,8 +951,8 @@
           "transactions" : "Transacciones"
         },
         "withdraw" : {
-          "title" : "Se te redirigirá a Baanx",
-          "description" : "Retira fondos de tu cuenta de Baanx a la dirección de tu wallet Ledger.",
+          "title" : "Se te redirigirá a Monavate",
+          "description" : "Retira fondos de tu cuenta de Monavate a la dirección de tu wallet Ledger.",
           "continue" : "Continuar"
         },
         "history" : {
@@ -950,7 +963,7 @@
         }
       },
       "reward" : {
-        "title" : "Total de devoluciones"
+        "title" : "Total de devoluciones · {{ratePercent}}% en {{ticker}}"
       },
       "numbers" : {
         "reveal" : "Ver",
@@ -982,7 +995,9 @@
         "status" : "Estado",
         "card" : "Tarjeta",
         "cardInfo" : "Los últimos cuatro dígitos de la tarjeta utilizada para este pago.",
-        "fundingSource" : "Origen de los fondos",
+        "fundingSource_one" : "Origen de los fondos",
+        "fundingSource_other" : "Orígenes de los fondos",
+        "cashback" : "Devolución en efectivo",
         "transactionId" : "ID de la transacción",
         "copyTransactionId" : "Copiar ID de la transacción",
         "today" : "Hoy {{time}}",
@@ -1010,6 +1025,10 @@
         "signedOut" : {
           "title" : "Inicia sesión para ver las transacciones de la tarjeta",
           "description" : "La actividad de la tarjeta aparecerá aquí una vez que inicies sesión."
+        },
+        "unclaimed" : {
+          "title" : "Tarjeta cripto",
+          "description" : "Ve a Pay para configurar la tarjeta."
         },
         "empty" : {
           "title" : "Aún no hay transacciones con tarjeta",
@@ -1056,6 +1075,7 @@
     },
     "contacts" : {
       "title" : "Pagar a un contacto",
+      "me" : "Yo",
       "empty" : {
         "info" : "Aún no tienes contactos",
         "addContact" : "Agregar contacto"
@@ -1076,10 +1096,11 @@
       },
       "addressPicker" : {
         "title" : "Seleccionar la dirección de {{name}}",
+        "meTitle" : "Seleccionar mi dirección",
         "addAddress" : "Agregar dirección"
       },
       "paySuccess" : {
-        "title" : "Has pagado ({{recipient}})",
+        "title" : "Has pagado {{recipient}}",
         "amount" : "Importe",
         "estimatedTime" : "Tiempo est.",
         "from" : "De",
@@ -1148,19 +1169,39 @@
         "action" : "Inicia sesión"
       },
       "errors" : {
-        "pkce_failed" : "No fue posible realizar el inicio de sesión. Inténtalo de nuevo.",
-        "browser_open_failed" : "No fue posible abrir la página de inicio de sesión. Inténtalo de nuevo.",
-        "missing_attempt" : "Este inicio de sesión ya no es válido. Vuelve a iniciar sesión.",
-        "exchange_failed" : "No fue posible completar el inicio de sesión. Inténtalo de nuevo.",
-        "persist_failed" : "No fue posible guardar la sesión. Inténtalo de nuevo.",
-        "fetch_user_failed" : "No fue posible cargar tu tarjeta. Inténtalo de nuevo."
+        "pkce_failed" : {
+          "title" : "No fue posible realizar el inicio de sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "browser_open_failed" : {
+          "title" : "No fue posible abrir la página de inicio de sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "missing_attempt" : {
+          "title" : "Este inicio de sesión ya no es válido.",
+          "description" : "Vuelve a iniciar sesión."
+        },
+        "exchange_failed" : {
+          "title" : "No fue posible completar el inicio de sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "persist_failed" : {
+          "title" : "No fue posible guardar la sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "fetch_user_failed" : {
+          "title" : "No fue posible cargar tu tarjeta.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "retryLogin" : "Intentar de nuevo",
+        "retryUser" : "Reintentar"
       }
     },
     "cardLoginIntro" : {
       "title" : "Gasta cripto, obtén devoluciones",
-      "providedBy" : "Tarjeta ofrecida por Baanx",
+      "providedBy" : "Tarjeta ofrecida por Monavate",
       "createAccount" : "Crear una cuenta",
-      "logIn" : "Iniciar sesión en Baanx",
+      "logIn" : "Iniciar sesión en Monavate",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -1202,8 +1243,9 @@
         "verifyCta" : "Verifica la dirección",
         "successTitle" : "Dirección mostrada en la pantalla segura del dispositivo",
         "nextStepsLabel" : "Siguientes pasos",
-        "nextStepShare" : "Comparte tu dirección a través de la app que desees",
-        "nextStepMatch" : "Asegúrate de que la dirección compartida coincida con la de tu dispositivo Ledger.",
+        "nextStepKeepDisplayed" : "Mantén visible la dirección en tu dispositivo Ledger. No la confirmes todavía.",
+        "nextStepPaste" : "Haz clic en \"Entendido\" y luego pega la dirección en la app con la que la compartes.",
+        "nextStepCheckMatch" : "Antes de enviar, comprueba que coincida con la de tu dispositivo Ledger.",
         "gotItCta" : "Entendido",
         "device" : {
           "cancelledTitle" : "Se ha cancelado la verificación de la dirección",
@@ -2947,6 +2989,46 @@
       "feesAmount" : "Monto de la tarifa ({{unit}})",
       "payFeesIn" : "Pagar tarifas en"
     },
+    "feePayment" : {
+      "title" : "Selecciona el pago de la tarifa",
+      "regular" : "Transferencia estándar",
+      "sponsored" : "Pagar con {{provider}}",
+      "payIn" : "Pagar la tarifa de red en {{feeCurrency}}",
+      "paidIn" : "Pagado en {{currency}}",
+      "nudge" : "Podrías ahorrar {{amount}} con {{provider}}",
+      "saved" : "Ahorrado con {{provider}}",
+      "confirm" : "Confirmar",
+      "disclaimer" : "Con {{provider}}, un proveedor externo de energía, las tarifas se pagan en {{feeCurrency}}.",
+      "insufficientFunds" : "No tienes suficiente {{feeCurrency}} para cubrir la cantidad y la tarifa de alquiler de energía de {{provider}}."
+    },
+    "sponsoredRentSignature" : {
+      "title" : "Paso 1 de 2",
+      "strategy" : "Alquiler de energía - {{provider}}",
+      "crafting" : "Preparando el alquiler de energía...",
+      "submitting" : "Enviando el pago del alquiler de energía…",
+      "feeLabel" : "Tarifa de alquiler"
+    },
+    "sponsoredTransferSignature" : {
+      "title" : "Paso 2 de 2"
+    },
+    "sponsoredPolling" : {
+      "title" : "Esperando la entrega de energía",
+      "waiting" : "{{provider}} está entregando la energía alquilada. Esto puede tardar unos momentos.",
+      "elapsed" : "Tiempo transcurrido: {{time}}"
+    },
+    "sponsoredFailure" : {
+      "title" : "Algo ha salido mal",
+      "rentPayment" : "Error en el pago de la tarifa. Tus fondos no se han movido.",
+      "rentPaymentReportedFailed" : "{{provider}} informó de que el pago de la tarifa ha fallado, pero es posible que aún se procese.",
+      "priceIncreased" : "El precio del alquiler de energía ha subido a {{fee}}. Tus fondos no se han movido.",
+      "deliveryFailed" : "No se entregó la energía. Se envió el pago de la tarifa de alquiler. Ponte en contacto con el soporte de {{provider}} para solicitar un reembolso{{txidSuffix}}.",
+      "transfer" : "La transferencia falló, pero la energía alquilada sigue siendo válida. Puedes volver a intentar la transferencia.",
+      "retryLocked" : "Para no pagar el alquiler dos veces, puedes volver a intentarlo después de {{time}}.",
+      "retry" : "Reintentar",
+      "retryPaying" : "Paga de nuevo y vuelve a intentarlo",
+      "acceptPrice" : "Aceptar nuevo precio",
+      "cancel" : "Cancelar"
+    },
     "coinControl" : {
       "title" : "Control de monedas",
       "strategy" : "La estrategia ",
@@ -3612,7 +3694,9 @@
       "title" : "Retirar activos",
       "steps" : {
         "amount" : {
-          "title" : "Retirar"
+          "title" : "Retirar",
+          "unlockedOn" : "Desbloqueado el {{date}}",
+          "unlocksOn" : "Se desbloquea el {{date}}"
         },
         "connectDevice" : {
           "title" : "Dispositivo"
@@ -5030,8 +5114,7 @@
           },
           "validator" : {
             "title" : "Validadores",
-            "ledgerByBitwiseTC" : "Términos y condiciones de Ledger by Bitwise",
-            "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
+            "ledgerByBitwiseTC" : "Términos y condiciones de Ledger by Bitwise"
           },
           "connectDevice" : {
             "title" : "Dispositivo"
@@ -5082,6 +5165,62 @@
     "operationTypes" : {
       "IN" : "Depositar",
       "OUT" : "Retirar"
+    }
+  },
+  "stacks" : {
+    "stake" : {
+      "flow" : {
+        "title" : "Poner en participación",
+        "preparingTransaction" : "Preparando transacción…",
+        "steps" : {
+          "validator" : {
+            "title" : "Pool",
+            "description" : "Elige un pool en el que delegar tus STX para la puesta en participación.",
+            "poolAddressLabel" : "Dirección del pool",
+            "numCyclesLabel" : "Cantidad de ciclos"
+          },
+          "amount" : {
+            "title" : "Importe",
+            "disclaimer" : "Tus STX quedarán bloqueados hasta que el pool de participación los libere."
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "Has puesto en participación {{amount}}. El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ir al dashboard de cuenta"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "Cancelar la puesta en participación",
+        "preparingTransaction" : "Preparando transacción…",
+        "steps" : {
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "broadcastError" : "No fue posible enviar tu transacción de quita de participación a la red. Inténtalo de nuevo.",
+            "success" : {
+              "title" : "Quita de participación enviada",
+              "text" : "La desdelegación de tus STX se ha transmitido correctamente.",
+              "cta" : "Ver detalles"
+            }
+          }
+        }
+      }
+    },
+    "account" : {
+      "staked" : "En participación",
+      "unlockCycle" : "Ciclo de desbloqueo"
     }
   },
   "tezos" : {
@@ -5599,7 +5738,10 @@
         "eligibleAddressFamilies" : "Familias de direcciones elegibles",
         "customFamiliesHint" : "Familias separadas por comas para pruebas multifamilia personalizadas.",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
-        "applyFamilies" : "Aplicar",
+        "apply" : "Aplicar",
+        "newBadge" : "Nueva insignia",
+        "excludedCurrencyIds" : "IDs de divisas excluidas",
+        "excludedCurrencyIdsPlaceholder" : "por ejemplo, ethereum, bitcoin",
         "contactsData" : "Datos de contactos",
         "loadPopulatedContacts" : "Cargar contactos completados",
         "loadFromSendHistory" : "Cargar contactos desde el historial de envíos",
@@ -5708,6 +5850,9 @@
       "featureFlagsOverride" : "Forzar",
       "featureFlagsRestoreAll" : "Restaurar los valores de todos los Indicadores",
       "flagHint" : "Si una marca de opción está definida en el entorno Firebase de destino \npero falta de la siguiente lista, puedes escribir su nombre **exacto** en \nla entrada de la búsqueda y aparecerá en la lista. Escribe el \nnombre de la opción combinando mayúsculasMinúsculas sin el prefijo \"feature\".",
+      "contentAbTests" : {
+        "invalidPayload" : "Carga útil no válida. \"enabled\" debe ser un booleano y \"copy\" debe asociar claves a cadenas."
+      },
       "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
       "buttonTitle" : "Señales de alarma anuladas localmente",
       "overridden" : {
@@ -6727,6 +6872,7 @@
       "undelegate" : "Confirma en tu dispositivo para finalizar la operación",
       "redelegate" : "Confirma en tu dispositivo para finalizar la operación",
       "claimRewardCompound" : "Confirma en tu dispositivo para finalizar la operación",
+      "compoundReward" : "Confirma en tu dispositivo para finalizar la operación",
       "nominate" : "Confirma en tu dispositivo para finalizar la operación",
       "chill" : "Confirma en tu dispositivo para finalizar la operación",
       "bond" : "Confirma en tu dispositivo para finalizar la operación",
@@ -6745,12 +6891,17 @@
       "transfer_token_private" : "receptor privado",
       "convert_token_public_to_private" : "receptor privado",
       "convert_token_private_to_public" : "receptor público",
+      "bond_public" : "validador",
+      "unbond_public" : "receptor",
+      "claim_unbond_public" : "receptor",
       "delegate" : "validador",
       "redelegate" : "validador",
       "undelegate" : "validador",
       "claimReward" : "receptor de recompensas",
       "claimRewardCompound" : "validador que recibirá las recompensas",
+      "compoundReward" : "validador que recibirá las recompensas",
       "optIn" : "receptor",
+      "tokenAssociate" : "receptor",
       "nominate" : "validador",
       "stake" : "validador",
       "unstake" : "validador",
@@ -7202,6 +7353,10 @@
     "CosmosDelegateAllFundsWarning" : {
       "title" : "Asegúrate de que tu saldo restante es suficiente para cubrir las tarifas de transacciones futuras"
     },
+    "CosmosMemoTooLong" : {
+      "title" : "La nota memo supera la longitud máxima",
+      "description" : "Tu memo está compuesta por {{memoLength}} bytes, pero el máximo permitido es de {{maxLength}} bytes. Reduce el tamaño de la nota memo."
+    },
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} no es compatible",
       "description" : "Todavía no se admite este activo cripto. contacta al Soporte de Ledger."
@@ -7560,6 +7715,10 @@
     "TransactionRefusedOnDevice" : {
       "title" : "Operación denegada en el dispositivo",
       "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "TransferOfferExpiredError" : {
+      "title" : "Esta oferta ha expirado",
+      "description" : "La oferta de transferencia expiró antes de ser aceptada. Solicita al remitente que envíe una nueva."
     },
     "UserRefusedAddress" : {
       "title" : "Dirección de recepción rechazada.",
@@ -8088,6 +8247,10 @@
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
     },
+    "StacksStakeInPreparePhase" : {
+      "title" : "La puesta en participación está en pausa hasta el próximo ciclo de recompensas",
+      "description" : "La red Stacks no acepta nuevas puestas en participación mientras prepara el próximo ciclo de recompensas. La puesta en participación se reanuda en {{blocksUntilReopen}} bloques de Bitcoin."
+    },
     "StellarWrongMemoFormat" : {
       "title" : "El formato de Memo es incorrecto"
     },
@@ -8557,6 +8720,30 @@
       "title" : "No se puede seguir este tema",
       "description" : "Internet Computer ha retirado este tema o la app de Internet Computer de Ledger aún no puede firmar el seguimiento de éste. Elige otro tema."
     },
+    "ICPTooManyFollowees" : {
+      "title" : "Límite de usuarios seguidos alcanzado",
+      "description" : "Un tema puede seguir como máximo a {{max}} neuronas. Elimina neuronas hasta que la lista contenga {{max}} o menos."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "ID de neurona no válido",
+      "description" : "{{id}} no es un ID de neurona válido. Elimínalo de la lista."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "La neurona aparece dos veces",
+      "description" : "La neurona {{id}} aparece en la lista más de una vez. Elimina el duplicado."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Una neurona no puede seguirse a sí misma.",
+      "description" : "{{id}} es el ID propio de esta neurona. Elimínalo de la lista."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "No se puede comenzar a disolver esta neurona",
+      "description" : "Solo una neurona bloqueada puede comenzar a disolverse. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "No se puede dejar de disolver esta neurona",
+      "description" : "Solo una neurona en disolución puede detener la disolución, y es posible que esta ya haya finalizado. Sincroniza tus neuronas para ver su estado actual."
+    },
     "ICPDisburseNotAllowed" : {
       "title" : "No se puede desembolsar esta neurona",
       "description" : "Una neurona se puede desembolsar una vez que se haya disuelto por completo y su participación sea superior a la tarifa de red. Sincroniza tus neuronas para ver su estado actual."
@@ -8600,6 +8787,10 @@
     "ICPCallRejected" : {
       "title" : "Solicitud no aceptada",
       "description" : "Internet Computer rechazó la solicitud antes de que se ejecutara, por lo que nada ha cambiado. Inténtalo de nuevo. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "Solicitud no enviada",
+      "description" : "Internet Computer no aceptó la solicitud, por lo que no se envió nada y nada ha cambiado. Inténtalo de nuevo. {{reason}}"
     },
     "ICPInvalidPercentage" : {
       "title" : "Porcentaje fuera de rango",
@@ -9454,7 +9645,7 @@
   "marketBanner" : {
     "title" : "Mercado",
     "genericError" : "La conexión ha fallado",
-    "cta" : "Ver todo",
+    "cta" : "Más",
     "ranking" : {
       "trending" : "Tendencias",
       "gainers" : "Ganadores",
@@ -10061,7 +10252,7 @@
       },
       "contact" : {
         "title" : "Despídete de las direcciones largas",
-        "description" : "Presentamos Contactos Guarda las direcciones de wallet con nombres. Fáciles de encontrar, fáciles de enviar."
+        "description" : "Presentamos Contactos.Guarda las direcciones de wallet con nombres. Fáciles de encontrar, fáciles de enviar."
       },
       "contactNoPay" : {
         "title" : "Presentamos Contactos",
@@ -10121,7 +10312,6 @@
   },
   "history" : {
     "title" : "Historial de transacciones",
-    "cardScope" : "Tarjeta",
     "cardAssetScope" : "Tarjeta · {{assetName}}",
     "pending" : "Transacción pendiente",
     "pending_other" : "Transacciones pendientes",
@@ -10258,6 +10448,7 @@
     "addAddressEntry" : {
       "title" : "Ingresar dirección",
       "addressPlaceholder" : "Dirección o ENS",
+      "addressPlaceholderNoENS" : "Dirección",
       "confirmAddress" : "Continúa para revisar",
       "validatingAddress" : "Validando la dirección",
       "validAddress" : "Dirección válida",

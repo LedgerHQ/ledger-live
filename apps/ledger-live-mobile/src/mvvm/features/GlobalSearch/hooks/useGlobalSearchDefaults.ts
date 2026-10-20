@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import {
   useAssetsData,
   useStocksData,
@@ -7,7 +7,7 @@ import {
   selectTopAssetsByCategory,
   selectTopStocks,
 } from "@features/platform-aggregated-assets";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -31,7 +31,7 @@ export function useGlobalSearchDefaults(enabled: boolean): GlobalSearchDefaults 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
-  const version = VersionNumber.appVersion ?? "";
+  const version = appVersion;
   const skip = !enabled;
 
   const { tickers: stablecoinTickers, isLoading: loadingTickers } = useStablecoinTickers(

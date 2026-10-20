@@ -29,10 +29,11 @@ describe("getBlockInfo via MSW", () => {
     expect(info.time.getTime()).toBe(1783691947227);
   });
 
+  // A non-retried status, so the error surfaces at once — 5xx retries are covered by the unit tests.
   it("throws when the endpoint returns a non-ok status", async () => {
-    server.use(http.get(BLOCKS_URL, () => new HttpResponse(null, { status: 500 })));
+    server.use(http.get(BLOCKS_URL, () => new HttpResponse(null, { status: 404 })));
 
-    await expect(getBlockInfo(1)).rejects.toThrow("kaspa: getBlocksFromBlueScore: status 500");
+    await expect(getBlockInfo(1)).rejects.toThrow("kaspa: getBlocksFromBlueScore: status 404");
   });
 
   it("throws when no block exists at the blue score", async () => {

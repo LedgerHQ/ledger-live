@@ -60,6 +60,25 @@ describe("transaction serialization", () => {
     expect(toTransactionRaw(transaction)).toEqual(raw);
   });
 
+  it("round-trips a generic-bridge token transfer, which has no network or anchorMode", () => {
+    const raw: TransactionRaw = {
+      family: "stacks",
+      amount: "2500",
+      recipient: "SP1abc",
+      useAllAmount: false,
+      fees: null,
+      mode: "send",
+      assetReference: "SP_CONTRACT.token-x::token-x",
+      assetOwner: "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J",
+    };
+
+    const transaction = fromTransactionRaw(raw);
+    expect(transaction.assetReference).toBe("SP_CONTRACT.token-x::token-x");
+    expect(transaction.assetOwner).toBe("SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J");
+
+    expect(toTransactionRaw(transaction)).toEqual(raw);
+  });
+
   it("throws on an unrecognized network", () => {
     const raw: TransactionRaw = { ...baseRaw(), network: "not-a-real-network" };
     expect(() => fromTransactionRaw(raw)).toThrow("network not-a-real-network not valid");

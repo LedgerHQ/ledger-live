@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-elrond
 
+## 6.32.0
+
+### Minor Changes
+
+- [#23225](https://github.com/LedgerHQ/ledger-live/pull/23225) [`1731458`](https://github.com/LedgerHQ/ledger-live/commit/17314582789efaad9ba35a5cf5e434a3140d6132) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `protobufjs` to 8.4.1 and `protobufjs-cli` to 2.4.1 (security), regenerate hw-app-exchange protobuf bindings. Absent protobuf string fields now decode as `undefined` instead of `""`.
+
+## 6.32.0-next.0
+
+### Minor Changes
+
+- [#23225](https://github.com/LedgerHQ/ledger-live/pull/23225) [`1731458`](https://github.com/LedgerHQ/ledger-live/commit/17314582789efaad9ba35a5cf5e434a3140d6132) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `protobufjs` to 8.4.1 and `protobufjs-cli` to 2.4.1 (security), regenerate hw-app-exchange protobuf bindings. Absent protobuf string fields now decode as `undefined` instead of `""`.
+
 ## 6.31.0
 
 ### Minor Changes
@@ -145,19 +157,5 @@
 
 - Updated dependencies [[`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
   - @ledgerhq/hw-transport@6.35.0-next.0
-
-## 6.29.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.34.1
-
-## 6.29.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.34.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

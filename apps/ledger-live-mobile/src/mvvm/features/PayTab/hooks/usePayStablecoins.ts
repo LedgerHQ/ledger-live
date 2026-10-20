@@ -1,8 +1,6 @@
 import { useMemo } from "react";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import useEnv from "@features/platform-env";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { AccountLike } from "@ledgerhq/types-live";
 import {
   useStablecoinTickers,
   useDefaultStablecoins,
@@ -11,7 +9,7 @@ import {
 import { useCategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/index";
 import {
   buildStablecoinHoldings,
-  type HeldAccount,
+  toHeldAccount,
   type StablecoinItem,
 } from "@features/flow-pay-balance";
 import { useDistribution } from "~/actions/general";
@@ -26,29 +24,11 @@ export type PayStablecoins = Readonly<{
   isError: boolean;
 }>;
 
-function toHeldAccount(account: AccountLike): HeldAccount {
-  const currency = getAccountCurrency(account);
-  return {
-    type: account.type,
-    balance: account.balance.toNumber(),
-    currency: {
-      id: currency.id,
-      name: currency.name,
-      ticker: currency.ticker,
-      units: currency.units.map(unit => ({
-        name: unit.name,
-        code: unit.code,
-        magnitude: unit.magnitude,
-      })),
-    },
-  };
-}
-
 export function usePayStablecoins(): PayStablecoins {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const heldAccounts = useSelector(flattenAccountsSelector);
-  const version = VersionNumber.appVersion ?? "";
+  const version = appVersion;
 
   // groupBy: "asset" aggregates each ticker across chains into one row.
   // This path does not read the aggregatedAssets wallet flag.

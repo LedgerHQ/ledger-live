@@ -2,6 +2,7 @@ import { getMemoTagValueByTransactionFamily } from "../utils";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import { Transaction as SolanaTransaction } from "@ledgerhq/live-common/families/solana/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 
 describe("getMemoTagValueByTransactionFamily", () => {
   it("should return empty string if transaction family is not recognized", () => {
@@ -28,6 +29,15 @@ describe("getMemoTagValueByTransactionFamily", () => {
       memoValue: "Stellar memo",
     } as StellarTransaction;
     expect(getMemoTagValueByTransactionFamily(transaction)).toBe("Stellar memo");
+  });
+
+  it("should return memoValue for hedera family", () => {
+    const transaction = {
+      family: "hedera",
+      memoType: "string",
+      memoValue: "Hedera memo",
+    } as HederaGenericTransaction;
+    expect(getMemoTagValueByTransactionFamily(transaction)).toBe("Hedera memo");
   });
 
   it("should return memo for solana family", () => {

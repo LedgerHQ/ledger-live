@@ -1,4 +1,8 @@
-import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type {
+  ConnectedDevice,
+  DeviceManagementKit,
+  DiscoveredDevice,
+} from "@ledgerhq/device-management-kit";
 import type { ActorRef, Snapshot, StateMachine, StateSchema } from "xstate";
 
 export enum DeviceSituation {
@@ -26,11 +30,12 @@ export type CheckErrorCauseStateMachineInput = {
 
 export type CheckErrorCauseStateMachineContext = CheckErrorCauseStateMachineInput & {
   result: CheckErrorCauseResult | null;
+  rediscoveredDevice: DiscoveredDevice | null;
 };
 
 export enum CheckErrorCauseStateMachineEventType {
   DEVICE_DISCONNECTED = "DEVICE_DISCONNECTED",
-  DEVICE_RECONNECTED = "DEVICE_RECONNECTED",
+  DEVICE_FOUND = "DEVICE_FOUND",
 }
 
 export type CheckErrorCauseStateMachineEvent =
@@ -38,7 +43,8 @@ export type CheckErrorCauseStateMachineEvent =
       type: CheckErrorCauseStateMachineEventType.DEVICE_DISCONNECTED;
     }
   | {
-      type: CheckErrorCauseStateMachineEventType.DEVICE_RECONNECTED;
+      type: CheckErrorCauseStateMachineEventType.DEVICE_FOUND;
+      device: DiscoveredDevice;
     };
 
 export enum CheckErrorCauseResult {
@@ -46,7 +52,21 @@ export enum CheckErrorCauseResult {
   Unrecoverable = "unrecoverable",
 }
 
-export type CheckErrorCauseStateMachineOutput = CheckErrorCauseResult;
+export type CheckErrorCauseStateMachineOutput =
+  | {
+      result: CheckErrorCauseResult.Recovered;
+      connectedDevice: ConnectedDevice;
+    }
+  | {
+      result: CheckErrorCauseResult.Unrecoverable;
+    };
+
+export const isRecovered = (
+  output: CheckErrorCauseStateMachineOutput,
+): output is Extract<
+  CheckErrorCauseStateMachineOutput,
+  { result: CheckErrorCauseResult.Recovered }
+> => output.result === CheckErrorCauseResult.Recovered;
 
 export type CheckErrorCauseStateMachine = StateMachine<
   CheckErrorCauseStateMachineContext,

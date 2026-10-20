@@ -18,7 +18,6 @@ const EXPECTED_REDUCER_PATHS = [
   "countervaluesApi",
   "hederaApi",
   "marketApi",
-  "ofacGeoBlockApi",
   "pushDevicesApi",
   "swapApi",
 ] as const;

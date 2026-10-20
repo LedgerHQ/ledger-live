@@ -1,9 +1,6 @@
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  initialState as countervaluesInitialState,
-  type CountervaluesSettings,
-} from "@domain/entity-market-countervalues";
+import { initialState as countervaluesInitialState } from "@domain/entity-market-countervalues";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import {
@@ -21,7 +18,7 @@ import historyReducer, {
   hasUnreadOperationsSelector,
 } from "../history";
 import type { State } from "../index";
-import type { CountervaluesState } from "../countervalues";
+import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
 
 const settingsUnreadBase = {
   currenciesSettings: {},
@@ -47,23 +44,14 @@ function makeUnreadTestState(lastSeenDate: string | null, accounts: Account[]): 
   } as unknown as State;
 }
 
-function createCountervaluesState(): CountervaluesState {
+function createCountervaluesState(): CountervaluesStoreState {
   return {
-    countervalues: {
-      state: countervaluesInitialState,
-      pending: false,
+    rates: countervaluesInitialState,
+    sync: {
+      load: "idle",
       error: null,
-    },
-    polling: {
       isPolling: true,
-      triggerLoad: false,
     },
-    userSettings: {
-      trackingPairs: [],
-      autofillGaps: true,
-      refreshRate: 0,
-      marketCapBatchingAfterRank: 0,
-    } satisfies CountervaluesSettings,
   };
 }
 

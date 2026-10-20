@@ -3,7 +3,7 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
-import { DeviceIntentExecutor } from "@features/platform-device-intent/react";
+import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
 import {
   DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,
@@ -16,17 +16,15 @@ import { DialogBackgroundToneProvider } from "@shared/ui-info-state";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
-import DeviceConnectionComponentLWD from "./DeviceConnectionComponentLWD";
-import DeviceContextInitializerComponentLWD, {
-  InitializerConfig,
-} from "./DeviceContextInitializerComponentLWD";
+import Connection from "./Connection";
+import ContextInitializer, { InitializerConfig } from "./ContextInitializer";
 import type { InitializationInput } from "./types";
-import { useDeviceIntentExecutorLWDViewModel } from "./useDeviceIntentExecutorLWDViewModel";
+import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewModel";
 
 export {
   buildDeviceInitializationInput,
   type BuildDeviceInitializationInputParams,
-} from "./DeviceContextInitializerComponentLWD/utils/buildDeviceInitializationInput";
+} from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
 export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
 export { RetryableDeviceLocked } from "./components/DeviceGenericStates/RetryableDeviceLocked";
@@ -52,14 +50,14 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecut
 };
 
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
-  DeviceConnectionComponent: DeviceConnectionComponentLWD,
-  DeviceContextInitializerComponent: DeviceContextInitializerComponentLWD,
+  DeviceConnectionComponent: Connection,
+  DeviceContextInitializerComponent: ContextInitializer,
   DeviceDisconnectedComponent: DeviceDisconnected,
   IntentErrorComponent: IntentError,
   InvalidOperationComponent: InvalidOperation,
 };
 
-export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps, Result = undefined>(
+export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undefined>(
   props: Props<JobState, Input, ExtraProps, Result>,
 ): React.ReactElement | null {
   const {
@@ -71,7 +69,7 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps, Result = un
     onHeaderClosePressed,
     onOverlayDismiss,
     onEscapeKeyDown,
-  } = useDeviceIntentExecutorLWDViewModel(props);
+  } = useDeviceIntentExecutorViewModel(props);
 
   if (!wrappedProps.enabled) return null;
 
@@ -91,7 +89,7 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps, Result = un
                 <DialogHeader density="compact" onClose={onHeaderClosePressed} className="!mb-0" />
               )}
               <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
-                <DeviceIntentExecutor
+                <BaseDeviceIntentExecutor
                   {...wrappedProps}
                   platformConfig={platformConfig}
                   initializerConfig={wrappedProps.initializerConfig}

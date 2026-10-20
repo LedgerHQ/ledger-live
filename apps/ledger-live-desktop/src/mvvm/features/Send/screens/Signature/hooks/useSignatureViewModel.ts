@@ -14,13 +14,13 @@ import {
   type SendFlowCompletion,
 } from "@ledgerhq/live-common/flows/send/types";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { reportSponsoredTransferOutcome } from "@ledgerhq/live-common/flows/send/sponsored/transferOutcome";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
-import { isContractDataDisabledError } from "../../../utils/contractDataError";
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { hasOnboardedDeviceSelector, mevProtectionSelector } from "~/renderer/reducers/settings";
 import { broadcastLogger } from "~/datadog/logs";
@@ -118,18 +118,14 @@ export function useSignatureViewModel() {
   const onFinish = useCallback(
     (completion: SendFlowCompletion, error?: Error) => {
       if (isSponsoredTransfer) {
-        if (completion === SEND_FLOW_COMPLETION.SUCCESS) {
-          sponsoredActions.onTransferSuccess(signedPaymentTxId);
-        } else {
-          // useSponsoredPhaseNavigator routes FAILED to SPONSORED_FAILURE; don't advance here.
-          const failure = error ?? new Error("Sponsored transfer failed");
-          if (isContractDataDisabledError(failure)) {
-            sponsoredActions.setContractDataFailure(failure, signedPaymentTxId);
-          } else {
-            sponsoredActions.onTransferError(failure, signedPaymentTxId);
-          }
-          return;
-        }
+        reportSponsoredTransferOutcome({
+          actions: sponsoredActions,
+          signedPaymentTxId,
+          completion,
+          error,
+        });
+        // useSponsoredPhaseNavigator routes FAILED to SPONSORED_FAILURE; don't advance here.
+        if (completion !== SEND_FLOW_COMPLETION.SUCCESS) return;
       }
       if (completion === SEND_FLOW_COMPLETION.SUCCESS && source === SEND_FLOW_SOURCE.PAY) {
         endSession();

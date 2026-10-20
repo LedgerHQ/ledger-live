@@ -31,14 +31,20 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       break;
     }
     // `zcash_regtest` deliberately reuses mainnet's version bytes, not
-    // `coininfo.zcash.test`: @ledgerhq/coin-zcash's own recipient classifier
-    // hardcodes mainnet address prefixes with no per-network
-    // parameterization, so a testnet-encoded address would never validate
-    // there. See `zcash_regtest.ts` in domain/entity/currency-crypto for the
-    // full rationale.
+    // `coininfo.zcash.test`: it is only used by the coin-tester, which relies
+    // on the mainnet encodings. See `zcash_regtest.ts` in
+    // domain/entity/currency-crypto for the full rationale. `zcash_testnet`
+    // uses the real testnet ones.
     case "zcash":
     case "zcash_regtest": {
       const network = coininfo.zcash.main.toBitcoinJS();
+      res = new crypto.Zec({ network });
+      break;
+    }
+    case "zcash_testnet": {
+      const testnet = coininfo.zcash.test;
+      if (!testnet) throw new Error("coininfo has no zcash testnet parameters");
+      const network = testnet.toBitcoinJS();
       res = new crypto.Zec({ network });
       break;
     }

@@ -14,6 +14,10 @@ declare const __static: string;
 declare const __DEV__: boolean;
 declare const __UPDATE_CHECK_PUBKEY__: string | null;
 declare const __BUILD_ENVS__: Record<string, string>;
+declare const __FIREBASE_ENV_CONFIGS__: Record<
+  string,
+  import("firebase/app").FirebaseOptions | null
+> | null;
 
 declare module "*.css";
 
@@ -62,8 +66,9 @@ declare namespace Electron {
 }
 
 interface Window {
-  // Electron's nodeIntegration provides require on window
-  require: NodeJS.Require;
+  // Read through `~/renderer/bridge`, which checks the version.
+  lld: import("./src/bridge/contract").LedgerBridge;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
@@ -81,6 +86,7 @@ interface Window {
     removeDevice: (device: Device) => void;
     resetDevices: () => void;
     getMockServerSessionToken: () => string | undefined;
+    setSpeculosTarget: (address: string, sessionToken?: string) => void;
   };
 
   // used for the analytics, initialized in the index.html
@@ -126,7 +132,7 @@ interface Window {
 
 declare var api: Window["api"] | undefined; // eslint-disable-line no-var
 
-// Allow custom properties on global/globalThis (tests, AppGeoBlocker, etc.)
+// Allow custom properties on global/globalThis (tests, splash lift, etc.)
 declare global {
   interface GlobalThis {
     [key: string]: any;

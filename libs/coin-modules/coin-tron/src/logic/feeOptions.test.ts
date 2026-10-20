@@ -14,13 +14,16 @@ const TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 const SENDER = "TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3";
 const RECIPIENT = "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8";
 
+const TRONIFY_SETTINGS = {
+  url: "https://open.tronify.io",
+  sourceFlag: "ledger",
+  paymentAddresses: ["TDii6vao7xyWg2rKPbCPWVRpSmne8xcqYx"],
+};
+
 const activatedConfig = {
   explorer: { url: "https://explorer" },
   status: { type: "active" },
-  energyRent: {
-    provider: "tronify",
-    tronify: { url: "https://open.tronify.io", sourceFlag: "ledger" },
-  },
+  energyRent: { provider: "tronify", tronify: TRONIFY_SETTINGS },
 } as unknown as TronCoinConfig;
 
 const notActivatedConfig = {
@@ -137,6 +140,29 @@ describe("listFeeOptions", () => {
       expect.anything(),
     );
   });
+
+  it.each([
+    ["missing", undefined],
+    ["empty", []],
+    ["not a list", "TDii6vao7xyWg2rKPbCPWVRpSmne8xcqYx"],
+    ["holding an invalid address", ["TDii6vao7xyWg2rKPbCPWVRpSmne8xcqYx", "TDii6vao7xyWg2rKPbCP"]],
+    ["holding a non-string", ["TDii6vao7xyWg2rKPbCPWVRpSmne8xcqYx", 42]],
+  ])(
+    "returns [standard] and logs, without estimating, when the payment addresses are %s",
+    async (_label, paymentAddresses) => {
+      mockConfig.mockResolvedValue({
+        ...activatedConfig,
+        energyRent: { provider: "tronify", tronify: { ...TRONIFY_SETTINGS, paymentAddresses } },
+      } as unknown as TronCoinConfig);
+      await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+      expect(mockLogger).toHaveBeenCalledWith(
+        "tron/listFeeOptions",
+        expect.any(String),
+        expect.anything(),
+      );
+    },
+  );
 
   it.each([
     ["missing", { url: "https://tronify.api.live.ledger.com" }],

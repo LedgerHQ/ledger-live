@@ -8,6 +8,7 @@ import {
   useTouchScreenOnboardingUpsellPath,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { getNetworkState } from "@shared/network-status";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
@@ -35,7 +36,8 @@ export function useOpenRecoverCallback() {
         navigate(path);
         dispatch(setHasBeenUpsoldRecover(true));
       }
-      if (!navigator.onLine) {
+      const { isConnected } = await getNetworkState();
+      if (!isConnected) {
         fallbackRedirection();
       } else if (
         lastOnboardedDevice &&

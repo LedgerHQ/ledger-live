@@ -59,6 +59,24 @@ describe("DefaultDeviceDiscoveryService", () => {
     subscription.unsubscribe();
   });
 
+  it("GIVEN sources for several transports, WHEN reading the transport ids, THEN it should list every source transport, including ignored ones", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+
+    // WHEN
+    service.start({ ignoreTransportIdentifiers: [sourceB.transportId] });
+
+    // THEN
+    expect(service.transportIds).toEqual(["transport-a", "transport-b"]);
+  });
+
   it("GIVEN all sources are started, WHEN they emit devices, THEN it should aggregate discovered devices", () => {
     // GIVEN
     const sourceA = createSource("transport-a");

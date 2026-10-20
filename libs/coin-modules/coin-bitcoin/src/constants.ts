@@ -13,7 +13,6 @@ export const ESTIMATION_RECIPIENTS: Record<string, string> = {
   litecoin: "LUWPbpM43E2p7ZSh8cyTBEkvpHmr3cB8Ez",
   nix: "GRpn2DPiQxAczMrQFt2sK1CS8EYdnvSHxo",
   qtum: "QPvRe2C17qk24K6v5gTg7CPghZ8b4WMxZP",
-  zcash: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",
   zclassic: "t1Qmwyih5F7Mw6Vts4tSnXuA2o3NgJPYNgP",
   zcoin: "a1bW3sVVUsLqgKuTMXtSaAHGvpxKwugxPH",
   zencash: "zngWJRgpBa45KUeRuCmdMsqti4ohhe9sVwC",
@@ -24,3 +23,15 @@ export const getBitcoinEstimationRecipient = (currencyId: string): string => {
   if (!recipient) throw new Error(`No estimation recipient for ${currencyId}`);
   return recipient;
 };
+
+// ── Module defaults of the optional coin config fields (see config.ts) ──────
+//
+// The values wallet-btc consumes are defined there, next to their use, and re-exported here.
+
+export { DEFAULT_EXPLORER_BATCH_SIZE } from "@ledgerhq/wallet-btc/explorer/index";
+export { DEFAULT_REPLACED_OPERATION_EXPIRY_MS } from "@ledgerhq/wallet-btc/operations";
+export { DEFAULT_RBF_MIN_BUMP_RATIO } from "@ledgerhq/wallet-btc/utils";
+
+export const DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS = 20 * 60 * 1000;
+export const DEFAULT_FEE_CALCULATION_CACHE_TTL_MS = 5 * 60 * 1000;
+export const DEFAULT_FEE_RATES_CACHE_TTL_MS = 5 * 60 * 1000;

@@ -27,7 +27,7 @@ export type Props = Partial<ComponentProps<typeof Image>> & {
 };
 
 const AbsoluteBackgroundContainer = styled(Flex).attrs({
-  ...StyleSheet.absoluteFillObject,
+  ...StyleSheet.flatten(StyleSheet.absoluteFill),
   backgroundColor: DEBUG ? "blue" : undefined,
 })``;
 
@@ -100,7 +100,7 @@ const FramedPicture: React.FC<Props> = ({
           </AbsoluteBackgroundContainer>
           {background ? (
             <Flex
-              {...StyleSheet.absoluteFillObject}
+              {...StyleSheet.flatten(StyleSheet.absoluteFill)}
               height={frameHeight}
               justifyContent="center"
               width={frameWidth}

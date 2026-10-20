@@ -58,9 +58,11 @@ export function PayTabView({
   const { scrollY, onScroll } = useScrollOffset();
 
   return (
-    <Box lx={{ flex: 1 }} testID="paytab-screen">
+    <Box lx={{ flex: 1 }}>
       <Wallet40Background type="pay" scrollY={scrollY} />
       <Animated.ScrollView
+        testID="paytab-screen"
+        style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={onScroll}

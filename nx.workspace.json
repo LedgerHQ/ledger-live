@@ -6,10 +6,9 @@
       "{workspaceRoot}/nx.s3.defaults.json",
       "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
-      "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/pnpm-workspace.yaml",
-      "{workspaceRoot}/.npmrc"
+      "{workspaceRoot}/patches/**/*"
     ],
     "default": [
       "sharedGlobals",
@@ -54,9 +53,6 @@
         "env": "BRAZE_CUSTOM_ENDPOINT"
       },
       {
-        "env": "BYPASS_CORS"
-      },
-      {
         "env": "CI_KEYCHAIN_NAME"
       },
       {
@@ -97,24 +93,6 @@
       },
       {
         "env": "MATCH_PASSWORD"
-      },
-      {
-        "env": "SENTRY_AUTH_TOKEN"
-      },
-      {
-        "env": "SENTRY_ENVIRONMENT"
-      },
-      {
-        "env": "SENTRY_PROJECT"
-      },
-      {
-        "env": "SENTRY_DISABLE_AUTO_UPLOAD"
-      },
-      {
-        "env": "SENTRY_ALLOW_FAILURE"
-      },
-      {
-        "env": "SENTRY_DSN"
       }
     ],
     "mobileEnv": [
@@ -232,18 +210,6 @@
         "env": "GIT_REPO_USER"
       },
       {
-        "env": "LEDGER_AUTH_CLIENT_ID"
-      },
-      {
-        "env": "LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"
-      },
-      {
-        "env": "LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING"
-      },
-      {
-        "env": "LEDGER_AUTH_KEYCLOAK_REALM"
-      },
-      {
         "env": "LEDGER_INTERNAL_ARGS"
       },
       {
@@ -348,11 +314,26 @@
       {
         "env": "UPDATE_CHECK_PUBKEY"
       }
+    ],
+    "formatConfig": [
+      "{workspaceRoot}/oxfmt.config.mts",
+      "{workspaceRoot}/support/fmt/oxfmt.config.mts"
+    ],
+    "lintConfig": [
+      "{workspaceRoot}/support/lint/**/*",
+      "{workspaceRoot}/*/oxlint.config.mts",
+      "{workspaceRoot}/*/*/oxlint.config.mts"
     ]
+  },
+  "pluginsConfig": {
+    "@nx/js": {
+      "projectsAffectedByDependencyUpdates": "auto"
+    }
   },
   "plugins": [
     "./tools/nx-plugins/project-tags/plugin.js",
-    "./tools/nx-plugins/enforce-package-structure/plugin.js"
+    "./tools/nx-plugins/enforce-package-structure/plugin.js",
+    "./tools/nx-plugins/enforce-tool-config/plugin.mjs"
   ],
   "targetDefaults": {
     "build": {
@@ -370,6 +351,7 @@
       "inputs": [
         "default",
         "^default",
+        "lintConfig",
         {
           "env": "CI_OS"
         }
@@ -380,7 +362,7 @@
     },
     "format:check": {
       "cache": true,
-      "inputs": ["default", "^default"]
+      "inputs": ["default", "^default", "formatConfig"]
     },
     "check-export-rules": {
       "cache": false

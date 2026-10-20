@@ -1,0 +1,61 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
+import React, { useCallback } from "react";
+import { Button, Flex } from "@ledgerhq/native-ui";
+import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import { useTranslation, useLocale } from "~/context/Locale";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { Linking } from "react-native";
+import { urls } from "~/utils/urls";
+import { GenericInformationBody } from "~/components/GenericInformationBody";
+
+export type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+  productName: string;
+};
+
+const GenuineCheckNonGenuineDrawer: React.FC<Props> = ({ isOpen, onClose, productName }) => {
+  const { t } = useTranslation();
+  const { locale } = useLocale();
+
+  const onContactSupport = useCallback(() => {
+    track("button_clicked", {
+      button: "Contacting support about non genuine device",
+    });
+
+    const supportUrl =
+      locale in urls.contactSupportWebview
+        ? urls.contactSupportWebview[locale as keyof typeof urls.contactSupportWebview]
+        : urls.contactSupportWebview.en;
+
+    Linking.openURL(supportUrl);
+  }, [locale]);
+
+  return (
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} preventBackdropClick>
+      <TrackScreen category="Device not genuine" type="drawer" refreshSource={false} />
+      <Flex justifyContent="center" alignItems="center" mt={7}>
+        <GenericInformationBody
+          title={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.title", { productName })}
+          description={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.description", {
+            productName,
+          })}
+        />
+      </Flex>
+      <Flex mt={8} mb={7}>
+        <Button
+          type="main"
+          size="large"
+          onPress={onContactSupport}
+          Icon={ExternalLinkMedium}
+          iconPosition="right"
+        >
+          {t("earlySecurityCheck.genuineCheckNonGenuineDrawer.supportCta")}
+        </Button>
+      </Flex>
+    </QueuedDrawer>
+  );
+};
+
+export default GenuineCheckNonGenuineDrawer;

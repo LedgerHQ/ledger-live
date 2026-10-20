@@ -1,5 +1,79 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.31.0
+
+### Minor Changes
+
+- [#22995](https://github.com/LedgerHQ/ledger-live/pull/22995) [`3444d16`](https://github.com/LedgerHQ/ledger-live/commit/3444d16d5159b6e415b4dd0ab4fedfbf4cbeb260) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Connected` and `Done` UI states now carry the connected `device`, so that the UI can show the transport that was used.
+
+- [#22765](https://github.com/LedgerHQ/ledger-live/pull/22765) [`e3e6c22`](https://github.com/LedgerHQ/ledger-live/commit/e3e6c222ddba748a7e9e03e85f5919ce8e5c28bd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract the device discovery service and the connectivity types shared by device connection flows into a `deviceConnectivity` folder. The discovery, connection and unknown error UI states now use the shared `ConnectivityUIStateTypes` enum. `ConnectDeviceUIStateTypes` becomes a const object that includes these shared members, so type positions use `typeof ConnectDeviceUIStateTypes.X` or the new `ConnectDeviceUIStateType` type. The device type moves to the shared part as `Device`, and connectDevice keeps `KnownDevice` as an alias of it. connectDevice behaviour is unchanged.
+
+- [#22847](https://github.com/LedgerHQ/ledger-live/pull/22847) [`1a9b21e`](https://github.com/LedgerHQ/ledger-live/commit/1a9b21e6cc971d5e5b069cab968826b15332024b) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectNewDeviceUseCase`, which exposes the connectNewDevice state machine as an `Observable` of UI states, and the mobile `connectNewDevice`, which discovers on RN_BLE and Speculos on iOS and also on RN_HID on Android.
+
+- [#22950](https://github.com/LedgerHQ/ledger-live/pull/22950) [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Keep the DMK firmware distribution salt in sync with the user ID of the identities store, so DMK flows follow the progressive OS rollout on desktop and mobile
+
+- [#23056](https://github.com/LedgerHQ/ledger-live/pull/23056) [`9a39ad5`](https://github.com/LedgerHQ/ledger-live/commit/9a39ad5eeeaefff74791ec01db8c62c102b6e54a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Discovering` UI state now keeps the devices in the order in which they were first discovered. A device that discovery no longer reports stays at its position with `isAvailable: false` and no `onSelect`. It becomes available again at the same position when discovery reports it again. The state machine takes a new `getDiscoveredDeviceKey` input to identify a device from one discovery update to the next: on mobile, a Bluetooth device by its id and a USB device by its model. Each device of the list has this `key`, to use as its row key.
+
+- [#23121](https://github.com/LedgerHQ/ledger-live/pull/23121) [`3a45eb3`](https://github.com/LedgerHQ/ledger-live/commit/3a45eb3e29f417f24570787e76d977cefa5090d9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - `connectNewDevice` lists only the available USB devices when a USB device is available, and only the devices on the other transports otherwise.
+
+### Patch Changes
+
+- Updated dependencies [[`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`c9b7594`](https://github.com/LedgerHQ/ledger-live/commit/c9b75949c8f01cade6b061bd5b6ecb0af5b0ec5f), [`d33fd72`](https://github.com/LedgerHQ/ledger-live/commit/d33fd721a5d1a9363f820738f6aadbeb0a8b3cad), [`d819300`](https://github.com/LedgerHQ/ledger-live/commit/d819300df11d1e58ad33dbb8d0dbdb6f20c8dd93), [`e308deb`](https://github.com/LedgerHQ/ledger-live/commit/e308deb3e4f812f01166de17bb28c587a290b9bb), [`3a45eb3`](https://github.com/LedgerHQ/ledger-live/commit/3a45eb3e29f417f24570787e76d977cefa5090d9), [`3444d16`](https://github.com/LedgerHQ/ledger-live/commit/3444d16d5159b6e415b4dd0ab4fedfbf4cbeb260), [`e3e6c22`](https://github.com/LedgerHQ/ledger-live/commit/e3e6c222ddba748a7e9e03e85f5919ce8e5c28bd), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e), [`1a9b21e`](https://github.com/LedgerHQ/ledger-live/commit/1a9b21e6cc971d5e5b069cab968826b15332024b), [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be), [`42d4dc2`](https://github.com/LedgerHQ/ledger-live/commit/42d4dc25044dceb9936c1907fb5ea0838fa0a64b), [`9a39ad5`](https://github.com/LedgerHQ/ledger-live/commit/9a39ad5eeeaefff74791ec01db8c62c102b6e54a)]:
+  - @shared/env@0.10.0
+  - @ledgerhq/live-dmk-shared@0.35.0
+  - @ledgerhq/types-devices@7.1.0
+
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#22995](https://github.com/LedgerHQ/ledger-live/pull/22995) [`3444d16`](https://github.com/LedgerHQ/ledger-live/commit/3444d16d5159b6e415b4dd0ab4fedfbf4cbeb260) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Connected` and `Done` UI states now carry the connected `device`, so that the UI can show the transport that was used.
+
+- [#22765](https://github.com/LedgerHQ/ledger-live/pull/22765) [`e3e6c22`](https://github.com/LedgerHQ/ledger-live/commit/e3e6c222ddba748a7e9e03e85f5919ce8e5c28bd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract the device discovery service and the connectivity types shared by device connection flows into a `deviceConnectivity` folder. The discovery, connection and unknown error UI states now use the shared `ConnectivityUIStateTypes` enum. `ConnectDeviceUIStateTypes` becomes a const object that includes these shared members, so type positions use `typeof ConnectDeviceUIStateTypes.X` or the new `ConnectDeviceUIStateType` type. The device type moves to the shared part as `Device`, and connectDevice keeps `KnownDevice` as an alias of it. connectDevice behaviour is unchanged.
+
+- [#22847](https://github.com/LedgerHQ/ledger-live/pull/22847) [`1a9b21e`](https://github.com/LedgerHQ/ledger-live/commit/1a9b21e6cc971d5e5b069cab968826b15332024b) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectNewDeviceUseCase`, which exposes the connectNewDevice state machine as an `Observable` of UI states, and the mobile `connectNewDevice`, which discovers on RN_BLE and Speculos on iOS and also on RN_HID on Android.
+
+- [#22950](https://github.com/LedgerHQ/ledger-live/pull/22950) [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Keep the DMK firmware distribution salt in sync with the user ID of the identities store, so DMK flows follow the progressive OS rollout on desktop and mobile
+
+- [#23056](https://github.com/LedgerHQ/ledger-live/pull/23056) [`9a39ad5`](https://github.com/LedgerHQ/ledger-live/commit/9a39ad5eeeaefff74791ec01db8c62c102b6e54a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectNewDevice `Discovering` UI state now keeps the devices in the order in which they were first discovered. A device that discovery no longer reports stays at its position with `isAvailable: false` and no `onSelect`. It becomes available again at the same position when discovery reports it again. The state machine takes a new `getDiscoveredDeviceKey` input to identify a device from one discovery update to the next: on mobile, a Bluetooth device by its id and a USB device by its model. Each device of the list has this `key`, to use as its row key.
+
+- [#23121](https://github.com/LedgerHQ/ledger-live/pull/23121) [`3a45eb3`](https://github.com/LedgerHQ/ledger-live/commit/3a45eb3e29f417f24570787e76d977cefa5090d9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - `connectNewDevice` lists only the available USB devices when a USB device is available, and only the devices on the other transports otherwise.
+
+### Patch Changes
+
+- Updated dependencies [[`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`c9b7594`](https://github.com/LedgerHQ/ledger-live/commit/c9b75949c8f01cade6b061bd5b6ecb0af5b0ec5f), [`d33fd72`](https://github.com/LedgerHQ/ledger-live/commit/d33fd721a5d1a9363f820738f6aadbeb0a8b3cad), [`d819300`](https://github.com/LedgerHQ/ledger-live/commit/d819300df11d1e58ad33dbb8d0dbdb6f20c8dd93), [`e308deb`](https://github.com/LedgerHQ/ledger-live/commit/e308deb3e4f812f01166de17bb28c587a290b9bb), [`3a45eb3`](https://github.com/LedgerHQ/ledger-live/commit/3a45eb3e29f417f24570787e76d977cefa5090d9), [`3444d16`](https://github.com/LedgerHQ/ledger-live/commit/3444d16d5159b6e415b4dd0ab4fedfbf4cbeb260), [`e3e6c22`](https://github.com/LedgerHQ/ledger-live/commit/e3e6c222ddba748a7e9e03e85f5919ce8e5c28bd), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e), [`1a9b21e`](https://github.com/LedgerHQ/ledger-live/commit/1a9b21e6cc971d5e5b069cab968826b15332024b), [`8737f89`](https://github.com/LedgerHQ/ledger-live/commit/8737f89e2b515ab518cbcdeacc064641c6f595be), [`42d4dc2`](https://github.com/LedgerHQ/ledger-live/commit/42d4dc25044dceb9936c1907fb5ea0838fa0a64b), [`9a39ad5`](https://github.com/LedgerHQ/ledger-live/commit/9a39ad5eeeaefff74791ec01db8c62c102b6e54a)]:
+  - @shared/env@0.10.0-next.0
+  - @ledgerhq/live-dmk-shared@0.35.0-next.0
+  - @ledgerhq/types-devices@7.1.0
+
+## 0.30.0
+
+### Minor Changes
+
+- [#22653](https://github.com/LedgerHQ/ledger-live/pull/22653) [`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump DMK dependencies: device-management-kit 1.10.0, device-signer-kit-solana 1.13.3, device-signer-kit-ethereum 1.18.1, context-module 2.6.0, dmk-ledger-wallet 0.6.0, device-contacts-kit 0.5.0, signer-utils 1.3.0, device-transport-kit-mockserver 1.1.2
+
+- [#21976](https://github.com/LedgerHQ/ledger-live/pull/21976) [`26e51d9`](https://github.com/LedgerHQ/ledger-live/commit/26e51d98fde1c080e09f566e0dbeb4f2c2e9f382) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add mobile E2E coverage for creating a contact, registering EVM addresses on the device and deleting both, and let device intents run against Speculos by registering it as a discoverable transport. Speculos specs can now pin an OS version so the run uses the Ethereum build the contacts intents require, which the app catalog does not serve yet.
+
+### Patch Changes
+
+- Updated dependencies [[`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf), [`5adf8f3`](https://github.com/LedgerHQ/ledger-live/commit/5adf8f3b844e21895aa17f96a620a2dfa6b679ad), [`33b4952`](https://github.com/LedgerHQ/ledger-live/commit/33b4952ef04d4e0528d2735ba299b4a8073e447e)]:
+  - @ledgerhq/live-dmk-shared@0.34.0
+  - @shared/env@0.9.0
+
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#22653](https://github.com/LedgerHQ/ledger-live/pull/22653) [`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump DMK dependencies: device-management-kit 1.10.0, device-signer-kit-solana 1.13.3, device-signer-kit-ethereum 1.18.1, context-module 2.6.0, dmk-ledger-wallet 0.6.0, device-contacts-kit 0.5.0, signer-utils 1.3.0, device-transport-kit-mockserver 1.1.2
+
+- [#21976](https://github.com/LedgerHQ/ledger-live/pull/21976) [`26e51d9`](https://github.com/LedgerHQ/ledger-live/commit/26e51d98fde1c080e09f566e0dbeb4f2c2e9f382) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add mobile E2E coverage for creating a contact, registering EVM addresses on the device and deleting both, and let device intents run against Speculos by registering it as a discoverable transport. Speculos specs can now pin an OS version so the run uses the Ethereum build the contacts intents require, which the app catalog does not serve yet.
+
+### Patch Changes
+
+- Updated dependencies [[`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf), [`5adf8f3`](https://github.com/LedgerHQ/ledger-live/commit/5adf8f3b844e21895aa17f96a620a2dfa6b679ad), [`33b4952`](https://github.com/LedgerHQ/ledger-live/commit/33b4952ef04d4e0528d2735ba299b4a8073e447e)]:
+  - @ledgerhq/live-dmk-shared@0.34.0-next.0
+  - @shared/env@0.9.0-next.0
+
 ## 0.29.9
 
 ### Patch Changes
@@ -143,41 +217,5 @@
   - @ledgerhq/hw-transport@6.35.7-next.0
   - @shared/env@0.1.1-next.0
   - @ledgerhq/live-dmk-shared@0.29.1-next.0
-
-## 0.29.0
-
-### Minor Changes
-
-- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
-
-### Patch Changes
-
-- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
-  - @ledgerhq/live-dmk-shared@0.29.0
-
-## 0.29.0-next.0
-
-### Minor Changes
-
-- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
-
-### Patch Changes
-
-- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
-  - @ledgerhq/live-dmk-shared@0.29.0-next.0
-
-## 0.28.1
-
-### Patch Changes
-
-- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
-  - @ledgerhq/live-env@2.42.0
-
-## 0.28.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
-  - @ledgerhq/live-env@2.42.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

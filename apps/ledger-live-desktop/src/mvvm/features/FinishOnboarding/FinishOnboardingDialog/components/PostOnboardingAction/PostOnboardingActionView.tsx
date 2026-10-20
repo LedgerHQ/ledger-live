@@ -31,6 +31,7 @@ const PostOnboardingActionView = memo(function PostOnboardingActionView({
     <ListItem
       data-testid={testId}
       data-post-onboarding-action-id={postOnboardingActionId}
+      data-post-onboarding-action-completed={completed}
       onClick={completed ? undefined : onRowActivate}
       className={completed ? "p-8 m-0 rounded-md" : "cursor-pointer p-8 m-0 rounded-md"}
     >

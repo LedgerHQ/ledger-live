@@ -56,7 +56,6 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported",
     "format": "oxfmt src tests",
     "format:check": "oxfmt --check src tests"
   },

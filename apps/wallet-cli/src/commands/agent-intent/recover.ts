@@ -3,21 +3,18 @@ import { z } from "zod";
 import {
   createAgentRecoveryRequest,
   createAgentRecoveryUrl,
-  createSoftwareAgentIdentity,
   formatAgentPublicKeyFingerprint,
-  isAgentRecoverySource,
-  SUPPORTED_AGENT_RECOVERY_SOURCES,
   AGENT_INTENT_FRONTEND_URLS,
   type AgentRecoverySource,
-  type SoftwareAgentIdentity,
 } from "@ledgerhq/agent-intent-sdk";
 import { Session, withSessionLock, type AgentIntentProfileMeta } from "../../session/session-store";
-import { loadAgentIntentSecretKey } from "../../key-ring/agent-intent-keychain";
+import { loadProfileIdentity } from "../../agent-intent/profile-identity";
 import { authenticateRecoveryCompletion } from "../../agent-intent/completion-auth";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import {
   assertServiceUrl,
+  assertStoredServiceUrl,
   createRelayHost,
   keycloakOverride,
   parseDurationMs,
@@ -48,47 +45,10 @@ function requireRecoverableProfile(session: Session, profileId: string): Enrolle
         "recover — start a fresh `agent-intent enroll` instead.",
     );
   }
-  if (!isAgentRecoverySource(source)) {
-    throw new Error(
-      `Agent Intent recovery supports only ${SUPPORTED_AGENT_RECOVERY_SOURCES.join(", ")} agents; ` +
-        `profile "${profileId}" is a ${source} agent.`,
-    );
-  }
   if (profile.keycloakBaseUrl !== undefined) {
-    try {
-      assertServiceUrl(profile.keycloakBaseUrl, "keycloak-url");
-    } catch (e) {
-      throw new Error(
-        `Agent Intent profile "${profileId}" has an invalid stored Keycloak URL — fix the record ` +
-          "in session.yaml before recovering it.",
-        { cause: e },
-      );
-    }
+    assertStoredServiceUrl(profileId, profile.keycloakBaseUrl, "keycloak-url", "Keycloak URL");
   }
   return { ...profile, trustchainId, source };
-}
-
-async function loadProfileIdentity(profile: EnrolledProfile): Promise<SoftwareAgentIdentity> {
-  let secretKey: string | null;
-  try {
-    secretKey = await loadAgentIntentSecretKey(profile.profileId);
-  } catch (e) {
-    throw new Error(
-      `Could not read the agent key of profile "${profile.profileId}" from the OS keychain ` +
-        `(${e instanceof Error ? e.message : String(e)}).`,
-      { cause: e },
-    );
-  }
-  if (!secretKey) {
-    throw new Error(`No agent key found in the OS keychain for profile "${profile.profileId}".`);
-  }
-  const identity = createSoftwareAgentIdentity(secretKey);
-  if (identity.publicKey.toLowerCase() !== profile.publicKey.toLowerCase()) {
-    throw new Error(
-      `The OS keychain key of profile "${profile.profileId}" does not match its recorded public key.`,
-    );
-  }
-  return identity;
 }
 
 function isUnchanged(
@@ -112,8 +72,8 @@ function clearPendingRecovery(profile: EnrolledProfile, requestSignature: string
 export default defineCommand({
   name: "recover",
   description:
-    "Re-enroll an enrolled Agent Intent profile's existing key into its previous Trustchain, and " +
-    "wait for the approval to be relayed back (no device required).",
+    "Re-enroll an enrolled Agent Intent profile's existing key into its " +
+    "previous Trustchain, and wait for the approval to be relayed back (no device required).",
   options: {
     profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
       description: "Local id of the enrolled profile to recover.",

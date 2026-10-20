@@ -2,13 +2,13 @@ import React from "react";
 import { Text } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
-import { render, screen, waitFor, act } from "@tests/test-renderer";
+import { render, screen, waitFor, act, countervaluesTestUserSettings } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { ScreenName } from "~/const";
@@ -27,6 +27,10 @@ const VERIFY_INTRO = "Verify your address";
 const DIE_LABEL = "Ledger Secure Screen";
 const PAY_DEPOSIT = "Add stablecoin";
 
+jest.mock("@shared/clipboard", () => ({
+  copyToClipboard: jest.fn().mockResolvedValue(true),
+}));
+
 jest.mock("@features/flow-pay-card", () => ({
   Card: () => null,
 }));
@@ -41,7 +45,7 @@ let capturedExecutor: CapturedExecutor | undefined;
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
-  DeviceIntentExecutorLWM: (props: CapturedExecutor) => {
+  DeviceIntentExecutor: (props: CapturedExecutor) => {
     capturedExecutor = props;
     return <Text>Ledger Secure Screen</Text>;
   },
@@ -58,13 +62,10 @@ function withUsdcHoldings(state: State): State {
     accounts: { active: [{ ...payTabEthAccount, subAccounts: [payTabUsdcAccount] }] },
     countervalues: {
       ...state.countervalues,
-      countervalues: {
-        ...state.countervalues.countervalues,
-        state: importCountervalues(
-          { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
-          state.countervalues.userSettings,
-        ),
-      },
+      rates: importCountervalues(
+        { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
+        countervaluesTestUserSettings,
+      ),
     },
   };
 }
@@ -225,7 +226,7 @@ describe("PayTab RequestReceive integration", () => {
 
     await user.press(await screen.findByRole("button", { name: "Copy" }));
 
-    expect(Clipboard.setString).toHaveBeenCalledWith(payTabEthAccount.freshAddress);
+    expect(copyToClipboard).toHaveBeenCalledWith(payTabEthAccount.freshAddress);
   });
 
   it("should render the request receive card for the selected account", async () => {

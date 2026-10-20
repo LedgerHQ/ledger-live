@@ -40,18 +40,25 @@ function BalanceTypeOptionItem({ option, selected, onSelect }: Readonly<OptionIt
       data-testid={`balance-type-${option.id}`}
     >
       <ListItemLeading>
-        <Spot appearance="icon" icon={IconComponent} />
+        <Spot icon={IconComponent} />
         <ListItemContent>
           <ListItemTitle>{t(`newSendFlow.${option.translationKey}.title`)}</ListItemTitle>
-          <ListItemDescription>
-            {t(`newSendFlow.${option.translationKey}.subtitle`)}
-          </ListItemDescription>
+          {option.hideSubtitle ? null : (
+            <ListItemDescription>
+              {t(`newSendFlow.${option.translationKey}.subtitle`)}
+            </ListItemDescription>
+          )}
           {option.isZero ? (
             <ListItemDescription
               className="text-warning"
               data-testid={`balance-type-${option.id}-zero`}
             >
               {t("newSendFlow.balanceType.zeroBalance.warning")}
+            </ListItemDescription>
+          ) : null}
+          {option.requiresSync ? (
+            <ListItemDescription data-testid={`balance-type-${option.id}-requires-sync`}>
+              {t("newSendFlow.balanceType.requiresSync.notice")}
             </ListItemDescription>
           ) : null}
         </ListItemContent>

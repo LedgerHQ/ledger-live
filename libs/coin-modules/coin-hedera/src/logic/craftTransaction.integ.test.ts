@@ -1,4 +1,4 @@
-import * as sdk from "@hashgraph/sdk";
+import * as sdk from "@hiero-ledger/sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES } from "../constants";

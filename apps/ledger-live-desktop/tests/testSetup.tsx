@@ -6,9 +6,15 @@ import {
   Features,
   PartialFeatures,
 } from "@shared/feature-flags";
-import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import {
+  startCountervaluesSync,
+  stopCountervaluesSync,
+} from "@features/platform-market-countervalues";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
-import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
+import type {
+  CounterValuesStateRaw,
+  CountervaluesSettings,
+} from "@domain/entity-market-countervalues";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RenderHookResult,
@@ -17,7 +23,7 @@ import {
   act,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
+import React, { useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
@@ -25,7 +31,6 @@ import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
 import { LinkingProvider } from "@shared/linking";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
-import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import type { ReduxStore } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -105,20 +110,29 @@ export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State>
   };
 }
 
-function CountervaluesProviders({
-  children,
+// No tracking pairs and no polling: tests seed the rates they assert on.
+const countervaluesTestUserSettings: CountervaluesSettings = {
+  trackingPairs: [],
+  autofillGaps: true,
+  refreshRate: 0,
+  marketCapBatchingAfterRank: 0,
+};
+
+// Runs the countervalues loop on the test's store while the tree is mounted, as the app does from boot.
+function CountervaluesTestSync({
+  store,
   savedState,
 }: {
-  children: React.ReactNode;
+  store: ReduxStore;
   savedState?: CounterValuesStateRaw | undefined;
 }) {
-  const bridge = useCountervaluesBridge();
-
-  return (
-    <CountervaluesProvider bridge={bridge} savedState={savedState}>
-      {children}
-    </CountervaluesProvider>
-  );
+  useEffect(() => {
+    store.dispatch(startCountervaluesSync({ savedState, settings: countervaluesTestUserSettings }));
+    return () => {
+      store.dispatch(stopCountervaluesSync());
+    };
+  }, [store, savedState]);
+  return null;
 }
 
 /**
@@ -170,9 +184,10 @@ function Providers({
   );
 
   const routerContent = (
-    <CountervaluesProviders savedState={initialCountervalues}>
+    <>
+      <CountervaluesTestSync store={store} savedState={initialCountervalues} />
       {rampCatalogContent}
-    </CountervaluesProviders>
+    </>
   );
 
   return (

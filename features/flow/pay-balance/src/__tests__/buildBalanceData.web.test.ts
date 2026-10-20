@@ -62,13 +62,16 @@ describe("buildBalanceData", () => {
     expect(data.hasBalance).toBe(true);
   });
 
-  it("should sum by ticker when the held currencyId differs from the option market id", () => {
+  it("should total only the selected asset when several share a ticker", () => {
     const { data } = build({
-      stablecoins: [makeItem("solana/token/usdc", "USDC", "USD Coin", 1000)],
-      filter: USDC.id,
+      stablecoins: [
+        makeItem("solana/token/usdc", "USDC", "USD Coin", 1000),
+        makeItem(USDC.id, "USDC", "USD Coin", 250),
+      ],
+      filter: "solana/token/usdc",
     });
 
-    expect(data.filter).toBe(USDC.id);
+    expect(data.filter).toBe("solana/token/usdc");
     expect(data.stableBalance).toBe(1000);
   });
 

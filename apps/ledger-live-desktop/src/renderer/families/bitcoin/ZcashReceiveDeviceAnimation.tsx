@@ -2,13 +2,14 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@features/platform-feature-flags";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import type { StepProps } from "~/renderer/modals/Receive/Body";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = StepProps & { fallback: React.ReactNode };
 
@@ -21,7 +22,7 @@ const ZcashReceiveDeviceAnimation = ({ account, parentAccount, device, fallback 
     | ZcashPrivateInfo
     | undefined;
   const shieldedAddress =
-    shieldedEnabled && mainAccount?.currency.id === "zcash"
+    shieldedEnabled && !!mainAccount && isZcashCurrencyId(mainAccount.currency.id)
       ? (privateInfo?.shieldedAddress ?? null)
       : null;
 

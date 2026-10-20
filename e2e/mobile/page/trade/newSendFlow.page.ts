@@ -24,6 +24,7 @@ export default class NewSendFlowPage {
   contactAddressPickerId = "pay-contact-address-picker";
   recipientCardAvatarId = "send-recipient-card-avatar";
   recipientCardTitleId = "send-recipient-card-title";
+  recipientCardSendId = "send-recipient-card-send";
   recipientCardAddContactId = "send-recipient-card-add-contact";
   recipientContactNameId = "recipient-contact-name";
   contactCompactRowId = (contactId: string) => `contacts-compact-row-${contactId}`;
@@ -108,6 +109,12 @@ export default class NewSendFlowPage {
   @Step("Clear the recipient input (stay on recipient step)")
   async clearRecipientNewFlow() {
     await clearTextByElement(getElementById(this.recipientInputId));
+  }
+
+  @Step("Send to the matched recipient")
+  async tapRecipientCardSend() {
+    await waitForElementById(this.recipientCardSendId);
+    await tapById(this.recipientCardSendId);
   }
 
   @Step("Select contact {{{0}}} from the recipient search results")

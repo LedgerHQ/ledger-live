@@ -56,11 +56,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "unimported"
+    "coverage": "jest --coverage"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {

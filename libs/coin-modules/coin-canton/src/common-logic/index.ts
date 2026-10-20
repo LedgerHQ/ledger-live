@@ -1,5 +1,4 @@
 export { getBalance } from "./account/getBalance";
-export { parseAPIValue } from "./common";
 export { lastBlock } from "./history/lastBlock";
 export { listOperations } from "./history/listOperations";
 export { broadcast } from "./transaction/broadcast";

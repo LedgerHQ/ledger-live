@@ -31,6 +31,9 @@ export class PortfolioPage extends AppPage {
   private readonly noBalanceTitle = this.page.getByTestId("no-balance-title");
   private readonly quickActionButton = (action: QuickActionButton) =>
     this.page.getByTestId(`quick-action-button-${action}`);
+  private readonly quickActionButtons = this.page
+    .getByTestId("quick-actions-actions-list")
+    .getByRole("button");
   private readonly connectQuickActionButton = this.page.getByTestId("quick-action-button-connect");
   private readonly buyALedgerQuickActionButton = this.page.getByTestId(
     "quick-action-button-buy-a-ledger",
@@ -299,6 +302,29 @@ export class PortfolioPage extends AppPage {
   @step("Check no device title is visible")
   async checkNoDeviceTitleVisibility() {
     await this.checkVisibility(this.noDeviceTitle);
+  }
+
+  @step("Expect the Wallet home without a device")
+  async expectNoDeviceWalletHome() {
+    await expect(this.pageView("dashboard")).toBeVisible();
+    await expect(this.noDeviceTitle).toBeVisible();
+    await expect(this.page).not.toHaveURL(/\/onboarding/);
+  }
+
+  @step("Expect the no-device title in place of a balance")
+  async expectNoDeviceHeader() {
+    await expect(this.noDeviceTitle).toBeVisible();
+    await expect(this.portfolioBalance).toBeHidden();
+    await expect(this.portfolioTotalBalance).toBeHidden();
+    await expect(this.portfolioTrend).toBeHidden();
+  }
+
+  /** Without a device, Receive, Buy, Sell and Send are not rendered at all, and desktop has no Swap action. */
+  @step("Expect Connect and Buy a Ledger to be the only quick actions")
+  async expectNoDeviceQuickActions() {
+    await expect(this.connectQuickActionButton).toBeVisible();
+    await expect(this.buyALedgerQuickActionButton).toBeVisible();
+    await expect(this.quickActionButtons).toHaveCount(2);
   }
 
   @step("Click send button")

@@ -56,6 +56,7 @@ export function runSwapTokenApprovalFlow(
       async () => {
         const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
         await app.swap.logSelectedProvider(provider.uiName);
+        await app.speculos.enableBlindSigningOnNanoS();
         await revokeTokenApproval(fromAccount, provider);
         const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
         if (amountToSwap === null) {
@@ -73,13 +74,13 @@ export function runSwapTokenApprovalFlow(
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swapLiveApp.expectTwoStepApprovalScreen();
         await app.swapLiveApp.tapGiveApprovalButton();
-        await app.send.summaryContinue();
+        await app.walletApiSignatureDrawer.expectVisible();
         await app.speculos.signTokenApproval();
         if (provider === SwapProvider.UNISWAP) {
           await app.swapLiveApp.tapGiveAuthorizationButton();
           await app.speculos.signTypedMessage();
         }
-        await app.swapLiveApp.expectExecuteSwapOnStepApproval();
+        await app.swapLiveApp.expectExecuteSwapOnStepApproval({ isTokenApproval: true });
       },
       TOKEN_APPROVAL_TEST_TIMEOUT,
     );

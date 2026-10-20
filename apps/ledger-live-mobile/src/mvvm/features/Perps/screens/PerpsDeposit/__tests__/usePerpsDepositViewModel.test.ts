@@ -21,11 +21,11 @@ jest.mock("LLM/features/ModularDrawer", () => ({
 }));
 
 const mockCalculateCountervalue = jest.fn((_currency: unknown, value: BigNumber) => value);
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
     mockCalculateCountervalue(currency, value),
-  useCountervaluesState: () => ({}),
+  useCountervaluesCache: () => ({}),
 }));
 
 // Prices the typed amount back into the funding currency, in its smallest unit.
@@ -94,12 +94,23 @@ function renderViewModel(
   props: never,
   discreetMode = false,
   accounts: Account[] = [fundingAccount, fundedAccount],
+  maxConstants?: Record<string, string>,
 ) {
+  const tradeMaxConstant = maxConstants && {
+    ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
+  };
   return renderHook(() => usePerpsDepositViewModel(props), {
     overrideInitialState: state => ({
       ...state,
       accounts: { ...state.accounts, active: accounts },
       settings: { ...state.settings, discreetMode },
+      ...(tradeMaxConstant && {
+        featureFlags: {
+          ...state.featureFlags,
+          overrides: { ...state.featureFlags.overrides, ...tradeMaxConstant },
+          resolved: { ...state.featureFlags.resolved, ...tradeMaxConstant },
+        },
+      }),
     }),
   });
 }
@@ -574,5 +585,28 @@ describe("usePerpsDepositViewModel", () => {
         expect.objectContaining({ swapId: undefined }),
       );
     });
+  });
+  // Countervalues are 1:1 in smallest units: 25 wei of ETH is worth $0.25.
+  it("hands the MAX pill the configured fee buffer of a native coin", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(props, false, undefined, {
+      ethereum: "0.000000000000000025",
+    });
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+
+    expect(result.current.maxBuffer).toBe(0.25);
+    expect(result.current.maxAmount).toBe(100);
+  });
+
+  it("holds nothing back while the trade max constant is off", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+
+    expect(result.current.maxBuffer).toBe(0);
   });
 });

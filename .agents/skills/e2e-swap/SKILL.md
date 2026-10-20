@@ -5,6 +5,8 @@ description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright)
 
 # Swap E2E Skill
 
+Writing rules: when editing desktop, follow [Desktop E2E](../../../e2e/desktop/AGENTS.md). When editing mobile, follow [Mobile E2E](../../../e2e/mobile/AGENTS.md).
+
 ## Use this skill when
 
 - Updating swap tests in `e2e/desktop` or `e2e/mobile`.
@@ -14,11 +16,10 @@ description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright)
 ## Current source of truth
 
 - Desktop specs: `e2e/desktop/tests/specs/*swap*.spec.ts`
-- Desktop swap shared utils:
-  - `e2e/desktop/tests/utils/swapUtils.ts`
+- Desktop swap shared utils: `e2e/desktop/tests/utils/swapUtils.ts`
 - Desktop page objects:
-  - `e2e/desktop/tests/page/swap.page.ts`
-  - `e2e/desktop/tests/page/drawer/swap.confirmation.drawer.ts`
+  - `e2e/desktop/tests/page/swap.page.ts` — swap webview.
+  - `e2e/desktop/tests/page/drawer/swap.confirmation.drawer.ts` — main window.
 - Mobile builders/specs:
   - `e2e/mobile/specs/swap/otherTestCases/swap.other.ts`
   - `e2e/mobile/specs/swap/**/*.spec.ts`
@@ -26,94 +27,52 @@ description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright)
   - `e2e/mobile/page/liveApps/swapLiveApp.ts`
   - `e2e/mobile/page/trade/swap.page.ts`
 
-## Platform model
+## Swap rules
 
-- Desktop:
-  - Electron can expose multiple windows (main app + one or more webviews).
-  - Resolve swap webview via `WebViewAppPage.getWebView()` using `webviewIdentifier` title matching, not fixed `electronApp.windows()[N]` indexes.
-  - `SwapPage` methods usually receive `electronApp`.
-  - `SwapConfirmationDrawer` methods act on the main window.
-- Mobile:
-  - Webview operations use Detox web helpers.
-  - Native operations use regular Detox matchers.
-
-## Implementation rules
-
-- Keep selectors centralized in page objects, not inline in specs.
-- Keep test IDs as class properties in page objects (avoid repeated string literals in methods).
-- Do not define reusable workflow methods in spec files. Put them in page objects (for atomic UI actions) or shared utils (for multi-step flows).
-- Remove dead methods/fields quickly; do not keep unused helpers.
-- Keep single-use constants local to the narrowest scope that uses them.
-- Reuse existing provider helper `selectSpecificProvider(...)` before adding new variants.
-- Prefer runtime UI assertions over cross-repo filesystem assertions.
-- Prefer `if/else` in `@Step` methods over early `return` branches for readability and reporting consistency.
-- When replacing all occurrences in strings, prefer `replaceAll()` over regex-based `replace()` where equivalent.
-- Avoid unnecessary non-null assertions (`!`); prefer type-safe narrowing/guards.
-- For fragile swap amounts, fetch minimum dynamically with:
+- Reuse `selectSpecificProvider(...)` before adding a new provider helper.
+- Assert what the UI shows. Do not assert swap state by reading another repo on disk.
+- Fragile amounts come from the provider minimum, not a hardcoded value:
   - `app.swap.getMinimumAmount(...)` (desktop)
   - `app.swapLiveApp.getMinimumAmount(...)` (mobile)
 
-## Desktop patterns (current API)
+## Desktop API
 
-- Keep assertion method prefixes consistent within a page object (`check*`).
-- In `SwapPage`, prefer `const webview = await this.getWebView()` for swap webview context.
-  Do not pass `electronApp` unless a method explicitly needs non-webview Electron windows/events.
-- Current Changelly UI swap pattern:
-  - `performSwapUntilQuoteSelectionStep(...)`
-  - `app.swap.selectSpecificProvider(Provider.CHANGELLY, electronApp)`
-  - `const amountToSend = await app.swap.getAmountToSend(electronApp)` (only when needed by follow-up assertions)
-- Avoid reintroducing removed generic/dead helpers:
-  - `checkBannerVisibility(...)` (removed)
-  - `verifyContinueButtonVisible()` in desktop swap page (removed)
-  - `selectProviderQuoteWithRetry(...)` in swap utils (removed)
+Quote selection takes a `SwapProvider`. `SwapProvider.CHANGELLY` is disabled.
 
-## Mobile patterns (current API)
+- `performSwapUntilQuoteSelectionStep({ app, swap, minAmount })`
+- `app.swap.selectSpecificProvider(provider)`
+- `await app.swap.getAmountToSend()` only when a later assertion needs the amount
 
-- Multi-step flow should assert progression, not only click:
-  - `tapExecuteSwap()`
-  - `tapExecuteSwapOnStepApproval()` (includes post-click wait to send summary)
-- Do not reintroduce removed JS-click helper `tapSwapOnMultiStepApproval()`
-  unless there is a proven regression and a documented reason.
-- Swap history feedback link assertion should be page-object driven:
-  - `app.swap.checkSwapHistoryFeedbackFormUrl(expectedUrl)`
-  - Prefer platform-specific attributes for URL assertion (`value` on iOS, `label` on Android).
-- Do not add unused icon selector fields (`networkFeesInfoIcon`, `rateInfoIcon`).
+`selectSpecificProvider` and `getAmountToSend` do not take `electronApp`.
 
-## Validation before finishing
+Do not reintroduce removed helpers:
 
-Run validation for the impacted E2E package(s), not the whole monorepo:
+- `checkBannerVisibility(...)`
+- `verifyContinueButtonVisible()` on the desktop swap page
+- `selectProviderQuoteWithRetry(...)` in swap utils
 
-- Desktop:
-  - `pnpm --filter ledger-live-desktop-e2e-tests typecheck`
-  - Run targeted Playwright tests for changed swap specs when environment allows.
-- Mobile:
-  - `pnpm --filter ledger-live-mobile-e2e-tests typecheck`
-  - Run targeted Detox tests for changed swap specs when environment allows.
+## Mobile API
 
-Validation workflow notes:
+Quote selection uses the provider UI name:
 
-- Reuse an existing watch terminal when available before starting a new watcher.
-- Prefer watch mode where scripts support it.
+- `performSwapUntilQuoteSelectionStep(...)`
+- `app.swapLiveApp.selectSpecificProvider(provider.uiName)`
+- `await app.swapLiveApp.getAmountToSend()` only when a later assertion needs the amount
 
-If unrelated pre-existing failures appear, explicitly report them as pre-existing and keep scope focused on swap changes.
+A multi-step flow asserts progression, not only the click:
 
-## PR review comment workflow
+- `tapExecuteSwap(provider.uiName)`
+- `tapExecuteSwapOnStepApproval()` waits for the approval button to become enabled and taps it; assert the post-click destination separately (for example, `app.walletApiSignatureDrawer.expectVisible()`).
 
-For each comment:
+Do not reintroduce `tapSwapOnMultiStepApproval()` unless a regression is proven and the reason is written down.
 
-1. Verify current code and usages (`rg` for symbol usage).
-2. Classify:
-   - real change needed,
-   - duplicate comment,
-   - stale/already addressed.
-3. Implement only real changes.
-4. Prepare explicit PR replies for stale/duplicate/already-fixed comments.
+Swap history feedback is page-object driven: `app.swap.checkSwapHistoryFeedbackFormUrl(expectedUrl)`. Assert the URL with `value` on iOS and `label` on Android.
+
+Do not add unused icon selector fields (`networkFeesInfoIcon`, `rateInfoIcon`).
 
 ## Quick checklist
 
-- [ ] No inline repeated test IDs in specs when page object exists.
-- [ ] No dead selectors/helpers added.
+ - [ ] Follow the conventions docs and typecheck each changed package (`pnpm --filter ledger-live-desktop-e2e-tests typecheck` and/or `pnpm --filter ledger-live-mobile-e2e-tests typecheck`).
 - [ ] Multi-step mobile flow has a post-click state assertion.
-- [ ] Amounts are not hardcoded where minimum is provider-dependent.
-- [ ] Desktop assertions use correct window context.
-- [ ] Typecheck and relevant test commands were attempted/reported.
+- [ ] Amounts are not hardcoded where the minimum is provider-dependent.
+- [ ] Removed helpers above were not reintroduced.

@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
-import type {
-  BitcoinAccount,
-  Transaction,
-  ZcashAccount,
-} from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import type { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount, Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = Readonly<{
   account: BitcoinAccount;
@@ -20,7 +17,7 @@ type Props = Readonly<{
  * the chosen pool only, so a keystroke in the amount field never restarts it.
  */
 export function ZcashAmountStepSync({ account, transaction }: Props) {
-  const isZcash = account.currency.id === "zcash";
+  const isZcash = isZcashCurrencyId(account.currency.id);
   const sender = (transaction as unknown as ZcashTransaction).sender;
   const { startShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
 

@@ -57,6 +57,23 @@ describe("evmConfig", () => {
     expect(config).not.toHaveProperty("eip1559BaseFeeMultiplier");
   });
 
+  it("should configure alpen testnet with an external node and a blockscout explorer", () => {
+    const config = getCurrencyConfiguration("alpen_testnet");
+
+    expect(config).toMatchObject({
+      chainId: 20310,
+      name: "Alpen Testnet",
+      unit: { name: "BTC", code: "BTC", magnitude: 18 },
+      node: { type: "external", uri: "https://alpen.testnet.alpen.org" },
+      explorer: { type: "blockscout", uri: "https://explorer.testnet.alpen.org/api" },
+      status: { type: "active", features: [{ id: "blockchain_txs", status: "active" }] },
+    });
+    expect(config).not.toMatchObject({ explorer: { type: "none" } });
+    expect(config).not.toHaveProperty("finalizationLevel");
+    expect(isLedgerBased(evmConfig.config_currency_alpen_testnet)).toBe(false);
+    expect(config).not.toHaveProperty("ledgerExplorerUri");
+  });
+
   it("should reflects an env change made after configuration load", () => {
     setEnv("EIP1559_BASE_FEE_MULTIPLIER", 5.5);
     setEnv("EXPLORER", "http://url.url");

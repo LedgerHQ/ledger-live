@@ -1,4 +1,7 @@
-export default {
+import { createRequire } from "node:module";
+const { withEsmDeps } = createRequire(import.meta.url)("@support/jest-shared");
+
+const config = {
   testEnvironment: "node",
   testRegex: ".test.ts$",
   collectCoverage: true,
@@ -29,3 +32,5 @@ export default {
   ],
   // collectCoverageFrom: ["packages/**/src/*.ts"],
 };
+
+export default withEsmDeps(config);

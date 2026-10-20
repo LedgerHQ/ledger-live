@@ -20,7 +20,7 @@ import {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import {
   SolanaAccount,
@@ -140,7 +140,7 @@ export type SwapNavigatorParamList = {
     accountId: string;
     parentId?: string;
     account: Account;
-    transaction: HederaTransaction;
+    transaction: HederaGenericTransaction;
     currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
     nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };

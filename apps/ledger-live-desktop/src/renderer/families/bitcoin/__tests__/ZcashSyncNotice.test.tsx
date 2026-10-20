@@ -2,7 +2,8 @@ import React from "react";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { ZcashSyncNotice } from "../ZcashSyncNotice";
 
@@ -66,6 +67,15 @@ describe("ZcashSyncNotice", () => {
       false,
     );
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders the running banner for a zcash_testnet account too", () => {
+    const testnetAccount = {
+      ...buildZcashAccount({ syncState: "running", progress: 50 }),
+      currency: { id: "zcash_testnet" } as CryptoCurrency,
+    } as unknown as ZcashAccount;
+    renderNotice(testnetAccount, "private");
+    expect(screen.getByTestId("zcash-sync-banner-running")).toBeVisible();
   });
 
   it("renders the running banner for Zcash + private sender + syncState=running", () => {

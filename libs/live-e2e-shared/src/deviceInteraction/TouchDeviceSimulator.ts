@@ -1,4 +1,4 @@
-import { getSpeculosAddress, getDeviceLabelCoordinates } from "../speculos";
+import { getSpeculosAddress, getDeviceLabelCoordinates, getSpeculosHeaders } from "../speculos";
 import axios from "axios";
 import { getEnv } from "@shared/env";
 import { retryAxiosRequest } from "./retryAxiosRequest";
@@ -25,11 +25,15 @@ export async function pressAndRelease(deviceLabel: string, x?: number, y?: numbe
     yCoord = coords.y;
   }
   await retryAxiosRequest(() =>
-    axios.post(`${speculosAddress}:${speculosApiPort}/finger`, {
-      action: "press-and-release",
-      x: xCoord,
-      y: yCoord,
-    }),
+    axios.post(
+      `${speculosAddress}:${speculosApiPort}/finger`,
+      {
+        action: "press-and-release",
+        x: xCoord,
+        y: yCoord,
+      },
+      { headers: getSpeculosHeaders() },
+    ),
   );
 }
 
@@ -37,25 +41,33 @@ export async function longPressAndRelease(deviceLabel: string, delay: number) {
   const { speculosApiPort, speculosAddress } = getSpeculosInfo();
   const deviceLabelCoordinates = await getDeviceLabelCoordinates(deviceLabel, speculosApiPort);
   await retryAxiosRequest(() =>
-    axios.post(`${speculosAddress}:${speculosApiPort}/finger`, {
-      action: "press-and-release",
-      x: deviceLabelCoordinates.x,
-      y: deviceLabelCoordinates.y,
-      delay: delay,
-    }),
+    axios.post(
+      `${speculosAddress}:${speculosApiPort}/finger`,
+      {
+        action: "press-and-release",
+        x: deviceLabelCoordinates.x,
+        y: deviceLabelCoordinates.y,
+        delay: delay,
+      },
+      { headers: getSpeculosHeaders() },
+    ),
   );
 }
 
 export async function swipeRight() {
   const { speculosApiPort, speculosAddress } = getSpeculosInfo();
   await retryAxiosRequest(() =>
-    axios.post(`${speculosAddress}:${speculosApiPort}/finger`, {
-      action: "press-and-release",
-      x: 100,
-      y: 100,
-      x2: 50,
-      y2: 100,
-      delay: 0.5,
-    }),
+    axios.post(
+      `${speculosAddress}:${speculosApiPort}/finger`,
+      {
+        action: "press-and-release",
+        x: 100,
+        y: 100,
+        x2: 50,
+        y2: 100,
+        delay: 0.5,
+      },
+      { headers: getSpeculosHeaders() },
+    ),
   );
 }

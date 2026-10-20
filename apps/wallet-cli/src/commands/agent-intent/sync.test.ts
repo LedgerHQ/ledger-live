@@ -81,7 +81,10 @@ beforeAll(() =>
       },
     },
     sdk: {
-      createSoftwareAgentIdentity: () => ({ publicKey: derivedPublicKey }),
+      createSoftwareAgentIdentity: (secretKey: string) => ({
+        publicKey: derivedPublicKey,
+        exportSecretKey: () => secretKey,
+      }),
     },
     lkrpSdk: {
       createAgentLedgerSyncSdk: (environment: string) => {

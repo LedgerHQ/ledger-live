@@ -1,11 +1,12 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useLumenDataTable } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { isAccountDetailEnabledFor } from "@features/flow-account-detail";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
@@ -13,18 +14,18 @@ import { track } from "@shared/analytics";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
 import { computeBalanceSortCountervalueByAccountId } from "../../../utils/aggregateAccounts";
-import {
-  AccountAddressCell,
-  AccountAssetsCell,
-  AccountNameCell,
-  AccountRowActionCell,
-  AccountValueCell,
-  AggregatedAccountNameCell,
-  AggregatedAccountValueCell,
-} from "../Cell";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
-import { getAccountAssetsCurrencies } from "LLD/features/CryptoAddresses/utils/getAccountAssetsCurrencies";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
+import { useAccountSettingsDialog } from "./useAccountSettingsDialog";
+import { useEditNameDialog } from "./useEditNameDialog";
+import {
+  ActionCell,
+  AddressCell,
+  AssetsCell,
+  BalanceCell,
+  NameCell,
+  type CryptoTableCellData,
+} from "../CryptoTableCells";
 
 type UseCryptoDataTableParams = {
   readonly rows: AccountLike[];
@@ -44,6 +45,15 @@ export function useCryptoDataTable({
   const calculateCountervalue = useCalculateCountervalueCallback();
   const syncPhase = useSyncPhase();
   const isSyncing = syncPhase === "syncing";
+  const { openEditName, editNameDialog } = useEditNameDialog(rows);
+  const { openSettings, settingsDialog } = useAccountSettingsDialog(rows);
+  const accountDetailFeature = useFeature("accountDetail");
+  const hasAccountSettings = useCallback(
+    (account: AccountLike) =>
+      account.type === "Account" &&
+      isAccountDetailEnabledFor(accountDetailFeature, account.currency.id),
+    [accountDetailFeature],
+  );
 
   const aggregatedDataByAccountId = useMemo(
     () =>
@@ -76,18 +86,7 @@ export function useCryptoDataTable({
             { sensitivity: "base" },
           ),
         header: t("cryptoAddresses.table.columns.name"),
-        cell: ({ row }) =>
-          shouldDisplayAggregatedAssets && row.original.type === "Account" ? (
-            <AggregatedAccountNameCell
-              account={row.original}
-              displayName={accountNameWithDefaultSelector(walletState, row.original)}
-            />
-          ) : (
-            <AccountNameCell
-              account={row.original}
-              displayName={accountNameWithDefaultSelector(walletState, row.original)}
-            />
-          ),
+        cell: NameCell,
       },
       {
         id: "address",
@@ -99,9 +98,7 @@ export function useCryptoDataTable({
             { sensitivity: "base" },
           ),
         header: t("cryptoAddresses.table.columns.address"),
-        cell: ({ row }) => (
-          <AccountAddressCell account={row.original} lookupParentAccount={lookupParentAccount} />
-        ),
+        cell: AddressCell,
         meta: { align: "end" },
       },
       ...(shouldDisplayAggregatedAssets
@@ -110,11 +107,7 @@ export function useCryptoDataTable({
               id: "assets",
               header: t("cryptoAddresses.table.columns.asset"),
               enableSorting: false,
-              cell: ({ row }: { row: Row<AccountLike> }) => (
-                <AccountAssetsCell
-                  currencies={getAccountAssetsCurrencies(row.original, blacklistedTokenIds)}
-                />
-              ),
+              cell: AssetsCell,
               meta: { align: "end" },
             } satisfies ColumnDef<AccountLike>,
           ]
@@ -125,41 +118,42 @@ export function useCryptoDataTable({
         sortingFn: (rowA, rowB) =>
           getSortCountervalue(rowA.original.id).comparedTo(getSortCountervalue(rowB.original.id)),
         header: t("cryptoAddresses.table.columns.value"),
-        cell: ({ row }) => {
-          const entry = aggregatedDataByAccountId?.get(row.original.id);
-          return shouldDisplayAggregatedAssets && aggregatedDataByAccountId ? (
-            <AggregatedAccountValueCell
-              aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)}
-            />
-          ) : (
-            <AccountValueCell account={row.original} />
-          );
-        },
+        cell: BalanceCell,
         meta: { align: "end" },
       },
       {
         id: "action",
         header: "",
         enableSorting: false,
-        cell: ({ row }) => (
-          <AccountRowActionCell
-            account={row.original}
-            editNameAriaLabel={t("cryptoAddresses.table.editName")}
-            isSyncing={isSyncing}
-          />
-        ),
+        cell: ActionCell,
         meta: { align: "end" },
       },
     ],
-    [
-      t,
+    [t, walletState, shouldDisplayAggregatedAssets, lookupParentAccount, getSortCountervalue],
+  );
+
+  const cellData = useMemo<CryptoTableCellData>(
+    () => ({
       walletState,
       shouldDisplayAggregatedAssets,
       lookupParentAccount,
-      getSortCountervalue,
+      blacklistedTokenIds,
       aggregatedDataByAccountId,
       isSyncing,
+      onEditName: openEditName,
+      hasAccountSettings,
+      onOpenSettings: openSettings,
+    }),
+    [
+      walletState,
+      shouldDisplayAggregatedAssets,
+      lookupParentAccount,
       blacklistedTokenIds,
+      aggregatedDataByAccountId,
+      isSyncing,
+      openEditName,
+      hasAccountSettings,
+      openSettings,
     ],
   );
 
@@ -209,5 +203,13 @@ export function useCryptoDataTable({
     [walletState],
   );
 
-  return { table, handleRowClick, getRowTestId };
+  return {
+    table,
+    handleRowClick,
+    getRowTestId,
+    cellData,
+    editNameDialog,
+    settingsDialog,
+    isSyncing,
+  };
 }

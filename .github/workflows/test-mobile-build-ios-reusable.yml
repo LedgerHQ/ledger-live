@@ -42,11 +42,6 @@ on:
         required: false
         type: boolean
         default: false
-    outputs:
-      js-bundle-size:
-        description: The JS bundle size of the built app
-        value: ${{ jobs.build-ios-js.outputs.js-bundle-size }}
-
     secrets:
       AWS_ACCOUNT_ID_PROD:
         required: true
@@ -212,9 +207,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: ledger-wallet-8cpu-aws-public
-    outputs:
-      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
+    runs-on: ledger-wallet-8cpu-aws-public-cached
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
@@ -236,7 +229,7 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -255,25 +248,19 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
+          command: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --frozen-lockfile --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
 
-      - name: Build JS bundle and minify for size analysis
+      # The mobile postinstall writes a dev .env that nx run would load into the bundle and its hash;
+      # without it the hash matches the one the affected job computes
+      - name: Remove the dev .env
+        run: rm -f apps/ledger-live-mobile/.env
+
+      - name: Build JS bundle
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
-        env:
-          CARD_BAANX_API_URL: ${{ secrets.CARD_BAANX_API_URL }}
-          CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
-          CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
-          CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- -p ios --bundle --bundle-size
+          command: pnpm exec nx run live-mobile:e2e:bundle:ios
           disable_cache: ${{ inputs.disable-nx-cache || false }}
-
-      - name: Output bundle size for analysis
-        id: output-js-bundle-size
-        run: |
-          # Report the minified bundle size for comparison with other branches
-          echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -285,10 +272,3 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-
-  skip-ios-js:
-    name: "iOS Build JS - Skip"
-    if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ubuntu-22.04]
-    steps:
-      - run: echo "Skipping"

@@ -1,5 +1,5 @@
 import type { StringMemo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { cardanoCoinConfig as config } from "../fixtures/config";
 import * as cbors from "@stricahq/cbors";
 import { crypto } from "@stricahq/typhonjs";
 import { getAllTransactionsByKeys } from "../api/fetchTransactions";
@@ -18,7 +18,6 @@ const mockFetchTxs = jest.mocked(getAllTransactionsByKeys);
 const mockGetDelegation = jest.mocked(getDelegationInfo);
 const mockFetchNetworkInfo = jest.mocked(fetchNetworkInfo);
 
-const currency = getCryptoCurrencyById("cardano");
 const SENDER =
   "addr1q8mgw8geggkl2hs0m6rq3pgt69uxttpqcgu6euxje5tt6plxjtjrnskhhtt03g6l3sr98p9t8mtlajr26vmwjzep77pqxn8cms";
 const RECIPIENT =
@@ -37,7 +36,7 @@ const POOL_HASH = "b".repeat(56);
  * (hence its hash — what the device signed) unchanged through the cbors decode/re-encode.
  */
 async function expectBodyPreserved(intent: TransactionIntent<StringMemo>): Promise<void> {
-  const tx = await buildUnsignedTransaction(currency, intent);
+  const tx = await buildUnsignedTransaction(config, "cardano", intent);
   const { payload, hash } = tx.buildTransaction();
   const { value } = cbors.Decoder.decode(Buffer.from(combine(payload, [SIGNATURE], PUBKEY), "hex"));
   expect(crypto.hash32(cbors.Encoder.encode(value[0])).toString("hex")).toBe(hash);
@@ -56,7 +55,7 @@ function sendIntent(): TransactionIntent<StringMemo> {
 
 /** Build a realistic unsigned tx and return its CBOR payload + canonical body hash. */
 async function craftUnsigned(): Promise<{ payload: string; bodyHash: string }> {
-  const tx = await buildUnsignedTransaction(currency, sendIntent());
+  const tx = await buildUnsignedTransaction(config, "cardano", sendIntent());
   const { payload, hash } = tx.buildTransaction();
   return { payload, bodyHash: hash };
 }

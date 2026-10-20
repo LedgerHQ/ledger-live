@@ -218,6 +218,15 @@ export function extractBalance(balances: Balance[], type: string): Balance {
   );
 }
 
+export function sumBalance(balances: Balance[], type: string): Balance {
+  const matching = balances.filter(balance => balance.asset.type === type);
+  return {
+    asset: { type },
+    value: matching.reduce((sum, balance) => sum + balance.value, 0n),
+    locked: matching.reduce((sum, balance) => sum + (balance.locked ?? 0n), 0n),
+  };
+}
+
 /**
  * Default `getTokenFromAsset` strategy for chains whose token registry is keyed by a bare,
  * chain-specific reference string (VeChain's VTHO address, Stacks' SIP-010 composite key, etc.):
@@ -320,17 +329,23 @@ export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber 
  * The staking positions, in the `Balance` shape `getBalance` reported them in. Appended after the
  * native balance, which stays first.
  */
-function stakingBalances(account: Account): Balance[] {
+function stakingBalances(
+  account: Account,
+  getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber,
+): Balance[] {
   // `isStakingAccount` only tests that the key is present, so the value can still be undefined.
   const resources = isStakingAccount(account) ? account.stakingResources : undefined;
   if (!resources) return [];
+
+  const heldNativeOf = (position: StakingDelegation | StakingUnbonding): BigNumber =>
+    getHeldNativeAmount?.(position) ?? position.amount.plus(position.lockedReserve ?? 0);
 
   const toBalance = (
     position: StakingDelegation | StakingUnbonding,
     state: StakeState,
     delegate: string | undefined,
   ): Balance => ({
-    value: BigInt(position.amount.plus(position.lockedReserve ?? 0).toFixed()),
+    value: BigInt(heldNativeOf(position).toFixed()),
     asset: { type: "native" },
     stake: {
       uid: position.positionId ?? "",
@@ -380,22 +395,39 @@ function numericDetailEntry(
 export function extractBalances(
   account: Account,
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  partitionsNativeBalance?: boolean,
+  getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber,
 ): Balance[] {
-  const nativeReserve = BigNumber.max(account.balance.minus(account.spendableBalance), 0);
-  const nativePending = getPendingNativeSpent(account.pendingOperations ?? []);
+  const nativeReserve = BigInt(
+    BigNumber.max(account.balance.minus(account.spendableBalance), 0).toFixed(),
+  );
+  const nativePending = BigInt(getPendingNativeSpent(account.pendingOperations ?? []).toFixed());
+  const stakes = stakingBalances(account, getHeldNativeAmount);
+  const staked = partitionsNativeBalance
+    ? stakes.reduce((sum, stake) => sum + stake.value, 0n)
+    : 0n;
+  const total = BigInt(account.balance.toFixed());
+  const nativeValue = total > staked ? total - staked : 0n;
+  const nativeLocked = (nativeReserve > staked ? nativeReserve - staked : 0n) + nativePending;
   const balances: Balance[] = [
     {
       // `value` is the total balance, `locked` is the non-spendable part of it.
       // Consumers must compute available funds as `value - locked`.
       // We lock the chain reserve plus any funds already committed to pending
       // (optimistic, not-yet-synced) transactions, capped at the total balance.
-      value: BigInt(account.balance.toFixed()),
+      // When the family partitions its native balance, the staking positions are carved out
+      // of it, as `getBalance` reports them.
+      value: nativeValue,
       asset: { type: "native" },
-      locked: BigInt(BigNumber.min(nativeReserve.plus(nativePending), account.balance).toFixed()),
+      locked: nativeLocked > nativeValue ? nativeValue : nativeLocked,
     },
   ];
 
-  balances.push(...stakingBalances(account));
+  balances.push(
+    ...(partitionsNativeBalance
+      ? stakes.map(stake => ({ ...stake, locked: stake.value }))
+      : stakes),
+  );
 
   if (!account.subAccounts?.length || !getAssetFromToken) {
     return balances;
@@ -793,7 +825,15 @@ function computeOperationValue(
   if (hasFailed) return bnFees;
   if (
     op.asset.type === "native" &&
-    ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
+    [
+      "OUT",
+      "FEES",
+      "DELEGATE",
+      "UNDELEGATE",
+      "REDELEGATE",
+      "CONTRACT_CALL",
+      "UPDATE_ACCOUNT",
+    ].includes(opType)
   ) {
     return new BigNumber(op.value.toString()).plus(bnFees);
   }
@@ -919,7 +959,7 @@ export function transactionToIntent(
     senderPublicKey: account.xpub,
     recipient: transaction.recipient,
     amount,
-    asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
+    asset: { type: "native" },
     useAllAmount,
     sequence:
       transaction.nonce !== null && transaction.nonce !== undefined
@@ -936,8 +976,6 @@ export function transactionToIntent(
     res.asset = {
       type: tokenAccount?.token.tokenType ?? "token",
       assetReference: transaction.assetReference,
-      name: tokenAccount?.token.name ?? transaction.assetReference, // NOTE: for stellar, assetReference = tokenAccount.name, this is futureproofing
-      unit: account.currency.units[0],
       assetOwner: transaction.assetOwner,
     };
   }

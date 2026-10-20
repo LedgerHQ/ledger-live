@@ -158,10 +158,15 @@ export class NotEnoughGas extends Error {
   }
 }
 
-/** A Tronify REST call returned a non-success `resCode`. Carries the raw code. */
+/** Tronify's response or price is unusable. `resCode`: the REST error code; `rule`: the
+ * pre-signing check that refused the payment; `payCoinAmt`: what an order priced above the
+ * approved ceiling, but within the cap, charges. */
 export class TronifyApiError extends Error {
   override name = "TronifyApiError";
   resCode?: number;
+  rule?: string;
+  orderId?: string;
+  payCoinAmt?: string;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "TronifyApiError");
     if (fields) Object.assign(this, fields);

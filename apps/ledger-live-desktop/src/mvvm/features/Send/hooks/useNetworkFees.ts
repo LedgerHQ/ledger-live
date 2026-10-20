@@ -13,7 +13,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
+import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
 import { feeSelectorLabelKeySuffix } from "@ledgerhq/live-common/flows/send/utils/feeStrategyLabels";

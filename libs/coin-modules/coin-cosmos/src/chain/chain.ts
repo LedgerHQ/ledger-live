@@ -13,12 +13,10 @@ import Mantra from "./Mantra";
 import Nyx from "./Nyx";
 import Osmosis from "./Osmosis";
 import Persistence from "./Persistence";
-import Quicksilver from "./Quicksilver";
 import SecretNetwork from "./SecretNetwork";
 import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Xion from "./Xion";
-import Zenrock from "./Zenrock";
 import CosmosBase from "./cosmosBase";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
@@ -28,77 +26,62 @@ const CURRENCY_ID_ALIASES: Record<string, string> = {
   crypto_org_croeseid: "crypto_org", // croeseid testnet reuses crypto_org's params
 };
 
+export const resolveChainCurrencyId = (currencyId: string): string =>
+  CURRENCY_ID_ALIASES[currencyId] ?? currencyId;
+
+function createChain(currencyId: string): CosmosBase {
+  switch (currencyId) {
+    case "osmo":
+      return new Osmosis();
+    case "cosmos":
+      return new Cosmos();
+    case "axelar":
+      return new Axelar();
+    case "binance_beacon_chain":
+      return new BinanceBeaconChain();
+    case "desmos":
+      return new Desmos();
+    case "dydx":
+      return new Dydx();
+    case "nyx":
+      return new Nyx();
+    case "persistence":
+      return new Persistence();
+    case "secret_network":
+      return new SecretNetwork();
+    case "stargaze":
+      return new Stargaze();
+    case "stride":
+      return new Stride();
+    case "coreum":
+      return new Coreum();
+    case "injective":
+      return new Injective();
+    case "mantra":
+      return new Mantra();
+    case "crypto_org":
+      return new CryptoOrg();
+    case "xion":
+      return new Xion();
+    case "babylon":
+      return new Babylon();
+    case "gonka":
+      return new Gonka();
+    default:
+      throw new Error(`${currencyId} is not supported`);
+  }
+}
+
 export default function cryptoFactory(currencyId: string, config?: CosmosCoinConfig): CosmosBase {
-  currencyId = CURRENCY_ID_ALIASES[currencyId] ?? currencyId;
+  currencyId = resolveChainCurrencyId(currencyId);
+  // An explicit config bypasses the shared cache so it is never shadowed by an earlier call.
+  if (config) return { ...createChain(currencyId), ...config } as CosmosBase;
+
   if (!cosmosChainParams[currencyId]) {
-    let chain: CosmosBase;
-    switch (currencyId) {
-      case "osmo":
-        chain = new Osmosis();
-        break;
-      case "cosmos":
-        chain = new Cosmos();
-        break;
-      case "axelar":
-        chain = new Axelar();
-        break;
-      case "binance_beacon_chain":
-        chain = new BinanceBeaconChain();
-        break;
-      case "desmos":
-        chain = new Desmos();
-        break;
-      case "dydx":
-        chain = new Dydx();
-        break;
-      case "nyx":
-        chain = new Nyx();
-        break;
-      case "persistence":
-        chain = new Persistence();
-        break;
-      case "quicksilver":
-        chain = new Quicksilver();
-        break;
-      case "secret_network":
-        chain = new SecretNetwork();
-        break;
-      case "stargaze":
-        chain = new Stargaze();
-        break;
-      case "stride":
-        chain = new Stride();
-        break;
-      case "coreum":
-        chain = new Coreum();
-        break;
-      case "injective":
-        chain = new Injective();
-        break;
-      case "mantra":
-        chain = new Mantra();
-        break;
-      case "crypto_org":
-        chain = new CryptoOrg();
-        break;
-      case "xion":
-        chain = new Xion();
-        break;
-      case "zenrock":
-        chain = new Zenrock();
-        break;
-      case "babylon":
-        chain = new Babylon();
-        break;
-      case "gonka":
-        chain = new Gonka();
-        break;
-      default:
-        throw new Error(`${currencyId} is not supported`);
-    }
+    const chain = createChain(currencyId);
 
     try {
-      const coinConfig = config ?? cosmosCoinConfig.getCoinConfig(currencyId);
+      const coinConfig = cosmosCoinConfig.getCoinConfig(currencyId);
       cosmosChainParams[currencyId] = coinConfig
         ? ({ ...chain, ...coinConfig } as CosmosBase)
         : chain;

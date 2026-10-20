@@ -13,10 +13,9 @@ import BrazeKit
 import BrazeUI
 import braze_react_native_sdk
 
-import react_native_splash_screen
-
 import Expo
 import ExpoModulesCore
+import ExpoSplashScreen
 
 
 @main
@@ -99,8 +98,9 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
       return true
     }
 
-    RNSplashScreen
-      .show()
+    if let rootView = window.rootViewController?.view {
+      SplashScreenManager.shared.initWith(rootView)
+    }
 
     UserDefaults.standard.set(
       false,

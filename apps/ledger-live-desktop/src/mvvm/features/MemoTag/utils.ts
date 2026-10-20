@@ -1,6 +1,7 @@
 import { getTransactionMemo } from "@ledgerhq/live-common/families/solana/transactions";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { MEMO_TAG_COINS } from "./constants";
 
 /**
@@ -19,6 +20,8 @@ export const getMemoTagValueByTransactionFamily = (transaction: Transaction) => 
       return transaction?.comment?.text;
     case "stellar":
       return (transaction as StellarTransaction)?.memoValue;
+    case "hedera":
+      return (transaction as HederaGenericTransaction)?.memoValue ?? undefined;
     case "solana":
       return getTransactionMemo(transaction) || undefined;
     case "casper":

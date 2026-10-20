@@ -1,11 +1,10 @@
 import invariant from "invariant";
-import { AccountId, TransactionId } from "@hashgraph/sdk";
+import { AccountId, TransactionId } from "@hiero-ledger/sdk";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { getEnv } from "@ledgerhq/live-env";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import network from "@ledgerhq/live-network";
 import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
-import type { FiatCurrency, Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { HEDERA_VALIDATORS_CACHE_MINUTES, STAKING_REWARD_ACCOUNT_ID } from "../constants";
@@ -33,13 +32,7 @@ import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
 import { rpcClient } from "./rpc";
 
-const USD_FIAT: FiatCurrency = {
-  type: "FiatCurrency",
-  ticker: "USD",
-  name: "US Dollar",
-  symbol: "$",
-  units: [{ code: "$", name: "US Dollar", magnitude: 2, showAllDigits: true, prefixCode: true }],
-};
+const USD_TICKER = "USD";
 
 export async function createTransactionId(
   accountId: string,
@@ -162,8 +155,6 @@ export const enrichERC20Transfers = async ({
   configOrCurrencyId: HederaCoinConfig | string;
   erc20Transfers: ERC20TokenTransfer[];
 }) => {
-  const enrichedTransfers: EnrichedERC20Transfer[] = [];
-
   // with hgraph we can get two different transfers with the same transaction hash
   const groupedByTxHash = new Map<string, [ERC20TokenTransfer, ...ERC20TokenTransfer[]]>();
   for (const transfer of erc20Transfers) {
@@ -177,32 +168,40 @@ export const enrichERC20Transfers = async ({
     group.push(transfer);
   }
 
-  for (const [txHash, transfers] of groupedByTxHash.entries()) {
-    const payerAddress = toEntityId({ num: transfers[0].payer_account_id });
-    const inaccurateConsensusTimestampNs = new BigNumber(transfers[0].consensus_timestamp);
-    const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(9);
+  const enrichedTransfers = await promiseAllBatched(
+    4,
+    [...groupedByTxHash.entries()],
+    async ([txHash, transfers]): Promise<EnrichedERC20Transfer | null> => {
+      const payerAddress = toEntityId({ num: transfers[0].payer_account_id });
+      const inaccurateConsensusTimestampNs = new BigNumber(transfers[0].consensus_timestamp);
+      const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(
+        9,
+      );
 
-    const [contractCallResult, mirrorTransaction] = await Promise.all([
-      apiClient.getContractCallResult({ configOrCurrencyId, transactionHash: txHash }),
-      apiClient.findTransactionByContractCallV2({
-        configOrCurrencyId,
-        payerAddress,
-        timestamp: inaccurateConsensusTimestamp,
-      }),
-    ]);
+      const [contractCallResult, mirrorTransaction] = await Promise.all([
+        apiClient.getContractCallResult({ configOrCurrencyId, transactionHash: txHash }),
+        apiClient.findTransactionByContractCallV2({
+          configOrCurrencyId,
+          payerAddress,
+          timestamp: inaccurateConsensusTimestamp,
+        }),
+      ]);
 
-    if (!mirrorTransaction) {
-      continue;
-    }
+      if (!mirrorTransaction) {
+        return null;
+      }
 
-    enrichedTransfers.push({
-      transfers,
-      contractCallResult,
-      mirrorTransaction,
-    });
-  }
+      return {
+        transfers,
+        contractCallResult,
+        mirrorTransaction,
+      };
+    },
+  );
 
-  return enrichedTransfers;
+  return enrichedTransfers.filter(
+    (transfer): transfer is EnrichedERC20Transfer => transfer !== null,
+  );
 };
 
 // getEnv("LEDGER_COUNTERVALUES_API") must be read lazily, per call — not cached in a
@@ -215,26 +214,23 @@ export const enrichERC20Transfers = async ({
 // dep. Unblock shared/* access first, then migrate the endpoint.
 // note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
 export const getCurrencyToUSDRate = makeLRUCache(
-  async (currency: Currency) => {
+  async (currencyId: string) => {
     try {
-      // All callers pass the hedera CryptoCurrency (id = "hedera"), never a TokenCurrency
-      // (token ids include the token path, e.g. "hedera/hts/…").
-      // For the fiat (USD_FIAT) side of the Currency union the API id is the ticker.
-      // The two global remaps (assethub_polkadot, concordium_testnet) don't apply to hedera.
-      const fromId = currency.type !== "FiatCurrency" ? currency.id : currency.ticker;
-      const params = new URLSearchParams({ to: USD_FIAT.ticker, froms: fromId });
+      // The countervalues API id of a crypto currency is its currency id ("hedera"). The two
+      // global remaps (assethub_polkadot, concordium_testnet) don't apply to hedera.
+      const params = new URLSearchParams({ to: USD_TICKER, froms: currencyId });
       const { data } = await network<Record<string, number>>({
         method: "GET",
         url: `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?${params.toString()}`,
       });
-      const rate = data[fromId];
+      const rate = data[currencyId];
       invariant(rate, "no value returned from cvs api");
       return new BigNumber(rate);
     } catch {
       return null;
     }
   },
-  currency => currency.ticker,
+  currencyId => currencyId,
   seconds(3),
 );
 
@@ -326,9 +322,6 @@ export const safeParseAccountId = async ({
   configOrCurrencyId: HederaCoinConfig | string;
   address: string;
 }): Promise<[Error, null] | [null, { accountId: string; checksum: string | null }]> => {
-  const currency = getCryptoCurrencyById("hedera");
-  const currencyName = currency?.name ?? "Hedera";
-
   try {
     const accountId = AccountId.fromString(address);
     const checksum = getChecksum(address);
@@ -349,7 +342,7 @@ export const safeParseAccountId = async ({
 
     return [null, result];
   } catch {
-    return [new InvalidAddress("", { currencyName }), null];
+    return [new InvalidAddress("", { currencyName: resolveConfig(configOrCurrencyId).name }), null];
   }
 };
 

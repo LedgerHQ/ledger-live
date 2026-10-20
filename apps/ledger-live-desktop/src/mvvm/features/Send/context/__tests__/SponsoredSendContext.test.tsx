@@ -13,6 +13,7 @@ import {
   createMockTronUsdtAccount,
 } from "../../screens/Recipient/__integrations__/__fixtures__/accounts";
 import { getPendingTokenSpent } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
+import { track } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { SponsoredSendProvider, useSponsoredSend } from "../SponsoredSendContext";
 
@@ -38,7 +39,6 @@ const mockActions = {
   craftRent: jest.fn(),
   startRentPayment: jest.fn(),
   onTransferSuccess: jest.fn(),
-  setContractDataFailure: jest.fn(),
   onTransferError: jest.fn(),
   retry: jest.fn(),
   reset: jest.fn(),
@@ -90,9 +90,9 @@ const mockUseSponsoredFeeResult = {
   feeCurrencyTicker: "USDT",
   loading: false,
 };
-const mockUseSponsoredFee = jest.fn((..._args: unknown[]) => mockUseSponsoredFeeResult);
-jest.mock("../../hooks/useSponsoredFee", () => ({
-  useSponsoredFee: (...args: unknown[]) => mockUseSponsoredFee(...args),
+const mockUseSponsoredFeeQuote = jest.fn((..._args: unknown[]) => mockUseSponsoredFeeResult);
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote", () => ({
+  useSponsoredFeeQuote: (...args: unknown[]) => mockUseSponsoredFeeQuote(...args),
 }));
 
 const mockUpdateAccountWithUpdater = jest.fn((..._args: unknown[]) => ({
@@ -101,6 +101,18 @@ const mockUpdateAccountWithUpdater = jest.fn((..._args: unknown[]) => ({
 jest.mock("~/renderer/actions/accounts", () => ({
   ...jest.requireActual("~/renderer/actions/accounts"),
   updateAccountWithUpdater: (...args: unknown[]) => mockUpdateAccountWithUpdater(...args),
+}));
+
+const mockUseSponsoredSendFunnelTracking = jest.fn();
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking", () => ({
+  useSponsoredSendFunnelTracking: (...args: unknown[]) =>
+    mockUseSponsoredSendFunnelTracking(...args),
+}));
+jest.mock("../SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
+}));
+jest.mock("../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send" }),
 }));
 
 const mockUpdateTransaction = jest.fn();
@@ -124,7 +136,7 @@ describe("SponsoredSendContext", () => {
   beforeEach(() => {
     mockUseSponsoredSendOrchestration.mockClear();
     mockGetSponsoredCoinApi.mockClear();
-    mockUseSponsoredFee.mockClear();
+    mockUseSponsoredFeeQuote.mockClear();
     mockUpdateTransaction.mockClear();
     mockActions.reset.mockClear();
     mockUseSponsoredFeeResult.available = false;
@@ -140,16 +152,47 @@ describe("SponsoredSendContext", () => {
     mockParentAccount = null;
   });
 
-  it("exposes useSponsoredFee's result (available/quote/savingsFiatFormatted)", () => {
+  it("exposes useSponsoredFeeQuote's result (available/quote/savingsFiatFormatted)", () => {
     const { result } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
 
     expect(result.current.available).toBe(false);
     expect(result.current.quote).toBeNull();
     expect(result.current.sponsoredFeeAmounts).toBeNull();
     expect(result.current.savingsFiatFormatted).toBeNull();
-    expect(mockUseSponsoredFee).toHaveBeenCalledWith(
+    expect(mockUseSponsoredFeeQuote).toHaveBeenCalledWith(
       expect.objectContaining({ mainAccount: mockAccount }),
     );
+  });
+
+  it("tracks the sponsored send funnel with the send flow's properties", async () => {
+    mockUseSponsoredFeeResult.quote = USDT_QUOTE;
+    mockUseSponsoredFeeResult.standardFeeFiat = new BigNumber(170);
+    mockUseSponsoredFeeResult.sponsoredFeeFiat = new BigNumber(113);
+    renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+    await act(async () => {});
+
+    expect(mockUseSponsoredSendFunnelTracking).toHaveBeenLastCalledWith({
+      state: mockSponsoredState,
+      provider: "sponsored-fixture",
+      quote: USDT_QUOTE,
+      standardFeeFiat: new BigNumber(170),
+      sponsoredFeeFiat: new BigNumber(113),
+      fiatCurrency: expect.objectContaining({ ticker: "USD" }),
+      flowSessionId: "session-1",
+      properties: { flow: "send" },
+      track,
+    });
+  });
+
+  it.each([
+    ["IDLE", true],
+    ["RENT_SIGNING", false],
+    ["FAILED", false],
+  ])("refreshes the quote in phase %s: %s", (phase, refresh) => {
+    mockSponsoredState.phase = phase;
+    renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+
+    expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(expect.objectContaining({ refresh }));
   });
 
   it("prices the sponsored fee in the fee asset's unit and the standard fee in the account's", () => {
@@ -190,7 +233,7 @@ describe("SponsoredSendContext", () => {
     expect(result.current.state).toBe(mockSponsoredState);
   });
 
-  it("exposes the resolved seam's identity and hands the seam to useSponsoredFee", async () => {
+  it("exposes the resolved seam's identity and hands the seam to useSponsoredFeeQuote", async () => {
     const { result } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
     await act(async () => {});
 
@@ -199,7 +242,7 @@ describe("SponsoredSendContext", () => {
     expect(result.current.providerName).toBe("Provider");
     expect(result.current.waivesErrorKeys).toEqual(["gasLimit"]);
     expect(result.current.waivesWarningKeys).toEqual(["amount"]);
-    expect(mockUseSponsoredFee).toHaveBeenLastCalledWith(
+    expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
       expect.objectContaining({ seam: mockSeam }),
     );
   });
@@ -352,7 +395,9 @@ describe("SponsoredSendContext", () => {
     await act(async () => {});
 
     expect(result.current.sponsoredFeeOptionId).toBe("");
-    expect(mockUseSponsoredFee).toHaveBeenLastCalledWith(expect.objectContaining({ seam: null }));
+    expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({ seam: null }),
+    );
     expect(result.current.state).toBe(mockSponsoredState);
     expect(result.current.actions).toBe(mockActions);
   });

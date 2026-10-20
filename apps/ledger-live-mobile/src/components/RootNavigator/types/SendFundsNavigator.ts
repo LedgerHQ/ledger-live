@@ -28,7 +28,7 @@ import {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import {
   SolanaAccount,
   Transaction as SolanaTransaction,
@@ -277,7 +277,7 @@ export type SendFundsNavigatorStackParamList = {
     accountId: string;
     parentId?: string;
     account: Account;
-    transaction: HederaTransaction;
+    transaction: HederaGenericTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

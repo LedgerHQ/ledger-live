@@ -1,9 +1,8 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { createSoftwareAgentIdentity } from "@ledgerhq/agent-intent-sdk";
 import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Session, withSessionLock, type AgentIntentProfileMeta } from "../../session/session-store";
-import { loadAgentIntentSecretKey } from "../../key-ring/agent-intent-keychain";
+import { loadProfileIdentity } from "../../agent-intent/profile-identity";
 import { createAgentLedgerSyncSdk } from "../../key-ring/lkrp-sdk";
 import { APP_16_PATH_RE } from "../../agent-intent/completion-auth";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
@@ -13,7 +12,6 @@ import {
   type LedgerSyncImportReport,
   type PullResult,
 } from "../../ledger-sync/cloud-sync-accounts";
-import { errMessage } from "../../shared/error-message";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
@@ -44,31 +42,8 @@ function requireEnrolledProfile(session: Session, profileId: string): EnrolledPr
 }
 
 async function requireAgentCredentials(profile: EnrolledProfile): Promise<MemberCredentials> {
-  let secretKey: string | null;
-  try {
-    secretKey = await loadAgentIntentSecretKey(profile.profileId);
-  } catch (e) {
-    throw new Error(
-      `Could not read the agent key of profile "${profile.profileId}" from the OS keychain ` +
-        `(${errMessage(e)}).`,
-      { cause: e },
-    );
-  }
-  if (!secretKey) {
-    throw new Error(
-      `No agent key found in the OS keychain for profile "${profile.profileId}" — enroll a fresh ` +
-        "profile.",
-    );
-  }
-  if (
-    createSoftwareAgentIdentity(secretKey).publicKey.toLowerCase() !==
-    profile.publicKey.toLowerCase()
-  ) {
-    throw new Error(
-      `The OS keychain key of profile "${profile.profileId}" does not match its recorded public key.`,
-    );
-  }
-  return { pubkey: profile.publicKey, privatekey: secretKey };
+  const identity = await loadProfileIdentity(profile);
+  return { pubkey: profile.publicKey, privatekey: identity.exportSecretKey() };
 }
 
 function toEjectedError(profile: EnrolledProfile, e: unknown): unknown {

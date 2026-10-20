@@ -1,26 +1,18 @@
 import { useEffect } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Subscription, Observable } from "rxjs";
-import { useFeature } from "@features/platform-feature-flags";
-import { useDeviceManagementKit, DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 
 export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-
-  const deviceManagementKit = useDeviceManagementKit();
 
   useEffect(() => {
     let sub: Subscription;
 
-    const dmkListen = isLdmkConnectAppEnabled
-      ? DeviceManagementKitTransport.listen
-      : DeviceManagementKitTransport.listenLegacyConnectApp;
-
     function syncDevicesWithDmk() {
-      sub = new Observable(dmkListen).subscribe({
+      sub = new Observable(DeviceManagementKitTransport.listen).subscribe({
         next: ({ descriptor, device, deviceModel, type }) => {
           if (device) {
             const deviceId = descriptor || "";
@@ -49,17 +41,14 @@ export const useListenToHidDevices = () => {
       });
     }
 
-    // Always use DeviceManagementKit for device listening (WebHID)
-    const fn = syncDevicesWithDmk;
-
-    const timeoutSyncDevices = setTimeout(fn, 1000);
+    const timeoutSyncDevices = setTimeout(syncDevicesWithDmk, 1000);
 
     return () => {
       console.log("[[useListenToHidDevices]] cleanup");
       clearTimeout?.(timeoutSyncDevices);
       sub?.unsubscribe?.();
     };
-  }, [dispatch, deviceManagementKit, isLdmkConnectAppEnabled]);
+  }, [dispatch]);
 
   return null;
 };

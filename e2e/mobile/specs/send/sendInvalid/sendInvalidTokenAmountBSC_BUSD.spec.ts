@@ -9,7 +9,7 @@ const transaction = new Transaction(
 runSendInvalidTokenAmountTest(
   transaction,
   new RegExp(
-    /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Chain network\. .*/,
+    /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Smart Chain network\. .*/,
   ),
   ["B2CQA-2700"],
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bsc", "@family-evm"],

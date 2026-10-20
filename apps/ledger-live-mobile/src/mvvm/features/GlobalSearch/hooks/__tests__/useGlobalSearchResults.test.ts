@@ -8,7 +8,8 @@ import { useGlobalSearchResults } from "../useGlobalSearchResults";
 jest.mock("@ledgerhq/live-common/hooks/useDebounce", () => ({
   useDebounce: (value: string) => value,
 }));
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: () => ({ rate: 1, status: "ready" }),
 }));
 jest.mock("@features/platform-aggregated-assets", () => ({

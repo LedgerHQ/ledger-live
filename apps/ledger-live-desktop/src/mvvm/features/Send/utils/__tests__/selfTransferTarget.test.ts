@@ -1,6 +1,9 @@
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountSelfTransferTarget } from "../selfTransferTarget";
+import {
+  applyRecipientSelfTransferState,
+  getAccountSelfTransferTarget,
+} from "../selfTransferTarget";
 
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: { getBalanceTypeConfig: jest.fn() },
@@ -27,6 +30,22 @@ describe("getAccountSelfTransferTarget", () => {
     expect(getSelfTransferTarget).toHaveBeenCalledWith({ account, transaction });
   });
 
+  it("hands the parent account to the config, for a token account sharing its address", () => {
+    const getSelfTransferTarget = jest.fn(() => null);
+    mockedGetBalanceTypeConfig.mockReturnValue({ getSelfTransferTarget } as never);
+    const tokenAccount = { type: "TokenAccount", token: { id: "aleo/token" } } as never;
+    const transaction = { mode: "transfer_token_public" };
+
+    getAccountSelfTransferTarget(tokenAccount, transaction, account);
+
+    expect(getSelfTransferTarget).toHaveBeenCalledTimes(1);
+    expect(getSelfTransferTarget).toHaveBeenCalledWith({
+      account: tokenAccount,
+      parentAccount: account,
+      transaction,
+    });
+  });
+
   it("returns null when the currency declares no balanceType config", () => {
     mockedGetBalanceTypeConfig.mockReturnValue(null);
 
@@ -39,5 +58,70 @@ describe("getAccountSelfTransferTarget", () => {
     } as never);
 
     expect(getAccountSelfTransferTarget(account, {})).toBeNull();
+  });
+});
+
+describe("applyRecipientSelfTransferState", () => {
+  const target = {
+    address: "aleo1self",
+    translationKey: "recipient.selfTransfer.toPrivate",
+    isDestinationPublic: false,
+  };
+
+  function stubConfig() {
+    const buildSelfTransferPatch = jest.fn(({ isSelfTransfer }: { isSelfTransfer: boolean }) => ({
+      selfTransfer: isSelfTransfer,
+    }));
+    mockedGetBalanceTypeConfig.mockReturnValue({
+      getSelfTransferTarget: () => target,
+      buildSelfTransferPatch,
+    } as never);
+    return buildSelfTransferPatch;
+  }
+
+  it("puts the transaction in self-transfer state for the account's own target address", () => {
+    const buildSelfTransferPatch = stubConfig();
+    const transaction = { mode: "transfer_public" };
+
+    expect(applyRecipientSelfTransferState(account, transaction, "ALEO1SELF")).toEqual({
+      mode: "transfer_public",
+      selfTransfer: true,
+    });
+    expect(buildSelfTransferPatch).toHaveBeenCalledWith({ isSelfTransfer: true, transaction });
+  });
+
+  it("matches the token account's target through its parent account", () => {
+    const getSelfTransferTarget = jest.fn(() => target);
+    mockedGetBalanceTypeConfig.mockReturnValue({
+      getSelfTransferTarget,
+      buildSelfTransferPatch: () => ({ selfTransfer: true }),
+    } as never);
+    const tokenAccount = { type: "TokenAccount", token: { id: "aleo/token" } } as never;
+    const transaction = { mode: "transfer_token_public" };
+
+    expect(
+      applyRecipientSelfTransferState(tokenAccount, transaction, "aleo1self", account),
+    ).toEqual({ mode: "transfer_token_public", selfTransfer: true });
+    expect(getSelfTransferTarget).toHaveBeenCalledTimes(1);
+    expect(getSelfTransferTarget).toHaveBeenCalledWith({
+      account: tokenAccount,
+      parentAccount: account,
+      transaction,
+    });
+  });
+
+  it("takes the transaction out of self-transfer state for any other address", () => {
+    stubConfig();
+
+    expect(
+      applyRecipientSelfTransferState(account, { selfTransfer: true }, "aleo1someoneelse"),
+    ).toEqual({ selfTransfer: false });
+  });
+
+  it("returns the transaction untouched when the currency declares no balanceType config", () => {
+    mockedGetBalanceTypeConfig.mockReturnValue(null);
+    const transaction = { mode: "transfer_public" };
+
+    expect(applyRecipientSelfTransferState(account, transaction, "aleo1self")).toBe(transaction);
   });
 });

@@ -71,6 +71,23 @@ export const NavigationHeaderCloseButtonRounded: React.FC<Props> = React.memo(({
   );
 });
 
+export const NavigationHeaderCloseButtonCompact: React.FC<Props> = React.memo(
+  ({ onPress, color }) => {
+    const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+    return (
+      <Touchable
+        touchableTestID="NavigationHeaderCloseButton"
+        event="HeaderRightClose"
+        onPress={() => (onPress ? onPress() : navigation.popToTop())}
+      >
+        <Flex width={40} height={40} alignItems="center" justifyContent="center">
+          <Icons.Close color={color || "neutral.c100"} />
+        </Flex>
+      </Touchable>
+    );
+  },
+);
+
 export type CtaConfig = {
   type: string;
   styles: StyleProp<ViewStyle>;
@@ -86,6 +103,7 @@ type AdvancedProps = {
   confirmationDesc?: React.ReactNode;
   onClose?: () => void;
   rounded?: boolean;
+  compact?: boolean;
   showButton?: boolean;
   buttonText?: string;
   customDrawerStyle?: Record<string, unknown>;
@@ -115,6 +133,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     confirmationDesc,
     onClose,
     rounded = false,
+    compact = false,
     showButton = false,
     buttonText,
     customDrawerStyle,
@@ -208,8 +227,9 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
 
       if (isOnboarding) return <NavigationHeaderBackButton onPress={onPress} />;
       if (rounded) return <NavigationHeaderCloseButtonRounded onPress={onPress} color={color} />;
-      else return <NavigationHeaderCloseButton onPress={onPress} color={color} />;
-    }, [buttonText, showButton, onPress, rounded, color, isOnboarding]);
+      if (compact) return <NavigationHeaderCloseButtonCompact onPress={onPress} color={color} />;
+      return <NavigationHeaderCloseButton onPress={onPress} color={color} />;
+    }, [buttonText, showButton, onPress, rounded, compact, color, isOnboarding]);
 
     return (
       <>

@@ -15,7 +15,6 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
-import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatusProviderWrapper";
@@ -26,7 +25,6 @@ import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { BrazeProvider } from "LLD/features/DynamicContent/components/BrazeProvider";
 import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
-import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
@@ -37,6 +35,7 @@ import { I18nProvider } from "@shared/i18n";
 import i18n from "~/renderer/i18n/init";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
 import { LinkingProviderWrapper } from "~/renderer/components/LinkingProviderWrapper";
+import { MockServerDeviceWindow } from "LLD/components/MockServerDeviceWindow";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -46,12 +45,11 @@ const reloadApp = (event: KeyboardEvent) => {
 
 type Props = {
   store: Store<State>;
-  initialCountervalues: CounterValuesStateRaw;
 };
 
 const queryClient = new QueryClient();
 
-const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
+const InnerApp = () => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
   useResetTimeRangeOnGraphRework();
@@ -67,7 +65,6 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   }, [reloadEnabled]);
 
   const selectedPalette = useSelector(themeSelector) || "light";
-  const ldmkTransport = useFeature("ldmkTransport");
   const zcashShielded = useFeature("zcashShielded");
 
   // Mirror the `zcashShielded` feature flag: neither a coin module nor the bridge
@@ -94,25 +91,24 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             <ConnectEnvsToDatadog />
             <UpdaterProvider>
               <AppDataStorageProvider>
-                <DeviceManagementKitProvider ldmkTransportEnabled={ldmkTransport?.enabled ?? false}>
-                  <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                    <ToastProvider>
-                      <ServiceStatusProviderWrapper>
-                        <Router>
-                          <PostOnboardingProviderWrapped>
-                            <PlatformAppProviderWrapper>
-                              <DrawerProvider>
-                                <QueryClientProvider client={queryClient}>
-                                  <Default />
-                                  <ReactQueryDevtoolsProvider />
-                                </QueryClientProvider>
-                              </DrawerProvider>
-                            </PlatformAppProviderWrapper>
-                          </PostOnboardingProviderWrapped>
-                        </Router>
-                      </ServiceStatusProviderWrapper>
-                    </ToastProvider>
-                  </CountervaluesBridgedProvider>
+                <DeviceManagementKitProvider>
+                  <ToastProvider>
+                    <ServiceStatusProviderWrapper>
+                      <Router>
+                        <PostOnboardingProviderWrapped>
+                          <PlatformAppProviderWrapper>
+                            <DrawerProvider>
+                              <QueryClientProvider client={queryClient}>
+                                <Default />
+                                <MockServerDeviceWindow />
+                                <ReactQueryDevtoolsProvider />
+                              </QueryClientProvider>
+                            </DrawerProvider>
+                          </PlatformAppProviderWrapper>
+                        </PostOnboardingProviderWrapped>
+                      </Router>
+                    </ServiceStatusProviderWrapper>
+                  </ToastProvider>
                 </DeviceManagementKitProvider>
               </AppDataStorageProvider>
             </UpdaterProvider>
@@ -123,7 +119,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   );
 };
 
-const App = ({ store, initialCountervalues }: Props) => {
+const App = ({ store }: Props) => {
   return (
     <LiveStyleSheetManager>
       {/* Two providers, one instance: `I18nextProvider` serves the app's own react-i18next call
@@ -132,7 +128,7 @@ const App = ({ store, initialCountervalues }: Props) => {
         <I18nProvider i18n={i18n}>
           <Provider store={store}>
             <LinkingProviderWrapper>
-              <InnerApp initialCountervalues={initialCountervalues} />
+              <InnerApp />
             </LinkingProviderWrapper>
           </Provider>
         </I18nProvider>

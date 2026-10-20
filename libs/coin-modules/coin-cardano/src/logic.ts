@@ -1,6 +1,5 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "./config";
 import type { OperationType } from "@ledgerhq/types-live";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import {
@@ -329,8 +328,8 @@ export function getOperationType({
       : "NONE";
 }
 
-export function isTestnet(currency: CryptoCurrency): boolean {
-  return getCryptoCurrencyById(currency.id).isTestnetFor ? true : false;
+export function isTestnet(config: CardanoCoinConfig): boolean {
+  return config.testnet;
 }
 
 export function getAccountChange(
@@ -556,11 +555,9 @@ export function calculateMinAdaForTokens(
  * Native ADA balance split, shared by account sync and the CoinModule balance path so the
  * spendable math is defined in one place:
  *
- * - `total` = on-chain UTXO ADA plus accrued staking rewards (counted whether or not they
- *   are currently withdrawable).
- * - `spendable` = UTXO ADA minus the min-ADA locked behind held tokens, plus rewards **only**
- *   when the stake key is delegated to a dRep (Conway rule: rewards aren't withdrawable
- *   otherwise). Never negative.
+ * - `total` = on-chain UTXO ADA plus accrued staking rewards.
+ * - `spendable` = UTXO ADA minus the min-ADA locked behind held tokens. Never negative.
+ *   Excludes rewards: a send never withdraws them (the device swap policy denies it).
  *
  * The non-spendable ("locked") portion is `total - spendable`.
  */
@@ -568,17 +565,13 @@ export function computeAdaBalance({
   utxosSum,
   minAdaForTokens,
   rewards,
-  delegatedToDRep,
 }: {
   utxosSum: BigNumber;
   minAdaForTokens: BigNumber;
   rewards: BigNumber;
-  delegatedToDRep: boolean;
 }): { total: BigNumber; spendable: BigNumber } {
-  const total = utxosSum.plus(rewards);
-  let spendable = BigNumber.max(0, utxosSum.minus(minAdaForTokens));
-  if (delegatedToDRep) {
-    spendable = spendable.plus(rewards);
-  }
-  return { total, spendable };
+  return {
+    total: utxosSum.plus(rewards),
+    spendable: BigNumber.max(0, utxosSum.minus(minAdaForTokens)),
+  };
 }

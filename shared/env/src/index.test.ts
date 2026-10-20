@@ -101,14 +101,14 @@ describe("@shared/live-env", () => {
       expect(getEnv("MOCK_SERVER_SEED")).toBe("");
     });
 
-    it("defaults MOCK_SERVER_SESSION to a single USB Stax on firmware 1.9.1", () => {
+    it("defaults MOCK_SERVER_SESSION to a single USB Stax on firmware 1.11.0", () => {
       expect(defaultSession).toEqual({
         devices: [
           {
             name: "Ledger Stax",
             device_type: "stax",
             connectivity_type: "USB",
-            firmware_version: "1.9.1",
+            firmware_version: "1.11.0",
             apps: [{ name: "BOLOS", version: "1.4.0" }],
           },
         ],

@@ -1,6 +1,6 @@
 import React from "react";
-import { ipcRenderer } from "electron";
 import { act, fireEvent, render, screen } from "tests/testSetup";
+import { saveLogs } from "~/helpers/saveLogs";
 import ExportLogsButton from "../ExportLogsButton";
 
 jest.mock("~/renderer/logger", () => ({
@@ -12,18 +12,9 @@ jest.mock("~/renderer/logger", () => ({
   },
 }));
 
-jest.mock("electron", () => ({
-  webFrame: { getResourceUsage: jest.fn(() => ({})) },
-  ipcRenderer: {
-    invoke: jest.fn(() => Promise.resolve(undefined)),
-  },
-}));
-
 jest.mock("~/helpers/saveLogs", () => ({
   saveLogs: jest.fn(() => Promise.resolve()),
 }));
-
-const mockInvoke = jest.mocked(ipcRenderer.invoke);
 
 const pressCtrlE = async (init: KeyboardEventInit = { key: "e", ctrlKey: true }) => {
   await act(async () => {
@@ -48,7 +39,10 @@ describe("ExportLogsButton", () => {
     await pressCtrlE();
 
     expect(screen.queryByTestId("export-logs-button")).toBeNull();
-    expect(mockInvoke).toHaveBeenCalledWith("show-save-dialog", expect.anything());
+    expect(saveLogs).toHaveBeenCalledWith({
+      options: expect.objectContaining({ title: "Export logs" }),
+      e2ePath: "./ledgerwallet-logs.txt",
+    });
   });
 
   it("does not export the logs on e without ctrl", async () => {
@@ -56,7 +50,7 @@ describe("ExportLogsButton", () => {
 
     await pressCtrlE({ key: "e" });
 
-    expect(mockInvoke).not.toHaveBeenCalled();
+    expect(saveLogs).not.toHaveBeenCalled();
   });
 
   it("does not listen to the shortcut when it renders the button", async () => {
@@ -64,6 +58,6 @@ describe("ExportLogsButton", () => {
 
     await pressCtrlE();
 
-    expect(mockInvoke).not.toHaveBeenCalled();
+    expect(saveLogs).not.toHaveBeenCalled();
   });
 });

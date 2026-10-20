@@ -1,10 +1,11 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
-import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import reducer, {
   INITIAL_STATE,
+  seedMockServerKnownDevice,
   importKnownDevices,
   knownDevicesSelector,
   knownDevicesStoreSelector,
@@ -14,6 +15,7 @@ import reducer, {
   type PersistedKnownDevice,
 } from "./knownDevices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { mockServerKnownDevice } from "../mockServerTransport";
 import type { State } from "./index";
 
 const makeLastSeenDevice = (modelId: DeviceModelId): DeviceModelInfo => ({
@@ -59,6 +61,53 @@ function withSpeculosEnv(device: string, run: () => void) {
 describe("knownDevices reducer", () => {
   it("starts empty", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toEqual(INITIAL_STATE);
+  });
+
+  describe("mock server device", () => {
+    it("keeps the mock server transport when a later device update arrives", () => {
+      const seeded = reducer(
+        INITIAL_STATE,
+        seedMockServerKnownDevice(mockServerKnownDevice("nanoX")),
+      );
+      const state = reducer(seeded, lastSeenDeviceInfo(DeviceModelId.nanoX));
+      expect(state.knownDevices).toEqual([
+        {
+          transport: mockserverIdentifier,
+          deviceModelId: DeviceModelId.nanoX,
+          id: "",
+          name: null,
+        },
+      ]);
+    });
+
+    it("adds the mock server device beside saved devices", () => {
+      const seeded = reducer(
+        INITIAL_STATE,
+        fetchSettings({
+          lastSeenDevice: makeLastSeenDevice(DeviceModelId.stax),
+          lastOnboardedDevice: null,
+        }),
+      );
+      const state = reducer(seeded, seedMockServerKnownDevice(mockServerKnownDevice("nanoX")));
+      const savedDevice = {
+        transport: webHidTransportIdentifier,
+        deviceModelId: DeviceModelId.stax,
+        id: "",
+        name: null,
+      };
+      expect(state.knownDevices).toEqual([
+        savedDevice,
+        {
+          transport: mockserverIdentifier,
+          deviceModelId: DeviceModelId.nanoX,
+          id: "",
+          name: null,
+        },
+      ]);
+      expect(knownDevicesStoreSelector({ knownDevices: state } as State)).toEqual({
+        knownDevices: [{ ...savedDevice, transport: "webhid" }],
+      });
+    });
   });
 
   describe("migration on settings fetch", () => {

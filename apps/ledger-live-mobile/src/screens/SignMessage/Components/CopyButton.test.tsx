@@ -2,10 +2,10 @@ import React from "react";
 import { render } from "@tests/test-renderer";
 import { screen } from "@testing-library/react-native";
 import CopyButton from "./CopyButton";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 
-jest.mock("@react-native-clipboard/clipboard", () => ({
-  setString: jest.fn().mockImplementation(() => Promise.resolve()),
+jest.mock("@shared/clipboard", () => ({
+  copyToClipboard: jest.fn().mockResolvedValue(true),
 }));
 
 describe("CopyButton", () => {
@@ -31,14 +31,13 @@ describe("CopyButton", () => {
   });
 
   it("copies text to clipboard when clicked", async () => {
-    const mockClipboard = jest.spyOn(Clipboard, "setString");
     const { user } = render(<CopyButton text={testText} />);
     const button = screen.getByText("Copy");
 
     await user.press(button);
     expect(button).toBeVisible();
 
-    expect(mockClipboard).toHaveBeenCalledWith(testText);
+    expect(copyToClipboard).toHaveBeenCalledWith(testText);
   });
 
   it("shows success state after copying", async () => {

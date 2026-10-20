@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { getEnv } from "@shared/env";
-import Lottie from "react-lottie";
+import { Lottie } from "@shared/lottie";
 import { useAnimationData } from "./useAnimationData";
 
 interface AnimatedLogoProps {
@@ -12,6 +12,7 @@ export function AnimatedLogo({ collapsed }: AnimatedLogoProps) {
   const [playing, setPlaying] = useState(false);
   const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
   const { collapse, expand, themeKey } = useAnimationData();
+  const handleComplete = useCallback(() => setPlaying(false), []);
 
   useLayoutEffect(() => {
     if (prevCollapsed.current !== collapsed) {
@@ -26,26 +27,15 @@ export function AnimatedLogo({ collapsed }: AnimatedLogoProps) {
   // When playing, show the actual transition animation.
   const animationData = collapsed === playing ? collapse : expand;
 
-  const eventListeners = useMemo(
-    () => [{ eventName: "complete" as const, callback: () => setPlaying(false) }],
-    [],
-  );
-
   return (
     <Lottie
       key={themeKey}
-      isClickToPauseDisabled
-      ariaRole="presentation"
-      isPaused={isPlaywright || !playing}
-      options={{
-        loop: false,
-        autoplay: false,
-        animationData,
-      }}
-      height={35}
-      width={100}
-      eventListeners={eventListeners}
-      style={{ flexShrink: 0 }}
+      source={animationData}
+      role="presentation"
+      autoPlay={false}
+      paused={isPlaywright || !playing}
+      onComplete={handleComplete}
+      style={{ flexShrink: 0, width: 100, height: 35 }}
     />
   );
 }

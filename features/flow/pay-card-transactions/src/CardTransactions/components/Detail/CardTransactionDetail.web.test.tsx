@@ -2,19 +2,18 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
+import { copyToClipboard } from "@shared/clipboard";
 import { CardTransactionDetail } from "./CardTransactionDetail";
 import { CATEGORY_LABELS, DETAIL_COPY, cardApiWrapper } from "../../../__tests__/cardApiStore";
+
+jest.mock("@shared/clipboard");
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
 const CASHBACK = `${transaction.cashback?.amount} ${transaction.cashback?.currency}`;
 
 describe("CardTransactionDetail (web)", () => {
   beforeEach(() => {
-    Object.assign(navigator, {
-      clipboard: {
-        writeText: jest.fn().mockResolvedValue(undefined),
-      },
-    });
+    jest.mocked(copyToClipboard).mockResolvedValue(true);
   });
 
   it("shows the selected transaction details in a dialog", () => {
@@ -43,7 +42,7 @@ describe("CardTransactionDetail (web)", () => {
     fireEvent.click(screen.getByTestId("card-transaction-detail-copy"));
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(transaction.transactionId);
+      expect(copyToClipboard).toHaveBeenCalledWith(transaction.transactionId);
     });
   });
 

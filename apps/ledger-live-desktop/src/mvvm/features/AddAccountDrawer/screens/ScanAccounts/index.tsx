@@ -4,7 +4,6 @@ import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { default as React, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { useTheme } from "styled-components";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { themeSelector } from "~/renderer/actions/general";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
@@ -35,7 +34,6 @@ const ScanAccounts = ({
   FooterComponent = Footer,
 }: Props) => {
   const source = useSelector(modularDialogSourceSelector);
-  const { colors } = useTheme();
   const currentTheme = useSelector(themeSelector);
   const { t } = useTranslation();
 
@@ -71,21 +69,14 @@ const ScanAccounts = ({
         <Box mb={16} key={account.id}>
           <FormattedAccountItem
             account={accountFormatted}
-            backgroundColor={colors.opacityDefault.c05}
-            rightElement={{
-              type: "checkbox",
-              checkbox: {
-                name: "checked",
-                isChecked: selectedIds.includes(accountFormatted.id),
-                onChange: () => {},
-              },
-            }}
+            checked={selectedIds.includes(accountFormatted.id)}
             onClick={() => handleToggle(accountFormatted.id)}
+            trailing="checkbox"
           />
         </Box>
       );
     },
-    [colors.opacityDefault.c05, formatAccount, handleToggle, selectedIds],
+    [formatAccount, handleToggle, selectedIds],
   );
 
   if (isRegionRestricted) return null;

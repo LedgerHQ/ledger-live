@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "2.5.0",
+  "version": "2.7.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -88,7 +88,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@hashgraph/sdk": "2.78.0",
+    "@hiero-ledger/sdk": "2.84.0",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
@@ -132,7 +132,6 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

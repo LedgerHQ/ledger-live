@@ -3,7 +3,8 @@
 // transparent) without depending on coin-bitcoin. It operates on a structural, LL-agnostic
 // operation shape — no @ledgerhq/types-live / cryptoassets coupling.
 
-const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
+/** Age after which an unconfirmed operation is dropped by {@link removeReplaced}: 2 hours. */
+export const DEFAULT_REPLACED_OPERATION_EXPIRY_MS = 2 * 60 * 60 * 1000;
 const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";
 
 /** Minimal structural shape of an operation needed by the replacement accounting. */
@@ -36,18 +37,19 @@ export type ReplaceableOperation = {
  * - Transactions without `extra.inputs` (usually `OUT` transactions) are exempt from
  *   the input-based replacement above.
  * - Regardless of the rules above, the final result also drops every unconfirmed
- *   operation older than 2 hours (this expiry applies to all ops, including no-input
- *   ones).
+ *   operation older than `expiryMs` (2 hours by default; this expiry applies to all ops,
+ *   including no-input ones).
  *
  * Outcome:
  * The result is a filtered list of operations, cleaned of unconfirmed or superseded
  * transactions that were replaced using RBF logic or similar, and of stale
- * (older-than-2h) unconfirmed operations. The original order of operations is preserved.
+ * (older-than-`expiryMs`) unconfirmed operations. The original order of operations is preserved.
  */
 export const removeReplaced = <T extends ReplaceableOperation>(
   operations: T[],
   now = Date.now(),
   preferMostRecentWhenSameHeight = false,
+  expiryMs = DEFAULT_REPLACED_OPERATION_EXPIRY_MS,
 ): T[] => {
   const isConfirmed = (op: T): boolean => typeof op.blockHeight === "number";
   const getInputs = (op: T): string[] => op.extra?.inputs ?? [];
@@ -83,7 +85,7 @@ export const removeReplaced = <T extends ReplaceableOperation>(
     });
 
   const isExpiredUnconfirmed = (op: T): boolean =>
-    !isConfirmed(op) && now > toDateMs(op) + TWO_HOUR_MS;
+    !isConfirmed(op) && now > toDateMs(op) + expiryMs;
 
   const addOperationForInput = (
     input: string,

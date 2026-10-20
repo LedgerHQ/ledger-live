@@ -2,8 +2,7 @@ import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { closeAllModal, openModal } from "~/renderer/actions/modals";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import { openModal } from "~/renderer/actions/modals";
 import { DeeplinkHandler, DeeplinkHandlerContext } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 
@@ -55,9 +54,6 @@ async function handleTransactionFlow(
 
   const sendRecipient = typeof recipient === "string" ? recipient : undefined;
   const sendAmount = typeof amount === "string" ? amount : undefined;
-
-  dispatch(closeAllModal());
-  setDrawer();
 
   if (!currency) {
     if (flowType === "send") {

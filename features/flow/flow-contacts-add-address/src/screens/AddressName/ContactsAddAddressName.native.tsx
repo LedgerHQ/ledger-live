@@ -12,13 +12,18 @@ import {
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import { CONTACTS_NATIVE_NAME_INPUT_PROPS } from "@features/platform-contacts";
+import { useTranslation } from "@shared/i18n";
 import { useLocalizedUrl, useOpenLink } from "@shared/linking";
+import { useAddAddressNameValidationErrors } from "../../copy/useAddAddressNameValidationErrors";
 import { urls } from "../../urls";
-import type { AddAddressLabelState, AddAddressNameLabels } from "../../state/types";
+import type { AddAddressLabelState } from "../../state/types";
+
+export type AddAddressNameNextStep = "review" | "confirmation";
 
 export type ContactsAddAddressNameProps = Readonly<{
   addressLabel: AddAddressLabelState;
-  labels: AddAddressNameLabels;
+  showPrivacyPolicy?: boolean;
+  nextStep?: AddAddressNameNextStep;
   bottomOffset?: number;
   onChangeText: (value: string) => void;
   onContinue: () => void;
@@ -26,14 +31,25 @@ export type ContactsAddAddressNameProps = Readonly<{
 
 export function ContactsAddAddressName({
   addressLabel,
-  labels,
+  showPrivacyPolicy = false,
+  nextStep = "review",
   bottomOffset = 0,
   onChangeText,
   onContinue,
 }: ContactsAddAddressNameProps): React.JSX.Element {
+  const { t } = useTranslation();
+  const validationErrors = useAddAddressNameValidationErrors();
   const validationMessage = addressLabel.validationError
-    ? labels.validationErrors[addressLabel.validationError]
+    ? validationErrors[addressLabel.validationError]
     : undefined;
+  const title = t("contacts.addAddressName.title");
+  const inputLabel = t("contacts.addAddressName.inputLabel");
+  const namingDisclaimer = t("contacts.addAddressName.namingDisclaimer");
+  const continueLabel =
+    nextStep === "confirmation"
+      ? t("common.continue")
+      : t("contacts.addAddressName.continueToReview");
+  const privacyPolicy = showPrivacyPolicy ? t("contacts.addAddressName.privacyPolicy") : undefined;
   const openLink = useOpenLink();
   const localizedPrivacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy.native);
   const handlePressPrivacyPolicy = useCallback(() => {
@@ -45,14 +61,14 @@ export function ContactsAddAddressName({
       testID="contacts-add-address-name-screen"
       style={{ bottom: 0, paddingBottom: bottomOffset > 0 ? bottomOffset : 32 }}
     >
-      <BottomSheetHeader density="expanded" title={labels.title} />
+      <BottomSheetHeader density="expanded" title={title} />
       <Box style={{ flex: 1 }} lx={{ justifyContent: "space-between", gap: "s16" }}>
         <Box lx={{ gap: "s16" }}>
           <Box lx={{ gap: "s8" }}>
             <TextInput
               testID="contacts-add-address-name-input"
               autoFocus
-              label={labels.inputLabel}
+              label={inputLabel}
               value={addressLabel.value}
               helperText={validationMessage}
               maxLength={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
@@ -74,11 +90,11 @@ export function ContactsAddAddressName({
           <Banner
             testID="contacts-add-address-name-disclaimer"
             appearance="info"
-            description={labels.namingDisclaimer}
+            description={namingDisclaimer}
           />
         </Box>
         <Box lx={{ gap: "s16", alignItems: "center" }}>
-          {labels.privacyPolicy ? (
+          {privacyPolicy ? (
             <Link
               testID="contacts-add-address-name-privacy-policy"
               appearance="base"
@@ -87,7 +103,7 @@ export function ContactsAddAddressName({
               isExternal
               onPress={handlePressPrivacyPolicy}
             >
-              {labels.privacyPolicy}
+              {privacyPolicy}
             </Link>
           ) : null}
           <Button
@@ -99,7 +115,7 @@ export function ContactsAddAddressName({
             icon={LedgerLogo}
             onPress={onContinue}
           >
-            {labels.continueToReview}
+            {continueLabel}
           </Button>
         </Box>
       </Box>

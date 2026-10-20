@@ -26,6 +26,7 @@ const mockTracking = {
   completeExchangeNoParams: jest.fn(),
   swapPayloadRequested: jest.fn(),
   swapResponseRetrieved: jest.fn(),
+  swapSignatureVerificationRetry: jest.fn(),
 };
 const testAppManifest = {
   id: "12",
@@ -436,6 +437,221 @@ describe("handlers", () => {
       // ...while the precise field is carried through in errorMessage.
       expect(data.errorMessage).toContain("payin_extra_id");
       expect(data.swapId).toBe("swap-123");
+    });
+
+    describe("when the device rejects the payload signature", () => {
+      type UiSwapCall = {
+        exchangeParams: { willRetryOnSignatureError?: boolean };
+        onSuccess: (result: { operationHash: string; swapId: string }) => void;
+        onCancel: (error: Error) => void;
+      };
+
+      const signatureError = new CompleteExchangeError(
+        "CHECK_TRANSACTION_SIGNATURE",
+        "signVerificationFail",
+        "Signature verification failed",
+      );
+      const acceptedSwap = { operationHash: "0xhash", swapId: "swap-123" };
+      const rejectSignature = ({ onCancel }: UiSwapCall) => onCancel(signatureError);
+      const acceptSwap = ({ onSuccess }: UiSwapCall) => onSuccess(acceptedSwap);
+
+      const { retrieveSwapPayload } = jest.requireMock("../../exchange/swap/api/v5/actions");
+
+      const runSwap = (...attemptOutcomes: Array<(call: UiSwapCall) => void>) => {
+        const accounts = [genAccount("accountId1"), genAccount("accountId2")];
+        const [fromAccount, toAccount] = accounts;
+
+        const { getMainAccount } = jest.requireMock(
+          "@ledgerhq/ledger-wallet-framework/account/index",
+        );
+        getMainAccount.mockReturnValue(fromAccount);
+
+        const { getAccountBridge } = jest.requireMock("../../bridge");
+        getAccountBridge.mockResolvedValue({
+          createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
+          updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({
+            ...tx,
+            ...upd,
+            amount: new BigNumber("1000000"),
+          })),
+        });
+
+        let attempt = 0;
+        mockUiStartExchange.mockImplementation(({ onSuccess }) => {
+          attempt += 1;
+          onSuccess(`NONCE-${attempt}`, { modelId: "nanoX", deviceId: "device-1" });
+        });
+        mockUiSwap.mockImplementation((call: UiSwapCall) => attemptOutcomes[attempt - 1](call));
+
+        const handler = handlers({
+          accounts,
+          locale: "en",
+          counterValueCurrency: "USD",
+          tracking: mockTracking,
+          manifest: testAppManifest,
+          uiHooks: mockUiHooks,
+        });
+
+        const params: ExchangeSwapParams = {
+          exchangeType: "SWAP",
+          provider: "TestProvider",
+          fromAccountId: fromAccount.id,
+          toAccountId: toAccount.id,
+          tokenCurrency: undefined,
+          fromAmount: "1000000",
+          fromAmountAtomic: new BigNumber("1000000"),
+          feeStrategy: "medium",
+          quoteId: "rate-1",
+          correlationId: "correlation-1",
+        };
+        const request: RpcRequest<string, ExchangeSwapParams> = {
+          jsonrpc: "2.0",
+          method: "custom.exchange.swap",
+          params,
+          id: "test",
+        };
+        const context = {
+          config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+        };
+
+        return handler["custom.exchange.swap"](request, context, {});
+      };
+
+      const swapCancelledPayloads = () =>
+        mockedNetwork.mock.calls
+          .map(([req]) => req)
+          .filter(req => req.url?.includes("/swap/cancelled"))
+          .map(req => req.data);
+
+      it("should resolve with the retried swap", async () => {
+        const result = await runSwap(rejectSignature, acceptSwap);
+
+        expect(result).toEqual(acceptedSwap);
+        expect(mockUiError).not.toHaveBeenCalled();
+      });
+
+      it("should request a new nonce and payload with the same swap params", async () => {
+        await runSwap(rejectSignature, acceptSwap);
+
+        expect(mockUiStartExchange).toHaveBeenCalledTimes(2);
+        expect(retrieveSwapPayload.mock.calls.map(([data]) => data)).toEqual([
+          expect.objectContaining({
+            deviceTransactionId: "NONCE-1",
+            quoteId: "rate-1",
+            correlationId: "correlation-1",
+          }),
+          expect.objectContaining({
+            deviceTransactionId: "NONCE-2",
+            quoteId: "rate-1",
+            correlationId: "correlation-1",
+          }),
+        ]);
+      });
+
+      it("should resolve when the third attempt succeeds after two rejections", async () => {
+        const result = await runSwap(rejectSignature, rejectSignature, acceptSwap);
+
+        expect(result).toEqual(acceptedSwap);
+        expect(mockUiStartExchange).toHaveBeenCalledTimes(3);
+        expect(mockUiError).not.toHaveBeenCalled();
+      });
+
+      it("should tell the host that every attempt but the last will be retried", async () => {
+        await runSwap(rejectSignature, rejectSignature, acceptSwap);
+
+        expect(
+          mockUiSwap.mock.calls.map(
+            ([{ exchangeParams }]: [UiSwapCall]) => exchangeParams.willRetryOnSignatureError,
+          ),
+        ).toEqual([true, true, false]);
+      });
+
+      it("should report the first attempt to /swap/cancelled with code R0", async () => {
+        await runSwap(rejectSignature, acceptSwap);
+
+        expect(swapCancelledPayloads()).toEqual([
+          expect.objectContaining({
+            statusCode: "signVerificationFail",
+            errorMessage: "Signature verification failed Code: R0",
+          }),
+        ]);
+      });
+
+      it("should track each retry", async () => {
+        await runSwap(rejectSignature, rejectSignature, acceptSwap);
+
+        expect(
+          mockTracking.swapSignatureVerificationRetry.mock.calls.map(([event]) => event),
+        ).toEqual([
+          expect.objectContaining({
+            provider: "TestProvider",
+            exchangeType: "SWAP",
+            retryCount: 1,
+          }),
+          expect.objectContaining({
+            provider: "TestProvider",
+            exchangeType: "SWAP",
+            retryCount: 2,
+          }),
+        ]);
+      });
+
+      it("should reject with the last attempt's error when every retry is rejected", async () => {
+        await expect(
+          runSwap(rejectSignature, rejectSignature, rejectSignature),
+        ).rejects.toMatchObject({
+          step: "CHECK_TRANSACTION_SIGNATURE",
+          title: "signVerificationFail",
+          message: "Signature verification failed Code: R2",
+        });
+
+        expect(mockUiStartExchange).toHaveBeenCalledTimes(3);
+      });
+
+      it("should report each rejected attempt to /swap/cancelled with its code", async () => {
+        await expect(runSwap(rejectSignature, rejectSignature, rejectSignature)).rejects.toThrow(
+          "Signature verification failed Code: R2",
+        );
+
+        expect(swapCancelledPayloads()).toEqual([
+          expect.objectContaining({ errorMessage: "Signature verification failed Code: R0" }),
+          expect.objectContaining({ errorMessage: "Signature verification failed Code: R1" }),
+          expect.objectContaining({ errorMessage: "Signature verification failed Code: R2" }),
+        ]);
+      });
+
+      it("should not tag the error when the retry fails for another reason", async () => {
+        const userRefusal = new CompleteExchangeError(
+          "SIGN_COIN_TRANSACTION",
+          "userRefused",
+          "User refused",
+        );
+
+        await expect(
+          runSwap(rejectSignature, ({ onCancel }) => onCancel(userRefusal)),
+        ).rejects.toBe(userRefusal);
+
+        expect(swapCancelledPayloads()).toEqual([
+          expect.objectContaining({ errorMessage: "Signature verification failed Code: R0" }),
+          expect.objectContaining({ statusCode: "userRefused", errorMessage: "User refused" }),
+        ]);
+      });
+
+      it("should not retry a signature rejection on another step", async () => {
+        const partnerError = new CompleteExchangeError(
+          "CHECK_PARTNER",
+          "signVerificationFail",
+          "Signature verification failed",
+        );
+
+        await expect(runSwap(({ onCancel }) => onCancel(partnerError))).rejects.toBe(partnerError);
+
+        expect(mockUiStartExchange).toHaveBeenCalledTimes(1);
+        expect(mockTracking.swapSignatureVerificationRetry).not.toHaveBeenCalled();
+        expect(swapCancelledPayloads()).toEqual([
+          expect.objectContaining({ errorMessage: "Signature verification failed" }),
+        ]);
+      });
     });
   });
 

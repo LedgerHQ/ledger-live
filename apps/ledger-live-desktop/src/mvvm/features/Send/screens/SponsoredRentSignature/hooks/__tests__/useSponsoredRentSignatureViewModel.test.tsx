@@ -17,13 +17,11 @@ jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowActions: () => ({ close: mockClose }),
 }));
 
-const mockCraftRent = jest.fn(() => Promise.resolve());
+const mockCraftRent = jest.fn((_approvedFee: bigint | null) => Promise.resolve());
 const mockStartRentPayment = jest.fn(() => Promise.resolve());
-const mockSetContractDataFailure = jest.fn();
 const mockActions = {
   craftRent: mockCraftRent,
   startRentPayment: mockStartRentPayment,
-  setContractDataFailure: mockSetContractDataFailure,
   onTransferSuccess: jest.fn(),
   onTransferError: jest.fn(),
   retry: jest.fn(),
@@ -40,11 +38,14 @@ let mockSponsoredState: {
   failureError: Error | null;
 };
 
+let mockQuote: { value: bigint } | null;
+
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: () => ({
     state: mockSponsoredState,
     actions: mockActions,
     providerName: "Provider",
+    quote: mockQuote,
   }),
 }));
 
@@ -82,12 +83,24 @@ describe("useSponsoredRentSignatureViewModel", () => {
       failureKind: null,
       failureError: null,
     };
+    mockQuote = { value: 3_200_000n };
   });
 
   it("crafts the order on entry exactly once when phase is RENT_SIGNING and there is no order yet", () => {
     renderHook(() => useSponsoredRentSignatureViewModel());
 
     expect(mockCraftRent).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["the fee shown on Review", { value: 3_200_000n }, 3_200_000n],
+    ["no fee when Review showed none", null, null],
+  ])("binds the order to %s", (_label, quote, approvedFee) => {
+    mockQuote = quote;
+
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockCraftRent).toHaveBeenCalledWith(approvedFee);
   });
 
   it("crafts the order on entry exactly once when phase is IDLE and there is no order yet (AMOUNT navigated in without craftRent)", () => {
@@ -124,27 +137,26 @@ describe("useSponsoredRentSignatureViewModel", () => {
     expect(mockStartRentPayment).toHaveBeenCalledWith(combinedSignature, "tx-a-id");
   });
 
-  it("routes a contract-data-disabled refusal to setContractDataFailure and never starts the rent payment", () => {
+  it("surfaces a device status error for a retry and never starts the rent payment", () => {
     mockSponsoredState.order = makeOrder();
     mockSponsoredState.toSign = rawDataHex;
     mockSponsoredState.paymentTxId = "tx-a-id";
     const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
 
-    const contractDataError = Object.assign(new Error("contract data disabled"), {
+    const incorrectData = Object.assign(new Error("incorrect data"), {
       name: "TransportStatusError",
       statusCode: 0x6a80,
     });
 
     act(() => {
-      result.current.onResult({ transactionSignError: contractDataError });
+      result.current.onResult({ transactionSignError: incorrectData });
     });
 
-    expect(mockSetContractDataFailure).toHaveBeenCalledTimes(1);
-    expect(mockSetContractDataFailure).toHaveBeenCalledWith(contractDataError, "tx-a-id");
+    expect(result.current.signError).toBe(incorrectData);
     expect(mockStartRentPayment).not.toHaveBeenCalled();
   });
 
-  it("surfaces any other sign error for a retry (no contract-data failure, no rent payment)", () => {
+  it("surfaces any other sign error for a retry (no rent payment)", () => {
     mockSponsoredState.order = makeOrder();
     const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
 
@@ -157,7 +169,6 @@ describe("useSponsoredRentSignatureViewModel", () => {
     });
 
     expect(result.current.signError).toBe(refusedOnDevice);
-    expect(mockSetContractDataFailure).not.toHaveBeenCalled();
     expect(mockStartRentPayment).not.toHaveBeenCalled();
 
     act(() => {

@@ -33,7 +33,6 @@ import {
   removeImageExecMock,
   renameDeviceExecMock,
 } from "~/e2e/bridge/types";
-import { useFeature } from "@features/platform-feature-flags";
 
 export function useAppDeviceAction({
   allowNonOnboardedDevice = false,
@@ -43,63 +42,42 @@ export function useAppDeviceAction({
   const envMock = useEnv("MOCK");
   const deviceProxy = useEnv("DEVICE_PROXY_URL");
   const mock = envMock && !deviceProxy;
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
     () =>
-      appCreateAction(
-        mock
-          ? connectAppExecMock
-          : connectAppFactory({ isLdmkConnectAppEnabled, allowNonOnboardedDevice }),
-      ),
-    [allowNonOnboardedDevice, isLdmkConnectAppEnabled, mock],
+      appCreateAction(mock ? connectAppExecMock : connectAppFactory({ allowNonOnboardedDevice })),
+    [allowNonOnboardedDevice, mock],
   );
 }
 
 export function useTransactionDeviceAction() {
   const mock = useEnv("MOCK");
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
-    () =>
-      transactionCreateAction(
-        mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
-      ),
-    [isLdmkConnectAppEnabled, mock],
+    () => transactionCreateAction(mock ? connectAppExecMock : connectAppFactory()),
+    [mock],
   );
 }
 
 export function useRawTransactionDeviceAction() {
   const mock = useEnv("MOCK");
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
-    () =>
-      rawTransactionCreateAction(
-        mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
-      ),
-    [isLdmkConnectAppEnabled, mock],
+    () => rawTransactionCreateAction(mock ? connectAppExecMock : connectAppFactory()),
+    [mock],
   );
 }
 
 export function useManagerDeviceAction() {
   const mock = useEnv("MOCK");
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
-    () =>
-      managerCreateAction(
-        mock ? connectManagerExecMock : connectManagerFactory({ isLdmkConnectAppEnabled }),
-      ),
-    [isLdmkConnectAppEnabled, mock],
+    () => managerCreateAction(mock ? connectManagerExecMock : connectManagerFactory()),
+    [mock],
   );
 }
 
 export function useSignMessageDeviceAction() {
   const mock = useEnv("MOCK");
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
-    () =>
-      signMessageCreateAction(
-        mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
-      ),
-    [isLdmkConnectAppEnabled, mock],
+    () => signMessageCreateAction(mock ? connectAppExecMock : connectAppFactory()),
+    [mock],
   );
 }
 
@@ -137,13 +115,12 @@ export function useRemoveImageDeviceAction() {
 
 export function useStartExchangeDeviceAction() {
   const mock = useEnv("MOCK");
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
     () =>
       mock
         ? startExchangeCreateAction(connectAppExecMock, startExchangeExecMock)
-        : startExchangeCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), startExchange),
-    [isLdmkConnectAppEnabled, mock],
+        : startExchangeCreateAction(connectAppFactory(), startExchange),
+    [mock],
   );
 }
 

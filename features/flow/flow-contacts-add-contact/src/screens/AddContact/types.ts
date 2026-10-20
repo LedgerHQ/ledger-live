@@ -17,18 +17,7 @@ export type UseAddContactContentViewModelOptions = Readonly<{
   onSaveSuccess: (contact: Contact) => void;
 }>;
 
-export type ContactsAddContactContentLabels = Readonly<{
-  title: string;
-  namePlaceholder: string;
-  namingDisclaimer: string;
-  confirmAddContact: string;
-  nameValidationErrors: Readonly<Record<ContactNameValidationErrorName, string>>;
-}>;
-
-export type ContactsAddContactContentProps = AddContactContentViewModel &
-  Readonly<{
-    labels: ContactsAddContactContentLabels;
-  }>;
+export type ContactsAddContactContentProps = AddContactContentViewModel;
 
 export type ContactsAddContactContentNativeProps = ContactsAddContactContentProps &
   Readonly<{
@@ -37,7 +26,7 @@ export type ContactsAddContactContentNativeProps = ContactsAddContactContentProp
 
 export type ContactsAddContactFooterProps = Pick<
   ContactsAddContactContentProps,
-  "isConfirmEnabled" | "isSaving" | "labels" | "onConfirm"
+  "isConfirmEnabled" | "isSaving" | "onConfirm"
 >;
 
 export type AddContactDialogLifecycleCallbacks = Readonly<{
@@ -49,7 +38,6 @@ export type AddContactDialogLifecycleCallbacks = Readonly<{
 
 export type UseAddContactDialogViewModelOptions = Readonly<{
   contactCreation: ContactCreationPort;
-  labels: ContactsAddContactContentLabels;
   onSaveSuccess: (contact: Contact) => void;
   callbacks?: AddContactDialogLifecycleCallbacks;
 }>;
@@ -57,7 +45,6 @@ export type UseAddContactDialogViewModelOptions = Readonly<{
 export type AddContactDialogViewModel = AddContactContentViewModel &
   Readonly<{
     isOpen: boolean;
-    labels: ContactsAddContactContentLabels;
     onOpen: () => void;
     onClose: () => void;
   }>;

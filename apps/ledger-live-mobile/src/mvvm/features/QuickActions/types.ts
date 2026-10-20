@@ -8,19 +8,7 @@ export type TransferActionId = "receive" | "send" | "bank_transfer";
 /**
  * Available quick action CTA identifiers
  */
-export type QuickActionCtaId =
-  | "transfer"
-  | "swap"
-  | "buy"
-  | "connect"
-  | "buy_ledger"
-  | "receive"
-  | "send";
-
-/**
- * User state for quick actions display
- */
-export type UserQuickActionsState = "no_signer" | "no_funds" | "has_funds";
+export type QuickActionCtaId = "transfer" | "swap" | "buy" | "connect" | "buy_ledger";
 
 /**
  * Represents a quick action CTA button configuration

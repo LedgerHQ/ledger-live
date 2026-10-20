@@ -28,7 +28,7 @@ describe("test transactin pagination", () => {
   });
 
   beforeAll(async () => {
-    await xpub.sync();
+    await xpub.sync(jest.fn());
   }, 120000);
   it("should fetch transaction correctly when there are multiple pages", async () => {
     let txs = (xpub.storage as any).txs as TX[];

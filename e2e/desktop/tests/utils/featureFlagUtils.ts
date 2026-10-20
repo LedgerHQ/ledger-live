@@ -75,8 +75,31 @@ export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
   analyticsOptIn: { enabled: false },
 } satisfies PartialFeatures;
 
+// Onboarding specs run on the Welcome analytics opt-in screen production shows (V2, not the legacy drawer).
+export const FF_ANALYTICS_OPT_IN_SCREEN_V2 = {
+  lwdAnalyticsOptInScreenV2: { enabled: true },
+} satisfies PartialFeatures;
+
+// Device onboarding specs end on the Wallet.
+export const FF_DEVICE_ONBOARDING = {
+  ...FF_ANALYTICS_OPT_IN_SCREEN_V2,
+  recoverUpsellPostOnboarding: { enabled: false },
+  lwdProductTour: { enabled: true },
+  lldLedgerSyncEntryPoints: {
+    enabled: true,
+    params: {
+      onboarding: true,
+      manager: true,
+      accounts: true,
+      settings: true,
+      postOnboarding: true,
+      sendFlow: true,
+    },
+  },
+} satisfies PartialFeatures;
+
 // Wallet 4.0 without analytics consent; pins flags that would block the finish-onboarding widget.
-export const FF_POST_ONBOARDING_DESKTOP = {
+export const FF_POST_ONBOARDING_MOCK_DESKTOP = {
   ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
   onboardingWidget: { enabled: true },
   protectServicesDesktop: { enabled: false },
@@ -135,6 +158,16 @@ export const FF_STAKE_PROGRAMS_MODAL = {
   },
 } satisfies PartialFeatures;
 
+// The earn-live-app routes deposits to /v2/{os}/deposit only when swapToEarn is enabled, so
+// deposit specs pin it explicitly instead of inheriting the Remote Config value.
+export const FF_SWAP_TO_EARN_ENABLED = {
+  swapToEarn: { enabled: true },
+} satisfies PartialFeatures;
+
+export const FF_SWAP_TO_EARN_DISABLED = {
+  swapToEarn: { enabled: false },
+} satisfies PartialFeatures;
+
 // Mina staking is unreleased, so the currency is absent from the remote stakePrograms list. The
 // account header only keeps a "Stake" action when getCanStakeUsingLedgerLive is true, so without
 // this the Earn button never renders.
@@ -165,6 +198,35 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
     params: {
       families: [],
       excludedCurrencyIds: [],
+    },
+  },
+} satisfies PartialFeatures;
+
+// Keep this scope synchronized with the LWD production Firebase configuration.
+export const FF_NEW_SEND_FLOW_ENABLED = {
+  newSendFlow: {
+    enabled: true,
+    params: {
+      families: [
+        "evm",
+        "bitcoin",
+        "solana",
+        "xrp",
+        "stellar",
+        "cosmos",
+        "polkadot",
+        "near",
+        "sui",
+        "tezos",
+        "vechain",
+        "algorand",
+        "tron",
+        "cardano",
+        "ton",
+        "internet_computer",
+        "filecoin",
+      ],
+      excludedCurrencyIds: ["zcash", "dash"],
     },
   },
 } satisfies PartialFeatures;
