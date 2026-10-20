@@ -147,7 +147,10 @@ describe("useBalanceGraphViewModel", () => {
     mockUseSupportedCounterCurrencies.mockReturnValue({
       data: ["usd", "eur", "btc"],
     } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
-    mockUseOpenReceiveDrawer.mockReturnValue({ handleOpenReceiveDrawer });
+    mockUseOpenReceiveDrawer.mockReturnValue({
+      handleOpenReceiveDrawer,
+      openReceiveForAccount: jest.fn(),
+    });
   });
 
   describe("price & trend", () => {
