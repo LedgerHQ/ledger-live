@@ -102,6 +102,62 @@ describe("ChainwatchAccountManager", () => {
     });
   });
 
+  it("should register addresses in batches of 1000", async () => {
+    const addresses = Array.from({ length: 2500 }, (_, index) => `bc1q${index}`);
+    mockedNetwork.mockResolvedValue(networkOk(undefined));
+
+    await accountManager.registerNewAddresses(addresses);
+
+    expect(mockedNetwork.mock.calls.map(([request]) => request.data)).toEqual([
+      addresses.slice(0, 1000),
+      addresses.slice(1000, 2000),
+      addresses.slice(2000),
+    ]);
+  });
+
+  it("should stop registering at the first failed batch", async () => {
+    const error = new LedgerAPI5xx("unavailable", { status: 500, url: undefined, method: "PUT" });
+    mockedNetwork.mockRejectedValueOnce(error);
+
+    await expect(
+      accountManager.registerNewAddresses(
+        Array.from({ length: 1500 }, (_, index) => `bc1q${index}`),
+      ),
+    ).rejects.toBe(error);
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should remove addresses in batches and forget the suffixes of removed batches only", async () => {
+    const addresses = Array.from(
+      { length: 1500 },
+      (_, index) => `bc1q${String(index).padStart(4, "0")}`,
+    );
+    accountManager.suffixes = addresses.map(address => address.slice(-4));
+    const error = new LedgerAPI5xx("unavailable", {
+      status: 500,
+      url: undefined,
+      method: "DELETE",
+    });
+    mockedNetwork.mockResolvedValueOnce(networkOk(undefined)).mockRejectedValueOnce(error);
+
+    await expect(accountManager.removeAddresses(addresses)).rejects.toBe(error);
+
+    expect(mockedNetwork.mock.calls.map(([request]) => request.data)).toEqual([
+      addresses.slice(0, 1000),
+      addresses.slice(1000),
+    ]);
+    expect(accountManager.suffixes).toEqual(
+      addresses.slice(1000).map(address => address.slice(-4)),
+    );
+  });
+
+  it("should ignore case when matching hexadecimal addresses", () => {
+    accountManager.suffixes = ["abcd"];
+
+    expect(accountManager.accountAlreadySubscribed("0x12ABCD")).toBe(true);
+    expect(accountManager.accountAlreadySubscribed("0x12ABCE")).toBe(false);
+  });
+
   it("should preserve case when matching non-hexadecimal addresses", () => {
     accountManager.suffixes = ["AbCd"];
 

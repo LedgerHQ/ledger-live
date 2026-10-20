@@ -1,16 +1,20 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, ChainwatchNetwork } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getAccountBridge } from "../bridge/index";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 import {
   getTransactionsAlertsAddresses,
   getTransactionsAlertsAddressKey,
   reconcileTransactionsAlertsAddresses,
+  resolveTransactionsAlertsAddresses,
 } from ".";
 
 jest.mock("./ChainwatchAccountManager");
+jest.mock("../bridge/index", () => ({ getAccountBridge: jest.fn() }));
 
 const MockedChainwatchAccountManager = jest.mocked(ChainwatchAccountManager);
+const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const avalanche = getCryptoCurrencyById("avalanche_c_chain");
 const network: ChainwatchNetwork = {
   ledgerLiveId: avalanche.id,
@@ -37,6 +41,51 @@ describe("getTransactionsAlertsAddressKey", () => {
 describe("getTransactionsAlertsAddresses", () => {
   it("should ignore accounts without an address", () => {
     expect(getTransactionsAlertsAddresses([makeAccount("account", "")])).toEqual([]);
+  });
+});
+
+describe("resolveTransactionsAlertsAddresses", () => {
+  const mockOwnedAddresses = (ownedAddresses: Record<string, string[]>) => {
+    mockedGetAccountBridge.mockImplementation(
+      async () =>
+        ({
+          getOwnedAddresses: async (account: Account) => ownedAddresses[account.freshAddress],
+        }) as unknown as Awaited<ReturnType<typeof getAccountBridge>>,
+    );
+  };
+
+  it("should return every address owned by each account", async () => {
+    mockOwnedAddresses({
+      "0x01": ["0x01", "0x0a"],
+      "0x02": ["0x02"],
+    });
+
+    const addresses = await resolveTransactionsAlertsAddresses([
+      makeAccount("account-1", "0x01"),
+      makeAccount("account-2", "0x02"),
+    ]);
+
+    expect(addresses).toEqual([makeAddress("0x01"), makeAddress("0x0a"), makeAddress("0x02")]);
+  });
+
+  it("should return an address shared by several accounts once", async () => {
+    mockOwnedAddresses({ "0x01": ["0x01", "0xAB"], "0x02": ["0x02", "0xab"] });
+
+    const addresses = await resolveTransactionsAlertsAddresses([
+      makeAccount("account-1", "0x01"),
+      makeAccount("account-2", "0x02"),
+    ]);
+
+    expect(addresses.map(({ address }) => address.toLowerCase())).toEqual(["0x01", "0xab", "0x02"]);
+  });
+
+  it("should reject when the addresses of an account cannot be resolved", async () => {
+    const error = new Error("bridge unavailable");
+    mockedGetAccountBridge.mockRejectedValueOnce(error);
+
+    await expect(resolveTransactionsAlertsAddresses([makeAccount("account", "0x01")])).rejects.toBe(
+      error,
+    );
   });
 });
 

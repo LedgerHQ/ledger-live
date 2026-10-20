@@ -1,4 +1,5 @@
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
+import { getAccountBridge } from "../bridge/index";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 
 const hexAddressPattern = /^0x[0-9a-f]+$/i;
@@ -17,6 +18,10 @@ const getAddressKey = ({ currencyId, address }: TransactionsAlertsAddress) =>
 export const deduplicateTransactionsAlertsAddresses = (addresses: TransactionsAlertsAddress[]) =>
   Array.from(new Map(addresses.map(address => [getAddressKey(address), address])).values());
 
+/**
+ * @deprecated Only returns the fresh address of each account, which misses most addresses of UTXO
+ * accounts. Use `resolveTransactionsAlertsAddresses`.
+ */
 export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
   deduplicateTransactionsAlertsAddresses(
     accounts
@@ -26,6 +31,17 @@ export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
         address: account.freshAddress,
       })),
   );
+
+export const resolveTransactionsAlertsAddresses = async (accounts: Account[]) => {
+  const addressesByAccount = await Promise.all(
+    accounts.map(async account => {
+      const bridge = await getAccountBridge(account);
+      const addresses = await bridge.getOwnedAddresses(account);
+      return addresses.map(address => ({ currencyId: account.currency.id, address }));
+    }),
+  );
+  return deduplicateTransactionsAlertsAddresses(addressesByAccount.flat());
+};
 
 const formatAddressesByCurrencies = (
   newAddresses: TransactionsAlertsAddress[],

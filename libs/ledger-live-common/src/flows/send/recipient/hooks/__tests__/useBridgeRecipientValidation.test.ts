@@ -60,6 +60,7 @@ const mockBridge = {
   isStrategyDisabled: jest.fn(),
   isTransactionConfirmed: jest.fn(),
   getWalletApiSpendableBalance: jest.fn(),
+  getOwnedAddresses: jest.fn(),
 };
 
 describe("useBridgeRecipientValidation", () => {
