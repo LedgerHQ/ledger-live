@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
