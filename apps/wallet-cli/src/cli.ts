@@ -11,6 +11,7 @@ import { disposeAnalytics, startAnalytics } from "./analytics/segment";
 import { withCommandLifecycleAnalytics } from "./analytics/lifecycle-analytics";
 import { loadCommands } from "./commands/registry";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import { getActiveSpeculosTarget } from "./device/speculos-target";
 import { setupWalletCliStore } from "./state-manager/configureStore";
 
 emitTestingBuildBannerIfNeeded();
@@ -56,4 +57,7 @@ if (import.meta.main) {
     await disposeWalletCliDmkTransportFully();
     await disposeAnalytics();
   }
+  // The Speculos transport cannot abort its HTTP calls, so one left pending after a timeout would
+  // hold the process open until Bun's 5-minute fetch timeout.
+  if (getActiveSpeculosTarget()) process.exit();
 }

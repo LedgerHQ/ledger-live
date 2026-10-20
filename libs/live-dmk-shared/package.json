@@ -36,6 +36,7 @@
   "dependencies": {
     "@domain/entity-client-identity": "workspace:*",
     "@ledgerhq/context-module": "catalog:",
+    "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/dmk-ledger-wallet": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/logs": "catalog:",

@@ -49,7 +49,7 @@ wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 
 ## Prerequisites
 
-- A Ledger on USB for the commands marked in the Device column
+- A Ledger on USB, or [Speculos](#speculos), for the commands marked in the Device column. `genuine-check` needs a physical Ledger
 - On Linux, the USB/HID libraries: `sudo apt-get install libudev-dev libusb-1.0-0-dev`
 
 ## Environment and storage
@@ -57,6 +57,25 @@ wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 - `USER_ID` defaults to `wallet-cli`, so the DMK firmware distribution salt stays stable.
 - `swap quote`, `swap execute` and `agent-intent swap` authenticate their quote requests to the Ledger API with a dedicated key. The key is stored in the OS keychain as `api-auth-key-<hash>` (service `ledger-wallet-cli`). Without a usable keychain, a one-off key authenticates that run only. It is not the Key Ring key, and `session reset` and `ring destroy` do not remove it. If authentication fails or takes more than 10 s (not counting a keychain dialog waiting for the user), the request is sent without a token.
 - `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults for development. The swap API stays on production.
+
+## Speculos
+
+Device commands talk to the first USB Ledger. Setting `SPECULOS_API_PORT` switches them to a [Speculos](https://github.com/LedgerHQ/speculos) emulator instead, for local development and agents without hardware. wallet-cli reads the same variables as the Ledger Live Desktop e2e setup:
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `SPECULOS_API_PORT` | none | Speculos REST API port. Required to use Speculos |
+| `SPECULOS_ADDRESS` | `http://127.0.0.1` | Speculos host. A port in the address wins over `SPECULOS_API_PORT` |
+| `SPECULOS_DEVICE` | `nanoSP` | Emulated model: `nanoS`, `nanoSP`, `nanoX`, `stax`, `flex` (or `europa`) or `nanoGen5`. Other values fall back to `nanoSP`. Match `--model` |
+
+```bash
+SPECULOS_API_PORT=5000 SPECULOS_DEVICE=nanoSP wallet-cli account discover --network ethereum --output json
+```
+
+- Speculos must already run the app the command needs. wallet-cli does not start it or press its buttons, so stick to flows without on-device approval, such as `account discover`. A prompt to open the app gives up after `--device-timeout` with code 6 (`timeout`). Signing and address verification have no timeout of their own: an unanswered prompt ends only when the HTTP call to Speculos times out, after about 5 minutes, with code 1 and the message `GeneralDmkError`.
+- An unreachable Speculos exits with code 3 (`disconnected`), with the underlying error in the message. A connect that gets no answer exits with code 6 (`timeout`) after about 10 to 20 s. `genuine-check` refuses to run, since an emulator has no attestation keys.
+- On macOS, the AirPlay Receiver already listens on port 5000 and answers with 403, which wallet-cli reports as an unreachable Speculos. Publish Speculos on another port (`docker run -p 127.0.0.1:45000:5000 …` with `SPECULOS_API_PORT=45000`) or turn off AirPlay Receiver in System Settings.
+- `pnpm apdu-proxy` relays a **USB** Ledger to Ledger Live through `DEVICE_PROXY_URL`, even when `SPECULOS_*` is set. It is not the Speculos transport, and Ledger Live can use Speculos directly.
 
 ## Development
 
