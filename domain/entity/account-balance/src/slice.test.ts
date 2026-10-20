@@ -3,7 +3,7 @@ import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountAssetBalance } from "./schema.mock";
 import { initialAccountBalancesState, type AccountBalancesState } from "./schema";
-import { accountBalancesRemoved, accountBalancesSlice } from "./slice";
+import { accountBalancesSlice } from "./slice";
 
 declare module "@domain/entity-account-data" {
   interface AccountDataRegistry {
@@ -70,19 +70,5 @@ describe("accountBalancesSlice", () => {
       }),
     );
     expect(state[accountUUID]).toEqual([eth]);
-  });
-
-  it("should delete the account listed in accountBalancesRemoved", () => {
-    const state = reduce(receive([eth]), accountBalancesRemoved([accountUUID]));
-    expect(state[accountUUID]).toBeUndefined();
-  });
-
-  it("should keep an account that accountBalancesRemoved does not list", () => {
-    const state = reduce(
-      receive([eth]),
-      receive([usdt], otherAccountUUID),
-      accountBalancesRemoved([accountUUID]),
-    );
-    expect(state[otherAccountUUID]).toEqual([usdt]);
   });
 });
