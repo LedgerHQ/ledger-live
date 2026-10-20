@@ -6,14 +6,11 @@ import { useDiscreetMode } from "./useDiscreetMode";
 import { useExperimentalFeatures } from "./useExperimentalFeatures";
 import { useFeatureFlags } from "./useFeatureFlags";
 import { useMockServerTransport } from "./useMockServerTransport";
-import { useMyLedger } from "./useMyLedger";
-import { useSettings } from "./useSettings";
 import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
   const {
     shouldDisplayOperationsList,
-    shouldDisplayMyWallet,
     shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("desktop");
@@ -28,8 +25,6 @@ const useTopBarViewModel = () => {
     tooltip: activityIndicatorTooltip,
     onTooltipShow: activityIndicatorOnTooltipShow,
   } = useActivityIndicator();
-  const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
-  const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
   const {
     isVisible: isExperimentalVisible,
     handleExperimental,
@@ -119,7 +114,6 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    ...(shouldDisplayMyWallet ? [] : [{ type: "notification" as const }]),
     {
       type: "action",
       action: {
@@ -131,30 +125,6 @@ const useTopBarViewModel = () => {
       },
     },
     ...(shouldDisplayOperationsList ? [{ type: "history" as const }] : []),
-    ...(shouldDisplayMyWallet
-      ? []
-      : [
-          {
-            type: "action" as const,
-            action: {
-              label: "settings",
-              tooltip: settingsTooltip,
-              icon: settingsIcon,
-              isInteractive: true,
-              onClick: handleSettings,
-            },
-          },
-          {
-            type: "action" as const,
-            action: {
-              label: "my ledger",
-              tooltip: myLedgerTooltip,
-              icon: myLedgerIcon,
-              isInteractive: true,
-              onClick: handleMyLedger,
-            },
-          },
-        ]),
   ];
 
   return {

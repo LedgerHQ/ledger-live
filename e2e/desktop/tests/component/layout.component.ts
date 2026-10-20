@@ -34,13 +34,6 @@ export class Layout extends Component {
   readonly topbarSynchronizeButton = this.topbarActionButton("synchronize").or(
     this.page.getByTestId("topbar-synchronize-button"),
   );
-  readonly topbarNotificationButton = this.topbarActionButton("notifications").or(
-    this.page.getByTestId("topbar-notification-button"),
-  );
-  readonly topbarSettingsButton = this.topbarActionButton("settings").or(
-    this.page.getByTestId("topbar-settings-button"),
-  );
-  readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
 
   @step("synchronize accounts")
   async syncAccounts() {

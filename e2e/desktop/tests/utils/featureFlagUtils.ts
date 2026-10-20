@@ -18,9 +18,6 @@ const getLwdWallet40Params = async (page: Page) => {
 export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
   Boolean((await getLwdWallet40Params(page))?.assetSection);
 
-export const isMyWalletEnabled = async (page: Page): Promise<boolean> =>
-  Boolean((await getLwdWallet40Params(page))?.myWallet);
-
 export const isOperationsListEnabled = async (page: Page): Promise<boolean> =>
   Boolean((await getLwdWallet40Params(page))?.operationsList);
 
@@ -41,7 +38,6 @@ const FF_LWD_WALLET_40_Q1 = {
       brazePlacement: true,
       operationsList: false,
       aggregatedAssets: false,
-      myWallet: false,
       pnl: false,
       earnUpselling: false,
       earnSimulator: false,
@@ -59,7 +55,6 @@ export const FF_LWD_WALLET_40_Q2 = {
       brazePlacement: true,
       operationsList: true,
       aggregatedAssets: true,
-      myWallet: true,
       pnl: true,
       earnUpselling: true,
       earnSimulator: true,

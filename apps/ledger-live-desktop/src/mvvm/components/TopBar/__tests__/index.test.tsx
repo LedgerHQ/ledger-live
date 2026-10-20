@@ -64,11 +64,11 @@ describe("TopBar", () => {
       }),
     });
 
-    expect(screen.getByTestId("topbar-action-button-my-ledger")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-synchronize")).toBeVisible();
-    expect(screen.getByTestId("topbar-action-button-notifications")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-discreet")).toBeVisible();
-    expect(screen.getByTestId("topbar-action-button-settings")).toBeVisible();
+    expect(screen.queryByTestId("topbar-action-button-my-ledger")).toBeNull();
+    expect(screen.queryByTestId("topbar-action-button-notifications")).toBeNull();
+    expect(screen.queryByTestId("topbar-action-button-settings")).toBeNull();
   });
 
   describe("discreetMode", () => {

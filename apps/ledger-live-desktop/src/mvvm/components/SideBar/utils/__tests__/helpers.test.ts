@@ -18,47 +18,29 @@ describe("pathnameToActive", () => {
     { pathname: SIDEBAR_VALUE_TO_PATH.paytab, expected: "paytab" },
     { pathname: "/paytab/details", expected: "paytab" },
   ])('should return "$expected" for pathname "$pathname"', ({ pathname, expected }) => {
-    expect(pathnameToActive(pathname, undefined)).toBe(expected);
+    expect(pathnameToActive(pathname)).toBe(expected);
   });
 
   it('should return "accounts" for /cryptos when asset section is enabled', () => {
-    expect(pathnameToActive("/cryptos", undefined, true)).toBe("accounts");
+    expect(pathnameToActive("/cryptos", true)).toBe("accounts");
   });
 
   it("should return empty string for /cryptos when asset section is disabled", () => {
-    expect(pathnameToActive("/cryptos", undefined, false)).toBe("");
+    expect(pathnameToActive("/cryptos", false)).toBe("");
   });
 
   it('should return "paytab" for a live app opened from the Pay tab', () => {
-    expect(pathnameToActive("/platform/some-app", undefined, false, "?returnTo=%2Fpaytab")).toBe(
-      "paytab",
-    );
+    expect(pathnameToActive("/platform/some-app", false, "?returnTo=%2Fpaytab")).toBe("paytab");
   });
 
   it('should return "discover" for a live app with another returnTo', () => {
-    expect(pathnameToActive("/platform/some-app", undefined, false, "?returnTo=%2Fswap")).toBe(
-      "discover",
-    );
-  });
-
-  it.each([
-    { pathname: "/refer-a-friend", referPath: "/refer-a-friend" },
-    { pathname: "/refer-a-friend/details", referPath: "/refer-a-friend" },
-  ])(
-    'should return "refer" for pathname "$pathname" with referPath "$referPath"',
-    ({ pathname, referPath }) => {
-      expect(pathnameToActive(pathname, referPath)).toBe("refer");
-    },
-  );
-
-  it("should prioritize refer over other matches", () => {
-    expect(pathnameToActive("/swap", "/swap")).toBe("refer");
+    expect(pathnameToActive("/platform/some-app", false, "?returnTo=%2Fswap")).toBe("discover");
   });
 
   it.each(["/settings", "/manager", "/refer"])(
     'should return empty string for unmatched path "%s"',
     pathname => {
-      expect(pathnameToActive(pathname, undefined)).toBe("");
+      expect(pathnameToActive(pathname)).toBe("");
     },
   );
 });
