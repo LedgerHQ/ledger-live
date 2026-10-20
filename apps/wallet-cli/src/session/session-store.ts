@@ -121,7 +121,7 @@ const ringFields = {
  * never bricks every command); returning the raw records (not just their ids) is what lets `write()`
  * carry them forward unchanged instead of a subsequent write from ANY command (enroll,
  * reset, ring, discover — every one of them calls `write()`) silently erasing them from disk and
- * orphaning their OS-keychain secret for good.
+ * orphaning their OS-keychain secret or key file for good.
  */
 function invalidAgentIntentProfileRaws(root: unknown): unknown[] {
   const raw =
@@ -334,9 +334,9 @@ export class Session {
   /**
    * `profileId`s of `agentIntentProfiles` entries the last read dropped for failing schema
    * validation — recoverable enough to name, not enough to load. See `agent-intent list`'s use of
-   * this: each id's OS-keychain secret (if any) is orphaned only once nothing else records it —
-   * which, since `write()` now carries the raw record forward (see below), requires an explicit
-   * `session reset` rather than just any subsequent write.
+   * this: each id's OS-keychain secret or key file (if any) is orphaned only once nothing else
+   * records it — which, since `write()` now carries the raw record forward (see below), requires an
+   * explicit `session reset` rather than just any subsequent write.
    */
   get invalidAgentIntentProfileIds(): ReadonlyArray<string> {
     return invalidAgentIntentProfileIds(this._invalidAgentIntentProfileRaws);
@@ -441,8 +441,9 @@ export class Session {
     if (this._passwordSalt) data.passwordSalt = this._passwordSalt;
     // Invalid raws ride along unchanged (never re-validated, never mutated by anything in this
     // class) so a write from ANY command — not just `agent-intent` ones — can't silently erase an
-    // entry the last read couldn't parse and orphan its OS-keychain secret. They keep failing
-    // validation on the next read, which is the intended outcome: recoverable-by-name, not adopted.
+    // entry the last read couldn't parse and orphan its OS-keychain secret or key file. They keep
+    // failing validation on the next read, which is the intended outcome: recoverable-by-name, not
+    // adopted.
     const agentIntentProfiles = [
       ...this._agentIntentProfiles,
       ...this._invalidAgentIntentProfileRaws,

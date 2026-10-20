@@ -76,7 +76,7 @@ function httpErrorMessage(e: AgentIntentHttpError, profileId: string): string {
     case "pubkey_mismatch":
       return (
         `The Agent Intent service rejected the intent: its issuer does not match the authenticated ` +
-        `agent (${detail}). The OS-keychain key for profile "${profileId}" doesn't belong to its ` +
+        `agent (${detail}). The agent key for profile "${profileId}" doesn't belong to its ` +
         `enrollment. ${RE_ENROLL(profileId)}`
       );
     case "signature_invalid":
