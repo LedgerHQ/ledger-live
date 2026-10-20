@@ -9,7 +9,7 @@ import Animated, {
 
 export const CONTENT_FADE_MS = 150;
 
-export const AnimatedCheckmark = () => {
+export const AnimatedCheckmark = ({ testID }: Readonly<{ testID: string }>) => {
   const scale = useSharedValue(0.5);
   const checkOpacity = useSharedValue(0);
 
@@ -27,7 +27,7 @@ export const AnimatedCheckmark = () => {
   );
 
   return (
-    <Animated.View style={animatedCheckStyle} testID="portfolio-refresh-status-checkmark">
+    <Animated.View style={animatedCheckStyle} testID={testID}>
       <CheckmarkCircleFill size={16} color="success" />
     </Animated.View>
   );

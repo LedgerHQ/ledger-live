@@ -1,10 +1,8 @@
 import { renderHook, act } from "@tests/test-renderer";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
-import {
-  usePortfolioRefreshStatusViewModel,
-  REFRESH_STATUS_VISIBLE_DURATION_MS,
-} from "../usePortfolioRefreshStatusViewModel";
+import { REFRESH_STATUS_VISIBLE_DURATION_MS } from "LLM/components/RefreshStatus";
+import { usePortfolioRefreshStatusViewModel } from "../usePortfolioRefreshStatusViewModel";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 

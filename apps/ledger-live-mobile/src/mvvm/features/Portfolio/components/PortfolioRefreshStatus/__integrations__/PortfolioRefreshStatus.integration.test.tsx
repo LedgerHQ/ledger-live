@@ -38,7 +38,7 @@ import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
-import { REFRESH_STATUS_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
+import { REFRESH_STATUS_VISIBLE_DURATION_MS } from "LLM/components/RefreshStatus";
 import { PortfolioRefreshStatus } from "../index";
 import { State } from "~/reducers/types";
 
