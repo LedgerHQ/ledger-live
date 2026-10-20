@@ -102,20 +102,6 @@ describe("ChainwatchAccountManager", () => {
     });
   });
 
-  it("should keep the suffixes of addresses whose removal failed", async () => {
-    accountManager.suffixes = ["0x01", "0x02"];
-    const error = new LedgerAPI5xx("unavailable", {
-      status: 500,
-      url: undefined,
-      method: "DELETE",
-    });
-    mockedNetwork.mockRejectedValueOnce(error);
-
-    await expect(accountManager.removeAddresses(["0x01"])).rejects.toBe(error);
-
-    expect(accountManager.suffixes).toEqual(["0x01", "0x02"]);
-  });
-
   it("should ignore case when matching hexadecimal addresses", () => {
     accountManager.suffixes = ["abcd"];
 

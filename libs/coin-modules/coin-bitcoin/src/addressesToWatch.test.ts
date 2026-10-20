@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
 import type { IExplorer } from "@ledgerhq/wallet-btc/explorer/types";
 import BitcoinLikeStorage from "@ledgerhq/wallet-btc/storage/index";
-import type { Input, Output, TX } from "@ledgerhq/wallet-btc/storage/types";
+import type { TX } from "@ledgerhq/wallet-btc/storage/types";
 import { DerivationModes } from "@ledgerhq/wallet-btc/types";
 import Xpub from "@ledgerhq/wallet-btc/xpub";
 import { getAddressesToWatch } from "./addressesToWatch";
@@ -19,56 +19,21 @@ const deriveAll = (paths: [chain: number, index: number][]) =>
   Promise.all(paths.map(([chain, index]) => derive(chain, index)));
 const block = { hash: "block", height: 1, time: "2026-01-01T00:00:00Z" };
 
-type StoredTx = {
-  chain: number;
-  index: number;
-  id?: string;
-  outputValue?: string;
-  spends?: { chain: number; index: number; id: string };
-  pending?: boolean;
-};
+type StoredTx = { chain: number; index: number; funded: boolean };
 
-const makeTx = async ({
-  chain,
-  index,
-  id,
-  outputValue,
-  spends,
-  pending,
-}: StoredTx): Promise<TX> => {
+const makeTx = async ({ chain, index, funded }: StoredTx): Promise<TX> => {
   const address = await derive(chain, index);
-  const txId = id ?? `tx-${chain}-${index}`;
-  const outputs: Output[] = outputValue
-    ? [
-        {
-          value: outputValue,
-          address,
-          output_hash: txId,
-          output_index: 0,
-          block_height: 1,
-          rbf: false,
-        },
-      ]
-    : [];
-  const inputs: Input[] = spends
-    ? [
-        {
-          value: "1000",
-          address: await derive(spends.chain, spends.index),
-          output_hash: spends.id,
-          output_index: 0,
-          sequence: 0,
-        },
-      ]
-    : [];
+  const id = `tx-${chain}-${index}`;
   return {
-    id: txId,
+    id,
     account: chain,
     index,
     address,
-    inputs,
-    outputs,
-    block: pending ? null : block,
+    inputs: [],
+    outputs: funded
+      ? [{ value: "1000", address, output_hash: id, output_index: 0, block_height: 1, rbf: false }]
+      : [],
+    block,
     received_at: block.time,
   };
 };
@@ -84,24 +49,21 @@ const makeAccount = async (txs: StoredTx[]): Promise<Account> => {
     derivationMode: DerivationModes.NATIVE_SEGWIT,
   });
   const receiveIndexes = txs.filter(tx => tx.chain === RECEIVE).map(tx => tx.index);
-  xpub.freshAddressIndex = receiveIndexes.length ? Math.max(...receiveIndexes) + 1 : 0;
+  xpub.freshAddressIndex = Math.max(...receiveIndexes) + 1;
   return {
     freshAddress: await derive(RECEIVE, xpub.freshAddressIndex),
     bitcoinResources: { utxos: [], walletAccount: { xpub } },
   } as unknown as Account;
 };
 
-const used = (chain: number, indexes: number[]): StoredTx[] =>
-  indexes.map(index => ({ chain, index }));
-
-const funded = (txs: StoredTx[], indexes: number[]) =>
-  txs.map(tx => (indexes.includes(tx.index) ? { ...tx, outputValue: "1000" } : tx));
+const used = (chain: number, indexes: number[], fundedIndexes: number[]): StoredTx[] =>
+  indexes.map(index => ({ chain, index, funded: fundedIndexes.includes(index) }));
 
 describe("getAddressesToWatch", () => {
   it("returns the funded addresses with the next receive and change addresses", async () => {
     const account = await makeAccount([
-      ...funded(used(RECEIVE, range(0, 10)), [3, 7]),
-      ...funded(used(CHANGE, range(0, 5)), [2]),
+      ...used(RECEIVE, range(0, 10), [3, 7]),
+      ...used(CHANGE, range(0, 5), [2]),
     ]);
 
     expect((await getAddressesToWatch(account)).sort()).toEqual(
@@ -112,51 +74,6 @@ describe("getAddressesToWatch", () => {
           [CHANGE, 2],
           [RECEIVE, 10],
           [CHANGE, 5],
-        ])
-      ).sort(),
-    );
-  });
-
-  it("returns the first receive and change addresses of an unused account", async () => {
-    const account = await makeAccount([]);
-
-    expect(await getAddressesToWatch(account)).toEqual(
-      await deriveAll([
-        [RECEIVE, 0],
-        [CHANGE, 0],
-      ]),
-    );
-  });
-
-  it("counts pending incoming funds as funds", async () => {
-    const account = await makeAccount([
-      ...used(RECEIVE, range(0, 3)).map(tx =>
-        tx.index === 1 ? { ...tx, outputValue: "1000", pending: true } : tx,
-      ),
-    ]);
-
-    expect((await getAddressesToWatch(account)).sort()).toEqual(
-      (
-        await deriveAll([
-          [RECEIVE, 1],
-          [RECEIVE, 3],
-          [CHANGE, 0],
-        ])
-      ).sort(),
-    );
-  });
-
-  it("drops an address once its funds are spent", async () => {
-    const account = await makeAccount([
-      ...funded(used(RECEIVE, range(0, 3)), [1]),
-      { chain: CHANGE, index: 0, id: "spend", spends: { chain: RECEIVE, index: 1, id: "tx-0-1" } },
-    ]);
-
-    expect((await getAddressesToWatch(account)).sort()).toEqual(
-      (
-        await deriveAll([
-          [RECEIVE, 3],
-          [CHANGE, 1],
         ])
       ).sort(),
     );

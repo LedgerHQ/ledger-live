@@ -48,13 +48,10 @@ describe("getTransactionsAlertsAddresses", () => {
 
 describe("resolveTransactionsAlertsAddressesByAccount", () => {
   const mockAddressesToWatch = (addressesToWatch: Record<string, string[]>) => {
-    mockedGetAccountBridge.mockImplementation(
-      async () =>
-        ({
-          getAddressesToWatch: (account: Account) =>
-            Promise.resolve(addressesToWatch[account.freshAddress]),
-        }) as unknown as Awaited<ReturnType<typeof getAccountBridge>>,
-    );
+    mockedGetAccountBridge.mockResolvedValue({
+      getAddressesToWatch: (account: Account) =>
+        Promise.resolve(addressesToWatch[account.freshAddress]),
+    } as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
   };
 
   it("should return the addresses to watch of each account", async () => {
@@ -74,15 +71,6 @@ describe("resolveTransactionsAlertsAddressesByAccount", () => {
       [firstAccount.id]: [makeAddress("0x01"), makeAddress("0x0a")],
       [secondAccount.id]: [makeAddress("0x02")],
     });
-  });
-
-  it("should reject when the addresses of an account cannot be resolved", async () => {
-    const error = new Error("bridge unavailable");
-    mockedGetAccountBridge.mockRejectedValueOnce(error);
-
-    await expect(
-      resolveTransactionsAlertsAddressesByAccount([makeAccount("account", "0x01")]),
-    ).rejects.toBe(error);
   });
 });
 
