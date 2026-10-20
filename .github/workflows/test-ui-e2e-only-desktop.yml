@@ -437,6 +437,34 @@ jobs:
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
 
+      - name: Add workflow inputs to Allure environment
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          TRIGGER: ${{ github.event_name }}
+          REF: ${{ inputs.ref || github.ref_name }}
+          BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
+          SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
+          TEAM: ${{ inputs.team || 'all' }}
+          TEST_FILTER: ${{ inputs.test_filter }}
+          INVERT_FILTER: ${{ inputs.invert_filter || false }}
+          SMOKE_TESTS: ${{ inputs.smoke_tests || false }}
+          REPEAT_EACH: ${{ inputs.repeat_each }}
+        run: |
+          node e2e/tooling/allure/add-run-context.mjs e2e/desktop/allure-results \
+            "trigger=$TRIGGER" \
+            "ref=$REF" \
+            "commit=$(git rev-parse HEAD)" \
+            "broadcast=$E2E_BROADCAST_ENABLED" \
+            "firebase_env=$BUILD_TYPE" \
+            "speculos=$SPECULOS_MODE" \
+            "team=$TEAM" \
+            "test_filter=$TEST_FILTER" \
+            "invert_filter=$INVERT_FILTER" \
+            "smoke_tests=$SMOKE_TESTS" \
+            "repeat_each=$REPEAT_EACH"
+
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
