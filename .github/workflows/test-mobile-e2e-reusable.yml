@@ -20,7 +20,7 @@ on:
     # One broadcast nightly per platform: iOS on Wednesday, Android on Friday. Both platforms still
     # run every weekday, only broadcast rotates — a single broadcasting platform per run keeps the
     # shared QAA on-chain accounts free of allowance/nonce races (desktop broadcasts on Monday).
-    # Each platform's device rotates per weekday (see "Resolve per-platform Speculos device").
+    # Each platform's device rotates per weekday: e2e/tooling/nightly-devices/rotation.json.
     # These cron expressions are matched verbatim in the env block below — keep both in sync.
     - cron: "0 0 * * 3"
     - cron: "0 0 * * 5"
@@ -338,6 +338,7 @@ jobs:
             apps/ledger-live-mobile
             e2e/mobile
             e2e/tooling/filter
+            e2e/tooling/nightly-devices
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
             pnpm-workspace.yaml
             tools
@@ -367,32 +368,9 @@ jobs:
         env:
           SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoX' }}
         run: |
-          # Per-platform, per-weekday mapping for scheduled nightly runs (QAA-1193), shared with the
-          # desktop rotation in test-ui-e2e-only-desktop.yml: the three platforms use three different
-          # devices each weekday, and all six devices run every week.
-          # nanoS and nanoSP have no Bluetooth, so they can't pair with an iPhone and stay off iOS.
-          # Wednesday alternates nanoGen5 / flex on Android by ISO week parity, the opposite of desktop.
-          # 10# keeps a zero-padded week such as "08" from being read as octal.
-          if [ $((10#$(date -u +%V) % 2)) -eq 0 ]; then ANDROID_WEDNESDAY_DEVICE=nanoGen5; else ANDROID_WEDNESDAY_DEVICE=flex; fi
-          declare -A IOS_WEEKDAY_DEVICE=(
-            [1]=stax        # Monday     - Stax
-            [2]=nanoGen5    # Tuesday    - NG5
-            [3]=nanoX       # Wednesday  - LNX (iOS broadcast)
-            [4]=nanoGen5    # Thursday   - NG5
-            [5]=flex        # Friday     - Flex
-          )
-          declare -A ANDROID_WEEKDAY_DEVICE=(
-            [1]=nanoX                       # Monday     - LNX
-            [2]=nanoS                       # Tuesday    - LNS
-            [3]=$ANDROID_WEDNESDAY_DEVICE   # Wednesday  - NG5 on even ISO weeks, Flex on odd ones
-            [4]=nanoSP                      # Thursday   - LNSP
-            [5]=stax                        # Friday     - Stax (Android broadcast)
-          )
-
           if [ "$NIGHTLY_RUN" = "true" ]; then
-            DOW=$(date -u +%u)
-            echo "ios_device=${IOS_WEEKDAY_DEVICE[$DOW]:-stax}"           >> $GITHUB_OUTPUT
-            echo "android_device=${ANDROID_WEEKDAY_DEVICE[$DOW]:-nanoX}"  >> $GITHUB_OUTPUT
+            # Per-platform rotation shared with desktop (QAA-1193): e2e/tooling/nightly-devices/rotation.json
+            node e2e/tooling/nightly-devices/resolve.mjs >> "$GITHUB_OUTPUT"
           else
             INPUT_DEVICE="$SPECULOS_DEVICE_INPUT"
             echo "ios_device=$INPUT_DEVICE"     >> $GITHUB_OUTPUT

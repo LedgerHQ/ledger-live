@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "e2e-nightly-devices",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/e2e/tooling/nightly-devices/**/*"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test e2e/tooling/nightly-devices/resolve.test.mjs"
+      }
+    }
+  }
+}
