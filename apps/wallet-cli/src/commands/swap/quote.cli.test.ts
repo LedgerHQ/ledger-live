@@ -176,6 +176,7 @@ describe("quote command — API auth key", () => {
       expect(quote.quoteAuthorizations).toEqual([null]);
       expect(challenges).toBe(0);
       expect(warn).not.toHaveBeenCalled();
+      expect(stderr).toMatch(/No usable OS keychain/);
     } finally {
       useApiAuthKeychain(null);
       warn.mockRestore();
