@@ -49,6 +49,8 @@ export type RentPayment = { asset: SponsoredFeeAsset; amount: bigint };
 export interface SponsoredCoinApi {
   readonly feeOptionId: string;
   readonly providerName: string;
+  /** The provider's terms, which the user accepts by signing the rent payment. */
+  readonly providerTermsUrl: string;
   /** Status error keys the sponsored fee pays for; the Send flow drops them before gating Review. */
   readonly waivesErrorKeys: readonly string[];
   /** Status warning keys the sponsored fee makes moot; the Send flow hides them. */

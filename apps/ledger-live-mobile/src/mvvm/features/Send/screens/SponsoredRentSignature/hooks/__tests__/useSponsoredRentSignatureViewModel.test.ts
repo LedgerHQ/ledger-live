@@ -46,6 +46,7 @@ jest.mock("../../../../context/SponsoredSendContext", () => ({
     state: mockSponsoredState,
     actions: mockActions,
     providerName: "Provider",
+    providerTermsUrl: "https://provider.example/terms",
     approvedFee: 3_200_000n,
   }),
 }));
@@ -122,6 +123,8 @@ describe("useSponsoredRentSignatureViewModel", () => {
     expect(result.current.feeAmountLabel).toMatch(/3\.2.*USDT/);
     expect(result.current.intentExtraProps.strategyLabel).toContain("Provider");
     expect(result.current.intentExtraProps.feeLabel).toMatch(/3\.2.*USDT/);
+    expect(result.current.intentExtraProps.providerName).toBe("Provider");
+    expect(result.current.intentExtraProps.termsUrl).toBe("https://provider.example/terms");
   });
 
   // The executor drops an operation whose intent or device input changes mid-signing.

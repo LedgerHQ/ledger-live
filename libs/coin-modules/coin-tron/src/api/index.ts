@@ -169,6 +169,7 @@ export function createSponsoredSendApi(context: TronContext) {
   return {
     feeOptionId: TRONIFY_FEE_OPTION_ID,
     providerName: TRONIFY_PROVIDER.name,
+    providerTermsUrl: TRONIFY_PROVIDER.termsUrl,
     // The rented energy covers the fee, so validateIntent's NotEnoughGas must not block the send.
     waivesErrorKeys: ["gasLimit"] as const,
     // ...and TronNotEnoughEnergy's burn warning describes the shortfall the rental fills.

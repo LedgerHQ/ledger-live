@@ -10,13 +10,13 @@ export type SponsoredPollingViewModel = Readonly<{
 
 export function useSponsoredPollingViewModel(): SponsoredPollingViewModel {
   const { t } = useTranslation();
-  const { state, providerName } = useSponsoredSend();
+  const { state } = useSponsoredSend();
 
   const elapsed = useSponsoredPollingElapsed(state.phase);
 
   return {
     title: t("newSendFlow.sponsoredPolling.title"),
-    waitingLabel: t("newSendFlow.sponsoredPolling.waiting", { provider: providerName }),
+    waitingLabel: t("newSendFlow.sponsoredPolling.waiting"),
     elapsedLabel: t("newSendFlow.sponsoredPolling.elapsed", { time: elapsed }),
   };
 }

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { fireEvent, render, screen } from "tests/testSetup";
 import {
   useSponsoredRentSignatureViewModel,
   type SponsoredRentSignatureViewModel,
@@ -47,6 +47,9 @@ const viewModel: SponsoredRentSignatureViewModel = {
   strategyLabel: "Energy rental - Provider",
   feeLabel: "Rental fee",
   feeAmountLabel: "1.5 USDT",
+  providerName: "Provider",
+  termsUrl: "https://provider.example/terms",
+  onOpenTerms: jest.fn(),
   request: {
     account: { id: "acc_tron" },
     parentAccount: null,
@@ -102,5 +105,27 @@ describe("SponsoredRentSignatureScreen", () => {
     expect(screen.getByText(craftingLabel)).toBeVisible();
     expect(screen.queryByText(submittingLabel)).toBeNull();
     expect(screen.queryByTestId("device-action")).toBeNull();
+  });
+
+  it("tells the user that signing accepts the provider's terms, and opens them", () => {
+    render(<SponsoredRentSignatureScreen />);
+
+    expect(screen.getByTestId("send-sponsored-rent-signature-terms")).toHaveTextContent(
+      "By signing this transaction, you agree to Provider's Terms and Conditions.",
+    );
+    const link = screen.getByTestId("send-sponsored-rent-signature-terms-link");
+    expect(link).toHaveAttribute("href", "https://provider.example/terms");
+    fireEvent.click(link);
+    expect(viewModel.onOpenTerms).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["without a provider's terms", { termsUrl: null }],
+    ["once signing failed", { signError: new Error("refused") }],
+  ])("shows no terms notice %s", (_label, overrides) => {
+    mockedUseSponsoredRentSignatureViewModel.mockReturnValue({ ...viewModel, ...overrides });
+    render(<SponsoredRentSignatureScreen />);
+
+    expect(screen.queryByTestId("send-sponsored-rent-signature-terms")).toBeNull();
   });
 });

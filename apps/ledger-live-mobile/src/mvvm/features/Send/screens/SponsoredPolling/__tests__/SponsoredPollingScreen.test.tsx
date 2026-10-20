@@ -10,16 +10,16 @@ jest.mock("../hooks/useSponsoredPollingViewModel", () => ({
 describe("SponsoredPollingScreen", () => {
   it("shows what it waits for and for how long", () => {
     jest.mocked(useSponsoredPollingViewModel).mockReturnValue({
-      title: "Waiting for energy delivery",
-      message: "Provider is delivering the rented energy.",
+      title: "Your energy is being delivered",
+      message: "This usually takes up to 30 seconds.",
       elapsedLabel: "Elapsed: 00:05",
     });
 
     render(<SponsoredPollingScreen />);
 
     expect(screen.getByTestId("send-sponsored-polling")).toBeOnTheScreen();
-    expect(screen.getByText("Waiting for energy delivery")).toBeOnTheScreen();
-    expect(screen.getByText("Provider is delivering the rented energy.")).toBeOnTheScreen();
+    expect(screen.getByText("Your energy is being delivered")).toBeOnTheScreen();
+    expect(screen.getByText("This usually takes up to 30 seconds.")).toBeOnTheScreen();
     expect(screen.getByText("Elapsed: 00:05")).toBeOnTheScreen();
   });
 });
