@@ -80,7 +80,7 @@ export function buildCryptoAssetsStore({
     async getTokensSyncHash(currencyId) {
       const { data, error } = await dispatch(api.endpoints.getTokensSyncHash.initiate(currencyId));
       if (error) throw remapRtkQueryError(error);
-      // A successful query always yields the commit hash; guard the type envelope
+      // A successful query always yields the token list hash; guard the type envelope
       // (string | undefined) instead of an unsafe cast so undefined can't escape.
       if (data === undefined) throw new NetworkDown();
       return data;

@@ -193,23 +193,37 @@ describe("cryptoAssetsApi requests", () => {
     expect(request.url).toContain("https://cal.test/v1/tokens");
   });
 
-  it("getTokensSyncHash returns the X-Ledger-Commit header from /v1/currencies", async () => {
-    mockFetch([{ id: "ethereum" }], { "X-Ledger-Commit": "commit-hash" });
+  it("getTokensSyncHash returns the network token list hash from /v1/networks", async () => {
+    mockFetch([{ id: "solana", token_list_hash: "f61ca8f4b4123c59" }], {
+      "X-Ledger-Commit": "commit-hash",
+    });
     const store = makeStore();
 
     const result = await store.dispatch(
-      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"),
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("solana"),
     );
 
-    expect(result.data).toBe("commit-hash");
+    expect(result.data).toBe("f61ca8f4b4123c59");
     // getTokensSyncHash calls fetch with a URL object; stringify before asserting.
-    const url = String(fetchSpy.mock.calls[0][0]);
-    expect(url).toContain("https://cal.test/v1/currencies");
-    expect(url).toContain("id=ethereum");
+    const url = new URL(String(fetchSpy.mock.calls[0][0]));
+    expect(url.origin + url.pathname).toBe("https://cal.test/v1/networks");
+    expect(url.searchParams.get("id")).toBe("solana");
+    expect(url.searchParams.get("output")).toBe("id,token_list_hash");
+  });
+
+  it("getTokensSyncHash returns a fixed hash for a network without tokens", async () => {
+    mockFetch([{ id: "bitcoin" }]);
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("bitcoin"),
+    );
+
+    expect(result.data).toBe("no-tokens");
   });
 
   it("getTokensSyncHash preserves a path prefix in the base URL (Gravitee /cal prefix)", async () => {
-    mockFetch([{ id: "ethereum" }], { "X-Ledger-Commit": "abc123" });
+    mockFetch([{ id: "ethereum", token_list_hash: "abc123" }]);
     const store = configureStore({
       reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
       middleware: gdm =>
@@ -226,11 +240,11 @@ describe("cryptoAssetsApi requests", () => {
     await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
 
     const url = String(fetchSpy.mock.calls[0][0]);
-    expect(url).toContain("https://global.api.prd.ledger.com/cal/v1/currencies");
+    expect(url).toContain("https://global.api.prd.ledger.com/cal/v1/networks");
   });
 
-  it("getTokensSyncHash errors with 404 on an empty currency array", async () => {
-    mockFetch([], { "X-Ledger-Commit": "commit-hash" });
+  it("getTokensSyncHash errors with 404 on an empty network array", async () => {
+    mockFetch([]);
     const store = makeStore();
 
     const result = await store.dispatch(
@@ -238,10 +252,11 @@ describe("cryptoAssetsApi requests", () => {
     );
 
     expect(result.isError).toBe(true);
+    expect(result.error).toMatchObject({ status: 404 });
   });
 
-  it("getTokensSyncHash errors when the X-Ledger-Commit header is missing", async () => {
-    mockFetch([{ id: "ethereum" }]);
+  it("getTokensSyncHash errors on a malformed response", async () => {
+    mockFetch({ id: "ethereum", token_list_hash: "abc123" });
     const store = makeStore();
 
     const result = await store.dispatch(
@@ -249,5 +264,6 @@ describe("cryptoAssetsApi requests", () => {
     );
 
     expect(result.isError).toBe(true);
+    expect(result.error).toMatchObject({ status: "PARSING_ERROR" });
   });
 });

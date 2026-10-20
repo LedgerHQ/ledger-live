@@ -1,6 +1,6 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { calApi, getCalExtra, HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
-import { ApiTokenResponseSchema } from "./schema";
+import { ApiNetworkTokenListHashResponseSchema, ApiTokenResponseSchema } from "./schema";
 import {
   type GetTokensDataParams,
   type PageParam,
@@ -9,12 +9,12 @@ import {
   type TokensDataWithPagination,
 } from "./types";
 import {
-  commitHeaderMissingError,
-  currencyNotFoundError,
   DEFAULT_PAGE_SIZE,
-  fetchCurrencyError,
+  EMPTY_TOKEN_LIST_HASH,
   fetchError,
-  HEADER_X_LEDGER_COMMIT,
+  fetchNetworkError,
+  invalidNetworkResponseError,
+  networkNotFoundError,
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
@@ -67,12 +67,17 @@ export const cryptoAssetsApi = calApi
         providesTags: [...TOKEN_TAGS],
       }),
 
+      /**
+       * The CAL's hash of the token list of one network. It changes only when a token of that
+       * network is added or removed, unlike the `X-Ledger-Commit` header, which changes on any CAL
+       * deployment and would make every account of every network resync from scratch.
+       */
       getTokensSyncHash: build.query<string, string>({
         async queryFn(currencyId, queryApi) {
           const extra = getCalExtra(queryApi);
           try {
-            const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
-            url.searchParams.set("output", "id");
+            const url = new URL(`${extra.calServiceUrl}/v1/networks`);
+            url.searchParams.set("output", "id,token_list_hash");
             url.searchParams.set("limit", "1");
             url.searchParams.set("id", currencyId);
 
@@ -84,22 +89,20 @@ export const cryptoAssetsApi = calApi
             });
 
             if (!response.ok) {
-              return fetchCurrencyError(response.status, response.statusText);
+              return fetchNetworkError(response.status, response.statusText);
             }
 
-            // Check if the response contains data (not an empty array)
-            const responseData = await response.json();
-            if (Array.isArray(responseData) && responseData.length === 0) {
-              return currencyNotFoundError(currencyId);
+            const parsed = ApiNetworkTokenListHashResponseSchema.safeParse(await response.json());
+            if (!parsed.success) {
+              return invalidNetworkResponseError();
             }
 
-            const hash = response.headers.get(HEADER_X_LEDGER_COMMIT);
-
-            if (!hash) {
-              return commitHeaderMissingError();
+            const [network] = parsed.data;
+            if (!network) {
+              return networkNotFoundError(currencyId);
             }
 
-            return { data: hash };
+            return { data: network.token_list_hash ?? EMPTY_TOKEN_LIST_HASH };
           } catch (error) {
             return fetchError(error);
           }
