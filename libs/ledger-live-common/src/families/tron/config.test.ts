@@ -20,10 +20,10 @@ describe("tronConfig", () => {
     LiveConfig.instance.provider = savedProvider;
   });
 
-  it("ships the Tronify provider at the Ledger proxy, without a sourceFlag", () => {
+  it("ships the Tronify provider at the Ledger proxy, with the payee check on and no sourceFlag", () => {
     expect(getCurrencyConfiguration("tron").energyRent).toEqual({
       provider: "tronify",
-      tronify: { url: TRONIFY_PROXY_URL },
+      tronify: { url: TRONIFY_PROXY_URL, enforcePaymentAddresses: true },
     });
   });
 
@@ -34,7 +34,18 @@ describe("tronConfig", () => {
 
     expect(getCurrencyConfiguration("tron").energyRent).toEqual({
       provider: "tronify",
-      tronify: { url: TRONIFY_PROXY_URL, sourceFlag: "ledger-live" },
+      tronify: { url: TRONIFY_PROXY_URL, enforcePaymentAddresses: true, sourceFlag: "ledger-live" },
+    });
+  });
+
+  it("lets the remote config turn the payee check off", () => {
+    LiveConfig.setProvider({
+      getValueByKey: () => ({ energyRent: { tronify: { enforcePaymentAddresses: false } } }),
+    });
+
+    expect(getCurrencyConfiguration("tron").energyRent).toEqual({
+      provider: "tronify",
+      tronify: { url: TRONIFY_PROXY_URL, enforcePaymentAddresses: false },
     });
   });
 });

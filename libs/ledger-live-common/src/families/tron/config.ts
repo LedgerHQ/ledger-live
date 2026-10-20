@@ -18,10 +18,11 @@ export const tronConfig: Record<string, ConfigInfo> = {
         url: getEnv("API_TRONGRID_PROXY"),
       },
       // The sourceFlag and paymentAddresses come from the remote config only: Tronify must confirm
-      // the channel name first, and an array here would merge by index under the remote one.
+      // the channel name first, and an array here would merge by index under the remote one. The
+      // payee check stays on unless the remote config sets enforcePaymentAddresses to false.
       energyRent: {
         provider: "tronify",
-        tronify: { url: "https://tronify.api.live.ledger.com" },
+        tronify: { url: "https://tronify.api.live.ledger.com", enforcePaymentAddresses: true },
       },
     },
   },

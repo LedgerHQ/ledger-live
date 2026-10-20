@@ -25,6 +25,11 @@ export type TronifyProviderConfig = {
    * Remote coin-config only: missing, empty or any invalid entry disables the option.
    */
   paymentAddresses?: string[];
+  /**
+   * Whether the rent payment must go to one of `paymentAddresses`. Optional — on unless set to
+   * `false`, which drops the payee check and with it the need for a list; the cost cap still applies.
+   */
+  enforcePaymentAddresses?: boolean;
   /** Most one rental may cost, in USDT, whatever Tronify quotes. Optional — defaults to 10. */
   maxRentAmount?: number;
   /** How far the order may exceed the fee approved on Review, as a fraction. Optional — defaults to 0.05. */

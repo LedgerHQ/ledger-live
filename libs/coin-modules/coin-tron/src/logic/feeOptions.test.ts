@@ -207,6 +207,24 @@ describe("listFeeOptions", () => {
     ]);
   });
 
+  it("returns [tronify, standard] without payment addresses when the payee check is off", async () => {
+    mockConfig.mockResolvedValue({
+      ...activatedConfig,
+      energyRent: {
+        provider: "tronify",
+        tronify: {
+          ...TRONIFY_SETTINGS,
+          paymentAddresses: undefined,
+          enforcePaymentAddresses: false,
+        },
+      },
+    } as unknown as TronCoinConfig);
+    await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([
+      tronifyOption,
+      standardOption,
+    ]);
+  });
+
   it("returns [standard] when the energy simulation failed (shortfall is a sentinel)", async () => {
     mockEstimateFees.mockResolvedValue(fee(1_000_000n, { required: "1", available: "0" }, false));
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);

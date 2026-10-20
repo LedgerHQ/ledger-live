@@ -498,6 +498,52 @@ describe("energyRent provider switch", () => {
       expect(mockedAddTronRentRecord).not.toHaveBeenCalled();
     });
 
+    const unlistedPayment = () =>
+      decodedTrc20Payment({
+        data: transferData(ONE_USDT, "0".repeat(22) + UNLISTED_RECIPIENT_HEX),
+      });
+
+    it("pays an unlisted address, with no list, when coin-config turns the payee check off", async () => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+      mockedDecodeTransaction.mockResolvedValueOnce(unlistedPayment());
+      const unchecked = tronifyConfig({
+        paymentAddresses: undefined,
+        enforcePaymentAddresses: false,
+      });
+
+      await expect(
+        craftEnergyRentTransaction(mockLogger, unchecked, request),
+      ).resolves.toMatchObject({ orderId: "order-1" });
+    });
+
+    it("still caps the rent cost when coin-config turns the payee check off", async () => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("10.5"));
+      mockedDecodeTransaction.mockResolvedValueOnce(
+        decodedTrc20Payment({
+          data: transferData(10_500_000, "0".repeat(22) + UNLISTED_RECIPIENT_HEX),
+        }),
+      );
+      const unchecked = tronifyConfig({ enforcePaymentAddresses: false });
+
+      await expect(
+        craftEnergyRentTransaction(mockLogger, unchecked, { ...request, maxPayCoinAmt: "11" }),
+      ).rejects.toMatchObject({ name: "TronifyApiError", rule: "cap" });
+    });
+
+    it.each([
+      ["missing", undefined],
+      ["true", true],
+      ["the string false", "false"],
+      ["0", 0],
+    ])("keeps the payee check while the switch is %s", async (_label, enforcePaymentAddresses) => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+      mockedDecodeTransaction.mockResolvedValueOnce(unlistedPayment());
+
+      await expect(
+        craftEnergyRentTransaction(mockLogger, tronifyConfig({ enforcePaymentAddresses }), request),
+      ).rejects.toMatchObject({ name: "TronifyApiError", rule: "payee" });
+    });
+
     it.each([
       ["a missing transaction", { ...orderCosting("1.0"), transaction: {} }],
       [

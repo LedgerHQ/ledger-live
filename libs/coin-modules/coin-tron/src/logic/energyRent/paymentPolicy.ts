@@ -21,10 +21,12 @@ function tronAddressHex(address: unknown): string | null {
   }
 }
 
-/** The addresses a rent payment may go to, as lower-case 41-prefixed hex. Throws unless coin-config
- * lists at least one and every entry is valid, so a bad entry disables the option rather than
- * dropping a payee. */
-export function tronifyPaymentAddresses(config: TronCoinConfig): ReadonlySet<string> {
+/** The addresses a rent payment may go to, as lower-case 41-prefixed hex, or null when coin-config
+ * turns the payee check off. Otherwise throws unless coin-config lists at least one and every entry
+ * is valid, so a bad entry disables the option rather than dropping a payee. */
+export function tronifyPaymentAddresses(config: TronCoinConfig): ReadonlySet<string> | null {
+  // Only an explicit false turns the check off: a missing or malformed flag keeps it.
+  if (config.energyRent?.tronify?.enforcePaymentAddresses === false) return null;
   const listed: unknown = config.energyRent?.tronify?.paymentAddresses;
   const addresses = Array.isArray(listed) ? listed.map(tronAddressHex) : [];
   if (addresses.length === 0 || addresses.includes(null)) {

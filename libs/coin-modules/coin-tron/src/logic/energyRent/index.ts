@@ -243,7 +243,8 @@ function assertPaymentWindow(rawData: Record<string, unknown>): number {
 async function assertSignableTransferMatchesRequest(
   request: EnergyRentRequest,
   order: EnergyRentOrder,
-  limits: { payees: ReadonlySet<string>; cap: BigNumber },
+  // `payees` is null when coin-config turns the payee check off.
+  limits: { payees: ReadonlySet<string> | null; cap: BigNumber },
 ): Promise<number> {
   // The caller may approve any coin code; only a USDT payment can be decoded and bounded here.
   if (String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code) {
@@ -294,7 +295,7 @@ async function assertSignableTransferMatchesRequest(
       "Energy-rent payment data is not a USDT transfer(address,uint256) call",
     );
   }
-  if (!limits.payees.has(transfer.to.toLowerCase())) {
+  if (limits.payees && !limits.payees.has(transfer.to.toLowerCase())) {
     throw rejected("payee", "Energy-rent payment goes to an address Tronify does not list");
   }
 
