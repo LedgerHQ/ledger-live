@@ -35,6 +35,7 @@ jest.mock("@devtools/bindings", () => ({
   }),
   useTrustchainDevToolProps: () => ({ marker: "trustchain-props" }),
   useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
+  useAccountBalanceToolProps: () => ({ marker: "account-balance-props" }),
 }));
 
 jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
@@ -73,6 +74,7 @@ describe("DevToolsScreen", () => {
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
           { id: "device-onboarding", config: { marker: "device-onboarding-props" } },
+          { id: "account-balance", config: { marker: "account-balance-props" } },
         ],
       }),
     );

@@ -3410,6 +3410,18 @@ importers:
         specifier: 'catalog:'
         version: 4.2.2
 
+  devtools/account-balance:
+    devDependencies:
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   devtools/bindings:
     dependencies:
       '@devtools/env':
@@ -3418,9 +3430,24 @@ importers:
       '@devtools/registry':
         specifier: workspace:*
         version: link:../registry
+      '@domain/api-account-data':
+        specifier: workspace:*
+        version: link:../../domain/api/account-data
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../domain/api/card-management
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-balance
+      '@domain/entity-account-data':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-data
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-descriptor
       '@domain/entity-card-asset-mapping':
         specifier: workspace:*
         version: link:../../domain/entity/card-asset-mapping
@@ -4110,6 +4137,9 @@ importers:
 
   devtools/registry:
     dependencies:
+      '@devtools/account-balance':
+        specifier: workspace:*
+        version: link:../account-balance
       '@devtools/cloud-sync':
         specifier: workspace:*
         version: link:../cloud-sync
