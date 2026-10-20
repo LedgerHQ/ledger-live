@@ -48,6 +48,9 @@ type _AgentIntentEnvironmentsExhaustive = AssertTrue<
   AgentIntentEnvironment extends (typeof AGENT_INTENT_ENVIRONMENTS)[number] ? true : false
 >;
 
+export const AGENT_INTENT_KEY_STORES = ["os-keychain", "plaintext-file"] as const;
+export type AgentIntentKeyStore = (typeof AGENT_INTENT_KEY_STORES)[number];
+
 // Ledger Sync (App-16) stream the agent was granted on enrollment — references only, not secret.
 const AgentIntentAccountAccessSchema = z.object({
   mode: z.literal("direct-app16-key-reader"),
@@ -72,7 +75,7 @@ const AgentIntentProfileSchema = z.object({
   // not just any 66/130-char hex string, matching what secp256k1.getPublicKey() actually produces.
   publicKey: z.string().regex(/^0[23][0-9a-f]{64}$|^04[0-9a-f]{128}$/i),
   // Defaulted so profiles enrolled before the plaintext fallback keep parsing.
-  keyStore: z.enum(["os-keychain", "plaintext-file"]).default("os-keychain"),
+  keyStore: z.enum(AGENT_INTENT_KEY_STORES).default("os-keychain"),
   trustchainId: z.string().optional(),
   accountAccess: AgentIntentAccountAccessSchema.optional(),
   // Set while `agent-intent recover` waits for approval; a bad value is dropped, not fatal.

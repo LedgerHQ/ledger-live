@@ -2,7 +2,7 @@ import { mock } from "bun:test";
 import { _setTestKeychainProbe } from "../../../key-ring/keychain-entry";
 
 /**
- * Shared, flag-gated module mocks for the `agent-intent` command unit tests.
+ * Shared, flag-gated module mocks for the agent-intent unit tests.
  *
  * Bun evaluates every test file's top-level code in one collection phase before any test runs, and
  * `mock.module` is process-global, so a plain top-level `mock.module("session-store", ...)` in one of

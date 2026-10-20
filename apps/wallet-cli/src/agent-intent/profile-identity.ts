@@ -35,7 +35,7 @@ export async function loadProfileIdentity(
     // The SDK's message names what's wrong with the key, never the key itself.
     throw new Error(
       `The agent key file of profile "${profileId}" (${agentIntentKeyFilePath(profileId)}) does ` +
-        `not hold a valid agent key (${errMessage(e)}) — enroll a fresh profile here.`,
+        `not hold a valid agent key (${errMessage(e)}) — re-enroll under a new --profile id.`,
       { cause: e },
     );
   }
@@ -57,7 +57,7 @@ async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
     : "";
   assertOsKeychainAvailable(
     `Profile "${profileId}" keeps its agent key in the OS keychain, so it can't be read here. ` +
-      "Enroll a new profile (new --profile id) with --allow-plaintext-key, only after the human " +
+      "Re-enroll under a new --profile id with --allow-plaintext-key, only after the human " +
       `explicitly agrees to store the agent key unencrypted on this machine.${keyFileHint}`,
   );
   let secretKey: string | null;
@@ -77,7 +77,7 @@ async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
   if (!secretKey) {
     throw new Error(
       `No agent key found in the OS keychain for profile "${profileId}". Profiles don't move ` +
-        "between machines or users — enroll a fresh profile here.",
+        "between machines or users — re-enroll under a new --profile id.",
     );
   }
   return secretKey;
@@ -97,7 +97,7 @@ function loadKeyFromFile(profileId: string): string {
   if (!secretKey) {
     throw new Error(
       `No agent key file found for profile "${profileId}" at ${path}. Profiles don't move ` +
-        "between machines or users — enroll a fresh profile here.",
+        "between machines or users — re-enroll under a new --profile id.",
     );
   }
   // stderr only, so JSON output on stdout is unchanged.

@@ -22,7 +22,8 @@ export function _setTestKeychainProbe(find: ((service: string) => unknown) | nul
   findProbeCredentials = find ?? findCredentials;
 }
 
-// todo: probe via findCredentials because @napi-rs/keyring 1.3.0 can't pin the Linux store; pin { linux: { store: "secret-service" } } after upgrading to >= 2.1
+// todo: probe via findCredentials because @napi-rs/keyring 1.3.0 can't pin the Linux store; pin
+// { linux: { store: "secret-service" } } after upgrading to >= 2.1
 // On Linux `new Entry()` silently falls back to the kernel keyring when no Secret Service is
 // reachable, while `findCredentials` talks to Secret Service directly and throws. Not memoized:
 // callers probe right before they read or write.

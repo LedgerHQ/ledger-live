@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../shared/ui";
 import { KeychainUnavailableError } from "../key-ring/keychain-entry";
+import type { AgentIntentKeyStore } from "../session/session-store";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -55,7 +56,7 @@ describe("loadProfileIdentity", () => {
     restorePlatform();
   });
 
-  const profile = (keyStore: "os-keychain" | "plaintext-file") => ({
+  const profile = (keyStore: AgentIntentKeyStore) => ({
     profileId: "bot",
     publicKey: agent.publicKey,
     keyStore,
@@ -112,7 +113,7 @@ describe("loadProfileIdentity", () => {
 
   it("reports a missing key file for a plaintext-file profile", async () => {
     await expect(loadProfileIdentity(profile("plaintext-file"))).rejects.toThrow(
-      /No agent key file found for profile "bot" at .*bot\.key.*enroll a fresh profile here/s,
+      /No agent key file found for profile "bot" at .*bot\.key.*re-enroll under a new --profile id/s,
     );
   });
 

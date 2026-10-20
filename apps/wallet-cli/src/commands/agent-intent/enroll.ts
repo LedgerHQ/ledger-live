@@ -13,7 +13,7 @@ import {
   Session,
   AGENT_INTENT_ENVIRONMENTS,
   withSessionLock,
-  type AgentIntentProfileMeta,
+  type AgentIntentKeyStore,
 } from "../../session/session-store";
 import {
   hasAgentIntentSecretKey,
@@ -41,17 +41,14 @@ import { createCommandOutput } from "../../output";
 import { errMessage } from "../../shared/error-message";
 import { writeStderr } from "../../shared/ui";
 
-type KeyStore = AgentIntentProfileMeta["keyStore"];
-
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
  * right before writing — a concurrent enroll of the same profile id could pass the first check and
- * still lose the race to the second. */
-// Also returns where the agent key will be stored.
+ * still lose the race to the second. Also returns where the agent key will be stored. */
 function checkProfileAndChooseKeyStore(
   session: Session,
   profileId: string,
   allowPlaintextKey: boolean,
-): KeyStore {
+): AgentIntentKeyStore {
   if (session.getAgentIntentProfile(profileId)) {
     throw new Error(
       `Agent Intent profile "${profileId}" already exists. Choose a different --profile id, or ` +
@@ -83,7 +80,7 @@ function checkProfileAndChooseKeyStore(
 
 // The OS keychain always wins; the plaintext file is only a consented fallback. Runs before
 // anything is generated or printed, so the human never approves a link that can't be saved.
-function chooseKeyStore(allowPlaintextKey: boolean): KeyStore {
+function chooseKeyStore(allowPlaintextKey: boolean): AgentIntentKeyStore {
   try {
     assertOsKeychainAvailable(
       "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
@@ -97,7 +94,7 @@ function chooseKeyStore(allowPlaintextKey: boolean): KeyStore {
   }
 }
 
-async function saveSecretKey(keyStore: KeyStore, profileId: string, secretKey: string) {
+async function saveSecretKey(keyStore: AgentIntentKeyStore, profileId: string, secretKey: string) {
   if (keyStore === "plaintext-file") {
     try {
       saveAgentIntentKeyFile(profileId, secretKey);
@@ -249,10 +246,11 @@ export default defineCommand({
                 ? deleteAgentIntentKeyFile(profileId)
                 : deleteAgentIntentSecretKey(profileId);
             if (!rolledBack) {
-              const store = keyStore === "plaintext-file" ? "key file" : "keychain";
+              const [store, item] =
+                keyStore === "plaintext-file" ? ["key file", "file"] : ["keychain", "entry"];
               throw new Error(
-                `${errMessage(e)} Additionally, the ${store} rollback ` +
-                  `for profile "${profileId}" failed — remove that entry manually before retrying, ` +
+                `${errMessage(e)} Additionally, the ${store} rollback for profile ` +
+                  `"${profileId}" failed — remove that ${item} manually before retrying, ` +
                   `or re-enrolling will refuse it as an orphaned duplicate.`,
                 { cause: e },
               );

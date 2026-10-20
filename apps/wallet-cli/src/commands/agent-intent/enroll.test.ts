@@ -389,7 +389,7 @@ describe("agent-intent enroll", () => {
       deleteKeyFileSucceeds = false;
 
       await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toThrow(
-        /disk full.*Additionally, the key file rollback.*failed/s,
+        /disk full.*Additionally, the key file rollback.*failed.*remove that file manually/s,
       );
     });
 
