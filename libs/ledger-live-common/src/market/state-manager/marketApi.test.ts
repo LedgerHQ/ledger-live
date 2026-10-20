@@ -4,12 +4,11 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { createTestStore } from "@tests/test-helpers/testUtils";
-import { getEnv } from "@shared/env";
 import { marketApi } from "./marketApi";
 import { createMockMarketItemResponse } from "../utils/fixtures";
 
 let store: ReturnType<typeof createTestStore>;
-const basePath = new URL(getEnv("LEDGER_COUNTERVALUES_API")).pathname;
+const basePath = "/countervalue";
 const server = setupServer();
 
 beforeAll(() => {
