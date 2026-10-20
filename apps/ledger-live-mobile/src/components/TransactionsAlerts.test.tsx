@@ -192,6 +192,22 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.getRemote().suffixes).toEqual(["0x02"]);
   });
 
+  it("should keep watching an address an account no longer returns", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01"]]));
+
+    act(() => {
+      store.dispatch(replaceAccounts([{ ...account01, freshAddress: "0x03" }]));
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01"], ["0x03"]]));
+    expect(chainwatch.addressDeletes).toHaveLength(0);
+    expect(chainwatch.getRemote().suffixes).toEqual(["0x01", "0x03"]);
+  });
+
   it("should ignore account changes that keep the same desired address set", async () => {
     const chainwatch = installChainwatchHandlers();
     const { store } = render(<TransactionsAlerts />, {
