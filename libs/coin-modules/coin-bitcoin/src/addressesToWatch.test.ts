@@ -15,8 +15,8 @@ const xpubKey =
 const crypto = cryptoFactory("bitcoin");
 const derive = (chain: number, index: number) =>
   crypto.getAddress(DerivationModes.NATIVE_SEGWIT, xpubKey, chain, index);
-const deriveAll = (chain: number, indexes: number[]) =>
-  Promise.all(indexes.map(index => derive(chain, index)));
+const deriveAll = (paths: [chain: number, index: number][]) =>
+  Promise.all(paths.map(([chain, index]) => derive(chain, index)));
 const block = { hash: "block", height: 1, time: "2026-01-01T00:00:00Z" };
 
 type StoredTx = {
@@ -94,59 +94,72 @@ const makeAccount = async (txs: StoredTx[]): Promise<Account> => {
 const used = (chain: number, indexes: number[]): StoredTx[] =>
   indexes.map(index => ({ chain, index }));
 
+const funded = (txs: StoredTx[], indexes: number[]) =>
+  txs.map(tx => (indexes.includes(tx.index) ? { ...tx, outputValue: "1000" } : tx));
+
 describe("getAddressesToWatch", () => {
-  it("returns the funded addresses and the last 20 addresses of each chain with the next unused ones", async () => {
+  it("returns the funded addresses with the next receive and change addresses", async () => {
     const account = await makeAccount([
-      ...used(RECEIVE, range(0, 30)).map(tx =>
-        tx.index === 3 ? { ...tx, outputValue: "1000" } : tx,
-      ),
-      ...used(CHANGE, range(0, 25)),
+      ...funded(used(RECEIVE, range(0, 10)), [3, 7]),
+      ...funded(used(CHANGE, range(0, 5)), [2]),
     ]);
 
-    expect(await getAddressesToWatch(account)).toEqual([
-      await derive(RECEIVE, 3),
-      ...(await deriveAll(RECEIVE, range(10, 31))),
-      ...(await deriveAll(CHANGE, range(5, 26))),
-    ]);
+    expect((await getAddressesToWatch(account)).sort()).toEqual(
+      (
+        await deriveAll([
+          [RECEIVE, 3],
+          [RECEIVE, 7],
+          [CHANGE, 2],
+          [RECEIVE, 10],
+          [CHANGE, 5],
+        ])
+      ).sort(),
+    );
   });
 
-  it("returns every derived address while a chain has fewer than 20", async () => {
-    const account = await makeAccount([...used(RECEIVE, [0, 1]), ...used(CHANGE, [0])]);
-
-    expect(await getAddressesToWatch(account)).toEqual([
-      ...(await deriveAll(RECEIVE, [0, 1, 2])),
-      ...(await deriveAll(CHANGE, [0, 1])),
-    ]);
-  });
-
-  it("returns the fresh receive and the first change address of an unused account", async () => {
+  it("returns the first receive and change addresses of an unused account", async () => {
     const account = await makeAccount([]);
 
-    expect(await getAddressesToWatch(account)).toEqual([
-      await derive(RECEIVE, 0),
-      await derive(CHANGE, 0),
-    ]);
+    expect(await getAddressesToWatch(account)).toEqual(
+      await deriveAll([
+        [RECEIVE, 0],
+        [CHANGE, 0],
+      ]),
+    );
   });
 
   it("counts pending incoming funds as funds", async () => {
     const account = await makeAccount([
-      ...used(RECEIVE, range(0, 30)).map(tx =>
-        tx.index === 2 ? { ...tx, outputValue: "1000", pending: true } : tx,
+      ...used(RECEIVE, range(0, 3)).map(tx =>
+        tx.index === 1 ? { ...tx, outputValue: "1000", pending: true } : tx,
       ),
     ]);
 
-    expect(await getAddressesToWatch(account)).toContain(await derive(RECEIVE, 2));
+    expect((await getAddressesToWatch(account)).sort()).toEqual(
+      (
+        await deriveAll([
+          [RECEIVE, 1],
+          [RECEIVE, 3],
+          [CHANGE, 0],
+        ])
+      ).sort(),
+    );
   });
 
-  it("drops an old address once its funds are spent", async () => {
+  it("drops an address once its funds are spent", async () => {
     const account = await makeAccount([
-      ...used(RECEIVE, range(0, 30)).map(tx =>
-        tx.index === 4 ? { ...tx, outputValue: "1000" } : tx,
-      ),
-      { chain: CHANGE, index: 0, id: "spend", spends: { chain: RECEIVE, index: 4, id: "tx-0-4" } },
+      ...funded(used(RECEIVE, range(0, 3)), [1]),
+      { chain: CHANGE, index: 0, id: "spend", spends: { chain: RECEIVE, index: 1, id: "tx-0-1" } },
     ]);
 
-    expect(await getAddressesToWatch(account)).not.toContain(await derive(RECEIVE, 4));
+    expect((await getAddressesToWatch(account)).sort()).toEqual(
+      (
+        await deriveAll([
+          [RECEIVE, 3],
+          [CHANGE, 1],
+        ])
+      ).sort(),
+    );
   });
 
   it("falls back to the fresh address when the wallet account is not loaded", async () => {
