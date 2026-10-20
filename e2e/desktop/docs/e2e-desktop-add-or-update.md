@@ -57,8 +57,18 @@ static readonly NEWCOIN = new Currency("NewCoin", "TICKER", "currency_id", AppIn
 **Ask user for:** account derivation path (BIP44)
 
 ```typescript
-static readonly NEWCOIN_1 = new Account(Currency.NEWCOIN, "NewCoin 1", 0, "44'/xxx'/0'/0/0");
-static readonly NEWCOIN_2 = new Account(Currency.NEWCOIN, "NewCoin 2", 1, "44'/xxx'/0'/0/1");
+static readonly NEWCOIN_1 = new Account({
+  currency: Currency.NEWCOIN,
+  accountName: "NewCoin 1",
+  index: 0,
+  accountPath: "44'/xxx'/0'/0/0",
+});
+static readonly NEWCOIN_2 = new Account({
+  currency: Currency.NEWCOIN,
+  accountName: "NewCoin 2",
+  index: 1,
+  accountPath: "44'/xxx'/0'/0/1",
+});
 ```
 
 ### Step 5: Add family file (if new family)
