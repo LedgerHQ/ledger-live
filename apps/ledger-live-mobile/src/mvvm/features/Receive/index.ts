@@ -120,7 +120,16 @@ export function useOpenReceiveDrawer({
     ],
   );
 
+  const openReceiveForAccount = useCallback(
+    (account: AccountLike, parentAccount?: Account) => {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.receiveFlow);
+      openReceiveConfirmation(account, parentAccount);
+    },
+    [openReceiveConfirmation],
+  );
+
   return {
     handleOpenReceiveDrawer: handleOnclick,
+    openReceiveForAccount,
   };
 }

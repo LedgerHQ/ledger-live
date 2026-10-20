@@ -4,16 +4,18 @@ import {
   openTransferDrawer,
   closeTransferDrawer,
   transferDrawerStateSelector,
+  type TransferDrawerScope,
 } from "~/reducers/transferDrawer";
 
 interface OpenDrawerParams {
   sourceScreenName: string;
+  scope: TransferDrawerScope;
 }
 
 export const useTransferDrawerController = () => {
   const dispatch = useDispatch();
 
-  const { isOpen, sourceScreenName } = useSelector(transferDrawerStateSelector);
+  const { isOpen, sourceScreenName, scope } = useSelector(transferDrawerStateSelector);
   // Stores a tap that arrived while the drawer was still open/animating,
   // so it can be replayed as soon as isOpen transitions to false.
   const pendingOpenRef = useRef<OpenDrawerParams | null>(null);
@@ -24,11 +26,7 @@ export const useTransferDrawerController = () => {
         pendingOpenRef.current = params;
         dispatch(closeTransferDrawer());
       } else {
-        dispatch(
-          openTransferDrawer({
-            sourceScreenName: params.sourceScreenName,
-          }),
-        );
+        dispatch(openTransferDrawer(params));
       }
     },
     [dispatch, isOpen],
@@ -38,11 +36,7 @@ export const useTransferDrawerController = () => {
     if (!isOpen && pendingOpenRef.current) {
       const pending = pendingOpenRef.current;
       pendingOpenRef.current = null;
-      dispatch(
-        openTransferDrawer({
-          sourceScreenName: pending.sourceScreenName,
-        }),
-      );
+      dispatch(openTransferDrawer(pending));
     }
   }, [isOpen, dispatch]);
 
@@ -57,13 +51,14 @@ export const useTransferDrawerController = () => {
     if (!isOpen && pendingOpenRef.current) {
       const params = pendingOpenRef.current;
       pendingOpenRef.current = null;
-      dispatch(openTransferDrawer({ sourceScreenName: params.sourceScreenName }));
+      dispatch(openTransferDrawer(params));
     }
   }, [isOpen, dispatch]);
 
   return {
     isOpen,
     sourceScreenName,
+    scope,
     openDrawer,
     closeDrawer,
   };

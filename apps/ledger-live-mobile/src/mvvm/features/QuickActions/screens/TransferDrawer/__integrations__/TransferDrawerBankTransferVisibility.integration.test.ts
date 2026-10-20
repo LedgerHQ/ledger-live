@@ -10,6 +10,7 @@ import { State } from "~/reducers/types";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 const USDC_CURRENCY_ID = "ethereum/erc20/usd__coin";
 
@@ -22,7 +23,7 @@ const mockUsdc = {
 } as unknown as TokenCurrency;
 
 const withOpenDrawer =
-  (noahEnabled: boolean, activeCurrencyIds: string[] = []) =>
+  (noahEnabled: boolean, activeCurrencyIds: string[] = [], currency?: CryptoOrTokenCurrency) =>
   (state: State): State => {
     const base = overrideStateWithFunds(state);
     return {
@@ -40,6 +41,7 @@ const withOpenDrawer =
       transferDrawer: {
         isOpen: true,
         sourceScreenName: "Asset Detail",
+        scope: currency ? { type: "asset", currency } : { type: "wallet" },
       },
     };
   };
@@ -58,8 +60,8 @@ describe("TransferDrawer bank_transfer visibility", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("should hide bank_transfer for a non-stablecoin asset when Noah is enabled", async () => {
-    const { result } = renderHook(() => useTransferDrawerViewModel({ currency: mockBitcoin }), {
-      overrideInitialState: withOpenDrawer(true, [USDC_CURRENCY_ID]),
+    const { result } = renderHook(() => useTransferDrawerViewModel(), {
+      overrideInitialState: withOpenDrawer(true, [USDC_CURRENCY_ID], mockBitcoin),
     });
     await waitFor(() => expect(result.current).not.toBeNull());
 
@@ -67,8 +69,8 @@ describe("TransferDrawer bank_transfer visibility", () => {
   });
 
   it("should show bank_transfer for a stablecoin when Noah is enabled and currency is in activeCurrencyIds", async () => {
-    const { result } = renderHook(() => useTransferDrawerViewModel({ currency: mockUsdc }), {
-      overrideInitialState: withOpenDrawer(true, [USDC_CURRENCY_ID]),
+    const { result } = renderHook(() => useTransferDrawerViewModel(), {
+      overrideInitialState: withOpenDrawer(true, [USDC_CURRENCY_ID], mockUsdc),
     });
     await waitFor(() => expect(result.current).not.toBeNull());
 
@@ -76,8 +78,8 @@ describe("TransferDrawer bank_transfer visibility", () => {
   });
 
   it("should hide bank_transfer when Noah flag is disabled regardless of currency", async () => {
-    const { result } = renderHook(() => useTransferDrawerViewModel({ currency: mockUsdc }), {
-      overrideInitialState: withOpenDrawer(false),
+    const { result } = renderHook(() => useTransferDrawerViewModel(), {
+      overrideInitialState: withOpenDrawer(false, [], mockUsdc),
     });
     await waitFor(() => expect(result.current).not.toBeNull());
 
