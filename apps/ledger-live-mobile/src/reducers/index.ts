@@ -54,6 +54,7 @@ import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-car
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
+import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountsSlice } from "@domain/entity-account";
 import { appLockSlice } from "@features/platform-app-lock";
 import type { UnknownAction } from "@reduxjs/toolkit";
@@ -116,6 +117,7 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountBalances: accountBalancesSlice.reducer,
   accountEntries: accountsSlice.reducer,
   appLock: appLockSlice.reducer,
   ...llmRTKApiReducers,
