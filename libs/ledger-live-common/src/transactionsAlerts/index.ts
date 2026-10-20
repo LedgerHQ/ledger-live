@@ -20,7 +20,7 @@ export const deduplicateTransactionsAlertsAddresses = (addresses: TransactionsAl
 
 /**
  * @deprecated Only returns the fresh address of each account, which misses most addresses of UTXO
- * accounts. Use `resolveTransactionsAlertsAddresses`.
+ * accounts. Use `resolveTransactionsAlertsAddressesByAccount`.
  */
 export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
   deduplicateTransactionsAlertsAddresses(
@@ -32,16 +32,43 @@ export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
       })),
   );
 
-export const resolveTransactionsAlertsAddresses = async (accounts: Account[]) => {
-  const addressesByAccount = await Promise.all(
-    accounts.map(async account => {
-      const bridge = await getAccountBridge(account);
-      const addresses = await bridge.getAddressesToWatch(account);
-      return addresses.map(address => ({ currencyId: account.currency.id, address }));
-    }),
+export type TransactionsAlertsAddressesByAccount = Record<string, TransactionsAlertsAddress[]>;
+
+export const resolveTransactionsAlertsAddressesByAccount = async (
+  accounts: Account[],
+): Promise<TransactionsAlertsAddressesByAccount> =>
+  Object.fromEntries(
+    await Promise.all(
+      accounts.map(async account => {
+        const bridge = await getAccountBridge(account);
+        const addresses = await bridge.getAddressesToWatch(account);
+        return [
+          account.id,
+          addresses.map(address => ({ currencyId: account.currency.id, address })),
+        ] as const;
+      }),
+    ),
   );
-  return deduplicateTransactionsAlertsAddresses(addressesByAccount.flat());
-};
+
+/**
+ * Adds the resolved addresses of each account to the ones already watched for it, so an address
+ * stays watched after the account stops returning it (e.g. once emptied by a pending send).
+ * Accounts missing from `resolved` were removed from the wallet: their addresses are dropped.
+ */
+export const mergeTransactionsAlertsAddresses = (
+  watched: TransactionsAlertsAddressesByAccount,
+  resolved: TransactionsAlertsAddressesByAccount,
+): TransactionsAlertsAddressesByAccount =>
+  Object.fromEntries(
+    Object.entries(resolved).map(([accountId, addresses]) => [
+      accountId,
+      deduplicateTransactionsAlertsAddresses([...(watched[accountId] ?? []), ...addresses]),
+    ]),
+  );
+
+export const flattenTransactionsAlertsAddresses = (
+  addressesByAccount: TransactionsAlertsAddressesByAccount,
+) => deduplicateTransactionsAlertsAddresses(Object.values(addressesByAccount).flat());
 
 const formatAddressesByCurrencies = (
   newAddresses: TransactionsAlertsAddress[],

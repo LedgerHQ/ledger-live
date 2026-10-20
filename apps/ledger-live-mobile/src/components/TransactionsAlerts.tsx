@@ -6,9 +6,12 @@ import { useFeature } from "@features/platform-feature-flags";
 import {
   reconcileTransactionsAlertsAddresses,
   deleteUserChainwatchAccounts,
-  resolveTransactionsAlertsAddresses,
+  flattenTransactionsAlertsAddresses,
+  mergeTransactionsAlertsAddresses,
+  resolveTransactionsAlertsAddressesByAccount,
   getTransactionsAlertsAddressKey,
   type TransactionsAlertsAddress,
+  type TransactionsAlertsAddressesByAccount,
 } from "@ledgerhq/live-common/transactionsAlerts/index";
 import type { ChainwatchNetwork } from "@ledgerhq/types-live";
 import { notificationsSelector } from "~/reducers/settings";
@@ -40,9 +43,12 @@ const TransactionsAlerts = () => {
   const isActive = Boolean(
     featureTransactionsAlerts?.enabled && notifications.transactionsAlertsCategory,
   );
-  const [transactionsAlertsAddresses, setTransactionsAlertsAddresses] = useState<
-    TransactionsAlertsAddress[]
-  >([]);
+  const [watchedAddressesByAccount, setWatchedAddressesByAccount] =
+    useState<TransactionsAlertsAddressesByAccount>({});
+  const transactionsAlertsAddresses = useMemo(
+    () => flattenTransactionsAlertsAddresses(watchedAddressesByAccount),
+    [watchedAddressesByAccount],
+  );
   const refActive = useRef(false);
   const refAddresses = useRef<TransactionsAlertsAddress[]>([]);
   const refScheduledOperation = useRef<ScheduledOperation | undefined>(undefined);
@@ -52,9 +58,13 @@ const TransactionsAlerts = () => {
     if (!chainwatchBaseUrl || !isActive) return;
 
     let cancelled = false;
-    resolveTransactionsAlertsAddresses(accountsFilteredBySupportedChains).then(
-      addresses => {
-        if (!cancelled) setTransactionsAlertsAddresses(addresses);
+    resolveTransactionsAlertsAddressesByAccount(accountsFilteredBySupportedChains).then(
+      resolved => {
+        if (!cancelled) {
+          setWatchedAddressesByAccount(watched =>
+            mergeTransactionsAlertsAddresses(watched, resolved),
+          );
+        }
       },
       () => undefined,
     );

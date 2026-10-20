@@ -6,8 +6,10 @@ import ChainwatchAccountManager from "./ChainwatchAccountManager";
 import {
   getTransactionsAlertsAddresses,
   getTransactionsAlertsAddressKey,
+  flattenTransactionsAlertsAddresses,
+  mergeTransactionsAlertsAddresses,
   reconcileTransactionsAlertsAddresses,
-  resolveTransactionsAlertsAddresses,
+  resolveTransactionsAlertsAddressesByAccount,
 } from ".";
 
 jest.mock("./ChainwatchAccountManager");
@@ -44,7 +46,7 @@ describe("getTransactionsAlertsAddresses", () => {
   });
 });
 
-describe("resolveTransactionsAlertsAddresses", () => {
+describe("resolveTransactionsAlertsAddressesByAccount", () => {
   const mockAddressesToWatch = (addressesToWatch: Record<string, string[]>) => {
     mockedGetAccountBridge.mockImplementation(
       async () =>
@@ -59,33 +61,58 @@ describe("resolveTransactionsAlertsAddresses", () => {
       "0x01": ["0x01", "0x0a"],
       "0x02": ["0x02"],
     });
+    const firstAccount = makeAccount("account-1", "0x01");
+    const secondAccount = makeAccount("account-2", "0x02");
 
-    const addresses = await resolveTransactionsAlertsAddresses([
-      makeAccount("account-1", "0x01"),
-      makeAccount("account-2", "0x02"),
+    const addresses = await resolveTransactionsAlertsAddressesByAccount([
+      firstAccount,
+      secondAccount,
     ]);
 
-    expect(addresses).toEqual([makeAddress("0x01"), makeAddress("0x0a"), makeAddress("0x02")]);
-  });
-
-  it("should return an address shared by several accounts once", async () => {
-    mockAddressesToWatch({ "0x01": ["0x01", "0xAB"], "0x02": ["0x02", "0xab"] });
-
-    const addresses = await resolveTransactionsAlertsAddresses([
-      makeAccount("account-1", "0x01"),
-      makeAccount("account-2", "0x02"),
-    ]);
-
-    expect(addresses.map(({ address }) => address.toLowerCase())).toEqual(["0x01", "0xab", "0x02"]);
+    expect(addresses).toEqual({
+      [firstAccount.id]: [makeAddress("0x01"), makeAddress("0x0a")],
+      [secondAccount.id]: [makeAddress("0x02")],
+    });
   });
 
   it("should reject when the addresses of an account cannot be resolved", async () => {
     const error = new Error("bridge unavailable");
     mockedGetAccountBridge.mockRejectedValueOnce(error);
 
-    await expect(resolveTransactionsAlertsAddresses([makeAccount("account", "0x01")])).rejects.toBe(
-      error,
-    );
+    await expect(
+      resolveTransactionsAlertsAddressesByAccount([makeAccount("account", "0x01")]),
+    ).rejects.toBe(error);
+  });
+});
+
+describe("mergeTransactionsAlertsAddresses", () => {
+  it("should keep the addresses an account no longer returns", () => {
+    expect(
+      mergeTransactionsAlertsAddresses(
+        { account: [makeAddress("0x01"), makeAddress("0x02")] },
+        { account: [makeAddress("0x02"), makeAddress("0x03")] },
+      ),
+    ).toEqual({ account: [makeAddress("0x01"), makeAddress("0x02"), makeAddress("0x03")] });
+  });
+
+  it("should drop the addresses of removed accounts", () => {
+    expect(
+      mergeTransactionsAlertsAddresses(
+        { removed: [makeAddress("0x01")], kept: [makeAddress("0x02")] },
+        { kept: [makeAddress("0x02")] },
+      ),
+    ).toEqual({ kept: [makeAddress("0x02")] });
+  });
+});
+
+describe("flattenTransactionsAlertsAddresses", () => {
+  it("should return an address shared by several accounts once", () => {
+    expect(
+      flattenTransactionsAlertsAddresses({
+        first: [makeAddress("0x01"), makeAddress("0xAB")],
+        second: [makeAddress("0x02"), makeAddress("0xab")],
+      }).map(({ address }) => address.toLowerCase()),
+    ).toEqual(["0x01", "0xab", "0x02"]);
   });
 });
 
