@@ -7,7 +7,9 @@ import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/walle
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
-import { useSortAccountsComparator } from "~/actions/general";
+import { useSortByFiatValue } from "@features/platform-market-countervalues";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenAddAccountDrawer } from "LLM/features/Accounts/hooks/useOpenAddAccountDrawer";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
@@ -22,6 +24,13 @@ export type AddressAccountData = Readonly<{
   truncatedAddress: string;
 }>;
 
+const NO_ACCOUNTS: AccountLike[] = [];
+
+const getAccountFiatEntry = (account: AccountLike) => ({
+  currency: getAccountCurrency(account),
+  value: account.balance,
+});
+
 export function useAddressesViewModel(
   currency: AssetDetailCurrencyProps,
   distributionItem: DistributionItem | undefined,
@@ -30,7 +39,12 @@ export function useAddressesViewModel(
   const navigation = useNavigation();
   const walletState = useSelector(walletSelector);
   const allAccounts = useSelector(accountsSelector);
-  const comparator = useSortAccountsComparator();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const sortedByValue = useSortByFiatValue(
+    distributionItem?.accounts ?? NO_ACCOUNTS,
+    getAccountFiatEntry,
+    counterValueCurrency,
+  );
 
   const { handleOpenAddAccountDrawer } = useOpenAddAccountDrawer({
     currency: currency ?? undefined,
@@ -40,10 +54,10 @@ export function useAddressesViewModel(
 
   const mainAccountById = useMemo(() => buildMainAccountByIdMap(allAccounts), [allAccounts]);
 
-  const sortedAccounts = useMemo(() => {
-    if (!distributionItem) return [];
-    return [...distributionItem.accounts].sort(comparator);
-  }, [distributionItem, comparator]);
+  const sortedAccounts = useMemo(
+    () => (distributionItem ? sortedByValue : []),
+    [distributionItem, sortedByValue],
+  );
 
   const accounts: AddressAccountData[] = useMemo(() => {
     if (!currency || !distributionItem) return [];
