@@ -1,4 +1,4 @@
-import { setCoinModuleCallObserver } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+import { setCoinModuleCallObserver } from "@features/platform-coin-observability";
 import { setTransactionObserver } from "@ledgerhq/transaction-observability";
 import { coinModuleCallLogger, transactionBroadcastLogger } from "./logs";
 

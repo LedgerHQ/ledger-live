@@ -4,7 +4,7 @@ import {
   TransactionStage,
   ErrorCategory,
 } from "@ledgerhq/transaction-observability";
-import { setCoinObservabilityConfigReader } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+import { setCoinObservabilityConfigReader } from "@features/platform-coin-observability";
 import {
   __resetDatadogLogsForTesting,
   broadcastLogger,

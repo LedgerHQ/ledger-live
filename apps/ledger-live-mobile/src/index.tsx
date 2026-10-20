@@ -76,7 +76,7 @@ import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 import {
   setCoinObservabilityConfigReader,
   toCoinObservabilityConfig,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+} from "@features/platform-coin-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";

@@ -7,7 +7,7 @@ import {
   createCoinModuleCallTransmitter,
   readCoinObservabilityConfig,
   type CoinModuleCallEvent,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+} from "@features/platform-coin-observability";
 import {
   toDatadogBroadcastLog,
   type LogEvent as TransactionLogEvent,

@@ -11,7 +11,7 @@ import {
   customErrorEventMapper,
   transactionBroadcastLogger,
 } from "./datadog";
-import { setCoinObservabilityConfigReader } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+import { setCoinObservabilityConfigReader } from "@features/platform-coin-observability";
 
 const observabilityOn = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 5 };
 

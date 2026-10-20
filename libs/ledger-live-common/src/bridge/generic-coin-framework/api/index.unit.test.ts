@@ -1,5 +1,5 @@
 import { getCoinModuleApi } from "./index";
-import { setCoinModuleCallObserver } from "./metrics";
+import { setCoinModuleCallObserver } from "@features/platform-coin-observability";
 import { coinModuleLoaders } from "../../../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../../../coin-modules/registry";
 import * as xrpModule from "@ledgerhq/coin-xrp/api";

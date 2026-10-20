@@ -97,7 +97,7 @@ import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 import {
   setCoinObservabilityConfigReader,
   toCoinObservabilityConfig,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+} from "@features/platform-coin-observability";
 import { loadAppConfig } from "~/setup";
 
 const rootNode = document.getElementById("react-root");
