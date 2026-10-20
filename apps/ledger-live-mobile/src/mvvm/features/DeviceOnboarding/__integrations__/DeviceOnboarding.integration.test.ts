@@ -1,4 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import { OnboardingStep } from "@features/platform-device-onboarding";
 import {
   DeviceManagementKitBLETransport,
   activeHidDeviceSessionSubject,
@@ -8,6 +9,7 @@ import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
+import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
 import { createTestDevice, knownStax } from "../testing/testDevice";
 import { useLeaveOnboarding } from "../hooks/useLeaveOnboarding";
 
@@ -330,5 +332,174 @@ async function connectStax(
 
 async function quit(result: { current: ReturnType<typeof useDeviceOnboarding> }) {
   act(() => result.current.send({ type: "QUIT" }));
+  await waitFor(() => expect(result.current.status).toBe("exited"));
+}
+
+describe("scripted device onboarding", () => {
+  it("drives a new device from connection to ready", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+
+    await connectToGenuineCheck(result, device);
+    await finishSetup(result, device);
+
+    expect(result.current.exit).toEqual({
+      reason: "completed",
+      sessionId: device.sessionId,
+      modelId: DeviceModelId.STAX,
+    });
+    expect(device.isWatching(device.sessionId)).toBe(true);
+    expect(device.dmk.sendCommand).toHaveBeenCalledTimes(4);
+    expect(device.dmk.executeDeviceAction).toHaveBeenCalledTimes(2);
+  });
+
+  it("allows a repeated secure-connection prompt once", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.requestSecureConnection());
+    await waitFor(() => expect(result.current.context?.secureConnectionRequested).toBe(true));
+
+    act(() => device.requestSecureConnection());
+    expect(allowedSecureConnections(result)).toHaveLength(0);
+
+    act(() => device.allowSecureConnection());
+    await waitFor(() => expect(result.current.context?.secureConnectionRequested).toBe(false));
+    expect(allowedSecureConnections(result)).toHaveLength(1);
+
+    await finishSetup(result, device);
+    expect(result.current.exit?.reason).toBe("completed");
+  });
+
+  it("retries a failed genuine check and finishes setup", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.failGenuineCheck());
+    await waitFor(() => expect(result.current.state).toBe("checks.genuineFailed"));
+
+    act(() => result.current.send({ type: "RETRY" }));
+    await waitFor(() => expect(result.current.state).toBe("checks.genuineCheck.running"));
+
+    await finishSetup(result, device);
+    expect(result.current.exit?.reason).toBe("completed");
+  });
+
+  it("watches the new session before SESSION_READY and finishes on it", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.unplug());
+    await waitFor(() => expect(result.current.state).toBe("awaitingSession"));
+
+    device.setSession("session-2");
+    device.show();
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
+    expect(canSend(result, "SESSION_READY")).toBe(true);
+
+    answerWelcome(device);
+    device.acceptToggle();
+    act(() => result.current.send({ type: "SESSION_READY" }));
+    await waitFor(() => expect(result.current.state).toBe("checks.genuineCheck.running"));
+
+    await finishSetup(result, device);
+    expect(result.current.exit).toMatchObject({ reason: "completed", sessionId: "session-2" });
+  });
+
+  it("retries a failed firmware check and finishes setup", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.passGenuineCheck());
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheck"));
+
+    act(() => device.failFirmwareCheck());
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheckFailed"));
+
+    act(() => result.current.send({ type: "RETRY" }));
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheck"));
+
+    device.acceptToggle();
+    act(() => device.reportFirmwareUpToDate());
+    await waitFor(() => expect(result.current.state).toBe("deviceSetup.waiting"));
+
+    act(() =>
+      device.answerState({
+        onboardingState: OnboardingStep.Ready,
+        numberOfWords: 24,
+        currentWordIndex: 0,
+        isOnboarded: true,
+      }),
+    );
+    await waitFor(() => expect(result.current.status).toBe("exited"));
+    expect(result.current.exit?.reason).toBe("completed");
+  });
+});
+
+type ScriptedHook = { current: ReturnType<typeof useDeviceOnboarding> };
+
+function renderScripted(device: ReturnType<typeof createScriptedTestDevice>) {
+  return renderHook(
+    () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    {
+      overrideInitialState: withFlagOverrides({
+        deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+      }),
+    },
+  );
+}
+
+function allowedSecureConnections(result: ScriptedHook) {
+  return result.current.log.filter(row => row.event?.type === "SECURE_CONNECTION_ALLOWED");
+}
+
+function answerWelcome(device: ReturnType<typeof createScriptedTestDevice>) {
+  device.answerState({
+    onboardingState: OnboardingStep.WelcomeScreen1,
+    numberOfWords: 24,
+    currentWordIndex: 0,
+  });
+}
+
+async function connectToGenuineCheck(
+  result: ScriptedHook,
+  device: ReturnType<typeof createScriptedTestDevice>,
+) {
+  answerWelcome(device);
+  device.show();
+  act(() => result.current.connect());
+
+  await waitFor(() => expect(result.current.state).toBe("awaitingStart"));
+  expect(device.isWatching(device.sessionId)).toBe(true);
+
+  device.acceptToggle();
+  act(() => result.current.send({ type: "CONTINUE" }));
+  await waitFor(() => expect(result.current.state).toBe("checks.genuineCheck.running"));
+}
+
+async function finishSetup(
+  result: ScriptedHook,
+  device: ReturnType<typeof createScriptedTestDevice>,
+) {
+  act(() => device.passGenuineCheck());
+  await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheck"));
+
+  device.acceptToggle();
+  act(() => device.reportFirmwareUpToDate());
+  await waitFor(() => expect(result.current.state).toBe("deviceSetup.waiting"));
+
+  act(() =>
+    device.answerState({
+      onboardingState: OnboardingStep.Ready,
+      numberOfWords: 24,
+      currentWordIndex: 0,
+      isOnboarded: true,
+    }),
+  );
   await waitFor(() => expect(result.current.status).toBe("exited"));
 }
