@@ -73,10 +73,8 @@ import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakeProgr
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
-import {
-  setCoinObservabilityConfigReader,
-  toCoinObservabilityConfig,
-} from "@features/platform-coin-observability";
+import { setCoinObservabilityConfigReader } from "@features/platform-coin-observability";
+import { coinObservabilityConfigFor } from "./coinObservabilityConfig";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -147,9 +145,14 @@ store.subscribe(
     apiBaseUrl: Config.EARN_API_BASE_URL,
   }),
 );
-setCoinObservabilityConfigReader(() =>
-  toCoinObservabilityConfig(selectFeature(store.getState(), "coinObservability")),
-);
+setCoinObservabilityConfigReader(() => {
+  const state = store.getState();
+  return coinObservabilityConfigFor({
+    bugReportingEnabled: reportErrorsEnabledSelector(state),
+    datadogEnabled: selectFeature(state, "llmDatadog")?.enabled ?? false,
+    coinObservability: selectFeature(state, "coinObservability"),
+  });
+});
 
 const styles = StyleSheet.create({
   root: {
