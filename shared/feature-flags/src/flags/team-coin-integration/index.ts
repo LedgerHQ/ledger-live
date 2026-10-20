@@ -1,4 +1,5 @@
 export * from "./addressPoisoningOperationsFilter";
+export * from "./coinObservability";
 export * from "./concordiumIdAppLinks";
 export * from "./currencyAdi";
 export * from "./currencyAleo";
