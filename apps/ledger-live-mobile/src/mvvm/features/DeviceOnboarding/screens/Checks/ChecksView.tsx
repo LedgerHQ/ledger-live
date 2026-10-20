@@ -59,7 +59,7 @@ function Illustration({ kind }: Readonly<{ kind: ChecksIllustration }>) {
       <Lottie
         key={`${theme}-${kind}`}
         source={illustrationSources[theme][kind]}
-        loop
+        loop={kind !== "success"}
         style={{ width: illustrationSize, height: illustrationSize }}
       />
     </Box>
