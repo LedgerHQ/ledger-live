@@ -455,12 +455,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos]
+        os: [windows]
         shard: [1]
         include:
-          - os: macos
-            runner: '["macOS", "ARM64", "general-pool"]'
-            workers: 6
+          - os: windows
+            runner: '["windows-2022-16cpu-64ram"]'
+            workers: 8
     timeout-minutes: 120
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -509,7 +509,7 @@ jobs:
               ;;
             macOS)
               os_name="$(sw_vers -productName) $(sw_vers -productVersion)"
-              hw="$(sysctl -n hw.ncpu) CPU, $(($(sysctl -n hw.memsize) / 1073741824)) GB RAM"
+              hw="$(/usr/sbin/sysctl -n hw.ncpu) CPU, $(($(/usr/sbin/sysctl -n hw.memsize) / 1073741824)) GB RAM"
               ;;
             *)
               os_name=$(uname -sr)
@@ -612,10 +612,11 @@ jobs:
         shell: bash
         run: |
           sample() {
+            set +e +o pipefail
             while true; do
-              load=$(sysctl -n vm.loadavg | awk '{print $2}')
+              load=$(/usr/sbin/sysctl -n vm.loadavg | awk '{print $2}')
               free=$(memory_pressure -Q | awk -F': ' '/percentage/ {print $2}')
-              swap=$(sysctl -n vm.swapusage | awk '{print $6}')
+              swap=$(/usr/sbin/sysctl -n vm.swapusage | awk '{print $6}')
               echo "$(date +%T) load=$load free=$free swap=$swap"
               sleep 30
             done
@@ -683,7 +684,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos]
+        os: [windows]
     env:
       ALLURE_RESULTS: "allure-results"
     steps:
