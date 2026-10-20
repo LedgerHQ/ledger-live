@@ -1,5 +1,6 @@
 export * from "./hooks/countervaluesHooks";
 export * from "./hooks/useGetCounterValueIdsPolling";
+export * from "./hooks/useSortByFiatValue";
 export * from "./hooks/useUsdToFiatRate";
 export * from "./state/middleware";
 export * from "./state/reducer";
