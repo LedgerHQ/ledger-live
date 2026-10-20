@@ -47,6 +47,8 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredSelected: boolean;
   sponsoredFeeOptionId: string;
   providerName: string;
+  /** The provider's terms the rent payment's signer accepts; null without a provider. */
+  providerTermsUrl: string | null;
   waivesErrorKeys: readonly string[];
   waivesWarningKeys: readonly string[];
   selectSponsored: () => void;
@@ -183,6 +185,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   }, [sponsoredSelectionStale, selectStandard]);
 
   const providerName = seam?.providerName ?? "";
+  const providerTermsUrl = seam?.providerTermsUrl ?? null;
   const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_KEYS;
   const waivesWarningKeys = seam?.waivesWarningKeys ?? NO_WAIVED_KEYS;
 
@@ -195,6 +198,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       ...feeAmounts,
       sponsoredFeeOptionId,
       providerName,
+      providerTermsUrl,
       waivesErrorKeys,
       waivesWarningKeys,
       available,
@@ -212,6 +216,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       feeAmounts,
       sponsoredFeeOptionId,
       providerName,
+      providerTermsUrl,
       waivesErrorKeys,
       waivesWarningKeys,
       available,

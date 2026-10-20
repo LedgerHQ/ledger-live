@@ -210,6 +210,7 @@ function makeSeam(payer: Account): SponsoredCoinApi {
   return {
     feeOptionId: SPONSORED_FEE_OPTION_ID,
     providerName: "Tronify",
+    providerTermsUrl: "https://tronify.example/terms",
     waivesErrorKeys: [],
     waivesWarningKeys: [],
     reservationDedupKey: jest.fn().mockReturnValue("1.5"),

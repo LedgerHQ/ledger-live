@@ -7,6 +7,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSponsoredRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRentPayment";
 import { useRawTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import logger from "~/renderer/logger";
+import { openURL } from "~/renderer/linking";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
@@ -33,6 +34,10 @@ export type SponsoredRentSignatureViewModel = Readonly<{
   strategyLabel: string;
   feeLabel: string;
   feeAmountLabel: string | null;
+  providerName: string;
+  /** Signing the rent payment accepts these terms; null hides the notice. */
+  termsUrl: string | null;
+  onOpenTerms: () => void;
   request: SponsoredRentSignatureRequest | null;
   action: ReturnType<typeof useRawTransactionAction>;
   onResult: (result: SponsoredRentSignatureResult) => void;
@@ -47,7 +52,7 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
   const { t } = useTranslation();
   const { state: sendFlowState } = useSendFlowData();
   const { close } = useSendFlowActions();
-  const { state, actions, providerName, quote } = useSponsoredSend();
+  const { state, actions, providerName, providerTermsUrl, quote } = useSponsoredSend();
 
   const locale = useSelector(localeSelector);
   const { isCrafting, feeAmountLabel, submitSignature } = useSponsoredRentPayment({
@@ -95,6 +100,10 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
     setSignError(null);
   }, []);
 
+  const onOpenTerms = useCallback(() => {
+    if (providerTermsUrl) openURL(providerTermsUrl);
+  }, [providerTermsUrl]);
+
   return {
     isCrafting,
     craftingLabel: t("newSendFlow.sponsoredRentSignature.crafting"),
@@ -102,6 +111,9 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
     strategyLabel: t("newSendFlow.sponsoredRentSignature.strategy", { provider: providerName }),
     feeLabel: t("newSendFlow.sponsoredRentSignature.feeLabel"),
     feeAmountLabel,
+    providerName,
+    termsUrl: providerTermsUrl,
+    onOpenTerms,
     request,
     action,
     onResult,
