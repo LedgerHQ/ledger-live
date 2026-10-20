@@ -6,6 +6,7 @@ import type { Account } from "@ledgerhq/types-live";
 import {
   getDurationBucket,
   getEnableFailureReason,
+  markFirstSyncFailed,
   markPrivateBalanceEnabled,
   useZcashFirstSyncTracking,
   ZcashFirstSyncTracking,
@@ -133,7 +134,7 @@ describe("useZcashFirstSyncTracking", () => {
     );
   });
 
-  it("reports a failed manual sync as a failure, not a later retry as a success", () => {
+  it("reports a failed sync as a failure, not a later retry as a success", () => {
     markPrivateBalanceEnabled("a6");
     mount([zcashAccount("a6", { syncState: "running", lastSyncError: null })]);
     mount([zcashAccount("a6", { syncState: "stopped", lastSyncError: "Error: engine down" })]);
@@ -144,6 +145,26 @@ describe("useZcashFirstSyncTracking", () => {
       "zcash_private_balance_first_sync_failed",
       expect.objectContaining({ reason: "sync_error" }),
     );
+  });
+
+  it("reports a failed manual sync once, which the account state shows as a user stop", () => {
+    markPrivateBalanceEnabled("a7", Date.now() - 10 * MIN);
+    mount([zcashAccount("a7", { syncState: "running", lastSyncError: null })]);
+    markFirstSyncFailed("a7");
+    mount([zcashAccount("a7", { syncState: "stopped", lastSyncError: null })]);
+    mount([zcashAccount("a7", { syncState: "complete" })]);
+
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+    expect(mockedTrack).toHaveBeenCalledWith("zcash_private_balance_first_sync_failed", {
+      currency: "zcash",
+      durationBucket: "5m_30m",
+      reason: "sync_error",
+    });
+  });
+
+  it("ignores a failed manual sync of an account whose first sync is not awaited", () => {
+    markFirstSyncFailed("a8");
+    expect(mockedTrack).not.toHaveBeenCalled();
   });
 
   it("never tracks an account that was not marked", () => {

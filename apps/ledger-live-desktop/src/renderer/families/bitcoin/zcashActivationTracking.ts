@@ -69,6 +69,25 @@ export function markPrivateBalanceEnabled(accountId: string, now = Date.now()) {
   pendingFirstSync.set(accountId, now);
 }
 
+function reportFirstSyncFailed(accountId: string, enabledAt: number, now: number) {
+  track(ZCASH_PRIVATE_BALANCE_FIRST_SYNC_FAILED, {
+    currency: "zcash",
+    durationBucket: getDurationBucket(now - enabledAt),
+    reason: "sync_error",
+  });
+  pendingFirstSync.delete(accountId);
+}
+
+/**
+ * Reports a failed first private sync that the account state does not show: a sync
+ * started by hand stops without `lastSyncError`, like a user stop, so that the wallet
+ * sync does not retry it on its own.
+ */
+export function markFirstSyncFailed(accountId: string, now = Date.now()) {
+  const enabledAt = pendingFirstSync.get(accountId);
+  if (enabledAt !== undefined) reportFirstSyncFailed(accountId, enabledAt, now);
+}
+
 /**
  * Reports how the first private sync of an account enabled in this session ended.
  * A user stop is neither a success nor a failure, so it keeps waiting.
@@ -86,17 +105,14 @@ export function useZcashFirstSyncTracking() {
         continue;
       }
       const { syncState, lastSyncError } = account.privateInfo ?? {};
-      const durationBucket = getDurationBucket(now - enabledAt);
       if (syncState === "complete") {
-        track(ZCASH_PRIVATE_BALANCE_FIRST_SYNC_COMPLETED, { currency: "zcash", durationBucket });
-        pendingFirstSync.delete(accountId);
-      } else if (syncState === "stopped" && lastSyncError) {
-        track(ZCASH_PRIVATE_BALANCE_FIRST_SYNC_FAILED, {
+        track(ZCASH_PRIVATE_BALANCE_FIRST_SYNC_COMPLETED, {
           currency: "zcash",
-          durationBucket,
-          reason: "sync_error",
+          durationBucket: getDurationBucket(now - enabledAt),
         });
         pendingFirstSync.delete(accountId);
+      } else if (syncState === "stopped" && lastSyncError) {
+        reportFirstSyncFailed(accountId, enabledAt, now);
       }
     }
   }, [accounts]);

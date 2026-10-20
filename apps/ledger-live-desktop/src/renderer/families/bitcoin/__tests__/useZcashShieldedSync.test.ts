@@ -9,6 +9,7 @@ import { act, renderHook, waitFor } from "tests/testSetup";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { upsertShieldedSubscription } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { syncStateUpdater } from "../ZCashExportKeyFlowModal/sync";
+import { markFirstSyncFailed } from "../zcashActivationTracking";
 import { useZcashShieldedSync } from "../useZcashShieldedSync";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
@@ -17,7 +18,11 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 jest.mock("../ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
+jest.mock("../zcashActivationTracking", () => ({
+  markFirstSyncFailed: jest.fn(),
+}));
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
+const mockedMarkFirstSyncFailed = jest.mocked(markFirstSyncFailed);
 const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
 const baseAccount = createFixtureAccount();
@@ -113,7 +118,7 @@ describe("useZcashShieldedSync", () => {
     });
   });
 
-  it("records the error when the sync fails, so the stop is not taken for a user stop", async () => {
+  it("stops without a sync error when the sync fails, and reports the failure", async () => {
     const account = buildAccount();
     mockedGetAccountBridge.mockReturnValue({
       sync: jest.fn(
@@ -135,9 +140,10 @@ describe("useZcashShieldedSync", () => {
     await waitFor(() => {
       expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
         expect.objectContaining({ id: account.id }),
-        { syncState: "stopped", progress: 0, lastSyncError: "Error: engine down" },
+        { syncState: "stopped", progress: 0 },
       );
     });
+    expect(mockedMarkFirstSyncFailed).toHaveBeenCalledWith(account.id);
   });
 
   it("is a no-op when a sync is already in flight for the account", () => {
