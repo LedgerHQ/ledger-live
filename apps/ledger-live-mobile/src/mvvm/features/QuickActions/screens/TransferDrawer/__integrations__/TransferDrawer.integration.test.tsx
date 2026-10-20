@@ -498,12 +498,12 @@ describe("TransferDrawer account scope", () => {
       );
     });
 
-    it("lists no asset when only one can be sent", async () => {
+    it("doesn't render the picker when only one asset can be sent", async () => {
       const { user } = renderDrawer(withUsdc(0, 5));
 
       await user.press(await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.transferDrawer.send));
 
-      expect(within(screen.getByTestId(pickerList)).queryByText(usdcToken.name)).toBeNull();
+      expect(screen.queryByTestId(pickerList)).toBeNull();
       expect(mockOpenSendFlowForAccount).toHaveBeenCalledTimes(1);
     });
   });

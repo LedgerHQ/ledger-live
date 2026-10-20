@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import { act, renderHook } from "@tests/test-renderer";
 import { useOpenSwap } from "../index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -225,6 +226,35 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
 
       expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
       expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("openSwapForAccount", () => {
+    test("keeps an empty native account as the destination", () => {
+      const emptyAccount = {
+        ...createBitcoinAccount("empty-native"),
+        balance: new BigNumber(0),
+        spendableBalance: new BigNumber(0),
+        operations: [],
+        operationsCount: 0,
+      };
+      const { result } = renderHook(() =>
+        useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+      );
+
+      act(() => result.current.openSwapForAccount(emptyAccount));
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        NavigatorName.Main,
+        {
+          screen: NavigatorName.Swap,
+          params: {
+            screen: ScreenName.SwapTab,
+            params: expect.objectContaining({ defaultAccount: emptyAccount }),
+          },
+        },
+        { pop: true },
+      );
     });
   });
 });

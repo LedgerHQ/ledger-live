@@ -13,6 +13,7 @@ import { updateAccount } from "~/actions/accounts";
 import { SYNC_SETTLE_GUARD_MS } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
 import AccountScreen from "../AccountScreen";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../testIds";
+import type { Account } from "@ledgerhq/types-live";
 
 const mockSetSyncBehavior = jest.fn();
 const mockSyncState = {
@@ -33,6 +34,14 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => {
     useAccountSyncState: () => useSyncExternalStore(subscribe, () => mockSyncState.current),
   };
 });
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+  useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+    accounts.map(() => ({ isAccountEmpty: () => false })),
+  ),
+}));
 
 function setSyncState(next: SyncState) {
   act(() => {

@@ -9,7 +9,7 @@ export function AccountDetailLayout({
   transactions,
 }: AccountDetailLayoutProps) {
   return (
-    <Box lx={{ flexDirection: "column", gap: "s32" }} testID="account-detail-layout">
+    <Box lx={{ flexDirection: "column", gap: "s24" }} testID="account-detail-layout">
       {hero}
       {customPlace}
       {assets}

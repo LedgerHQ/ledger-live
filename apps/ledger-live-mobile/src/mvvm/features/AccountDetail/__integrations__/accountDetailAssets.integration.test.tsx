@@ -63,10 +63,10 @@ function renderAccount(
 }
 
 describe("AccountDetail assets", () => {
-  it("lists the coin and its tokens with their balances", () => {
+  it("lists the coin and its tokens with their balances", async () => {
     renderAccount(ethAccount);
 
-    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    const section = await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
     expect(within(section).getByText("Assets")).toBeVisible();
     expect(within(section).getByTestId("assetItem-Ethereum")).toBeVisible();
     expect(within(section).getByText("1 ETH")).toBeVisible();

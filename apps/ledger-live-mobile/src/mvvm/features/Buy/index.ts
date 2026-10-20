@@ -46,12 +46,17 @@ export function useOpenBuySell({
   }, [resolvedCurrencyIds, flattenedAccounts, shallowAccounts]);
 
   const navigateToBuySell = useCallback(
-    (mode: "buy" | "sell", account?: AccountLike, parentAccount?: Account) => {
+    (
+      mode: "buy" | "sell",
+      account?: AccountLike,
+      parentAccount?: Account,
+      defaultCurrency: CryptoOrTokenCurrency | undefined = currency,
+    ) => {
       const defaultAccountId = account?.id;
       const parentId = isTokenAccount(account)
         ? (parentAccount?.id ?? account.parentId)
         : undefined;
-      const defaultCurrencyId = account ? getAccountCurrency(account).id : currency?.id;
+      const defaultCurrencyId = account ? getAccountCurrency(account).id : defaultCurrency?.id;
 
       navigation.navigate(NavigatorName.Exchange, {
         screen: mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
@@ -116,5 +121,11 @@ export function useOpenBuySell({
     ],
   );
 
-  return { handleOpenBuySell };
+  const openBuySellForCurrency = useCallback(
+    (mode: "buy" | "sell", selectedCurrency: CryptoOrTokenCurrency) =>
+      navigateToBuySell(mode, undefined, undefined, selectedCurrency),
+    [navigateToBuySell],
+  );
+
+  return { handleOpenBuySell, openBuySellForAccount: navigateToBuySell, openBuySellForCurrency };
 }
