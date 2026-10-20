@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import { Currency } from "@domain/entity-currency";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";

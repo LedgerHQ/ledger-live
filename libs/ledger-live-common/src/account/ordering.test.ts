@@ -9,7 +9,7 @@ import {
 } from "./ordering";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import type { AccountNamesState } from "@domain/entity-account-name";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 import { accountRawToAccountUserData } from "./serialization";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 

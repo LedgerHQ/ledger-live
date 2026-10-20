@@ -1,6 +1,6 @@
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import { resolveWalletApiSpendableBalance } from "@ledgerhq/live-common/wallet-api/converters";

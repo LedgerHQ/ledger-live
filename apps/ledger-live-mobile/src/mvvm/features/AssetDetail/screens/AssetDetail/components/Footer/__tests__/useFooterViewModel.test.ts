@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useTradeAvailability, type TradeAvailability } from "@ledgerhq/asset-detail";
 import type { Account } from "@ledgerhq/types-live";

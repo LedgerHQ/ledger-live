@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto/legacy";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";

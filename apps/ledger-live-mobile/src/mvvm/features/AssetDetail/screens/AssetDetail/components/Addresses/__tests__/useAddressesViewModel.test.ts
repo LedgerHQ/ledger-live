@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account, DistributionItem } from "@ledgerhq/types-live";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import {

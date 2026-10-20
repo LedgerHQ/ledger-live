@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getAccountTuplesForCurrency } from "../../utils/getAccountTuplesForCurrency";
 import type { Account } from "@ledgerhq/types-live";

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getTokensWithFunds, getTokensWithFundsMap } from "./getTokensWithFunds";
 
 const balance = (hasFunds: boolean) => ({ gt: () => hasFunds });

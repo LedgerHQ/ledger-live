@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Route, Routes, useLocation } from "react-router";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";

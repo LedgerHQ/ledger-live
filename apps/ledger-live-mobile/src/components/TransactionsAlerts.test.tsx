@@ -1,7 +1,7 @@
 import React from "react";
 import { UserId } from "@domain/entity-client-identity";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account, ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
 import { setOverride } from "@shared/feature-flags";
 import { server, http, HttpResponse } from "@tests/server";

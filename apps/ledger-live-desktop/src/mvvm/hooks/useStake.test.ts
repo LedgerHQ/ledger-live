@@ -10,7 +10,7 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getAccountUrl } from "~/renderer/utils";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",

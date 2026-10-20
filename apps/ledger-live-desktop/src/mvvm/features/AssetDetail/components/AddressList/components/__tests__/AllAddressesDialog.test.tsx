@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor, within } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { AllAddressesDialog } from "../AllAddressesDialog";
 
 const btc = getCryptoCurrencyById("bitcoin");

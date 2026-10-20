@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useState, useCallback } from "react";
 import useAnalytics from "LLM/hooks/useAnalytics";

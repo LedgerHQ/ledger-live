@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { Linking } from "react-native";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { act, renderHook } from "@tests/test-renderer";
 import { urls } from "~/utils/urls";
 import useAddressTypeTooltipViewModel from "./useAddressTypeTooltipViewModel";

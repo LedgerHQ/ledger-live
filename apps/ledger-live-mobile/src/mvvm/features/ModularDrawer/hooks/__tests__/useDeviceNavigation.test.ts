@@ -10,7 +10,7 @@ import { State } from "~/reducers/types";
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { resolveWalletApiSpendableBalance } from "@ledgerhq/live-common/wallet-api/converters";
 import aleoExtensions from "@ledgerhq/live-common/families/aleo/bridgeExtensions";

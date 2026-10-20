@@ -1,4 +1,5 @@
-import { listCryptoCurrencies, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto/legacy";
 import type { ContactsConfigResolver } from "../contactDeviceIntentsPort";
 import { isContactDeviceCurrencySupported } from "../device/resolveContactDeviceContext";
 

@@ -1,4 +1,5 @@
-import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { isContactDeviceCurrencySupported } from "../device/resolveContactDeviceContext";

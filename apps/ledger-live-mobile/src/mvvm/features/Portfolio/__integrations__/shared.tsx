@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { PortfolioScreen as Portfolio } from "../screens/Portfolio";
 import ReadOnlyPortfolio from "../screens/ReadOnly";

@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
+import { accountsSlice } from "@domain/entity-account";
+import { AccountIdSchema } from "@domain/entity-account/legacy";
 import reducers from "~/reducers";
 import { addOneAccount, deleteAccount, replaceAccounts } from "~/actions/accounts";
 import { connectAccounts } from "./account-data-setup";

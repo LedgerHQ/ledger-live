@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { FIAT_CURRENCIES_BY_TICKER } from "@domain/entity-currency-fiat";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 

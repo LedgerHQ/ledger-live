@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { buildAccountAssetItems } from "../buildAccountAssetItems";
 

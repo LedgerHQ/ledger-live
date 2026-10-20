@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockContactWithAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { render, screen } from "@tests/test-renderer";

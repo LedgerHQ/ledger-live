@@ -8,7 +8,7 @@ import { discreetModeSelector } from "~/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 

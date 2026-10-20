@@ -1,5 +1,5 @@
 import { computeAccountAlias } from "@domain/entity-account-alias";
-import { parseAnyAccountId } from "@domain/entity-account";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
 
 /**
  * React Router decodes URL parameters, but account IDs in the Redux store are encoded.
