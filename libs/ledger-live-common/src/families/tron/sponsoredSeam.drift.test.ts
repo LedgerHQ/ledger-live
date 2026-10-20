@@ -7,6 +7,7 @@ import type { SponsoredCoinApi } from "../../bridge/generic-coin-framework/spons
 const SEAM_MEMBERS: Record<keyof SponsoredCoinApi, true> = {
   feeOptionId: true,
   providerName: true,
+  providerTermsUrl: true,
   waivesErrorKeys: true,
   waivesWarningKeys: true,
   reservationDedupKey: true,
