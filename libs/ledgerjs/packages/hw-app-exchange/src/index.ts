@@ -24,7 +24,23 @@ export {
   decodeSellPayload,
   decodeFundPayload,
 };
+export { swapPayloadFormatOf } from "./Exchange";
 export { findSwapPayloadSpecViolation } from "./SwapUtils";
 export { SwapPayloadFieldExceedsLimit } from "./errors";
+export { checkSwapPayload } from "./SwapPayloadChecker";
+export type {
+  DecodedSwapPayload,
+  SwapPayloadCheckInput,
+  SwapPayloadCheckReport,
+  SwapPayloadIssue,
+  SwapPayloadIssueCode,
+} from "./SwapPayloadChecker";
+export { checkSellPayload } from "./SellPayloadChecker";
+export type {
+  DecodedSellPayload,
+  SellPayloadCheckInput,
+  SellPayloadCheckReport,
+} from "./SellPayloadChecker";
+export type { SwapNgPartnerPublicKey } from "./SwapSignature";
 
 export default Exchange;

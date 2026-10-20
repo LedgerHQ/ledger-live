@@ -1,8 +1,9 @@
 import { ledger_trade } from "./generate-protocol";
-import { isHexadecimal } from "./shared-utils";
+import { base64UrlDecode, isHexadecimal } from "./shared-utils";
 import { SwapPayloadFieldExceedsLimit } from "./errors";
 
-type SwapProtobufPayload = {
+/** @ignore internal */
+export type SwapProtobufPayload = {
   payinAddress: string;
   payinExtraId?: string;
   refundAddress: string;
@@ -40,21 +41,29 @@ export type SwapPayload = {
 export const decodePayloadProtobuf = (payload: string): Promise<SwapPayload> =>
   decodeSwapPayload(payload);
 
+/** @ignore internal */
+export function decodeNewTransactionResponseBytes(bytes: Uint8Array): SwapProtobufPayload {
+  // `decode` throws on malformed wire bytes, which is the validation we want here.
+  // (protobufjs `verify` only checks a plain message object, not an encoded buffer.)
+  return ledger_trade.NewTransactionResponse.decode(bytes) as unknown as SwapProtobufPayload;
+}
+
 function decodeNewTransactionResponse(payload: string): SwapProtobufPayload {
   // Swap NG payloads are base64url and can reach us in JWS form with a leading "."
   // separator; normalize both so we decode exactly the bytes the device receives.
-  // (React Native's Buffer has no "base64url" encoding, hence the manual mapping.)
   const normalized = payload.startsWith(".") ? payload.slice(1) : payload;
   const buffer = isHexadecimal(normalized)
     ? Buffer.from(normalized, "hex")
-    : Buffer.from(normalized.replace(/-/g, "+").replace(/_/g, "/"), "base64");
-  // `decode` throws on malformed wire bytes, which is the validation we want here.
-  // (protobufjs `verify` only checks a plain message object, not an encoded buffer.)
-  return ledger_trade.NewTransactionResponse.decode(buffer) as unknown as SwapProtobufPayload;
+    : base64UrlDecode(normalized);
+  return decodeNewTransactionResponseBytes(buffer);
 }
 
 export async function decodeSwapPayload(payload: string): Promise<SwapPayload> {
-  const decodePayload = decodeNewTransactionResponse(payload);
+  return toSwapPayload(decodeNewTransactionResponse(payload));
+}
+
+/** @ignore internal */
+export function toSwapPayload(decodePayload: SwapProtobufPayload): SwapPayload {
   const {
     amountToWallet: amountToWalletBuffer,
     amountToProvider: amountToProviderBuffer,
@@ -75,12 +84,11 @@ export async function decodeSwapPayload(payload: string): Promise<SwapPayload> {
   return { ...decodePayload, amountToWallet, amountToProvider, deviceTransactionIdNg };
 }
 
-type ProtoFieldKind = "string" | "bytes";
-
-type NewTransactionResponseFieldLimit = {
+type ProtoFieldLimit = {
   key: keyof SwapProtobufPayload;
+  fieldNumber: number;
   protoName: string;
-  kind: ProtoFieldKind;
+  kind: "string" | "bytes";
   maxSize: number;
 };
 
@@ -91,27 +99,71 @@ type NewTransactionResponseFieldLimit = {
  *
  * @ignore internal lookup table, consumers should use `findSwapPayloadSpecViolation`.
  */
-const NEW_TRANSACTION_RESPONSE_FIELD_LIMITS: NewTransactionResponseFieldLimit[] = [
-  { key: "payinAddress", protoName: "payin_address", kind: "string", maxSize: 151 },
-  { key: "payinExtraId", protoName: "payin_extra_id", kind: "string", maxSize: 20 },
-  { key: "refundAddress", protoName: "refund_address", kind: "string", maxSize: 151 },
-  { key: "refundExtraId", protoName: "refund_extra_id", kind: "string", maxSize: 20 },
-  { key: "payoutAddress", protoName: "payout_address", kind: "string", maxSize: 151 },
-  { key: "payoutExtraId", protoName: "payout_extra_id", kind: "string", maxSize: 20 },
-  { key: "currencyFrom", protoName: "currency_from", kind: "string", maxSize: 10 },
-  { key: "currencyTo", protoName: "currency_to", kind: "string", maxSize: 10 },
-  { key: "amountToProvider", protoName: "amount_to_provider", kind: "bytes", maxSize: 16 },
-  { key: "amountToWallet", protoName: "amount_to_wallet", kind: "bytes", maxSize: 16 },
-  { key: "deviceTransactionId", protoName: "device_transaction_id", kind: "string", maxSize: 11 },
+export const NEW_TRANSACTION_RESPONSE_FIELD_LIMITS: ProtoFieldLimit[] = [
+  { key: "payinAddress", fieldNumber: 1, protoName: "payin_address", kind: "string", maxSize: 151 },
+  { key: "payinExtraId", fieldNumber: 2, protoName: "payin_extra_id", kind: "string", maxSize: 20 },
+  {
+    key: "refundAddress",
+    fieldNumber: 3,
+    protoName: "refund_address",
+    kind: "string",
+    maxSize: 151,
+  },
+  {
+    key: "refundExtraId",
+    fieldNumber: 4,
+    protoName: "refund_extra_id",
+    kind: "string",
+    maxSize: 20,
+  },
+  {
+    key: "payoutAddress",
+    fieldNumber: 5,
+    protoName: "payout_address",
+    kind: "string",
+    maxSize: 151,
+  },
+  {
+    key: "payoutExtraId",
+    fieldNumber: 6,
+    protoName: "payout_extra_id",
+    kind: "string",
+    maxSize: 20,
+  },
+  { key: "currencyFrom", fieldNumber: 7, protoName: "currency_from", kind: "string", maxSize: 10 },
+  { key: "currencyTo", fieldNumber: 8, protoName: "currency_to", kind: "string", maxSize: 10 },
+  {
+    key: "amountToProvider",
+    fieldNumber: 9,
+    protoName: "amount_to_provider",
+    kind: "bytes",
+    maxSize: 16,
+  },
+  {
+    key: "amountToWallet",
+    fieldNumber: 10,
+    protoName: "amount_to_wallet",
+    kind: "bytes",
+    maxSize: 16,
+  },
+  {
+    key: "deviceTransactionId",
+    fieldNumber: 11,
+    protoName: "device_transaction_id",
+    kind: "string",
+    maxSize: 11,
+  },
   {
     key: "deviceTransactionIdNg",
+    fieldNumber: 12,
     protoName: "device_transaction_id_ng",
     kind: "bytes",
     maxSize: 32,
   },
 ];
 
-function measureBytes(value: unknown): number {
+/** @ignore internal */
+export function measureBytes(value: unknown): number {
   if (typeof value === "string") return Buffer.byteLength(value, "utf8");
   if (value instanceof Uint8Array) return value.length;
   return 0;
@@ -142,14 +194,24 @@ export function findSwapPayloadSpecViolation(
     return undefined;
   }
 
+  const [violation] = findLimitViolations(decoded);
+  return violation
+    ? new SwapPayloadFieldExceedsLimit(violation.field, violation.limit, violation.actual)
+    : undefined;
+}
+
+/** @ignore internal */
+export type FieldLimitViolation = { field: string; limit: number; actual: number };
+
+function findLimitViolations(decoded: SwapProtobufPayload): FieldLimitViolation[] {
+  const violations: FieldLimitViolation[] = [];
   for (const { key, protoName, kind, maxSize } of NEW_TRANSACTION_RESPONSE_FIELD_LIMITS) {
     const actualBytes = measureBytes(decoded[key]);
     const maxBytes = kind === "string" ? maxSize - 1 : maxSize;
 
     if (actualBytes > maxBytes) {
-      return new SwapPayloadFieldExceedsLimit(protoName, maxBytes, actualBytes);
+      violations.push({ field: protoName, limit: maxBytes, actual: actualBytes });
     }
   }
-
-  return undefined;
+  return violations;
 }

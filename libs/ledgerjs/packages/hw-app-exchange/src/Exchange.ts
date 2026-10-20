@@ -86,12 +86,20 @@ function computedFormatToEncodedFormat(format: PayloadSignatureComputedFormat | 
 }
 
 /**
+ * Payload format a partner uses, from its provider config `version`: undefined or 1 is a legacy
+ * partner, any other version uses the NG (Next Gen) APDU commands.
+ */
+export function swapPayloadFormatOf(partnerVersion?: number): "ng" | "legacy" {
+  return partnerVersion === undefined || partnerVersion === 1 ? "legacy" : "ng";
+}
+
+/**
  * Adapt ExchangeTypes following partner info.
  * For "legacy" partner, we don't change the provided type.
  * For new one, we call the new APDU commands (Ng, Next Gen).
  */
 function resolveTransactionType(type: ExchangeTypes, partnerVersion?: number): ExchangeTypes {
-  if (partnerVersion === undefined || partnerVersion === 1) {
+  if (swapPayloadFormatOf(partnerVersion) === "legacy") {
     return type;
   }
 
