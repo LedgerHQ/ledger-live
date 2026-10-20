@@ -51,7 +51,8 @@ describe("resolveTransactionsAlertsAddressesByAccount", () => {
     mockedGetAccountBridge.mockImplementation(
       async () =>
         ({
-          getAddressesToWatch: async (account: Account) => addressesToWatch[account.freshAddress],
+          getAddressesToWatch: (account: Account) =>
+            Promise.resolve(addressesToWatch[account.freshAddress]),
         }) as unknown as Awaited<ReturnType<typeof getAccountBridge>>,
     );
   };
