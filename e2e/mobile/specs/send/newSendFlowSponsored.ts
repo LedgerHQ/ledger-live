@@ -24,9 +24,8 @@ import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 import { beforeAllTokenFunction } from "@e2e/specs/send/newSendFlow";
 
 const FEATURE_FLAGS = { ...FF_NEW_SEND_FLOW_ENABLED, gasSponsorship: { enabled: true } };
-
-// Broadcasts reach the fake TronGrid, which answers them and never forwards them.
-allowBroadcastToFakeNodes();
+const NOT_ENOUGH_USDT =
+  "You don't have enough USDT to cover the amount and the Tronify energy rental fee.";
 
 // The device shows the rent in full; the app rounds it the way it rounds every fee.
 const appFee = (usdt: string) =>
@@ -66,9 +65,11 @@ function sponsoredSendSuite(
   setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
+  // Broadcasts reach the fake TronGrid, which answers them and never forwards them.
+  allowBroadcastToFakeNodes();
 
   const label = transaction.accountToDebit.currency.testLabel;
-  let fake: FakeTronify;
+  let fake: FakeTronify | undefined;
 
   describeIfDeviceShowsTronify(`Send - new flow - fee paid in USDT with Tronify - ${suite}`, () => {
     beforeAll(async () => {
@@ -102,7 +103,10 @@ function sponsoredSendSuite(
       );
     });
 
-    it(`[${label}] - ${test}`, () => body(fake));
+    it(`[${label}] - ${test}`, () => {
+      if (!fake) throw new Error("The fake Tronify did not start");
+      return body(fake);
+    });
   });
 }
 
@@ -116,6 +120,15 @@ async function reachAmountStep(transaction: TransactionType) {
     transaction.memoTag,
   );
   await app.newSend.setAmountNewFlow(transaction.amount);
+}
+
+/** TX-A: the scenario's first order pays the first payee. */
+async function signRentPayment(fake: FakeTronify) {
+  await app.newSend.waitForRentSignature();
+  await expectRentOrderedFromFake(fake);
+  await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, TRONIFY_E2E_PAYEES[0]);
+  await app.speculos.resetSpeculosEvents();
+  await app.newSend.expectSponsoredPolling();
 }
 
 export function runNewSendFlowSponsoredTest(
@@ -145,13 +158,7 @@ export function runNewSendFlowSponsoredTest(
       await app.newSend.confirmFeePayment();
       await app.newSend.expectSponsoredFeeSelected();
       await app.newSend.tapReviewNewFlow();
-
-      // TX-A: the scenario's first order pays the first payee.
-      await app.newSend.waitForRentSignature();
-      await expectRentOrderedFromFake(fake);
-      await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, TRONIFY_E2E_PAYEES[0]);
-      await app.speculos.resetSpeculosEvents();
-      await app.newSend.waitForSponsoredPolling();
+      await signRentPayment(fake);
 
       // TX-C: the user's own transfer, once the rented energy has landed.
       await app.newSend.waitForSignature();
@@ -184,14 +191,9 @@ export function runNewSendFlowSponsoredInsufficientUsdtTest(
     },
     async () => {
       await reachAmountStep(transaction);
+      await app.newSend.payFeeWith(TRONIFY_OPTION_ID);
 
-      await app.newSend.openFeePayment();
-      await app.newSend.selectFeePaymentOption(TRONIFY_OPTION_ID);
-      await app.newSend.confirmFeePayment();
-
-      await app.newSend.expectSponsoredFeeError(
-        "You don't have enough USDT to cover the amount and the Tronify energy rental fee.",
-      );
+      await app.newSend.expectSponsoredFeeError(NOT_ENOUGH_USDT);
       await app.newSend.expectReviewDisabled();
     },
   );
@@ -213,17 +215,10 @@ export function runNewSendFlowSponsoredDeliveryTimeoutTest(
     },
     async fake => {
       await reachAmountStep(transaction);
-
-      await app.newSend.openFeePayment();
-      await app.newSend.selectFeePaymentOption(TRONIFY_OPTION_ID);
-      await app.newSend.confirmFeePayment();
+      await app.newSend.payFeeWith(TRONIFY_OPTION_ID);
       await app.newSend.expectSponsoredFeeSelected();
       await app.newSend.tapReviewNewFlow();
-
-      await app.newSend.waitForRentSignature();
-      await expectRentOrderedFromFake(fake);
-      await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, TRONIFY_E2E_PAYEES[0]);
-      await app.newSend.waitForSponsoredPolling();
+      await signRentPayment(fake);
 
       await app.newSend.expectSponsoredFailure("Energy was not delivered.");
       await app.newSend.expectRetryLocked();
@@ -248,17 +243,14 @@ export function runNewSendFlowSponsoredPriceRoseTest(
     },
     async () => {
       await reachAmountStep(transaction);
-
-      await app.newSend.openFeePayment();
-      await app.newSend.selectFeePaymentOption(TRONIFY_OPTION_ID);
-      await app.newSend.confirmFeePayment();
+      await app.newSend.payFeeWith(TRONIFY_OPTION_ID);
       await app.newSend.expectSponsoredFeeSelected();
       await app.newSend.tapReviewNewFlow();
 
       await app.newSend.expectSponsoredFailure(
         `The energy rental price went up to ${appFee(FAKE_TRONIFY_RENT.raised)}.`,
       );
-      await app.newSend.expectRetryOffered("Accept new price");
+      await app.newSend.expectRetryOffered("Accept new price", NOT_ENOUGH_USDT);
       await app.newSend.cancelSponsoredFailure();
     },
   );

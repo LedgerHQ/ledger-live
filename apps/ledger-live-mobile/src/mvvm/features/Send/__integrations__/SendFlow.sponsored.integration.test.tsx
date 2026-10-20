@@ -18,6 +18,7 @@ import {
   recordPendingRent,
   resetPendingRentsForTests,
 } from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { act, renderWithReactQuery, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { Account, Operation, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
@@ -585,10 +586,14 @@ describe("Sponsored send flow integration tests", () => {
     expect(screen.queryByTestId("send-sponsored-fee-nudge")).not.toBeOnTheScreen();
     expect(screen.queryByTestId("send-fee-payment-entry")).not.toBeOnTheScreen();
 
+    const prepareTransaction = jest.spyOn(await getAccountBridge(account), "prepareTransaction");
     await deliverEnergy();
 
     expect(await screen.findByTestId("send-sponsored-fee-nudge")).toBeOnTheScreen();
     expect(screen.queryByTestId("send-sponsored-rent-arriving")).not.toBeOnTheScreen();
+    // The landed energy lowers the standard fee, so the bridge estimates it again.
+    expect(prepareTransaction).toHaveBeenCalled();
+    prepareTransaction.mockRestore();
   });
 
   it("should send with the standard fee while the sponsored fee isn't picked", async () => {

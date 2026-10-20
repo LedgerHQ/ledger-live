@@ -25,11 +25,11 @@ export default class NewSendFlowPage {
   memoTypeSelectId = "send-memo-type-select";
   amountModeToggleId = "amount-mode-toggle";
   amountContinueEnabledButtonId = "enabled-amount-continue-button";
-  amountContinueDisabledButtonId = "disabled-amount-continue-button";
   signaturePromptId = "send-signature-prompt";
-  successConfirmationId = "send-confirmation-success";
   successViewTransactionId = "send-confirmation-success-view-transaction";
 
+  private readonly amountContinueDisabledButtonId = "disabled-amount-continue-button";
+  private readonly successConfirmationId = "send-confirmation-success";
   private readonly sponsoredFeeNudgeId = "send-sponsored-fee-nudge";
   private readonly sponsoredFeeValueId = "send-sponsored-fee-value";
   private readonly sponsoredFeeErrorId = "send-sponsored-fee-error";
@@ -44,8 +44,13 @@ export default class NewSendFlowPage {
   private readonly sponsoredFailureCancelId = "send-sponsored-failure-cancel";
   private readonly amountInputId = "amount-input";
   private readonly retryLockedNotice = () => getElementById(this.sponsoredFailureRetryBlockedId);
-  private readonly notEnoughUsdtCopy = () =>
-    getElementByText(containing("You don't have enough USDT"));
+  private readonly textContaining = (text: string) => getElementByText(containing(text));
+  private readonly feePaymentOptionShowing = (optionId: string, text: string) =>
+    getElementByIdWithDescendantTexts(this.feePaymentOptionId(optionId), containing(text));
+  private readonly sponsoredFeeErrorShowing = (text: string) =>
+    getElementByIdAndText(this.sponsoredFeeErrorId, containing(text));
+  private readonly sponsoredFailureRetryShowing = (text: string) =>
+    getElementByIdWithDescendantTexts(this.sponsoredFailureRetryId, containing(text));
 
   contactAddressPickerId = "pay-contact-address-picker";
   recipientCardAvatarId = "send-recipient-card-avatar";
@@ -156,9 +161,7 @@ export default class NewSendFlowPage {
    */
   @Step("Verify fee payment option {{{0}}} costs {{{1}}}")
   async expectFeePaymentOptionFee(optionId: string, fee: string) {
-    await waitForElement(
-      getElementByIdWithDescendantTexts(this.feePaymentOptionId(optionId), containing(fee)),
-    );
+    await waitForElement(this.feePaymentOptionShowing(optionId, fee));
   }
 
   @Step("Select fee payment option: {{{0}}}")
@@ -172,6 +175,13 @@ export default class NewSendFlowPage {
     jestExpect(await waitForElementNotVisible(this.feePaymentConfirmId)).toBe(true);
   }
 
+  @Step("Pay the network fee with fee payment option: {{{0}}}")
+  async payFeeWith(optionId: string) {
+    await this.openFeePayment();
+    await this.selectFeePaymentOption(optionId);
+    await this.confirmFeePayment();
+  }
+
   @Step("Verify the network fee is paid with the sponsored option")
   async expectSponsoredFeeSelected() {
     await waitForElementById(this.sponsoredFeeValueId);
@@ -179,7 +189,7 @@ export default class NewSendFlowPage {
 
   @Step("Verify sponsored fee error: {{{0}}}")
   async expectSponsoredFeeError(message: string) {
-    await waitForElement(getElementByIdAndText(this.sponsoredFeeErrorId, containing(message)));
+    await waitForElement(this.sponsoredFeeErrorShowing(message));
   }
 
   @Step("Wait for the rent payment signature screen")
@@ -188,7 +198,7 @@ export default class NewSendFlowPage {
   }
 
   @Step("Verify the energy delivery wait is shown")
-  async waitForSponsoredPolling() {
+  async expectSponsoredPolling() {
     await waitForElementById(this.sponsoredPollingId);
   }
 
@@ -196,7 +206,7 @@ export default class NewSendFlowPage {
   @Step("Verify the sponsored send failed: {{{0}}}")
   async expectSponsoredFailure(message: string) {
     await waitForElementById(this.sponsoredFailureId);
-    await waitForElement(getElementByText(containing(message)));
+    await waitForElement(this.textContaining(message));
   }
 
   /**
@@ -210,13 +220,11 @@ export default class NewSendFlowPage {
     await waitForElement(this.retryLockedNotice());
   }
 
-  @Step("Verify Retry is offered as: {{{0}}}")
-  async expectRetryOffered(label: string) {
-    await waitForElement(
-      getElementByIdWithDescendantTexts(this.sponsoredFailureRetryId, containing(label)),
-    );
+  @Step("Verify Retry is offered as {{{0}}}, without the message: {{{1}}}")
+  async expectRetryOffered(label: string, absentMessage: string) {
+    await waitForElement(this.sponsoredFailureRetryShowing(label));
     await detoxExpect(this.retryLockedNotice()).not.toExist();
-    await detoxExpect(this.notEnoughUsdtCopy()).not.toExist();
+    await detoxExpect(this.textContaining(absentMessage)).not.toExist();
   }
 
   @Step("Cancel the failed sponsored send")

@@ -71,7 +71,8 @@ describe("useAmountScreen", () => {
     expect(track).not.toHaveBeenCalled();
   });
 
-  it("should report the screen's focus to the sponsored send when it gains and loses focus", () => {
+  // The mocked useFocusEffect runs on mount and cleans up on unmount, as a focus and a blur would.
+  it("should report the screen's focus to the sponsored send when it mounts and unmounts", () => {
     mockReviewReady = true;
     const { unmount } = renderHook(() => useAmountScreen());
     expect(mockSetAmountFocused).toHaveBeenLastCalledWith(true);

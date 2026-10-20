@@ -10,7 +10,7 @@ import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { isPaytabSpec } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
-import { FAKE_TRONIFY_PORT } from "@ledgerhq/live-e2e-shared/tronify/index";
+import { FAKE_TRONIFY_PORT } from "@ledgerhq/live-e2e-shared/tronify/constants";
 import {
   CARD_SESSION_BOOTSTRAP_ENV,
   resolveCardSessionBootstrap,
@@ -94,8 +94,8 @@ export function fakeTronifyPort(): number {
 let broadcastsReachOnlyFakeNodes = false;
 
 /**
- * Lets the app launched for this spec file broadcast: call it at the top of a spec whose
- * transactions only reach a local fake node, which answers them without forwarding them.
+ * Lets the app launched for this spec file broadcast: call it while registering the tests of a spec
+ * whose transactions only reach a local fake node, which answers them without forwarding them.
  */
 export function allowBroadcastToFakeNodes() {
   broadcastsReachOnlyFakeNodes = true;
