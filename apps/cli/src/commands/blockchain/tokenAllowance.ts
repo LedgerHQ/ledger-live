@@ -3,7 +3,10 @@ import { from } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
-import { findCryptoCurrencyByKeyword, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  findCryptoCurrencyByKeyword,
+  getCryptoCurrencyById,
+} from "@domain/entity-currency-crypto/legacy";
 import {
   encodeAccountId,
   decodeAccountId,

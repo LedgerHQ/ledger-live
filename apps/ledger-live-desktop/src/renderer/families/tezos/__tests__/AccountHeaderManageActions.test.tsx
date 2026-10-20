@@ -1,7 +1,7 @@
 import { act } from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { renderHook, withFlagOverrides } from "tests/testSetup";

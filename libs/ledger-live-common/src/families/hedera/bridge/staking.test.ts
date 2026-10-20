@@ -4,7 +4,7 @@ import { rpcClient } from "@ledgerhq/coin-hedera/network/rpc";
 import { getMockedConfig } from "@ledgerhq/coin-hedera/test/fixtures/config.fixture";
 import type { HederaMemo, HederaTxData } from "@ledgerhq/coin-hedera/types";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";

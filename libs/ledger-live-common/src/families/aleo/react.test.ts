@@ -10,7 +10,7 @@ import { Subject } from "rxjs";
 import BigNumber from "bignumber.js";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Transaction } from "../../generated/types";
 import type { AleoAccount, AleoUnspentRecord } from "./types";

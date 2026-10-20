@@ -1,6 +1,6 @@
 import React from "react";
 import { act, render, screen } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Operation } from "@ledgerhq/types-live";
 import { track } from "@shared/analytics";

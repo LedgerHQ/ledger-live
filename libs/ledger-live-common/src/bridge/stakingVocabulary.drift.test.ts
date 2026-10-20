@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { GENERIC_TRANSACTION_MODE } from "./generic-coin-framework/types";
 import { MODE_TRAITS, RESOURCE_STAKING_OPERATION_TYPES } from "@ledgerhq/coin-tron/logic/modes";
 import {

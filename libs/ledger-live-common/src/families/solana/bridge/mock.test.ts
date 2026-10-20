@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { VersionedTransaction } from "@solana/web3.js";
 import { firstValueFrom, filter } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import mockBridge from "./mock";
 import type { Transaction } from "../types";
 

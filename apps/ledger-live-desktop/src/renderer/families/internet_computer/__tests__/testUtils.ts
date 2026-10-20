@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE } from "@ledgerhq/live-common/families/internet_computer/consts";
 import {
   NeuronsData,

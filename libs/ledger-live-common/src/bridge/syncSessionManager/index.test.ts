@@ -1,5 +1,5 @@
 import { createSyncSessionManager } from ".";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { genAccount } from "../../mock/account";
 
 jest.mock("@ledgerhq/logs", () => ({

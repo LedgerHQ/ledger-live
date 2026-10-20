@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { Flex } from "@ledgerhq/react-ui/index";

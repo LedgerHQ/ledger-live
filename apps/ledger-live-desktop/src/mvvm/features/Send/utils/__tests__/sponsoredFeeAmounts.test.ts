@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { TRON_USDT_FEE_ASSET } from "../../screens/Recipient/__integrations__/__fixtures__/accounts";

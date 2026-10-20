@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { TFunction } from "i18next";

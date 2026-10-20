@@ -3,7 +3,7 @@ import { Linking } from "react-native";
 import { render, screen, userEvent } from "@tests/test-renderer";
 import StepPair from "../components/StepPair";
 import { PairStatus } from "../hooks/usePairing";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 const mockStartPairing = jest.fn();
 const mockUsePairing = jest.fn();

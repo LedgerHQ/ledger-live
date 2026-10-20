@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react-native";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";

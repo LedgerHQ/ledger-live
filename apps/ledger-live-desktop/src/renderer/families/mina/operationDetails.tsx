@@ -8,7 +8,7 @@ import {
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { MinaOperation } from "@ledgerhq/live-common/families/mina/types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import BigNumber from "bignumber.js";
 
 type OperationDetailsExtraProps = {

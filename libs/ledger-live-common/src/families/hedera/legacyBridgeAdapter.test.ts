@@ -2,7 +2,7 @@
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/coin-hedera/constants";
 import { getMockedHTSTokenCurrency } from "@ledgerhq/coin-hedera/test/fixtures/currency.fixture";
 import type { HederaAccount, Transaction } from "@ledgerhq/coin-hedera/types/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

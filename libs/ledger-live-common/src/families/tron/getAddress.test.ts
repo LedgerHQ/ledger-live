@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { TronSigner } from "./types";
 import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import resolver from "./getAddress";

@@ -4,11 +4,8 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { SponsoredFeeAsset } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  CryptoCurrencyIdSchema,
-  type CryptoCurrency,
-  getCryptoCurrencyById,
-} from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 
 type CurrencyOverrides = Partial<Omit<CryptoCurrency, "id">> & { id?: string };
 

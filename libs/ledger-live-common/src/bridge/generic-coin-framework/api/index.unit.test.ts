@@ -9,7 +9,7 @@ import * as evmModule from "@ledgerhq/coin-evm/api";
 import * as cardanoModule from "@ledgerhq/coin-cardano/api/index";
 import * as config from "../../../config";
 import * as networkApi from "./network/network-coin-service";
-import * as cryptoAssets from "@domain/entity-currency-crypto";
+import * as cryptoAssets from "@domain/entity-currency-crypto/legacy";
 
 const mockApiInstance = { mock: "api" };
 
@@ -25,7 +25,7 @@ const expectResolvedModule = (result: any) => {
   expect(result.supports("getStakes")).toBe(false);
 };
 
-jest.mock("@domain/entity-currency-crypto", () => ({
+jest.mock("@domain/entity-currency-crypto/legacy", () => ({
   findCryptoCurrencyById: jest.fn(),
 }));
 

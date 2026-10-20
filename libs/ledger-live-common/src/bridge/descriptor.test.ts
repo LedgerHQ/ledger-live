@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { BigNumber } from "bignumber.js";
 import { getDescriptor, getSendDescriptor } from "./descriptor/registry";

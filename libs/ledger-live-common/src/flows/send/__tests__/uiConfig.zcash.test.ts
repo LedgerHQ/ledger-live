@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { getSendUiConfig } from "../uiConfig";
 import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "../../../bridge/zcashRouting";
 

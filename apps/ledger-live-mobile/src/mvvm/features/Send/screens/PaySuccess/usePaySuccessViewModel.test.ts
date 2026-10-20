@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { parseAnyAccountId } from "@domain/entity-account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { parseAnyAccountId } from "@domain/entity-account/legacy";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto/legacy";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
