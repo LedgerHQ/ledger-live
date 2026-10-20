@@ -57,21 +57,23 @@ function accountsExportSelector(state: State) {
 
 // Throttled save for crypto assets cache (save at most once per 5 seconds)
 // Only write when content actually changed to avoid redundant app.json resaves
+// No leading save: a changed sync hash lands one action before its stale tokens are evicted
 let lastPersistedCryptoAssets: PersistedCAL | null = null;
-const saveCryptoAssetsCache = throttle((state: State) => {
-  try {
-    const persistedData = extractPersistedCALFromState(state);
-    if (
-      persistedData.tokens.length > 0 &&
-      !persistedCALContentEqual(lastPersistedCryptoAssets, persistedData)
-    ) {
-      setKey("app", "cryptoAssets", persistedData);
-      lastPersistedCryptoAssets = persistedData;
+const saveCryptoAssetsCache = throttle(
+  (state: State) => {
+    try {
+      const persistedData = extractPersistedCALFromState(state);
+      if (!persistedCALContentEqual(lastPersistedCryptoAssets, persistedData)) {
+        setKey("app", "cryptoAssets", persistedData);
+        lastPersistedCryptoAssets = persistedData;
+      }
+    } catch (e) {
+      console.warn("crypto assets cache write failed:", e);
     }
-  } catch (e) {
-    console.warn("crypto assets cache write failed:", e);
-  }
-}, 5000);
+  },
+  5000,
+  { leading: false },
+);
 
 const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (!isActionWithType(action)) {

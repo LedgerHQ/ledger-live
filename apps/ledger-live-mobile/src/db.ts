@@ -379,9 +379,7 @@ export function getCryptoAssetsCacheState(): Promise<PersistedCAL | null> {
   return storage.get("cryptoAssetsCache") as Promise<PersistedCAL | null>;
 }
 export async function saveCryptoAssetsCacheState(persistedData: PersistedCAL): Promise<void> {
-  if (persistedData.tokens.length > 0) {
-    await storage.save("cryptoAssetsCache", persistedData);
-  }
+  await storage.save("cryptoAssetsCache", persistedData);
 }
 
 export function getIdentities(): Promise<PersistedIdentities | null> {

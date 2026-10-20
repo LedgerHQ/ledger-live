@@ -397,18 +397,39 @@ describe("DBMiddleware - trustchain branch", () => {
 });
 
 describe("DBMiddleware - crypto assets cache branch", () => {
+  const calAction = cryptoAssetsApi.util.upsertQueryEntries([]);
+
   beforeEach(() => {
     mockedSetKey.mockReset();
+    jest.useFakeTimers();
   });
 
-  it("persists the CAL token cache on actions of the registered CAL api", () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("persists the CAL token cache once the save throttle elapses", () => {
     const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
     jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
     jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
     const state = baseState();
 
-    runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
+    runMiddleware([state, state], calAction);
+    expect(mockedSetKey).not.toHaveBeenCalled();
 
+    jest.advanceTimersByTime(5000);
     expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", persisted);
+  });
+
+  it("persists an emptied CAL token cache", () => {
+    const emptied = { tokens: [], hashes: { ethereum: "hash456" } } as unknown as PersistedCAL;
+    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(emptied);
+    jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
+    const state = baseState();
+
+    runMiddleware([state, state], calAction);
+    jest.advanceTimersByTime(5000);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", emptied);
   });
 });
