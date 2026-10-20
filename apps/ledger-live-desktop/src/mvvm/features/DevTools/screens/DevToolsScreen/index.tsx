@@ -3,8 +3,13 @@ import { DevTools } from "@devtools/shell";
 import { TransportPanel } from "@devtools/transport-panel";
 import { useDevToolsScreenViewModel } from "./useDevToolsScreenViewModel";
 
-export default function DevToolsScreen() {
-  const { config, onClose, transport, hubUrl, setHubUrl, role } = useDevToolsScreenViewModel();
+type Props = {
+  onClose?: () => void;
+};
+
+export default function DevToolsScreen({ onClose: onCloseOverride }: Props) {
+  const { config, onClose, transport, hubUrl, setHubUrl, role } =
+    useDevToolsScreenViewModel(onCloseOverride);
 
   return (
     <div

@@ -4,7 +4,7 @@ import {
   Experiment,
   Refresh,
   Settings,
-  Tools,
+  Code,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router";
@@ -13,7 +13,7 @@ import useTopBarViewModel from "../useTopBarViewModel";
 import { useActivityIndicator } from "../useActivityIndicator";
 import { useDiscreetMode } from "../useDiscreetMode";
 import { useExperimentalFeatures } from "../useExperimentalFeatures";
-import { useFeatureFlags } from "../useFeatureFlags";
+import { useDevTools } from "../useDevTools";
 import { useMockServerTransport } from "../useMockServerTransport";
 import { useSettings } from "../useSettings";
 import type { TopBarSlot } from "../../types";
@@ -21,7 +21,7 @@ import type { TopBarSlot } from "../../types";
 jest.mock("../useActivityIndicator");
 jest.mock("../useDiscreetMode");
 jest.mock("../useExperimentalFeatures");
-jest.mock("../useFeatureFlags");
+jest.mock("../useDevTools");
 jest.mock("../useMockServerTransport");
 jest.mock("../useSettings");
 
@@ -43,11 +43,11 @@ const defaults = {
     icon: Experiment,
     tooltip: "Experimental",
   },
-  featureFlags: {
+  devTools: {
     isVisible: false,
-    handleFeatureFlags: jest.fn(),
-    icon: Tools,
-    tooltip: "Feature flags",
+    handleDevTools: jest.fn(),
+    icon: Code,
+    tooltip: "Dev tools",
   },
   mockServer: {
     isVisible: false,
@@ -63,7 +63,7 @@ type SetupOptions = {
   hasAccounts?: boolean;
   isRotating?: boolean;
   experimentalVisible?: boolean;
-  featureFlagsVisible?: boolean;
+  devToolsVisible?: boolean;
   mockServerVisible?: boolean;
   operationsList?: boolean;
   myWallet?: boolean;
@@ -74,7 +74,7 @@ const setup = ({
   hasAccounts = true,
   isRotating = false,
   experimentalVisible = false,
-  featureFlagsVisible = false,
+  devToolsVisible = false,
   mockServerVisible = false,
   operationsList = false,
   myWallet = false,
@@ -91,9 +91,9 @@ const setup = ({
     ...defaults.experimental,
     isVisible: experimentalVisible,
   });
-  jest.mocked(useFeatureFlags).mockReturnValue({
-    ...defaults.featureFlags,
-    isVisible: featureFlagsVisible,
+  jest.mocked(useDevTools).mockReturnValue({
+    ...defaults.devTools,
+    isVisible: devToolsVisible,
   });
   jest.mocked(useMockServerTransport).mockReturnValue({
     ...defaults.mockServer,
@@ -149,10 +149,10 @@ describe("useTopBarViewModel", () => {
       ],
       [
         "all optional slots visible",
-        { experimentalVisible: true, featureFlagsVisible: true, operationsList: true },
+        { experimentalVisible: true, devToolsVisible: true, operationsList: true },
         [
           "experimental",
-          "feature flags",
+          "devtools",
           "synchronize",
           "notification",
           "discreet",
@@ -173,12 +173,12 @@ describe("useTopBarViewModel", () => {
   });
 
   describe("slot properties", () => {
-    it("experimental and feature flags slots have accent appearance", () => {
-      const { result } = setup({ experimentalVisible: true, featureFlagsVisible: true });
+    it("experimental and devtools slots have accent appearance", () => {
+      const { result } = setup({ experimentalVisible: true, devToolsVisible: true });
       const slots = result.current.topBarSlots;
 
       expect(findSlot(slots, "experimental")?.action.appearance).toBe("accent");
-      expect(findSlot(slots, "feature flags")?.action.appearance).toBe("accent");
+      expect(findSlot(slots, "devtools")?.action.appearance).toBe("accent");
     });
 
     it("synchronize slot is not interactive when isRotating is true", () => {

@@ -5,6 +5,7 @@ import { URL, pathToFileURL } from "url";
 import { ledgerUSBVendorId } from "@ledgerhq/devices";
 import { intFromEnv, MIN_HEIGHT, MIN_WIDTH } from "~/config/windowConstants";
 import { closeTrackedWebviewDevTools } from "./webviewHandlers";
+import { DEVTOOLS_WINDOW_NAME } from "~/config/devToolsWindow";
 
 export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 1024);
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
@@ -204,6 +205,23 @@ function setupMainWindowHandlers() {
       return true;
     }
     return false;
+  });
+
+  // The renderer portals its DevTools panel into this blank popup (same JS context, shared store).
+  mainWindow.webContents.setWindowOpenHandler(({ url, frameName }) => {
+    if (url === "about:blank" && frameName === DEVTOOLS_WINDOW_NAME) {
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          width: 1100,
+          height: 800,
+          title: "Ledger Wallet DevTools",
+          autoHideMenuBar: true,
+          backgroundColor: defaultWindowOptions.backgroundColor,
+        },
+      };
+    }
+    return { action: "allow" };
   });
 
   // On <webview> teardown, close any tracked DevTools window for that guest id.
