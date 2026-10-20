@@ -201,7 +201,7 @@ catalog:
   react-native-keychain: 10.0.0
   react-native-reanimated: 4.3.4
   react-native-worklets: 0.8.1
-  react-native-safe-area-context: 5.6.1
+  react-native-safe-area-context: 5.7.0
   react-native-svg: 15.15.4
   react-redux: ^9.2.0
   redux: ^5.0.1
@@ -316,7 +316,7 @@ patchedDependencies:
   "detox@20.51.3": "patches/detox@20.51.3.patch"
   "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch"
   "@taquito/http-utils": "patches/@taquito__http-utils.patch"
-  "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch"
+  "react-native-webview@13.16.1": "patches/react-native-webview@13.16.1.patch"
   "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch"
   "styled-components@6.1.19": "patches/styled-components@6.1.19.patch"
   "react-native@0.81.6": "patches/react-native@0.81.6.patch"
