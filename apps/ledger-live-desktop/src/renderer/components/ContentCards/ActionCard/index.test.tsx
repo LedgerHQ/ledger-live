@@ -25,6 +25,22 @@ describe("ActionCard", () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
+  it("should call onClose when the close button is used", async () => {
+    const onClose = jest.fn();
+    const { user } = render(
+      <ActionCard
+        title="Title"
+        description="Description"
+        onClose={onClose}
+        actions={{ primary: { label: "Continue", action: jest.fn() } }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Close content banner" }));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   it("does not render dismiss link when dismiss is omitted", () => {
     render(
       <ActionCard

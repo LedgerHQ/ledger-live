@@ -37,6 +37,29 @@ describe("RecoverBanner", () => {
   });
 
   describe("subscribe-done state (STARGATE_SUBSCRIBE)", () => {
+    it("should dismiss and persist when the close button is used", async () => {
+      mockGetStoreValue.mockImplementation((key: string) => {
+        if (key === "SUBSCRIPTION_STATE") {
+          return LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE;
+        }
+        return undefined;
+      });
+
+      const { user, store: reduxStore } = render(<RecoverBanner />, {
+        initialState: recoverFlagState,
+      });
+
+      await user.click(await screen.findByRole("button", { name: "Close content banner" }));
+
+      expect(reduxStore.getState().recoverState.protectIdState["protect-test"]?.displayBanner).toBe(
+        false,
+      );
+      expect(store.setStoreValue).toHaveBeenCalledWith("DISPLAY_BANNER", "false", "protect-test");
+      expect(
+        screen.queryByRole("button", { name: "Close content banner" }),
+      ).not.toBeInTheDocument();
+    });
+
     it("renders secondary dismiss link when i18n includes secondaryCta", async () => {
       mockGetStoreValue.mockImplementation((key: string) => {
         if (key === "SUBSCRIPTION_STATE")

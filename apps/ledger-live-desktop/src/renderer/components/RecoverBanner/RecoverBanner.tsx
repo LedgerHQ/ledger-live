@@ -118,6 +118,7 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
         }
         title={recoverBannerSelected.title}
         description={recoverBannerSelected.description}
+        onClose={onCloseBanner}
         actions={{
           primary: {
             label: recoverBannerSelected.primaryCta,
