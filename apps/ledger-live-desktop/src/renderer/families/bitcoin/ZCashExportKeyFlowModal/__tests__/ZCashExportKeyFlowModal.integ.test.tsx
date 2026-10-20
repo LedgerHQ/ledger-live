@@ -58,12 +58,14 @@ jest.mock("~/renderer/components/Modal", () => {
 jest.mock("../Body", () => {
   return function MockBody({
     onUfvkChanged,
+    onConnectionFailed,
     handleBirthdayChange,
     handleSyncFromZero,
     handleEnableShieldedBalance,
     invalidBirthday,
   }: {
     onUfvkChanged: (ufvk: string, shieldedAddress?: string | null, error?: Error | null) => void;
+    onConnectionFailed: (error: Error) => void;
     handleBirthdayChange: (birthday: string) => void;
     handleSyncFromZero: () => void;
     handleEnableShieldedBalance: (options: { startSyncNow: boolean }) => void;
@@ -86,6 +88,16 @@ jest.mock("../Body", () => {
           }}
         >
           refuse export
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const disconnected = new Error("device disconnected");
+            disconnected.name = "DisconnectedDevice";
+            onConnectionFailed(disconnected);
+          }}
+        >
+          fail connection
         </button>
         <button type="button" onClick={() => handleBirthdayChange("2026-08-01")}>
           set birthday
@@ -111,6 +123,9 @@ jest.mock("../Body", () => {
 
 const RealBody = jest.requireActual("../Body").default;
 
+// Set by a test to make the connect-app step fail.
+let mockConnectError: Error | null = null;
+
 // Mock useConnectAppAction to prevent actual device connection attempts
 jest.mock("~/renderer/hooks/useConnectAppAction", () => {
   const mockDevice: Device = {
@@ -123,6 +138,16 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => {
     __esModule: true,
     default: () => ({
       useHook: () => {
+        if (mockConnectError) {
+          return {
+            device: mockDevice,
+            isLoading: false,
+            error: mockConnectError,
+            isLocked: false,
+            opened: false,
+            displayUpgradeWarning: false,
+          };
+        }
         // Return a state that indicates device is connected and ready
         // mapResult requires: opened=true, device exists, displayUpgradeWarning=false
         return {
@@ -138,9 +163,9 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => {
           },
         };
       },
-      mapResult: (hookState: { device?: Device }) => {
+      mapResult: (hookState: { device?: Device; opened?: boolean }) => {
         // Return a payload when device is connected
-        if (hookState.device) {
+        if (hookState.device && hookState.opened) {
           return { device: hookState.device };
         }
         return null;
@@ -196,6 +221,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -254,6 +280,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -284,6 +311,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -318,6 +346,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -349,6 +378,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -401,6 +431,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={null}
         onStepIdChanged={jest.fn()}
         onUfvkChanged={onUfvkChanged}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={new Date().toISOString().split("T")[0]}
@@ -424,6 +455,47 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
     });
   });
 
+  it("reports a failed device connection to onConnectionFailed", async () => {
+    const connectError = new Error("device locked");
+    connectError.name = "LockedDeviceError";
+    mockConnectError = connectError;
+    const onConnectionFailed = jest.fn();
+
+    try {
+      render(
+        <RealBody
+          stepId="device"
+          ufvk=""
+          ufvkExportError={null}
+          onStepIdChanged={jest.fn()}
+          onUfvkChanged={jest.fn()}
+          onConnectionFailed={onConnectionFailed}
+          onRetry={jest.fn()}
+          onClose={jest.fn()}
+          birthday={new Date().toISOString().split("T")[0]}
+          invalidBirthday={false}
+          syncFromZero={false}
+          handleBirthdayChange={jest.fn()}
+          handleSyncFromZero={jest.fn()}
+          handleEnableShieldedBalance={jest.fn()}
+          params={{ account }}
+        />,
+        {
+          initialState: {
+            settings: AFTER_ONBOARDING_STATE,
+            devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          },
+        },
+      );
+
+      await waitFor(() => {
+        expect(onConnectionFailed).toHaveBeenCalledWith(connectError);
+      });
+    } finally {
+      mockConnectError = null;
+    }
+  });
+
   it("disables Continue on the birthday step when the birthday is invalid", async () => {
     render(
       <RealBody
@@ -432,6 +504,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={jest.fn()}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday="2000-02-11"
@@ -461,6 +534,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={jest.fn()}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={birthday}
@@ -683,6 +757,19 @@ describe("ZCash Export UFVK Flow - activation tracking", () => {
       ],
     ]);
     expect(trackedCalls("zcash_private_balance_enabled")).toHaveLength(0);
+  });
+
+  it("tracks a failed enable when the device connection fails", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /fail connection/i }));
+
+    expect(trackedCalls("zcash_private_balance_enable_failed")).toEqual([
+      [
+        "zcash_private_balance_enable_failed",
+        { flow: "exportUfvk", currency: "zcash", reason: "device_error" },
+      ],
+    ]);
   });
 
   it("never puts the key, the address, the birthday or a balance in a tracked payload", async () => {

@@ -80,6 +80,16 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
     setUfvkExportError(null);
   };
 
+  // Stable: the device action reports a connection failure from an effect that depends
+  // on this callback, so a new reference on each render would report it again.
+  const trackEnableFailure = useCallback((error: Error) => {
+    track(ZCASH_PRIVATE_BALANCE_ENABLE_FAILED, {
+      flow: "exportUfvk",
+      currency: "zcash",
+      reason: getEnableFailureReason(error),
+    });
+  }, []);
+
   const handleUfvkChanged = (
     viewKey: string,
     shieldedAddr?: string | null,
@@ -88,13 +98,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
     if ((error as { name?: string })?.name === "UserRefusedOnDevice") {
       logger.critical(error);
     }
-    if (error) {
-      track(ZCASH_PRIVATE_BALANCE_ENABLE_FAILED, {
-        flow: "exportUfvk",
-        currency: "zcash",
-        reason: getEnableFailureReason(error),
-      });
-    }
+    if (error) trackEnableFailure(error);
     setUfvkExportError(error);
     setUfvk(viewKey);
     setShieldedAddress(shieldedAddr ?? null);
@@ -141,6 +145,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
           ufvkExportError={ufvkExportError}
           onStepIdChanged={setStepId}
           onUfvkChanged={handleUfvkChanged}
+          onConnectionFailed={trackEnableFailure}
           onRetry={onHandleReset}
           onClose={onClose}
           params={data ?? {}}
