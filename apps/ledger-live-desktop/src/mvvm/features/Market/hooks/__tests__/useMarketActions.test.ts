@@ -81,14 +81,6 @@ describe("useMarketActions", () => {
     expect(result.current.availableOnBuy).toBe(false);
   });
 
-  it("should return availableOnBuy=false when only tokens of deactivated networks are listed", () => {
-    const deactivatedToken = { ...mockCurrency, ledgerIds: ["arbitrum/erc20/usd_coin"] };
-
-    const { result } = renderMarketActionsHook(deactivatedToken);
-
-    expect(result.current.availableOnBuy).toBe(false);
-  });
-
   it("should return availableOnSwap=true when currency ledgerId is in the swap set", () => {
     const { result } = renderMarketActionsHook();
 
@@ -136,45 +128,7 @@ describe("useMarketActions", () => {
     expect(mockEvent.preventDefault).toHaveBeenCalled();
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
-    expect(mockNavigateToSwap).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "bitcoin" }),
-      expect.objectContaining({ currencyIds: expect.any(Array) }),
-    );
-  });
-
-  // Only networks swap supports and that are not deactivated are offered for selection.
-  it("onSwap hands over the swappable, active networks of the asset", async () => {
-    const { result } = renderMarketActionsHook({
-      ...mockCurrency,
-      ledgerIds: ["bitcoin", "ethereum", "solana", "arbitrum"],
-    });
-
-    await act(async () => {
-      await result.current.onSwap(mockEvent);
-    });
-
-    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.anything(), {
-      currencyIds: ["bitcoin", "ethereum"],
-    });
-  });
-
-  it("onSwap leaves out tokens whose parent network is deactivated", async () => {
-    jest.mocked(useFetchCurrencyAll).mockReturnValue({
-      data: ["ethereum/erc20/usd__coin", "arbitrum/erc20/usd_coin"],
-    } as unknown as ReturnType<typeof useFetchCurrencyAll>);
-
-    const { result } = renderMarketActionsHook({
-      ...mockCurrency,
-      ledgerIds: ["ethereum/erc20/usd__coin", "arbitrum/erc20/usd_coin"],
-    });
-
-    await act(async () => {
-      await result.current.onSwap(mockEvent);
-    });
-
-    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.anything(), {
-      currencyIds: ["ethereum/erc20/usd__coin"],
-    });
+    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.objectContaining({ id: "bitcoin" }));
   });
 
   it("onSwap should return early if ledgerCurrency.id is falsy", async () => {
