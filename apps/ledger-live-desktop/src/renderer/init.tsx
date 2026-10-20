@@ -28,6 +28,7 @@ import { seedMockServerKnownDevice } from "~/renderer/reducers/knownDevices";
 import { getMockServerSessionToken, setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
+import "~/datadog/registerObservers";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
@@ -93,6 +94,10 @@ import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  setCoinObservabilityConfigReader,
+  toCoinObservabilityConfig,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
 import { loadAppConfig } from "~/setup";
 
 const rootNode = document.getElementById("react-root");
@@ -187,6 +192,9 @@ async function init() {
       readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
       apiBaseUrl: process.env.EARN_API_BASE_URL,
     }),
+  );
+  setCoinObservabilityConfigReader(() =>
+    toCoinObservabilityConfig(selectFeature(store.getState(), "coinObservability")),
   );
 
   // Hydrate persisted crypto assets tokens from app.json

@@ -53,6 +53,8 @@ export {
 
 export { toSegmentTrackEvent, type SegmentTrackEvent } from "./segmentEvent";
 
+export { toDatadogBroadcastLog, type DatadogBroadcastLog } from "./datadogEvent";
+
 export {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,

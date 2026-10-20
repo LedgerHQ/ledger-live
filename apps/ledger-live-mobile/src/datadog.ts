@@ -20,6 +20,15 @@ import type { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 import { buildFeatureFlagTags } from "./utils/datadogUtils";
 import { extractErrorContext } from "@ledgerhq/live-common/errors/helpers";
+import {
+  createCoinModuleCallTransmitter,
+  readCoinObservabilityConfig,
+  type CoinModuleCallEvent,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+import {
+  toDatadogBroadcastLog,
+  type LogEvent as TransactionLogEvent,
+} from "@ledgerhq/transaction-observability";
 
 type DatadogRemoteParams = NonNullable<Features["llmDatadog"]["params"]>;
 type ErrorEventMapper = NonNullable<RumConfigurationOptions["errorEventMapper"]>;
@@ -217,6 +226,42 @@ export function broadcastLogger(event: LogEvent): void {
         ...rest,
       },
       errorContext: errorContext,
+    });
+  }
+}
+
+const transmitCoinModuleCall = createCoinModuleCallTransmitter(readCoinObservabilityConfig);
+
+/**
+ * Coin-module call sink, gated on the `coinObservability` flag. Sampling and the failure cap are
+ * applied before the SDK, so a dropped event never crosses the native bridge.
+ */
+export function coinModuleCallLogger(event: CoinModuleCallEvent): void {
+  if (!isDatadogEnabled || !transmitCoinModuleCall(event)) return;
+
+  if (event.status === "failure") {
+    DdLogs.warn("coin_module_call", { coinModule: event });
+  } else {
+    DdLogs.info("coin_module_call", { coinModule: event });
+  }
+}
+
+/**
+ * Broadcast outcomes seen at the bridge seam, for every family and every route. Gated on the
+ * `coinObservability` flag too; never sampled, since there are a few per user action.
+ */
+export function transactionBroadcastLogger(event: TransactionLogEvent): void {
+  if (!isDatadogEnabled || !readCoinObservabilityConfig()) return;
+
+  const log = toDatadogBroadcastLog(event);
+  if (!log) return;
+
+  if (log.status === "success") {
+    DdLogs.info(log.message, { broadcast: log.attributes });
+  } else {
+    const error = log.error;
+    DdLogs.error(log.message, error?.name ?? "Error", error?.message ?? "", error?.stack ?? "", {
+      broadcast: log.attributes,
     });
   }
 }

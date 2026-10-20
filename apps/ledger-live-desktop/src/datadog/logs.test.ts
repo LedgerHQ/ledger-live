@@ -1,8 +1,17 @@
 import {
+  TransactionDataSource,
+  TransactionPathway,
+  TransactionStage,
+  ErrorCategory,
+} from "@ledgerhq/transaction-observability";
+import { setCoinObservabilityConfigReader } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+import {
   __resetDatadogLogsForTesting,
   broadcastLogger,
+  coinModuleCallLogger,
   initDatadogLogs,
   isDatadogLogsAvailable,
+  transactionBroadcastLogger,
 } from "./logs";
 
 jest.mock("./config", () => ({
@@ -20,6 +29,7 @@ jest.mock("@datadog/browser-logs", () => ({
     setGlobalContext: jest.fn(),
     logger: {
       info: jest.fn(),
+      warn: jest.fn(),
       error: jest.fn(),
     },
   },
@@ -30,6 +40,7 @@ const getOperatingSystemSupportStatus = jest.mocked(
   jest.requireMock("~/support/os").getOperatingSystemSupportStatus,
 );
 const datadogLogs = jest.requireMock("@datadog/browser-logs").datadogLogs;
+const observabilityOn = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 5 };
 
 describe("datadog logs", () => {
   beforeEach(() => {
@@ -247,6 +258,144 @@ describe("datadog logs", () => {
         },
         error,
       );
+    });
+  });
+
+  describe("coinModuleCallLogger", () => {
+    const call = {
+      method: "broadcast",
+      network: "ripple",
+      family: "xrp",
+      durationMs: 12,
+      status: "success" as const,
+    };
+
+    beforeEach(() => setCoinObservabilityConfigReader(() => observabilityOn));
+    afterEach(() => setCoinObservabilityConfigReader(null));
+
+    it("does nothing while the coinObservability flag is off", () => {
+      getDatadogBuildConfig.mockReturnValue({
+        applicationId: null,
+        clientToken: "token",
+        site: "datadoghq.eu",
+        env: "production",
+      });
+      initDatadogLogs(() => true);
+      setCoinObservabilityConfigReader(null);
+      coinModuleCallLogger(call);
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+    });
+
+    it("does nothing before Datadog logs are initialised", () => {
+      coinModuleCallLogger(call);
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+    });
+
+    describe("once initialised", () => {
+      beforeEach(() => {
+        getDatadogBuildConfig.mockReturnValue({
+          applicationId: null,
+          clientToken: "token",
+          site: "datadoghq.eu",
+          env: "production",
+        });
+        initDatadogLogs(() => true);
+      });
+
+      it("logs a transaction-path call as info", () => {
+        coinModuleCallLogger(call);
+        expect(datadogLogs.logger.info).toHaveBeenCalledWith("coin_module_call", {
+          coinModule: call,
+        });
+      });
+
+      it("logs a failure as warn, even on the sync path", () => {
+        const failure = { ...call, method: "getBalance", status: "failure" as const };
+        coinModuleCallLogger(failure);
+        expect(datadogLogs.logger.warn).toHaveBeenCalledWith("coin_module_call", {
+          coinModule: failure,
+        });
+      });
+
+      it("drops a sync-path success outside the sample", () => {
+        const random = jest.spyOn(Math, "random").mockReturnValue(0.99);
+        coinModuleCallLogger({ ...call, method: "getBalance" });
+        expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+        random.mockRestore();
+      });
+    });
+  });
+
+  describe("transactionBroadcastLogger", () => {
+    const common = {
+      appVersion: "1.0.0",
+      pathway: TransactionPathway.WalletApiSignAndBroadcast,
+      manifestId: "some-live-app",
+      currencyId: "ethereum",
+      family: "evm",
+      currencyTicker: "ETH",
+      isTestnet: false,
+      isSendMax: false,
+      dataSource: TransactionDataSource.Broadcast,
+    };
+
+    beforeEach(() => {
+      getDatadogBuildConfig.mockReturnValue({
+        applicationId: null,
+        clientToken: "token",
+        site: "datadoghq.eu",
+        env: "production",
+      });
+      initDatadogLogs(() => true);
+      setCoinObservabilityConfigReader(() => observabilityOn);
+    });
+    afterEach(() => setCoinObservabilityConfigReader(null));
+
+    it("does nothing while the coinObservability flag is off", () => {
+      setCoinObservabilityConfigReader(null);
+      transactionBroadcastLogger({
+        status: "success",
+        stage: TransactionStage.Broadcast,
+        ...common,
+      });
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+    });
+
+    it("logs a broadcast success from any route", () => {
+      transactionBroadcastLogger({
+        status: "success",
+        stage: TransactionStage.Broadcast,
+        ...common,
+      });
+      expect(datadogLogs.logger.info).toHaveBeenCalledWith(
+        "tx_broadcast",
+        expect.objectContaining({
+          broadcast: expect.objectContaining({ family: "evm", manifest_id: "some-live-app" }),
+        }),
+      );
+    });
+
+    it("logs a broadcast failure as an error without the signed payload", () => {
+      const error = new Error("nonce too low");
+      transactionBroadcastLogger({
+        status: "failure",
+        stage: TransactionStage.Broadcast,
+        error,
+        errorCategory: ErrorCategory.Blockchain,
+        txPayload: { signature: "0xSIGNED" },
+        ...common,
+      });
+      expect(datadogLogs.logger.error).toHaveBeenCalledWith(
+        "tx_broadcast",
+        { broadcast: expect.objectContaining({ error_category: ErrorCategory.Blockchain }) },
+        error,
+      );
+      expect(JSON.stringify(datadogLogs.logger.error.mock.calls[0][1])).not.toContain("0xSIGNED");
+    });
+
+    it("ignores sign-stage events", () => {
+      transactionBroadcastLogger({ status: "intent", stage: TransactionStage.Sign, ...common });
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
     });
   });
 });

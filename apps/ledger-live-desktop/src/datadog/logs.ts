@@ -3,6 +3,15 @@ import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { buildBeforeSend, getDatadogBuildConfig, type ShouldSendCallback } from "./config";
 import { extractErrorContext } from "@ledgerhq/live-common/errors/helpers";
+import {
+  createCoinModuleCallTransmitter,
+  readCoinObservabilityConfig,
+  type CoinModuleCallEvent,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+import {
+  toDatadogBroadcastLog,
+  type LogEvent as TransactionLogEvent,
+} from "@ledgerhq/transaction-observability";
 
 let initialized = false;
 
@@ -52,6 +61,39 @@ export function initDatadogLogs(shouldSend: ShouldSendCallback): boolean {
   } catch (e) {
     console.error("Datadog Logs init failed", e);
     return false;
+  }
+}
+
+const transmitCoinModuleCall = createCoinModuleCallTransmitter(readCoinObservabilityConfig);
+
+/**
+ * Coin-module call sink, gated on the `coinObservability` flag. Sampling and the failure cap are
+ * applied here, before the consent gate in `beforeSend`, so a dropped event never reaches the SDK.
+ */
+export function coinModuleCallLogger(event: CoinModuleCallEvent): void {
+  if (!initialized || !transmitCoinModuleCall(event)) return;
+
+  if (event.status === "failure") {
+    datadogLogs.logger.warn("coin_module_call", { coinModule: event });
+  } else {
+    datadogLogs.logger.info("coin_module_call", { coinModule: event });
+  }
+}
+
+/**
+ * Broadcast outcomes seen at the bridge seam, for every family and every route. Gated on the
+ * `coinObservability` flag too; never sampled, since there are a few per user action.
+ */
+export function transactionBroadcastLogger(event: TransactionLogEvent): void {
+  if (!initialized || !readCoinObservabilityConfig()) return;
+
+  const log = toDatadogBroadcastLog(event);
+  if (!log) return;
+
+  if (log.status === "success") {
+    datadogLogs.logger.info(log.message, { broadcast: log.attributes });
+  } else {
+    datadogLogs.logger.error(log.message, { broadcast: log.attributes }, log.error);
   }
 }
 

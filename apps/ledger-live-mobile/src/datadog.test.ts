@@ -1,8 +1,22 @@
 import { DdLogs } from "@datadog/mobile-react-native";
-import { broadcastLogger, customErrorEventMapper } from "./datadog";
+import {
+  ErrorCategory,
+  TransactionDataSource,
+  TransactionPathway,
+  TransactionStage,
+} from "@ledgerhq/transaction-observability";
+import {
+  broadcastLogger,
+  coinModuleCallLogger,
+  customErrorEventMapper,
+  transactionBroadcastLogger,
+} from "./datadog";
+import { setCoinObservabilityConfigReader } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/metrics";
+
+const observabilityOn = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 5 };
 
 jest.mock("@datadog/mobile-react-native", () => ({
-  DdLogs: { info: jest.fn(), error: jest.fn() },
+  DdLogs: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
   TrackingConsent: {},
   DatadogProvider: { initialize: jest.fn() },
 }));
@@ -111,5 +125,106 @@ describe("broadcastLogger", () => {
         },
       },
     );
+  });
+});
+
+describe("coinModuleCallLogger", () => {
+  const call = {
+    method: "broadcast",
+    network: "ripple",
+    family: "xrp",
+    durationMs: 12,
+    status: "success" as const,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setCoinObservabilityConfigReader(() => observabilityOn);
+  });
+  afterEach(() => setCoinObservabilityConfigReader(null));
+
+  it("does nothing while the coinObservability flag is off", () => {
+    setCoinObservabilityConfigReader(null);
+    coinModuleCallLogger(call);
+    expect(DdLogs.info).not.toHaveBeenCalled();
+  });
+
+  it("logs a transaction-path call as info", () => {
+    coinModuleCallLogger(call);
+    expect(DdLogs.info).toHaveBeenCalledWith("coin_module_call", { coinModule: call });
+  });
+
+  it("logs a failure as warn, even on the sync path", () => {
+    const failure = { ...call, method: "getBalance", status: "failure" as const };
+    coinModuleCallLogger(failure);
+    expect(DdLogs.warn).toHaveBeenCalledWith("coin_module_call", { coinModule: failure });
+  });
+
+  it("drops a sync-path success outside the sample", () => {
+    const random = jest.spyOn(Math, "random").mockReturnValue(0.99);
+    coinModuleCallLogger({ ...call, method: "getBalance" });
+    expect(DdLogs.info).not.toHaveBeenCalled();
+    random.mockRestore();
+  });
+});
+
+describe("transactionBroadcastLogger", () => {
+  const common = {
+    appVersion: "1.0.0",
+    pathway: TransactionPathway.Dapp,
+    manifestId: "some-dapp",
+    currencyId: "ethereum",
+    family: "evm",
+    currencyTicker: "ETH",
+    isTestnet: false,
+    isSendMax: false,
+    dataSource: TransactionDataSource.Broadcast,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setCoinObservabilityConfigReader(() => observabilityOn);
+  });
+  afterEach(() => setCoinObservabilityConfigReader(null));
+
+  it("does nothing while the coinObservability flag is off", () => {
+    setCoinObservabilityConfigReader(null);
+    transactionBroadcastLogger({ status: "success", stage: TransactionStage.Broadcast, ...common });
+    expect(DdLogs.info).not.toHaveBeenCalled();
+  });
+
+  it("logs a broadcast success from any route", () => {
+    transactionBroadcastLogger({ status: "success", stage: TransactionStage.Broadcast, ...common });
+    expect(DdLogs.info).toHaveBeenCalledWith(
+      "tx_broadcast",
+      expect.objectContaining({
+        broadcast: expect.objectContaining({ family: "evm", manifest_id: "some-dapp" }),
+      }),
+    );
+  });
+
+  it("logs a broadcast failure as an error without the signed payload", () => {
+    const error = Object.assign(new Error("nonce too low"), { name: "NonceTooLow" });
+    transactionBroadcastLogger({
+      status: "failure",
+      stage: TransactionStage.Broadcast,
+      error,
+      errorCategory: ErrorCategory.Blockchain,
+      txPayload: { signature: "0xSIGNED" },
+      ...common,
+    });
+    expect(DdLogs.error).toHaveBeenCalledWith(
+      "tx_broadcast",
+      "NonceTooLow",
+      "nonce too low",
+      expect.any(String),
+      { broadcast: expect.objectContaining({ error_category: ErrorCategory.Blockchain }) },
+    );
+    expect(JSON.stringify(jest.mocked(DdLogs.error).mock.calls[0][4])).not.toContain("0xSIGNED");
+  });
+
+  it("ignores sign-stage events", () => {
+    transactionBroadcastLogger({ status: "intent", stage: TransactionStage.Sign, ...common });
+    expect(DdLogs.info).not.toHaveBeenCalled();
   });
 });
