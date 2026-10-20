@@ -64,7 +64,12 @@ export const store = configureStore({
         immutableCheck: false,
         thunk: {
           extraArgument: {
-            ...accountDataExtra(accountDataSources((): State => store.getState())),
+            ...accountDataExtra(
+              accountDataSources(
+                (): State => store.getState(),
+                (action): unknown => store.dispatch(action),
+              ),
+            ),
             ...calApiExtra({
               calServiceUrl: getEnv("CAL_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
