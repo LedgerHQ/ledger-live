@@ -1,4 +1,5 @@
 {
+  "$schema": "./components.config.schema.json",
   "ignoredEntryPrefixes": ["test", "mock"],
   "platformEntries": {
     "./web": "web",

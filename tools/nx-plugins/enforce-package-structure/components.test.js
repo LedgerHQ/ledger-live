@@ -349,3 +349,11 @@ test("an entry without a condition that resolves the same on both platforms is n
   const empty = fs.mkdtempSync(path.join(os.tmpdir(), "package-components-test-"));
   assert.deepEqual(checkComponents(empty, "shared/none"), []);
 });
+
+test("the config sets every setting its schema requires, and nothing else", () => {
+  const schema = require("./components.config.schema.json");
+  const config = require("./components.config.json");
+  const settings = Object.keys(config).filter(key => key !== "$schema");
+  assert.deepEqual(settings.toSorted(), schema.required.toSorted());
+  assert.ok(settings.every(key => Object.hasOwn(schema.properties, key)));
+});
