@@ -9,6 +9,7 @@ import {
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { NavigatorName, ScreenName } from "~/const";
 import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -33,6 +34,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const allowLeave = useRef(false);
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
   const { notifyFlowCompleted } = useNotificationsPrompt();
+  const learnMoreUrl = useLocalizedUrl(LEDGER_SYNC_LEARN_MORE_URL);
 
   useEffect(
     () =>
@@ -71,8 +73,8 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   }, [device, dispatch, navigation]);
 
   const onLearnMore = useCallback(() => {
-    Linking.openURL(LEDGER_SYNC_LEARN_MORE_URL);
-  }, []);
+    Linking.openURL(learnMoreUrl);
+  }, [learnMoreUrl]);
 
   return {
     onActivate,

@@ -48,12 +48,13 @@ jest.mock("@react-navigation/native", () => ({
   }),
 }));
 
-function renderOffer(hasTrustchain: boolean) {
+function renderOffer(hasTrustchain: boolean, language?: string) {
   return renderHook(() => useSyncOfferRouteViewModel(), {
     overrideInitialState: (state: State) => ({
       ...state,
       settings: {
         ...state.settings,
+        ...(language ? { language } : {}),
         readOnlyModeEnabled: true,
         hasCompletedOnboarding: false,
         hasBeenRedirectedToPostOnboarding: true,
@@ -148,12 +149,23 @@ describe("useSyncOfferRouteViewModel", () => {
 
   it("should open the Ledger Sync Academy page from learn more", () => {
     const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { result } = renderOffer(false);
+    const { result } = renderOffer(false, "en");
 
     act(() => result.current.onLearnMore());
 
     expect(openURL).toHaveBeenCalledWith(
       "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
+    );
+  });
+
+  it("should open the Ledger Sync Academy page in the app language", () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const { result } = renderOffer(false, "fr");
+
+    act(() => result.current.onLearnMore());
+
+    expect(openURL).toHaveBeenCalledWith(
+      "https://www.ledger.com/fr/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
     );
   });
 });
