@@ -25,6 +25,7 @@ User-facing feature packages shared across desktop and mobile apps. Each subdire
 - A flow may orchestrate sub-flows: depending on another `@features/flow-*` package is allowed, so a parent flow can compose smaller ones
 - Nx tag inferred automatically: `type:feature-flow`
 - Platform-specific files use `.web.tsx` / `.native.tsx` suffixes; shared logic uses `.ts` / `.tsx`
+- A component exported from a universal entry takes one props contract on both platforms; one that cannot goes behind a `./web` or `./native` entry: see the [universal components ADR](../../docs/adr/universal-components.md)
 - Barrel export via `src/index.ts`
 
 ## Testing
