@@ -36,6 +36,7 @@ import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
 import type { ContactsState } from "@domain/entity-contact";
 import type { AccountDataState } from "@domain/entity-account-data";
+import type { AccountBalancesState } from "@domain/entity-account-balance";
 import type { AccountsState as AccountEntriesState } from "@domain/entity-account";
 import type { AppLockState } from "@features/platform-app-lock";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
@@ -506,6 +507,7 @@ export type State = LLMRTKApiState & {
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   accountData: AccountDataState;
+  accountBalances: AccountBalancesState;
   accountEntries: AccountEntriesState;
   appLock: AppLockState;
 };

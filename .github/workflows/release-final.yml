@@ -104,7 +104,7 @@ jobs:
 
       - name: publish release (JFrog)
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
 
       #NPM publishing - to be removed when all is migrated
       - name: authenticate with npm

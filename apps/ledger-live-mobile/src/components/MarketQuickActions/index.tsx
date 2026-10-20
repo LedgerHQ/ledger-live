@@ -10,10 +10,7 @@ import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
 const stakeLabel = getStakeLabelLocaleBased();
-type MarketQuickActionsProps = Required<Pick<QuickActionProps, "currency" | "accounts">> &
-  Pick<QuickActionProps, "swapCurrencyIds">;
-
-export const MarketQuickActions = (quickActionsProps: MarketQuickActionsProps) => {
+export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>) => {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();

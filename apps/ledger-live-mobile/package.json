@@ -96,6 +96,7 @@
     "@domain/api-market-index-fear-and-greed": "workspace:^",
     "@domain/api-push-devices": "workspace:*",
     "@domain/entity-account": "workspace:^",
+    "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-analytics-consent": "workspace:*",

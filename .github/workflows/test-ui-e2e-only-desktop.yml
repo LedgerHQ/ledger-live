@@ -7,6 +7,7 @@ on:
     # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
     # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
     # broadcast from the shared QAA accounts on the same day.
+    # The device rotates per weekday (see WEEKDAY_DEVICE in prepare-devices).
     # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
     - cron: "0 1 * * 1"
     - cron: "0 1 * * 2-5"
@@ -176,12 +177,17 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoSP' }}
         run: |
+          # Nightly rotation, shared with the mobile one in test-mobile-e2e-reusable.yml: the three
+          # platforms use three different devices each weekday, and all six devices run every week.
+          # Wednesday alternates flex / nanoGen5 by ISO week parity, the opposite of Android that day.
+          # 10# keeps a zero-padded week such as "08" from being read as octal.
+          if [ $((10#$(date -u +%V) % 2)) -eq 0 ]; then WEDNESDAY_DEVICE=flex; else WEDNESDAY_DEVICE=nanoGen5; fi
           declare -A WEEKDAY_DEVICE=(
-            [1]=nanoSP    # Monday     - LNSP
-            [2]=stax      # Tuesday    - Stax
-            [3]=nanoX     # Wednesday  - LNX
-            [4]=flex      # Thursday   - Flex
-            [5]=nanoGen5  # Friday     - NG5
+            [1]=nanoSP              # Monday     - LNSP (broadcast)
+            [2]=nanoX               # Tuesday    - LNX
+            [3]=$WEDNESDAY_DEVICE   # Wednesday  - Flex on even ISO weeks, NG5 on odd ones
+            [4]=stax                # Thursday   - Stax
+            [5]=nanoS               # Friday     - LNS
           )
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
@@ -228,6 +234,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       npm_config_loglevel: warn
+      pnpm_config_loglevel: warn
       DO_NOT_TRACK: 1
       SPECULOS_DEVICE: ${{ matrix.device }}
       REMOTE_SPECULOS: ${{ inputs.remote_speculos }}

@@ -91,13 +91,7 @@ describe("generic-coin-framework stellar token", () => {
       expect(getAssetFromToken(token)).toEqual({
         assetOwner: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         assetReference: "USDC",
-        name: "USDC",
         type: "stellar",
-        unit: {
-          code: "usdc",
-          magnitude: 7,
-          name: "USDC",
-        },
       });
     });
 
@@ -121,13 +115,7 @@ describe("generic-coin-framework stellar token", () => {
       expect(getAssetFromToken(token)).toEqual({
         assetOwner: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         assetReference: "USDC",
-        name: "USDC",
         type: "stellar",
-        unit: {
-          code: "USDC",
-          magnitude: 7,
-          name: "USDC",
-        },
       });
     });
   });

@@ -91,6 +91,26 @@ describe("AssetListItem", () => {
     });
   });
 
+  describe("press", () => {
+    it("calls onPress with the asset when tapped", async () => {
+      const onPress = jest.fn();
+      const { user } = render(
+        <AssetListItem asset={mockAsset} onPress={onPress} precomputed={baseViewModelResult} />,
+      );
+
+      await user.press(screen.getByRole("button"));
+
+      expect(onPress).toHaveBeenCalledWith(mockAsset);
+    });
+
+    it("is not pressable without onPress", () => {
+      render(<AssetListItem asset={mockAsset} precomputed={baseViewModelResult} />);
+
+      expect(screen.getByTestId("assetItem-Bitcoin")).toBeVisible();
+      expect(screen.queryByRole("button")).toBeNull();
+    });
+  });
+
   describe("market variant", () => {
     it("renders the name, market cap, rank tag and price", () => {
       renderMarketView();

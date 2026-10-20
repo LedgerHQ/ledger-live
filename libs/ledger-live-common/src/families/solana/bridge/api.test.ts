@@ -197,8 +197,6 @@ describe("solana bridge", () => {
         type: "spl",
         assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
         assetOwner: owner,
-        name: "USD Coin",
-        unit: { name: "USDC", code: "USDC", magnitude: 6 },
       });
     });
 
@@ -218,18 +216,6 @@ describe("solana bridge", () => {
       const result = getAssetFromToken(mockToken, owner);
 
       expect(result).toHaveProperty("assetOwner", owner);
-    });
-
-    it("should use token.units[0] for unit", () => {
-      const result = getAssetFromToken(mockToken, owner);
-
-      expect(result.unit).toBe(mockToken.units[0]);
-    });
-
-    it("should use token.name for name", () => {
-      const result = getAssetFromToken(mockToken, owner);
-
-      expect(result.name).toBe(mockToken.name);
     });
   });
 
