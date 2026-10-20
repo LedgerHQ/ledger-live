@@ -1,5 +1,12 @@
 # @features/flow-analytics-consent
 
+## 0.2.10-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.9.1-next.0
+
 ## 0.2.9
 
 ### Patch Changes

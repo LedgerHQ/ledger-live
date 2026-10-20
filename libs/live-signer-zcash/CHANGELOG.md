@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#23343](https://github.com/LedgerHQ/ledger-live/pull/23343) [`9365d3a`](https://github.com/LedgerHQ/ledger-live/commit/9365d3ad499ac5c80d445e7816c30adbfe05ffd8) Thanks [@cted-ledger](https://github.com/cted-ledger)! - take the zcash network from the account's currency instead of the zaino url, and pass it to the device signer for transparent sends; the viewing-key export keeps the testnet coin type (1') instead of rejecting it
+
 ## 0.10.0
 
 ### Minor Changes
