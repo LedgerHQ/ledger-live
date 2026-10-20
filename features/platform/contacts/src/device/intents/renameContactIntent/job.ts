@@ -103,11 +103,17 @@ function createOutcomeMapper(
       case DeviceActionStatus.Error: {
         const jobState = mapDeviceActionErrorToFailureJobState(state.error);
 
-        // A rejection is the one failure the user can undo, so it stays open and
-        // carries the replay handle instead of settling the port promise.
-        return jobState.type === "device-rejected"
-          ? { jobState: { ...jobState, retry: params.retry }, terminal: false }
-          : { jobState, terminal: true, report: { type: "failure", error: jobState.error } };
+        // These two stay open instead of settling the port promise. A rejection
+        // can be retried on this device. A foreign proof (0x6982) is checked
+        // before the device shows a confirmation, so this screen is the only
+        // message the user gets — settling would tear the executor down first.
+        if (jobState.type === "device-rejected") {
+          return { jobState: { ...jobState, retry: params.retry }, terminal: false };
+        }
+        if (jobState.type === "existing-group-verification-failed") {
+          return { jobState, terminal: false };
+        }
+        return { jobState, terminal: true, report: { type: "failure", error: jobState.error } };
       }
     }
   };
