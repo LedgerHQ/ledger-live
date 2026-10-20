@@ -310,6 +310,9 @@ export async function craftEnergyRentTransaction(
 ): Promise<VerifiedEnergyRentOrder> {
   // Read before ordering, so a missing payee list never leaves an order behind.
   const limits = { payees: tronifyPaymentAddresses(config), cap: maxRentBaseUnits(logger, config) };
+  if (!limits.payees) {
+    logger("tron/energyRent", "rent payment payee not checked: coin-config turns the check off");
+  }
   let orderId: string | undefined;
   try {
     const approved = approvedCost(request);

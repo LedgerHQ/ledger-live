@@ -514,6 +514,10 @@ describe("energyRent provider switch", () => {
       await expect(
         craftEnergyRentTransaction(mockLogger, unchecked, request),
       ).resolves.toMatchObject({ orderId: "order-1" });
+      expect(mockLogger).toHaveBeenCalledWith(
+        "tron/energyRent",
+        "rent payment payee not checked: coin-config turns the check off",
+      );
     });
 
     it("still caps the rent cost when coin-config turns the payee check off", async () => {
