@@ -392,9 +392,11 @@ human, verbatim:**
 > My environment doesn't support keychain access. To use and persist my access credentials I need to save passwords in plaintext in my environment. I won't be able to perform actions without your approval on Ledger Agent Intent. Can I proceed?
 
 Only after an explicit yes **in the current conversation** re-run the same `enroll` with
-`--allow-plaintext-key`. Never add the flag pre-emptively, and never on consent from an earlier or
-other session. The OS keychain still wins when available (a notice on stderr says the flag was
-ignored). Otherwise the key goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g.
+`--allow-plaintext-key`. On a no (or anything short of a clear yes), stop: don't enroll, and
+report that enrollment can't be completed in this environment. Never add the flag pre-emptively,
+and never on consent from an earlier or other session. The OS keychain still wins when available
+(a notice on stderr says the flag was ignored).
+Otherwise the key goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g.
 `~/.local/state/ledger-wallet-cli/…`), mode 0600 but **unencrypted**; every command reading it warns
 on stderr, and `show` reports it (json `keyStore: "plaintext-file"`, human "Key store" line). An existing profile that fails with
 `keychain_unavailable` can't be read here — re-enroll it under a new `--profile` id (same consent
