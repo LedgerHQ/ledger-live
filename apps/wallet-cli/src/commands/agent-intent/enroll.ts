@@ -129,7 +129,18 @@ async function saveSecretKey(
   } catch (e) {
     walletCliDebug("agent-intent: keychain write failed", e);
     // Secret Service gone since the probe is the same condition the probe reports.
-    assertOsKeychainAvailable(NO_KEYCHAIN_HINT);
+    try {
+      assertOsKeychainAvailable(NO_KEYCHAIN_HINT);
+    } catch (probeError) {
+      if (!allowPlaintextKey || !(probeError instanceof KeychainUnavailableError)) throw probeError;
+      saveKeyFile(profileId, secretKey);
+      writeStderr(
+        `⚠ No OS keychain is reachable anymore (${errMessage(e)}); the agent key went to the ` +
+          `plaintext file ${agentIntentKeyFilePath(profileId)} because --allow-plaintext-key was ` +
+          "passed.\n",
+      );
+      return "plaintext-file";
+    }
     if (process.platform !== "linux") {
       throw new Error(
         `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +

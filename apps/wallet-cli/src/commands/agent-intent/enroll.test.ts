@@ -550,6 +550,31 @@ describe("agent-intent enroll", () => {
       expect(deletedKeyFileCalls).toEqual([]);
     });
 
+    it("stores the key in the plaintext file with --allow-plaintext-key when the Secret Service disappears before the write", async () => {
+      let probeCalls = 0;
+      // Precheck and locked recheck pass; the probe after the failed write does not.
+      keychainProbe = () => {
+        probeCalls++;
+        if (probeCalls > 2) failingKeychainProbe();
+        return [];
+      };
+      saveSecretKeyError = new Error("Platform secure storage failure: zbus error");
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(probeCalls).toBe(3);
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "plaintext-file" });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "plaintext-file",
+        enrolled: true,
+      });
+      expect(stderr.join("")).toMatch(
+        /No OS keychain is reachable anymore \(Platform secure storage failure: zbus error\); the agent key went to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
+    });
+
     it("rolls back the keychain entry when addAgentIntentProfile itself throws", async () => {
       const addError = new Error("duplicate profileId race");
       addAgentIntentProfileImpl = () => {
