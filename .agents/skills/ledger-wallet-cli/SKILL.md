@@ -401,8 +401,11 @@ available and accepts the write (a notice on stderr says the flag was ignored). 
 goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g. `~/.local/state/ledger-wallet-cli/…`),
 mode 0600 but **unencrypted**, with a stderr notice if the keychain refused the write; every
 command reading it warns on stderr, and `show` reports it (json `keyStore: "plaintext-file"`,
-human "Key store" line). An existing profile that fails with `keychain_unavailable` can't be read
-here — re-enroll it under a new `--profile` id (same consent rule).
+human "Key store" line). A `plaintext-file` profile needs wallet-cli 2.12.0 or later: an older one
+doesn't know the key file and drops `keyStore` when it rewrites the session file. An existing
+profile that fails with `keychain_unavailable` can't be read here (if an older wallet-cli enrolled
+it without a Secret Service, its key went to the kernel keyring and is gone) — re-enroll it under a
+new `--profile` id (same consent rule).
 
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
 enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
