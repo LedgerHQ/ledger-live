@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 38.4.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`e505c53`](https://github.com/LedgerHQ/ledger-live/commit/e505c537cafd5f44999f201cfe0a773a90cf5671), [`fe74104`](https://github.com/LedgerHQ/ledger-live/commit/fe74104174a41357be9cb911d9b762e4360cbf46)]:
+  - @ledgerhq/live-signer-zcash@0.11.0-next.1
+  - @ledgerhq/coin-solana@2.5.0-next.1
+  - @ledgerhq/coin-zcash@1.0.0-next.1
+  - @ledgerhq/live-signer-solana@0.22.2-next.1
+
 ## 38.4.0-next.1
 
 ### Minor Changes

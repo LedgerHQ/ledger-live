@@ -1,5 +1,18 @@
 # live-mobile
 
+## 4.25.0-next.2
+
+### Minor Changes
+
+- [#23672](https://github.com/LedgerHQ/ledger-live/pull/23672) [`fe74104`](https://github.com/LedgerHQ/ledger-live/commit/fe74104174a41357be9cb911d9b762e4360cbf46) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): check the stake minimum before a validator is picked
+
+  The mobile delegation flow asks for the amount before the validator, so the recipient is still empty when the amount is validated. The minimum-delegation check was skipped in that case, which let an amount below 1 SOL through to the summary. The summary now also shows its validation error in the alert colour.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-send@0.1.4-next.2
+
 ## 4.25.0-next.1
 
 ### Minor Changes

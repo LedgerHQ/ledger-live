@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 4.25.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-zcash@1.0.0-next.1
+  - @ledgerhq/live-common@38.4.0-next.2
+  - @ledgerhq/asset-detail@0.12.1-next.2
+  - @ledgerhq/live-dmk-desktop@0.25.0-next.2
+  - @ledgerhq/live-send@0.1.4-next.2
+
 ## 4.25.0-next.1
 
 ### Minor Changes

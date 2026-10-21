@@ -1,5 +1,13 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.16.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-zcash@1.0.0-next.1
+  - @ledgerhq/live-common@38.4.0-next.2
+
 ## 0.16.0-next.1
 
 ### Patch Changes

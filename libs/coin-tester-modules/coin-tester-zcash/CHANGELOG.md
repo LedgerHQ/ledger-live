@@ -1,5 +1,14 @@
 # @ledgerhq/coin-tester-zcash
 
+## 0.3.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`e505c53`](https://github.com/LedgerHQ/ledger-live/commit/e505c537cafd5f44999f201cfe0a773a90cf5671)]:
+  - @ledgerhq/live-signer-zcash@0.11.0-next.1
+  - @ledgerhq/coin-zcash@1.0.0-next.1
+  - @ledgerhq/live-common@38.4.0-next.2
+
 ## 0.3.0-next.1
 
 ### Patch Changes

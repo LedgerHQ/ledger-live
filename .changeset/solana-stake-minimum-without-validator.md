@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-solana": patch
-"live-mobile": patch
+"@ledgerhq/coin-solana": minor
+"live-mobile": minor
 ---
 
 fix(coin-solana): check the stake minimum before a validator is picked

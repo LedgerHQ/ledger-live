@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.11.0-next.1
+
+### Minor Changes
+
+- [#23671](https://github.com/LedgerHQ/ledger-live/pull/23671) [`e505c53`](https://github.com/LedgerHQ/ledger-live/commit/e505c537cafd5f44999f201cfe0a773a90cf5671) Thanks [@cted-ledger](https://github.com/cted-ledger)! - bump @ledgerhq/device-signer-kit-zcash to 0.9.0, which signs mainnet transparent transactions under the nu7 branch id from the nu7 mainnet activation height
+
 ## 0.11.0-next.0
 
 ### Minor Changes
