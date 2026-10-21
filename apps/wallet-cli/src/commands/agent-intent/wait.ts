@@ -87,7 +87,9 @@ export default defineCommand({
           });
           return;
         }
-        if (status === "expired") {
+        // An expired link with a live listener keeps polling: an approval made just before expiry
+        // may still be in `authenticate`.
+        if (status === "expired" && listenerPid === undefined) {
           throw new CodedCommandError(
             "enrollment_expired",
             `The enrollment link of profile "${profileId}" expired at ` +
@@ -106,8 +108,12 @@ export default defineCommand({
           );
         }
 
-        const remainingMs =
-          Math.min(deadline, Date.parse(profile.enrollmentExpiresAt)) - Date.now();
+        // Capped at the expiry only while it is ahead; past it, --timeout applies as is.
+        const end =
+          status === "expired"
+            ? deadline
+            : Math.min(deadline, Date.parse(profile.enrollmentExpiresAt));
+        const remainingMs = end - Date.now();
         if (remainingMs <= 0) {
           const enrollmentUrl = loggedEnrollmentUrl(logPath, profileId);
           out.agentIntentEnrollmentWaiting({
