@@ -1,6 +1,18 @@
 import { Fragment, useState, type ReactNode } from "react";
 import { Button, SegmentedControl, SegmentedControlButton, Switch } from "@ledgerhq/lumen-ui-react";
-import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  Bluetooth,
+  CheckmarkCircle,
+  ChevronDown,
+  ChevronRight,
+  Circles,
+  Download,
+  ExitLogout,
+  Lock,
+  Nano,
+  ShieldCheck,
+  Warning,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
 import { emptyLogCopy, headerCopy, featureFlagCopy, logCopy, overrideCopy } from "./configCopy";
 import {
@@ -9,8 +21,25 @@ import {
   type DisplayRow,
   type EventRow,
   type NextStateGroup,
+  type StateKind,
   type StateStep,
 } from "./useDeviceOnboardingViewModel";
+
+// IconProps is not exported from @ledgerhq/lumen-ui-react, so the type comes from a symbol.
+type IconComponent = typeof ShieldCheck;
+
+const stepPresentation: Record<StateKind, { readonly Icon: IconComponent; readonly tone: string }> =
+  {
+    progress: { Icon: Circles, tone: "bg-muted-transparent text-muted" },
+    genuine: { Icon: ShieldCheck, tone: "bg-active-subtle text-active" },
+    firmware: { Icon: Download, tone: "bg-active-subtle text-active" },
+    setup: { Icon: Nano, tone: "bg-active-subtle text-active" },
+    locked: { Icon: Lock, tone: "bg-warning-transparent text-warning" },
+    session: { Icon: Bluetooth, tone: "bg-warning-transparent text-warning" },
+    failed: { Icon: Warning, tone: "bg-error-transparent text-error" },
+    succeeded: { Icon: CheckmarkCircle, tone: "bg-success-transparent text-success" },
+    quit: { Icon: ExitLogout, tone: "bg-muted-transparent text-muted" },
+  };
 
 function exportLogs(content: string) {
   const link = document.createElement("a");
@@ -203,10 +232,17 @@ function PossibleEvents({ groups }: Readonly<{ groups: readonly NextStateGroup[]
 }
 
 function StateChip({ step }: Readonly<{ step: StateStep }>) {
+  const { Icon, tone } = stepPresentation[step.kind];
+
   return (
-    <code className={step.isCurrent ? "body-3-semi-bold text-base" : "body-3 text-muted"}>
-      {step.label}
-    </code>
+    <span
+      className={`flex items-center gap-8 px-8 py-4 rounded-sm body-3 border ${tone} ${
+        step.isCurrent ? "border-current" : "border-transparent"
+      }`}
+    >
+      <Icon size={16} />
+      <code>{step.label}</code>
+    </span>
   );
 }
 
