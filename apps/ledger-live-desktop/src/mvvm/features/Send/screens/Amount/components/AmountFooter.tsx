@@ -5,6 +5,7 @@ import type { FeeSelectorOption, SponsoredFeeDisplay } from "../types";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { AmountMessageText } from "./AmountMessageText";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
+import { FamilySendAmountFooterRow } from "./FamilySendAmountFooterRow";
 import type { SponsoredFeeNudgeProps } from "./Fees/SponsoredFeeNudge";
 
 type AmountFooterProps = Readonly<{
@@ -74,6 +75,7 @@ export function AmountFooter({
         sponsoredNudge={sponsoredNudge}
         sponsoredFee={sponsoredFee}
       />
+      <FamilySendAmountFooterRow />
       <Button
         appearance="base"
         size="lg"

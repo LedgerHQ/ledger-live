@@ -2,6 +2,8 @@ import { useCallback, useMemo } from "react";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { buildRecipientTransactionPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
@@ -44,10 +46,14 @@ export function useSendFlowTransaction({
     (recipient: RecipientData) => {
       if (!account || !transaction || !bridge) return;
 
-      const updates = buildRecipientTransactionPatch(
-        transaction,
-        recipient,
-      ) as Partial<Transaction>;
+      const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
+      const updates = {
+        ...buildRecipientTransactionPatch(transaction, recipient),
+        ...balanceTypeConfig?.buildSelfTransferPatch({
+          isSelfTransfer: recipient.isSelfTransfer === true,
+          transaction,
+        }),
+      } as Partial<Transaction>;
 
       setTransaction(bridge.updateTransaction(transaction, updates));
     },

@@ -169,6 +169,8 @@ export enum ScreenName {
   SendBroadcastError = "SendBroadcastError",
   SendValidationError = "SendValidationError",
   NewSendRecipient = "NewSendRecipient",
+  SendFlowBalanceType = "SendFlowBalanceType",
+  SendFlowAccountSync = "SendFlowAccountSync",
   SendFlowRecipient = "SendFlowRecipient",
   SendFlowAmount = "SendFlowAmount",
   SendFlowConfirmation = "SendFlowConfirmation",

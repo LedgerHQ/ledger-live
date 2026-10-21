@@ -356,7 +356,7 @@ export type BalanceTypeOption = Readonly<{
   id: string;
   /** i18n key suffix; the UI prepends its namespace and appends `.title`, `.subtitle`, ... */
   translationKey: string;
-  balance: BigNumber;
+  balance: BigNumber | null;
   /**
    * Whether the pool holds funds that are not spendable yet, so `balance` may still grow
    * (ex: a Zcash note too young to spend). The UI warns instead of hiding the shortfall.
@@ -390,7 +390,7 @@ export type BalanceTypeConfig = Readonly<{
   /** Id of the pool the transaction draws from, or `null` until the user picks one. */
   getSelectedOptionId: (transaction: unknown) => string | null;
   /** Patch making the transaction draw from `optionId`. */
-  buildSelectionPatch: (optionId: string) => TransactionPatch;
+  buildSelectionPatch: (optionId: string, transaction: unknown) => TransactionPatch;
   /** Destination for a transfer to the account's other pool; `null` when it has none. */
   getSelfTransferTarget: (params: {
     account: AccountLike;
@@ -402,7 +402,10 @@ export type BalanceTypeConfig = Readonly<{
    * `selfTransfer`, which locks the recipient) never infer it from the recipient value,
    * so the flow has to declare it both ways; return `{}` when the recipient says it all.
    */
-  buildSelfTransferPatch: (params: { isSelfTransfer: boolean }) => TransactionPatch;
+  buildSelfTransferPatch: (params: {
+    isSelfTransfer: boolean;
+    transaction: unknown;
+  }) => TransactionPatch;
   /**
    * Balance the amount step may spend from this pool, bounded by the pool's transaction
    * input ceiling (e.g. Zcash's 32-action / 32-UTXO limit). Distinct from

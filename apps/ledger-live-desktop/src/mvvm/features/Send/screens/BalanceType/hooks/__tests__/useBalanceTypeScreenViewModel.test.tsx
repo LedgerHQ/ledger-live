@@ -1,11 +1,16 @@
 import React, { forwardRef, useImperativeHandle } from "react";
-import { render, cleanup } from "tests/testSetup";
+import { act, render, cleanup } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { trackPage } from "@shared/analytics";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
+
+let mockFamily: { SendBalanceTypeSync?: unknown } = {};
+jest.mock("~/renderer/families", () => ({
+  useLLDCoinFamily: jest.fn(() => mockFamily),
+}));
 
 // Navigation mock
 const mockGoToStep = jest.fn();
@@ -124,9 +129,16 @@ function renderViewModel(): HookApi | null {
   return ref.current;
 }
 
+function readySync(ref: React.RefObject<HookApi | null>) {
+  const vm = ref.current;
+  if (!vm?.ready) throw new Error("view model not ready");
+  return vm;
+}
+
 describe("useBalanceTypeScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFamily = {};
     mockUpdateTransaction.mockImplementation((tx, patch) => ({ ...tx, ...patch }));
     stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
 
@@ -185,6 +197,20 @@ describe("useBalanceTypeScreenViewModel", () => {
     }
   });
 
+  test("shows a placeholder for a pool whose balance is not known yet", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: null }]);
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      expect(vm.options.map(option => option.id)).toEqual(["public", "private"]);
+      expect(vm.options[1].formattedBalance).toBe("-");
+      expect(vm.options[1].formattedCounterValue).toBe("");
+      expect(vm.options[1].isZero).toBe(false);
+    }
+  });
+
   test("propagates the pending-balance flag of a pool", () => {
     stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, hasPendingBalance: true }]);
 
@@ -230,7 +256,7 @@ describe("useBalanceTypeScreenViewModel", () => {
         tx: Record<string, unknown>,
       ) => Record<string, unknown>;
       updater({ id: "tx1" });
-      expect(config.buildSelectionPatch).toHaveBeenCalledWith(optionId);
+      expect(config.buildSelectionPatch).toHaveBeenCalledWith(optionId, { id: "tx1" });
       expect(mockUpdateTransaction).toHaveBeenCalledWith(expect.objectContaining({ id: "tx1" }), {
         sender: optionId,
       });
@@ -287,6 +313,33 @@ describe("useBalanceTypeScreenViewModel", () => {
 
     expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
     expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  describe("when the family syncs after a balance is picked", () => {
+    function renderViewModelRef() {
+      const ref = React.createRef<HookApi>();
+      render(<Harness ref={ref} />);
+      return ref;
+    }
+
+    beforeEach(() => {
+      mockFamily = { SendBalanceTypeSync: () => null };
+    });
+
+    test("holds the recipient step until the family sync completes", () => {
+      const ref = renderViewModelRef();
+
+      act(() => readySync(ref).onSelect("private"));
+
+      expect(mockUpdateTransactionAction).toHaveBeenCalledTimes(1);
+      expect(mockGoToStep).not.toHaveBeenCalled();
+      expect(readySync(ref).sync.isPending).toBe(true);
+
+      act(() => readySync(ref).sync.onComplete());
+
+      expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
+      expect(readySync(ref).sync.isPending).toBe(false);
+    });
   });
 
   describe("page tracking", () => {

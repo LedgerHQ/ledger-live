@@ -2,6 +2,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCurrencyBridge } from "../impl";
 import { resolveFamily } from "../zcashRouting";
+import { descriptor as aleoDescriptor } from "../../families/aleo/descriptor";
 import { descriptor as algorandDescriptor } from "../../families/algorand/descriptor";
 import { descriptor as aptosDescriptor } from "../../families/aptos/descriptor";
 import { descriptor as bitcoinDescriptor } from "../../families/bitcoin/descriptor";
@@ -33,6 +34,7 @@ import { descriptor as zcashDescriptor } from "../../families/zcash/descriptor";
 import type { CoinDescriptor, SendDescriptor, StakeDescriptor } from "./types";
 
 const descriptorRegistry: Record<string, CoinDescriptor> = {
+  aleo: aleoDescriptor,
   algorand: algorandDescriptor,
   aptos: aptosDescriptor,
   bitcoin: bitcoinDescriptor,

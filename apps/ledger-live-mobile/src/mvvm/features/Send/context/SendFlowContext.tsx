@@ -31,6 +31,7 @@ type ActionsContextValue = Readonly<{
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
   setRecipientSearchValue: (value: string) => void;
   clearRecipientSearch: () => void;
+  resetRecipient: () => void;
 }>;
 
 const SendFlowActionsContext = createContext<ActionsContextValue | null>(null);
@@ -61,6 +62,7 @@ export function SendFlowProvider({ value, onClose, children }: SendFlowProviderP
       setAccountAndNavigate: value.setAccountAndNavigate,
       setRecipientSearchValue: value.recipientSearch.setValue,
       clearRecipientSearch: value.recipientSearch.clear,
+      resetRecipient: value.resetRecipient,
     }),
     [
       value.transaction,
@@ -70,6 +72,7 @@ export function SendFlowProvider({ value, onClose, children }: SendFlowProviderP
       value.setAccountAndNavigate,
       value.recipientSearch.setValue,
       value.recipientSearch.clear,
+      value.resetRecipient,
     ],
   );
 

@@ -15,7 +15,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ScreenName } from "~/const";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
+import { useTranslation } from "~/context/Locale";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
 import type { SendFlowNavigationProp } from "../../../types";
 
 type RecipientScreenViewModelBase = Readonly<{
@@ -40,6 +42,7 @@ export type ReadyRecipientScreenViewModel = Readonly<{
 export type RecipientScreenViewModel = RecipientScreenViewModelBase | ReadyRecipientScreenViewModel;
 
 export function useRecipientScreenViewModel(): RecipientScreenViewModel {
+  const { t } = useTranslation();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
   const { transaction } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
@@ -105,11 +108,22 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string, goToNextStep = true, memo?: Memo) => {
+      const selfTransferTarget = account
+        ? getAccountSelfTransferTarget(account, state.transaction.transaction)
+        : null;
+      const matchedSelfTransferTarget =
+        selfTransferTarget?.address.toLowerCase() === address.toLowerCase()
+          ? selfTransferTarget
+          : null;
+
       transaction.setRecipient({
         address,
         ensName,
         memo: memo ?? (state.recipient?.address === address ? state.recipient.memo : undefined),
-        displayLabel: undefined,
+        displayLabel: matchedSelfTransferTarget
+          ? t(`send.newSendFlow.${matchedSelfTransferTarget.translationKey}.label`)
+          : undefined,
+        isSelfTransfer: matchedSelfTransferTarget !== null,
       });
 
       if (goToNextStep) {
@@ -117,7 +131,15 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         goToAmount();
       }
     },
-    [transaction, state.recipient, recipientSearch, goToAmount],
+    [
+      account,
+      state.transaction.transaction,
+      transaction,
+      state.recipient,
+      t,
+      recipientSearch,
+      goToAmount,
+    ],
   );
 
   if (!account || !currency) {

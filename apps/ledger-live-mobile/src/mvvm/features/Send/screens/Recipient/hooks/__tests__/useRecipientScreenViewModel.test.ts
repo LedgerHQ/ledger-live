@@ -7,11 +7,13 @@ import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlo
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { createMockAccount, createMockCurrency } from "./accounts";
+import { getAccountSelfTransferTarget } from "../../../../utils/selfTransferTarget";
 import { useRecipientScreenViewModel } from "../useRecipientScreenViewModel";
 
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@react-navigation/native");
 jest.mock("../../../../context/SendFlowContext");
+jest.mock("../../../../utils/selfTransferTarget");
 jest.mock("@features/platform-contacts", () => ({
   useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
@@ -31,6 +33,7 @@ const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
+const mockedGetAccountSelfTransferTarget = jest.mocked(getAccountSelfTransferTarget);
 
 const account = createMockAccount({ id: "account_1" });
 
@@ -47,6 +50,7 @@ describe("useRecipientScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedGetAccountCurrency.mockReturnValue(account.currency);
+    mockedGetAccountSelfTransferTarget.mockReturnValue(null);
     mockedUseNavigation.mockReturnValue({ navigate, goBack, getState } as never);
     mockedUseSendFlowActions.mockReturnValue({
       transaction: { setRecipient },
@@ -144,6 +148,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: "name.eth",
       memo: undefined,
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
   });
@@ -164,6 +169,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: "name.eth",
       memo: undefined,
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
     expect(navigate).not.toHaveBeenCalled();
   });
@@ -187,6 +193,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: undefined,
       memo: { value: "", type: "NO_MEMO" },
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
   });
@@ -225,7 +232,33 @@ describe("useRecipientScreenViewModel", () => {
       ensName: undefined,
       memo: { type: "MEMO", value: "123" },
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
+  });
+
+  it("GIVEN the account's own other pool WHEN its address is typed THEN it is recorded as a self transfer", () => {
+    mockedGetAccountSelfTransferTarget.mockReturnValue({
+      address: "aleo1self",
+      translationKey: "recipient.selfTransfer.toPrivate",
+      isDestinationPublic: false,
+    });
+    const { result } = renderHook(() => useRecipientScreenViewModel());
+    if (!result.current.ready) {
+      throw new Error("Expected a ready recipient screen");
+    }
+    const viewModel = result.current;
+
+    act(() => {
+      viewModel.onAddressSelected("ALEO1SELF");
+    });
+
+    expect(setRecipient).toHaveBeenCalledWith(
+      expect.objectContaining({
+        address: "ALEO1SELF",
+        displayLabel: "Private balance",
+        isSelfTransfer: true,
+      }),
+    );
   });
 
   it("returns to the existing Amount screen instead of stacking another", () => {

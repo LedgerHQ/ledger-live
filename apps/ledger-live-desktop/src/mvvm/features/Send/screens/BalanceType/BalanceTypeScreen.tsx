@@ -1,5 +1,6 @@
 import React from "react";
 import { BalanceTypeScreenInner } from "./components/BalanceTypeScreenInner";
+import { FamilyBalanceTypeSync } from "./components/FamilyBalanceTypeSync";
 import { useBalanceTypeScreenViewModel } from "./hooks/useBalanceTypeScreenViewModel";
 
 export function BalanceTypeScreen() {
@@ -7,6 +8,10 @@ export function BalanceTypeScreen() {
 
   if (!viewModel.ready) {
     return null;
+  }
+
+  if (viewModel.sync.isPending) {
+    return <FamilyBalanceTypeSync onComplete={viewModel.sync.onComplete} />;
   }
 
   return <BalanceTypeScreenInner viewModel={viewModel} />;
