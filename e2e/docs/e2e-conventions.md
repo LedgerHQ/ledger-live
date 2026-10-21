@@ -52,18 +52,6 @@ Keep 1–2 obvious parameters positional.
 
 Declare an `XxxOptions` type, take `options: XxxOptions` and destructure it on the first line. In a constructor, declare the fields and assign each one explicitly rather than `Object.assign(this, options)`, so strict checks still cover every field. Callers pass only the fields they need. Keep `""` where it is a real value: it is not the same as omitting the field.
 
-```ts
-static readonly HEDERA_1 = new Account({
-  currency: Currency.HBAR,
-  accountName: "Hedera 1",
-  index: 0,
-  accountPath: "44/3030",
-  address: "0.0.10837606",
-});
-```
-
-See `Account` in [Account.ts](../../libs/live-e2e-shared/src/enum/Account.ts) for a constructor example.
-
 ## Page objects
 
 ### Selectors are stored on the relevant page object
