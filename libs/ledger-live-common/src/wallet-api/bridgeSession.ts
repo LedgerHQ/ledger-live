@@ -123,12 +123,17 @@ export class BridgeSession implements Transport {
     this.isActive = true;
     const queued = this.queue;
     this.queue = [];
-    queued.forEach(handle => handle());
+    // A queued handler may close the session: the next ones must not run then.
+    queued.forEach(handle => this.deliver(handle));
   }
 
   /** Settles like `promise`, or rejects with `BridgeSessionClosed` once the session is closed. */
   cancelOnClose<T>(promise: Promise<T> | T): Promise<T> {
-    if (this.isClosed) return Promise.reject(new BridgeSessionClosed());
+    if (this.isClosed) {
+      // Observed so that a request failing after the close is not an unhandled rejection.
+      Promise.resolve(promise).catch(() => {});
+      return Promise.reject(new BridgeSessionClosed());
+    }
     return new Promise<T>((resolve, reject) => {
       // Removed once the request settles, so a long-lived session does not retain them.
       this.closeListeners.add(reject);
@@ -224,6 +229,16 @@ export function useBridgeSession({
 
   const [session, setSession] = useState(() => new BridgeSession(undefined, post));
   const sessionRef = useRef(session);
+
+  // Closes the session when its view goes away. A replayed effect (Strict Mode) reopens one.
+  useEffect(() => {
+    if (!sessionRef.current.isOpen) {
+      const reopened = new BridgeSession(sessionRef.current.origin, post);
+      sessionRef.current = reopened;
+      setSession(reopened);
+    }
+    return () => sessionRef.current.close();
+  }, [post]);
 
   const reset = useCallback(
     (origin: string | undefined) => {
