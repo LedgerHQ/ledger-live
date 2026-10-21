@@ -239,19 +239,23 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const broadcastTransaction = useCallback(
-      async ({
-        accountId,
-        signedTransaction,
-      }: {
-        accountId: string;
-        signedTransaction: RawPlatformSignedTransaction;
-      }) => {
+      async (
+        {
+          accountId,
+          signedTransaction,
+        }: {
+          accountId: string;
+          signedTransaction: RawPlatformSignedTransaction;
+        },
+        session: BridgeSession,
+      ) => {
         return broadcastTransactionLogic(
           { manifest, dispatch, accounts, tracking, mevProtected },
           accountId,
           signedTransaction,
           pushToast,
           t,
+          session,
         );
       },
       [manifest, accounts, pushToast, dispatch, t, tracking, mevProtected],
