@@ -4,9 +4,13 @@
   "private": true,
   "description": "Analytics tracking helpers for the Pay flow, shared across desktop and mobile",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
     "./testing/module-mock": "./src/testing/moduleMock.tsx",
     "./package.json": "./package.json"
   },

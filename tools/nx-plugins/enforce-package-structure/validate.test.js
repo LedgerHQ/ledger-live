@@ -6,7 +6,9 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const { checkPackage, findPackageRoots } = require("./validate");
-const { PACKAGE_EXCEPTIONS } = require("./exceptions");
+const { COMPONENT_EXCEPTIONS, PACKAGE_EXCEPTIONS } = require("./exceptions");
+
+const REPO_ROOT = path.resolve(__dirname, "../../..");
 
 /**
  * @param {Record<string, string>} files paths relative to the workspace root
@@ -75,6 +77,58 @@ test("every exception carries a reason and an exit condition", () => {
       /exit condition/i,
       `${root} must state how the exception gets removed — entries are temporary`,
     );
+  }
+});
+
+const ONE_PLATFORM_PACKAGE = {
+  "shared/thing/package.json": JSON.stringify({
+    exports: { ".": { "react-native": "./src/index.native.ts", default: "./src/index.ts" } },
+  }),
+  "shared/thing/src/index.ts": "export {};\n",
+  "shared/thing/src/index.native.ts": 'export * from "./Sheet";\n',
+  "shared/thing/src/Sheet.native.tsx": "export function Sheet() { return null; }\n",
+};
+
+test("component violations are reported next to barrel violations", () => {
+  const found = checkPackage(workspace(ONE_PLATFORM_PACKAGE), "shared/thing", {});
+  assert.deepEqual(
+    found.map(v => [v.file, v.rule, v.code]),
+    [
+      ["shared/thing/src/index.ts", undefined, "not-a-barrel"],
+      ["shared/thing/src/Sheet.native.tsx", "R1", "universal-parity"],
+    ],
+  );
+});
+
+test("a component waiver silences its rules only, and a stale one is reported", () => {
+  const root = workspace(ONE_PLATFORM_PACKAGE);
+  function codes(waivers) {
+    return checkPackage(root, "shared/thing", { "shared/thing": waivers })
+      .filter(v => v.rule)
+      .map(v => `${v.rule} ${v.code} ${v.subject}`);
+  }
+
+  assert.deepEqual(codes({ Sheet: { rules: ["R1"] } }), []);
+  assert.deepEqual(codes({ Sheet: { rules: ["R5"] } }), [
+    "R1 universal-parity Sheet",
+    "R5 stale-waiver Sheet",
+  ]);
+  assert.deepEqual(codes({ Sheet: { rules: ["R1"] }, Gone: { rules: ["R1"] } }), [
+    "R1 stale-waiver Gone",
+  ]);
+});
+
+test("every component waiver names a package, its rules and an exit condition", () => {
+  for (const [root, waivers] of Object.entries(COMPONENT_EXCEPTIONS)) {
+    assert.ok(
+      fs.existsSync(path.join(REPO_ROOT, root, "package.json")),
+      `${root} is not a package`,
+    );
+    for (const [subject, waiver] of Object.entries(waivers)) {
+      assert.ok(waiver.rules.length > 0, `${root} ${subject} must name the rules it waives`);
+      for (const rule of waiver.rules) assert.match(rule, /^R[15]$/);
+      assert.match(waiver.reason, /exit condition/i, `${root} ${subject} needs an exit condition`);
+    }
   }
 });
 
