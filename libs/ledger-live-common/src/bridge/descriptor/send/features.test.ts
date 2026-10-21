@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "../../zcashRouting";
 import { sendFeatures } from "./features";
 
@@ -6,6 +7,7 @@ const celo = getCryptoCurrencyById("celo");
 const stellar = getCryptoCurrencyById("stellar");
 const ethereum = getCryptoCurrencyById("ethereum");
 const zcash = getCryptoCurrencyById("zcash");
+const tron = getCryptoCurrencyById("tron");
 
 describe("sendFeatures.hasDefaultStrategy / getDefaultStrategyPatch", () => {
   it("Celo: declares a default strategy that clears feesStrategy + fees only", () => {
@@ -88,5 +90,22 @@ describe("sendFeatures.getTrackingAttributes", () => {
 
   it("returns {} for an undefined currency", () => {
     expect(sendFeatures.getTrackingAttributes(undefined, {})).toEqual({});
+  });
+});
+
+describe("sendFeatures.rentChangesFee", () => {
+  it("asks the parent family's descriptor for a token", () => {
+    const trc20 = { type: "TokenCurrency", tokenType: "trc20", parentCurrencyId: "tron" };
+
+    expect(sendFeatures.rentChangesFee(trc20 as TokenCurrency)).toBe(true);
+    expect(sendFeatures.rentChangesFee(tron)).toBe(false);
+  });
+
+  it("returns false when the family declares no hook", () => {
+    expect(sendFeatures.rentChangesFee(ethereum)).toBe(false);
+  });
+
+  it("returns false for an undefined currency", () => {
+    expect(sendFeatures.rentChangesFee(undefined)).toBe(false);
   });
 });

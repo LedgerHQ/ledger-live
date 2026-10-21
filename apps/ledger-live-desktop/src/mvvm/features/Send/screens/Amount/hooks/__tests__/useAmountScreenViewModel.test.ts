@@ -37,6 +37,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     hasCoinControl: () => false,
     getFeePresetOptions: jest.fn(() => []),
     getBalanceTypeConfig: jest.fn(),
+    rentChangesFee: jest.fn(),
   },
 }));
 
@@ -191,6 +192,7 @@ describe("useAmountScreenViewModel", () => {
       currency_id: "bitcoin",
     });
     jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue(null);
+    jest.mocked(sendFeatures.rentChangesFee).mockReturnValue(false);
 
     mockedGetAccountBridge.mockReturnValue({
       updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
@@ -596,7 +598,9 @@ describe("useAmountScreenViewModel", () => {
       } as TransactionStatus;
 
       function buildTronParams() {
-        mockedGetAccountCurrency.mockReturnValue(getCryptoCurrencyById("tron"));
+        mockedGetAccountCurrency.mockImplementation(account =>
+          account?.type === "TokenAccount" ? account.token : getCryptoCurrencyById("tron"),
+        );
         mockedGetMainAccount.mockImplementation(
           (account: Account | TokenAccount, parentAccount?: Account | null) => {
             if (isAccount(account)) return account;
@@ -605,6 +609,10 @@ describe("useAmountScreenViewModel", () => {
           },
         );
         const usdtAccount = createMockTronUsdtAccount({ parentId: "tron_parent" });
+        // The Tron descriptor's answer: only the TRC-20 send burns energy.
+        jest
+          .mocked(sendFeatures.rentChangesFee)
+          .mockImplementation(currency => currency === usdtAccount.token);
         const tronAccount = createMockAccount({
           id: "tron_parent",
           currency: getCryptoCurrencyById("tron"),
