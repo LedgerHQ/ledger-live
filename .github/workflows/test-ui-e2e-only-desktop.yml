@@ -574,21 +574,28 @@ jobs:
         run: |
           $distro = 'Ubuntu-24.04'
           wsl --list --verbose
-          Start-Process -WindowStyle Hidden wsl -ArgumentList "-d $distro -u root -- dockerd --tls=false --iptables=false --ip6tables=false --bridge=none -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375 > /tmp/dockerd.log 2>&1"
-          $env:DOCKER_HOST = 'tcp://127.0.0.1:2375'
-          $ready = $false
-          foreach ($i in 1..45) {
+          Start-Process -WindowStyle Hidden wsl -ArgumentList "-d $distro -u root -e sleep infinity"
+          $override = "[Service]`nExecStart=`nExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375 --tls=false --containerd=/run/containerd/containerd.sock`n"
+          $override | wsl -d $distro -u root -e sh -c "mkdir -p /etc/systemd/system/docker.service.d && tr -d '\r' > /etc/systemd/system/docker.service.d/tcp.conf && systemctl daemon-reload && systemctl restart docker"
+          $wslIp = ((wsl -d $distro -e hostname -I) -split ' ')[0].Trim()
+          $dockerIp = $null
+          foreach ($i in 1..30) {
+            foreach ($ip in @('127.0.0.1', $wslIp)) {
+              docker -H "tcp://${ip}:2375" version --format '{{.Server.Os}}' 2>$null
+              if ($LASTEXITCODE -eq 0) { $dockerIp = $ip; break }
+            }
+            if ($dockerIp) { break }
             Start-Sleep -Seconds 2
-            docker version --format '{{.Server.Os}}' 2>$null
-            if ($LASTEXITCODE -eq 0) { $ready = $true; break }
           }
-          if (-not $ready) {
-            wsl -d $distro -u root -e sh -c 'uname -r; mount | grep cgroup; ss -ltn; tail -n 80 /tmp/dockerd.log; docker -H unix:///var/run/docker.sock version'
+          if (-not $dockerIp) {
+            wsl -d $distro -u root -e sh -c 'systemctl status docker --no-pager | tail -n 40; ss -ltn'
             exit 1
           }
-          docker version
+          docker -H "tcp://${dockerIp}:2375" version
+          Write-Output "Docker reachable from Windows on $dockerIp (WSL IP: $wslIp)"
           $mount = wsl -d $distro -e wslpath -a (($env:GITHUB_WORKSPACE -replace '\\', '/') + '/coin-apps')
-          "DOCKER_HOST=$env:DOCKER_HOST" >> $env:GITHUB_ENV
+          "DOCKER_HOST=tcp://${dockerIp}:2375" >> $env:GITHUB_ENV
+          if ($dockerIp -ne '127.0.0.1') { "SPECULOS_ADDRESS=http://$dockerIp" >> $env:GITHUB_ENV }
           "SPECULOS_COINAPPS_MOUNT=$mount" >> $env:GITHUB_ENV
           Write-Output "coin-apps mounted from $mount"
 
