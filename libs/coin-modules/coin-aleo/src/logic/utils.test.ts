@@ -91,6 +91,7 @@ import {
   determineTransactionType,
   patchAccountWithViewKey,
   toPublicOperation,
+  toPrivateFeeOperation,
   toPrivateOperation,
   getFees,
   findBondPublicTransition,
@@ -1024,6 +1025,52 @@ describe("toPrivateOperation", () => {
 
     expect(result.tx.fees).toBe(2318n);
     expect(result.tx.feesPayer).toBe(testnetAddress);
+  });
+});
+
+describe("toPrivateFeeOperation", () => {
+  const feeRecord = getMockedRecord({
+    transaction_id: "at1join  ",
+    block_height: 500,
+    block_timestamp: 1704067200,
+    function_name: "fee_private",
+  });
+  const fee = { transition: getMockedFeePrivateTransition({ base: 2308n, priority: 10n }) };
+
+  it("should charge the account the fee and nothing else", () => {
+    const result = toPrivateFeeOperation({
+      feeRecord,
+      details: getMockedTransactionDetails("at1join", { fee, block_hash: "ab1block" }),
+      address: testnetAddress,
+    });
+
+    expect(result).toEqual({
+      id: "at1join",
+      type: "FEES",
+      senders: [testnetAddress],
+      recipients: [],
+      value: 0n,
+      asset: { type: "native" },
+      details: { functionId: "fee_private", transactionType: "private", ledgerOpType: "FEES" },
+      tx: {
+        fees: 2318n,
+        feesPayer: testnetAddress,
+        hash: "at1join",
+        date: new Date(1704067200 * 1000),
+        block: { hash: "ab1block", height: 500, time: new Date(1704067200 * 1000) },
+        failed: false,
+      },
+    });
+  });
+
+  it("should mark a rejected transaction as failed", () => {
+    const result = toPrivateFeeOperation({
+      feeRecord,
+      details: getMockedTransactionDetails("at1join", { fee, status: "Rejected" }),
+      address: testnetAddress,
+    });
+
+    expect(result.tx).toEqual(expect.objectContaining({ fees: 2318n, failed: true }));
   });
 });
 

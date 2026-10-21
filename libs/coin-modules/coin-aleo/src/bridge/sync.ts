@@ -57,6 +57,8 @@ import { listPrivateOperations } from "./listPrivateOperations";
 import {
   attachPrivateTokenOpsToParent,
   buildSubAccountsFromPrivateRecords,
+  filterHistoryRecords,
+  isOutgoingTokenRecord,
   patchTokenSubAccountOps,
   resolveTokenSubAccounts,
 } from "./tokens";
@@ -443,6 +445,13 @@ export async function performPrivateSync({
     record => record.block_height >= tokenSyncStartHeight,
   );
 
+  const knownTransactionIds = new Set([
+    ...[...currentPublicOps, ...oldPrivateOps.filter(op => op.type !== "FEES")].map(op => op.hash),
+    ...filterHistoryRecords(calTokenRecords)
+      .filter(record => isOutgoingTokenRecord(record, address))
+      .map(record => record.transaction_id.trim()),
+  ]);
+
   signal?.throwIfAborted();
 
   const [latestAccountPrivateOperations, patchedPublicOperations] = await Promise.all([
@@ -452,6 +461,7 @@ export async function performPrivateSync({
       address,
       ledgerAccountId,
       privateRecords: rawNewNativePrivateRecords,
+      knownTransactionIds,
       ...(calTokenRecords.length > 0 && { tokenRecords: newCalTokenRecords }),
       ...(onProgress
         ? {

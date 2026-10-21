@@ -32,6 +32,7 @@ import {
   isParsableTransferFunction,
   resolveStakingOperationType,
   stripBatcherSuffix,
+  toPrivateFeeOperation,
   toPrivateOperation,
   toPublicOperation,
 } from "./utils";
@@ -121,6 +122,7 @@ async function collectPrivateOperations({
   provableId,
   viewKey,
   publicTxIds,
+  inWindowTxIds,
   recordsFrom,
   recordsTo,
   tokenTypeByProgramName,
@@ -130,6 +132,7 @@ async function collectPrivateOperations({
   provableId: string;
   viewKey: string;
   publicTxIds: Set<string>;
+  inWindowTxIds: Set<string>;
   recordsFrom: number;
   recordsTo: number;
   tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>;
@@ -150,7 +153,7 @@ async function collectPrivateOperations({
   });
 
   const ownedRecordTxIds = new Set<string>();
-  const ownedFeeRecordTxIds = new Set<string>();
+  const feeRecordByTransactionId = new Map<string, AleoPrivateRecord>();
   const byTransactionId = new Map<string, AleoPrivateRecord>();
 
   for (const record of records) {
@@ -160,7 +163,7 @@ async function collectPrivateOperations({
 
     const transactionId = record.transaction_id.trim();
     if (record.function_name === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE) {
-      ownedFeeRecordTxIds.add(transactionId);
+      feeRecordByTransactionId.set(transactionId, record);
     }
 
     if (!isParsableTransferFunction(record.function_name)) continue;
@@ -174,29 +177,44 @@ async function collectPrivateOperations({
     }
   }
 
-  const enriched = await enrichPrivateRecords({
-    config,
-    viewKey,
-    address,
-    records: [...byTransactionId.values()],
+  const feeOnlyRecords = [...feeRecordByTransactionId]
+    .filter(
+      ([transactionId]) =>
+        !inWindowTxIds.has(transactionId) && !ownedRecordTxIds.has(transactionId),
+    )
+    .map(([, record]) => record);
+
+  const [enriched, feeOperations] = await Promise.all([
+    enrichPrivateRecords({
+      config,
+      viewKey,
+      address,
+      records: [...byTransactionId.values()],
+    }),
+    promiseAllBatched(4, feeOnlyRecords, async feeRecord => {
+      const details = await apiClient.getTransactionById(config, feeRecord.transaction_id.trim());
+      return toPrivateFeeOperation({ feeRecord, details, address });
+    }),
+  ]);
+
+  const transferOperations = enriched.flatMap(enrichedRecord => {
+    if (!enrichedRecord) return [];
+
+    const transactionId = enrichedRecord.rawRecord.transaction_id.trim();
+    const operation = toPrivateOperation({
+      enrichedRecord,
+      address,
+      tokenTypeByProgramName,
+      hasOwnedFeeRecord: feeRecordByTransactionId.has(transactionId),
+    });
+
+    return [operation];
   });
 
   return {
     ownedRecordTxIds,
-    ownedFeeRecordTxIds,
-    operations: enriched.flatMap(enrichedRecord => {
-      if (!enrichedRecord) return [];
-
-      const transactionId = enrichedRecord.rawRecord.transaction_id.trim();
-      const operation = toPrivateOperation({
-        enrichedRecord,
-        address,
-        tokenTypeByProgramName,
-        hasOwnedFeeRecord: ownedFeeRecordTxIds.has(transactionId),
-      });
-
-      return [operation];
-    }),
+    ownedFeeRecordTxIds: new Set(feeRecordByTransactionId.keys()),
+    operations: [...transferOperations, ...feeOperations],
   };
 }
 
@@ -334,6 +352,7 @@ export async function listOperations({
     rawTx => config.enableStaking || resolveStakingOperationType(rawTx) === undefined,
   );
   const publicTxIds = new Set(publicTransactions.map(tx => tx.transaction_id));
+  const inWindowTxIds = new Set(inWindow.map(tx => tx.transaction_id));
 
   const [
     transactionsWithDetails,
@@ -348,6 +367,7 @@ export async function listOperations({
       provableId,
       viewKey,
       publicTxIds,
+      inWindowTxIds,
       recordsFrom,
       recordsTo,
       tokenTypeByProgramName,
