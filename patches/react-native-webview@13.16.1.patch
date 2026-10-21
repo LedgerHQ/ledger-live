@@ -1,8 +1,8 @@
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
-index 80c68034b193a47bedb56ca527352de9548e8ac6..90041e4684a0df1234c56d29d9f70db4cbd2564e 100644
+index 80c6803..e86df44 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
-@@ -95,6 +95,10 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -95,6 +95,20 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
          mRNCWebViewClient.setBasicAuthCredential(credential);
      }
  
@@ -10,22 +10,58 @@ index 80c68034b193a47bedb56ca527352de9548e8ac6..90041e4684a0df1234c56d29d9f70db4
 +        mRNCWebViewClient.setAllowsUnsecureHttps(allowsUnsecureHttps);
 +    }
 +
++    // Ledger patch (LIVE-39616), see RNCWebViewClient#setAllowedMainFrameOrigins.
++    protected @Nullable List<String> mAllowedMainFrameOrigins = null;
++
++    public void setAllowedMainFrameOrigins(@Nullable List<String> origins) {
++        mAllowedMainFrameOrigins = origins;
++        if (mRNCWebViewClient != null) {
++            mRNCWebViewClient.setAllowedMainFrameOrigins(origins);
++        }
++    }
++
      public void setSendContentSizeChangeEvents(boolean sendContentSizeChangeEvents) {
          this.sendContentSizeChangeEvents = sendContentSizeChangeEvents;
      }
+@@ -221,6 +235,7 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+         if (client instanceof RNCWebViewClient) {
+             mRNCWebViewClient = (RNCWebViewClient) client;
+             mRNCWebViewClient.setProgressChangedFilter(progressChangedFilter);
++            mRNCWebViewClient.setAllowedMainFrameOrigins(mAllowedMainFrameOrigins);
+         }
+     }
+ 
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
-index 0287e1c56b07b6c23b4049f3992d88b86fdc5c79..477d537122e07ebd45ff0639744df3c09fc31b3a 100644
+index 0287e1c..8a0c78a 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
-@@ -42,6 +42,7 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -2,6 +2,7 @@ package com.reactnativecommunity.webview;
+ 
+ import android.annotation.TargetApi;
+ import android.graphics.Bitmap;
++import android.net.Uri;
+ import android.net.http.SslError;
+ import android.os.Build;
+ import android.os.SystemClock;
+@@ -35,6 +36,8 @@ import com.reactnativecommunity.webview.events.TopShouldStartLoadWithRequestEven
+ import android.webkit.CookieManager;
+ import android.webkit.CookieSyncManager;
+ 
++import java.util.List;
++import java.util.Locale;
+ import java.util.concurrent.atomic.AtomicReference;
+ 
+ public class RNCWebViewClient extends WebViewClient {
+@@ -42,6 +45,8 @@ public class RNCWebViewClient extends WebViewClient {
      protected static final int SHOULD_OVERRIDE_URL_LOADING_TIMEOUT = 250;
  
      protected boolean mLastLoadFailed = false;
 +    protected boolean mAllowsUnsecureHttps = false;
++    protected @Nullable List<String> mAllowedMainFrameOrigins = null;
      protected RNCWebView.ProgressChangedFilter progressChangedFilter = null;
      protected @Nullable RNCBasicAuthCredential basicAuthCredential = null;
  
-@@ -49,6 +50,10 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -49,6 +54,55 @@ public class RNCWebViewClient extends WebViewClient {
          basicAuthCredential = credential;
      }
  
@@ -33,10 +69,114 @@ index 0287e1c56b07b6c23b4049f3992d88b86fdc5c79..477d537122e07ebd45ff0639744df3c0
 +        mAllowsUnsecureHttps = allowsUnsecureHttps;
 +    }
 +
++    // Ledger patch (LIVE-39616): opt-in, synchronous main-frame origin check so that a
++    // disallowed http(s) origin is cancelled natively instead of being allowed when the
++    // JS round trip of onShouldStartLoadWithRequest exceeds SHOULD_OVERRIDE_URL_LOADING_TIMEOUT.
++    // Remove once react-native-webview ships an equivalent native allowlist upstream.
++    public void setAllowedMainFrameOrigins(@Nullable List<String> origins) {
++        mAllowedMainFrameOrigins = origins;
++    }
++
++    // Entries: exact origin ("https://example.com[:port]"), any host for a scheme
++    // ("https://" or "https://*") or subdomains ("https://*.example.com[:port]").
++    // Only http(s) URLs are checked; other schemes keep the onShouldStartLoadWithRequest path.
++    protected boolean isMainFrameOriginBlocked(String url) {
++        final List<String> allowedOrigins = mAllowedMainFrameOrigins;
++        if (allowedOrigins == null) return false;
++
++        final Uri uri = Uri.parse(url);
++        final String rawScheme = uri.getScheme();
++        if (rawScheme == null) return true;
++        final String scheme = rawScheme.toLowerCase(Locale.ROOT);
++        if (!scheme.equals("http") && !scheme.equals("https")) return false;
++
++        final String rawHost = uri.getHost();
++        if (rawHost == null || rawHost.isEmpty()) return true;
++        final int port = uri.getPort();
++        final boolean isDefaultPort = port == -1
++            || (scheme.equals("https") && port == 443)
++            || (scheme.equals("http") && port == 80);
++        final String host = rawHost.toLowerCase(Locale.ROOT) + (isDefaultPort ? "" : ":" + port);
++        final String origin = scheme + "://" + host;
++
++        for (String entry : allowedOrigins) {
++            if (entry == null) continue;
++            final String pattern = entry.trim();
++            if (pattern.isEmpty()) continue;
++            if (pattern.equals(origin)) return false;
++            if (pattern.equals(scheme + "://") || pattern.equals(scheme + "://*")) return false;
++            final String wildcardPrefix = scheme + "://*.";
++            if (pattern.startsWith(wildcardPrefix)) {
++                final String suffix = pattern.substring(wildcardPrefix.length());
++                if (!suffix.isEmpty() && host.endsWith("." + suffix)) return false;
++            }
++        }
++        return true;
++    }
++
      @Override
      public void onPageFinished(WebView webView, String url) {
          super.onPageFinished(webView, url);
-@@ -167,7 +172,12 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -92,6 +146,18 @@ public class RNCWebViewClient extends WebViewClient {
+ 
+     @Override
+     public boolean shouldOverrideUrlLoading(WebView view, String url) {
++        return this.shouldOverrideUrlLoading(view, url, true);
++    }
++
++    protected boolean shouldOverrideUrlLoading(WebView view, String url, boolean isMainFrame) {
++        // Ledger patch (LIVE-39616): cancel disallowed main-frame origins synchronously. JS still
++        // receives the request without a lock, so it can observe it and only re-issue it with loadUrl.
++        if (isMainFrame && isMainFrameOriginBlocked(url)) {
++            FLog.w(TAG, "Blocked main-frame navigation to an origin outside allowedMainFrameOrigins.");
++            dispatchShouldStartLoadWithRequestEvent(view, url, true);
++            return true;
++        }
++
+         final RNCWebView rncWebView = (RNCWebView) view;
+         final boolean isJsDebugging = rncWebView.getReactApplicationContext().getJavaScriptContextHolder().get() == 0;
+ 
+@@ -102,6 +168,8 @@ public class RNCWebViewClient extends WebViewClient {
+ 
+             final WritableMap event = createWebViewEvent(view, url);
+             event.putDouble("lockIdentifier", lockIdentifier);
++            // Ledger patch (LIVE-39616): forward the real frame instead of leaving isTopFrame unset.
++            event.putBoolean("isTopFrame", isMainFrame);
+             rncWebView.dispatchDirectShouldStartLoadWithRequest(event);
+ 
+             try {
+@@ -131,19 +199,25 @@ public class RNCWebViewClient extends WebViewClient {
+             FLog.w(TAG, "Couldn't use blocking synchronous call for onShouldStartLoadWithRequest due to debugging or missing Catalyst instance, falling back to old event-and-load.");
+             progressChangedFilter.setWaitingForCommandLoadUrl(true);
+ 
+-            int reactTag = RNCWebViewWrapper.getReactTagFromWebView(view);
+-            UIManagerHelper.getEventDispatcherForReactTag((ReactContext) view.getContext(), reactTag).dispatchEvent(new TopShouldStartLoadWithRequestEvent(
+-                    reactTag,
+-                    createWebViewEvent(view, url)));
++            dispatchShouldStartLoadWithRequestEvent(view, url, isMainFrame);
+             return true;
+         }
+     }
+ 
++    protected void dispatchShouldStartLoadWithRequestEvent(WebView view, String url, boolean isMainFrame) {
++        int reactTag = RNCWebViewWrapper.getReactTagFromWebView(view);
++        final WritableMap event = createWebViewEvent(view, url);
++        event.putBoolean("isTopFrame", isMainFrame);
++        UIManagerHelper.getEventDispatcherForReactTag((ReactContext) view.getContext(), reactTag).dispatchEvent(new TopShouldStartLoadWithRequestEvent(
++                reactTag,
++                event));
++    }
++
+     @TargetApi(Build.VERSION_CODES.N)
+     @Override
+     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+         final String url = request.getUrl().toString();
+-        return this.shouldOverrideUrlLoading(view, url);
++        return this.shouldOverrideUrlLoading(view, url, request.isForMainFrame());
+     }
+ 
+     @Override
+@@ -167,7 +241,12 @@ public class RNCWebViewClient extends WebViewClient {
          // Cancel request after obtaining top-level URL.
          // If request is cancelled before obtaining top-level URL, undesired behavior may occur.
          // Undesired behavior: Return value of WebView.getUrl() may be the current URL instead of the failing URL.
@@ -51,7 +191,7 @@ index 0287e1c56b07b6c23b4049f3992d88b86fdc5c79..477d537122e07ebd45ff0639744df3c0
          int code = error.getPrimaryError();
          String description = "";
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
-index f83033b3597a425da159555233bacce250ccfce0..4d546d26664ff76e60017ed2d4c06be27c172a7e 100644
+index f83033b..021cb5b 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
 @@ -563,6 +563,10 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
@@ -65,27 +205,46 @@ index f83033b3597a425da159555233bacce250ccfce0..4d546d26664ff76e60017ed2d4c06be2
      fun setAndroidLayerType(viewWrapper: RNCWebViewWrapper, layerTypeString: String?) {
          val view = viewWrapper.webView
          val layerType = when (layerTypeString) {
+@@ -659,6 +663,12 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
+         }
+     }
+ 
++    fun setAllowedMainFrameOrigins(viewWrapper: RNCWebViewWrapper, value: ReadableArray?) {
++        viewWrapper.webView.setAllowedMainFrameOrigins(
++            value?.toArrayList()?.mapNotNull { it as? String }
++        )
++    }
++
+     fun setNestedScrollEnabled(viewWrapper: RNCWebViewWrapper, value: Boolean) {
+         val view = viewWrapper.webView
+         view.nestedScrollEnabled = value
 diff --git a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 4709e2822499067cef3a4ce571991b96f844e085..723fcc9ff0d80b5e9c4a43e7495d17bd8aca369a 100644
+index 4709e28..426b4d5 100644
 --- a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-@@ -88,6 +88,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
+@@ -88,6 +88,17 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
          mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
      }
  
 +    @ReactProp(name = "allowsUnsecureHttps")
 +    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
 +        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
++    }
++
++    @Override
++    @ReactProp(name = "allowedMainFrameOrigins")
++    public void setAllowedMainFrameOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
++        mRNCWebViewManagerImpl.setAllowedMainFrameOrigins(view, value);
 +    }
 +
      @Override
      @ReactProp(name = "allowsProtectedMedia")
      public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
 diff --git a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 974337f41ce01a5102eeafa6e54fbb3b949c48d7..f721441973bfe695fb5e5e49eff6a3565797319e 100644
+index 974337f..53aed43 100644
 --- a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-@@ -67,6 +67,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
+@@ -67,6 +67,16 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
          mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
      }
  
@@ -94,11 +253,16 @@ index 974337f41ce01a5102eeafa6e54fbb3b949c48d7..f721441973bfe695fb5e5e49eff6a356
 +        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
 +    }
 +
++    @ReactProp(name = "allowedMainFrameOrigins")
++    public void setAllowedMainFrameOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
++        mRNCWebViewManagerImpl.setAllowedMainFrameOrigins(view, value);
++    }
++
      @ReactProp(name = "allowsProtectedMedia")
      public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
          mRNCWebViewManagerImpl.setAllowsProtectedMedia(view, value);
 diff --git a/apple/RNCWebViewImpl.h b/apple/RNCWebViewImpl.h
-index 1f6bbfd697a4e0b0aef2db344386b786839a1969..c8546386b7c1e2279effd99551f21fb2df8e7e54 100644
+index 1f6bbfd..c854638 100644
 --- a/apple/RNCWebViewImpl.h
 +++ b/apple/RNCWebViewImpl.h
 @@ -82,6 +82,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *)request
@@ -110,7 +274,7 @@ index 1f6bbfd697a4e0b0aef2db344386b786839a1969..c8546386b7c1e2279effd99551f21fb2
  @property (nonatomic, assign) BOOL bounces;
  @property (nonatomic, assign) BOOL mediaPlaybackRequiresUserAction;
 diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
-index 7f5c24d6e2cfb26eddbc513bf17a81c24a7273e2..3de79e49648c78664395b9db1c2130a87cc94609 100644
+index 7f5c24d..461c428 100644
 --- a/apple/RNCWebViewImpl.m
 +++ b/apple/RNCWebViewImpl.m
 @@ -1161,6 +1161,12 @@ - (void)                    webView:(WKWebView *)webView
@@ -126,8 +290,22 @@ index 7f5c24d6e2cfb26eddbc513bf17a81c24a7273e2..3de79e49648c78664395b9db1c2130a8
    if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
      SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
      if (localCertificate != nil) {
+@@ -1345,8 +1351,12 @@ - (void)                  webView:(WKWebView *)webView
+ 
+     WKNavigationType navigationType = navigationAction.navigationType;
+     NSURLRequest *request = navigationAction.request;
+-    BOOL isTopFrame = [request.URL isEqual:request.mainDocumentURL];
+     BOOL hasTargetFrame = navigationAction.targetFrame != nil;
++    // Ledger patch (LIVE-39616): use the target frame when WebKit provides it; comparing the
++    // request URL with mainDocumentURL mislabels an iframe that loads the top document URL.
++    BOOL isTopFrame = hasTargetFrame
++      ? navigationAction.targetFrame.isMainFrame
++      : [request.URL isEqual:request.mainDocumentURL];
+ 
+     if (_onOpenWindow && !hasTargetFrame) {
+       // When OnOpenWindow should be called, we want to prevent the navigation
 diff --git a/apple/RNCWebViewManager.mm b/apple/RNCWebViewManager.mm
-index f8f375f23b12039b64b7900034c8978e0235a8e7..a6103fca6e633b5bd0b356bd3612a86be36323d8 100644
+index f8f375f..a6103fc 100644
 --- a/apple/RNCWebViewManager.mm
 +++ b/apple/RNCWebViewManager.mm
 @@ -64,6 +64,7 @@ - (RNCView *)view
@@ -139,7 +317,7 @@ index f8f375f23b12039b64b7900034c8978e0235a8e7..a6103fca6e633b5bd0b356bd3612a86b
  RCT_EXPORT_VIEW_PROPERTY(mediaPlaybackRequiresUserAction, BOOL)
  RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
 diff --git a/lib/WebViewTypes.d.ts b/lib/WebViewTypes.d.ts
-index 998cc88f03f3fbcd0a47f227c01f738dbf4c58bf..d4863a01293decaff966f9561e7dde1e09f1961a 100644
+index 998cc88..1ec5ba9 100644
 --- a/lib/WebViewTypes.d.ts
 +++ b/lib/WebViewTypes.d.ts
 @@ -475,6 +475,11 @@ export interface IOSWebViewProps extends WebViewSharedProps {
@@ -166,7 +344,7 @@ index 998cc88f03f3fbcd0a47f227c01f738dbf4c58bf..d4863a01293decaff966f9561e7dde1e
      /**
       * Function that is invoked when the WebKit WebView content process gets terminated.
       * @platform macos
-@@ -893,6 +903,11 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
+@@ -893,6 +903,19 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
       * Sets ability to open fullscreen videos on Android devices.
       */
      allowsFullscreenVideo?: boolean;
@@ -175,6 +353,76 @@ index 998cc88f03f3fbcd0a47f227c01f738dbf4c58bf..d4863a01293decaff966f9561e7dde1e
 +     * @platform android
 +     */
 +    allowsUnsecureHttps?: boolean;
++    /**
++     * Android only. When set, a main-frame http(s) navigation whose origin matches no entry is
++     * cancelled natively and synchronously, before onShouldStartLoadWithRequest is consulted.
++     * Entries: exact origin ("https://example.com"), any host ("https://*") or subdomains
++     * ("https://*.example.com"). Other schemes are left to onShouldStartLoadWithRequest.
++     * @platform android
++     */
++    allowedMainFrameOrigins?: readonly string[];
      /**
       * Configuring Dark Theme
       *
+diff --git a/src/RNCWebViewNativeComponent.ts b/src/RNCWebViewNativeComponent.ts
+index 7f4e6c4..7d7c951 100644
+--- a/src/RNCWebViewNativeComponent.ts
++++ b/src/RNCWebViewNativeComponent.ts
+@@ -147,6 +147,7 @@ export interface NativeProps extends ViewProps {
+   allowFileAccess?: boolean;
+   allowsProtectedMedia?: boolean;
+   allowsFullscreenVideo?: boolean;
++  allowedMainFrameOrigins?: ReadonlyArray<string>;
+   androidLayerType?: WithDefault<'none' | 'software' | 'hardware', 'none'>;
+   cacheMode?: WithDefault<
+     | 'LOAD_DEFAULT'
+diff --git a/src/WebViewShared.tsx b/src/WebViewShared.tsx
+index 3b0a38b..50c4fe8 100644
+--- a/src/WebViewShared.tsx
++++ b/src/WebViewShared.tsx
+@@ -37,6 +37,12 @@ const compileWhitelist = (
+ ): readonly string[] =>
+   ['about:blank', ...(originWhitelist || [])].map(originWhitelistToRegex);
+ 
++// Ledger patch (LIVE-39616): about:, blob: and data: subframes (e.g. about:srcdoc) inherit
++// their creator's origin or get an opaque one, so the origin whitelist does not apply to them.
++// Without this, iOS cancels them and tries to open them with Linking.
++const isLocalSubframeRequest = (url: string, isTopFrame?: boolean) =>
++  isTopFrame === false && /^(about|blob|data):/i.test(url);
++
+ const createOnShouldStartLoadWithRequest = (
+   loadRequest: (
+     shouldStart: boolean,
+@@ -50,7 +56,11 @@ const createOnShouldStartLoadWithRequest = (
+     let shouldStart = true;
+     const { url, lockIdentifier } = nativeEvent;
+ 
+-    if (!passesWhitelist(compileWhitelist(originWhitelist), url)) {
++    if (isLocalSubframeRequest(url, nativeEvent.isTopFrame)) {
++      shouldStart = onShouldStartLoadWithRequest
++        ? onShouldStartLoadWithRequest(nativeEvent)
++        : true;
++    } else if (!passesWhitelist(compileWhitelist(originWhitelist), url)) {
+       Linking.canOpenURL(url)
+         .then((supported) => {
+           if (supported) {
+diff --git a/src/WebViewTypes.ts b/src/WebViewTypes.ts
+index eca8141..e179ad6 100644
+--- a/src/WebViewTypes.ts
++++ b/src/WebViewTypes.ts
+@@ -1093,6 +1093,15 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
+    */
+   allowsFullscreenVideo?: boolean;
+ 
++  /**
++   * Android only. When set, a main-frame http(s) navigation whose origin matches no entry is
++   * cancelled natively and synchronously, before onShouldStartLoadWithRequest is consulted.
++   * Entries: exact origin ("https://example.com"), any host ("https://*") or subdomains
++   * ("https://*.example.com"). Other schemes are left to onShouldStartLoadWithRequest.
++   * @platform android
++   */
++  allowedMainFrameOrigins?: readonly string[];
++
+   /**
+    * Configuring Dark Theme
+    *
