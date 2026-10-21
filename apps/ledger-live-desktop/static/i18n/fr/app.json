@@ -304,6 +304,33 @@
     "coinControl" : "Choisir",
     "feesAmount" : "Montant des frais"
   },
+  "accountDetailSettings" : {
+    "title" : "Paramètres du compte",
+    "menu" : {
+      "changeName" : "Modifier le nom",
+      "viewAdvancedLogs" : "Voir les logs détaillés",
+      "removeAccount" : "Retirer ce compte du Portefeuille"
+    },
+    "changeName" : {
+      "title" : "Modifier le nom du compte",
+      "description" : "Donnez un nom à cette adresse pour la retrouver facilement (ex. {{ticker}}-trades, {{ticker}}-DeFi).",
+      "label" : "Nom de l’adresse",
+      "submit" : "Modifier le nom"
+    },
+    "advancedLogs" : {
+      "title" : "Logs détaillés",
+      "derivationTip" : "Cet xpub est de type {{tag}}. Lorsque vous l’importez dans un wallet tiers, choisissez le même mode de dérivation.",
+      "synchronised" : "Synchronisé le {{date}}",
+      "copy" : "Copier les logs",
+      "copied" : "Copié"
+    },
+    "remove" : {
+      "title" : "Supprimer le compte ?",
+      "description" : "Les actifs liés à ce compte ne seront plus visibles dans votre portefeuille. Vos actifs sur la blockchain ne sont pas affectés.",
+      "confirm" : "Supprimer",
+      "cancel" : "Conserver"
+    }
+  },
   "sidebar" : {
     "card" : "Carte",
     "paytab" : "Payer",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle" : "Actifs arrivant à maturité",
         "pendingNotice" : "Certaines notes shielded sont encore en cours de maturation et peuvent ne pas encore être transférables."
       },
+      "aleoPublic" : {
+        "title" : "Solde public"
+      },
+      "aleoPrivate" : {
+        "title" : "Solde privé"
+      },
       "zeroBalance" : {
         "warning" : "Aucun solde disponible"
+      },
+      "requiresSync" : {
+        "notice" : "Synchronisation requise"
       }
     }
   },
@@ -7783,6 +7819,14 @@
       "title" : "Ces actifs ne peuvent pas encore être transférés",
       "description" : "Veuillez réessayer dans quelques minutes."
     },
+    "ZcashShieldedNotSupportedOnDevice" : {
+      "title" : "Cet appareil peut uniquement réaliser des transferts entre des adresses transparentes",
+      "description" : "Utilisez un Ledger Nano S Plus, un Ledger Nano X, Ledger Flex ou Ledger Stax pour envoyer vers ou depuis une adresse privée."
+    },
+    "ZcashPreparedBuildMismatch" : {
+      "title" : "La transaction a changé depuis sa vérification",
+      "description" : "Votre solde ou vos frais ont changé. Veuillez revérifier votre transaction."
+    },
     "InvalidNonce" : {
       "title" : "Nonce requis"
     },
@@ -9829,7 +9873,7 @@
             "subtitle" : "Protégé",
             "unavailable" : "Solde privé indisponible"
           },
-          "spendableWarning" : "Le solde disponible peut être inférieur au solde total. Plusieurs confirmations et un scan complet (~15 minutes) sont requises avant de pouvoir utiliser des actifs récemment shielded."
+          "spendableWarning" : "Le solde disponible peut être inférieur au solde total. Plusieurs confirmations et un scan complet sont requises avant de pouvoir utiliser des actifs récemment shielded."
         },
         "memo" : {
           "label" : "Mémo (facultatif)",
@@ -10090,11 +10134,25 @@
         "recordsUsed" : "Entrées utilisées",
         "signingTime" : "Heure de signature"
       },
+      "amount" : {
+        "signingTime" : {
+          "label" : "Heure de signature",
+          "description" : "Vous approuvez avec votre signer Ledger chaque entrée utilisée par cette transaction. Envoyer davantage depuis votre solde privé peut nécessiter plus d’entrées et prendre plus de temps."
+        }
+      },
       "mandatoryPrivateSync" : {
         "title" : "Synchronisation de votre solde privé ({{percentage}}%)",
         "desc" : "Veuillez patienter",
         "errorTitle" : "Échec de la synchronisation",
         "errorDesc" : "Une erreur est survenue, veuillez réessayer."
+      },
+      "balanceTypeSync" : {
+        "title" : "Actualisation de votre solde privé",
+        "progress" : "{{percentage}}%",
+        "errorTitle" : "Échec de la synchronisation",
+        "errorDescription" : "Une erreur est survenue, veuillez réessayer.",
+        "recordLimitTitle" : "Vous pouvez envoyer jusqu’à {{amount}}",
+        "recordLimitDescription" : "Votre solde est réparti sur plusieurs entrées, et une transaction peut utiliser un maximum de {{maxRecords}}. Pour envoyer un montant plus élevé, effectuez plusieurs transactions."
       }
     },
     "operationTypes" : {
@@ -10573,6 +10631,14 @@
           "description" : "Chiffrement de bout en bout avec Ledger Sync."
         }
       }
+    }
+  },
+  "accountDetail" : {
+    "header" : {
+      "settings" : "Paramètres du compte"
+    },
+    "assets" : {
+      "title" : "Actifs"
     }
   },
   "assetDetails" : {
@@ -11113,6 +11179,9 @@
       "amountExceedsBalance" : "Solde insuffisant",
       "quoteUnavailable" : "Échec de la récupération de l’offre auprès de {{provider}}. Veuillez choisir un autre actif ou réessayer plus tard."
     }
+  },
+  "actionMenuDialog" : {
+    "a11yTitle" : "Choisissez une action"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Signature du placement",
