@@ -5,7 +5,6 @@ import { appVersion } from "LLM/utils/appVersion";
 import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
-import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type {
@@ -24,6 +23,7 @@ import {
   signMessageLogic,
 } from "@ledgerhq/live-common/platform/logic";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
+import { withPlatformAPIPermissions } from "@ledgerhq/live-common/platform/permissions";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
 import {
   serializePlatformAccount,
@@ -36,7 +36,6 @@ import {
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { useFeature } from "@features/platform-feature-flags";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import useEnv from "@features/platform-env";
@@ -47,11 +46,14 @@ import prepareSignTransaction from "./liveSDKLogic";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
+import { BridgeSessionClosed } from "@ledgerhq/live-common/errors";
+import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import { useWebviewState } from "./helpers";
 import {
-  getAllowedSenderOrigin,
+  acceptWebviewMessage,
   getMessagingAllowedOrigins,
   useBridgeAllowedDomains,
+  useWebviewBridgeSession,
 } from "./bridge";
 import { closePlatformExchange } from "./closePlatformExchange";
 import { getTrackingRouteLiveAppSource } from "./analytics";
@@ -97,17 +99,23 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const manifestDomainCheckEnabled = useFeature("llmWebviewManifestDomainCheck")?.enabled;
+    const enforcePermissions = !!useFeature("platformApiEnforcePermissions")?.enabled;
 
-    const { webviewProps, webviewRef, onShouldStartLoadWithRequest, isBlockedByDomainCheck } =
-      useWebviewState(
-        {
-          manifest,
-          inputs,
-          manifestDomainCheckEnabled,
-        },
-        ref,
-        onStateChange,
-      );
+    const {
+      webviewProps,
+      webviewRef,
+      onShouldStartLoadWithRequest,
+      isBlockedByDomainCheck,
+      mainFrameUrl,
+    } = useWebviewState(
+      {
+        manifest,
+        inputs,
+        manifestDomainCheckEnabled,
+      },
+      ref,
+      onStateChange,
+    );
 
     const walletState = useSelector(walletSelector);
 
@@ -125,8 +133,20 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
     const listPlatformCurrencies = useListPlatformCurrencies(deactivatedCurrencyIdsSet);
 
-    const { openDrawer: openModularDrawer } = useModularDrawerController();
+    const {
+      openDrawer: openModularDrawer,
+      closeDrawer: closeModularDrawer,
+      isOpen: isModularDrawerOpen,
+    } = useModularDrawerController();
 
+    // The drawer a Live App opened is closed when its main frame moves to another origin.
+    const closeLiveAppDrawers = useCallback(() => {
+      if (isModularDrawerOpen) {
+        closeModularDrawer();
+      }
+    }, [closeModularDrawer, isModularDrawerOpen]);
+
+    const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, closeLiveAppDrawers);
     const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
     const messagingAllowedOrigins = useMemo(
       () => getMessagingAllowedOrigins(allowedDomains),
@@ -218,27 +238,30 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const signTransaction = useCallback(
-      ({
-        accountId,
-        transaction,
-        params,
-      }: // TODO: use type SignTransactionParams from LedgerLiveApiSdk
-      // }: SignTransactionParams) => {
-      {
-        accountId: string;
-        transaction: RawPlatformTransaction;
-        params?: {
-          /**
-           * The name of the Ledger Nano app to use for the signing process
-           */
-          useApp: string;
-        };
-      }) =>
+      (
+        {
+          accountId,
+          transaction,
+          params,
+        }: // TODO: use type SignTransactionParams from LedgerLiveApiSdk
+        // }: SignTransactionParams) => {
+        {
+          accountId: string;
+          transaction: RawPlatformTransaction;
+          params?: {
+            /**
+             * The name of the Ledger Nano app to use for the signing process
+             */
+            useApp: string;
+          };
+        },
+        session: BridgeSession,
+      ) =>
         signTransactionLogic(
           { manifest, accounts, tracking },
           accountId,
           transaction,
-          async (account, parentAccount, { liveTx }) => {
+          session.whileOpen(async (account, parentAccount, { liveTx }) => {
             let tx: Transaction;
             try {
               tx = await prepareSignTransaction(account, parentAccount, liveTx);
@@ -246,6 +269,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               tracking.platformSignTransactionFail(manifest);
               throw error;
             }
+            if (!session.isOpen) throw new BridgeSessionClosed();
 
             return new Promise((resolve, reject) => {
               let done = false;
@@ -277,7 +301,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 onError,
               });
             });
-          },
+          }),
         ),
       [manifest, accounts, navigation, tracking],
     );
@@ -351,110 +375,124 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const completeExchange = useCallback(
-      (request: {
-        provider: string;
-        fromAccountId: string;
-        toAccountId: string;
-        transaction: RawPlatformTransaction;
-        binaryPayload: string;
-        signature: string;
-        feesStrategy: string;
-        exchangeType: number;
-        amountExpectedTo?: number;
-      }) =>
+      (
+        request: {
+          provider: string;
+          fromAccountId: string;
+          toAccountId: string;
+          transaction: RawPlatformTransaction;
+          binaryPayload: string;
+          signature: string;
+          feesStrategy: string;
+          exchangeType: number;
+          amountExpectedTo?: number;
+        },
+        session: BridgeSession,
+      ) =>
         completeExchangeLogic(
           { manifest, accounts, tracking },
           request,
-          ({
-            provider,
-            exchange,
-            transaction,
-            binaryPayload,
-            signature,
-            feesStrategy,
-            exchangeType,
-          }): Promise<Operation> =>
-            new Promise((resolve, reject) => {
-              navigation.navigate(NavigatorName.PlatformExchange, {
-                screen: ScreenName.PlatformCompleteExchange,
-                params: {
-                  request: {
-                    exchangeType,
-                    provider,
-                    exchange,
-                    transaction: transaction as Transaction,
-                    binaryPayload,
-                    signature,
-                    feesStrategy,
+          session.whileOpen(
+            ({
+              provider,
+              exchange,
+              transaction,
+              binaryPayload,
+              signature,
+              feesStrategy,
+              exchangeType,
+            }): Promise<Operation> =>
+              new Promise((resolve, reject) => {
+                navigation.navigate(NavigatorName.PlatformExchange, {
+                  screen: ScreenName.PlatformCompleteExchange,
+                  params: {
+                    request: {
+                      exchangeType,
+                      provider,
+                      exchange,
+                      transaction: transaction as Transaction,
+                      binaryPayload,
+                      signature,
+                      feesStrategy,
+                    },
+                    device,
+                    onResult: (result: { operation?: Operation; error?: Error }) => {
+                      if (result.error) {
+                        tracking.platformStartExchangeFail(manifest);
+                        reject(result.error);
+                      }
+                      if (result.operation) {
+                        tracking.platformStartExchangeSuccess(manifest);
+                        resolve(result.operation);
+                      }
+                      setDevice(undefined);
+                      closePlatformExchange(navigation);
+                    },
                   },
-                  device,
-                  onResult: (result: { operation?: Operation; error?: Error }) => {
-                    if (result.error) {
-                      tracking.platformStartExchangeFail(manifest);
-                      reject(result.error);
-                    }
-                    if (result.operation) {
-                      tracking.platformStartExchangeSuccess(manifest);
-                      resolve(result.operation);
-                    }
-                    setDevice(undefined);
-                    closePlatformExchange(navigation);
-                  },
-                },
-              });
-            }),
+                });
+              }),
+          ),
         ),
       [accounts, manifest, navigation, device, tracking],
     );
 
     const signMessage = useCallback(
-      ({ accountId, message }: { accountId: string; message: string }) =>
+      ({ accountId, message }: { accountId: string; message: string }, session: BridgeSession) =>
         signMessageLogic(
           { manifest, accounts, tracking },
           accountId,
           message,
-          ({ id: accountId }, message) =>
-            new Promise((resolve, reject) => {
-              navigation.navigate(NavigatorName.SignMessage, {
-                screen:
-                  message.standard === "EIP712"
-                    ? ScreenName.SignSelectDevice
-                    : ScreenName.SignSummary,
-                params: {
-                  message,
-                  accountId,
-                  onConfirmationHandler: (message: string) => {
-                    tracking.platformSignMessageSuccess(manifest);
-                    resolve(message);
+          session.whileOpen(
+            ({ id: accountId }, message) =>
+              new Promise((resolve, reject) => {
+                navigation.navigate(NavigatorName.SignMessage, {
+                  screen:
+                    message.standard === "EIP712"
+                      ? ScreenName.SignSelectDevice
+                      : ScreenName.SignSummary,
+                  params: {
+                    message,
+                    accountId,
+                    onConfirmationHandler: (message: string) => {
+                      tracking.platformSignMessageSuccess(manifest);
+                      resolve(message);
+                    },
+                    onFailHandler: (error: Error) => {
+                      tracking.platformSignMessageFail(manifest);
+                      reject(error);
+                    },
                   },
-                  onFailHandler: (error: Error) => {
-                    tracking.platformSignMessageFail(manifest);
-                    reject(error);
+                  onClose: () => {
+                    tracking.platformSignMessageUserRefused(manifest);
+                    reject(new UserRefusedOnDevice());
                   },
-                },
-                onClose: () => {
-                  tracking.platformSignMessageUserRefused(manifest);
-                  reject(new UserRefusedOnDevice());
-                },
-              });
-            }),
+                });
+              }),
+          ),
         ),
       [accounts, manifest, navigation, tracking],
     );
 
     const handlers = useMemo(
-      () => ({
-        "account.list": listAccounts,
-        "currency.list": listPlatformCurrencies,
-        "account.request": requestAccount,
-        "account.receive": receiveOnAccount,
-        "transaction.sign": signTransaction,
-        "transaction.broadcast": broadcastTransaction,
-        "exchange.start": startExchange,
-        "exchange.complete": completeExchange,
-        "message.sign": signMessage,
-      }),
+      () =>
+        withPlatformAPIPermissions(
+          {
+            "account.list": listAccounts,
+            "currency.list": listPlatformCurrencies,
+            "account.request": requestAccount,
+            "account.receive": receiveOnAccount,
+            "transaction.sign": signTransaction,
+            "transaction.broadcast": broadcastTransaction,
+            "exchange.start": startExchange,
+            "exchange.complete": completeExchange,
+            "message.sign": signMessage,
+          },
+          manifest,
+          enforcePermissions,
+        ),
       [
+        manifest,
+        enforcePermissions,
         listAccounts,
         listPlatformCurrencies,
         requestAccount,
@@ -466,16 +504,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signMessage,
       ],
     );
-    const handleSend = useCallback(
-      (request: JSONRPCRequest): Promise<void> => {
-        const webview = safeGetRefValue(webviewRef);
-        webview.postMessage(JSON.stringify(request));
+    useJSONRPCServer(handlers, bridge.session);
 
-        return Promise.resolve();
-      },
-      [webviewRef],
-    );
-    const [receive] = useJSONRPCServer(handlers, handleSend);
+    const { accept } = bridge;
     const handleMessage = useCallback(
       (e: WebViewMessageEvent) => {
         const data = e.nativeEvent?.data;
@@ -503,15 +534,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           }
         }
 
-        if (!getAllowedSenderOrigin(e, allowedDomains)) return;
-
-        try {
-          void receive(JSON.parse(data));
-        } catch {
-          void receive(data); // let JSON-RPC handle / error-respond
-        }
+        acceptWebviewMessage(e, allowedDomains, accept)?.receive(data);
       },
-      [allowedDomains, manifest, receive],
+      [accept, allowedDomains, manifest],
     );
 
     const handleError = useCallback(

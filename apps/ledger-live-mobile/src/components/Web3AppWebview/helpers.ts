@@ -560,6 +560,8 @@ export function useWebviewState(
     webviewRef,
     onShouldStartLoadWithRequest,
     isBlockedByDomainCheck,
+    /** Main-frame URL, updated from load start: the bridge session follows its origin */
+    mainFrameUrl: state.url,
   };
 }
 

@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { useWebviewState } from "./helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import type { WebviewBridgeMessage } from "~/bridge/contract";
 
 jest.mock("./helpers", () => ({
@@ -45,14 +46,20 @@ jest.mock("@ledgerhq/live-common/platform/react", () => ({
   useListPlatformCurrencies: () => jest.fn(),
 }));
 
-const mockReceive = jest.fn();
-let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
-
 jest.mock("@ledgerhq/live-common/platform/JSONRPCServer", () => ({
-  useJSONRPCServer: () => [mockReceive],
+  useJSONRPCServer: jest.fn(),
 }));
 
+const mockSession = { receive: jest.fn() };
+const mockAccept = jest.fn();
+let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
+
 jest.mock("./bridge", () => ({
+  useWebviewBridgeSession: () => ({
+    session: mockSession,
+    accept: mockAccept,
+    onMainFrameNavigation: jest.fn(),
+  }),
   useWebviewBridgeMessages: (_ref: unknown, onBridgeMessage: (m: WebviewBridgeMessage) => void) => {
     mockOnBridgeMessage = onBridgeMessage;
   },
@@ -214,7 +221,14 @@ describe("PlatformAPIWebview", () => {
     expect(queryByTestId("network-error-screen")).not.toBeInTheDocument();
   });
 
-  it("hands Platform API messages to the server", () => {
+  it("serves the Platform API on the bridge session", () => {
+    render(<PlatformAPIWebview manifest={mockManifest} />);
+
+    expect(useJSONRPCServer).toHaveBeenCalledWith(expect.any(Object), mockSession);
+  });
+
+  it("hands Platform API messages to the session of their origin", () => {
+    mockAccept.mockReturnValue(mockSession);
     render(<PlatformAPIWebview manifest={mockManifest} />);
 
     mockOnBridgeMessage?.({
@@ -230,8 +244,9 @@ describe("PlatformAPIWebview", () => {
       message: '{"id":2}',
     });
 
-    expect(mockReceive).toHaveBeenCalledTimes(1);
-    expect(mockReceive).toHaveBeenCalledWith({ id: 1 });
+    expect(mockAccept).toHaveBeenCalledTimes(1);
+    expect(mockSession.receive).toHaveBeenCalledTimes(1);
+    expect(mockSession.receive).toHaveBeenCalledWith('{"id":1}');
   });
 
   it("shows Loader while widget is loading and no error", () => {
