@@ -15,10 +15,13 @@ type Profile = Record<string, unknown>;
 /** What each successive `Session.read` returns for the profile; the last entry repeats. */
 let profileReads: Array<Profile | undefined>;
 let sessionReadCalls: number;
+/** Runs inside the first `Session.read`, before it returns. */
+let onFirstSessionRead: () => Promise<void>;
 
 beforeAll(() =>
   activateAgentIntentMocks({
     sessionRead: async () => {
+      if (sessionReadCalls === 0) await onFirstSessionRead();
       const profile = profileReads[Math.min(sessionReadCalls, profileReads.length - 1)];
       sessionReadCalls++;
       return { getAgentIntentProfile: (_profileId: string) => profile };
@@ -100,6 +103,7 @@ describe("agent-intent wait", () => {
     expect(logPath.startsWith(stateHome)).toBe(true);
     profileReads = [pendingProfile()];
     sessionReadCalls = 0;
+    onFirstSessionRead = async () => {};
     rmSync(dirname(logPath), { recursive: true, force: true });
     stdout = [];
     restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: () => {} });
@@ -144,6 +148,23 @@ describe("agent-intent wait", () => {
       expect(line).toMatchObject({ enrolled: true });
     });
     expect(sessionReadCalls).toBe(2);
+  });
+
+  it("reads the lock before the session, so a listener that saves and exits in between reads enrolled", async () => {
+    mkdirSync(dirname(lockPath), { recursive: true });
+    const holder = Bun.spawn([process.execPath, "-e", "setInterval(() => {}, 1000)"]);
+    writeFileSync(lockPath, `${holder.pid}:a1b2c3d4e5f60718`);
+    // The listener saves the approval and exits after this run read its lock, before the session.
+    onFirstSessionRead = async () => {
+      holder.kill();
+      await holder.exited;
+    };
+    profileReads = [pendingProfile(), ENROLLED];
+
+    const { code, line } = await runWaitJson(stdout);
+
+    expect(code).toBe(0);
+    expect(line).toMatchObject({ enrolled: true });
   });
 
   it("reports enrollment-waiting with the listener and the logged link at timeout, exit 0", async () => {
@@ -232,7 +253,7 @@ describe("agent-intent wait", () => {
     expect(line).toMatchObject({ error: { code: "listener_exited" } });
   });
 
-  it("fails with enrollment_expired once the link expired", async () => {
+  it("fails with enrollment_expired once the link expired and no listener runs", async () => {
     profileReads = [pendingProfile(-1_000)];
 
     const { code, line } = await runWaitJson(stdout);
@@ -243,16 +264,32 @@ describe("agent-intent wait", () => {
     });
   });
 
-  it("stops waiting when the link expires before --timeout", async () => {
-    profileReads = [pendingProfile(1_000)];
+  it("keeps polling an expired link while its listener runs, and reports enrollment-waiting at --timeout", async () => {
+    const profile = pendingProfile(-1_000);
+    profileReads = [profile];
 
     await withEnrollListenerLock("test-agent", async () => {
       const started = Date.now();
+      const { code, line } = await runWaitJson(stdout, { timeout: "1s" });
+
+      expect(Date.now() - started).toBeGreaterThanOrEqual(900);
+      expect(code).toBe(0);
+      expect(line).toMatchObject({
+        type: "enrollment-waiting",
+        expiresAt: profile.enrollmentExpiresAt,
+        listenerPid: process.pid,
+      });
+    });
+  });
+
+  it("reports enrolled when an approval made near expiry is saved after the link expired", async () => {
+    profileReads = [pendingProfile(-1_000), ENROLLED];
+
+    await withEnrollListenerLock("test-agent", async () => {
       const { code, line } = await runWaitJson(stdout, { timeout: "25s" });
 
-      expect(Date.now() - started).toBeLessThan(5_000);
-      expect(code).toBe(1);
-      expect(line).toMatchObject({ error: { code: "enrollment_expired" } });
+      expect(code).toBe(0);
+      expect(line).toMatchObject({ enrolled: true });
     });
   });
 
