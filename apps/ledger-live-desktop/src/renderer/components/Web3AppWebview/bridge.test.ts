@@ -1,13 +1,68 @@
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import type { WebviewBridgeMessage } from "~/bridge/contract";
 import { webview } from "~/renderer/bridge";
-import { useWebviewBridgeMessages } from "./bridge";
+import { closeAllModal } from "~/renderer/actions/modals";
+import { closePlatformAppDrawer } from "~/renderer/actions/UI";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { closeDialog } from "~/renderer/reducers/modularDialog";
+import { useWebviewBridgeMessages, useWebviewBridgeSession } from "./bridge";
 import type { WebviewTag } from "./types";
 
+const mockDispatch = jest.fn();
+
+jest.mock("LLD/hooks/redux", () => ({
+  useDispatch: () => mockDispatch,
+}));
+
+jest.mock("~/renderer/drawers/Provider", () => ({
+  setDrawer: jest.fn(),
+}));
+
 const makeWebviewRef = (guestId = 7) => {
-  const guest = { getWebContentsId: jest.fn(() => guestId) };
-  return { ref: { current: guest as unknown as WebviewTag } };
+  const postMessage = jest.fn();
+  const guest = {
+    getWebContentsId: jest.fn(() => guestId),
+    contentWindow: { postMessage },
+  };
+  return { ref: { current: guest as unknown as WebviewTag }, postMessage };
 };
+
+describe("useWebviewBridgeSession", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("posts replies to the origin of the session only", () => {
+    const { ref, postMessage } = makeWebviewRef();
+    const { result } = renderHook(() => useWebviewBridgeSession(ref, "https://app.example.com/"));
+
+    result.current.session.send("reply");
+
+    expect(postMessage).toHaveBeenCalledWith("reply", "https://app.example.com");
+  });
+
+  it("closes the flows the Live App opened when the main frame changes origin", () => {
+    const { ref, postMessage } = makeWebviewRef();
+    const { result, rerender } = renderHook(({ url }) => useWebviewBridgeSession(ref, url), {
+      initialProps: { url: "https://app.example.com/" },
+    });
+    const firstSession = result.current.session;
+
+    rerender({ url: "https://app.example.com/other-page" });
+    expect(mockDispatch).not.toHaveBeenCalled();
+
+    act(() => rerender({ url: "https://other.example.com/" }));
+
+    expect(mockDispatch).toHaveBeenCalledWith(closeAllModal());
+    expect(mockDispatch).toHaveBeenCalledWith(closePlatformAppDrawer());
+    expect(mockDispatch).toHaveBeenCalledWith(closeDialog());
+    expect(setDrawer).toHaveBeenCalledWith();
+    expect(result.current.session).not.toBe(firstSession);
+
+    firstSession.send("late reply");
+    expect(postMessage).not.toHaveBeenCalled();
+  });
+});
 
 describe("useWebviewBridgeMessages", () => {
   const message: WebviewBridgeMessage = {

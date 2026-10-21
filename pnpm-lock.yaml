@@ -1474,9 +1474,6 @@ importers:
       invariant:
         specifier: 2.2.4
         version: 2.2.4
-      json-rpc-2.0:
-        specifier: 0.2.19
-        version: 0.2.19
       jsqr:
         specifier: 1.4.0
         version: 1.4.0
@@ -2411,9 +2408,6 @@ importers:
       jotai:
         specifier: 2.17.0
         version: 2.17.0(@babel/core@7.28.5)(@babel/template@7.29.7)(@types/react@19.0.14)(react@19.1.4)
-      json-rpc-2.0:
-        specifier: 0.2.19
-        version: 0.2.19
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
