@@ -6566,6 +6566,13 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/flow/account-detail-hero:
+    dependencies:
+      '@features/platform-quick-actions':
+        specifier: workspace:*
+        version: link:../../platform/quick-actions
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.16(react@19.1.4)
     devDependencies:
       '@support/jest':
         specifier: workspace:*
@@ -6576,9 +6583,15 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
       '@testing-library/jest-dom':
         specifier: 'catalog:'
         version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
