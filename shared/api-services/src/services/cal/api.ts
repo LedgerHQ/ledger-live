@@ -78,7 +78,7 @@ const timedFetchBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
     if (timedOut && result.error) {
       return {
         error: { status: "TIMEOUT_ERROR", error: `CAL request timed out after ${timeout}ms` },
-        meta: result.meta,
+        ...(result.meta === undefined ? {} : { meta: result.meta }),
       };
     }
     return result;
