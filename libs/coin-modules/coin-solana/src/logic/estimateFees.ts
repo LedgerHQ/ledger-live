@@ -31,6 +31,7 @@ import {
   tokenProgramOfMint,
 } from "../helpers/token";
 import { UserInputType } from "../signer";
+import { validateMemo } from "./validateMemo";
 import type {
   SolanaTokenProgram,
   SolanaTransactionIntentData,
@@ -100,6 +101,7 @@ export async function estimateFees(
     mint ? tokenProgramOfMint(mint) : resolveTokenProgramFromAsset(intent.asset),
     // A Token-2022 transfer instruction reads the mint on chain, so the dummy needs the real one.
     "assetReference" in intent.asset ? intent.asset.assetReference : undefined,
+    pricedMemo(intent),
   );
 
   if (TOKEN_AUTHORITY_TYPES.has(intent.type)) {
@@ -266,8 +268,9 @@ export async function estimateTxFee(
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) {
-  const tx = await createDummyTx(config, address, kind, tokenProgram, mintAddress);
+  const tx = await createDummyTx(config, address, kind, tokenProgram, mintAddress, memo);
   const [onChainTx] = await buildVersionedTransaction(address, tx, api, config);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
@@ -293,10 +296,11 @@ const createDummyTx = (
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) => {
   switch (kind) {
     case "transfer":
-      return createDummyTransferTx(address);
+      return createDummyTransferTx(address, memo);
     case "stake.createAccount":
       return createDummyStakeCreateAccountTx(config, address);
     case "stake.delegate":
@@ -306,7 +310,7 @@ const createDummyTx = (
     case "stake.withdraw":
       return createDummyStakeWithdrawTx(address);
     case "token.transfer":
-      return createDummyTokenTransferTx(address, tokenProgram, mintAddress);
+      return createDummyTokenTransferTx(address, tokenProgram, mintAddress, memo);
     case "token.approve":
       return createDummyTokenApproveTx(address, tokenProgram);
     case "token.revoke":
@@ -322,7 +326,17 @@ const createDummyTx = (
   }
 };
 
-const createDummyTransferTx = (address: string): Transaction => {
+/**
+ * A memo costs compute units, which the compute-unit price charges: a transfer estimated without it
+ * can fall short of its fee, a send-all of rent. An oversized one is for `validateIntent` to report, and would
+ * overflow the dummy.
+ */
+function pricedMemo(intent: TransactionIntent<StringMemo | MemoNotSupported>): string | undefined {
+  const memo = "memo" in intent && intent.memo.type === "string" ? intent.memo.value : undefined;
+  return memo !== undefined && validateMemo(memo) ? memo : undefined;
+}
+
+const createDummyTransferTx = (address: string, memo?: string): Transaction => {
   return {
     ...BASE_TRANSACTION,
     model: {
@@ -334,6 +348,7 @@ const createDummyTransferTx = (address: string): Transaction => {
           amount: 0,
           recipient: address,
           sender: address,
+          memo,
         },
         ...commandDescriptorCommons,
       },
@@ -429,6 +444,7 @@ const createDummyTokenTransferTx = (
   address: string,
   tokenProgram: SolanaTokenProgram = PARSED_PROGRAMS.SPL_TOKEN,
   mintAddress: string = randomAddresses[0],
+  memo?: string,
 ): Transaction => {
   const command: TokenTransferCommand = {
     kind: "token.transfer",
@@ -445,6 +461,7 @@ const createDummyTokenTransferTx = (
       userInputType: UserInputType.SOL,
     },
     tokenProgram,
+    memo,
   };
 
   // Token-2022 tokens with a transfer-fee extension use a different

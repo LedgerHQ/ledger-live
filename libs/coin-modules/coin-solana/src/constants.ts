@@ -12,6 +12,11 @@ export const DEFAULT_COMPUTE_UNIT_MARGIN = 0.1;
 export const DEFAULT_TX_FEE = 5000;
 export const DEFAULT_BLOCKHASH_RETRIES = 5;
 export const DEFAULT_BLOCKHASH_RETRY_DELAY_MS = 5000;
+/**
+ * Compute-unit price floor, in microLamports per CU. The recent-fee median is often 0 on uncontended
+ * accounts, and an unpriced transaction is the first one dropped under load.
+ */
+export const DEFAULT_MIN_PRIORITY_FEE = 10_000;
 export const DEFAULT_VALIDATORS_CACHE_TTL_MS = 15 * 60 * 1000;
 
 // Hardcoding the Ledger validators info as backup,
