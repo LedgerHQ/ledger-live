@@ -6,6 +6,7 @@ import {
   initDatadog,
   captureException,
   addBreadcrumb,
+  addAction,
   setTags,
   setUser,
 } from "./renderer";
@@ -120,6 +121,13 @@ describe("datadog renderer", () => {
   describe("addBreadcrumb", () => {
     it("should not call datadogRum.addAction when not initialized", () => {
       addBreadcrumb({ message: "test", category: "track" });
+      expect(datadogRum.addAction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("addAction", () => {
+    it("should not call datadogRum.addAction when not initialized", () => {
+      addAction("test", { foo: "bar" });
       expect(datadogRum.addAction).not.toHaveBeenCalled();
     });
   });
@@ -251,6 +259,13 @@ describe("datadog renderer", () => {
       });
       expect(datadogRum.addAction).toHaveBeenCalledWith("click", {
         context: { sessionId: undefined, foo: "bar" },
+      });
+    });
+
+    it("addAction should send its context as the action's top-level context", () => {
+      addAction("live_app_domain_check_violation", { origin: "https://evil.com" });
+      expect(datadogRum.addAction).toHaveBeenCalledWith("live_app_domain_check_violation", {
+        origin: "https://evil.com",
       });
     });
 

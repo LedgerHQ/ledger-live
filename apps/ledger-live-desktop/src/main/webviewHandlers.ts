@@ -1,15 +1,25 @@
 import { app, session, webContents } from "electron";
+import {
+  createDomainCheckReporter,
+  getReportableOrigin,
+  type DomainCheckOutcome,
+  type DomainCheckViolation,
+} from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 import { openURL } from "./openURL";
 import {
   WEBVIEW_GUEST_CSP,
   applyWebviewAttachPolicy,
   createLiveAppSchemeChecker,
   createMainFrameOriginChecker,
-  getLoggableOrigin,
   mergeCspHeaders,
   takeAllowedOrigins,
+  takeDomainCheckReport,
 } from "./webviewHandlers.helpers";
-import type { WebviewAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
+import { CHANNELS } from "~/bridge/contract";
+import type {
+  WebviewAllowedOrigins,
+  WebviewDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
 
 type WebviewHandlersGlobal = typeof globalThis & {
   __ledgerLiveWebviewHandlersSetup__?: boolean;
@@ -89,11 +99,29 @@ export function closeTrackedWebviewDevTools(guestId?: number) {
   }
 }
 
-const warnBlockedMainFrame = (reason: string, url: string) => {
-  console.warn(`Blocked a Live App main frame outside its manifest domains (${reason})`, {
-    origin: getLoggableOrigin(url),
-  });
+type GuestDomainCheckReport = {
+  manifestId: string;
+  /** Strict manifest domains; `undefined` when the renderer sent none (no report-only check). */
+  strictDomains: string[] | undefined;
+  report: (violation: DomainCheckViolation) => void;
 };
+
+/**
+ * Hands a guest's violations to its embedder, which sends them to Datadog: main has no
+ * Datadog SDK. Each distinct violation is sent once per guest.
+ */
+const createGuestDomainCheckReport = (
+  guest: Electron.WebContents,
+  context: WebviewDomainCheckReport | undefined,
+): GuestDomainCheckReport => ({
+  manifestId: context?.manifestId ?? "unknown",
+  strictDomains: context?.domains,
+  report: createDomainCheckReporter(violation => {
+    const embedder = guest.hostWebContents;
+    if (!embedder || embedder.isDestroyed()) return;
+    embedder.send(CHANNELS.webviewDomainCheckViolation, violation);
+  }),
+});
 
 /**
  * Wires up all security-sensitive handlers for Live App <webview> guests
@@ -117,6 +145,9 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
   // Electron emits synchronously while creating that same guest, before its
   // first load (`did-attach-webview` only fires after that load has started).
   let pendingAllowedOrigins: WebviewAllowedOrigins | undefined;
+  let pendingDomainCheckReport: WebviewDomainCheckReport | undefined;
+
+  const domainCheckReportByGuest = new Map<number, GuestDomainCheckReport>();
 
   // Tracks sessions we've already attached CSP + external-protocol hardening to,
   // so we don't register duplicate onHeadersReceived listeners when multiple
@@ -128,6 +159,27 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
 
   const isGuestMainFrameUrlAllowed = (guestId: number, url: string) =>
     isMainFrameUrlAllowed(url, allowedOriginsByGuest.get(guestId));
+
+  const reportMainFrame = (guestId: number, url: string, outcome: DomainCheckOutcome) => {
+    const guestReport = domainCheckReportByGuest.get(guestId);
+    guestReport?.report({
+      origin: getReportableOrigin(url),
+      manifestId: guestReport.manifestId,
+      appVersion: app.getVersion(),
+      platform: "desktop",
+      frameType: "main_frame",
+      kind: "navigation",
+      outcome,
+    });
+  };
+
+  // Report-only: a main frame the current check allows but the strict manifest
+  // domains would not, so the lists can be fixed before the check tightens.
+  const reportIfStrictlyDisallowed = (guestId: number, url: string) => {
+    const strictDomains = domainCheckReportByGuest.get(guestId)?.strictDomains;
+    if (strictDomains === undefined || isMainFrameUrlAllowed(url, strictDomains)) return;
+    reportMainFrame(guestId, url, "would_block");
+  };
 
   // Inject a restrictive Content-Security-Policy on document responses served
   // to any <webview> guest session. Chromium enforces `frame-src` before
@@ -187,13 +239,13 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
 
         // Every main-frame load goes through here: the first `src`, `loadURL()`,
         // link clicks, redirects and back/forward.
-        if (
-          details.resourceType === "mainFrame" &&
-          !isGuestMainFrameUrlAllowed(guest.id, details.url)
-        ) {
-          warnBlockedMainFrame("request", details.url);
-          callback({ cancel: true });
-          return;
+        if (details.resourceType === "mainFrame") {
+          if (!isGuestMainFrameUrlAllowed(guest.id, details.url)) {
+            reportMainFrame(guest.id, details.url, "blocked");
+            callback({ cancel: true });
+            return;
+          }
+          reportIfStrictlyDisallowed(guest.id, details.url);
         }
 
         callback({});
@@ -209,6 +261,7 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
   const guardWebviewAttach = (embedder: Electron.WebContents) => {
     embedder.on("will-attach-webview", (event, webPreferences, params) => {
       const allowedOrigins = takeAllowedOrigins(webPreferences);
+      const domainCheckReport = takeDomainCheckReport(webPreferences);
       const allowed = applyWebviewAttachPolicy(webPreferences, params.src, {
         appDir: __dirname,
         isSrcAllowed: isLiveAppSchemeAllowed,
@@ -217,9 +270,11 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
         console.warn("Blocked a <webview> with a disallowed src", params.src);
         event.preventDefault();
         pendingAllowedOrigins = undefined;
+        pendingDomainCheckReport = undefined;
         return;
       }
       pendingAllowedOrigins = allowedOrigins;
+      pendingDomainCheckReport = domainCheckReport;
     });
   };
 
@@ -261,6 +316,11 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     if (allowedOrigins !== undefined) {
       allowedOriginsByGuest.set(contents.id, allowedOrigins);
     }
+    domainCheckReportByGuest.set(
+      contents.id,
+      createGuestDomainCheckReport(contents, pendingDomainCheckReport),
+    );
+    pendingDomainCheckReport = undefined;
 
     // Route same-tab `window.open` attempts: http(s) goes to the user's
     // default browser via `openURL`; everything else (including
@@ -279,6 +339,7 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
 
     contents.once("destroyed", () => {
       allowedOriginsByGuest.delete(contents.id);
+      domainCheckReportByGuest.delete(contents.id);
     });
 
     // Block disallowed schemes for:
@@ -304,6 +365,7 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     // Early cancels of the main-frame origin check enforced in `onBeforeRequest`.
     const mainFrameOriginGuard = (event: Electron.Event<{ url: string; isMainFrame: boolean }>) => {
       if (event.isMainFrame && !isGuestMainFrameUrlAllowed(contents.id, event.url)) {
+        reportMainFrame(contents.id, event.url, "blocked");
         event.preventDefault();
       }
     };
@@ -316,8 +378,12 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     contents.on(
       "did-frame-navigate",
       (_event, url, _httpResponseCode, _httpStatusText, isMainFrame) => {
-        if (!isMainFrame || isGuestMainFrameUrlAllowed(contents.id, url)) return;
-        warnBlockedMainFrame("commit", url);
+        if (!isMainFrame) return;
+        if (isGuestMainFrameUrlAllowed(contents.id, url)) {
+          reportIfStrictlyDisallowed(contents.id, url);
+          return;
+        }
+        reportMainFrame(contents.id, url, "blocked");
         contents.loadURL("about:blank").catch(() => {
           // Superseded by another navigation, which goes through the same checks.
         });

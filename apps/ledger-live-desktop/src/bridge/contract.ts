@@ -1,7 +1,9 @@
 // Bundled into the preload: keep it to types and constants.
 
+import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
+
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 5;
+export const BRIDGE_VERSION = 6;
 export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
@@ -61,6 +63,11 @@ export type UpdaterBridge = {
 export type DeeplinkBridge = {
   open(url: string): void;
   onOpen(callback: (url: string) => void): Unsubscribe;
+};
+
+export type WebviewBridge = {
+  /** Live App domain check violations seen by main, once per guest, origin and outcome. */
+  onDomainCheckViolation(callback: (violation: DomainCheckViolation) => void): Unsubscribe;
 };
 
 export type SaveRequest = {
@@ -127,6 +134,7 @@ export type LedgerBridge = {
   db: DbBridge;
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
+  webview: WebviewBridge;
   app: AppBridge;
   files: FilesBridge;
   power: PowerBridge;
@@ -152,6 +160,7 @@ export const CHANNELS = {
   cleanCache: "cleanCache",
   updater: "updater",
   deepLinking: "deep-linking",
+  webviewDomainCheckViolation: "webview:domain-check-violation",
   appReload: "app-reload",
   appRelaunch: "app-relaunch",
   appQuit: "app-quit",

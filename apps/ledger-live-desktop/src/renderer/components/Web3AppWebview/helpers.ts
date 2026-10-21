@@ -11,7 +11,11 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
-import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
+import {
+  UNRESTRICTED_ORIGINS,
+  serializeAllowedOrigins,
+  serializeDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
 import {
   SetCurrentAccountHistDb,
   useDAppManifestCurrencyIds,
@@ -19,6 +23,7 @@ import {
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { reportBridgeSenderOrigin } from "./domainCheckReport";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -77,7 +82,7 @@ type UseWebviewStateReturn = {
   webviewState: WebviewState;
   webviewProps: {
     src: string;
-    /** Carries the allowed main-frame origins to the main process */
+    /** Carries the allowed main-frame origins and the domain check report context to main */
     webpreferences: string;
   };
   webviewRef: RefObject<WebviewTag | null>;
@@ -278,6 +283,12 @@ export function useWebviewState(
     }));
   }, []);
 
+  const handleIpcMessage = useCallback(() => {
+    const webview = webviewRef.current;
+    if (!webview) return;
+    reportBridgeSenderOrigin(manifest, webview.getURL());
+  }, [manifest]);
+
   const handleRefresh = useCallback(() => {
     getAttachedWebview(webviewRef)?.reload();
   }, [webviewRef]);
@@ -297,6 +308,7 @@ export function useWebviewState(
     webview.addEventListener("dom-ready", handleDomReady);
     webview.addEventListener("did-fail-load", handleFailLoad);
     webview.addEventListener("render-process-gone", handleCrashed);
+    webview.addEventListener("ipc-message", handleIpcMessage);
 
     return () => {
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
@@ -307,6 +319,7 @@ export function useWebviewState(
       webview.removeEventListener("dom-ready", handleDomReady);
       webview.removeEventListener("did-fail-load", handleFailLoad);
       webview.removeEventListener("render-process-gone", handleCrashed);
+      webview.removeEventListener("ipc-message", handleIpcMessage);
     };
   }, [
     handleDidNavigate,
@@ -317,15 +330,19 @@ export function useWebviewState(
     handleDomReady,
     handleFailLoad,
     handleCrashed,
+    handleIpcMessage,
     webviewNode,
   ]);
 
   const webpreferences = useMemo(
     () =>
-      serializeAllowedOrigins(
-        manifestDomainCheckEnabled ? (manifest.domains ?? []) : UNRESTRICTED_ORIGINS,
-      ),
-    [manifest.domains, manifestDomainCheckEnabled],
+      [
+        serializeAllowedOrigins(
+          manifestDomainCheckEnabled ? (manifest.domains ?? []) : UNRESTRICTED_ORIGINS,
+        ),
+        serializeDomainCheckReport({ manifestId: manifest.id, domains: manifest.domains ?? [] }),
+      ].join(","),
+    [manifest.domains, manifest.id, manifestDomainCheckEnabled],
   );
 
   const props = {

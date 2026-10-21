@@ -41,6 +41,7 @@ import {
 } from "../../e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "../../e2e/webviewLogStore";
 import { getTrackingRouteLiveAppSource } from "./analytics";
+import { reportDomainCheckViolation, reportIfStrictlyDisallowed } from "./domainCheckReport";
 import { walletSelector } from "~/reducers/wallet";
 import {
   CacheMode,
@@ -222,6 +223,12 @@ export function useWebView(
   const onMessage = useCallback(
     (e: WebViewMessageEvent) => {
       if (e.nativeEvent?.data) {
+        reportIfStrictlyDisallowed({
+          manifest,
+          url: e.nativeEvent.url,
+          frameType: "unknown",
+          kind: "bridge",
+        });
         try {
           const msg = JSON.parse(e.nativeEvent.data);
 
@@ -246,7 +253,7 @@ export function useWebView(
         }
       }
     },
-    [onDappMessage, onMessageRaw],
+    [manifest, onDappMessage, onMessageRaw],
   );
 
   const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
@@ -361,8 +368,15 @@ export function useWebviewState(
   useEffect(() => {
     if (isBlockedByDomainCheck) {
       setState(s => ({ ...s, loading: false, isAppUnavailable: true }));
+      reportDomainCheckViolation({
+        manifest,
+        url: initialURL,
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
     }
-  }, [isBlockedByDomainCheck]);
+  }, [initialURL, isBlockedByDomainCheck, manifest]);
   const { theme } = useTheme();
 
   const source = useMemo(
@@ -475,12 +489,29 @@ export function useWebviewState(
     }
   }, [state, onStateChange]);
 
+  useEffect(() => {
+    reportIfStrictlyDisallowed({
+      manifest,
+      url: state.url,
+      frameType: "main_frame",
+      kind: "navigation",
+    });
+  }, [manifest, state.url]);
+
   const onShouldStartLoadWithRequest = useCallback(
     (request: ShouldStartLoadRequest): boolean => {
       if (!manifestDomainCheckEnabled) return true;
-      return isUrlAllowedByManifestDomains(request.url, manifest.domains ?? []);
+      if (isUrlAllowedByManifestDomains(request.url, manifest.domains ?? [])) return true;
+      reportDomainCheckViolation({
+        manifest,
+        url: request.url,
+        frameType: request.isTopFrame === false ? "sub_frame" : "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
+      return false;
     },
-    [manifestDomainCheckEnabled, manifest.domains],
+    [manifestDomainCheckEnabled, manifest],
   );
 
   const props: Partial<WebViewProps> = useMemo(

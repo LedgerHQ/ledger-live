@@ -1,10 +1,16 @@
 import { app, session, webContents } from "electron";
 import { closeTrackedWebviewDevTools, setupWebviewHandlers } from "./webviewHandlers";
-import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
+import {
+  UNRESTRICTED_ORIGINS,
+  serializeAllowedOrigins,
+  serializeDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
+import { CHANNELS } from "~/bridge/contract";
 
 jest.mock("electron", () => ({
   app: {
     on: jest.fn(),
+    getVersion: jest.fn(() => "2.130.0"),
   },
   session: {
     defaultSession: {
@@ -33,7 +39,14 @@ const makeDevToolsContents = () => ({
   once: jest.fn(),
 });
 
-const makeWindow = () => ({ getType: jest.fn(() => "window"), on: jest.fn() });
+const makeWindow = () => ({
+  getType: jest.fn(() => "window"),
+  on: jest.fn(),
+  send: jest.fn(),
+  isDestroyed: jest.fn(() => false),
+});
+
+type Embedder = ReturnType<typeof makeWindow>;
 
 const makeOwner = (id: number, type: string, devToolsWebContents: unknown) => ({
   id,
@@ -55,8 +68,9 @@ const getBeforeRequest = () =>
     ) => void,
   ];
 
-const makeGuest = (id: number) => ({
+const makeGuest = (id: number, hostWebContents?: Embedder) => ({
   id,
+  hostWebContents,
   getType: jest.fn(() => "webview"),
   on: jest.fn(),
   once: jest.fn(),
@@ -145,9 +159,9 @@ describe("setupWebviewHandlers", () => {
       ) as Electron.WebPreferences;
       const preventDefault = jest.fn();
       attach({ preventDefault }, webPreferences, { src });
-      if (preventDefault.mock.calls.length > 0) return makeGuest(id);
+      if (preventDefault.mock.calls.length > 0) return makeGuest(id, embedder);
 
-      const guest = makeGuest(id);
+      const guest = makeGuest(id, embedder);
       getWebContentsCreatedHandler()?.(
         {} as Electron.Event,
         guest as unknown as Electron.WebContents,
@@ -184,12 +198,7 @@ describe("setupWebviewHandlers", () => {
     const domains = serializeAllowedOrigins(["https://app.example.com"]);
 
     beforeEach(() => {
-      jest.spyOn(console, "warn").mockImplementation(() => {});
       setupWebviewHandlers(["ledgerlive"]);
-    });
-
-    afterEach(() => {
-      jest.mocked(console.warn).mockRestore();
     });
 
     it("lets main-frame loads through only on the manifest origins", () => {
@@ -199,9 +208,6 @@ describe("setupWebviewHandlers", () => {
       expect(requestMainFrame(guest, "ledgerlive://discover")).toEqual({});
       expect(requestMainFrame(guest, "https://evil.com/")).toEqual({ cancel: true });
       expect(requestMainFrame(guest, "http://app.example.com/")).toEqual({ cancel: true });
-      expect(console.warn).toHaveBeenCalledWith(expect.any(String), {
-        origin: "https://evil.com",
-      });
     });
 
     it("does not check subframe loads against the manifest origins", () => {
@@ -256,6 +262,134 @@ describe("setupWebviewHandlers", () => {
       destroyed();
 
       expect(requestMainFrame(guest, "https://app.example.com/")).toEqual({ cancel: true });
+    });
+
+    describe("violation reports", () => {
+      const report = serializeDomainCheckReport({
+        manifestId: "swap",
+        domains: ["https://*", "https://app.example.com"],
+      });
+
+      const sentViolations = (guest: Guest) =>
+        (guest.hostWebContents?.send.mock.calls ?? []).map(([channel, violation]) => {
+          expect(channel).toBe(CHANNELS.webviewDomainCheckViolation);
+          return violation;
+        });
+
+      const violation = (outcome: string, origin = "https://evil.com") => ({
+        origin,
+        manifestId: "swap",
+        appVersion: "2.130.0",
+        platform: "desktop",
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome,
+      });
+
+      it("reports a blocked main-frame load with its origin only", () => {
+        const guest = attachGuest(`${domains},${report}`);
+
+        requestMainFrame(guest, "https://evil.com/send?address=0xabc#secret");
+
+        expect(sentViolations(guest)).toEqual([violation("blocked")]);
+      });
+
+      it("reports what the strict domains would block while the check is off", () => {
+        const guest = attachGuest(`${serializeAllowedOrigins(UNRESTRICTED_ORIGINS)},${report}`);
+
+        expect(requestMainFrame(guest, "https://evil.com/path")).toEqual({});
+        requestMainFrame(guest, "https://app.example.com/path");
+        requestMainFrame(guest, "ledgerlive://discover");
+        requestMainFrame(guest, "about:blank");
+
+        expect(sentViolations(guest)).toEqual([violation("would_block")]);
+      });
+
+      it("reports what the strict domains would block while the check is on", () => {
+        const guest = attachGuest(
+          `${serializeAllowedOrigins(["https://*", "https://app.example.com"])},${report}`,
+        );
+
+        expect(requestMainFrame(guest, "https://evil.com/")).toEqual({});
+
+        expect(sentViolations(guest)).toEqual([violation("would_block")]);
+      });
+
+      it("reports each violation once per guest", () => {
+        const guest = attachGuest(`${domains},${report}`);
+
+        requestMainFrame(guest, "https://evil.com/a");
+        requestMainFrame(guest, "https://evil.com/b");
+        requestMainFrame(guest, "https://other.com/");
+
+        expect(sentViolations(guest)).toEqual([
+          violation("blocked"),
+          violation("blocked", "https://other.com"),
+        ]);
+      });
+
+      it("reports a blocked main frame without a manifest id when none was sent", () => {
+        const guest = attachGuest(domains);
+
+        requestMainFrame(guest, "https://evil.com/");
+
+        expect(sentViolations(guest)).toEqual([{ ...violation("blocked"), manifestId: "unknown" }]);
+      });
+
+      it("does not report what is allowed when no report context was sent", () => {
+        const guest = attachGuest(serializeAllowedOrigins(UNRESTRICTED_ORIGINS));
+
+        requestMainFrame(guest, "https://evil.com/");
+
+        expect(sentViolations(guest)).toEqual([]);
+      });
+
+      it.each(["will-navigate", "will-redirect"])("reports a main frame cancelled on %s", event => {
+        const guest = attachGuest(`${domains},${report}`);
+
+        emitWillEvent(guest, event, "https://evil.com/next");
+
+        expect(sentViolations(guest)).toEqual([violation("blocked")]);
+      });
+
+      it("reports a disallowed main-frame commit", () => {
+        const guest = attachGuest(`${domains},${report}`);
+
+        emitDidFrameNavigate(guest, "https://evil.com/");
+
+        expect(sentViolations(guest)).toEqual([violation("blocked")]);
+      });
+
+      it("reports a commit the strict domains would block", () => {
+        const guest = attachGuest(`${serializeAllowedOrigins(UNRESTRICTED_ORIGINS)},${report}`);
+
+        emitDidFrameNavigate(guest, "https://evil.com/");
+
+        expect(guest.loadURL).not.toHaveBeenCalled();
+        expect(sentViolations(guest)).toEqual([violation("would_block")]);
+      });
+
+      it("does not report subframes", () => {
+        const guest = attachGuest(`${domains},${report}`);
+        const [, listener] = getBeforeRequest();
+
+        listener(
+          { url: "https://3ds.bank.example/", resourceType: "subFrame", webContents: guest },
+          jest.fn(),
+        );
+        emitDidFrameNavigate(guest, "https://3ds.bank.example/", false);
+
+        expect(sentViolations(guest)).toEqual([]);
+      });
+
+      it("drops a report once the embedder is gone", () => {
+        const guest = attachGuest(`${domains},${report}`);
+        guest.hostWebContents?.isDestroyed.mockReturnValue(true);
+
+        requestMainFrame(guest, "https://evil.com/");
+
+        expect(sentViolations(guest)).toEqual([]);
+      });
     });
 
     it.each(["will-navigate", "will-redirect"])(

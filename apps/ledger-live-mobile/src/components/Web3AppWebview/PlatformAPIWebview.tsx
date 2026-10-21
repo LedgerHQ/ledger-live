@@ -50,6 +50,7 @@ import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { closePlatformExchange } from "./closePlatformExchange";
 import { getTrackingRouteLiveAppSource } from "./analytics";
+import { reportIfStrictlyDisallowed } from "./domainCheckReport";
 import { NetworkError } from "./NetworkError";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
@@ -464,6 +465,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       (e: WebViewMessageEvent) => {
         const data = e.nativeEvent?.data;
         if (!data) return;
+        reportIfStrictlyDisallowed({
+          manifest,
+          url: e.nativeEvent.url,
+          frameType: "unknown",
+          kind: "bridge",
+        });
 
         try {
           const msg = JSON.parse(data);
@@ -482,7 +489,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           void receive(data); // let JSON-RPC handle / error-respond
         }
       },
-      [receive],
+      [manifest, receive],
     );
 
     const handleError = useCallback(

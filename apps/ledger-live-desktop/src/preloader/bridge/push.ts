@@ -5,7 +5,9 @@ import {
   type UpdaterBridge,
   type UpdaterStatusEvent,
   type Unsubscribe,
+  type WebviewBridge,
 } from "~/bridge/contract";
+import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 
 // Drops the event: its `sender` is a privileged WebContents that must not cross the bridge.
 function subscribe<T>(channel: string, callback: (payload: T) => void): Unsubscribe {
@@ -26,4 +28,9 @@ export const updater: UpdaterBridge = {
 export const deeplink: DeeplinkBridge = {
   open: (url: string) => ipcRenderer.send(CHANNELS.deepLinking, url),
   onOpen: (callback: (url: string) => void) => subscribe<string>(CHANNELS.deepLinking, callback),
+};
+
+export const webview: WebviewBridge = {
+  onDomainCheckViolation: (callback: (violation: DomainCheckViolation) => void) =>
+    subscribe<DomainCheckViolation>(CHANNELS.webviewDomainCheckViolation, callback),
 };

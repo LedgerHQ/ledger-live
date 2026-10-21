@@ -4,11 +4,15 @@ import {
   applyWebviewAttachPolicy,
   createLiveAppSchemeChecker,
   createMainFrameOriginChecker,
-  getLoggableOrigin,
   mergeCspHeaders,
   takeAllowedOrigins,
+  takeDomainCheckReport,
 } from "./webviewHandlers.helpers";
-import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
+import {
+  UNRESTRICTED_ORIGINS,
+  serializeAllowedOrigins,
+  serializeDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
 
 describe("createLiveAppSchemeChecker", () => {
   const isAllowed = createLiveAppSchemeChecker(["ledgerlive", "ledgerwallet"]);
@@ -334,14 +338,40 @@ describe("createMainFrameOriginChecker", () => {
   });
 });
 
-describe("getLoggableOrigin", () => {
-  it("keeps only the origin", () => {
-    expect(getLoggableOrigin("https://app.example.com:8443/path?token=secret#x")).toBe(
-      "https://app.example.com:8443",
+describe("takeDomainCheckReport", () => {
+  it("reads the report context, keeps the strict domains and removes it from the preferences", () => {
+    const webPreferences = preferencesFrom(
+      [
+        "nativeWindowOpen=no",
+        serializeAllowedOrigins(UNRESTRICTED_ORIGINS),
+        serializeDomainCheckReport({
+          manifestId: "swap",
+          domains: ["https://*", "https://app.example.com", "https://*.b.com"],
+        }),
+      ].join(","),
     );
+
+    expect(takeDomainCheckReport(webPreferences)).toEqual({
+      manifestId: "swap",
+      domains: ["https://app.example.com", "https://*.b.com"],
+    });
+    expect(takeAllowedOrigins(webPreferences)).toBe(UNRESTRICTED_ORIGINS);
+    expect(webPreferences).toEqual({ nativeWindowOpen: "no" });
   });
 
-  it("does not throw on malformed URLs", () => {
-    expect(getLoggableOrigin("not a url")).toBe("invalid URL");
+  it.each([
+    ["missing", {}],
+    ["coerced to a boolean by Electron", { ledgerLiveDomainCheckReport: true }],
+    ["not JSON", { ledgerLiveDomainCheckReport: "swap" }],
+    [
+      "without a manifest id",
+      { ledgerLiveDomainCheckReport: encodeURIComponent('{"domains":[]}') },
+    ],
+    [
+      "with non-string domains",
+      { ledgerLiveDomainCheckReport: encodeURIComponent('{"manifestId":"a","domains":[1]}') },
+    ],
+  ])("returns undefined when the value is %s", (_, webPreferences) => {
+    expect(takeDomainCheckReport(webPreferences as Electron.WebPreferences)).toBeUndefined();
   });
 });
