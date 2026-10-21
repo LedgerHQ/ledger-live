@@ -188,14 +188,15 @@ describe("the on-device waiting screen", () => {
     expectChecksPassed(actor);
   });
 
-  it("skips leaving a screen it never entered", async () => {
-    const { fake } = await start({
+  it("still tries to leave a screen the device refused to enter", async () => {
+    const { actor, fake } = await start({
       osVersion: [os(unseeded)],
       earlyCheck: [refusedToggle("6982")],
       ...passingChecks,
     });
 
-    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter]);
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expectChecksPassed(actor);
   });
 
   it("is dismissed as soon as the checks pass, rather than when the user taps", async () => {
@@ -267,6 +268,17 @@ describe("the on-device waiting screen", () => {
       genuineCheck: [deviceRefusal],
     });
 
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
+  });
+
+  it("is dismissed on quit while it is still being entered", async () => {
+    const { actor, fake } = await launch({ osVersion: [os(unseeded)] });
+
+    actor.send({ type: "CONTINUE" });
     actor.send({ type: "QUIT" });
     await settle();
 
