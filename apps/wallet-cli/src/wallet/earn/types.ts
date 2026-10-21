@@ -60,6 +60,17 @@ export type EarnYieldRow = {
   depositable?: boolean;
 };
 
+/** Lamport amounts for opening a stake account with coin-solana's `stake.createAccount`. */
+export type SolanaStakeLimits = {
+  minimumDelegation: BigNumberStr;
+  rent: BigNumberStr;
+  spendableBalance: BigNumberStr;
+  /** SOL leaving the account in still-pending operations, already held back from `maxStakeable`. */
+  pendingDebits: BigNumberStr;
+  maxStakeable: BigNumberStr;
+  feeReserve: BigNumberStr;
+};
+
 /**
  * One on-chain Solana stake account, derived from the synced account's `stakingResources`.
  * `stakeAccount` is the value `earn withdraw --stake-account` expects.
