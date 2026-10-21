@@ -16,6 +16,7 @@ export function PerpsDepositSignView({
   retry,
   onDismiss,
   onDeviceError,
+  onOpenManager,
 }: PerpsDepositSignViewProps) {
   const { t } = useTranslation();
 
@@ -54,6 +55,7 @@ export function PerpsDepositSignView({
             request={request}
             onResult={onResult}
             onError={onDeviceError}
+            onOpenManager={onOpenManager}
             renderExchangeConfirmation={
               deviceStep.stepId === "confirm" ? () => <PerpsDepositConfirmation /> : undefined
             }

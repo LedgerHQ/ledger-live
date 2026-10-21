@@ -12,6 +12,11 @@ jest.mock("../../PerpsDeposit/PerpsDepositDialog", () => ({
   openPerpsDeposit: (data: unknown) => mockOpenPerpsDeposit(data),
 }));
 
+const mockCancelDepositRequest = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/depositRequest", () => ({
+  cancelDepositRequest: () => mockCancelDepositRequest(),
+}));
+
 const mockOpenPerpsReview = jest.fn();
 jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
   openPerpsReview: (data: unknown) => mockOpenPerpsReview(data),
@@ -75,6 +80,16 @@ describe("usePerpsDepositSignViewModel", () => {
     // The form comes back with the amount the holder typed, ready to be lowered.
     expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: data.draft });
     expect(mockOpenPerpsReview).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("should close and abandon the deposit when the holder heads to My Ledger", () => {
+    const onClose = jest.fn();
+    const { result } = renderHook(() => usePerpsDepositSignViewModel(data, onClose));
+
+    result.current.onOpenManager();
+
+    expect(mockCancelDepositRequest).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalled();
   });
 
