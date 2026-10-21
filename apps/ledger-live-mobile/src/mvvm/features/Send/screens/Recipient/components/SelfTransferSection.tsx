@@ -29,7 +29,7 @@ export function SelfTransferSection() {
       </Text>
       <ListItem onPress={viewModel.onSelfTransfer} testID="self-transfer-button">
         <ListItemLeading>
-          <Spot appearance="icon" icon={icon} />
+          <Spot icon={icon} />
           <ListItemContent>
             <ListItemTitle>{viewModel.actionLabel}</ListItemTitle>
           </ListItemContent>

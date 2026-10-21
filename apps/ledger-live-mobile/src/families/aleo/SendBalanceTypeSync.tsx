@@ -1,73 +1,97 @@
-import React, { useEffect } from "react";
-import { Box, Button, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
-import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
-import { useTranslation } from "~/context/Locale";
+import React from "react";
+import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
+import { isAleoAccount, isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/aleo/types";
+import { InfoState } from "@shared/ui-info-state";
 import type {
   SendBalanceTypeSync,
   SendBalanceTypeSyncProps,
 } from "LLM/features/Send/utils/familySendSlots";
-import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
+import {
+  useSendBalanceTypeSyncViewModel,
+  type SendBalanceTypeSyncViewModel,
+} from "./hooks/useSendBalanceTypeSyncViewModel";
 
-function PrivateSyncProgress({ account, onComplete }: SendBalanceTypeSyncProps) {
-  const { t } = useTranslation();
-  const { progress, isSyncing, error, start } = useAleoPrivateSync({
-    account,
-    autoStart: true,
-    keepAliveOnUnmount: true,
-  });
+type PrivateSyncProps = Readonly<{
+  account: AleoAccount;
+  transaction: Transaction;
+  onComplete: () => void;
+  onClose: () => void;
+}>;
 
-  const isDone = !isSyncing && !error && progress >= 100;
-
-  useEffect(() => {
-    if (isDone) onComplete();
-  }, [isDone, onComplete]);
-
-  if (error) {
+function SendBalanceTypeSyncView({
+  viewModel,
+}: Readonly<{ viewModel: SendBalanceTypeSyncViewModel }>) {
+  if (viewModel.status === "error") {
     return (
-      <Box
-        lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s24", padding: "s24" }}
-        testID="aleo-private-sync-error"
-      >
-        <WarningFill size={40} color="warning" />
-        <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-          {t("aleo.send.balanceTypeSync.errorTitle")}
-        </Text>
-        <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-          {t("aleo.send.balanceTypeSync.errorDescription")}
-        </Text>
-        <Button appearance="base" size="lg" onPress={start}>
-          {t("common.retry")}
-        </Button>
-      </Box>
+      <InfoState
+        preset="error"
+        title={viewModel.title}
+        description={viewModel.description}
+        primaryCta={{ label: viewModel.retryLabel, onPress: viewModel.onRetry }}
+        secondaryCta={{ label: viewModel.cancelLabel, onPress: viewModel.onCancel }}
+        testID="aleo-balance-type-sync-error"
+      />
+    );
+  }
+
+  if (viewModel.status === "recordLimit") {
+    return (
+      <InfoState
+        preset="info"
+        title={viewModel.title}
+        description={viewModel.description}
+        primaryCta={{ label: viewModel.continueLabel, onPress: viewModel.onContinue }}
+        testID="aleo-balance-type-sync-recordLimit"
+      />
     );
   }
 
   return (
     <Box
       lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s16", padding: "s24" }}
-      testID="aleo-private-sync"
+      testID="aleo-balance-type-sync-syncing"
     >
       <Spinner size={48} />
       <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-        {t("aleo.send.balanceTypeSync.title")}
+        {viewModel.title}
       </Text>
       <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-        {t("aleo.send.balanceTypeSync.description")}
+        {viewModel.description}
       </Text>
       <Text typography="body3" lx={{ color: "muted" }} testID="aleo-private-sync-progress">
-        {t("aleo.send.balanceTypeSync.progress", {
-          percentage: Math.min(Math.round(progress), 100),
-        })}
+        {viewModel.progressLabel}
       </Text>
     </Box>
+  );
+}
+
+function PrivateSync(props: PrivateSyncProps) {
+  const viewModel = useSendBalanceTypeSyncViewModel(props);
+  return <SendBalanceTypeSyncView viewModel={viewModel} />;
+}
+
+function AleoSendBalanceTypeSync({
+  account,
+  transaction,
+  onComplete,
+  onClose,
+}: SendBalanceTypeSyncProps) {
+  if (!isAleoAccount(account) || transaction.family !== "aleo") return null;
+  return (
+    <PrivateSync
+      account={account}
+      transaction={transaction}
+      onComplete={onComplete}
+      onClose={onClose}
+    />
   );
 }
 
 const aleoSendBalanceTypeSync: SendBalanceTypeSync = {
   isRequired: ({ transaction }) =>
     transaction.family === "aleo" && isPrivateTransaction(transaction),
-  Component: PrivateSyncProgress,
+  Component: AleoSendBalanceTypeSync,
 };
 
 export default aleoSendBalanceTypeSync;

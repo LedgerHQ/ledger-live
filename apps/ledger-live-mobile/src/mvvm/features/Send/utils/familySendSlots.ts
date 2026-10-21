@@ -6,7 +6,9 @@ import generatedSendAmountFooterRow from "~/generated/SendAmountFooterRow";
 
 export type SendBalanceTypeSyncProps = Readonly<{
   account: Account;
+  transaction: Transaction;
   onComplete: () => void;
+  onClose: () => void;
 }>;
 
 export type SendBalanceTypeSync = Readonly<{

@@ -9,11 +9,17 @@ export function BalanceTypeSyncScreen() {
     return null;
   }
 
-  const { SyncComponent, account, onComplete } = viewModel;
+  const { SyncComponent, account, transaction, onComplete, onClose } = viewModel;
 
   return (
     <SendFlowLayout>
-      <SyncComponent key={account.id} account={account} onComplete={onComplete} />
+      <SyncComponent
+        key={account.id}
+        account={account}
+        transaction={transaction}
+        onComplete={onComplete}
+        onClose={onClose}
+      />
     </SendFlowLayout>
   );
 }

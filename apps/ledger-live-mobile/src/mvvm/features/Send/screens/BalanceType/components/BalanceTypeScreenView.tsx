@@ -37,7 +37,7 @@ function BalanceTypeOptionItem({ option, selected, onSelect }: OptionItemProps) 
       testID={`balance-type-${option.id}`}
     >
       <ListItemLeading>
-        <Spot appearance="icon" icon={icon} />
+        <Spot icon={icon} />
         <ListItemContent>
           <ListItemTitle>{t(`send.newSendFlow.${option.translationKey}.title`)}</ListItemTitle>
           {option.hideSubtitle ? null : (

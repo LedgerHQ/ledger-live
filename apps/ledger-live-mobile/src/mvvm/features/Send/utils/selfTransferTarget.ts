@@ -11,3 +11,19 @@ export function getAccountSelfTransferTarget(
   const config = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
   return config?.getSelfTransferTarget({ account, parentAccount, transaction }) ?? null;
 }
+
+export function applyRecipientSelfTransferState<T extends object>(
+  account: AccountLike,
+  transaction: T,
+  recipient: string,
+  parentAccount?: Account | null,
+): T {
+  const config = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
+  if (!config) return transaction;
+
+  const target = config.getSelfTransferTarget({ account, parentAccount, transaction });
+  const isSelfTransfer =
+    target !== null && target.address.toLowerCase() === recipient.toLowerCase();
+
+  return { ...transaction, ...config.buildSelfTransferPatch({ isSelfTransfer, transaction }) };
+}

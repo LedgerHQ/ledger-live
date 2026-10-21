@@ -31,7 +31,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   },
   [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: {
     id: SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
-    canGoBack: true,
+    canGoBack: false,
     screenName: ScreenName.SendFlowBalanceTypeSync,
     showHeaderRight: false,
     showTitle: false,

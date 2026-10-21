@@ -1,7 +1,7 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { useSendFlowData } from "../../../../context/SendFlowContext";
+import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
 import { getSendBalanceTypeSync } from "../../../../utils/familySendSlots";
 import { useBalanceTypeSyncScreenViewModel } from "../useBalanceTypeSyncScreenViewModel";
 
@@ -15,10 +15,12 @@ jest.mock("../../../../utils/familySendSlots", () => ({
 }));
 
 const mockReplace = jest.fn();
+const mockClose = jest.fn();
 const MockSyncComponent = () => null;
 
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
+const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
 const mockedGetSendBalanceTypeSync = jest.mocked(getSendBalanceTypeSync);
 
 const mockAccount = {
@@ -27,9 +29,14 @@ const mockAccount = {
   currency: { id: "aleo", family: "aleo", type: "CryptoCurrency", units: [] },
 };
 
-function mockFlowState(account: typeof mockAccount | null = mockAccount) {
+const mockTransaction = { family: "aleo", mode: "transfer_private" };
+
+function mockFlowState(
+  account: typeof mockAccount | null = mockAccount,
+  transaction: typeof mockTransaction | null = mockTransaction,
+) {
   mockedUseSendFlowData.mockReturnValue({
-    state: { account: { account, parentAccount: null } },
+    state: { account: { account, parentAccount: null }, transaction: { transaction } },
   } as never);
 }
 
@@ -41,6 +48,7 @@ describe("useBalanceTypeSyncScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigation.mockReturnValue({ replace: mockReplace } as never);
+    mockedUseSendFlowActions.mockReturnValue({ close: mockClose } as never);
     mockedGetSendBalanceTypeSync.mockReturnValue({
       isRequired: jest.fn(() => true),
       Component: MockSyncComponent,
@@ -50,6 +58,14 @@ describe("useBalanceTypeSyncScreenViewModel", () => {
 
   it("GIVEN no account WHEN rendered THEN the view model is not ready", () => {
     mockFlowState(null);
+
+    const { result } = renderViewModel();
+
+    expect(result.current.ready).toBe(false);
+  });
+
+  it("GIVEN no transaction WHEN rendered THEN the view model is not ready", () => {
+    mockFlowState(mockAccount, null);
 
     const { result } = renderViewModel();
 
@@ -71,7 +87,9 @@ describe("useBalanceTypeSyncScreenViewModel", () => {
     expect(result.current).toMatchObject({
       ready: true,
       account: mockAccount,
+      transaction: mockTransaction,
       SyncComponent: MockSyncComponent,
+      onClose: mockClose,
     });
   });
 
