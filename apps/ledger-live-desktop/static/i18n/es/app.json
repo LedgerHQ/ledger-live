@@ -304,6 +304,33 @@
     "coinControl" : "Control de monedas",
     "feesAmount" : "Importe de tarifas"
   },
+  "accountDetailSettings" : {
+    "title" : "Ajustes de cuenta",
+    "menu" : {
+      "changeName" : "Cambiar nombre",
+      "viewAdvancedLogs" : "Ver registros avanzados",
+      "removeAccount" : "Eliminar cuenta del Portfolio"
+    },
+    "changeName" : {
+      "title" : "Cambiar el nombre de la cuenta",
+      "description" : "Asigna un nombre a esta dirección para organizarte (por ejemplo, {{ticker}}-Trading, {{ticker}}-DeFi).",
+      "label" : "Nombre de la dirección",
+      "submit" : "Cambiar nombre"
+    },
+    "advancedLogs" : {
+      "title" : "Registros avanzados",
+      "derivationTip" : "Esta es una xpub {{tag}}. Cuando la importes en una wallet de terceros, selecciona el mismo modo de derivación.",
+      "synchronised" : "{{date}} sincronizado",
+      "copy" : "Copiar registros",
+      "copied" : "Copiado"
+    },
+    "remove" : {
+      "title" : "¿Quitar cuenta?",
+      "description" : "Los activos vinculados a esta cuenta ya no estarán visibles en el Portfolio. Los activos en la blockchain no se ven afectados.",
+      "confirm" : "Sí, eliminar.",
+      "cancel" : "Conservar"
+    }
+  },
   "sidebar" : {
     "card" : "Tarjeta",
     "paytab" : "Pay",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle" : "Maduración de fondos",
         "pendingNotice" : "Algunas notas blindadas aún están madurando y es posible que todavía no se puedan gastar"
       },
+      "aleoPublic" : {
+        "title" : "Saldo público"
+      },
+      "aleoPrivate" : {
+        "title" : "Saldo privado"
+      },
       "zeroBalance" : {
         "warning" : "No hay saldo disponible"
+      },
+      "requiresSync" : {
+        "notice" : "Sincronización requerida"
       }
     }
   },
@@ -7783,6 +7819,14 @@
       "title" : "Estos fondos aún no se pueden gastar",
       "description" : "Inténtalo de nuevo en unos minutos"
     },
+    "ZcashShieldedNotSupportedOnDevice" : {
+      "title" : "Este dispositivo solo puede enviar entre direcciones transparentes",
+      "description" : "Utiliza un Ledger Nano S Plus, un Nano X, un Flex o un Stax para enviar a una dirección privada o desde una dirección privada."
+    },
+    "ZcashPreparedBuildMismatch" : {
+      "title" : "La transacción cambió desde que se revisó",
+      "description" : "Tu saldo o las tarifas han cambiado. Vuelve a revisar la transacción."
+    },
     "InvalidNonce" : {
       "title" : "Es obligatorio añadir un nonce"
     },
@@ -9829,7 +9873,7 @@
             "subtitle" : "Blindado",
             "unavailable" : "Saldo privado no disponible"
           },
-          "spendableWarning" : "El saldo disponible puede ser inferior al saldo total. Los fondos protegidos recientemente necesitan confirmaciones y un escaneo completo (~15 minutos) antes de poder gastarse."
+          "spendableWarning" : "El saldo disponible puede ser inferior al saldo total. Los fondos protegidos recientemente necesitan confirmaciones y un escaneo completo antes de poder gastarse."
         },
         "memo" : {
           "label" : "Memo (opcional)",
@@ -10090,11 +10134,25 @@
         "recordsUsed" : "Registros utilizados",
         "signingTime" : "Hora de la firma"
       },
+      "amount" : {
+        "signingTime" : {
+          "label" : "Hora de la firma",
+          "description" : "Tu signer Ledger aprueba cada registro que utiliza esta transacción. Enviar más desde tu saldo privado puede utilizar más registros y tardar más."
+        }
+      },
       "mandatoryPrivateSync" : {
         "title" : "Sincronizando tu saldo privado ({{percentage}}%)",
         "desc" : "Espera",
         "errorTitle" : "La sincronización privada ha fallado.",
         "errorDesc" : "Algo salió mal, por favor inténtalo de nuevo"
+      },
+      "balanceTypeSync" : {
+        "title" : "Actualizando el saldo privado",
+        "progress" : "{{percentage}}%",
+        "errorTitle" : "La sincronización privada ha fallado.",
+        "errorDescription" : "Algo salió mal, por favor inténtalo de nuevo",
+        "recordLimitTitle" : "Puedes enviar hasta {{amount}}",
+        "recordLimitDescription" : "El saldo está dividido en varios registros y una transacción puede usar un máximo de {{maxRecords}}. Para enviar más, realiza varias transacciones."
       }
     },
     "operationTypes" : {
@@ -10573,6 +10631,14 @@
           "description" : "Cifrado de extremo a extremo con Ledger Sync."
         }
       }
+    }
+  },
+  "accountDetail" : {
+    "header" : {
+      "settings" : "Ajustes de cuenta"
+    },
+    "assets" : {
+      "title" : "Activos"
     }
   },
   "assetDetails" : {
@@ -11113,6 +11179,9 @@
       "amountExceedsBalance" : "Saldo insuficiente",
       "quoteUnavailable" : "No podemos obtener una cotización de {{provider}}SwapKit. Prueba con otros activos o intenta más tarde."
     }
+  },
+  "actionMenuDialog" : {
+    "a11yTitle" : "Elige una acción"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Firma del depósito",
