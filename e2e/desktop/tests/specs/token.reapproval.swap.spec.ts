@@ -15,10 +15,13 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
+import { holdLockLikeBroadcastOnlyFlow } from "tests/utils/lockPlaceholder";
 
 const fromAccount = TokenAccount.ETH_USDT_3;
 const reapprovalLock = exclusiveLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_3;
+const flowTitle = `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token reapproval flow`;
+const flowTags = [...DEVICE_TAGS, "@ethereum", "@family-evm"];
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
   SwapProvider.LIFI,
@@ -26,6 +29,9 @@ const eligibleProviders = [
   SwapProvider.ONE_INCH,
   SwapProvider.VELORA,
 ];
+
+// 144 s on the 2026-10-19 broadcast nightly.
+holdLockLikeBroadcastOnlyFlow({ flowTitle, tags: flowTags, lock: reapprovalLock, holdMs: 144_000 });
 
 test.describe("Swap - token reapproval", { lock: reapprovalLock.names }, () => {
   test.skip(
@@ -57,9 +63,9 @@ test.describe("Swap - token reapproval", { lock: reapprovalLock.names }, () => {
   });
 
   test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token reapproval flow`,
+    flowTitle,
     {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
+      tag: flowTags,
       annotation: [
         {
           type: "TMS",
