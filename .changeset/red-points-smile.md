@@ -2,4 +2,4 @@
 "@ledgerhq/coin-aleo": minor
 ---
 
-support for rejected private ops fees for Aleo
+list fees of rejected private transactions and of private join/split calls, and count join/split records in the private balance

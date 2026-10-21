@@ -446,7 +446,7 @@ export async function performPrivateSync({
   );
 
   const knownTransactionIds = new Set([
-    ...[...currentPublicOps, ...oldPrivateOps].map(op => op.hash),
+    ...[...currentPublicOps, ...oldPrivateOps.filter(op => op.type !== "FEES")].map(op => op.hash),
     ...filterHistoryRecords(calTokenRecords)
       .filter(record => isOutgoingTokenRecord(record, address))
       .map(record => record.transaction_id.trim()),

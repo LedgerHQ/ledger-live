@@ -20,7 +20,7 @@ function onlyTaggedRecordValue(
   return "tag" in value;
 }
 
-function isRecordManagementRecord(record: AleoPrivateRecord): boolean {
+function isJoinOrSplit(record: AleoPrivateRecord): boolean {
   return (
     record.function_name === EXPLORER_TRANSFER_TYPES.JOIN ||
     record.function_name === EXPLORER_TRANSFER_TYPES.SPLIT
@@ -62,7 +62,23 @@ function isStakingTransaction({ execution }: AleoPublicTransactionDetailsRespons
   );
 }
 
-async function listFeeOperations({
+// A rejected execution leaves its inputs unspent; only the fee is charged.
+function getConsumedRecordTags({
+  execution,
+  fee,
+  status,
+}: AleoPublicTransactionDetailsResponse): string[] {
+  const transitions = [
+    ...(status === "Accepted" ? (execution?.transitions ?? []) : []),
+    ...(fee ? [fee.transition] : []),
+  ];
+
+  return transitions.flatMap(({ inputs }) =>
+    inputs.filter(onlyTaggedRecordValue).map(input => input.tag),
+  );
+}
+
+async function listNonTransferTransactions({
   config,
   address,
   ledgerAccountId,
@@ -87,24 +103,32 @@ async function listFeeOperations({
       .map(record => record.transaction_id.trim()),
   ]);
 
-  const feeOnlyRecords = privateRecords.filter(
-    record =>
-      record.function_name === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE &&
-      !listedTransactionIds.has(record.transaction_id.trim()),
+  const feeRecordByTransactionId = new Map<string, AleoPrivateRecord | undefined>();
+  for (const record of privateRecords) {
+    const transactionId = record.transaction_id.trim();
+    if (listedTransactionIds.has(transactionId)) continue;
+
+    if (record.function_name === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE) {
+      feeRecordByTransactionId.set(transactionId, record);
+    } else if (isJoinOrSplit(record) && !feeRecordByTransactionId.has(transactionId)) {
+      feeRecordByTransactionId.set(transactionId, undefined);
+    }
+  }
+
+  const results = await promiseAllBatched(
+    2,
+    [...feeRecordByTransactionId],
+    async ([transactionId, feeRecord]) => {
+      signal?.throwIfAborted();
+      const details = await apiClient.getTransactionById(config, transactionId);
+      const operations =
+        feeRecord && !isStakingTransaction(details)
+          ? [toPrivateFeeBridgeOperation(ledgerAccountId, feeRecord, details, address)]
+          : [];
+
+      return { operations, consumedRecordTags: getConsumedRecordTags(details) };
+    },
   );
-
-  const results = await promiseAllBatched(2, feeOnlyRecords, async feeRecord => {
-    signal?.throwIfAborted();
-    const details = await apiClient.getTransactionById(config, feeRecord.transaction_id.trim());
-    const consumedRecordTags = (details.fee?.transition.inputs ?? [])
-      .filter(onlyTaggedRecordValue)
-      .map(input => input.tag);
-    const operations = isStakingTransaction(details)
-      ? []
-      : [toPrivateFeeBridgeOperation(ledgerAccountId, feeRecord, details, address)];
-
-    return { operations, consumedRecordTags };
-  });
 
   return {
     operations: results.flatMap(result => result.operations),
@@ -139,16 +163,16 @@ export async function listPrivateOperations({
   const recordsToEnrich = tokenRecords ? [...privateRecords, ...tokenRecords] : privateRecords;
   const nativeRecordTags = new Set(privateRecords.map(record => record.tag));
 
-  const [enrichedRecords, feeOnly] = await Promise.all([
+  const [enrichedRecords, nonTransfer] = await Promise.all([
     enrichPrivateRecords({
       config,
       viewKey,
       address,
-      records: recordsToEnrich.filter(record => !isRecordManagementRecord(record)),
+      records: recordsToEnrich.filter(record => !isJoinOrSplit(record)),
       ...(onProgress && { onProgress }),
       ...(signal && { signal }),
     }),
-    listFeeOperations({
+    listNonTransferTransactions({
       config,
       address,
       ledgerAccountId,
@@ -160,7 +184,7 @@ export async function listPrivateOperations({
 
   const consumedRecordTags = new Set([
     ...buildConsumedRecordTags(enrichedRecords, address),
-    ...feeOnly.consumedRecordTags,
+    ...nonTransfer.consumedRecordTags,
   ]);
 
   const operations = enrichedRecords
@@ -169,5 +193,5 @@ export async function listPrivateOperations({
     })
     .map(record => toPrivateBridgeOperation(ledgerAccountId, record, address));
 
-  return { operations: [...operations, ...feeOnly.operations], consumedRecordTags };
+  return { operations: [...operations, ...nonTransfer.operations], consumedRecordTags };
 }

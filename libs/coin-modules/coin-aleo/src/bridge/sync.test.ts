@@ -1291,6 +1291,32 @@ describe("sync.ts", () => {
       expect(getKnownTransactionIds()).toEqual(new Set(["at1public", "at1oldprivate"]));
     });
 
+    it("should leave cached private fee operations out of known transaction ids", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const oldFeeOp = getMockedOperation({
+        id: "old-fee",
+        type: "FEES",
+        hash: "at1oldfee",
+        extra: { transactionType: "private", functionId: "fee_private" },
+      });
+
+      await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: { ...mockInitialAccount, operations: [oldFeeOp] },
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+
+      expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
+      expect(getKnownTransactionIds()).toEqual(new Set());
+    });
+
     it("should use latest private operation blockHeight as start cursor for getAccountOwnedRecords", async () => {
       mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
       const privateOp = getMockedOperation({
