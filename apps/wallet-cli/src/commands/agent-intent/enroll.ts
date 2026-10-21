@@ -26,6 +26,7 @@ import {
   waitForRelayCompletion,
 } from "../../agent-intent/relay";
 import {
+  assertNoLiveEnrollListener,
   enrollListenerPaths,
   ErrorLineSchema,
   PendingLineSchema,
@@ -34,7 +35,6 @@ import {
   spawnDetached,
   withEnrollListenerLock,
 } from "../../agent-intent/detach";
-import { readLiveLockHolderPid } from "../../shared/file-lock";
 import { createCommandOutput, type CommandOutput } from "../../output";
 
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
@@ -75,15 +75,9 @@ async function startDetachedEnroll(
     );
   }
   const profileId = flags.profile;
-  const { logPath, lockPath } = enrollListenerPaths(profileId);
+  const { logPath } = enrollListenerPaths(profileId);
   // Checked before the spawn truncates the log a running listener still writes to.
-  const runningPid = readLiveLockHolderPid(lockPath);
-  if (runningPid !== undefined) {
-    throw new Error(
-      `An enrollment listener for profile "${profileId}" is already running (pid ${runningPid}). ` +
-        `Run \`wallet-cli agent-intent wait --profile ${profileId}\` to check on it.`,
-    );
-  }
+  assertNoLiveEnrollListener(profileId);
 
   const args = ["agent-intent", "enroll"];
   for (const [name, value] of Object.entries(flags)) {
