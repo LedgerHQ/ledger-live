@@ -7,11 +7,8 @@ import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenSwap } from "LLM/features/Swap";
 import type { useAccountAssetPicker } from "LLM/components/AccountAssetPickerSheet/useAccountAssetPicker";
-import type { AccountAsset } from "LLM/utils/accountAssets";
-import type {
-  AccountAssetsByAction,
-  AssetActionId,
-} from "../../../../utils/resolveAccountAssetsByAction";
+import type { AssetActionId } from "@features/platform-quick-actions";
+import type { AccountAsset, AccountAssetsByAction } from "LLM/utils/accountAssets";
 import {
   ACCOUNT_DETAIL_PAGE,
   ACCOUNT_SCOPED_ASSETS_CONFIGURATION,

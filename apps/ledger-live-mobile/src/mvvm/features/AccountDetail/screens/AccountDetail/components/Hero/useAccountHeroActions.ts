@@ -6,8 +6,7 @@ import type { AccountHeroActionId } from "@features/flow-account-detail-hero";
 import { useTransferDrawerController } from "LLM/features/QuickActions";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import type { AccountAsset } from "LLM/utils/accountAssets";
-import type { AccountAssetsByAction } from "../../../../utils/resolveAccountAssetsByAction";
+import type { AccountAsset, AccountAssetsByAction } from "LLM/utils/accountAssets";
 import { ACCOUNT_DETAIL_PAGE } from "./constants";
 import { useInvestActions, type PickAsset } from "./useInvestActions";
 

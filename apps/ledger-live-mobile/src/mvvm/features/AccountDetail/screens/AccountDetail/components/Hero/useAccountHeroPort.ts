@@ -12,7 +12,7 @@ import {
   useAccountAssetPicker,
   type AccountAssetPickerSheetProps,
 } from "LLM/components/AccountAssetPickerSheet/useAccountAssetPicker";
-import { hasAnyFunds } from "LLM/utils/accountAssets";
+import { hasAnyFunds } from "@features/platform-quick-actions";
 import { useAccountHeroActions } from "./useAccountHeroActions";
 import { useAccountCountervalue, useAccountHeroAssets } from "./useAccountHeroAssets";
 import { useAssetsByAction } from "./useAssetsByAction";

@@ -126,10 +126,7 @@ function renderAccount(account: Account) {
     </Stack.Navigator>,
     {
       overrideInitialState: (state: State): State => {
-        const withFlag = withFlagOverrides({
-          accountDetail: { enabled: true },
-          ptxServiceCtaScreens: { enabled: true },
-        })(state);
+        const withFlag = withFlagOverrides({ accountDetail: { enabled: true } })(state);
         return { ...withFlag, accounts: { ...withFlag.accounts, active: [account] } };
       },
     },
@@ -164,14 +161,13 @@ describe("AccountDetail hero", () => {
     expect(screen.getByTestId(moreItem("earn"))).toBeVisible();
   });
 
-  it("leaves Sell and Earn out of More when no asset has a spendable balance", async () => {
-    const { user } = renderAccount(emptyAccount);
+  it("shows only Transfer and Buy when no asset has a spendable balance", async () => {
+    renderAccount(emptyAccount);
 
-    await user.press(await screen.findByTestId(tile("more")));
-
-    expect(screen.getByTestId(moreItem("buy"))).toBeVisible();
-    expect(screen.queryByTestId(moreItem("sell"))).toBeNull();
-    expect(screen.queryByTestId(moreItem("earn"))).toBeNull();
+    expect(await screen.findByTestId(tile("transfer"))).toBeVisible();
+    expect(screen.getByTestId(tile("buy"))).toBeVisible();
+    expect(screen.queryByTestId(tile("swap"))).toBeNull();
+    expect(screen.queryByTestId(tile("more"))).toBeNull();
   });
 
   it("opens the Transfer sheet on the account scope from the Transfer tile", async () => {
@@ -228,7 +224,7 @@ describe("AccountDetail hero", () => {
   });
 });
 
-function renderPort(account: Account, flags: Parameters<typeof withFlagOverrides>[0] = {}) {
+function renderPort(account: Account) {
   const result: { current: AccountHeroPortResult } = { current: undefined! };
   function PortProbe() {
     const port = useAccountHeroPort(account);
@@ -243,10 +239,7 @@ function renderPort(account: Account, flags: Parameters<typeof withFlagOverrides
     </Stack.Navigator>,
     {
       overrideInitialState: (state: State): State => {
-        const withFlags = withFlagOverrides({ ptxServiceCtaScreens: { enabled: true }, ...flags })(
-          state,
-        );
-        return { ...withFlags, accounts: { ...withFlags.accounts, active: [account] } };
+        return { ...state, accounts: { ...state.accounts, active: [account] } };
       },
     },
   );
@@ -343,14 +336,6 @@ describe("useAccountHeroPort actions", () => {
         parentId: accountWithToken.id,
       }),
       expect.objectContaining({ id: accountWithToken.id }),
-    );
-  });
-
-  it("disables Buy and Sell when the ramp CTAs are turned off", () => {
-    const { result } = renderPort(accountWithToken, { ptxServiceCtaScreens: { enabled: false } });
-
-    expect(result.current.port.availability).toEqual(
-      expect.objectContaining({ isBuyAvailable: false, isSellAvailable: false }),
     );
   });
 
