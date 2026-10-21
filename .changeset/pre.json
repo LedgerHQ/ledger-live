@@ -270,5 +270,7 @@
     "@ledgerhq/generators": "0.1.0",
     "@ledgerhq/prune-changelogs": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "electron-43-emudhra-ca"
+  ]
 }

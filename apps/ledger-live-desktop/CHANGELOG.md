@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.24.1-hotfix.0
+
+### Patch Changes
+
+- [#23658](https://github.com/LedgerHQ/ledger-live/pull/23658) [`3c1702f`](https://github.com/LedgerHQ/ledger-live/commit/3c1702f21b0d748f4988130a538fd0938e8ca9c8) Thanks [@lewisd5](https://github.com/lewisd5)! - Upgrade Electron to 43.8.3 to stop trusting the compromised eMudhra intermediate CAs
+
 ## 4.24.0
 
 ### Minor Changes
