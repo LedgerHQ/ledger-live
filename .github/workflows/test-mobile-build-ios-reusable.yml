@@ -32,6 +32,11 @@ on:
         required: false
         type: string
         default: "detox-ios-native-cache"
+      ios-native-nx-hash:
+        description: Nx hash of live-mobile:e2e:native:ios; when set, the native build runs through Nx, which caches it under that hash
+        required: false
+        type: string
+        default: ""
       ios-js-cache-key:
         description: The cache key to use for the iOS JS bundle
         required: false
@@ -171,6 +176,7 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm && pnpm nx:write-cache-config --cache-key-prefix "${{ steps.setup-caches.outputs.nx-cache-key-prefix }}"
 
       - name: Build iOS app for Detox test run
+        if: ${{ inputs.ios-native-nx-hash == '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         env:
           SKIP_JS_BUNDLING: "true"
@@ -183,7 +189,39 @@ jobs:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
+      # The hash must match the one the affected job computed, or the test jobs would look for another cache entry
+      - name: Check the native build Nx hash
+        if: ${{ inputs.ios-native-nx-hash != '' }}
+        env:
+          EXPECTED_HASH: ${{ inputs.ios-native-nx-hash }}
+        run: |
+          HASH=$(node tools/nx/task-hash.mjs live-mobile e2e:native:ios --details | cut -d= -f2)
+          if [ "$HASH" != "$EXPECTED_HASH" ]; then
+            echo "::error::live-mobile:e2e:native:ios hashes to $HASH here but $EXPECTED_HASH in the affected job"
+            exit 1
+          fi
+
+      - name: Build iOS app for Detox test run with Nx
+        if: ${{ inputs.ios-native-nx-hash != '' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        env:
+          SKIP_JS_BUNDLING: "true"
+          CARD_BAANX_API_URL: ${{ secrets.CARD_BAANX_API_URL }}
+          CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
+          CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
+          CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
+        with:
+          command: pnpm exec nx run live-mobile:e2e:native:ios
+
+      - name: Check the native build is in the Nx cache
+        if: ${{ inputs.ios-native-nx-hash != '' }}
+        env:
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          HASH: ${{ inputs.ios-native-nx-hash }}
+        run: aws s3api head-object --bucket "$CACHE_BUCKET" --key "${NX_CACHE_KEY_PREFIX}/$HASH"
+
       - name: Upload Detox Build
+        if: ${{ inputs.ios-native-nx-hash == '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}

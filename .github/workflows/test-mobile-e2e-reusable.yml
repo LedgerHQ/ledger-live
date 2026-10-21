@@ -199,6 +199,16 @@ on:
         required: false
         type: string
         default: ""
+      native_hash_ios:
+        description: "Nx hash of live-mobile:e2e:native:ios; when set, it replaces the hashFiles key of the iOS native build"
+        required: false
+        type: string
+        default: ""
+      native_hash_android:
+        description: "Nx hash of live-mobile:e2e:native:android; when set, it replaces the hashFiles key of the Android native build"
+        required: false
+        type: string
+        default: ""
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -315,11 +325,13 @@ jobs:
       test_filter: ${{ steps.test-filter.outputs.filter }}
       ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
-      ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
+      ios_native_exists: ${{ steps.check-native-nx.outputs.ios || steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-js.outputs.ios }}
-      android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
+      android_native_exists: ${{ steps.check-native-nx.outputs.android || steps.check-android-native.outputs.cache-hit }}
       android_js_exists: ${{ steps.check-js.outputs.android }}
       ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
+      ios_native_hash: ${{ steps.check-native-nx.outputs.ios_hash }}
+      android_native_hash: ${{ steps.check-native-nx.outputs.android_hash }}
       ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
@@ -387,6 +399,29 @@ jobs:
           }
           echo "ios=$(exists "$IOS_HASH")" | tee -a "$GITHUB_OUTPUT"
           echo "android=$(exists "$ANDROID_HASH")" | tee -a "$GITHUB_OUTPUT"
+
+      # The production builds use another detox configuration that the e2e:native targets don't build,
+      # so they keep the hashFiles keys
+      - name: Check if native builds exist in the Nx cache
+        id: check-native-nx
+        if: ${{ !inputs.production_firebase }}
+        env:
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          IOS_HASH: ${{ inputs.native_hash_ios }}
+          ANDROID_HASH: ${{ inputs.native_hash_android }}
+        run: |
+          exists() {
+            aws s3api head-object --bucket "$CACHE_BUCKET" --key "${NX_CACHE_KEY_PREFIX}/$1" > /dev/null 2>&1 &&
+              echo true || echo false
+          }
+          if [ -n "$IOS_HASH" ]; then
+            echo "ios_hash=$IOS_HASH" >> "$GITHUB_OUTPUT"
+            echo "ios=$(exists "$IOS_HASH")" | tee -a "$GITHUB_OUTPUT"
+          fi
+          if [ -n "$ANDROID_HASH" ]; then
+            echo "android_hash=$ANDROID_HASH" >> "$GITHUB_OUTPUT"
+            echo "android=$(exists "$ANDROID_HASH")" | tee -a "$GITHUB_OUTPUT"
+          fi
 
       - name: Resolve per-platform Speculos device
         id: devices
@@ -554,6 +589,7 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
+        if: ${{ steps.check-native-nx.outputs.ios_hash == '' }}
         uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
@@ -582,6 +618,7 @@ jobs:
 
       - name: Check if Android Native Build exists already
         id: check-android-native
+        if: ${{ steps.check-native-nx.outputs.android_hash == '' }}
         uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
@@ -610,7 +647,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: ./.github/workflows/test-mobile-build-ios-reusable.yml
     permissions:
       id-token: write
       contents: read
@@ -621,6 +658,7 @@ jobs:
       build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
+      ios-native-nx-hash: ${{ needs.determine-builds.outputs.ios_native_hash }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
       production_firebase: ${{ inputs.production_firebase || false }}
     secrets:
@@ -640,7 +678,7 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: ./.github/workflows/test-mobile-build-android-reusable.yml
     permissions:
       id-token: write
       contents: read
@@ -650,6 +688,7 @@ jobs:
       build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
+      android-native-nx-hash: ${{ needs.determine-builds.outputs.android_native_hash }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
       production_firebase: ${{ inputs.production_firebase || false }}
     secrets:
@@ -836,6 +875,7 @@ jobs:
         working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
+        if: ${{ needs.determine-builds.outputs.ios_native_hash == '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
@@ -845,6 +885,15 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Fetch Native Build from the Nx cache
+        if: ${{ needs.determine-builds.outputs.ios_native_hash != '' }}
+        env:
+          ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          REGION: ${{ secrets.AWS_CACHE_REGION }}
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          HASH: ${{ needs.determine-builds.outputs.ios_native_hash }}
+        run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" "$IOS_NATIVE_PATH"
 
       - name: Download JS Build
         if: ${{ needs.determine-builds.outputs.ios_js_exists != 'true' }}
@@ -1050,6 +1099,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
 
       - name: Download Native Build
+        if: ${{ needs.determine-builds.outputs.android_native_hash == '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
@@ -1058,6 +1108,14 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Fetch Native Build from the Nx cache
+        if: ${{ needs.determine-builds.outputs.android_native_hash != '' }}
+        env:
+          REGION: ${{ secrets.AWS_CACHE_REGION }}
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          HASH: ${{ needs.determine-builds.outputs.android_native_hash }}
+        run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" apps/ledger-live-mobile/android/app/build/outputs/apk
 
       - name: Download JS Bundle
         if: ${{ needs.determine-builds.outputs.android_js_exists != 'true' }}

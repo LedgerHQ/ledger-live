@@ -24,6 +24,12 @@ on:
       mobile_js_hash_android:
         description: "Nx hash of live-mobile:e2e:bundle:android, set when ledger-live-mobile is affected"
         value: ${{ jobs.nx-affected.outputs.mobile_js_hash_android }}
+      mobile_native_hash_ios:
+        description: "Nx hash of live-mobile:e2e:native:ios, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_native_hash_ios }}
+      mobile_native_hash_android:
+        description: "Nx hash of live-mobile:e2e:native:android, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_native_hash_android }}
 
 permissions:
   contents: read
@@ -40,6 +46,8 @@ jobs:
       paths: ${{ steps.nx-affected.outputs.paths }}
       mobile_js_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
       mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
+      mobile_native_hash_ios: ${{ steps.mobile-native-hash.outputs.ios }}
+      mobile_native_hash_android: ${{ steps.mobile-native-hash.outputs.android }}
     steps:
       - name: Checkout head branch
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -100,3 +108,12 @@ jobs:
         id: mobile-js-hash
         if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
         run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"
+
+      # The e2e:native targets only hash native inputs, so the mobile e2e workflow can skip the native
+      # builds whenever a previous run already cached them for the same native code
+      - name: Compute mobile native build Nx hashes
+        id: mobile-native-hash
+        if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
+        run: |
+          echo "ios=$(node tools/nx/task-hash.mjs live-mobile e2e:native:ios | cut -d= -f2)" | tee -a "$GITHUB_OUTPUT"
+          echo "android=$(node tools/nx/task-hash.mjs live-mobile e2e:native:android | cut -d= -f2)" | tee -a "$GITHUB_OUTPUT"
