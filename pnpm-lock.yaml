@@ -421,8 +421,8 @@ catalogs:
       specifier: 20.51.3
       version: 20.51.3
     electron:
-      specifier: 43.1.1
-      version: 43.1.1
+      specifier: 43.8.3
+      version: 43.8.3
     eslint-plugin-better-tailwindcss:
       specifier: 4.0.0-beta.3
       version: 4.0.0-beta.3
@@ -1651,7 +1651,7 @@ importers:
         version: 26.0.1
       electron:
         specifier: 'catalog:'
-        version: 43.1.1
+        version: 43.8.3
       electron-builder:
         specifier: 26.0.1
         version: 26.0.1
@@ -5607,7 +5607,7 @@ importers:
         version: 4.17.21
       electron:
         specifier: 'catalog:'
-        version: 43.1.1
+        version: 43.8.3
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -31120,8 +31120,8 @@ packages:
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
-  electron@43.1.1:
-    resolution: {integrity: sha512-I5c5vfuVvaXpWx3IZdwvXgxQW44+e7OP1wXGVQkogLeSFSkUZ6sLCcWV05AdEcs65AO5tAIJJwbp7ixw+LdarA==}
+  electron@43.8.3:
+    resolution: {integrity: sha512-KgvSm3bHXz96hSXzqxyRjLeli80rIdszbDQFKlRSfckmGazTPCH/CxUN31Dp9c5rFKTQSNf9gPJRWl1yWNB3pA==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -57370,7 +57370,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@43.1.1:
+  electron@43.8.3:
     dependencies:
       '@electron-internal/extract-zip': 1.0.4
       '@electron/get': 5.0.0
