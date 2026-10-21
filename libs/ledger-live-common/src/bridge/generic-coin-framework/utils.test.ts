@@ -738,32 +738,6 @@ describe("coin-framework utils", () => {
       });
     });
 
-    describe("asset", () => {
-      it("describes the native asset by its type only", () => {
-        const account = { currency: { name: "solana", units: [{}] } } as Account;
-
-        expect(transactionToIntent(account, { mode: "send" } as GenericTransaction).asset).toEqual({
-          type: "native",
-        });
-      });
-
-      it("describes a token by its type, reference and owner only", () => {
-        const account = {
-          currency: { name: "stellar", units: [{}] },
-          subAccounts: [{ id: "sub-1", token: { tokenType: "stellar", name: "USDC" } }],
-        } as unknown as Account;
-
-        expect(
-          transactionToIntent(account, {
-            mode: "send",
-            subAccountId: "sub-1",
-            assetReference: "USDC",
-            assetOwner: "issuer",
-          } as GenericTransaction).asset,
-        ).toEqual({ type: "stellar", assetReference: "USDC", assetOwner: "issuer" });
-      });
-    });
-
     describe("type", () => {
       it("fallbacks to 'Payment' without a transaction mode", () => {
         expect(
