@@ -72,7 +72,6 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 support/fmt/                                             @ledgerhq/platform
 support/jest/                                            @ledgerhq/platform
 support/lint/                                            @ledgerhq/platform
-support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 support/tsconfig/                                        @ledgerhq/platform
 
 # Wallet — libs

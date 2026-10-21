@@ -8,11 +8,11 @@ import {
 } from "@features/platform-pay-analytics/testing/module-mock";
 import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 import {
-  cardApiWrapper,
   listenToCardApi,
   revealCardDetailsHandler,
   signedInCardApiHandlers,
-} from "@support/msw-features-flow-pay-card";
+} from "@domain/api-card-management/mock/card-api";
+import { cardApiWrapper } from "../../__tests__/cardApiStore";
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
 import type { CardDetailsProps, CardVisualProps } from "../../types";

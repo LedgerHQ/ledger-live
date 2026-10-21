@@ -2,7 +2,7 @@ import { renderHook, waitFor, act } from "@testing-library/react";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { useGetCardCashbackQuery } from "@domain/api-card-management";
 import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
-import { CARD_CASHBACK_URL, listenToCardApi } from "@support/msw-features-flow-pay-card";
+import { CARD_CASHBACK_URL, listenToCardApi } from "@domain/api-card-management/mock/card-api";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 import { cardApiWrapper } from "../../__tests__/cardApiStore";

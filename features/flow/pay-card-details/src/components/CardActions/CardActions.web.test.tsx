@@ -1,10 +1,10 @@
 import React from "react";
 import { screen } from "@testing-library/react";
 import {
-  cardApiWrapper,
   listenToCardApi,
   signedInCardApiHandlers,
-} from "@support/msw-features-flow-pay-card";
+} from "@domain/api-card-management/mock/card-api";
+import { cardApiWrapper } from "../../__tests__/cardApiStore";
 import { CARD_COPY, MORE_COPY } from "../../__tests__/i18nWrapper";
 import { renderWeb } from "../../__tests__/renderWeb";
 import type { RevealTileProps } from "../../types";

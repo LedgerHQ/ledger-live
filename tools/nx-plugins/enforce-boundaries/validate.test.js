@@ -135,6 +135,31 @@ test("features -> legacy libs is forbidden (features must stay in new arch)", ()
   assert.deepEqual(v[0].sourceTags, ["scope:features"]);
 });
 
+test("support -> shared is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:support"] },
+      { name: "b", tags: ["scope:shared"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("support -> domain is forbidden (tooling carries no domain knowledge)", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:support"] },
+      { name: "b", tags: ["scope:domain", "type:domain-api"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.deepEqual(v[0].sourceTags, ["scope:support"]);
+  assert.equal(v[0].target, "b");
+});
+
 test("legacy source (no new-arch tags) is unconstrained", () => {
   const graph = buildGraph(
     [
