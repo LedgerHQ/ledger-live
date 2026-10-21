@@ -7,7 +7,7 @@ import { estimateTransactionByteLength, serializePayload } from "@stacks/transac
 import { getConfiguredStacksNetwork } from "../common-logic";
 import { getStacksBaseUrl } from "../network/api";
 import { buildUnsignedTx } from "./buildUnsignedTx";
-import { fetchLowTransactionFee } from "./fetchLowTransactionFee";
+import { fetchLowTransactionFee } from "../network/fees";
 import { getNextSequence } from "./getNextSequence";
 import type { StacksTxData } from "../types";
 

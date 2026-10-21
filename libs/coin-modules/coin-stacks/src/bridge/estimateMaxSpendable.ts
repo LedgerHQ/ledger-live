@@ -3,7 +3,7 @@ import { estimateTransactionByteLength, serializePayload } from "@stacks/transac
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { STACKS_DUMMY_ADDRESS } from "../constants";
-import { fetchLowTransactionFee } from "../logic/fetchLowTransactionFee";
+import { fetchLowTransactionFee } from "../network/fees";
 import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";

@@ -6,6 +6,9 @@ type TransactionFeeParams = Parameters<typeof fetchFeeEstimateTransaction>[0];
  * Low tier of the byte-length fee estimate.
  * Ledger's Stacks proxy has no route for POST /v2/fees/transaction, so a 404 falls back to the
  * transfer fee rate (GET /v2/fees/transfer), which that proxy does serve.
+ * The rate is applied to the estimated byte length of any payload, contract calls included, the
+ * same fallback the SDK's own `fetchFeeEstimate` uses when the node has no estimate.
+ * Remove the fallback once the proxy routes POST /v2/fees/transaction.
  */
 export async function fetchLowTransactionFee(
   params: TransactionFeeParams & { estimatedLength: number },

@@ -9,7 +9,7 @@ import {
 import BigNumber from "bignumber.js";
 import { c32address } from "c32check";
 import invariant from "invariant";
-import { fetchLowTransactionFee } from "../logic/fetchLowTransactionFee";
+import { fetchLowTransactionFee } from "../network/fees";
 import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
 import { validateAddress } from "../common-logic";
