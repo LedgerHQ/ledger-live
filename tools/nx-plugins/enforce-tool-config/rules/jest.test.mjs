@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import jest, { factoryProblem, stripComments } from "./jest.mjs";
+import jest, { factoryProblem, maskSource } from "./jest.mjs";
 
 const CONSUMER = JSON.stringify({ devDependencies: { "@support/jest": "workspace:*" } });
 
@@ -124,7 +124,36 @@ test("commented-out code is ignored", () => {
 /* module.exports = {}; */
 module.exports = require("@support/jest/shared").createSharedJestConfig();`;
   assert.equal(factoryProblem(source), null);
-  assert.equal(stripComments('"// kept" // dropped'), '"// kept"           ');
+});
+
+test("comments and literal contents are masked, preset specifiers and offsets kept", () => {
+  assert.equal(
+    maskSource('require("@support/jest/shared") // x\n"a(" + /b"\\//g'),
+    'require("@support/jest/shared")     \n"  " + /    /g',
+  );
+  assert.equal(maskSource("`a${`(`}b`"), "` ${` `} `");
+  assert.equal(maskSource("x = a / 2 / b;"), "x = a / 2 / b;");
+});
+
+test("regular expression and string literals in the overrides are not read as code", () => {
+  const source = `const { createSharedJestConfig } = require("@support/jest/shared");
+
+module.exports = createSharedJestConfig({
+  displayName: "module.exports",
+  testPathIgnorePatterns: [/node_modules\\//.source, /["')]/.source, /[/]/.source],
+  rootDir: \`\${__dirname}/) export default\`,
+  maxWorkers: require("os").cpus().length / 2,
+  testRegex: typeof x === "string" ? /\\.test\\.ts$/ : "x",
+});
+`;
+  assert.equal(factoryProblem(source), null);
+});
+
+test("an export hidden after a regular expression is still found", () => {
+  const source = `const ignored = [/lib\\/*/];
+module.exports = require("@support/jest/shared").createSharedJestConfig();
+module.exports.verbose = true;`;
+  assert.equal(factoryProblem(source), "assigns its export more than once");
 });
 
 test("a config without an export, or exporting twice, is rejected", () => {

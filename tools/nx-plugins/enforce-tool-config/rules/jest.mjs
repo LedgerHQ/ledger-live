@@ -17,17 +17,58 @@ const DEPENDENCY_FIELDS = [
 const CONFIG_FILE = /^jest(\.[\w-]+)?\.config\.[cm]?[jt]s$/;
 const FACTORY = /^create\w*Config$/;
 const PRESET_SPECIFIER = String.raw`["'](@support/jest/[\w-]+)["']`;
+const KEPT_LITERAL = /^@support\/jest\/[\w-]+$/;
 const IDENTIFIER = String.raw`[A-Za-z_$][\w$]*`;
+// A `/` after one of these words starts a regular expression, after any other word a division.
+const KEYWORDS_BEFORE_EXPRESSION = new Set([
+  "await",
+  "case",
+  "delete",
+  "do",
+  "else",
+  "in",
+  "instanceof",
+  "new",
+  "of",
+  "return",
+  "throw",
+  "typeof",
+  "void",
+  "yield",
+]);
 
 /**
- * The source with comments blanked out, string and template contents kept, so the patterns below
- * neither match commented-out code nor stop at a parenthesis inside a comment.
+ * Index of the first character from `from` on that `closes` accepts, stepping over escapes, or the
+ * end of the source.
+ *
+ * @param {string} source
+ * @param {number} from
+ * @param {(index: number) => boolean} closes
+ * @returns {number}
+ */
+function literalEnd(source, from, closes) {
+  let i = from;
+  while (i < source.length && !closes(i)) i += source[i] === "\\" ? 2 : 1;
+  return Math.min(i, source.length);
+}
+
+/**
+ * The source with comments blanked out, and the contents of string, template and regular
+ * expression literals blanked out too, except the preset specifiers. Delimiters, newlines and
+ * offsets are kept, so the patterns below see only code: they neither match commented-out code or
+ * text inside a literal, nor stop at a parenthesis in either.
  *
  * @param {string} source
  * @returns {string}
  */
-export function stripComments(source) {
-  let out = "";
+export function maskSource(source) {
+  const out = source.split("");
+  const blank = (from, to) => {
+    for (let k = from; k < to; k++) if (out[k] !== "\n") out[k] = " ";
+  };
+  // One entry per open brace: true when it opened a template literal's `${`.
+  const braces = [];
+  let regexAllowed = true;
   let i = 0;
   while (i < source.length) {
     const char = source[i];
@@ -35,46 +76,72 @@ export function stripComments(source) {
     if (char === "/" && next === "/") {
       const end = source.indexOf("\n", i);
       const stop = end === -1 ? source.length : end;
-      out += " ".repeat(stop - i);
+      blank(i, stop);
       i = stop;
     } else if (char === "/" && next === "*") {
       const end = source.indexOf("*/", i + 2);
       const stop = end === -1 ? source.length : end + 2;
-      out += source.slice(i, stop).replace(/[^\n]/g, " ");
+      blank(i, stop);
       i = stop;
-    } else if (char === '"' || char === "'" || char === "`") {
-      const start = i;
-      i++;
-      while (i < source.length && source[i] !== char) i += source[i] === "\\" ? 2 : 1;
-      i++;
-      out += source.slice(start, i);
+    } else if (char === '"' || char === "'") {
+      const end = literalEnd(source, i + 1, k => source[k] === char);
+      if (!KEPT_LITERAL.test(source.slice(i + 1, end))) blank(i + 1, end);
+      i = end + 1;
+      regexAllowed = false;
+    } else if (char === "`" || (char === "}" && braces.at(-1) === true)) {
+      if (char === "}") braces.pop();
+      const end = literalEnd(
+        source,
+        i + 1,
+        k => source[k] === "`" || (source[k] === "$" && source[k + 1] === "{"),
+      );
+      blank(i + 1, end);
+      if (source[end] === "$") {
+        braces.push(true);
+        i = end + 2;
+        regexAllowed = true;
+      } else {
+        i = end + 1;
+        regexAllowed = false;
+      }
+    } else if (char === "/" && regexAllowed) {
+      let inClass = false;
+      const end = literalEnd(source, i + 1, k => {
+        if (source[k] === "\n") return true;
+        if (source[k] === "[") inClass = true;
+        else if (source[k] === "]") inClass = false;
+        return source[k] === "/" && !inClass;
+      });
+      blank(i + 1, end);
+      i = end + 1;
+      while (i < source.length && /\w/.test(source[i])) i++;
+      regexAllowed = false;
+    } else if (/[\w$]/.test(char)) {
+      const word = /^[\w$]+/.exec(source.slice(i))[0];
+      i += word.length;
+      regexAllowed = KEYWORDS_BEFORE_EXPRESSION.has(word);
     } else {
-      out += char;
+      if (char === "{") braces.push(false);
+      else if (char === "}") braces.pop();
+      if (!/\s/.test(char)) regexAllowed = !/[)\]}]/.test(char);
       i++;
     }
   }
-  return out;
+  return out.join("");
 }
 
 /**
  * Index just past the parenthesis closing the one at `open`, or -1 when it is unbalanced.
  *
- * @param {string} code comments already stripped
+ * @param {string} code masked by maskSource
  * @param {number} open index of a `(`
  * @returns {number}
  */
 function closingParen(code, open) {
   let depth = 0;
   for (let i = open; i < code.length; i++) {
-    const char = code[i];
-    if (char === '"' || char === "'" || char === "`") {
-      i++;
-      while (i < code.length && code[i] !== char) i += code[i] === "\\" ? 2 : 1;
-    } else if (char === "(") {
-      depth++;
-    } else if (char === ")" && --depth === 0) {
-      return i + 1;
-    }
+    if (code[i] === "(") depth++;
+    else if (code[i] === ")" && --depth === 0) return i + 1;
   }
   return -1;
 }
@@ -83,7 +150,7 @@ function closingParen(code, open) {
  * The names a config binds to preset exports: `factories` maps a local name to the export it
  * stands for, `namespaces` holds the names bound to a whole preset module.
  *
- * @param {string} code comments already stripped
+ * @param {string} code masked by maskSource
  */
 function presetBindings(code) {
   const factories = new Map();
@@ -125,7 +192,7 @@ function presetBindings(code) {
  * @returns {string | null}
  */
 export function factoryProblem(source) {
-  const code = stripComments(source);
+  const code = maskSource(source);
 
   const exports = [
     ...code.matchAll(/\bmodule\.exports\b|\bexports\.\w+\s*=|\bexport\s+default\b/g),
