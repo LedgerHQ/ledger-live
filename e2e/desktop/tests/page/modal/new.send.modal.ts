@@ -361,7 +361,8 @@ export class NewSendModal extends Modal {
   @step("Verify the network fees were estimated again once the rent landed")
   async expectFeesReestimatedOnRentDelivery(feesBefore: string) {
     await expect(this.sponsoredRentArriving).toBeHidden();
-    await expect(this.networkFeesRow).not.toHaveText(feesBefore);
+    // innerText, as networkFees() read it: textContent drops the layout's line breaks.
+    await expect(this.networkFeesRow).not.toHaveText(feesBefore, { useInnerText: true });
   }
 
   @step("Verify the energy delivery wait is shown")
