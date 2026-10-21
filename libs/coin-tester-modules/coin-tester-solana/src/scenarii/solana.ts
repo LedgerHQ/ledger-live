@@ -414,16 +414,21 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
       expect(latestOperation.value).toStrictEqual(latestOperation.fee);
       expect(latestOperation.senders).toStrictEqual([]);
       expect(latestOperation.recipients).toStrictEqual([]);
+      // Delegation, stake rent exemption (2282880) and the transaction fee, priority fee included.
+      const staked = new BigNumber(1e9 + 2282880).plus(latestOperation.fee);
       expect(latestOperation.extra).toMatchObject({
-        stake: { address: VOTE_ACCOUNT?.votePubkey, amount: new BigNumber(1e9 + 2287880) }, // amount + rent exempt reserve + fee
+        stake: { address: VOTE_ACCOUNT?.votePubkey, amount: staked },
       });
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
-      // 1e9 (delegation) + 2287880 (stake rent exempt) + 5000 (tx fee) + 5000 (unstakeReserve = 1 withdrawFee)
-      expect(currentAccount.spendableBalance).toStrictEqual(
-        previousAccount.spendableBalance.minus(1e9 + 2297880),
-      );
+      // Spendable also holds back the unstake reserve: the future undelegate and withdraw fees, each
+      // the 5000 base fee plus a priority fee of at least 1 and at most ceil(10,000 µL/CU × 1.4M CU).
+      const reserve = previousAccount.spendableBalance
+        .minus(currentAccount.spendableBalance)
+        .minus(staked);
+      expect(reserve.isGreaterThan(2 * 5000)).toBe(true);
+      expect(reserve.isLessThanOrEqualTo(2 * (5000 + 14_000))).toBe(true);
       // Verify staking resources are populated after sync with delegation to the validator
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
       expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);

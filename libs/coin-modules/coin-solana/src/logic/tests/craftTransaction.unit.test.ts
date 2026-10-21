@@ -5,8 +5,11 @@ import type {
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import {
   BlockhashWithExpiryBlockHeight,
+  ComputeBudgetProgram,
   PublicKey,
   RecentPrioritizationFees,
+  SystemProgram,
+  TransactionInstruction,
   VersionedTransaction,
 } from "@solana/web3.js";
 import { SolanaTokenAccountHoldsAnotherToken } from "../../errors";
@@ -25,7 +28,12 @@ import {
 } from "../../network/chain/web3";
 import type { SolanaTokenProgram, Transaction } from "../../types";
 import { DUMMY_SIGNATURE } from "../../utils";
-import { buildVersionedTransaction, craftTransaction } from "../craftTransaction";
+import {
+  buildVersionedTransaction,
+  computeBudgetOf,
+  craftTransaction,
+  instructionsOfMessage,
+} from "../craftTransaction";
 import BigNumber from "bignumber.js";
 import { getStakeAccounts, type StakeAccount } from "../../network/chain/stake-activation/rpc";
 
@@ -176,6 +184,14 @@ describe("craftTransaction — partner-built transaction", () => {
   });
 });
 
+function signedBudget(result: { transaction: string }) {
+  const tx = VersionedTransaction.deserialize(Buffer.from(result.transaction, "base64"));
+  return {
+    budget: computeBudgetOf(instructionsOfMessage(tx.message)),
+    count: tx.message.compiledInstructions.length,
+  };
+}
+
 describe("craftTransaction", () => {
   const mockGetLatestBlockhash = jest.fn() as jest.MockedFunction<ChainAPI["getLatestBlockhash"]>;
   const mockGetFeeForMessage = jest.fn() as jest.MockedFunction<ChainAPI["getFeeForMessage"]>;
@@ -236,6 +252,121 @@ describe("craftTransaction", () => {
 
     expect(result.details?.estimatedFee).toBe("10000");
     expect(mockGetFeeForMessage).not.toHaveBeenCalled();
+  });
+
+  describe("compute budget", () => {
+    const sendIntent = {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+    } as const;
+
+    /** What crafting builds afresh: a sampled price of 1 µL/CU and a simulated limit. */
+    function buildsTransferWithLimit(units: number) {
+      jest.mocked(buildTransferInstructions).mockResolvedValueOnce([
+        ComputeBudgetProgram.setComputeUnitLimit({ units }),
+        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 1 }),
+        SystemProgram.transfer({
+          fromPubkey: new PublicKey(TEST_ADDRESS),
+          toPubkey: new PublicKey(TEST_RECIPIENT),
+          lamports: 1000000,
+        }),
+      ]);
+    }
+
+    beforeEach(() => {
+      mockGetLatestBlockhash.mockResolvedValue({
+        blockhash: TEST_BLOCKHASH,
+        lastValidBlockHeight: 280064048,
+      });
+    });
+
+    it("signs the price and limit the estimate forwarded instead of the freshly built ones", async () => {
+      buildsTransferWithLimit(450);
+      const result = await craftTransaction(api, sendIntent, {
+        value: 5005n,
+        // As the wallet persists them: JSON-safe strings.
+        parameters: { computeUnitPrice: "10000", computeUnitLimit: "495" },
+      });
+
+      expect(signedBudget(result)).toEqual({
+        budget: { computeUnitPrice: 10_000n, computeUnitLimit: 495 },
+        count: 3,
+      });
+      expect(result.details?.estimatedFee).toBe("5005");
+    });
+
+    it("keeps the fresh limit of a transaction that grew since the estimate", async () => {
+      buildsTransferWithLimit(30_000);
+      const result = await craftTransaction(api, sendIntent, {
+        value: 5005n,
+        parameters: { computeUnitPrice: "10000", computeUnitLimit: "495" },
+      });
+
+      expect(signedBudget(result).budget).toEqual({
+        computeUnitPrice: 10_000n,
+        computeUnitLimit: 30_000,
+      });
+    });
+
+    it("signs the fresh limit when the estimate ran on the runtime default", async () => {
+      buildsTransferWithLimit(450);
+      const result = await craftTransaction(api, sendIntent, {
+        value: 5060n,
+        parameters: { computeUnitPrice: 10_000n },
+      });
+
+      expect(signedBudget(result)).toEqual({
+        budget: { computeUnitPrice: 10_000n, computeUnitLimit: 450 },
+        count: 3,
+      });
+    });
+
+    it("leaves the limit to the runtime default when neither side requested one", async () => {
+      jest.mocked(buildTransferInstructions).mockResolvedValueOnce([
+        SystemProgram.transfer({
+          fromPubkey: new PublicKey(TEST_ADDRESS),
+          toPubkey: new PublicKey(TEST_RECIPIENT),
+          lamports: 1000000,
+        }),
+      ]);
+      const result = await craftTransaction(api, sendIntent, {
+        value: 5060n,
+        parameters: { computeUnitPrice: 10_000n },
+      });
+
+      expect(signedBudget(result)).toEqual({ budget: { computeUnitPrice: 10_000n }, count: 2 });
+    });
+
+    it("keeps the built budget when no price is forwarded", async () => {
+      buildsTransferWithLimit(999);
+      const result = await craftTransaction(api, sendIntent, { value: 5000n });
+
+      expect(signedBudget(result).budget).toEqual({ computeUnitPrice: 1n, computeUnitLimit: 999 });
+    });
+
+    it("prices the priority fee into the fallback when getFeeForMessage returns null", async () => {
+      buildsTransferWithLimit(999);
+      mockGetFeeForMessage.mockResolvedValue(null);
+
+      const result = await craftTransaction(api, sendIntent);
+
+      // 5,000 per signature plus ceil(1 µL/CU × 999 CU).
+      expect(result.details?.estimatedFee).toBe("5001");
+    });
+
+    it("reads no budget from a truncated compute-budget instruction", () => {
+      const truncated = new TransactionInstruction({
+        keys: [],
+        programId: ComputeBudgetProgram.programId,
+        data: Buffer.from([3, 1, 2]),
+      });
+
+      expect(computeBudgetOf([truncated])).toEqual({});
+    });
   });
 
   it("should throw for invalid sender address", async () => {

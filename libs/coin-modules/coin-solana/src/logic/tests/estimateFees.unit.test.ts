@@ -2,6 +2,15 @@ import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import {
+  ComputeBudgetProgram,
+  PublicKey,
+  SystemProgram,
+  TransactionInstruction,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import { NetworkError } from "../../errors";
 import type { ChainAPI } from "../../network";
 import { estimateFees, estimateTxFee } from "../estimateFees";
 
@@ -10,6 +19,7 @@ jest.mock("../craftTransaction", () => {
   return {
     ...actual,
     buildVersionedTransaction: jest.fn(),
+    craftTransaction: jest.fn(actual.craftTransaction),
     resolveRecipientDescriptor: jest.fn(actual.resolveRecipientDescriptor),
   };
 });
@@ -19,10 +29,26 @@ jest.mock("../../network/chain/web3", () => ({
   getStakeAccountAddressWithSeed: jest.fn().mockResolvedValue("stakeAccAddress"),
 }));
 
-const { buildVersionedTransaction, resolveRecipientDescriptor } =
+const { buildVersionedTransaction, craftTransaction, resolveRecipientDescriptor } =
   jest.requireMock("../craftTransaction");
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
+
+/** A self-transfer priced at 10,000 µL/CU, after the given limit instructions. */
+function pricedTransfer(limitIxs: TransactionInstruction[]): VersionedTransaction {
+  const payer = new PublicKey(TEST_ADDRESS);
+  return new VersionedTransaction(
+    new TransactionMessage({
+      payerKey: payer,
+      recentBlockhash: PublicKey.default.toBase58(),
+      instructions: [
+        ...limitIxs,
+        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 10_000 }),
+        SystemProgram.transfer({ fromPubkey: payer, toPubkey: payer, lamports: 0 }),
+      ],
+    }).compileToLegacyMessage(),
+  );
+}
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
 
 function mintAccountInfo(program: string, extensions?: unknown[]) {
@@ -83,6 +109,75 @@ function setupBuildMock(blockhash = "oldBlockhash") {
 describe("estimateFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Most cases measure the dummy the estimate falls back on; the crafted path has its own cases.
+    craftTransaction.mockRejectedValue(new Error("dummy under test"));
+  });
+
+  it("signs the budget it estimated, however the fees moved in between", async () => {
+    const {
+      craftTransaction: craft,
+      computeBudgetOf,
+      instructionsOfMessage,
+    } = jest.requireActual("../craftTransaction");
+    craftTransaction.mockImplementation(craft);
+    const api = {
+      ...createMockApi([5005]),
+      config: {},
+      getLatestBlockhash: jest.fn().mockResolvedValue({
+        blockhash: PublicKey.default.toBase58(),
+        lastValidBlockHeight: 100,
+      }),
+      getRecentPrioritizationFees: jest.fn().mockResolvedValue([{ prioritizationFee: 0 }]),
+      getSimulationComputeUnits: jest.fn().mockResolvedValue(450),
+    } as unknown as ChainAPI;
+    const intent = {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+    } as TransactionIntent;
+
+    const estimate = await estimateFees(api, intent);
+    (api.getRecentPrioritizationFees as jest.Mock).mockResolvedValue([
+      { prioritizationFee: 90_000 },
+    ]);
+    // The wallet forwards the parameters JSON-safe, bigints as strings.
+    const forwarded = JSON.parse(
+      JSON.stringify(estimate, (_, value) => (typeof value === "bigint" ? `${value}` : value)),
+    );
+    const signed = await craft(api, intent, {
+      value: estimate.value,
+      parameters: forwarded.parameters,
+    });
+
+    expect(estimate).toEqual({
+      value: 5005n,
+      parameters: { computeUnitPrice: 10_000n, computeUnitLimit: 495 },
+    });
+    const { message } = VersionedTransaction.deserialize(Buffer.from(signed.transaction, "base64"));
+    expect(computeBudgetOf(instructionsOfMessage(message))).toEqual({
+      computeUnitPrice: 10_000n,
+      computeUnitLimit: 495,
+    });
+    expect(signed.details.estimatedFee).toBe("5005");
+  });
+
+  it("lets a network failure while crafting surface rather than estimate on a dummy", async () => {
+    craftTransaction.mockRejectedValue(new NetworkError("Too many requests"));
+
+    await expect(
+      estimateFees(createMockApi([5000]), {
+        intentType: "transaction",
+        type: "send",
+        sender: TEST_ADDRESS,
+        recipient: TEST_RECIPIENT,
+        amount: 1000000n,
+        asset: { type: "native" },
+      }),
+    ).rejects.toThrow(NetworkError);
+    expect(buildVersionedTransaction).not.toHaveBeenCalled();
   });
 
   it("should return estimated fee wrapped as BigInt", async () => {
@@ -101,6 +196,50 @@ describe("estimateFees", () => {
     expect(result).toEqual({ value: 5000n });
   });
 
+  it("prices the transaction crafting builds and publishes its budget for crafting to sign", async () => {
+    const api = createMockApi([5005]);
+    const crafted = pricedTransfer([ComputeBudgetProgram.setComputeUnitLimit({ units: 495 })]);
+    craftTransaction.mockResolvedValueOnce({
+      transaction: Buffer.from(crafted.serialize()).toString("base64"),
+      details: { estimatedFee: "5005" },
+    });
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+    });
+
+    expect(result).toEqual({
+      value: 5005n,
+      parameters: { computeUnitPrice: 10_000n, computeUnitLimit: 495 },
+    });
+    expect(buildVersionedTransaction).not.toHaveBeenCalled();
+  });
+
+  it("crafts without a memo too long to fit, which validateIntent reports", async () => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+      memo: { type: "string", kind: "text", value: "a".repeat(501) },
+    } as TransactionIntent);
+
+    expect(craftTransaction.mock.calls[0][1].memo).toEqual({ type: "none" });
+    expect(buildVersionedTransaction.mock.calls[0][1].model.commandDescriptor.command.memo).toBe(
+      undefined,
+    );
+  });
+
   it("should map token intent to token.transfer kind", async () => {
     const api = createMockApi([5000]);
     setupBuildMock();
@@ -116,6 +255,30 @@ describe("estimateFees", () => {
 
     const tx = buildVersionedTransaction.mock.calls[0][1];
     expect(tx.model.kind).toBe("token.transfer");
+  });
+
+  it.each([
+    ["native", { type: "native" }],
+    [
+      "token",
+      { type: "spl-token", assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
+    ],
+  ])("prices the memo of a %s transfer, which raises its priority fee", async (_, asset) => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset,
+      memo: { type: "string", kind: "text", value: "invoice-42" },
+    } as TransactionIntent);
+
+    const tx = buildVersionedTransaction.mock.calls[0][1];
+    expect(tx.model.commandDescriptor.command.memo).toBe("invoice-42");
   });
 
   it("should use spl-token program for standard SPL token intents", async () => {
@@ -546,18 +709,25 @@ describe("estimateTxFee", () => {
     jest.useRealTimers();
   });
 
-  it("should fallback to DEFAULT_TX_FEE (5000) when retry also returns non-number", async () => {
-    jest.useFakeTimers();
-    const api = createMockApi([null, null]);
-    setupBuildMock();
+  it.each([
+    ["at its compute-unit limit", [ComputeBudgetProgram.setComputeUnitLimit({ units: 495 })], 5005],
+    // The runtime default of two builtins, the transfer and the price: 10,000 µL/CU × 6,000 CU.
+    ["at the runtime default without a limit", [], 5060],
+  ])(
+    "falls back to the base fee plus the priority fee %s when retry also returns non-number",
+    async (_, limitIxs, expected) => {
+      jest.useFakeTimers();
+      const api = createMockApi([null, null]);
+      buildVersionedTransaction.mockResolvedValue([pricedTransfer(limitIxs), {}, jest.fn()]);
 
-    const feePromise = estimateTxFee(api, TEST_ADDRESS, "transfer");
-    await jest.advanceTimersByTimeAsync(6000);
-    const fee = await feePromise;
+      const feePromise = estimateTxFee(api, TEST_ADDRESS, "transfer");
+      await jest.advanceTimersByTimeAsync(6000);
+      const fee = await feePromise;
 
-    expect(fee).toBe(5000);
-    jest.useRealTimers();
-  });
+      expect(fee).toBe(expected);
+      jest.useRealTimers();
+    },
+  );
 
   it.each([
     "transfer",

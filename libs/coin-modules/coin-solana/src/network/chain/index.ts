@@ -40,6 +40,7 @@ export const LAST_VALID_BLOCK_HEIGHT_MOCK = 280064048;
 
 export type Config = {
   readonly endpoint: string;
+  readonly minPriorityFee?: number | undefined;
 };
 
 export type ChainAPI = Readonly<{
@@ -419,6 +420,9 @@ export function getChainAPI(
         // so we can be sure the transaction will succeed
         // and get the real compute units used
         ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }),
+        // The signed transaction always carries a price instruction, which consumes compute units
+        // too. A zero price measures it without charging a priority fee on the 1.4M limit above.
+        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 0 }),
         ...instructions,
       ];
       const testTransaction = new VersionedTransaction(

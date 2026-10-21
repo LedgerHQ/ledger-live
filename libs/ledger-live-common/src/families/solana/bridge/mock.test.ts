@@ -126,7 +126,8 @@ describe("solana mock bridge", () => {
       "ComputeBudget111111111111111111111111111111",
       "11111111111111111111111111111111",
     ]);
-    expect(signed.message.compiledInstructions).toHaveLength(2);
+    // Compute-unit limit, compute-unit price (always set, floored), transfer.
+    expect(signed.message.compiledInstructions).toHaveLength(3);
   });
 
   it("signs a partner-built transaction, keeping its instructions", async () => {
