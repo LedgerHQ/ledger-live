@@ -409,6 +409,13 @@ make that Secret Service reachable. Only when the human confirms an older wallet
 here without one (its key went to the kernel keyring and is gone), re-enroll under a new
 `--profile` id (same consent rule).
 
+On macOS and Windows a refused write fails `enroll` with the generic `Could not store the agent's
+secret key in the OS keychain` instead (no `keychain_unavailable`). Make sure it ran with the
+sandbox bypass; if it still fails, stop and ask the human to unlock the keychain or allow access in
+the system prompt, then re-run the same `enroll`. If that's not possible, report that enrollment
+can't be completed in this environment. Never offer `--allow-plaintext-key` for this error: the
+plaintext fallback is Linux-only.
+
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
 enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
 profile enrolled for staging can never end up holding a production Trustchain ID. `--bff-url` and
@@ -699,3 +706,4 @@ Get the Solana `--stake-account` address from `earn positions <account>` (its `s
 | `[✖] Ledger not detected. Plug in, unlock, retry.` (exit code 3)                                     | device powered off or unplugged                                                                                                                        | Ask the user to power on the device, unlock it, and connect via USB, then re-run the command.                                                                                                                                                                                                                                                                                         |
 | `device-state … awaiting_approval … reason: unlock` (JSON stream)                                     | device locked                                                                                                                                          | Keep the command running — the CLI resumes automatically once unlocked. Ask the user to unlock the device with their PIN.                                                                                                                                                                                                                                                             |
 | `keychain_unavailable` (json `error.code`) | `agent-intent enroll`: no Secret Service on Linux, or the OS keychain refused to store the agent key (e.g. a locked collection). Other `agent-intent` commands: the profile's keychain can't be reached | Follow **Keychain required**: when the keychain refused the write, ask the human to unlock it first; never add `--allow-plaintext-key` without the human's explicit yes. |
+| `Could not store the agent's secret key in the OS keychain` | `agent-intent enroll` on macOS/Windows: the keychain refused the write (locked, or access denied) | Re-run with the sandbox bypass; if it still fails, ask the human to unlock the keychain or allow access, then re-run. Never offer `--allow-plaintext-key` (Linux-only). |
