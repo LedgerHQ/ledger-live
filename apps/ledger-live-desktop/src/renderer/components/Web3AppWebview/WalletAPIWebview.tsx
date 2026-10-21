@@ -11,7 +11,15 @@ import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/t
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
-import React, { type RefObject, forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  type RefObject,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { userIdSelector } from "@domain/entity-client-identity";
@@ -30,7 +38,7 @@ import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { DappAccountGate } from "./DappAccountGate";
 import { getAttachedWebview, useWebviewState } from "./helpers";
-import { useWebviewBridgeMessages } from "./bridge";
+import { useWebviewBridgeMessages, useWebviewBridgeSession } from "./bridge";
 import type { WebviewBridgeMessage } from "~/bridge/contract";
 import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
@@ -294,6 +302,7 @@ function useWebView(
     "manifest" | "customHandlers" | "currentAccountHistDb" | "setCurrentAccountHistDb" | "inputs"
   >,
   webviewRef: RefObject<WebviewTag | null>,
+  mainFrameUrl: string,
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
@@ -315,21 +324,15 @@ function useWebView(
   const webviewHook = useMemo(() => {
     return {
       reload: () => getAttachedWebview(webviewRef)?.reloadIgnoringCache(),
-      postMessage: (message: string) => {
-        const webview = webviewRef.current;
-        if (webview) {
-          const origin = new URL(webview.src).origin;
-          if (origin === "null") return;
-          webview.contentWindow?.postMessage(message, origin);
-        }
-      },
     };
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl);
+
   const walletState = useSelector(walletSelector);
 
-  const { widgetLoaded, onLoad, onReload, onMessage, server } = useWalletAPIServer({
+  const { widgetLoaded, onLoad, onReload, server } = useWalletAPIServer({
     accountNames: walletState.accountNames,
     manifest,
     accounts,
@@ -338,6 +341,7 @@ function useWebView(
     webviewHook,
     uiHook,
     customHandlers,
+    bridgeSession: bridge.session,
   });
 
   useEffect(() => {
@@ -350,7 +354,7 @@ function useWebView(
     manifest,
     accounts,
     uiHook,
-    postMessage: webviewHook.postMessage,
+    postMessage: bridge.session.send,
     currentAccountHistDb: currentAccountHistDb,
     setCurrentAccountHistDb: setCurrentAccountHistDb,
     tracking,
@@ -359,16 +363,27 @@ function useWebView(
     mevProtected,
   });
 
+  // A queued dapp message runs once its session is active, with the handler of that session.
+  const onDappMessageRef = useRef(onDappMessage);
+  useLayoutEffect(() => {
+    onDappMessageRef.current = onDappMessage;
+  }, [onDappMessage]);
+
+  const { accept } = bridge;
   const handleBridgeMessage = useCallback(
-    ({ channel, message }: WebviewBridgeMessage) => {
+    ({ origin, channel, message }: WebviewBridgeMessage) => {
+      const session = accept(origin);
+      if (!session) return;
       if (channel === "webviewToParent" && typeof message === "string") {
-        onMessage(message);
+        session.receive(message);
       }
       if (channel === "dappToParent" && typeof message === "object" && message !== null) {
-        onDappMessage(message as Parameters<typeof onDappMessage>[0]);
+        session.deliver(() =>
+          onDappMessageRef.current(message as Parameters<typeof onDappMessage>[0]),
+        );
       }
     },
-    [onDappMessage, onMessage],
+    [accept],
   );
 
   useWebviewBridgeMessages(webviewRef, handleBridgeMessage);
@@ -474,6 +489,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         inputs,
       },
       webviewRef,
+      webviewState.url,
       tracking,
       serverRef,
       customWebviewStyle,

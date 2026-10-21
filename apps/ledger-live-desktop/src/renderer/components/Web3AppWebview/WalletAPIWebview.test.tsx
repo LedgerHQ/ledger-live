@@ -9,10 +9,11 @@ import type { WebviewBridgeMessage } from "~/bridge/contract";
 
 let mockUiHook: Partial<UiHook> = {};
 const mockDispatch = jest.fn();
-const mockOnMessage = jest.fn();
 const mockOnDappMessage = jest.fn();
 const mockOnLoad = jest.fn();
 let mockNoAccounts = false;
+const mockSession = { send: jest.fn(), receive: jest.fn(), deliver: jest.fn() };
+const mockAccept = jest.fn();
 let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
 
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
@@ -24,7 +25,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
       widgetLoaded: true,
       onLoad: mockOnLoad,
       onReload: jest.fn(),
-      onMessage: mockOnMessage,
+      onMessage: jest.fn(),
       server: undefined,
     };
   }),
@@ -39,6 +40,11 @@ jest.mock("@ledgerhq/live-common/wallet-api/useDappLogic", () => ({
 }));
 
 jest.mock("./bridge", () => ({
+  useWebviewBridgeSession: () => ({
+    session: mockSession,
+    accept: mockAccept,
+    onMainFrameNavigation: jest.fn(),
+  }),
   useWebviewBridgeMessages: (_ref: unknown, onBridgeMessage: (m: WebviewBridgeMessage) => void) => {
     mockOnBridgeMessage = onBridgeMessage;
   },
@@ -184,6 +190,8 @@ describe("WalletAPIWebview bridge messages", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAccept.mockReturnValue(mockSession);
+    mockSession.deliver.mockImplementation((handle: () => void) => handle());
     jest.mocked(useWebviewState).mockReturnValue({
       webviewState: { loading: false, isAppUnavailable: false, url: "https://example.com" },
       webviewRef: { current: null },
@@ -195,27 +203,39 @@ describe("WalletAPIWebview bridge messages", () => {
     render(<WalletAPIWebview manifest={manifest} />);
   });
 
-  it("hands Wallet API messages to the server", () => {
+  it("hands Wallet API messages to the session of their origin", () => {
     sendBridgeMessage({ message: '{"id":1}' });
 
-    expect(mockOnMessage).toHaveBeenCalledWith('{"id":1}');
+    expect(mockAccept).toHaveBeenCalledWith("https://example.com");
+    expect(mockSession.receive).toHaveBeenCalledWith('{"id":1}');
     expect(mockOnDappMessage).not.toHaveBeenCalled();
   });
 
-  it("hands dapp messages to the dapp logic", () => {
+  it("hands dapp messages to the dapp logic through the session", () => {
     const request = { jsonrpc: "2.0", id: 1, method: "eth_chainId" };
 
     sendBridgeMessage({ channel: "dappToParent", message: request });
 
+    expect(mockSession.deliver).toHaveBeenCalled();
     expect(mockOnDappMessage).toHaveBeenCalledWith(request);
-    expect(mockOnMessage).not.toHaveBeenCalled();
+    expect(mockSession.receive).not.toHaveBeenCalled();
+  });
+
+  it("drops messages that the session does not accept", () => {
+    mockAccept.mockReturnValue(undefined);
+
+    sendBridgeMessage({ origin: "https://other.example.com" });
+    sendBridgeMessage({ channel: "dappToParent", message: { jsonrpc: "2.0" } });
+
+    expect(mockSession.receive).not.toHaveBeenCalled();
+    expect(mockOnDappMessage).not.toHaveBeenCalled();
   });
 
   it("drops malformed payloads", () => {
     sendBridgeMessage({ message: { not: "a string" } });
     sendBridgeMessage({ channel: "dappToParent", message: "not an object" });
 
-    expect(mockOnMessage).not.toHaveBeenCalled();
+    expect(mockSession.receive).not.toHaveBeenCalled();
     expect(mockOnDappMessage).not.toHaveBeenCalled();
   });
 });
