@@ -3,11 +3,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { calApi } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
 import { isCurrencyNotFoundError, PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
-import {
-  buildHashCacheEntries,
-  buildRestoreCacheEntries,
-  groupTokensByCurrency,
-} from "./internals/restore";
+import { buildHashCacheEntries, buildRestoreCacheEntries } from "./internals/restore";
 import { PersistedCALSchema } from "./schema";
 import type {
   CryptoAssetsDispatch,
@@ -151,10 +147,11 @@ export function filterExpiredTokens(
 }
 
 /**
- * Optimistically restores persisted tokens and their stored hashes into the RTK Query cache
- * without blocking loading, then starts a hash check for each restored currency. The check
- * evicts that currency's stale tokens itself (see `getTokensSyncHash`); a failed check keeps
- * both. Currencies with no stored hash are never evicted.
+ * Optimistically restores persisted tokens and every stored hash into the RTK Query cache
+ * without blocking loading, then starts a hash check for each stored hash. The check evicts that
+ * currency's stale tokens itself (see `getTokensSyncHash`); a failed check keeps both, so the
+ * stored hash stays the last known one even when none of the currency's tokens are left.
+ * Currencies with no stored hash are never evicted.
  */
 export function restoreTokensToCache(
   dispatch: CryptoAssetsDispatch,
@@ -162,14 +159,11 @@ export function restoreTokensToCache(
   ttl: number,
 ): void {
   const validTokens = filterExpiredTokens(persistedData.tokens, ttl);
-  if (validTokens.length === 0) {
+  const hashes = persistedData.hashes ?? {};
+  if (validTokens.length === 0 && Object.keys(hashes).length === 0) {
     return;
   }
 
-  const hashes = hashesForRestoredCurrencies(
-    persistedData.hashes ?? {},
-    groupTokensByCurrency(validTokens),
-  );
   dispatch(
     cryptoAssetsApi.util.upsertQueryEntries([
       ...buildRestoreCacheEntries(validTokens),
@@ -184,16 +178,4 @@ export function restoreTokensToCache(
       cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: true }),
     );
   }
-}
-
-function hashesForRestoredCurrencies(
-  hashes: Record<string, string>,
-  tokensByCurrency: Map<string, PersistedTokenEntry[]>,
-): Record<string, string> {
-  const restored: Record<string, string> = {};
-  for (const currencyId of tokensByCurrency.keys()) {
-    const hash = hashes[currencyId];
-    if (hash) restored[currencyId] = hash;
-  }
-  return restored;
 }

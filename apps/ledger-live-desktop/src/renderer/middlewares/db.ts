@@ -58,6 +58,13 @@ function accountsExportSelector(state: State) {
 // Throttled save for crypto assets cache (save at most once per 5 seconds)
 // Only write when content actually changed to avoid redundant app.json resaves
 let lastPersistedCryptoAssets: PersistedCAL | null = null;
+
+// CAL actions run before init restores the persisted cache: saving then would overwrite it with an
+// empty one. Saves start once init has read it, so an emptied cache after eviction is still saved.
+let cryptoAssetsCacheHydrated = false;
+export function markCryptoAssetsCacheHydrated() {
+  cryptoAssetsCacheHydrated = true;
+}
 const saveCryptoAssetsCache = throttle((state: State) => {
   try {
     const persistedData = extractPersistedCALFromState(state);
@@ -139,8 +146,7 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
   if (action.type.startsWith(`${cryptoAssetsApi.reducerPath}/`)) {
     const res = next(action);
-    const state = store.getState();
-    saveCryptoAssetsCache(state);
+    if (cryptoAssetsCacheHydrated) saveCryptoAssetsCache(store.getState());
     return res;
   }
 

@@ -9,7 +9,7 @@ import {
   restoreTokensToCache,
   type PersistedCAL,
 } from "@domain/api-currency-token";
-import DBMiddleware from "../db";
+import DBMiddleware, { markCryptoAssetsCacheHydrated } from "../db";
 
 const mockSetKey = jest.fn();
 
@@ -86,6 +86,8 @@ async function settle() {
 }
 
 describe("DBMiddleware - crypto assets cache with a delayed hash check", () => {
+  beforeAll(() => markCryptoAssetsCacheHydrated());
+
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers({ doNotFake: ["nextTick", "queueMicrotask", "setImmediate"] });

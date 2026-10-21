@@ -410,6 +410,36 @@ describe("restoreTokensToCache", () => {
       }
     });
 
+    it.each([
+      { cache: "holds only a hash", tokens: [], timestamp: Date.now() },
+      { cache: "holds only expired tokens", tokens: [usdt], timestamp: Date.now() - 2 * ttl },
+    ])(
+      "keeps the stored hash as the fallback when the cache $cache and the check fails",
+      async ({ tokens, timestamp }) => {
+        respond(() => HttpResponse.json({}, { status: 404 }));
+        const store = makeStore();
+        try {
+          restoreTokensToCache(
+            store.dispatch,
+            persistedCal({ tokens, timestamp, hashes: { ethereum: "hash123" } }),
+            ttl,
+          );
+          expect(hashRequests).toBe(0);
+          await waitUntil(() => hashRequests === 1);
+
+          const check = await store.dispatch(
+            cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"),
+          );
+          expect(check.isError).toBe(true);
+          expect(check.data).toBe("hash123");
+          expect(restoredTokenCount(store)).toBe(0);
+          expect(extractHashesFromState(store.getState())).toEqual({ ethereum: "hash123" });
+        } finally {
+          store.dispatch(cryptoAssetsApi.util.resetApiState());
+        }
+      },
+    );
+
     it("keeps a fulfilled lookup that replaced an expired restored token", async () => {
       const hash = holdResponse();
       respond(() => hash.pending);

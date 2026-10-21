@@ -36,7 +36,7 @@ import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-to
 import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
-import dbMiddleware from "~/renderer/middlewares/db";
+import dbMiddleware, { markCryptoAssetsCacheHydrated } from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { appCountervaluesSources } from "../state-manager/middleware/countervalues";
@@ -202,6 +202,7 @@ async function init() {
   } catch (error) {
     logger.error("Failed to load crypto assets tokens from app.json:", error);
   }
+  markCryptoAssetsCacheHydrated();
 
   if (getEnv("PLAYWRIGHT_RUN")) {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

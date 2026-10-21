@@ -9,7 +9,7 @@ import {
 import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
-import DBMiddleware from "../db";
+import DBMiddleware, { markCryptoAssetsCacheHydrated } from "../db";
 
 jest.mock("~/renderer/storage", () => ({
   setKey: jest.fn(),
@@ -403,32 +403,47 @@ describe("DBMiddleware - crypto assets cache branch", () => {
     mockedSetKey.mockReset();
   });
 
-  it("persists the CAL token cache on actions of the registered CAL api", () => {
-    const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
-    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
-    jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
+  // Runs first: the hydration flag is module state and the tests below set it.
+  it("does not persist the CAL cache before init restores it", () => {
+    jest.mocked(extractPersistedCALFromState).mockClear();
     const state = baseState();
 
     runMiddleware([state, state], calAction);
 
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", persisted);
+    expect(extractPersistedCALFromState).not.toHaveBeenCalled();
+    expect(mockedSetKey).not.toHaveBeenCalled();
   });
 
-  it("persists an emptied CAL token cache", () => {
-    jest.useFakeTimers();
-    try {
-      jest.advanceTimersByTime(5000);
-      const emptied = { tokens: [], hashes: { ethereum: "hash456" } } as unknown as PersistedCAL;
-      jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(emptied);
+  describe("once init restored it", () => {
+    beforeAll(() => markCryptoAssetsCacheHydrated());
+
+    it("persists the CAL token cache on actions of the registered CAL api", () => {
+      const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
+      jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
       jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
       const state = baseState();
 
       runMiddleware([state, state], calAction);
-      jest.advanceTimersByTime(5000);
 
-      expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", emptied);
-    } finally {
-      jest.useRealTimers();
-    }
+      expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", persisted);
+    });
+
+    it("persists an emptied CAL token cache", () => {
+      jest.useFakeTimers();
+      try {
+        jest.advanceTimersByTime(5000);
+        const emptied = { tokens: [], hashes: { ethereum: "hash456" } } as unknown as PersistedCAL;
+        jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(emptied);
+        jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
+        const state = baseState();
+
+        runMiddleware([state, state], calAction);
+        jest.advanceTimersByTime(5000);
+
+        expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", emptied);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
   });
 });

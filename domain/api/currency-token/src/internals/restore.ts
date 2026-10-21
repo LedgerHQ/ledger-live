@@ -3,23 +3,6 @@ import type { PersistedTokenEntry } from "../types";
 
 // Package-private cache-restoration helpers for `restoreTokensToCache`.
 
-/** Groups persisted token entries by their parent crypto-currency id. */
-export function groupTokensByCurrency(
-  tokens: PersistedTokenEntry[],
-): Map<string, PersistedTokenEntry[]> {
-  const byCurrency = new Map<string, PersistedTokenEntry[]>();
-  for (const entry of tokens) {
-    const currencyId = entry.data.parentCurrencyId;
-    const group = byCurrency.get(currencyId);
-    if (group) {
-      group.push(entry);
-    } else {
-      byCurrency.set(currencyId, [entry]);
-    }
-  }
-  return byCurrency;
-}
-
 type HashCacheEntry = { endpointName: "getTokensSyncHash"; arg: string; value: string };
 
 /** Builds a `getTokensSyncHash` cache entry per stored `currencyId → hash`. */

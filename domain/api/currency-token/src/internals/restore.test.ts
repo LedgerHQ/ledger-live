@@ -1,6 +1,6 @@
 import { token } from "@domain/entity-currency-token";
 import type { PersistedTokenEntry } from "../types";
-import { buildHashCacheEntries, buildRestoreCacheEntries, groupTokensByCurrency } from "./restore";
+import { buildHashCacheEntries, buildRestoreCacheEntries } from "./restore";
 
 function entry(
   id: string,
@@ -22,23 +22,6 @@ function entry(
     ...(tokenIdentifier === undefined ? {} : { token_identifier: tokenIdentifier }),
   };
 }
-
-describe("groupTokensByCurrency", () => {
-  it("groups entries by parentCurrencyId", () => {
-    const grouped = groupTokensByCurrency([
-      entry("ethereum/erc20/a", "ethereum"),
-      entry("ethereum/erc20/b", "ethereum"),
-      entry("polygon/erc20/c", "polygon"),
-    ]);
-
-    expect(grouped.get("ethereum")).toHaveLength(2);
-    expect(grouped.get("polygon")).toHaveLength(1);
-  });
-
-  it("returns an empty map for no tokens", () => {
-    expect(groupTokensByCurrency([]).size).toBe(0);
-  });
-});
 
 describe("buildRestoreCacheEntries", () => {
   it("builds an id + address entry per token", () => {
