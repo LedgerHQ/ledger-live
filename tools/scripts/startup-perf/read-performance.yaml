@@ -1,0 +1,31 @@
+# Opens Settings > Debug > Performance in an app that is already running.
+# It never launches the app: the launch being measured is done by adb / simctl beforehand.
+# Debug is visible without the 7 taps because the builds use .env.mock.prerelease (FORCE_DEBUG_VISIBLE=1).
+appId: com.ledger.live
+---
+- openLink: ledgerlive://settings
+# iOS may ask to confirm opening the link; system permission prompts can also be on screen.
+- tapOn:
+    text: "Open"
+    optional: true
+- tapOn:
+    text: "(Don.t Allow|Not now|Later)"
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "Debug.*"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    text: "Debug.*"
+- scrollUntilVisible:
+    element:
+      text: "Performance.*"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    text: "Performance.*"
+- extendedWaitUntil:
+    visible:
+      text: "App startup time.*"
+    timeout: 15000
