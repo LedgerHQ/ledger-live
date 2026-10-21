@@ -595,6 +595,7 @@ test("R3 fails: a contract that references a DOM or React Native type", () => {
           [
             "onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;",
             "ref?: Ref<HTMLElement>;",
+            "anchor?: Ref<Element>;",
             "layout: CSSProperties;",
             "inset: ViewStyle;",
           ].join("\n"),
@@ -602,6 +603,7 @@ test("R3 fails: a contract that references a DOM or React Native type", () => {
       ),
     ).toSorted(),
     [
+      "R3 contract-platform-type Card",
       "R3 contract-platform-type Card",
       "R3 contract-platform-type Card",
       "R3 contract-platform-type Card",
@@ -622,7 +624,20 @@ test("R3 fails: a banned type imported under an alias", () => {
 
 test("R3 passes: neutral types that share a word with a banned one", () => {
   assert.deepEqual(
-    check(card(contract("ref?: Ref<CardHandle>;\nevent: TrackingEvent;\nnode: ReactNode;"))),
+    check(
+      card(
+        contract(
+          [
+            "ref?: Ref<CardHandle>;",
+            "event: TrackingEvent;",
+            "node: ReactNode;",
+            "icon: JSX.Element;",
+            "badge: React.JSX.Element;",
+            'footer: import("react").JSX.Element;',
+          ].join("\n"),
+        ),
+      ),
+    ),
     [],
   );
 });

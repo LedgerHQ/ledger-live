@@ -54,6 +54,7 @@
     "*HTMLAttributes",
     "HTMLProps",
     "DetailedHTMLProps",
+    "Element",
     "HTML*Element",
     "SVG*Element",
     "NativeSyntheticEvent",

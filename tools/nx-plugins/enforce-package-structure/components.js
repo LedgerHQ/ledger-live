@@ -637,7 +637,8 @@ function suffixedSiblings(file) {
 /**
  * @param {ts.Node} node
  * @returns {string | null} the rightmost name of a type reference, `React.ChangeEvent` read as
- *   `ChangeEvent`, or the original name of an import, so an alias does not hide it
+ *   `ChangeEvent`, or the original name of an import, so an alias does not hide it. A name under
+ *   the `JSX` namespace is neutral and returns null, so `JSX.Element` is not read as `Element`
  */
 function referencedTypeName(node) {
   if (ts.isImportSpecifier(node)) return (node.propertyName ?? node.name).text;
@@ -646,7 +647,10 @@ function referencedTypeName(node) {
   else if (ts.isImportTypeNode(node)) name = node.qualifier;
   else if (ts.isExpressionWithTypeArguments(node)) name = node.expression;
   if (!name) return null;
-  if (ts.isQualifiedName(name)) return name.right.text;
+  if (ts.isQualifiedName(name)) {
+    const namespace = ts.isQualifiedName(name.left) ? name.left.right : name.left;
+    return namespace.text === "JSX" ? null : name.right.text;
+  }
   if (ts.isPropertyAccessExpression(name)) return name.name.text;
   return ts.isIdentifier(name) ? name.text : null;
 }

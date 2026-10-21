@@ -107,7 +107,7 @@
       "examples": [["react-native", "@ledgerhq/lumen-ui-", "react-dom"]]
     },
     "bannedTypeNames": {
-      "description": "R3. DOM and React Native type names a contract may not reference anywhere, matched on the rightmost name, so `React.ChangeEvent` counts as `ChangeEvent`. `*` stands for zero or more camelCase words: `HTML*Element` matches `HTMLElement` and `HTMLInputElement`. The check reads names, not types: an alias declared in another module escapes it.",
+      "description": "R3. DOM and React Native type names a contract may not reference anywhere, matched on the rightmost name, so `React.ChangeEvent` counts as `ChangeEvent`. Names under the `JSX` namespace are neutral: `JSX.Element` does not count as `Element`. `*` stands for zero or more camelCase words: `HTML*Element` matches `HTMLElement` and `HTMLInputElement`. The check reads names, not types: an alias declared in another module escapes it.",
       "type": "array",
       "uniqueItems": true,
       "items": { "$ref": "#/definitions/camelCaseGlob" },
