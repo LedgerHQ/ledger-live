@@ -65,6 +65,13 @@ describe("getMessagingAllowedOrigins", () => {
     expect(getMessagingAllowedOrigins([])).toEqual([]);
   });
 
+  it("keeps a bracketed IPv6 host", () => {
+    expect(getMessagingAllowedOrigins(["http://[::1]:3000", "https://[2001:db8::1]"])).toEqual([
+      "http://[::1]:3000",
+      "https://[2001:db8::1]",
+    ]);
+  });
+
   it("leaves the bridge to any origin when the domain check is off", () => {
     expect(getMessagingAllowedOrigins(undefined)).toBeUndefined();
   });

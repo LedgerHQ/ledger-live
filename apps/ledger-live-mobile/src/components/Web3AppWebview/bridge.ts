@@ -40,14 +40,17 @@ export function getMessagingAllowedOrigins(domains: string[] | undefined): strin
   if (domains === undefined) return undefined;
   const rules = new Set<string>();
   for (const domain of domains) {
-    const match = /^(https?):\/\/(\*\.|\*)?([^/*:]*)(:\d+)?$/.exec(domain.trim());
+    // The host is a name, an IPv4 address or a bracketed IPv6 address ("http://[::1]:3000").
+    const match = /^(https?):\/\/(\*\.|\*)?(\[[\da-f:.]+\]|[^/*:[\]]*)(:\d+)?$/i.exec(
+      domain.trim(),
+    );
     if (!match) continue;
     const [, scheme, wildcard, host, port = ""] = match;
     if (!host) {
       if (wildcard !== "*." && port === "") return undefined;
       continue;
     }
-    if (wildcard === "*") continue;
+    if (wildcard === "*" || (wildcard && host.startsWith("["))) continue;
     rules.add(`${scheme}://${wildcard ?? ""}${host}${port}`);
   }
   return [...rules];
