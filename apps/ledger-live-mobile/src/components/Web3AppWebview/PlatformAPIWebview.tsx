@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "~/context/hooks";
 import { appVersion } from "LLM/utils/appVersion";
-import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -52,6 +52,10 @@ import { closePlatformExchange } from "./closePlatformExchange";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 import { reportIfStrictlyDisallowed } from "./domainCheckReport";
 import { NetworkError } from "./NetworkError";
+import {
+  MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST,
+  openWindowExternally,
+} from "./manifestDomainGuard";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
@@ -509,12 +513,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       [manifest, tracking],
     );
 
-    const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
-      const { targetUrl } = event.nativeEvent;
-      // Don't use canOpenURL as we cannot check unknown apps on the phone
-      // Without listing everything in plist and android manifest
-      Linking.openURL(targetUrl);
-    }, []);
+    const onOpenWindow = useCallback(
+      (event: WebViewOpenWindowEvent) => {
+        openWindowExternally(event.nativeEvent.targetUrl, !!manifestDomainCheckEnabled);
+      },
+      [manifestDomainCheckEnabled],
+    );
 
     useEffect(() => {
       tracking.platformLoad(manifest);
@@ -538,7 +542,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         renderLoading={renderLoading}
-        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+        originWhitelist={
+          manifestDomainCheckEnabled ? MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST : manifest.domains
+        }
+        allowedMainFrameOrigins={manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined}
         onShouldStartLoadWithRequest={
           manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
         }

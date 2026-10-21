@@ -48,7 +48,6 @@ import {
   ShouldStartLoadRequest,
   WebViewOpenWindowEvent,
 } from "react-native-webview/lib/WebViewTypes";
-import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -56,6 +55,11 @@ import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSig
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
+import {
+  isLedgerDeeplink,
+  openWindowExternally,
+  shouldStartLoadWithManifestDomains,
+} from "./manifestDomainGuard";
 export function useWebView(
   {
     manifest,
@@ -256,12 +260,12 @@ export function useWebView(
     [manifest, onDappMessage, onMessageRaw],
   );
 
-  const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
-    const { targetUrl } = event.nativeEvent;
-    // Don't use canOpenURL as we cannot check unknown apps on the phone
-    // Without listing everything in plist and android manifest
-    Linking.openURL(targetUrl);
-  }, []);
+  const onOpenWindow = useCallback(
+    (event: WebViewOpenWindowEvent) => {
+      openWindowExternally(event.nativeEvent.targetUrl, !!manifestDomainCheckEnabled);
+    },
+    [manifestDomainCheckEnabled],
+  );
 
   useEffect(() => {
     if (webviewRef && webviewRef.current && manifest.cacheBustingId !== undefined) {
@@ -501,14 +505,18 @@ export function useWebviewState(
   const onShouldStartLoadWithRequest = useCallback(
     (request: ShouldStartLoadRequest): boolean => {
       if (!manifestDomainCheckEnabled) return true;
-      if (isUrlAllowedByManifestDomains(request.url, manifest.domains ?? [])) return true;
-      reportDomainCheckViolation({
-        manifest,
-        url: request.url,
-        frameType: request.isTopFrame === false ? "sub_frame" : "main_frame",
-        kind: "navigation",
-        outcome: "blocked",
-      });
+      if (shouldStartLoadWithManifestDomains(request, manifest.domains ?? [])) return true;
+      const isMainFrame = request.isTopFrame !== false;
+      // Main-frame Ledger deeplinks are handed to Linking, not blocked.
+      if (!(isMainFrame && isLedgerDeeplink(request.url))) {
+        reportDomainCheckViolation({
+          manifest,
+          url: request.url,
+          frameType: isMainFrame ? "main_frame" : "sub_frame",
+          kind: "navigation",
+          outcome: "blocked",
+        });
+      }
       return false;
     },
     [manifestDomainCheckEnabled, manifest],
