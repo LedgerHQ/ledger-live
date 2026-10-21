@@ -7,6 +7,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import prepareSignTransaction from "./liveSDKLogic";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import { act } from "@testing-library/react-native";
+import { Linking } from "react-native";
 import type { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
 import { reportDomainCheckViolation, reportIfStrictlyDisallowed } from "./domainCheckReport";
 
@@ -193,6 +194,7 @@ describe("useWebviewState", () => {
     });
 
     it("reports a load the domain check blocks", () => {
+      const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
       jest
         .mocked(isUrlAllowedByManifestDomains)
         .mockImplementation(url => new URL(url).origin === "https://example.com");
@@ -207,7 +209,8 @@ describe("useWebviewState", () => {
       expect(result.current.onShouldStartLoadWithRequest(request("https://example.com/next"))).toBe(
         true,
       );
-      expect(result.current.onShouldStartLoadWithRequest(request("https://evil.com/", false))).toBe(
+      expect(result.current.onShouldStartLoadWithRequest(request("https://evil.com/"))).toBe(false);
+      expect(result.current.onShouldStartLoadWithRequest(request("ledgerlive://discover"))).toBe(
         false,
       );
 
@@ -215,10 +218,11 @@ describe("useWebviewState", () => {
       expect(reportDomainCheckViolation).toHaveBeenCalledWith({
         manifest: mockManifest,
         url: "https://evil.com/",
-        frameType: "sub_frame",
+        frameType: "main_frame",
         kind: "navigation",
         outcome: "blocked",
       });
+      openURL.mockRestore();
     });
 
     it("reports an initial URL the domain check blocks", () => {
@@ -251,6 +255,70 @@ describe("useWebviewState", () => {
       expect(result.current.onShouldStartLoadWithRequest(request("https://evil.com/"))).toBe(true);
       expect(reportDomainCheckViolation).not.toHaveBeenCalled();
     });
+  });
+});
+
+const shouldStartRequest = (url: string, isTopFrame?: boolean) =>
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  ({ url, isTopFrame }) as ShouldStartLoadRequest;
+
+describe("useWebviewState - onShouldStartLoadWithRequest", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetInitialURL.mockReturnValue("https://example.com");
+    jest
+      .mocked(isUrlAllowedByManifestDomains)
+      .mockImplementation(
+        jest.requireActual("@ledgerhq/live-common/wallet-api/manifestDomainUtils")
+          .isUrlAllowedByManifestDomains,
+      );
+  });
+
+  afterAll(() => {
+    jest.mocked(isUrlAllowedByManifestDomains).mockImplementation(() => true);
+  });
+
+  it("keeps the current behaviour when the flag is off", () => {
+    const { result } = renderHook(() =>
+      useWebviewState(
+        { manifest: mockManifest, manifestDomainCheckEnabled: false },
+        null,
+        undefined,
+      ),
+    );
+
+    expect(
+      result.current.onShouldStartLoadWithRequest(shouldStartRequest("https://evil.com", true)),
+    ).toBe(true);
+    expect(
+      result.current.onShouldStartLoadWithRequest(shouldStartRequest("http://example.com", true)),
+    ).toBe(true);
+  });
+
+  it("cancels main-frame loads outside manifest.domains when the flag is on", () => {
+    const { result } = renderHook(() =>
+      useWebviewState(
+        { manifest: mockManifest, manifestDomainCheckEnabled: true },
+        null,
+        undefined,
+      ),
+    );
+    const { onShouldStartLoadWithRequest } = result.current;
+
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://example.com/path", true))).toBe(
+      true,
+    );
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://evil.com", true))).toBe(false);
+    expect(
+      onShouldStartLoadWithRequest(shouldStartRequest("https://example.com.evil.com", true)),
+    ).toBe(false);
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("http://example.com", true))).toBe(
+      false,
+    );
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://evil.com"))).toBe(false);
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://3ds.bank.com", false))).toBe(
+      true,
+    );
   });
 });
 
