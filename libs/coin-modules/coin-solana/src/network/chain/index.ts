@@ -347,8 +347,13 @@ export function getChainAPI(
           });
         } catch (error: unknown) {
           if (error instanceof SendTransactionError) {
-            const logs = await error.getLogs(connection);
-            throw new NetworkError(error.message, { logs });
+            // web3.js types `signature` as private; it is '' for preflight rejections.
+            const { signature } = error as unknown as { signature?: string };
+            if (signature) {
+              const logs = await error.getLogs(connection);
+              throw new NetworkError(error.message, { logs });
+            }
+            throw new NetworkError(error.message, { logs: error.logs });
           }
 
           throw error;
