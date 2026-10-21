@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 4.25.0-next.1
+
+### Minor Changes
+
+- [#23631](https://github.com/LedgerHQ/ledger-live/pull/23631) [`19e5335`](https://github.com/LedgerHQ/ledger-live/commit/19e5335bcb3d6017d6c875fc1fd66704f0f5a8be) Thanks [@henri-ly](https://github.com/henri-ly)! - Restore name and unit on the transaction intent asset so XRP and Stellar amount errors show the currency unit instead of "Unknown unit"
+
+### Patch Changes
+
+- Updated dependencies [[`19e5335`](https://github.com/LedgerHQ/ledger-live/commit/19e5335bcb3d6017d6c875fc1fd66704f0f5a8be)]:
+  - @ledgerhq/live-common@38.4.0-next.1
+  - @ledgerhq/asset-detail@0.12.1-next.1
+  - @ledgerhq/live-dmk-desktop@0.25.0-next.1
+  - @ledgerhq/live-send@0.1.4-next.1
+
 ## 4.25.0-next.0
 
 ### Minor Changes
