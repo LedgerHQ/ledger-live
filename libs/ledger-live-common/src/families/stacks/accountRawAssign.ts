@@ -2,6 +2,7 @@ import {
   assignFromAccountRaw as assignStakingPositionsFromAccountRaw,
   assignToAccountRaw,
 } from "@ledgerhq/coin-stacks/bridge/serialization";
+import { generateHistoryFromOperations } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { isOperationType } from "../../bridge/generic-coin-framework/utils";
 
@@ -10,11 +11,21 @@ import { isOperationType } from "../../bridge/generic-coin-framework/utils";
  * row has no contract id, so a pox `stake` cannot be told apart from a user contract's `stake`
  * function, and only the former is a DELEGATE. Done on load rather than with a `syncVersion`
  * resync: a sync from scratch rebuilds the token accounts without their local `swapHistory` and
- * pending operations. */
+ * pending operations.
+ *
+ * The value follows the type: the framework values a synced CONTRACT_CALL at its fee, but an
+ * unknown type was stored at 0 when it succeeded (a failed one is already valued at its fee). The
+ * balance history is built before this hook runs, so it is rebuilt when a row changes. A retyped
+ * row is a valid type on the next load, which leaves it alone. */
 function retypeStoredContractCalls(account: Account): void {
+  let retyped = false;
   for (const operation of account.operations ?? []) {
-    if (!isOperationType(operation.type)) operation.type = "CONTRACT_CALL";
+    if (isOperationType(operation.type)) continue;
+    operation.type = "CONTRACT_CALL";
+    if (!operation.hasFailed) operation.value = operation.value.plus(operation.fee);
+    retyped = true;
   }
+  if (retyped) account.balanceHistoryCache = generateHistoryFromOperations(account);
 }
 
 function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
