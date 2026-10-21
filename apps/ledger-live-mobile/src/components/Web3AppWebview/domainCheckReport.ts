@@ -14,7 +14,7 @@ import { appVersion } from "LLM/utils/appVersion";
 import { isDatadogEnabled } from "~/datadog";
 
 const report = createDomainCheckReporter(violation => {
-  if (!isDatadogEnabled) return;
+  if (!isDatadogEnabled) return false;
   DdRum.addAction(RumActionType.CUSTOM, DOMAIN_CHECK_VIOLATION_ACTION, violation).catch(() => {
     // Reporting is best effort.
   });

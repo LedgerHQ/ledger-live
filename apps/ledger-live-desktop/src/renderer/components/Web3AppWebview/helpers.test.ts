@@ -10,9 +10,11 @@ import {
   serializeAllowedOrigins,
   serializeDomainCheckReport,
 } from "~/bridge/webviewAllowedOrigins";
-import { reportBridgeSenderOrigin } from "./domainCheckReport";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import { reportBlockedInitialLoad, reportBridgeSenderOrigin } from "./domainCheckReport";
 
 jest.mock("./domainCheckReport", () => ({
+  reportBlockedInitialLoad: jest.fn(),
   reportBridgeSenderOrigin: jest.fn(),
 }));
 
@@ -157,6 +159,33 @@ describe("useWebviewState", () => {
       rerender({ manifest: updatedManifest });
 
       expect(result.current.webviewProps.src).toBe("https://new.example.com");
+    });
+
+    it("reports the initial load when the domain check keeps an empty domain list on about:blank", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com/swap?address=0xabc");
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(false);
+      const manifest = { ...mockManifest, domains: [] };
+
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(result.current.webviewProps.src).toBe("about:blank");
+      expect(reportBlockedInitialLoad).toHaveBeenCalledWith(
+        manifest,
+        "https://example.com/swap?address=0xabc",
+      );
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(true);
+    });
+
+    it("does not report an initial load the domain check allows", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+
+      renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
     });
   });
 

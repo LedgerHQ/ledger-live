@@ -164,14 +164,18 @@ export function addBreadcrumb(breadcrumb: Breadcrumb): void {
   }
 }
 
-/** A custom RUM action whose attributes are queried as `@context.<key>`. */
-export function addAction(name: string, context: Record<string, unknown>): void {
-  if (!initialized) return;
+/**
+ * A custom RUM action whose attributes are queried as `@context.<key>`.
+ * Returns false when RUM is not initialized and nothing was sent.
+ */
+export function addAction(name: string, context: Record<string, unknown>): boolean {
+  if (!initialized) return false;
   try {
     datadogRum.addAction(name, context);
   } catch {
     // no-op
   }
+  return true;
 }
 
 export function setTags(tags: Record<string, string | number | boolean | null | undefined>): void {

@@ -101,6 +101,17 @@ describe("manifestDomainReport", () => {
       expect(send).toHaveBeenNthCalledWith(1, violation);
     });
 
+    it("sends a violation again when the sender could not send it", () => {
+      const send = jest.fn().mockReturnValueOnce(false).mockReturnValue(true);
+      const report = createDomainCheckReporter(send);
+
+      report(violation);
+      report(violation);
+      report(violation);
+
+      expect(send).toHaveBeenCalledTimes(2);
+    });
+
     it("stops sending once too many distinct violations were seen", () => {
       const send = jest.fn();
       const report = createDomainCheckReporter(send);

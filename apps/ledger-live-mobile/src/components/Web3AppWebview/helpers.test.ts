@@ -195,7 +195,7 @@ describe("useWebviewState", () => {
     it("reports a load the domain check blocks", () => {
       jest
         .mocked(isUrlAllowedByManifestDomains)
-        .mockImplementation(url => url.startsWith("https://example.com"));
+        .mockImplementation(url => new URL(url).origin === "https://example.com");
       const { result } = renderHook(() =>
         useWebviewState(
           { manifest: mockManifest, manifestDomainCheckEnabled: true },
