@@ -76,3 +76,22 @@ last two arrive only with the second page.
 `src/mocks/card/state.ts` holds the switchboard the panel and the handler share. It lives on
 `globalThis`, because the panel's props are built in `@devtools/bindings`, which cannot import from
 an app.
+
+## CAL hang / error (LIVE-39373)
+
+`src/mocks/cal/handler.ts` intercepts the CAL reads `*/cal/v1/currencies` and `*/cal/v1/tokens`. Two
+env vars set the answer, one for each endpoint:
+
+- `MSW_CAL_CURRENCIES`: `pass` (default), `hang` or `error`.
+- `MSW_CAL_TOKENS`: `pass` (default), `hang` or `error`.
+
+`pass` sends the request to the real CAL, `hang` never answers, and `error` answers `503`. An unknown
+value is `pass`. Babel inlines the values when Metro bundles, so restart Metro with `--reset-cache`
+after a change:
+
+```sh
+MSW_ENABLED=true MSW_CAL_TOKENS=hang pnpm start -- --reset-cache
+```
+
+With `hang`, the CAL request timeout must end the request and the app must recover. If the app waits
+longer than that timeout, the test fails.
