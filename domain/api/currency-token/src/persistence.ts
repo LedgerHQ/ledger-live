@@ -1,15 +1,12 @@
 import isEqual from "lodash/isEqual";
-import type { QueryCacheKey } from "@reduxjs/toolkit/query";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { calApi } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
-import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
+import { isCurrencyNotFoundError, PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
 import {
+  buildHashCacheEntries,
   buildRestoreCacheEntries,
-  checkStoredHash,
   groupTokensByCurrency,
-  hashQueryCacheKey,
-  restoreQueryCacheKeys,
 } from "./internals/restore";
 import { PersistedCALSchema } from "./schema";
 import type {
@@ -86,7 +83,8 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
 
 /**
  * Extracts the `currencyId → hash` map from `getTokensSyncHash` cache entries that still hold a hash.
- * A refetch can be pending or rejected while the previous hash is still the baseline worth saving.
+ * A refetch can be pending or rejected while the previous hash is still the baseline worth saving,
+ * unless CAL no longer lists the currency.
  */
 export function extractHashesFromState(state: WithCryptoAssetsApi): Record<string, string> {
   const rtkState = state[cryptoAssetsApi.reducerPath];
@@ -102,9 +100,9 @@ export function extractHashesFromState(state: WithCryptoAssetsApi): Record<strin
       continue;
     }
     // Query key format: 'getTokensSyncHash("ethereum")'
-    const match = SYNC_HASH_QUERY_KEY.exec(queryKey);
-    if (match?.[1]) {
-      hashes[match[1]] = query.data;
+    const currencyId = SYNC_HASH_QUERY_KEY.exec(queryKey)?.[1];
+    if (currencyId && !isCurrencyNotFoundError(query.error, currencyId)) {
+      hashes[currencyId] = query.data;
     }
   }
 
@@ -153,11 +151,10 @@ export function filterExpiredTokens(
 }
 
 /**
- * Optimistically restores persisted tokens into the RTK Query cache without blocking loading,
- * and pins each stored hash onto that currency's in-flight check. Currencies are checked
- * independently: a changed hash drops that currency's restored entries, a currency CAL no
- * longer lists drops the hash too, and a failed check leaves both in place. A lookup that
- * replaced a restored entry is left in place. Currencies with no stored hash are never evicted.
+ * Optimistically restores persisted tokens and their stored hashes into the RTK Query cache
+ * without blocking loading, then starts a hash check for each restored currency. The check
+ * evicts that currency's stale tokens itself (see `getTokensSyncHash`); a failed check keeps
+ * both. Currencies with no stored hash are never evicted.
  */
 export function restoreTokensToCache(
   dispatch: CryptoAssetsDispatch,
@@ -169,18 +166,25 @@ export function restoreTokensToCache(
     return;
   }
 
-  const restoredRequestIds = snapshotRestoredRequestIds(dispatch, validTokens);
+  const hashes = hashesForRestoredCurrencies(
+    persistedData.hashes ?? {},
+    groupTokensByCurrency(validTokens),
+  );
+  dispatch(
+    cryptoAssetsApi.util.upsertQueryEntries([
+      ...buildRestoreCacheEntries(validTokens),
+      ...buildHashCacheEntries(hashes),
+    ]),
+  );
 
-  const tokensByCurrency = groupTokensByCurrency(validTokens);
-  const hashesToRestore = hashesForRestoredCurrencies(persistedData.hashes ?? {}, tokensByCurrency);
-  for (const [currencyId, tokens] of tokensByCurrency) {
-    const storedHash = hashesToRestore[currencyId];
-    if (!storedHash) continue;
-    void checkStoredHash(dispatch, currencyId, storedHash).then(verdict => {
-      if (verdict.action === "keep") return;
-      dropRestoredCacheEntries(dispatch, tokens, restoredRequestIds);
-      if (verdict.action === "missing") dropHashCacheEntry(dispatch, currencyId);
-    });
+  // The entry stays pending with the stored hash as data, so a later lookup joins this check.
+  for (const currencyId of Object.keys(hashes)) {
+    void dispatch(
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, {
+        forceRefetch: true,
+        subscribe: false,
+      }),
+    );
   }
 }
 
@@ -194,59 +198,4 @@ function hashesForRestoredCurrencies(
     if (hash) restored[currencyId] = hash;
   }
   return restored;
-}
-
-function dropHashCacheEntry(dispatch: CryptoAssetsDispatch, currencyId: string) {
-  dispatch(
-    cryptoAssetsApi.internalActions.removeQueryResult({
-      queryCacheKey: hashQueryCacheKey(currencyId),
-    }),
-  );
-}
-
-function snapshotRestoredRequestIds(
-  dispatch: CryptoAssetsDispatch,
-  tokens: PersistedTokenEntry[],
-): ReadonlyMap<QueryCacheKey, string> {
-  const restoredRequestIds = new Map<QueryCacheKey, string>();
-  const entries = buildRestoreCacheEntries(tokens);
-  if (entries.length === 0) return restoredRequestIds;
-
-  dispatch((thunkDispatch, getState) => {
-    thunkDispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
-    for (const queryCacheKey of restoreQueryCacheKeys(tokens)) {
-      const requestId = queryRequestId(getState(), queryCacheKey);
-      if (requestId !== undefined) restoredRequestIds.set(queryCacheKey, requestId);
-    }
-  });
-
-  return restoredRequestIds;
-}
-
-function dropRestoredCacheEntries(
-  dispatch: CryptoAssetsDispatch,
-  tokens: PersistedTokenEntry[],
-  restoredRequestIds: ReadonlyMap<QueryCacheKey, string>,
-) {
-  dispatch((thunkDispatch, getState) => {
-    for (const queryCacheKey of restoreQueryCacheKeys(tokens)) {
-      const restoredRequestId = restoredRequestIds.get(queryCacheKey);
-      if (restoredRequestId === undefined) continue;
-      if (queryRequestId(getState(), queryCacheKey) !== restoredRequestId) continue;
-      thunkDispatch(cryptoAssetsApi.internalActions.removeQueryResult({ queryCacheKey }));
-    }
-  });
-}
-
-function queryRequestId(state: unknown, queryCacheKey: QueryCacheKey): string | undefined {
-  if (!isRecord(state)) return undefined;
-  const slice = state[cryptoAssetsApi.reducerPath];
-  if (!isRecord(slice) || !isRecord(slice.queries)) return undefined;
-  const query = slice.queries[queryCacheKey];
-  if (!isRecord(query) || typeof query.requestId !== "string") return undefined;
-  return query.requestId;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
 }

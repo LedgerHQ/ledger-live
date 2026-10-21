@@ -1,13 +1,6 @@
 import { token } from "@domain/entity-currency-token";
 import type { PersistedTokenEntry } from "../types";
-import { currencyNotFoundError, fetchCurrencyError } from "./errors";
-import {
-  buildRestoreCacheEntries,
-  checkStoredHash,
-  decideHashCheck,
-  groupTokensByCurrency,
-  restoreQueryCacheKeys,
-} from "./restore";
+import { buildHashCacheEntries, buildRestoreCacheEntries, groupTokensByCurrency } from "./restore";
 
 function entry(
   id: string,
@@ -76,66 +69,11 @@ describe("buildRestoreCacheEntries", () => {
   });
 });
 
-describe("restoreQueryCacheKeys", () => {
-  it("returns no keys for no tokens", () => {
-    expect(restoreQueryCacheKeys([])).toEqual([]);
-  });
-
-  it("returns the id and address keys RTK Query assigns a token", () => {
-    expect(restoreQueryCacheKeys([entry("ethereum/erc20/a", "ethereum")])).toEqual([
-      'findTokenById({"id":"ethereum/erc20/a"})',
-      'findTokenByAddressInCurrency({"contract_address":"0xabc","network":"ethereum"})',
+describe("buildHashCacheEntries", () => {
+  it("builds one getTokensSyncHash entry per stored hash", () => {
+    expect(buildHashCacheEntries({ ethereum: "hash1", polygon: "hash2" })).toEqual([
+      { endpointName: "getTokensSyncHash", arg: "ethereum", value: "hash1" },
+      { endpointName: "getTokensSyncHash", arg: "polygon", value: "hash2" },
     ]);
-  });
-
-  it("returns the address key with token_identifier and the address-only key", () => {
-    expect(restoreQueryCacheKeys([entry("elrond/esdt/a", "elrond", "MYTOKEN-1")])).toEqual([
-      'findTokenById({"id":"elrond/esdt/a"})',
-      'findTokenByAddressInCurrency({"contract_address":"0xabc","network":"elrond","token_identifier":"MYTOKEN-1"})',
-      'findTokenByAddressInCurrency({"contract_address":"0xabc","network":"elrond"})',
-    ]);
-  });
-});
-
-describe("decideHashCheck", () => {
-  it("keeps the currency when the current hash matches the stored one", () => {
-    expect(decideHashCheck("ethereum", "hash1", { data: "hash1" })).toEqual({ action: "keep" });
-  });
-
-  it("replaces the stored hash when the current hash differs", () => {
-    expect(decideHashCheck("ethereum", "hash1", { data: "hash2" })).toEqual({
-      action: "changed",
-      hash: "hash2",
-    });
-  });
-
-  it("drops the currency when CAL no longer lists it", () => {
-    expect(decideHashCheck("ethereum", "hash1", currencyNotFoundError("ethereum"))).toEqual({
-      action: "missing",
-    });
-  });
-
-  it("keeps the currency when the hash fetch returns an HTTP 404", () => {
-    expect(decideHashCheck("ethereum", "hash1", fetchCurrencyError(404, "Not Found"))).toEqual({
-      action: "keep",
-    });
-  });
-
-  it("keeps the currency when the hash fetch returns no hash", () => {
-    expect(decideHashCheck("ethereum", "hash1", { error: { status: "FETCH_ERROR" } })).toEqual({
-      action: "keep",
-    });
-  });
-});
-
-describe("checkStoredHash", () => {
-  it("keeps the stored hash when the request throws", async () => {
-    const dispatch = jest.fn(() => {
-      throw new Error("network");
-    });
-
-    await expect(checkStoredHash(dispatch, "ethereum", "hash1")).resolves.toEqual({
-      action: "keep",
-    });
   });
 });

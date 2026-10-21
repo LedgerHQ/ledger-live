@@ -1,6 +1,6 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, type Middleware } from "@reduxjs/toolkit";
 import type { QueryCacheKey } from "@reduxjs/toolkit/query";
-import { calApiExtra } from "@shared/api-services";
+import { CAL_REQUEST_TIMEOUT_MS, calApiExtra } from "@shared/api-services";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { cryptoAssetsApi } from "./api";
@@ -39,7 +39,7 @@ afterAll(() => {
   server.close();
 });
 
-function makeStore() {
+function makeStore(afterEachAction: Middleware = () => next => action => next(action)) {
   return configureStore({
     reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
     middleware: getDefaultMiddleware =>
@@ -51,7 +51,9 @@ function makeStore() {
             ledgerClientVersion: "1.0.0",
           }),
         },
-      }).concat(cryptoAssetsApi.middleware),
+      })
+        .concat(cryptoAssetsApi.middleware)
+        .concat(afterEachAction),
   });
 }
 
@@ -258,6 +260,60 @@ describe("restoreTokensToCache", () => {
         expect(extractHashesFromState(store.getState())).toEqual(remainingHashes ?? hashes ?? {});
       } finally {
         store.dispatch(cryptoAssetsApi.util.resetApiState());
+      }
+    });
+
+    it("never exposes the changed hash next to the stale tokens", async () => {
+      respond(changedHashResponse);
+      const snapshots: Array<{ hash?: string; tokens: number }> = [];
+      // A middleware sees the state after every action; store.subscribe is auto-batched.
+      const recordSnapshot: Middleware = api => next => action => {
+        const result = next(action);
+        snapshots.push({
+          hash: extractHashesFromState(api.getState()).ethereum,
+          tokens: extractPersistedCALFromState(api.getState()).tokens.length,
+        });
+        return result;
+      };
+      const store = makeStore(recordSnapshot);
+      try {
+        restore(store, { ethereum: "hash123" });
+        await waitUntil(() => extractHashesFromState(store.getState()).ethereum === "hash456");
+
+        expect(snapshots.some(({ hash, tokens }) => hash === "hash123" && tokens > 0)).toBe(true);
+        expect(snapshots.filter(({ hash, tokens }) => hash === "hash456" && tokens > 0)).toEqual(
+          [],
+        );
+      } finally {
+        store.dispatch(cryptoAssetsApi.util.resetApiState());
+      }
+    });
+
+    it("ends a hung check after the CAL timeout and keeps the stored hash and tokens", async () => {
+      jest.useFakeTimers({ doNotFake: ["setImmediate", "nextTick", "queueMicrotask"] });
+      respond(() => new Promise<Response>(() => undefined));
+      const store = makeStore();
+      try {
+        restore(store, { ethereum: "hash123" });
+        await waitUntil(() => hashRequests === 1);
+
+        jest.advanceTimersByTime(CAL_REQUEST_TIMEOUT_MS);
+        await waitUntil(
+          () =>
+            cryptoAssetsApi.endpoints.getTokensSyncHash.select("ethereum")(store.getState())
+              .isError,
+        );
+
+        const check = cryptoAssetsApi.endpoints.getTokensSyncHash.select("ethereum")(
+          store.getState(),
+        );
+        expect(check.error).toMatchObject({ status: "TIMEOUT_ERROR" });
+        expect(hashRequests).toBe(1);
+        expect(restoredTokenCount(store)).toBe(2);
+        expect(extractHashesFromState(store.getState())).toEqual({ ethereum: "hash123" });
+      } finally {
+        store.dispatch(cryptoAssetsApi.util.resetApiState());
+        jest.useRealTimers();
       }
     });
 

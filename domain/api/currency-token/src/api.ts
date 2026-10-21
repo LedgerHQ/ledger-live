@@ -1,5 +1,6 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { calApi, getCalExtra, HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
+import type { BaseQueryApi, FetchBaseQueryMeta } from "@reduxjs/toolkit/query";
+import { calApi, getCalExtra } from "@shared/api-services";
 import { ApiTokenResponseSchema } from "./schema";
 import {
   type GetTokensDataParams,
@@ -12,15 +13,16 @@ import {
   commitHeaderMissingError,
   currencyNotFoundError,
   DEFAULT_PAGE_SIZE,
-  fetchCurrencyError,
-  fetchError,
   HEADER_X_LEDGER_COMMIT,
+  staleTokenQueryKeys,
+  type TokenQueryEntry,
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
 
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
+const TOKENS_PAGE_TIMEOUT_MS = 30_000;
 
 /**
  * CAL token endpoints, injected into the shared CAL service api.
@@ -68,56 +70,37 @@ export const cryptoAssetsApi = calApi
       }),
 
       getTokensSyncHash: build.query<string, string>({
-        async queryFn(currencyId, queryApi) {
-          const extra = getCalExtra(queryApi);
-          try {
-            const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
-            url.searchParams.set("output", "id");
-            url.searchParams.set("limit", "1");
-            url.searchParams.set("id", currencyId);
+        // Stale tokens leave the cache before the new hash enters it, so every saved snapshot
+        // pairs a hash with tokens that match it.
+        async queryFn(currencyId, api, _extraOptions, baseQuery) {
+          const checkStartedAt = Date.now();
+          const result = await baseQuery({
+            url: "/v1/currencies",
+            params: { output: "id", limit: "1", id: currencyId },
+          });
+          if (result.error) return { error: result.error };
 
-            const response = await fetch(url, {
-              headers: {
-                "Content-Type": "application/json",
-                [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
-              },
-            });
-
-            if (!response.ok) {
-              return fetchCurrencyError(response.status, response.statusText);
-            }
-
-            const responseData: unknown = await response.json();
-            if (Array.isArray(responseData) && responseData.length === 0) {
-              return currencyNotFoundError(currencyId);
-            }
-
-            const hash = response.headers.get(HEADER_X_LEDGER_COMMIT);
-            if (!hash) {
-              return commitHeaderMissingError();
-            }
-
-            return { data: hash };
-          } catch (error) {
-            return fetchError(error);
+          if (Array.isArray(result.data) && result.data.length === 0) {
+            evictStaleTokens(api, currencyId, checkStartedAt);
+            return currencyNotFoundError(currencyId);
           }
-        },
-        async onQueryStarted(currencyId, api) {
-          const extra = getCalExtra(api);
-          try {
-            const previousHash = api.getCacheEntry()?.data as string | undefined;
-            const { data: newHash } = await api.queryFulfilled;
 
-            if (previousHash && newHash && previousHash !== newHash) {
-              extra.logger?.(
-                "cryptoassets",
-                `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
-              );
-              api.dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
-            }
-          } catch {
-            // Query failed, skip eviction
+          const meta = result.meta as FetchBaseQueryMeta | undefined;
+          const hash = meta?.response?.headers.get(HEADER_X_LEDGER_COMMIT);
+          if (!hash) {
+            return commitHeaderMissingError();
           }
+
+          const previousHash = cachedQueries(api)[api.queryCacheKey ?? ""]?.data;
+          if (typeof previousHash === "string" && previousHash !== hash) {
+            getCalExtra(api).logger?.(
+              "cryptoassets",
+              `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${hash}, evicting token cache`,
+            );
+            evictStaleTokens(api, currencyId, checkStartedAt);
+          }
+
+          return { data: hash };
         },
       }),
 
@@ -136,6 +119,8 @@ export const cryptoAssetsApi = calApi
           return {
             url: "/v1/tokens",
             params,
+            // Pages hold up to 1000 tokens: allow more than the CAL default timeout.
+            timeout: TOKENS_PAGE_TIMEOUT_MS,
           };
         },
         providesTags: [...TOKEN_TAGS],
@@ -159,3 +144,16 @@ export const {
 } = cryptoAssetsApi;
 
 export type CryptoAssetsApi = typeof cryptoAssetsApi;
+
+type CachedQueries = Record<string, TokenQueryEntry | undefined>;
+
+function cachedQueries(api: BaseQueryApi): CachedQueries {
+  const state = api.getState() as Record<string, { queries?: CachedQueries } | undefined>;
+  return state[calApi.reducerPath]?.queries ?? {};
+}
+
+function evictStaleTokens(api: BaseQueryApi, currencyId: string, checkStartedAt: number) {
+  for (const queryCacheKey of staleTokenQueryKeys(cachedQueries(api), currencyId, checkStartedAt)) {
+    api.dispatch(calApi.internalActions.removeQueryResult({ queryCacheKey }));
+  }
+}

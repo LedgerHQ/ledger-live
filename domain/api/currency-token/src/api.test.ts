@@ -202,8 +202,7 @@ describe("cryptoAssetsApi requests", () => {
     );
 
     expect(result.data).toBe("commit-hash");
-    // getTokensSyncHash calls fetch with a URL object; stringify before asserting.
-    const url = String(fetchSpy.mock.calls[0][0]);
+    const { url } = fetchSpy.mock.calls[0][0] as Request;
     expect(url).toContain("https://cal.test/v1/currencies");
     expect(url).toContain("id=ethereum");
   });
@@ -225,7 +224,7 @@ describe("cryptoAssetsApi requests", () => {
 
     await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
 
-    const url = String(fetchSpy.mock.calls[0][0]);
+    const { url } = fetchSpy.mock.calls[0][0] as Request;
     expect(url).toContain("https://global.api.prd.ledger.com/cal/v1/currencies");
   });
 
