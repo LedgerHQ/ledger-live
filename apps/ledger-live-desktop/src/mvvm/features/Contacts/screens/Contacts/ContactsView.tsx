@@ -1,16 +1,18 @@
 import React from "react";
 import {
-  ContactAddressDetailDialog,
-  ContactsDeleteAddressDialog,
-  ContactsEditSignerMismatchDialog,
   ContactsView as ContactsFlowView,
-  type ContactAddressDetailDialogProps,
   type AddContactAppAdapterResult,
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
+import {
+  ContactAddressDetailDialog,
+  ContactsEditSignerMismatchDialog,
+  type ContactAddressDetailDialogProps,
+} from "@features/flow-contacts-detail";
 import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
+import { ContactsDeleteAddressDialog } from "@features/flow-contacts-delete-address";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import {
   ContactsAddAddressFlowDialog,

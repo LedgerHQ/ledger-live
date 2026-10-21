@@ -4,9 +4,13 @@ import { formatPrice } from "@ledgerhq/live-currency-format";
 import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import {
+  alignFlatDayCountervalueChange,
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
+import { useAssetsData } from "@features/platform-aggregated-assets";
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "@ledgerhq/live-common/market/utils/timers";
+import { appVersion } from "LLM/utils/appVersion";
 import { useThrottledValues } from "@ledgerhq/live-common/hooks/useThrottledValues";
 import { ValueChange } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -26,6 +30,20 @@ export interface AssetListItemViewModelResult {
 // ---------------------------------------------------------------------------
 
 const CV_THROTTLE_MS = 5_000;
+const EMPTY_MARKET_DAY_CHANGE: ReadonlyMap<string, number> = new Map();
+
+function toMarketDayChangeByCurrencyId(
+  markets: { [currencyId: string]: { priceChangePercentage24h?: number | null } } | undefined,
+): ReadonlyMap<string, number> {
+  if (!markets) return EMPTY_MARKET_DAY_CHANGE;
+  const map = new Map<string, number>();
+  for (const [currencyId, market] of Object.entries(markets)) {
+    if (market?.priceChangePercentage24h != null) {
+      map.set(currencyId, market.priceChangePercentage24h);
+    }
+  }
+  return map.size === 0 ? EMPTY_MARKET_DAY_CHANGE : map;
+}
 
 interface SharedState {
   cvState: ReturnType<typeof useCountervaluesState>;
@@ -33,6 +51,7 @@ interface SharedState {
   range: "day";
   locale: string;
   discreet: boolean;
+  marketDayChangeByCurrencyId: ReadonlyMap<string, number>;
 }
 
 // ---------------------------------------------------------------------------
@@ -86,12 +105,26 @@ function getCountervalueChange(
     return { value: 0, percentage: 0 };
   }
 
-  const { countervalueChange } = getCurrencyPortfolio(
+  const portfolio = getCurrencyPortfolio(
     asset.accounts,
     state.range,
     state.cvState,
     state.counterValueCurrency,
   );
+  const balanceAtRangeStart = portfolio.history[0]?.value;
+  const balanceAtRangeEnd = portfolio.history.at(-1)?.value;
+
+  const countervalueChange =
+    balanceAtRangeStart == null || balanceAtRangeEnd == null
+      ? portfolio.countervalueChange
+      : alignFlatDayCountervalueChange({
+          range: state.range,
+          countervalueChange: portfolio.countervalueChange,
+          balanceAtRangeStart,
+          balanceAtRangeEnd,
+          currentCountervalue: portfolio.history.at(-1)?.countervalue,
+          marketDayChangePercentPoints: state.marketDayChangeByCurrencyId.get(asset.currency.id),
+        });
 
   // Fallback: when the 24h portfolio change is unavailable (e.g. freshly-held positions
   // whose 24h-ago balance was zero), show the asset's 1D price change computed from countervalues.
@@ -149,6 +182,16 @@ export function usePrecomputedAssetListData(
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const range = "day" as const;
+  const { data: assetsData } = useAssetsData({
+    product: "llm",
+    version: appVersion,
+    pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    skipPollingIfUnfocused: true,
+  });
+  const marketDayChangeByCurrencyId = useMemo(
+    () => toMarketDayChangeByCurrencyId(assetsData?.markets),
+    [assetsData],
+  );
 
   const rawCvState = useCountervaluesState();
   const [cvState] = useThrottledValues([rawCvState], CV_THROTTLE_MS);
@@ -162,6 +205,7 @@ export function usePrecomputedAssetListData(
       range,
       locale,
       discreet,
+      marketDayChangeByCurrencyId,
     };
     const prev = cacheRef.current;
     const next = new Map<string, AssetListItemViewModelResult>();
@@ -182,5 +226,5 @@ export function usePrecomputedAssetListData(
     if (!changed) return prev;
     cacheRef.current = next;
     return next;
-  }, [assets, cvState, counterValueCurrency, range, locale, discreet]);
+  }, [assets, cvState, counterValueCurrency, range, locale, discreet, marketDayChangeByCurrencyId]);
 }

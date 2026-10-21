@@ -1,5 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
@@ -18,8 +16,8 @@ const mockRegistry = jest
 const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
-  paymentInfo: (_config: unknown, signedTx: string, currency: CryptoCurrency | undefined) =>
-    mockPaymentInfo(signedTx, currency),
+  paymentInfo: (_config: unknown, signedTx: string, currencyId: string | undefined) =>
+    mockPaymentInfo(signedTx, currencyId),
   getTransactionParams: () => mockTransactionParams(),
 }));
 
@@ -52,8 +50,7 @@ describe("getEstimatedFees", () => {
     expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
     expect(mockPaymentInfo.mock.lastCall).not.toBeNull();
 
-    const currency = getCryptoCurrencyById(account.currency.id);
-    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(currency);
+    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(account.currency.id);
 
     expect(result).toEqual(new BigNumber(partialFee));
   });

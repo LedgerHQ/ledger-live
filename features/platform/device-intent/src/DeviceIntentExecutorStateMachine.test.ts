@@ -318,6 +318,21 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
+    it("WHEN the job observable errors with a device disconnect THEN it transitions to deviceDisconnected", () => {
+      const jobError = { _tag: "DeviceDisconnectedWhileSendingError" };
+      const intent = makeIntent(() => throwError(() => jobError));
+      const connectionResult = makeConnectionResult();
+      const { sm, listeners } = createSM({ intent });
+      driveToExecution(sm, connectionResult);
+
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
+      expect(listeners.onIntentJobError).toHaveBeenCalledWith(intent, jobError);
+      sm.stop();
+    });
+
     it("WHEN DEVICE_DISCONNECTED is received THEN it transitions to deviceDisconnected", () => {
       const { sm, listeners } = createSM({ job: () => NEVER });
       const connectionResult = makeConnectionResult();
@@ -495,6 +510,20 @@ describe("DeviceIntentExecutorStateMachine", () => {
 
       sm.reinitialize();
       expect(lastExecutorState(listeners)).toMatchObject({ type: "initializingDeviceContext" });
+      sm.stop();
+    });
+
+    it("WHEN DEVICE_DISCONNECTED is received THEN it transitions to deviceDisconnected", () => {
+      const connectionResult = makeConnectionResult();
+      const { sm, listeners } = createSM({ job: () => throwError(() => new Error("fail")) });
+      driveToExecution(sm, connectionResult);
+      expect(lastExecutorState(listeners)?.type).toBe("executingIntentError");
+
+      sm.deviceDisconnected();
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
       sm.stop();
     });
   });

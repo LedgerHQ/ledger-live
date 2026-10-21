@@ -1,6 +1,7 @@
-import type { HostOnboardingEvent } from "@ledgerhq/device-onboarding";
+import type { HostOnboardingEvent } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useLayoutEffect } from "react";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName, BASE_NAVIGATOR_ID } from "~/const";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
@@ -11,7 +12,12 @@ const mockGoBack = jest.fn();
 const mockCurrentPush = jest.fn();
 let mockFocusCallback: (() => void) | null = null;
 
-const mockGetParent = jest.fn((_id?: string) => ({
+type ParentNavigation = {
+  push: typeof mockPush;
+  goBack: typeof mockGoBack;
+};
+
+const mockGetParent = jest.fn((_id?: string): ParentNavigation | undefined => ({
   push: mockPush,
   goBack: mockGoBack,
 }));
@@ -71,6 +77,46 @@ describe("useFirmwareUpdateHandover", () => {
     expect(mockGetParent).toHaveBeenCalledWith(BASE_NAVIGATOR_ID);
     expect(send).not.toHaveBeenCalled();
     expect(mockCurrentPush).not.toHaveBeenCalled();
+  });
+
+  it("should guard the exit and keep the apps backup when the delegated device is already seeded", async () => {
+    const { rerender } = renderDelegated(jest.fn(), { isDeviceOnboarded: true });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+
+    await waitFor(() =>
+      expect(mockPush).toHaveBeenCalledWith(
+        ScreenName.FirmwareUpdate,
+        expect.objectContaining({
+          device,
+          isBeforeOnboarding: true,
+          isDeviceOnboarded: true,
+        }),
+      ),
+    );
+  });
+
+  it("opens the update on the current navigator when Base is not mounted", async () => {
+    mockGetParent.mockImplementation(() => undefined);
+    const send = jest.fn();
+    const { rerender } = renderDelegated(send);
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+
+    await waitFor(() =>
+      expect(mockCurrentPush).toHaveBeenCalledWith(
+        ScreenName.FirmwareUpdate,
+        expect.objectContaining({ device, isBeforeOnboarding: true }),
+      ),
+    );
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+    mockGetParent.mockImplementation(() => ({
+      push: mockPush,
+      goBack: mockGoBack,
+    }));
   });
 
   it("closes the handover exactly once when callback and focus both report the return", async () => {
@@ -155,10 +201,41 @@ describe("useFirmwareUpdateHandover", () => {
     expect(send).toHaveBeenCalledTimes(1);
   });
 
+  it("does not open the updater when the user closes before its effect runs", () => {
+    const send = jest.fn();
+    const closeOnLayout = { current: false };
+    reportFirmware("ongoing");
+
+    const { rerender } = renderHook(() => {
+      const handover = useFirmwareUpdateHandover({
+        device,
+        isDeviceOnboarded: false,
+        machineState: delegated,
+        send,
+      });
+      useLayoutEffect(() => {
+        if (closeOnLayout.current) handover.close();
+      });
+      return handover;
+    });
+
+    expect(mockPush).not.toHaveBeenCalled();
+
+    closeOnLayout.current = true;
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({});
+
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(mockCurrentPush).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
+  });
+
   it("does not fetch firmware metadata outside the delegated state", () => {
     renderHook(() =>
       useFirmwareUpdateHandover({
         device,
+        isDeviceOnboarded: false,
         machineState: "checks.firmwareUpdateOffered",
         send: jest.fn(),
       }),
@@ -172,11 +249,15 @@ describe("useFirmwareUpdateHandover", () => {
 
 const delegated = "checks.firmwareUpdateDelegated";
 
-function renderDelegated(send: (event: HostOnboardingEvent) => void) {
+function renderDelegated(
+  send: (event: HostOnboardingEvent) => void,
+  { isDeviceOnboarded = false }: { isDeviceOnboarded?: boolean } = {},
+) {
   const props = { machineState: delegated };
   const rendered = renderHook(() =>
     useFirmwareUpdateHandover({
       device,
+      isDeviceOnboarded,
       machineState: props.machineState,
       send,
     }),

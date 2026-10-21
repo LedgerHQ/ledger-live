@@ -44,7 +44,7 @@ describe.each(Object.entries(CURRENCY_CONFIGS))("network/index on-demand (%s)", 
   const { currency, config } = entry;
 
   it("getValidators('all') returns validators", async () => {
-    const validators = await polkadotAPI.getValidators(config, "all", currency);
+    const validators = await polkadotAPI.getValidators(config, "all", currency.id);
     expect(validators.length).toBeGreaterThan(0);
     expect(validators[0]).toMatchObject({
       address: expect.any(String),
@@ -55,26 +55,26 @@ describe.each(Object.entries(CURRENCY_CONFIGS))("network/index on-demand (%s)", 
 
   it("caches per currency, order-independently for stash lists", async () => {
     const [first, second] = await Promise.all([
-      polkadotAPI.getValidators(config, "all", currency),
-      polkadotAPI.getValidators(config, "all", currency),
+      polkadotAPI.getValidators(config, "all", currency.id),
+      polkadotAPI.getValidators(config, "all", currency.id),
     ]);
     expect(second).toBe(first);
 
     const stashes = [first[1].address, first[0].address];
-    const byList = await polkadotAPI.getValidators(config, stashes, currency);
+    const byList = await polkadotAPI.getValidators(config, stashes, currency.id);
     const byReversedList = await polkadotAPI.getValidators(
       config,
       [...stashes].reverse(),
-      currency,
+      currency.id,
     );
     expect(byReversedList).toBe(byList);
   }, 60000);
 
   it("getStakingProgress and getMinimumBondBalance resolve", async () => {
-    const staking = await polkadotAPI.getStakingProgress(logger, config, currency);
+    const staking = await polkadotAPI.getStakingProgress(logger, config, currency.id);
     expect(typeof staking.activeEra).toBe("number");
     expect(typeof staking.electionClosed).toBe("boolean");
-    const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(config, currency);
+    const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(config, currency.id);
 
     // Staking lives on Asset Hub since the migration, so the relay chain reports
     // neither an active era nor a minimum bond — only assethub_* carries them.

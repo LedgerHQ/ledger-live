@@ -88,8 +88,6 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
     type: token.tokenType,
     assetReference,
     assetOwner: owner,
-    name: token.name,
-    unit: token.units[0],
   };
 }
 

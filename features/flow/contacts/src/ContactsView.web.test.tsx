@@ -12,15 +12,6 @@ import { ContactsView } from "./ContactsView.web";
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
-const labels = {
-  title: "Contacts",
-  searchPlaceholder: "Search contact",
-  searchNoResults: "No contact found",
-  addContact: "Add contact",
-  ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
-  formatAddressCount: (count: number) => `${count} address`,
-};
-
 describe("ContactsView", () => {
   it("should hide add contact actions when a search has no result", () => {
     const contacts = mockPopulatedContacts();
@@ -34,7 +25,6 @@ describe("ContactsView", () => {
           "unknown",
           formatTestContactDisplayName,
         )}
-        labels={labels}
         searchQuery="unknown"
         onSearchInputChange={jest.fn()}
         onOpenMe={jest.fn()}
@@ -43,18 +33,11 @@ describe("ContactsView", () => {
         ledgerSyncStatus="ready"
         featureIntroduction={{
           isOpen: false,
-          title: "Add contacts",
-          highlights: [],
-          primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),
           onClose: jest.fn(),
         }}
         ledgerSyncIntroduction={{
           isOpen: false,
-          title: "Sync your wallet to add a contact",
-          description: "Keep contacts in sync.",
-          activateLabel: "Sync my wallet",
-          dismissLabel: "Not now",
           onActivate: jest.fn(),
           onDismiss: jest.fn(),
         }}
@@ -73,7 +56,6 @@ describe("ContactsView", () => {
     render(
       <ContactsView
         viewModel={createContactsSearchViewModel(me, contacts, "", formatTestContactDisplayName)}
-        labels={labels}
         searchQuery=""
         onSearchInputChange={jest.fn()}
         onOpenMe={jest.fn()}
@@ -82,24 +64,17 @@ describe("ContactsView", () => {
         ledgerSyncStatus="unavailable"
         featureIntroduction={{
           isOpen: false,
-          title: "Add contacts",
-          highlights: [],
-          primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),
           onClose: jest.fn(),
         }}
         ledgerSyncIntroduction={{
           isOpen: true,
-          title: "Sync your wallet to add a contact",
-          description: "Keep contacts in sync.",
-          activateLabel: "Sync my wallet",
-          dismissLabel: "Not now",
           onActivate: jest.fn(),
           onDismiss: jest.fn(),
         }}
       />,
     );
 
-    expect(screen.getByText("Keep contacts in sync.")).toBeVisible();
+    expect(screen.getByText("contacts.ledgerSyncIntroduction.description")).toBeVisible();
   });
 });

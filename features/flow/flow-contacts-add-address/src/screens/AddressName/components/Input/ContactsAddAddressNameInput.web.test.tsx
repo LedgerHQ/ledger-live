@@ -7,6 +7,7 @@ import {
   ContactAddressLabelSchema,
   ContactAddressValueSchema,
 } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsAddAddressNameInput } from "./ContactsAddAddressNameInput";
 import type { ContactsAddAddressNameProps } from "../../types";
 
@@ -28,20 +29,6 @@ function createProps(
       label: ContactAddressLabelSchema.parse("Ethereum"),
       validationError: null,
     },
-    labels: {
-      inputLabel: "Address name",
-      namingDisclaimer: "Address naming disclaimer",
-      namingDisclaimerAccessibilityLabel: "Address name information",
-      continueToReview: "Continue to review",
-      validAddress: "Valid address",
-      validationErrors: {
-        [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]:
-          "This address name is already used for this contact.",
-        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]:
-          "Address names must be 32 characters or fewer.",
-      },
-    },
     showConfirmedAddress: false,
     onAddressLabelChange: jest.fn(),
     onContinue: jest.fn(),
@@ -51,7 +38,7 @@ function createProps(
 
 describe("ContactsAddAddressNameInput", () => {
   it("should render only the name input with the 32-character limit", () => {
-    render(<ContactsAddAddressNameInput {...createProps()} />);
+    render(<ContactsAddAddressNameInput {...createProps()} />, { wrapper: I18nTestProvider });
 
     expect(screen.queryByTestId("contacts-add-address-confirmed-input")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Ethereum");
@@ -65,7 +52,9 @@ describe("ContactsAddAddressNameInput", () => {
 
   it("should forward address-label edits", () => {
     const onAddressLabelChange = jest.fn();
-    render(<ContactsAddAddressNameInput {...createProps({ onAddressLabelChange })} />);
+    render(<ContactsAddAddressNameInput {...createProps({ onAddressLabelChange })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     fireEvent.change(screen.getByTestId("contacts-add-address-name-input"), {
       target: { value: "Exchange" },
@@ -75,12 +64,9 @@ describe("ContactsAddAddressNameInput", () => {
   });
 
   it.each([
-    [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME, "Special characters are not allowed."],
-    [
-      DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-      "This address name is already used for this contact.",
-    ],
-    [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME, "Address names must be 32 characters or fewer."],
+    [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME, "contacts.addAddressName.invalidLabel"],
+    [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME, "contacts.addAddressName.duplicateLabel"],
+    [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME, "contacts.addAddressName.tooLongLabel"],
   ] as const)("should render the shared %s validation error", (validationError, message) => {
     render(
       <ContactsAddAddressNameInput
@@ -93,6 +79,7 @@ describe("ContactsAddAddressNameInput", () => {
           },
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveAttribute(
@@ -104,7 +91,9 @@ describe("ContactsAddAddressNameInput", () => {
 
   it("should continue only with a valid address label", () => {
     const onContinue = jest.fn();
-    const { rerender } = render(<ContactsAddAddressNameInput {...createProps({ onContinue })} />);
+    const { rerender } = render(<ContactsAddAddressNameInput {...createProps({ onContinue })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     fireEvent.click(screen.getByTestId("contacts-add-address-name-continue"));
     expect(onContinue).toHaveBeenCalledTimes(1);

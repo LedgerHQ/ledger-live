@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Pay Card flow orchestrator: composes the Pay Card auth and details leaves for Ledger Wallet",
   "main": "src/index.ts",
@@ -37,7 +37,7 @@
     "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",

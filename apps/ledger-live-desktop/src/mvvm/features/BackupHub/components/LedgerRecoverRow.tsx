@@ -39,10 +39,7 @@ export function LedgerRecoverRow({
       data-testid="backup-hub-recover-row"
     >
       <ListItemLeading>
-        <Spot
-          appearance="icon"
-          icon={showNotificationDot ? ShieldCheckNotificationIcon : ShieldCheck}
-        />
+        <Spot icon={showNotificationDot ? ShieldCheckNotificationIcon : ShieldCheck} />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription

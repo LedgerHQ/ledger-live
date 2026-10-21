@@ -16,7 +16,7 @@ import { Merge } from "../pickingstrategies/Merge";
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
-const verifyEcdsa = (pubkey: Buffer, msghash: Buffer, signature: Buffer) =>
+const verifyEcdsa = (pubkey: Uint8Array, msghash: Uint8Array, signature: Uint8Array) =>
   ecc.verify(msghash, pubkey, signature);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -72,7 +72,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
     await sleep(30000);
 
     try {
-      await xpubs[0].xpub.sync();
+      await xpubs[0].xpub.sync(jest.fn());
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log("praline explorer setup error", e);
@@ -92,7 +92,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
 
     const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
-    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx({
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx(jest.fn(), {
       destAddress: address,
       amount: new BigNumber(100000000),
       feePerByte: 100,
@@ -114,7 +114,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
     outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
     expect(outputs.length).toEqual(2);
@@ -144,8 +144,8 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
       console.log("praline error");
     }
     await sleep(40000);
-    await xpubs[0].xpub.sync();
-    await xpubs[1].xpub.sync();
+    await xpubs[0].xpub.sync(jest.fn());
+    await xpubs[1].xpub.sync(jest.fn());
 
     expectedFee1 = 10 * 100 + inputs.length * 100 * 180 + outputs.length * 34 * 100;
 

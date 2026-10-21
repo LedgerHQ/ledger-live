@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ApplyUpdatesStateType,
   OsUpdatesSteps,
@@ -12,6 +12,8 @@ import type { OsUpdatePlatformComponents } from "../types";
 
 export type OsUpdatesOrchestratorComponentProps = OsUpdatesOrchestratorUseCaseInput & {
   platformComponents: OsUpdatePlatformComponents;
+  /** Called once the updates are applied, before the user closes the flow. */
+  onCompleted?: () => void;
 };
 
 function isCompleted(progress: OsUpdatesProgress): boolean {
@@ -37,6 +39,7 @@ const INITIAL_PROGRESS: OsUpdatesProgress = {
 
 export function OsUpdatesOrchestratorComponent({
   platformComponents,
+  onCompleted,
   ...orchestratorInput
 }: OsUpdatesOrchestratorComponentProps): React.ReactElement | null {
   const { connectedDevice, onStop } = orchestratorInput;
@@ -45,6 +48,9 @@ export function OsUpdatesOrchestratorComponent({
   const [isCloseRequested, setIsCloseRequested] = useState(false);
 
   const hasCompleted = isCompleted(osUpdatesProgress);
+  useEffect(() => {
+    if (hasCompleted) onCompleted?.();
+  }, [hasCompleted, onCompleted]);
   const isCloseConfirmationOpen = isCloseRequested && !hasCompleted;
 
   const onUserClose = useCallback(() => {

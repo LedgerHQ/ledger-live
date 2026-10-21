@@ -25,6 +25,7 @@ import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdat
 import Page from "LLD/components/Page";
 import NightlyLayer from "LLD/components/NightlyLayer";
 import { isFullscreenOverlayRoute, isWallet40Page } from "LLD/components/Page/utils";
+import { useIsAccountDetailPage } from "LLD/features/AccountDetail/hooks/useIsAccountDetailPage";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -59,7 +60,8 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
 import { useSuppressQ3TourForNewUsers } from "LLD/features/Q3Tour/hooks/useSuppressQ3TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
-import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
+import { AppAvailability } from "@features/flow-app-availability";
+import { LiftSplashOnAppAvailability } from "LLD/features/AppBlockers/components/LiftSplashOnAppAvailability";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import {
   setSolanaLdmkEnabled,
@@ -111,7 +113,7 @@ const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboar
 const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshooting"));
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const AssetDetails = lazy(() => import("LLD/features/AssetDetail"));
-const Account = lazy(() => import("~/renderer/screens/account"));
+const AccountDetailRoute = lazy(() => import("LLD/features/AccountDetail/AccountDetailRoute"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
 const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
 const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
@@ -254,8 +256,11 @@ function MainAppContent({
               <Route path="/borrow/*" element={withSuspense(Borrow)({})} />
               <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
               <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
-              <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
-              <Route path="/account/:id/*" element={withSuspense(Account)({})} />
+              <Route
+                path="/account/:parentId/:id/*"
+                element={withSuspense(AccountDetailRoute)({})}
+              />
+              <Route path="/account/:id/*" element={withSuspense(AccountDetailRoute)({})} />
               <Route
                 path="/asset/*"
                 element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
@@ -297,9 +302,9 @@ export const MainAppLayout = () => {
 
   const backgroundImage = getPageBackground(pathname, theme);
 
-  const useWallet40Layout = isWallet40Page(pathname, {
-    shouldDisplayAggregatedAssets,
-  });
+  const isAccountDetailPage = useIsAccountDetailPage(pathname);
+  const useWallet40Layout =
+    isAccountDetailPage || isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
     preloadBackgrounds();
@@ -462,11 +467,12 @@ export default function Default() {
   return (
     <>
       <TriggerAppReady />
+      <LiftSplashOnAppAvailability />
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
       <Idler />
       {process.platform === "darwin" ? <AppRegionDrag /> : null}
-      <AppGeoBlocker>
+      <AppAvailability>
         <AppVersionBlocker>
           <IsUnlocked>
             <BridgeSyncProvider>
@@ -543,7 +549,7 @@ export default function Default() {
             </BridgeSyncProvider>
           </IsUnlocked>
         </AppVersionBlocker>
-      </AppGeoBlocker>
+      </AppAvailability>
 
       {analyticsConsoleActive ? <AnalyticsConsole /> : null}
       {themeConsoleActive || process.env.DEBUG_THEME ? <ThemeConsole /> : null}

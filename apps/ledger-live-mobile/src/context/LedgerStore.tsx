@@ -12,7 +12,6 @@ import {
 } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
-import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
@@ -63,14 +62,11 @@ import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-to
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
 import { whenCachedFlagsSettled } from "./whenCachedFlagsSettled";
+import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
 
 interface Props {
   onInitFinished: () => void;
-  children: (props: {
-    ready: boolean;
-    initialCountervalues?: CounterValuesStateRaw;
-    currencyInitialized: boolean;
-  }) => ReactNode;
+  children: (props: { ready: boolean; currencyInitialized: boolean }) => ReactNode;
   store: Store;
 }
 
@@ -92,9 +88,6 @@ async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): P
 
 const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store }) => {
   const [ready, setReady] = useState(false);
-  const [initialCountervalues, setInitialCountervalues] = useState<
-    CounterValuesStateRaw | undefined
-  >(undefined);
   const [currencyInitialized, setCurrencyInitialized] = useState(false);
 
   const init = useCallback(async () => {
@@ -291,11 +284,12 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       await bootstrapCardSession(store.dispatch);
       await restoreCardAuthStatus(store.dispatch, store.getState);
 
-      setInitialCountervalues(initialCountervalues);
       setReady(true);
       onInitFinished();
 
-      await hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
+      const currenciesHydrated = hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
+      void startCountervaluesWhenReady(store, initialCountervalues, currenciesHydrated);
+      await currenciesHydrated;
     } catch (error) {
       console.error(
         error instanceof Error
@@ -309,11 +303,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
     init();
   }, [init]);
 
-  return (
-    <Provider store={store}>
-      {children({ ready, initialCountervalues, currencyInitialized })}
-    </Provider>
-  );
+  return <Provider store={store}>{children({ ready, currencyInitialized })}</Provider>;
 };
 
 export default LedgerStoreProvider;

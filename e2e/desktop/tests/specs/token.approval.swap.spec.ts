@@ -68,6 +68,7 @@ test.describe("Swap - token approval", () => {
       // Approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
       test.setTimeout(480_000);
       await app.swap.logSelectedProvider(provider.uiName);
+      await app.speculos.enableBlindSigningOnNanoS();
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);

@@ -20,8 +20,8 @@ export type TopologyTransactionData = {
 
 /** `OnboardingPrepareResponse.transactions` (`TopologyTransactions` in OpenAPI). */
 export type TopologyTransactions = {
-  namespace_transaction: TopologyTransactionData;
-  party_to_key_transaction: TopologyTransactionData;
+  namespace_transaction?: TopologyTransactionData | null;
+  party_to_key_transaction?: TopologyTransactionData | null;
   party_to_participant_transaction: TopologyTransactionData;
   combined_hash: string;
 };

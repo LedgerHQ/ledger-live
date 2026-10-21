@@ -39,9 +39,13 @@ export async function getCoinFrameworkAccountBridge(
     sync: makeSync({
       getAccountShape: genericGetAccountShape(network, kind),
       postSync,
+      // Defaults to `false`: the shape already returns the merged list. Left on, the outer
+      // `mergeOps(stored, shape.operations)` re-adds every operation the store bound just dropped,
+      // undoing it, and resurrects the history a from-scratch resync deliberately discarded. A
+      // family that opts back in gives up the store bound.
       shouldMergeOps: async account => {
         const bridgeApi = await getBridgeApi(account.currency, network);
-        return bridgeApi.shouldMergeOps ?? true;
+        return bridgeApi.shouldMergeOps ?? false;
       },
     }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress), {

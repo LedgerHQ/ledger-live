@@ -11,10 +11,11 @@ import {
   resolveOutputFormat,
 } from "./inputs";
 import { trackBalanceViewed } from "./accounts-analytics";
+import { commandDescription } from "./registry";
 
 export default defineCommand({
   name: "balances",
-  description: "Fetch native and token balances for an account (no device required)",
+  description: commandDescription("balances"),
   options: {
     account: accountOption,
     output: outputOption,

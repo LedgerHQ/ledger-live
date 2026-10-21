@@ -1,26 +1,43 @@
 import { useEffect, useState } from "react";
-import type { HostOnboardingEvent } from "@ledgerhq/device-onboarding";
-import {
-  watchedContextFields,
-  type DeviceOnboardingStatus,
-  type DeviceOnboardingToolEvent,
-  type DeviceOnboardingToolProps,
+import type { HostOnboardingEvent, OnboardingEvent } from "@features/platform-device-onboarding";
+import type {
+  DeviceOnboardingFeatureFlag,
+  DeviceOnboardingLogRow,
+  DeviceOnboardingNextState,
+  DeviceOnboardingToolEvent,
+  DeviceOnboardingToolPayload,
+  DeviceOnboardingToolProps,
 } from "../types";
+import { logCopy, overrideCopy, statusCopy } from "./configCopy";
 
 const displayedEventCount = 40;
 const displayedDetailLength = 80;
-const displayedStateCount = 24;
+const displayedPayloadRows = 80;
 
-const statusLabels: Record<DeviceOnboardingStatus, string> = {
-  idle: "Not started",
-  connecting: "Connecting…",
-  running: "Running",
-  exited: "Exited",
-};
+export interface NextStateGroup {
+  readonly event: string;
+  readonly states: string[];
+}
+
+function groupByEvent(rows: readonly DeviceOnboardingNextState[]): NextStateGroup[] {
+  const groups = new Map<string, string[]>();
+  for (const { event, state } of rows) groups.set(event, [...(groups.get(event) ?? []), state]);
+  return [...groups].map(([event, states]) => ({ event, states }));
+}
+
+const DeviceLink = {
+  Usb: "USB",
+  Ble: "BLE",
+} as const;
 
 export interface DisplayRow {
   readonly label: string;
   readonly value: string;
+  /**
+   * Set for an object: the row opens on its fields, so a long path never runs off the screen. Its
+   * `value` is the field count, a hint of what opening it shows.
+   */
+  readonly children?: readonly DisplayRow[];
 }
 
 export interface EventRow {
@@ -28,6 +45,7 @@ export interface EventRow {
   readonly type: string;
   readonly time: string;
   readonly detail: string | null;
+  readonly payload: readonly DisplayRow[];
 }
 
 export interface SendableRow {
@@ -36,63 +54,52 @@ export interface SendableRow {
   readonly event: HostOnboardingEvent;
 }
 
-export type StateKind =
-  | "progress"
-  | "genuine"
-  | "firmware"
-  | "setup"
-  | "locked"
-  | "session"
-  | "failed"
-  | "succeeded"
-  | "quit";
-
 export interface StateStep {
   readonly key: string;
   readonly label: string;
-  readonly kind: StateKind;
   readonly isCurrent: boolean;
 }
 
-const failedStates = new Set([
-  "checks.genuineFailed",
-  "checks.firmwareCheckFailed",
-  "checks.notGenuineSupport",
-  "legacyFallback",
-  "bootloaderRecovery",
-]);
-const succeededStates = new Set([
-  "checks.checksDone",
-  "checks.checksSucceeded",
-  "onboardedExit",
-  "syncOffer",
-  "done",
-]);
-const quitStates = new Set(["quitting", "leavingOnQuit", "exitOnboarding"]);
-const firmwarePattern = /firmware/i;
-const genuinePattern = /genuine|earlycheck/i;
+export type LogLine =
+  | (StateStep & { readonly line: "state" })
+  | (EventRow & { readonly line: "event" });
 
-export function stateKind(state: string): StateKind {
-  if (failedStates.has(state)) return "failed";
-  if (succeededStates.has(state)) return "succeeded";
-  if (quitStates.has(state)) return "quit";
-  if (state === "deviceLocked") return "locked";
-  if (state === "awaitingSession") return "session";
-  if (state.startsWith("deviceSetup.")) return "setup";
-  if (firmwarePattern.test(state)) return "firmware";
-  if (genuinePattern.test(state)) return "genuine";
-  return "progress";
+function rowsFor(
+  log: readonly DeviceOnboardingLogRow[],
+  state: string | null,
+): readonly DeviceOnboardingLogRow[] {
+  if (state === null) return [];
+  if (log.at(-1)?.state === state) return log;
+  return [...log, { state }];
+}
+
+export interface SwitchRow {
+  readonly key: string;
+  readonly label: string;
+  readonly checked: boolean;
+  readonly onChange: (checked: boolean) => void;
+}
+
+export interface OverrideRow {
+  readonly key: string;
+  readonly label: string;
+  readonly value: string;
+  readonly options: readonly { readonly value: string; readonly label: string }[];
+  readonly onChange: (value: string) => void;
 }
 
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
-  readonly stateSteps: readonly StateStep[];
+  readonly exportLogs: () => string;
+  readonly logLines: readonly LogLine[];
   readonly deviceLabel: string | null;
   readonly isRunning: boolean;
   readonly contextRows: readonly DisplayRow[];
-  readonly eventRows: readonly EventRow[];
+  /** The exit contract, without the device id. Empty until the run exits. */
   readonly exitRows: readonly DisplayRow[];
   readonly sendableRows: readonly SendableRow[];
+  readonly nextStateGroups: readonly NextStateGroup[];
+  readonly logIsEmpty: boolean;
   readonly error: string | null;
   readonly canConnect: boolean;
   readonly canSend: boolean;
@@ -100,19 +107,135 @@ export interface DeviceOnboardingViewModel {
   readonly connect: () => void;
   readonly send: (event: HostOnboardingEvent) => void;
   readonly reset: () => void;
+  /** Empty when the host has no feature flag: the section is hidden. */
+  readonly featureFlagRows: readonly SwitchRow[];
+  /** Null when the host does not say whether a mock replaces the flag. */
+  readonly featureFlagSource: "flag" | "mock" | null;
+  readonly resetFeatureFlag: (() => void) | null;
+  readonly overrideRows: readonly OverrideRow[];
 }
 
-export function formatValue(value: string | number | boolean | null | undefined): string {
-  if (value === undefined || value === "") {
-    return "—";
-  }
+export const GenuineOverride = {
+  Device: "device",
+  Genuine: "genuine",
+  Fail: "fail",
+} as const;
 
-  const hostDefeatedTheType = value !== null && typeof value === "object";
-  if (hostDefeatedTheType) {
-    return "—";
-  }
+export type GenuineOverride = (typeof GenuineOverride)[keyof typeof GenuineOverride];
 
-  return String(value);
+export const FirmwareOverride = {
+  Device: "device",
+  UpToDate: "upToDate",
+  Outdated: "outdated",
+} as const;
+
+export type FirmwareOverride = (typeof FirmwareOverride)[keyof typeof FirmwareOverride];
+
+type FirmwareAnswer = Extract<OnboardingEvent, { type: "FIRMWARE_UP_TO_DATE" }>["output"];
+
+// The machine reads only the update, so the made-up answer carries no more than its versions.
+const overrideFirmware = {
+  firmwareVersion: { os: "override", mcu: "override", bootloader: "override" },
+  firmwareUpdateContext: {},
+} as FirmwareAnswer;
+
+type FirmwareUpdate = Extract<
+  OnboardingEvent,
+  { type: "FIRMWARE_UPDATE_AVAILABLE" }
+>["output"]["firmwareUpdateContext"]["availableUpdate"];
+
+const overrideUpdate = { finalFirmware: { version: "override" } } as FirmwareUpdate;
+
+function overrideEvent(
+  state: string | null,
+  genuine: GenuineOverride,
+  firmware: FirmwareOverride,
+): OnboardingEvent | null {
+  const inGenuineCheck = state?.startsWith("checks.genuineCheck") ?? false;
+  if (inGenuineCheck && genuine === GenuineOverride.Genuine) {
+    return { type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } };
+  }
+  if (inGenuineCheck && genuine === GenuineOverride.Fail) {
+    return { type: "DEVICE_NOT_GENUINE", failure: { isGenuine: false } };
+  }
+  if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.UpToDate) {
+    return { type: "FIRMWARE_UP_TO_DATE", output: overrideFirmware };
+  }
+  if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.Outdated) {
+    return {
+      type: "FIRMWARE_UPDATE_AVAILABLE",
+      output: {
+        ...overrideFirmware,
+        firmwareUpdateContext: {
+          ...overrideFirmware.firmwareUpdateContext,
+          availableUpdate: overrideUpdate,
+        },
+      },
+    };
+  }
+  return null;
+}
+
+function payloadRowsOf(payload: DeviceOnboardingToolPayload | undefined): DisplayRow[] {
+  return payload !== null && typeof payload === "object" ? rowsOf(payload) : [];
+}
+
+/** One row per field of this level. A level stops at the row limit with "more fields". */
+function rowsOf(value: DeviceOnboardingToolPayload & object): DisplayRow[] {
+  const entries = Object.entries(value);
+  const rows = entries.slice(0, displayedPayloadRows).map(([label, child]) => rowOf(label, child));
+  if (entries.length > displayedPayloadRows) {
+    rows.push({ label: logCopy.more, value: logCopy.moreFields });
+  }
+  return rows;
+}
+
+function rowOf(label: string, value: DeviceOnboardingToolPayload): DisplayRow {
+  if (value === null || typeof value !== "object") return { label, value: formatValue(value) };
+  // One row per item makes `mcuVersions` three rows for one fact.
+  if (isPlainList(value)) return { label, value: value.map(formatValue).join(", ") };
+  return { label, value: `(${Object.keys(value).length})`, children: rowsOf(value) };
+}
+
+function isPlainList(
+  value: DeviceOnboardingToolPayload & object,
+): value is readonly (string | number | boolean | null)[] {
+  return Array.isArray(value) && value.every(item => item === null || typeof item !== "object");
+}
+
+function featureFlagSourceOf(
+  flag: DeviceOnboardingFeatureFlag | undefined,
+  isOverridden: boolean | undefined,
+): "flag" | "mock" | null {
+  if (flag === undefined || isOverridden === undefined) return null;
+  return isOverridden ? "mock" : "flag";
+}
+
+export function featureFlagRows(
+  flag: DeviceOnboardingFeatureFlag | undefined,
+  setFlag: ((flag: DeviceOnboardingFeatureFlag) => void) | undefined,
+): SwitchRow[] {
+  if (!flag || !setFlag) return [];
+
+  return [
+    {
+      key: "enabled",
+      label: "enabled",
+      checked: flag.enabled,
+      onChange: enabled => setFlag({ ...flag, enabled }),
+    },
+    ...Object.entries(flag.params).map(([name, value]) => ({
+      key: `params.${name}`,
+      label: `params.${name}`,
+      checked: value,
+      onChange: (checked: boolean) =>
+        setFlag({ ...flag, params: { ...flag.params, [name]: checked } }),
+    })),
+  ];
+}
+
+export function formatValue(value: string | number | boolean | null): string {
+  return value === "" ? "—" : String(value);
 }
 
 function formatDetail(detail: DeviceOnboardingToolEvent["detail"]): string | null {
@@ -143,56 +266,68 @@ export function formatTime(at: number): string {
   return `${time}.${String(date.getMilliseconds()).padStart(3, "0")}`;
 }
 
-function orderOf(at: number): number {
-  return Number.isFinite(at) ? at : 0;
+function eventLine(event: DeviceOnboardingToolEvent): LogLine {
+  return {
+    line: "event",
+    id: event.id,
+    type: event.type,
+    time: formatTime(event.at),
+    detail: formatDetail(event.detail)?.slice(0, displayedDetailLength) ?? null,
+    payload: payloadRowsOf(event.payload),
+  };
+}
+
+function logLinesOf(rows: readonly DeviceOnboardingLogRow[]): LogLine[] {
+  const shown = rows.slice(-displayedEventCount);
+  const lines: LogLine[] = [];
+
+  for (let index = shown.length - 1; index >= 0; index -= 1) {
+    const row = shown[index];
+    const newer = shown[index + 1];
+    if (newer === undefined || newer.state !== row.state) {
+      lines.push({
+        line: "state",
+        key: `${index}-${row.state}`,
+        label: row.state,
+        isCurrent: newer === undefined,
+      });
+    }
+    if (row.event) lines.push(eventLine(row.event));
+  }
+
+  return lines;
 }
 
 export function useDeviceOnboardingViewModel(
   props: DeviceOnboardingToolProps,
 ): DeviceOnboardingViewModel {
-  const { status, device, state, context, events, exit, sendableEvents, error } = props;
+  const {
+    status,
+    device,
+    state,
+    machineContext,
+    log,
+    exit,
+    sendableEvents,
+    nextStates,
+    error,
+    featureFlag,
+    setFeatureFlag,
+    isFeatureFlagOverridden,
+    resetFeatureFlag,
+    send,
+  } = props;
 
-  const [visitedStates, setVisitedStates] = useState<readonly string[]>([]);
-
+  const [genuineOverride, setGenuineOverride] = useState<GenuineOverride>(GenuineOverride.Device);
+  const [firmwareOverride, setFirmwareOverride] = useState<FirmwareOverride>(
+    FirmwareOverride.Device,
+  );
   useEffect(() => {
-    setVisitedStates(current => {
-      if (!state) {
-        return current.length === 0 ? current : [];
-      }
-      if (current.at(-1) === state) {
-        return current;
-      }
-      return [...current, state].slice(-displayedStateCount);
-    });
-  }, [state]);
+    const event = overrideEvent(state, genuineOverride, firmwareOverride);
+    if (event) send(event);
+  }, [firmwareOverride, genuineOverride, send, state]);
 
-  const stateSteps: StateStep[] = visitedStates.map((label, index) => ({
-    key: `${index}-${label}`,
-    label,
-    kind: stateKind(label),
-    isCurrent: index === visitedStates.length - 1,
-  }));
-
-  const contextRows: DisplayRow[] =
-    context === null
-      ? []
-      : watchedContextFields
-          .filter(field => context[field] !== undefined)
-          .map(field => ({ label: field, value: formatValue(context[field]) }));
-
-  const eventRows: EventRow[] = events
-    .map((event, index) => ({ event, index }))
-    .sort(
-      (left, right) => orderOf(right.event.at) - orderOf(left.event.at) || right.index - left.index,
-    )
-    .slice(0, displayedEventCount)
-    .map(({ event }) => ({
-      id: event.id,
-      type: event.type,
-      time: formatTime(event.at),
-      detail: formatDetail(event.detail)?.slice(0, displayedDetailLength) ?? null,
-    }));
-
+  const rows = rowsFor(log, state);
   const exitRows: DisplayRow[] =
     exit === null
       ? []
@@ -201,6 +336,8 @@ export function useDeviceOnboardingViewModel(
           { label: "sessionId", value: formatValue(exit.sessionId) },
           { label: "modelId", value: formatValue(exit.modelId) },
         ];
+  const logLines = logLinesOf(rows);
+  const contextRows = payloadRowsOf(machineContext ?? undefined);
 
   const sendableRows: SendableRow[] = sendableEvents.map((entry, index) => ({
     key: `${index}-${entry.event.type}`,
@@ -210,21 +347,24 @@ export function useDeviceOnboardingViewModel(
 
   let deviceLabel = null;
   if (device !== null) {
-    const transport = device.wired ? "USB" : "BLE";
+    const transport = device.wired ? DeviceLink.Usb : DeviceLink.Ble;
     deviceLabel = `${device.name} · ${device.modelId} · ${transport} · ${device.sessionId}`;
   }
 
   const transportWentAwayMidRun = status === "running" && device === null;
 
   return {
-    statusLabel: statusLabels[status],
-    stateSteps,
+    statusLabel: statusCopy[status],
+    exportLogs: () => JSON.stringify({ status, device, state, machineContext, log, exit }, null, 2),
+    logLines,
     deviceLabel,
     isRunning: status === "running",
     contextRows,
-    eventRows,
     exitRows,
     sendableRows,
+    nextStateGroups: groupByEvent(nextStates),
+    // The host offers events and next states only while the machine runs, so they come with a log.
+    logIsEmpty: logLines.length === 0,
     error,
     canConnect:
       status === "idle" ||
@@ -234,7 +374,34 @@ export function useDeviceOnboardingViewModel(
     canSend: status === "running" && device !== null,
     canReset: status !== "idle",
     connect: props.connect,
-    send: props.send,
+    send,
     reset: props.reset,
+    featureFlagRows: featureFlagRows(featureFlag, setFeatureFlag),
+    featureFlagSource: featureFlagSourceOf(featureFlag, isFeatureFlagOverridden),
+    resetFeatureFlag: resetFeatureFlag ?? null,
+    overrideRows: [
+      {
+        key: "genuine",
+        label: overrideCopy.genuine,
+        value: genuineOverride,
+        options: [
+          { value: GenuineOverride.Device, label: overrideCopy.device },
+          { value: GenuineOverride.Genuine, label: overrideCopy.isGenuine },
+          { value: GenuineOverride.Fail, label: overrideCopy.fail },
+        ],
+        onChange: value => setGenuineOverride(value as GenuineOverride),
+      },
+      {
+        key: "firmware",
+        label: overrideCopy.firmware,
+        value: firmwareOverride,
+        options: [
+          { value: FirmwareOverride.Device, label: overrideCopy.device },
+          { value: FirmwareOverride.UpToDate, label: overrideCopy.upToDate },
+          { value: FirmwareOverride.Outdated, label: overrideCopy.outdated },
+        ],
+        onChange: value => setFirmwareOverride(value as FirmwareOverride),
+      },
+    ],
   };
 }

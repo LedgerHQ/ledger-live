@@ -179,6 +179,32 @@ describe("DmkSignerZcash", () => {
       });
     });
 
+    it("keeps the testnet coin type when converting a ZIP-44 path to ZIP-32", async () => {
+      mockSignerZcash.getFullViewingKey.mockReturnValue({
+        observable: createCompletedObservable({
+          mode: "ufvk",
+          fullViewingKey: "uviewtest1",
+        }),
+      });
+
+      await signer.getFullViewingKey("44'/1'/0'/0/0");
+
+      expect(mockSignerZcash.getFullViewingKey).toHaveBeenCalledWith("32'/1'/0'", {
+        mode: "ufvk",
+        skipOpenApp: true,
+      });
+    });
+
+    it.each(["44'/0'/0'/0/0", "44'/133/0'/0/0", "84'/133'/0'/0/0", "44'/133'/0/0/0", "44'/133'"])(
+      "rejects the derivation path %s",
+      async path => {
+        await expect(signer.getFullViewingKey(path)).rejects.toThrow(
+          `Invalid Zcash derivation path: ${path}`,
+        );
+        expect(mockSignerZcash.getFullViewingKey).not.toHaveBeenCalled();
+      },
+    );
+
     it("should reject if returned mode is not ufvk", async () => {
       mockSignerZcash.getFullViewingKey.mockReturnValue({
         observable: createCompletedObservable({
@@ -315,6 +341,28 @@ describe("DmkSignerZcash", () => {
       const result = await signer.createPaymentTransaction(baseArg);
 
       expect(result).toBe("0500008001deadbeef");
+    });
+
+    it("leaves the network out when none is given, so the kit applies mainnet", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction(baseArg);
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      expect(legacyArg).not.toHaveProperty("network");
+    });
+
+    it("forwards the network to the kit", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction({ ...baseArg, network: "testnet" });
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      expect(legacyArg.network).toBe("testnet");
     });
 
     it("maps multiple inputs preserving order and per-input fields", async () => {

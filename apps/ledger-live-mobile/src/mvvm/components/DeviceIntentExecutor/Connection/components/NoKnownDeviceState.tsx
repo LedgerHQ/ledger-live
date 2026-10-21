@@ -42,7 +42,7 @@ export function NoKnownDeviceState({
     <Box lx={{ width: "full", alignItems: "center", gap: "s32" }}>
       <TrackDIEScreen category={PAGE_CONNECT_DEVICE.NoKnownDevice} refreshSource />
       <Box lx={{ width: "full", alignItems: "center", gap: "s24" }}>
-        <Spot appearance="icon" icon={LedgerDevices} size={72} />
+        <Spot icon={LedgerDevices} size={72} />
         <Box lx={{ width: "full", alignItems: "center", gap: "s8" }}>
           <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {t("deviceIntentExecutor.connectDevice.states.noKnownDevice.title")}

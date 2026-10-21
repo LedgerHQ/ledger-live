@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Link } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { useLocalizedUrl, useOpenLink } from "@shared/linking";
@@ -15,11 +16,9 @@ import type { ContactsAddAddressFlowDialogProps } from "./types";
 
 export function ContactsAddAddressFlowDialog({
   state,
-  entryLabels,
-  privacyLink,
-  sanctionedAddressBanner,
-  nameLabels,
-  reviewLabels,
+  supportsDomain,
+  showPrivacyPolicy,
+  onSanctionedAddressLearnMore,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
@@ -28,11 +27,15 @@ export function ContactsAddAddressFlowDialog({
   onBack,
   onClose,
 }: ContactsAddAddressFlowDialogProps): React.JSX.Element | null {
+  const { t } = useTranslation();
   const openLink = useOpenLink();
   const localizedPrivacyPolicyUrl = useLocalizedUrl(contactsUrls.privacyPolicy.desktop);
+  const title = t("contacts.addAddressEntry.title");
+  const confirmAddressLabel = t("contacts.addAddressEntry.confirmAddress");
+  const privacyPolicyLabel = t("contacts.addAddressEntry.privacyPolicy");
   const handlePressPrivacyPolicy = useCallback(() => {
-    if (privacyLink) openLink(localizedPrivacyPolicyUrl);
-  }, [openLink, privacyLink, localizedPrivacyPolicyUrl]);
+    if (showPrivacyPolicy) openLink(localizedPrivacyPolicyUrl);
+  }, [openLink, showPrivacyPolicy, localizedPrivacyPolicyUrl]);
 
   if (state.status === "closed") {
     return null;
@@ -54,9 +57,9 @@ export function ContactsAddAddressFlowDialog({
         onClick={onContinueFromAddressDetails}
         size="lg"
       >
-        {entryLabels.confirmAddress}
+        {confirmAddressLabel}
       </Button>
-      {privacyLink ? (
+      {showPrivacyPolicy ? (
         <Link
           appearance="base"
           className="cursor-pointer mt-24"
@@ -66,7 +69,7 @@ export function ContactsAddAddressFlowDialog({
           size="sm"
           onClick={handlePressPrivacyPolicy}
         >
-          {privacyLink.label}
+          {privacyPolicyLabel}
         </Link>
       ) : null}
     </div>
@@ -81,10 +84,8 @@ export function ContactsAddAddressFlowDialog({
             modularDialog.content
           ) : (
             <ContactsAddAddressFlowContent
-              entryLabels={entryLabels}
-              sanctionedAddressBanner={sanctionedAddressBanner}
-              nameLabels={nameLabels}
-              reviewLabels={reviewLabels}
+              supportsDomain={supportsDomain}
+              onSanctionedAddressLearnMore={onSanctionedAddressLearnMore}
               onAddressChange={onAddressChange}
               onAddressLabelChange={onAddressLabelChange}
               onContinueFromAddressDetails={onContinueFromAddressDetails}
@@ -111,28 +112,28 @@ export function ContactsAddAddressFlowDialog({
               dialogFooter: footer,
               dialogFooterClassName:
                 "bg-gradient-to-b from-canvas-sheet-transparent to-canvas-sheet",
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title },
               hasBackButton: true,
             },
           },
           name: {
             content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title },
               hasBackButton: true,
             },
           },
           review: {
             content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title },
               hasBackButton: true,
             },
           },
           success: {
             content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title },
               hasBackButton: false,
             },
           },

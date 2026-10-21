@@ -8,7 +8,6 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
   useCountervaluesPolling: () => ({}),
 }));
 

@@ -32,7 +32,7 @@ export function CardVisualView({
 
       {isFrozen && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <Spot appearance="icon" icon={Snow} data-testid="card-visual-frozen" />
+          <Spot icon={Snow} data-testid="card-visual-frozen" />
         </div>
       )}
     </div>

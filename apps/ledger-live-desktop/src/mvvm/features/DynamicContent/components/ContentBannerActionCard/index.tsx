@@ -51,7 +51,7 @@ export const ContentBannerActionCard = (props: ContentBannerActionCardProps) => 
         className="w-full cursor-pointer border-none bg-transparent p-0 text-left"
       >
         <ContentBanner className="pr-48">
-          <Spot appearance="icon" icon={icon} size={48} />
+          <Spot icon={icon} size={48} />
           <ContentBannerContent>
             {title && <ContentBannerTitle>{title}</ContentBannerTitle>}
             {description && <ContentBannerDescription>{description}</ContentBannerDescription>}

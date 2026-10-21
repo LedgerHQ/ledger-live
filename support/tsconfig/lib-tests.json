@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "rootDir": "${configDir}/..",
+    "outDir": null
+  }
+}

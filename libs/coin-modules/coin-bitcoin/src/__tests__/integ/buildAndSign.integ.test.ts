@@ -32,14 +32,14 @@ describe("buildAccountTx / signAccountTx", () => {
         explorer: { url: "https://explorers.api.live.ledger.com" },
       }),
     );
-    await wallet.syncAccount(account);
+    await wallet.syncAccount(jest.fn(), account);
   });
 
   it("should allow to build a transaction", async () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
-    const txInfo = await buildAccountTx(TEST_CONFIG, {
+    const txInfo = await buildAccountTx(jest.fn(), TEST_CONFIG, {
       fromAccount: account,
       dest: receiveAddress.address,
       amount: new BigNumber(100000),
@@ -60,7 +60,7 @@ describe("buildAccountTx / signAccountTx", () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
-    const { outputs } = await buildAccountTx(TEST_CONFIG, {
+    const { outputs } = await buildAccountTx(jest.fn(), TEST_CONFIG, {
       fromAccount: account,
       dest: receiveAddress.address,
       amount: new BigNumber(100000),
@@ -91,7 +91,7 @@ describe("buildAccountTx / signAccountTx", () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
     account.xpub.OUTPUT_VALUE_MAX = 60000;
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
-    const txInfo = await buildAccountTx(TEST_CONFIG, {
+    const txInfo = await buildAccountTx(jest.fn(), TEST_CONFIG, {
       fromAccount: account,
       dest: receiveAddress.address,
       amount: new BigNumber(100000),
@@ -112,15 +112,19 @@ describe("buildAccountTx / signAccountTx", () => {
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
     const changeAddress = await wallet.getAccountNewChangeAddress(account);
 
-    const { outputs, changeAddress: changeAddressOutput } = await buildAccountTx(TEST_CONFIG, {
-      fromAccount: account,
-      dest: receiveAddress.address,
-      amount: new BigNumber(100000),
-      feePerByte: 5,
-      utxoPickingStrategy,
-      sequence: 0,
-      changeAddress: changeAddress.address,
-    });
+    const { outputs, changeAddress: changeAddressOutput } = await buildAccountTx(
+      jest.fn(),
+      TEST_CONFIG,
+      {
+        fromAccount: account,
+        dest: receiveAddress.address,
+        amount: new BigNumber(100000),
+        feePerByte: 5,
+        utxoPickingStrategy,
+        sequence: 0,
+        changeAddress: changeAddress.address,
+      },
+    );
 
     expect(changeAddressOutput).toEqual(changeAddress);
 
@@ -137,7 +141,7 @@ describe("buildAccountTx / signAccountTx", () => {
     const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
     await expect(
-      buildAccountTx(TEST_CONFIG, {
+      buildAccountTx(jest.fn(), TEST_CONFIG, {
         fromAccount: account,
         dest: receiveAddress.address,
         amount: new BigNumber(100000),

@@ -175,24 +175,22 @@ describe("serialization", () => {
         clearBridgeCache();
       });
 
-      // A real (non-mock) account id already takes the bitcoin family unconditionally --
-      // resolveSerializationFamily only ever reads isCoinModuleRegistered for a mock id -- so
-      // this doesn't exercise that guard, only the (already-correct) real-id path: it shows
-      // coin-bitcoin's real chain-adapter preserves both fields on a reduced-registry host.
-      test("a real account id deserializes through the bitcoin family with privateInfo and bitcoinResources intact", async () => {
+      // A real (non-mock) account id takes the bitcoin family here. coin-bitcoin no longer
+      // carries any Zcash code, so it restores the transparent resources it shares with
+      // Zcash and nothing reads the shielded state.
+      test("a real account id deserializes through the bitcoin family without its shielded state", async () => {
         const raw = { ...zcashAccountRaw(), id: "js:2:zcash:xpub6zcashtest:" };
 
         const account: any = await fromAccountRaw(raw);
 
         expect(account.currency.id).toBe("zcash");
-        expect(account.privateInfo?.ufvk).toBe("uview1test");
+        expect(account.privateInfo).toBeUndefined();
         expect(account.bitcoinResources?.utxos).toHaveLength(1);
       });
 
       // This is the guard `isCoinModuleRegistered("zcash")` actually covers: a *mock* id has
       // nowhere to fall but coin-bitcoin's mock bridge, which declares no assign hooks at all.
-      // The fallback keeps resolution from throwing `CurrencyNotSupported` -- it does not
-      // preserve the shielded state, unlike the real-id case above.
+      // The fallback keeps resolution from throwing `CurrencyNotSupported`.
       test("a mock account id deserializes through the bitcoin family without throwing, though shielded data is lost", async () => {
         const account: any = await fromAccountRaw(zcashAccountRaw());
 

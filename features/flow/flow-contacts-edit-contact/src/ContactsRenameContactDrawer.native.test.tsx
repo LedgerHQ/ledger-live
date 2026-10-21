@@ -1,9 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-} from "@domain/entity-contact";
+import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameContactDrawer } from ".";
 import type { ContactsRenameContactDrawerProps } from "./types";
 
@@ -39,17 +37,6 @@ function createViewModel(
     draftName: "",
     invalidNameError: null,
     isDeviceRequired: false,
-    labels: {
-      title: "Edit contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer: "Use a nickname or a first name and initial.",
-      applyChanges: "Apply changes",
-      confirmName: "Apply changes",
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
-      },
-    },
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftNameChange: jest.fn(),
@@ -67,23 +54,26 @@ describe("ContactsRenameContactDrawer", () => {
           invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByTestId("contacts-rename-contact-content")).toBeVisible();
-    expect(screen.getByText("Edit contact")).toBeVisible();
+    expect(screen.getByText("contacts.editContact.title")).toBeVisible();
     expect(screen.getByTestId("contacts-rename-contact-name-input")).toHaveProp("value", "Ada");
     expect(screen.getByTestId("contacts-rename-contact-name-error")).toHaveProp(
       "accessibilityLiveRegion",
       "polite",
     );
-    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
+    expect(screen.getByText("contacts.editContact.invalidNameError")).toBeVisible();
     expect(screen.getByText("3/32")).toBeVisible();
   });
 
   it("should forward name changes", () => {
     const onDraftNameChange = jest.fn();
 
-    render(<ContactsRenameContactDrawer {...createViewModel({ onDraftNameChange })} />);
+    render(<ContactsRenameContactDrawer {...createViewModel({ onDraftNameChange })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     fireEvent.changeText(screen.getByTestId("contacts-rename-contact-name-input"), "Ada Lovelace");
 
@@ -91,13 +81,17 @@ describe("ContactsRenameContactDrawer", () => {
   });
 
   it("should leave the confirm action to the host, which pins it above the keyboard", () => {
-    render(<ContactsRenameContactDrawer {...createViewModel({ isConfirmEnabled: true })} />);
+    render(<ContactsRenameContactDrawer {...createViewModel({ isConfirmEnabled: true })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(screen.queryByTestId("contacts-rename-contact-confirm")).not.toBeOnTheScreen();
   });
 
   it("should withhold focus until the host grants it", () => {
-    const { rerender } = render(<ContactsRenameContactDrawer {...createViewModel()} />);
+    const { rerender } = render(<ContactsRenameContactDrawer {...createViewModel()} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(mockFocus).not.toHaveBeenCalled();
 
@@ -107,7 +101,9 @@ describe("ContactsRenameContactDrawer", () => {
   });
 
   it("should not render its content while closed", () => {
-    render(<ContactsRenameContactDrawer {...createViewModel({ isOpen: false })} />);
+    render(<ContactsRenameContactDrawer {...createViewModel({ isOpen: false })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(screen.queryByTestId("contacts-rename-contact-content")).not.toBeOnTheScreen();
   });

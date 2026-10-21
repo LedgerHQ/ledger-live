@@ -1,0 +1,25 @@
+services:
+  yaci:
+    image: bloxbean/yaci-cli:0.10.6@sha256:054643c8a2b6610c40beee492505344e87761860ef60c3abadd02102fac06a03
+    container_name: coin-tester-cardano
+    # The image's default entrypoint (`sh /app/yaci-cli.sh`) uses bash-only syntax, so call the native
+    # binary directly. `up` is refused in Docker mode; `create-node --start` is its Docker equivalent.
+    entrypoint: ["/app/yaci-cli"]
+    command: ["create-node", "-o", "--start"]
+    environment:
+      yaci_store_enabled: "true"
+      yaci_store_mode: native
+      ogmios_enabled: "false"
+      kupo_enabled: "false"
+      IS_DOCKER: "true"
+    # Host loopback only: the admin API is unauthenticated.
+    ports:
+      - "127.0.0.1:8080:8080" # yaci-store (reads)
+      - "127.0.0.1:10000:10000" # admin API (faucet, reset)
+    # Healthy = a produced block (height is -1 at genesis), so `up --wait` returns once the store serves data.
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8080/api/v1/blocks/latest | grep -q '\"height\":[0-9]'"]
+      interval: 3s
+      timeout: 5s
+      retries: 60
+      start_period: 5s

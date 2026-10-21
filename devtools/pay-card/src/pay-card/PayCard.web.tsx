@@ -94,7 +94,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
       <Section title="Card Debug">
         <ListItem onClick={() => setScreen("interaction")}>
           <ListItemLeading>
-            <Spot appearance="icon" icon={CreditCard} />
+            <Spot icon={CreditCard} />
             <ListItemContent>
               <ListItemTitle>Card Status</ListItemTitle>
             </ListItemContent>
@@ -111,7 +111,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
           }}
         >
           <ListItemLeading>
-            <Spot appearance="icon" icon={CoinsCrypto} />
+            <Spot icon={CoinsCrypto} />
             <ListItemContent>
               <ListItemTitle>Balance & Wallets</ListItemTitle>
             </ListItemContent>
@@ -123,7 +123,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
 
         <ListItem onClick={() => setScreen("transactions")}>
           <ListItemLeading>
-            <Spot appearance="icon" icon={CreditCard} />
+            <Spot icon={CreditCard} />
             <ListItemContent>
               <ListItemTitle>Transactions</ListItemTitle>
             </ListItemContent>
@@ -140,7 +140,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
           }}
         >
           <ListItemLeading>
-            <Spot appearance="icon" icon={CheckmarkCircle} />
+            <Spot icon={CheckmarkCircle} />
             <ListItemContent>
               <ListItemTitle>Card onboarding</ListItemTitle>
             </ListItemContent>
@@ -152,7 +152,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
 
         <ListItem onClick={() => setScreen("mapping")}>
           <ListItemLeading>
-            <Spot appearance="icon" icon={Coins} />
+            <Spot icon={Coins} />
             <ListItemContent>
               <ListItemTitle>Currency Mapping</ListItemTitle>
             </ListItemContent>

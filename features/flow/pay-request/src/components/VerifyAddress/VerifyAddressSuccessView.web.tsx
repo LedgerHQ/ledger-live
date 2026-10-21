@@ -1,5 +1,5 @@
 import React from "react";
-import { Spot } from "@ledgerhq/lumen-ui-react";
+import { SpotNumber } from "@ledgerhq/lumen-ui-react";
 import { ShieldLock } from "@ledgerhq/lumen-ui-react/symbols";
 import { VerifyAddressDialog } from "./VerifyAddressDialog.web";
 import type { VerifyAddressSuccessViewProps } from "../../types";
@@ -28,7 +28,7 @@ export function VerifyAddressSuccessView({
         <span className="body-2 text-muted">{nextStepsLabel}</span>
         {nextSteps.map(step => (
           <div key={step.index} className="flex flex-row items-center justify-start gap-12">
-            <Spot appearance="number" number={step.index} size={32} />
+            <SpotNumber value={step.index} size={32} />
             <span className="body-2 text-base">{step.label}</span>
           </div>
         ))}

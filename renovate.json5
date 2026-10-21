@@ -6,6 +6,7 @@
     ":dependencyDashboard"
   ],
   "dependencyDashboard": true,
+  "gitIgnoredAuthors": ["105061298+live-github-bot[bot]@users.noreply.github.com"],
   "labels": ["dependencies"],
   "automerge": false,
   "vulnerabilityAlerts": {
@@ -124,8 +125,7 @@
         "@playwright/test",
         "playwright",
         "allure-js-commons",
-        "allure-playwright",
-        "allure-commandline"
+        "allure-playwright"
       ],
       "commitMessagePrefix": "chore(e2e):",
       "labels": ["dependencies", "e2e"],

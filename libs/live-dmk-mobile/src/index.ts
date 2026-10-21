@@ -41,3 +41,4 @@ export * from "./errors";
 export * from "./hooks";
 export * from "./utils/matchDevicesByNameOrId";
 export { type DmkError } from "@ledgerhq/device-management-kit";
+export { getActiveConnectedDevice } from "./utils/getActiveConnectedDevice";

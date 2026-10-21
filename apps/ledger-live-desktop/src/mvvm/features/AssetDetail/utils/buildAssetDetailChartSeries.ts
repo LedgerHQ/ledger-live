@@ -25,6 +25,7 @@ type BuildAssetDetailChartSeriesParams = Readonly<{
   atl?: number;
   athTime?: number;
   atlTime?: number;
+  latestPrice?: { price: number; timestamp: number };
 }>;
 
 export function buildAssetDetailChartSeries({
@@ -34,6 +35,7 @@ export function buildAssetDetailChartSeries({
   atl,
   athTime,
   atlTime,
+  latestPrice,
 }: BuildAssetDetailChartSeriesParams): { prices: number[]; timestamps: number[] } {
   return buildMarketChartSeries({
     chartData,
@@ -43,5 +45,6 @@ export function buildAssetDetailChartSeries({
     atl,
     athTime,
     atlTime,
+    latestPrice,
   });
 }

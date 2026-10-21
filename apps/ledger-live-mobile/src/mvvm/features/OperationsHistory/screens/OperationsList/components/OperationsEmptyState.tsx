@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
+import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { LumenViewStyle, LumenTextStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 
@@ -8,7 +9,7 @@ export function OperationsEmptyState() {
 
   return (
     <Box lx={containerStyle} testID="operations-empty-state">
-      <Spot appearance="info" size={72} />
+      <Spot appearance="muted" icon={InformationFill} size={72} />
       <Box lx={textContainerStyle}>
         <Text typography="heading4SemiBold" lx={titleStyle}>
           {t("operationList.emptyTitle")}

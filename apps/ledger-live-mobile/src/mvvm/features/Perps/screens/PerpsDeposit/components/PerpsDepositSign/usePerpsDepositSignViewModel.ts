@@ -38,10 +38,30 @@ export function usePerpsDepositSignViewModel({
   onNotEnoughBalance,
   ...depositParams
 }: PerpsDepositSignProps): PerpsDepositSignViewModel {
+  const isLeavingRef = useRef(false);
+
+  const handleNotEnoughBalance = useCallback(() => {
+    isLeavingRef.current = true;
+    onNotEnoughBalance();
+  }, [onNotEnoughBalance]);
+
+  const handleDone = useCallback(
+    (outcome: PerpsDepositOutcome) => {
+      isLeavingRef.current = true;
+      onDone(outcome);
+    },
+    [onDone],
+  );
+
+  const handleDrawerClose = useCallback(() => {
+    if (isLeavingRef.current) return;
+    onRefused();
+  }, [onRefused]);
+
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(depositParams, {
-    onDone,
+    onDone: handleDone,
     onRefused,
-    onNotEnoughBalance,
+    onNotEnoughBalance: handleNotEnoughBalance,
   });
 
   const onDeviceError = useCallback(
@@ -64,7 +84,7 @@ export function usePerpsDepositSignViewModel({
     setSelectedDevice: onSelectDevice,
     retry,
     onDeviceError,
-    handleDrawerClose: onRefused,
+    handleDrawerClose,
     ignoreHeaderOptions,
   };
 }

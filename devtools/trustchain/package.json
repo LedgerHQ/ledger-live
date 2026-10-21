@@ -29,13 +29,14 @@
     "unimported": "pnpm knip --directory ../.. -c devtools/trustchain/knip.web.config.mjs -W devtools/trustchain --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/trustchain/knip.native.config.mjs -W devtools/trustchain --tsConfig tsconfig.native.json"
   },
   "devDependencies": {
-    "@support/jest-devtools": "workspace:*",
+    "@support/jest": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "react": "catalog:",

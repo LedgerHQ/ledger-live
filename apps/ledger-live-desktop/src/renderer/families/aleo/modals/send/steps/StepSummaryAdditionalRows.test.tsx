@@ -12,7 +12,11 @@ import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
 import { getAleoCurrencyConfig, isAleoTransaction } from "../../../shared/utils";
 import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 
-jest.mock("@ledgerhq/live-common/families/aleo/utils");
+jest.mock("@ledgerhq/live-common/families/aleo/utils", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/aleo/utils"),
+  getEstimatedSigningTime: jest.fn(),
+  isPublicTransaction: jest.fn(),
+}));
 jest.mock("../../../shared/utils", () => ({
   ...jest.requireActual("../../../shared/utils"),
   getAleoCurrencyConfig: jest.fn(),

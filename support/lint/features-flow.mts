@@ -1,0 +1,79 @@
+import { defineConfig } from "oxlint";
+import base from "./base.mts";
+
+const CLIPBOARD_MESSAGE = "Use copyToClipboard / readClipboard from @shared/clipboard instead of";
+
+// Packages whose own config kept the React Compiler rules and `import/namespace` fatal. The rest
+// of the layer has them as warnings and violates them today, so they stay fatal here only. Globs
+// anchor to features/flow/, where the layer config re-exports this preset.
+const FATAL_REACT_COMPILER = [
+  "fear-and-greed",
+  "market-banner",
+  "pay-card",
+  "pay-card-assets",
+  "pay-card-auth",
+  "pay-card-details",
+  "pay-card-transactions",
+  "pay-deposit",
+];
+
+export default defineConfig({
+  extends: [base],
+  rules: {
+    // features/flow is the strictest layer in the repo and wants `any` to be fatal.
+    "typescript/no-explicit-any": "error",
+    // Shadowing is idiomatic in the hook-heavy code here.
+    "eslint/no-shadow": "off",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          "lodash",
+          { name: "expo-clipboard", message: `${CLIPBOARD_MESSAGE} expo-clipboard.` },
+        ],
+        patterns: [
+          {
+            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+            message: "Please remove the /lib import from live-common import.",
+          },
+        ],
+      },
+    ],
+    "eslint/no-restricted-properties": [
+      "error",
+      {
+        object: "navigator",
+        property: "clipboard",
+        message: `${CLIPBOARD_MESSAGE} navigator.clipboard.`,
+      },
+    ],
+    "react-hooks/exhaustive-deps": [
+      "error",
+      {
+        additionalHooks: "(useInViewContext|useAnimatedStyle|useDerivedValue|useAnimatedProps)",
+      },
+    ],
+    // Test structure is fatal here, as every flow config had it.
+    "jest/no-export": "error",
+    "jest/no-standalone-expect": "error",
+    "jest/valid-describe-callback": "error",
+    "jest/valid-expect": "error",
+  },
+  overrides: [
+    {
+      files: FATAL_REACT_COMPILER.map(pkg => `${pkg}/**`),
+      rules: {
+        "import/namespace": "error",
+        "react/globals": "error",
+        "react/immutability": "error",
+        "react/preserve-manual-memoization": "error",
+        "react/purity": "error",
+        "react/refs": "error",
+        "react/set-state-in-effect": "error",
+        "react/set-state-in-render": "error",
+        "react/static-components": "error",
+        "react/use-memo": "error",
+      },
+    },
+  ],
+});

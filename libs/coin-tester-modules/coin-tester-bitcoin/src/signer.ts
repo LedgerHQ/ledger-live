@@ -3,7 +3,7 @@ import { BitcoinAddress, BitcoinSigner, CreateTransaction } from "@ledgerhq/coin
 import { generateMnemonic, mnemonicToSeed } from "bip39";
 import { BIP32Factory } from "bip32";
 import * as bitcoin from "bitcoinjs-lib";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { serializeTransaction } from "@ledgerhq/hw-app-btc/serializeTransaction";
 import { BufferReader } from "@ledgerhq/psbtv2";
 
@@ -121,8 +121,7 @@ const eccWrapper = {
   sign(hash: Uint8Array | Buffer, privateKey: Uint8Array | Buffer): Uint8Array {
     const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
     const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
-    const signature = secp256k1.sign(hashBytes, keyBytes, { prehash: false });
-    return signature.toBytes("compact");
+    return secp256k1.sign(hashBytes, keyBytes, { prehash: false });
   },
 
   verify(
@@ -210,8 +209,7 @@ function createPaymentTransaction(seed: Buffer, arg: CreateTransaction): Promise
     const inputTxid = bitcoin.crypto.hash256(inputTxBuffer);
     const spentOutputIndex = input[1];
     const spentTxOutput = input[0].outputs[spentOutputIndex];
-    const amount =
-      (spentTxOutput.amount.readUInt32LE(4) << 32) + spentTxOutput.amount.readUInt32LE(0);
+    const amount = spentTxOutput.amount.readBigUInt64LE(0);
     const sequence = input[3];
     const inputNode = root.derivePath(arg.associatedKeysets[i]);
     const inputP2wpkh = bitcoin.payments.p2wpkh({
@@ -242,7 +240,7 @@ function createPaymentTransaction(seed: Buffer, arg: CreateTransaction): Promise
     const amount = outputsBufferReader.readUInt64();
     const outputScript = outputsBufferReader.readVarSlice();
 
-    tx.addOutput({ value: amount, script: outputScript });
+    tx.addOutput({ value: BigInt(amount), script: outputScript });
   }
 
   for (let i = 0; i < tx.inputCount; i++) {
@@ -267,6 +265,55 @@ export async function buildSigner(): Promise<BitcoinSigner> {
     createPaymentTransaction: arg => createPaymentTransaction(seed, arg),
     signMessage: () => {
       throw new Error("Not implemented");
+    },
+  };
+}
+
+/**
+ * Software signer for the **generic-adapter** strategy: plays the device on coin-bitcoin's
+ * single-address Alpaca path. Accounts are native SegWit (P2WPKH, regtest).
+ *
+ * The generic `signOperation` calls `signTransaction(path, unsignedPsbt)` with the account's
+ * address path; every input spends that one address, so each is signed with the key at `path`.
+ * Like a Ledger app signing through hw-app-btc, it returns the whole signed transaction (hex), which
+ * coin-bitcoin's `combine` checks against what was crafted.
+ */
+export type GenericBitcoinSigner = {
+  getAddress: (path: string) => Promise<{ address: string; publicKey: string }>;
+  signTransaction: (path: string, unsignedPsbtBase64: string) => Promise<string>;
+};
+
+const stripMaster = (path: string): string => path.replace(/^m\//, "");
+
+export async function buildGenericSigner(
+  mnemonic: string = generateMnemonic(),
+): Promise<GenericBitcoinSigner> {
+  const seed = await mnemonicToSeed(mnemonic);
+  const root = BIP32Factory(eccWrapper).fromSeed(seed, bitcoin.networks.regtest);
+  const nodeAt = (path: string) => root.derivePath(stripMaster(path));
+
+  return {
+    getAddress: async (path: string) => {
+      const { publicKey } = nodeAt(path);
+      const address = bitcoin.payments.p2wpkh({
+        pubkey: Buffer.from(publicKey),
+        network: bitcoin.networks.regtest,
+      }).address!;
+      return { address, publicKey: Buffer.from(publicKey).toString("hex") };
+    },
+    signTransaction: async (path: string, unsignedPsbtBase64: string) => {
+      const node = nodeAt(path);
+      const psbt = bitcoin.Psbt.fromBase64(unsignedPsbtBase64, {
+        network: bitcoin.networks.regtest,
+      });
+      for (let index = 0; index < psbt.inputCount; index++) {
+        psbt.signInput(index, {
+          publicKey: Buffer.from(node.publicKey),
+          sign: (hash: Buffer) => Buffer.from(node.sign(hash)),
+        });
+      }
+      psbt.finalizeAllInputs();
+      return psbt.extractTransaction().toHex();
     },
   };
 }

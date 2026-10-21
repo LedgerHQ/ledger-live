@@ -8,6 +8,7 @@ import type {
   Intent,
 } from "./core";
 import type { ExecutorState } from "./executor";
+import { isDeviceDisconnectedError } from "./isDeviceDisconnectedError";
 
 const LOG_TYPE = "DIEStateMachine";
 
@@ -45,6 +46,14 @@ type MachineContext<JobState, Input, ExtraProps, Result> = {
   deviceExtractedContext: DeviceExtractedContext | null;
   error: unknown;
 };
+
+function notifyJobError<JobState, Input, ExtraProps, Result>(
+  context: MachineContext<JobState, Input, ExtraProps, Result>,
+  error: unknown,
+): void {
+  context.currentIntent.onJobError?.(error);
+  context.listeners.onIntentJobError(context.currentIntent, error);
+}
 
 type MachineEvent<JobState, Input, ExtraProps, Result> =
   | { type: "DEVICE_CONNECTED"; result: DeviceConnectionResult }
@@ -212,16 +221,24 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
               context.listeners.onIntentJobComplete(context.currentIntent);
             },
           },
-          onError: {
-            target: "intentError",
-            actions: [
-              ({ event, context }) => {
-                context.currentIntent.onJobError?.(event.error);
-                context.listeners.onIntentJobError(context.currentIntent, event.error);
-              },
-              assign({ error: ({ event }) => event.error }),
-            ],
-          },
+          onError: [
+            {
+              guard: ({ event }) => isDeviceDisconnectedError(event.error),
+              target: "deviceDisconnected",
+              actions: [
+                ({ event, context }) => notifyJobError(context, event.error),
+                "notifyDeviceDisconnected",
+                "resetConnection",
+              ],
+            },
+            {
+              target: "intentError",
+              actions: [
+                ({ event, context }) => notifyJobError(context, event.error),
+                assign({ error: ({ event }) => event.error }),
+              ],
+            },
+          ],
         },
         on: {
           DEVICE_DISCONNECTED: {
@@ -265,6 +282,10 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
           RETRY: {
             target: "intentExecution",
             actions: assign({ error: () => null }),
+          },
+          DEVICE_DISCONNECTED: {
+            target: "deviceDisconnected",
+            actions: ["notifyDeviceDisconnected", "resetConnection"],
           },
           SET_INTENT: {
             target: "intentExecution",

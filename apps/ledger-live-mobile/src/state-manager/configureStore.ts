@@ -1,7 +1,7 @@
 import Config from "react-native-config";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { authApiExtra } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -18,6 +18,8 @@ import { setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-mobile";
 import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
+import { accountDataExtra } from "@domain/api-account-data";
+import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
@@ -41,8 +43,10 @@ import {
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { selectFeature } from "@shared/feature-flags";
+import { appConfig } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
+import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 /** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
@@ -60,6 +64,7 @@ export const store = configureStore({
         immutableCheck: false,
         thunk: {
           extraArgument: {
+            ...accountDataExtra(accountDataSources((): State => store.getState())),
             ...calApiExtra({
               calServiceUrl: getEnv("CAL_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -94,12 +99,9 @@ export const store = configureStore({
                 selectFeature(store.getState(), "lwmAuth").enabled ?? false,
               authProvider: new AuthSDK(
                 {
-                  clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                  keycloakBaseUrl(): string | null {
-                    const environment = authEnvironmentSelector(store.getState());
-                    return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
-                  },
-                  keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                  clientId: appConfig.keycloakClientId,
+                  keycloakBaseUrl: appConfig.keycloakBaseUrl,
+                  keycloakRealm: appConfig.keycloakRealm,
                   disablePkce: true,
                 },
                 {
@@ -123,7 +125,8 @@ export const store = configureStore({
         }),
       )
       .concat(createMobileFeatureFlagsMiddleware())
-      .concat(sleepingListener.middleware),
+      .concat(sleepingListener.middleware)
+      .concat(createMobileCountervaluesMiddleware()),
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
@@ -154,6 +157,7 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) =>
   }),
 );
 connectRecentAddressesStore(store, recentAddressesSelector);
+connectAccounts(store);
 setupCryptoAssetsStore(store);
 setupRateLookups();
 setSwapQuotesStore(store.dispatch);

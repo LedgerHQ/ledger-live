@@ -1,3 +1,7 @@
+# 4.24.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 4.23.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

@@ -1,6 +1,6 @@
 const path = require("path");
 
-const config = require("@support/jest-features-flow").createFlowJestConfig();
+const config = require("@support/jest/features-flow").createFlowJestConfig();
 
 const webProject = config.projects.find(project => project.displayName === "web");
 webProject.setupFilesAfterEnv = [

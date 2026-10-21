@@ -4,6 +4,7 @@ import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
+import { isCurrencyUnsupportedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { isPaytabSpec } from "@e2e/utils/paytab";
@@ -40,6 +41,12 @@ export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
   process.env.SPECULOS_DEVICE !== Device.LNS.name
     ? describe(...args)
     : describe.skip("[not available on LNS] " + args[0], args[1]);
+
+/** `describeIfNotNanoS` when one of the currencies is not supported on LNS, `describe` otherwise. */
+export const describeIfNanoSSupports = (...currencyIds: string[]) =>
+  currencyIds.some(currencyId => isCurrencyUnsupportedOnLNS(currencyId))
+    ? describeIfNotNanoS
+    : describe;
 
 export function isAndroid(): boolean {
   return device.getPlatform() === "android";
@@ -80,10 +87,11 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
 
   const port = await findFreePort();
   closeBridge();
-  initBridge(port);
+  const wsToken = initBridge(port);
   await device.launchApp({
     launchArgs: {
       wsPort: port,
+      wsToken,
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,

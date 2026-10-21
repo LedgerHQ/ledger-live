@@ -5,9 +5,10 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Alert from "~/renderer/components/Alert";
 import { useFeature } from "@features/platform-feature-flags";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import { ZcashShieldedReceiveBlock } from "./ZcashShieldedReceiveBlock";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 const AlertBoxContainer = styled.div`
   margin-top: 20px;
@@ -26,7 +27,7 @@ const StepReceiveFundsPostAlert = (props: StepProps) => {
   invariant(account && mainAccount, "No account given");
 
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
-  const isZcash = mainAccount.currency.id === "zcash";
+  const isZcash = isZcashCurrencyId(mainAccount.currency.id);
 
   return (
     <>

@@ -1,8 +1,7 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
-import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
+import type { AuthProvider } from "@shared/auth";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -42,15 +41,6 @@ jest.mock("~/firebase/remoteConfig", () => ({
 
 describe("mobile store", () => {
   describe("auth provider flow", () => {
-    const PROD_KEYCLOAK_BASE_URL = "http://keycloak-prod.test";
-    const STAGING_KEYCLOAK_BASE_URL = "http://keycloak-staging.test";
-
-    const AUTH_CONFIG = {
-      clientId: "ledger-keycloak",
-      keycloakBaseUrl: PROD_KEYCLOAK_BASE_URL,
-      keycloakRealm: "ledger-bc-customers",
-    };
-
     const MEMBER_CREDENTIALS: MemberCredentials = {
       pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
       privatekey: "873f500bd20783224f7e78d4f8cce3d2bf69eb8008fbd697d20bbea31a721a03",
@@ -65,21 +55,14 @@ describe("mobile store", () => {
     const queryFn = jest.fn(() => Promise.resolve());
 
     const endpoints = {
-      prodKeycloakAuth: jest.fn<Response, [{ request: Request }]>(),
-      stagingKeycloakAuth: jest.fn<Response, [{ request: Request }]>(),
+      keycloakAuth: jest.fn<Response, [{ request: Request }]>(),
       lkrpAuth: jest.fn<Response, [{ request: Request }]>(),
       lkrpToken: jest.fn<Response, [{ request: Request }]>(),
       tokenExchange: jest.fn<Response, [{ request: Request }]>(),
     };
     const server = setupServer(
-      http.get(
-        `${PROD_KEYCLOAK_BASE_URL}/realms/${AUTH_CONFIG.keycloakRealm}/protocol/openid-connect/auth`,
-        endpoints.prodKeycloakAuth,
-      ),
-      http.get(
-        `${STAGING_KEYCLOAK_BASE_URL}/realms/${AUTH_CONFIG.keycloakRealm}/protocol/openid-connect/auth`,
-        endpoints.stagingKeycloakAuth,
-      ),
+      // Any host and realm: which Keycloak the config resolves to is covered by the setup tests.
+      http.get("*/realms/:realm/protocol/openid-connect/auth", endpoints.keycloakAuth),
       http.post(`https://${CHALLENGE.json.host}/openid/v1/authenticate`, endpoints.lkrpAuth),
       http.post(`https://${CHALLENGE.json.host}/openid/v1/token`, endpoints.lkrpToken),
       http.post(`https://${CHALLENGE.json.host}/openid/v1/exchange`, endpoints.tokenExchange),
@@ -93,14 +76,6 @@ describe("mobile store", () => {
       jest.resetModules();
       jest.clearAllMocks();
       server.resetHandlers();
-
-      // Use the post-reset instance so configureStore reads these environment values.
-      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
-      setEnv("LEDGER_CLIENT_VERSION", "jest");
-      setEnv("LEDGER_AUTH_CLIENT_ID", AUTH_CONFIG.clientId);
-      setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING", STAGING_KEYCLOAK_BASE_URL);
-      setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD", PROD_KEYCLOAK_BASE_URL);
-      setEnv("LEDGER_AUTH_KEYCLOAK_REALM", AUTH_CONFIG.keycloakRealm);
     });
 
     afterAll(() => {
@@ -115,83 +90,11 @@ describe("mobile store", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith();
-      expect(endpoints.prodKeycloakAuth).not.toHaveBeenCalled();
-      expect(endpoints.stagingKeycloakAuth).not.toHaveBeenCalled();
-    });
-
-    it("should retry authentication after the environment becomes available", async () => {
-      endpoints.prodKeycloakAuth.mockImplementation(() =>
-        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
-      );
-      endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
-      endpoints.lkrpToken.mockImplementation(() =>
-        HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
-      );
-      endpoints.tokenExchange.mockImplementation(() =>
-        HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
-      );
-
-      const { store } = require("./configureStore");
-      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
-
-      await expect(
-        dispatchThunk(store, (_dispatch, _getState, extra) =>
-          extra.authProvider.withToken({ queryFn }),
-        ),
-      ).rejects.toMatchObject({ name: WalletAuthMissingBaseUrlError.name });
-
-      store.dispatch(setAuthEnvironment("PROD"));
-      store.dispatch(
-        importTrustchainStoreState({
-          trustchain: null,
-          memberCredentials: MEMBER_CREDENTIALS,
-        }),
-      );
-
-      await dispatchThunk(store, (_dispatch, _getState, extra) =>
-        extra.authProvider.withToken({ queryFn }),
-      );
-
-      expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
-      );
-      expect(endpoints.prodKeycloakAuth).toHaveBeenCalledTimes(1);
-    });
-
-    it("should use the staging Keycloak URL for a staging Trustchain SDK", async () => {
-      endpoints.stagingKeycloakAuth.mockImplementation(() =>
-        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
-      );
-      endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
-      endpoints.lkrpToken.mockImplementation(() =>
-        HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
-      );
-      endpoints.tokenExchange.mockImplementation(() =>
-        HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
-      );
-
-      const { store } = require("./configureStore");
-      store.dispatch(setAuthEnvironment("STAGING"));
-      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
-      store.dispatch(
-        importTrustchainStoreState({
-          trustchain: null,
-          memberCredentials: MEMBER_CREDENTIALS,
-        }),
-      );
-
-      await dispatchThunk(store, async (_dispatch, _getState, extra) =>
-        extra.authProvider.withToken({
-          queryFn,
-          refreshAndRetryWhen: () => true,
-        }),
-      );
-
-      expect(endpoints.stagingKeycloakAuth).toHaveBeenCalled();
+      expect(endpoints.keycloakAuth).not.toHaveBeenCalled();
     });
 
     it("should authenticate with attestation when trustchain store has a root id", async () => {
-      endpoints.prodKeycloakAuth.mockImplementation(() =>
+      endpoints.keycloakAuth.mockImplementation(() =>
         HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
       );
       endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
@@ -203,7 +106,6 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
-      store.dispatch(setAuthEnvironment("PROD"));
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
@@ -226,11 +128,6 @@ describe("mobile store", () => {
       expect(queryFn).toHaveBeenCalledWith(
         expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
       );
-      expect(
-        endpoints.prodKeycloakAuth.mock.calls.every(([{ request }]) =>
-          request.url.startsWith(AUTH_CONFIG.keycloakBaseUrl),
-        ),
-      ).toBe(true);
 
       const challengeRequest = await endpoints.lkrpAuth.mock.calls.at(-1)?.[0].request.json();
       expect(challengeRequest).toEqual(
@@ -243,31 +140,6 @@ describe("mobile store", () => {
           }),
         }),
       );
-    });
-  });
-
-  describe("swap extraArgument", () => {
-    beforeEach(() => {
-      jest.resetModules();
-      // Re-seed after resetModules(), like the auth provider flow tests above: configureStore
-      // also builds calApiExtra/pushDevicesApiExtra, which require a non-empty LEDGER_CLIENT_VERSION.
-      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
-      setEnv("LEDGER_CLIENT_VERSION", "jest");
-    });
-
-    it("resolves the swap api base url from the build's SWAP_API_BASE", () => {
-      const Config = require("react-native-config").default as Record<string, unknown>;
-      Config.SWAP_API_BASE = "https://swap-stg.test/v5";
-
-      const { store } = require("./configureStore");
-
-      expect(dispatchSwapExtra(store)).toBe("https://swap-stg.test/v5");
-    });
-
-    it("falls back to the production swap api when the build sets no SWAP_API_BASE", () => {
-      const { store } = require("./configureStore");
-
-      expect(dispatchSwapExtra(store)).toBe("https://swap.ledger.com/v5");
     });
   });
 
@@ -286,45 +158,6 @@ describe("mobile store", () => {
       expect(setupRateLookups).toHaveBeenCalledTimes(1);
     });
   });
-
-  describe("countervalues", () => {
-    it("sends rate requests to the url the developer staging toggle switches to", async () => {
-      jest.resetModules();
-      const { getEnv, setEnv } = require("@shared/env") as typeof import("@shared/env");
-      setEnv("LEDGER_CLIENT_VERSION", "jest");
-      const { store } = require("./configureStore");
-      const { marketCountervaluesApi } =
-        require("@domain/api-market-countervalues") as typeof import("@domain/api-market-countervalues");
-      const production = getEnv("LEDGER_COUNTERVALUES_API");
-      const requested: string[] = [];
-      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(input => {
-        requested.push((input as Request).url);
-        return Promise.resolve(
-          new Response(JSON.stringify({ bitcoin: 9000 }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          }),
-        );
-      });
-
-      setEnv("LEDGER_COUNTERVALUES_API", "https://countervalues.staging.test");
-      try {
-        await store.dispatch(
-          marketCountervaluesApi.endpoints.getSpotRates.initiate(
-            { to: "USD", froms: ["bitcoin"] },
-            { forceRefetch: true },
-          ),
-        );
-      } finally {
-        setEnv("LEDGER_COUNTERVALUES_API", production);
-        fetchSpy.mockRestore();
-      }
-
-      expect(requested).toEqual([
-        expect.stringContaining("https://countervalues.staging.test/v3/spot/simple"),
-      ]);
-    });
-  });
 });
 
 type AuthThunk = (
@@ -336,16 +169,6 @@ type DispatchThunk = (thunk: AuthThunk) => Promise<unknown>;
 function dispatchThunk(store: unknown, thunk: AuthThunk): Promise<unknown> {
   const dispatch = (store as { dispatch: unknown }).dispatch as DispatchThunk;
   return dispatch(thunk);
-}
-
-type SwapThunk = (
-  dispatch: unknown,
-  getState: unknown,
-  extra: { getSwapApiBaseUrl: () => string },
-) => string;
-function dispatchSwapExtra(store: unknown): string {
-  const dispatch = (store as { dispatch: unknown }).dispatch as (thunk: SwapThunk) => string;
-  return dispatch((_dispatch, _getState, extra) => extra.getSwapApiBaseUrl());
 }
 
 function makeJwt(payload: Record<string, unknown>): string {

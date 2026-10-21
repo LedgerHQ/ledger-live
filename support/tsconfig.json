@@ -1,4 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "./jest-devtools" }, { "path": "./jest-features-flow" }, { "path": "./lint-rules" }]
+  "references": [{ "path": "./jest/devtools" }, { "path": "./jest/features-flow" }, { "path": "./lint" }]
 }

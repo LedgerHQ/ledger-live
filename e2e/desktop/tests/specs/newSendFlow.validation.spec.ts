@@ -34,11 +34,6 @@ const invalidAmounts: Array<{
   expectsGetFundsCta?: boolean;
 }> = [
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
-    expectedErrorMessage: null,
-    xrayTicket: "B2CQA-2568",
-  },
-  {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0", Fee.MEDIUM),
     expectedErrorMessage: null,
     xrayTicket: "B2CQA-2569",
@@ -115,7 +110,7 @@ test.describe("Send - new flow - max amount", () => {
     `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) max amount`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-473" },
+      annotation: { type: "TMS", description: "B2CQA-6124" },
     },
     async ({ app }) => {
       await reachAmountStep(app, tx);

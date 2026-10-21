@@ -1,5 +1,5 @@
 import * as bitcoin from "bitcoinjs-lib";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { broadcast } from "./broadcast";
 import Xpub from "@ledgerhq/wallet-btc/xpub";
 import BitcoinLikeExplorer from "@ledgerhq/wallet-btc/explorer/index";
@@ -17,14 +17,14 @@ function buildSignedTxHex(): { txHex: string; address: string } {
   psbt.addInput({
     hash: Buffer.alloc(32, 0xab),
     index: 0,
-    witnessUtxo: { value: 100000, script: p2wpkhScript! },
+    witnessUtxo: { value: 100000n, script: p2wpkhScript! },
   });
-  psbt.addOutput({ address: address!, value: 10000 - 500 });
+  psbt.addOutput({ address: address!, value: 10000n - 500n });
 
   psbt.signInput(0, {
     publicKey,
     sign: (hash: Buffer) =>
-      Buffer.from(secp256k1.sign(new Uint8Array(hash), privateKey).toBytes("compact")),
+      Buffer.from(secp256k1.sign(new Uint8Array(hash), privateKey, { prehash: false })),
   });
   psbt.finalizeAllInputs();
   return { txHex: psbt.extractTransaction().toHex(), address: address! };

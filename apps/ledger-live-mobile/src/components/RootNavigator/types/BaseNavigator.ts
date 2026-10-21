@@ -408,6 +408,11 @@ export type BaseNavigatorStackParamList = {
     device?: Device | null;
     onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
     isBeforeOnboarding?: boolean;
+    isDeviceOnboarded?: boolean;
+  };
+  [ScreenName.OsUpdate]: {
+    device: Device;
+    mode?: "bootloaderRepair" | "restoreBackup";
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
   [ScreenName.Portfolio]: undefined;

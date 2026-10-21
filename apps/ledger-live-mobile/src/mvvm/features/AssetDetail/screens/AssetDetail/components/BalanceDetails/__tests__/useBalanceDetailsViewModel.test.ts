@@ -334,12 +334,16 @@ describe("useBalanceDetailsViewModel", () => {
         useBalanceDetailsViewModel(
           mockBtcCryptoCurrency,
           buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+          ["bitcoin"],
         ),
       );
 
       act(() => result.current.onTransferPress());
 
-      expect(mockOpenDrawer).toHaveBeenCalledWith({ sourceScreenName: "Asset Detail" });
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        sourceScreenName: "Asset Detail",
+        scope: { type: "asset", currency: mockBtcCryptoCurrency, ledgerIds: ["bitcoin"] },
+      });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "transfer",
         currency: "bitcoin",

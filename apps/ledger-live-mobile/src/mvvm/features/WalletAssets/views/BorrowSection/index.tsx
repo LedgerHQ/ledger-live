@@ -35,7 +35,7 @@ export const PortfolioBorrowSection = ({ onPress }: PortfolioBorrowSectionProps)
         <Card onPress={onPress} testID="portfolio-borrow-entry-point">
           <CardHeader>
             <CardLeading>
-              <Spot appearance="icon" icon={CoinsAddPlus} />
+              <Spot icon={CoinsAddPlus} />
               <CardContent>
                 <CardContentTitle>{t("portfolio.borrowEntry.cardTitle")}</CardContentTitle>
                 <CardContentDescription>

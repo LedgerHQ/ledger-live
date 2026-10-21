@@ -285,8 +285,8 @@ export type CosmosAccount = Account & {
 };
 
 export type CosmosAccountRaw = AccountRaw & {
-  cosmosResources: CosmosResourcesRaw;
-  stakingResources: StakingResourcesRaw & LegacyCosmosResourcesFields;
+  cosmosResources?: CosmosResourcesRaw;
+  stakingResources?: StakingResourcesRaw & LegacyCosmosResourcesFields;
 };
 export type TransactionStatus = TransactionStatusCommon;
 
@@ -313,6 +313,7 @@ export type CosmosCurrencyConfig = {
   lcd: string;
   minGasPrice: number;
   ledgerValidator?: string;
+  denom: string;
 };
 
 export const RETURN_CODES = {

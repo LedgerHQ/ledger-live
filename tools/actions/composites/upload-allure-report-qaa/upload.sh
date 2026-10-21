@@ -18,6 +18,9 @@
 #                         deep-link back to the CI run that produced the report
 #   QAA_ALLURE_BRANCH   — when set, sent as multipart `branch` so the portal can
 #                         show/filter which git branch the run came from
+#   QAA_ALLURE_HISTORY_KEY — when set, sent as multipart `historyKey`; reports with
+#                         the same key and branch share one trend history
+#                         (the server defaults the key to the report name)
 #   QAA_ALLURE_REPORT_ATTACHMENTS — when set to a directory, every file under it
 #                         is sent on the `reportAttachments` field (report-level
 #                         attachments, e.g. runner telemetry CSVs). The sent
@@ -38,6 +41,7 @@ QAA_ALLURE_TAGS="${QAA_ALLURE_TAGS:-}"
 QAA_ALLURE_HISTORY="${QAA_ALLURE_HISTORY:-50}"
 QAA_ALLURE_JOB_URL="${QAA_ALLURE_JOB_URL:-}"
 QAA_ALLURE_BRANCH="${QAA_ALLURE_BRANCH:-}"
+QAA_ALLURE_HISTORY_KEY="${QAA_ALLURE_HISTORY_KEY:-}"
 QAA_ALLURE_REPORT_ATTACHMENTS="${QAA_ALLURE_REPORT_ATTACHMENTS:-}"
 
 warn() { echo "::warning title=qaa-allure::$*"; }
@@ -105,6 +109,9 @@ if [ -n "${QAA_ALLURE_JOB_URL}" ]; then
 fi
 if [ -n "${QAA_ALLURE_BRANCH}" ]; then
   curl_args+=(--form-string "branch=${QAA_ALLURE_BRANCH}")
+fi
+if [ -n "${QAA_ALLURE_HISTORY_KEY}" ]; then
+  curl_args+=(--form-string "historyKey=${QAA_ALLURE_HISTORY_KEY}")
 fi
 
 # Report-level attachments: send every file under the given directory on the

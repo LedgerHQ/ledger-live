@@ -445,6 +445,49 @@ describe("useAddressValidation", () => {
     );
   });
 
+  it("validates a token account's own address as a self-transfer through its parent", () => {
+    mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
+    const getSelfTransferTarget = jest.fn(() => ({
+      address: mockAccount.freshAddress,
+      translationKey: "recipient.selfTransfer.toPrivate",
+      isDestinationPublic: false,
+    }));
+    mockedSendFeatures.getBalanceTypeConfig.mockReturnValue({
+      getSelfTransferTarget,
+      buildSelfTransferPatch: ({ isSelfTransfer }: { isSelfTransfer: boolean }) => ({
+        mode: isSelfTransfer ? "convert_token_public_to_private" : "transfer_token_public",
+      }),
+    } as never);
+    const tokenCurrency = createMockTokenCurrency();
+    const tokenAccount = genTokenAccount(0, mockAccount, tokenCurrency);
+    const transaction = {
+      family: "aleo",
+      mode: "transfer_token_public",
+      subAccountId: tokenAccount.id,
+    } as unknown as Transaction;
+
+    renderHook(() =>
+      useAddressValidation({
+        searchValue: mockAccount.freshAddress,
+        currency: tokenCurrency,
+        account: tokenAccount,
+        parentAccount: mockAccount,
+        transaction,
+        currentAccountId: tokenAccount.id,
+      }),
+    );
+
+    expect(getSelfTransferTarget).toHaveBeenCalledWith(
+      expect.objectContaining({ account: tokenAccount, parentAccount: mockAccount }),
+    );
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        recipient: mockAccount.freshAddress,
+        transaction: expect.objectContaining({ mode: "convert_token_public_to_private" }),
+      }),
+    );
+  });
+
   it("keeps the account name when a self-match is not the self-transfer target address", () => {
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
     mockedUseMaybeAccountName.mockReturnValue("My Account");

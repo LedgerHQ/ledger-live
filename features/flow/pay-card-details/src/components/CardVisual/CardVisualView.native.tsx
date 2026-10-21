@@ -62,7 +62,7 @@ export function CardVisualView({
             lx={{ alignItems: "center", justifyContent: "center" }}
             style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
           >
-            <Spot appearance="icon" icon={Snow} size={56} testID="card-visual-frozen" />
+            <Spot icon={Snow} size={56} testID="card-visual-frozen" />
           </Box>
         ) : null}
       </Box>

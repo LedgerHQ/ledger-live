@@ -1866,6 +1866,27 @@
       "description": "The amount joins the neuron's existing stake and follows its dissolve delay, so it is not spendable until the neuron dissolves."
     }
   },
+  "accountDetailSettings": {
+    "title": "Account settings",
+    "menu": {
+      "changeName": "Change name",
+      "viewAdvancedLogs": "View advanced logs",
+      "removeAccount": "Remove account from portfolio"
+    },
+    "advancedLogs": {
+      "title": "Advanced logs",
+      "derivationTip": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
+      "synchronised": "Synchronised {{date}}",
+      "copy": "Copy logs",
+      "copied": "Copied"
+    },
+    "remove": {
+      "title": "Remove account?",
+      "description": "The assets linked to this account will no longer be visible in your portfolio. Your assets on the blockchain remain unaffected.",
+      "confirm": "Yes, remove.",
+      "cancel": "Keep"
+    }
+  },
   "crash": {
     "title": "Something went wrong"
   },
@@ -2537,6 +2558,39 @@
       "progress": "Stay in Ledger Wallet while apps are installing.",
       "skippedInfo": "Some apps aren’t available. They are yet to be developed for {{ productName }}.",
       "skipped": "Not yet available for {{ productName }}"
+    }
+  },
+  "deviceOnboarding": {
+    "checks": {
+      "close": "Close",
+      "synchronizing": {
+        "title": "Synchronizing..."
+      },
+      "idle": {
+        "title": "Check your device",
+        "description": "Let's confirm that your Ledger device is genuine and up-to-date.",
+        "cta": "Check my device"
+      },
+      "checking": {
+        "title": "Check your device",
+        "description": "Confirming your Ledger signer is safe to use and up-to-date.",
+        "cta": "Checking..."
+      },
+      "succeeded": {
+        "title": "Device genuine and up-to-date",
+        "cta": "Continue"
+      }
+    },
+    "syncOffer": {
+      "title": "Sync your wallet",
+      "description": "Keep your balance and portfolio in sync when switching phones or using a computer.",
+      "learnMore": "Learn more",
+      "activate": "Activate",
+      "skip": "Skip for now"
+    },
+    "connection": {
+      "connecting": "Connecting to your device",
+      "failed": "Connection failed"
     }
   },
   "onboarding": {
@@ -5360,6 +5414,15 @@
         }
       },
       "feePayment": {
+        "title": "Select fee payment",
+        "regular": "Regular transfer",
+        "sponsored": "Pay with {{provider}}",
+        "payIn": "Pay network fee in {{feeCurrency}}",
+        "paidIn": "Paid in {{currency}}",
+        "nudge": "You could save {{amount}} with {{provider}}",
+        "saved": "Saved with {{provider}}",
+        "confirm": "Confirm",
+        "disclaimer": "With {{provider}}, a third-party energy provider, fees are paid in {{feeCurrency}}.",
         "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
       },
       "sponsoredRentSignature": {
@@ -5819,6 +5882,24 @@
     }
   },
   "osUpdates": {
+    "backupBanner": {
+      "title": "Backup found",
+      "description": "Apps and settings were not fully restored on your device.",
+      "restore": "Restore",
+      "delete": "Delete backup"
+    },
+    "restoreConfirmation": {
+      "title": "Restore your previous configuration?",
+      "description": "I confirm I want to restore apps & settings from my previous configuration and any app & data created since will be lost.",
+      "confirm": "Restore",
+      "cancel": "Cancel"
+    },
+    "deleteConfirmation": {
+      "title": "Delete your backup?",
+      "description": "I am aware previous configuration and app & data from my last backup, including Security Key credentials, will be lost.",
+      "confirm": "Delete backup",
+      "cancel": "Cancel"
+    },
     "actions": {
       "retry": "Retry",
       "cancel": "Cancel",
@@ -10248,7 +10329,7 @@
             "steps": {
               "step1": "Make sure Ledger Sync is activated on one of your apps.",
               "step2": "Open the Ledger Wallet app you want to sync.",
-              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
               "step4": "Scan QR code."
             }
           }
@@ -10261,7 +10342,7 @@
             "steps": {
               "step1": "Make sure Ledger Sync is activated on one of your apps.",
               "step2": "Open the Ledger Wallet you want to sync with.",
-              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Show QR</0>",
               "step4": "Scan QR code."
             }
           }
@@ -10371,6 +10452,27 @@
         }
       }
     }
+  },
+  "accountDetail": {
+    "assets": {
+      "title": "Assets"
+    },
+    "refreshStatus": {
+      "upToDate": "Account up to date",
+      "syncError": "Account data couldn’t load"
+    },
+    "transactions": {
+      "title": "Transactions"
+    },
+    "editName": {
+      "title": "Change name",
+      "description": "Give this address a name to stay organized (ex. {{ticker}}-Trading, {{ticker}}-DeFi).",
+      "label": "Address name",
+      "submit": "Change name"
+    }
+  },
+  "accountAssetPicker": {
+    "title": "Select an asset"
   },
   "assetDetail": {
     "balanceGraph": {
@@ -11852,7 +11954,7 @@
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
-      "labelTooLong": "This address name is too long.",
+      "tooLongLabel": "This address name is too long.",
       "privacyPolicy": "Learn more about Ledger's Privacy Policy."
     },
     "addAddressReview": {
@@ -11872,7 +11974,6 @@
     "detail": {
       "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
-      "myAddresses": "My addresses",
       "emptyState": {
         "contactTitle": "No saved addresses for {{name}}",
         "meTitle": "Save your own addresses",

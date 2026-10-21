@@ -1,18 +1,15 @@
 {
-  "extends": "../../../../tsconfig.base",
+  "extends": "@support/tsconfig/lib-react",
   "compilerOptions": {
     "composite": true,
-    "declarationMap": true,
-    "jsx": "react",
     "lib": ["es2019", "dom"],
     "types": [],
-    "paths": { "*": ["./*"] },
-    "rootDir": "./src",
-    "outDir": "./lib",
+    "paths": {
+      "*": ["./*"]
+    },
     "preserveSymlinks": true,
     "moduleResolution": "bundler",
     "module": "ESNext"
   },
-  "include": ["src/**/*", "types.d.ts"],
-  "exclude": ["node_modules", "./scripts", "./lib"]
+  "include": ["src/**/*", "types.d.ts"]
 }

@@ -126,7 +126,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
         <Section title="Card Debug">
           <ListItem onPress={() => setScreen("interaction")}>
             <ListItemLeading>
-              <Spot appearance="icon" icon={CreditCard} />
+              <Spot icon={CreditCard} />
               <ListItemContent>
                 <ListItemTitle>Card interaction</ListItemTitle>
               </ListItemContent>
@@ -143,7 +143,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
             }}
           >
             <ListItemLeading>
-              <Spot appearance="icon" icon={CoinsCrypto} />
+              <Spot icon={CoinsCrypto} />
               <ListItemContent>
                 <ListItemTitle>Balance & Wallets</ListItemTitle>
               </ListItemContent>
@@ -155,7 +155,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
 
           <ListItem onPress={() => setScreen("transactions")}>
             <ListItemLeading>
-              <Spot appearance="icon" icon={CreditCard} />
+              <Spot icon={CreditCard} />
               <ListItemContent>
                 <ListItemTitle>Transactions</ListItemTitle>
               </ListItemContent>
@@ -172,7 +172,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
             }}
           >
             <ListItemLeading>
-              <Spot appearance="icon" icon={CheckmarkCircle} />
+              <Spot icon={CheckmarkCircle} />
               <ListItemContent>
                 <ListItemTitle>Card onboarding</ListItemTitle>
               </ListItemContent>
@@ -184,7 +184,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
 
           <ListItem onPress={() => setScreen("mapping")}>
             <ListItemLeading>
-              <Spot appearance="icon" icon={Coins} />
+              <Spot icon={Coins} />
               <ListItemContent>
                 <ListItemTitle>Currency Mapping</ListItemTitle>
               </ListItemContent>
@@ -221,12 +221,6 @@ function PayCard(props: Readonly<PayCardToolProps>) {
             description="params.card_disclaimer"
             checked={flags.cardDisclaimerParam}
             onChange={flags.setCardDisclaimerParam}
-          />
-          <ToggleRow
-            label="Legacy top up"
-            description="params.legacyTopUp"
-            checked={flags.legacyTopUpParam}
-            onChange={flags.setLegacyTopUpParam}
           />
           <ToggleRow
             label="Legacy Card"

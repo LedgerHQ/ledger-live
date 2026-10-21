@@ -35,11 +35,17 @@ Two kinds of preset:
 
 | Package | Applies to |
 | --- | --- |
-| [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
-| [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
-| [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
-| [`lint-rules`](./lint-rules) | monorepo-wide custom ESLint rules |
+| [`fmt`](./fmt) | every package: the repository's only oxfmt config, re-exported by the root `oxfmt.config.mts`. Packages carry none and pass no `-c` |
+| [`jest`](./jest) | jest presets per layer (`devtools`, `features-flow`, `shared`) with their setup files, mocks and fixtures |
+| [`lint`](./lint) | oxlint presets, one per layer that differs, and the monorepo-wide custom rules |
 | [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
+| [`tsconfig`](./tsconfig) | every package: TypeScript presets, one per project archetype |
+
+## Conformance
+
+`pnpm lint:tool-config` checks that each package carries only what its tool cannot inherit from its
+preset, one rule per tool ([the plugin](../tools/nx-plugins/enforce-tool-config/)). Packages not on a
+preset yet are listed in its `exclusions.mjs`.
 
 ## Adding a package
 

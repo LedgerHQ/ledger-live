@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { BigNumber } from "bignumber.js";
+import { track } from "@shared/analytics";
 import { SPONSORED_FAILURE_KIND } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useSponsoredFailureViewModel } from "../useSponsoredFailureViewModel";
 
@@ -35,6 +36,12 @@ jest.mock("../../../../context/SendFlowContext", () => ({
     operation: { onRetry: mockOperationRetry },
     status: { resetStatus: mockResetStatus },
   }),
+}));
+jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send" }),
+}));
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
 }));
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: () => ({
@@ -173,6 +180,7 @@ describe("useSponsoredFailureViewModel", () => {
           'send.newSendFlow.sponsoredFailure.retryLocked {"time":"14:33"}',
         );
         expect(mockRetry).not.toHaveBeenCalled();
+        expect(track).not.toHaveBeenCalled();
 
         act(() => jest.advanceTimersByTime(60_000));
         act(() => result.current.onRetry());
@@ -244,6 +252,7 @@ describe("useSponsoredFailureViewModel", () => {
       "send.newSendFlow.feePayment.insufficientFunds",
     );
     expect(mockRetry).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("clears the failed transfer's status before retrying", () => {
@@ -264,5 +273,23 @@ describe("useSponsoredFailureViewModel", () => {
     act(() => result.current.onCancel());
 
     expect(mockClose).toHaveBeenCalled();
+  });
+
+  it.each([
+    ["retry", "onRetry"],
+    ["cancel", "onCancel"],
+  ] as const)("tracks the %s click with the failure kind", (button, handler) => {
+    mockSponsoredState = failed(SPONSORED_FAILURE_KIND.TRANSFER);
+    const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+    act(() => result.current[handler]());
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button,
+      page: "step sponsored failure",
+      failure_kind: SPONSORED_FAILURE_KIND.TRANSFER,
+      flow_session_id: "session-1",
+      flow: "send",
+    });
   });
 });

@@ -16,7 +16,7 @@ jest.mock("LLM/features/ModularDrawer", () => ({
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
-  useCountervaluesState: () => ({}),
+  useCountervaluesCache: () => ({}),
 }));
 
 jest.mock("@domain/entity-market-countervalues", () => ({
@@ -31,13 +31,15 @@ jest.mock("../usePerpsDepositQuote", () => ({
 
 let capturedCallbacks: PerpsDepositExecutionCallbacks | undefined;
 const mockExecuteDeposit = jest.fn();
+const mockRetry = jest.fn();
+let mockDeviceStep: unknown = { kind: "processing" };
 jest.mock("LLM/features/Perps/hooks/usePerpsDepositExecution", () => ({
   usePerpsDepositExecution: (_params: unknown, callbacks: PerpsDepositExecutionCallbacks) => {
     capturedCallbacks = callbacks;
     return {
-      deviceStep: { kind: "processing" },
+      deviceStep: mockDeviceStep,
       executeDeposit: mockExecuteDeposit,
-      retry: jest.fn(),
+      retry: mockRetry,
     };
   },
 }));
@@ -105,6 +107,7 @@ describe("PerpsDepositSign integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     capturedCallbacks = undefined;
+    mockDeviceStep = { kind: "processing" };
     mockUsePerpsDepositQuote.mockReturnValue({
       quote: { amountTo: new BigNumber(42) },
       isLoading: false,
@@ -165,6 +168,21 @@ describe("PerpsDepositSign integration", () => {
     expect(await screen.findByTestId("perps-deposit-sign-step")).toBeOnTheScreen();
     expect(screen.queryByTestId("select-device")).not.toBeOnTheScreen();
     expect(mockExecuteDeposit).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows the error with a retry when the deposit fails", async () => {
+    const { user } = renderDeposit();
+
+    await user.press(await fillFormAndReview(user));
+    mockDeviceStep = { kind: "error", error: new Error("Device disconnected") };
+    await user.press(await screen.findByTestId("select-device"));
+
+    expect(await screen.findByTestId("perps-deposit-sign-error")).toBeOnTheScreen();
+    expect(screen.queryByTestId("perps-deposit-sign-step")).not.toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("perps-deposit-sign-retry"));
+
+    expect(mockRetry).toHaveBeenCalledTimes(1);
   });
 
   it("drops the device step once the deposit lands", async () => {

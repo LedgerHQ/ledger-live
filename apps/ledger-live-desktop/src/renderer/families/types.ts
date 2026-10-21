@@ -431,6 +431,23 @@ export type LLDCoinFamily<
   SendAmountEffect?: React.ComponentType<{ account: A; transaction: T }>;
 
   /**
+   * Rendered as its own step of the new send flow, right after the user picks a
+   * balance pool and before the recipient step (e.g. Aleo refreshes its private
+   * records when the private balance is picked). The flow moves on only when
+   * `onComplete` is called, so a family with nothing to do for the picked pool
+   * calls it straight away; `onClose` closes the whole flow.
+   */
+  SendBalanceTypeSync?: React.ComponentType<{
+    account: A;
+    transaction: T;
+    onComplete: () => void;
+    onClose: () => void;
+  }>;
+
+  /** Extra row rendered in the Amount step footer, right under the network fees. */
+  SendAmountFooterRow?: React.ComponentType<{ account: A; transaction: T }>;
+
+  /**
    *  One time modal that is trigger only one time on a account that never send
    */
   sendWarning?: {

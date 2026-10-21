@@ -9,7 +9,7 @@ export function MarketNoAssetsEmptyState({ t }: Readonly<{ t: TFunction }>) {
       className="flex flex-1 flex-col items-center justify-center gap-24"
       data-testid="market-no-assets-empty"
     >
-      <Spot appearance="icon" icon={CoinsCrypto} />
+      <Spot icon={CoinsCrypto} />
       <div className="flex flex-col items-center gap-8 text-center">
         <span className="heading-4-semi-bold text-base">{t("market.assets.noAssets.title")}</span>
         <span className="body-2 text-muted">{t("market.assets.noAssets.description")}</span>

@@ -13,7 +13,13 @@ import {
   Text,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Download, Information, LifeRing, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  Download,
+  Information,
+  LifeRing,
+  Trash,
+  InformationFill,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useMyWalletHelpViewModel } from "./useMyWalletHelpViewModel";
@@ -104,7 +110,7 @@ export function MyWalletHelpScreen() {
         <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
           <BottomSheetHeader />
           <Box lx={{ alignItems: "center", gap: "s16", paddingHorizontal: "s16" }}>
-            <Spot appearance="info" size={72} />
+            <Spot appearance="muted" icon={InformationFill} size={72} />
             <Text typography="heading5SemiBold" lx={{ textAlign: "center", color: "base" }}>
               {t("settings.help.clearCache")}
             </Text>

@@ -22,6 +22,7 @@ const PUBLIC_OPTION = {
   formattedBalance: "1 ZEC",
   formattedCounterValue: "$10.00",
   isZero: false,
+  requiresSync: false,
   hasPendingBalance: false,
   icon: "check" as const,
 };
@@ -32,6 +33,7 @@ const PRIVATE_OPTION = {
   formattedBalance: "2 ZEC",
   formattedCounterValue: "$20.00",
   isZero: false,
+  requiresSync: false,
   hasPendingBalance: false,
   icon: "lock" as const,
 };
@@ -112,6 +114,29 @@ describe("BalanceTypeScreenInner", () => {
 
     expect(screen.getByTestId("balance-type-public-zero")).toBeVisible();
     expect(screen.getByText("No available balance")).toBeVisible();
+  });
+
+  it("should ask for a sync when a pool's balance is unknown", () => {
+    render(
+      <BalanceTypeScreenInner
+        viewModel={readyViewModel({
+          options: [
+            PUBLIC_OPTION,
+            {
+              ...PRIVATE_OPTION,
+              formattedBalance: "-",
+              formattedCounterValue: "",
+              requiresSync: true,
+            },
+          ],
+        })}
+      />,
+    );
+
+    expect(screen.getByTestId("balance-type-private-requires-sync")).toBeVisible();
+    expect(screen.getByText("Sync required")).toBeVisible();
+    expect(screen.getByText("-")).toBeVisible();
+    expect(screen.queryByTestId("balance-type-public-requires-sync")).not.toBeInTheDocument();
   });
 
   it("should show a pending notice when a pool has maturing funds", () => {

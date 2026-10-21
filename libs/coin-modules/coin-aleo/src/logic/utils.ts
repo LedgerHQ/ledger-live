@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
-import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type {
   Account,
   AccountLike,
@@ -378,9 +377,12 @@ export function parseTransactionFields(rawTx: AleoPublicTransaction, address: st
   const blockHash = rawTx.block_hash;
 
   if (rawTx.program_id === PROGRAM_ID.CREDITS) {
+    // A rejected transaction only moves its fee, so the account's own rejected send is OUT, even to itself.
+    const isRejectedSend = hasFailed && rawTx.sender_address === address;
     // The indexer blanks both sides of a staking call, so no address comparison can type it.
     type =
-      resolveStakingOperationType(rawTx) ?? (address === rawTx.recipient_address ? "IN" : "OUT");
+      resolveStakingOperationType(rawTx) ??
+      (address === rawTx.recipient_address && !isRejectedSend ? "IN" : "OUT");
   }
 
   const transactionType = determineTransactionType(rawTx.function_id, type);
@@ -492,8 +494,14 @@ export const toPublicOperation = ({
       ? address
       : rawTx.recipient_address || (resolvedRecipient ?? "");
   const stakingType = resolveStakingOperationType(rawTx);
-  const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
   const fee = getFees({ details, address, hasOwnedFeeRecord });
+  const failed = rawTx.transaction_status !== "Accepted";
+  // Typed IN, the framework would drop a rejected transaction with the fee the account paid.
+  const type =
+    stakingType ??
+    (failed && fee.feesPayer === address
+      ? "OUT"
+      : resolveOperationType(rawTx, address, sender, recipient));
   const stakingValue = fee.feesPayer === address ? fee.fees : 0n;
   const value = stakingType ? stakingValue : BigInt(resolveTransactionAmount(rawTx).toFixed(0));
   const stake = stakingType ? getStakeDetails(rawTx, details, stakingType) : undefined;
@@ -520,7 +528,7 @@ export const toPublicOperation = ({
         height: rawTx.block_number,
         time: date,
       },
-      failed: rawTx.transaction_status !== "Accepted",
+      failed,
     },
   };
 };
@@ -1513,11 +1521,13 @@ export function getStrategyConfig(
   };
 }
 
+const ALEO_CURRENCY_IDS: ReadonlySet<string> = new Set(["aleo", "aleo_testnet"]);
+
 export function isAleoAccount(acc: AccountLike): acc is AleoAccount | AleoTokenAccount {
   if (acc.type === "Account") {
     return acc.currency.family === "aleo";
   }
-  return findCryptoCurrencyById(acc.token.parentCurrencyId)?.family === "aleo";
+  return ALEO_CURRENCY_IDS.has(acc.token.parentCurrencyId);
 }
 
 export const getNextSequenceNumber = (account: AleoAccount): BigNumber => {
@@ -1646,6 +1656,13 @@ export const getEstimatedSigningTime = (
   const minutes = flooredSeconds / 60;
   return `~${minutes} ${minuteShort}`;
 };
+
+export function getSigningRecordCount(transaction: Transaction): number {
+  if (!isPrivateTransaction(transaction)) return 0;
+
+  const { amountRecordCommitments, feeRecordCommitment } = transaction.properties;
+  return amountRecordCommitments.length + (feeRecordCommitment ? 1 : 0);
+}
 
 /** Narrows any cross-family transaction shape down to Aleo's own `Transaction` type. */
 export function isAleoTransaction(tx: { family: string }): tx is Transaction {

@@ -488,7 +488,7 @@ export async function performTransparentSync(
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
   const blockHeight = currentBlock?.height || 0;
-  await wallet.syncAccount(walletAccount, blockHeight);
+  await wallet.syncAccount(context.logger, walletAccount, blockHeight);
 
   const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
@@ -512,7 +512,7 @@ export async function performTransparentSync(
   if (isShieldedEnabled()) {
     try {
       resolved = await recoverTransactionDetails(
-        zainoEndpoint(config.zaino.url),
+        zainoEndpoint(config.zaino.url, currency.id),
         transactions,
         initialAccount,
       );
@@ -1073,7 +1073,7 @@ export function buildExtraSyncObservable(
         zcashSyncShielded(
           info,
           syncConfig,
-          zainoEndpoint(config.zaino.url),
+          zainoEndpoint(config.zaino.url, info.currency.id),
           config.zaino.batchSize ?? ZCASH_SHIELDED_BATCH_SIZE,
         ),
       ).pipe(timeout(config.zaino.timeoutMs ?? ZCASH_SHIELDED_CHUNK_TIMEOUT_MS)),

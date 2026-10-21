@@ -1,5 +1,33 @@
 # @ledgerhq/coin-tron
 
+## 10.1.0
+
+### Minor Changes
+
+- [#22760](https://github.com/LedgerHQ/ledger-live/pull/22760) [`abf8d33`](https://github.com/LedgerHQ/ledger-live/commit/abf8d33f65a4177d2ab8c727c2b53c2b4439c676) Thanks [@ishaba](https://github.com/ishaba)! - Pay the Tronify energy rent in USDT instead of TRX: coin-tron offers it on USDT transfers only and rejects a rent payment that stays valid past the delivery window, and the default Tron config points at the Ledger Tronify proxy.
+
+- [#21731](https://github.com/LedgerHQ/ledger-live/pull/21731) [`99f7c87`](https://github.com/LedgerHQ/ledger-live/commit/99f7c87afc8029eca9bf574df03123bf07ca7810) Thanks [@ishaba](https://github.com/ishaba)! - feat(tron): sponsored-send energy-rent logic and the SponsoredCoinApi seam
+
+- [#23026](https://github.com/LedgerHQ/ledger-live/pull/23026) [`ef32df5`](https://github.com/LedgerHQ/ledger-live/commit/ef32df54a788270d9d01e84f05868902e82ef3c0) Thanks [@amaslakov](https://github.com/amaslakov)! - Check the Tronify rent payment before signing: it must pay an address from the remote `paymentAddresses` list (the option stays hidden without one) and cost at most the fee approved on Review plus `rentPriceMargin` (5%), capped at `maxRentAmount` (10 USDT); `buildEnergyRentRequest` now takes that approved fee.
+
+- [#23112](https://github.com/LedgerHQ/ledger-live/pull/23112) [`7f0d867`](https://github.com/LedgerHQ/ledger-live/commit/7f0d867cc9f8715b9244979e42a035babe43d2ab) Thanks [@amaslakov](https://github.com/amaslakov)! - Harden the Tronify rent payment: Retry stays locked until a payment that may still land has expired, a rent price rise is shown and must be accepted before ordering again, a signed payment about to expire is refused before broadcast, and the unreachable contract-data failure is removed.
+
+- [#23110](https://github.com/LedgerHQ/ledger-live/pull/23110) [`3ac5d88`](https://github.com/LedgerHQ/ledger-live/commit/3ac5d880557971ef69834eeccbdef83d381cd801) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(coin-tron): surface TronGrid error messages instead of empty or querystring-encoded ones
+
+## 10.1.0-next.0
+
+### Minor Changes
+
+- [#22760](https://github.com/LedgerHQ/ledger-live/pull/22760) [`abf8d33`](https://github.com/LedgerHQ/ledger-live/commit/abf8d33f65a4177d2ab8c727c2b53c2b4439c676) Thanks [@ishaba](https://github.com/ishaba)! - Pay the Tronify energy rent in USDT instead of TRX: coin-tron offers it on USDT transfers only and rejects a rent payment that stays valid past the delivery window, and the default Tron config points at the Ledger Tronify proxy.
+
+- [#21731](https://github.com/LedgerHQ/ledger-live/pull/21731) [`99f7c87`](https://github.com/LedgerHQ/ledger-live/commit/99f7c87afc8029eca9bf574df03123bf07ca7810) Thanks [@ishaba](https://github.com/ishaba)! - feat(tron): sponsored-send energy-rent logic and the SponsoredCoinApi seam
+
+- [#23026](https://github.com/LedgerHQ/ledger-live/pull/23026) [`ef32df5`](https://github.com/LedgerHQ/ledger-live/commit/ef32df54a788270d9d01e84f05868902e82ef3c0) Thanks [@amaslakov](https://github.com/amaslakov)! - Check the Tronify rent payment before signing: it must pay an address from the remote `paymentAddresses` list (the option stays hidden without one) and cost at most the fee approved on Review plus `rentPriceMargin` (5%), capped at `maxRentAmount` (10 USDT); `buildEnergyRentRequest` now takes that approved fee.
+
+- [#23112](https://github.com/LedgerHQ/ledger-live/pull/23112) [`7f0d867`](https://github.com/LedgerHQ/ledger-live/commit/7f0d867cc9f8715b9244979e42a035babe43d2ab) Thanks [@amaslakov](https://github.com/amaslakov)! - Harden the Tronify rent payment: Retry stays locked until a payment that may still land has expired, a rent price rise is shown and must be accepted before ordering again, a signed payment about to expire is refused before broadcast, and the unreachable contract-data failure is removed.
+
+- [#23110](https://github.com/LedgerHQ/ledger-live/pull/23110) [`3ac5d88`](https://github.com/LedgerHQ/ledger-live/commit/3ac5d880557971ef69834eeccbdef83d381cd801) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(coin-tron): surface TronGrid error messages instead of empty or querystring-encoded ones
+
 ## 10.0.0
 
 ### Major Changes
@@ -385,33 +413,5 @@
 - Updated dependencies [[`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
   - @ledgerhq/types-live@6.118.0-next.0
   - @ledgerhq/ledger-wallet-framework@2.7.0-next.0
-
-## 6.8.0
-
-### Minor Changes
-
-- [#19979](https://github.com/LedgerHQ/ledger-live/pull/19979) [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
-  - @ledgerhq/errors@7.0.0
-  - @ledgerhq/ledger-wallet-framework@2.6.0
-  - @ledgerhq/live-network@3.0.0
-  - @ledgerhq/types-live@6.117.0
-
-## 6.8.0-next.0
-
-### Minor Changes
-
-- [#19979](https://github.com/LedgerHQ/ledger-live/pull/19979) [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
-  - @ledgerhq/errors@7.0.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
-  - @ledgerhq/live-network@3.0.0-next.0
-  - @ledgerhq/types-live@6.117.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

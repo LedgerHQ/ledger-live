@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
-import { View, Pressable } from "react-native";
+import { Text as RNText, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Text,
@@ -8,6 +8,12 @@ import {
   BottomSheetView,
   BottomSheetHeader,
   Divider,
+  DescriptionItem,
+  DescriptionItemLabel,
+  DescriptionItemLeading,
+  DescriptionItemTrailing,
+  DescriptionItemValue,
+  Tag,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Information, ChevronDown, Check } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -15,41 +21,132 @@ import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
 import { InfoState } from "@shared/ui-info-state";
-import type { FeeSelectorOptionKind, NetworkFeesViewModel } from "../types";
+import type {
+  FeeSelectorOptionKind,
+  NetworkFeesViewModel,
+  SponsoredFeeEntryViewModel,
+} from "../types";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
+import { FeePaymentSheet } from "./FeePaymentSheet";
 
 type NetworkFeesRowProps = Readonly<{
   viewModel: NetworkFeesViewModel;
+  /** While set, the fee value opens the fee payment sheet instead of the strategy selector. */
+  sponsored?: SponsoredFeeEntryViewModel | null;
 }>;
+
+const STRUCK_THROUGH = { textDecorationLine: "line-through" } as const;
 
 const isStrategyKind = (kind: FeeSelectorOptionKind) => kind === "preset" || kind === "default";
 
-export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
+type FeeValueProps = Readonly<{
+  value: string;
+  secondaryValue: string | null;
+  /** The standard fee, struck through next to a cheaper sponsored one. */
+  originalValue?: string | null;
+  testID?: string;
+}>;
+
+function FeeValue({ value, secondaryValue, originalValue, testID }: FeeValueProps) {
+  return (
+    <>
+      {originalValue ? (
+        <Text
+          typography="body3"
+          lx={{ color: "muted" }}
+          style={STRUCK_THROUGH}
+          testID="send-sponsored-fee-original-value"
+        >
+          {originalValue}
+        </Text>
+      ) : null}
+      <DescriptionItemValue testID={testID}>{value}</DescriptionItemValue>
+      {secondaryValue ? (
+        <Text typography="body3" lx={{ color: "muted" }}>
+          {secondaryValue}
+        </Text>
+      ) : null}
+    </>
+  );
+}
+
+type SponsoredFeeEntryProps = Readonly<{
+  entry: SponsoredFeeEntryViewModel;
+  /** Shown while the standard fee is picked. */
+  standardFee: NetworkFeesViewModel;
+  onPress: () => void;
+}>;
+
+function SponsoredFeeEntry({ entry, standardFee, onPress }: SponsoredFeeEntryProps) {
+  const styles = useStyleSheet(
+    theme => ({
+      entry: {
+        alignItems: "flex-end",
+        gap: theme.spacings.s4,
+      },
+      value: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: theme.spacings.s4,
+      },
+    }),
+    [],
+  );
+
+  return (
+    <Pressable
+      style={styles.entry}
+      onPress={onPress}
+      disabled={entry.locked}
+      accessibilityRole="button"
+      testID="send-fee-payment-entry"
+    >
+      {entry.label ? (
+        <Tag
+          appearance={entry.selected ? "success" : "gray"}
+          size="sm"
+          label={entry.label}
+          testID={entry.selected ? "send-sponsored-fee-saved-badge" : "send-sponsored-fee-nudge"}
+        />
+      ) : null}
+      <View style={styles.value}>
+        {entry.fee ? (
+          <FeeValue
+            value={entry.fee.value}
+            secondaryValue={entry.fee.secondaryValue}
+            originalValue={entry.fee.originalValue}
+            testID="send-sponsored-fee-value"
+          />
+        ) : (
+          <FeeValue value={standardFee.value} secondaryValue={standardFee.secondaryValue} />
+        )}
+        {entry.locked ? null : <ChevronDown size={16} lx={{ color: "muted" }} />}
+      </View>
+    </Pressable>
+  );
+}
+
+export function NetworkFeesRow({ viewModel, sponsored }: NetworkFeesRowProps) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const infoBottomSheetRef = useBottomSheetRef();
   const selectorBottomSheetRef = useBottomSheetRef();
+  const feePaymentBottomSheetRef = useBottomSheetRef();
 
   const styles = useStyleSheet(
     theme => ({
-      row: {
-        flexDirection: "row",
+      feesItem: {
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: theme.spacings.s12,
-        marginBottom: theme.spacings.s8,
+        paddingVertical: theme.spacings.s16,
       },
-      leftSection: {
+      infoTrigger: {
         flexDirection: "row",
         alignItems: "center",
+        flexShrink: 1,
         gap: theme.spacings.s4,
+        minWidth: 0,
       },
-      rightSection: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: theme.spacings.s4,
-      },
-      feeValue: {
+      valueTrigger: {
         flexDirection: "row",
         alignItems: "center",
         gap: theme.spacings.s4,
@@ -117,55 +214,67 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     infoBottomSheetRef.current?.dismiss();
   }, [infoBottomSheetRef]);
 
+  const handleOpenFeePayment = useCallback(() => {
+    feePaymentBottomSheetRef.current?.present();
+  }, [feePaymentBottomSheetRef]);
+
   const infoTitle = viewModel.networkFeesInfo
     ? t(`send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.title`)
     : viewModel.label;
 
-  const infoDescription = viewModel.networkFeesInfo
+  const networkFeesDescription = viewModel.networkFeesInfo
     ? t(
         `send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.description`,
         viewModel.networkFeesInfo.values,
       )
     : t("send.newSendFlow.feesPaid");
+  const infoDescription = sponsored?.infoDescription ?? networkFeesDescription;
+
+  const standardFeeValue = canOpenFeeSelector ? (
+    <Pressable accessibilityRole="button" onPress={handleOpenSelector} style={styles.valueTrigger}>
+      <DescriptionItemValue>
+        {viewModel.value} • <RNText>{viewModel.strategyLabel}</RNText>
+      </DescriptionItemValue>
+      <ChevronDown size={16} lx={{ color: "muted" }} />
+    </Pressable>
+  ) : (
+    <>
+      <DescriptionItemValue>{viewModel.value}</DescriptionItemValue>
+      {viewModel.secondaryValue ? (
+        <Text typography="body3" lx={{ color: "muted" }}>
+          {viewModel.secondaryValue}
+        </Text>
+      ) : null}
+    </>
+  );
 
   return (
     <>
-      <View style={styles.row}>
-        <Pressable onPress={handleOpenInfo} style={styles.leftSection}>
-          <Text typography="body3" lx={{ color: "base" }}>
-            {viewModel.label}
-          </Text>
-          <Information size={16} lx={{ color: "muted" }} />
-        </Pressable>
-        <Pressable
-          style={styles.rightSection}
-          onPress={handleOpenSelector}
-          disabled={!canOpenFeeSelector}
-        >
-          <View style={styles.feeValue}>
-            <Text typography="body3" lx={{ color: "base" }}>
-              {viewModel.value}
-            </Text>
-            {viewModel.secondaryValue ? (
-              <Text typography="body3" lx={{ color: "muted" }}>
-                {viewModel.secondaryValue}
-              </Text>
-            ) : null}
-            {/* A read-only fee has no strategy to name. */}
-            {canOpenFeeSelector ? (
-              <>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  •
-                </Text>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {viewModel.strategyLabel}
-                </Text>
-              </>
-            ) : null}
-          </View>
-          {canOpenFeeSelector ? <ChevronDown size={16} /> : null}
-        </Pressable>
-      </View>
+      <DescriptionItem size="sm" style={styles.feesItem}>
+        <DescriptionItemLeading>
+          <Pressable accessibilityRole="button" onPress={handleOpenInfo} style={styles.infoTrigger}>
+            <DescriptionItemLabel>{viewModel.label}</DescriptionItemLabel>
+            <Information size={16} lx={{ color: "muted" }} />
+          </Pressable>
+        </DescriptionItemLeading>
+        <DescriptionItemTrailing>
+          {sponsored ? (
+            // A sponsored fee is priced by its provider, so the strategy presets don't apply to it.
+            <SponsoredFeeEntry
+              entry={sponsored}
+              standardFee={viewModel}
+              onPress={handleOpenFeePayment}
+            />
+          ) : (
+            standardFeeValue
+          )}
+        </DescriptionItemTrailing>
+      </DescriptionItem>
+      {sponsored?.error ? (
+        <Text typography="body3" lx={{ color: "error" }} testID="send-sponsored-fee-error">
+          {sponsored.error}
+        </Text>
+      ) : null}
 
       <BottomSheet
         ref={infoBottomSheetRef}
@@ -187,6 +296,8 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
           />
         </BottomSheetView>
       </BottomSheet>
+
+      {sponsored ? <FeePaymentSheet sheetRef={feePaymentBottomSheetRef} /> : null}
 
       <BottomSheet ref={selectorBottomSheetRef} enableDynamicSizing snapPoints={null}>
         <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>

@@ -12,11 +12,12 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
+    "sequence": 29,
     "spendableBalance": "124351",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
-    "xpub": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
+    "xpub": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
   },
   {
     "balance": "0",
@@ -28,11 +29,12 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
     "index": 1,
     "pendingOperations": [],
     "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
+    "sequence": 0,
     "spendableBalance": "0",
     "swapHistory": [],
     "syncHash": undefined,
     "used": false,
-    "xpub": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
+    "xpub": "0246b68a4f546af213bca96b0a0d0319b1ffa3c194cd89b16e48c349492e3b36e6",
   },
 ]
 `;

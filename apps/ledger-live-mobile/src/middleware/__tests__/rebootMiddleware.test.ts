@@ -1,7 +1,7 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
 import { rebootMiddleware } from "../rebootMiddleware";
 import { reboot } from "~/actions/appstate";
-import { setCountervaluesState, wipeCountervalues } from "@features/platform-market-countervalues";
+import { setCountervaluesState, wipeCountervalues } from "@domain/entity-market-countervalues";
 import { AppStateActionTypes } from "~/actions/types";
 
 function buildStore() {

@@ -55,7 +55,7 @@ export function resetRegisteredAddresses(): void {
 async function yaciGet<T>(path: string): Promise<T | null> {
   // AbortSignal bounds every devnet read so a hung socket can't stall the run. A transient read failure
   // (timeout / network) is "not ready yet" → null, so callers' `?? fallback` + the sync retry keep
-  // polling instead of hard-failing (matches isStoreUp/pollUtxos). A response that arrives is parsed
+  // polling instead of hard-failing (matches pollUtxos). A response that arrives is parsed
   // as-is — a bad shape still surfaces.
   let res: Response;
   try {

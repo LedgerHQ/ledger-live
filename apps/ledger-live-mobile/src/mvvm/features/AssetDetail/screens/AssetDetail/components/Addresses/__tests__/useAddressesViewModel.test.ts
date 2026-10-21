@@ -10,6 +10,9 @@ import {
   mockEthCryptoCurrency,
   usdcToken,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { buildCV } from "@domain/entity-market-countervalues/mock";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { countervaluesInitialState } from "@features/platform-market-countervalues";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import { useAddressesViewModel } from "../useAddressesViewModel";
@@ -74,6 +77,48 @@ const usdtAlgoToken: TokenCurrency = {
 describe("useAddressesViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("ordering", () => {
+    it("shows the 5 highest-balance accounts first, even when the setting orders by name", () => {
+      const usd = getFiatCurrencyByTicker("USD");
+      const oneBtc = new BigNumber(10).pow(getCryptoCurrencyById("bitcoin").units[0].magnitude);
+      const accounts = [2, 6, 1, 5, 3, 4].map(amount => ({
+        ...genAccount(`account-holding-${amount}-btc`, {
+          currency: mockBtcCryptoCurrency,
+          operationsSize: 0,
+        }),
+        balance: oneBtc.times(amount),
+      }));
+
+      const { result } = renderHook(
+        () =>
+          useAddressesViewModel(
+            mockBtcCryptoCurrency,
+            buildDistributionItem(mockBtcCryptoCurrency, accounts),
+          ),
+        {
+          overrideInitialState: (state: State): State => ({
+            ...state,
+            accounts: { ...state.accounts, active: accounts },
+            settings: { ...state.settings, orderAccounts: "name|asc", counterValue: usd.ticker },
+            countervalues: {
+              ...countervaluesInitialState,
+              rates: buildCV({
+                pair: { from: getCryptoCurrencyById("bitcoin"), to: usd },
+                latest: 30_000,
+              }),
+            },
+          }),
+        },
+      );
+
+      const displayedBtc = result.current.displayedAccounts.map(a =>
+        a.balanceAccount.balance.div(oneBtc).toNumber(),
+      );
+      // Preview: 6, 5, 4, 3, 2 BTC. The 1 BTC account is the only one left out.
+      expect(displayedBtc).toEqual([6, 5, 4, 3, 2]);
+    });
   });
 
   describe("displayedAccounts", () => {

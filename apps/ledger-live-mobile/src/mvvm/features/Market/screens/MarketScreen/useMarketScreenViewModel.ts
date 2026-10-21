@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
@@ -53,14 +53,27 @@ export function useMarketScreenViewModel(): MarketScreenViewModel {
   const categories = useMarketCategories({ routeCategory });
   const filters = useMarketFilters();
   const starredMarketCoins = useSelector(starredMarketCoinsSelector);
-  const { assets, loading, isFetchingNextPage, isError, emptyState, onEndReached } =
-    useMarketAssets({
-      search: search.query,
-      category: categories.selectedCategory,
-      sorting: filters.sorting,
-      timeframe: filters.timeframe,
-      starredMarketCoins,
-    });
+  const {
+    assets,
+    loading,
+    isFetchingNextPage,
+    isError,
+    emptyState,
+    onEndReached,
+    resetToFirstPage,
+  } = useMarketAssets({
+    search: search.query,
+    category: categories.selectedCategory,
+    sorting: filters.sorting,
+    timeframe: filters.timeframe,
+    starredMarketCoins,
+  });
+
+  useEffect(() => {
+    resetToFirstPage();
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- same as the legacy list: only when the screen mounts
+  }, []);
+
   const onAssetPress = useMarketAssetPress(categories.selectedCategory);
 
   const pageTracking = useMemo(

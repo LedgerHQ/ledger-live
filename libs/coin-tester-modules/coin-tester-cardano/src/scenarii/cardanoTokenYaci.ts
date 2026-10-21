@@ -71,7 +71,8 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
     const token: TokenCurrency = {
       type: "TokenCurrency",
       id: TokenCurrencyIdSchema.parse(`cardano_testnet/native/${assetReference}`),
-      contractAddress: assetReference,
+      contractAddress: policyId,
+      tokenIdentifier: ASSET_NAME_HEX,
       parentCurrencyId: CARDANO_TESTNET.id,
       tokenType: "native",
       name: "Coin Tester Token",
@@ -79,9 +80,10 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       units: [{ name: "Coin Tester Token", code: "CTT", magnitude: 0 }],
     };
     setCryptoAssetsStore({
-      // Match by asset reference only — buildSubAccounts queries with the bridge's currency.id, which
-      // can be the parent "cardano" rather than "cardano_testnet"; the single test token is unambiguous.
-      findTokenByAddressInCurrency: async addr => (addr === assetReference ? token : undefined),
+      // Ignore the currency id — buildSubAccounts queries with the bridge's currency.id, which can be
+      // the parent "cardano" rather than "cardano_testnet"; the single test token is unambiguous.
+      findTokenByAddressInCurrency: async (addr, _currencyId, tokenIdentifier) =>
+        addr === policyId && tokenIdentifier === ASSET_NAME_HEX ? token : undefined,
       findTokenById: async id => (id === token.id ? token : undefined),
       getTokensSyncHash: async () => "",
     });

@@ -12,6 +12,7 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
       name: "XRP",
       unit: { name: "XRP", code: "XRP", magnitude: 6 },
       node: "https://xrp.coin.ledger.com",
+      enabledTokenStandards: [],
     } satisfies XrpCoinConfig,
   },
   config_currency_ripple_testnet: {
@@ -24,6 +25,20 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
       name: "XRP (Testnet)",
       unit: { name: "XRP", code: "XRP", magnitude: 6 },
       node: "https://s.altnet.rippletest.net:51234",
+      enabledTokenStandards: [],
+    } satisfies XrpCoinConfig,
+  },
+  config_currency_ripple_devnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      name: "XRP (Devnet)",
+      unit: { name: "XRP", code: "XRP", magnitude: 6 },
+      node: "https://s.devnet.rippletest.net:51234",
+      enabledTokenStandards: [],
     } satisfies XrpCoinConfig,
   },
 };

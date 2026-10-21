@@ -6,14 +6,10 @@ import { payRequestVerifyHintInitialState } from "@features/flow-pay-request/sta
 import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
-import {
-  CountervaluesBridge,
-  CountervaluesProvider,
-  countervaluesInitialState as COUNTERVALUES_INITIAL_STATE,
-} from "@features/platform-market-countervalues";
-import { createMockRateSource } from "@domain/api-market-countervalues/mock";
+import { countervaluesInitialState as COUNTERVALUES_INITIAL_STATE } from "@features/platform-market-countervalues";
 import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
+import { createMobileCountervaluesMiddleware } from "~/state-manager/middleware/countervalues";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -24,7 +20,7 @@ import {
   userEvent,
 } from "@testing-library/react-native";
 import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
-import React, { useMemo } from "react";
+import React from "react";
 import { I18nextProvider } from "react-i18next";
 import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
@@ -49,6 +45,7 @@ import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
 import { INITIAL_STATE as RECEIVE_OPTIONS_DRAWER_INITIAL_STATE } from "~/reducers/receiveOptionsDrawer";
 import { INITIAL_STATE as REBORN_BUY_DEVICE_DRAWER_INITIAL_STATE } from "~/reducers/rebornBuyDeviceDrawer";
 import { INITIAL_STATE as TRANSFER_DRAWER_INITIAL_STATE } from "~/reducers/transferDrawer";
+import { INITIAL_STATE as OS_UPDATE_INITIAL_STATE } from "LLM/features/OsUpdate/state/osUpdateSlice";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
 import { State } from "~/reducers/types";
@@ -75,6 +72,7 @@ const INITIAL_STATE: State = {
   ble: BLE_INITIAL_STATE,
   borrow: BORROW_INITIAL_STATE,
   countervalues: COUNTERVALUES_INITIAL_STATE,
+  countervaluesExtraSessionTracking: [],
   contacts: contactsInitialState,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
@@ -94,6 +92,7 @@ const INITIAL_STATE: State = {
   rebornBuyDeviceDrawer: REBORN_BUY_DEVICE_DRAWER_INITIAL_STATE,
   currencyRegionRestrictedDrawer: CURRENCY_REGION_RESTRICTED_DRAWER_INITIAL_STATE,
   transferDrawer: TRANSFER_DRAWER_INITIAL_STATE,
+  osUpdate: OS_UPDATE_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
   postOnboardingHubDrawer: POST_ONBOARDING_HUB_DRAWER_INITIAL_STATE,
@@ -128,7 +127,6 @@ enum RenderType {
 }
 
 type NavigationChildren = React.ComponentProps<typeof NavigationContainer>["children"];
-type CountervaluesChildren = React.ComponentProps<typeof CountervaluesProvider>["children"];
 type WrapperProps = { children?: NavigationChildren };
 
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
@@ -171,7 +169,8 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
             },
           },
         }),
-      ),
+        // Installed as in the app, and inert: no test starts it unless it dispatches the start.
+      ).concat(createMobileCountervaluesMiddleware()),
     preloadedState: state,
     devTools: false,
   });
@@ -250,39 +249,6 @@ export const countervaluesTestUserSettings: CountervaluesSettings = {
   marketCapBatchingAfterRank: 0,
 };
 
-function CountervaluesProviders({
-  children,
-  store,
-}: {
-  children: CountervaluesChildren;
-  store: ReduxStore;
-}): React.JSX.Element {
-  // TODO This interim bridge is only a stop-gap. We’ll remove it once we either:
-  // (a) separate counter-values user settings from the Firebase feature flag, or
-  // (b) introduce a proper feature-flag provider that doesn’t break our tests.
-  const bridge = useMemo((): CountervaluesBridge => {
-    const state = store.getState();
-    return {
-      rates: createMockRateSource(),
-      setPollingIsPolling: () => {},
-      setPollingTriggerLoad: () => {},
-      setState: () => {},
-      setStateError: () => {},
-      setStatePending: () => {},
-      useSupportedCryptoIds: () => [],
-      usePollingIsPolling: () => false,
-      usePollingTriggerLoad: () => false,
-      useState: () => state.countervalues.countervalues.state,
-      useStateError: () => null,
-      useStatePending: () => false,
-      useUserSettings: () => countervaluesTestUserSettings,
-      wipe: () => {},
-    };
-  }, [store]);
-
-  return <CountervaluesProvider bridge={bridge}>{children}</CountervaluesProvider>;
-}
-
 /**
  * Provides context providers for the application, conditionally including certain providers
  * based on the render type and feature flags.
@@ -341,9 +307,7 @@ function Providers({
       <I18nProvider i18n={i18n}>
         <LinkingProvider config={{ openExternal: () => {} }}>
           <Provider store={store}>
-            <CountervaluesProviders store={store}>
-              <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
-            </CountervaluesProviders>
+            <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
           </Provider>
         </LinkingProvider>
       </I18nProvider>

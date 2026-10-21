@@ -1,5 +1,53 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.42.0
+
+### Minor Changes
+
+- [#21734](https://github.com/LedgerHQ/ledger-live/pull/21734) [`6b4ea77`](https://github.com/LedgerHQ/ledger-live/commit/6b4ea7724fc9c4e00cff1ecbab548e7d95c96687) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile Borrow E2E coverage for full repay (B2CQA-6073) and withdraw collateral (B2CQA-6080), closing the LLD/LLM parity gap on those keys (QAA-1477). Open loan, repay and withdraw now share one spec, and each resets the ERC-20 allowance its approval step needs, with the spender resolved from the partner's own action.
+
+  The borrow driver now enables blind signing on touch devices, and a partner 5xx is retried only on read endpoints, so a lost response can no longer leave a second action behind. It pads gas limits so a call no longer runs out of gas when state moves before inclusion. Mobile and desktop now wait for each on-chain step to land before starting the next, so the app never reuses a nonce still in flight, and each test waits for the partner to index its outcome before cleanup touches the account. A detox retry also skips the describe blocks it has nothing to rerun instead of repeating their on-chain setup. On desktop, waiting for the device validation screen now gets the same budget as the sign modal, since the partner prepares each transaction server-side.
+
+- [#23083](https://github.com/LedgerHQ/ledger-live/pull/23083) [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/ledger-key-ring-protocol`, `@ledgerhq/hw-ledger-key-ring-protocol` to 1.0.0 and `@ledgerhq/evm-tools` to 2.0.0 (ts-libs). No API change.
+
+- [#22751](https://github.com/LedgerHQ/ledger-live/pull/22751) [`863c7e4`](https://github.com/LedgerHQ/ledger-live/commit/863c7e43b5e615ab117f35bd5499fb00b59d6c18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover the mobile Pay tab stablecoin balance, filter, and deposit options
+
+- [#22811](https://github.com/LedgerHQ/ledger-live/pull/22811) [`3132a4a`](https://github.com/LedgerHQ/ledger-live/commit/3132a4aba419be9a91320295d8c0260f3509f9bd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/ledger-key-ring-protocol` and `@ledgerhq/hw-ledger-key-ring-protocol` from npm (they now live in `ts-libs`), and bump `axios` to 1.20.0. No API change.
+
+- [#22754](https://github.com/LedgerHQ/ledger-live/pull/22754) [`4aa7793`](https://github.com/LedgerHQ/ledger-live/commit/4aa77939cec43fd1aac459689c372868dece3496) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover paying a contact from the mobile Pay tab, selecting the native tile by contact id
+
+- [#22755](https://github.com/LedgerHQ/ledger-live/pull/22755) [`5f7cc73`](https://github.com/LedgerHQ/ledger-live/commit/5f7cc73ec88df6e84e970818668adca6cf7e5fe2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover freezing and unfreezing the card from the mobile Pay tab
+
+- [#22753](https://github.com/LedgerHQ/ledger-live/pull/22753) [`eab040b`](https://github.com/LedgerHQ/ledger-live/commit/eab040b4649df55af728a5b8266e74bc31aa2b6b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover a new payment started from the mobile Pay tab
+
+- [#22752](https://github.com/LedgerHQ/ledger-live/pull/22752) [`d31fbca`](https://github.com/LedgerHQ/ledger-live/commit/d31fbca35991fc58c8e61156761c5004393fe1cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover requesting a payment from the mobile Pay tab
+
+- [#22691](https://github.com/LedgerHQ/ledger-live/pull/22691) [`4efc0c3`](https://github.com/LedgerHQ/ledger-live/commit/4efc0c3b807c02b61b03431521a7826236e67a9c) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Add `$KnownFailure` to flag mobile E2E tests failing on a tracked bug: they still run once and report failed, but Detox no longer retries them.
+
+## 0.42.0-next.0
+
+### Minor Changes
+
+- [#21734](https://github.com/LedgerHQ/ledger-live/pull/21734) [`6b4ea77`](https://github.com/LedgerHQ/ledger-live/commit/6b4ea7724fc9c4e00cff1ecbab548e7d95c96687) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile Borrow E2E coverage for full repay (B2CQA-6073) and withdraw collateral (B2CQA-6080), closing the LLD/LLM parity gap on those keys (QAA-1477). Open loan, repay and withdraw now share one spec, and each resets the ERC-20 allowance its approval step needs, with the spender resolved from the partner's own action.
+
+  The borrow driver now enables blind signing on touch devices, and a partner 5xx is retried only on read endpoints, so a lost response can no longer leave a second action behind. It pads gas limits so a call no longer runs out of gas when state moves before inclusion. Mobile and desktop now wait for each on-chain step to land before starting the next, so the app never reuses a nonce still in flight, and each test waits for the partner to index its outcome before cleanup touches the account. A detox retry also skips the describe blocks it has nothing to rerun instead of repeating their on-chain setup. On desktop, waiting for the device validation screen now gets the same budget as the sign modal, since the partner prepares each transaction server-side.
+
+- [#23083](https://github.com/LedgerHQ/ledger-live/pull/23083) [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/ledger-key-ring-protocol`, `@ledgerhq/hw-ledger-key-ring-protocol` to 1.0.0 and `@ledgerhq/evm-tools` to 2.0.0 (ts-libs). No API change.
+
+- [#22751](https://github.com/LedgerHQ/ledger-live/pull/22751) [`863c7e4`](https://github.com/LedgerHQ/ledger-live/commit/863c7e43b5e615ab117f35bd5499fb00b59d6c18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover the mobile Pay tab stablecoin balance, filter, and deposit options
+
+- [#22811](https://github.com/LedgerHQ/ledger-live/pull/22811) [`3132a4a`](https://github.com/LedgerHQ/ledger-live/commit/3132a4aba419be9a91320295d8c0260f3509f9bd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/ledger-key-ring-protocol` and `@ledgerhq/hw-ledger-key-ring-protocol` from npm (they now live in `ts-libs`), and bump `axios` to 1.20.0. No API change.
+
+- [#22754](https://github.com/LedgerHQ/ledger-live/pull/22754) [`4aa7793`](https://github.com/LedgerHQ/ledger-live/commit/4aa77939cec43fd1aac459689c372868dece3496) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover paying a contact from the mobile Pay tab, selecting the native tile by contact id
+
+- [#22755](https://github.com/LedgerHQ/ledger-live/pull/22755) [`5f7cc73`](https://github.com/LedgerHQ/ledger-live/commit/5f7cc73ec88df6e84e970818668adca6cf7e5fe2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover freezing and unfreezing the card from the mobile Pay tab
+
+- [#22753](https://github.com/LedgerHQ/ledger-live/pull/22753) [`eab040b`](https://github.com/LedgerHQ/ledger-live/commit/eab040b4649df55af728a5b8266e74bc31aa2b6b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover a new payment started from the mobile Pay tab
+
+- [#22752](https://github.com/LedgerHQ/ledger-live/pull/22752) [`d31fbca`](https://github.com/LedgerHQ/ledger-live/commit/d31fbca35991fc58c8e61156761c5004393fe1cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover requesting a payment from the mobile Pay tab
+
+- [#22691](https://github.com/LedgerHQ/ledger-live/pull/22691) [`4efc0c3`](https://github.com/LedgerHQ/ledger-live/commit/4efc0c3b807c02b61b03431521a7826236e67a9c) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Add `$KnownFailure` to flag mobile E2E tests failing on a tracked bug: they still run once and report failed, but Detox no longer retries them.
+
 ## 0.41.0
 
 ### Minor Changes
@@ -238,8 +286,10 @@ match one or more of the following constraints` — or before the button had
   mounted at all. 3/5 nightlies, still failing in the latest.
 
   Each of the three sheet taps now waits for the sheet's own container
-  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
-  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  (`transfer-drawer`) at 100% visibility, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
 - [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
@@ -266,7 +316,9 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
-  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+  timeout or adding a retry, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -310,8 +362,10 @@ match one or more of the following constraints` — or before the button had
   mounted at all. 3/5 nightlies, still failing in the latest.
 
   Each of the three sheet taps now waits for the sheet's own container
-  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
-  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  (`transfer-drawer`) at 100% visibility, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
 - [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
@@ -338,7 +392,9 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
-  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+  timeout or adding a retry, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -559,21 +615,5 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 ### Minor Changes
 
 - [#19828](https://github.com/LedgerHQ/ledger-live/pull/19828) [`f08cad1`](https://github.com/LedgerHQ/ledger-live/commit/f08cad15e523a210054d9a10f0bbb69bf42a963a) Thanks [@henri-ly](https://github.com/henri-ly)! - new send flow e2e mobile native send
-
-## 0.31.0
-
-### Minor Changes
-
-- [#19888](https://github.com/LedgerHQ/ledger-live/pull/19888) [`f8a6ef6`](https://github.com/LedgerHQ/ledger-live/commit/f8a6ef66a6548c3d729e6db985cc05067013b962) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test(e2e): hardcode the HBAR to XRP swap amount to 500 as a temporary workaround for LIVE-33611; revert once the swap "min amount for quotes" bug is fixed.
-
-- [#19724](https://github.com/LedgerHQ/ledger-live/pull/19724) [`06138af`](https://github.com/LedgerHQ/ledger-live/commit/06138af41298aec793f5dcab5bc5bdb686296c4a) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Review buySell.spec (QAA-1107): pick the buy/sell provider from the available quotes via a shared deterministic weekly rotation helper (`pickRotatingProvider` in live-e2e-shared, used by both desktop and mobile) instead of hardcoded MoonPay, and expand sell coverage to BTC, ETH and USDT. Align the mobile BTC sell TMS link accordingly.
-
-## 0.31.0-next.0
-
-### Minor Changes
-
-- [#19888](https://github.com/LedgerHQ/ledger-live/pull/19888) [`f8a6ef6`](https://github.com/LedgerHQ/ledger-live/commit/f8a6ef66a6548c3d729e6db985cc05067013b962) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test(e2e): hardcode the HBAR to XRP swap amount to 500 as a temporary workaround for LIVE-33611; revert once the swap "min amount for quotes" bug is fixed.
-
-- [#19724](https://github.com/LedgerHQ/ledger-live/pull/19724) [`06138af`](https://github.com/LedgerHQ/ledger-live/commit/06138af41298aec793f5dcab5bc5bdb686296c4a) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Review buySell.spec (QAA-1107): pick the buy/sell provider from the available quotes via a shared deterministic weekly rotation helper (`pickRotatingProvider` in live-e2e-shared, used by both desktop and mobile) instead of hardcoded MoonPay, and expand sell coverage to BTC, ETH and USDT. Align the mobile BTC sell TMS link accordingly.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -39,7 +39,7 @@ test("isInRepoSpecifier covers the workspace scopes only", () => {
   assert.ok(isInRepoSpecifier("@shared/schema-primitives"));
   assert.ok(isInRepoSpecifier("@domain/entity-currency-crypto"));
   assert.ok(isInRepoSpecifier("@features/platform-contacts"));
-  assert.ok(isInRepoSpecifier("@support/jest-devtools"));
+  assert.ok(isInRepoSpecifier("@support/jest/devtools"));
   assert.ok(isInRepoSpecifier("@ledgerhq/live-env"));
   assert.ok(!isInRepoSpecifier("zod"));
   assert.ok(!isInRepoSpecifier("./schema"));

@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-transactions",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Pay Card Transactions flow: displays card transaction history for Ledger Wallet",
   "main": "src/index.ts",
@@ -37,7 +37,7 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@support/msw-features-flow-pay-card": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

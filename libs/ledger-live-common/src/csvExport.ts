@@ -3,7 +3,7 @@ import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternalsAndNfts } from "./operation";
-import { calculate, type CounterValuesState } from "@domain/entity-market-countervalues";
+import { calculate, type CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
 import {
   AccountNamesState,
@@ -18,7 +18,7 @@ type Field = {
     arg1: Account | null | undefined,
     arg2: Operation,
     arg3: Currency | null | undefined,
-    arg4: CounterValuesState | null | undefined,
+    arg4: CounterValuesCacheView | null | undefined,
     arg5: AccountNamesState | null | undefined,
   ) => string;
 };
@@ -142,7 +142,7 @@ const accountRows = (
   account: AccountLike,
   parentAccount: Account | null | undefined,
   counterValueCurrency?: Currency,
-  countervalueState?: CounterValuesState,
+  countervalueState?: CounterValuesCacheView,
   accountNames?: AccountNamesState,
 ): Array<string[]> =>
   account.operations
@@ -163,7 +163,7 @@ const accountRows = (
 const accountsRows = (
   accounts: Account[],
   counterValueCurrency?: Currency,
-  countervalueState?: CounterValuesState,
+  countervalueState?: CounterValuesCacheView,
   accountNames?: AccountNamesState,
 ): Array<string[]> => {
   return flattenAccounts(accounts).reduce((all: Array<string[]>, account) => {
@@ -188,7 +188,7 @@ const mapRowValue = (row: string[]): string => {
 export const accountsOpToCSV = (
   accounts: Account[],
   counterValueCurrency?: Currency,
-  countervalueState?: CounterValuesState, // cvs state required for countervalues export
+  countervalueState?: CounterValuesCacheView, // cvs state required for countervalues export
   accountNames?: AccountNamesState, // wallet state required for account name
 ): string => {
   const header = fields.map(field => field.title).join(",") + newLine;

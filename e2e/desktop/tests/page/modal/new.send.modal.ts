@@ -63,6 +63,9 @@ export class NewSendModal extends Modal {
   private readonly contactAddressRow = (addressId: string) =>
     this.dialog.getByTestId(`send-recipient-contact-address-${addressId}`);
 
+  private readonly balanceTypeOption = (optionId: string) =>
+    this.dialog.getByTestId(`balance-type-${optionId}`);
+
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
     // Return null when the element isn't populated yet so callers can retry.
@@ -73,6 +76,11 @@ export class NewSendModal extends Modal {
   @step("Wait for send flow dialog to open")
   async waitForDialog() {
     await this.dialog.waitFor({ state: "visible" });
+  }
+
+  @step("Select balance type: $0")
+  async selectBalanceType(optionId: "public" | "private") {
+    await this.balanceTypeOption(optionId).click();
   }
 
   @step("Type address in search input: $0")
@@ -288,6 +296,12 @@ export class NewSendModal extends Modal {
   @step("Wait success confirmation screen")
   async waitForSuccessConfirmation() {
     await this.waitForConfirmation();
+    // The flow is over once a terminal screen shows: fail now rather than wait out the timeout.
+    const failureContent = this.confirmationErrorContent.or(this.confirmationInfoContent);
+    if (await failureContent.isVisible()) {
+      const details = await failureContent.locator("h3, p").allInnerTexts();
+      throw new Error(`Send ended on a non-success screen: ${details.join(" — ")}`);
+    }
     await expect(this.successConfirmationTitle).toBeVisible();
   }
 }

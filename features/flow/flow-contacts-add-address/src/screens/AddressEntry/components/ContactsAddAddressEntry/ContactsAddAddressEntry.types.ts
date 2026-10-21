@@ -1,16 +1,13 @@
-import type {
-  AddAddressEntryLabels,
-  AddAddressEntryState,
-  AddAddressInputSource,
-} from "../../../../state/types";
 import type { SanctionedAddressBannerProps } from "../../../../components/SanctionedAddressBanner/types";
+import type { AddAddressEntryLabels } from "../../../../copy/addAddressEntryLabels";
+import type { AddAddressEntryState, AddAddressInputSource } from "../../../../state/types";
 
 export type { SanctionedAddressBannerProps } from "../../../../components/SanctionedAddressBanner/types";
 
 export type ContactsAddAddressEntryProps = Readonly<{
   addressEntry: AddAddressEntryState;
-  labels: AddAddressEntryLabels;
-  sanctionedAddressBanner?: SanctionedAddressBannerProps;
+  supportsDomain: boolean;
+  onSanctionedAddressLearnMore?: () => void;
   bottomOffset?: number;
   onChangeText: (value: string, inputMethod: AddAddressInputSource) => void;
   onConfirm: () => void;

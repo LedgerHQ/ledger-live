@@ -7,10 +7,9 @@ import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-
 import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
 import {
   calculate,
-  type CounterValuesState,
+  type CounterValuesCacheView,
   historyKey,
   inferCurrencyAPIID,
-  type CounterValuesState as MarketCounterValuesState,
 } from "@domain/entity-market-countervalues";
 import type { StoreType } from "~/state-manager/configureStore";
 
@@ -30,7 +29,7 @@ export function setupRateLookups(): void {
 
   const rateLookup = {
     calculate: (snapshot: unknown, query: Parameters<typeof calculate>[1]) =>
-      calculate(snapshot as CounterValuesState, query),
+      calculate(snapshot as CounterValuesCacheView, query),
   };
 
   setAssetAggregationRateLookup(rateLookup);
@@ -38,7 +37,7 @@ export function setupRateLookups(): void {
   setWalletPnlRateLookup({
     ...rateLookup,
     historyKey: (snapshot, from, to, lastOpDate) =>
-      historyKey(snapshot as MarketCounterValuesState, from, to, lastOpDate),
+      historyKey(snapshot as CounterValuesCacheView, from, to, lastOpDate),
     currencyApiId: inferCurrencyAPIID,
   });
 }

@@ -1,118 +1,131 @@
-import { Fragment } from "react";
-import { ScrollView } from "react-native";
-import { Box, Button, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { Fragment, useState, type ReactNode } from "react";
+import { Pressable, ScrollView, Share } from "react-native";
 import {
-  ArrowDown,
-  Bluetooth,
-  CheckmarkCircle,
-  Circles,
-  Download,
-  ExitLogout,
-  Lock,
-  Nano,
-  ShieldCheck,
-  Warning,
-} from "@ledgerhq/lumen-ui-rnative/symbols";
+  Box,
+  Button,
+  SegmentedControl,
+  SegmentedControlButton,
+  Switch,
+  Text,
+  useTheme,
+} from "@ledgerhq/lumen-ui-rnative";
+import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
 import {
+  emptyLogCopy,
+  headerCopy,
+  featureFlagCopy,
+  featureFlagSourceCopy,
+  logCopy,
+  overrideCopy,
+} from "./configCopy";
+import {
   useDeviceOnboardingViewModel,
+  type DeviceOnboardingViewModel,
   type DisplayRow,
   type EventRow,
-  type StateKind,
+  type NextStateGroup,
   type StateStep,
 } from "./useDeviceOnboardingViewModel";
 
-// IconProps is not exported from @ledgerhq/lumen-ui-rnative, so the type comes from a symbol.
-type IconComponent = typeof ShieldCheck;
-
-interface StepPresentation {
-  readonly Icon: IconComponent;
-  readonly backgroundColor:
-    | "mutedTransparent"
-    | "activeSubtle"
-    | "warningTransparent"
-    | "errorTransparent"
-    | "successTransparent";
-  readonly color: "muted" | "active" | "warning" | "error" | "success";
-}
-
-const stepPresentation: Record<StateKind, StepPresentation> = {
-  progress: { Icon: Circles, backgroundColor: "mutedTransparent", color: "muted" },
-  genuine: { Icon: ShieldCheck, backgroundColor: "activeSubtle", color: "active" },
-  firmware: { Icon: Download, backgroundColor: "activeSubtle", color: "active" },
-  setup: { Icon: Nano, backgroundColor: "activeSubtle", color: "active" },
-  locked: { Icon: Lock, backgroundColor: "warningTransparent", color: "warning" },
-  session: { Icon: Bluetooth, backgroundColor: "warningTransparent", color: "warning" },
-  failed: { Icon: Warning, backgroundColor: "errorTransparent", color: "error" },
-  succeeded: { Icon: CheckmarkCircle, backgroundColor: "successTransparent", color: "success" },
-  quit: { Icon: ExitLogout, backgroundColor: "mutedTransparent", color: "muted" },
-};
-
 const HEADER_LX = {
-  flexDirection: "row",
-  alignItems: "center",
+  flexDirection: "column",
   gap: "s8",
   padding: "s16",
 } as const;
+const HEADER_ROW_LX = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "s8",
+} as const;
 const SECTION_LX = { padding: "s16", gap: "s4" } as const;
-const ACTIONS_LX = {
+const BUTTONS_LX = {
   flexDirection: "row",
   flexWrap: "wrap",
   alignItems: "center",
   gap: "s8",
-  padding: "s16",
 } as const;
 const ROW_LX = { flexDirection: "row", alignItems: "baseline", gap: "s8" } as const;
 const HEADER_ACTIONS_LX = { flexDirection: "row", gap: "s4" } as const;
-const TRAIL_LX = { flexDirection: "column", alignItems: "flex-start", gap: "s4" } as const;
-const CHIP_LX = {
-  flexDirection: "row",
-  alignItems: "center",
-  gap: "s8",
-  paddingHorizontal: "s8",
-  paddingVertical: "s4",
-  borderRadius: "sm",
-} as const;
-const ARROW_LX = { marginLeft: "s8" } as const;
+const LOG_LX = { flexDirection: "column", alignItems: "flex-start", gap: "s4" } as const;
+
+function useToolStyles() {
+  const { theme } = useTheme();
+  return {
+    theme,
+    divider: { borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle },
+    base: { color: theme.colors.text.base },
+    muted: { color: theme.colors.text.muted },
+    mono: { color: theme.colors.text.base, fontFamily: "monospace" },
+    mutedMono: { color: theme.colors.text.muted, fontFamily: "monospace" },
+  };
+}
 
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
-  const { theme } = useTheme();
-  const divider = { borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle };
-  const base = { color: theme.colors.text.base };
-  const muted = { color: theme.colors.text.muted };
+  const { theme, divider, base, muted } = useToolStyles();
+  const [tab, setTab] = useState<"log" | "config">("log");
 
   return (
     <ScrollView>
       <Box lx={HEADER_LX} style={divider}>
-        <Box
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: 4,
-            backgroundColor: vm.isRunning
-              ? theme.colors.text.success
-              : theme.colors.border.mutedSubtle,
-          }}
-        />
-        <Text typography="body2" style={base}>
-          {vm.statusLabel}
-        </Text>
+        <Box lx={HEADER_ROW_LX}>
+          <Box
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: vm.isRunning
+                ? theme.colors.text.success
+                : theme.colors.border.mutedSubtle,
+            }}
+          />
+          <Text typography="body2" style={base}>
+            {vm.statusLabel}
+          </Text>
+          <Box lx={HEADER_ACTIONS_LX} style={{ marginLeft: "auto" }}>
+            <Button size="sm" appearance="accent" disabled={!vm.canConnect} onPress={vm.connect}>
+              {headerCopy.connect}
+            </Button>
+            <Button size="sm" appearance="transparent" disabled={!vm.canReset} onPress={vm.reset}>
+              {headerCopy.reset}
+            </Button>
+          </Box>
+        </Box>
         {vm.deviceLabel ? (
-          <Text typography="body2" numberOfLines={1} style={{ ...muted, flex: 1 }}>
+          <Text typography="body2" style={muted}>
             {vm.deviceLabel}
           </Text>
         ) : null}
-        <Box lx={HEADER_ACTIONS_LX} style={{ marginLeft: "auto" }}>
-          <Button size="sm" appearance="accent" disabled={!vm.canConnect} onPress={vm.connect}>
-            Connect
-          </Button>
-          <Button size="sm" appearance="transparent" disabled={!vm.canReset} onPress={vm.reset}>
-            Reset
-          </Button>
-        </Box>
+        {vm.exitRows.length > 0 ? (
+          <Disclosure
+            label={
+              <Text typography="body2" style={muted}>
+                {logCopy.exit}
+              </Text>
+            }
+            rows={vm.exitRows}
+          />
+        ) : null}
+        {vm.contextRows.length > 0 ? (
+          <Disclosure
+            label={
+              <Text typography="body2" style={muted}>
+                {logCopy.context}
+              </Text>
+            }
+            rows={vm.contextRows}
+          />
+        ) : null}
+        <SegmentedControl
+          selectedValue={tab}
+          onSelectedChange={setTab}
+          accessibilityLabel={headerCopy.tabs}
+        >
+          <SegmentedControlButton value="log">{headerCopy.log}</SegmentedControlButton>
+          <SegmentedControlButton value="config">{headerCopy.config}</SegmentedControlButton>
+        </SegmentedControl>
       </Box>
-
       {vm.error ? (
         <Box lx={SECTION_LX} style={divider}>
           <Text typography="body2" style={{ color: theme.colors.text.error }}>
@@ -121,30 +134,68 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         </Box>
       ) : null}
 
-      <Box lx={SECTION_LX} style={divider}>
-        <Text typography="body2" style={muted}>
-          State
-        </Text>
-        {vm.stateSteps.length === 0 ? (
-          <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
-            —
-          </Text>
-        ) : (
-          <Box lx={TRAIL_LX}>
-            {vm.stateSteps.map((step, index) => (
-              <Fragment key={step.key}>
-                {index > 0 ? <ArrowDown size={16} color="muted" lx={ARROW_LX} /> : null}
-                <StateChip step={step} />
-              </Fragment>
-            ))}
-          </Box>
-        )}
-      </Box>
+      {tab === "config" ? <ConfigTab vm={vm} /> : <LogTab vm={vm} />}
+    </ScrollView>
+  );
+}
 
-      <Box lx={ACTIONS_LX} style={divider}>
+function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
+  const { divider } = useToolStyles();
+
+  return (
+    <Box lx={SECTION_LX} style={divider}>
+      <SectionHeader title={overrideCopy.title} description={overrideCopy.description} />
+      {vm.overrideRows.map(row => (
+        <OverrideRow key={row.key} label={row.label}>
+          <SegmentedControl
+            selectedValue={row.value}
+            onSelectedChange={row.onChange}
+            accessibilityLabel={row.label}
+          >
+            {row.options.map(option => (
+              <SegmentedControlButton key={option.value} value={option.value}>
+                {option.label}
+              </SegmentedControlButton>
+            ))}
+          </SegmentedControl>
+        </OverrideRow>
+      ))}
+    </Box>
+  );
+}
+
+function ConfigTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
+  return (
+    <>
+      {vm.featureFlagRows.length > 0 ? (
+        <FeatureFlagSection
+          rows={vm.featureFlagRows}
+          source={vm.featureFlagSource}
+          onReset={vm.resetFeatureFlag}
+        />
+      ) : null}
+      <OverrideSection vm={vm} />
+    </>
+  );
+}
+
+function LogTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
+  const { divider, muted } = useToolStyles();
+
+  if (vm.logIsEmpty) {
+    return (
+      <Box lx={SECTION_LX} style={divider}>
+        <SectionHeader {...emptyLogCopy} />
+      </Box>
+    );
+  }
+
+  return (
+    <Box lx={SECTION_LX} style={divider}>
+      <Box lx={BUTTONS_LX}>
         {vm.sendableRows.length === 0 ? (
           <Text typography="body2" style={muted}>
-            No event accepted in this state
+            {logCopy.noEvent}
           </Text>
         ) : (
           vm.sendableRows.map(row => (
@@ -160,88 +211,221 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
           ))
         )}
       </Box>
-
-      {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}
-      {vm.contextRows.length > 0 ? <Rows title="Context" rows={vm.contextRows} /> : null}
-
-      <Box lx={SECTION_LX}>
-        <Text typography="body2" style={muted}>
-          Events
-        </Text>
-        {vm.eventRows.length === 0 ? (
-          <Text typography="body2" style={muted}>
-            Nothing yet
-          </Text>
-        ) : (
-          vm.eventRows.map(event => <EventLine key={event.id} event={event} />)
+      <Box lx={{ ...LOG_LX, marginTop: "s16" }}>
+        {vm.logLines.map(line =>
+          line.line === "state" ? (
+            <Fragment key={line.key}>
+              <StateChip step={line} />
+              {line.isCurrent ? <PossibleEvents groups={vm.nextStateGroups} /> : null}
+            </Fragment>
+          ) : (
+            <EventLine key={line.id} event={line} />
+          ),
         )}
       </Box>
-    </ScrollView>
-  );
-}
-
-function StateChip({ step }: Readonly<{ step: StateStep }>) {
-  const { Icon, backgroundColor, color } = stepPresentation[step.kind];
-  const { theme } = useTheme();
-  const tone = theme.colors.text[color];
-
-  return (
-    <Box
-      lx={{ ...CHIP_LX, backgroundColor }}
-      style={{ borderWidth: 1, borderColor: step.isCurrent ? tone : "transparent" }}
-    >
-      <Icon size={16} color={color} />
-      <Text typography="body2" style={{ color: tone, fontFamily: "monospace" }}>
-        {step.label}
-      </Text>
+      <Button
+        size="sm"
+        appearance="transparent"
+        onPress={() =>
+          void Share.share({
+            title: logCopy.shareTitle,
+            message: vm.exportLogs(),
+          })
+        }
+      >
+        {logCopy.export}
+      </Button>
     </Box>
   );
 }
 
-function Rows({ title, rows }: Readonly<{ title: string; rows: readonly DisplayRow[] }>) {
-  const { theme } = useTheme();
+function FeatureFlagSection({
+  rows,
+  source,
+  onReset,
+}: Readonly<{
+  rows: DeviceOnboardingViewModel["featureFlagRows"];
+  source: DeviceOnboardingViewModel["featureFlagSource"];
+  onReset: DeviceOnboardingViewModel["resetFeatureFlag"];
+}>) {
+  const { divider, mono, muted } = useToolStyles();
 
   return (
-    <Box
-      lx={SECTION_LX}
-      style={{ borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle }}
-    >
-      <Text typography="body2" style={{ color: theme.colors.text.muted }}>
-        {title}
-      </Text>
+    <Box lx={SECTION_LX} style={divider}>
+      <SectionHeader title={featureFlagCopy.title} description={featureFlagCopy.description} />
+      {source ? (
+        <Text typography="body2" style={muted}>
+          {source === "mock" ? featureFlagSourceCopy.mock : featureFlagSourceCopy.flag}
+        </Text>
+      ) : null}
       {rows.map(row => (
-        <Box key={row.label} lx={ROW_LX}>
-          <Text typography="body2" style={{ color: theme.colors.text.muted }}>
+        <Box key={row.key} lx={HEADER_ROW_LX}>
+          <Text typography="body2" style={mono}>
             {row.label}
           </Text>
-          <Text
-            typography="body2"
-            style={{ color: theme.colors.text.base, flex: 1, fontFamily: "monospace" }}
-          >
-            {row.value}
+          <Box style={{ marginLeft: "auto" }}>
+            <Switch
+              checked={row.checked}
+              onCheckedChange={row.onChange}
+              accessibilityLabel={row.label}
+            />
+          </Box>
+        </Box>
+      ))}
+      {source === "mock" && onReset ? (
+        <Button size="sm" appearance="transparent" onPress={onReset}>
+          {featureFlagSourceCopy.reset}
+        </Button>
+      ) : null}
+    </Box>
+  );
+}
+
+function OverrideRow({ label, children }: Readonly<{ label: string; children: ReactNode }>) {
+  const { base } = useToolStyles();
+
+  return (
+    <Box lx={{ flexDirection: "column", alignItems: "flex-start", gap: "s8" }}>
+      <Text typography="body2" style={base}>
+        {label}
+      </Text>
+      {children}
+    </Box>
+  );
+}
+
+function PossibleEvents({ groups }: Readonly<{ groups: readonly NextStateGroup[] }>) {
+  const { mutedMono: muted } = useToolStyles();
+  if (groups.length === 0) return null;
+
+  return (
+    <Box lx={LOG_LX} style={{ opacity: 0.55 }}>
+      {groups.map(group => (
+        <Box key={group.event} lx={{ ...LOG_LX, paddingLeft: "s16" }}>
+          <Text typography="body2" style={muted}>
+            {group.event}
           </Text>
+          {group.states.map((state, index) => (
+            <Text
+              key={`${index}-${state}`}
+              typography="body2"
+              style={{ ...muted, paddingLeft: 16 }}
+            >
+              {state}
+            </Text>
+          ))}
         </Box>
       ))}
     </Box>
   );
 }
 
-function EventLine({ event }: Readonly<{ event: EventRow }>) {
-  const { theme } = useTheme();
-  const mono = { color: theme.colors.text.base, fontFamily: "monospace" };
+function StateChip({ step }: Readonly<{ step: StateStep }>) {
+  const { mono, mutedMono } = useToolStyles();
 
   return (
-    <Box lx={ROW_LX}>
-      <Text typography="body2" style={{ color: theme.colors.text.muted, fontFamily: "monospace" }}>
-        {event.time}
+    <Text typography="body2" style={step.isCurrent ? { ...mono, fontWeight: "600" } : mutedMono}>
+      {step.label}
+    </Text>
+  );
+}
+
+function SectionHeader({ title, description }: Readonly<{ title: string; description: string }>) {
+  const { base, muted } = useToolStyles();
+
+  return (
+    <>
+      <Text typography="body2" style={base}>
+        {title}
       </Text>
-      <Text typography="body2" style={mono}>
-        {event.type}
+      <Text typography="body2" style={muted}>
+        {description}
       </Text>
-      {event.detail ? (
-        <Text typography="body2" numberOfLines={1} style={{ ...mono, flex: 1 }}>
-          {event.detail}
-        </Text>
+    </>
+  );
+}
+
+function EventLine({ event }: Readonly<{ event: EventRow }>) {
+  const { mono, mutedMono } = useToolStyles();
+
+  return (
+    <Disclosure
+      label={
+        <>
+          <Text typography="body2" style={mutedMono}>
+            {event.time}
+          </Text>
+          <Text typography="body2" style={mono}>
+            {event.type}
+          </Text>
+          {event.detail ? (
+            <Text typography="body2" numberOfLines={1} style={{ ...mono, flex: 1 }}>
+              {event.detail}
+            </Text>
+          ) : null}
+        </>
+      }
+      rows={event.payload}
+    />
+  );
+}
+
+function Disclosure({ label, rows }: Readonly<{ label: ReactNode; rows: readonly DisplayRow[] }>) {
+  const [open, setOpen] = useState(false);
+  const { muted, mono, mutedMono } = useToolStyles();
+
+  return (
+    <Box lx={LOG_LX} style={{ alignSelf: "stretch" }}>
+      <Pressable
+        onPress={() => setOpen(current => !current)}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+      >
+        <Box lx={ROW_LX}>
+          {open ? (
+            <ChevronDown size={16} color="muted" />
+          ) : (
+            <ChevronRight size={16} color="muted" />
+          )}
+          {label}
+        </Box>
+      </Pressable>
+      {open ? (
+        <Box lx={LOG_LX} style={{ paddingLeft: 16, alignSelf: "stretch" }}>
+          {rows.length === 0 ? (
+            <Text typography="body2" style={mutedMono}>
+              —
+            </Text>
+          ) : (
+            rows.map((row, index) =>
+              row.children ? (
+                <Disclosure
+                  key={`${index}-${row.label}`}
+                  label={
+                    <>
+                      <Text typography="body2" style={muted}>
+                        {row.label}
+                      </Text>
+                      <Text typography="body2" style={mutedMono}>
+                        {row.value}
+                      </Text>
+                    </>
+                  }
+                  rows={row.children}
+                />
+              ) : (
+                <Box key={`${index}-${row.label}`} lx={ROW_LX} style={{ alignSelf: "stretch" }}>
+                  <Text typography="body2" style={muted}>
+                    {row.label}
+                  </Text>
+                  <Text typography="body2" style={{ ...mono, flex: 1 }}>
+                    {row.value}
+                  </Text>
+                </Box>
+              ),
+            )
+          )}
+        </Box>
       ) : null}
     </Box>
   );

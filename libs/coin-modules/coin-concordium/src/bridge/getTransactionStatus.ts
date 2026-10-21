@@ -92,9 +92,8 @@ function validateFee(estimatedFees: BigNumber): Error | undefined {
  * {@link MAX_MEMO_LENGTH} bounds either. The PLT path's extra tag-24 envelope
  * counts against the operations blob, not this cap.
  *
- * The device signs the full length either way, and its signing screen shows only
- * the first few bytes. That bounds what the user reads rather than what may be
- * sent, so it is not a limit to enforce here.
+ * The device decodes the memo and shows the whole text on its signing screen, so
+ * no display limit applies beyond {@link MAX_MEMO_LENGTH}.
  */
 function validateMemo(memo: string): Error | undefined {
   const memoBytes = Buffer.byteLength(memo, "utf-8");

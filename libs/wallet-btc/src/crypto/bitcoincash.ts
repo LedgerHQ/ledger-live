@@ -20,7 +20,7 @@ class BitcoinCash extends Base {
 
   // get address given an address type
   async customGetAddress(
-    derivationMode: string,
+    _derivationMode: string,
     xpub: string,
     account: number,
     index: number,
@@ -33,7 +33,7 @@ class BitcoinCash extends Base {
       throw new InvalidAddress();
     }
     // TODO find a better way to calculate the script from bch address instead of converting to bitcoin address
-    return btcAddress.toOutputScript(bchaddr.toLegacyAddress(address), this.network);
+    return Buffer.from(btcAddress.toOutputScript(bchaddr.toLegacyAddress(address), this.network));
   }
 
   validateAddress(address: string): boolean {

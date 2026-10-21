@@ -39,6 +39,9 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
+import { appCountervaluesSources } from "../state-manager/middleware/countervalues";
+import { startCountervaluesSync } from "@features/platform-market-countervalues";
+import type { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { bootstrapCardSession } from "./bootstrapCardSession";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -69,6 +72,7 @@ import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
+import { connectAccounts } from "~/config/account-data-setup";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
 import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
@@ -89,6 +93,7 @@ import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import { loadAppConfig } from "~/setup";
 
 const rootNode = document.getElementById("react-root");
 
@@ -128,6 +133,7 @@ async function init() {
   });
 
   expectOperatingSystemSupportStatus();
+  let configStorage;
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {
@@ -143,14 +149,18 @@ async function init() {
         dateString: require("../../tests/time.js").default,
       });
     }
+    configStorage = { getAll: () => spectronData.appConfig, set() {}, clear() {} };
   }
   const store = createStore({
     dbMiddleware,
+    countervalues: appCountervaluesSources,
+    appConfig: loadAppConfig(configStorage),
   });
   const dispatch: AppDispatch = store.dispatch;
 
   setupListeners(store.dispatch);
   connectRecentAddressesStore(store, recentAddressesSelector);
+  connectAccounts(store);
   setupCryptoAssetsStore(store);
   setupRateLookups();
   setSwapQuotesStore(store.dispatch);
@@ -389,7 +399,11 @@ async function init() {
   const mockServerDevice = await bootstrapMockServerTransport();
   if (mockServerDevice) store.dispatch(seedMockServerKnownDevice(mockServerDevice));
 
-  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+  // Started right before the first render, so it shows the saved rates.
+  store.dispatch(
+    startCountervaluesSync({ savedState: initialCountervalues as CounterValuesStateRaw }),
+  );
+  r(<ReactRoot store={store} language={language} />);
 
   await dispatch(fetchTrustchain());
   await dispatch(fetchWallet());
@@ -470,6 +484,15 @@ async function init() {
       store.dispatch(resetDevices());
     },
     getMockServerSessionToken,
+    // E2E: a relaunched remote Speculos comes back on a new URL with a new session token.
+    setSpeculosTarget: (address: string, sessionToken?: string) => {
+      process.env.SPECULOS_ADDRESS = address;
+      if (sessionToken) {
+        process.env.SPECULOS_SESSION_TOKEN = sessionToken;
+      } else {
+        delete process.env.SPECULOS_SESSION_TOKEN;
+      }
+    },
   };
 }
 const root = rootNode ? createRoot(rootNode) : null;

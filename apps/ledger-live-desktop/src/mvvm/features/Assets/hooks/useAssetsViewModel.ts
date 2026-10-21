@@ -4,14 +4,15 @@ import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import { AssetsViewProps, AssetTableItem } from "../types";
+import type { AssetsViewProps } from "../types";
+import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 import { buildPlaceholderAssetItemsFromAssetsData } from "../utils/buildPlaceholderAssetItemsFromAssetsData";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,
   counterValueCurrencySelector,
 } from "~/renderer/reducers/settings";
-import { useAllCurrencyTrends } from "./useAllCurrencyTrends";
+import { useAllCurrencyTrends } from "LLD/components/AssetsTable/useAllCurrencyTrends";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { setTrackingSource, track } from "@shared/analytics";
@@ -61,6 +62,17 @@ export function useAssetsViewModel(): AssetsViewProps {
     if (!assetsData?.markets) return map;
     for (const [currencyId, market] of Object.entries(assetsData.markets)) {
       if (market?.price != null) map.set(currencyId, market.price);
+    }
+    return map;
+  }, [assetsData]);
+
+  const marketDayChangeByCurrencyId = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!assetsData?.markets) return map;
+    for (const [currencyId, market] of Object.entries(assetsData.markets)) {
+      if (market?.priceChangePercentage24h != null) {
+        map.set(currencyId, market.priceChangePercentage24h);
+      }
     }
     return map;
   }, [assetsData]);
@@ -149,7 +161,7 @@ export function useAssetsViewModel(): AssetsViewProps {
   );
   useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
 
-  const trends = useAllCurrencyTrends(allItems, "day");
+  const trends = useAllCurrencyTrends(allItems, "day", marketDayChangeByCurrencyId);
 
   const cryptosWithTrend = useMemo(
     () =>

@@ -1,5 +1,172 @@
 # @ledgerhq/coin-tester-stacks
 
+## 0.3.0
+
+### Minor Changes
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`1a0d409`](https://github.com/LedgerHQ/ledger-live/commit/1a0d409b99c1ff75c609d6f70736c48a79f8fe44) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - perf: boot the devnet from Clarinet's epoch-4.0 snapshot on Clarinet v3.24.1
+
+  The devnet booted from genesis (burn height 100) and waited for epoch 3.0 and 4.0 at 10s blocks
+  before the send and staking scenarios could run. Clarinet ships a chain-state snapshot that starts
+  at burn height 163, past epoch 4.0, but rejected ours because `Devnet.toml` lacked its default
+  `stacker` stacking order, and our pinned Clarinet could not deploy project contracts on a snapshot
+  boot (fixed upstream in v3.24.0, stx-labs/clarinet#2529).
+
+  The patched Clarinet build also redirected the stacks-node's burnchain RPC straight to bitcoind.
+  That port is Clarinet's own Bitcoin RPC proxy, which mines the next block whenever it relays a
+  miner's block-commit; bypassing it is what stalled mining and required the external
+  `bitcoin-miner.js` workaround, which is removed.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`d833b5f`](https://github.com/LedgerHQ/ledger-live/commit/d833b5f9a2333791e22a3e3f76c01cf27c1814f3) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - chore: drop the external bitcoin miner and tighten the devnet timeouts
+
+  With Clarinet's Bitcoin RPC proxy restored, Clarinet mines the devnet's blocks itself, so
+  `scripts/bitcoin-miner.js` and its start-timing logic are removed. The boot deadline and contract
+  waits drop from 15/25 minutes to 5, since a snapshot boot is ready in about a minute; the setup hook
+  allows 30 minutes to cover a Clarinet build on a cache miss.
+
+  The pinned Clarinet commit and Rust toolchain are now read from `docker/clarinet/Dockerfile` only,
+  and the local binary cache is keyed on a hash of `docker/clarinet/**`, so changing the commit, a
+  patch or the toolchain rebuilds it.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`4572d8e`](https://github.com/LedgerHQ/ledger-live/commit/4572d8e7f72d61b0f8604f21a1fbe8b3a2a34e9f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix: put the bitcoin snapshot in place before bitcoind starts, and print why the devnet failed to boot
+
+  Booting from the snapshot, Clarinet copied the bitcoin chain state into the bitcoind container with
+  `docker cp` after starting it. That raced bitcoind: on Linux, which enforces bind-mount ownership
+  unlike Docker Desktop, bitcoind (uid 1000) could not read the copied files and exited; and when it
+  had already begun its own chain state, the stacks-node's snapshot no longer matched its blocks
+  (`Non-contiguous header`, intermittent). A Clarinet patch now copies the snapshot on the host into
+  the bind-mounted data directory before the container is created, and makes it world-readable and
+  writable.
+
+  A failed boot now prints the tail of Clarinet's output and every devnet container's exit state and
+  logs, without `DEBUG`. Before, the error pointed at "the clarinet output above", which was never
+  printed.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`927ed65`](https://github.com/LedgerHQ/ledger-live/commit/927ed653df5a9ef7c062b7d4f7576a405ea2e64a) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix: pin the devnet images and rust toolchain, and cache the patched clarinet binary in CI
+
+  `hirosystems/stacks-blockchain-api` and `postgres` defaulted to the floating `latest` and
+  `alpine` tags at the pinned clarinet commit, so an upstream push could break every run with no
+  change on our side, as `latest` moving to 9.3.0 did on 2026-09-15. Both are now pinned by tag and
+  digest to the images the last green runs pulled, and the clarinet build uses a pinned rust base
+  image and dated nightly. CI now caches `.clarinet-cache`, keyed on `docker/clarinet/**`, instead
+  of spending ~13 minutes rebuilding clarinet from source on every run.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`927ed65`](https://github.com/LedgerHQ/ledger-live/commit/927ed653df5a9ef7c062b7d4f7576a405ea2e64a) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - perf: run every scenario on one shared devnet, each with its own sender account
+
+  The legacy send, generic-adapter send and pox-5 staking runs each booted a Clarinet devnet from
+  genesis and waited again for the contract deployment batches, about 27 minutes of 10s blocks per
+  CI run. The devnet is now started once in the test file's `beforeAll` and torn down in
+  `afterAll`. Runs share the chain but not accounts: each signs with its own Clarinet default
+  account (`wallet_4`, `wallet_5`, `wallet_6`), so no run starts on another's history or drained
+  balance. The test token is minted straight to the two send senders at deploy time, so the deployer
+  sends nothing before `signer-manager-stub` is deployed (Clarinet pre-assigns the deployer's nonces
+  for its deployment plan, and an earlier deployer transaction would take the stub's nonce).
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`c92c32e`](https://github.com/LedgerHQ/ledger-live/commit/c92c32e66d20de8a85454bf1fc444dadd3a51e76) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - chore: take `@stacks/network` and `@stacks/transactions` from the pnpm catalog
+
+  `coin-stacks` used `^7.6.0` while `coin-tester-stacks` pinned `6.17.0` next to a
+  `@stacks/transactions-v7` alias, so both major lines were installed side by side. Both packages now
+  use the catalog entry (7.6.0). The coin-tester's pox-5 signer-manager setup is ported from the v6
+  API, and its now unused `@stacks/network` dependency is dropped. The `@noble/hashes` pin inside
+  `@stacks/transactions` itself is upstream and unchanged.
+
+### Patch Changes
+
+- Updated dependencies [[`d60f240`](https://github.com/LedgerHQ/ledger-live/commit/d60f240af5f814d887bb2df19db8415425b52317), [`c954015`](https://github.com/LedgerHQ/ledger-live/commit/c954015d149a86adc8a1cdfcda41a71313171b68), [`4028b7e`](https://github.com/LedgerHQ/ledger-live/commit/4028b7e53019ef07b2e94a6559c5f8a6ba54b82f), [`21fa5a5`](https://github.com/LedgerHQ/ledger-live/commit/21fa5a533d3369db9586a38d6fa869f8c03121af), [`438c7b3`](https://github.com/LedgerHQ/ledger-live/commit/438c7b3035ac460e702d294a3c17db2843962d21), [`ee95a8e`](https://github.com/LedgerHQ/ledger-live/commit/ee95a8e0c4cdce091dfc1cb0e9b54445030f079c), [`b9da45c`](https://github.com/LedgerHQ/ledger-live/commit/b9da45cd99b74603ac760b08cf748d60f9bb4a2f), [`ef84a7c`](https://github.com/LedgerHQ/ledger-live/commit/ef84a7cac52080143934ebf01511d24a4dcaa0f3), [`20484ff`](https://github.com/LedgerHQ/ledger-live/commit/20484ff8d7cc0aab2e4b8448c7e8ce9ebf6840fe), [`f047501`](https://github.com/LedgerHQ/ledger-live/commit/f047501381efde857b48c1314d2de637fdce8ade), [`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`abf8d33`](https://github.com/LedgerHQ/ledger-live/commit/abf8d33f65a4177d2ab8c727c2b53c2b4439c676), [`bc85ada`](https://github.com/LedgerHQ/ledger-live/commit/bc85ada15c9403d1180d5af23f730196fd0cc672), [`0c507ff`](https://github.com/LedgerHQ/ledger-live/commit/0c507ffb0964a6bfbd221ecd83f00d0259921ada), [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9), [`e308deb`](https://github.com/LedgerHQ/ledger-live/commit/e308deb3e4f812f01166de17bb28c587a290b9bb), [`3dda070`](https://github.com/LedgerHQ/ledger-live/commit/3dda0705f09d0e0da75ebde9a76b17ba7a9f65e6), [`db3bde1`](https://github.com/LedgerHQ/ledger-live/commit/db3bde1a0ea2435389260b012d9759dd26f7b174), [`ac0379e`](https://github.com/LedgerHQ/ledger-live/commit/ac0379ea0511dd457d6bba6a540d48b8358f4f93), [`33467b2`](https://github.com/LedgerHQ/ledger-live/commit/33467b29525ab06b0abce96ed8489a61a01429c5), [`0f401bb`](https://github.com/LedgerHQ/ledger-live/commit/0f401bb6289b6e78fbd05b6f98977bde4999d22a), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`e80d009`](https://github.com/LedgerHQ/ledger-live/commit/e80d009b57fbec125c43649fcc0b21edc60cb473), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`1f50e41`](https://github.com/LedgerHQ/ledger-live/commit/1f50e41fc85d46eec8ffdec4d27ab573a5cbb28e), [`3dae3bb`](https://github.com/LedgerHQ/ledger-live/commit/3dae3bb200941b7e8ed4e56485e401fda188de8b), [`ff5e1b0`](https://github.com/LedgerHQ/ledger-live/commit/ff5e1b0f5a315aaccd3e23aeb8ccd2c7d48730f4), [`7bf8668`](https://github.com/LedgerHQ/ledger-live/commit/7bf8668bea3ae36c1a5c176bc5538311bafbee3d), [`dccba0c`](https://github.com/LedgerHQ/ledger-live/commit/dccba0c7481c705b4a295942171891deff1c0e85), [`7ff8f5b`](https://github.com/LedgerHQ/ledger-live/commit/7ff8f5b518a19e73005ef974121ce21e593a8e99), [`826a87c`](https://github.com/LedgerHQ/ledger-live/commit/826a87c08f3757ed3b1fd63f217ed9493082811d), [`6bb4b44`](https://github.com/LedgerHQ/ledger-live/commit/6bb4b44d94a29c3eb8eaffaafda55ca9d6934e2b), [`9c9cae5`](https://github.com/LedgerHQ/ledger-live/commit/9c9cae5ab492b74d52b13e0a5b0673bd681f8d9d), [`c59fbf4`](https://github.com/LedgerHQ/ledger-live/commit/c59fbf41212398e3d0c1000c776d33c6344290a3), [`dd2d1f8`](https://github.com/LedgerHQ/ledger-live/commit/dd2d1f8965897befc6e49f041eeccc51deb9578c), [`b8fc9af`](https://github.com/LedgerHQ/ledger-live/commit/b8fc9af53fc59427695bb0fe81d11d46ef74742e), [`4182256`](https://github.com/LedgerHQ/ledger-live/commit/4182256c2213208e330861b904a6d8859d1b3e60), [`0a65851`](https://github.com/LedgerHQ/ledger-live/commit/0a65851ea6de6228030a2c94f0cad2234903db2b), [`4d9cfbd`](https://github.com/LedgerHQ/ledger-live/commit/4d9cfbd7eff1fb20fb2052b0a2f2b21ea87ba052), [`09db449`](https://github.com/LedgerHQ/ledger-live/commit/09db4497ad5e67c6510e87608d694bd06963213e), [`bac3334`](https://github.com/LedgerHQ/ledger-live/commit/bac3334a1c58495722e2c5a123c7d2a26b0c8d7d), [`82946e5`](https://github.com/LedgerHQ/ledger-live/commit/82946e53e676943851a8a9e153bafc641a40778b), [`f9ebcf6`](https://github.com/LedgerHQ/ledger-live/commit/f9ebcf6d2b79758ea43554977a8997df25c4e3b4), [`99f7c87`](https://github.com/LedgerHQ/ledger-live/commit/99f7c87afc8029eca9bf574df03123bf07ca7810), [`c26bbea`](https://github.com/LedgerHQ/ledger-live/commit/c26bbea7477d27f6042657c3a3c48c05f85b1f59), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e), [`78b38fb`](https://github.com/LedgerHQ/ledger-live/commit/78b38fb3820d3391c5c04812fee88c1c2a6e9289), [`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`18166fb`](https://github.com/LedgerHQ/ledger-live/commit/18166fbe8719d50c911aa0ab349e68c414f8fc62), [`339d174`](https://github.com/LedgerHQ/ledger-live/commit/339d17482fba108dfca790c2500c697a818f7a1c), [`3160fa7`](https://github.com/LedgerHQ/ledger-live/commit/3160fa7a2f2a6e121d15766609902e83f4efc71f), [`812d03f`](https://github.com/LedgerHQ/ledger-live/commit/812d03f74d4324c2b165d4fb67fb3b31834d2b67), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`5e611ff`](https://github.com/LedgerHQ/ledger-live/commit/5e611ffffdcf2c73fb55c8b673693dfa88d1077c), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`6d744e0`](https://github.com/LedgerHQ/ledger-live/commit/6d744e0d30b4480282d35c359d096f3f6d6602af), [`644071b`](https://github.com/LedgerHQ/ledger-live/commit/644071ba1aba85cdce57c423934be80f91639155), [`6756f58`](https://github.com/LedgerHQ/ledger-live/commit/6756f5881526607858dbc2ba3d8065e5453b2d5a), [`7073e2d`](https://github.com/LedgerHQ/ledger-live/commit/7073e2d835a79e3e014ca1a9631e73c1f21989c6), [`35d9396`](https://github.com/LedgerHQ/ledger-live/commit/35d9396f690292ae8efda27b24ac4143f03cd00b), [`c92c32e`](https://github.com/LedgerHQ/ledger-live/commit/c92c32e66d20de8a85454bf1fc444dadd3a51e76), [`7f0d867`](https://github.com/LedgerHQ/ledger-live/commit/7f0d867cc9f8715b9244979e42a035babe43d2ab), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`4bab512`](https://github.com/LedgerHQ/ledger-live/commit/4bab512f050d8f4d49a7745104b278ec94dd1d20), [`3264580`](https://github.com/LedgerHQ/ledger-live/commit/3264580e247bbd35d774b33eae21cc7c2e87d105), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e), [`766d1eb`](https://github.com/LedgerHQ/ledger-live/commit/766d1ebf51eccbbaefd0b3d47b07f3e3b8672775), [`3cdcba9`](https://github.com/LedgerHQ/ledger-live/commit/3cdcba9252780b413452cb100682cf08041d966e), [`0a5b68d`](https://github.com/LedgerHQ/ledger-live/commit/0a5b68d609355af795c6176a4ac30c5b7142c2eb), [`8312d68`](https://github.com/LedgerHQ/ledger-live/commit/8312d6818aa5fa37f523352f81f51a61dd502bf2), [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4), [`b7cc410`](https://github.com/LedgerHQ/ledger-live/commit/b7cc41062a66145da018db31722d0df45ed98b1c), [`74a7067`](https://github.com/LedgerHQ/ledger-live/commit/74a706756e9009886a490052d0f3005c6837e8b1)]:
+  - @ledgerhq/coin-stacks@0.33.0
+  - @ledgerhq/live-common@38.3.0
+  - @ledgerhq/ledger-wallet-framework@3.7.0
+  - @ledgerhq/types-live@6.127.0
+  - @ledgerhq/coin-tester@0.20.0
+
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef)]:
+  - @ledgerhq/live-common@38.3.0-next.1
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.1
+  - @ledgerhq/coin-stacks@0.33.0-next.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`1a0d409`](https://github.com/LedgerHQ/ledger-live/commit/1a0d409b99c1ff75c609d6f70736c48a79f8fe44) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - perf: boot the devnet from Clarinet's epoch-4.0 snapshot on Clarinet v3.24.1
+
+  The devnet booted from genesis (burn height 100) and waited for epoch 3.0 and 4.0 at 10s blocks
+  before the send and staking scenarios could run. Clarinet ships a chain-state snapshot that starts
+  at burn height 163, past epoch 4.0, but rejected ours because `Devnet.toml` lacked its default
+  `stacker` stacking order, and our pinned Clarinet could not deploy project contracts on a snapshot
+  boot (fixed upstream in v3.24.0, stx-labs/clarinet#2529).
+
+  The patched Clarinet build also redirected the stacks-node's burnchain RPC straight to bitcoind.
+  That port is Clarinet's own Bitcoin RPC proxy, which mines the next block whenever it relays a
+  miner's block-commit; bypassing it is what stalled mining and required the external
+  `bitcoin-miner.js` workaround, which is removed.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`d833b5f`](https://github.com/LedgerHQ/ledger-live/commit/d833b5f9a2333791e22a3e3f76c01cf27c1814f3) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - chore: drop the external bitcoin miner and tighten the devnet timeouts
+
+  With Clarinet's Bitcoin RPC proxy restored, Clarinet mines the devnet's blocks itself, so
+  `scripts/bitcoin-miner.js` and its start-timing logic are removed. The boot deadline and contract
+  waits drop from 15/25 minutes to 5, since a snapshot boot is ready in about a minute; the setup hook
+  allows 30 minutes to cover a Clarinet build on a cache miss.
+
+  The pinned Clarinet commit and Rust toolchain are now read from `docker/clarinet/Dockerfile` only,
+  and the local binary cache is keyed on a hash of `docker/clarinet/**`, so changing the commit, a
+  patch or the toolchain rebuilds it.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`4572d8e`](https://github.com/LedgerHQ/ledger-live/commit/4572d8e7f72d61b0f8604f21a1fbe8b3a2a34e9f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix: put the bitcoin snapshot in place before bitcoind starts, and print why the devnet failed to boot
+
+  Booting from the snapshot, Clarinet copied the bitcoin chain state into the bitcoind container with
+  `docker cp` after starting it. That raced bitcoind: on Linux, which enforces bind-mount ownership
+  unlike Docker Desktop, bitcoind (uid 1000) could not read the copied files and exited; and when it
+  had already begun its own chain state, the stacks-node's snapshot no longer matched its blocks
+  (`Non-contiguous header`, intermittent). A Clarinet patch now copies the snapshot on the host into
+  the bind-mounted data directory before the container is created, and makes it world-readable and
+  writable.
+
+  A failed boot now prints the tail of Clarinet's output and every devnet container's exit state and
+  logs, without `DEBUG`. Before, the error pointed at "the clarinet output above", which was never
+  printed.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`927ed65`](https://github.com/LedgerHQ/ledger-live/commit/927ed653df5a9ef7c062b7d4f7576a405ea2e64a) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix: pin the devnet images and rust toolchain, and cache the patched clarinet binary in CI
+
+  `hirosystems/stacks-blockchain-api` and `postgres` defaulted to the floating `latest` and
+  `alpine` tags at the pinned clarinet commit, so an upstream push could break every run with no
+  change on our side, as `latest` moving to 9.3.0 did on 2026-09-15. Both are now pinned by tag and
+  digest to the images the last green runs pulled, and the clarinet build uses a pinned rust base
+  image and dated nightly. CI now caches `.clarinet-cache`, keyed on `docker/clarinet/**`, instead
+  of spending ~13 minutes rebuilding clarinet from source on every run.
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`927ed65`](https://github.com/LedgerHQ/ledger-live/commit/927ed653df5a9ef7c062b7d4f7576a405ea2e64a) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - perf: run every scenario on one shared devnet, each with its own sender account
+
+  The legacy send, generic-adapter send and pox-5 staking runs each booted a Clarinet devnet from
+  genesis and waited again for the contract deployment batches, about 27 minutes of 10s blocks per
+  CI run. The devnet is now started once in the test file's `beforeAll` and torn down in
+  `afterAll`. Runs share the chain but not accounts: each signs with its own Clarinet default
+  account (`wallet_4`, `wallet_5`, `wallet_6`), so no run starts on another's history or drained
+  balance. The test token is minted straight to the two send senders at deploy time, so the deployer
+  sends nothing before `signer-manager-stub` is deployed (Clarinet pre-assigns the deployer's nonces
+  for its deployment plan, and an earlier deployer transaction would take the stub's nonce).
+
+- [#22636](https://github.com/LedgerHQ/ledger-live/pull/22636) [`c92c32e`](https://github.com/LedgerHQ/ledger-live/commit/c92c32e66d20de8a85454bf1fc444dadd3a51e76) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - chore: take `@stacks/network` and `@stacks/transactions` from the pnpm catalog
+
+  `coin-stacks` used `^7.6.0` while `coin-tester-stacks` pinned `6.17.0` next to a
+  `@stacks/transactions-v7` alias, so both major lines were installed side by side. Both packages now
+  use the catalog entry (7.6.0). The coin-tester's pox-5 signer-manager setup is ported from the v6
+  API, and its now unused `@stacks/network` dependency is dropped. The `@noble/hashes` pin inside
+  `@stacks/transactions` itself is upstream and unchanged.
+
+### Patch Changes
+
+- Updated dependencies [[`d60f240`](https://github.com/LedgerHQ/ledger-live/commit/d60f240af5f814d887bb2df19db8415425b52317), [`c954015`](https://github.com/LedgerHQ/ledger-live/commit/c954015d149a86adc8a1cdfcda41a71313171b68), [`4028b7e`](https://github.com/LedgerHQ/ledger-live/commit/4028b7e53019ef07b2e94a6559c5f8a6ba54b82f), [`21fa5a5`](https://github.com/LedgerHQ/ledger-live/commit/21fa5a533d3369db9586a38d6fa869f8c03121af), [`438c7b3`](https://github.com/LedgerHQ/ledger-live/commit/438c7b3035ac460e702d294a3c17db2843962d21), [`ee95a8e`](https://github.com/LedgerHQ/ledger-live/commit/ee95a8e0c4cdce091dfc1cb0e9b54445030f079c), [`b9da45c`](https://github.com/LedgerHQ/ledger-live/commit/b9da45cd99b74603ac760b08cf748d60f9bb4a2f), [`ef84a7c`](https://github.com/LedgerHQ/ledger-live/commit/ef84a7cac52080143934ebf01511d24a4dcaa0f3), [`20484ff`](https://github.com/LedgerHQ/ledger-live/commit/20484ff8d7cc0aab2e4b8448c7e8ce9ebf6840fe), [`f047501`](https://github.com/LedgerHQ/ledger-live/commit/f047501381efde857b48c1314d2de637fdce8ade), [`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`abf8d33`](https://github.com/LedgerHQ/ledger-live/commit/abf8d33f65a4177d2ab8c727c2b53c2b4439c676), [`bc85ada`](https://github.com/LedgerHQ/ledger-live/commit/bc85ada15c9403d1180d5af23f730196fd0cc672), [`0c507ff`](https://github.com/LedgerHQ/ledger-live/commit/0c507ffb0964a6bfbd221ecd83f00d0259921ada), [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9), [`e308deb`](https://github.com/LedgerHQ/ledger-live/commit/e308deb3e4f812f01166de17bb28c587a290b9bb), [`3dda070`](https://github.com/LedgerHQ/ledger-live/commit/3dda0705f09d0e0da75ebde9a76b17ba7a9f65e6), [`db3bde1`](https://github.com/LedgerHQ/ledger-live/commit/db3bde1a0ea2435389260b012d9759dd26f7b174), [`ac0379e`](https://github.com/LedgerHQ/ledger-live/commit/ac0379ea0511dd457d6bba6a540d48b8358f4f93), [`33467b2`](https://github.com/LedgerHQ/ledger-live/commit/33467b29525ab06b0abce96ed8489a61a01429c5), [`0f401bb`](https://github.com/LedgerHQ/ledger-live/commit/0f401bb6289b6e78fbd05b6f98977bde4999d22a), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`e80d009`](https://github.com/LedgerHQ/ledger-live/commit/e80d009b57fbec125c43649fcc0b21edc60cb473), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`1f50e41`](https://github.com/LedgerHQ/ledger-live/commit/1f50e41fc85d46eec8ffdec4d27ab573a5cbb28e), [`3dae3bb`](https://github.com/LedgerHQ/ledger-live/commit/3dae3bb200941b7e8ed4e56485e401fda188de8b), [`ff5e1b0`](https://github.com/LedgerHQ/ledger-live/commit/ff5e1b0f5a315aaccd3e23aeb8ccd2c7d48730f4), [`7bf8668`](https://github.com/LedgerHQ/ledger-live/commit/7bf8668bea3ae36c1a5c176bc5538311bafbee3d), [`dccba0c`](https://github.com/LedgerHQ/ledger-live/commit/dccba0c7481c705b4a295942171891deff1c0e85), [`7ff8f5b`](https://github.com/LedgerHQ/ledger-live/commit/7ff8f5b518a19e73005ef974121ce21e593a8e99), [`826a87c`](https://github.com/LedgerHQ/ledger-live/commit/826a87c08f3757ed3b1fd63f217ed9493082811d), [`6bb4b44`](https://github.com/LedgerHQ/ledger-live/commit/6bb4b44d94a29c3eb8eaffaafda55ca9d6934e2b), [`9c9cae5`](https://github.com/LedgerHQ/ledger-live/commit/9c9cae5ab492b74d52b13e0a5b0673bd681f8d9d), [`c59fbf4`](https://github.com/LedgerHQ/ledger-live/commit/c59fbf41212398e3d0c1000c776d33c6344290a3), [`dd2d1f8`](https://github.com/LedgerHQ/ledger-live/commit/dd2d1f8965897befc6e49f041eeccc51deb9578c), [`b8fc9af`](https://github.com/LedgerHQ/ledger-live/commit/b8fc9af53fc59427695bb0fe81d11d46ef74742e), [`4182256`](https://github.com/LedgerHQ/ledger-live/commit/4182256c2213208e330861b904a6d8859d1b3e60), [`0a65851`](https://github.com/LedgerHQ/ledger-live/commit/0a65851ea6de6228030a2c94f0cad2234903db2b), [`4d9cfbd`](https://github.com/LedgerHQ/ledger-live/commit/4d9cfbd7eff1fb20fb2052b0a2f2b21ea87ba052), [`09db449`](https://github.com/LedgerHQ/ledger-live/commit/09db4497ad5e67c6510e87608d694bd06963213e), [`bac3334`](https://github.com/LedgerHQ/ledger-live/commit/bac3334a1c58495722e2c5a123c7d2a26b0c8d7d), [`82946e5`](https://github.com/LedgerHQ/ledger-live/commit/82946e53e676943851a8a9e153bafc641a40778b), [`f9ebcf6`](https://github.com/LedgerHQ/ledger-live/commit/f9ebcf6d2b79758ea43554977a8997df25c4e3b4), [`99f7c87`](https://github.com/LedgerHQ/ledger-live/commit/99f7c87afc8029eca9bf574df03123bf07ca7810), [`c26bbea`](https://github.com/LedgerHQ/ledger-live/commit/c26bbea7477d27f6042657c3a3c48c05f85b1f59), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e), [`78b38fb`](https://github.com/LedgerHQ/ledger-live/commit/78b38fb3820d3391c5c04812fee88c1c2a6e9289), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`18166fb`](https://github.com/LedgerHQ/ledger-live/commit/18166fbe8719d50c911aa0ab349e68c414f8fc62), [`339d174`](https://github.com/LedgerHQ/ledger-live/commit/339d17482fba108dfca790c2500c697a818f7a1c), [`3160fa7`](https://github.com/LedgerHQ/ledger-live/commit/3160fa7a2f2a6e121d15766609902e83f4efc71f), [`812d03f`](https://github.com/LedgerHQ/ledger-live/commit/812d03f74d4324c2b165d4fb67fb3b31834d2b67), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`5e611ff`](https://github.com/LedgerHQ/ledger-live/commit/5e611ffffdcf2c73fb55c8b673693dfa88d1077c), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`6d744e0`](https://github.com/LedgerHQ/ledger-live/commit/6d744e0d30b4480282d35c359d096f3f6d6602af), [`644071b`](https://github.com/LedgerHQ/ledger-live/commit/644071ba1aba85cdce57c423934be80f91639155), [`6756f58`](https://github.com/LedgerHQ/ledger-live/commit/6756f5881526607858dbc2ba3d8065e5453b2d5a), [`7073e2d`](https://github.com/LedgerHQ/ledger-live/commit/7073e2d835a79e3e014ca1a9631e73c1f21989c6), [`35d9396`](https://github.com/LedgerHQ/ledger-live/commit/35d9396f690292ae8efda27b24ac4143f03cd00b), [`c92c32e`](https://github.com/LedgerHQ/ledger-live/commit/c92c32e66d20de8a85454bf1fc444dadd3a51e76), [`7f0d867`](https://github.com/LedgerHQ/ledger-live/commit/7f0d867cc9f8715b9244979e42a035babe43d2ab), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`4bab512`](https://github.com/LedgerHQ/ledger-live/commit/4bab512f050d8f4d49a7745104b278ec94dd1d20), [`3264580`](https://github.com/LedgerHQ/ledger-live/commit/3264580e247bbd35d774b33eae21cc7c2e87d105), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e), [`766d1eb`](https://github.com/LedgerHQ/ledger-live/commit/766d1ebf51eccbbaefd0b3d47b07f3e3b8672775), [`3cdcba9`](https://github.com/LedgerHQ/ledger-live/commit/3cdcba9252780b413452cb100682cf08041d966e), [`0a5b68d`](https://github.com/LedgerHQ/ledger-live/commit/0a5b68d609355af795c6176a4ac30c5b7142c2eb), [`8312d68`](https://github.com/LedgerHQ/ledger-live/commit/8312d6818aa5fa37f523352f81f51a61dd502bf2), [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4), [`b7cc410`](https://github.com/LedgerHQ/ledger-live/commit/b7cc41062a66145da018db31722d0df45ed98b1c), [`74a7067`](https://github.com/LedgerHQ/ledger-live/commit/74a706756e9009886a490052d0f3005c6837e8b1)]:
+  - @ledgerhq/coin-stacks@0.33.0-next.0
+  - @ledgerhq/live-common@38.3.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.0
+  - @ledgerhq/types-live@6.127.0-next.0
+  - @ledgerhq/coin-tester@0.20.0
+
 ## 0.2.0
 
 ### Minor Changes
@@ -213,14 +380,4 @@
   - @ledgerhq/coin-stacks@0.29.0
   - @ledgerhq/coin-tester@0.20.0
 
-## 0.1.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`61b4b5f`](https://github.com/LedgerHQ/ledger-live/commit/61b4b5f293524a51f9d34c11e7113c3c923e8dbd), [`26d8617`](https://github.com/LedgerHQ/ledger-live/commit/26d86172869e47608dd0f0e26dfbc905dafa3588), [`2a4b4b1`](https://github.com/LedgerHQ/ledger-live/commit/2a4b4b195a6074b0197e022f7c3ad3cc51b9cf90), [`bb58645`](https://github.com/LedgerHQ/ledger-live/commit/bb586459d2412e667e35bbaeb1c61b69d06aedf0), [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`b2a2e9e`](https://github.com/LedgerHQ/ledger-live/commit/b2a2e9ecec155c4ff3fdefa0b22e0ac2226bf830), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`d1ab42f`](https://github.com/LedgerHQ/ledger-live/commit/d1ab42f2b4db3cef7719d25a7b73a4cf223735dd), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`32f3b76`](https://github.com/LedgerHQ/ledger-live/commit/32f3b7638dbe8c23fd64f60b8eb5e8dfe8f4c74a), [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d), [`f7e5005`](https://github.com/LedgerHQ/ledger-live/commit/f7e5005f306b306042e3022fcb299ef499e7491a), [`4555355`](https://github.com/LedgerHQ/ledger-live/commit/4555355dc1f4162841917325ffd539260322a54d), [`fb4a5bc`](https://github.com/LedgerHQ/ledger-live/commit/fb4a5bc6d78301182f56572ffedbe28bc995f271), [`6e1e0aa`](https://github.com/LedgerHQ/ledger-live/commit/6e1e0aa7b317b7fb5f7c73161198536232b3881e), [`306a681`](https://github.com/LedgerHQ/ledger-live/commit/306a6813eaabfd67dc575bb7bdfc2b52892037df), [`79bd143`](https://github.com/LedgerHQ/ledger-live/commit/79bd143c2b2fe9dd4036ffbf2f75b82afc6e677f), [`e11eebe`](https://github.com/LedgerHQ/ledger-live/commit/e11eebedce8093322ce9dd9140be2e1f29817735), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`a826856`](https://github.com/LedgerHQ/ledger-live/commit/a826856200049687f4b3b37f85bb588eaa4fb4a2), [`b3095f5`](https://github.com/LedgerHQ/ledger-live/commit/b3095f5500b76110b5ce2ed1f08aee9f346a40f3), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`a56baa8`](https://github.com/LedgerHQ/ledger-live/commit/a56baa8d0b71460066bc8173767920049aa50e37), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9), [`9d84383`](https://github.com/LedgerHQ/ledger-live/commit/9d84383b5197f7509eaf232c9a5f12efb6fa162f), [`3908965`](https://github.com/LedgerHQ/ledger-live/commit/3908965e8872b6502558b669897028d39c492f7e), [`d7a9847`](https://github.com/LedgerHQ/ledger-live/commit/d7a9847244eeff976b10ae1aee39fadafec3d1e2)]:
-  - @ledgerhq/live-common@37.4.0-next.0
-  - @ledgerhq/types-live@6.121.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0-next.0
-  - @ledgerhq/live-env@3.1.0-next.0
-  - @ledgerhq/coin-stacks@0.29.0-next.0
-  - @ledgerhq/coin-tester@0.20.0
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

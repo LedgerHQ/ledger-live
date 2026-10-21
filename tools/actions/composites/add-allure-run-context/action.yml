@@ -1,0 +1,27 @@
+name: "Add Allure run context"
+description: "Prepend the workflow run context (RUN.* entries) to the Allure results environment.properties"
+inputs:
+  path:
+    required: true
+    description: "Allure results directory"
+  context:
+    required: false
+    default: ""
+    description: >
+      Newline-separated `key=value` pairs, each written as `RUN.<key> = <value>`.
+      `trigger` (event name) and `commit` (checked-out HEAD) are always added.
+
+runs:
+  using: composite
+  steps:
+    - name: Add run context to environment.properties
+      shell: bash
+      env:
+        INPUTS_PATH: ${{ inputs.path }}
+        INPUTS_CONTEXT: ${{ inputs.context }}
+      run: |
+        {
+          echo "trigger=$GITHUB_EVENT_NAME"
+          echo "commit=$(git rev-parse HEAD 2>/dev/null || echo "$GITHUB_SHA")"
+          printf '%s\n' "$INPUTS_CONTEXT"
+        } | bash "$GITHUB_ACTION_PATH/add-run-context.sh" "$INPUTS_PATH"

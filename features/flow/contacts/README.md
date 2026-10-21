@@ -8,22 +8,17 @@ Shared Contacts flow package for Desktop and Mobile.
 
 ## Scope
 
-- Empty contact detail selection and presentation
-- Populated contact detail view model (address rows, count, and open-detail intents)
-- Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
-- Contact address detail view model (selected address payload, QR payload string, and not-found state)
-- Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
-- Contacts orchestration through `ContactsView`, which composes List, Detail, and Introduction
-  journeys
+- Contacts orchestration through `ContactsView`. On Web it composes List, Detail, and
+  Introduction. On Mobile it renders List, and the app mounts Contact Detail on its own screen.
+- Cross-journey ports and analytics that connect Contact Detail to edit, delete, and add-address
 - Shared UI components (`.web.tsx` / `.native.tsx`)
-- Contact detail composition; Platform Contacts owns the reusable Contact avatar, including the
-  app-owned "Me" profile image
 - Contacts analytics contract: typed event/page names, payloads, and
   `createContactsAnalyticsHelper()` for apps to inject their `track` functions
 
 App layers own routing, screen composition, i18n, and analytics adapters (`track` /
 `trackPage`). Flow-specific tracking contracts and helpers live in this package; shared global
 analytics properties come from `@features/platform-contacts`.
+
 ## Public API
 
 Consume the complete Contacts aggregate from `@features/flow-contacts`. Both Desktop and Mobile use
@@ -32,7 +27,11 @@ Folders under `src/` are internal implementation details and are not exported as
 
 `@features/flow-contacts-list` remains a public leaf flow for consumers that only need a contact
 list. It never imports this orchestrator. `ContactsView` is the appropriate API when the screen
-also needs Contacts Detail or introductions.
+also needs Contact Detail or introductions.
+
+`@features/flow-contacts-detail` owns the Contact Detail journey. Desktop and Mobile import that
+leaf directly. This aggregate composes `ContactDetailView` on Web and keeps the ports and analytics
+that connect Detail to the other journeys.
 
 `@features/flow-contacts-introduction` owns the Feature Introduction and Ledger Sync Introduction
 journeys. Applications that mount their hooks, helpers, or native content directly import that leaf
@@ -51,10 +50,12 @@ dialog or Native drawer directly; the aggregate composes its state with Contact 
 `@features/flow-contacts-delete-contact` owns Contact deletion. Applications import its Web dialog
 or Native drawer directly; the aggregate coordinates its invocation from Contact Detail.
 
-Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split
-used by the app features (View + ViewModel + types + colocated components). Web and React Native
-export their respective `ContactsView` and `ContactDetailView` implementations through the root
-entry point. The native entry also exports `ContactsAddContactHeaderButton` via the List leaf flow.
+`@features/flow-contacts-delete-address` owns address deletion. Applications import its Web dialog
+or Native drawer directly; Contact Detail coordinates when the journey opens.
+
+Web and React Native export `ContactsView` through the root entry point. The native entry also
+exports `ContactsAddContactHeaderButton` via the List leaf flow. Contact Detail rendering lives in
+`@features/flow-contacts-detail`.
 
 ## Testing
 
@@ -64,27 +65,17 @@ entry point. The native entry also exports `ContactsAddContactHeaderButton` via 
 
 ## Structure
 
-Each `steps/<Step>/` is an MVVM screen: `index.ts` (neutral barrel) + `web.ts` / `native.ts`
-(platform Views) + `XxxView.web/.native.tsx` (dumb View) + `types.ts` + colocated `components/`,
-mirroring the app `mvvm/features/*` folders. View-model logic lives at the step root for small
-steps or is grouped into `model/` (pure builders) and `hooks/` (React hooks)
-for larger steps (e.g. `List`). Every folder under `components/` is a PascalCase UI concept; a
-"block" owns its sub-parts as nested folders.
+Journey screens live in their own flow packages. This package composes those leaves and keeps the
+hooks that connect them.
 
 ```
 src/
-├── ContactsView.web/.native.tsx         # orchestrates List with parent-owned journeys
+├── ContactsView.web.tsx                 # orchestrates List, Detail, and Introduction
+├── ContactsView.native.tsx              # renders List
 ├── ContactsView.types.ts
-├── steps/
-│   └── Detail/                          # Contact detail (web + native)
-│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / useContactAddressDetailActionsViewModel.ts / types.ts
-│       ├── model/                       # empty + populated + address detail + quick-action builders
-│       ├── components/                  # Header, EmptyState and detail-specific UI
-│       └── index.ts / web.ts / native.ts
-├── components/                          # Cross-step shared UI
-│   ├── ContactsButton/                  # My Wallet entry (web + native)
-├── hooks/                               # Contacts flow-only hooks
-├── utils/                               # Contacts flow-only utilities
+├── components/                          # Cross-journey shared UI
+│   └── ContactsButton/                  # My Wallet entry (web + native)
+├── hooks/                               # Orchestration hooks
 ├── analytics/                           # Typed tracking contract + helper
 ├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
 ├── index.ts                             # Web public API

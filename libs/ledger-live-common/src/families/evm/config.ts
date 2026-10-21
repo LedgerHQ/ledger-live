@@ -267,6 +267,8 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "cronos",
         uri: "https://proxycronosexplorer.api.live.ledger.com/explorer/api",
       },
+      // Cronos rejects txs below a global min fee of 375 gwei/gas, which eth_feeHistory doesn't reflect
+      minGasPrice: "375000000000",
     },
   },
   config_currency_core: {
@@ -577,26 +579,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1285",
-      },
-    },
-  },
-  config_currency_velas_evm: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 106,
-      name: "Velas EVM",
-      unit: { name: "VLX", code: "VLX", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://evmexplorer.velas.com/rpc",
-      },
-      explorer: {
-        type: "blockscout",
-        uri: "https://evmexplorer.velas.com/api",
       },
     },
   },
@@ -1280,6 +1262,29 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "none",
       },
+    },
+  },
+  config_currency_alpen_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      chainId: 20310,
+      name: "Alpen Testnet",
+      unit: { name: "BTC", code: "BTC", magnitude: 18 },
+      node: { type: "external", uri: "https://alpen.testnet.alpen.org" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.testnet.alpen.org/api",
+      },
+      // Alpen's fee market is sparse: the base fee holds at 0.000875-0.001 gwei and
+      // eth_feeHistory reports no tips, so EIP-1559 estimation falls back to a 1 gwei tip
+      // (~1000x the real cost). Zero-tip transactions are included, so price as legacy from
+      // eth_gasPrice with a 2x-base-fee floor. Re-measure after a regenesis and at mainnet.
+      forceLegacyTransactions: true,
+      minGasPrice: "2000000",
     },
   },
 };

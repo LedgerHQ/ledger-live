@@ -1,9 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import {
-  contact,
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-} from "@domain/entity-contact";
+import { contact } from "@domain/entity-contact";
 import { useContacts } from "@features/platform-contacts";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactDialogViewModel } from "./useAddContactDialogViewModel";
@@ -16,17 +12,6 @@ jest.mock("@features/platform-contacts", () => ({
 
 const mockedUseContacts = jest.mocked(useContacts);
 
-const labels = {
-  title: "Add contact",
-  namePlaceholder: "Contact name",
-  namingDisclaimer: "Use a nickname.",
-  confirmAddContact: "Add contact",
-  nameValidationErrors: {
-    [INVALID_CONTACT_NAME_ERROR_NAME]: "Invalid name",
-    [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "Duplicate name",
-  },
-} as const;
-
 function renderViewModel(
   callbacks?: AddContactDialogLifecycleCallbacks,
   onSaveSuccess = jest.fn(),
@@ -37,7 +22,7 @@ function renderViewModel(
     ),
   };
   const rendered = renderHook(() =>
-    useAddContactDialogViewModel({ contactCreation, labels, onSaveSuccess, callbacks }),
+    useAddContactDialogViewModel({ contactCreation, onSaveSuccess, callbacks }),
   );
 
   return { ...rendered, contactCreation, onSaveSuccess };

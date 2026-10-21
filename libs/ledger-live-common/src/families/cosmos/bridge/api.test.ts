@@ -70,7 +70,7 @@ describe("cosmos bridge", () => {
         base,
       );
 
-      expect(mockGetRedelegations).toHaveBeenCalledWith("cosmos", "cosmos1a");
+      expect(mockGetRedelegations).toHaveBeenCalledWith("cosmos", "uatom", "cosmos1a");
       expect(result.redelegations).toEqual(redelegations);
       expect(result.delegatedBalance).toBe(base.delegatedBalance);
     });

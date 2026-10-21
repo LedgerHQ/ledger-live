@@ -1,12 +1,9 @@
 /**
- * A Zcash account persisted by coin-bitcoin must read back identically through
- * coin-zcash, and the other way round: moving every Zcash account to coin-zcash
- * must neither lose nor rewrite what users already have on disk (UTXOs, the
- * wallet-btc account, the shielded state with its notes), and going back must
- * read what coin-zcash wrote.
+ * Zcash accounts saved before coin-zcash served them were written by coin-bitcoin.
+ * coin-zcash must read them back without losing or rewriting anything users already
+ * have on disk: the UTXOs, the wallet-btc account, the shielded state with its notes.
+ * `persistedAccount` is that shape.
  */
-import "@ledgerhq/coin-bitcoin/chain-adapters/zcash/index";
-import * as bitcoinSerialization from "@ledgerhq/coin-bitcoin/serialization";
 import * as zcashSerialization from "@ledgerhq/coin-zcash/bridge/serialization";
 import { toWalletBtcCurrency } from "@ledgerhq/coin-zcash/walletBtcCurrency";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
@@ -14,6 +11,11 @@ import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import wallet, { DerivationModes } from "@ledgerhq/wallet-btc/index";
 
 const zcash = getCryptoCurrencyById("zcash");
+
+const serialization = {
+  assignFromAccountRaw: zcashSerialization.makeAssignFromAccountRaw(jest.fn()),
+  assignToAccountRaw: zcashSerialization.assignToAccountRaw,
+};
 
 async function persistedAccount(): Promise<AccountRaw> {
   const walletAccount = await wallet.generateAccount(
@@ -101,27 +103,11 @@ function readThenWrite(raw: AccountRaw, reader: Serialization, writer: Serializa
   return JSON.parse(JSON.stringify(out));
 }
 
-describe("Zcash account persistence across coin-bitcoin and coin-zcash", () => {
+describe("Zcash account persistence", () => {
   it("reads what coin-bitcoin persisted and writes it back unchanged", async () => {
     const raw = await persistedAccount();
-    const asPersisted = readThenWrite(raw, bitcoinSerialization, bitcoinSerialization);
 
-    expect(readThenWrite(raw, zcashSerialization, zcashSerialization)).toEqual(asPersisted);
-  });
-
-  it("writes what coin-bitcoin reads back unchanged", async () => {
-    const raw = await persistedAccount();
-    const writtenByZcash = readThenWrite(raw, zcashSerialization, zcashSerialization);
-
-    expect(readThenWrite(writtenByZcash, bitcoinSerialization, bitcoinSerialization)).toEqual(
-      readThenWrite(raw, bitcoinSerialization, bitcoinSerialization),
-    );
-  });
-
-  it("keeps every field of the persisted account", async () => {
-    const raw = await persistedAccount();
-
-    expect(readThenWrite(raw, zcashSerialization, zcashSerialization)).toEqual(
+    expect(readThenWrite(raw, serialization, serialization)).toEqual(
       JSON.parse(JSON.stringify(raw)),
     );
   });

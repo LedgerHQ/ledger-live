@@ -10,6 +10,7 @@ import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import type { DeviceState, RejectedContext } from "./device-state";
+import { speculosTarget } from "./speculos-target";
 
 export type ClassifyContext = {
   /** App name we attempted to open/use. Used for `app_not_installed` / `wrong_app`. */
@@ -98,7 +99,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
   // Device-not-detected: rxjs EmptyError is thrown when lastValueFrom sees no emission,
   // Disconnected* covers USB unplug / transport close.
   if (isDisconnectedError(error)) {
-    return { code: "disconnected" };
+    return { code: "disconnected", ...speculosTarget() };
   }
 
   // Device locked (multiple representations across stacks).
@@ -116,13 +117,13 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
 
   // Timeouts talking to the device — surface as a retriable timeout.
   if (error instanceof SendApduTimeoutError || hasTag(error, "SendApduTimeoutError")) {
-    return { code: "timeout" };
+    return { code: "timeout", ...speculosTarget() };
   }
 
   // Transport framing errors (garbled APDU). Surfaced as timeout since root cause is
   // typically lock / busy and the fix is the same: retry.
   if (hasAnyTag(error, TRANSPORT_FRAMING_TAGS)) {
-    return { code: "timeout" };
+    return { code: "timeout", ...speculosTarget() };
   }
 
   // DMK refused-by-user (RefusedByUserDAError) happens when the user declines the OpenApp prompt.

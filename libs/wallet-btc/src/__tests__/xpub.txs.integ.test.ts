@@ -19,7 +19,7 @@ import { Merge } from "../pickingstrategies/Merge";
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
-const verifyEcdsa = (pubkey: Buffer, msghash: Buffer, signature: Buffer) =>
+const verifyEcdsa = (pubkey: Uint8Array, msghash: Uint8Array, signature: Uint8Array) =>
   ecc.verify(msghash, pubkey, signature);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -75,7 +75,7 @@ describe.skip("testing xpub legacy transactions", () => {
     await sleep(30000);
 
     try {
-      await xpubs[0].xpub.sync();
+      await xpubs[0].xpub.sync(jest.fn());
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log("praline explorer setup error", e);
@@ -98,7 +98,7 @@ describe.skip("testing xpub legacy transactions", () => {
 
     const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
-    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx({
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx(jest.fn(), {
       destAddress: address,
       amount: new BigNumber(100000000),
       feePerByte: 100,
@@ -120,7 +120,7 @@ describe.skip("testing xpub legacy transactions", () => {
     outputs.forEach((output: OutputInfo) => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
     expect(outputs.length).toEqual(2);
@@ -155,8 +155,8 @@ describe.skip("testing xpub legacy transactions", () => {
     expect(pendingsReceive.length).toEqual(1);
     expect(pendings.length).toEqual(1);
 
-    await xpubs[0].xpub.sync();
-    await xpubs[1].xpub.sync();
+    await xpubs[0].xpub.sync(jest.fn());
+    await xpubs[1].xpub.sync(jest.fn());
 
     // pending is seen here
     expect((await xpubs[0].xpub.getXpubBalance()).toNumber()).toEqual(
@@ -179,8 +179,8 @@ describe.skip("testing xpub legacy transactions", () => {
     // time for explorer to sync
     await sleep(30000);
 
-    await xpubs[0].xpub.sync();
-    await xpubs[1].xpub.sync();
+    await xpubs[0].xpub.sync(jest.fn());
+    await xpubs[1].xpub.sync(jest.fn());
 
     expect((await xpubs[0].xpub.getXpubBalance()).toNumber()).toEqual(
       5700000000 - 100000000 - expectedFee1,
@@ -202,7 +202,7 @@ describe.skip("testing xpub legacy transactions", () => {
     const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
     xpubs[0].xpub.OUTPUT_VALUE_MAX = 70000000;
-    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx({
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx(jest.fn(), {
       destAddress: address,
       amount: new BigNumber(100000000),
       feePerByte: 100,
@@ -224,7 +224,7 @@ describe.skip("testing xpub legacy transactions", () => {
     outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
 
@@ -254,8 +254,8 @@ describe.skip("testing xpub legacy transactions", () => {
     // time for explorer to sync
     await sleep(30000);
 
-    await xpubs[0].xpub.sync();
-    await xpubs[1].xpub.sync();
+    await xpubs[0].xpub.sync(jest.fn());
+    await xpubs[1].xpub.sync(jest.fn());
 
     expectedFee2 =
       utils.maxTxSizeCeil(
@@ -319,7 +319,7 @@ describe.skip("Build transactions", () => {
 
     const opReturnData = Buffer.from("charley loves heidi", "utf-8");
 
-    const { inputs, outputs } = await xpubs[0].xpub.buildTx({
+    const { inputs, outputs } = await xpubs[0].xpub.buildTx(jest.fn(), {
       destAddress: address,
       amount: new BigNumber(100000000),
       feePerByte: 100,
@@ -342,7 +342,7 @@ describe.skip("Build transactions", () => {
     outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
   });

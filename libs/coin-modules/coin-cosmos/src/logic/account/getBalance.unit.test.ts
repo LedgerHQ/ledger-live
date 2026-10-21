@@ -1,21 +1,20 @@
 import BigNumber from "bignumber.js";
+import type { CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { getBalance } from "./getBalance";
+
+const config = { denom: "uatom" } as CosmosCoinConfig;
 
 describe("logic/account/getBalance", () => {
   it("returns a single native balance from the account's total native amount", async () => {
     const api = {
-      getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
       getAllBalances: jest.fn().mockResolvedValue(new BigNumber("1500000")),
       getStakingPositions: jest.fn().mockResolvedValue({ delegations: [], unbondings: [] }),
     } as unknown as CosmosAPI;
 
-    const balances = await getBalance(api, "cosmos1abc");
+    const balances = await getBalance(config, api, "cosmos1abc");
 
-    expect(api.getAllBalances).toHaveBeenCalledWith(
-      "cosmos1abc",
-      expect.objectContaining({ id: "cosmos" }),
-    );
+    expect(api.getAllBalances).toHaveBeenCalledWith("cosmos1abc", "uatom");
     expect(balances).toHaveLength(1);
     expect(balances[0].value).toBe(1500000n);
     expect(balances[0].asset).toEqual({ type: "native" });
@@ -24,12 +23,11 @@ describe("logic/account/getBalance", () => {
 
   it("returns a zero native balance for a pristine account", async () => {
     const api = {
-      getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
       getAllBalances: jest.fn().mockResolvedValue(new BigNumber("0")),
       getStakingPositions: jest.fn().mockResolvedValue({ delegations: [], unbondings: [] }),
     } as unknown as CosmosAPI;
 
-    const balances = await getBalance(api, "cosmos1pristine");
+    const balances = await getBalance(config, api, "cosmos1pristine");
 
     expect(balances).toHaveLength(1);
     expect(balances[0].value).toBe(0n);
@@ -39,7 +37,6 @@ describe("logic/account/getBalance", () => {
 
   it("returns a native balance (value incl staked, locked=staked) plus per-position stake balances", async () => {
     const api = {
-      getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
       getAllBalances: jest.fn().mockResolvedValue(new BigNumber("7000000")), // liquid
       getStakingPositions: jest.fn().mockResolvedValue({
         delegations: [
@@ -60,7 +57,7 @@ describe("logic/account/getBalance", () => {
       }),
     } as unknown as CosmosAPI;
 
-    const balances = await getBalance(api, "cosmos1a");
+    const balances = await getBalance(config, api, "cosmos1a");
 
     const native = balances[0];
     expect(native.asset).toEqual({ type: "native" });

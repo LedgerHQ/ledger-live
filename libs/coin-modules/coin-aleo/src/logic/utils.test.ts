@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import aleoConfig from "../config";
 import {
   EXPLORER_TRANSFER_TYPES,
@@ -134,6 +135,7 @@ import {
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
   getEstimatedSigningTime,
+  getSigningRecordCount,
   sumPrivateRecords,
   getMaxPrivateRecordsForAccount,
   getStrategyConfig,
@@ -644,6 +646,84 @@ describe("toPublicOperation", () => {
     });
 
     const result = toPublicOperation({ ...publicOpArgs, rawTx, address: senderAddress });
+
+    expect(result.type).toBe("IN");
+  });
+
+  const feePublicPaidBy = (payer: string) =>
+    getMockedTransactionDetails("at1tx1", {
+      fee: { transition: getMockedFeePublicTransition({ payer }) },
+    });
+
+  it("should set type to OUT for a rejected public self-transfer the account paid for", () => {
+    const rawTx = getMockedPublicTransaction({
+      sender_address: testnetAddress,
+      recipient_address: testnetAddress,
+      transaction_status: "Rejected",
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details: feePublicPaidBy(testnetAddress),
+      address: testnetAddress,
+    });
+
+    expect(result.type).toBe("OUT");
+  });
+
+  it("should keep a rejected public self-transfer IN when its fee was sponsored", () => {
+    const rawTx = getMockedPublicTransaction({
+      sender_address: testnetAddress,
+      recipient_address: testnetAddress,
+      transaction_status: "Rejected",
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details: feePublicPaidBy(testnetSponsorAddress),
+      address: testnetAddress,
+    });
+
+    expect(result.type).toBe("IN");
+  });
+
+  it("should set type to OUT for a rejected unshield to self paid with a private fee", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_private_to_public",
+      sender_address: "",
+      recipient_address: testnetAddress,
+      transaction_status: "Rejected",
+    });
+    const details = getMockedTransactionDetails("at1tx1", {
+      fee: { transition: getMockedFeePrivateTransition() },
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details,
+      address: testnetAddress,
+      hasOwnedFeeRecord: true,
+    });
+
+    expect(result.type).toBe("OUT");
+    expect(result.details).toMatchObject({ transactionType: "private" });
+  });
+
+  it("should keep a rejected incoming transfer IN when another address paid the fee", () => {
+    const rawTx = getMockedPublicTransaction({
+      recipient_address: recipientAddress,
+      transaction_status: "Rejected",
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details: feePublicPaidBy(testnetSponsorAddress),
+      address: recipientAddress,
+    });
 
     expect(result.type).toBe("IN");
   });
@@ -3320,6 +3400,50 @@ describe("getEstimatedSigningTime", () => {
   });
 });
 
+const privateTransaction = (
+  amountRecordCount: number,
+  feeRecordCommitment: string | null,
+  mode:
+    | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE
+    | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE = TRANSACTION_TYPE.TRANSFER_PRIVATE,
+) =>
+  getMockedTransaction({
+    mode,
+    properties: {
+      amountRecordCommitments: Array.from({ length: amountRecordCount }, (_, i) => `record-${i}`),
+      feeRecordCommitment,
+    },
+  });
+
+describe("getSigningRecordCount", () => {
+  it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC])(
+    "returns 0 for %s",
+    mode => {
+      expect(getSigningRecordCount(getMockedTransaction({ mode }))).toBe(0);
+    },
+  );
+
+  it("counts the amount records and the fee record of a private send", () => {
+    expect(getSigningRecordCount(privateTransaction(3, "fee-record"))).toBe(4);
+  });
+
+  it("leaves the fee record out when the fee is sponsored", () => {
+    expect(getSigningRecordCount(privateTransaction(3, null))).toBe(3);
+  });
+
+  it("counts records the same way for a private token send", () => {
+    expect(
+      getSigningRecordCount(
+        privateTransaction(2, "fee-record", TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE),
+      ),
+    ).toBe(3);
+  });
+
+  it("returns 0 before any record is picked", () => {
+    expect(getSigningRecordCount(privateTransaction(0, null))).toBe(0);
+  });
+});
+
 describe("sumPrivateRecords", () => {
   it("returns BigNumber(0) for an empty array", () => {
     expect(sumPrivateRecords([]).isEqualTo(new BigNumber(0))).toBe(true);
@@ -3394,6 +3518,16 @@ describe("isAleoAccount", () => {
 
   it("returns true for an Aleo token account", () => {
     expect(isAleoAccount(getMockedTokenAccount())).toBe(true);
+  });
+
+  it("returns true for an Aleo testnet token account", () => {
+    const testnetTokenAccount = getMockedTokenAccount(undefined, {
+      token: {
+        ...getMockedTokenCurrency(),
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("aleo_testnet"),
+      },
+    });
+    expect(isAleoAccount(testnetTokenAccount)).toBe(true);
   });
 
   it("returns false for an account of another family", () => {
@@ -3909,6 +4043,18 @@ describe("parseTransactionFields", () => {
 
     expect(parseTransactionFields(rawTx, rawTx.recipient_address).type).toBe("IN");
     expect(parseTransactionFields(rawTx, rawTx.sender_address).type).toBe("OUT");
+  });
+
+  it("types a self-transfer IN, unless it was rejected", () => {
+    const selfTx = (transaction_status: string) =>
+      getMockedPublicTransaction({
+        sender_address: address,
+        recipient_address: address,
+        transaction_status,
+      });
+
+    expect(parseTransactionFields(selfTx("Accepted"), address).type).toBe("IN");
+    expect(parseTransactionFields(selfTx("Rejected"), address).type).toBe("OUT");
   });
 });
 

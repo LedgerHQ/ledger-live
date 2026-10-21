@@ -83,7 +83,7 @@ export async function broadcast(
   }
 
   const { zaino } = await context.config(currencyId);
-  const endpoint = zainoEndpoint(zaino.url);
+  const endpoint = zainoEndpoint(zaino.url, currencyId);
   const { grpcUrl } = endpoint;
   const client = await getZCashClient(endpoint);
 

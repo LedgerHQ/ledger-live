@@ -7,7 +7,10 @@ import {
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  type LiveDataCommandOptions,
+  liveDataWithRecipientAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
   FF_NEW_SEND_FLOW_ENABLED,
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
@@ -15,6 +18,8 @@ import {
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
+
+type BalanceType = "public" | "private";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -57,6 +62,9 @@ export type NewSendFlowEntry = {
    * entry, on entries that have actually been run.
    */
   verifyOperationAmount?: boolean;
+  disableBroadcast?: boolean;
+  balanceType?: BalanceType;
+  postSeedHook?: LiveDataCommandOptions["postSeedHook"];
 };
 
 function currencyRequiresMemoStep(currencyId: string): boolean {
@@ -75,7 +83,11 @@ export function requireRecipientAddress(tx: Transaction): string {
   return recipientAddress;
 }
 
-export async function openNewSendFromAccount(app: Application, tx: Transaction) {
+export async function openNewSendFromAccount(
+  app: Application,
+  tx: Transaction,
+  balanceType?: BalanceType,
+) {
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToDebit));
   if (tx.accountToDebit instanceof TokenAccount) {
@@ -83,10 +95,17 @@ export async function openNewSendFromAccount(app: Application, tx: Transaction) 
   }
   await app.account.clickSend();
   await app.newSendFlow.waitForDialog();
+  if (balanceType) {
+    await app.newSendFlow.selectBalanceType(balanceType);
+  }
 }
 
-export async function reachAmountStep(app: Application, tx: Transaction) {
-  await openNewSendFromAccount(app, tx);
+export async function reachAmountStep(
+  app: Application,
+  tx: Transaction,
+  balanceType?: BalanceType,
+) {
+  await openNewSendFromAccount(app, tx, balanceType);
   await app.newSendFlow.typeAddress(requireRecipientAddress(tx));
 
   const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
@@ -112,11 +131,17 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+        cliCommands: [
+          liveDataWithRecipientAddressCommand(tx, {
+            useScheme: true,
+            postSeedHook: entry.postSeedHook,
+          }),
+        ],
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           ...FF_NEW_SEND_FLOW_ENABLED,
         },
+        ...(entry.disableBroadcast && { env: { DISABLE_TRANSACTION_BROADCAST: "1" } }),
       });
 
       test(
@@ -135,7 +160,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           ],
         },
         async ({ app }) => {
-          await reachAmountStep(app, tx);
+          await reachAmountStep(app, tx, entry.balanceType);
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
           if (entry.verifyAmountPrecision) {

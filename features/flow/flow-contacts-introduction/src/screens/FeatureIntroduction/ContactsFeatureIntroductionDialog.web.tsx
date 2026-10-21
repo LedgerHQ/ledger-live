@@ -7,6 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@ledgerhq/lumen-ui-react";
+import { useFeatureIntroductionCopy } from "../../copy/useFeatureIntroductionCopy";
 import type { ContactsFeatureIntroduction } from "../../state/types";
 import { useContactsFeatureIntroductionActions } from "./useContactsFeatureIntroductionActions";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
@@ -14,13 +15,11 @@ import { ContactsFeatureIntroductionDialogContent } from "./ContactsFeatureIntro
 
 export function ContactsFeatureIntroductionDialog({
   isOpen,
-  title,
-  highlights,
-  primaryActionLabel,
   heroImageSrc,
   onComplete,
   onClose: onCloseCallback,
 }: ContactsFeatureIntroduction): React.ReactNode {
+  const { title, highlights, primaryActionLabel } = useFeatureIntroductionCopy();
   const { complete, onClose } = useContactsFeatureIntroductionActions({
     isOpen,
     onComplete,

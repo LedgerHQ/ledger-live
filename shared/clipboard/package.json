@@ -1,6 +1,6 @@
 {
   "name": "@shared/clipboard",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Cross-platform copy and paste: expo-clipboard on mobile, navigator.clipboard on web",
   "main": "src/index.ts",
@@ -20,7 +20,7 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/clipboard",
-    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src"
   },
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/jest-dom": "catalog:",

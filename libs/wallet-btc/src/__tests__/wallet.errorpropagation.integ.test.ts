@@ -28,7 +28,7 @@ describe("testing resilience of failures", () => {
             },
             walletBtcCurrency("bitcoin"),
           )
-          .then(a => wallet.syncAccount(a)),
+          .then(a => wallet.syncAccount(jest.fn(), a)),
       ).rejects.toEqual(new Error("FAILCRYPTO"));
     } finally {
       setSecp256k1Instance(defaultImpl);

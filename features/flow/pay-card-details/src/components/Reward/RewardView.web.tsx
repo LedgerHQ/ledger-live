@@ -20,7 +20,7 @@ export function RewardView({ amount, countervalue, subtitle, onPress }: RewardVi
     >
       <CardHeader>
         <CardLeading>
-          <Spot appearance="icon" icon={DollarConvert} size={48} />
+          <Spot icon={DollarConvert} size={48} />
           <CardContent>
             <CardContentTitle>{countervalue ?? amount}</CardContentTitle>
             <CardContentDescription>{subtitle}</CardContentDescription>

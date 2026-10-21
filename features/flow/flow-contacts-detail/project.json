@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-contacts-detail",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

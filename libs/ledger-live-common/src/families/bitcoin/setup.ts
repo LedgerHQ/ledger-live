@@ -10,7 +10,6 @@ import type { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
 import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
-import { getChainAdapter } from "@ledgerhq/coin-bitcoin/chain-adapters/registry";
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
@@ -18,11 +17,8 @@ import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { SignMessage } from "../../hw/signMessage/types";
 
-const createSigner = (transport: Transport, currency: CryptoCurrency): BitcoinSigner => {
-  const btc = new Btc({ transport, currency: currency.id });
-  const adapter = getChainAdapter(currency.id);
-  return adapter.createSigner?.(transport, currency, btc) ?? btc;
-};
+const createSigner = (transport: Transport, currency: CryptoCurrency): BitcoinSigner =>
+  new Btc({ transport, currency: currency.id });
 
 const signerContext: SignerContext = <T>(
   deviceId: string,

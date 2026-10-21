@@ -14,7 +14,6 @@ export type ContactsAddAddressNameLabels = Readonly<{
 export type ContactsAddAddressNameProps = Readonly<{
   addressEntry: ValidAddAddressEntryState;
   addressLabel: AddAddressLabelState;
-  labels: ContactsAddAddressNameLabels;
   showConfirmedAddress?: boolean;
   onAddressLabelChange: (value: string) => void;
   onContinue: () => void;

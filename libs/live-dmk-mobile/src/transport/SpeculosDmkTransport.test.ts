@@ -92,6 +92,24 @@ describe("SpeculosDmkTransport", () => {
       "http://localhost:5000",
       true,
       DeviceModelId.NANO_X,
+      { bearerToken: undefined },
+    );
+  });
+
+  it("sends the target bearer token with every Speculos request", async () => {
+    const subject = new BehaviorSubject<SpeculosTarget | null>({
+      url: "https://run.speculos.ledgerlabs.net:443",
+      bearerToken: "session-token",
+    });
+    const transport = new SpeculosDmkTransport(args, subject);
+
+    await firstValueFrom(transport.listenToAvailableDevices());
+
+    expect(speculosTransportFactory).toHaveBeenCalledWith(
+      "https://run.speculos.ledgerlabs.net:443",
+      true,
+      undefined,
+      { bearerToken: "session-token" },
     );
   });
 
@@ -120,12 +138,14 @@ describe("SpeculosDmkTransport", () => {
       "http://localhost:5000",
       true,
       undefined,
+      { bearerToken: undefined },
     );
     expect(speculosTransportFactory).toHaveBeenNthCalledWith(
       2,
       "http://localhost:5001",
       true,
       undefined,
+      { bearerToken: undefined },
     );
   });
 

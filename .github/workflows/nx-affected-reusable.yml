@@ -11,16 +11,6 @@ on:
         description: "Head branch"
         type: string
         required: true
-      close_smartling_pr:
-        description: "Close Smartling translation pull requests instead of computing affected projects. Internal pull requests only."
-        type: boolean
-        required: false
-        default: false
-    secrets:
-      GH_BOT_APP_ID:
-        required: false
-      GH_BOT_PRIVATE_KEY:
-        required: false
     outputs:
       packages:
         description: "Newline-separated list of affected packages"
@@ -28,6 +18,12 @@ on:
       paths:
         description: "Newline-separated list of affected paths"
         value: ${{ jobs.nx-affected.outputs.paths }}
+      mobile_js_hash_ios:
+        description: "Nx hash of live-mobile:e2e:bundle:ios, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_js_hash_ios }}
+      mobile_js_hash_android:
+        description: "Nx hash of live-mobile:e2e:bundle:android, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_js_hash_android }}
 
 permissions:
   contents: read
@@ -35,52 +31,22 @@ permissions:
 jobs:
   nx-affected:
     name: "Determine Affected (Nx)"
-    runs-on: ledger-wallet-2cpu-aws-public
+    runs-on: ledger-wallet-4cpu-aws-public-cached
     permissions:
       contents: read
       id-token: write # needed for the OIDC login to JFrog
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}
+      mobile_js_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
+      mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
     steps:
-      - name: Check for a Smartling branch
-        if: ${{ inputs.close_smartling_pr }}
-        env:
-          HEAD_BRANCH: ${{ inputs.head_branch }}
-        run: |
-          branch="${HEAD_BRANCH#refs/heads/}"
-          case "$branch" in
-            smartling-content-updated*|smartling-translation-completed*)
-              echo "IS_SMARTLING=true" >> "$GITHUB_ENV"
-              ;;
-          esac
-
-      - name: Generate token
-        id: generate-token
-        if: ${{ env.IS_SMARTLING == 'true' }}
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
-        with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-          permission-contents: write
-          permission-pull-requests: write
-
-      - name: Close the Smartling pull request
-        if: ${{ env.IS_SMARTLING == 'true' }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPOSITORY: ${{ github.repository }}
-        run: gh pr close "$PR_NUMBER" -R "$REPOSITORY" --delete-branch
-
       - name: Checkout head branch
-        if: ${{ env.IS_SMARTLING != 'true' }}
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
       # ones the repo pins. This also writes nx.cache-config.json.
       - name: Setup the caches
-        if: ${{ env.IS_SMARTLING != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
@@ -88,13 +54,11 @@ jobs:
 
       # Before the install so every package is fetched through JFrog, not public npm.
       - name: JFrog npm auth
-        if: ${{ env.IS_SMARTLING != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Fetch base branch
-        if: ${{ env.IS_SMARTLING != 'true' }}
         env:
           BASE_BRANCH: ${{ inputs.base_branch }}
         run: |
@@ -102,7 +66,6 @@ jobs:
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: clean-refs
-        if: ${{ env.IS_SMARTLING != 'true' }}
         env:
           HEAD_BRANCH_INPUT: ${{ inputs.head_branch }}
           BASE_BRANCH_INPUT: ${{ inputs.base_branch }}
@@ -118,14 +81,22 @@ jobs:
             core.exportVariable("base_branch", newBaseBranch);
             core.setOutput("base_ref", "origin/" + newBaseBranch);
 
-      - name: Install dev dependencies for root workspace
-        if: ${{ env.IS_SMARTLING != 'true' }}
-        run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
+      # Same filters as the mobile Build JS jobs: Nx resolves package versions through node_modules,
+      # so the e2e:bundle hash computed below only matches theirs with the same install
+      - name: Install dependencies for the root workspace and mobile
+        run: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="ledger-live" --ignore-scripts
 
       - name: Get affected packages and paths
         id: nx-affected
-        if: ${{ env.IS_SMARTLING != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD
+
+      # Reuses the project graph the affected step just built, so the mobile e2e workflow can look the
+      # JS bundles up in the Nx cache without its own install. Like the Build JS jobs, it sets no sharedEnv
+      # variables, which are part of the e2e:bundle hash.
+      - name: Compute mobile JS bundle Nx hashes
+        id: mobile-js-hash
+        if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
+        run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"

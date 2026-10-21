@@ -1,0 +1,6 @@
+{
+  "extends": "./client.json",
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  }
+}

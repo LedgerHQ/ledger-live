@@ -12,9 +12,12 @@ import {
 
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
+const mockClose = jest.fn();
 // Lumen hands back the same ref across renders. Handing back a new one would change the identity
 // of every callback built from it, re-running the open/close effect (and its cleanup) each render.
-const mockBottomSheetRef = { current: { present: mockPresent, dismiss: mockDismiss } };
+const mockBottomSheetRef = {
+  current: { present: mockPresent, dismiss: mockDismiss, close: mockClose },
+};
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   __esModule: true,
@@ -100,6 +103,7 @@ describe("useQueuedBottomSheet", () => {
 
     signalClose();
     expect(mockDismiss).toHaveBeenCalled();
+    expect(mockClose).toHaveBeenCalled();
   });
 
   it("frees its queue slot on the close signal rather than waiting for handleDismiss", () => {
@@ -155,6 +159,61 @@ describe("useQueuedBottomSheet", () => {
     expect(onModalHide).toHaveBeenCalledTimes(1);
   });
 
+  it("calls onModalHide when the sheet settles closed without onDismiss", () => {
+    jest.useFakeTimers();
+    try {
+      const onModalHide = jest.fn();
+      const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+      renderHook(() =>
+        useQueuedBottomSheet({
+          isRequestingToBeOpened: true,
+          onModalHide,
+        }),
+      );
+
+      signalOpen();
+      signalClose();
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      expect(onModalHide).toHaveBeenCalledTimes(1);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("calls onModalHide once when the fallback and onDismiss both run", () => {
+    jest.useFakeTimers();
+    try {
+      const onModalHide = jest.fn();
+      const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+      const { result } = renderHook(() =>
+        useQueuedBottomSheet({
+          isRequestingToBeOpened: true,
+          onModalHide,
+        }),
+      );
+
+      signalOpen();
+      signalClose();
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      act(() => {
+        result.current.handleDismiss();
+      });
+
+      expect(onModalHide).toHaveBeenCalledTimes(1);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("does not call present() twice if already open", () => {
     const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
@@ -178,6 +237,30 @@ describe("useQueuedBottomSheet", () => {
     );
 
     expect(mockDismiss).not.toHaveBeenCalled();
+  });
+
+  it("tells the consumer the sheet is gone when the request drops and gorhom never dismisses", () => {
+    jest.useFakeTimers();
+    try {
+      const onModalHide = jest.fn();
+      let isRequestingToBeOpened = true;
+
+      const { rerender } = renderHook(() =>
+        useQueuedBottomSheet({ isRequestingToBeOpened, onModalHide }),
+      );
+
+      isRequestingToBeOpened = false;
+      rerender(undefined);
+      expect(onModalHide).not.toHaveBeenCalled();
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      expect(onModalHide).toHaveBeenCalledTimes(1);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("frees its queue slot only once when handleDismiss follows the close signal", () => {
@@ -631,6 +714,68 @@ describe("useQueuedBottomSheet", () => {
 
   // gorhom ignores a dismiss for a sheet that has not finished presenting, so the sheet arrives on
   // screen showing a consumer that has already been told to hide its content.
+  it("dismisses a sheet that settles open after a close during its entrance was ignored", () => {
+    jest.useFakeTimers();
+    try {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      let isRequestingToBeOpened = true;
+
+      const { result, rerender } = renderHook(() =>
+        useQueuedBottomSheet({ isRequestingToBeOpened }),
+      );
+
+      signalOpen();
+      isRequestingToBeOpened = false;
+      rerender(undefined);
+      expect(mockDismiss).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      act(() => {
+        result.current.handleOpened();
+      });
+
+      expect(mockDismiss).toHaveBeenCalledTimes(2);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("leaves a settled sheet open while it is still requested", () => {
+    const { signalOpen } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    mockDismiss.mockClear();
+    act(() => {
+      result.current.handleOpened();
+    });
+
+    expect(mockDismiss).not.toHaveBeenCalled();
+  });
+
+  it("dismisses a sheet that keeps opening after it is no longer requested", () => {
+    const { signalOpen } = setupBottomSheetStateCapture();
+    let isRequestingToBeOpened = true;
+
+    const { result, rerender } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened }));
+
+    signalOpen();
+    isRequestingToBeOpened = false;
+    rerender(undefined);
+    mockDismiss.mockClear();
+    mockClose.mockClear();
+
+    act(() => {
+      result.current.handleAnimate(-1, 0);
+    });
+
+    expect(mockDismiss).toHaveBeenCalled();
+    expect(mockClose).toHaveBeenCalled();
+  });
+
   it("dismisses a sheet that arrives on screen after being settled as closed", () => {
     jest.useFakeTimers();
     try {
@@ -920,6 +1065,157 @@ describe("useQueuedBottomSheet", () => {
     expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
   });
 
+  describe("a request made while the sheet is on its way out", () => {
+    function renderReopenableHook() {
+      const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+      const rendered = renderHook(() => {
+        const [isOpen, setIsOpen] = useState(true);
+        const hook = useQueuedBottomSheet({
+          isRequestingToBeOpened: isOpen,
+          onClose: () => setIsOpen(false),
+        });
+        return { hook, setIsOpen };
+      });
+      signalOpen();
+      return { ...rendered, signalOpen, signalClose };
+    }
+
+    it("is held for the next presentation instead of being served by the outgoing one", () => {
+      const { result, signalOpen } = renderReopenableHook();
+
+      act(() => {
+        result.current.hook.handleHeaderClosePressed();
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+
+      // Re-tapped while the close animation is still running.
+      act(() => {
+        result.current.setIsOpen(true);
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(true);
+      expect(mockPresent).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      // Queued once more for the new request, after the slot the re-tap took was released.
+      expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(3);
+      expect(mockPresent).toHaveBeenCalledTimes(1);
+
+      signalOpen();
+      expect(mockPresent).toHaveBeenCalledTimes(2);
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it("serves the held request through the fallback when onDismiss never arrives", () => {
+      jest.useFakeTimers();
+      try {
+        const { result, signalOpen } = renderReopenableHook();
+
+        act(() => {
+          result.current.hook.handleHeaderClosePressed();
+        });
+        act(() => {
+          result.current.setIsOpen(true);
+        });
+        expect(result.current.hook.isAwaitingNextPresentation).toBe(true);
+
+        act(() => {
+          jest.advanceTimersByTime(1000);
+        });
+        expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+        expect(mockPresent).toHaveBeenCalledTimes(1);
+
+        signalOpen();
+        expect(mockPresent).toHaveBeenCalledTimes(2);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it.each([
+      ["a pan-down close", (hook: HookResult) => hook.handleAnimate(0, -1)],
+      ["a queue close", (_hook: HookResult, signalClose: () => void) => signalClose()],
+    ])("holds a request made again after %s for the next presentation", (_d, startClose) => {
+      const { result, signalOpen, signalClose } = renderReopenableHook();
+
+      act(() => {
+        startClose(result.current.hook, signalClose);
+      });
+      act(() => {
+        result.current.setIsOpen(true);
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(true);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      signalOpen();
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it.each([
+      ["the close animation starts", (hook: HookResult) => hook.handleAnimate(0, -1)],
+      ["the header close is pressed", (hook: HookResult) => hook.handleHeaderClosePressed()],
+    ])("holds nothing back when %s without a new request", (_description, startClose) => {
+      const { result } = renderReopenableHook();
+
+      act(() => {
+        startClose(result.current.hook);
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it("holds nothing back when the queue closes it without a new request", () => {
+      const { result, signalClose } = renderReopenableHook();
+
+      signalClose();
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    // The backdrop reports the close only once the sheet is gone, so the consumer still requests
+    // the sheet for the whole animation.
+    it("keeps the content of a sheet closed from the backdrop until it is gone", () => {
+      const { result } = renderReopenableHook();
+
+      act(() => {
+        result.current.hook.handleBackdropPress();
+      });
+      act(() => {
+        result.current.hook.handleAnimate(0, -1);
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it.each([
+      ["the close animation starts", (hook: HookResult) => hook.handleAnimate(0, -1)],
+      ["the header close is pressed", (hook: HookResult) => hook.handleHeaderClosePressed()],
+      ["the backdrop is pressed", (hook: HookResult) => hook.handleBackdropPress()],
+    ])("keeps the content of a sheet its consumer never lets go when %s", (_d, startClose) => {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result } = renderHook(() =>
+        useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose: jest.fn() }),
+      );
+      signalOpen();
+
+      act(() => {
+        startClose(result.current);
+      });
+
+      expect(result.current.isAwaitingNextPresentation).toBe(false);
+    });
+  });
+
   describe("a screen losing focus", () => {
     function renderFocusAware(props: { onClose: () => void; restoreOnFocus?: boolean }) {
       let isFocused = true;
@@ -973,6 +1269,16 @@ describe("useQueuedBottomSheet", () => {
       });
 
       expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("keeps the content while hiding under restoreOnFocus", () => {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result, setFocused } = renderFocusAware({ onClose: jest.fn(), restoreOnFocus: true });
+
+      signalOpen();
+      setFocused(false);
+
+      expect(result.current.isAwaitingNextPresentation).toBe(false);
     });
 
     it("queues the drawer again under restoreOnFocus once the screen is focused", () => {

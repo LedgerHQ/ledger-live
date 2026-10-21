@@ -7,7 +7,7 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { Account } from "@ledgerhq/types-live";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import ExportKeyModal from "../index";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {

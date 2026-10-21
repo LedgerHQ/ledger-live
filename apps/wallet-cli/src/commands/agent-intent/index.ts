@@ -9,13 +9,11 @@ import StatusCommand from "./status";
 import SendCommand from "./send";
 import SwapCommand from "./swap";
 import SyncCommand from "./sync";
+import { commandDescription } from "../registry";
 
 export default defineGroup({
   name: "agent-intent",
-  description:
-    "Enroll and manage Agent Intent profiles for AI agents proposing Ethereum and Solana " +
-    "payments and Ethereum swaps for human review, list the intents they proposed, check " +
-    "their status and cancel them, and sync their Ledger Sync accounts.",
+  description: commandDescription("agent-intent"),
   commands: [
     EnrollCommand,
     RecoverCommand,

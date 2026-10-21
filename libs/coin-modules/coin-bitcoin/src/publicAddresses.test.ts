@@ -1,6 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { isValidAddress } from "@ledgerhq/wallet-btc/utils";
-import { ESTIMATION_RECIPIENTS, getBitcoinEstimationRecipient } from "./constants";
+import { ESTIMATION_RECIPIENTS } from "./constants";
 
 // Mirrors the bitcoin loader's supportedCoins (coin-bitcoin can't read the live-common registry).
 const SUPPORTED_BITCOIN_COINS = [
@@ -9,8 +8,6 @@ const SUPPORTED_BITCOIN_COINS = [
   "bitcoin_cash",
   "dogecoin",
   "dash",
-  "zcash",
-  "zcash_testnet",
   "decred",
   "digibyte",
   "qtum",
@@ -27,10 +24,4 @@ test("all bitcoin forks that have a manager app have a defined estimation recipi
     .map(c => c.id)
     .sort();
   expect(currencyIds.every(id => ESTIMATION_RECIPIENTS[id] !== undefined)).toEqual(true);
-});
-
-test("zcash_testnet has a valid testnet estimation recipient", () => {
-  expect(isValidAddress(getBitcoinEstimationRecipient("zcash_testnet"), "zcash_testnet")).toBe(
-    true,
-  );
 });

@@ -1,7 +1,7 @@
 # @features/flow-app-availability
 
 > [!CAUTION]
-> **Status: UNSTABLE** — New package; not yet wired into a host application, and its API may change.
+> **Status: STABLE** — Wired into Ledger Wallet Desktop and Mobile. 
 
 Owns the launch availability check for Ledger Wallet. Apps wrap the tree with `AppAvailability`
 and read `useAppAvailability` from splash gates. Unavailable states render
@@ -35,5 +35,6 @@ const pendingAvailabilityCheck = availability.status === "pending";
 ```
 
 Unavailable copy is resolved in the flow through `@shared/i18n`. Geo-block uses the existing
-`geoBlocking.title` and `geoBlocking.description` keys. The flow does not own URLs or the loading
-splash.
+`geoBlocking.title`, `geoBlocking.description`, and `geoBlocking.learnMore` keys. The learn-more
+URL lives in the flow (`urls.geoBlockLearnMore`) and opens through `@shared/linking`, so the host
+must mount `AppAvailability` under `LinkingProvider`. The flow does not own the loading splash.

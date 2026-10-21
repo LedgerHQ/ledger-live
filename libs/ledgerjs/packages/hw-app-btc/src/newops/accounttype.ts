@@ -1,5 +1,5 @@
 import { crypto } from "bitcoinjs-lib";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { BufferWriter, PsbtV2 } from "@ledgerhq/psbtv2";
 import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
 import { hashPublicKey } from "../hashPublicKey";
@@ -33,8 +33,8 @@ export function computeTaprootOutputKey(internalXonlyPubkey: Buffer): Buffer {
   if (internalXonlyPubkey.length !== 32) {
     throw new Error("Expected 32 byte pubkey. Got " + internalXonlyPubkey.length);
   }
-  const h = crypto.sha256(Buffer.from("TapTweak", "utf-8"));
-  const tweak = crypto.sha256(Buffer.concat([h, h, internalXonlyPubkey]));
+  const h = Buffer.from(crypto.sha256(Buffer.from("TapTweak", "utf-8")));
+  const tweak = Buffer.from(crypto.sha256(Buffer.concat([h, h, internalXonlyPubkey])));
   const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), internalXonlyPubkey]);
   const tweakedKey = pointAddScalar(evenEcdsaPubkey, tweak);
   if (!tweakedKey) throw new Error("Point addition failed");

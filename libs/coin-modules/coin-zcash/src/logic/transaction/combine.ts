@@ -24,7 +24,7 @@ export async function combine(
   },
 ): Promise<FinalizeTransactionResult> {
   const { zaino } = await context.config(currencyId);
-  const client = await getZCashClient(zainoEndpoint(zaino.url));
+  const client = await getZCashClient(zainoEndpoint(zaino.url, currencyId));
 
   if (!client.finalizeTransaction) {
     throw new Error("Shielded Zcash transactions are not supported in this environment");

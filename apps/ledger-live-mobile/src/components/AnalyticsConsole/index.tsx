@@ -82,7 +82,7 @@ const AnalyticsConsole = () => {
         zIndex={1}
       >
         <Flex
-          style={StyleSheet.absoluteFillObject}
+          style={StyleSheet.absoluteFill}
           bg={"white"}
           opacity={visibility === Visibility.opaque && !previewTransparent ? 1 : 0.6}
         />

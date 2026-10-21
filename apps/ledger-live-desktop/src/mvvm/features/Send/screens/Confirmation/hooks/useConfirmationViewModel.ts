@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -70,10 +70,14 @@ export function useConfirmationViewModel() {
   );
 
   const transactionError = state.operation.transactionError;
+  const trackedSuccessSessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     switch (status) {
       case FLOW_STATUS.SUCCESS:
+        // Account refreshes after the broadcast recreate the tracking props: send the event once per flow.
+        if (trackedSuccessSessionIdRef.current === flowSessionId) break;
+        trackedSuccessSessionIdRef.current = flowSessionId;
         trackPage({
           category: "Modal send - transaction sent",
           props: {

@@ -47,9 +47,9 @@ describe("createApi (integration)", () => {
   });
 
   // getBlockInfo / getBlock are not repeated here: their live checks are
-  // logic/history/getBlockInfo.integ.test.ts and getBlock.integ.test.ts, and the createApi delegation
-  // is covered in api/index.unit.test.ts. The upstream provider rate-limits /blocks-from-bluescore
-  // hard, so a second request for the same block from a parallel test file is enough to get 429.
+  // logic/history/getBlockInfo.integ.test.ts and getBlock.integ.test.ts, currently skipped because the
+  // upstream provider throttles /blocks-from-bluescore hard. Their response mapping is covered by
+  // logic/history/getBlock*.msw.test.ts, the createApi delegation by api/index.unit.test.ts.
 
   // Smoke tests through the createApi() surface — deep coverage lives in the logic/*.integ.test.ts;
   // these verify the factory exposes and delegates each method correctly. Depend on FUNDED_SENDER

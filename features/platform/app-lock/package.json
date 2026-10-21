@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-app-lock",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "App lock protection state, verifier and biometrics, plus the UI shared by the app lock flows",
   "main": "src/index.ts",
@@ -50,7 +50,7 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",

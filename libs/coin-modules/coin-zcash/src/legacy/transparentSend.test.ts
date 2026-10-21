@@ -3,7 +3,8 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "../types/bridge";
-import { testContext } from "../test/coinConfig";
+import { TM_ADDRESS } from "../__tests__/fixtures/testnetAddresses";
+import { contextWithZip2009, testContext } from "../test/coinConfig";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
 import { buildLegacyPrepareTransaction } from "./prepareTransaction";
 import { buildLegacyGetTransactionStatus } from "./getTransactionStatus";
@@ -14,7 +15,11 @@ const estimateAccountMaxSpendable = jest.fn();
 const broadcastTx = jest.fn();
 
 jest.mock("./buildTransaction");
-jest.mock("./fees", () => ({ zcashSafeFeePerByte: () => new BigNumber(40) }));
+const zcashSafeFeePerByte = jest.fn((..._args: unknown[]) => new BigNumber(40));
+
+jest.mock("./fees", () => ({
+  zcashSafeFeePerByte: (...args: unknown[]) => zcashSafeFeePerByte(...args),
+}));
 jest.mock("@ledgerhq/wallet-btc/index", () => ({
   __esModule: true,
   default: {
@@ -39,6 +44,18 @@ const account = {
   id: "js:2:zcash:xpub:",
   currency: { id: "zcash", name: "Zcash" },
 } as unknown as ZcashAccount;
+
+// Heights either side of the ZIP 2009 switch (3_590_000, applied 100 blocks late).
+const accountAt = (id: string, blockHeight: number): ZcashAccount =>
+  ({ ...account, currency: { id, name: "Zcash" }, blockHeight }) as unknown as ZcashAccount;
+// A test network refuses a mainnet address, so each account gets one of its own.
+const recipientOf = (acc: ZcashAccount): string =>
+  acc.currency.id === "zcash_testnet" ? TM_ADDRESS : T1;
+const PRICED_AT = [
+  ["mainnet below the switch", accountAt("zcash", 3_590_098), 5_000],
+  ["mainnet past the switch", accountAt("zcash", 3_590_099), 1_000],
+  ["testnet at height 0", accountAt("zcash_testnet", 0), 1_000],
+] as [string, ZcashAccount, number][];
 
 const tx = (fields: Partial<Transaction>): Transaction =>
   ({
@@ -135,6 +152,98 @@ describe("buildLegacyPrepareTransaction", () => {
   });
 });
 
+describe("legacy pricing follows the account's marginal fee", () => {
+  it.each(PRICED_AT)(
+    "prepares %s at the account's marginal fee",
+    async (_label, acc, marginalFee) => {
+      await buildLegacyPrepareTransaction(testContext)(acc, tx({ recipient: recipientOf(acc) }));
+
+      expect(mockBuild).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        marginalFee,
+      );
+    },
+  );
+
+  it.each(PRICED_AT)(
+    "prices the status of %s at the account's marginal fee",
+    async (_label, acc, marginalFee) => {
+      await buildLegacyGetTransactionStatus(testContext)(acc, tx({ recipient: recipientOf(acc) }));
+
+      expect(mockBuild).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        marginalFee,
+      );
+    },
+  );
+
+  it.each(PRICED_AT)(
+    "derives the safe rate of %s from the account's marginal fee",
+    async (_label, acc, marginalFee) => {
+      estimateAccountMaxSpendable.mockResolvedValue(new BigNumber(1));
+
+      await buildLegacyEstimateMaxSpendable(testContext)({ account: acc });
+
+      expect(zcashSafeFeePerByte).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        marginalFee,
+      );
+    },
+  );
+});
+
+describe("legacy pricing follows the zip2009 coin config", () => {
+  const delayed = contextWithZip2009({ mainnetHeight: 3_700_000 });
+  const disabled = contextWithZip2009({ mainnetHeight: null });
+  const past = accountAt("zcash", 3_600_000);
+
+  it("prepares at the fee of the setting", async () => {
+    await buildLegacyPrepareTransaction(delayed)(past, tx({}));
+    expect(mockBuild).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      5_000,
+    );
+
+    await buildLegacyPrepareTransaction(testContext)(past, tx({}));
+    expect(mockBuild).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      1_000,
+    );
+  });
+
+  it("prices the status at the fee of the setting", async () => {
+    await buildLegacyGetTransactionStatus(disabled)(past, tx({}));
+
+    expect(mockBuild).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      5_000,
+    );
+  });
+
+  it("derives the safe rate from the fee of the setting", async () => {
+    estimateAccountMaxSpendable.mockResolvedValue(new BigNumber(1));
+
+    await buildLegacyEstimateMaxSpendable(delayed)({ account: past });
+
+    expect(zcashSafeFeePerByte).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      5_000,
+    );
+  });
+});
+
 describe("buildLegacyGetTransactionStatus", () => {
   const status = buildLegacyGetTransactionStatus(testContext);
 
@@ -175,7 +284,13 @@ describe("buildLegacyEstimateMaxSpendable", () => {
     const max = await estimate({ account, transaction: tx({}) });
 
     expect(max.toNumber()).toBe(123_000);
-    expect(estimateAccountMaxSpendable).toHaveBeenCalledWith(expect.anything(), 40, [], [T1]);
+    expect(estimateAccountMaxSpendable).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      40,
+      [],
+      [T1],
+    );
   });
 
   it("never reports a negative max", async () => {

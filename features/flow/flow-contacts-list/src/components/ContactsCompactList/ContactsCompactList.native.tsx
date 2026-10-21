@@ -7,6 +7,7 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
+import { useContactsCompactListCopy } from "../../copy/useContactsCompactListCopy";
 import type { ContactsCompactListProps, ContactsCompactRowProps } from "../../types";
 import {
   getCompactContactAddressDescription,
@@ -42,10 +43,10 @@ export function ContactsCompactRow({
 
 export function ContactsCompactList({
   contacts,
-  labels,
   maxContacts,
   onContactSelect,
 }: ContactsCompactListProps): React.JSX.Element {
+  const labels = useContactsCompactListCopy();
   const displayedContacts = getDisplayedCompactContacts(contacts, maxContacts);
 
   return (

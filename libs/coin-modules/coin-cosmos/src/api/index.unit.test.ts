@@ -5,13 +5,12 @@ import { CosmosAPI } from "../network/Cosmos";
 
 jest.mock("../network/Cosmos", () => ({
   CosmosAPI: jest.fn().mockImplementation(() => ({
-    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getAllBalances: jest.fn().mockResolvedValue({ toFixed: () => "0" }),
     getAccount: jest
       .fn()
       .mockResolvedValue({ accountNumber: 0, sequence: 0, pubKeyType: "", pubKey: "" }),
     getLatestBlockInfo: jest.fn().mockResolvedValue({ height: 1, hash: "hash", time: new Date() }),
-    getTransactionsPage: jest.fn().mockResolvedValue({ txs: [], hasMore: false }),
+    getTransactionsPage: jest.fn().mockResolvedValue({ streams: [] }),
     getValidators: jest.fn().mockResolvedValue([]),
     getDelegations: jest.fn().mockResolvedValue([]),
     getUnbondings: jest.fn().mockResolvedValue([]),
@@ -22,7 +21,7 @@ jest.mock("../network/Cosmos", () => ({
 
 import { createApi } from "./index";
 
-const config = { status: { type: "active" } } as unknown as CosmosCoinConfig;
+const config = { status: { type: "active" }, denom: "uatom" } as unknown as CosmosCoinConfig;
 
 const makeContext = (cfg: CosmosCoinConfig = config): CosmosContext => ({
   config: async () => cfg,

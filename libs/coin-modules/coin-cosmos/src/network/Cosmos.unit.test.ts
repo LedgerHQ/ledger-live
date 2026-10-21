@@ -1,6 +1,5 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "../chain/chain";
@@ -470,12 +469,51 @@ describe("CosmosApi", () => {
         });
       });
 
-      const { txs, hasMore } = await cosmosApi.getTransactionsPage("address", 10);
-      expect(txs.length).toEqual(20);
-      expect(hasMore).toBe(true);
+      const { streams } = await cosmosApi.getTransactionsPage("address", 10);
+      expect(streams.map(stream => stream.txs.length)).toEqual([10, 10, 10]);
+      expect(streams.map(stream => stream.hasMore)).toEqual([true, true, true]);
     });
 
-    it("reports hasMore=false when both streams fit within count", async () => {
+    it("queries the sender, recipient and fee payer streams", async () => {
+      const requestedUrls: string[] = [];
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.44.0" } },
+          });
+        }
+        requestedUrls.push(decodeURIComponent(networkOptions.url));
+        return Promise.resolve({ data: { pagination: { total: 0 }, tx_responses: [] } });
+      });
+
+      await cosmosApi.getTransactionsPage("address", 10);
+
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("message.sender='address'"),
+        expect.stringContaining("transfer.recipient='address'"),
+        expect.stringContaining("tx.fee_payer='address'"),
+      ]);
+    });
+
+    it("reports hasMore per stream when only the fee payer stream exceeds count", async () => {
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.44.0" } },
+          });
+        }
+        const total = decodeURIComponent(networkOptions.url).includes("tx.fee_payer") ? 500 : 2;
+        return Promise.resolve({ data: { pagination: { total }, tx_responses: [] } });
+      });
+
+      const { streams } = await cosmosApi.getTransactionsPage("address", 10);
+
+      expect(streams.map(stream => stream.hasMore)).toEqual([false, false, true]);
+    });
+
+    it("reports hasMore=false when all streams fit within count", async () => {
       // @ts-expect-error method is mocked
       network.mockImplementation((networkOptions: { url: string }) => {
         if (networkOptions.url.includes("node_info")) {
@@ -488,9 +526,9 @@ describe("CosmosApi", () => {
         });
       });
 
-      const { txs, hasMore } = await cosmosApi.getTransactionsPage("address", 10);
-      expect(txs.length).toEqual(4);
-      expect(hasMore).toBe(false);
+      const { streams } = await cosmosApi.getTransactionsPage("address", 10);
+      expect(streams.map(stream => stream.txs.length)).toEqual([2, 2, 2]);
+      expect(streams.map(stream => stream.hasMore)).toEqual([false, false, false]);
     });
 
     it("falls back to legacy params when the node version is unparseable", async () => {
@@ -514,8 +552,8 @@ describe("CosmosApi", () => {
       });
 
       // Old behaviour: semver.gte throws on "unknown" → catch → empty page. Fixed: legacy params.
-      const { txs } = await cosmosApi.getTransactionsPage("address", 5);
-      expect(txs.length).toEqual(10);
+      const { streams } = await cosmosApi.getTransactionsPage("address", 5);
+      expect(streams.map(stream => stream.txs.length)).toEqual([5, 5, 5]);
     });
   });
 
@@ -791,7 +829,7 @@ describe("CosmosApi", () => {
 
   describe("getAccountInfo", () => {
     const babylonAddress = "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n";
-    const babylonCurrency = { id: "babylon", units: [{}, { code: "ubbn" }] } as CryptoCurrency;
+    const babylonDenom = "ubbn";
 
     const queuedDelegate = {
       msg_type: "cosmos.staking.v1beta1.MsgDelegate",
@@ -903,7 +941,7 @@ describe("CosmosApi", () => {
     it("merges queued epoching staking messages into babylon positions", async () => {
       mockAccountInfoRoutes({ msgs: [queuedDelegate, queuedUndelegate, queuedForeignDelegate] });
       const babylonApi = new CosmosAPI("babylon");
-      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonDenom);
 
       expect(result.delegations).toEqual([
         expect.objectContaining({
@@ -930,7 +968,7 @@ describe("CosmosApi", () => {
     it("does not merge when the epoch changes during the queue fetch", async () => {
       mockAccountInfoRoutes({ epochs: ["5", "6"], msgs: [queuedDelegate] });
       const babylonApi = new CosmosAPI("babylon");
-      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonDenom);
 
       expect(result.delegations).toEqual([
         expect.objectContaining({
@@ -944,7 +982,7 @@ describe("CosmosApi", () => {
     it("does not merge when the block height is past the epoch boundary", async () => {
       mockAccountInfoRoutes({ height: 999, epochBoundary: "360", msgs: [queuedDelegate] });
       const babylonApi = new CosmosAPI("babylon");
-      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonDenom);
 
       expect(result.delegations).toEqual([expect.objectContaining({ amount: new BigNumber(50) })]);
     });
@@ -953,7 +991,7 @@ describe("CosmosApi", () => {
       // at the boundary block the queue has already executed into the on-chain delegations
       mockAccountInfoRoutes({ height: 360, epochBoundary: "360", msgs: [queuedDelegate] });
       const babylonApi = new CosmosAPI("babylon");
-      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonDenom);
 
       expect(result.delegations).toEqual([expect.objectContaining({ amount: new BigNumber(50) })]);
     });
@@ -961,7 +999,7 @@ describe("CosmosApi", () => {
     it("keeps the babylon sync alive when the epoching endpoint fails", async () => {
       mockAccountInfoRoutes({ epochingError: true, msgs: [queuedDelegate] });
       const babylonApi = new CosmosAPI("babylon");
-      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonDenom);
 
       expect(result.balances).toEqual(new BigNumber(70));
       expect(result.delegations).toEqual([expect.objectContaining({ amount: new BigNumber(50) })]);
@@ -969,10 +1007,7 @@ describe("CosmosApi", () => {
 
     it("never requests epoching endpoints for non-epoched chains", async () => {
       mockAccountInfoRoutes({});
-      await cosmosApi.getAccountInfo("cosmos1myaddress", {
-        id: "cosmos",
-        units: [{}, { code: "uatom" }],
-      } as CryptoCurrency);
+      await cosmosApi.getAccountInfo("cosmos1myaddress", "uatom");
 
       const requestedUrls = mockedNetwork.mock.calls.map(([options]) => options.url);
       expect(requestedUrls.length).toBeGreaterThan(0);
@@ -985,7 +1020,7 @@ describe("CosmosApi", () => {
       const babylonApi = new CosmosAPI("babylon");
 
       const before = Date.now();
-      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonDenom);
       const after = Date.now();
 
       const DAY_MS = 86_400_000;
@@ -1000,10 +1035,7 @@ describe("CosmosApi", () => {
     it("keeps the chain completion_time on non-epoched chains (no re-anchor)", async () => {
       mockAccountInfoRoutes({ unbondings: [processedUnbonding] });
 
-      const result = await cosmosApi.getAccountInfo("cosmos1myaddress", {
-        id: "cosmos",
-        units: [{}, { code: "uatom" }],
-      } as CryptoCurrency);
+      const result = await cosmosApi.getAccountInfo("cosmos1myaddress", "uatom");
 
       expect(result.unbondings).toEqual([
         expect.objectContaining({
@@ -1021,7 +1053,7 @@ describe("CosmosApi", () => {
       mockAccountInfoRoutes({ height: 4_016_182, unbondings: [malformed] });
       const babylonApi = new CosmosAPI("babylon");
 
-      const [unbonding] = (await babylonApi.getAccountInfo(babylonAddress, babylonCurrency))
+      const [unbonding] = (await babylonApi.getAccountInfo(babylonAddress, babylonDenom))
         .unbondings;
       expect(unbonding.completionDate).toEqual(new Date("2026-08-10T07:10:27.684611546Z"));
       expect(Number.isNaN(unbonding.completionDate.getTime())).toBe(false);
@@ -1059,7 +1091,7 @@ describe("CosmosApi", () => {
   };
 
   describe("getStakingPositions", () => {
-    const currency = { id: "babylon", units: [{}, { code: "ubbn" }] } as CryptoCurrency;
+    const denom = "ubbn";
 
     it("returns delegations/unbondings with queued epoching messages merged (babylon)", async () => {
       mockBabylonRoutes([
@@ -1072,7 +1104,7 @@ describe("CosmosApi", () => {
       const babylonApi = new CosmosAPI("babylon");
       const { delegations, unbondings } = await babylonApi.getStakingPositions(
         BABYLON_ADDRESS,
-        currency,
+        denom,
       );
 
       expect(unbondings).toEqual([]);
@@ -1090,8 +1122,8 @@ describe("CosmosApi", () => {
   });
 
   describe("getRedelegationsWithQueued", () => {
-    const babylon = { id: "babylon", units: [{}, { code: "ubbn" }] } as CryptoCurrency;
-    const cosmos = { id: "cosmos", units: [{}, { code: "uatom" }] } as CryptoCurrency;
+    const babylon = "ubbn";
+    const cosmos = "uatom";
 
     it("merges queued redelegations on epoched chains (babylon)", async () => {
       mockBabylonRoutes([

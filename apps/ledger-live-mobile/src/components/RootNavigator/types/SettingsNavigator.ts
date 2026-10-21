@@ -79,6 +79,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugWallet40]: undefined;
   [ScreenName.DebugContacts]: undefined;
   [ScreenName.DebugDevTools]: undefined;
+  [ScreenName.DebugDeviceOnboarding]: undefined;
   [ScreenName.DebugPayContactSuccess]: { recipient?: "me" } | undefined;
   [ScreenName.DebugSendSuccess]: undefined;
   [ScreenName.DebugPlayground]: undefined;

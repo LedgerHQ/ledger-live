@@ -1,4 +1,5 @@
 import { renderHook, act } from "tests/testSetup";
+import { track } from "@shared/analytics";
 import { BigNumber } from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import {
@@ -6,8 +7,9 @@ import {
   createMockCurrency,
   createMockTronUsdtAccount,
 } from "../../../Recipient/__integrations__/__fixtures__/accounts";
-import type { SponsoredFeeAmounts } from "LLD/features/Send/types";
-import { useFeePaymentViewModel, type FeePaymentOption } from "../useFeePaymentViewModel";
+import type { FeePaymentOption, SponsoredFeeAmounts } from "LLD/features/Send/types";
+import { openURL } from "~/renderer/linking";
+import { useFeePaymentViewModel } from "../useFeePaymentViewModel";
 
 const SPONSORED_ID = "sponsored-fixture";
 
@@ -43,9 +45,23 @@ jest.mock("../../../../context/SendFlowContext", () => ({
   }),
 }));
 
+jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send" }),
+}));
+
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
+}));
+
 jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: () => ({ navigation: { goToPreviousStep: mockGoToPreviousStep } }),
 }));
+
+jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: () => "https://support.ledger.com/gas-sponsorship",
+}));
+jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
+const mockedOpenURL = jest.mocked(openURL);
 
 const findSponsored = (options: readonly FeePaymentOption[]) =>
   options.find(option => option.id === SPONSORED_ID);
@@ -193,6 +209,15 @@ describe("useFeePaymentViewModel", () => {
     );
   });
 
+  it("opens the gas sponsorship article from Learn more", () => {
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    expect(result.current.learnMoreLabel).toBe("Learn more");
+    act(() => result.current.onLearnMore());
+
+    expect(mockedOpenURL).toHaveBeenCalledWith("https://support.ledger.com/gas-sponsorship");
+  });
+
   it("lets both options be picked while the fee token covers the rent", () => {
     const { result } = renderHook(() => useFeePaymentViewModel());
 
@@ -240,5 +265,36 @@ describe("useFeePaymentViewModel", () => {
 
     expect(result.current.confirmDisabled).toBe(true);
     expect(mockGoToPreviousStep).not.toHaveBeenCalled();
+  });
+
+  it("tracks the fee option confirmed", () => {
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    act(() => {
+      result.current.onSelect(SPONSORED_ID);
+    });
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "confirm",
+      page: "step fee payment",
+      fee_option: SPONSORED_ID,
+      flow_session_id: "session-1",
+      flow: "send",
+    });
+  });
+
+  it("tracks nothing when Confirm is blocked", () => {
+    mockSponsoredSend.selectedFeeOptionId = SPONSORED_ID;
+    mockSponsoredSend.sponsoredMaxAmount = new BigNumber(0);
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(track).not.toHaveBeenCalled();
   });
 });

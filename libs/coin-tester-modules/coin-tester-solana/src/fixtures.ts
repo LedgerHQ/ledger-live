@@ -159,7 +159,7 @@ export const makeAccount = (
   };
 };
 
-export function initMSW(): () => void {
+export function initMSW(rpcUrl: string): () => void {
   const mockServer = setupServer(
     http.get("https://global.api.prd.ledger.com/cal/v1/certificates", ({ request }) => {
       const url = new URL(request.url);
@@ -351,7 +351,7 @@ export function initMSW(): () => void {
       }
       return HttpResponse.json([]);
     }),
-    http.post("http://localhost:8899", async ({ request }) => {
+    http.post(rpcUrl, async ({ request }) => {
       const body: unknown = await request.clone().json();
 
       if (

@@ -1,5 +1,27 @@
 # @domain/api-swap-quotes
 
+## 0.3.0
+
+### Minor Changes
+
+- [#22582](https://github.com/LedgerHQ/ledger-live/pull/22582) [`766d1eb`](https://github.com/LedgerHQ/ledger-live/commit/766d1ebf51eccbbaefd0b3d47b07f3e3b8672775) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Remove the unused unauthenticated standalone swap quotes store
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#22582](https://github.com/LedgerHQ/ledger-live/pull/22582) [`766d1eb`](https://github.com/LedgerHQ/ledger-live/commit/766d1ebf51eccbbaefd0b3d47b07f3e3b8672775) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Remove the unused unauthenticated standalone swap quotes store
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0-next.0
+
 ## 0.2.6
 
 ### Patch Changes

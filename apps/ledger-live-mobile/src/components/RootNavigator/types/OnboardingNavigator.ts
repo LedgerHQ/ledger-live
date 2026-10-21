@@ -1,4 +1,7 @@
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import { NavigatorScreenParams } from "@react-navigation/native";
 
 import { NavigatorName, ScreenName } from "~/const";
@@ -48,6 +51,23 @@ export type OnboardingNavigatorParamList = {
     isProtectFlow?: boolean;
     fromAccessExistingWallet?: boolean;
     isRestoreSeed?: boolean;
+    connectSeededDevice?: boolean;
+  };
+  [ScreenName.DeviceOnboardingFunnel]: {
+    pairedDeviceId?: string;
+    wasReadOnlyAtEntry: boolean;
+  };
+  [ScreenName.DeviceOnboardingSyncOffer]: {
+    device: Device;
+    wasReadOnlyAtEntry: boolean;
+  };
+  [ScreenName.FirmwareUpdate]: {
+    deviceInfo?: DeviceInfo | null;
+    firmwareUpdateContext?: FirmwareUpdateContext | null;
+    device?: Device | null;
+    onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
+    isBeforeOnboarding?: boolean;
+    isDeviceOnboarded?: boolean;
   };
   [ScreenName.OnboardingSecureYourCrypto]: {
     deviceModelId?: DeviceModelId;

@@ -26,15 +26,19 @@ export type DeviceStateCode =
 export type AwaitingApprovalReason = "sign" | "verify_address" | "open_app" | "unlock";
 export type RejectedContext = "sign" | "verify_address" | "open_app";
 
+/**
+ * `speculosUrl` is set when wallet-cli talks to Speculos instead of a USB device, and `detail`
+ * carries why connecting to it failed.
+ */
 export type DeviceState =
-  | { code: "disconnected" }
+  | { code: "disconnected"; speculosUrl?: string; detail?: string }
   | { code: "wrong_app"; expected: string; found?: string }
   | { code: "awaiting_approval"; reason: AwaitingApprovalReason }
   | { code: "rejected"; context: RejectedContext; deviceModelId?: string }
   | { code: "exchange_app_needed" }
   | { code: "locked" }
   | { code: "app_not_installed"; appName: string }
-  | { code: "timeout" }
+  | { code: "timeout"; speculosUrl?: string }
   | { code: "unknown"; cause: unknown };
 
 export type DeviceStateGlyph = "[✖]" | "[⧖]" | "[ℹ]";
@@ -75,12 +79,16 @@ export function renderDeviceState(state: DeviceState): {
   exitCode: DeviceExitCode;
 } {
   switch (state.code) {
-    case "disconnected":
+    case "disconnected": {
+      const detail = state.detail ? ` (${state.detail})` : "";
       return {
         glyph: "[✖]",
-        message: "Ledger not detected. Plug in, unlock, retry.",
+        message: state.speculosUrl
+          ? `Speculos not reachable at ${state.speculosUrl}${detail}. Start Speculos or fix SPECULOS_API_PORT / SPECULOS_ADDRESS, then retry.`
+          : "Ledger not detected. Plug in, unlock, retry.",
         exitCode: DEVICE_EXIT_CODES.disconnected,
       };
+    }
     case "wrong_app": {
       const found = state.found ? ` (found: ${state.found})` : "";
       return {
@@ -122,8 +130,9 @@ export function renderDeviceState(state: DeviceState): {
     case "timeout":
       return {
         glyph: "[✖]",
-        message:
-          "Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.",
+        message: state.speculosUrl
+          ? `Timed out talking to Speculos at ${state.speculosUrl}. The emulated app may be waiting for a button press. Retry the command.`
+          : "Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.",
         exitCode: DEVICE_EXIT_CODES.timeout,
       };
     case "unknown":

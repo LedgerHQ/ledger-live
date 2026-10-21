@@ -26,6 +26,7 @@ type EarnState =
 export function useBalanceDetailsViewModel(
   currency: AssetDetailCurrencyProps,
   distributionItem: DistributionItem | undefined,
+  ledgerIds?: string[],
 ) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
@@ -130,8 +131,11 @@ export function useBalanceDetailsViewModel(
       currency: currency?.id,
       page: "Asset Detail",
     });
-    openDrawer({ sourceScreenName: "Asset Detail" });
-  }, [openDrawer, currency?.id]);
+    openDrawer({
+      sourceScreenName: "Asset Detail",
+      scope: currency ? { type: "asset", currency, ledgerIds } : { type: "wallet" },
+    });
+  }, [openDrawer, currency, ledgerIds]);
 
   const onEarnBannerPress = useCallback(() => {
     track("button_clicked", {

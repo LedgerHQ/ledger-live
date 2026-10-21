@@ -1,0 +1,6 @@
+{
+  "extends": "./lib.json",
+  "compilerOptions": {
+    "lib": ["ES2022"]
+  }
+}

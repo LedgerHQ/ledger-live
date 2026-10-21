@@ -8,8 +8,9 @@ import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box/Box";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = {
   account: ZcashAccount;
@@ -28,7 +29,7 @@ const ZcashSyncStateBanner = ({ account, sender }: Props) => {
   const activeAccount = liveAccount ?? account;
   const { startShieldedSync } = useZcashShieldedSync(activeAccount);
 
-  if (!shieldedEnabled || sender !== "private" || activeAccount.currency.id !== "zcash")
+  if (!shieldedEnabled || sender !== "private" || !isZcashCurrencyId(activeAccount.currency.id))
     return null;
 
   const privateInfo = activeAccount.privateInfo;

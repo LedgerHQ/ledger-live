@@ -17,7 +17,6 @@ export type ContactsAddAddressReviewProps = Readonly<{
   addressEntry: ValidAddAddressEntryState;
   addressLabel: ValidAddAddressLabelState;
   displayContext: AddAddressDisplayContext;
-  labels: ContactsAddAddressReviewLabels;
   onContinue: () => void;
 }>;
 
