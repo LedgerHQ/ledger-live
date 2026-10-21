@@ -40,6 +40,7 @@ import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
 import {
   buildSpeculosLegacyDeviceId,
+  getDeviceManagementKit,
   isSpeculosLegacyDeviceId,
   speculosIdentifier,
   speculosTargetSubject,
@@ -57,8 +58,19 @@ let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
 
+async function disconnectDeviceIntentSpeculosSessions() {
+  const dmk = getDeviceManagementKit();
+  await Promise.all(
+    dmk
+      .listConnectedDevices()
+      .filter(device => device.transport === speculosIdentifier)
+      .map(({ sessionId }) => dmk.disconnect({ sessionId }).catch(() => {})),
+  );
+}
+
 async function disconnectAllSpeculosSessions() {
   await DeviceManagementKitTransportSpeculos.disconnectAll();
+  await disconnectDeviceIntentSpeculosSessions();
 }
 
 function removeKnownSpeculosDevices() {
