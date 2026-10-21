@@ -42,7 +42,9 @@ export function withMetrics<
     if (!hasCoinModuleCallObservers()) return fn(...args);
 
     const start = now();
-    const report = (error?: unknown) => {
+    // The outcome is passed explicitly: a method may throw or reject with `undefined`, which is
+    // still a failure for the caller and must not be counted as a success.
+    const report = (outcome: { failed: false } | { failed: true; error: unknown }) => {
       const event: CoinModuleCallEvent = {
         method,
         network,
@@ -50,8 +52,8 @@ export function withMetrics<
         durationMs: Math.round(now() - start),
         status: "success",
       };
-      if (error !== undefined) {
-        const err = toError(error);
+      if (outcome.failed) {
+        const err = toError(outcome.error);
         event.status = stubs.has(method) ? "not_supported" : "failure";
         event.errorName = err.name;
         event.errorMessage = sanitizeErrorMessage(err.message);
@@ -64,22 +66,22 @@ export function withMetrics<
     try {
       result = fn(...args);
     } catch (e) {
-      report(e);
+      report({ failed: true, error: e });
       throw e;
     }
     if (result instanceof Promise) {
       return result.then(
         v => {
-          report();
+          report({ failed: false });
           return v;
         },
         e => {
-          report(e);
+          report({ failed: true, error: e });
           throw e;
         },
       );
     }
-    report();
+    report({ failed: false });
     return result;
   });
 }

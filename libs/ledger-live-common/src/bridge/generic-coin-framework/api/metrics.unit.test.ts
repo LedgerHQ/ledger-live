@@ -106,6 +106,36 @@ describe("withMetrics", () => {
     expect(events).toEqual([expect.objectContaining({ method: "combine", status: "failure" })]);
   });
 
+  // `undefined` is a legal thrown value: the caller still fails, so the call is no success.
+  it("reports a synchronous throw of undefined as a failure", () => {
+    const combine = jest.fn(() => {
+      // oxlint-disable-next-line no-throw-literal -- the case under test
+      throw undefined;
+    });
+    const api = withMetrics(makeApi({ combine }), labels);
+
+    let thrown: unknown = "nothing thrown";
+    try {
+      api.combine({}, "tx", "sig");
+    } catch (e) {
+      thrown = e;
+    }
+
+    expect(thrown).toBeUndefined();
+    expect(events).toEqual([expect.objectContaining({ method: "combine", status: "failure" })]);
+  });
+
+  it("reports a rejection with undefined as a failure", async () => {
+    const api = withMetrics(
+      makeApi({ lastBlock: jest.fn().mockReturnValue(Promise.reject(undefined)) }),
+      labels,
+    );
+
+    await expect(api.lastBlock({})).rejects.toBeUndefined();
+
+    expect(events).toEqual([expect.objectContaining({ method: "lastBlock", status: "failure" })]);
+  });
+
   it("reports a call to an omitted capability as not supported, not as a failure", () => {
     const api = withMetrics(makeApi(), labels);
 
