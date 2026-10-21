@@ -1,8 +1,26 @@
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
-index 80c6803..e86df44 100644
+index 80c6803..12872b9 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
-@@ -95,6 +95,20 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -46,6 +46,7 @@ import org.json.JSONObject;
+ 
+ import java.util.List;
+ import java.util.Map;
++import java.util.Objects;
+ import java.util.Set;
+ 
+ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -58,6 +59,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+     RNCWebViewBridge fallbackBridge;
+     protected @Nullable
+     WebViewCompat.WebMessageListener bridgeListener = null;
++    // Ledger Live patch (LIVE-39616): origin rules of the frames the bridge is exposed to, any
++    // origin when null. Remove once upstream react-native-webview restricts the listener.
++    @Nullable protected Set<String> messagingAllowedOrigins = null;
+ 
+     /**
+      * android.webkit.WebChromeClient fundamentally does not support JS injection into frames other
+@@ -95,6 +99,20 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
          mRNCWebViewClient.setBasicAuthCredential(credential);
      }
  
@@ -23,7 +41,7 @@ index 80c6803..e86df44 100644
      public void setSendContentSizeChangeEvents(boolean sendContentSizeChangeEvents) {
          this.sendContentSizeChangeEvents = sendContentSizeChangeEvents;
      }
-@@ -221,6 +235,7 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -221,6 +239,7 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
          if (client instanceof RNCWebViewClient) {
              mRNCWebViewClient = (RNCWebViewClient) client;
              mRNCWebViewClient.setProgressChangedFilter(progressChangedFilter);
@@ -31,6 +49,87 @@ index 80c6803..e86df44 100644
          }
      }
  
+@@ -253,15 +272,10 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+             this.bridgeListener = new WebViewCompat.WebMessageListener() {
+               @Override
+               public void onPostMessage(@NonNull WebView view, @NonNull WebMessageCompat message, @NonNull Uri sourceOrigin, boolean isMainFrame, @NonNull JavaScriptReplyProxy replyProxy) {
+-                RNCWebView.this.onMessage(message.getData(), sourceOrigin.toString());
++                RNCWebView.this.onMessage(message.getData(), sourceOrigin.toString(), isMainFrame);
+               }
+             };
+-            WebViewCompat.addWebMessageListener(
+-              webView,
+-              JAVASCRIPT_INTERFACE,
+-              Set.of("*"),
+-              this.bridgeListener
+-            );
++            addBridgeListener(webView);
+           }
+         } else {
+           if (fallbackBridge == null) {
+@@ -272,6 +286,30 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+         injectJavascriptObject();
+     }
+ 
++    // Ledger Live patch (LIVE-39616): an invalid rule fails closed, the bridge is not exposed.
++    private void addBridgeListener(WebView webView) {
++        Set<String> rules = messagingAllowedOrigins == null ? Set.of("*") : messagingAllowedOrigins;
++        if (rules.isEmpty()) {
++            return;
++        }
++        try {
++            WebViewCompat.addWebMessageListener(webView, JAVASCRIPT_INTERFACE, rules, this.bridgeListener);
++        } catch (IllegalArgumentException e) {
++            FLog.w("RNCWebView", "Invalid messagingAllowedOrigins, the bridge is not exposed", e);
++        }
++    }
++
++    public void setMessagingAllowedOrigins(@Nullable Set<String> origins) {
++        if (Objects.equals(messagingAllowedOrigins, origins)) {
++            return;
++        }
++        messagingAllowedOrigins = origins;
++        if (bridgeListener != null && WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
++            WebViewCompat.removeWebMessageListener(this, JAVASCRIPT_INTERFACE);
++            addBridgeListener(this);
++        }
++    }
++
+     private void injectJavascriptObject() {
+       if (getSettings().getJavaScriptEnabled()) {
+         String js = "(function(){\n" +
+@@ -325,6 +363,11 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+     }
+ 
+     public void onMessage(String message, String sourceUrl) {
++        onMessage(message, sourceUrl, null);
++    }
++
++    // Ledger Live patch (LIVE-39616): reports whether the sender is the main frame, when known.
++    public void onMessage(String message, String sourceUrl, @Nullable Boolean isMainFrame) {
+         ThemedReactContext reactContext = getThemedReactContext();
+         RNCWebView mWebView = this;
+ 
+@@ -338,6 +381,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+                     }
+                     WritableMap data = mRNCWebViewClient.createWebViewEvent(webView, sourceUrl);
+                     data.putString("data", message);
++                    if (isMainFrame != null) {
++                        data.putBoolean("isMainFrame", isMainFrame);
++                    }
+ 
+                     if (mMessagingJSModule != null) {
+                         dispatchDirectMessage(data);
+@@ -349,6 +395,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+         } else {
+             WritableMap eventData = Arguments.createMap();
+             eventData.putString("data", message);
++            if (isMainFrame != null) {
++                eventData.putBoolean("isMainFrame", isMainFrame);
++            }
+ 
+             if (mMessagingJSModule != null) {
+                 dispatchDirectMessage(eventData);
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
 index 0287e1c..50b4f48 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
@@ -213,7 +312,7 @@ index 0287e1c..50b4f48 100644
          int code = error.getPrimaryError();
          String description = "";
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
-index f83033b..021cb5b 100644
+index f83033b..e1a7b52 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
 @@ -563,6 +563,10 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
@@ -227,7 +326,19 @@ index f83033b..021cb5b 100644
      fun setAndroidLayerType(viewWrapper: RNCWebViewWrapper, layerTypeString: String?) {
          val view = viewWrapper.webView
          val layerType = when (layerTypeString) {
-@@ -659,6 +663,12 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
+@@ -651,6 +655,11 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
+       }
+     }
+ 
++    fun setMessagingAllowedOrigins(viewWrapper: RNCWebViewWrapper, value: ReadableArray?) {
++        val origins = value?.toArrayList()?.filterIsInstance<String>()?.toSet()
++        viewWrapper.webView.setMessagingAllowedOrigins(origins)
++    }
++
+     fun setMenuCustomItems(viewWrapper: RNCWebViewWrapper, value: ReadableArray?) {
+         val view = viewWrapper.webView
+         when (value) {
+@@ -659,6 +668,12 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
          }
      }
  
@@ -241,7 +352,7 @@ index f83033b..021cb5b 100644
          val view = viewWrapper.webView
          view.nestedScrollEnabled = value
 diff --git a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 4709e28..426b4d5 100644
+index 4709e28..de5bed4 100644
 --- a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 @@ -88,6 +88,17 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
@@ -262,8 +373,21 @@ index 4709e28..426b4d5 100644
      @Override
      @ReactProp(name = "allowsProtectedMedia")
      public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
+@@ -236,6 +247,12 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
+         mRNCWebViewManagerImpl.setMessagingEnabled(view, value);
+     }
+ 
++    @Override
++    @ReactProp(name = "messagingAllowedOrigins")
++    public void setMessagingAllowedOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
++        mRNCWebViewManagerImpl.setMessagingAllowedOrigins(view, value);
++    }
++
+     @Override
+     @ReactProp(name = "messagingModuleName")
+     public void setMessagingModuleName(RNCWebViewWrapper view, @Nullable String value) {
 diff --git a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 974337f..53aed43 100644
+index 974337f..63e2fc7 100644
 --- a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 @@ -67,6 +67,16 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
@@ -283,6 +407,32 @@ index 974337f..53aed43 100644
      @ReactProp(name = "allowsProtectedMedia")
      public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
          mRNCWebViewManagerImpl.setAllowsProtectedMedia(view, value);
+@@ -184,6 +194,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
+         mRNCWebViewManagerImpl.setMessagingEnabled(view, value);
+     }
+ 
++    @ReactProp(name = "messagingAllowedOrigins")
++    public void setMessagingAllowedOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
++        mRNCWebViewManagerImpl.setMessagingAllowedOrigins(view, value);
++    }
++
+     @ReactProp(name = "menuItems")
+     public void setMenuCustomItems(RNCWebViewWrapper view, @Nullable ReadableArray items) {
+         mRNCWebViewManagerImpl.setMenuCustomItems(view, items);
+diff --git a/apple/RNCWebView.mm b/apple/RNCWebView.mm
+index c0816b6..476c545 100644
+--- a/apple/RNCWebView.mm
++++ b/apple/RNCWebView.mm
+@@ -154,7 +154,8 @@ - (instancetype)initWithFrame:(CGRect)frame
+                     .canGoBack = static_cast<bool>([[dictionary valueForKey:@"canGoBack"] boolValue]),
+                     .canGoForward = static_cast<bool>([[dictionary valueForKey:@"canGoForward"] boolValue]),
+                     .loading = static_cast<bool>([[dictionary valueForKey:@"loading"] boolValue]),
+-                    .data = nullSafeString([dictionary valueForKey:@"data"])
++                    .data = nullSafeString([dictionary valueForKey:@"data"]),
++                    .isMainFrame = static_cast<bool>([[dictionary valueForKey:@"isMainFrame"] boolValue])
+                 };
+                 webViewEventEmitter->onMessage(data);
+             }
 diff --git a/apple/RNCWebViewImpl.h b/apple/RNCWebViewImpl.h
 index 1f6bbfd..c854638 100644
 --- a/apple/RNCWebViewImpl.h
@@ -296,10 +446,19 @@ index 1f6bbfd..c854638 100644
  @property (nonatomic, assign) BOOL bounces;
  @property (nonatomic, assign) BOOL mediaPlaybackRequiresUserAction;
 diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
-index 7f5c24d..461c428 100644
+index 7f5c24d..fd07cb3 100644
 --- a/apple/RNCWebViewImpl.m
 +++ b/apple/RNCWebViewImpl.m
-@@ -1161,6 +1161,12 @@ - (void)                    webView:(WKWebView *)webView
+@@ -786,6 +786,8 @@ - (void)userContentController:(WKUserContentController *)userContentController
+       NSMutableDictionary<NSString *, id> *event = [self baseEvent];
+       [event addEntriesFromDictionary: @{@"data": message.body}];
+       [event addEntriesFromDictionary: @{@"url": message.frameInfo.request.URL.absoluteString}];
++      // Ledger Live patch (LIVE-39616): whether the sender is the main frame.
++      [event addEntriesFromDictionary: @{@"isMainFrame": @(message.frameInfo.isMainFrame)}];
+       _onMessage(event);
+     }
+   }
+@@ -1161,6 +1163,12 @@ - (void)                    webView:(WKWebView *)webView
      completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
      return;
    }
@@ -312,7 +471,7 @@ index 7f5c24d..461c428 100644
    if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
      SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
      if (localCertificate != nil) {
-@@ -1345,8 +1351,12 @@ - (void)                  webView:(WKWebView *)webView
+@@ -1345,8 +1353,12 @@ - (void)                  webView:(WKWebView *)webView
  
      WKNavigationType navigationType = navigationAction.navigationType;
      NSURLRequest *request = navigationAction.request;
@@ -339,10 +498,21 @@ index f8f375f..a6103fc 100644
  RCT_EXPORT_VIEW_PROPERTY(mediaPlaybackRequiresUserAction, BOOL)
  RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
 diff --git a/lib/WebViewTypes.d.ts b/lib/WebViewTypes.d.ts
-index 998cc88..e8a4ee3 100644
+index 998cc88..5871692 100644
 --- a/lib/WebViewTypes.d.ts
 +++ b/lib/WebViewTypes.d.ts
-@@ -475,6 +475,11 @@ export interface IOSWebViewProps extends WebViewSharedProps {
+@@ -68,6 +68,10 @@ export interface FileDownload {
+ export type DecelerationRateConstant = 'normal' | 'fast';
+ export interface WebViewMessage extends WebViewNativeEvent {
+     data: string;
++    /**
++     * Whether the sender is the main frame. Unset when the platform cannot tell.
++     */
++    isMainFrame?: boolean;
+ }
+ export interface WebViewError extends WebViewNativeEvent {
+     /**
+@@ -475,6 +479,11 @@ export interface IOSWebViewProps extends WebViewSharedProps {
       * @platform ios
       */
      allowUniversalAccessFromFileURLs?: boolean;
@@ -354,7 +524,7 @@ index 998cc88..e8a4ee3 100644
      /**
       * Function that is invoked when the WebKit WebView content process gets terminated.
       * @platform ios
-@@ -757,6 +762,11 @@ export interface MacOSWebViewProps extends WebViewSharedProps {
+@@ -757,6 +766,11 @@ export interface MacOSWebViewProps extends WebViewSharedProps {
       * @platform macos
       */
      allowUniversalAccessFromFileURLs?: boolean;
@@ -366,7 +536,7 @@ index 998cc88..e8a4ee3 100644
      /**
       * Function that is invoked when the WebKit WebView content process gets terminated.
       * @platform macos
-@@ -893,6 +903,20 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
+@@ -893,6 +907,26 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
       * Sets ability to open fullscreen videos on Android devices.
       */
      allowsFullscreenVideo?: boolean;
@@ -384,14 +554,29 @@ index 998cc88..e8a4ee3 100644
 +     * @platform android
 +     */
 +    allowedMainFrameOrigins?: readonly string[];
++    /**
++     * Origin rules (androidx.webkit `addWebMessageListener` format) of the frames that get
++     * `window.ReactNativeWebView`. Any origin when unset, none when empty.
++     * @platform android
++     */
++    messagingAllowedOrigins?: string[];
      /**
       * Configuring Dark Theme
       *
 diff --git a/src/RNCWebViewNativeComponent.ts b/src/RNCWebViewNativeComponent.ts
-index 7f4e6c4..7d7c951 100644
+index 7f4e6c4..67b66b1 100644
 --- a/src/RNCWebViewNativeComponent.ts
 +++ b/src/RNCWebViewNativeComponent.ts
-@@ -147,6 +147,7 @@ export interface NativeProps extends ViewProps {
+@@ -29,6 +29,8 @@ export type WebViewMessageEvent = Readonly<{
+   canGoForward: boolean;
+   lockIdentifier: Double;
+   data: string;
++  // Ledger Live patch (LIVE-39616): whether the sender is the main frame.
++  isMainFrame: boolean;
+ }>;
+ export type WebViewOpenWindowEvent = Readonly<{
+   targetUrl: string;
+@@ -147,6 +149,7 @@ export interface NativeProps extends ViewProps {
    allowFileAccess?: boolean;
    allowsProtectedMedia?: boolean;
    allowsFullscreenVideo?: boolean;
@@ -399,6 +584,15 @@ index 7f4e6c4..7d7c951 100644
    androidLayerType?: WithDefault<'none' | 'software' | 'hardware', 'none'>;
    cacheMode?: WithDefault<
      | 'LOAD_DEFAULT'
+@@ -161,6 +164,8 @@ export interface NativeProps extends ViewProps {
+   geolocationEnabled?: boolean;
+   lackPermissionToDownloadMessage?: string;
+   messagingModuleName: string;
++  // Ledger Live patch (LIVE-39616): origin rules of the frames the bridge is exposed to.
++  messagingAllowedOrigins?: ReadonlyArray<string>;
+   minimumFontSize?: Int32;
+   mixedContentMode?: WithDefault<'never' | 'always' | 'compatibility', 'never'>;
+   nestedScrollEnabled?: boolean;
 diff --git a/src/WebViewTypes.ts b/src/WebViewTypes.ts
 index eca8141..4240de5 100644
 --- a/src/WebViewTypes.ts
