@@ -377,9 +377,12 @@ export function parseTransactionFields(rawTx: AleoPublicTransaction, address: st
   const blockHash = rawTx.block_hash;
 
   if (rawTx.program_id === PROGRAM_ID.CREDITS) {
+    // A rejected transaction only moves its fee, so the account's own rejected send is OUT, even to itself.
+    const isRejectedSend = hasFailed && rawTx.sender_address === address;
     // The indexer blanks both sides of a staking call, so no address comparison can type it.
     type =
-      resolveStakingOperationType(rawTx) ?? (address === rawTx.recipient_address ? "IN" : "OUT");
+      resolveStakingOperationType(rawTx) ??
+      (address === rawTx.recipient_address && !isRejectedSend ? "IN" : "OUT");
   }
 
   const transactionType = determineTransactionType(rawTx.function_id, type);
@@ -491,8 +494,14 @@ export const toPublicOperation = ({
       ? address
       : rawTx.recipient_address || (resolvedRecipient ?? "");
   const stakingType = resolveStakingOperationType(rawTx);
-  const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
   const fee = getFees({ details, address, hasOwnedFeeRecord });
+  const failed = rawTx.transaction_status !== "Accepted";
+  // Typed IN, the framework would drop a rejected transaction with the fee the account paid.
+  const type =
+    stakingType ??
+    (failed && fee.feesPayer === address
+      ? "OUT"
+      : resolveOperationType(rawTx, address, sender, recipient));
   const stakingValue = fee.feesPayer === address ? fee.fees : 0n;
   const value = stakingType ? stakingValue : BigInt(resolveTransactionAmount(rawTx).toFixed(0));
   const stake = stakingType ? getStakeDetails(rawTx, details, stakingType) : undefined;
@@ -519,7 +528,7 @@ export const toPublicOperation = ({
         height: rawTx.block_number,
         time: date,
       },
-      failed: rawTx.transaction_status !== "Accepted",
+      failed,
     },
   };
 };
