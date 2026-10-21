@@ -13540,6 +13540,9 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
