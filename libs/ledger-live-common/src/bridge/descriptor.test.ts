@@ -453,7 +453,7 @@ describe("sendFeatures", () => {
       mainAccount: genAccount("celo-fee-assets", { currency: celo }),
       transaction: {},
     });
-    expect(options?.map(option => option.id)).toEqual(["celo"]);
+    expect(options?.map(option => option.id)).toEqual(["standard"]);
   });
 
   it("should keep the selected celo fee asset option while token accounts hydrate", () => {
@@ -473,8 +473,8 @@ describe("sendFeatures", () => {
     });
 
     expect(options.map(option => [option.id, option.ticker])).toEqual([
-      ["celo", "CELO"],
-      ["celo-token-account-id", "USDC"],
+      ["standard", "CELO"],
+      ["0xceba9300f2b948710d2653dd7b07f33a8b32118c", "USDC"],
     ]);
   });
 
