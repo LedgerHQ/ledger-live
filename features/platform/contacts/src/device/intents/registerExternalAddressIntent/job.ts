@@ -19,8 +19,10 @@ import {
   tap,
 } from "rxjs";
 import {
+  handleContactDeviceActionTransportError,
   mapDeviceActionErrorToFailureJobState,
   mapDmkErrorToError,
+  throwIfDeviceDisconnected,
 } from "../../contactsDeviceActionFailure";
 import {
   mapBytesToGroupHandle,
@@ -123,6 +125,7 @@ function createOutcomeMapper(
       }
 
       case DeviceActionStatus.Error: {
+        throwIfDeviceDisconnected(state.error);
         const jobState = mapDeviceActionErrorToFailureJobState(state.error);
 
         // A rejection is the one failure the user can undo, so it stays open and
@@ -203,17 +206,11 @@ export const registerExternalAddressIntentJob: Job<
       tap(outcome => outcome.report && reporter.report(outcome.report)),
       takeWhile(outcome => !outcome.terminal, true),
       map(({ jobState }) => jobState),
-      // A transport-level failure errors the kit's observable directly (no
-      // DeviceActionStatus.Error to map), so this is the only place that can
-      // catch it. Per the Device Intent Executor contract, jobs report their
-      // own failures as a terminal JobState instead of erroring the job
-      // observable, which would push the executor into its generic fallback
-      // state instead of this intent's own InfoState.
-      catchError((error: unknown) => {
-        const mapped = mapDmkErrorToError(error);
-        reporter.report({ type: "failure", error: mapped });
-        return of<RegisterExternalAddressJobState>({ type: "failed", error: mapped });
-      }),
+      catchError((error: unknown) =>
+        handleContactDeviceActionTransportError<RegisterExternalAddressJobState>(error, mapped =>
+          reporter.report({ type: "failure", error: mapped }),
+        ),
+      ),
     );
   }).pipe(reporter.cancelOnUnsubscribe());
 };

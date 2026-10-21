@@ -462,6 +462,41 @@ describe("registerExternalAddressIntentJob", () => {
     expect(job.states).toContainEqual({ type: "failed", error: expect.any(Error) });
   });
 
+  it("GIVEN the device disconnects during confirmation WHEN the device action errors THEN it reports the failure without a failed screen", () => {
+    // GIVEN
+    const job = startJob();
+    const error = { _tag: "DeviceDisconnectedWhileSendingError" };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.onResult).toHaveBeenCalledWith({
+      type: "failure",
+      error: expect.objectContaining({ message: error._tag }),
+    });
+    expect(job.states.find(state => state.type === "failed")).toBeUndefined();
+    expect(job.isCompleted()).toBe(false);
+    expect(job.getError()).toBe(error);
+  });
+
+  it("GIVEN the device action observable errors with a disconnect WHEN reported THEN it rethrows instead of failing the screen", () => {
+    // GIVEN
+    const job = startJob();
+    const error = { _tag: "DeviceDisconnectedBeforeSendingApdu" };
+
+    // WHEN
+    job.fail(error);
+
+    // THEN
+    expect(job.onResult).toHaveBeenCalledWith({
+      type: "failure",
+      error: expect.objectContaining({ message: error._tag }),
+    });
+    expect(job.states.find(state => state.type === "failed")).toBeUndefined();
+    expect(job.getError()).toBe(error);
+  });
+
   it("GIVEN the device action observable errors WHEN reported THEN it reports failure with a terminal failed state", () => {
     // GIVEN
     const job = startJob();
