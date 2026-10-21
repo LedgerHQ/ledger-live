@@ -572,16 +572,22 @@ jobs:
         if: ${{ runner.os == 'Windows' && env.REMOTE_SPECULOS != 'true' }}
         shell: pwsh
         run: |
+          $distro = 'Ubuntu-24.04'
           wsl --list --verbose
-          Start-Process -WindowStyle Hidden wsl -ArgumentList '-d', 'Ubuntu-24.04', '-u', 'root', '--', 'dockerd', '--tls=false', '-H', 'unix:///var/run/docker.sock', '-H', 'tcp://0.0.0.0:2375'
+          Start-Process -WindowStyle Hidden wsl -ArgumentList "-d $distro -u root -- dockerd --tls=false --iptables=false --ip6tables=false --bridge=none -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375 > /tmp/dockerd.log 2>&1"
           $env:DOCKER_HOST = 'tcp://127.0.0.1:2375'
-          foreach ($i in 1..60) {
-            docker version --format '{{.Server.Os}}' 2>$null
-            if ($LASTEXITCODE -eq 0) { break }
+          $ready = $false
+          foreach ($i in 1..45) {
             Start-Sleep -Seconds 2
+            docker version --format '{{.Server.Os}}' 2>$null
+            if ($LASTEXITCODE -eq 0) { $ready = $true; break }
+          }
+          if (-not $ready) {
+            wsl -d $distro -u root -e sh -c 'uname -r; mount | grep cgroup; ss -ltn; tail -n 80 /tmp/dockerd.log; docker -H unix:///var/run/docker.sock version'
+            exit 1
           }
           docker version
-          $mount = wsl -d Ubuntu-24.04 -- wslpath -a "$env:GITHUB_WORKSPACE\coin-apps"
+          $mount = wsl -d $distro -e wslpath -a (($env:GITHUB_WORKSPACE -replace '\\', '/') + '/coin-apps')
           "DOCKER_HOST=$env:DOCKER_HOST" >> $env:GITHUB_ENV
           "SPECULOS_COINAPPS_MOUNT=$mount" >> $env:GITHUB_ENV
           Write-Output "coin-apps mounted from $mount"
