@@ -1,4 +1,6 @@
 import { configureStore, type Middleware } from "@reduxjs/toolkit";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
@@ -572,8 +574,12 @@ describe("Token Persistence", () => {
       tokens: [{ data: mockTokenCurrency, timestamp: fetchedAt }],
     };
 
+    const server = setupServer();
     let now: number;
-    let fetchSpy: jest.SpyInstance | undefined;
+
+    beforeAll(() => {
+      server.listen({ onUnhandledRequest: "error" });
+    });
 
     beforeEach(() => {
       now = fetchedAt;
@@ -581,9 +587,12 @@ describe("Token Persistence", () => {
     });
 
     afterEach(() => {
-      fetchSpy?.mockRestore();
-      fetchSpy = undefined;
+      server.resetHandlers();
       jest.restoreAllMocks();
+    });
+
+    afterAll(() => {
+      server.close();
     });
 
     async function launch(persisted: PersistedCAL) {
@@ -638,10 +647,11 @@ describe("Token Persistence", () => {
       const store = await launch(persistedAtFetch);
 
       now = fetchedAt + 3 * hour;
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
-        new Response(JSON.stringify([mockApiTokenResponse]), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
+      const requestedIds: (string | null)[] = [];
+      server.use(
+        http.get("https://cal.test/v1/tokens", ({ request }) => {
+          requestedIds.push(new URL(request.url).searchParams.get("id"));
+          return HttpResponse.json([mockApiTokenResponse]);
         }),
       );
       await store.dispatch(
@@ -651,7 +661,7 @@ describe("Token Persistence", () => {
         ),
       );
 
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(requestedIds).toEqual([mockTokenCurrency.id]);
       expect(extractPersistedCALFromState(store.getState()).tokens).toEqual([
         expect.objectContaining({ timestamp: fetchedAt + 3 * hour }),
       ]);
