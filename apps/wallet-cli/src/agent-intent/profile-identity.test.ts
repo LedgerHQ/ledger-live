@@ -13,6 +13,7 @@ const agent = realAgentIntentSdk.createSoftwareAgentIdentity();
 const other = realAgentIntentSdk.createSoftwareAgentIdentity();
 
 let keychainSecret: string | null;
+let keychainError: Error | undefined;
 let keyFileSecret: string | null;
 let keychainProbe: () => unknown;
 let keychainReads: number;
@@ -22,6 +23,7 @@ beforeAll(() =>
     keychain: {
       loadAgentIntentSecretKey: async () => {
         keychainReads++;
+        if (keychainError) throw keychainError;
         return keychainSecret;
       },
     },
@@ -44,6 +46,7 @@ describe("loadProfileIdentity", () => {
   beforeEach(() => {
     restorePlatform = overridePlatform("linux");
     keychainSecret = null;
+    keychainError = undefined;
     keyFileSecret = null;
     keychainProbe = () => [];
     keychainReads = 0;
@@ -79,7 +82,7 @@ describe("loadProfileIdentity", () => {
 
     expect(err).toBeInstanceOf(KeychainUnavailableError);
     expect((err as Error).message).toMatch(
-      /Profile "bot" keeps its agent key in the OS keychain.*new --profile id.*--allow-plaintext-key/s,
+      /Profile "bot" can't be read here.*kernel keyring.*that key is gone\. Re-enroll with `wallet-cli agent-intent enroll` under a new --profile id.*--allow-plaintext-key/s,
     );
     expect((err as Error).message).not.toContain("plaintext agent key file exists");
     expect(keychainReads).toBe(0);
@@ -113,7 +116,7 @@ describe("loadProfileIdentity", () => {
 
   it("reports a missing key file for a plaintext-file profile", async () => {
     await expect(loadProfileIdentity(profile("plaintext-file"))).rejects.toThrow(
-      /No agent key file found for profile "bot" at .*bot\.key.*re-enroll under a new --profile id/s,
+      /No agent key file found for profile "bot" at .*bot\.key.*Re-enroll with `wallet-cli agent-intent enroll` under a new --profile id/s,
     );
   });
 
@@ -155,6 +158,29 @@ describe("loadProfileIdentity", () => {
       /No agent key found in the OS keychain for profile "bot"/,
     );
     expect((err as Error).message).not.toContain("plaintext agent key file exists");
+  });
+
+  it("asks for a new profile when the OS keychain key can never be read again", async () => {
+    keychainError = Object.assign(new Error("corrupt"), {
+      name: "AgentIntentCorruptKeychainError",
+    });
+
+    const err = await loadProfileIdentity(profile("os-keychain")).catch((e: unknown) => e);
+
+    expect((err as Error).message).toMatch(
+      /Could not read the agent key of profile "bot" from the OS keychain \(corrupt\)\. Re-enroll with `wallet-cli agent-intent enroll` under a new --profile id/,
+    );
+    expect((err as Error).message).not.toContain("Unlock");
+  });
+
+  it("asks to unlock the OS keychain when reading the key fails otherwise", async () => {
+    keychainError = new Error("keychain locked");
+
+    const err = await loadProfileIdentity(profile("os-keychain")).catch((e: unknown) => e);
+
+    expect((err as Error).message).toMatch(
+      /Could not read the agent key of profile "bot" from the OS keychain \(keychain locked\)\. Unlock the OS keychain and re-run\.$/,
+    );
   });
 
   it("checks an OS keychain key against the recorded public key", async () => {

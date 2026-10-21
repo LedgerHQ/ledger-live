@@ -11,6 +11,7 @@ import {
 } from "../key-ring/agent-intent-key-file";
 import { assertOsKeychainAvailable } from "../key-ring/keychain-entry";
 import { errMessage } from "../shared/error-message";
+import { RE_ENROLL } from "./service-errors";
 import { writeStderr } from "../shared/ui";
 
 // A stored key that can never be read again: only a fresh enrollment gets the agent working.
@@ -35,7 +36,7 @@ export async function loadProfileIdentity(
     // The SDK's message names what's wrong with the key, never the key itself.
     throw new Error(
       `The agent key file of profile "${profileId}" (${agentIntentKeyFilePath(profileId)}) does ` +
-        `not hold a valid agent key (${errMessage(e)}) — re-enroll under a new --profile id.`,
+        `not hold a valid agent key (${errMessage(e)}). ${RE_ENROLL(profileId)}`,
       { cause: e },
     );
   }
@@ -56,9 +57,11 @@ async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
       "and dropped the field), set `keyStore: plaintext-file` for it in session.yaml."
     : "";
   assertOsKeychainAvailable(
-    `Profile "${profileId}" keeps its agent key in the OS keychain, so it can't be read here. ` +
-      "Re-enroll under a new --profile id with --allow-plaintext-key, only after the human " +
-      `explicitly agrees to store the agent key unencrypted on this machine.${keyFileHint}`,
+    `Profile "${profileId}" can't be read here: its agent key is in the OS keychain. If an older ` +
+      "wallet-cli enrolled it on this machine without one, the key went to the kernel keyring, " +
+      `which wallet-cli no longer reads: that key is gone. ${RE_ENROLL(profileId)} Pass ` +
+      "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
+      `unencrypted on this machine.${keyFileHint}`,
   );
   let secretKey: string | null;
   try {
@@ -66,8 +69,8 @@ async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
   } catch (e) {
     const hint =
       e instanceof Error && UNUSABLE_KEY_ERRORS.has(e.name)
-        ? " Re-enroll under a new --profile id."
-        : "";
+        ? ` ${RE_ENROLL(profileId)}`
+        : " Unlock the OS keychain and re-run.";
     throw new Error(
       `Could not read the agent key of profile "${profileId}" from the OS keychain ` +
         `(${errMessage(e)}).${hint}`,
@@ -77,7 +80,7 @@ async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
   if (!secretKey) {
     throw new Error(
       `No agent key found in the OS keychain for profile "${profileId}". Profiles don't move ` +
-        `between machines or users — re-enroll under a new --profile id.${keyFileHint}`,
+        `between machines or users. ${RE_ENROLL(profileId)}${keyFileHint}`,
     );
   }
   return secretKey;
@@ -97,7 +100,7 @@ function loadKeyFromFile(profileId: string): string {
   if (!secretKey) {
     throw new Error(
       `No agent key file found for profile "${profileId}" at ${path}. Profiles don't move ` +
-        "between machines or users — re-enroll under a new --profile id.",
+        `between machines or users. ${RE_ENROLL(profileId)}`,
     );
   }
   // stderr only, so JSON output on stdout is unchanged.
