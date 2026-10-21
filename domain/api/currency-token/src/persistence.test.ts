@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, type Middleware } from "@reduxjs/toolkit";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
@@ -604,6 +604,33 @@ describe("Token Persistence", () => {
 
       expect(savedOnce.tokens).toEqual([expect.objectContaining({ timestamp: fetchedAt })]);
       expect(savedTwice.tokens).toEqual([expect.objectContaining({ timestamp: fetchedAt })]);
+    });
+
+    it("keeps the first fetch time when the cache is saved while the restore is dispatched", async () => {
+      now = fetchedAt + 2 * hour;
+      let savedDuringDispatch: PersistedCAL | undefined;
+      const saveOnUpsert: Middleware<object, WithCryptoAssetsApi> =
+        middlewareApi => next => action => {
+          const result = next(action);
+          if (cryptoAssetsApi.util.upsertQueryEntries.match(action)) {
+            savedDuringDispatch = extractPersistedCALFromState(middlewareApi.getState());
+          }
+          return result;
+        };
+      const store = configureStore({
+        reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+        middleware: getDefaultMiddleware =>
+          getDefaultMiddleware({ serializableCheck: false })
+            .concat(cryptoAssetsApi.middleware)
+            .concat(saveOnUpsert),
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await restoreTokensToCache(store.dispatch as any, persistedAtFetch, ttl);
+
+      expect(savedDuringDispatch?.tokens).toEqual([
+        expect.objectContaining({ timestamp: fetchedAt }),
+      ]);
     });
 
     it("saves the refetch time for a token refetched after restore", async () => {

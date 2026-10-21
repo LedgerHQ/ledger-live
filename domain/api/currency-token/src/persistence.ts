@@ -197,17 +197,26 @@ export async function restoreTokensToCache(
 
   const entries = buildRestoreCacheEntries(tokensToRestore);
   if (entries.length > 0) {
-    dispatch((thunkDispatch, getState) => {
-      thunkDispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
-      // One upsert stamps every entry with the same requestId.
-      const { requestId } = cryptoAssetsApi.endpoints.findTokenById.select({
-        id: tokensToRestore[0].data.id,
-      })(getState());
-      if (requestId === undefined) return;
+    const upsert = cryptoAssetsApi.util.upsertQueryEntries(entries);
+    // Registered before dispatch: a middleware may save the cache while the upsert is dispatched.
+    const requestId = upsertRequestId(upsert);
+    if (requestId !== undefined) {
       restoredFetchTimes.set(
         requestId,
         new Map(tokensToRestore.map(entry => [entry.data.id, entry.timestamp])),
       );
-    });
+    }
+    dispatch(upsert);
   }
+}
+
+/**
+ * The `requestId` RTK stamps on every entry of one `upsertQueryEntries` action. It is set on the
+ * action's `meta` at runtime, but RTK's public type for the action leaves `meta` out.
+ */
+function upsertRequestId(action: object): string | undefined {
+  const meta: unknown = Reflect.get(action, "meta");
+  if (typeof meta !== "object" || meta === null) return undefined;
+  const requestId: unknown = Reflect.get(meta, "requestId");
+  return typeof requestId === "string" ? requestId : undefined;
 }
