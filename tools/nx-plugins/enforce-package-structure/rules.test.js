@@ -231,3 +231,44 @@ test("starReexportTargets keeps the relative, public `export *` only", () => {
   ].join("\n");
   assert.deepEqual(starReexportTargets(source), ["./schema", "./types"]);
 });
+
+test("re-exports are found wherever a top-level statement can start", () => {
+  // Indented, after a block comment, and a second statement on the same line.
+  const source = [
+    '  export * from "./indented";',
+    '/* note */ export { a } from "./a";',
+    'export * from "./first"; export { b } from "./b";',
+  ].join("\n");
+  assert.deepEqual(starReexportTargets(source), ["./indented", "./first"]);
+  assert.deepEqual(
+    checkReachedModule(source).map(v => [v.code, v.line]),
+    [
+      ["hidden-barrel", 2],
+      ["hidden-barrel", 3],
+    ],
+  );
+});
+
+test("export-looking text inside literals and nested blocks is not a statement", () => {
+  const source = [
+    "const doc = `",
+    'export { a } from "./a";',
+    'export * from "./b";',
+    "${`nested ${'export * from \"./c\"'}`}",
+    "`;",
+    "const s = 'export { d } from \"./d\"';",
+    'declare module "m" {',
+    '  export * from "./e";',
+    "}",
+  ].join("\n");
+  assert.deepEqual(checkReachedModule(source), []);
+  assert.deepEqual(starReexportTargets(source), []);
+});
+
+test("a stray apostrophe in JSX text does not hide the statements below it", () => {
+  const source = ["const A = () => <p>Don't</p>;", 'export { a } from "./a";'].join("\n");
+  assert.deepEqual(
+    checkReachedModule(source).map(v => [v.code, v.line]),
+    [["hidden-barrel", 2]],
+  );
+});

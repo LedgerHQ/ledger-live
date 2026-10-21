@@ -288,3 +288,17 @@ test("the file exception audit flags a missing file, a clean file and a missing 
 test("every file exception names a file that still has a violation, and its exit condition", () => {
   assert.deepEqual(auditFileExceptions(REPO_ROOT, FILE_EXCEPTIONS), []);
 });
+
+test("an indented or same-line `export *` in a barrel is followed too", () => {
+  const root = workspace({
+    "shared/thing/src/index.ts":
+      '  export * from "./a";\nexport * from "./b"; export * from "./c";\n',
+    "shared/thing/src/a.ts": 'export { x } from "./x";\n',
+    "shared/thing/src/b.ts": "export const ok = 1;\n",
+    "shared/thing/src/c.ts": 'export { y } from "./y";\n',
+  });
+  assert.deepEqual(
+    checkPackage(root, "shared/thing").map(v => v.file),
+    ["shared/thing/src/a.ts", "shared/thing/src/c.ts"],
+  );
+});

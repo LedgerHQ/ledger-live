@@ -102,7 +102,8 @@ function stripComments(source) {
       const quote = char;
       out += char;
       i += 1;
-      while (i < source.length && source[i] !== quote) {
+      // A quote string cannot span lines, so a stray apostrophe in JSX text stops at its line.
+      while (i < source.length && source[i] !== quote && (quote === "`" || source[i] !== "\n")) {
         if (source[i] === "\\") {
           out += source.slice(i, i + 2);
           i += 2;
@@ -219,13 +220,77 @@ function checkBarrel(source, options = {}) {
   return violations;
 }
 
-// Any re-export statement, anchored at a line start so only top-level ones match. Group 1 is the
-// export clause (`*`, `* as ns`, `{ … }`), group 3 the specifier.
+// A re-export statement, matched where the scanner below finds a top-level `export`. Group 1 is
+// the export clause (`*`, `* as ns`, `{ … }`), group 3 the specifier.
 const REEXPORT_STATEMENT =
-  /^export\s+(?:type\s+)?(\*(?:\s+as\s+[A-Za-z_$][\w$]*)?|\{[^}]*\})\s+from\s+(['"])([^'"]+)\2/gm;
+  /export\s+(?:type\s+)?(\*(?:\s+as\s+[A-Za-z_$][\w$]*)?|\{[^}]*\})\s+from\s+(['"])([^'"]+)\2/y;
 
 /**
- * Every top-level re-export statement of a module.
+ * Offset just past the quote string starting at `start`. A quote string cannot span lines.
+ *
+ * @param {string} code
+ * @param {number} start
+ * @returns {number}
+ */
+function skipString(code, start) {
+  let i = start + 1;
+  while (i < code.length && code[i] !== code[start] && code[i] !== "\n") {
+    i += code[i] === "\\" ? 2 : 1;
+  }
+  return i + 1;
+}
+
+/**
+ * Offset just past the `{ … }` block starting at `start`, literals included.
+ *
+ * @param {string} code
+ * @param {number} start
+ * @returns {number}
+ */
+function skipBlock(code, start) {
+  let depth = 0;
+  let i = start;
+  while (i < code.length) {
+    const char = code[i];
+    if (char === '"' || char === "'") {
+      i = skipString(code, i);
+      continue;
+    }
+    if (char === "`") {
+      i = skipTemplate(code, i);
+      continue;
+    }
+    if (char === "{") depth += 1;
+    else if (char === "}") {
+      depth -= 1;
+      if (depth === 0) return i + 1;
+    }
+    i += 1;
+  }
+  return i;
+}
+
+/**
+ * Offset just past the template literal starting at `start`, `${ … }` substitutions included.
+ *
+ * @param {string} code
+ * @param {number} start
+ * @returns {number}
+ */
+function skipTemplate(code, start) {
+  let i = start + 1;
+  while (i < code.length && code[i] !== "`") {
+    if (code[i] === "\\") i += 2;
+    else if (code[i] === "$" && code[i + 1] === "{") i = skipBlock(code, i + 1);
+    else i += 1;
+  }
+  return i + 1;
+}
+
+/**
+ * Every top-level re-export statement of a module. The scan skips literal contents and nested
+ * blocks, so an export-looking line in a template is ignored, while an indented statement or a
+ * second one on the same line is found.
  *
  * @param {string} source raw file contents
  * @returns {Array<{ line: number, statement: string, clause: string, specifier: string, text: string }>}
@@ -234,15 +299,37 @@ function reexportsOf(source) {
   const code = stripComments(source);
   const lines = source.split("\n");
   const found = [];
-  for (const match of code.matchAll(REEXPORT_STATEMENT)) {
-    const line = code.slice(0, match.index).split("\n").length;
-    found.push({
-      line,
-      statement: match[0],
-      clause: match[1],
-      specifier: match[3],
-      text: lines[line - 1]?.trim() ?? "",
-    });
+  let depth = 0;
+  let i = 0;
+  while (i < code.length) {
+    const char = code[i];
+    if (char === '"' || char === "'") {
+      i = skipString(code, i);
+      continue;
+    }
+    if (char === "`") {
+      i = skipTemplate(code, i);
+      continue;
+    }
+    if (char === "{" || char === "(" || char === "[") depth += 1;
+    else if (char === "}" || char === ")" || char === "]") depth -= 1;
+    else if (depth <= 0 && char === "e" && !/[\w$.]/.test(code[i - 1] ?? "")) {
+      REEXPORT_STATEMENT.lastIndex = i;
+      const match = REEXPORT_STATEMENT.exec(code);
+      if (match) {
+        const line = code.slice(0, i).split("\n").length;
+        found.push({
+          line,
+          statement: match[0],
+          clause: match[1],
+          specifier: match[3],
+          text: lines[line - 1]?.trim() ?? "",
+        });
+        i += match[0].length;
+        continue;
+      }
+    }
+    i += 1;
   }
   return found;
 }
