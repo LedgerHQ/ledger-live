@@ -219,10 +219,98 @@ function checkBarrel(source, options = {}) {
   return violations;
 }
 
+// Any re-export statement, anchored at a line start so only top-level ones match. Group 1 is the
+// export clause (`*`, `* as ns`, `{ … }`), group 3 the specifier.
+const REEXPORT_STATEMENT =
+  /^export\s+(?:type\s+)?(\*(?:\s+as\s+[A-Za-z_$][\w$]*)?|\{[^}]*\})\s+from\s+(['"])([^'"]+)\2/gm;
+
+/**
+ * Every top-level re-export statement of a module.
+ *
+ * @param {string} source raw file contents
+ * @returns {Array<{ line: number, statement: string, clause: string, specifier: string, text: string }>}
+ */
+function reexportsOf(source) {
+  const code = stripComments(source);
+  const lines = source.split("\n");
+  const found = [];
+  for (const match of code.matchAll(REEXPORT_STATEMENT)) {
+    const line = code.slice(0, match.index).split("\n").length;
+    found.push({
+      line,
+      statement: match[0],
+      clause: match[1],
+      specifier: match[3],
+      text: lines[line - 1]?.trim() ?? "",
+    });
+  }
+  return found;
+}
+
+/**
+ * The relative, non-internal `export *` specifiers of a module: the files it makes public as a
+ * whole, which the check follows.
+ *
+ * @param {string} source raw file contents
+ * @returns {string[]}
+ */
+function starReexportTargets(source) {
+  return reexportsOf(source)
+    .filter(({ clause, specifier }) => clause === "*" && specifier.startsWith("."))
+    .map(({ specifier }) => specifier)
+    .filter(specifier => !isInternalSpecifier(specifier));
+}
+
+/**
+ * Report the re-exports of a module reached through a barrel's `export *` or named as a package
+ * entry point. Its declarations are its own business, but its re-exports are public API: they
+ * follow the barrel rules, so moving a named re-export or a proxy out of `index.*` hides nothing.
+ *
+ * @param {string} source raw file contents
+ * @param {{ allowNonRelative?: boolean }} [options]
+ * @returns {Violation[]}
+ */
+function checkReachedModule(source, options = {}) {
+  const violations = [];
+
+  for (const { line, statement, clause, specifier, text } of reexportsOf(source)) {
+    if (isInternalSpecifier(specifier)) {
+      violations.push({
+        line,
+        code: "internals-reexport",
+        message: `\`${specifier}\` is a private location; internals must stay out of the public API`,
+        text,
+      });
+    } else if (!specifier.startsWith(".") && !options.allowNonRelative) {
+      const inRepo = isInRepoSpecifier(specifier);
+      violations.push({
+        line,
+        code: inRepo ? "cross-package-reexport" : "external-reexport",
+        message: inRepo
+          ? `re-exporting \`${specifier}\` makes this package a proxy; consumers must import the original provider`
+          : `re-exporting the third-party \`${specifier}\` makes this package a proxy`,
+        text,
+      });
+    } else if (clause !== "*" && !DEFAULT_REEXPORT.test(statement)) {
+      violations.push({
+        line,
+        code: "hidden-barrel",
+        message:
+          "this module is public API, so it re-exports like a barrel: `export * from` and an optional default re-export only",
+        text,
+      });
+    }
+  }
+
+  return violations;
+}
+
 module.exports = {
   checkBarrel,
+  checkReachedModule,
   isBarrelFile,
   isInternalSpecifier,
   isInRepoSpecifier,
+  starReexportTargets,
   stripComments,
 };

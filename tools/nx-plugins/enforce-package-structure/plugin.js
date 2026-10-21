@@ -29,8 +29,8 @@ function buildTarget(projectRoot) {
     executor: "nx:run-commands",
     cache: true,
     inputs: [
-      `{projectRoot}/src/**/*.ts`,
-      `{projectRoot}/src/**/*.tsx`,
+      // Any source file can be reached through `export *` or named in `package.json#exports`.
+      `{projectRoot}/src/**/*`,
       `{projectRoot}/package.json`,
       `{workspaceRoot}/${PLUGIN_ROOT}/rules.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/components.js`,

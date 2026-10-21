@@ -4,9 +4,11 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
   checkBarrel,
+  checkReachedModule,
   isBarrelFile,
   isInternalSpecifier,
   isInRepoSpecifier,
+  starReexportTargets,
   stripComments,
 } = require("./rules");
 
@@ -162,4 +164,70 @@ test("a `//` inside a specifier is not treated as a comment", () => {
   const found = checkBarrel('export * from "https://example.com/mod";');
   assert.equal(found.length, 1);
   assert.equal(found[0].code, "external-reexport");
+});
+
+const reachedCodes = source => checkReachedModule(source).map(v => v.code);
+
+test("a reached module may declare anything and `export *` relative files", () => {
+  const source = [
+    'import { z } from "zod";',
+    "export const Schema = z.object({});",
+    "export function helper() {}",
+    "export default Schema;",
+    'export * from "./schema";',
+    'export type * from "./types";',
+    'export { default } from "./useEnv";',
+  ].join("\n");
+  assert.deepEqual(checkReachedModule(source), []);
+});
+
+test("a named re-export in a reached module is a hidden barrel", () => {
+  // features/flow/flow-contacts-detail/src/web.ts
+  assert.deepEqual(reachedCodes('export { ContactDetailView } from "./ContactDetailView.web";'), [
+    "hidden-barrel",
+  ]);
+  assert.deepEqual(reachedCodes('export type { Props } from "./types";'), ["hidden-barrel"]);
+  assert.deepEqual(reachedCodes('export * as helpers from "./helpers";'), ["hidden-barrel"]);
+  const multiLine = ["export {", "  a,", "  b,", '} from "./x";'].join("\n");
+  assert.deepEqual(
+    checkReachedModule(multiLine).map(v => [v.code, v.line]),
+    [["hidden-barrel", 1]],
+  );
+});
+
+test("a reached module re-exporting a package or internals is reported like a barrel", () => {
+  // features/flow/contacts/src/hooks/contactsHooks.ts
+  assert.deepEqual(reachedCodes('export { useContacts } from "@features/platform-contacts";'), [
+    "cross-package-reexport",
+  ]);
+  assert.deepEqual(reachedCodes('export * from "@features/platform-contacts";'), [
+    "cross-package-reexport",
+  ]);
+  assert.deepEqual(reachedCodes('export { useTheme } from "styled-components/native";'), [
+    "external-reexport",
+  ]);
+  assert.deepEqual(reachedCodes('export * from "./internals";'), ["internals-reexport"]);
+  assert.deepEqual(
+    checkReachedModule('export * from "@ledgerhq/live-env";', { allowNonRelative: true }),
+    [],
+  );
+});
+
+test("a commented-out re-export in a reached module is ignored", () => {
+  assert.deepEqual(
+    checkReachedModule('// export { a } from "./a";\n/* export * from "zod"; */'),
+    [],
+  );
+});
+
+test("starReexportTargets keeps the relative, public `export *` only", () => {
+  const source = [
+    'export * from "./schema";',
+    'export type * from "./types";',
+    'export * from "./internals";',
+    'export * from "@shared/other";',
+    'export * as ns from "./ns";',
+    'export { a } from "./a";',
+  ].join("\n");
+  assert.deepEqual(starReexportTargets(source), ["./schema", "./types"]);
 });
