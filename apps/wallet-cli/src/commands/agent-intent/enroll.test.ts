@@ -1,5 +1,6 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { createCLI, defineCommand, defineGroup } from "@bunli/core";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -7,6 +8,7 @@ import { installOutputCapture } from "../../shared/ui";
 import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
 import { failingKeychainProbe, overridePlatform } from "../../testing/os-keychain";
 import { readLiveLockHolderPid } from "../../shared/file-lock";
+import bunliConfig from "../../../bunli.config";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -959,6 +961,34 @@ describe("agent-intent enroll", () => {
   });
 });
 
+/** Runs `agent-intent <argv>` through the real bunli CLI, with `enroll` as the given command. */
+async function runWithBunli(enroll: unknown, argv: string[]): Promise<void> {
+  const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
+  cli.command(
+    defineGroup({
+      name: "agent-intent",
+      description: "test",
+      commands: [enroll as Parameters<typeof defineGroup>[0]["commands"][number]],
+    }),
+  );
+  expect((await cli.run(["agent-intent", ...argv], { noExit: true })) ?? 0).toBe(0);
+}
+
+/** The flags bunli hands enroll's handler for `argv`, parsed against enroll's own options. */
+async function parseEnrollFlags(argv: string[]): Promise<Record<string, unknown>> {
+  let parsed: Record<string, unknown> = {};
+  const capture = defineCommand({
+    name: "enroll",
+    description: "test",
+    options: enrollCommand.options,
+    handler: async ({ flags }) => {
+      parsed = { ...flags };
+    },
+  });
+  await runWithBunli(capture, ["enroll", ...argv]);
+  return parsed;
+}
+
 describe("agent-intent enroll --detach", () => {
   let restore: () => void;
   let stdout: string[];
@@ -997,16 +1027,57 @@ describe("agent-intent enroll --detach", () => {
       "--name=Test Agent",
       "--description=Remote agent that proposes intents for review.",
       "--source=openclaw",
+      "--app-url=https://agent.example.com",
       "--expires-in=30m",
       "--environment=production",
       "--allow-plaintext-key=false",
-      "--app-url=https://agent.example.com",
       "--output=json",
     ]);
     expect(command[0]).toBe(process.execPath);
     // The parent itself creates nothing: the listener does.
     expect(sessionReadCalls).toBe(0);
     expect(savedSecretKeys.size).toBe(0);
+  });
+
+  it("passes every flag on so the real parser reads them back unchanged, without bunli's global flags", async () => {
+    const parentArgv = [
+      "enroll",
+      "--detach",
+      "--profile",
+      "test-agent",
+      "--name",
+      "Test Agent",
+      "--description=-dash = and spaces",
+      "--source",
+      "codex",
+      "--expires-in",
+      "2h",
+      "--environment",
+      "staging",
+      "--keycloak-url=https://keycloak.example.com/",
+      "--output",
+      "json",
+    ];
+
+    await runWithBunli(enrollCommand, parentArgv);
+
+    expect(spawnedCommands).toHaveLength(1);
+    const command = spawnedCommands[0];
+    const childArgv = command.slice(command.indexOf("agent-intent") + 1);
+    expect(childArgv[0]).toBe("enroll");
+    expect(childArgv.filter(arg => /^--(help|version|llms|detach)/.test(arg))).toEqual([]);
+    expect(await parseEnrollFlags(childArgv.slice(1))).toEqual({
+      ...(await parseEnrollFlags(parentArgv.slice(1))),
+      detach: false,
+      output: "json",
+    });
+  });
+
+  it("refuses to pass on a non-scalar flag value", async () => {
+    await expect(
+      runEnroll({ detach: true, name: ["a", "b"] as unknown as string }),
+    ).rejects.toThrow("--name has a value --detach cannot pass on to the listener.");
+    expect(spawnedCommands).toEqual([]);
   });
 
   it("prints the listener's pending line with its pid and log path in json mode, then returns", async () => {

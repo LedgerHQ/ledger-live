@@ -221,8 +221,9 @@ async function saveSecretKey(
 }
 
 /** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
- * listener's pending line and returns. The child's flags are rebuilt from the parsed ones (minus
- * `detach` and `output`), so flags added to `enroll` later carry over without argv parsing. */
+ * listener's pending line and returns. The child's flags are rebuilt from the parsed values of
+ * enroll's own options (minus `detach` and `output`), so options added to `enroll` later carry over
+ * without argv parsing. */
 async function startDetachedEnroll(
   flags: { profile: string; [flag: string]: unknown },
   out: CommandOutput,
@@ -239,8 +240,13 @@ async function startDetachedEnroll(
   assertNoLiveEnrollListener(profileId);
 
   const args = ["agent-intent", "enroll"];
-  for (const [name, value] of Object.entries(flags)) {
+  // Only enroll's own options: `flags` also carries bunli's global flags (--help, --version, ...).
+  for (const name of Object.keys(enrollCommand.options ?? {})) {
+    const value = flags[name];
     if (name === "detach" || name === "output" || value === undefined) continue;
+    if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+      throw new Error(`--${name} has a value --detach cannot pass on to the listener.`);
+    }
     args.push(`--${name}=${String(value)}`);
   }
   args.push("--output=json");
@@ -275,7 +281,7 @@ const DEFAULT_BFF_BASE_URLS = {
   production: "https://global.api.prd.ledger.com/agent-intent",
 } as const;
 
-export default defineCommand({
+const enrollCommand = defineCommand({
   name: "enroll",
   description:
     "Create an Agent Intent profile, print its signed enrollment URL, and wait for the approval to " +
@@ -510,3 +516,5 @@ export default defineCommand({
     });
   },
 });
+
+export default enrollCommand;
