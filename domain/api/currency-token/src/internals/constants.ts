@@ -3,6 +3,9 @@
 /** RTK Query cache tags for CAL token data. */
 export const TOKEN_TAGS = ["Tokens"] as const;
 
+/** Tag `getTokensData` pages provide, so a changed hash can refresh token lists alone. */
+export const TOKEN_LIST_TAG = { type: "Tokens", id: "LIST" } as const;
+
 /** Default page size for the paginated `getTokensData` query. */
 export const DEFAULT_PAGE_SIZE = 1000;
 

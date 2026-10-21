@@ -14,8 +14,11 @@ import {
   currencyNotFoundError,
   DEFAULT_PAGE_SIZE,
   HEADER_X_LEDGER_COMMIT,
+  snapshotTokenRequests,
   staleTokenQueryKeys,
+  type TokenRequestSnapshot,
   type TokenQueryEntry,
+  TOKEN_LIST_TAG,
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
@@ -73,7 +76,7 @@ export const cryptoAssetsApi = calApi
         // Stale tokens leave the cache before the new hash enters it, so every saved snapshot
         // pairs a hash with tokens that match it.
         async queryFn(currencyId, api, _extraOptions, baseQuery) {
-          const checkStartedAt = Date.now();
+          const settledTokens = snapshotTokenRequests(cachedQueries(api), currencyId);
           const result = await baseQuery({
             url: "/v1/currencies",
             params: { output: "id", limit: "1", id: currencyId },
@@ -81,7 +84,7 @@ export const cryptoAssetsApi = calApi
           if (result.error) return { error: result.error };
 
           if (Array.isArray(result.data) && result.data.length === 0) {
-            evictStaleTokens(api, currencyId, checkStartedAt);
+            evictStaleTokens(api, settledTokens);
             return currencyNotFoundError(currencyId);
           }
 
@@ -97,7 +100,9 @@ export const cryptoAssetsApi = calApi
               "cryptoassets",
               `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${hash}, evicting token cache`,
             );
-            evictStaleTokens(api, currencyId, checkStartedAt);
+            evictStaleTokens(api, settledTokens);
+            // Token lists are never saved, so a delayed refresh is enough for them.
+            api.dispatch(cryptoAssetsApi.util.invalidateTags([TOKEN_LIST_TAG]));
           }
 
           return { data: hash };
@@ -123,7 +128,7 @@ export const cryptoAssetsApi = calApi
             timeout: TOKENS_PAGE_TIMEOUT_MS,
           };
         },
-        providesTags: [...TOKEN_TAGS],
+        providesTags: [TOKEN_LIST_TAG],
         transformResponse: transformTokensResponse,
         infiniteQueryOptions: {
           initialPageParam: {
@@ -152,8 +157,8 @@ function cachedQueries(api: BaseQueryApi): CachedQueries {
   return state[calApi.reducerPath]?.queries ?? {};
 }
 
-function evictStaleTokens(api: BaseQueryApi, currencyId: string, checkStartedAt: number) {
-  for (const queryCacheKey of staleTokenQueryKeys(cachedQueries(api), currencyId, checkStartedAt)) {
+function evictStaleTokens(api: BaseQueryApi, settledTokens: TokenRequestSnapshot) {
+  for (const queryCacheKey of staleTokenQueryKeys(cachedQueries(api), settledTokens)) {
     api.dispatch(calApi.internalActions.removeQueryResult({ queryCacheKey }));
   }
 }

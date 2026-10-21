@@ -178,12 +178,10 @@ export function restoreTokensToCache(
   );
 
   // The entry stays pending with the stored hash as data, so a later lookup joins this check.
+  // It stays subscribed, so the stored hash is not dropped as unused data before the next save.
   for (const currencyId of Object.keys(hashes)) {
     void dispatch(
-      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, {
-        forceRefetch: true,
-        subscribe: false,
-      }),
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: true }),
     );
   }
 }

@@ -1,42 +1,43 @@
-import { staleTokenQueryKeys, type TokenQueryEntry } from "./evict";
-
-const CHECK_STARTED_AT = 1_000;
+import type { QueryCacheKey } from "@reduxjs/toolkit/query";
+import { snapshotTokenRequests, staleTokenQueryKeys, type TokenQueryEntry } from "./evict";
 
 function tokenEntry(overrides: Partial<TokenQueryEntry> = {}): TokenQueryEntry {
   return {
     endpointName: "findTokenById",
     status: "fulfilled",
     data: { id: "ethereum/erc20/usdt", parentCurrencyId: "ethereum" },
-    fulfilledTimeStamp: CHECK_STARTED_AT - 1,
+    requestId: "restored",
     ...overrides,
   };
 }
 
-describe("staleTokenQueryKeys", () => {
-  it("returns a lookup that settled before the check started", () => {
-    expect(staleTokenQueryKeys({ a: tokenEntry() }, "ethereum", CHECK_STARTED_AT)).toEqual(["a"]);
+function keys(snapshot: ReadonlyMap<QueryCacheKey, string>) {
+  return [...snapshot.keys()];
+}
+
+describe("snapshotTokenRequests", () => {
+  it("records a settled lookup of the currency with its request id", () => {
+    const snapshot = snapshotTokenRequests({ a: tokenEntry() }, "ethereum");
+    expect([...snapshot]).toEqual([["a", "restored"]]);
   });
 
-  it("returns a lookup that settled in the same millisecond as the check start", () => {
-    const queries = { a: tokenEntry({ fulfilledTimeStamp: CHECK_STARTED_AT }) };
-    expect(staleTokenQueryKeys(queries, "ethereum", CHECK_STARTED_AT)).toEqual(["a"]);
+  it("skips a lookup that is still in flight", () => {
+    const queries = { a: tokenEntry({ status: "pending" }) };
+    expect(keys(snapshotTokenRequests(queries, "ethereum"))).toEqual([]);
   });
 
-  it("keeps a lookup that settled after the check started", () => {
-    const queries = { a: tokenEntry({ fulfilledTimeStamp: CHECK_STARTED_AT + 1 }) };
-    expect(staleTokenQueryKeys(queries, "ethereum", CHECK_STARTED_AT)).toEqual([]);
-  });
-
-  it("keeps a lookup that is still in flight", () => {
-    const queries = { a: tokenEntry({ status: "pending", fulfilledTimeStamp: undefined }) };
-    expect(staleTokenQueryKeys(queries, "ethereum", CHECK_STARTED_AT)).toEqual([]);
-  });
-
-  it("keeps the lookups of another currency", () => {
+  it("skips the lookups of another currency", () => {
     const queries = {
       a: tokenEntry({ data: { id: "polygon/erc20/usdt", parentCurrencyId: "polygon" } }),
     };
-    expect(staleTokenQueryKeys(queries, "ethereum", CHECK_STARTED_AT)).toEqual([]);
+    expect(keys(snapshotTokenRequests(queries, "ethereum"))).toEqual([]);
+  });
+
+  it("matches a cached findTokenById miss by the currency in its id", () => {
+    const queries = {
+      a: tokenEntry({ data: undefined, originalArgs: { id: "ethereum/erc20/new_token" } }),
+    };
+    expect(keys(snapshotTokenRequests(queries, "ethereum"))).toEqual(["a"]);
   });
 
   it("matches an empty address lookup by its network argument", () => {
@@ -47,11 +48,32 @@ describe("staleTokenQueryKeys", () => {
         originalArgs: { contract_address: "0xabc", network: "ethereum" },
       }),
     };
-    expect(staleTokenQueryKeys(queries, "ethereum", CHECK_STARTED_AT)).toEqual(["a"]);
+    expect(keys(snapshotTokenRequests(queries, "ethereum"))).toEqual(["a"]);
   });
 
   it("ignores other endpoints", () => {
     const queries = { a: tokenEntry({ endpointName: "getTokensSyncHash", data: "hash" }) };
-    expect(staleTokenQueryKeys(queries, "ethereum", CHECK_STARTED_AT)).toEqual([]);
+    expect(keys(snapshotTokenRequests(queries, "ethereum"))).toEqual([]);
+  });
+});
+
+describe("staleTokenQueryKeys", () => {
+  const snapshot = snapshotTokenRequests({ a: tokenEntry() }, "ethereum");
+
+  it("returns a lookup that still holds the request from the snapshot", () => {
+    expect(staleTokenQueryKeys({ a: tokenEntry() }, snapshot)).toEqual(["a"]);
+  });
+
+  it("keeps a lookup that a later request replaced", () => {
+    expect(staleTokenQueryKeys({ a: tokenEntry({ requestId: "fresh" }) }, snapshot)).toEqual([]);
+  });
+
+  it("keeps an in-place refetch that is still in flight", () => {
+    const queries = { a: tokenEntry({ status: "pending", requestId: "refetch" }) };
+    expect(staleTokenQueryKeys(queries, snapshot)).toEqual([]);
+  });
+
+  it("ignores a lookup that left the cache", () => {
+    expect(staleTokenQueryKeys({}, snapshot)).toEqual([]);
   });
 });

@@ -317,6 +317,99 @@ describe("restoreTokensToCache", () => {
       }
     });
 
+    it.each([
+      { outcome: "succeeds", response: freshTokenResponse, saved: [freshTicker] },
+      { outcome: "fails", response: () => HttpResponse.json({}, { status: 404 }), saved: [] },
+    ])(
+      "keeps an in-place refetch when the hash changes, and saves it only if it $outcome",
+      async ({ response, saved }) => {
+        const hash = holdResponse();
+        const tokenResponse = holdResponse();
+        respond(() => hash.pending);
+        server.use(http.get(tokensUrl, () => tokenResponse.pending));
+
+        const store = makeStore();
+        try {
+          restore(store, { ethereum: "hash123" });
+          const refetch = store.dispatch(
+            cryptoAssetsApi.endpoints.findTokenById.initiate(
+              { id: usdt.id },
+              { forceRefetch: true },
+            ),
+          );
+          expect(findTokenByIdEntry(store)?.status).toBe("pending");
+
+          hash.release(changedHashResponse());
+          await waitUntil(() => extractHashesFromState(store.getState()).ethereum === "hash456");
+          expect(findTokenByIdEntry(store)?.status).toBe("pending");
+
+          tokenResponse.release(response());
+          await refetch;
+          refetch.unsubscribe();
+
+          const tickers = extractPersistedCALFromState(store.getState()).tokens.map(
+            ({ data }) => data.ticker,
+          );
+          expect(tickers).toEqual(saved);
+        } finally {
+          hash.release(HttpResponse.error());
+          tokenResponse.release(HttpResponse.error());
+          store.dispatch(cryptoAssetsApi.util.resetApiState());
+        }
+      },
+    );
+
+    it("refreshes a cached token list when the hash changes", async () => {
+      let listRequests = 0;
+      server.use(
+        http.get(tokensUrl, () => {
+          listRequests += 1;
+          return HttpResponse.json([]);
+        }),
+      );
+      const hash = holdResponse();
+      respond(() => hash.pending);
+
+      const store = makeStore();
+      const list = store.dispatch(cryptoAssetsApi.endpoints.getTokensData.initiate({}));
+      try {
+        await list;
+        expect(listRequests).toBe(1);
+
+        restore(store, { ethereum: "hash123" });
+        hash.release(changedHashResponse());
+
+        await waitUntil(() => listRequests === 2);
+        expect(listRequests).toBe(2);
+      } finally {
+        hash.release(HttpResponse.error());
+        list.unsubscribe();
+        store.dispatch(cryptoAssetsApi.util.resetApiState());
+      }
+    });
+
+    it("keeps the stored hash after a failed check outlives the unused-data period", async () => {
+      jest.useFakeTimers({ doNotFake: ["setImmediate", "nextTick", "queueMicrotask"] });
+      respond(() => HttpResponse.json({}, { status: 404 }));
+      const store = makeStore();
+      try {
+        restore(store, { ethereum: "hash123" });
+        await waitUntil(
+          () =>
+            cryptoAssetsApi.endpoints.getTokensSyncHash.select("ethereum")(store.getState())
+              .isError,
+        );
+
+        jest.advanceTimersByTime(61_000);
+        await waitUntil(() => true);
+
+        expect(extractHashesFromState(store.getState())).toEqual({ ethereum: "hash123" });
+      } finally {
+        store.dispatch(cryptoAssetsApi.util.resetApiState());
+        jest.useRealTimers();
+      }
+    });
+
     it("keeps a fulfilled lookup that replaced an expired restored token", async () => {
       const hash = holdResponse();
       respond(() => hash.pending);
