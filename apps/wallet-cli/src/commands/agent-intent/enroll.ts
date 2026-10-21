@@ -27,6 +27,8 @@ import {
 } from "../../agent-intent/relay";
 import {
   enrollListenerPaths,
+  ErrorLineSchema,
+  PendingLineSchema,
   readFirstLogJsonLine,
   selfCommand,
   spawnDetached,
@@ -58,18 +60,6 @@ function assertProfileAvailable(session: Session, profileId: string): void {
     );
   }
 }
-
-const PendingLineSchema = z.object({
-  type: z.literal("enrollment-pending"),
-  profileId: z.string(),
-  enrollmentUrl: z.string(),
-  fingerprint: z.string(),
-  expiresAt: z.string(),
-});
-const ErrorLineSchema = z.object({
-  ok: z.literal(false),
-  error: z.object({ message: z.string() }),
-});
 
 /** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
  * listener's pending line and returns. The child's flags are rebuilt from the parsed ones (minus

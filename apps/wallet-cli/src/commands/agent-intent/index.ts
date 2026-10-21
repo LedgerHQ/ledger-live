@@ -9,6 +9,7 @@ import StatusCommand from "./status";
 import SendCommand from "./send";
 import SwapCommand from "./swap";
 import SyncCommand from "./sync";
+import WaitCommand from "./wait";
 import { commandDescription } from "../registry";
 
 export default defineGroup({
@@ -16,6 +17,7 @@ export default defineGroup({
   description: commandDescription("agent-intent"),
   commands: [
     EnrollCommand,
+    WaitCommand,
     RecoverCommand,
     ListCommand,
     ShowCommand,

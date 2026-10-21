@@ -3,6 +3,7 @@ import { chmodSync, closeSync, fchmodSync, mkdirSync, openSync, readFileSync } f
 import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { stateDir } from "@bunli/utils";
+import { z } from "zod";
 import { APP_NAME } from "../session/session-store";
 import { withFileLock } from "../shared/file-lock";
 
@@ -83,6 +84,21 @@ export function readLogJsonLines(logPath: string): Record<string, unknown>[] {
   }
   return objects;
 }
+
+/** The listener's `enrollment-pending` line, as `enroll --output json` prints it. */
+export const PendingLineSchema = z.object({
+  type: z.literal("enrollment-pending"),
+  profileId: z.string(),
+  enrollmentUrl: z.string(),
+  fingerprint: z.string(),
+  expiresAt: z.string(),
+});
+
+/** A JSON error envelope, as any command prints it with `--output json`. */
+export const ErrorLineSchema = z.object({
+  ok: z.literal(false),
+  error: z.object({ message: z.string() }),
+});
 
 /** Waits for the child's first NDJSON line in its log. Fails if the child exits (or cannot start)
  * without printing one, and kills it if it prints nothing within the startup timeout. */
