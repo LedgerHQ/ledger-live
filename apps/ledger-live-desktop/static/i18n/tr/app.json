@@ -304,6 +304,33 @@
     "coinControl" : "Coin Yönetimi",
     "feesAmount" : "Ücret Tutarı"
   },
+  "accountDetailSettings" : {
+    "title" : "Hesap ayarları",
+    "menu" : {
+      "changeName" : "Adı değiştir",
+      "viewAdvancedLogs" : "Kapsamlı log'ları görüntüle",
+      "removeAccount" : "Hesabı portföyden kaldır"
+    },
+    "changeName" : {
+      "title" : "Hesap adını değiştir",
+      "description" : "Düzenli kalmak için bu adrese bir ad verin (örn. {{ticker}}-Alım Satım, {{ticker}}-DeFi).",
+      "label" : "Adres adı",
+      "submit" : "Adı değiştir"
+    },
+    "advancedLogs" : {
+      "title" : "Kapsamlı log'lar",
+      "derivationTip" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
+      "synchronised" : "{{date}} senkronize edildi",
+      "copy" : "Log kopyala",
+      "copied" : "Kopyalandı"
+    },
+    "remove" : {
+      "title" : "Hesap kaldırılsın mı?",
+      "description" : "Bu hesaba bağlı varlıklar artık portföyünüzde görünmeyecek. Blok zincirindeki varlıklarınız bu durumdan etkilenmez.",
+      "confirm" : "Evet, kaldır.",
+      "cancel" : "Tut"
+    }
+  },
   "sidebar" : {
     "card" : "Kart",
     "paytab" : "Ödeme yap",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle" : "Vadesi dolmak üzere olan bakiye",
         "pendingNotice" : "Bazı korumalı notlar hâlâ vade ödülü üretme sürecinde olduğundan henüz harcanamayabilir"
       },
+      "aleoPublic" : {
+        "title" : "Açık bakiye"
+      },
+      "aleoPrivate" : {
+        "title" : "Gizli bakiye"
+      },
       "zeroBalance" : {
         "warning" : "Mevcut bakiye yok"
+      },
+      "requiresSync" : {
+        "notice" : "Senkronizasyon gerekiyor"
       }
     }
   },
@@ -7783,6 +7819,14 @@
       "title" : "Bu bakiye henüz harcanabilir durumda değil",
       "description" : "Lütfen birkaç dakika sonra tekrar deneyin"
     },
+    "ZcashShieldedNotSupportedOnDevice" : {
+      "title" : "Bu cihaz sadece şeffaf adresler arasında gönderim yapabilir",
+      "description" : "Gizli bir adrese veya gizli bir adresten gönderim yapmak için bir Ledger Nano S Plus, Nano X, Flex veya Stax kullanın."
+    },
+    "ZcashPreparedBuildMismatch" : {
+      "title" : "İşlem incelendiğinden beri değişti",
+      "description" : "Bakiyeniz veya ücretler değişti. Lütfen işlemi tekrar gözden geçirin."
+    },
     "InvalidNonce" : {
       "title" : "Nonce gerekiyor"
     },
@@ -9829,7 +9873,7 @@
             "subtitle" : "Korumalı",
             "unavailable" : "Gizli bakiye kullanılamıyor"
           },
-          "spendableWarning" : "Harcanabilir bakiye, toplam bakiyeden daha düşük olabilir. Yakın zamanda korumalı (shielded) hâle getirilen bakiyenin harcanabilmesi için ağ onayları ve tam tarama işlemi (~15 dakika) gerekir."
+          "spendableWarning" : "Harcanabilir bakiye, toplam bakiyeden daha düşük olabilir. Yakın zamanda korumalı (shielded) hâle getirilen bakiyenin harcanabilmesi için ağ onayları ve tam tarama işlemi gerekir."
         },
         "memo" : {
           "label" : "Memo (isteğe bağlı)",
@@ -10090,11 +10134,25 @@
         "recordsUsed" : "Kullanılan kayıtlar",
         "signingTime" : "İmzalama zamanı"
       },
+      "amount" : {
+        "signingTime" : {
+          "label" : "İmzalama zamanı",
+          "description" : "Ledger imzalayıcınız, bu işlemin kullandığı her kaydı ayrı ayrı onaylar. Gizli bakiyenizden daha fazla tutar göndermek daha fazla kayıt kullanılmasına ve işlemin daha uzun sürmesine neden olabilir."
+        }
+      },
       "mandatoryPrivateSync" : {
         "title" : "Gizli bakiyeniz senkronize ediliyor (%{{percentage}}).",
         "desc" : "Lütfen bekleyin",
         "errorTitle" : "Gizli bakiye senkronizasyonu başarısız oldu.",
         "errorDesc" : "Bir şeyler yanlış gitti, lütfen tekrar deneyin."
+      },
+      "balanceTypeSync" : {
+        "title" : "Gizli bakiyeniz yenileniyor",
+        "progress" : "%{{percentage}}",
+        "errorTitle" : "Gizli bakiye senkronizasyonu başarısız oldu.",
+        "errorDescription" : "Bir şeyler yanlış gitti, lütfen tekrar deneyin.",
+        "recordLimitTitle" : "En fazla {{amount}} gönderebilirsiniz",
+        "recordLimitDescription" : "Bakiyeniz birden fazla kayda bölünmüş durumda ve tek bir işlemde en fazla {{maxRecords}} kullanılabilir. Daha fazla göndermek için birden fazla işlem yapın."
       }
     },
     "operationTypes" : {
@@ -10573,6 +10631,14 @@
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
+    }
+  },
+  "accountDetail" : {
+    "header" : {
+      "settings" : "Hesap ayarları"
+    },
+    "assets" : {
+      "title" : "Varlıklar"
     }
   },
   "assetDetails" : {
@@ -11113,6 +11179,9 @@
       "amountExceedsBalance" : "Yetersiz bakiye",
       "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin."
     }
+  },
+  "actionMenuDialog" : {
+    "a11yTitle" : "Bir eylem seçin"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Yatırma işlemini imzalayın",
