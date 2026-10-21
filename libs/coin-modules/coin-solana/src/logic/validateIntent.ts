@@ -594,7 +594,8 @@ async function computeCreateAccountAmount(
     });
 
   // Best-effort: if the RPC is unavailable or unsupported, skip the minimum-delegation
-  // check rather than failing validation entirely.
+  // check rather than failing validation entirely. It runs whatever the recipient: the minimum
+  // does not depend on the validator, and mobile asks for the amount before one is picked.
   const fetchStakeMinimumDelegation = async (): Promise<bigint | null> => {
     try {
       return BigInt(await api.getStakeMinimumDelegation());
@@ -620,7 +621,7 @@ async function computeCreateAccountAmount(
     if (allAmount === 0n) {
       errors.amount = new NotEnoughBalance();
     }
-    if (!errors.recipient && !errors.amount && allAmount > 0n) {
+    if (!errors.amount && allAmount > 0n) {
       const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
       if (
         stakeMinimumDelegation !== null &&
@@ -635,7 +636,7 @@ async function computeCreateAccountAmount(
     errors.amount = new AmountRequired();
   } else if (intent.amount + estimatedFees + reserve + rent > available) {
     errors.amount = new NotEnoughBalance();
-  } else if (!errors.recipient) {
+  } else {
     const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
     if (stakeMinimumDelegation !== null && intent.amount < stakeMinimumDelegation) {
       errors.amount = amountTooLowError(stakeMinimumDelegation);
