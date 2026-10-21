@@ -3834,6 +3834,10 @@ describe("genericGetAccountShape", () => {
       value: 1n,
     });
 
+    beforeEach(() => {
+      buildSubAccountsMock.mockReturnValue([]);
+    });
+
     afterEach(() => {
       getBridgeApiMock.mockImplementation(defaultBridgeApi);
     });
@@ -3859,7 +3863,6 @@ describe("genericGetAccountShape", () => {
       listOperationsMock.mockResolvedValue({ items: [], next: undefined });
       lastBlockMock.mockResolvedValue({ height: 900 });
       mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
-      buildSubAccountsMock.mockReturnValue([]);
 
       return genericGetAccountShape(network, currency.id)(
         {
@@ -3934,6 +3937,23 @@ describe("genericGetAccountShape", () => {
       });
 
       expectIncremental();
+    });
+
+    test("resumes from the watermark and drops the sub-account of a held token that became blacklisted", async () => {
+      const { buildSubAccounts: realBuildSubAccounts, mergeSubAccounts: realMergeSubAccounts } =
+        jest.requireActual("../buildSubAccounts");
+      buildSubAccountsMock.mockImplementation(realBuildSubAccounts);
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+      getTokenFromAssetMock.mockResolvedValue(heldToken);
+
+      const shape = await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("heldMint")],
+        blacklistedTokenIds: [heldToken.id],
+      });
+
+      expectIncremental();
+      expect(shape.subAccounts).toEqual([]);
     });
 
     test("resyncs from scratch when a token lookup fails", async () => {
