@@ -109,7 +109,7 @@ export const PendingLineSchema = z.object({
 /** A JSON error envelope, as any command prints it with `--output json`. */
 export const ErrorLineSchema = z.object({
   ok: z.literal(false),
-  error: z.object({ message: z.string() }),
+  error: z.object({ code: z.string().optional(), message: z.string() }),
 });
 
 /** Waits for the child's first NDJSON line in its log. Fails if the child exits (or cannot start)

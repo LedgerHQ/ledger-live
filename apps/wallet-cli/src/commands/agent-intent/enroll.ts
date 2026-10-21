@@ -48,7 +48,7 @@ import {
   spawnDetached,
   withEnrollListenerLock,
 } from "../../agent-intent/detach";
-import { createCommandOutput, type CommandOutput } from "../../output";
+import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
 import { errMessage } from "../../shared/error-message";
 import { walletCliDebug } from "../../shared/log";
 import { writeStderr } from "../../shared/ui";
@@ -251,6 +251,8 @@ async function startDetachedEnroll(
   }
   args.push("--output=json");
 
+  // Two concurrent --detach runs for one profile can both pass the check above and share the log,
+  // so one parent may report the other's line; one listener still loses the lock. Accepted: rare.
   const child = spawnDetached(selfCommand(args), logPath);
   const first = await readFirstLogJsonLine(child, logPath);
   const pending = PendingLineSchema.safeParse(first);
@@ -267,7 +269,10 @@ async function startDetachedEnroll(
     return;
   }
   const failure = ErrorLineSchema.safeParse(first);
-  if (failure.success) throw new Error(failure.data.error.message);
+  if (failure.success) {
+    const { code, message } = failure.data.error;
+    throw code === undefined ? new Error(message) : new CodedCommandError(code, message);
+  }
   child.kill();
   throw new Error(
     `The enrollment listener printed an unexpected first line and was stopped. See ${logPath}.`,

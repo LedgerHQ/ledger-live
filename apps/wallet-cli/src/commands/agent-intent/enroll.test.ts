@@ -1108,6 +1108,19 @@ describe("agent-intent enroll --detach", () => {
     expect(text).not.toContain("keep this process running");
   });
 
+  it("keeps the code of the listener's error in its own json error envelope", async () => {
+    firstLogLine = async () => ({
+      ok: false,
+      error: { command: "agent-intent enroll", code: "some_code", message: "boom" },
+    });
+
+    await expect(runEnroll({ detach: true, output: "json" })).rejects.toMatchObject({ code: 1 });
+    expect(JSON.parse(stdout.join("").trim())).toEqual({
+      ok: false,
+      error: { command: "agent-intent enroll", code: "some_code", message: "boom" },
+    });
+  });
+
   it("fails with the listener's own error when it prints an error envelope", async () => {
     firstLogLine = async () => ({
       ok: false,
