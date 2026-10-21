@@ -61,8 +61,21 @@ describe("getMessagingAllowedOrigins", () => {
     },
   );
 
+  it("skips a wildcard without a host", () => {
+    expect(getMessagingAllowedOrigins(["https://*.", "https://app.example.com"])).toEqual([
+      "https://app.example.com",
+    ]);
+  });
+
   it("exposes the bridge to no origin for empty domains", () => {
     expect(getMessagingAllowedOrigins([])).toEqual([]);
+  });
+
+  it("keeps a bracketed IPv6 host", () => {
+    expect(getMessagingAllowedOrigins(["http://[::1]:3000", "https://[2001:db8::1]"])).toEqual([
+      "http://[::1]:3000",
+      "https://[2001:db8::1]",
+    ]);
   });
 
   it("leaves the bridge to any origin when the domain check is off", () => {
