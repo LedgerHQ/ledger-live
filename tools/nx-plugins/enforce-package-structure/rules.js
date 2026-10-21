@@ -68,10 +68,50 @@ function isInRepoSpecifier(specifier) {
   return IN_REPO_SCOPES.some(scope => specifier.startsWith(scope));
 }
 
+// After one of these, a `/` starts a regular expression rather than a division.
+const REGEX_PRECEDER =
+  /(?:[(,=:[!&|?{};+\-*%<>~^]|(?:^|[^\w$.])(?:return|typeof|case|do|else|in|of|new|delete|void|throw|yield|await|instanceof))$/;
+
+/**
+ * True when a `/` following `before` opens a regular expression literal.
+ *
+ * @param {string} before the code preceding the `/`
+ * @returns {boolean}
+ */
+function startsRegex(before) {
+  const preceding = before.slice(-200).trimEnd();
+  return preceding === "" || REGEX_PRECEDER.test(preceding);
+}
+
+/**
+ * Offset just past the regular expression literal starting at `start`, its flags aside. A `/`
+ * inside a character class does not end it, and neither literal can span lines.
+ *
+ * @param {string} code
+ * @param {number} start
+ * @returns {number}
+ */
+function skipRegex(code, start) {
+  let inClass = false;
+  let i = start + 1;
+  while (i < code.length && code[i] !== "\n") {
+    const char = code[i];
+    if (char === "\\") {
+      i += 2;
+      continue;
+    }
+    if (char === "[") inClass = true;
+    else if (char === "]") inClass = false;
+    else if (char === "/" && !inClass) return i + 1;
+    i += 1;
+  }
+  return i;
+}
+
 /**
  * Blank out comments while preserving line count and column offsets, so violation line numbers
- * stay accurate. String literals are walked over so a `//` inside a specifier is not mistaken
- * for a comment.
+ * stay accurate. String and regular expression literals are walked over so a `//` inside a
+ * specifier, or a `/*` inside a pattern, is not mistaken for a comment.
  *
  * @param {string} source
  * @returns {string}
@@ -81,6 +121,12 @@ function stripComments(source) {
   let i = 0;
   while (i < source.length) {
     const two = source.slice(i, i + 2);
+    if (source[i] === "/" && two !== "//" && two !== "/*" && startsRegex(out)) {
+      const end = skipRegex(source, i);
+      out += source.slice(i, end);
+      i = end;
+      continue;
+    }
     if (two === "//") {
       while (i < source.length && source[i] !== "\n") {
         out += " ";
@@ -260,6 +306,10 @@ function skipBlock(code, start) {
       i = skipTemplate(code, i);
       continue;
     }
+    if (char === "/" && startsRegex(code.slice(Math.max(0, i - 200), i))) {
+      i = skipRegex(code, i);
+      continue;
+    }
     if (char === "{") depth += 1;
     else if (char === "}") {
       depth -= 1;
@@ -288,9 +338,9 @@ function skipTemplate(code, start) {
 }
 
 /**
- * Every top-level re-export statement of a module. The scan skips literal contents and nested
- * blocks, so an export-looking line in a template is ignored, while an indented statement or a
- * second one on the same line is found.
+ * Every top-level re-export statement of a module. The scan skips literal contents (strings,
+ * templates, regular expressions) and nested blocks, so export-looking text in a literal is
+ * ignored, while an indented statement or a second one on the same line is found.
  *
  * @param {string} source raw file contents
  * @returns {Array<{ line: number, statement: string, clause: string, specifier: string, text: string }>}
@@ -309,6 +359,10 @@ function reexportsOf(source) {
     }
     if (char === "`") {
       i = skipTemplate(code, i);
+      continue;
+    }
+    if (char === "/" && startsRegex(code.slice(Math.max(0, i - 200), i))) {
+      i = skipRegex(code, i);
       continue;
     }
     if (char === "{" || char === "(" || char === "[") depth += 1;

@@ -272,3 +272,31 @@ test("a stray apostrophe in JSX text does not hide the statements below it", () 
     [["hidden-barrel", 2]],
   );
 });
+
+test("a regular expression literal neither hides nor fakes a re-export", () => {
+  // An unbalanced bracket inside a pattern must not push the statements below out of scope.
+  const hidden = ["const open = /\\{/;", 'export { a } from "./a";', 'export * from "./b";'].join(
+    "\n",
+  );
+  assert.deepEqual(
+    checkReachedModule(hidden).map(v => [v.code, v.line]),
+    [["hidden-barrel", 2]],
+  );
+  assert.deepEqual(starReexportTargets(hidden), ["./b"]);
+  // A `/*` inside a pattern is not a comment opening.
+  const slashes = ["const trailing = /\\/*$/;", 'export { a } from "./a";'].join("\n");
+  assert.deepEqual(
+    checkReachedModule(slashes).map(v => v.line),
+    [2],
+  );
+  // Export-looking text inside a pattern is not a statement.
+  assert.deepEqual(checkReachedModule('const p = /export { a } from "zod"/;'), []);
+  // A division is still a division.
+  const division = ["const half = total / 2, ratio = a / b;", 'export { c } from "./c";'].join(
+    "\n",
+  );
+  assert.deepEqual(
+    checkReachedModule(division).map(v => v.line),
+    [2],
+  );
+});
