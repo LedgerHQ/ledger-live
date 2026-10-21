@@ -1,0 +1,265 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Transport } from "@ledgerhq/wallet-api-core";
+import { BridgeSessionClosed } from "../errors";
+import { isUrlAllowedByManifestDomains } from "./manifestDomainUtils";
+
+/** Posts a message to the webview main frame, only if its document is on `targetOrigin`. */
+export type PostMessageToOrigin = (message: string, targetOrigin: string) => void;
+
+/** Who sent a bridge message, as reported by the platform (never by the page itself). */
+export type BridgeSender = {
+  /** URL or origin of the frame that sent the message */
+  url: string | undefined;
+  /** `undefined` when the platform cannot tell, which only passes with the domain check off */
+  isMainFrame: boolean | undefined;
+};
+
+/**
+ * Origin of an http(s) URL, `undefined` for anything else (`about:blank`, `data:`, opaque
+ * origins, malformed URLs): the bridge never answers those.
+ */
+export function getBridgeOrigin(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  try {
+    const { protocol, origin } = new URL(url);
+    return protocol === "https:" || protocol === "http:" ? origin : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * The bridge only answers the main frame on an origin of `manifest.domains`.
+ * `allowedDomains` is `undefined` when the manifest domain check is off (kill switch): any
+ * http(s) origin is then answered, from a frame the platform does not report as a subframe.
+ */
+export function isBridgeSenderAllowed(
+  sender: BridgeSender,
+  allowedDomains: string[] | undefined,
+): boolean {
+  const origin = getBridgeOrigin(sender.url);
+  if (!origin || sender.isMainFrame === false) return false;
+  if (allowedDomains === undefined) return true;
+  return sender.isMainFrame === true && isUrlAllowedByManifestDomains(origin, allowedDomains);
+}
+
+/**
+ * A wallet bridge session serves a single main-frame origin, and is the transport of the
+ * Wallet API / Platform API server created for it:
+ * - replies are posted to the session origin only, so a reply never reaches another origin;
+ * - when the main frame moves to another origin the session is closed: its pending requests
+ *   are rejected and anything it still tries to send is dropped.
+ *
+ * Messages are queued until the server of the session has registered its handlers (`activate`).
+ */
+export class BridgeSession implements Transport {
+  onMessage: Transport["onMessage"] = undefined;
+
+  /** Rejects once the session is closed. */
+  readonly closed: Promise<never>;
+
+  private currentOrigin: string | undefined;
+  private isActive = false;
+  private isClosed = false;
+  private queue: Array<() => void> = [];
+  private closeListeners = new Set<(error: Error) => void>();
+  private rejectClosed: (error: Error) => void = () => {};
+
+  constructor(
+    origin: string | undefined,
+    private readonly postMessage: PostMessageToOrigin,
+  ) {
+    this.currentOrigin = origin;
+    this.closed = new Promise<never>((_, reject) => {
+      this.rejectClosed = reject;
+    });
+    // Rejected on close whether anyone observes it or not.
+    this.closed.catch(() => {});
+  }
+
+  get origin(): string | undefined {
+    return this.currentOrigin;
+  }
+
+  get isOpen(): boolean {
+    return !this.isClosed;
+  }
+
+  /**
+   * Binds a session that has no origin yet (nothing loaded or received so far).
+   * Returns whether the session serves `origin`.
+   */
+  bind(origin: string): boolean {
+    if (this.isClosed) return false;
+    if (this.currentOrigin === undefined) {
+      this.currentOrigin = origin;
+    }
+    return this.currentOrigin === origin;
+  }
+
+  send = (message: string): void => {
+    if (this.isClosed || this.currentOrigin === undefined) return;
+    this.postMessage(message, this.currentOrigin);
+  };
+
+  /** Hands an incoming message to the session server once it is ready. */
+  receive(message: string): void {
+    this.deliver(() => this.onMessage?.(message));
+  }
+
+  /** Runs `handle` once the session server is ready, never after the session is closed. */
+  deliver(handle: () => void): void {
+    if (this.isClosed) return;
+    if (this.isActive) {
+      handle();
+    } else {
+      this.queue.push(handle);
+    }
+  }
+
+  /** Called by the session server once its handlers are registered. */
+  activate(): void {
+    if (this.isClosed || this.isActive) return;
+    this.isActive = true;
+    const queued = this.queue;
+    this.queue = [];
+    queued.forEach(handle => handle());
+  }
+
+  /** Settles like `promise`, or rejects with `BridgeSessionClosed` once the session is closed. */
+  cancelOnClose<T>(promise: Promise<T> | T): Promise<T> {
+    if (this.isClosed) return Promise.reject(new BridgeSessionClosed());
+    return new Promise<T>((resolve, reject) => {
+      // Removed once the request settles, so a long-lived session does not retain them.
+      this.closeListeners.add(reject);
+      Promise.resolve(promise)
+        .then(resolve, reject)
+        .finally(() => this.closeListeners.delete(reject));
+    });
+  }
+
+  /**
+   * Wraps the continuation of a request (opening a UI, broadcasting...) so that it rejects with
+   * `BridgeSessionClosed` instead of running once the session is closed: a request still
+   * preparing when the main frame changed origin must not act for the next origin.
+   */
+  whileOpen<A extends unknown[], R>(fn: (...args: A) => R): (...args: A) => R {
+    return (...args: A): R => {
+      if (this.isClosed) throw new BridgeSessionClosed();
+      return fn(...args);
+    };
+  }
+
+  close(): void {
+    if (this.isClosed) return;
+    this.isClosed = true;
+    this.queue = [];
+    this.onMessage = undefined;
+    const error = new BridgeSessionClosed();
+    this.closeListeners.forEach(reject => reject(error));
+    this.closeListeners.clear();
+    this.rejectClosed(error);
+  }
+}
+
+/**
+ * Ties a UI flow to the session of the request that opens it: the flow is not opened once the
+ * session is closed (the request may still have been preparing), and its callbacks are dropped
+ * after that, e.g. a device connected late is not handed over to the next origin.
+ */
+export function bindUiFlowToSession<P extends object, R>(
+  session: BridgeSession,
+  open: (params: P) => R,
+): (params: P) => R | undefined {
+  return params => {
+    if (!session.isOpen) return undefined;
+    const boundParams = Object.fromEntries(
+      Object.entries(params).map(([key, value]) => [
+        key,
+        typeof value === "function"
+          ? (...args: unknown[]) => (session.isOpen ? value(...args) : undefined)
+          : value,
+      ]),
+    );
+    return open(boundParams as P);
+  };
+}
+
+type UseBridgeSessionParams = {
+  postMessage: PostMessageToOrigin;
+  /** Called when the main frame moved to another origin, e.g. to close open drawers. */
+  onReset?: (closedSession: BridgeSession) => void;
+};
+
+export type BridgeSessionController = {
+  /** The session the current render serves. */
+  session: BridgeSession;
+  /**
+   * Returns the session a message from `origin` (already checked with `isBridgeSenderAllowed`)
+   * belongs to, or `undefined` when it must be dropped. A message from another origin than the
+   * session's means the main frame moved without a navigation event reaching us first: the
+   * session is reset and the message dropped, it was sent before the new session existed.
+   */
+  accept: (origin: string) => BridgeSession | undefined;
+  /** Reports a main-frame URL (load start or commit): resets the session on an origin change. */
+  onMainFrameNavigation: (url: string | undefined) => void;
+};
+
+/** One bridge session per main-frame origin, reset on every origin change. */
+export function useBridgeSession({
+  postMessage,
+  onReset,
+}: UseBridgeSessionParams): BridgeSessionController {
+  const postMessageRef = useRef(postMessage);
+  const onResetRef = useRef(onReset);
+  useEffect(() => {
+    postMessageRef.current = postMessage;
+    onResetRef.current = onReset;
+  }, [postMessage, onReset]);
+
+  const post = useCallback<PostMessageToOrigin>(
+    (message, targetOrigin) => postMessageRef.current(message, targetOrigin),
+    [],
+  );
+
+  const [session, setSession] = useState(() => new BridgeSession(undefined, post));
+  const sessionRef = useRef(session);
+
+  const reset = useCallback(
+    (origin: string | undefined) => {
+      const closedSession = sessionRef.current;
+      closedSession.close();
+      const nextSession = new BridgeSession(origin, post);
+      sessionRef.current = nextSession;
+      setSession(nextSession);
+      onResetRef.current?.(closedSession);
+    },
+    [post],
+  );
+
+  const accept = useCallback(
+    (origin: string): BridgeSession | undefined => {
+      const current = sessionRef.current;
+      if (current.bind(origin)) return current;
+      reset(origin);
+      return undefined;
+    },
+    [reset],
+  );
+
+  const onMainFrameNavigation = useCallback(
+    (url: string | undefined) => {
+      const origin = getBridgeOrigin(url);
+      const current = sessionRef.current;
+      if (current.origin === origin) return;
+      if (current.origin === undefined && origin !== undefined) {
+        current.bind(origin);
+        return;
+      }
+      reset(origin);
+    },
+    [reset],
+  );
+
+  return { session, accept, onMainFrameNavigation };
+}
