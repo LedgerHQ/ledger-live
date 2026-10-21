@@ -1,6 +1,5 @@
 import { app, session, webContents } from "electron";
 import {
-  createDomainCheckReporter,
   getReportableOrigin,
   type DomainCheckOutcome,
   type DomainCheckViolation,
@@ -108,7 +107,7 @@ type GuestDomainCheckReport = {
 
 /**
  * Hands a guest's violations to its embedder, which sends them to Datadog: main has no
- * Datadog SDK. Each distinct violation is sent once per guest.
+ * Datadog SDK. The embedder deduplicates them, once it knows whether Datadog recorded them.
  */
 const createGuestDomainCheckReport = (
   guest: Electron.WebContents,
@@ -116,11 +115,11 @@ const createGuestDomainCheckReport = (
 ): GuestDomainCheckReport => ({
   manifestId: context?.manifestId ?? "unknown",
   strictDomains: context?.domains,
-  report: createDomainCheckReporter(violation => {
+  report: violation => {
     const embedder = guest.hostWebContents;
     if (!embedder || embedder.isDestroyed()) return;
     embedder.send(CHANNELS.webviewDomainCheckViolation, violation);
-  }),
+  },
 });
 
 /**

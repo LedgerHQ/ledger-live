@@ -2,7 +2,11 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 import { addAction } from "~/datadog/renderer";
 import { webview } from "~/renderer/bridge";
-import { reportBridgeSenderOrigin, startDomainCheckViolationReporting } from "./domainCheckReport";
+import {
+  reportBlockedInitialLoad,
+  reportBridgeSenderOrigin,
+  startDomainCheckViolationReporting,
+} from "./domainCheckReport";
 
 jest.mock("~/datadog/renderer", () => ({
   addAction: jest.fn(),
@@ -25,7 +29,8 @@ const mainFrameViolation: DomainCheckViolation = {
 
 describe("domainCheckReport", () => {
   beforeEach(() => {
-    jest.mocked(addAction).mockClear();
+    jest.mocked(addAction).mockReset().mockReturnValue(true);
+    jest.mocked(webview.onDomainCheckViolation).mockClear();
   });
 
   describe("startDomainCheckViolationReporting", () => {
@@ -38,6 +43,19 @@ describe("domainCheckReport", () => {
       listener(mainFrameViolation);
 
       expect(addAction).toHaveBeenCalledWith("live_app_domain_check_violation", mainFrameViolation);
+    });
+
+    it("sends a violation from main again once Datadog accepts it, then once", () => {
+      startDomainCheckViolationReporting();
+      const [listener] = jest.mocked(webview.onDomainCheckViolation).mock.calls[0];
+      const violation = { ...mainFrameViolation, manifestId: "buy" };
+      jest.mocked(addAction).mockReturnValueOnce(false);
+
+      listener(violation);
+      listener(violation);
+      listener(violation);
+
+      expect(addAction).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -67,6 +85,32 @@ describe("domainCheckReport", () => {
       reportBridgeSenderOrigin({ ...manifest, id: "earn" }, "https://other.com/b");
 
       expect(addAction).toHaveBeenCalledTimes(1);
+    });
+
+    it("reports a sender again once Datadog accepts it", () => {
+      jest.mocked(addAction).mockReturnValueOnce(false);
+
+      reportBridgeSenderOrigin({ ...manifest, id: "card" }, "https://other.com/a");
+      reportBridgeSenderOrigin({ ...manifest, id: "card" }, "https://other.com/a");
+      reportBridgeSenderOrigin({ ...manifest, id: "card" }, "https://other.com/a");
+
+      expect(addAction).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("reportBlockedInitialLoad", () => {
+    it("reports a blocked main-frame navigation with its origin only", () => {
+      reportBlockedInitialLoad({ ...manifest, domains: [] }, "https://app.example.com/a?b=c");
+
+      expect(addAction).toHaveBeenCalledWith("live_app_domain_check_violation", {
+        origin: "https://app.example.com",
+        manifestId: "swap",
+        appVersion: "2.0.0",
+        platform: "desktop",
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
     });
   });
 });

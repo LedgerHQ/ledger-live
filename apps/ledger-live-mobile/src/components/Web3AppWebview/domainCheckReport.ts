@@ -11,10 +11,11 @@ import {
 } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appVersion } from "LLM/utils/appVersion";
-import { isDatadogEnabled } from "~/datadog";
+import { isDatadogRecording } from "~/datadog";
 
+// Not recorded (no consent, flag off, SDK not ready): the violation is sent again next time.
 const report = createDomainCheckReporter(violation => {
-  if (!isDatadogEnabled) return;
+  if (!isDatadogRecording()) return false;
   DdRum.addAction(RumActionType.CUSTOM, DOMAIN_CHECK_VIOLATION_ACTION, violation).catch(() => {
     // Reporting is best effort.
   });

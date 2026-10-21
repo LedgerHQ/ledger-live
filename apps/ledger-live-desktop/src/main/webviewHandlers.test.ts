@@ -315,7 +315,7 @@ describe("setupWebviewHandlers", () => {
         expect(sentViolations(guest)).toEqual([violation("would_block")]);
       });
 
-      it("reports each violation once per guest", () => {
+      it("forwards every violation: the embedder deduplicates what Datadog records", () => {
         const guest = attachGuest(`${domains},${report}`);
 
         requestMainFrame(guest, "https://evil.com/a");
@@ -323,6 +323,7 @@ describe("setupWebviewHandlers", () => {
         requestMainFrame(guest, "https://other.com/");
 
         expect(sentViolations(guest)).toEqual([
+          violation("blocked"),
           violation("blocked"),
           violation("blocked", "https://other.com"),
         ]);

@@ -23,7 +23,7 @@ import {
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { reportBridgeSenderOrigin } from "./domainCheckReport";
+import { reportBlockedInitialLoad, reportBridgeSenderOrigin } from "./domainCheckReport";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -216,6 +216,10 @@ export function useWebviewState(
   );
 
   const isBlockedByDomainCheck = manifestDomainCheckEnabled && webviewSrc === "about:blank";
+
+  useEffect(() => {
+    if (isBlockedByDomainCheck) reportBlockedInitialLoad(manifest, initialURL);
+  }, [isBlockedByDomainCheck, manifest, initialURL]);
 
   const handleDidStartLoading = useCallback(() => {
     setState(oldState => ({

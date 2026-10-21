@@ -1,5 +1,5 @@
 import { DdLogs } from "@datadog/mobile-react-native";
-import { broadcastLogger, customErrorEventMapper } from "./datadog";
+import { broadcastLogger, customErrorEventMapper, isDatadogRecording } from "./datadog";
 
 jest.mock("@datadog/mobile-react-native", () => ({
   DdLogs: { info: jest.fn(), error: jest.fn() },
@@ -10,6 +10,12 @@ jest.mock("@datadog/mobile-react-native", () => ({
 jest.mock("@datadog/mobile-react-navigation", () => ({}));
 jest.mock("./const", () => ({ ScreenName: {} }));
 jest.mock("./utils/datadogUtils", () => ({ buildFeatureFlagTags: jest.fn(() => ({})) }));
+
+describe("isDatadogRecording", () => {
+  it("is false until the provider is initialized with the user's consent", () => {
+    expect(isDatadogRecording()).toBe(false);
+  });
+});
 
 describe("customErrorEventMapper", () => {
   const mapError = customErrorEventMapper(false);

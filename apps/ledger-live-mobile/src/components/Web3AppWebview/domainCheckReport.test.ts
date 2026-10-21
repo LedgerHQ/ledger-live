@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import { DdRum, RumActionType } from "@datadog/mobile-react-native";
 
-let mockIsDatadogEnabled = true;
+let mockIsDatadogRecording = true;
 
 jest.mock("@datadog/mobile-react-native", () => ({
   DdRum: { addAction: jest.fn(() => Promise.resolve()) },
@@ -9,9 +9,7 @@ jest.mock("@datadog/mobile-react-native", () => ({
 }));
 
 jest.mock("~/datadog", () => ({
-  get isDatadogEnabled() {
-    return mockIsDatadogEnabled;
-  },
+  isDatadogRecording: () => mockIsDatadogRecording,
 }));
 
 jest.mock("LLM/utils/appVersion", () => ({ appVersion: "4.21.0" }));
@@ -30,7 +28,7 @@ const loadModule = (): typeof import("./domainCheckReport") => {
 
 describe("mobile domainCheckReport", () => {
   beforeEach(() => {
-    mockIsDatadogEnabled = true;
+    mockIsDatadogRecording = true;
     jest.mocked(DdRum.addAction).mockClear();
     Platform.OS = "ios";
   });
@@ -76,8 +74,8 @@ describe("mobile domainCheckReport", () => {
     expect(jest.mocked(DdRum.addAction).mock.calls[0][2]).toMatchObject({ platform: "android" });
   });
 
-  it("sends nothing when Datadog is not configured", () => {
-    mockIsDatadogEnabled = false;
+  it("sends nothing while Datadog is not recording", () => {
+    mockIsDatadogRecording = false;
     const { reportDomainCheckViolation } = loadModule();
 
     reportDomainCheckViolation({
@@ -89,6 +87,27 @@ describe("mobile domainCheckReport", () => {
     });
 
     expect(DdRum.addAction).not.toHaveBeenCalled();
+  });
+
+  it("sends a new occurrence once recording starts, without replaying earlier ones", () => {
+    mockIsDatadogRecording = false;
+    const { reportDomainCheckViolation } = loadModule();
+    const event = {
+      manifest,
+      url: "https://evil.com/",
+      frameType: "main_frame",
+      kind: "navigation",
+      outcome: "blocked",
+    } as const;
+
+    reportDomainCheckViolation(event);
+    mockIsDatadogRecording = true;
+    expect(DdRum.addAction).not.toHaveBeenCalled();
+
+    reportDomainCheckViolation(event);
+    reportDomainCheckViolation(event);
+
+    expect(DdRum.addAction).toHaveBeenCalledTimes(1);
   });
 
   describe("reportIfStrictlyDisallowed", () => {

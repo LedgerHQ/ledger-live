@@ -66,10 +66,11 @@ const MAX_REPORTED_KEYS = 500;
 
 /**
  * Wraps a sender so each distinct violation is sent once: a page that retries a
- * blocked load in a loop must not flood Datadog.
+ * blocked load in a loop must not flood Datadog. A sender returns false when it could
+ * not send (e.g. reporting is not enabled yet), so the violation is sent again later.
  */
 export function createDomainCheckReporter(
-  send: (violation: DomainCheckViolation) => void,
+  send: (violation: DomainCheckViolation) => boolean | void,
 ): (violation: DomainCheckViolation) => void {
   const reported = new Set<string>();
   return violation => {
@@ -81,7 +82,7 @@ export function createDomainCheckReporter(
       violation.origin,
     ].join("|");
     if (reported.has(key) || reported.size >= MAX_REPORTED_KEYS) return;
+    if (send(violation) === false) return;
     reported.add(key);
-    send(violation);
   };
 }
