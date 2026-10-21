@@ -354,14 +354,14 @@ jobs:
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
-          enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
+          enable_broadcast: ${{ matrix.os != 'macos' && env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
 
       - name: Write workflow context to GitHub Summary
         env:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
           BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
-          BROADCAST_ENABLED: ${{ env.E2E_BROADCAST_ENABLED }}
+          BROADCAST_ENABLED: ${{ matrix.os != 'macos' && env.E2E_BROADCAST_ENABLED }}
           REPEAT_EACH: ${{ inputs.repeat_each }}
           WORKFLOW_REF: ${{ github.workflow_ref }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
@@ -466,7 +466,7 @@ jobs:
           path: e2e/desktop/allure-results
           context: |
             ref=${{ inputs.ref || github.ref_name }}
-            broadcast=${{ env.E2E_BROADCAST_ENABLED }}
+            broadcast=${{ matrix.os != 'macos' && env.E2E_BROADCAST_ENABLED }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
             team=${{ inputs.team || 'all' }}
