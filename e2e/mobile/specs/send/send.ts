@@ -167,14 +167,17 @@ export function runSendTest(
   });
 }
 
-export function runSendInvalidAddressTest(
-  transaction: TransactionType,
-  expectedErrorMessage: string,
-  address: string | undefined,
-  tmsLinks: string[],
-  tags: string[],
-  accountName?: string,
-) {
+type RunSendInvalidAddressTestOptions = {
+  transaction: TransactionType;
+  expectedErrorMessage: string;
+  address?: string;
+  tmsLinks: string[];
+  tags: string[];
+  accountName?: string;
+};
+
+export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOptions) {
+  const { transaction, expectedErrorMessage, address, tmsLinks, tags, accountName } = options;
   setTeamOwner(
     BST_SEND_INVALID_ADDRESS_CURRENCIES.has(transaction.accountToDebit.currency.id)
       ? Team.BST
