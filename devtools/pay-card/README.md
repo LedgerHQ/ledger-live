@@ -46,13 +46,11 @@ interface PayCardToolProps {
     cardNativeParam: boolean;
     cardLiveAppParam: boolean;
     cardDisclaimerParam: boolean;
-    legacyTopUpParam: boolean;
     ptxCardEnabled: boolean;
     setPayTabEnabled: (value: boolean) => void;
     setCardNativeParam: (value: boolean) => void;
     setCardLiveAppParam: (value: boolean) => void;
     setCardDisclaimerParam: (value: boolean) => void;
-    setLegacyTopUpParam: (value: boolean) => void;
     setPtxCardEnabled: (value: boolean) => void;
   };
   // The real, derived onboarding status — signals read from getUser/getCardStatus/

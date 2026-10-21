@@ -223,12 +223,6 @@ function PayCard(props: Readonly<PayCardToolProps>) {
             onChange={flags.setCardDisclaimerParam}
           />
           <ToggleRow
-            label="Legacy top up"
-            description="params.legacyTopUp"
-            checked={flags.legacyTopUpParam}
-            onChange={flags.setLegacyTopUpParam}
-          />
-          <ToggleRow
             label="Legacy Card"
             description="ptxCard"
             checked={flags.ptxCardEnabled}

@@ -320,7 +320,6 @@ describe("usePayCardToolProps", () => {
               card_native: true,
               card_live_app: false,
               card_disclaimer: false,
-              legacyTopUp: true,
             },
           },
         }),
@@ -334,7 +333,6 @@ describe("usePayCardToolProps", () => {
       card_native: false,
       card_live_app: false,
       card_disclaimer: false,
-      legacyTopUp: true,
     });
   });
 

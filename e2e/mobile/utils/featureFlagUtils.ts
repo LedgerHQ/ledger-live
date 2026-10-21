@@ -130,7 +130,6 @@ export const FF_PAY_TAB = {
       card_native: true,
       card_live_app: false,
       card_disclaimer: false,
-      legacyTopUp: false,
     },
   },
 } satisfies PartialFeatures;
