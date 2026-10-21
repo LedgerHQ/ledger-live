@@ -302,3 +302,18 @@ test("an indented or same-line `export *` in a barrel is followed too", () => {
     ["shared/thing/src/a.ts", "shared/thing/src/c.ts"],
   );
 });
+
+test("`export *` below JSX in a reached component is still followed", () => {
+  const root = workspace({
+    "shared/thing/src/index.ts": 'export * from "./View";\n',
+    "shared/thing/src/View.tsx": [
+      "export const View = () => (<p>Hello</p>);",
+      'export * from "./deeper";',
+    ].join("\n"),
+    "shared/thing/src/deeper.ts": 'export { a } from "./a";\n',
+  });
+  assert.deepEqual(
+    checkPackage(root, "shared/thing").map(v => [v.file, v.code]),
+    [["shared/thing/src/deeper.ts", "hidden-barrel"]],
+  );
+});

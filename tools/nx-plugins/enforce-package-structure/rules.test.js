@@ -300,3 +300,25 @@ test("a regular expression literal neither hides nor fakes a re-export", () => {
     [2],
   );
 });
+
+test("JSX closing tags do not hide the re-exports below them", () => {
+  const source = [
+    "const A = () => (<p>Hello</p>);",
+    "const B = ({ on }) => on && <p>{on}/{on}</p>;",
+    "const C = ({ items }) => items.map(i => (<li key={i}>{i}</li>));",
+    "const D = ({ x }) => (<Foo bar={x} />);",
+    'export { a } from "./a";',
+    'export * from "./deeper";',
+  ].join("\n");
+  assert.deepEqual(
+    checkReachedModule(source).map(v => [v.code, v.line]),
+    [["hidden-barrel", 5]],
+  );
+  assert.deepEqual(starReexportTargets(source), ["./deeper"]);
+  // Patterns are still read as patterns where a JSX tag cannot appear.
+  const patterns = ["const f = s => /[{(]/.test(s) && s.split(/>/);", 'export { b } from "./b";'];
+  assert.deepEqual(
+    checkReachedModule(patterns.join("\n")).map(v => v.line),
+    [2],
+  );
+});

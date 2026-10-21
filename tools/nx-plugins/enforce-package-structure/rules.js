@@ -68,9 +68,10 @@ function isInRepoSpecifier(specifier) {
   return IN_REPO_SCOPES.some(scope => specifier.startsWith(scope));
 }
 
-// After one of these, a `/` starts a regular expression rather than a division.
+// After one of these, a `/` starts a regular expression rather than a division. `<` is left
+// out: `</` closes a JSX element.
 const REGEX_PRECEDER =
-  /(?:[(,=:[!&|?{};+\-*%<>~^]|(?:^|[^\w$.])(?:return|typeof|case|do|else|in|of|new|delete|void|throw|yield|await|instanceof))$/;
+  /(?:[(,=:[!&|?{};+\-*%>~^]|(?:^|[^\w$.])(?:return|typeof|case|do|else|in|of|new|delete|void|throw|yield|await|instanceof))$/;
 
 /**
  * True when a `/` following `before` opens a regular expression literal.
@@ -353,6 +354,9 @@ function reexportsOf(source) {
   let i = 0;
   while (i < code.length) {
     const char = code[i];
+    // Formatted code starts every top-level statement in column 0. Resync there, so a misread
+    // literal (a JSX text, an unusual pattern) cannot hide the statements below it.
+    if ((i === 0 || code[i - 1] === "\n") && !/[\s)\]}]/.test(char)) depth = 0;
     if (char === '"' || char === "'") {
       i = skipString(code, i);
       continue;
