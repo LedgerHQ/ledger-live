@@ -27,7 +27,7 @@ import { accountDataRecorder } from "~/config/account-data-setup";
 
 const APPLICATION_ID = 16;
 
-export function useDevToolsScreenViewModel() {
+export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const featureFlagsToolProps = useFeatureFlagsToolProps();
@@ -115,7 +115,8 @@ export function useDevToolsScreenViewModel() {
     ],
   );
 
-  const onClose = useCallback(() => navigate(-1), [navigate]);
+  const navigateBack = useCallback(() => navigate(-1), [navigate]);
+  const onClose = onCloseOverride ?? navigateBack;
 
   return {
     config,

@@ -95,4 +95,14 @@ describe("DevToolsScreen", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
+
+  it("uses the provided onClose instead of navigating back", async () => {
+    const onClose = jest.fn();
+    const { user } = render(<DevToolsScreen onClose={onClose} />);
+
+    await user.click(screen.getByText("close-devtools"));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
 });
