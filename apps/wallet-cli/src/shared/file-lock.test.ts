@@ -1,8 +1,16 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { withFileLock } from "./file-lock";
+import { readLiveLockHolderPid, withFileLock } from "./file-lock";
 
 let dir: string | undefined;
 afterEach(() => {
@@ -55,6 +63,15 @@ describe("withFileLock", () => {
     ).rejects.toBe(boom);
     expect(existsSync(path)).toBe(false);
   });
+
+  it.skipIf(process.platform === "win32")(
+    "creates the lock file readable by its owner only",
+    async () => {
+      const path = lockPath();
+      const mode = await withFileLock(path, () => statSync(path).mode & 0o777);
+      expect(mode).toBe(0o600);
+    },
+  );
 
   it("leaves no leftover temp file in the directory either way", async () => {
     const path = lockPath();
@@ -183,4 +200,42 @@ describe("withFileLock", () => {
     expect(maxConcurrentHolders).toBe(1);
     expect(concurrentHolders).toBe(0); // every enter had a matching exit
   }, 10_000);
+});
+
+describe("readLiveLockHolderPid", () => {
+  it("returns undefined when there is no lock file", () => {
+    expect(readLiveLockHolderPid(lockPath())).toBeUndefined();
+  });
+
+  it("returns the pid of a live holder", () => {
+    const path = lockPath();
+    const holder = Bun.spawn([process.execPath, "-e", "await new Promise(() => {})"]);
+    writeFileSync(path, `${holder.pid}:a1b2c3d4e5f60718`);
+    try {
+      expect(readLiveLockHolderPid(path)).toBe(holder.pid);
+    } finally {
+      holder.kill();
+    }
+  });
+
+  it("returns this process's pid while withFileLock holds the lock", async () => {
+    const path = lockPath();
+    const seen = await withFileLock(path, () => readLiveLockHolderPid(path));
+    expect(seen).toBe(process.pid);
+  });
+
+  it("returns undefined for a dead holder and leaves its lock file in place", () => {
+    const path = lockPath();
+    writeFileSync(path, `${deadPid()}:a1b2c3d4e5f60718`);
+
+    expect(readLiveLockHolderPid(path)).toBeUndefined();
+    expect(existsSync(path)).toBe(true);
+  });
+
+  it("returns undefined for a malformed token even when its pid is alive", () => {
+    const path = lockPath();
+    writeFileSync(path, `${process.pid}:not-a-nonce`);
+
+    expect(readLiveLockHolderPid(path)).toBeUndefined();
+  });
 });

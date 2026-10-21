@@ -58,12 +58,19 @@ function isAbandoned(token: string | undefined): boolean {
   return pid === undefined || !isHolderAlive(pid);
 }
 
+/** The pid of the live process holding `lockPath`, or `undefined` when the lock is free or
+ * abandoned. Read-only: unlike `withFileLock`, it never reclaims an abandoned lock. */
+export function readLiveLockHolderPid(lockPath: string): number | undefined {
+  const pid = parsePid(readToken(lockPath));
+  return pid !== undefined && isHolderAlive(pid) ? pid : undefined;
+}
+
 /** Tries to publish `token` at `lockPath` via a private per-attempt temp file (see the module doc
  * comment on `withFileLock`). Returns whether it was acquired; `false` means `lockPath` is already
  * held by someone else. Throws for anything else, including transient Windows contention — the
  * caller decides how to retry. */
 function tryPublishLock(lockPath: string, tmpPath: string, token: string): boolean {
-  writeFileSync(tmpPath, token, { flag: "wx" });
+  writeFileSync(tmpPath, token, { flag: "wx", mode: 0o600 });
   try {
     linkSync(tmpPath, lockPath);
     return true;
