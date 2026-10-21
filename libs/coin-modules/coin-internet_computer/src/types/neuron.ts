@@ -1,4 +1,4 @@
-import type { Principal } from "@dfinity/principal";
+import type { Principal } from "@icp-sdk/core/principal";
 
 // NNS neuron lifecycle state (dfinity/ic NNS NeuronState enum; @dfinity/nns governance.enums.ts).
 export enum NeuronState {

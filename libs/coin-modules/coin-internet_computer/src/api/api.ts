@@ -1,23 +1,17 @@
 import {
   Cbor,
   Certificate,
-  Expiry,
   lookupResultToBuffer,
+  ReadRequestType,
   requestIdOf,
   SubmitRequestType,
   type RequestId,
-} from "@dfinity/agent";
-import type {
-  GetAccountIdentifierTransactionsResponse,
-  TransactionWithId,
-} from "@dfinity/ledger-icp";
-import { Principal } from "@dfinity/principal";
-import { fromNullable } from "@dfinity/utils";
+} from "@icp-sdk/core/agent";
+import { Principal } from "@icp-sdk/core/principal";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import {
-  DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
   FETCH_TXNS_LIMIT,
   ICP_NETWORK_URL,
   MAINNET_GOVERNANCE_CANISTER_ID,
@@ -31,38 +25,33 @@ import {
   ICPNodeRefused,
   ICPStakeNotRefreshed,
 } from "../errors";
+import { createIngressExpiry } from "../logic/buildTransaction";
 import { getAgent } from "../network/agent";
 import {
   decodeCanisterIdlFunc,
   encodeCanisterIdlFunc,
+  fromOpt,
   getCanisterIdlFunc,
   governanceIdlFactory,
   indexIdlFactory,
   ledgerIdlFactory,
 } from "../network/candid";
+import type {
+  GetAccountIdentifierTransactionsResponse,
+  TransactionWithId,
+} from "../network/idl/index.types";
 import type { ListNeuronsResponse, NeuronCommandOutcome } from "../types/neuron";
 
-function toArrayBuffer(view: ArrayBuffer | Uint8Array): ArrayBuffer {
-  if (view instanceof ArrayBuffer) {
-    return view;
-  }
-  const copy = new Uint8Array(view.byteLength);
-  copy.set(view);
-  return copy.buffer;
-}
-
 function requestIdFromHex(hex: string): RequestId {
-  const bytes = Buffer.from(hex, "hex");
-  const copy = new Uint8Array(bytes);
-  return copy.buffer as RequestId;
+  return new Uint8Array(Buffer.from(hex, "hex")) as RequestId;
 }
 
 // The IC root key is the trust anchor for BLS certificate verification. On mainnet the agent embeds
-// the well-known key (@dfinity/agent's IC_ROOT_KEY); only a local replica fetches it — from the replica
+// the well-known key (the agent's IC_ROOT_KEY); only a local replica fetches it — from the replica
 // itself, which is the trust boundary for local dev. It is deliberately NOT fetched from the boundary
 // node whose replies we verify: doing so would let a compromised boundary supply both a forged
 // certificate and a matching forged root, defeating certificate verification.
-async function getRootKey(): Promise<ArrayBuffer> {
+async function getRootKey(): Promise<Uint8Array> {
   const agent = await getAgent(ICP_NETWORK_URL);
   invariant(agent.rootKey, "[ICP](getRootKey) Root key unavailable");
   return agent.rootKey;
@@ -86,11 +75,10 @@ export const fetchBlockHeight = async (): Promise<BigNumber> => {
 
   invariant(blockHeightRes.status === "replied", "[ICP](fetchBlockHeight) Query failed");
 
-  const decodedIdl = decodeCanisterIdlFunc<[{ chain_length: bigint }]>(
+  const [decoded] = decodeCanisterIdlFunc<[{ chain_length: bigint }]>(
     queryBlocksIdlFunc,
     blockHeightRes.reply.arg,
   );
-  const decoded = fromNullable(decodedIdl);
   invariant(decoded, "[ICP](fetchBlockHeight) Decoding failed");
 
   return BigNumber(decoded.chain_length.toString());
@@ -153,8 +141,7 @@ export const fetchBalance = async (address: string): Promise<BigNumber> => {
     return BigNumber(0);
   }
 
-  const decodedBalance = decodeCanisterIdlFunc<[bigint]>(getBalanceIdlFunc, balanceRes.reply.arg);
-  const balance: bigint | undefined = fromNullable(decodedBalance);
+  const [balance] = decodeCanisterIdlFunc<[bigint]>(getBalanceIdlFunc, balanceRes.reply.arg);
   if (!balance) {
     return BigNumber(0);
   }
@@ -193,11 +180,10 @@ export const fetchTxns = async (
   });
 
   invariant(transactionsRes.status === "replied", "[ICP](fetchTxns) Query failed");
-  const decodedTransactions = decodeCanisterIdlFunc<
-    [{ Ok: GetAccountIdentifierTransactionsResponse }]
-  >(getTransactionsIdlFunc, transactionsRes.reply.arg);
-
-  const response = fromNullable(decodedTransactions);
+  const [response] = decodeCanisterIdlFunc<[{ Ok: GetAccountIdentifierTransactionsResponse }]>(
+    getTransactionsIdlFunc,
+    transactionsRes.reply.arg,
+  );
   invariant(response, "[ICP](fetchTxns) Decoding failed");
 
   if (response.Ok.transactions.length === 0) {
@@ -222,28 +208,28 @@ const delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(r
 // The terminal reply from a status certificate, or null while the request is still non-terminal
 // (received / processing / not yet in the tree). Throws only on an explicit `rejected` status.
 const terminalReply = async (
-  certificate: ArrayBuffer | Uint8Array,
+  certificate: Uint8Array,
   canisterId: Principal,
   requestId: RequestId,
-  rootKey: ArrayBuffer,
-): Promise<ArrayBuffer | null> => {
+  rootKey: Uint8Array,
+): Promise<Uint8Array | null> => {
   const cert = await Certificate.create({
-    certificate: toArrayBuffer(certificate),
+    certificate,
     rootKey,
-    canisterId,
+    principal: { canisterId },
     maxAgeInMinutes: 100,
   });
-  const statusBuf = lookupResultToBuffer(cert.lookup(["request_status", requestId, "status"]));
+  const statusBuf = lookupResultToBuffer(cert.lookup_path(["request_status", requestId, "status"]));
   const status = statusBuf ? new TextDecoder().decode(statusBuf) : undefined;
   if (status === "rejected") {
     const rejectBuf = lookupResultToBuffer(
-      cert.lookup(["request_status", requestId, "reject_message"]),
+      cert.lookup_path(["request_status", requestId, "reject_message"]),
     );
     const reason = redactPrincipals(rejectBuf ? new TextDecoder().decode(rejectBuf) : "");
     throw new ICPCallRejected(`[ICP] call rejected: ${reason || "unknown"}`, { reason });
   }
   return status === "replied"
-    ? (lookupResultToBuffer(cert.lookup(["request_status", requestId, "reply"])) ?? null)
+    ? (lookupResultToBuffer(cert.lookup_path(["request_status", requestId, "reply"])) ?? null)
     : null;
 };
 
@@ -251,7 +237,7 @@ const terminalReply = async (
 // status, or — for a call the node turned away before replication — the rejection itself.
 interface SyncCallBody {
   status?: string;
-  certificate?: ArrayBuffer | Uint8Array;
+  certificate?: Uint8Array;
   reject_message?: string;
 }
 
@@ -276,14 +262,14 @@ export const readReplyFromCanister = async (
   readStateBlob: Buffer | undefined,
   canisterIdStr: string,
   requestIdHex: string,
-): Promise<ArrayBuffer | null> => {
+): Promise<Uint8Array | null> => {
   const canisterId = Principal.fromText(canisterIdStr);
   const requestId = requestIdFromHex(requestIdHex);
   const rootKey = await getRootKey();
 
   const callRes = await broadcastTxn(callBlob, canisterIdStr, "call");
   if (callRes) {
-    const top = Cbor.decode<SyncCallBody>(toArrayBuffer(callRes));
+    const top = Cbor.decode<SyncCallBody>(callRes);
     throwIfRejectedBeforeReplication(top);
     if (top.certificate) {
       const reply = await terminalReply(top.certificate, canisterId, requestId, rootKey);
@@ -298,9 +284,7 @@ export const readReplyFromCanister = async (
     await delay(READ_STATE_POLL_INTERVAL_MS);
     const readStateRes = await broadcastTxn(readStateBlob, canisterIdStr, "read_state");
     if (!readStateRes) continue;
-    const { certificate } = Cbor.decode<{ certificate: ArrayBuffer | Uint8Array }>(
-      toArrayBuffer(readStateRes),
-    );
+    const { certificate } = Cbor.decode<{ certificate?: Uint8Array }>(readStateRes);
     if (!certificate) continue;
     const reply = await terminalReply(certificate, canisterId, requestId, rootKey);
     if (reply) return reply;
@@ -329,7 +313,7 @@ export const readTransferOutcome = async (
 ): Promise<LedgerTransferOutcome> => {
   const requestId = requestIdFromHex(transferRequestIdHex);
   const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
-  const top = Cbor.decode<SyncCallBody>(toArrayBuffer(syncCallResponse));
+  const top = Cbor.decode<SyncCallBody>(syncCallResponse);
   throwIfRejectedBeforeReplication(top);
   invariant(
     top.status === "replied" && top.certificate,
@@ -365,27 +349,27 @@ export const claimOrRefreshNeuronFromAccount = async (
   const func = getCanisterIdlFunc(governanceIdlFactory, "claim_or_refresh_neuron_from_account");
   const arg = encodeCanisterIdlFunc(func, [{ controller: [controller], memo }]);
   const content = {
-    request_type: SubmitRequestType.Call,
-    canister_id: Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID),
-    method_name: "claim_or_refresh_neuron_from_account",
     arg,
+    canister_id: Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID),
+    ingress_expiry: createIngressExpiry(),
+    method_name: "claim_or_refresh_neuron_from_account",
+    request_type: SubmitRequestType.Call,
     sender: Principal.anonymous(),
-    ingress_expiry: new Expiry(DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS),
   };
   const requestId = requestIdOf(content);
   const requestIdHex = Buffer.from(requestId).toString("hex");
   // Companion read-state envelope so the call can be polled to a terminal status (anonymous, no sig).
   const readStateContent = {
-    request_type: "read_state",
-    paths: [[new TextEncoder().encode("request_status"), new Uint8Array(requestId)]],
-    sender: content.sender,
     ingress_expiry: content.ingress_expiry,
+    paths: [[new TextEncoder().encode("request_status"), new Uint8Array(requestId)]],
+    request_type: ReadRequestType.ReadState,
+    sender: content.sender,
   };
   // The claim only ever runs after the transfer settled, so a rejected claim call leaves the same
   // state as one governance answered with an error: the ICP is in the neuron's account, unclaimed.
   // It is reported as that rather than as a rejected call, which reads as "nothing ran" — true of
   // the claim, false of the transfer, and what would get the user offered a retry that stakes twice.
-  let reply: ArrayBuffer | null;
+  let reply: Uint8Array | null;
   try {
     reply = await readReplyFromCanister(
       Buffer.from(Cbor.encode({ content })),
@@ -405,7 +389,7 @@ export const claimOrRefreshNeuronFromAccount = async (
   const decoded = decodeCanisterIdlFunc<
     [{ result: [] | [{ NeuronId?: { id: bigint }; Error?: { error_message: string } }] }]
   >(func, reply);
-  const result = fromNullable(decoded[0].result);
+  const result = fromOpt(decoded[0].result);
   if (result && "Error" in result && result.Error) {
     // The transfer has settled by now, so this is not a failed transaction: the ICP sits in the
     // neuron's account, and the reason says what stopped the claim or refresh.
@@ -424,7 +408,7 @@ export const claimOrRefreshNeuronFromAccount = async (
  * re-deriving the split from a percentage of a maturity figure that may have accrued since the last
  * snapshot; the reply states both totals outright.
  */
-export const decodeManageNeuronReply = (reply: ArrayBuffer): NeuronCommandOutcome | undefined => {
+export const decodeManageNeuronReply = (reply: Uint8Array): NeuronCommandOutcome | undefined => {
   const func = getCanisterIdlFunc(governanceIdlFactory, "manage_neuron");
   const [decoded] = decodeCanisterIdlFunc<
     [
@@ -440,7 +424,7 @@ export const decodeManageNeuronReply = (reply: ArrayBuffer): NeuronCommandOutcom
       },
     ]
   >(func, reply);
-  const command = fromNullable(decoded.command);
+  const command = fromOpt(decoded.command);
   if (command && "Error" in command && command.Error) {
     // Named rather than a bare Error: `errors.<name>` is how the apps translate this, and the
     // canister's own text rides along as `reason` for the copy to quote — minus the caller, which
@@ -458,7 +442,7 @@ export const decodeManageNeuronReply = (reply: ArrayBuffer): NeuronCommandOutcom
 };
 
 /** Decode a list_neurons reply into the raw neuron snapshot. */
-export const decodeListNeuronsReply = (reply: ArrayBuffer): ListNeuronsResponse => {
+export const decodeListNeuronsReply = (reply: Uint8Array): ListNeuronsResponse => {
   const func = getCanisterIdlFunc(governanceIdlFactory, "list_neurons");
   const [decoded] = decodeCanisterIdlFunc<[ListNeuronsResponse]>(func, reply);
   return decoded;

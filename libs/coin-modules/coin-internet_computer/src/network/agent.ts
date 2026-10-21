@@ -1,4 +1,4 @@
-import { HttpAgent } from "@dfinity/agent";
+import { HttpAgent } from "@icp-sdk/core/agent";
 
 // The root key only needs fetching against a local replica; mainnet uses the embedded key,
 // and the module's queries are uncertified, so skip the extra status round-trip there.

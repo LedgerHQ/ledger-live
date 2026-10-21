@@ -6,7 +6,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { Principal } from "@dfinity/principal";
+import { Principal } from "@icp-sdk/core/principal";
 import BigNumber from "bignumber.js";
 import {
   getNeuronActionPermissions,
