@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { StrictMode } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { BridgeSessionClosed } from "../errors";
 import {
@@ -143,6 +144,17 @@ describe("BridgeSession", () => {
     expect(handle).not.toHaveBeenCalled();
   });
 
+  it("does not run the queued messages left after one of them closed it", () => {
+    const session = new BridgeSession("https://app.example.com", jest.fn());
+    const next = jest.fn();
+
+    session.deliver(() => session.close());
+    session.deliver(next);
+    session.activate();
+
+    expect(next).not.toHaveBeenCalled();
+  });
+
   it("settles like the request while open", async () => {
     const session = new BridgeSession("https://app.example.com", jest.fn());
 
@@ -167,6 +179,16 @@ describe("BridgeSession", () => {
     await expect(session.cancelOnClose(Promise.resolve(1))).rejects.toBeInstanceOf(
       BridgeSessionClosed,
     );
+  });
+
+  it("observes a request that fails after it was closed", async () => {
+    const session = new BridgeSession("https://app.example.com", jest.fn());
+    session.close();
+    const failing = Promise.reject(new Error("failed"));
+    const catchSpy = jest.spyOn(failing, "catch");
+
+    await expect(session.cancelOnClose(failing)).rejects.toBeInstanceOf(BridgeSessionClosed);
+    expect(catchSpy).toHaveBeenCalled();
   });
 
   it("does not run a request continuation once closed", () => {
@@ -302,5 +324,27 @@ describe("useBridgeSession", () => {
     expect(onReset).toHaveBeenCalledWith(previous);
     expect(result.current.session.origin).toBe("https://other.example.com");
     expect(result.current.accept("https://other.example.com")).toBe(result.current.session);
+  });
+
+  it("closes the session and rejects its pending requests on unmount", async () => {
+    const { result, unmount, onReset } = setup();
+    act(() => result.current.onMainFrameNavigation("https://app.example.com/"));
+    const session = result.current.session;
+    const pending = session.cancelOnClose(new Promise(() => {}));
+
+    unmount();
+
+    expect(session.isOpen).toBe(false);
+    await expect(pending).rejects.toBeInstanceOf(BridgeSessionClosed);
+    expect(onReset).not.toHaveBeenCalled();
+  });
+
+  it("serves an open session after a Strict Mode effect replay", () => {
+    const { result } = renderHook(() => useBridgeSession({ postMessage: jest.fn() }), {
+      wrapper: StrictMode,
+    });
+
+    expect(result.current.session.isOpen).toBe(true);
+    expect(result.current.accept("https://app.example.com")).toBe(result.current.session);
   });
 });

@@ -52,29 +52,37 @@ export function isBridgeSenderAllowed(
  *
  * Messages are queued until the server of the session has registered its handlers (`activate`).
  */
+const noop = () => {};
+
+/** A promise rejected on demand, observed so that nobody has to observe it. */
+function createClosedSignal(): { promise: Promise<never>; reject: (error: Error) => void } {
+  let reject: (error: Error) => void = noop;
+  const promise = new Promise<never>((_, rejectPromise) => {
+    reject = rejectPromise;
+  });
+  promise.catch(noop);
+  return { promise, reject };
+}
+
 export class BridgeSession implements Transport {
   onMessage: Transport["onMessage"] = undefined;
 
+  private readonly closedSignal = createClosedSignal();
+
   /** Rejects once the session is closed. */
-  readonly closed: Promise<never>;
+  readonly closed: Promise<never> = this.closedSignal.promise;
 
   private currentOrigin: string | undefined;
   private isActive = false;
   private isClosed = false;
   private queue: Array<() => void> = [];
-  private closeListeners = new Set<(error: Error) => void>();
-  private rejectClosed: (error: Error) => void = () => {};
+  private readonly closeListeners = new Set<(error: Error) => void>();
 
   constructor(
     origin: string | undefined,
     private readonly postMessage: PostMessageToOrigin,
   ) {
     this.currentOrigin = origin;
-    this.closed = new Promise<never>((_, reject) => {
-      this.rejectClosed = reject;
-    });
-    // Rejected on close whether anyone observes it or not.
-    this.closed.catch(() => {});
   }
 
   get origin(): string | undefined {
@@ -91,9 +99,7 @@ export class BridgeSession implements Transport {
    */
   bind(origin: string): boolean {
     if (this.isClosed) return false;
-    if (this.currentOrigin === undefined) {
-      this.currentOrigin = origin;
-    }
+    this.currentOrigin ??= origin;
     return this.currentOrigin === origin;
   }
 
@@ -123,12 +129,17 @@ export class BridgeSession implements Transport {
     this.isActive = true;
     const queued = this.queue;
     this.queue = [];
-    queued.forEach(handle => handle());
+    // A queued handler may close the session: the next ones must not run then.
+    queued.forEach(handle => this.deliver(handle));
   }
 
   /** Settles like `promise`, or rejects with `BridgeSessionClosed` once the session is closed. */
   cancelOnClose<T>(promise: Promise<T> | T): Promise<T> {
-    if (this.isClosed) return Promise.reject(new BridgeSessionClosed());
+    if (this.isClosed) {
+      // Observed so that a request failing after the close is not an unhandled rejection.
+      Promise.resolve(promise).catch(() => {});
+      return Promise.reject(new BridgeSessionClosed());
+    }
     return new Promise<T>((resolve, reject) => {
       // Removed once the request settles, so a long-lived session does not retain them.
       this.closeListeners.add(reject);
@@ -158,7 +169,7 @@ export class BridgeSession implements Transport {
     const error = new BridgeSessionClosed();
     this.closeListeners.forEach(reject => reject(error));
     this.closeListeners.clear();
-    this.rejectClosed(error);
+    this.closedSignal.reject(error);
   }
 }
 
@@ -224,6 +235,16 @@ export function useBridgeSession({
 
   const [session, setSession] = useState(() => new BridgeSession(undefined, post));
   const sessionRef = useRef(session);
+
+  // Closes the session when its view goes away. A replayed effect (Strict Mode) reopens one.
+  useEffect(() => {
+    if (!sessionRef.current.isOpen) {
+      const reopened = new BridgeSession(sessionRef.current.origin, post);
+      sessionRef.current = reopened;
+      setSession(reopened);
+    }
+    return () => sessionRef.current.close();
+  }, [post]);
 
   const reset = useCallback(
     (origin: string | undefined) => {
