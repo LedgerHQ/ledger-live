@@ -1,4 +1,4 @@
-import { Principal } from "@dfinity/principal";
+import { Principal } from "@icp-sdk/core/principal";
 
 // Base32 groups of five, as principals are written; the last group may be shorter. Three groups
 // minimum, so a short hyphenated token like `hot-key` is not even a candidate.

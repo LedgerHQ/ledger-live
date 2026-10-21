@@ -1,3 +1,6 @@
+// ESM-only dependencies of @icp-sdk/core, which jest must transform to load from CommonJS.
+const esmPackages = ["@noble", "@scure"];
+
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
@@ -16,4 +19,5 @@ module.exports = {
       },
     ],
   },
+  transformIgnorePatterns: [`node_modules/\\.pnpm/(?!(${esmPackages.join("|")}))`],
 };

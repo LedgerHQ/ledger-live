@@ -1,7 +1,7 @@
-import { Cbor, Certificate } from "@dfinity/agent";
+import { Cbor, Certificate, LookupPathStatus } from "@icp-sdk/core/agent";
 import { ICPCallRejected, ICPStakeNotRefreshed } from "../errors";
-import { IDL } from "@dfinity/candid";
-import { Principal } from "@dfinity/principal";
+import { IDL } from "@icp-sdk/core/candid";
+import { Principal } from "@icp-sdk/core/principal";
 import {
   claimOrRefreshNeuronFromAccount,
   decodeListNeuronsReply,
@@ -14,37 +14,34 @@ import { getCanisterIdlFunc, governanceIdlFactory, ledgerIdlFactory } from "../n
 
 // Encode a governance canister *reply* (return value) using the real vendored IDL, so the decode
 // functions run against genuine candid bytes rather than a hand-rolled buffer.
-const encodeReply = (method: string, value: unknown): ArrayBuffer =>
-  IDL.encode(getCanisterIdlFunc(governanceIdlFactory, method).retTypes, [value]) as ArrayBuffer;
+const encodeReply = (method: string, value: unknown): Uint8Array =>
+  IDL.encode(getCanisterIdlFunc(governanceIdlFactory, method).retTypes, [value]);
 
-const encodeLedgerReply = (value: unknown): ArrayBuffer =>
-  IDL.encode(getCanisterIdlFunc(ledgerIdlFactory, "transfer").retTypes, [value]) as ArrayBuffer;
+const encodeLedgerReply = (value: unknown): Uint8Array =>
+  IDL.encode(getCanisterIdlFunc(ledgerIdlFactory, "transfer").retTypes, [value]);
 
-// Keep the real @dfinity/agent (Cbor, lookupResultToBuffer, IDL, …); mock only certificate creation
-// so we can drive terminalReply's status branches without a real BLS certificate.
-jest.mock("@dfinity/agent", () => ({
-  ...jest.requireActual("@dfinity/agent"),
+// Keep the real agent (Cbor, lookupResultToBuffer, …); mock only certificate creation so we can
+// drive terminalReply's status branches without a real BLS certificate.
+jest.mock("@icp-sdk/core/agent", () => ({
+  ...jest.requireActual("@icp-sdk/core/agent"),
   Certificate: { create: jest.fn() },
 }));
 
 // getRootKey() reads the agent's embedded root key; stub the agent so no network/embedded-key logic runs.
 jest.mock("../network/agent", () => ({
-  getAgent: jest.fn().mockResolvedValue({ rootKey: new ArrayBuffer(0) }),
+  getAgent: jest.fn().mockResolvedValue({ rootKey: new Uint8Array(0) }),
 }));
 
 const CANISTER = "rrkah-fqaaa-aaaaa-aaaaq-cai";
 const REQ_ID_HEX = "ab".repeat(32); // 32-byte request id
 
-const encStr = (s: string): ArrayBuffer => {
-  const u = new TextEncoder().encode(s);
-  return u.buffer.slice(u.byteOffset, u.byteOffset + u.byteLength);
-};
-const FOUND = (value: ArrayBuffer) => ({ status: "found", value });
-const ABSENT = { status: "absent" };
+const encStr = (s: string): Uint8Array => new TextEncoder().encode(s);
+const FOUND = (value: Uint8Array) => ({ status: LookupPathStatus.Found, value });
+const ABSENT = { status: LookupPathStatus.Absent };
 
-// A stand-in Certificate whose `lookup` answers the request_status leaves terminalReply asks for.
-const certWith = (status: string, reply?: ArrayBuffer) => ({
-  lookup: (path: unknown[]) => {
+// A stand-in Certificate whose `lookup_path` answers the request_status leaves terminalReply asks for.
+const certWith = (status: string, reply?: Uint8Array) => ({
+  lookup_path: (path: unknown[]) => {
     const leaf = path[2];
     if (leaf === "status") return FOUND(encStr(status));
     if (leaf === "reject_message") return FOUND(encStr("boom"));
@@ -260,7 +257,7 @@ describe("claimOrRefreshNeuronFromAccount", () => {
 
   // Drive the whole read path: the sync /call returns a `replied` certificate whose reply is the
   // given governance response, so readReplyFromCanister resolves without polling.
-  const driveWith = (reply: ArrayBuffer) => {
+  const driveWith = (reply: Uint8Array) => {
     (Certificate.create as jest.Mock).mockResolvedValue(certWith("replied", reply));
     respondingWith({ status: "replied", certificate: new Uint8Array([1]) });
   };

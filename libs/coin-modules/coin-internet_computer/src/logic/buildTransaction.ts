@@ -1,6 +1,5 @@
-import { Expiry, SubmitRequestType } from "@dfinity/agent";
-import { AccountIdentifier } from "@dfinity/ledger-icp";
-import { Principal } from "@dfinity/principal";
+import { Expiry, SubmitRequestType } from "@icp-sdk/core/agent";
+import { Principal } from "@icp-sdk/core/principal";
 import {
   DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
   ICP_FEES,
@@ -8,16 +7,26 @@ import {
 } from "../consts";
 import { encodeCanisterIdlFunc, getCanisterIdlFunc, ledgerIdlFactory } from "../network/candid";
 import { Transaction } from "../types";
+import { AccountIdentifier } from "./accountIdentifier";
 import { derivePrincipalFromPubkey } from "./crypto";
 
+// Keys are declared and built in sorted order: Cbor.encode writes them in insertion order, and the
+// signed envelope keeps the sorted-key layout the device app already receives.
 export interface UnsignedTransaction extends Record<string, unknown> {
-  request_type: SubmitRequestType;
+  arg: Uint8Array;
   canister_id: Principal;
-  method_name: string;
-  arg: ArrayBuffer;
-  sender: Principal;
   ingress_expiry: Expiry;
+  method_name: string;
+  request_type: SubmitRequestType;
+  sender: Principal;
 }
+
+// A 60s permitted-drift margin under the ingress window, so a client clock running ahead of the
+// IC still lands inside it.
+const PERMITTED_DRIFT_MSECS = 60 * 1000;
+
+export const createIngressExpiry = (): Expiry =>
+  Expiry.fromDeltaInMilliseconds(DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS - PERMITTED_DRIFT_MSECS);
 
 export interface TransferRawRequest {
   to: Uint8Array;
@@ -47,12 +56,12 @@ export const createUnsignedSendTransaction = (
   const arg = encodeCanisterIdlFunc(transferIdlFunc, [transferRawRequest]);
 
   const unsignedTransaction: UnsignedTransaction = {
-    request_type: SubmitRequestType.Call,
-    canister_id: Principal.fromText(MAINNET_LEDGER_CANISTER_ID),
-    method_name: "transfer",
     arg,
+    canister_id: Principal.fromText(MAINNET_LEDGER_CANISTER_ID),
+    ingress_expiry: createIngressExpiry(),
+    method_name: "transfer",
+    request_type: SubmitRequestType.Call,
     sender: derivePrincipalFromPubkey(pubKey),
-    ingress_expiry: new Expiry(DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS),
   };
 
   return { unsignedTransaction, transferRawRequest };

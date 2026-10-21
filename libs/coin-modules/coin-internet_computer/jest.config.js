@@ -1,3 +1,6 @@
+// ESM-only dependencies of @icp-sdk/core, which jest must transform to load from CommonJS.
+const esmPackages = ["@noble", "@scure"];
+
 module.exports = {
   passWithNoTests: true,
   collectCoverageFrom: [
@@ -17,7 +20,16 @@ module.exports = {
         },
       },
     ],
+    [`node_modules/\\.pnpm/(${esmPackages.join("|")}).+\\.m?js$`]: [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
   },
+  transformIgnorePatterns: [`node_modules/\\.pnpm/(?!(${esmPackages.join("|")}))`],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", "\\.integ\\.test\\.ts$"],
