@@ -480,8 +480,18 @@ describe("listPrivateOperations record management transactions", () => {
     },
   );
 
-  it("should skip a join another operation already lists", async () => {
-    const { operations } = await run({
+  it("should mark the inputs of a join paid with a public fee as consumed without listing it again", async () => {
+    mockGetTransactionById.mockResolvedValueOnce({
+      ...getRecordManagementDetails(EXPLORER_TRANSFER_TYPES.JOIN, "Accepted"),
+      fee: {
+        transition: {
+          ...getMockedTransition([{ id: "in0", type: "public", value: "5000000u64" }]),
+          function: EXPLORER_TRANSFER_TYPES.FEE_PUBLIC,
+        },
+      },
+    });
+
+    const { operations, consumedRecordTags } = await run({
       privateRecords: [
         getMockedRecord({
           transaction_id: "at1manage",
@@ -491,7 +501,9 @@ describe("listPrivateOperations record management transactions", () => {
       knownTransactionIds: new Set(["at1manage"]),
     });
 
-    expect(mockGetTransactionById).not.toHaveBeenCalled();
+    expect(mockGetTransactionById).toHaveBeenCalledWith(mockConfig, "at1manage");
+    expect(mockToPrivateFeeBridgeOperation).not.toHaveBeenCalled();
     expect(operations).toEqual([]);
+    expect(consumedRecordTags).toEqual(new Set(["input-tag-1", "input-tag-2"]));
   });
 });

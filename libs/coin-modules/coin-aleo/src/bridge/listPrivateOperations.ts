@@ -106,7 +106,7 @@ async function listNonTransferTransactions({
   const feeRecordByTransactionId = new Map<string, AleoPrivateRecord | undefined>();
   for (const record of privateRecords) {
     const transactionId = record.transaction_id.trim();
-    if (listedTransactionIds.has(transactionId)) continue;
+    if (listedTransactionIds.has(transactionId) && !isJoinOrSplit(record)) continue;
 
     if (record.function_name === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE) {
       feeRecordByTransactionId.set(transactionId, record);
