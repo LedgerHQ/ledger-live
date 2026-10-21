@@ -5,9 +5,6 @@ on:
     - cron: "9 16 * * 1-5"
 
   pull_request:
-    branches-ignore:
-      - "smartling-content-updated**"
-      - "smartling-translation-completed**"
   workflow_dispatch:
     inputs:
       chain:
