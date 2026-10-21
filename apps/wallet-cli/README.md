@@ -26,7 +26,7 @@ Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `
 | Earn | `earn yields`, `earn positions`, `earn deposit`, `earn withdraw` | deposit / withdraw, except with `--dry-run` |
 | Device | `genuine-check` | yes |
 | Key Ring | `ring init`, `ring encrypt`, `ring decrypt`, `ring keys`, `ring destroy` | init only |
-| Agent Intent | `agent-intent enroll`, `recover`, `list`, `show`, `sync`, `send`, `swap`, `intents`, `status`, `cancel` | no |
+| Agent Intent | `agent-intent enroll`, `wait`, `recover`, `list`, `show`, `sync`, `send`, `swap`, `intents`, `status`, `cancel` | no |
 | Agent skill | `skill list`, `skill retrieve`, `skill install`, `skill doctor` | no |
 
 - **Key Ring** encrypts files or text (AES-256-GCM) under named keys backed by Ledger Key Ring (LKRP). After `ring init`, it needs network access but no device.
