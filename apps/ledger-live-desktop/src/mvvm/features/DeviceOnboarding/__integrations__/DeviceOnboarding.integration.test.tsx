@@ -533,7 +533,7 @@ describe("DeviceOnboarding desktop integration", () => {
 
     unmount();
 
-    expect(transport?.close).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(transport?.close).toHaveBeenCalledTimes(1));
   });
 
   it("should unsubscribe when the session is already gone as the listener starts", async () => {

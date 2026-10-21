@@ -1,5 +1,9 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { OnboardingStep } from "@features/platform-device-onboarding";
+import {
+  EarlyCheckToggle,
+  OnboardingStep,
+  ToggleEarlyCheckCommand,
+} from "@features/platform-device-onboarding";
 import {
   DeviceManagementKitBLETransport,
   activeHidDeviceSessionSubject,
@@ -264,7 +268,7 @@ describe("useDeviceOnboarding", () => {
 
     unmount();
 
-    expect(closedSessionIds).toEqual(["session-1"]);
+    await waitFor(() => expect(closedSessionIds).toEqual(["session-1"]));
     expect(activeDeviceSessionSubject.value).toBeNull();
   });
 
@@ -351,6 +355,23 @@ describe("scripted device onboarding", () => {
     expect(device.isWatching(device.sessionId)).toBe(true);
     expect(device.dmk.sendCommand).toHaveBeenCalledTimes(4);
     expect(device.dmk.executeDeviceAction).toHaveBeenCalledTimes(2);
+  });
+
+  it("takes the device off the genuine check screen before closing the session on reset", async () => {
+    const closedSessionIds = closedSessions();
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => result.current.reset());
+
+    const lastCommand = jest.mocked(device.dmk.sendCommand).mock.lastCall?.[0].command;
+    expect(lastCommand).toBeInstanceOf(ToggleEarlyCheckCommand);
+    expect(lastCommand?.getApdu().p2).toBe(EarlyCheckToggle.Exit);
+    expect(closedSessionIds).toEqual([]);
+
+    device.acceptToggle();
+    await waitFor(() => expect(closedSessionIds).toEqual([device.sessionId]));
   });
 
   it("allows a repeated secure-connection prompt once", async () => {
