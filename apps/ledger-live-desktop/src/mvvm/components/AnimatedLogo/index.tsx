@@ -1,6 +1,6 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { getEnv } from "@shared/env";
-import { Lottie } from "@shared/lottie";
+import { Lottie } from "@shared/lottie/web";
 import { useAnimationData } from "./useAnimationData";
 
 interface AnimatedLogoProps {

@@ -1,12 +1,12 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { StyleSheet } from "react-native";
-import { Lottie } from "@shared/lottie";
+import { Lottie } from "@shared/lottie/native";
 import { Animation } from "./Animation.native";
 
 jest.mock("react-native-config", () => ({ __esModule: true, default: { DETOX: false } }));
 
-jest.mock("@shared/lottie", () => {
+jest.mock("@shared/lottie/native", () => {
   const React = require("react");
   const { View } = require("react-native");
   return {

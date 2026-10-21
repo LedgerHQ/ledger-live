@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { LottieSource } from "@shared/lottie";
+import type { LottieSource } from "@shared/lottie/native";
 import { ViewStyle } from "react-native";
 import {
   getDeviceActionAnimation,
