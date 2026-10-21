@@ -264,6 +264,7 @@ export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
     stakingSupported: true,
     partitionsNativeBalance: true,
+    balanceListsEveryToken: true,
     getHeldNativeAmount,
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
