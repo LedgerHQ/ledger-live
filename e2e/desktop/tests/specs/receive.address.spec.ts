@@ -1,5 +1,6 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import {
   Account,
   TokenAccount,
@@ -139,7 +140,15 @@ test.describe("Receive", () => {
       await app.account.expectTokenAccount(tokenAccount.account);
       await app.account.clickReceive();
       await app.receive.continue();
-      await app.receive.expectDeviceDeprecationError("Ledger Nano S");
+
+      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
+        await app.receive.expectDeviceDeprecationError("Ledger Nano S");
+      } else {
+        const displayedAddress = await app.receive.getAddressDisplayed();
+        await app.receive.expectValidReceiveAddress(displayedAddress);
+        await app.speculos.expectValidAddressDevice(tokenAccount.account, displayedAddress);
+        await app.receive.expectApproveLabel();
+      }
     },
   );
 });
