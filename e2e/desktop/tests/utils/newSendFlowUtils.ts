@@ -18,7 +18,7 @@ import {
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
-import { broadcastLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/broadcastLock";
 
 type BalanceType = "public" | "private";
 
@@ -126,7 +126,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
     const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
     const currency = tx.accountToDebit.currency;
     const currencyLabel = currency.testLabel;
-    const sendLock = broadcastLockFor({ broadcastAccounts: [tx.accountToDebit] });
+    const sendLock = exclusiveLockFor({
+      broadcastAccounts: entry.disableBroadcast ? [] : [tx.accountToDebit],
+    });
 
     test.describe("Send - new flow", { lock: sendLock.names }, () => {
       test.use({

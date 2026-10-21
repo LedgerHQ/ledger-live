@@ -11,11 +11,11 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
-import { broadcastLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/broadcastLock";
 
 const xrayTicket = "B2CQA-5632";
 const fromAccount = TokenAccount.ETH_USDC_1;
-const approvalLock = broadcastLockFor({ broadcastAccounts: [fromAccount] });
+const approvalLock = exclusiveLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_1;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,

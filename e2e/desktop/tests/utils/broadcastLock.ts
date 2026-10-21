@@ -28,7 +28,7 @@ export const withoutBroadcastLockEnv = (env: Record<string, string>): Record<str
     Object.entries(env).filter(([name]) => !name.startsWith(BROADCAST_LOCK_ENV_PREFIX)),
   );
 
-export type BroadcastLockDeclaration = {
+export type LockDeclaration = {
   /** Accounts the app broadcasts from in the test, locked unless app broadcast is disabled. */
   readonly broadcastAccounts?: readonly Account[];
   /** Accounts the test broadcasts from with the CLI, e.g. token approvals, locked on every run. */
@@ -37,13 +37,17 @@ export type BroadcastLockDeclaration = {
   readonly sharedResources?: readonly SharedResource[];
 };
 
-const isAppBroadcastEnabled = () => process.env.DISABLE_TRANSACTION_BROADCAST === "0";
+/** The test's `env` fixture, which overrides the runner's environment for the app. */
+type TestEnv = Readonly<Record<string, string>> | undefined;
 
-const lockedBroadcastAccounts = ({ broadcastAccounts = [] }: BroadcastLockDeclaration) =>
-  isAppBroadcastEnabled() ? broadcastAccounts : [];
+const isAppBroadcastEnabled = (env: TestEnv) =>
+  (env?.DISABLE_TRANSACTION_BROADCAST ?? process.env.DISABLE_TRANSACTION_BROADCAST ?? "1") === "0";
 
-const targetsToLock = (declaration: BroadcastLockDeclaration): LockTarget[] => [
-  ...lockedBroadcastAccounts(declaration),
+const lockedBroadcastAccounts = ({ broadcastAccounts = [] }: LockDeclaration, env: TestEnv) =>
+  isAppBroadcastEnabled(env) ? broadcastAccounts : [];
+
+const targetsToLock = (declaration: LockDeclaration, env: TestEnv): LockTarget[] => [
+  ...lockedBroadcastAccounts(declaration, env),
   ...(declaration.cliBroadcastAccounts ?? []),
   ...(declaration.sharedResources ?? []),
 ];
@@ -53,32 +57,14 @@ const targetsToLock = (declaration: BroadcastLockDeclaration): LockTarget[] => [
  * detail of their `test.describe` or `test`, so Playwright never runs two of them on the same
  * target at once in this run, and `fixtures` to `test.use`, so the broadcast lock fixture keeps
  * other CI machines off them. The fixture takes the whole declaration: Playwright reads an array
- * whose second item is an object, e.g. two accounts, as a `[value, options]` fixture.
+ * whose second item is an object, e.g. two accounts, as a `[value, options]` fixture. `names` only
+ * see the runner's environment, while the fixture locks on the broadcast setting the app gets.
  */
-export function broadcastLockFor(declaration: BroadcastLockDeclaration) {
+export function exclusiveLockFor(declaration: LockDeclaration) {
   return {
-    names: lockKeys(targetsToLock(declaration)),
-    fixtures: { broadcastLockDeclaration: declaration },
+    names: lockKeys(targetsToLock(declaration, undefined)),
+    fixtures: { lockDeclaration: declaration },
   };
-}
-
-/**
- * Runs `fn`, which may wait for a broadcast lock no fixture of the test holds, on the lock
- * fixture's budget, then gives the rest of the test its own timeout back.
- */
-export async function withBroadcastLockBudget<T>(
-  testInfo: TestInfo,
-  fn: () => Promise<T>,
-): Promise<T> {
-  const { timeout } = testInfo;
-  if (timeout === 0) return fn();
-  const startedAt = Date.now();
-  testInfo.setTimeout(timeout + BROADCAST_LOCK_FIXTURE_TIMEOUT);
-  try {
-    return await fn();
-  } finally {
-    testInfo.setTimeout(timeout + Date.now() - startedAt);
-  }
 }
 
 /**
@@ -95,19 +81,21 @@ const resolvePaytabCardSession = async (testInfo: TestInfo) => {
  * CLI broadcasts wait for their confirmation, so only an app broadcast leaves a settle window.
  */
 export async function lockDeclaredTargets(
-  declaration: BroadcastLockDeclaration,
+  declaration: LockDeclaration,
+  env: TestEnv,
   testInfo: TestInfo,
 ): Promise<Lease | undefined> {
-  const lease = await acquireDeclaredTargets(declaration, testInfo);
-  if (!lease || lockedBroadcastAccounts(declaration).length > 0) return lease;
+  const lease = await acquireDeclaredTargets(declaration, env, testInfo);
+  if (!lease || lockedBroadcastAccounts(declaration, env).length > 0) return lease;
   return { release: () => lease.abandon() };
 }
 
 async function acquireDeclaredTargets(
-  declaration: BroadcastLockDeclaration,
+  declaration: LockDeclaration,
+  env: TestEnv,
   testInfo: TestInfo,
 ): Promise<AbandonableLease | undefined> {
-  const targets = targetsToLock(declaration);
+  const targets = targetsToLock(declaration, env);
   if (targets.length === 0) return undefined;
   const label = `desktop ${path.basename(testInfo.file)} › ${testInfo.title}`;
   if (testInfo.retry === 0 && isBroadcastLockDeferralPass()) {

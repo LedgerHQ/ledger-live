@@ -14,10 +14,10 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommand
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
-import { broadcastLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/broadcastLock";
 
 const fromAccount = TokenAccount.ETH_USDT_3;
-const reapprovalLock = broadcastLockFor({ broadcastAccounts: [fromAccount] });
+const reapprovalLock = exclusiveLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_3;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,

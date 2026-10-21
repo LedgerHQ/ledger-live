@@ -16,7 +16,7 @@ import {
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import { BROADCAST_LOCK_FIXTURE_TIMEOUT, broadcastLockFor } from "tests/utils/broadcastLock";
+import { BROADCAST_LOCK_FIXTURE_TIMEOUT, exclusiveLockFor } from "tests/utils/broadcastLock";
 
 test.describe.configure({ mode: "default" });
 
@@ -28,7 +28,7 @@ const BORROW_HOOK_TIMEOUT_MS = 600_000 + BROADCAST_LOCK_FIXTURE_TIMEOUT;
 const BORROW_TEST_TIMEOUT_MS = 480_000;
 
 // This file runs in default mode, so Playwright holds the loan lock for the whole file.
-const loanLock = broadcastLockFor({ broadcastAccounts: [openLoanAccount] });
+const loanLock = exclusiveLockFor({ broadcastAccounts: [openLoanAccount] });
 
 /**
  * Holds the loan account from `prepare` until the loan is reset after the tests, so no other CI

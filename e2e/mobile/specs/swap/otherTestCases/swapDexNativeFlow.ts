@@ -1,8 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import {
-  ensureTokenApprovalUnderLock,
-  performSwapUntilQuoteSelectionStep,
-} from "@e2e/utils/swapUtils";
+import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "@e2e/utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
@@ -10,16 +7,10 @@ import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
-import { BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS } from "@ledgerhq/live-e2e-shared/broadcastLock";
-import { TIMEOUT } from "@e2e/utils/timeouts";
+import { declareCliBroadcastAccounts } from "@e2e/helpers/broadcastLock";
+import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
-/**
- * The allowance check waits for the account's broadcast lock, since the CLI approval broadcasts
- * despite the flag above.
- */
-const TOKEN_APPROVAL_HOOK_TIMEOUT = BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS + TIMEOUT.xxxxlarge;
 
 export function runSwapDexNativeFlow(
   fromAccount: Account,
@@ -28,9 +19,8 @@ export function runSwapDexNativeFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
+  if (needsTokenAllowance(fromAccount, provider)) declareCliBroadcastAccounts(fromAccount);
   (provider.availableOnLns ? describe : describeIfNotNanoS)("Swap - DEX native flow", () => {
-    let amountToSwap: number;
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -49,21 +39,17 @@ export function runSwapDexNativeFlow(
       });
     });
 
-    beforeAll(async () => {
-      const amount = await getAmountFromUSD(fromAccount.currency.id, 5);
-      if (amount === null) {
-        throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
-      }
-      amountToSwap = amount;
-      await ensureTokenApprovalUnderLock(fromAccount, provider, amountToSwap.toString());
-    }, TOKEN_APPROVAL_HOOK_TIMEOUT);
-
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap DEX native flow with ${provider.uiName}`, async () => {
+      const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
+      if (amountToSwap === null) {
+        throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
+      }
       const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
       await app.speculos.enableBlindSigningOnNanoS();
+      await ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
 
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
