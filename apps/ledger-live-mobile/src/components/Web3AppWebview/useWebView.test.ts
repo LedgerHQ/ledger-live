@@ -2,6 +2,7 @@ import Config from "react-native-config";
 import { renderHook } from "@tests/test-renderer";
 import type { WebViewMessageEvent } from "react-native-webview";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import { sendWalletAPIResponse } from "~/e2e/bridge/client";
 import { webviewLogStore } from "../../e2e/webviewLogStore";
 import {
@@ -13,13 +14,17 @@ import { useWebView } from "./helpers";
 const mockOnWalletApiMessage = jest.fn();
 const mockOnDappMessage = jest.fn();
 
+let mockBridgeSession: BridgeSession | undefined;
+
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/wallet-api/react"),
-  useWalletAPIServer: () => ({
-    onMessage: mockOnWalletApiMessage,
-    onLoadError: jest.fn(),
-    server: {},
-  }),
+  // Serves the bridge session like the real server: its messages reach `mockOnWalletApiMessage`.
+  useWalletAPIServer: ({ bridgeSession }: { bridgeSession: BridgeSession }) => {
+    mockBridgeSession = bridgeSession;
+    bridgeSession.onMessage = mockOnWalletApiMessage;
+    bridgeSession.activate();
+    return { onLoadError: jest.fn(), server: {} };
+  },
   useCacheBustedLiveApps: () => ({ edit: jest.fn(), getLatest: jest.fn() }),
 }));
 
@@ -142,13 +147,24 @@ describe("useWebView bridge messages", () => {
       expect(renderWebView(false).messagingAllowedOrigins).toBeUndefined();
     });
 
-    it("answers any web origin, but never a subframe", () => {
+    it("answers a frame the platform cannot tell, but never a subframe", () => {
       const { onMessage } = renderWebView(false);
 
-      onMessage(messageEvent(WALLET_API_MESSAGE, "https://other.com/", undefined));
-      onMessage(messageEvent(WALLET_API_MESSAGE, "https://other.com/", false));
+      onMessage(messageEvent(WALLET_API_MESSAGE, "https://app.example.com/", undefined));
+      onMessage(messageEvent(WALLET_API_MESSAGE, "https://app.example.com/", false));
 
       expect(mockOnWalletApiMessage).toHaveBeenCalledTimes(1);
+    });
+
+    it("drops a message from another origin than the session one, and resets the session", () => {
+      const { onMessage } = renderWebView(false);
+      onMessage(messageEvent(WALLET_API_MESSAGE, "https://app.example.com/", true));
+      const servedSession = mockBridgeSession;
+
+      onMessage(messageEvent(WALLET_API_MESSAGE, "https://other.com/", true));
+
+      expect(mockOnWalletApiMessage).toHaveBeenCalledTimes(1);
+      expect(servedSession?.isOpen).toBe(false);
     });
   });
 

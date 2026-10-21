@@ -7,9 +7,11 @@ import { NavigatorName, ScreenName } from "~/const";
 import prepareSignTransaction from "./liveSDKLogic";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import { act } from "@testing-library/react-native";
+import { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import { Linking } from "react-native";
 import type { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
 import { reportDomainCheckViolation, reportIfStrictlyDisallowed } from "./domainCheckReport";
+import { closePlatformExchange } from "./closePlatformExchange";
 
 /** Drives the `llmWalletApiDeviceIntentSign` flag via Redux state (see withFlagOverrides). */
 type DeviceIntentSignFlagOverride = {
@@ -33,6 +35,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
 
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
   safeGetRefValue: jest.fn(),
+  ExchangeType: { 0: "SWAP", SWAP: 0 },
 }));
 
 jest.mock("LLM/features/ModularDrawer", () => ({
@@ -55,6 +58,8 @@ jest.mock("./domainCheckReport", () => ({
   reportDomainCheckViolation: jest.fn(),
   reportIfStrictlyDisallowed: jest.fn(),
 }));
+
+jest.mock("./closePlatformExchange", () => ({ closePlatformExchange: jest.fn() }));
 
 jest.mock("./liveSDKLogic", () => ({
   __esModule: true,
@@ -570,5 +575,86 @@ describe("useUiHook - account.request cancel navigation", () => {
     drawerCallArgs.onAccountSelected({ id: "acc-1" } as AccountLike, undefined);
     expect(onAccountRequestSuccess).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+});
+
+const completeExchange = (uiHook: ReturnType<typeof useUiHook>) =>
+  uiHook["exchange.complete"]!({
+    exchangeParams: { exchangeType: 0, provider: "p", exchange: {}, transaction: {} } as never,
+    onSuccess: jest.fn(),
+    onCancel: jest.fn(),
+  });
+
+describe("useUiHook - exchange device of a bridge session", () => {
+  const device = { deviceId: "device-a", modelId: "nanoX", wired: false } as never;
+  const startResult = { startExchangeResult: { nonce: "nonce" }, device } as never;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function renderUiHook(session: BridgeSession) {
+    const bridgeSessionRef = { current: session };
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        bridgeSessionRef,
+        requestDeviceIntentSign: jest.fn(),
+        requestDeviceIntentSignMessage: jest.fn(),
+      }),
+    );
+    return { result, bridgeSessionRef };
+  }
+
+  const lastNavigationParams = () => mockNavigate.mock.calls[mockNavigate.mock.calls.length - 1][1];
+
+  it("hands the device of exchange.start to exchange.complete of the same session", () => {
+    const { result } = renderUiHook(new BridgeSession("https://a.com", jest.fn()));
+
+    result.current["exchange.start"]!({
+      exchangeType: "SWAP",
+      onSuccess: jest.fn(),
+      onCancel: jest.fn(),
+    });
+    act(() => lastNavigationParams().params.onResult(startResult));
+    completeExchange(result.current);
+
+    expect(lastNavigationParams().params.device).toBe(device);
+  });
+
+  it("does not hand a device selected before a reset to the next origin", () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { result, bridgeSessionRef } = renderUiHook(session);
+
+    result.current["exchange.start"]!({
+      exchangeType: "SWAP",
+      onSuccess: jest.fn(),
+      onCancel: jest.fn(),
+    });
+    act(() => lastNavigationParams().params.onResult(startResult));
+    session.close();
+    bridgeSessionRef.current = new BridgeSession("https://b.com", jest.fn());
+    completeExchange(result.current);
+
+    expect(lastNavigationParams().params.device).toBeUndefined();
+  });
+
+  it("ignores an exchange.start result arriving after its session closed", () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { result, bridgeSessionRef } = renderUiHook(session);
+
+    result.current["exchange.start"]!({
+      exchangeType: "SWAP",
+      onSuccess: jest.fn(),
+      onCancel: jest.fn(),
+    });
+    const { onResult } = lastNavigationParams().params;
+    session.close();
+    bridgeSessionRef.current = new BridgeSession("https://b.com", jest.fn());
+    act(() => onResult(startResult));
+    completeExchange(result.current);
+
+    expect(lastNavigationParams().params.device).toBeUndefined();
+    expect(closePlatformExchange).not.toHaveBeenCalled();
   });
 });

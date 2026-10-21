@@ -7,6 +7,7 @@ import {
   ExchangeType,
   UiHook,
   useConfig,
+  useDappSessionUiHook,
   useWalletAPIServer,
   SetCurrentAccountHistDb,
   useCacheBustedLiveApps,
@@ -244,12 +245,14 @@ export function useWebView(
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  // A dapp request opens its UI only while the session it came from is open.
+  const dappUiHook = useDappSessionUiHook(bridge.session, uiHook);
   const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     currentAccountHistDb,
     setCurrentAccountHistDb,
     accounts,
-    uiHook,
+    uiHook: dappUiHook,
     postMessage: bridge.session.send,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
@@ -627,7 +630,11 @@ export function useUiHook({
   onAccountRequestSuccess,
 }: Props): UiHook {
   const navigation = useNavigation();
-  const [device, setDevice] = useState<Device>();
+  // The device of an exchange belongs to the session that started it: the next origin never gets it.
+  const [exchangeDevice, setExchangeDevice] = useState<{
+    device: Device;
+    session: BridgeSession | undefined;
+  }>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
   const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
@@ -839,6 +846,7 @@ export function useUiHook({
         });
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        const session = bridgeSessionRef?.current;
         navigation.navigate(NavigatorName.PlatformExchange, {
           screen: ScreenName.PlatformStartExchange,
           params: {
@@ -846,12 +854,16 @@ export function useUiHook({
               exchangeType: ExchangeType[exchangeType],
             },
             onResult: result => {
+              // A late result of a closed session changes neither the device nor the flows of
+              // the next origin: its own flow is already gone.
+              if (session && !session.isOpen) return;
+
               if (result.startExchangeError) {
                 onCancel(result.startExchangeError.error);
               }
 
               if (result.startExchangeResult) {
-                setDevice(result.device);
+                setExchangeDevice(result.device ? { device: result.device, session } : undefined);
                 onSuccess(result.startExchangeResult.nonce);
               }
 
@@ -861,6 +873,9 @@ export function useUiHook({
         });
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+        const session = bridgeSessionRef?.current;
+        const device =
+          exchangeDevice && exchangeDevice.session === session ? exchangeDevice.device : undefined;
         navigation.navigate(NavigatorName.PlatformExchange, {
           screen: ScreenName.PlatformCompleteExchange,
           params: {
@@ -875,13 +890,14 @@ export function useUiHook({
             },
             device,
             onResult: (result: { operation?: Operation; error?: Error }) => {
+              if (session && !session.isOpen) return;
               if (result.error) {
                 onCancel(result.error);
               }
               if (result.operation) {
                 onSuccess(result.operation.hash);
               }
-              setDevice(undefined);
+              setExchangeDevice(undefined);
               closePlatformExchange(navigation);
             },
           },
@@ -893,7 +909,7 @@ export function useUiHook({
       source,
       flow,
       navigation,
-      device,
+      exchangeDevice,
       createDrawerConfiguration,
       onTransactionBroadcast,
       deviceIntentSignEnabled,

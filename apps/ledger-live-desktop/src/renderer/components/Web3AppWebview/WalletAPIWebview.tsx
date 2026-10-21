@@ -5,6 +5,7 @@ import {
   ExchangeType,
   UiHook,
   useConfig,
+  useDappSessionUiHook,
   useWalletAPIServer,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
@@ -350,10 +351,12 @@ function useWebView(
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  // A dapp request opens its UI only while the session it came from is open.
+  const dappUiHook = useDappSessionUiHook(bridge.session, uiHook);
   const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     accounts,
-    uiHook,
+    uiHook: dappUiHook,
     postMessage: bridge.session.send,
     currentAccountHistDb: currentAccountHistDb,
     setCurrentAccountHistDb: setCurrentAccountHistDb,

@@ -204,11 +204,43 @@ class BridgeSessionWalletAPIServer extends WalletAPIServer {
   }
 }
 
+/**
+ * The promise of a UI flow opened for a request: it also rejects once the session is closed, as
+ * the callbacks of the flow are dropped then (`bindUiFlowToSession`). A signing flow awaits it
+ * in `withLiveAppContext`, which can then restore the previous signing attribution.
+ */
+function sessionPromise<T>(
+  session: BridgeSession,
+  executor: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
+): Promise<T> {
+  return session.cancelOnClose(new Promise<T>(executor));
+}
+
 function useSessionUiFlow<P extends object, R>(
   session: BridgeSession,
   open: ((params: P) => R) | undefined,
 ): ((params: P) => R | undefined) | undefined {
   return useMemo(() => open && bindUiFlowToSession(session, open), [session, open]);
+}
+
+/**
+ * The UI hooks of the dapp logic, bound to the session of the request: a request still preparing
+ * when its session is closed (e.g. personal_sign) opens no UI, and its callbacks are dropped.
+ */
+export function useDappSessionUiHook(session: BridgeSession, uiHook: UiHook): UiHook {
+  return useMemo(() => {
+    const bind =
+      <P extends object>(open: (params: P) => void) =>
+      (params: P): void => {
+        bindUiFlowToSession(session, open)(params);
+      };
+    return {
+      ...uiHook,
+      "account.request": bind(uiHook["account.request"]),
+      "message.sign": bind(uiHook["message.sign"]),
+      "transaction.sign": bind(uiHook["transaction.sign"]),
+    };
+  }, [session, uiHook]);
 }
 
 export function useConfig({
@@ -739,7 +771,7 @@ export function useWalletAPIServer({
         accountId,
         message.toString("hex"),
         (account: AccountLike, message: AnyMessage) =>
-          new Promise((resolve, reject) => {
+          sessionPromise(bridgeSession, (resolve, reject) => {
             let done = false;
             return uiMessageSign({
               account,
@@ -771,7 +803,7 @@ export function useWalletAPIServer({
           }),
       ),
     );
-  }, [accounts, manifest, server, tracking, uiMessageSign]);
+  }, [bridgeSession, accounts, manifest, server, tracking, uiMessageSign]);
 
   useEffect(() => {
     if (!uiStorageGet) return;
@@ -794,7 +826,7 @@ export function useWalletAPIServer({
         accountId,
         psbt,
         (account, parentAccount, tx) =>
-          new Promise((resolve, reject) => {
+          sessionPromise(bridgeSession, (resolve, reject) => {
             let done = false;
             return uiTxSignRaw({
               account,
@@ -872,7 +904,16 @@ export function useWalletAPIServer({
 
       return { psbtSigned };
     });
-  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+  }, [
+    bridgeSession,
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiTxBroadcast,
+    uiTxSignRaw,
+  ]);
 
   useEffect(() => {
     if (!uiTxSign) return;
@@ -887,7 +928,7 @@ export function useWalletAPIServer({
           transaction,
           (account, parentAccount, signFlowInfos) => {
             family = getMainAccount(account, parentAccount).currency.family;
-            return new Promise((resolve, reject) => {
+            return sessionPromise(bridgeSession, (resolve, reject) => {
               let done = false;
               return uiTxSign({
                 account,
@@ -917,7 +958,7 @@ export function useWalletAPIServer({
           : Buffer.from(signedOperation.signature);
       },
     );
-  }, [accounts, manifest, server, tracking, uiTxSign]);
+  }, [bridgeSession, accounts, manifest, server, tracking, uiTxSign]);
 
   useEffect(() => {
     if (!uiTxSignRaw) return;
@@ -931,7 +972,7 @@ export function useWalletAPIServer({
           accountId,
           transaction,
           (account, parentAccount, tx) =>
-            new Promise((resolve, reject) => {
+            sessionPromise(bridgeSession, (resolve, reject) => {
               family = getMainAccount(account, parentAccount).currency.family;
               let done = false;
               return uiTxSignRaw({
@@ -1014,7 +1055,16 @@ export function useWalletAPIServer({
         };
       },
     );
-  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+  }, [
+    bridgeSession,
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiTxBroadcast,
+    uiTxSignRaw,
+  ]);
 
   useEffect(() => {
     if (!uiTxSign) return;
@@ -1033,7 +1083,7 @@ export function useWalletAPIServer({
           accountId,
           transaction,
           (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) => {
+            sessionPromise(bridgeSession, (resolve, reject) => {
               let done = false;
               return uiTxSign({
                 account,
@@ -1116,7 +1166,16 @@ export function useWalletAPIServer({
         );
       },
     );
-  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
+  }, [
+    bridgeSession,
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiTxBroadcast,
+    uiTxSign,
+  ]);
 
   const onLoad = useCallback(() => {
     tracking.loadSuccess(manifest);
@@ -1136,8 +1195,10 @@ export function useWalletAPIServer({
 
   const device = useDeviceTransport({ manifest, tracking });
 
-  // A device opened by the previous origin is not handed over to the next one.
-  useEffect(() => () => device.close(), [device, server]);
+  // A device opened by the previous origin is not handed over to the next one. `close` is stable:
+  // a manifest or tracking update (new `device`) keeps the transport of the same session.
+  const { close: closeDevice } = device;
+  useEffect(() => () => closeDevice(), [closeDevice, server]);
 
   useEffect(() => {
     if (!uiDeviceTransport) return;
@@ -1456,9 +1517,17 @@ export function useWalletAPIServer({
     });
   }, [uiExchangeComplete, accounts, manifest, server, tracking]);
 
-  // Declared last: the session receives messages once every handler above is registered.
+  // The session receives messages once every handler above is registered, and once the hooks the
+  // host calls after this one (e.g. `useDappLogic` and its websocket) have run their effects for
+  // this session: the microtask runs after every effect of the current commit.
   useEffect(() => {
-    bridgeSession.activate();
+    let isCurrent = true;
+    queueMicrotask(() => {
+      if (isCurrent) bridgeSession.activate();
+    });
+    return () => {
+      isCurrent = false;
+    };
   }, [bridgeSession, server]);
 
   return {
