@@ -8157,6 +8157,14 @@
       "title": "{{message}}",
       "description": "{{description}}"
     },
+    "TransactionCheckPotentialRisk": {
+      "title": "Potential risk",
+      "description": "This transaction involves a suspicious address. It might not be safe to continue."
+    },
+    "TransactionCheckCriticalThreat": {
+      "title": "Critical threat",
+      "description": "This transaction involves a malicious address. Your assets will most likely be stolen."
+    },
     "TaprootNotActivated": {
       "title": "Sending to a taproot address is unsafe before mainnet activation"
     },

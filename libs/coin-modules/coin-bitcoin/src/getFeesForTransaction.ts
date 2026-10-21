@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { BitcoinInput, BitcoinOutput, Transaction } from "./types";
+import type { TransactionInfo as WalletTxInfo } from "@ledgerhq/wallet-btc/types";
 import { buildTransaction } from "./buildTransaction";
 import { perCoinLogic } from "./logic";
 import type { Account } from "@ledgerhq/types-live";
@@ -16,7 +17,12 @@ const getFeesForTransaction = async (
     account: Account;
     transaction: Transaction;
   },
-): Promise<{ fees: BigNumber; txInputs: BitcoinInput[]; txOutputs: BitcoinOutput[] }> => {
+): Promise<{
+  fees: BigNumber;
+  txInputs: BitcoinInput[];
+  txOutputs: BitcoinOutput[];
+  walletTx: WalletTxInfo;
+}> => {
   const walletTx = await buildTransaction(config, logger, account, transaction);
   const fees = new BigNumber(walletTx.fee).integerValue();
   let txInputs = walletTx.inputs.map(i => {
@@ -59,6 +65,7 @@ const getFeesForTransaction = async (
     fees,
     txInputs,
     txOutputs,
+    walletTx,
   };
 };
 

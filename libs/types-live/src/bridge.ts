@@ -334,7 +334,26 @@ export interface AccountBridgeExtensions<T extends TransactionCommon = Transacti
   }) => boolean;
   isTransactionConfirmed?: (args: { account: AccountLike; hash: string }) => Promise<boolean>;
   getWalletApiSpendableBalance?: (account: AccountLike) => BigNumber;
+  /**
+   * The built transaction to screen with the web3checks backend, or null when it cannot be
+   * built yet or the currency has no transaction check.
+   */
+  getTransactionCheckPayload?: (
+    account: Account,
+    transaction: T,
+  ) => Promise<TransactionCheckPayload | null>;
 }
+
+export type TransactionCheckPayload = {
+  /** Path segment of the scan endpoint, e.g. "bitcoin" for `/bitcoin/scan/tx` */
+  chain: string;
+  /** Sender address, echoed in the descriptor ADDRESS field */
+  from: string;
+  /** Serialized transaction, sent as `tx.raw` */
+  raw: string;
+  /** Hex hash the descriptor TX_HASH field must match */
+  txHash: string;
+};
 
 export type AccountBridge<
   T extends TransactionCommon,

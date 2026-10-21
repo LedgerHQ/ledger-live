@@ -1,3 +1,4 @@
+import { EMPTY_WALLET_TX } from "./__tests__/fixtures/walletTx";
 import { TEST_CONFIG, TEST_LOGGER } from "./__tests__/fixtures/coinConfig";
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInput, Transaction } from "./types";
@@ -68,6 +69,7 @@ describe("getTransactionStatus on Bitcoin", () => {
       txInputs: utxoAddresses,
       txOutputs: [],
       fees: BigNumber(0),
+      walletTx: EMPTY_WALLET_TX,
     });
 
     const account = {
@@ -119,6 +121,7 @@ describe("getTransactionStatus on Bitcoin", () => {
       txInputs: utxoAddresses,
       txOutputs: [],
       fees: BigNumber(0),
+      walletTx: EMPTY_WALLET_TX,
     });
 
     const account = {
@@ -204,6 +207,7 @@ describe("getTransactionStatus on Bitcoin", () => {
         txInputs: [],
         txOutputs: [],
         fees: BigNumber(0),
+        walletTx: EMPTY_WALLET_TX,
       });
     });
 
@@ -292,6 +296,7 @@ describe("getTransactionStatus on Bitcoin", () => {
         txInputs: [],
         txOutputs: [],
         fees: BigNumber(0),
+        walletTx: EMPTY_WALLET_TX,
       });
     });
 
