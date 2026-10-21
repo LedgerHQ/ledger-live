@@ -49,6 +49,7 @@ import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
+  crashReportingSelector,
   languageSelector,
   trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
@@ -95,8 +96,8 @@ import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 import {
+  coinObservabilityConfigFor,
   setCoinObservabilityConfigReader,
-  toCoinObservabilityConfig,
 } from "@features/platform-coin-observability";
 import { loadAppConfig } from "~/setup";
 
@@ -193,9 +194,14 @@ async function init() {
       apiBaseUrl: process.env.EARN_API_BASE_URL,
     }),
   );
-  setCoinObservabilityConfigReader(() =>
-    toCoinObservabilityConfig(selectFeature(store.getState(), "coinObservability")),
-  );
+  setCoinObservabilityConfigReader(() => {
+    const state = store.getState();
+    return coinObservabilityConfigFor({
+      consentGranted: crashReportingSelector(state),
+      datadogEnabled: selectFeature(state, "lldDatadog")?.enabled ?? false,
+      coinObservability: selectFeature(state, "coinObservability"),
+    });
+  });
 
   // Hydrate persisted crypto assets tokens from app.json
   // Cross-caching is automatic: tokens are cached under both ID and address lookups

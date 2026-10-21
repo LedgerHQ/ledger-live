@@ -1,4 +1,5 @@
 import {
+  coinObservabilityConfigFor,
   DEFAULT_MAX_FAILURES_PER_KEY,
   DEFAULT_SYNC_PATH_SAMPLE_RATE,
   readCoinObservabilityConfig,
@@ -57,5 +58,56 @@ describe("coin observability config reader", () => {
     expect(readCoinObservabilityConfig()).toBe(config);
     setCoinObservabilityConfigReader(null);
     expect(readCoinObservabilityConfig()).toBeNull();
+  });
+});
+
+const flagOn = { enabled: true, params: { syncPathSampleRate: 0.2, maxFailuresPerKey: 3 } };
+
+describe("coinObservabilityConfigFor", () => {
+  it("returns the flag's config when consent, Datadog and the flag are all on", () => {
+    expect(
+      coinObservabilityConfigFor({
+        consentGranted: true,
+        datadogEnabled: true,
+        coinObservability: flagOn,
+      }),
+    ).toEqual({ includeSyncPath: true, syncPathSampleRate: 0.2, maxFailuresPerKey: 3 });
+  });
+
+  it("sends nothing when the user declined crash or bug reporting", () => {
+    expect(
+      coinObservabilityConfigFor({
+        consentGranted: false,
+        datadogEnabled: true,
+        coinObservability: flagOn,
+      }),
+    ).toBeNull();
+  });
+
+  it("sends nothing when the Datadog flag is off, even after initialisation", () => {
+    expect(
+      coinObservabilityConfigFor({
+        consentGranted: true,
+        datadogEnabled: false,
+        coinObservability: flagOn,
+      }),
+    ).toBeNull();
+  });
+
+  it("sends nothing when the coinObservability flag is off or missing", () => {
+    expect(
+      coinObservabilityConfigFor({
+        consentGranted: true,
+        datadogEnabled: true,
+        coinObservability: { enabled: false },
+      }),
+    ).toBeNull();
+    expect(
+      coinObservabilityConfigFor({
+        consentGranted: true,
+        datadogEnabled: true,
+        coinObservability: undefined,
+      }),
+    ).toBeNull();
   });
 });

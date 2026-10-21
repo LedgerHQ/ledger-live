@@ -32,6 +32,30 @@ export function readCoinObservabilityConfig(): CoinModuleCallTransmissionConfig 
 }
 
 /**
+ * The config a host injects with {@link setCoinObservabilityConfigReader}: `null` unless the user
+ * opted in, Datadog's own flag is on and `coinObservability` is on.
+ *
+ * Both hosts need all three on every read. Datadog's flag is only checked when the SDK is
+ * initialised, so turning it off mid-session does not stop logs already flowing; and the consent
+ * the SDK enforces is not always the one these logs answer to (mobile grants SDK consent from the
+ * analytics opt-in, while these logs belong to the crash/bug-reporting opt-in).
+ */
+export function coinObservabilityConfigFor({
+  consentGranted,
+  datadogEnabled,
+  coinObservability,
+}: {
+  /** The crash-reporting (desktop) or bug-reporting (mobile) opt-in. */
+  consentGranted: boolean;
+  /** `lldDatadog` or `llmDatadog`. */
+  datadogEnabled: boolean;
+  coinObservability: Parameters<typeof toCoinObservabilityConfig>[0];
+}): CoinModuleCallTransmissionConfig | null {
+  if (!consentGranted || !datadogEnabled) return null;
+  return toCoinObservabilityConfig(coinObservability);
+}
+
+/**
  * Turns the `coinObservability` flag into a config. Structural, so this package does not depend
  * on the flag registry; each missing param falls back to its default, since a remote config may
  * turn the flag on without sending any params.
