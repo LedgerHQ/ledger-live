@@ -67,8 +67,6 @@
     "bignumber.js": "^9",
     "bs58": "catalog:",
     "chalk": "^4.1.2",
-    "docker-compose": "^1",
-    "msw": "catalog:",
     "tronweb": "6.5.1"
   },
   "devDependencies": {

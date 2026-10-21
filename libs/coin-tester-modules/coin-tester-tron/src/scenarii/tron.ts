@@ -1,5 +1,8 @@
 import BigNumber from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -8,7 +11,8 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   TRON,
-  TRON_LOCAL_RPC,
+  getTronRpc,
+  setTronRpc,
   makeTronAccount,
   makeTrc10Token,
   makeTrc20Token,
@@ -20,24 +24,16 @@ import type {
   TronFamilySpecificData,
 } from "@ledgerhq/live-common/families/tron/types";
 import { getBridges } from "../helpers";
-import { getPrefundedAccounts, killTronbox, spawnTronbox } from "../tronbox";
-import type { PrefundedAccount } from "../tronbox";
+import type { Trc10Asset, Trc20Asset } from "../fixtures";
+import { generateTronTestAccount } from "../signer";
+import type { TronTestAccount } from "../signer";
 import { delegateBandwidth, freezeForDelegation, listWitnessAddresses } from "../stakingFixtures";
-import {
-  indexBlocks,
-  initMswHandlers,
-  registerTrc20Contract,
-  resetIndexer,
-  setEnergyLimitOverride,
-  waitForOperationInclusion,
-} from "../indexer";
-import { deployTrc20, issueTrc10 } from "../tokenFixtures";
-import type { Trc10Asset, Trc20Asset } from "../tokenFixtures";
+import { waitForOperationInclusion } from "../waitForInclusion";
 
-let closeMsw: (() => void) | null = null;
-let funder: PrefundedAccount;
-let recipient: PrefundedAccount;
-let startBlock = 0;
+let sandbox: Sandbox | undefined;
+let closeGuard: (() => void) | null = null;
+let funder: TronTestAccount;
+let recipient: TronTestAccount;
 let trc10: Trc10Asset;
 let trc10Token: TokenCurrency;
 let trc10SubAccountId = "";
@@ -46,6 +42,25 @@ let trc20Token: TokenCurrency;
 let trc20SubAccountId = "";
 let witnessAddress = "";
 
+/** TRX airdropped to each account, whole units: the node starts with no account. */
+const FUNDER_TRX = 100_000;
+const RECIPIENT_TRX = 1_000;
+/** The mainnet tokens the sandbox preloads, whole supply on Zion (the sandbox's genesis witness). */
+const ZION = "TMVQGm1qAQYVdetCeGRRkTWYYrLXuHK2HC";
+const BTTOLD: Trc10Asset = {
+  assetId: "1002000",
+  name: "BitTorrent Old",
+  symbol: "BTTOLD",
+  decimals: 6,
+};
+const USDT: Trc20Asset = {
+  contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  name: "Tether USD",
+  symbol: "USDT",
+  decimals: 6,
+};
+/** Whole units of each token airdropped to the funder: 1 000 BTTOLD is the 1e9 raw units `beforeAll` expects. */
+const TOKEN_AIRDROP = 1_000;
 /** Delegated to `recipient` during setup, so the undelegate row has something to act on. */
 const DELEGATED_SUN = 100_000_000; // 100 TRX
 const FROZEN_SUN = 50_000_000; // 50 TRX
@@ -64,12 +79,6 @@ const CUSTOM_FEE_LIMIT_SUN = 100_000_000; // 100 TRX
 const BELOW_DEFAULT_FEE_LIMIT_SUN = 30_000_000; // 30 TRX
 /** tx hash → on-chain `fee_limit`, recorded by `mockIndexer` for the guard row to assert against. */
 const onChainFeeLimitByHash = new Map<string, number | undefined>();
-/**
- * Energy the indexer mock reports for the energy-covered row — large enough to dwarf a TRC-20
- * transfer's cost, so `estimateFees` nets the fee to 0. Reproduces the mainnet USDT-holder state the
- * devnet can't credit on-chain (see `setEnergyLimitOverride`).
- */
-const COVERED_ENERGY = 1_000_000_000; // 1e9 energy
 
 /**
  * The transaction the wallet hands the bridge for Tron: the generic shape with `mode` widened to
@@ -240,11 +249,6 @@ function makeTransactions(): Tx[] {
     recipient: funder.address,
     familySpecificData: { resource: "ENERGY" } satisfies TronFamilySpecificData,
     expect: (prev, curr) => {
-      // From here on the account holds staked energy. The devnet meters energy differently from mainnet,
-      // so make the wallet see it as fully covered for the next row — reproducing the mainnet USDT-holder
-      // state on-chain devnet data alone can't provide. Set first so it survives an expect retry.
-      setEnergyLimitOverride(COVERED_ENERGY);
-
       const prevFrozen =
         (prev as TronAccount).tronResources?.frozen.energy?.amount ?? new BigNumber(0);
       const currFrozen =
@@ -262,14 +266,11 @@ function makeTransactions(): Tx[] {
     amount: new BigNumber(1_000_000),
     recipient: recipient.address,
     subAccountId: trc20SubAccountId,
-    // LIVE-36865 regression guard, and the only row that checks the crafted ceiling on chain: energy
-    // mocked as covered nets the display fee to 0, and a `fee_limit` of 0 reverts OUT_OF_ENERGY. The
+    // LIVE-36865 regression guard, and the only row that checks the crafted ceiling on chain: if the staked
+    // energy covers the cost, the display fee nets to 0, and a `fee_limit` of 0 reverts OUT_OF_ENERGY. The
     // ceiling must come from `estimateFees`'s own `feeLimit`, carried through `feeParameters` into
     // `craftTransaction`, which floors at the DEFAULT here. The readback proves it; the transfer lands.
     expect: (prev, curr) => {
-      // Restore real energy reporting for the remaining rows. Set first so it survives an expect retry.
-      setEnergyLimitOverride(null);
-
       const sub = curr.subAccounts?.find(s => s.id === trc20SubAccountId);
       const prevSub = prev.subAccounts?.find(s => s.id === trc20SubAccountId);
       expect(sub).toBeDefined();
@@ -278,6 +279,8 @@ function makeTransactions(): Tx[] {
       const [latestOp] = sub!.operations;
       expect(latestOp.type).toBe("OUT");
       expect(latestOp.recipients).toContain(recipient.address);
+      // The staked energy covers the whole cost: the chain charges nothing.
+      expect(latestOp.fee.isZero()).toBe(true);
       expect(onChainFeeLimitByHash.get(latestOp.hash)).toBe(DEFAULT_TRC20_FEES_LIMIT);
     },
   };
@@ -383,9 +386,8 @@ function makeTransactions(): Tx[] {
 
   // Ordering is load-bearing:
   //  - `vote` needs tron power, so it must follow `freeze`.
-  //  - `freezeEnergy` flips the indexer's energy-covered mock on, so `sendTrc20FromEnergyCovered` must
-  //    directly follow it; that row flips the mock back off. Both must precede `sendMaxTrc20`, which
-  //    empties the TRC20 balance they spend from.
+  //  - `sendTrc20FromEnergyCovered` must directly follow `freezeEnergy`: the staked energy is what
+  //    covers its fee. Both must precede `sendMaxTrc20`, which empties the TRC20 balance they spend from.
   //  - TRC20 sends burn energy (= TRX), so `sendMaxTrx` must stay last; otherwise the funder no
   //    longer has enough TRX to cover TRC20 fees. `freeze` also locks TRX, which `sendMaxTrx`'s
   //    spendable-balance assertion tolerates.
@@ -412,40 +414,34 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Tron (TRX + TRC10 + TRC20)",
 
   setup: async () => {
-    await spawnTronbox();
+    sandbox = await startSandbox(
+      { family: "tron", network: "tron" },
+      {
+        node: { provider: "java-tron", version: "4.7.2" },
+        indexer: { provider: "internal" },
+      },
+    );
+    // The indexer serves the TronGrid API and forwards the rest to the node: one URL for everything
+    const rpc = sandbox.endpoints.indexer;
+    if (rpc === undefined) throw new Error("the sandbox instance has no indexer endpoint");
+    setTronRpc(rpc);
 
-    const accounts = await getPrefundedAccounts();
-    if (accounts.length < 2) {
-      throw new Error("tronbox/tre must expose at least 2 prefunded accounts");
-    }
-    funder = accounts[0];
-    recipient = accounts[1];
+    funder = generateTronTestAccount();
+    recipient = generateTronTestAccount();
+    await sandbox.airdrop(funder.address, FUNDER_TRX);
+    await sandbox.airdrop(recipient.address, RECIPIENT_TRX);
 
-    trc10 = await issueTrc10(funder, {
-      name: "LedgerTestToken",
-      abbr: "LTT",
-      totalSupply: 1_000_000_000,
-      precision: 0,
-    });
-    trc20 = await deployTrc20(funder, {
-      name: "Tether USD",
-      symbol: "USDT",
-      decimals: 6,
-      initialSupply: 1_000_000_000_000n,
-    });
-    registerTrc20Contract({
-      contractAddress: trc20.contractAddress,
-      name: trc20.name,
-      symbol: trc20.symbol,
-      decimals: trc20.decimals,
-    });
+    trc10 = BTTOLD;
+    trc20 = USDT;
+    await sandbox.airdrop(funder.address, TOKEN_AIRDROP, trc10.assetId);
+    await sandbox.airdrop(funder.address, TOKEN_AIRDROP, trc20.contractAddress);
 
     // Stake 2.0 requires the resource be frozen before it can be delegated.
     await freezeForDelegation(funder, 200_000_000);
     await delegateBandwidth(funder, recipient.address, DELEGATED_SUN);
     [witnessAddress] = await listWitnessAddresses();
 
-    trc10Token = makeTrc10Token(trc10, funder.address);
+    trc10Token = makeTrc10Token(trc10, ZION);
     trc20Token = makeTrc20Token(trc20);
     registerTronTokensInMockStore(trc10Token, trc20Token);
 
@@ -453,17 +449,13 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
       status: { type: "active" as const },
       name: "Tron",
       unit: { name: "TRX", code: "TRX", magnitude: 6 },
-      explorer: { url: TRON_LOCAL_RPC },
+      explorer: { url: getTronRpc() },
     };
     LiveConfig.setConfig({
       config_currency_tron: { type: "object", default: localConfig },
     });
 
-    const headRes = await fetch(`${TRON_LOCAL_RPC}/wallet/getnowblock`);
-    const head = (await headRes.json()) as { block_header: { raw_data: { number: number } } };
-    startBlock = head.block_header.raw_data.number;
-
-    closeMsw = initMswHandlers();
+    closeGuard = forbidRemoteRequests();
 
     const { currencyBridge, accountBridge } = await getBridges(funder.signer);
     const account = makeTronAccount(funder.address);
@@ -474,10 +466,6 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
 
   getTransactions: () => makeTransactions() as ScenarioTransaction<GenericTransaction, Account>[],
 
-  beforeSync: async () => {
-    if (funder) await indexBlocks([funder.address, recipient.address], startBlock);
-  },
-
   mockIndexer: async (_account, optimistic) => {
     await waitForOperationInclusion(optimistic.hash);
     // Record each broadcast transaction's on-chain `fee_limit` so the LIVE-36391 guard row can assert
@@ -487,7 +475,7 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
     // as the guard row's own assertion instead.
     let feeLimit: number | undefined;
     try {
-      const res = await fetch(`${TRON_LOCAL_RPC}/wallet/gettransactionbyid`, {
+      const res = await fetch(`${getTronRpc()}/wallet/gettransactionbyid`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ value: optimistic.hash }),
@@ -512,10 +500,10 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
   },
 
   teardown: async () => {
-    closeMsw?.();
-    closeMsw = null;
-    resetIndexer();
+    closeGuard?.();
+    closeGuard = null;
     onChainFeeLimitByHash.clear();
-    await killTronbox();
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };
