@@ -1,4 +1,4 @@
-import { Entry, findCredentials } from "@napi-rs/keyring";
+import { Entry, type EntryOptions } from "@napi-rs/keyring";
 import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
@@ -9,28 +9,32 @@ const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
 // Never holds entries, so probing it decrypts no real secret.
 const PROBE_SERVICE = `${APP_NAME}-probe`;
+// Without a pin, Linux `new Entry()` silently falls back to the kernel keyring, which loses the key
+// on reboot. Pinned, the constructor throws when no Secret Service is reachable.
+const SECRET_SERVICE_ONLY: EntryOptions = { linux: { store: "secret-service" } };
 
 // Reported as `keychain_unavailable` in the JSON error envelope.
 export class KeychainUnavailableError extends Error {
   override name = "KeychainUnavailableError";
 }
 
-let findProbeCredentials: (service: string) => unknown = findCredentials;
-
-// Test seam — keeps tests off the OS keychain; `null` restores it.
-export function _setTestKeychainProbe(find: ((service: string) => unknown) | null): void {
-  findProbeCredentials = find ?? findCredentials;
+function probeSecretService(): void {
+  new Entry(PROBE_SERVICE, "probe", SECRET_SERVICE_ONLY).getPassword();
 }
 
-// todo: probe via findCredentials because @napi-rs/keyring 1.3.0 can't pin the Linux store; pin
-// { linux: { store: "secret-service" } } after upgrading to >= 2.1
-// On Linux `new Entry()` silently falls back to the kernel keyring when no Secret Service is
-// reachable, while `findCredentials` talks to Secret Service directly and throws. Not memoized:
-// callers probe right before they read or write.
+let probeKeychain: () => unknown = probeSecretService;
+
+// Test seam — keeps tests off the OS keychain; `null` restores it.
+export function _setTestKeychainProbe(probe: (() => unknown) | null): void {
+  probeKeychain = probe ?? probeSecretService;
+}
+
+// Reports a missing Secret Service up front, with a hint, instead of failing on the first pinned
+// entry. Not memoized: callers probe right before they read or write.
 export function assertOsKeychainAvailable(hint: string): void {
   if (process.platform !== "linux") return;
   try {
-    findProbeCredentials(PROBE_SERVICE);
+    probeKeychain();
   } catch (e) {
     throw new KeychainUnavailableError(
       `No OS keychain is available: no Secret Service provider (e.g. gnome-keyring or KeePassXC) ` +
@@ -53,25 +57,31 @@ export function keychainEntry(accountPrefix: string, ...hashParts: string[]): En
     .update([stateDir(APP_NAME), ...hashParts].join(" "))
     .digest("hex")
     .slice(0, 16);
-  return new Entry(SERVICE, `${accountPrefix}-${digest}`);
+  return osKeychainEntry(`${accountPrefix}-${digest}`);
+}
+
+// Throws on Linux when no Secret Service is reachable.
+export function osKeychainEntry(account: string): Entry {
+  return new Entry(SERVICE, account, SECRET_SERVICE_ONLY);
 }
 
 /**
- * "Deleted" and "already absent" both satisfy the postcondition (no key remains), so both collapse
- * to `true`; only a thrown backend error (the key may still persist) returns `false`.
+ * "Deleted" (`true`) and "already absent" (`false` since @napi-rs/keyring 2.0) both satisfy the
+ * postcondition (no key remains), so both collapse to `true`; only a throw (the key may still
+ * persist, or the entry can't even be built) returns `false`.
  */
-export function deleteKeychainEntry(entry: Entry): boolean {
+export function deleteKeychainEntry(entry: () => Entry): boolean {
   try {
-    entry.deletePassword();
+    entry().deletePassword();
     return true;
   } catch {
     return false;
   }
 }
 
-export function hasKeychainEntry(entry: Entry): boolean {
+export function hasKeychainEntry(entry: () => Entry): boolean {
   try {
-    return entry.getPassword() != null;
+    return entry().getPassword() != null;
   } catch {
     return false;
   }

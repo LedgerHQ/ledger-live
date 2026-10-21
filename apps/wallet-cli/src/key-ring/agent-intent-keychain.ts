@@ -66,8 +66,8 @@ export async function loadAgentIntentSecretKey(
 
 // "Deleted" and "already absent" both satisfy the postcondition (no key remains).
 export const deleteAgentIntentSecretKey = (profileId: string): boolean =>
-  deleteKeychainEntry(getEntry(profileId));
+  deleteKeychainEntry(() => getEntry(profileId));
 
 /** Whether a secret key is present in the OS keychain for this Agent Intent profile id. */
 export const hasAgentIntentSecretKey = (profileId: string): boolean =>
-  hasKeychainEntry(getEntry(profileId));
+  hasKeychainEntry(() => getEntry(profileId));

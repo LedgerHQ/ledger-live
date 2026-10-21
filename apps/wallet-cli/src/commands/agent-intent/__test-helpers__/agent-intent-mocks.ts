@@ -30,7 +30,7 @@ export type AgentIntentMockOverrides = {
   swapQuote?: Partial<Record<(typeof SWAP_QUOTE_KEYS)[number], AnyFn>>;
   confirmPrompt?: Partial<Record<(typeof CONFIRM_PROMPT_KEYS)[number], AnyFn>>;
   // Replaces the Linux Secret Service probe; defaults to one that always passes.
-  keychainProbe?: (service: string) => unknown;
+  keychainProbe?: () => unknown;
 };
 
 const SDK_KEYS = [

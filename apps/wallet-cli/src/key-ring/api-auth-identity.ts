@@ -1,12 +1,10 @@
-import { Entry } from "@napi-rs/keyring";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { initMemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/utils";
-import { APP_NAME } from "../session/session-store";
 import { walletCliDebug } from "../shared/log";
 import { writeStderr } from "../shared/ui";
 import { pubkeyFromPrivatekey } from "./crypto";
 import { profileKeychainAccount } from "./keychain";
-import { assertOsKeychainAvailable } from "./keychain-entry";
+import { assertOsKeychainAvailable, osKeychainEntry } from "./keychain-entry";
 
 export type ApiAuthKeychain = {
   getPassword(account: string): string | null;
@@ -15,12 +13,12 @@ export type ApiAuthKeychain = {
 
 const osKeychain: ApiAuthKeychain = {
   getPassword: account => {
-    // On Linux without a Secret Service, `Entry` silently uses the kernel keyring, which loses the
-    // key on reboot.
+    // On Linux the entry is pinned to the Secret Service, so a missing one throws instead of the key
+    // silently landing in the kernel keyring, which loses it on reboot.
     assertOsKeychainAvailable("The Ledger API auth key can't be kept.");
-    return new Entry(APP_NAME, account).getPassword();
+    return osKeychainEntry(account).getPassword();
   },
-  setPassword: (account, value) => new Entry(APP_NAME, account).setPassword(value),
+  setPassword: (account, value) => osKeychainEntry(account).setPassword(value),
 };
 
 type ApiAuthIdentity = { trustchain: null; memberCredentials: MemberCredentials | null };

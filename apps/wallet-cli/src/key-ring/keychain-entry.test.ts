@@ -67,9 +67,9 @@ describe("wrapSecret / unwrapSecret", () => {
 });
 
 describe("assertOsKeychainAvailable", () => {
-  const probedServices: string[] = [];
-  const failingProbe = (service: string) => {
-    probedServices.push(service);
+  let probes = 0;
+  const failingProbe = () => {
+    probes++;
     failingKeychainProbe();
   };
   let restorePlatform: () => void;
@@ -77,7 +77,7 @@ describe("assertOsKeychainAvailable", () => {
   afterEach(() => {
     restorePlatform();
     _setTestKeychainProbe(null);
-    probedServices.length = 0;
+    probes = 0;
   });
 
   it("throws KeychainUnavailableError with the hint on Linux when the Secret Service probe fails", () => {
@@ -86,14 +86,14 @@ describe("assertOsKeychainAvailable", () => {
 
     expect(() => assertOsKeychainAvailable("Hint.")).toThrow(KeychainUnavailableError);
     expect(() => assertOsKeychainAvailable("Hint.")).toThrow(
-      /no Secret Service provider.*\(no secret service provider or dbus session found\)\. Hint\./,
+      /no Secret Service provider.*\(Platform failure: DBus error: .*org\.freedesktop\.secrets.*\)\. Hint\./,
     );
-    expect(probedServices[0]).toBe("ledger-wallet-cli-probe");
+    expect(probes).toBe(2);
   });
 
   it("passes on Linux when the probe returns", () => {
     restorePlatform = overridePlatform("linux");
-    _setTestKeychainProbe(() => []);
+    _setTestKeychainProbe(() => null);
 
     expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
   });
@@ -103,6 +103,6 @@ describe("assertOsKeychainAvailable", () => {
     _setTestKeychainProbe(failingProbe);
 
     expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
-    expect(probedServices).toEqual([]);
+    expect(probes).toBe(0);
   });
 });
