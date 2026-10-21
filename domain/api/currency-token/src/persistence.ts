@@ -35,8 +35,22 @@ export interface WithCryptoAssetsApi {
 }
 
 /**
+ * When restored tokens were fetched from CAL, keyed by the `requestId` of the upsert that restored
+ * them, then by token id. RTK stamps upserted entries with the restore time, so without this each
+ * launch would save restored tokens as freshly fetched and their TTL would never run out. A refetch
+ * gives the cache entry a new `requestId`, so its own `fulfilledTimeStamp` applies again.
+ */
+const restoredFetchTimes = new Map<string, ReadonlyMap<string, number>>();
+
+function restoredFetchTime(requestId: string | undefined, tokenId: string): number | undefined {
+  return requestId === undefined ? undefined : restoredFetchTimes.get(requestId)?.get(tokenId);
+}
+
+/**
  * Extracts all cached tokens from RTK Query state. Only fulfilled `findTokenById` and
- * `findTokenByAddressInCurrency` queries are considered, deduplicated by token id.
+ * `findTokenByAddressInCurrency` queries are considered, deduplicated by token id: the most
+ * recently fetched entry wins. A token restored from persistence keeps the time it was fetched from
+ * CAL, not the time it was restored.
  */
 export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTokenEntry[] {
   const rtkState = state[cryptoAssetsApi.reducerPath];
@@ -45,8 +59,7 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
     return [];
   }
 
-  const tokens: PersistedTokenEntry[] = [];
-  const seenIds = new Set<string>();
+  const tokensById = new Map<string, PersistedTokenEntry>();
 
   for (const query of Object.values(rtkState.queries)) {
     if (
@@ -63,18 +76,23 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
           ? (query.originalArgs as TokenByAddressInCurrencyParams | undefined)?.token_identifier
           : undefined;
 
-      if (seenIds.has(token.id)) continue;
-      seenIds.add(token.id);
+      const timestamp =
+        restoredFetchTime(query.requestId, token.id) ?? (query.fulfilledTimeStamp || Date.now());
 
-      tokens.push({
-        data: token,
-        timestamp: query.fulfilledTimeStamp || Date.now(),
-        token_identifier: tokenIdentifier,
-      });
+      const previous = tokensById.get(token.id);
+      if (!previous || timestamp > previous.timestamp) {
+        tokensById.set(token.id, {
+          data: token,
+          timestamp,
+          token_identifier: tokenIdentifier ?? previous?.token_identifier,
+        });
+      } else if (previous.token_identifier === undefined) {
+        previous.token_identifier = tokenIdentifier;
+      }
     }
   }
 
-  return tokens;
+  return [...tokensById.values()];
 }
 
 /** Extracts the `currencyId → hash` map from fulfilled `getTokensSyncHash` queries. */
@@ -179,6 +197,17 @@ export async function restoreTokensToCache(
 
   const entries = buildRestoreCacheEntries(tokensToRestore);
   if (entries.length > 0) {
-    dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
+    dispatch((thunkDispatch, getState) => {
+      thunkDispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
+      // One upsert stamps every entry with the same requestId.
+      const { requestId } = cryptoAssetsApi.endpoints.findTokenById.select({
+        id: tokensToRestore[0].data.id,
+      })(getState());
+      if (requestId === undefined) return;
+      restoredFetchTimes.set(
+        requestId,
+        new Map(tokensToRestore.map(entry => [entry.data.id, entry.timestamp])),
+      );
+    });
   }
 }

@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
+import { mockApiTokenResponse, mockTokenCurrency } from "./fixtures";
 import { PERSISTENCE_VERSION } from "./internals";
 import {
   extractTokensFromState,
@@ -27,6 +28,22 @@ const mockToken: TokenCurrency = token({
   disableCountervalue: false,
   units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
 });
+
+function makeStore() {
+  return configureStore({
+    reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+        thunk: {
+          extraArgument: calApiExtra({
+            calServiceUrl: "https://cal.test",
+            ledgerClientVersion: "1.0.0",
+          }),
+        },
+      }).concat(cryptoAssetsApi.middleware),
+  });
+}
 
 describe("Token Persistence", () => {
   describe("parsePersistedCAL", () => {
@@ -333,6 +350,7 @@ describe("Token Persistence", () => {
       await restoreTokensToCache(mockDispatch, persistedData, ttl);
 
       expect(upsertActions).toHaveLength(0);
+      expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 
     it("should skip restore when hash fetch fails", async () => {
@@ -355,6 +373,7 @@ describe("Token Persistence", () => {
       await restoreTokensToCache(mockDispatch, persistedData, ttl);
 
       expect(upsertActions).toHaveLength(0);
+      expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 
     it("should restore tokens without hash (backward compatibility)", async () => {
@@ -473,22 +492,6 @@ describe("Token Persistence", () => {
   describe("integration: token_identifier round-trip", () => {
     const ttl = 24 * 60 * 60 * 1000;
 
-    function makeStore() {
-      return configureStore({
-        reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
-        middleware: getDefaultMiddleware =>
-          getDefaultMiddleware({
-            serializableCheck: false,
-            thunk: {
-              extraArgument: calApiExtra({
-                calServiceUrl: "https://cal.test",
-                ledgerClientVersion: "1.0.0",
-              }),
-            },
-          }).concat(cryptoAssetsApi.middleware),
-      });
-    }
-
     it("should restore cache entry with token_identifier after extract → restore cycle", async () => {
       const sourceState = {
         [cryptoAssetsApi.reducerPath]: {
@@ -557,6 +560,123 @@ describe("Token Persistence", () => {
       expect(
         (addressEntry?.originalArgs as { token_identifier?: string } | undefined)?.token_identifier,
       ).toBeUndefined();
+    });
+  });
+
+  describe("integration: fetch timestamps across launches", () => {
+    const hour = 60 * 60 * 1000;
+    const ttl = 24 * hour;
+    const fetchedAt = 1_700_000_000_000;
+    const persistedAtFetch: PersistedCAL = {
+      version: PERSISTENCE_VERSION,
+      tokens: [{ data: mockTokenCurrency, timestamp: fetchedAt }],
+    };
+
+    let now: number;
+    let fetchSpy: jest.SpyInstance | undefined;
+
+    beforeEach(() => {
+      now = fetchedAt;
+      jest.spyOn(Date, "now").mockImplementation(() => now);
+    });
+
+    afterEach(() => {
+      fetchSpy?.mockRestore();
+      fetchSpy = undefined;
+      jest.restoreAllMocks();
+    });
+
+    async function launch(persisted: PersistedCAL) {
+      const store = makeStore();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await restoreTokensToCache(store.dispatch as any, persisted, ttl);
+      return store;
+    }
+
+    it("keeps the first fetch time when a restored token is saved and restored again", async () => {
+      now = fetchedAt + 2 * hour;
+      const firstLaunch = await launch(persistedAtFetch);
+      const savedOnce = extractPersistedCALFromState(firstLaunch.getState());
+
+      now = fetchedAt + 4 * hour;
+      const secondLaunch = await launch(savedOnce);
+      const savedTwice = extractPersistedCALFromState(secondLaunch.getState());
+
+      expect(savedOnce.tokens).toEqual([expect.objectContaining({ timestamp: fetchedAt })]);
+      expect(savedTwice.tokens).toEqual([expect.objectContaining({ timestamp: fetchedAt })]);
+    });
+
+    it("saves the refetch time for a token refetched after restore", async () => {
+      now = fetchedAt + 2 * hour;
+      const store = await launch(persistedAtFetch);
+
+      now = fetchedAt + 3 * hour;
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+        new Response(JSON.stringify([mockApiTokenResponse]), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+      await store.dispatch(
+        cryptoAssetsApi.endpoints.findTokenById.initiate(
+          { id: mockTokenCurrency.id },
+          { forceRefetch: true },
+        ),
+      );
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(extractPersistedCALFromState(store.getState()).tokens).toEqual([
+        expect.objectContaining({ timestamp: fetchedAt + 3 * hour }),
+      ]);
+    });
+
+    it("drops a token older than the TTL even after several launches", async () => {
+      let persisted = persistedAtFetch;
+      for (const hoursSinceFetch of [8, 16]) {
+        now = fetchedAt + hoursSinceFetch * hour;
+        const store = await launch(persisted);
+        persisted = extractPersistedCALFromState(store.getState());
+        expect(persisted.tokens).toHaveLength(1);
+      }
+
+      now = fetchedAt + 25 * hour;
+      const store = await launch(persisted);
+
+      expect(extractPersistedCALFromState(store.getState()).tokens).toEqual([]);
+    });
+  });
+
+  describe("extractTokensFromState: restored and refetched entries", () => {
+    it("keeps the token_identifier when a newer entry for the same token has none", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenByAddressInCurrency({"contract_address":"0xdac17f958d2ee523a2206206994597c13d831ec7","network":"ethereum","token_identifier":"MYTOKEN-abc123"})':
+              {
+                status: "fulfilled",
+                data: mockToken,
+                endpointName: "findTokenByAddressInCurrency",
+                originalArgs: {
+                  contract_address: mockToken.contractAddress,
+                  network: mockToken.parentCurrencyId,
+                  token_identifier: "MYTOKEN-abc123",
+                },
+                fulfilledTimeStamp: 1000,
+              },
+            'findTokenById({"id":"ethereum/erc20/usdt"})': {
+              status: "fulfilled",
+              data: mockToken,
+              endpointName: "findTokenById",
+              originalArgs: { id: mockToken.id },
+              fulfilledTimeStamp: 2000,
+            },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      expect(extractTokensFromState(mockState)).toEqual([
+        { data: mockToken, timestamp: 2000, token_identifier: "MYTOKEN-abc123" },
+      ]);
     });
   });
 
