@@ -9,11 +9,18 @@ import {
 } from "../__tests__/fixtures/currency.fixture";
 import {
   getMockedEnrichedPrivateRecord,
+  getMockedRecord,
   getMockedTransaction as getMockedPublicTransaction,
+  getMockedTransactionDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
 import type { AleoPublicTransaction } from "../types";
-import { getCalTokens, toBridgeOperation, toPrivateBridgeOperation } from "./utils";
+import {
+  getCalTokens,
+  toBridgeOperation,
+  toPrivateBridgeOperation,
+  toPrivateFeeBridgeOperation,
+} from "./utils";
 
 jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),
@@ -410,5 +417,51 @@ describe("toPrivateBridgeOperation", () => {
     const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
 
     expect(result.value).toEqual(new BigNumber(42000000));
+  });
+});
+
+describe("toPrivateFeeBridgeOperation", () => {
+  const ledgerAccountId = "js:2:aleo:aleo1test:";
+  const address = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
+  const feeRecord = getMockedRecord({
+    transaction_id: "at1join  ",
+    block_height: 500,
+    block_timestamp: 1704067200,
+    function_name: "fee_private",
+  });
+
+  it("should charge the account the fee and nothing else", () => {
+    const details = getMockedTransactionDetails("at1join", {
+      fee_value: 2120,
+      block_hash: "ab1block",
+    });
+
+    const result = toPrivateFeeBridgeOperation(ledgerAccountId, feeRecord, details, address);
+
+    expect(result).toEqual({
+      id: encodeOperationId(ledgerAccountId, "at1join", "FEES"),
+      senders: [address],
+      recipients: [],
+      value: new BigNumber(2120),
+      type: "FEES",
+      hasFailed: false,
+      hash: "at1join",
+      fee: new BigNumber(2120),
+      blockHeight: 500,
+      blockHash: "ab1block",
+      accountId: ledgerAccountId,
+      date: new Date(1704067200 * 1000),
+      extra: { functionId: "fee_private", transactionType: "private" },
+    });
+  });
+
+  it("should mark a rejected transaction as failed", () => {
+    const details = getMockedTransactionDetails("at1join", { fee_value: 2776, status: "Rejected" });
+
+    const result = toPrivateFeeBridgeOperation(ledgerAccountId, feeRecord, details, address);
+
+    expect(result).toEqual(
+      expect.objectContaining({ hasFailed: true, value: new BigNumber(2776) }),
+    );
   });
 });

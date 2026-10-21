@@ -450,6 +450,26 @@ export const testnetOutgoingPrivateTokenRecord: AleoPrivateRecord = {
   transition_index: 0,
 };
 
+export const testnetRejectedFeePrivateRecord: AleoPrivateRecord = {
+  block_height: 20656603,
+  block_timestamp: 1792492512,
+  commitment: "4505465134862761021643503653731200046530219367402124313452775573574726492518field",
+  function_name: "fee_private",
+  output_index: 0,
+  owner: "4376890048891554766371961235062563625708746456629390535882860164705933280131field",
+  program_name: "credits.aleo",
+  record_ciphertext:
+    "record1qvqspgt05qckmjxus557tr0ur585cst9ea04lczxgn8e5awagcuew6srqyxx66trwfhkxun9v35hguerqqpqzq9huyq48lw3zs8zgv75xfacyazrpt9q93xpdx2y90723a245lr4q0cecn7m8uanwrdvqhsjze099xrgndjp6kw9cnvhfzsaux5phv33yk3yp6d",
+  record_name: "credits",
+  sender: testnetAddress,
+  spent: false,
+  tag: "2086831152375011096791603408492419483799495439756428028912427032740634880179field",
+  transaction_id: "at1d0ptg5xkeclply3g83mc93f4upqmnq7et3ydwcxdwpy6wzh7kypsn4u8ne    ",
+  transition_id: "au1ka3yp4qcg30tywcczlyxqzyaceg65a2t2psm0ymwjtlgr8svjyxssvfekm    ",
+  transaction_index: 0,
+  transition_index: 0,
+};
+
 export const getMockedRecord = (overrides?: Partial<AleoPrivateRecord>): AleoPrivateRecord => ({
   transaction_id: "tx123",
   block_height: 100,
