@@ -26,6 +26,7 @@ export type AgentIntentMockOverrides = {
   confirmPrompt?: Partial<Record<(typeof CONFIRM_PROMPT_KEYS)[number], AnyFn>>;
   // Replaces the Linux Secret Service probe; defaults to one that always passes.
   keychainProbe?: () => unknown;
+  detach?: Partial<Record<(typeof DETACH_KEYS)[number], AnyFn>>;
 };
 
 const SDK_KEYS = [
@@ -73,6 +74,8 @@ const TOKEN_LOOKUP_KEYS = [
 const SWAP_QUOTE_KEYS = ["fetchAgentSwapQuote"] as const;
 
 const CONFIRM_PROMPT_KEYS = ["canAskToConfirm", "askToConfirm"] as const;
+
+const DETACH_KEYS = ["spawnDetached", "readFirstLogJsonLine"] as const;
 
 // Snapshot the genuine exports into PLAIN objects before any mock is installed: `mock.module` re-binds
 // the live namespace to the mock, so a pass-through reading from the namespace would recurse forever.
@@ -132,6 +135,10 @@ const confirmPromptMock = await createGatedModuleMock(
   require.resolve("../../../agent-intent/confirm-prompt"),
   CONFIRM_PROMPT_KEYS,
 );
+const detachMock = await createGatedModuleMock(
+  require.resolve("../../../agent-intent/detach"),
+  DETACH_KEYS,
+);
 
 /** Scope these fakes to the calling test file. */
 export function activateAgentIntentMocks(overrides: AgentIntentMockOverrides): void {
@@ -145,6 +152,7 @@ export function activateAgentIntentMocks(overrides: AgentIntentMockOverrides): v
   tokenLookupMock.activate(overrides.tokenLookup ?? {});
   swapQuoteMock.activate(overrides.swapQuote ?? {});
   confirmPromptMock.activate(overrides.confirmPrompt ?? {});
+  detachMock.activate(overrides.detach ?? {});
   // Not a module mock: the probe is a seam, so the real OS keychain is never queried.
   _setTestKeychainProbe(overrides.keychainProbe ?? (() => []));
 }
@@ -162,6 +170,7 @@ export function deactivateAgentIntentMocks(): void {
     tokenLookupMock,
     swapQuoteMock,
     confirmPromptMock,
+    detachMock,
   ]) {
     gated.deactivate();
   }

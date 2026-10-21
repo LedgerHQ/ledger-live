@@ -313,6 +313,9 @@ export type AgentIntentEnrollmentPending = {
   enrollmentUrl: string;
   fingerprint: string;
   expiresAt: string;
+  /** Set by `enroll --detach`: the background listener that waits for the approval. */
+  listenerPid?: number;
+  logPath?: string;
 };
 
 export type AgentIntentRecoveryPending = {
@@ -848,14 +851,20 @@ class HumanCommandOutput implements CommandOutput {
     enrollmentUrl,
     fingerprint,
     expiresAt,
+    listenerPid,
+    logPath,
   }: AgentIntentEnrollmentPending): void {
     this._agentIntentLinkPending(
       enrollmentUrl,
       fingerprint,
       "Compare this fingerprint with the one shown when the enrollment link is opened, before " +
         "approving — this step never touches a Ledger device.",
-      `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
-        "this process running.",
+      logPath === undefined
+        ? `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
+            "this process running."
+        : `Profile "${profileId}" saved as pending. A background listener (pid ${listenerPid}, ` +
+            `log ${logPath}) waits for approval until ${expiresAt}. Run \`wallet-cli agent-intent ` +
+            `wait --profile ${profileId}\` to check whether the enrollment completed.`,
     );
   }
 

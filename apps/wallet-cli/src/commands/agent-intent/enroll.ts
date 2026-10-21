@@ -38,7 +38,15 @@ import {
   parseDurationMs,
   waitForRelayCompletion,
 } from "../../agent-intent/relay";
-import { createCommandOutput } from "../../output";
+import {
+  enrollListenerPaths,
+  readFirstLogJsonLine,
+  selfCommand,
+  spawnDetached,
+  withEnrollListenerLock,
+} from "../../agent-intent/detach";
+import { readLiveLockHolderPid } from "../../shared/file-lock";
+import { createCommandOutput, type CommandOutput } from "../../output";
 import { errMessage } from "../../shared/error-message";
 import { walletCliDebug } from "../../shared/log";
 import { writeStderr } from "../../shared/ui";
@@ -210,6 +218,72 @@ async function saveSecretKey(
   }
 }
 
+const PendingLineSchema = z.object({
+  type: z.literal("enrollment-pending"),
+  profileId: z.string(),
+  enrollmentUrl: z.string(),
+  fingerprint: z.string(),
+  expiresAt: z.string(),
+});
+const ErrorLineSchema = z.object({
+  ok: z.literal(false),
+  error: z.object({ message: z.string() }),
+});
+
+/** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
+ * listener's pending line and returns. The child's flags are rebuilt from the parsed ones (minus
+ * `detach` and `output`), so flags added to `enroll` later carry over without argv parsing. */
+async function startDetachedEnroll(
+  flags: { profile: string; [flag: string]: unknown },
+  out: CommandOutput,
+): Promise<void> {
+  if (process.platform === "win32") {
+    throw new Error(
+      "--detach is not supported on Windows. Run `wallet-cli agent-intent enroll` without " +
+        "--detach, as a background job of your shell or agent host.",
+    );
+  }
+  const profileId = flags.profile;
+  const { logPath, lockPath } = enrollListenerPaths(profileId);
+  // Checked before the spawn truncates the log a running listener still writes to.
+  const runningPid = readLiveLockHolderPid(lockPath);
+  if (runningPid !== undefined) {
+    throw new Error(
+      `An enrollment listener for profile "${profileId}" is already running (pid ${runningPid}). ` +
+        `Run \`wallet-cli agent-intent wait --profile ${profileId}\` to check on it.`,
+    );
+  }
+
+  const args = ["agent-intent", "enroll"];
+  for (const [name, value] of Object.entries(flags)) {
+    if (name === "detach" || name === "output" || value === undefined) continue;
+    args.push(`--${name}=${String(value)}`);
+  }
+  args.push("--output=json");
+
+  const child = spawnDetached(selfCommand(args), logPath);
+  const first = await readFirstLogJsonLine(child, logPath);
+  const pending = PendingLineSchema.safeParse(first);
+  if (pending.success) {
+    const { enrollmentUrl, fingerprint, expiresAt } = pending.data;
+    out.agentIntentEnrollmentPending({
+      profileId: pending.data.profileId,
+      enrollmentUrl,
+      fingerprint,
+      expiresAt,
+      listenerPid: child.pid,
+      logPath,
+    });
+    return;
+  }
+  const failure = ErrorLineSchema.safeParse(first);
+  if (failure.success) throw new Error(failure.data.error.message);
+  child.kill();
+  throw new Error(
+    `The enrollment listener printed an unexpected first line and was stopped. See ${logPath}.`,
+  );
+}
+
 // Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22).
 // The SDK has no default of its own for bffBaseUrl, so this stays local.
 const DEFAULT_BFF_BASE_URLS = {
@@ -263,6 +337,12 @@ export default defineCommand({
         "explicitly agrees.",
       argumentKind: "flag",
     }),
+    detach: option(z.boolean().default(false), {
+      description:
+        "Run the approval wait as a background listener: print the enrollment link and exit, then " +
+        "check on it with `agent-intent wait` (Linux and macOS).",
+      argumentKind: "flag",
+    }),
     output: outputOption,
   },
   handler: async ({ flags }) => {
@@ -271,167 +351,178 @@ export default defineCommand({
       network: "all",
     });
     await out.run(async () => {
-      const expiresInMs = parseDurationMs(flags["expires-in"]);
+      if (flags.detach) {
+        await startDetachedEnroll(flags, out);
+        return;
+      }
+      // Held for the whole run, so `agent-intent wait` can tell a live listener from a dead one.
+      await withEnrollListenerLock(flags.profile, async () => {
+        const expiresInMs = parseDurationMs(flags["expires-in"]);
 
-      const { environment, profile: profileId } = flags;
-      const bffBaseUrl = flags["bff-url"] ?? DEFAULT_BFF_BASE_URLS[environment];
-      const appUrl = flags["app-url"] ?? AGENT_INTENT_FRONTEND_URLS[environment];
-      const keycloakBaseUrl = flags["keycloak-url"];
-      assertServiceUrl(appUrl, "app-url");
-      assertServiceUrl(bffBaseUrl, "bff-url");
-      if (keycloakBaseUrl !== undefined) assertServiceUrl(keycloakBaseUrl, "keycloak-url");
-      const enrollmentExpiresAt = new Date(Date.now() + expiresInMs).toISOString();
+        const { environment, profile: profileId } = flags;
+        const bffBaseUrl = flags["bff-url"] ?? DEFAULT_BFF_BASE_URLS[environment];
+        const appUrl = flags["app-url"] ?? AGENT_INTENT_FRONTEND_URLS[environment];
+        const keycloakBaseUrl = flags["keycloak-url"];
+        assertServiceUrl(appUrl, "app-url");
+        assertServiceUrl(bffBaseUrl, "bff-url");
+        if (keycloakBaseUrl !== undefined) assertServiceUrl(keycloakBaseUrl, "keycloak-url");
+        const enrollmentExpiresAt = new Date(Date.now() + expiresInMs).toISOString();
 
-      // Fast, unlocked precheck: fail on an obvious typo/duplicate before spending a keypair
-      // generation + signature on it. Not a substitute for the recheck below — a concurrent enroll
-      // of the same profile can still pass this one.
-      const precheckedKeyStore = checkProfileAndChooseKeyStore(
-        await Session.read(),
-        profileId,
-        flags["allow-plaintext-key"],
-      );
-
-      const identity = createSoftwareAgentIdentity();
-      const host = createRelayHost(environment, expiresInMs);
-      try {
-        const request = createAgentEnrollmentRequest(identity, {
-          name: flags.name,
-          description: flags.description,
-          source: flags.source,
-          expiresAt: enrollmentExpiresAt,
-          channel: host.binding,
-        });
-        if (request.version !== AGENT_ENROLLMENT_CHANNEL_VERSION) {
-          throw new Error("Agent Intent SDK did not build a relay-bound enrollment request.");
-        }
-        // Built before anything is persisted, so a failure here leaves no profile or keychain entry.
-        const enrollmentUrl = createAgentEnrollmentUrl(appUrl, request);
-
-        // Shared with every other command that mutates session.yaml — see withSessionLock's doc.
-        const keyStore = await withSessionLock(async () => {
-          const session = await Session.read();
-          const chosenKeyStore = checkProfileAndChooseKeyStore(
-            session,
-            profileId,
-            flags["allow-plaintext-key"],
-            precheckedKeyStore,
-          );
-
-          const keyStore = await saveSecretKey(
-            chosenKeyStore,
-            profileId,
-            identity.exportSecretKey(),
-            flags["allow-plaintext-key"],
-          );
-          try {
-            session.addAgentIntentProfile({
-              profileId,
-              displayName: flags.name,
-              description: flags.description,
-              source: flags.source,
-              environment,
-              bffBaseUrl,
-              ...(keycloakBaseUrl === undefined ? {} : { keycloakBaseUrl }),
-              publicKey: identity.publicKey,
-              keyStore,
-              enrollmentExpiresAt,
-              createdAt: new Date().toISOString(),
-            });
-            session.write();
-          } catch (e) {
-            // Undo the key write so a retry doesn't hit "keychain entry (or key file) exists but
-            // isn't recorded in the session". If the rollback itself fails, say so, so the user
-            // knows to remove the keychain entry or key file by hand instead of retrying forever.
-            const rolledBack =
-              keyStore === "plaintext-file"
-                ? deleteAgentIntentKeyFile(profileId)
-                : deleteAgentIntentSecretKey(profileId);
-            if (!rolledBack) {
-              const [store, item] =
-                keyStore === "plaintext-file" ? ["key file", "file"] : ["keychain", "entry"];
-              throw new Error(
-                `${errMessage(e)} Additionally, the ${store} rollback for profile ` +
-                  `"${profileId}" failed — remove that ${item} manually before retrying, ` +
-                  `or re-enrolling will refuse it as an orphaned duplicate.`,
-                { cause: e },
-              );
-            }
-            throw e;
-          }
-          return keyStore;
-        });
-        if (flags["allow-plaintext-key"] && keyStore === "os-keychain") {
-          writeStderr(
-            "OS keychain is available: the agent key is stored in the OS keychain and " +
-              "--allow-plaintext-key was ignored.\n",
-          );
-        }
-
-        out.agentIntentEnrollmentPending({
+        // Fast, unlocked precheck: fail on an obvious typo/duplicate before spending a keypair
+        // generation + signature on it. Not a substitute for the recheck below — a concurrent enroll
+        // of the same profile can still pass this one.
+        const precheckedKeyStore = checkProfileAndChooseKeyStore(
+          await Session.read(),
           profileId,
-          enrollmentUrl,
-          fingerprint: formatAgentPublicKeyFingerprint(identity.publicKey),
-          expiresAt: enrollmentExpiresAt,
-        });
+          flags["allow-plaintext-key"],
+        );
 
-        const completion = await waitForRelayCompletion(
-          host,
-          {
-            request,
-            authenticate: candidate =>
-              authenticateEnrollmentCompletion({
-                completion: candidate,
-                identity,
+        const identity = createSoftwareAgentIdentity();
+        const host = createRelayHost(environment, expiresInMs);
+        try {
+          const request = createAgentEnrollmentRequest(identity, {
+            name: flags.name,
+            description: flags.description,
+            source: flags.source,
+            expiresAt: enrollmentExpiresAt,
+            channel: host.binding,
+          });
+          if (request.version !== AGENT_ENROLLMENT_CHANNEL_VERSION) {
+            throw new Error("Agent Intent SDK did not build a relay-bound enrollment request.");
+          }
+          // Built before anything is persisted, so a failure here leaves no profile or keychain entry.
+          const enrollmentUrl = createAgentEnrollmentUrl(appUrl, request);
+
+          // Shared with every other command that mutates session.yaml — see withSessionLock's doc.
+          const keyStore = await withSessionLock(async () => {
+            const session = await Session.read();
+            const chosenKeyStore = checkProfileAndChooseKeyStore(
+              session,
+              profileId,
+              flags["allow-plaintext-key"],
+              precheckedKeyStore,
+            );
+
+            const keyStore = await saveSecretKey(
+              chosenKeyStore,
+              profileId,
+              identity.exportSecretKey(),
+              flags["allow-plaintext-key"],
+            );
+            try {
+              session.addAgentIntentProfile({
+                profileId,
+                displayName: flags.name,
+                description: flags.description,
+                source: flags.source,
                 environment,
-                ...keycloakOverride(environment, keycloakBaseUrl),
-              }),
-            persist: relayed =>
-              withSessionLock(async () => {
-                const session = await Session.read();
-                const profile = session.getAgentIntentProfile(profileId);
-                if (!profile || profile.trustchainId || profile.publicKey !== identity.publicKey) {
-                  throw new Error(
-                    `Agent Intent profile "${profileId}" was removed or changed while waiting for ` +
-                      "approval; refusing to record the completion.",
-                  );
-                }
-                const {
-                  mode,
-                  environment: accessEnvironment,
-                  trustchainId,
-                  applicationPath,
-                } = relayed.accountAccess;
-                session.updateAgentIntentProfile(profileId, {
-                  trustchainId: relayed.trustchainId,
-                  accountAccess: {
+                bffBaseUrl,
+                ...(keycloakBaseUrl === undefined ? {} : { keycloakBaseUrl }),
+                publicKey: identity.publicKey,
+                keyStore,
+                enrollmentExpiresAt,
+                createdAt: new Date().toISOString(),
+              });
+              session.write();
+            } catch (e) {
+              // Undo the key write so a retry doesn't hit "keychain entry (or key file) exists but
+              // isn't recorded in the session". If the rollback itself fails, say so, so the user
+              // knows to remove the keychain entry or key file by hand instead of retrying forever.
+              const rolledBack =
+                keyStore === "plaintext-file"
+                  ? deleteAgentIntentKeyFile(profileId)
+                  : deleteAgentIntentSecretKey(profileId);
+              if (!rolledBack) {
+                const [store, item] =
+                  keyStore === "plaintext-file" ? ["key file", "file"] : ["keychain", "entry"];
+                throw new Error(
+                  `${errMessage(e)} Additionally, the ${store} rollback for profile ` +
+                    `"${profileId}" failed — remove that ${item} manually before retrying, ` +
+                    `or re-enrolling will refuse it as an orphaned duplicate.`,
+                  { cause: e },
+                );
+              }
+              throw e;
+            }
+            return keyStore;
+          });
+          if (flags["allow-plaintext-key"] && keyStore === "os-keychain") {
+            writeStderr(
+              "OS keychain is available: the agent key is stored in the OS keychain and " +
+                "--allow-plaintext-key was ignored.\n",
+            );
+          }
+
+          out.agentIntentEnrollmentPending({
+            profileId,
+            enrollmentUrl,
+            fingerprint: formatAgentPublicKeyFingerprint(identity.publicKey),
+            expiresAt: enrollmentExpiresAt,
+          });
+
+          const completion = await waitForRelayCompletion(
+            host,
+            {
+              request,
+              authenticate: candidate =>
+                authenticateEnrollmentCompletion({
+                  completion: candidate,
+                  identity,
+                  environment,
+                  ...keycloakOverride(environment, keycloakBaseUrl),
+                }),
+              persist: relayed =>
+                withSessionLock(async () => {
+                  const session = await Session.read();
+                  const profile = session.getAgentIntentProfile(profileId);
+                  if (
+                    !profile ||
+                    profile.trustchainId ||
+                    profile.publicKey !== identity.publicKey
+                  ) {
+                    throw new Error(
+                      `Agent Intent profile "${profileId}" was removed or changed while waiting for ` +
+                        "approval; refusing to record the completion.",
+                    );
+                  }
+                  const {
                     mode,
                     environment: accessEnvironment,
                     trustchainId,
                     applicationPath,
-                  },
-                });
-                session.write();
-              }),
-          },
-          "Enrollment interrupted.",
-        ).catch(e => {
-          throw new Error(
-            `Enrollment did not complete (${e instanceof Error ? e.message : String(e)}). ` +
-              `Profile "${profileId}" stays pending and cannot be resumed — start a fresh ` +
-              "enrollment with a new --profile id.",
-            { cause: e },
-          );
-        });
+                  } = relayed.accountAccess;
+                  session.updateAgentIntentProfile(profileId, {
+                    trustchainId: relayed.trustchainId,
+                    accountAccess: {
+                      mode,
+                      environment: accessEnvironment,
+                      trustchainId,
+                      applicationPath,
+                    },
+                  });
+                  session.write();
+                }),
+            },
+            "Enrollment interrupted.",
+          ).catch(e => {
+            throw new Error(
+              `Enrollment did not complete (${e instanceof Error ? e.message : String(e)}). ` +
+                `Profile "${profileId}" stays pending and cannot be resumed — start a fresh ` +
+                "enrollment with a new --profile id.",
+              { cause: e },
+            );
+          });
 
-        out.agentIntentEnrolled({
-          profileId,
-          trustchainId: completion.trustchainId,
-          accountAccessEnvironment: completion.accountAccess.environment,
-          keyStore,
-        });
-      } finally {
-        host.close();
-      }
+          out.agentIntentEnrolled({
+            profileId,
+            trustchainId: completion.trustchainId,
+            accountAccessEnvironment: completion.accountAccess.environment,
+            keyStore,
+          });
+        } finally {
+          host.close();
+        }
+      });
     });
   },
 });

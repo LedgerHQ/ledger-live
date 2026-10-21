@@ -1,8 +1,12 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { installOutputCapture } from "../../shared/ui";
 import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
 import { failingKeychainProbe, overridePlatform } from "../../testing/os-keychain";
+import { readLiveLockHolderPid } from "../../shared/file-lock";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -50,6 +54,11 @@ let authenticateInputs: Array<Record<string, unknown>>;
 let keychainProbe: () => unknown;
 let keyFileExists: boolean;
 let deleteKeyFileSucceeds: boolean;
+
+type FakeChild = { pid: number; kill: () => void };
+let spawnedCommands: string[][];
+let firstLogLine: () => Promise<Record<string, unknown>>;
+let childKilled: boolean;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
@@ -167,11 +176,38 @@ beforeAll(() =>
         return authenticateOverride;
       },
     },
+    detach: {
+      spawnDetached: (command: string[], _logPath: string): FakeChild => {
+        spawnedCommands.push(command);
+        return {
+          pid: 4242,
+          kill: () => {
+            childKilled = true;
+          },
+        };
+      },
+      readFirstLogJsonLine: (_child: FakeChild, _logPath: string) => firstLogLine(),
+    },
   }),
 );
 afterAll(() => deactivateAgentIntentMocks());
 
+// The listener lock is a real file lock: keep it out of the real state dir.
+let stateHome: string;
+let savedStateHome: string | undefined;
+beforeAll(() => {
+  savedStateHome = process.env.XDG_STATE_HOME;
+  stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-enroll-test-"));
+  process.env.XDG_STATE_HOME = stateHome;
+});
+afterAll(() => {
+  if (savedStateHome === undefined) delete process.env.XDG_STATE_HOME;
+  else process.env.XDG_STATE_HOME = savedStateHome;
+  rmSync(stateHome, { recursive: true, force: true });
+});
+
 const { default: enrollCommand } = await import("./enroll");
+const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
 
 type EnrollFlags = {
   profile: string;
@@ -184,6 +220,7 @@ type EnrollFlags = {
   "expires-in": string;
   environment: "staging" | "production";
   "allow-plaintext-key": boolean;
+  detach?: boolean;
   output?: "human" | "json";
 };
 
@@ -238,6 +275,9 @@ describe("agent-intent enroll", () => {
     deletedSecretKeyCalls.length = 0;
     addAgentIntentProfileImpl = () => {};
     writeImpl = () => {};
+    spawnedCommands = [];
+    firstLogLine = async () => ({});
+    childKilled = false;
     stdout = [];
     stderr = [];
     restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: s => stderr.push(s) });
@@ -725,6 +765,20 @@ describe("agent-intent enroll", () => {
       });
     });
 
+    it("holds the profile's listener lock while waiting for approval, and releases it after", async () => {
+      const { lockPath } = enrollListenerPaths("test-agent");
+      let holderWhileWaiting: number | undefined;
+      hostWait = input => {
+        holderWhileWaiting = readLiveLockHolderPid(lockPath);
+        return relayDelivers(input);
+      };
+
+      await runEnroll();
+
+      expect(holderWhileWaiting).toBe(process.pid);
+      expect(readLiveLockHolderPid(lockPath)).toBeUndefined();
+    });
+
     it("persists the trustchain id and account access once the completion is authenticated", async () => {
       await runEnroll();
 
@@ -902,6 +956,135 @@ describe("agent-intent enroll", () => {
       expect(storedProfile).toMatchObject({ trustchainId: "app18-root" });
       expect(stdout.join("")).toContain('Agent Intent profile "test-agent" enrolled');
     });
+  });
+});
+
+describe("agent-intent enroll --detach", () => {
+  let restore: () => void;
+  let stdout: string[];
+  const pendingLine = {
+    type: "enrollment-pending",
+    command: "agent-intent enroll",
+    network: "all",
+    profileId: "test-agent",
+    enrollmentUrl: "https://agent.example.com#request=opaque",
+    fingerprint: "AB12 CD34",
+    expiresAt: "2026-10-21T12:30:00.000Z",
+  };
+
+  beforeEach(() => {
+    spawnedCommands = [];
+    firstLogLine = async () => pendingLine;
+    childKilled = false;
+    sessionReadCalls = 0;
+    savedSecretKeys.clear();
+    stdout = [];
+    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: () => {} });
+  });
+
+  afterEach(() => restore());
+
+  it("re-runs enroll in the background with the parsed flags, minus --detach and --output", async () => {
+    await runEnroll({ detach: true, output: "human", "app-url": "https://agent.example.com" });
+
+    expect(spawnedCommands).toHaveLength(1);
+    const command = spawnedCommands[0];
+    const args = command.slice(command.indexOf("agent-intent"));
+    expect(args).toEqual([
+      "agent-intent",
+      "enroll",
+      "--profile=test-agent",
+      "--name=Test Agent",
+      "--description=Remote agent that proposes intents for review.",
+      "--source=openclaw",
+      "--expires-in=30m",
+      "--environment=production",
+      "--allow-plaintext-key=false",
+      "--app-url=https://agent.example.com",
+      "--output=json",
+    ]);
+    expect(command[0]).toBe(process.execPath);
+    // The parent itself creates nothing: the listener does.
+    expect(sessionReadCalls).toBe(0);
+    expect(savedSecretKeys.size).toBe(0);
+  });
+
+  it("prints the listener's pending line with its pid and log path in json mode, then returns", async () => {
+    await runEnroll({ detach: true, output: "json" });
+
+    const lines = stdout
+      .join("")
+      .trim()
+      .split("\n")
+      .map(l => JSON.parse(l));
+    expect(lines).toEqual([
+      {
+        ...pendingLine,
+        listenerPid: 4242,
+        logPath: enrollListenerPaths("test-agent").logPath,
+      },
+    ]);
+  });
+
+  it("tells the human to run agent-intent wait instead of keeping the process running", async () => {
+    await runEnroll({ detach: true });
+
+    const text = stdout.join("");
+    expect(text).toContain(pendingLine.enrollmentUrl);
+    expect(text).toContain("Public key fingerprint: AB12 CD34");
+    expect(text).toContain("background listener (pid 4242");
+    expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent`");
+    expect(text).not.toContain("keep this process running");
+  });
+
+  it("fails with the listener's own error when it prints an error envelope", async () => {
+    firstLogLine = async () => ({
+      ok: false,
+      error: {
+        command: "agent-intent enroll",
+        message: 'Agent Intent profile "x" already exists.',
+      },
+    });
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(
+      'Agent Intent profile "x" already exists.',
+    );
+  });
+
+  it("fails when the listener exits before printing anything", async () => {
+    firstLogLine = () =>
+      Promise.reject(new Error("The enrollment listener exited with code 1 before printing"));
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(/exited with code 1/);
+  });
+
+  it("stops the listener and fails when its first line is neither pending nor an error", async () => {
+    firstLogLine = async () => ({ status: "success" });
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(/unexpected first line/);
+    expect(childKilled).toBe(true);
+  });
+
+  it("refuses to start a second listener while one is running for the profile", async () => {
+    await withEnrollListenerLock("test-agent", async () => {
+      await expect(runEnroll({ detach: true })).rejects.toThrow(
+        `An enrollment listener for profile "test-agent" is already running (pid ${process.pid}).`,
+      );
+    });
+    expect(spawnedCommands).toEqual([]);
+  });
+
+  it("is not supported on Windows", async () => {
+    const platform = Object.getOwnPropertyDescriptor(process, "platform");
+    Object.defineProperty(process, "platform", { value: "win32" });
+    try {
+      await expect(runEnroll({ detach: true })).rejects.toThrow(
+        /--detach is not supported on Windows/,
+      );
+    } finally {
+      if (platform) Object.defineProperty(process, "platform", platform);
+    }
+    expect(spawnedCommands).toEqual([]);
   });
 });
 
