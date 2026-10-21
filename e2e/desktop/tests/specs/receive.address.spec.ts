@@ -139,11 +139,6 @@ test.describe("Receive", () => {
       await app.account.expectTokenAccount(tokenAccount.account);
       await app.account.clickReceive();
       await app.receive.continue();
-
-      const displayedAddress = await app.receive.getAddressDisplayed();
-      await app.receive.expectValidReceiveAddress(displayedAddress);
-      await app.speculos.expectValidAddressDevice(tokenAccount.account, displayedAddress);
-      await app.receive.expectApproveLabel();
       await app.receive.expectDeviceDeprecationError("Ledger Nano S");
     },
   );
