@@ -16,7 +16,7 @@ It declares only test metadata and invokes the sibling test function. The flow, 
 
 ### Arrange state in fixtures and flags, not in UI steps
 
-See [E2E conventions](../../docs/e2e-conventions.md#state). Entry-point flags belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
+See [E2E conventions](../../docs/e2e-conventions.md#test-state). Entry-point flags belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
 
 ### No conditional steps
 
