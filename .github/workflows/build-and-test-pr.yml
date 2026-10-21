@@ -33,10 +33,6 @@ jobs:
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
-      close_smartling_pr: true
-    secrets:
-      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
-      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
   # LLD
   build-desktop:
