@@ -54,6 +54,17 @@ describe("preload push bridge", () => {
         outcome: "blocked",
       },
     },
+    {
+      name: "webview.onMessage",
+      channel: CHANNELS.webviewBridgeMessage,
+      subscribe: (callback: (payload: unknown) => void): Unsubscribe => webview.onMessage(callback),
+      payload: {
+        guestId: 7,
+        origin: "https://app.example.com",
+        channel: "webviewToParent",
+        message: "{}",
+      },
+    },
   ])("$name", ({ channel, subscribe, payload }) => {
     it("should deliver the payload only, never the IPC event", () => {
       const callback = jest.fn();

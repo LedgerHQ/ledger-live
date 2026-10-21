@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { useWebviewState } from "./helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import type { WebviewBridgeMessage } from "~/bridge/contract";
 
 jest.mock("./helpers", () => ({
   useWebviewState: jest.fn(),
@@ -44,8 +45,17 @@ jest.mock("@ledgerhq/live-common/platform/react", () => ({
   useListPlatformCurrencies: () => jest.fn(),
 }));
 
+const mockReceive = jest.fn();
+let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
+
 jest.mock("@ledgerhq/live-common/platform/JSONRPCServer", () => ({
-  useJSONRPCServer: () => [jest.fn()],
+  useJSONRPCServer: () => [mockReceive],
+}));
+
+jest.mock("./bridge", () => ({
+  useWebviewBridgeMessages: (_ref: unknown, onBridgeMessage: (m: WebviewBridgeMessage) => void) => {
+    mockOnBridgeMessage = onBridgeMessage;
+  },
 }));
 
 jest.mock("@ledgerhq/live-common/platform/logic", () => ({
@@ -202,6 +212,26 @@ describe("PlatformAPIWebview", () => {
     const { queryByTestId } = render(<PlatformAPIWebview manifest={mockManifest} />);
 
     expect(queryByTestId("network-error-screen")).not.toBeInTheDocument();
+  });
+
+  it("hands Platform API messages to the server", () => {
+    render(<PlatformAPIWebview manifest={mockManifest} />);
+
+    mockOnBridgeMessage?.({
+      guestId: 1,
+      origin: "https://example.com",
+      channel: "webviewToParent",
+      message: '{"id":1}',
+    });
+    mockOnBridgeMessage?.({
+      guestId: 1,
+      origin: "https://example.com",
+      channel: "dappToParent",
+      message: '{"id":2}',
+    });
+
+    expect(mockReceive).toHaveBeenCalledTimes(1);
+    expect(mockReceive).toHaveBeenCalledWith({ id: 1 });
   });
 
   it("shows Loader while widget is loading and no error", () => {

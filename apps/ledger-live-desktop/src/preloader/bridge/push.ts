@@ -6,6 +6,7 @@ import {
   type UpdaterStatusEvent,
   type Unsubscribe,
   type WebviewBridge,
+  type WebviewBridgeMessage,
 } from "~/bridge/contract";
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 
@@ -33,4 +34,6 @@ export const deeplink: DeeplinkBridge = {
 export const webview: WebviewBridge = {
   onDomainCheckViolation: (callback: (violation: DomainCheckViolation) => void) =>
     subscribe<DomainCheckViolation>(CHANNELS.webviewDomainCheckViolation, callback),
+  onMessage: (callback: (message: WebviewBridgeMessage) => void) =>
+    subscribe<WebviewBridgeMessage>(CHANNELS.webviewBridgeMessage, callback),
 };

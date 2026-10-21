@@ -15,6 +15,7 @@ import {
   type ShellBridge,
   type SystemBridge,
   type ZcashBridge,
+  type WebviewBridgeMessage,
 } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
@@ -63,6 +64,7 @@ export const webview: jest.Mocked<WebviewBridge> = {
   onDomainCheckViolation: jest.fn(
     (_callback: (violation: DomainCheckViolation) => void) => () => {},
   ),
+  onMessage: jest.fn((_callback: (message: WebviewBridgeMessage) => void) => () => {}),
 };
 
 export const app: jest.Mocked<AppBridge> = {
