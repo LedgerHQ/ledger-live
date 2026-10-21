@@ -4,7 +4,7 @@ import { useSelector } from "~/context/hooks";
 import { appVersion } from "LLM/utils/appVersion";
 import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type {
@@ -56,6 +56,7 @@ import {
   useWebviewBridgeSession,
 } from "./bridge";
 import { closePlatformExchange } from "./closePlatformExchange";
+import { closeLiveAppFlows } from "./closeLiveAppFlows";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 import { reportIfStrictlyDisallowed } from "./domainCheckReport";
 import { NetworkError } from "./NetworkError";
@@ -124,6 +125,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       useNavigation<
         RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>
       >();
+    const route = useRoute();
     const [device, setDevice] = useState<Device>();
     const listAccounts = useListPlatformAccounts(walletState.accountNames, accounts);
     const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
@@ -139,14 +141,17 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       isOpen: isModularDrawerOpen,
     } = useModularDrawerController();
 
-    // The drawer a Live App opened is closed when its main frame moves to another origin.
-    const closeLiveAppDrawers = useCallback(() => {
+    // The drawer and flows a Live App opened are closed when its main frame moves to another
+    // origin, and the device of its exchange is forgotten.
+    const closeLiveAppFlowsAndDrawers = useCallback(() => {
       if (isModularDrawerOpen) {
         closeModularDrawer();
       }
-    }, [closeModularDrawer, isModularDrawerOpen]);
+      setDevice(undefined);
+      closeLiveAppFlows(navigation, route.key);
+    }, [closeModularDrawer, isModularDrawerOpen, navigation, route.key]);
 
-    const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, closeLiveAppDrawers);
+    const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, closeLiveAppFlowsAndDrawers);
     const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
     const messagingAllowedOrigins = useMemo(
       () => getMessagingAllowedOrigins(allowedDomains),
@@ -307,18 +312,21 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const broadcastTransaction = useCallback(
-      ({
-        accountId,
-        signedTransaction,
-      }: {
-        accountId: string;
-        signedTransaction: RawPlatformSignedTransaction;
-      }) =>
+      (
+        {
+          accountId,
+          signedTransaction,
+        }: {
+          accountId: string;
+          signedTransaction: RawPlatformSignedTransaction;
+        },
+        session: BridgeSession,
+      ) =>
         broadcastTransactionLogic(
           { manifest, accounts, tracking },
           accountId,
           signedTransaction,
-          async (account, parentAccount, signedOperation) => {
+          session.whileOpen(async (account, parentAccount, signedOperation) => {
             let optimisticOperation: Operation = signedOperation.operation;
 
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
@@ -336,13 +344,16 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             }
 
             return optimisticOperation.hash;
-          },
+          }),
         ),
       [manifest, accounts, tracking],
     );
 
     const startExchange = useCallback(
-      ({ exchangeType, provider }: { exchangeType: number; provider?: string }) => {
+      (
+        { exchangeType, provider }: { exchangeType: number; provider?: string },
+        session: BridgeSession,
+      ) => {
         tracking.platformStartExchangeRequested(manifest);
 
         return new Promise((resolve, reject) => {
@@ -361,11 +372,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
                 if (result.startExchangeResult) {
                   tracking.platformStartExchangeSuccess(manifest);
-                  setDevice(result.device);
+                  if (session.isOpen) setDevice(result.device);
                   resolve(result.startExchangeResult.nonce);
                 }
 
-                closePlatformExchange(navigation);
+                // Once the session is closed, its flow is already gone: do not pop another one.
+                if (session.isOpen) closePlatformExchange(navigation);
               },
             },
           });
@@ -425,6 +437,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                         tracking.platformStartExchangeSuccess(manifest);
                         resolve(result.operation);
                       }
+                      // Once the session is closed, its flow is already gone: do not pop
+                      // the exchange the next origin may have opened.
+                      if (!session.isOpen) return;
                       setDevice(undefined);
                       closePlatformExchange(navigation);
                     },

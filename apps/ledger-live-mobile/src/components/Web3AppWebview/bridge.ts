@@ -13,8 +13,8 @@ import {
 /** A JS string literal of `value`, line separators included. */
 const toScriptLiteral = (value: string) =>
   JSON.stringify(value)
-    .replace(/\u2028/g, "\\u2028")
-    .replace(/\u2029/g, "\\u2029");
+    .replaceAll("\u2028", String.raw`\u2028`)
+    .replaceAll("\u2029", String.raw`\u2029`);
 
 /**
  * Dispatches `message` like react-native-webview's `postMessage` (on `window` on iOS, on
