@@ -51,6 +51,13 @@ function decide(url: string, isTopFrame: boolean | undefined) {
   return loadRequest.mock.calls[0][0];
 }
 
+/** The flag-off pipeline: manifest.domains as originWhitelist and no callback. */
+function decideWithoutDomainCheck(url: string, isTopFrame: boolean | undefined) {
+  const loadRequest = jest.fn();
+  createOnShouldStartLoadWithRequest(loadRequest, DOMAINS)(shouldStartEvent(url, isTopFrame));
+  return loadRequest.mock.calls[0][0];
+}
+
 describe("manifest domain check navigation pipeline", () => {
   let openURL: jest.SpyInstance;
   let canOpenURL: jest.SpyInstance;
@@ -62,7 +69,8 @@ describe("manifest domain check navigation pipeline", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    openURL.mockRestore();
+    canOpenURL.mockRestore();
   });
 
   it("continues a main-frame load on an origin listed in manifest.domains", () => {
@@ -123,6 +131,38 @@ describe("manifest domain check navigation pipeline", () => {
   it("cancels http subframes", () => {
     expect(decide("http://tracker.com/pixel", false)).toBe(false);
   });
+
+  it("cancels http and unknown schemes without opening them, even when Linking can", () => {
+    canOpenURL.mockResolvedValue(true);
+
+    expect(decide("http://evil.com/", true)).toBe(false);
+    expect(decide("http://evil.com/", false)).toBe(false);
+    expect(decide("tel:+33100000000", true)).toBe(false);
+    expect(decide("tel:+33100000000", false)).toBe(false);
+
+    expect(canOpenURL).not.toHaveBeenCalled();
+    expect(openURL).not.toHaveBeenCalled();
+  });
+});
+
+describe("navigation pipeline with the domain check off", () => {
+  let canOpenURL: jest.SpyInstance;
+  let warn: jest.SpyInstance;
+
+  beforeEach(() => {
+    canOpenURL = jest.spyOn(Linking, "canOpenURL").mockResolvedValue(false);
+    warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    canOpenURL.mockRestore();
+    warn.mockRestore();
+  });
+
+  it("keeps rejecting local subframes outside originWhitelist", () => {
+    expect(decideWithoutDomainCheck("about:srcdoc", false)).toBe(false);
+    expect(decideWithoutDomainCheck("data:text/html,<p>hi</p>", false)).toBe(false);
+  });
 });
 
 describe("openWindowExternally", () => {
@@ -134,18 +174,17 @@ describe("openWindowExternally", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    openURL.mockRestore();
   });
 
-  it.each(["https://ledger.com/support", "ledgerlive://buy", "ledgerwallet://swap"])(
-    "opens %s when restricted",
-    url => {
-      openWindowExternally(url, true);
-      expect(openURL).toHaveBeenCalledWith(url);
-    },
-  );
+  it("opens an https URL when restricted", () => {
+    openWindowExternally("https://ledger.com/support", true);
+    expect(openURL).toHaveBeenCalledWith("https://ledger.com/support");
+  });
 
   it.each([
+    "ledgerlive://buy",
+    "ledgerwallet://swap",
     "http://ledger.com",
     "javascript:alert(1)",
     "file:///etc/hosts",
@@ -164,9 +203,9 @@ describe("openWindowExternally", () => {
 });
 
 describe("isExternallyOpenableUrl", () => {
-  it("only accepts https and Ledger schemes", () => {
+  it("only accepts https", () => {
     expect(isExternallyOpenableUrl("https://a.com")).toBe(true);
-    expect(isExternallyOpenableUrl("ledgerlive://x")).toBe(true);
+    expect(isExternallyOpenableUrl("ledgerlive://x")).toBe(false);
     expect(isExternallyOpenableUrl("HTTP://a.com")).toBe(false);
     expect(isExternallyOpenableUrl("mailto:a@b.c")).toBe(false);
   });
