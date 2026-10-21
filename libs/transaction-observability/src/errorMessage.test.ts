@@ -51,6 +51,20 @@ describe("sanitizeErrorMessage", () => {
     );
   });
 
+  it("stays fast on a pathological message", () => {
+    const message = "a" + "!".repeat(200_000) + "b " + "x(".repeat(50_000);
+    const start = Date.now();
+    sanitizeErrorMessage(message);
+    expect(Date.now() - start).toBeLessThan(100);
+  });
+
+  // Known limit, accepted: a value made only of letters cannot be told apart from a word.
+  it("keeps an alphabetic value the user typed", () => {
+    expect(sanitizeErrorMessage("Near: invalid recipient address alice")).toBe(
+      "Near: invalid recipient address alice",
+    );
+  });
+
   it("caps a long message", () => {
     const sanitized = sanitizeErrorMessage("node said: " + "too many requests, ".repeat(40));
     expect(sanitized).toHaveLength(MAX_ERROR_MESSAGE_LENGTH + 1);
