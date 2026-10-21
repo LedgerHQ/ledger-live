@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { UiHook } from "@ledgerhq/live-common/wallet-api/react";
 import { app } from "~/renderer/bridge";
@@ -11,6 +11,8 @@ let mockUiHook: Partial<UiHook> = {};
 const mockDispatch = jest.fn();
 const mockOnMessage = jest.fn();
 const mockOnDappMessage = jest.fn();
+const mockOnLoad = jest.fn();
+let mockNoAccounts = false;
 let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
 
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
@@ -20,7 +22,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
     mockUiHook = uiHook;
     return {
       widgetLoaded: true,
-      onLoad: jest.fn(),
+      onLoad: mockOnLoad,
       onReload: jest.fn(),
       onMessage: mockOnMessage,
       server: undefined,
@@ -31,7 +33,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
 jest.mock("@ledgerhq/live-common/wallet-api/useDappLogic", () => ({
   useDappLogic: () => ({
     onDappMessage: mockOnDappMessage,
-    noAccounts: false,
+    noAccounts: mockNoAccounts,
     isLoadingAccounts: false,
   }),
 }));
@@ -40,6 +42,10 @@ jest.mock("./bridge", () => ({
   useWebviewBridgeMessages: (_ref: unknown, onBridgeMessage: (m: WebviewBridgeMessage) => void) => {
     mockOnBridgeMessage = onBridgeMessage;
   },
+}));
+
+jest.mock("./DappAccountGate", () => ({
+  DappAccountGate: () => null,
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration", () => ({
@@ -211,5 +217,35 @@ describe("WalletAPIWebview bridge messages", () => {
 
     expect(mockOnMessage).not.toHaveBeenCalled();
     expect(mockOnDappMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe("WalletAPIWebview load", () => {
+  it("listens to the webview load once the dapp account gate opens", () => {
+    const webviewRef: { current: HTMLElement | null } = { current: null };
+    jest.mocked(useWebviewState).mockReturnValue({
+      webviewState: { loading: false, isAppUnavailable: false },
+      webviewRef,
+      setWebviewRef: (node: HTMLElement | null) => {
+        webviewRef.current = node;
+      },
+      webviewProps: {},
+      webviewPartition: {},
+      handleRefresh: jest.fn(),
+    } as never);
+    const dappManifest = { ...manifest, dapp: { networks: [], provider: "evm" } } as never;
+    mockNoAccounts = true;
+    const { rerender } = render(
+      <WalletAPIWebview manifest={dappManifest} setCurrentAccountHistDb={jest.fn()} />,
+    );
+    expect(webviewRef.current).toBeNull();
+
+    mockNoAccounts = false;
+    rerender(<WalletAPIWebview manifest={dappManifest} setCurrentAccountHistDb={jest.fn()} />);
+    act(() => {
+      webviewRef.current?.dispatchEvent(new Event("did-finish-load"));
+    });
+
+    expect(mockOnLoad).toHaveBeenCalledTimes(1);
   });
 });
