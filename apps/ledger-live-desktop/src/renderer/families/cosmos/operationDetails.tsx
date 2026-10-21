@@ -1,7 +1,11 @@
 /* eslint-disable consistent-return */
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { accountValidators, mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
@@ -10,7 +14,6 @@ import {
   CosmosDelegationInfo,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

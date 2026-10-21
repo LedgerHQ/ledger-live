@@ -5,7 +5,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { Currency } from "@domain/entity-currency";
 import { Unit } from "@domain/entity-currency-unit";
 import { TronAccount, TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { openURL } from "~/renderer/linking";
 import {
   OpDetailsTitle,

@@ -3,7 +3,7 @@ import { StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import {
   formatVotes,
   useTronSuperRepresentatives,

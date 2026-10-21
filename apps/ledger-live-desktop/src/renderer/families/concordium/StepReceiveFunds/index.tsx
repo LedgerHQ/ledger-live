@@ -9,7 +9,7 @@ import { getEnv } from "@shared/env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getDefaultAccountName } from "@domain/entity-account-name";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import useTheme from "~/renderer/hooks/useTheme";

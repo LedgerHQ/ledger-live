@@ -5,7 +5,7 @@ import SafeAreaViewFixed from "~/components/SafeAreaView";
 import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Operation } from "@ledgerhq/types-live";
 

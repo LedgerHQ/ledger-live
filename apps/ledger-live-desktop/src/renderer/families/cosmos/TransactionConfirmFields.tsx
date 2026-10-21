@@ -12,7 +12,7 @@ import {
   resolveSourceValidator,
   resolveTransactionValidators,
 } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { openURL } from "~/renderer/linking";
 import {
   OpDetailsData,

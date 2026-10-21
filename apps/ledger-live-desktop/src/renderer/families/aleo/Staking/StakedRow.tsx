@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { AleoStakingPositionView } from "@ledgerhq/live-common/families/aleo/react";
 import Box from "~/renderer/components/Box/Box";

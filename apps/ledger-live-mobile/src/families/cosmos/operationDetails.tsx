@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";

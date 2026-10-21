@@ -1,8 +1,11 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import {
+  getDefaultExplorerView,
+  getAddressExplorer,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
