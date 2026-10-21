@@ -33,11 +33,13 @@ export function getCalExtra(api: { extra: unknown }): CalApiExtra {
 }
 
 /**
- * Only a network error or a 5xx can pass on a second try. A timeout is not retried, so a hung CAL
+ * Only a network error or a 5xx (also with a non-JSON body) can pass on a second try. A timeout is not retried, so a hung CAL
  * holds its caller for one {@link CAL_REQUEST_TIMEOUT_MS} only.
  */
 function isRetryable(error: FetchBaseQueryError): boolean {
   if (error.status === "FETCH_ERROR") return true;
+  // A 5xx with a non-JSON body (a gateway HTML page) arrives as a parsing error.
+  if (error.status === "PARSING_ERROR") return error.originalStatus >= 500;
   return typeof error.status === "number" && error.status >= 500;
 }
 

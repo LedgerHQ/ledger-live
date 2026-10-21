@@ -112,8 +112,14 @@ export function remapRtkQueryError(error: FetchBaseQueryError | SerializedError)
 function isTransientError(error: FetchBaseQueryError | SerializedError): boolean {
   if (!("status" in error)) return false;
   const { status } = error;
-  if (typeof status === "number") return status >= 500 && status < 600;
+  if (typeof status === "number") return isServerError(status);
+  // A 5xx with a non-JSON body (a gateway HTML page) arrives as a parsing error.
+  if (status === "PARSING_ERROR") return isServerError(error.originalStatus);
   return status === "TIMEOUT_ERROR" || status === "FETCH_ERROR";
+}
+
+function isServerError(status: number): boolean {
+  return status >= 500 && status < 600;
 }
 
 function toErrorMessage(rawError: unknown, status: string): string {

@@ -134,6 +134,7 @@ describe("buildCryptoAssetsStore", () => {
       [{ status: "FETCH_ERROR", error: "Failed to fetch" }],
       [{ status: 500, data: {} }],
       [{ status: 503, data: {} }],
+      [{ status: "PARSING_ERROR", originalStatus: 502, data: "<html>", error: "SyntaxError" }],
     ])("returns the last known hash on transient error %p", async error => {
       const { store, dispatch } = setup();
       dispatch.mockResolvedValue({ data: "abc123", error });
@@ -147,6 +148,15 @@ describe("buildCryptoAssetsStore", () => {
         error: { status: 404, data: { message: "Currency not found" } },
       });
       await expect(store.getTokensSyncHash("ethereum")).rejects.toBeInstanceOf(LedgerAPI4xx);
+    });
+
+    it("throws on a malformed 200 even when a hash is known", async () => {
+      const { store, dispatch } = setup();
+      dispatch.mockResolvedValue({
+        data: "abc123",
+        error: { status: "PARSING_ERROR", originalStatus: 200, data: "x", error: "SyntaxError" },
+      });
+      await expect(store.getTokensSyncHash("ethereum")).rejects.toThrow("SyntaxError");
     });
 
     it("throws on a transient error when no hash is known", async () => {

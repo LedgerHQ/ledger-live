@@ -209,6 +209,22 @@ describe("calBaseQuery", () => {
       expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
 
+    it("retries a 5xx with a body that is not json", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(() =>
+        Promise.resolve(
+          new Response("<html>Bad Gateway</html>", {
+            status: 502,
+            headers: { "content-type": "application/json" },
+          }),
+        ),
+      );
+
+      const result = await probe();
+
+      expect(result.error).toMatchObject({ status: "PARSING_ERROR", originalStatus: 502 });
+      expect(fetchSpy).toHaveBeenCalledTimes(MAX_RETRIES + 1);
+    });
+
     it("does not retry a body that is not json", async () => {
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
