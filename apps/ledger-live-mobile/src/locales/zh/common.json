@@ -632,6 +632,10 @@
       "title" : "出了点问题 (Error #17)",
       "description" : "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "CosmosMemoTooLong" : {
+      "title" : "备注长度超出最大限制",
+      "description" : "您的的备注长度为 {{memoLength}} 字节，但允许的最大长度为 {{maxLength}} 字节。请缩短备注长度。"
+    },
     "DeviceAppVerifyNotSupported" : {
       "title" : "打开“我的 Ledger”更新此应用程序",
       "description" : "不支持该应用程序的验证。"
@@ -1163,6 +1167,10 @@
       "title" : "交易被设备端拒绝",
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "TransferOfferExpiredError" : {
+      "title" : "此报价已过期",
+      "description" : "该转账报价在被接受前已过期。请让发送方重新发送。"
+    },
     "TransportError" : {
       "title" : "出错了。请重新连接您的设备。",
       "description" : "{{message}} 请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -1449,6 +1457,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "质押已暂停，直至下一个奖励周期。",
+      "description" : "Stacks 网络在准备下一个奖励周期期间不接受新的质押。质押将在 {{blocksUntilReopen}} 个比特币区块后重新开放。"
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo 格式错误"
@@ -1852,6 +1864,27 @@
     "ICPIncreaseStakeWarning" : {
       "title" : "此操作会增加已锁定的质押。",
       "description" : "该数额将并入该神经元现有的质押中，并遵循其解锁延迟，因此在神经元解锁前，这部分资金无法动用。"
+    }
+  },
+  "accountDetailSettings" : {
+    "title" : "账户设置",
+    "menu" : {
+      "changeName" : "更改名称",
+      "viewAdvancedLogs" : "查看高级日志",
+      "removeAccount" : "从资产组合中删除账户"
+    },
+    "advancedLogs" : {
+      "title" : "高级日志",
+      "derivationTip" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
+      "synchronised" : "已同步 {{date}}",
+      "copy" : "复制日志",
+      "copied" : "已复制"
+    },
+    "remove" : {
+      "title" : "移除账号？",
+      "description" : "与此账户关联的资产将不再显示在您的资产组合中。您在区块链上的资产不受影响。",
+      "confirm" : "是的，移除。",
+      "cancel" : "保留"
     }
   },
   "crash" : {
@@ -2525,6 +2558,35 @@
       "progress" : "安装应用程序时，请停留在 Ledger Wallet 中。",
       "skippedInfo" : "一些应用程序无法使用。适用于 {{ productName }} 的应用程序有待开发。",
       "skipped" : "暂不适用于 {{ productName }}"
+    }
+  },
+  "deviceOnboarding" : {
+    "checks" : {
+      "close" : "关闭",
+      "synchronizing" : {
+        "title" : "正在同步..."
+      },
+      "idle" : {
+        "title" : "检查您的设备",
+        "description" : "让我们确认您的 Ledger 设备为正品且已更新至最新版本。",
+        "cta" : "检查我的设备"
+      },
+      "checking" : {
+        "title" : "检查您的设备",
+        "description" : "正在确认您的 Ledger 签署设备可安全使用且已更新至最新版本。",
+        "cta" : "正在检查…"
+      },
+      "succeeded" : {
+        "title" : "设备为正品，且已更新至最新版本",
+        "cta" : "继续"
+      }
+    },
+    "syncOffer" : {
+      "title" : "同步您的钱包",
+      "description" : "在您换用手机或使用电脑时，保持您的余额和资产组合同步。",
+      "learnMore" : "了解更多",
+      "activate" : "激活",
+      "skip" : "暂时跳过"
     }
   },
   "onboarding" : {
@@ -3546,8 +3608,6 @@
       "buy" : "买入",
       "connect" : "连接",
       "buyLedger" : "购买 Ledger 设备",
-      "receive" : "接收",
-      "send" : "发送",
       "transferDrawer" : {
         "title" : "转移",
         "receiveCrypto" : "通过加密货币地址接收",
@@ -4238,7 +4298,7 @@
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
-        "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
+        "desc" : "获取以太坊、多边形、币安智能链、雪崩链和以太坊经典的交易通知"
       },
       "totalMarketCap" : {
         "title" : "总市值",
@@ -4376,6 +4436,9 @@
       "featureFlagsRestoreAll" : "恢复所有标志值",
       "featureFlagsTabAll" : "全部",
       "featureFlagsTabGroups" : "分组",
+      "contentAbTests" : {
+        "invalidPayload" : "有效负载无效。\"enabled\" 必须为布尔值，且 \"copy\" 必须将键映射至字符串。"
+      },
       "firebaseProject" : "此版本支持的 Firebase 项目：",
       "showBannerDesc" : "标志被覆盖时显示横幅",
       "bannerTitle" : "已本地覆盖的标志",
@@ -5345,6 +5408,35 @@
             "CUSTOM" : "自定义币种选择"
           }
         }
+      },
+      "feePayment" : {
+        "insufficientFunds" : "您没有足够的 {{feeCurrency}} 支付数额以及 {{provider}} 能量租赁费用。"
+      },
+      "sponsoredRentSignature" : {
+        "crafting" : "正在准备能量租赁…",
+        "strategy" : "能量租赁 - {{provider}}",
+        "fee" : "租赁费用：{{amount}}",
+        "cancelled" : {
+          "title" : "能量租赁已取消",
+          "description" : "您已拒绝支付租赁费用。您的资金不会受到影响。"
+        }
+      },
+      "sponsoredPolling" : {
+        "title" : "正在等待能量交付",
+        "waiting" : "{{provider}} 正在交付租用的能量。此过程可能需要片刻。",
+        "elapsed" : "已用时间：{{time}}"
+      },
+      "sponsoredFailure" : {
+        "rentPayment" : "费用支付失败——您的资金未被转移。",
+        "rentPaymentReportedFailed" : "{{provider}} 报告费用支付失败，但其可能仍会通过。",
+        "priceIncreased" : "能量租赁价格已上涨至 {{fee}}。您的资金未被转移。",
+        "deliveryFailed" : "能量未交付。您的租赁费付款已发送——请联系 {{provider}} 客服申请退款{{txidSuffix}}。",
+        "transfer" : "您的转账失败，但已租用的能量仍然有效——您可以重试该转账。",
+        "retryLocked" : "为避免您重复支付租赁费用，您可以在 {{time}} 后重试。",
+        "retry" : "重试",
+        "retryPaying" : "重新支付并重试",
+        "acceptPrice" : "接受新价格",
+        "cancel" : "取消"
       }
     },
     "pendingTxWarning" : "您有待处理的传入交易。请注意，待处理交易可以撤销。",
@@ -5748,6 +5840,110 @@
     },
     "chooseAccountToFund" : "选择账户用于添加资金"
   },
+  "connectNewDevice" : {
+    "discovering" : {
+      "title" : "正在寻找您的 Ledger 设备",
+      "description" : {
+        "bluetooth" : "确保您的 Ledger 设备已解锁且靠近您想要配对的手机。",
+        "bluetoothAndUsb" : "解锁您的 Ledger 并使用蓝牙或 USB 数据线将其连接到您的手机。",
+        "usb" : "解锁您的 Ledger 并使用 USB 数据线将其连接到您的手机。"
+      },
+      "select" : "连接",
+      "selectAccessibilityLabel" : "连接 {{deviceName}}",
+      "deviceNotFound" : "我看不到我的设备"
+    },
+    "connecting" : {
+      "bluetooth" : {
+        "title" : "正在和 {{deviceName}} 配对",
+        "description" : "如果有提示，请在您的 {{productName}} 上确认代码"
+      },
+      "usb" : {
+        "title" : "正在连接到 {{deviceName}}"
+      }
+    },
+    "connected" : {
+      "bluetooth" : {
+        "title" : "您的设备已配对"
+      },
+      "usb" : {
+        "title" : "您的设备已连接"
+      }
+    }
+  },
+  "osUpdates" : {
+    "actions" : {
+      "retry" : "重试",
+      "cancel" : "取消",
+      "close" : "关闭"
+    },
+    "closeConfirmation" : {
+      "title" : "正在更新操作系统",
+      "description" : "如果您现在取消更新，您的设置和应用程序可能无法正确恢复。",
+      "continue" : "继续操作系统更新",
+      "cancel" : "取消操作系统更新"
+    },
+    "whatsNew" : {
+      "productName" : "LedgerOS™",
+      "version" : "版本 {{version}}",
+      "banner" : "确保将您的 24 词秘密恢复短语写在恢复表中并妥善保管，以备不时之需。",
+      "title" : "此操作系统更新包含哪些内容？",
+      "start" : "开始更新"
+    },
+    "preparing" : {
+      "title" : "正在准备安装"
+    },
+    "progress" : {
+      "updatingTitle" : "正在更新您的 {{productName}}",
+      "restoringTitle" : "正在恢复您的应用程序和设置",
+      "updateCount" : "更新 {{index}}/{{count}}",
+      "description" : "在更新完成之前，请保持您的设备处于连接状态并置于附近。"
+    },
+    "applied" : {
+      "title" : "更新完成",
+      "description" : "您的 {{productName}} 已是最新版本。"
+    },
+    "restored" : {
+      "title" : "备份已恢复",
+      "description" : "您的应用程序和设置已恢复到您的 {{productName}} 上。"
+    },
+    "continueOnDevice" : {
+      "title" : "继续在您的 {{productName}} 上操作",
+      "description" : "按照安全屏幕上的说明进行操作。"
+    },
+    "unlockDevice" : {
+      "title" : "解锁您的 {{productName}}"
+    },
+    "deviceDisconnected" : {
+      "title" : "设备已断开",
+      "description" : "重新连接您的 Ledger 设备以继续。更新将自动恢复。"
+    },
+    "unexpectedError" : {
+      "title" : "出错了",
+      "description" : "操作系统更新无法继续。如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "batteryTooLow" : {
+      "title" : "为您的 {{productName}} 充电",
+      "description" : "您的设备电量为 {{percentage}}%。请连接电源或将其充电至 20% 以上以继续。"
+    },
+    "backupSelection" : {
+      "title" : "使用您现有的备份？",
+      "description" : "您最近的备份已超过 24 小时。您可以继续使用，或创建一个新的将其替换。Security Key 安全密钥凭据是备份的一部分。",
+      "useExisting" : "使用现有备份",
+      "createNew" : "创建新备份"
+    },
+    "secureConnectionRefused" : {
+      "title" : "安全连接被拒绝",
+      "description" : "您拒绝了设备上的安全连接。重试以继续。"
+    },
+    "installFirmwareRefused" : {
+      "title" : "已拒绝安装",
+      "description" : "已在您的设备上拒绝安装，因此更新无法继续。"
+    },
+    "outOfMemory" : {
+      "title" : "您的设备上空间不足",
+      "description" : "您的设备内存不足，无法继续。请释放空间并重试。"
+    }
+  },
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
@@ -5936,7 +6132,12 @@
               }
             },
             "bluetoothStateUnknownCheckOnly" : {
-              "title" : "正在检查蓝牙……"
+              "title" : "蓝牙未响应",
+              "description" : "无法检查蓝牙是否已开启。请等待几秒钟，然后重试。如果此情况持续，请关闭蓝牙并重新开启。",
+              "cta" : {
+                "retry" : "重试",
+                "ignore" : "改用 USB 继续"
+              }
             },
             "bluetoothUnsupported" : {
               "title" : "不支持蓝牙",
@@ -8500,6 +8701,73 @@
       }
     }
   },
+  "stacks" : {
+    "stake" : {
+      "stepperHeader" : {
+        "pool" : "质押池",
+        "amount" : "数额",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "pool" : {
+        "description" : "进入您想将 STX 委托给的池地址，以及要将其锁定多少个奖励周期。",
+        "poolAddressLabel" : "池地址",
+        "poolAddressError" : "进入资金池合约地址，例如 SP….pool-name",
+        "numCyclesLabel" : "周期数",
+        "numCyclesError" : "请进入 {{min}}–{{max}} 之间的整数周期数"
+      },
+      "amount" : {
+        "disclaimer" : "您的 STX 将被锁定，直到质押池将其释放。",
+        "pool" : "质押池",
+        "numCycles" : "周期数",
+        "available" : "可用"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "您已成功质押资产",
+          "description" : "该交易一经区块链确认，就会更新您的账户余额。"
+        }
+      }
+    },
+    "unstake" : {
+      "title" : "解除质押",
+      "stepperHeader" : {
+        "summary" : "解除质押",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "summary" : {
+        "info" : "解除质押会缩短您的锁定周期。您的 STX 将在该缩短的期间结束时释放，而非立即释放。",
+        "pool" : "质押池",
+        "noPosition" : "该账户没有活跃的质押仓位可供解除质押。"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "已提交解除质押",
+          "description" : "您的 STX 解除委托已成功广播。"
+        }
+      }
+    },
+    "account" : {
+      "staked" : "已质押",
+      "unlockCycle" : "解锁周期"
+    },
+    "info" : {
+      "available" : {
+        "title" : "可用",
+        "description" : "您可以花费或质押的 STX 数额。"
+      },
+      "staked" : {
+        "title" : "已质押",
+        "description" : "已委托至您的质押池并由 pox-5 锁定的 STX 数额。"
+      },
+      "unlockCycle" : {
+        "title" : "解锁周期",
+        "description" : "释放您质押的 STX 的奖励周期。"
+      }
+    }
+  },
   "sui" : {
     "info" : {
       "estimatedReward" : "已赚取的奖励",
@@ -10148,6 +10416,20 @@
       }
     }
   },
+  "accountDetail" : {
+    "assets" : {
+      "title" : "资产"
+    },
+    "transactions" : {
+      "title" : "交易"
+    },
+    "editName" : {
+      "title" : "修改名称",
+      "description" : "为此地址命名以方便管理（例如：{{ticker}}-Trading、{{ticker}}-DeFi）。",
+      "label" : "地址名称",
+      "submit" : "修改名称"
+    }
+  },
   "assetDetail" : {
     "balanceGraph" : {
       "marketPrice" : "市场价格",
@@ -10337,6 +10619,7 @@
     }
   },
   "largeMover" : {
+    "coinPosition" : "{{position}}/{{total}}",
     "info" : "信息",
     "marketCap" : "市值",
     "volume" : "交易量（24 小时）",
@@ -11232,13 +11515,16 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
-      "backup" : "备份",
       "help" : "帮助",
       "referral" : "推荐"
     },
+    "walletBackups" : {
+      "title" : "钱包备份",
+      "description" : "别失去对您资产的访问权限。"
+    },
     "contacts" : {
       "title" : "联系人",
-      "description" : "管理您的联系人"
+      "description" : "管理您的联系人。"
     },
     "backupHub" : {
       "title" : "秘密恢复短语备份",
@@ -11537,6 +11823,9 @@
         "unbondedAmount" : "已解除质押的数额"
       }
     },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "领取"
+    },
     "shared" : {
       "sponsoredByProvable" : "由 Provable 赞助"
     }
@@ -11582,7 +11871,8 @@
     "addAddress" : "添加地址",
     "addYourAddress" : "添加您的地址",
     "searchPlaceholder" : "按名称搜索",
-    "searchNoResults" : "未找到联系人",
+    "searchNoResults" : "未找到该名称的联系人",
+    "searchNoResultsDescription" : "请尝试其他名称或拼写。",
     "addContactDrawer" : {
       "namePlaceholder" : "联系人姓名",
       "namingDisclaimer" : "为了保护隐私，请避免使用全名。使用昵称，或仅使用名字+首字母，例如：“John S.”",
@@ -11615,7 +11905,7 @@
       "continueToReview" : "继续核对",
       "invalidLabel" : "不允许使用特殊字符。",
       "duplicateLabel" : "此地址名称已用于此联系人。",
-      "labelTooLong" : "此地址名称过长。",
+      "tooLongLabel" : "此地址名称过长。",
       "privacyPolicy" : "详细了解 Ledger 的隐私政策。"
     },
     "addAddressReview" : {
@@ -11635,7 +11925,6 @@
     "detail" : {
       "meDisplayName" : "{{name}}（我）",
       "ledgerWalletAddresses" : "Ledger Wallet 地址",
-      "myAddresses" : "我的地址",
       "emptyState" : {
         "contactTitle" : "{{name}} 还没有已保存的地址",
         "meTitle" : "保存您自己的地址",
