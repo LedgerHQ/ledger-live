@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { BroadcastLockStoreFatalError } from "../errors";
+import { ExclusiveLockStoreFatalError } from "../errors";
 import { signS3Request, type S3Credentials } from "./sigv4";
 import type { LockRecord, LockStore } from "./types";
 
@@ -46,18 +46,18 @@ const parseLockRecord = (text: string): LockRecord | undefined => {
 const requiredHeader = (response: Response, name: string) => {
   const value = response.headers.get(name);
   if (!value) {
-    throw new BroadcastLockStoreFatalError(
-      `[broadcastLock] R2 response is missing the "${name}" header`,
+    throw new ExclusiveLockStoreFatalError(
+      `[exclusiveLock] R2 response is missing the "${name}" header`,
     );
   }
   return value;
 };
 
 const r2Error = async (method: string, url: URL, response: Response) => {
-  const message = `[broadcastLock] R2 ${method} ${url.pathname} failed with ${response.status}: ${(await response.text()).slice(0, 500)}`;
+  const message = `[exclusiveLock] R2 ${method} ${url.pathname} failed with ${response.status}: ${(await response.text()).slice(0, 500)}`;
   return isRetryableStatus(response.status)
     ? new Error(message)
-    : new BroadcastLockStoreFatalError(message);
+    : new ExclusiveLockStoreFatalError(message);
 };
 
 export function createR2LockStore(config: R2LockStoreConfig): LockStore {
@@ -122,16 +122,16 @@ export function createR2LockStore(config: R2LockStoreConfig): LockStore {
 
       const record = parseLockRecord(await response.text());
       if (!record) {
-        throw new BroadcastLockStoreFatalError(
-          `[broadcastLock] R2 object ${url.pathname} is not a lock record`,
+        throw new ExclusiveLockStoreFatalError(
+          `[exclusiveLock] R2 object ${url.pathname} is not a lock record`,
         );
       }
       const ageMs =
         Date.parse(requiredHeader(response, "date")) -
         Date.parse(requiredHeader(response, "last-modified"));
       if (!Number.isFinite(ageMs)) {
-        throw new BroadcastLockStoreFatalError(
-          `[broadcastLock] R2 object ${url.pathname} came with an unreadable Date or Last-Modified header`,
+        throw new ExclusiveLockStoreFatalError(
+          `[exclusiveLock] R2 object ${url.pathname} came with an unreadable Date or Last-Modified header`,
         );
       }
       return { record, etag: strongEtag(requiredHeader(response, "etag")), ageMs };

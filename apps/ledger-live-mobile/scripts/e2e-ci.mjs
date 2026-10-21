@@ -85,31 +85,31 @@ const test_android = (args, env) =>
       ${args}`.nothrow();
 
 const E2E_DIR = "e2e/mobile";
-// Mirror BROADCAST_DEFERRALS_DIR and BROADCAST_LOCK_WAITS_DIR in e2e/mobile/utils/broadcastDeferrals.ts.
-const BROADCAST_DEFERRALS_DIR = path.join(E2E_DIR, "artifacts/broadcast-deferrals");
-const BROADCAST_LOCK_WAITS_DIR = path.join(E2E_DIR, "artifacts/broadcast-lock-waits");
+// Mirror LOCK_DEFERRALS_DIR and EXCLUSIVE_LOCK_WAITS_DIR in e2e/mobile/utils/lockDeferrals.ts.
+const LOCK_DEFERRALS_DIR = path.join(E2E_DIR, "artifacts/lock-deferrals");
+const EXCLUSIVE_LOCK_WAITS_DIR = path.join(E2E_DIR, "artifacts/exclusive-lock-waits");
 
 // Loaded only to run tests: the build and bundle tasks run before the lib is built.
 const loadDeferralPasses = () =>
-  createRequire(import.meta.url)("@ledgerhq/live-e2e-shared/broadcastLock/deferralPasses");
+  createRequire(import.meta.url)("@ledgerhq/live-e2e-shared/exclusiveLock/deferralPasses");
 
 const takeDeferredSpecs = async () => {
-  const markers = await fs.readdir(BROADCAST_DEFERRALS_DIR).catch(() => []);
+  const markers = await fs.readdir(LOCK_DEFERRALS_DIR).catch(() => []);
   const specs = await Promise.all(
-    markers.map(marker => fs.readFile(path.join(BROADCAST_DEFERRALS_DIR, marker), "utf8")),
+    markers.map(marker => fs.readFile(path.join(LOCK_DEFERRALS_DIR, marker), "utf8")),
   );
-  await fs.remove(BROADCAST_DEFERRALS_DIR);
+  await fs.remove(LOCK_DEFERRALS_DIR);
   return [...new Set(specs)];
 };
 
-const takeBroadcastLockWaits = async () => {
-  const markers = await fs.readdir(BROADCAST_LOCK_WAITS_DIR).catch(() => []);
+const takeExclusiveLockWaits = async () => {
+  const markers = await fs.readdir(EXCLUSIVE_LOCK_WAITS_DIR).catch(() => []);
   const waits = await Promise.all(
     markers.map(marker =>
-      fs.readJson(path.join(BROADCAST_LOCK_WAITS_DIR, marker)).catch(() => undefined),
+      fs.readJson(path.join(EXCLUSIVE_LOCK_WAITS_DIR, marker)).catch(() => undefined),
     ),
   );
-  await fs.remove(BROADCAST_LOCK_WAITS_DIR);
+  await fs.remove(EXCLUSIVE_LOCK_WAITS_DIR);
   return new Map(waits.filter(Boolean).map(({ spec, waitedMs }) => [spec, waitedMs]));
 };
 
@@ -166,10 +166,10 @@ const foldPassOutput = async (pass, deferredSpecs, lockWaits) => {
   });
 };
 
-const testWithBroadcastDeferrals = async runTests => {
-  const { broadcastDeferralPasses, runWithDeferralPasses } = loadDeferralPasses();
-  await fs.remove(BROADCAST_DEFERRALS_DIR);
-  await fs.remove(BROADCAST_LOCK_WAITS_DIR);
+const testWithLockDeferrals = async runTests => {
+  const { lockDeferralPasses, runWithDeferralPasses } = loadDeferralPasses();
+  await fs.remove(LOCK_DEFERRALS_DIR);
+  await fs.remove(EXCLUSIVE_LOCK_WAITS_DIR);
   const runPass = async ({ number, mayDefer, items, env }) => {
     if (items) {
       console.log(`Pass ${number}: ${items.length} spec(s) whose broadcast accounts were busy`);
@@ -180,13 +180,13 @@ const testWithBroadcastDeferrals = async runTests => {
       ...env,
     });
     const deferred = mayDefer ? await takeDeferredSpecs() : [];
-    const lockWaits = await takeBroadcastLockWaits();
+    const lockWaits = await takeExclusiveLockWaits();
     if (outputFile) await foldPassOutput(number, deferred, lockWaits);
     return { exitCode: result.exitCode, deferred };
   };
   process.exitCode = await runWithDeferralPasses(
     runPass,
-    testType === "e2e" ? broadcastDeferralPasses() : 0,
+    testType === "e2e" ? lockDeferralPasses() : 0,
   );
 };
 
@@ -194,12 +194,12 @@ const getTasksFrom = {
   ios: {
     build: build_ios,
     bundle: async () => (cache ? await bundle_ios_with_cache() : await bundle_ios()),
-    test: () => testWithBroadcastDeferrals(test_ios),
+    test: () => testWithLockDeferrals(test_ios),
   },
   android: {
     build: build_android,
     bundle: async () => await bundle_android(),
-    test: () => testWithBroadcastDeferrals(test_android),
+    test: () => testWithLockDeferrals(test_android),
   },
 };
 

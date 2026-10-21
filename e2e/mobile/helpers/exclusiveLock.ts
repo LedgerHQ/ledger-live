@@ -1,23 +1,23 @@
 import path from "node:path";
 import {
-  acquireAccountBroadcastLock,
-  BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS,
-  BROADCAST_LOCK_NESTED_DRAIN_MS,
-  refuseAccountBroadcastLocks,
-  takeBroadcastLockWaitedMs,
-  tryAcquireAccountBroadcastLock,
+  acquireExclusiveLock,
+  EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS,
+  EXCLUSIVE_LOCK_NESTED_DRAIN_MS,
+  refuseExclusiveLocks,
+  takeExclusiveLockWaitedMs,
+  tryAcquireExclusiveLock,
   type AbandonableLease,
   type Lease,
   type LockTarget,
   type SharedResource,
-} from "@ledgerhq/live-e2e-shared/broadcastLock";
+} from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { isAppBroadcastDisabled } from "@e2e/helpers/commonHelpers";
-import { SPEC_BROADCAST_LOCK, type SpecBroadcastLock } from "@e2e/utils/broadcastDeferrals";
+import { SPEC_EXCLUSIVE_LOCK, type SpecExclusiveLock } from "@e2e/utils/lockDeferrals";
 import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 
-export const BROADCAST_LOCK_ACQUIRE_HOOK_TIMEOUT = BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS + 2 * 60_000;
-export const BROADCAST_LOCK_RELEASE_HOOK_TIMEOUT = BROADCAST_LOCK_NESTED_DRAIN_MS + 60_000;
+export const EXCLUSIVE_LOCK_ACQUIRE_HOOK_TIMEOUT = EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS + 2 * 60_000;
+export const EXCLUSIVE_LOCK_RELEASE_HOOK_TIMEOUT = EXCLUSIVE_LOCK_NESTED_DRAIN_MS + 60_000;
 
 const declaredAccounts: Account[] = [];
 const declaredCliAccounts: Account[] = [];
@@ -80,10 +80,10 @@ const resolvePaytabCardSession = async () => {
   if (isPaytabSpec()) await paytabCardSession();
 };
 
-async function tryLockDeclaredBroadcastAccounts(): Promise<boolean> {
+async function tryLockDeclaredTargets(): Promise<boolean> {
   const targets = targetsToLock();
   if (targets.length === 0 || lease) return true;
-  const acquired = await tryAcquireAccountBroadcastLock(targets, holderLabel(), lockOptions);
+  const acquired = await tryAcquireExclusiveLock(targets, holderLabel(), lockOptions);
   if (!acquired) return false;
   try {
     await resolvePaytabCardSession();
@@ -95,17 +95,17 @@ async function tryLockDeclaredBroadcastAccounts(): Promise<boolean> {
   return true;
 }
 
-export async function lockDeclaredBroadcastAccounts(): Promise<void> {
+export async function lockDeclaredTargets(): Promise<void> {
   const targets = targetsToLock();
   if (targets.length === 0 || lease) return;
   await resolvePaytabCardSession();
   const label = holderLabel();
   let acquired: AbandonableLease;
   try {
-    acquired = await acquireAccountBroadcastLock(targets, label, lockOptions);
+    acquired = await acquireExclusiveLock(targets, label, lockOptions);
   } catch (error) {
     if (!specFinished) {
-      lease = refuseAccountBroadcastLocks(targets, `could not be locked by ${label}`);
+      lease = refuseExclusiveLocks(targets, `could not be locked by ${label}`);
     }
     throw error;
   }
@@ -116,16 +116,16 @@ export async function lockDeclaredBroadcastAccounts(): Promise<void> {
   lease = specLease(acquired);
 }
 
-export async function releaseDeclaredBroadcastAccounts(): Promise<void> {
+export async function releaseDeclaredTargets(): Promise<void> {
   specFinished = true;
   const held = lease;
   lease = undefined;
   await held?.release();
 }
 
-const specBroadcastLock: SpecBroadcastLock = {
-  tryLock: tryLockDeclaredBroadcastAccounts,
-  release: releaseDeclaredBroadcastAccounts,
-  takeWaitedMs: takeBroadcastLockWaitedMs,
+const specExclusiveLock: SpecExclusiveLock = {
+  tryLock: tryLockDeclaredTargets,
+  release: releaseDeclaredTargets,
+  takeWaitedMs: takeExclusiveLockWaitedMs,
 };
-Reflect.set(globalThis, SPEC_BROADCAST_LOCK, specBroadcastLock);
+Reflect.set(globalThis, SPEC_EXCLUSIVE_LOCK, specExclusiveLock);

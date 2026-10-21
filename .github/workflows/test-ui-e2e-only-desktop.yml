@@ -15,7 +15,7 @@ on:
     # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
     # broadcast from the shared QAA accounts on the same day.
     # The device rotates per weekday (see WEEKDAY_DEVICE in prepare-devices).
-    # The cron expression below is matched verbatim in the concurrency group and the 
+    # The cron expression below is matched verbatim in the concurrency group and the
     # E2E_BROADCAST_ENABLED env — keep all three in sync.
     - cron: "0 1 * * 1"
     - cron: "0 1 * * 2-5"
@@ -101,13 +101,13 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
-      broadcast_deferral_passes:
-        description: "Passes that move a test whose broadcast lock is busy to the next one (default 2)"
+      lock_deferral_passes:
+        description: "Passes that move a test whose exclusive lock is busy to the next one (default 2)"
         required: false
         type: string
         default: ""
-      broadcast_lock:
-        description: "Broadcast lock: remote (R2), or local if R2 is down"
+      exclusive_lock:
+        description: "Exclusive lock: remote (R2), or local if R2 is down"
         required: false
         type: choice
         options:
@@ -387,7 +387,7 @@ jobs:
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
-          BROADCAST_LOCK: ${{ inputs.broadcast_lock || 'remote' }}
+          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -412,7 +412,7 @@ jobs:
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-            echo "- **Broadcast lock:** $BROADCAST_LOCK"
+            echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
@@ -460,7 +460,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
-        # Every run can also wait up to 30 minutes for a busy broadcast lock: without broadcast, tests
+        # Every run can also wait up to 30 minutes for a busy exclusive lock: without broadcast, tests
         # still lock the Pay card and the accounts CLI token approvals broadcast from.
         timeout-minutes: 70
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
@@ -479,12 +479,12 @@ jobs:
           BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
-          E2E_BROADCAST_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          E2E_BROADCAST_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
-          E2E_BROADCAST_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          E2E_BROADCAST_LOCK_DEFERRAL_PASSES: ${{ inputs.broadcast_deferral_passes }}
-          E2E_BROADCAST_LOCK_MODE: ${{ inputs.broadcast_lock }}
+          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -495,7 +495,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
-            broadcast_lock=${{ inputs.broadcast_lock || 'remote' }}
+            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
             team=${{ inputs.team || 'all' }}

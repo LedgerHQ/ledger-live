@@ -76,11 +76,11 @@ Tests MUST NOT add retry loops, manual polling, or a second tap to hide an inter
 
 ### Tests MUST declare what they broadcast from or change
 
-A test declares the QAA account it broadcasts from, with the app or with a CLI command such as a token approval. It also declares shared state it changes, such as the Pay card. No test on another worker or CI machine then uses them at the same time.
+A test MUST declare the QAA account it broadcasts from, with the app or with a CLI command such as a token approval. It MUST also declare shared state it changes, such as the Pay card. No test on another worker or CI machine then uses them at the same time.
 
-Declare the debited account, e.g. `accountToDebit` or `delegation.account`, not the credited one. A token account locks its parent, since both spend from the same address. A test that always disables app broadcast declares no app account.
+It MUST declare the debited account, e.g. `accountToDebit` or `delegation.account`, not the credited one. A token account locks its parent, since both spend from the same address. A test that always disables app broadcast declares no app account.
 
-See [Desktop](../desktop/docs/e2e-desktop-conventions.md#broadcast-lock-implementation) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#broadcast-lock-implementation) for how each client declares them, and [Broadcast lock](broadcast-lock.md) for how the lock works and how to read its logs.
+See [Desktop](../desktop/docs/e2e-desktop-conventions.md#exclusive-lock-implementation) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#exclusive-lock-implementation) for how each client declares them, and [Exclusive lock](exclusive-lock.md) for how the lock works and how to read its logs.
 
 ### Paytab specs MUST live under paytab
 

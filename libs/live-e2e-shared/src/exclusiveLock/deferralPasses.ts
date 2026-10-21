@@ -1,23 +1,23 @@
-/** How many passes may move a test whose broadcast lock is busy on to the next pass. */
-const BROADCAST_DEFERRAL_PASSES_ENV = "E2E_BROADCAST_LOCK_DEFERRAL_PASSES";
+/** How many passes may move a test whose exclusive lock is busy on to the next pass. */
+const LOCK_DEFERRAL_PASSES_ENV = "E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES";
 
 /** "1" on the passes that may defer; the pass after them waits for busy locks instead. */
-const BROADCAST_LOCK_DEFER_ENV = "E2E_BROADCAST_LOCK_DEFER";
+const EXCLUSIVE_LOCK_DEFER_ENV = "E2E_EXCLUSIVE_LOCK_DEFER";
 
 const DEFAULT_DEFERRAL_PASSES = 2;
 
 type Env = Readonly<Record<string, string | undefined>>;
 
-export const isBroadcastLockDeferralPass = (env: Env = process.env): boolean =>
-  env[BROADCAST_LOCK_DEFER_ENV] === "1";
+export const isExclusiveLockDeferralPass = (env: Env = process.env): boolean =>
+  env[EXCLUSIVE_LOCK_DEFER_ENV] === "1";
 
-export function broadcastDeferralPasses(env: Env = process.env): number {
-  const configured = env[BROADCAST_DEFERRAL_PASSES_ENV]?.trim();
+export function lockDeferralPasses(env: Env = process.env): number {
+  const configured = env[LOCK_DEFERRAL_PASSES_ENV]?.trim();
   if (!configured) return DEFAULT_DEFERRAL_PASSES;
   const passes = Number(configured);
   if (!Number.isInteger(passes) || passes < 0) {
     throw new Error(
-      `${BROADCAST_DEFERRAL_PASSES_ENV} must be a whole number of passes, 0 or more, not "${configured}"`,
+      `${LOCK_DEFERRAL_PASSES_ENV} must be a whole number of passes, 0 or more, not "${configured}"`,
     );
   }
   return passes;
@@ -38,13 +38,13 @@ export type DeferralPassResult<Item> = {
 };
 
 /**
- * Runs everything once, then runs again what each pass deferred because its broadcast lock was
+ * Runs everything once, then runs again what each pass deferred because its exclusive lock was
  * busy, until nothing is deferred. After `deferralPasses` deferring passes, the last one waits for
  * busy locks instead. Resolves to the first non-zero exit code of the passes.
  */
 export function runWithDeferralPasses<Item>(
   runPass: RunPass<Item>,
-  deferralPasses: number = broadcastDeferralPasses(),
+  deferralPasses: number = lockDeferralPasses(),
 ): Promise<number> {
   return runPassesFrom(runPass, deferralPasses, 1, undefined);
 }
@@ -62,7 +62,7 @@ async function runPassesFrom<Item>(
     number,
     mayDefer,
     items,
-    env: { [BROADCAST_LOCK_DEFER_ENV]: mayDefer ? "1" : "0" },
+    env: { [EXCLUSIVE_LOCK_DEFER_ENV]: mayDefer ? "1" : "0" },
   });
   if (!mayDefer || deferred.length === 0) return exitCode;
   const laterExitCode = await runPassesFrom(runPass, deferralPasses, number + 1, deferred);

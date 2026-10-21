@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Runs `playwright test` with the given arguments, then runs again, in later passes, the tests
- * that were skipped because their broadcast locks were busy (see tests/utils/broadcastLock.ts).
+ * that were skipped because their exclusive locks were busy (see tests/utils/exclusiveLock.ts).
  * Ends with the passed/failed/flaky/skipped counts of all passes, which CI reads.
  */
 import { spawnSync } from "node:child_process";
@@ -12,12 +12,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
-const { runWithDeferralPasses } = require("@ledgerhq/live-e2e-shared/broadcastLock/deferralPasses");
+const { runWithDeferralPasses } = require("@ledgerhq/live-e2e-shared/exclusiveLock/deferralPasses");
 
-// Mirror tests/utils/broadcastDeferrals.ts.
-const BROADCAST_DEFERRAL_REPORT_ENV = "E2E_BROADCAST_DEFERRAL_REPORT";
-const BROADCAST_LOCK_DEFERRED_REASON =
-  "[broadcastLock] moved to a later pass: its broadcast locks are busy";
+// Mirror tests/utils/lockDeferrals.ts.
+const LOCK_DEFERRAL_REPORT_ENV = "E2E_LOCK_DEFERRAL_REPORT";
+const EXCLUSIVE_LOCK_DEFERRED_REASON =
+  "[exclusiveLock] moved to a later pass: its exclusive locks are busy";
 
 const ALLURE_RESULTS_DIR = "allure-results";
 const OUTPUT_OPTION = "--output";
@@ -36,7 +36,7 @@ const OPTIONS_WITH_A_SEPARATE_VALUE = new Set(["--shard", OUTPUT_OPTION, LAST_RU
 
 const args = process.argv.slice(2);
 const DEFERRAL_REPORTER = fileURLToPath(
-  new URL("../tests/reporters/broadcastDeferralReporter.ts", import.meta.url),
+  new URL("../tests/reporters/lockDeferralReporter.ts", import.meta.url),
 );
 // A --reporter option replaces the configured reporters, this one included.
 const testArgs = args.map((arg, index) =>
@@ -71,7 +71,7 @@ const dropDeferredAllureResults = async () => {
       const result = await readJson(resultPath).catch(() => undefined);
       const deferred =
         result?.status === "skipped" &&
-        result.statusDetails?.message === BROADCAST_LOCK_DEFERRED_REASON;
+        result.statusDetails?.message === EXCLUSIVE_LOCK_DEFERRED_REASON;
       if (deferred) await rm(resultPath, { force: true });
     }),
   );
@@ -123,7 +123,7 @@ const runPasses = async () => {
     let passArgs = testArgs;
     const passEnv = { ...process.env, ...env };
     if (items) {
-      console.log(`\nPass ${number}: ${items.length} test(s) whose broadcast locks were busy`);
+      console.log(`\nPass ${number}: ${items.length} test(s) whose exclusive locks were busy`);
       const testList = path.join(workDir, `pass-${number}.tests`);
       await writeFile(testList, items.flatMap(item => item.testListLines).join("\n"));
       passArgs = [...laterPassArgs, "--test-list", testList];
@@ -136,7 +136,7 @@ const runPasses = async () => {
     const reportFile = path.join(workDir, `pass-${number}.json`);
     const exitCode = runPlaywright(passArgs, {
       ...passEnv,
-      [BROADCAST_DEFERRAL_REPORT_ENV]: reportFile,
+      [LOCK_DEFERRAL_REPORT_ENV]: reportFile,
     });
     await dropDeferredAllureResults();
     const report = await readJson(reportFile).catch(() => undefined);

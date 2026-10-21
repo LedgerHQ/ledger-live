@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import { exclusiveLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 // Shared modal/test config for the Tezos staking specs. DISABLE_TRANSACTION_BROADCAST is off by
 // default (CI never broadcasts); set it to "0" locally to broadcast + confirm the op on-chain.

@@ -2,7 +2,7 @@ import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { declareBroadcastAccounts } from "@e2e/helpers/broadcastLock";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { verifyTezosStakingOperationDetails } from "@e2e/models/stake";
 import { FF_TEZOS_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
 

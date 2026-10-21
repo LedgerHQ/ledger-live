@@ -77,7 +77,7 @@ export async function ensureTokenApproval(
   if (!needsTokenAllowance(fromAccount, provider)) return;
   const approvalNeeded = await isTokenApprovalExpected(fromAccount, provider, minAmount);
   if (!approvalNeeded) return;
-    
+
   // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
   await revokeTokenApproval(fromAccount, provider);
   await withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {

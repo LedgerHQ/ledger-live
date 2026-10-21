@@ -26,7 +26,7 @@ import type { Application } from "tests/page";
 import type { DelegateTxType } from "tests/page/drawer/delegate.drawer";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
-import { exclusiveLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const DISABLE_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "1" };
 // `getEnv` does not read process.env in the test runner, so it would always return the default here.

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  broadcastDeferralPasses,
-  isBroadcastLockDeferralPass,
+  lockDeferralPasses,
+  isExclusiveLockDeferralPass,
   runWithDeferralPasses,
   type DeferralPass,
 } from "./deferralPasses";
@@ -20,25 +20,25 @@ const recordPasses = (deferredByPass: string[][], exitCodes: number[] = []) => {
 };
 
 test("defers for two passes unless told otherwise", () => {
-  assert.equal(broadcastDeferralPasses({}), 2);
-  assert.equal(broadcastDeferralPasses({ E2E_BROADCAST_LOCK_DEFERRAL_PASSES: " " }), 2);
-  assert.equal(broadcastDeferralPasses({ E2E_BROADCAST_LOCK_DEFERRAL_PASSES: "5" }), 5);
-  assert.equal(broadcastDeferralPasses({ E2E_BROADCAST_LOCK_DEFERRAL_PASSES: "0" }), 0);
+  assert.equal(lockDeferralPasses({}), 2);
+  assert.equal(lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: " " }), 2);
+  assert.equal(lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: "5" }), 5);
+  assert.equal(lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: "0" }), 0);
 });
 
 test("refuses a number of deferral passes that is not a whole number", () => {
   for (const configured of ["-1", "1.5", "two"]) {
     assert.throws(
-      () => broadcastDeferralPasses({ E2E_BROADCAST_LOCK_DEFERRAL_PASSES: configured }),
-      /E2E_BROADCAST_LOCK_DEFERRAL_PASSES must be a whole number/,
+      () => lockDeferralPasses({ E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: configured }),
+      /E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES must be a whole number/,
     );
   }
 });
 
 test("reads a deferring pass from the environment the runner sets", () => {
-  assert.equal(isBroadcastLockDeferralPass({ E2E_BROADCAST_LOCK_DEFER: "1" }), true);
-  assert.equal(isBroadcastLockDeferralPass({ E2E_BROADCAST_LOCK_DEFER: "0" }), false);
-  assert.equal(isBroadcastLockDeferralPass({}), false);
+  assert.equal(isExclusiveLockDeferralPass({ E2E_EXCLUSIVE_LOCK_DEFER: "1" }), true);
+  assert.equal(isExclusiveLockDeferralPass({ E2E_EXCLUSIVE_LOCK_DEFER: "0" }), false);
+  assert.equal(isExclusiveLockDeferralPass({}), false);
 });
 
 test("runs a single pass when nothing is deferred", async () => {
@@ -47,7 +47,7 @@ test("runs a single pass when nothing is deferred", async () => {
   assert.equal(await runWithDeferralPasses(runPass, 2), 0);
   assert.deepEqual(
     passes.map(({ number, mayDefer, items, env }) => ({ number, mayDefer, items, env })),
-    [{ number: 1, mayDefer: true, items: undefined, env: { E2E_BROADCAST_LOCK_DEFER: "1" } }],
+    [{ number: 1, mayDefer: true, items: undefined, env: { E2E_EXCLUSIVE_LOCK_DEFER: "1" } }],
   );
 });
 
@@ -74,9 +74,9 @@ test("waits instead of deferring on the pass after the last deferring one", asyn
   assert.deepEqual(
     passes.map(({ number, mayDefer, env }) => ({ number, mayDefer, env })),
     [
-      { number: 1, mayDefer: true, env: { E2E_BROADCAST_LOCK_DEFER: "1" } },
-      { number: 2, mayDefer: true, env: { E2E_BROADCAST_LOCK_DEFER: "1" } },
-      { number: 3, mayDefer: false, env: { E2E_BROADCAST_LOCK_DEFER: "0" } },
+      { number: 1, mayDefer: true, env: { E2E_EXCLUSIVE_LOCK_DEFER: "1" } },
+      { number: 2, mayDefer: true, env: { E2E_EXCLUSIVE_LOCK_DEFER: "1" } },
+      { number: 3, mayDefer: false, env: { E2E_EXCLUSIVE_LOCK_DEFER: "0" } },
     ],
   );
 });

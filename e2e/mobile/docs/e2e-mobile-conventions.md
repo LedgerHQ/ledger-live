@@ -155,9 +155,9 @@ Builders are shared with desktop specs. The shape MUST be derived from the produ
 
 iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in a fixture fails on iOS only. Such characters MUST stay out of fixtures, and the test MUST say why.
 
-## Broadcast lock implementation
+## Exclusive lock implementation
 
-What a test declares: [Broadcast lock](../../docs/e2e-conventions.md#broadcast-lock). The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/broadcastLock.ts`](../helpers/broadcastLock.ts)) before its `describe`:
+What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
 
 ```ts
 export function runDelegateTest(delegation: DelegateType /* … */) {

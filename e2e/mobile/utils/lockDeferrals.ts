@@ -7,18 +7,18 @@
  * `jest.config.js` requires this file, so it must stay free of imports and of non-erasable
  * TypeScript syntax.
  */
-export const BROADCAST_DEFERRALS_DIR = "artifacts/broadcast-deferrals";
+export const LOCK_DEFERRALS_DIR = "artifacts/lock-deferrals";
 
-/** Time each spec file waited for broadcast locks, which e2e-ci.mjs keeps out of the shard timings. */
-export const BROADCAST_LOCK_WAITS_DIR = "artifacts/broadcast-lock-waits";
+/** Time each spec file waited for exclusive locks, which e2e-ci.mjs keeps out of the shard timings. */
+export const EXCLUSIVE_LOCK_WAITS_DIR = "artifacts/exclusive-lock-waits";
 
 export const deferralMarkerName = (testFilePath: string) =>
   `${Buffer.from(testFilePath).toString("base64url")}.txt`;
 
-/** Set on the spec's global by helpers/broadcastLock.ts, so the environment can reach its accounts. */
-export const SPEC_BROADCAST_LOCK = Symbol.for("@ledgerhq/e2e-mobile/specBroadcastLock");
+/** Set on the spec's global by helpers/exclusiveLock.ts, so the environment can reach its accounts. */
+export const SPEC_EXCLUSIVE_LOCK = Symbol.for("@ledgerhq/e2e-mobile/specExclusiveLock");
 
-export type SpecBroadcastLock = {
+export type SpecExclusiveLock = {
   /** Resolves to false when the spec's targets are busy. */
   readonly tryLock: () => Promise<boolean>;
   readonly release: () => Promise<void>;

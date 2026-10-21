@@ -17,7 +17,7 @@ import {
 import type { TokenApprovalOpts } from "./runCli";
 import { sleep } from "./index";
 import { setEnv } from "@shared/env";
-import { runWithAccountBroadcastLock } from "./broadcastLock";
+import { runWithExclusiveLock } from "./exclusiveLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
 import { enableBlindSigningOnNanoS } from "./speculos";
@@ -512,7 +512,7 @@ async function broadcastTokenApproval(
 ): Promise<string> {
   // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
   await enableBlindSigningOnNanoS();
-  return runWithAccountBroadcastLock(
+  return runWithExclusiveLock(
     [account],
     `token ${opts.mode}`,
     () => runTokenApprovalWithRetry(opts),

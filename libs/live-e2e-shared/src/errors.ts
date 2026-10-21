@@ -1,23 +1,23 @@
-export class BroadcastLockStoreFatalError extends Error {
-  override name = "BroadcastLockStoreFatalError";
+export class ExclusiveLockStoreFatalError extends Error {
+  override name = "ExclusiveLockStoreFatalError";
 }
 
-export class BroadcastLockStoreDownError extends Error {
-  override name = "BroadcastLockStoreDownError";
+export class ExclusiveLockStoreDownError extends Error {
+  override name = "ExclusiveLockStoreDownError";
 }
 
-export class BroadcastLockConfigError extends Error {
-  override name = "BroadcastLockConfigError";
+export class ExclusiveLockConfigError extends Error {
+  override name = "ExclusiveLockConfigError";
 }
 
-export class BroadcastLockLostError extends Error {
-  override name = "BroadcastLockLostError";
+export class ExclusiveLockLostError extends Error {
+  override name = "ExclusiveLockLostError";
 }
 
-export class BroadcastLockRefusedError extends Error {
-  override name = "BroadcastLockRefusedError";
+export class ExclusiveLockRefusedError extends Error {
+  override name = "ExclusiveLockRefusedError";
 }
 
-export class BroadcastLockBusyError extends Error {
-  override name = "BroadcastLockBusyError";
+export class ExclusiveLockBusyError extends Error {
+  override name = "ExclusiveLockBusyError";
 }

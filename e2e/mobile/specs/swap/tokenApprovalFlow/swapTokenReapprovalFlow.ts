@@ -11,7 +11,7 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 import { BroadcastFlow, shouldRunBroadcastFlow } from "@e2e/helpers/broadcastRotation";
-import { declareBroadcastAccounts } from "@e2e/helpers/broadcastLock";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 
 /** CLI revoke and partial approval, then an on-device revoke and re-approval: longer still. */
 const TOKEN_REAPPROVAL_TEST_TIMEOUT = 600_000;
