@@ -84,45 +84,47 @@ export function ChecksView({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <Box testID={checksTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
-      <NavBar density="compact">
-        {onQuit ? (
-          <NavBarTrailing>
-            <IconButton
-              appearance="no-background"
-              size="md"
-              icon={Close}
-              accessibilityLabel={closeLabel}
-              testID={checksTestIds.quit}
-              onPress={onQuit}
-            />
-          </NavBarTrailing>
-        ) : null}
-      </NavBar>
-      {illustration ? <Illustration kind={illustration} /> : null}
-      <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
-        <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
-          {title}
-        </Text>
-        {description ? (
-          <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-            {description}
+    <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <Box lx={{ flex: 1, gap: "s24" }}>
+        <NavBar density="compact">
+          {onQuit ? (
+            <NavBarTrailing>
+              <IconButton
+                appearance="no-background"
+                size="md"
+                icon={Close}
+                accessibilityLabel={closeLabel}
+                testID={checksTestIds.quit}
+                onPress={onQuit}
+              />
+            </NavBarTrailing>
+          ) : null}
+        </NavBar>
+        {illustration ? <Illustration kind={illustration} /> : null}
+        <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+          <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+            {title}
           </Text>
+          {description ? (
+            <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+              {description}
+            </Text>
+          ) : null}
+        </Box>
+        {primaryLabel ? (
+          <Box lx={{ paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
+            {primaryLoading ? (
+              <Button appearance="transparent" size="lg" isFull loading>
+                {primaryLabel}
+              </Button>
+            ) : (
+              <Button appearance="base" size="lg" isFull testID={primaryTestID} onPress={onPrimary}>
+                {primaryLabel}
+              </Button>
+            )}
+          </Box>
         ) : null}
       </Box>
-      {primaryLabel ? (
-        <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
-          {primaryLoading ? (
-            <Button appearance="transparent" size="lg" isFull loading>
-              {primaryLabel}
-            </Button>
-          ) : (
-            <Button appearance="base" size="lg" isFull testID={primaryTestID} onPress={onPrimary}>
-              {primaryLabel}
-            </Button>
-          )}
-        </Box>
-      ) : null}
       {allowSheet ? (
         <QueuedBottomSheet
           isRequestingToBeOpened
