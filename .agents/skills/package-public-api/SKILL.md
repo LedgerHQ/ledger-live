@@ -33,8 +33,9 @@ Enforced by `nx run <project>:lint:structure`
 `src/`, at any depth.
 
 The rule follows a file's role, not its name. It follows every relative `export *` from a barrel,
-through any number of files (platform variants and folder `index.*` included), and it reads every
-source file named in `package.json#exports`, under any condition. Such a module may declare
+through any number of files, resolved as the web and native bundlers do, and it reads every
+source file named in `package.json#exports`, under any condition. Test support entries (a subpath
+segment starting with `test` or `mock`) are left out. Such a module may declare
 anything, but it re-exports like a barrel: `export *` from a relative file and an optional default
 re-export only. So `export * from "./exports"` in the index with the sorting or the proxy in
 `exports.ts` fails the same way (`hidden-barrel`, `cross-package-reexport`, …).

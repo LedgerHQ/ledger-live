@@ -322,3 +322,31 @@ test("JSX closing tags do not hide the re-exports below them", () => {
     [2],
   );
 });
+
+test("a nested template holding a URL does not hide the re-exports below it", () => {
+  const source = [
+    "export const url = `outer ${`https://example.com`}`;",
+    'export { a } from "./a";',
+    'export * from "./deeper";',
+  ].join("\n");
+  assert.deepEqual(
+    checkReachedModule(source).map(v => [v.code, v.line]),
+    [["hidden-barrel", 2]],
+  );
+  assert.deepEqual(starReexportTargets(source), ["./deeper"]);
+});
+
+test("JSX text is neither a violation nor a traversal target", () => {
+  const source =
+    'export const Help = () => <pre>export * from "zod"; export * from "./deeper";</pre>;';
+  assert.deepEqual(checkReachedModule(source, {}, "Help.tsx"), []);
+  assert.deepEqual(starReexportTargets(source, "Help.tsx"), []);
+});
+
+test("a `.ts` module is parsed without JSX, so a type assertion is not a tag", () => {
+  const source = ["const n = <number>value;", 'export { a } from "./a";'].join("\n");
+  assert.deepEqual(
+    checkReachedModule(source, {}, "cast.ts").map(v => [v.code, v.line]),
+    [["hidden-barrel", 2]],
+  );
+});

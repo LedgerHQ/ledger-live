@@ -216,10 +216,6 @@ const FILE_EXCEPTIONS = {
   "features/platform/style/src/hooks/useTheme.web.ts": THIRD_PARTY_PROXY,
   "shared/analytics/src/analyticsEvents.ts": INTERNALS_REEXPORT,
   "shared/feature-flags/src/data/schema.ts": NAMED_REEXPORT,
-  "shared/ui-queued-bottom-sheet/src/testing/moduleMock.ts":
-    "TEMPORARY. A jest `moduleNameMapper` target that renames doubles into the package's names, " +
-    "so it picks names by design. Exit condition: the doubles are declared under their public " +
-    "names in this file instead of re-exported, then delete this entry.",
 };
 
 module.exports = { COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, PACKAGE_EXCEPTIONS };

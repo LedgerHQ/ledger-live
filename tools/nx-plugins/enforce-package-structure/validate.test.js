@@ -229,7 +229,7 @@ test("every source file in package.json#exports is checked, under any condition"
     "shared/thing/package.json": JSON.stringify({
       exports: {
         ".": { "react-native": "./src/index.native.ts", default: "./src/index.ts" },
-        "./testing": { types: "./src/testing.ts", default: "./src/testing.ts" },
+        "./server": { types: "./src/server.ts", default: "./src/server.ts" },
         "./native": { "react-native": ["./src/native.ts"] },
         "./*": "./src/*.ts",
         "./package.json": "./package.json",
@@ -238,7 +238,7 @@ test("every source file in package.json#exports is checked, under any condition"
     "shared/thing/src/index.ts": 'export * from "./schema";\n',
     "shared/thing/src/index.native.ts": 'export * from "./schema";\n',
     "shared/thing/src/schema.ts": "export const a = 1;\n",
-    "shared/thing/src/testing.ts": 'export { a as b } from "./schema";\n',
+    "shared/thing/src/server.ts": 'export { a as b } from "./schema";\n',
     "shared/thing/src/native.ts": 'export * from "./nativeOnly";\n',
     "shared/thing/src/nativeOnly.ts": 'export { c } from "./c";\n',
   });
@@ -246,9 +246,26 @@ test("every source file in package.json#exports is checked, under any condition"
     checkPackage(root, "shared/thing").map(v => [v.file, v.code]),
     [
       ["shared/thing/src/nativeOnly.ts", "hidden-barrel"],
-      ["shared/thing/src/testing.ts", "hidden-barrel"],
+      ["shared/thing/src/server.ts", "hidden-barrel"],
     ],
   );
+});
+
+test("a test support entry is not checked, as in components.js", () => {
+  const root = workspace({
+    "shared/thing/package.json": JSON.stringify({
+      exports: {
+        ".": "./src/index.ts",
+        "./testing/module-mock": "./src/testing/moduleMock.ts",
+        "./mocks": { default: "./src/mocks.ts" },
+      },
+    }),
+    "shared/thing/src/index.ts": 'export * from "./schema";\n',
+    "shared/thing/src/schema.ts": "export const a = 1;\n",
+    "shared/thing/src/testing/moduleMock.ts": 'export { a as b } from "../schema";\n',
+    "shared/thing/src/mocks.ts": 'export { a as c } from "./schema";\n',
+  });
+  assert.deepEqual(checkPackage(root, "shared/thing"), []);
 });
 
 test("a file exception hides that file's violations only", () => {

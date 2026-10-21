@@ -8,6 +8,8 @@
 // location. Re-exporting another package turns the barrel into a proxy: two import paths for the
 // same symbol, and no obvious original provider.
 
+const ts = require("typescript");
+
 /** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
 
 // `index.ts`, and the platform variants beside it: `index.native.ts`, `index.web.tsx`, …
@@ -68,51 +70,10 @@ function isInRepoSpecifier(specifier) {
   return IN_REPO_SCOPES.some(scope => specifier.startsWith(scope));
 }
 
-// After one of these, a `/` starts a regular expression rather than a division. `<` is left
-// out: `</` closes a JSX element.
-const REGEX_PRECEDER =
-  /(?:[(,=:[!&|?{};+\-*%>~^]|(?:^|[^\w$.])(?:return|typeof|case|do|else|in|of|new|delete|void|throw|yield|await|instanceof))$/;
-
-/**
- * True when a `/` following `before` opens a regular expression literal.
- *
- * @param {string} before the code preceding the `/`
- * @returns {boolean}
- */
-function startsRegex(before) {
-  const preceding = before.slice(-200).trimEnd();
-  return preceding === "" || REGEX_PRECEDER.test(preceding);
-}
-
-/**
- * Offset just past the regular expression literal starting at `start`, its flags aside. A `/`
- * inside a character class does not end it, and neither literal can span lines.
- *
- * @param {string} code
- * @param {number} start
- * @returns {number}
- */
-function skipRegex(code, start) {
-  let inClass = false;
-  let i = start + 1;
-  while (i < code.length && code[i] !== "\n") {
-    const char = code[i];
-    if (char === "\\") {
-      i += 2;
-      continue;
-    }
-    if (char === "[") inClass = true;
-    else if (char === "]") inClass = false;
-    else if (char === "/" && !inClass) return i + 1;
-    i += 1;
-  }
-  return i;
-}
-
 /**
  * Blank out comments while preserving line count and column offsets, so violation line numbers
- * stay accurate. String and regular expression literals are walked over so a `//` inside a
- * specifier, or a `/*` inside a pattern, is not mistaken for a comment.
+ * stay accurate. String literals are walked over so a `//` inside a specifier is not mistaken
+ * for a comment.
  *
  * @param {string} source
  * @returns {string}
@@ -122,12 +83,6 @@ function stripComments(source) {
   let i = 0;
   while (i < source.length) {
     const two = source.slice(i, i + 2);
-    if (source[i] === "/" && two !== "//" && two !== "/*" && startsRegex(out)) {
-      const end = skipRegex(source, i);
-      out += source.slice(i, end);
-      i = end;
-      continue;
-    }
     if (two === "//") {
       while (i < source.length && source[i] !== "\n") {
         out += " ";
@@ -149,8 +104,7 @@ function stripComments(source) {
       const quote = char;
       out += char;
       i += 1;
-      // A quote string cannot span lines, so a stray apostrophe in JSX text stops at its line.
-      while (i < source.length && source[i] !== quote && (quote === "`" || source[i] !== "\n")) {
+      while (i < source.length && source[i] !== quote) {
         if (source[i] === "\\") {
           out += source.slice(i, i + 2);
           i += 2;
@@ -267,127 +221,36 @@ function checkBarrel(source, options = {}) {
   return violations;
 }
 
-// A re-export statement, matched where the scanner below finds a top-level `export`. Group 1 is
-// the export clause (`*`, `* as ns`, `{ … }`), group 3 the specifier.
-const REEXPORT_STATEMENT =
-  /export\s+(?:type\s+)?(\*(?:\s+as\s+[A-Za-z_$][\w$]*)?|\{[^}]*\})\s+from\s+(['"])([^'"]+)\2/y;
-
 /**
- * Offset just past the quote string starting at `start`. A quote string cannot span lines.
- *
- * @param {string} code
- * @param {number} start
- * @returns {number}
- */
-function skipString(code, start) {
-  let i = start + 1;
-  while (i < code.length && code[i] !== code[start] && code[i] !== "\n") {
-    i += code[i] === "\\" ? 2 : 1;
-  }
-  return i + 1;
-}
-
-/**
- * Offset just past the `{ … }` block starting at `start`, literals included.
- *
- * @param {string} code
- * @param {number} start
- * @returns {number}
- */
-function skipBlock(code, start) {
-  let depth = 0;
-  let i = start;
-  while (i < code.length) {
-    const char = code[i];
-    if (char === '"' || char === "'") {
-      i = skipString(code, i);
-      continue;
-    }
-    if (char === "`") {
-      i = skipTemplate(code, i);
-      continue;
-    }
-    if (char === "/" && startsRegex(code.slice(Math.max(0, i - 200), i))) {
-      i = skipRegex(code, i);
-      continue;
-    }
-    if (char === "{") depth += 1;
-    else if (char === "}") {
-      depth -= 1;
-      if (depth === 0) return i + 1;
-    }
-    i += 1;
-  }
-  return i;
-}
-
-/**
- * Offset just past the template literal starting at `start`, `${ … }` substitutions included.
- *
- * @param {string} code
- * @param {number} start
- * @returns {number}
- */
-function skipTemplate(code, start) {
-  let i = start + 1;
-  while (i < code.length && code[i] !== "`") {
-    if (code[i] === "\\") i += 2;
-    else if (code[i] === "$" && code[i + 1] === "{") i = skipBlock(code, i + 1);
-    else i += 1;
-  }
-  return i + 1;
-}
-
-/**
- * Every top-level re-export statement of a module. The scan skips literal contents (strings,
- * templates, regular expressions) and nested blocks, so export-looking text in a literal is
- * ignored, while an indented statement or a second one on the same line is found.
+ * Every top-level re-export declaration of a module, read with the TypeScript parser alone, so
+ * export-looking text in a string, a template, a pattern or JSX is never taken for a statement.
  *
  * @param {string} source raw file contents
- * @returns {Array<{ line: number, statement: string, clause: string, specifier: string, text: string }>}
+ * @param {string} file parses a `.tsx` or `.jsx` file with JSX, and the rest without
+ * @returns {Array<{ line: number, kind: "star" | "namespace" | "named", isDefault: boolean, specifier: string, text: string }>}
  */
-function reexportsOf(source) {
-  const code = stripComments(source);
+function reexportsOf(source, file) {
+  const scriptKind = /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, scriptKind);
   const lines = source.split("\n");
   const found = [];
-  let depth = 0;
-  let i = 0;
-  while (i < code.length) {
-    const char = code[i];
-    // Formatted code starts every top-level statement in column 0. Resync there, so a misread
-    // literal (a JSX text, an unusual pattern) cannot hide the statements below it.
-    if ((i === 0 || code[i - 1] === "\n") && !/[\s)\]}]/.test(char)) depth = 0;
-    if (char === '"' || char === "'") {
-      i = skipString(code, i);
-      continue;
-    }
-    if (char === "`") {
-      i = skipTemplate(code, i);
-      continue;
-    }
-    if (char === "/" && startsRegex(code.slice(Math.max(0, i - 200), i))) {
-      i = skipRegex(code, i);
-      continue;
-    }
-    if (char === "{" || char === "(" || char === "[") depth += 1;
-    else if (char === "}" || char === ")" || char === "]") depth -= 1;
-    else if (depth <= 0 && char === "e" && !/[\w$.]/.test(code[i - 1] ?? "")) {
-      REEXPORT_STATEMENT.lastIndex = i;
-      const match = REEXPORT_STATEMENT.exec(code);
-      if (match) {
-        const line = code.slice(0, i).split("\n").length;
-        found.push({
-          line,
-          statement: match[0],
-          clause: match[1],
-          specifier: match[3],
-          text: lines[line - 1]?.trim() ?? "",
-        });
-        i += match[0].length;
-        continue;
-      }
-    }
-    i += 1;
+  for (const statement of sourceFile.statements) {
+    if (!ts.isExportDeclaration(statement)) continue;
+    if (!statement.moduleSpecifier || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+    const clause = statement.exportClause;
+    const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
+    found.push({
+      line,
+      kind: !clause ? "star" : ts.isNamespaceExport(clause) ? "namespace" : "named",
+      // `export { default } from "./x"` and `export { X as default } from "./x"`.
+      isDefault:
+        !!clause &&
+        ts.isNamedExports(clause) &&
+        clause.elements.length === 1 &&
+        clause.elements[0].name.text === "default",
+      specifier: statement.moduleSpecifier.text,
+      text: lines[line - 1]?.trim() ?? "",
+    });
   }
   return found;
 }
@@ -397,11 +260,12 @@ function reexportsOf(source) {
  * whole, which the check follows.
  *
  * @param {string} source raw file contents
+ * @param {string} [file]
  * @returns {string[]}
  */
-function starReexportTargets(source) {
-  return reexportsOf(source)
-    .filter(({ clause, specifier }) => clause === "*" && specifier.startsWith("."))
+function starReexportTargets(source, file = "module.tsx") {
+  return reexportsOf(source, file)
+    .filter(({ kind, specifier }) => kind === "star" && specifier.startsWith("."))
     .map(({ specifier }) => specifier)
     .filter(specifier => !isInternalSpecifier(specifier));
 }
@@ -413,12 +277,13 @@ function starReexportTargets(source) {
  *
  * @param {string} source raw file contents
  * @param {{ allowNonRelative?: boolean }} [options]
+ * @param {string} [file]
  * @returns {Violation[]}
  */
-function checkReachedModule(source, options = {}) {
+function checkReachedModule(source, options = {}, file = "module.tsx") {
   const violations = [];
 
-  for (const { line, statement, clause, specifier, text } of reexportsOf(source)) {
+  for (const { line, kind, isDefault, specifier, text } of reexportsOf(source, file)) {
     if (isInternalSpecifier(specifier)) {
       violations.push({
         line,
@@ -436,7 +301,7 @@ function checkReachedModule(source, options = {}) {
           : `re-exporting the third-party \`${specifier}\` makes this package a proxy`,
         text,
       });
-    } else if (clause !== "*" && !DEFAULT_REEXPORT.test(statement)) {
+    } else if (kind !== "star" && !isDefault) {
       violations.push({
         line,
         code: "hidden-barrel",

@@ -11,15 +11,14 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { checkBarrel, checkReachedModule, isBarrelFile, starReexportTargets } = require("./rules");
-const { checkComponents } = require("./components");
+const { checkComponents, isIgnoredEntry, resolveRelative } = require("./components");
 const { COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, PACKAGE_EXCEPTIONS } = require("./exceptions");
 
 const EXCEPTIONS_FILE = "tools/nx-plugins/enforce-package-structure/exceptions.js";
 
 const LAYER_ROOTS = ["domain", "shared", "features"];
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "lib-es", "build", ".turbo", ".cache"]);
-const EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".mts", ".cts"];
-const PLATFORMS = ["web", "native", "ios", "android"];
+const PLATFORMS = ["web", "native"];
 const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 
 /**
@@ -93,47 +92,52 @@ function applyComponentWaivers(projectRoot, violations, waivers) {
 }
 
 /**
- * Every file a relative specifier can load: the extensions, the platform variants beside them
- * and a folder's `index.*`. All of them, since each platform resolves its own.
+ * The files a relative specifier loads, as each platform's bundler resolves it.
  *
  * @param {string} fromFile absolute path of the importing file
  * @param {string} specifier relative specifier
  * @returns {string[]} absolute paths
  */
 function resolveModule(fromFile, specifier) {
-  const base = path.resolve(path.dirname(fromFile), specifier);
-  const stems = [base, path.join(base, "index")];
-  const candidates = [base];
-  for (const stem of stems) {
-    for (const extension of EXTENSIONS) {
-      candidates.push(stem + extension);
-      for (const platform of PLATFORMS) candidates.push(`${stem}.${platform}${extension}`);
-    }
-  }
-  return candidates.filter(
-    file => SOURCE_FILE.test(file) && fs.statSync(file, { throwIfNoEntry: false })?.isFile(),
-  );
+  const files = PLATFORMS.map(platform => resolveRelative(fromFile, specifier, platform));
+  return [...new Set(files.filter(file => file !== null))];
 }
 
 /**
- * Every relative source file named in `package.json#exports`, under any condition and at any
- * depth. Wildcard subpaths are skipped: they name a pattern, not a file.
+ * Every relative source file a `package.json#exports` target names, under any condition and at
+ * any depth. Wildcard targets are skipped: they name a pattern, not a file.
+ *
+ * @param {unknown} target
+ * @returns {string[]}
+ */
+function targetFilesOf(target) {
+  if (typeof target === "string") {
+    return target.startsWith("./") && SOURCE_FILE.test(target) && !target.includes("*")
+      ? [target]
+      : [];
+  }
+  if (target && typeof target === "object") {
+    return Object.values(target).flatMap(targetFilesOf);
+  }
+  return [];
+}
+
+/**
+ * Every source file named in `package.json#exports`, test support entries left out as
+ * components.js does.
  *
  * @param {unknown} exportsField
  * @returns {string[]}
  */
 function entryPointsOf(exportsField) {
-  if (typeof exportsField === "string") {
-    return exportsField.startsWith("./") &&
-      SOURCE_FILE.test(exportsField) &&
-      !exportsField.includes("*")
-      ? [exportsField]
-      : [];
+  if (!exportsField || typeof exportsField !== "object") return targetFilesOf(exportsField);
+  // An object of conditions alone is the target of the root entry.
+  if (!Object.keys(exportsField).some(key => key.startsWith("."))) {
+    return targetFilesOf(exportsField);
   }
-  if (exportsField && typeof exportsField === "object") {
-    return Object.values(exportsField).flatMap(entryPointsOf);
-  }
-  return [];
+  return Object.entries(exportsField).flatMap(([subpath, target]) =>
+    isIgnoredEntry(subpath) ? [] : targetFilesOf(target),
+  );
 }
 
 /**
@@ -172,12 +176,14 @@ function checkPackage(
     }
     const relative = path.relative(workspaceRoot, file).split(path.sep).join("/");
     if (!Object.hasOwn(fileExceptions, relative)) {
-      const check = isBarrelFile(relative) ? checkBarrel : checkReachedModule;
-      for (const violation of check(source, options)) {
+      const violations = isBarrelFile(relative)
+        ? checkBarrel(source, options)
+        : checkReachedModule(source, options, relative);
+      for (const violation of violations) {
         found.push({ file: relative, ...violation });
       }
     }
-    for (const specifier of starReexportTargets(source)) {
+    for (const specifier of starReexportTargets(source, relative)) {
       for (const target of resolveModule(file, specifier)) visit(target);
     }
   }

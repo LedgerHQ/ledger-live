@@ -588,6 +588,7 @@ module.exports = {
   checkComponents,
   classifyEntries,
   collectEntryComponents,
+  isIgnoredEntry,
   parseModule,
   resolveRelative,
 };
