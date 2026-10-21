@@ -125,6 +125,19 @@ test("R5 fails: a component exported from a universal entry and a platform entry
   );
 });
 
+test("R5 fails: a platform entry that re-exports a universal component under another name", () => {
+  assert.deepEqual(
+    check({
+      "package.json": { exports: { ...UNIVERSAL, "./native": "./src/nativeExports.native.ts" } },
+      "src/index.ts": 'export * from "./Widget";\n',
+      "src/index.native.ts": 'export * from "./Widget";\n',
+      "src/Widget.tsx": button("Widget"),
+      "src/nativeExports.native.ts": 'export { Widget as NativeWidget } from "./Widget";\n',
+    }),
+    ["R5 component-in-both-entries NativeWidget"],
+  );
+});
+
 test("R5 fails: a platform entry that repeats the universal entry", () => {
   assert.deepEqual(
     check({
@@ -292,6 +305,19 @@ test("classifyEntries: a react-native condition makes a universal entry, a bare 
   assert.deepEqual(classifyEntries("./src/index.ts").unconditioned, [
     { subpath: ".", target: "./src/index.ts" },
   ]);
+});
+
+test("R1: root conditions without a `.` key are the root entry", () => {
+  const files = {
+    "src/index.ts": 'export * from "./Actions.web";\n',
+    "src/index.native.ts": 'export * from "./Actions.native";\nexport * from "./Sheet.native";\n',
+    "src/Actions.web.tsx": button("Actions"),
+    "src/Actions.native.tsx": button("Actions"),
+    "src/Sheet.native.tsx": button("Sheet"),
+  };
+  const expected = ["R1 universal-parity Sheet"];
+  assert.deepEqual(check({ ...files, "package.json": { exports: UNIVERSAL } }), expected);
+  assert.deepEqual(check({ ...files, "package.json": { exports: UNIVERSAL["."] } }), expected);
 });
 
 test("test support entries are not checked", () => {

@@ -97,9 +97,17 @@ function classifyEntries(exportsField) {
   const universal = [];
   const platform = [];
   const unconditioned = [];
-  const entries = typeof exportsField === "string" ? { ".": exportsField } : exportsField;
-  if (entries === null || typeof entries !== "object")
+  if (
+    typeof exportsField !== "string" &&
+    (exportsField === null || typeof exportsField !== "object")
+  )
     return { universal, platform, unconditioned };
+  // A string, or an object of conditions alone, is the target of the root entry.
+  const isRootTarget =
+    typeof exportsField === "string" ||
+    (Object.keys(exportsField).length > 0 &&
+      !Object.keys(exportsField).some(key => key.startsWith(".")));
+  const entries = isRootTarget ? { ".": exportsField } : exportsField;
 
   for (const [subpath, target] of Object.entries(entries)) {
     if (isIgnoredEntry(subpath)) continue;
@@ -522,10 +530,15 @@ function checkComponents(workspaceRoot, projectRoot) {
   const universalFiles = new Set(
     universal.flatMap(entry => [entry.files.web, entry.files.native]).filter(Boolean),
   );
+  // Matched by name and by declaration, so an aliased re-export is still the same component.
   const universalNames = new Map();
+  const universalDeclarations = new Map();
   for (const entry of universal) {
-    for (const name of [...entry.components.web.keys(), ...entry.components.native.keys()]) {
-      if (!universalNames.has(name)) universalNames.set(name, entry.subpath);
+    for (const [name, info] of [...entry.components.web, ...entry.components.native]) {
+      const found = { name, subpath: entry.subpath };
+      if (!universalNames.has(name)) universalNames.set(name, found);
+      const key = `${info.file}:${info.line}`;
+      if (!universalDeclarations.has(key)) universalDeclarations.set(key, found);
     }
   }
 
@@ -552,15 +565,17 @@ function checkComponents(workspaceRoot, projectRoot) {
       });
     }
     for (const [name, info] of entry.components) {
-      const universalSubpath = universalNames.get(name);
-      if (!universalSubpath) continue;
+      const shared =
+        universalNames.get(name) ?? universalDeclarations.get(`${info.file}:${info.line}`);
+      if (!shared) continue;
+      const universalName = shared.name === name ? "" : `, as \`${shared.name}\`,`;
       violations.push({
         rule: "R5",
         subject: name,
         file: relative(info.file),
         line: info.line,
         code: "component-in-both-entries",
-        message: `\`${name}\` is exported from the universal entry \`${universalSubpath}\` and from the platform entry \`${entry.subpath}\``,
+        message: `\`${name}\` is exported from the universal entry \`${shared.subpath}\`${universalName} and from the platform entry \`${entry.subpath}\``,
         text: "",
       });
     }
