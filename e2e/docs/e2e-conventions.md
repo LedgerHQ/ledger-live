@@ -1,6 +1,6 @@
 # Shared E2E conventions
 
-This document outlines the shared conventions for writing E2E tests across desktop and mobile clients in this repository.
+This document outlines the shared conventions for writing E2E tests across desktop, mobile, and all other E2E areas under the `e2e` directory.
 
 ## State
 
