@@ -1,3 +1,4 @@
+import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 import {
   BOOTSTRAP_VERSION,
   type Bootstrap,
@@ -6,6 +7,7 @@ import {
   type DeeplinkBridge,
   type UpdaterBridge,
   type UpdaterStatusEvent,
+  type WebviewBridge,
   type AppBridge,
   type FilesBridge,
   type PowerBridge,
@@ -55,6 +57,12 @@ export const updater: jest.Mocked<UpdaterBridge> = {
 export const deeplink: jest.Mocked<DeeplinkBridge> = {
   open: jest.fn(),
   onOpen: jest.fn((_callback: (url: string) => void) => () => {}),
+};
+
+export const webview: jest.Mocked<WebviewBridge> = {
+  onDomainCheckViolation: jest.fn(
+    (_callback: (violation: DomainCheckViolation) => void) => () => {},
+  ),
 };
 
 export const app: jest.Mocked<AppBridge> = {

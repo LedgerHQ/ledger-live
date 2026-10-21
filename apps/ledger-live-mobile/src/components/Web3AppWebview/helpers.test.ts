@@ -5,6 +5,10 @@ import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { NavigatorName, ScreenName } from "~/const";
 import prepareSignTransaction from "./liveSDKLogic";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import { act } from "@testing-library/react-native";
+import type { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
+import { reportDomainCheckViolation, reportIfStrictlyDisallowed } from "./domainCheckReport";
 
 /** Drives the `llmWalletApiDeviceIntentSign` flag via Redux state (see withFlagOverrides). */
 type DeviceIntentSignFlagOverride = {
@@ -44,6 +48,11 @@ jest.mock("@react-navigation/native", () => {
 
 jest.mock("@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration", () => ({
   useDrawerConfiguration: jest.fn(() => ({ createDrawerConfiguration: jest.fn(() => ({})) })),
+}));
+
+jest.mock("./domainCheckReport", () => ({
+  reportDomainCheckViolation: jest.fn(),
+  reportIfStrictlyDisallowed: jest.fn(),
 }));
 
 jest.mock("./liveSDKLogic", () => ({
@@ -143,6 +152,104 @@ describe("useWebviewState", () => {
       expect(result.current.webviewProps.source).toMatchObject({
         uri: "https://new.example.com",
       });
+    });
+  });
+
+  describe("domain check reports", () => {
+    const request = (url: string, isTopFrame = true) =>
+      ({ url, isTopFrame }) as unknown as ShouldStartLoadRequest;
+
+    beforeEach(() => {
+      mockGetInitialURL.mockReturnValue("https://example.com/");
+    });
+
+    afterEach(() => {
+      jest.mocked(isUrlAllowedByManifestDomains).mockImplementation(() => true);
+    });
+
+    it("checks every committed main-frame URL against the strict domains", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest }, null, undefined),
+      );
+
+      act(() => {
+        result.current.webviewProps.onNavigationStateChange?.({
+          url: "https://evil.com/page",
+          title: "",
+          loading: false,
+          canGoBack: false,
+          canGoForward: false,
+          lockIdentifier: 0,
+          navigationType: "other",
+        });
+      });
+
+      expect(reportIfStrictlyDisallowed).toHaveBeenCalledWith({
+        manifest: mockManifest,
+        url: "https://evil.com/page",
+        frameType: "main_frame",
+        kind: "navigation",
+      });
+    });
+
+    it("reports a load the domain check blocks", () => {
+      jest
+        .mocked(isUrlAllowedByManifestDomains)
+        .mockImplementation(url => url.startsWith("https://example.com"));
+      const { result } = renderHook(() =>
+        useWebviewState(
+          { manifest: mockManifest, manifestDomainCheckEnabled: true },
+          null,
+          undefined,
+        ),
+      );
+
+      expect(result.current.onShouldStartLoadWithRequest(request("https://example.com/next"))).toBe(
+        true,
+      );
+      expect(result.current.onShouldStartLoadWithRequest(request("https://evil.com/", false))).toBe(
+        false,
+      );
+
+      expect(reportDomainCheckViolation).toHaveBeenCalledTimes(1);
+      expect(reportDomainCheckViolation).toHaveBeenCalledWith({
+        manifest: mockManifest,
+        url: "https://evil.com/",
+        frameType: "sub_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
+    });
+
+    it("reports an initial URL the domain check blocks", () => {
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(false);
+      mockGetInitialURL.mockReturnValue("https://evil.com/");
+
+      renderHook(() =>
+        useWebviewState(
+          { manifest: mockManifest, manifestDomainCheckEnabled: true },
+          null,
+          undefined,
+        ),
+      );
+
+      expect(reportDomainCheckViolation).toHaveBeenCalledWith({
+        manifest: mockManifest,
+        url: "https://evil.com/",
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
+    });
+
+    it("does not report blocks while the domain check is off", () => {
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(false);
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest }, null, undefined),
+      );
+
+      expect(result.current.onShouldStartLoadWithRequest(request("https://evil.com/"))).toBe(true);
+      expect(reportDomainCheckViolation).not.toHaveBeenCalled();
     });
   });
 });

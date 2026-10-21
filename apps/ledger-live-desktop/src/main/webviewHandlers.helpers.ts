@@ -4,11 +4,15 @@
  */
 import path from "node:path";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import { getStrictManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 import {
   ALLOWED_ORIGINS_PREFERENCE,
+  DOMAIN_CHECK_REPORT_PREFERENCE,
   UNRESTRICTED_ORIGINS,
   parseAllowedOrigins,
+  parseDomainCheckReport,
   type WebviewAllowedOrigins,
+  type WebviewDomainCheckReport,
 } from "~/bridge/webviewAllowedOrigins";
 
 const WEBVIEW_PRELOADS: ReadonlySet<string> = new Set([
@@ -63,6 +67,19 @@ export function takeAllowedOrigins(
 }
 
 /**
+ * Removes the renderer-supplied domain check report context from a <webview>'s
+ * preferences and returns it, with the manifest domains reduced to the strict list.
+ */
+export function takeDomainCheckReport(
+  webPreferences: Electron.WebPreferences,
+): WebviewDomainCheckReport | undefined {
+  const preferences = webPreferences as Record<string, unknown>;
+  const report = parseDomainCheckReport(preferences[DOMAIN_CHECK_REPORT_PREFERENCE]);
+  delete preferences[DOMAIN_CHECK_REPORT_PREFERENCE];
+  return report && { ...report, domains: getStrictManifestDomains(report.domains) };
+}
+
+/**
  * Builds the main-frame origin check of Live App <webview> guests.
  *
  * A guest without allowed origins fails closed. `about:blank` always passes: it is
@@ -89,17 +106,6 @@ export function createMainFrameOriginChecker(
     if (allowedOrigins === UNRESTRICTED_ORIGINS) return true;
     return isUrlAllowedByManifestDomains(url, allowedOrigins);
   };
-}
-
-/**
- * Returns the origin of a URL for logs, without its path or query.
- */
-export function getLoggableOrigin(url: string): string {
-  try {
-    return new URL(url).origin;
-  } catch {
-    return "invalid URL";
-  }
 }
 
 /**

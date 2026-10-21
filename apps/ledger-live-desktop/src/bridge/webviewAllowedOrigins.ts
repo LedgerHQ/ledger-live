@@ -38,3 +38,36 @@ export function parseAllowedOrigins(value: unknown): WebviewAllowedOrigins | und
   }
   return undefined;
 }
+
+/** What the main process needs to report a Live App's domain check violations. */
+export const DOMAIN_CHECK_REPORT_PREFERENCE = "ledgerLiveDomainCheckReport";
+
+export type WebviewDomainCheckReport = {
+  manifestId: string;
+  /** `manifest.domains`, checked strictly even when the domain check is off. */
+  domains: string[];
+};
+
+export function serializeDomainCheckReport(report: WebviewDomainCheckReport): string {
+  return `${DOMAIN_CHECK_REPORT_PREFERENCE}=${encodeURIComponent(JSON.stringify(report))}`;
+}
+
+/** Returns `undefined` for a missing or malformed value: nothing is reported for that guest. */
+export function parseDomainCheckReport(value: unknown): WebviewDomainCheckReport | undefined {
+  if (typeof value !== "string") return undefined;
+  try {
+    const parsed: unknown = JSON.parse(decodeURIComponent(value));
+    if (typeof parsed !== "object" || parsed === null) return undefined;
+    const { manifestId, domains } = parsed as Record<string, unknown>;
+    if (
+      typeof manifestId === "string" &&
+      Array.isArray(domains) &&
+      domains.every(domain => typeof domain === "string")
+    ) {
+      return { manifestId, domains };
+    }
+  } catch {
+    // Malformed value: report nothing.
+  }
+  return undefined;
+}

@@ -5,7 +5,16 @@ import { track } from "@shared/analytics";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewTag } from "./types";
 import type { RefObject } from "react";
-import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
+import {
+  UNRESTRICTED_ORIGINS,
+  serializeAllowedOrigins,
+  serializeDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
+import { reportBridgeSenderOrigin } from "./domainCheckReport";
+
+jest.mock("./domainCheckReport", () => ({
+  reportBridgeSenderOrigin: jest.fn(),
+}));
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
@@ -162,7 +171,10 @@ describe("useWebviewState", () => {
       );
 
       expect(result.current.webviewProps.webpreferences).toBe(
-        serializeAllowedOrigins(["https://example.com"]),
+        [
+          serializeAllowedOrigins(["https://example.com"]),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: ["https://example.com"] }),
+        ].join(","),
       );
     });
 
@@ -177,7 +189,12 @@ describe("useWebviewState", () => {
         ),
       );
 
-      expect(result.current.webviewProps.webpreferences).toBe(serializeAllowedOrigins([]));
+      expect(result.current.webviewProps.webpreferences).toBe(
+        [
+          serializeAllowedOrigins([]),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: [] }),
+        ].join(","),
+      );
     });
 
     it("marks the guest as unrestricted when the domain check is off", () => {
@@ -186,7 +203,10 @@ describe("useWebviewState", () => {
       );
 
       expect(result.current.webviewProps.webpreferences).toBe(
-        serializeAllowedOrigins(UNRESTRICTED_ORIGINS),
+        [
+          serializeAllowedOrigins(UNRESTRICTED_ORIGINS),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: ["https://example.com"] }),
+        ].join(","),
       );
     });
   });
@@ -314,6 +334,7 @@ describe("useWebviewState", () => {
       "dom-ready",
       "did-fail-load",
       "render-process-gone",
+      "ipc-message",
     ];
 
     it("should attach listeners when the webview node is set and detach them on cleanup", () => {
@@ -347,6 +368,30 @@ describe("useWebviewState", () => {
       addEventListener.mock.calls.forEach(([eventName, handler]) => {
         expect(removeEventListener).toHaveBeenCalledWith(eventName, handler);
       });
+    });
+  });
+
+  describe("bridge sender report", () => {
+    it("checks the current main-frame URL of the webview on every bridge message", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com/");
+      const addEventListener = jest.fn();
+      const mockWebview = {
+        addEventListener,
+        removeEventListener: jest.fn(),
+        getURL: () => "https://evil.com/page",
+      } as unknown as WebviewTag;
+
+      const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
+      act(() => {
+        result.current.setWebviewRef(mockWebview);
+      });
+      const handler = addEventListener.mock.calls.find(
+        ([event]: [string]) => event === "ipc-message",
+      )?.[1];
+
+      handler({ channel: "webviewToParent", args: ["{}"] });
+
+      expect(reportBridgeSenderOrigin).toHaveBeenCalledWith(mockManifest, "https://evil.com/page");
     });
   });
 
