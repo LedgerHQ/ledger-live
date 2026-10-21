@@ -585,8 +585,9 @@ function propsOf(info, module) {
   const component = componentFunction(info.node, module);
   if (!component) return null;
   const [parameter] = component.fn.parameters;
-  if (!parameter) return { kind: "none" };
-  const name = propsTypeName(parameter.type ?? component.typeArgument);
+  const type = parameter?.type ?? component.typeArgument;
+  if (!parameter && !type) return { kind: "none" };
+  const name = propsTypeName(type);
   return name ? { kind: "named", name } : { kind: "unnamed" };
 }
 
@@ -636,9 +637,10 @@ function suffixedSiblings(file) {
 /**
  * @param {ts.Node} node
  * @returns {string | null} the rightmost name of a type reference, `React.ChangeEvent` read as
- *   `ChangeEvent`
+ *   `ChangeEvent`, or the original name of an import, so an alias does not hide it
  */
 function referencedTypeName(node) {
+  if (ts.isImportSpecifier(node)) return (node.propertyName ?? node.name).text;
   let name;
   if (ts.isTypeReferenceNode(node)) name = node.typeName;
   else if (ts.isImportTypeNode(node)) name = node.qualifier;
@@ -816,6 +818,17 @@ function checkContractProps(module, declaration) {
 }
 
 /**
+ * @param {ts.BindingName} name
+ * @returns {string[]} every name a declaration binds, destructuring included
+ */
+function bindingNames(name) {
+  if (ts.isIdentifier(name)) return [name.text];
+  return name.elements.flatMap(element =>
+    ts.isOmittedExpression(element) ? [] : bindingNames(element.name),
+  );
+}
+
+/**
  * R4: what a platform module exports besides its components.
  *
  * @param {string} file absolute path
@@ -853,9 +866,7 @@ function extraExportsOf(file, module) {
       if (statement.isExportEquals || !isComponent(local)) extra.push({ name: "default", line });
     } else if (hasExportModifier(statement)) {
       const names = ts.isVariableStatement(statement)
-        ? statement.declarationList.declarations.flatMap(d =>
-            ts.isIdentifier(d.name) ? [d.name.text] : [],
-          )
+        ? statement.declarationList.declarations.flatMap(d => bindingNames(d.name))
         : [statement.name?.text ?? "*default*"];
       for (const name of names) {
         const isValue =
@@ -878,22 +889,27 @@ function extraExportsOf(file, module) {
  * @returns {ComponentViolation[]}
  */
 function checkContracts(universal, load, relative) {
-  /** @type {Map<string, Partial<Record<Platform, ExportInfo>>>} */
+  // Paired per entry, so two entries that export their own `Card` are both checked, and the same
+  // pair reached from two entries is checked once.
+  /** @type {Map<string, { name: string, sides: Partial<Record<Platform, ExportInfo>> }>} */
   const components = new Map();
   for (const entry of universal) {
-    for (const platform of /** @type {Platform[]} */ (["web", "native"])) {
-      for (const [name, info] of entry.components[platform]) {
-        const sides = components.get(name) ?? {};
-        sides[platform] ??= info;
-        components.set(name, sides);
-      }
+    const names = new Set([...entry.components.web.keys(), ...entry.components.native.keys()]);
+    for (const name of names) {
+      const sides = {
+        web: entry.components.web.get(name),
+        native: entry.components.native.get(name),
+      };
+      const key = [name, sides.web?.file, sides.web?.line, sides.native?.file, sides.native?.line];
+      components.set(key.join("|"), { name, sides });
     }
   }
 
-  /** @type {ComponentViolation[]} */
-  const violations = [];
+  /** @type {Map<string, ComponentViolation>} */
+  const violations = new Map();
   function report(rule, subject, file, line, code, message) {
-    violations.push({ rule, subject, file: relative(file), line, code, message, text: "" });
+    const violation = { rule, subject, file: relative(file), line, code, message, text: "" };
+    violations.set(JSON.stringify(violation), violation);
   }
   /** @type {Map<string, Array<{ line: number, code: string, message: string }>>} */
   const checked = new Map();
@@ -902,7 +918,7 @@ function checkContracts(universal, load, relative) {
     return checked.get(key);
   }
 
-  for (const [name, sides] of components) {
+  for (const { name, sides } of components.values()) {
     /** @type {Partial<Record<Platform, { info: ExportInfo, props: NonNullable<ReturnType<typeof propsOf>>, contract?: ReturnType<typeof contractOf> }>>} */
     const implementations = {};
     for (const platform of /** @type {Platform[]} */ (["web", "native"])) {
@@ -941,13 +957,13 @@ function checkContracts(universal, load, relative) {
     }
   }
 
-  /** @type {Map<string, { platform: Platform, names: string[] }>} */
+  /** @type {Map<string, { platform: Platform, names: Set<string> }>} */
   const platformModules = new Map();
-  for (const [name, sides] of components) {
+  for (const { name, sides } of components.values()) {
     for (const [platform, info] of Object.entries(sides)) {
-      if (!isPlatformModule(info.file)) continue;
-      const module = platformModules.get(info.file) ?? { platform, names: [] };
-      module.names.push(name);
+      if (!info || !isPlatformModule(info.file)) continue;
+      const module = platformModules.get(info.file) ?? { platform, names: new Set() };
+      module.names.add(name);
       platformModules.set(info.file, module);
     }
   }
@@ -965,7 +981,7 @@ function checkContracts(universal, load, relative) {
       }
     }
   }
-  return violations;
+  return [...violations.values()];
 }
 
 /**
@@ -975,8 +991,10 @@ function checkContracts(universal, load, relative) {
  */
 function checkOneContract(name, { web, native }, relative) {
   if (!web || !native) return null;
-  // One unsuffixed implementation serves both platforms: one contract by construction.
-  if (web.info.file === native.info.file && web.info.line === native.info.line) return null;
+  // One unsuffixed implementation serves both platforms: its props are one type by construction,
+  // but a named type it imports can still resolve per platform, so its contract is checked.
+  const shared = web.info.file === native.info.file && web.info.line === native.info.line;
+  if (shared && web.props.kind !== "named") return null;
   for (const [platform, implementation] of Object.entries({ web, native })) {
     if (implementation.props.kind !== "unnamed") continue;
     return {

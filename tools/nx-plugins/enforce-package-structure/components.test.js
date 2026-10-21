@@ -428,6 +428,62 @@ test("R2 passes: no props on either platform, forwardRef props, one shared imple
   );
 });
 
+/**
+ * @param {string} callback the render callback of a `forwardRef<unknown, CardProps>` `Card`
+ */
+function forwardRefCard(callback) {
+  return `import { forwardRef } from "react";\nimport type { CardProps } from "./Card.types";\nexport const Card = forwardRef<unknown, CardProps>(${callback});\n`;
+}
+
+test("R2 reads the forwardRef props type when the render callback takes no parameter", () => {
+  const files = {
+    ...card(contract("onPress: () => void;")),
+    "src/Card.web.tsx": forwardRefCard("() => null"),
+    "src/Card.native.tsx": forwardRefCard("(props, ref) => null"),
+  };
+  assert.deepEqual(check(files), ["R3 contract-gesture-callback Card"]);
+});
+
+test("R2 fails: one shared implementation whose contract resolves per platform", () => {
+  const props = "export type CardProps = { title: string };\n";
+  assert.deepEqual(
+    check({
+      "package.json": { exports: UNIVERSAL },
+      "src/index.ts": 'export * from "./Card";\n',
+      "src/index.native.ts": 'export * from "./Card";\n',
+      "src/Card.tsx":
+        'import type { CardProps } from "./Card.types";\nexport function Card(props: CardProps) { return null; }\n',
+      "src/Card.types.web.ts": props,
+      "src/Card.types.native.ts": props,
+    }),
+    ["R2 contract-mismatch Card"],
+  );
+});
+
+test("R2 to R4 check same-named components of two universal entries", () => {
+  const files = {
+    ...card(contract("title: string;")),
+    "package.json": {
+      exports: {
+        ...UNIVERSAL,
+        "./compact": { "react-native": "./src/compact.native.ts", default: "./src/compact.ts" },
+      },
+    },
+    "src/compact.ts": 'export * from "./compact/Card";\n',
+    "src/compact.native.ts": 'export * from "./compact/Card";\n',
+    "src/compact/Card.web.tsx": "export function Card(props: CompactProps) { return null; }\n",
+    "src/compact/Card.native.tsx": "export function Card(props: CompactProps) { return null; }\n",
+  };
+  assert.deepEqual(check(files), ["R2 contract-not-found Card"]);
+  const reversed = {
+    ...files,
+    "package.json": {
+      exports: { "./compact": files["package.json"].exports["./compact"], ...UNIVERSAL },
+    },
+  };
+  assert.deepEqual(check(reversed), ["R2 contract-not-found Card"]);
+});
+
 test("R2 fails: props on one platform, two names, an inline type", () => {
   assert.deepEqual(
     check({
@@ -552,6 +608,15 @@ test("R3 fails: a contract that references a DOM or React Native type", () => {
       "R3 contract-platform-type Card",
       "R3 contract-platform-type Card",
     ],
+  );
+});
+
+test("R3 fails: a banned type imported under an alias", () => {
+  assert.deepEqual(
+    check(
+      card(contract("layout?: Styles;", 'import type { CSSProperties as Styles } from "react";\n')),
+    ),
+    ["R3 contract-platform-type Card"],
   );
 });
 
@@ -696,7 +761,7 @@ test("R4 passes: a platform module that exports its component, also as default",
   );
 });
 
-test("R4 fails: a platform module that exports a type, a hook or a re-export", () => {
+test("R4 fails: a platform module that exports a type, a hook, a re-export or a destructured value", () => {
   const found = checkComponents(
     workspace({
       ...card(contract("title: string;")),
@@ -706,13 +771,20 @@ test("R4 fails: a platform module that exports a type, a hook or a re-export", (
         "export type CardLabels = { title: string };",
         "export function useCard() { return null; }",
         'export type { CardProps } from "./Card.types";',
+        "export const { cardTitle, nested: [, cardIcon] } = helpers;",
       ].join("\n"),
     }),
     "shared/thing",
   );
   assert.deepEqual(
     found.map(v => `${v.rule} ${v.line} ${v.message.split(" ")[4]}`),
-    ["R4 3 `CardLabels`", "R4 4 `useCard`", "R4 5 `CardProps`"],
+    [
+      "R4 3 `CardLabels`",
+      "R4 4 `useCard`",
+      "R4 5 `CardProps`",
+      "R4 6 `cardTitle`",
+      "R4 6 `cardIcon`",
+    ],
   );
   assert.equal(found[0].file, "shared/thing/src/Card.native.tsx");
 });
