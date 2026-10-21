@@ -106,6 +106,14 @@ on:
         required: false
         type: string
         default: ""
+      broadcast_lock:
+        description: "Broadcast lock: remote (R2), or local if R2 is down"
+        required: false
+        type: choice
+        options:
+          - remote
+          - local
+        default: remote
 
   workflow_call:
     inputs:
@@ -379,6 +387,7 @@ jobs:
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
+          BROADCAST_LOCK: ${{ inputs.broadcast_lock || 'remote' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -403,6 +412,7 @@ jobs:
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+            echo "- **Broadcast lock:** $BROADCAST_LOCK"
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
@@ -474,6 +484,7 @@ jobs:
           E2E_BROADCAST_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_BROADCAST_LOCK_DEFERRAL_PASSES: ${{ inputs.broadcast_deferral_passes }}
+          E2E_BROADCAST_LOCK_MODE: ${{ inputs.broadcast_lock }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -484,6 +495,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
+            broadcast_lock=${{ inputs.broadcast_lock || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
             team=${{ inputs.team || 'all' }}

@@ -14,6 +14,8 @@ export type { AbandonableLease, Lease } from "./broadcastLock/types";
 export const BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS = 30 * 60_000;
 export const BROADCAST_LOCK_NESTED_DRAIN_MS = 60_000;
 const LEASE_MS = 120_000;
+// A lease of failed requests: by then every holder has lost its lock too.
+const STORE_OUTAGE_MS = LEASE_MS;
 const HEARTBEAT_MS = 20_000;
 const POLL_MS = 5_000;
 // How long a lock attempt that must not wait keeps retrying lock store errors.
@@ -103,7 +105,21 @@ export function takeBroadcastLockWaitedMs(): number {
   return waited;
 }
 
+/** "local" locks on this machine only, even on CI, e.g. while R2 is down. */
+const BROADCAST_LOCK_MODE_ENV = "E2E_BROADCAST_LOCK_MODE";
+
+const isMachineLocalMode = (): boolean => {
+  const mode = process.env[BROADCAST_LOCK_MODE_ENV] || "remote";
+  if (mode !== "remote" && mode !== "local") {
+    throw new BroadcastLockConfigError(
+      `[broadcastLock] ${BROADCAST_LOCK_MODE_ENV} must be "remote" or "local", not "${mode}"`,
+    );
+  }
+  return mode === "local";
+};
+
 function remoteLockStoreFromEnv(): LockStore | undefined {
+  if (isMachineLocalMode()) return undefined;
   const endpoint = process.env.E2E_BROADCAST_LOCK_ENDPOINT;
   const bucket = process.env.E2E_BROADCAST_LOCK_BUCKET;
   const accessKeyId = process.env.E2E_BROADCAST_LOCK_ACCESS_KEY_ID;
@@ -128,15 +144,19 @@ async function acquireMachineLocalLock(
   key: string,
   acquireTimeoutMs: number,
 ): Promise<AbandonableLease> {
-  if (process.env.CI) {
+  const localMode = isMachineLocalMode();
+  if (process.env.CI && !localMode) {
     throw new BroadcastLockConfigError(
       `[broadcastLock] E2E_BROADCAST_LOCK_* must be set on CI: a machine-local lock on "${key}" does not stop other CI machines from broadcasting from it`,
     );
   }
   if (!warnedMachineLocal) {
     warnedMachineLocal = true;
+    const reason = localMode
+      ? `${BROADCAST_LOCK_MODE_ENV} is "local"`
+      : "E2E_BROADCAST_LOCK_* is not set";
     console.warn(
-      "[broadcastLock] E2E_BROADCAST_LOCK_* is not set: broadcasts are only serialized between processes on this machine",
+      `[broadcastLock] ${reason}: broadcasts are only serialized between processes on this machine`,
     );
   }
   const release = await acquireCrossProcessLock(key, { acquireTimeoutMs });
@@ -208,6 +228,7 @@ async function acquireKey(
         acquireTimeoutMs: giveUpIfHeld
           ? Math.min(TRY_LOCK_STORE_RETRY_MS, acquireTimeoutMs)
           : acquireTimeoutMs,
+        storeOutageMs: STORE_OUTAGE_MS,
         giveUpWhenHeld: giveUpIfHeld,
         settleClaimSpreadMs: SETTLE_CLAIM_SPREAD_MS,
         log: consoleLogger,
@@ -249,7 +270,8 @@ async function endAll(
 
 /**
  * Locks the on-chain accounts a broadcast mutates, or shared resources, across every CI machine
- * when E2E_BROADCAST_LOCK_* points at an R2 bucket, otherwise across this machine only.
+ * when E2E_BROADCAST_LOCK_* points at an R2 bucket, otherwise, or when E2E_BROADCAST_LOCK_MODE is
+ * "local", across this machine only.
  * Calls made while an `allowNested` lock is held, e.g. a CLI token approval inside a spec, run
  * under it instead of waiting for it, and its release waits for them. Releasing a lease another
  * holder took over throws. Abandoning it instead, when nothing was broadcast under it, spares the
