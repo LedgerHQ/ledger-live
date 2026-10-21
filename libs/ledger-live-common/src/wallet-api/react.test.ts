@@ -10,12 +10,15 @@ import type { TrackingAPI } from "./tracking";
 import type { useWalletAPIServerOptions } from "./react";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { accountGetPublicKeyLogic } from "./logic";
+import { BridgeSession } from "./bridgeSession";
+import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import {
   getAccountIdFromWalletAccountId,
   resolveWalletApiSpendableBalance,
   resolveWalletApiMaxSpendable,
 } from "./converters";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import openTransportAsSubject from "../hw/openTransportAsSubject";
 
 const walletState: AccountNamesState = new Map();
 const mockSetHandler = jest.fn();
@@ -134,8 +137,8 @@ function createDefaultOptions(
     },
     webviewHook: {
       reload: jest.fn(),
-      postMessage: jest.fn(),
     },
+    bridgeSession: new BridgeSession("https://test.app", jest.fn()),
     uiHook: {},
     ...overrides,
   };
@@ -155,16 +158,54 @@ describe("useWalletAPIServer", () => {
     const { result } = renderHook(() => useWalletAPIServer(options));
 
     expect(result.current).toHaveProperty("server");
-    expect(result.current).toHaveProperty("onMessage");
     expect(result.current).toHaveProperty("onLoad");
     expect(result.current).toHaveProperty("onReload");
     expect(result.current).toHaveProperty("onLoadError");
     expect(result.current).toHaveProperty("widgetLoaded");
 
-    expect(typeof result.current.onMessage).toBe("function");
     expect(typeof result.current.onLoad).toBe("function");
     expect(typeof result.current.onReload).toBe("function");
     expect(typeof result.current.onLoadError).toBe("function");
+  });
+
+  it("serves the bridge session it is given", () => {
+    const options = createDefaultOptions();
+    renderHook(() => useWalletAPIServer(options));
+
+    expect(WalletAPIServer).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(WalletAPIServer).mock.calls[0][0]).toBe(options.bridgeSession);
+  });
+
+  it("delivers the session messages once the server handlers are registered", () => {
+    const options = createDefaultOptions();
+    let handlersAtDelivery = 0;
+    options.bridgeSession.deliver(() => {
+      handlersAtDelivery = mockSetHandler.mock.calls.length;
+    });
+
+    renderHook(() => useWalletAPIServer(options));
+
+    expect(handlersAtDelivery).toBeGreaterThan(0);
+    expect(handlersAtDelivery).toBe(mockSetHandler.mock.calls.length);
+  });
+
+  it("runs a new server, with its handlers, config and permissions, for each bridge session", () => {
+    const options = createDefaultOptions();
+    const { rerender, result } = renderHook(
+      (props: useWalletAPIServerOptions) => useWalletAPIServer(props),
+      { initialProps: options },
+    );
+    const firstServer = result.current.server;
+    const handlersPerServer = mockSetHandler.mock.calls.length;
+    const nextSession = new BridgeSession("https://other.test.app", jest.fn());
+
+    rerender({ ...options, bridgeSession: nextSession });
+
+    expect(result.current.server).not.toBe(firstServer);
+    expect(jest.mocked(WalletAPIServer).mock.calls[1][0]).toBe(nextSession);
+    expect(mockSetHandler.mock.calls.length).toBe(2 * handlersPerServer);
+    expect(mockSetConfig).toHaveBeenCalledTimes(2);
+    expect(mockSetPermissions).toHaveBeenCalledTimes(2);
   });
 
   it("should start with widgetLoaded as false", () => {
@@ -434,6 +475,43 @@ describe("account.request handler", () => {
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, undefined);
     expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
+  });
+});
+
+describe("UI flows of a closed bridge session", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("does not open a UI flow once the session is closed", () => {
+    const uiAccountRequest = jest.fn();
+    const options = createDefaultOptions({ uiHook: { "account.request": uiAccountRequest } });
+    renderHook(() => useWalletAPIServer(options));
+
+    options.bridgeSession.close();
+    void getRegisteredHandler("account.request")({});
+
+    expect(uiAccountRequest).not.toHaveBeenCalled();
+  });
+
+  it("does not open the device for a connection that completes after the session is closed", () => {
+    let onDeviceConnected: (result: unknown) => void = () => {};
+    const uiDeviceTransport = jest.fn(({ onSuccess }) => {
+      onDeviceConnected = onSuccess;
+    });
+    const options = createDefaultOptions({ uiHook: { "device.transport": uiDeviceTransport } });
+    renderHook(() => useWalletAPIServer(options));
+
+    void getRegisteredHandler("device.transport")({ appName: "Ethereum" });
+    options.bridgeSession.close();
+    onDeviceConnected({ device: { deviceId: "device", modelId: "nanoX" } });
+
+    expect(uiDeviceTransport).toHaveBeenCalledTimes(1);
+    expect(openTransportAsSubject).not.toHaveBeenCalled();
   });
 });
 
