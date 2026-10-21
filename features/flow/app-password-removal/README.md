@@ -21,4 +21,4 @@ the app, which deletes the verifier and decides when removal is allowed.
 ## Native only
 
 The epic is mobile only, so the package ships no `.web` variants. Tests use the native project of
-`@support/jest-features-flow` (`*.native.test.ts(x)`).
+`@support/jest/features-flow` (`*.native.test.ts(x)`).

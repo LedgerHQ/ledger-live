@@ -27,7 +27,7 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.web.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.native.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.native.json"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/jest-dom": "catalog:",

@@ -12,6 +12,7 @@
 import fmt from "./fmt.mjs";
 import lint from "./lint.mjs";
 import tsconfig from "./tsconfig.mjs";
+import jest from "./jest.mjs";
 
 /**
  * @typedef {{ file: string, message: string }} Violation
@@ -20,4 +21,4 @@ import tsconfig from "./tsconfig.mjs";
  */
 
 /** @type {Rule[]} */
-export const RULES = [fmt, lint, tsconfig];
+export const RULES = [fmt, lint, tsconfig, jest];

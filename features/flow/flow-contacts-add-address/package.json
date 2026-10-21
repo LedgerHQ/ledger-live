@@ -50,7 +50,7 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^",
     "@ledgerhq/lumen-ui-react": "catalog:",

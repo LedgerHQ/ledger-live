@@ -45,7 +45,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@react-navigation/native": "catalog:",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

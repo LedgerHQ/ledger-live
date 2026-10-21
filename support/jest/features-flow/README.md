@@ -1,4 +1,4 @@
-# @support/jest-features-flow
+# @support/jest/features-flow
 
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
@@ -48,7 +48,7 @@ The Native project maps `@shared/ui-queued-bottom-sheet` to the double that pack
 (`@shared/ui-queued-bottom-sheet/testing/module-mock`), resolved from the consuming package's own
 dependency on it. Sheet-hosting views therefore render in tests without the queue and adapter
 providers the app supplies, and with no per-test mock. See
-[the package README](../../shared/ui-queued-bottom-sheet/README.md#testing) for the double's
+[the package README](../../../shared/ui-queued-bottom-sheet/README.md#testing) for the double's
 contract, and `jest.mock` the module in a test that needs the provider or the queue hooks.
 
 ## Web environment polyfills
@@ -68,7 +68,7 @@ needs none of this: it runs on node, which has them already.
 
 ```js
 // features/flow/<pkg>/jest.config.js
-module.exports = require("@support/jest-features-flow").createFlowJestConfig();
+module.exports = require("@support/jest/features-flow").createFlowJestConfig();
 ```
 
 Add the dependency:
@@ -76,6 +76,6 @@ Add the dependency:
 ```jsonc
 // package.json
 "devDependencies": {
-  "@support/jest-features-flow": "workspace:*"
+  "@support/jest": "workspace:*"
 }
 ```
