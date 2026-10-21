@@ -267,6 +267,8 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "cronos",
         uri: "https://proxycronosexplorer.api.live.ledger.com/explorer/api",
       },
+      // Cronos rejects txs below a global min fee of 375 gwei/gas, which eth_feeHistory doesn't reflect
+      minGasPrice: "375000000000",
     },
   },
   config_currency_core: {
