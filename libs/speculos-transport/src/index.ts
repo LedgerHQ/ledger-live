@@ -232,7 +232,7 @@ export async function createSpeculosDevice(
     "run",
     ...(process.env.CI ? ["--network=host"] : []),
     "-v",
-    `${coinapps}:/speculos/apps`,
+    `${process.env.SPECULOS_COINAPPS_MOUNT || coinapps}:/speculos/apps`,
     ...getPortMappings(),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,

@@ -459,8 +459,8 @@ jobs:
         shard: [1]
         include:
           - os: windows
-            runner: '["windows-2022-16cpu-64ram"]'
-            workers: 8
+            runner: '["windows-2022"]'
+            workers: 2
     timeout-minutes: 120
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -470,8 +470,9 @@ jobs:
       DO_NOT_TRACK: 1
       E2E_SHARD_TOTAL: "1"
       SPECULOS_DEVICE: ${{ needs.prepare-devices.outputs.device_1 }}
-      REMOTE_SPECULOS: "true"
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.prepare-devices.outputs.device_1 != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
+      REMOTE_SPECULOS: ${{ matrix.os == 'windows' && 'false' || 'true' }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.prepare-devices.outputs.device_1 != 'nanoS' && 'latest' || (matrix.os == 'windows' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'speculos-38ccc68068db-coinapps-85c7e5c') }}
+      COINAPPS: ${{ github.workspace }}/coin-apps
       NX_POWERPACK_CACHE_MODE: ${{ matrix.os == 'windows' && 'read-only' || '' }}
       LEDGER_DEFAULT_WINDOW_WIDTH: ${{ matrix.os == 'windows' && '1280' || '' }}
       LEDGER_DEFAULT_WINDOW_HEIGHT: ${{ matrix.os == 'windows' && '960' || '' }}
@@ -480,6 +481,7 @@ jobs:
       E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
     steps:
       - name: Probe Speculinho reachability
+        if: ${{ env.REMOTE_SPECULOS == 'true' }}
         shell: bash
         env:
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -531,6 +533,63 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 1
           persist-credentials: false
+
+      - name: Generate GitHub App token
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
+        id: generate-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: coin-apps
+          permission-contents: read
+
+      - name: Keep coin-apps symlinks (Windows)
+        if: ${{ runner.os == 'Windows' && env.REMOTE_SPECULOS != 'true' }}
+        shell: bash
+        run: git config --global core.symlinks true
+
+      - name: Checkout coin-apps (device firmware binaries)
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: LedgerHQ/coin-apps
+          ref: master
+          token: ${{ steps.generate-token.outputs.token }}
+          path: coin-apps
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up WSL 2 with Docker (Windows)
+        if: ${{ runner.os == 'Windows' && env.REMOTE_SPECULOS != 'true' }}
+        uses: Vampire/setup-wsl@4c48163d9f981914dd8caa0fc335fe19cca5bff4 # v7.2.0
+        with:
+          distribution: Ubuntu-24.04
+          wsl-version: 2
+          additional-packages: docker.io
+
+      - name: Start Docker in WSL and use it for Speculos (Windows)
+        if: ${{ runner.os == 'Windows' && env.REMOTE_SPECULOS != 'true' }}
+        shell: pwsh
+        run: |
+          wsl --list --verbose
+          Start-Process -WindowStyle Hidden wsl -ArgumentList '-d', 'Ubuntu-24.04', '-u', 'root', '--', 'dockerd', '--tls=false', '-H', 'unix:///var/run/docker.sock', '-H', 'tcp://0.0.0.0:2375'
+          $env:DOCKER_HOST = 'tcp://127.0.0.1:2375'
+          foreach ($i in 1..60) {
+            docker version --format '{{.Server.Os}}' 2>$null
+            if ($LASTEXITCODE -eq 0) { break }
+            Start-Sleep -Seconds 2
+          }
+          docker version
+          $mount = wsl -d Ubuntu-24.04 -- wslpath -a "$env:GITHUB_WORKSPACE\coin-apps"
+          "DOCKER_HOST=$env:DOCKER_HOST" >> $env:GITHUB_ENV
+          "SPECULOS_COINAPPS_MOUNT=$mount" >> $env:GITHUB_ENV
+          Write-Output "coin-apps mounted from $mount"
+
+      - name: Pull Speculos docker image
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
+        shell: bash
+        run: docker pull "$SPECULOS_IMAGE_TAG"
 
       - name: Setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
