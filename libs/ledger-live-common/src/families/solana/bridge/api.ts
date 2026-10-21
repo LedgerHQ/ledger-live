@@ -265,6 +265,9 @@ export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
     stakingSupported: true,
     partitionsNativeBalance: true,
     balanceListsEveryToken: true,
+    // Crafting signs the compute-unit price and limit `estimateFees` priced, so the fee the user
+    // approved is the one paid.
+    forwardsFeeParametersToCraft: true,
     getHeldNativeAmount,
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),

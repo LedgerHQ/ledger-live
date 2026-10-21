@@ -5,15 +5,22 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
-import { SolanaTokenAccountHoldsAnotherToken } from "../errors";
+import { NetworkError, SolanaTokenAccountHoldsAnotherToken } from "../errors";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { isSolanaStakingTransactionIntent } from "../logic";
 import {
   buildVersionedTransaction,
+  type ComputeBudget,
+  computeBudgetOf,
+  craftTransaction,
+  fallbackFee,
+  feeForMessage,
+  instructionsOfMessage,
   resolveRecipientDescriptor,
   stakeAccountSeedOfIntent,
 } from "./craftTransaction";
+import { validateMemo } from "./validateMemo";
 import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
@@ -44,8 +51,6 @@ import {
   ZERO_FILLED_DUMMY_SIGNATURE,
   assertUnreachable,
 } from "../utils";
-
-const DEFAULT_TX_FEE = 5000;
 
 const BASE_TRANSACTION: Transaction = {
   family: "solana",
@@ -85,27 +90,43 @@ export async function estimateFees(
       message.recentBlockhash = (await api.getLatestBlockhash()).blockhash;
     }
 
-    return { value: BigInt((await api.getFeeForMessage(message)) ?? DEFAULT_TX_FEE) };
+    return { value: await feeForMessage(api, message) };
   }
 
-  const kind = mapIntentToTxKind(intent);
+  // `validateIntent` reports an oversized memo; carried here, it would overflow the transaction.
+  const memo = "memo" in intent && intent.memo.type === "string" ? intent.memo.value : undefined;
+  const pricedMemo = memo !== undefined && validateMemo(memo) ? memo : undefined;
+  const pricedIntent =
+    memo === pricedMemo ? intent : { ...intent, memo: { type: "none" as const } };
+
   // `craftTransaction` reads the program off the mint, so the dummy has to be measured on it too.
-  const mint = await getMaybeMintOfIntent(api, intent);
-  const fee = await estimateTxFee(
-    api,
-    intent.sender,
-    kind,
-    mint ? tokenProgramOfMint(mint) : resolveTokenProgramFromAsset(intent.asset),
-    // A Token-2022 transfer instruction reads the mint on chain, so the dummy needs the real one.
-    "assetReference" in intent.asset ? intent.asset.assetReference : undefined,
-  );
+  const [mint, crafted] = await Promise.all([
+    getMaybeMintOfIntent(api, intent),
+    estimateCraftedFee(api, pricedIntent),
+  ]);
+  const fee =
+    crafted?.fee ??
+    BigInt(
+      await estimateTxFee(
+        api,
+        intent.sender,
+        mapIntentToTxKind(intent),
+        mint ? tokenProgramOfMint(mint) : resolveTokenProgramFromAsset(intent.asset),
+        // A Token-2022 transfer instruction reads the mint on chain, so the dummy needs the real one.
+        "assetReference" in intent.asset ? intent.asset.assetReference : undefined,
+        pricedMemo,
+      ),
+    );
+  // Forwarded to crafting, which signs this price and limit (see `pinComputeBudget`).
+  const computeBudget = crafted?.computeBudget ?? {};
 
   if (TOKEN_AUTHORITY_TYPES.has(intent.type)) {
     const ownerTokenAccount = mint && (await ownerAssociatedTokenAccount(intent, mint));
     const ataRent = intent.type === "token.createATA" && mint ? await ownerAtaRent(api, mint) : 0n;
+    const parameters = { ...computeBudget, ...(ownerTokenAccount ? { ownerTokenAccount } : {}) };
     return {
-      value: BigInt(fee) + ataRent,
-      ...(ownerTokenAccount ? { parameters: { ownerTokenAccount } } : {}),
+      value: fee + ataRent,
+      ...(Object.keys(parameters).length > 0 ? { parameters } : {}),
     };
   }
 
@@ -119,12 +140,13 @@ export async function estimateFees(
       isCreation ? unstakeReserve(api, intent.sender) : 0n,
     ]);
     return {
-      value: BigInt(fee),
+      value: fee,
       parameters: {
+        ...computeBudget,
         ...(stakeAccountRent !== undefined
           ? {
               stakeAccountRent: BigInt(stakeAccountRent),
-              reserve: BigInt(fee) + reserve,
+              reserve: fee + reserve,
             }
           : {}),
         ...(stakeAccountAddress ? { stakeAccountAddress } : {}),
@@ -135,6 +157,7 @@ export async function estimateFees(
   const transferFee = mint && (await getMaybeTransferFee(api, intent, mint));
   const destination = mint ? await recipientTokenDestination(api, intent, mint) : undefined;
   const parameters = {
+    ...computeBudget,
     ...(transferFee ? { transferFee } : {}),
     ...(destination
       ? {
@@ -147,9 +170,37 @@ export async function estimateFees(
       : {}),
   };
   return {
-    value: BigInt(fee) + (destination?.ataRent ?? 0n),
+    value: fee + (destination?.ataRent ?? 0n),
     ...(Object.keys(parameters).length > 0 ? { parameters } : {}),
   };
+}
+
+/**
+ * Prices the transaction crafting builds, so the estimate sees the real recipient, memo and accounts
+ * rather than a dummy's. An intent crafting rejects, such as a recipient holding another token, is
+ * for `validateIntent` to report, and falls back to a dummy. A network failure is not: the dummy would
+ * hit the same RPC, and estimating without the budget would let signing price it again.
+ */
+async function estimateCraftedFee(
+  api: ChainAPI,
+  intent: TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
+): Promise<{ fee: bigint; computeBudget: ComputeBudget } | undefined> {
+  let crafted;
+  try {
+    crafted = await craftTransaction(api, intent);
+  } catch (error) {
+    if (error instanceof NetworkError) throw error;
+    log(
+      "debug",
+      `Solana fee estimated on a dummy: <${error instanceof Error ? error.message : error}>`,
+    );
+    return undefined;
+  }
+  const { message } = OnChainTransaction.deserialize(Buffer.from(crafted.transaction, "base64"));
+  const computeBudget = computeBudgetOf(instructionsOfMessage(message));
+  const fee = crafted.details?.estimatedFee;
+  if (computeBudget.computeUnitPrice === undefined || typeof fee !== "string") return undefined;
+  return { fee: BigInt(fee), computeBudget };
 }
 
 /** Best-effort: a failure only makes send-max marginally less generous. */
@@ -259,8 +310,9 @@ export async function estimateTxFee(
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) {
-  const tx = await createDummyTx(address, kind, tokenProgram, mintAddress);
+  const tx = await createDummyTx(address, kind, tokenProgram, mintAddress, memo);
   const [onChainTx] = await buildVersionedTransaction(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
@@ -275,7 +327,7 @@ export async function estimateTxFee(
       "error",
       `Solana unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
     );
-    fee = DEFAULT_TX_FEE;
+    fee = Number(fallbackFee(onChainTx.message));
   }
   return fee;
 }
@@ -285,10 +337,11 @@ const createDummyTx = (
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) => {
   switch (kind) {
     case "transfer":
-      return createDummyTransferTx(address);
+      return createDummyTransferTx(address, memo);
     case "stake.createAccount":
       return createDummyStakeCreateAccountTx(address);
     case "stake.delegate":
@@ -298,7 +351,7 @@ const createDummyTx = (
     case "stake.withdraw":
       return createDummyStakeWithdrawTx(address);
     case "token.transfer":
-      return createDummyTokenTransferTx(address, tokenProgram, mintAddress);
+      return createDummyTokenTransferTx(address, tokenProgram, mintAddress, memo);
     case "token.approve":
       return createDummyTokenApproveTx(address, tokenProgram);
     case "token.revoke":
@@ -314,7 +367,7 @@ const createDummyTx = (
   }
 };
 
-const createDummyTransferTx = (address: string): Transaction => {
+const createDummyTransferTx = (address: string, memo?: string): Transaction => {
   return {
     ...BASE_TRANSACTION,
     model: {
@@ -326,6 +379,7 @@ const createDummyTransferTx = (address: string): Transaction => {
           amount: 0,
           recipient: address,
           sender: address,
+          memo,
         },
         ...commandDescriptorCommons,
       },
@@ -418,6 +472,7 @@ const createDummyTokenTransferTx = (
   address: string,
   tokenProgram: SolanaTokenProgram = PARSED_PROGRAMS.SPL_TOKEN,
   mintAddress: string = randomAddresses[0],
+  memo?: string,
 ): Transaction => {
   const command: TokenTransferCommand = {
     kind: "token.transfer",
@@ -425,6 +480,7 @@ const createDummyTokenTransferTx = (
     mintAddress,
     mintDecimals: 0,
     tokenId: "",
+    memo,
     ownerAddress: address,
     ownerAssociatedTokenAccountAddress: randomAddresses[1],
     recipientDescriptor: {

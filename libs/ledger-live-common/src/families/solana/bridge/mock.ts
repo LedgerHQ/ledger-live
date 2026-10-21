@@ -29,9 +29,10 @@ function mockChainAPI(config: Config): ChainAPI {
   const api = new Proxy(
     { config },
     {
-      get(_, propKey) {
-        if (propKey in api) {
-          return api[propKey];
+      get(target, propKey) {
+        // Read off the target: `api[propKey]` would re-enter this trap forever.
+        if (propKey in target) {
+          return Reflect.get(target, propKey);
         }
         if (propKey === "then") {
           return undefined;

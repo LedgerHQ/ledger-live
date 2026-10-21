@@ -1,10 +1,15 @@
 import { NetworkError } from "../../errors";
 import { Config, getChainAPI } from ".";
 import {
+  ComputeBudgetInstruction,
+  ComputeBudgetProgram,
   Connection,
   PublicKey,
   SendTransactionError,
   StakeProgram,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
   TransactionExpiredBlockheightExceededError,
   TransactionExpiredTimeoutError,
 } from "@solana/web3.js";
@@ -115,6 +120,29 @@ describe("index", () => {
       await expect(getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0))).rejects.toBe(
         expiry,
       );
+    });
+
+    it("simulates with a zero price instruction, whose compute units the signed transaction spends too", async () => {
+      const simulateTransaction = jest
+        .fn()
+        .mockResolvedValue({ value: { err: null, unitsConsumed: 450 } });
+      jest
+        .mocked(Connection)
+        .mockImplementation(() => ({ simulateTransaction }) as unknown as Connection);
+      const payer = new PublicKey("7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE");
+      const transfer = SystemProgram.transfer({ fromPubkey: payer, toPubkey: payer, lamports: 0 });
+
+      await getChainAPI(FAKE_CONFIG).getSimulationComputeUnits([transfer], payer);
+
+      const simulated: VersionedTransaction = simulateTransaction.mock.calls[0][0];
+      const prices = TransactionMessage.decompile(simulated.message)
+        .instructions.filter(
+          ix =>
+            ix.programId.equals(ComputeBudgetProgram.programId) &&
+            ComputeBudgetInstruction.decodeInstructionType(ix) === "SetComputeUnitPrice",
+        )
+        .map(ix => ComputeBudgetInstruction.decodeSetComputeUnitPrice(ix).microLamports);
+      expect(prices).toEqual([0n]);
     });
 
     describe("getSignaturesForAddressBatch", () => {

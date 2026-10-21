@@ -9,11 +9,14 @@ import type {
 import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import { trace } from "@ledgerhq/logs";
 import {
+  ComputeBudgetProgram,
   PublicKey,
+  SystemProgram,
   VersionedTransaction,
   TransactionInstruction,
   TransactionMessage,
   BlockhashWithExpiryBlockHeight,
+  type VersionedMessage,
 } from "@solana/web3.js";
 import { transferFeeForIntent, tokenProgramOfMint } from "../helpers/token";
 import { isValidBase58Address } from "../logic";
@@ -142,9 +145,7 @@ async function craftPrebuiltTransaction(
     transaction.message.recentBlockhash = recentBlockhash.blockhash;
   }
 
-  const fee = customFees
-    ? customFees.value
-    : BigInt((await api.getFeeForMessage(transaction.message)) ?? 5000);
+  const fee = customFees ? customFees.value : await feeForMessage(api, transaction.message);
 
   return {
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
@@ -197,7 +198,10 @@ async function craftWithdrawTransaction(
     toAccAddr: intent.sender,
     amount: withdrawable,
   };
-  const instructions = await buildInstructionsForCommand(api, command);
+  const instructions = pinComputeBudget(
+    await buildInstructionsForCommand(api, command),
+    customFees,
+  );
   const recentBlockhash = await api.getLatestBlockhash();
 
   const message = new TransactionMessage({
@@ -208,13 +212,7 @@ async function craftWithdrawTransaction(
 
   const transaction = new VersionedTransaction(message.compileToLegacyMessage());
 
-  let fee: bigint;
-  if (customFees) {
-    fee = customFees.value;
-  } else {
-    const feeForMsg = await api.getFeeForMessage(transaction.message);
-    fee = BigInt(feeForMsg ?? 5000);
-  }
+  const fee = customFees ? customFees.value : await feeForMessage(api, transaction.message);
 
   return {
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
@@ -381,7 +379,10 @@ async function craftSendTransactionFromIntent(
   const recentBlockhash = await api.getLatestBlockhash();
   const memoValue = "memo" in intent ? (intent.memo as StringMemo).value : undefined;
   const command = await resolveCommandFromIntent(api, intent, memoValue);
-  const instructions = await buildInstructionsForCommand(api, command);
+  const instructions = pinComputeBudget(
+    await buildInstructionsForCommand(api, command),
+    customFees,
+  );
 
   const message = new TransactionMessage({
     payerKey: new PublicKey(intent.sender),
@@ -390,13 +391,7 @@ async function craftSendTransactionFromIntent(
   });
   const transaction = new VersionedTransaction(message.compileToLegacyMessage());
 
-  let fee: bigint;
-  if (customFees) {
-    fee = customFees.value;
-  } else {
-    const feeForMsg = await api.getFeeForMessage(transaction.message);
-    fee = BigInt(feeForMsg ?? 5000);
-  }
+  const fee = customFees ? customFees.value : await feeForMessage(api, transaction.message);
 
   return {
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
@@ -414,7 +409,10 @@ async function craftCommandToTransaction(
   payerKey: string,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const instructions = await buildInstructionsForCommand(api, command);
+  const instructions = pinComputeBudget(
+    await buildInstructionsForCommand(api, command),
+    customFees,
+  );
   const recentBlockhash = await api.getLatestBlockhash();
   const message = new TransactionMessage({
     payerKey: new PublicKey(payerKey),
@@ -422,13 +420,7 @@ async function craftCommandToTransaction(
     instructions,
   });
   const transaction = new VersionedTransaction(message.compileToLegacyMessage());
-  let fee: bigint;
-  if (customFees) {
-    fee = customFees.value;
-  } else {
-    const feeForMsg = await api.getFeeForMessage(transaction.message);
-    fee = BigInt(feeForMsg ?? 5000);
-  }
+  const fee = customFees ? customFees.value : await feeForMessage(api, transaction.message);
   return {
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
     details: {
@@ -522,6 +514,105 @@ export async function buildInstructionsForCommand(
     default:
       return assertUnreachable(command);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Shared: compute budget
+// ---------------------------------------------------------------------------
+
+const LAMPORTS_PER_SIGNATURE = 5000n;
+const MAX_COMPUTE_UNIT_LIMIT = 1_400_000;
+
+export type ComputeBudget = { computeUnitPrice?: bigint; computeUnitLimit?: number };
+
+function isComputeBudget(ix: TransactionInstruction): boolean {
+  return ix.programId.equals(ComputeBudgetProgram.programId);
+}
+
+function isBuiltin(ix: TransactionInstruction): boolean {
+  return isComputeBudget(ix) || ix.programId.equals(SystemProgram.programId);
+}
+
+/** Decoded by hand: web3.js throws on the compute-budget instructions it has no layout for. */
+export function computeBudgetOf(instructions: TransactionInstruction[]): ComputeBudget {
+  const budget: ComputeBudget = {};
+  for (const ix of instructions.filter(isComputeBudget)) {
+    // A partner transaction may carry a truncated one; the runtime rejects it, the estimate need not.
+    if (ix.data[0] === 2 && ix.data.length >= 5) budget.computeUnitLimit = ix.data.readUInt32LE(1);
+    if (ix.data[0] === 3 && ix.data.length >= 9)
+      budget.computeUnitPrice = ix.data.readBigUInt64LE(1);
+  }
+  return budget;
+}
+
+/** Program ids are always static keys, so this reads the program of every instruction. */
+export function instructionsOfMessage(message: VersionedMessage): TransactionInstruction[] {
+  return message.compiledInstructions.map(
+    ix =>
+      new TransactionInstruction({
+        keys: [],
+        programId: message.staticAccountKeys[ix.programIdIndex] ?? PublicKey.default,
+        data: Buffer.from(ix.data),
+      }),
+  );
+}
+
+/**
+ * The fee of a message the RPC could not price: base fee plus the priority fee it carries. Without a
+ * requested limit, Agave grants 3,000 CU per builtin instruction and 200,000 per other one, capped at
+ * 1.4M (compute_budget_instruction_details.rs). Only the System and Compute Budget programs count as
+ * builtins here: the others are migrating to BPF, and an overestimate only leaves dust where an
+ * underestimate breaks send-max.
+ */
+export function fallbackFee(message: VersionedMessage): bigint {
+  const instructions = instructionsOfMessage(message);
+  const { computeUnitPrice = 0n, computeUnitLimit } = computeBudgetOf(instructions);
+  const builtinCount = instructions.filter(isBuiltin).length;
+  const limit = Math.min(
+    computeUnitLimit ?? (instructions.length - builtinCount) * 200_000 + builtinCount * 3_000,
+    MAX_COMPUTE_UNIT_LIMIT,
+  );
+  // Agave rounds the priority fee up (compute_budget_limits.rs).
+  return (
+    BigInt(message.header.numRequiredSignatures) * LAMPORTS_PER_SIGNATURE +
+    (computeUnitPrice * BigInt(limit) + 999_999n) / 1_000_000n
+  );
+}
+
+export async function feeForMessage(api: ChainAPI, message: VersionedMessage): Promise<bigint> {
+  const fee = await api.getFeeForMessage(message);
+  return typeof fee === "number" ? BigInt(fee) : fallbackFee(message);
+}
+
+function isAmount(value: unknown): value is string | number | bigint {
+  return (
+    typeof value === "bigint" ||
+    (typeof value === "number" && Number.isInteger(value)) ||
+    (typeof value === "string" && /^\d+$/.test(value))
+  );
+}
+
+/**
+ * Crafting re-samples the recent fees and re-simulates the compute units, so the signed fee could
+ * drift from the one the user approved: a later sample, a memo the estimate did not see. When the
+ * estimate's price is forwarded (the wallet does it for this family), it replaces the fresh one, and
+ * the larger of the two requested limits is signed: the same transaction keeps the estimated fee, and one whose
+ * shape changed since, such as a recipient token account closed in between, keeps enough compute
+ * units to land. No limit on either side means the runtime default.
+ */
+export function pinComputeBudget(
+  instructions: TransactionInstruction[],
+  customFees?: FeeEstimation,
+): TransactionInstruction[] {
+  const price = customFees?.parameters?.computeUnitPrice;
+  const limit = customFees?.parameters?.computeUnitLimit;
+  if (!isAmount(price) || (limit !== undefined && !isAmount(limit))) return instructions;
+  const units = Math.max(Number(limit ?? 0), computeBudgetOf(instructions).computeUnitLimit ?? 0);
+  return [
+    ...(units > 0 ? [ComputeBudgetProgram.setComputeUnitLimit({ units })] : []),
+    ComputeBudgetProgram.setComputeUnitPrice({ microLamports: BigInt(price) }),
+    ...instructions.filter(ix => !isComputeBudget(ix)),
+  ];
 }
 
 // ---------------------------------------------------------------------------

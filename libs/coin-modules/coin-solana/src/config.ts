@@ -13,6 +13,8 @@ export type SolanaConfig = {
     solana_testnet?: string;
   };
   validatorsUrl?: string;
+  /** Floor for the compute-unit price, in microLamports per CU. */
+  minPriorityFee?: number;
 };
 
 export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;
