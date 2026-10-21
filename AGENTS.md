@@ -32,6 +32,10 @@ When a task involves GitHub — pull requests, issues, CI checks, or releases �
 
 Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.
 
+## CI runners
+
+Before adding or changing a `runs-on` in `.github/workflows/`, read the [ci-runners](./.agents/skills/ci-runners/SKILL.md) skill. Several `ledger-live-*` runners are deprecated.
+
 ## Configuration and environment variables
 
 Before adding any configuration value — an environment variable, a URL, a partner key — read [/docs/configuration.md](/docs/configuration.md) to pick its home. `@shared/env` is deprecated and takes no new definitions.
