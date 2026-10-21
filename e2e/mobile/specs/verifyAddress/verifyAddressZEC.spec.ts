@@ -12,9 +12,9 @@ runVerifyAddressTest(
   Team.BST,
 );
 
-runReceiveBlockedOnLNSTest(
-  Account.ZEC_1,
-  ["B2CQA-6605"],
-  ["@LNS", "@zcash", "@family-bitcoin"],
-  Team.BST,
-);
+runReceiveBlockedOnLNSTest({
+  account: Account.ZEC_1,
+  tmsLinks: ["B2CQA-6605"],
+  tags: ["@LNS", "@zcash", "@family-bitcoin"],
+  teamOwner: Team.BST,
+});

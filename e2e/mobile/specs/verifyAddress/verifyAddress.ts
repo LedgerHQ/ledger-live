@@ -40,12 +40,15 @@ export function runVerifyAddressTest(
   });
 }
 
-export function runReceiveBlockedOnLNSTest(
-  account: AccountType,
-  tmsLinks: string[],
-  tags: string[],
-  teamOwner: Team = Team.COIN_INTEGRATION,
-) {
+type ReceiveBlockedOnLNSTestOptions = {
+  account: AccountType;
+  tmsLinks: string[];
+  tags: string[];
+  teamOwner?: Team;
+};
+
+export function runReceiveBlockedOnLNSTest(options: ReceiveBlockedOnLNSTestOptions) {
+  const { account, tmsLinks, tags, teamOwner = Team.COIN_INTEGRATION } = options;
   describeIfNanoS("Receive", () => {
     beforeAll(async () => {
       await app.init({
