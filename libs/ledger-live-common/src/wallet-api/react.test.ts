@@ -7,7 +7,7 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
-import type { useWalletAPIServerOptions } from "./react";
+import { type UiHook, type useWalletAPIServerOptions, useDappSessionUiHook } from "./react";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { accountGetPublicKeyLogic } from "./logic";
 import { BridgeSession } from "./bridgeSession";
@@ -742,3 +742,51 @@ function createMockTracking(): TrackingAPI {
     dappSignTypedDataFail: jest.fn(),
   } as unknown as TrackingAPI;
 }
+
+describe("useDappSessionUiHook", () => {
+  const setup = () => {
+    const session = new BridgeSession("https://app.example.com", jest.fn());
+    const uiHook = {
+      "account.request": jest.fn(),
+      "message.sign": jest.fn(),
+      "transaction.sign": jest.fn(),
+      "transaction.broadcast": jest.fn(),
+    } as unknown as UiHook;
+    const { result } = renderHook(() => useDappSessionUiHook(session, uiHook));
+    return { session, uiHook, dappUiHook: result.current };
+  };
+
+  it("opens the signing UI while the session of the request is open", () => {
+    const { uiHook, dappUiHook } = setup();
+    const onSuccess = jest.fn();
+
+    dappUiHook["message.sign"]({ onSuccess } as never);
+    jest.mocked(uiHook["message.sign"]).mock.calls[0][0].onSuccess("0xsignature");
+
+    expect(onSuccess).toHaveBeenCalledWith("0xsignature");
+  });
+
+  it("opens no signing UI once the session closed while the request was prepared", () => {
+    const { session, uiHook, dappUiHook } = setup();
+
+    session.close();
+    dappUiHook["message.sign"]({ onSuccess: jest.fn() } as never);
+    dappUiHook["transaction.sign"]({ onSuccess: jest.fn() } as never);
+    dappUiHook["account.request"]({ onSuccess: jest.fn() } as never);
+
+    expect(uiHook["message.sign"]).not.toHaveBeenCalled();
+    expect(uiHook["transaction.sign"]).not.toHaveBeenCalled();
+    expect(uiHook["account.request"]).not.toHaveBeenCalled();
+  });
+
+  it("drops the callbacks of a signing UI that completes after the session closed", () => {
+    const { session, uiHook, dappUiHook } = setup();
+    const onSuccess = jest.fn();
+
+    dappUiHook["transaction.sign"]({ onSuccess } as never);
+    session.close();
+    jest.mocked(uiHook["transaction.sign"]).mock.calls[0][0].onSuccess({} as never);
+
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
+});

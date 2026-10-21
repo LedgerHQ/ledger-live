@@ -211,6 +211,26 @@ function useSessionUiFlow<P extends object, R>(
   return useMemo(() => open && bindUiFlowToSession(session, open), [session, open]);
 }
 
+/**
+ * The UI hooks of the dapp logic, bound to the session of the request: a request still preparing
+ * when its session is closed (e.g. personal_sign) opens no UI, and its callbacks are dropped.
+ */
+export function useDappSessionUiHook(session: BridgeSession, uiHook: UiHook): UiHook {
+  return useMemo(() => {
+    const bind =
+      <P extends object>(open: (params: P) => void) =>
+      (params: P): void => {
+        bindUiFlowToSession(session, open)(params);
+      };
+    return {
+      ...uiHook,
+      "account.request": bind(uiHook["account.request"]),
+      "message.sign": bind(uiHook["message.sign"]),
+      "transaction.sign": bind(uiHook["transaction.sign"]),
+    };
+  }, [session, uiHook]);
+}
+
 export function useConfig({
   appId,
   userId,
