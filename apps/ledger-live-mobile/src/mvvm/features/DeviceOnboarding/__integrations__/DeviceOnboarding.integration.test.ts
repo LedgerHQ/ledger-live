@@ -264,7 +264,7 @@ describe("useDeviceOnboarding", () => {
 
     unmount();
 
-    expect(closedSessionIds).toEqual(["session-1"]);
+    await waitFor(() => expect(closedSessionIds).toEqual(["session-1"]));
     expect(activeDeviceSessionSubject.value).toBeNull();
   });
 
@@ -351,6 +351,43 @@ describe("scripted device onboarding", () => {
     expect(device.isWatching(device.sessionId)).toBe(true);
     expect(device.dmk.sendCommand).toHaveBeenCalledTimes(4);
     expect(device.dmk.executeDeviceAction).toHaveBeenCalledTimes(2);
+  });
+
+  it("takes the device off the genuine check screen before closing the session on reset", async () => {
+    const closedSessionIds = closedSessions();
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+    expect(device.showsEarlyCheckScreen()).toBe(true);
+
+    act(() => result.current.reset());
+    expect(closedSessionIds).toEqual([]);
+
+    device.acceptToggle();
+    await waitFor(() => expect(closedSessionIds).toEqual([device.sessionId]));
+    expect(device.showsEarlyCheckScreen()).toBe(false);
+  });
+
+  it("keeps the session a new screen took over when the old screen closes late", async () => {
+    const closedSessionIds = closedSessions();
+    const device = createScriptedTestDevice();
+    const first = renderScripted(device);
+    await connectToGenuineCheck(first.result, device);
+    first.unmount();
+
+    const { result } = renderScripted(device);
+    device.show();
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.status).toBe("running"));
+
+    // The old screen's Exit lands only now, after the new screen took the session.
+    device.acceptToggle();
+    await waitFor(() => expect(device.showsEarlyCheckScreen()).toBe(false));
+    answerWelcome(device);
+    await waitFor(() => expect(result.current.state).toBe("awaitingStart"));
+
+    expect(closedSessionIds).toEqual([]);
+    expect(activeDeviceSessionSubject.value?.sessionId).toBe(device.sessionId);
   });
 
   it("allows a repeated secure-connection prompt once", async () => {

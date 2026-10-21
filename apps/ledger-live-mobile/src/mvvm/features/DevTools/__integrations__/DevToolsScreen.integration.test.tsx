@@ -34,7 +34,7 @@ jest.mock(
       sendToActor: jest.fn(),
       startActor: jest.fn(),
       discardActor: jest.fn(),
-      resetActor: jest.fn(),
+      resetActor: jest.fn(() => Promise.resolve()),
       stopActor: jest.fn(),
     }),
   }),

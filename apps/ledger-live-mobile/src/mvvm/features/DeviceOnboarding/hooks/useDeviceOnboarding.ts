@@ -100,7 +100,6 @@ export function useDeviceOnboarding({
     sendToActor,
     startActor,
     resetActor,
-    stopActor,
   } = useDeviceOnboardingActor({
     missingSessionMessage: "No mobile onboarding session",
     onEvent: event => onEventRef.current(event),
@@ -302,9 +301,9 @@ export function useDeviceOnboarding({
     connectionRef.current = null;
     sessionActorRef.current?.stop();
     sessionActorRef.current = null;
-    resetActor();
-    void portsRef.current?.closeSession();
+    const ports = portsRef.current;
     portsRef.current = null;
+    void resetActor().then(() => ports?.closeSession());
     retryRef.current = null;
     setStatus("idle");
     setDevice(null);
@@ -325,11 +324,11 @@ export function useDeviceOnboarding({
       adoptGeneration.current += 1;
       connectionRef.current?.unsubscribe();
       sessionActorRef.current?.stop();
-      stopActor();
-      void portsRef.current?.closeSession();
+      const ports = portsRef.current;
       portsRef.current = null;
+      void resetActor().then(() => ports?.closeSession());
     },
-    [portsRef, stopActor],
+    [portsRef, resetActor],
   );
 
   return {

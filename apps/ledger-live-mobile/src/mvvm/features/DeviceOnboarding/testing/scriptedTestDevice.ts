@@ -5,8 +5,10 @@ import {
   DeviceStatus,
   GenuineCheckDeviceAction,
   GetDeviceMetadataDeviceAction,
+  isSuccessCommandResult,
   UnknownDAError,
   UserInteractionRequired,
+  type CommandResult,
   type DeviceActionState,
   type DeviceManagementKit,
   type DiscoveredDevice,
@@ -25,6 +27,7 @@ import {
   type SessionStream,
   type TestStream,
 } from "@features/platform-device-onboarding/testing";
+import { EarlyCheckToggle, ToggleEarlyCheckCommand } from "@features/platform-device-onboarding";
 import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 
@@ -85,6 +88,8 @@ export type ScriptedTestDevice = {
   reportFirmwareUpToDate(): void;
   failFirmwareCheck(): void;
   isWatching(sessionId: string): boolean;
+  /** What the device screen shows: the early-check (genuine check) screen once Enter is accepted. */
+  showsEarlyCheckScreen(): boolean;
 };
 
 /** A Bluetooth Stax whose commands and checks answer only what the test queues. */
@@ -96,8 +101,18 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
   const firmwareChecks: TestStream<FirmwareCheckState>[] = [];
   let sessionId = "session-1";
   const deviceId = "device-id";
+  let onEarlyCheckScreen = false;
 
-  const sendCommand = jest.fn(() => commandReplies.next());
+  const sendCommand = jest.fn(async ({ command }: { command: object }) => {
+    const reply = await commandReplies.next();
+    if (
+      command instanceof ToggleEarlyCheckCommand &&
+      isSuccessCommandResult(reply as CommandResult<unknown>)
+    ) {
+      onEarlyCheckScreen = command.getApdu().p2 === EarlyCheckToggle.Enter;
+    }
+    return reply;
+  });
   const executeDeviceAction = jest.fn(({ deviceAction }: { deviceAction: object }) => {
     if (isAction(deviceAction, GenuineCheckDeviceAction)) return startDeviceAction(genuineChecks);
     if (isAction(deviceAction, GetDeviceMetadataDeviceAction)) {
@@ -195,6 +210,9 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     },
     isWatching(id: string) {
       return sessions.get(id)?.watched === true;
+    },
+    showsEarlyCheckScreen() {
+      return onEarlyCheckScreen;
     },
   };
 

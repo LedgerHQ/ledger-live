@@ -169,6 +169,8 @@ export const deviceOnboardingMachine = setup({
       initial: "checksIdle",
       states: {
         enteringEarlyCheckScreen: {
+          // On as soon as Enter is sent: a quit before the device answers must still leave it.
+          entry: "enterEarlyCheckScreen",
           invoke: {
             src: "toggleEarlyCheck",
             input: ({ context }) => ({
@@ -178,7 +180,7 @@ export const deviceOnboardingMachine = setup({
             }),
           },
           on: {
-            EARLY_CHECK_TOGGLED: { target: "checksIdle", actions: "enterEarlyCheckScreen" },
+            EARLY_CHECK_TOGGLED: "checksIdle",
             EARLY_CHECK_UNAVAILABLE: "checksIdle",
           },
         },
