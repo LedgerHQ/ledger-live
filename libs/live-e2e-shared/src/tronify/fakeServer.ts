@@ -40,7 +40,11 @@ export const USDT_UNIT = { name: "USDT", code: "USDT", magnitude: 6 };
 /** The `config_currency_tron` override that points the app's Tron explorer and Tronify at the fake,
  * never at the real services. */
 export function fakeTronifyCoinConfig(host?: string, port?: number) {
-  const { url, tronGridUrl } = fakeTronifyUrls(host, port);
+  return tronifyCoinConfig(fakeTronifyUrls(host, port));
+}
+
+/** {@link fakeTronifyCoinConfig} for a fake already listening, on whatever port it got. */
+export function tronifyCoinConfig({ url, tronGridUrl }: Pick<FakeTronify, "url" | "tronGridUrl">) {
   return {
     config_currency_tron: {
       explorer: { url: tronGridUrl },
@@ -57,7 +61,9 @@ export function upstreamTronGrid(): string {
   return process.env.API_TRONGRID_PROXY || "https://tron.coin.ledger.com";
 }
 
-const RENT_ORDER_PATH = "/api/tronRent/addTronRentRecord";
+/** The Tronify endpoints that place a rent order and report its payment, as the fake logs them. */
+export const RENT_ORDER_PATH = "/api/tronRent/addTronRentRecord";
+export const RENT_PAYMENT_UPLOAD_PATH = "/api/tronRent/uploadHash";
 const FAKE_POLL_MS = 250;
 
 async function pollUntil(done: () => boolean, timeoutMs: number, failure: string): Promise<void> {
@@ -97,14 +103,23 @@ export async function expectUsdtTransferBroadcastToFake(
   amount: string,
   timeoutMs = 30_000,
 ): Promise<void> {
-  if (!recipient) throw new Error("The transaction has no recipient address to look for");
-  const toHex = base58ToHex(recipient);
-  const baseUnits = parseUsdt(amount);
   await pollUntil(
-    () => fake.broadcasts().some(({ rawDataHex }) => isUsdtTransfer(rawDataHex, toHex, baseUnits)),
+    () => hasUsdtTransferBroadcast(fake, recipient, amount),
     timeoutMs,
     `fake TronGrid got no broadcast of ${amount} USDT to ${recipient} in ${timeoutMs} ms`,
   );
+}
+
+/** Whether the app broadcast a USDT `transfer(recipient, amount)`. `amount` is in USDT. */
+export function hasUsdtTransferBroadcast(
+  fake: Pick<FakeTronify, "broadcasts">,
+  recipient: string | undefined,
+  amount: string,
+): boolean {
+  if (!recipient) throw new Error("The transaction has no recipient address to look for");
+  const toHex = base58ToHex(recipient);
+  const baseUnits = parseUsdt(amount);
+  return fake.broadcasts().some(({ rawDataHex }) => isUsdtTransfer(rawDataHex, toHex, baseUnits));
 }
 
 const SCENARIOS = [
@@ -130,6 +145,8 @@ export type FakeRequest = {
 
 export type FakeBroadcast = { txid: string; rawDataHex: string };
 
+export type FakeOrder = { orderId: string; payee: string };
+
 export type FakeTronify = {
   /** Tronify base url: coin-tron appends `/api/tronRent/<endpoint>`. */
   url: string;
@@ -142,6 +159,10 @@ export type FakeTronify = {
   log(): FakeRequest[];
   /** The transactions broadcast since the scenario was set, answered here and never forwarded. */
   broadcasts(): FakeBroadcast[];
+  /** The rent orders placed since the scenario was set, oldest first. */
+  orders(): FakeOrder[];
+  /** Delivers the energy of every paid order, even under `deliveryTimeout`: a rent landing late. */
+  landPaidRents(): void;
   close(): Promise<void>;
 };
 
@@ -185,6 +206,7 @@ type OrderRequest = {
 
 type Order = {
   orderId: string;
+  payee: string;
   fromAddress: string;
   pledgeAddress: string;
   pledgeNum: number;
@@ -195,6 +217,8 @@ type Order = {
   refused: boolean;
   /** `mypayorder` reads since the payment arrived. */
   statusReads: number;
+  /** Delivered by `landPaidRents`, whatever the scenario. */
+  landedLate: boolean;
 };
 
 type Json = Record<string, unknown>;
@@ -346,12 +370,12 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     if (!order.paid) return "wait_deposit_send";
     if (order.statusReads === 0) return "wait_sale";
     // So deliveryTimeout fails within seconds as DELIVERY_FAILED, not via the 120 s poll timeout.
-    return scenario === "deliveryTimeout" ? "timeout" : "complete";
+    return scenario === "deliveryTimeout" && !order.landedLate ? "timeout" : "complete";
   }
 
   // Lands after the paid order's first poll, so the app shows its waiting state before the transfer.
   const delivered = (order: Order) =>
-    order.paid && order.statusReads > 0 && scenario !== "deliveryTimeout";
+    order.paid && order.statusReads > 0 && (scenario !== "deliveryTimeout" || order.landedLate);
 
   // The fields a quote and an order share.
   const offer = (body: OrderRequest, rent: bigint) => ({
@@ -404,6 +428,7 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     const terms = offer(body, rent);
     const order: Order = {
       orderId: randomUUID().replaceAll("-", "_"),
+      payee,
       fromAddress: body.fromAddress,
       pledgeAddress: body.pledgeAddress,
       pledgeNum: terms.pledgeNum,
@@ -412,6 +437,7 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
       paid: false,
       refused: false,
       statusReads: 0,
+      landedLate: false,
     };
     orders.push(order);
     return {
@@ -662,6 +688,10 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     setScenario,
     log: () => [...requests],
     broadcasts: () => [...broadcasts],
+    orders: () => orders.map(({ orderId, payee }) => ({ orderId, payee })),
+    landPaidRents: () => {
+      for (const order of orders) if (order.paid) order.landedLate = true;
+    },
     close: () =>
       new Promise<void>((resolve, reject) => {
         server.close(error => (error ? reject(error) : resolve()));

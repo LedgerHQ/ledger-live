@@ -1,25 +1,9 @@
-import { writeFile } from "fs/promises";
-import { BigNumber } from "bignumber.js";
-import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
-import { test } from "tests/fixtures/common";
+import { test } from "tests/fixtures/fakeTronify";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import {
-  FAKE_TRONIFY_PORT,
-  FAKE_TRONIFY_RENT,
-  TRONIFY_E2E_PAYEES,
-  TRONIFY_OPTION_ID,
-  USDT_UNIT,
-  expectRentOrderedFromFake,
-  expectUsdtTransferBroadcastToFake,
-  fakeTronifyCoinConfig,
-  startFakeTronify,
-  upstreamTronGrid,
-  type FakeTronify,
-  type FakeTronifyScenario,
-} from "@ledgerhq/live-e2e-shared/tronify/index";
+import { FAKE_TRONIFY_RENT, TRONIFY_OPTION_ID } from "@ledgerhq/live-e2e-shared/tronify/index";
 import { deviceShowsTronifyService } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { FF_NEW_SEND_FLOW_ENABLED } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
@@ -30,46 +14,9 @@ const TMS_TICKET = "LIVE-32798";
 
 const tx = new Transaction(TokenAccount.TRX_USDT, TokenAccount.TRX_USDT_2, "1");
 
-// The device shows the rent in full; the app rounds it the way it rounds every fee.
-const appFee = (usdt: string) =>
-  formatFeeCurrencyAmount(USDT_UNIT, new BigNumber(usdt).shiftedBy(USDT_UNIT.magnitude));
-
-// The fake owns a fixed port (FAKE_TRONIFY_PORT, default 4790) and one global scenario, so this file
-// runs serially: --repeat-each and parallel workers are unsupported.
-test.describe.configure({ mode: "default" });
-
-let fake: FakeTronify;
-
-test.beforeAll(async () => {
-  fake = await startFakeTronify({
-    port: FAKE_TRONIFY_PORT,
-    payees: TRONIFY_E2E_PAYEES,
-    upstreamTronGrid: upstreamTronGrid(),
-    usdtBalance: 50_000_000n,
-    trxBalanceSun: 20_000_000n,
-  });
-});
-
-test.afterAll(async () => {
-  await fake?.close();
-});
-
-test.afterEach(async () => {
-  // A fake that failed to start (EADDRINUSE) has no log; its own error is the report.
-  if (!fake) return;
-  const testInfo = test.info();
-  const logPath = testInfo.outputPath("fake-tronify-log.json");
-  await writeFile(logPath, JSON.stringify(fake.log(), null, 2));
-  await testInfo.attach("Fake Tronify requests", {
-    path: logPath,
-    contentType: "application/json",
-  });
-});
-
-/** Runs before the app launches, so its first sync already reads the scenario's balances. */
-function useScenario(scenario: FakeTronifyScenario, params?: Record<string, unknown>) {
-  test.beforeEach(() => fake.setScenario(scenario, params));
-}
+// The fake's rents as the app rounds them; the device shows them in full (FAKE_TRONIFY_RENT).
+const QUOTED_RENT_SHOWN = "3.16945 USDT";
+const RAISED_RENT_SHOWN = "4.75418 USDT";
 
 const testOptions = {
   tag: buildTags({
@@ -95,48 +42,47 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
     featureFlags: { ...FF_NEW_SEND_FLOW_ENABLED, gasSponsorship: { enabled: true } },
     // Broadcasts reach the fake TronGrid, which answers them and never forwards them.
     env: { DISABLE_TRANSACTION_BROADCAST: "0" },
-    coinConfigOverrides: fakeTronifyCoinConfig(),
   });
 
   test.describe("happy path", () => {
-    useScenario("happy");
+    test.use({ tronifyScenario: { scenario: "happy" } });
 
     test(
       `[${label}] - Send paying the network fee in USDT, rent payment then transfer on device`,
       testOptions,
-      async ({ app }) => {
+      async ({ app, tronify }) => {
         await reachAmountStep(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
         await app.newSendFlow.expectSponsoredNudgeVisible();
 
         await app.newSendFlow.openFeePayment();
-        await app.newSendFlow.expectFeePaymentOptionFee(
-          TRONIFY_OPTION_ID,
-          appFee(FAKE_TRONIFY_RENT.quoted),
-        );
+        await app.newSendFlow.expectFeePaymentOptionFee(TRONIFY_OPTION_ID, QUOTED_RENT_SHOWN);
         await app.newSendFlow.selectFeePaymentOption(TRONIFY_OPTION_ID);
         await app.newSendFlow.confirmFeePayment();
         await app.newSendFlow.expectSponsoredFeeSelected();
         await app.newSendFlow.clickReview();
 
-        // TX-A: the scenario's first order pays the first payee.
-        await expectRentOrderedFromFake(fake);
-        await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, TRONIFY_E2E_PAYEES[0]);
+        // TX-A: the device shows the payee of the app's one rent order.
+        const payee = await tronify.expectRentOrdered();
+        await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, payee);
         await app.speculos.resetSpeculosEvents();
         await app.newSendFlow.waitForSponsoredPolling();
+        await tronify.expectRentPaidOnce();
 
         // TX-C: the user's own transfer, once the rented energy has landed.
         await app.newSendFlow.waitForSignature();
         await app.speculos.signSendTransaction(tx);
         await app.newSendFlow.waitForSuccessConfirmation();
-        await expectUsdtTransferBroadcastToFake(fake, tx.accountToCredit.address, tx.amount);
+        await tronify.expectUsdtTransferBroadcast(tx.accountToCredit.address, tx.amount);
       },
     );
   });
 
   test.describe("insufficient USDT", () => {
     // Covers the 1 USDT sent and the rent alone, not both together.
-    useScenario("insufficientBalance", { usdtBalance: 4_000_000 });
+    test.use({
+      tronifyScenario: { scenario: "insufficientBalance", params: { usdtBalance: 4_000_000 } },
+    });
 
     test(
       `[${label}] - Send paying the network fee in USDT is blocked when USDT can't cover amount and rent`,
@@ -158,12 +104,12 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
   });
 
   test.describe("energy delivery timeout", () => {
-    useScenario("deliveryTimeout");
+    test.use({ tronifyScenario: { scenario: "deliveryTimeout" } });
 
     test(
-      `[${label}] - Send paying the network fee in USDT fails with Retry locked when energy never arrives`,
+      `[${label}] - Send paying the network fee in USDT fails with Retry locked when energy never arrives, and a reopened Send waits for it`,
       testOptions,
-      async ({ app }) => {
+      async ({ app, tronify }) => {
         await reachAmountStep(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
 
@@ -173,19 +119,29 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
         await app.newSendFlow.expectSponsoredFeeSelected();
         await app.newSendFlow.clickReview();
 
-        await expectRentOrderedFromFake(fake);
-        await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, TRONIFY_E2E_PAYEES[0]);
+        const payee = await tronify.expectRentOrdered();
+        await app.speculos.signTronRentPayment(FAKE_TRONIFY_RENT.quoted, payee);
         await app.newSendFlow.waitForSponsoredPolling();
 
         await app.newSendFlow.expectSponsoredFailure("Energy was not delivered.");
         await app.newSendFlow.expectRetryLocked();
         await app.newSendFlow.cancelSponsoredFailure();
+
+        // The paid rent may still land: a reopened Send must not rent again meanwhile.
+        await reachAmountStep(app, tx);
+        await app.newSendFlow.fillCryptoAmount(tx.amount);
+        await app.newSendFlow.expectRentArriving();
+        const feesBefore = await app.newSendFlow.networkFees();
+
+        await tronify.landPaidRents();
+        await app.newSendFlow.expectFeesReestimatedOnRentDelivery(feesBefore);
+        await tronify.expectRentPaidOnce();
       },
     );
   });
 
   test.describe("rent price rose", () => {
-    useScenario("priceRose");
+    test.use({ tronifyScenario: { scenario: "priceRose" } });
 
     test(
       `[${label}] - Send paying the network fee in USDT shows the new price when the order costs more than the quote`,
@@ -201,9 +157,10 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
         await app.newSendFlow.clickReview();
 
         await app.newSendFlow.expectSponsoredFailure(
-          `The energy rental price went up to ${appFee(FAKE_TRONIFY_RENT.raised)}.`,
+          `The energy rental price went up to ${RAISED_RENT_SHOWN}.`,
         );
         await app.newSendFlow.expectRetryOffered("Accept new price");
+        await app.newSendFlow.expectNoFeeTokenShortfall("USDT");
         await app.newSendFlow.cancelSponsoredFailure();
       },
     );

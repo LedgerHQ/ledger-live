@@ -63,7 +63,7 @@ export class SpeculosPage extends AppPage {
 
   @step("Clear the device screen events")
   async resetSpeculosEvents() {
-    await resetSpeculosEvents(Number(process.env.SPECULOS_API_PORT));
+    await resetSpeculosEvents();
   }
 
   @step("Sign Delegation Transaction")

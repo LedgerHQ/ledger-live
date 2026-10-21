@@ -807,8 +807,10 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
 }
 
 /** Clears the screen events recorded so far, so the next review is checked against its own pages only. */
-export async function resetSpeculosEvents(speculosApiPort: number): Promise<void> {
+export async function resetSpeculosEvents(port?: number): Promise<void> {
   const speculosAddress = getSpeculosAddress();
+  // The device controllers that sign read the same port.
+  const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   await retryAxiosRequest(() =>
     axios.delete(`${speculosAddress}:${speculosApiPort}/events`, {
       headers: getSpeculosHeaders(),

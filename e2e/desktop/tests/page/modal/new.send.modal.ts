@@ -57,6 +57,8 @@ export class NewSendModal extends Modal {
   private readonly feePaymentConfirmButton = this.dialog.getByTestId("send-fee-payment-confirm");
   private readonly sponsoredFeeValue = this.dialog.getByTestId("send-sponsored-fee-value");
   private readonly sponsoredFeeError = this.dialog.getByTestId("send-sponsored-fee-error");
+  private readonly sponsoredRentArriving = this.dialog.getByTestId("send-sponsored-rent-arriving");
+  private readonly networkFeesRow = this.dialog.getByTestId("send-network-fees-row");
   private readonly sponsoredPolling = this.dialog.getByTestId("send-sponsored-polling");
   private readonly sponsoredFailure = this.dialog.getByTestId("send-sponsored-failure");
   private readonly sponsoredFailureRetry = this.dialog.getByTestId("send-sponsored-failure-retry");
@@ -66,7 +68,8 @@ export class NewSendModal extends Modal {
   private readonly sponsoredFailureCancel = this.dialog.getByTestId(
     "send-sponsored-failure-cancel",
   );
-  private readonly notEnoughUsdtCopy = this.dialog.getByText("You don't have enough USDT");
+  private readonly notEnoughFeeTokenCopy = (ticker: string) =>
+    this.dialog.getByText(`You don't have enough ${ticker}`);
 
   private readonly feePaymentOption = (optionId: string) =>
     this.dialog.getByTestId(`send-fee-payment-option-${optionId}`);
@@ -286,8 +289,8 @@ export class NewSendModal extends Modal {
   @step("Click review to proceed to signature")
   async clickReview() {
     await expect(this.reviewButton).toBeEnabled();
-    // A loading Review is still enabled but has no label; a sponsored send needs its quote first.
-    await expect(this.reviewButton).toHaveText(/\S/);
+    // A loading Review is still enabled; a sponsored send needs its quote first.
+    await expect(this.reviewButton).not.toHaveAttribute("aria-busy", "true");
     await this.reviewButton.click();
   }
 
@@ -343,6 +346,24 @@ export class NewSendModal extends Modal {
     await expect(this.sponsoredFeeError).toContainText(message);
   }
 
+  @step("Verify a paid rent is still arriving, and no other rent is offered")
+  async expectRentArriving() {
+    await expect(this.sponsoredRentArriving).toBeVisible();
+    await expect(this.feePaymentEntry).toBeHidden();
+  }
+
+  @step("Read the network fees")
+  async networkFees(): Promise<string> {
+    await expect(this.networkFeesRow).toBeVisible();
+    return this.networkFeesRow.innerText();
+  }
+
+  @step("Verify the network fees were estimated again once the rent landed")
+  async expectFeesReestimatedOnRentDelivery(feesBefore: string) {
+    await expect(this.sponsoredRentArriving).toBeHidden();
+    await expect(this.networkFeesRow).not.toHaveText(feesBefore);
+  }
+
   @step("Verify the energy delivery wait is shown")
   async waitForSponsoredPolling() {
     await expect(this.sponsoredPolling).toBeVisible();
@@ -363,7 +384,11 @@ export class NewSendModal extends Modal {
   async expectRetryOffered(label: string | RegExp) {
     await expect(this.sponsoredFailureRetry).toBeEnabled();
     await expect(this.sponsoredFailureRetry).toHaveText(label);
-    await expect(this.notEnoughUsdtCopy).toHaveCount(0);
+  }
+
+  @step("Verify no message says $0 is short")
+  async expectNoFeeTokenShortfall(ticker: string) {
+    await expect(this.notEnoughFeeTokenCopy(ticker)).toHaveCount(0);
   }
 
   @step("Cancel the failed sponsored send")

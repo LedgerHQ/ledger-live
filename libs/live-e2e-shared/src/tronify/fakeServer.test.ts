@@ -359,6 +359,40 @@ test("deliveryTimeout times the paid order out and never delivers", async () => 
   assert.equal((await energy()).EnergyLimit, 0);
 });
 
+test("should deliver a timed-out paid order once its rent lands late", async () => {
+  fake.setScenario("deliveryTimeout");
+  const { data } = await order();
+  await uploadHash(data);
+  await orderStatus(data);
+
+  fake.landPaidRents();
+
+  assert.equal(await orderStatus(data), "complete");
+  assert.equal((await energy()).EnergyLimit, data.pledgeNum);
+});
+
+test("should leave an unpaid order undelivered when rents land late", async () => {
+  fake.setScenario("deliveryTimeout");
+  const { data } = await order();
+
+  fake.landPaidRents();
+
+  assert.equal(await orderStatus(data), "wait_deposit_send");
+  assert.equal((await energy()).EnergyLimit, 0);
+});
+
+test("should list each order with the payee it was given", async () => {
+  const { data: first } = await order();
+  const { data: second } = await order();
+
+  assert.deepEqual(fake.orders(), [
+    { orderId: first.orderId, payee: TRONIFY_E2E_PAYEES[0] },
+    { orderId: second.orderId, payee: TRONIFY_E2E_PAYEES[1] },
+  ]);
+  fake.setScenario("happy");
+  assert.deepEqual(fake.orders(), []);
+});
+
 test("a new scenario starts with no orders", async () => {
   const { data } = await order();
   await uploadHash(data);
