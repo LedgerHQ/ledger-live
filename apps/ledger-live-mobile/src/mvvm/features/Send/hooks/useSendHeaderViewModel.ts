@@ -9,6 +9,8 @@ import type { BaseNavigationComposite } from "~/components/RootNavigator/types/h
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
@@ -96,11 +98,39 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const accountName = useMaybeAccountName(state.account.account);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
   const headerDisplayMode = currentStep === SEND_FLOW_STEP.COIN_CONTROL ? "crypto" : displayMode;
-  const spendableBalanceText = useAvailableBalance(state.account.account, headerDisplayMode);
+  const selectedPoolBalance = useMemo(
+    () => getSelectedBalanceTypeBalance(state.account.account, state.transaction.transaction),
+    [state.account.account, state.transaction.transaction],
+  );
+  const spendableBalanceText = useAvailableBalance(
+    state.account.account,
+    headerDisplayMode,
+    selectedPoolBalance,
+  );
+
+  const poolLabel = useMemo(() => {
+    const currency = state.account.currency;
+    const accountLike = state.account.account;
+    if (!currency || !accountLike) return undefined;
+
+    const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(currency);
+    const selectedOptionId = balanceTypeConfig?.getSelectedOptionId(state.transaction.transaction);
+    if (!balanceTypeConfig || !selectedOptionId) return undefined;
+
+    const selectedOption = balanceTypeConfig
+      .getOptions({ account: accountLike })
+      .find(option => option.id === selectedOptionId);
+    return selectedOption
+      ? t(`send.newSendFlow.${selectedOption.translationKey}.title`)
+      : undefined;
+  }, [state.account.currency, state.account.account, state.transaction.transaction, t]);
+  const qualifiedAccountName =
+    poolLabel && accountName ? `${accountName} (${poolLabel})` : accountName;
 
   const currencyName = state.account.currency?.ticker ?? "";
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
+  const isBalanceTypeStep = currentStep === SEND_FLOW_STEP.BALANCE_TYPE;
   const isSelectingContactAddress = isRecipientStep && selectedContact !== undefined;
   const showTitle = currentStepConfig?.showTitle !== false;
   const isCustomFeesStep = currentStep === SEND_FLOW_STEP.CUSTOM_FEES;
@@ -109,7 +139,9 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   if (isSelectingContactAddress) {
     title = t("send.newSendFlow.selectAddress");
   } else if (showTitle) {
-    if (isCustomFeesStep) {
+    if (isBalanceTypeStep) {
+      title = t("send.newSendFlow.balanceType.title");
+    } else if (isCustomFeesStep) {
       title = t("send.newSendFlow.customFees.title");
     } else if (isCoinControlStep) {
       title = t("send.newSendFlow.coinControl.title");
@@ -119,8 +151,8 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   }
   const descriptionText = isSelectingContactAddress
     ? selectedContact.name
-    : showTitle && !isCustomFeesStep
-      ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
+    : showTitle && !isCustomFeesStep && !isBalanceTypeStep
+      ? [qualifiedAccountName, spendableBalanceText].filter(Boolean).join(" · ")
       : "";
 
   const showHeaderRight =

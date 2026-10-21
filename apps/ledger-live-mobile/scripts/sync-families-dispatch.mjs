@@ -30,6 +30,8 @@ const targets = [
   "AccountBalanceHeader",
   "SendRowsCustom",
   "SendRowsFee",
+  "SendBalanceTypeSync",
+  "SendAmountFooterRow",
   "SendSelectRecipient",
   "AccountBalanceSummaryFooter",
   "SubAccountList",

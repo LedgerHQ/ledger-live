@@ -5243,6 +5243,44 @@
   },
   "send": {
     "newSendFlow": {
+      "balanceType": {
+        "title": "Select balance",
+        "transparent": {
+          "title": "Public balance",
+          "subtitle": "Transparent"
+        },
+        "shielded": {
+          "title": "Private balance",
+          "subtitle": "Shielded",
+          "pendingNoticeTitle": "Funds maturing",
+          "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+        },
+        "aleoPublic": {
+          "title": "Public balance"
+        },
+        "aleoPrivate": {
+          "title": "Private balance"
+        },
+        "zeroBalance": {
+          "warning": "No available balance"
+        },
+        "requiresSync": {
+          "notice": "Sync required"
+        }
+      },
+      "recipient": {
+        "selfTransfer": {
+          "title": "Self transfer",
+          "toPrivate": {
+            "action": "Send to private balance",
+            "label": "Private balance"
+          },
+          "toPublic": {
+            "action": "Send to public balance",
+            "label": "Public balance"
+          }
+        }
+      },
       "title": "Send {{currency}}",
       "selectAddress": "Select address",
       "available": "Available {{amount}}",
@@ -11795,6 +11833,21 @@
       }
     },
     "send": {
+      "balanceTypeSync": {
+        "title": "Refreshing your private balance",
+        "description": "This can take up to a minute",
+        "progress": "{{percentage}}% synced",
+        "errorTitle": "Private sync failed",
+        "errorDescription": "Something went wrong, please try again"
+      },
+      "amount": {
+        "signingTime": {
+          "label": "Signing time",
+          "description": "Your Ledger signer approves each record this transaction uses. Sending more from your private balance can use more records and take longer.",
+          "gotIt": "Got it",
+          "learnMore": "Learn more"
+        }
+      },
       "balanceSelection": {
         "title": "Select balance",
         "convertToPrivate": "Transfer from public",

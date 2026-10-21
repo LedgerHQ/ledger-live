@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useMaybeAccountName } from "~/reducers/wallet";
@@ -182,7 +183,60 @@ describe("useSendHeaderViewModel", () => {
 
     expect(result.current.title).toBe("Send ETH");
     expect(result.current.descriptionText).toBe("Base 1 · $5,969.83");
-    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat", undefined);
+  });
+
+  it("GIVEN the balance type step WHEN rendered THEN only the balance selection title is shown", () => {
+    mockedUseCurrentSendFlowStep.mockReturnValue([
+      SEND_FLOW_STEP.BALANCE_TYPE,
+      {
+        id: SEND_FLOW_STEP.BALANCE_TYPE,
+        canGoBack: true,
+        showTitle: true,
+        showHeaderRight: false,
+      },
+    ]);
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    expect(result.current.title).toBe("send.newSendFlow.balanceType.title");
+    expect(result.current.descriptionText).toBe("");
+  });
+
+  it("GIVEN a selected balance pool WHEN rendered THEN the account summary names the pool and shows its balance", () => {
+    const poolBalance = new BigNumber(1234);
+    const getBalanceTypeConfig = jest.spyOn(sendFeatures, "getBalanceTypeConfig").mockReturnValue({
+      getOptions: () => [
+        {
+          id: "private",
+          translationKey: "balanceType.aleoPrivate",
+          balance: poolBalance,
+          hasPendingBalance: false,
+          icon: "lock",
+        },
+      ],
+      getSelectedOptionId: () => "private",
+      buildSelectionPatch: () => ({}),
+      getSelfTransferTarget: () => null,
+      buildSelfTransferPatch: () => ({}),
+      getSelectableBalance: () => poolBalance,
+    });
+    const flowData = mockedUseSendFlowData();
+    mockedUseSendFlowData.mockReturnValue({
+      ...flowData,
+      state: {
+        ...flowData.state,
+        transaction: { ...flowData.state.transaction, transaction: { family: "aleo" } },
+      },
+    } as never);
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    expect(result.current.descriptionText).toBe(
+      "Base 1 (send.newSendFlow.balanceType.aleoPrivate.title) · $5,969.83",
+    );
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat", poolBalance);
+    getBalanceTypeConfig.mockRestore();
   });
 
   it("shows address selection for a contact and returns to the recipient list", () => {
@@ -225,7 +279,7 @@ describe("useSendHeaderViewModel", () => {
     const { result } = renderHook(() => useSendHeaderViewModel());
 
     expect(result.current.descriptionText).toBe("Base 1 · 0.0596983 ETH");
-    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto", undefined);
   });
 
   it("forces the header balance to crypto on the coin control step, ignoring the fiat display mode", () => {
@@ -245,7 +299,7 @@ describe("useSendHeaderViewModel", () => {
 
     renderHook(() => useSendHeaderViewModel());
 
-    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto", undefined);
   });
 
   it("navigates to ScanRecipient and fills the search with the scanned address", () => {
