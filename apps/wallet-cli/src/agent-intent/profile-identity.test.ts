@@ -120,6 +120,14 @@ describe("loadProfileIdentity", () => {
     );
   });
 
+  it("reports an empty key file as empty, not as missing", async () => {
+    keyFileSecret = "";
+
+    await expect(loadProfileIdentity(profile("plaintext-file"))).rejects.toThrow(
+      /The agent key file of profile "bot" \(.*bot\.key\) is empty\. Re-enroll with `wallet-cli agent-intent enroll`/,
+    );
+  });
+
   it("names the profile and path, never the content, when the key file is corrupt", async () => {
     keyFileSecret = "not-a-hex-key-zzzz";
 

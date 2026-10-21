@@ -100,7 +100,12 @@ function loadKeyFromFile(profileId: string): string {
       { cause: e },
     );
   }
-  if (!secretKey) {
+  if (secretKey === "") {
+    throw new Error(
+      `The agent key file of profile "${profileId}" (${path}) is empty. ${RE_ENROLL(profileId)}`,
+    );
+  }
+  if (secretKey === null) {
     throw new Error(
       `No agent key file found for profile "${profileId}" at ${path}. Profiles don't move ` +
         `between machines or users. ${RE_ENROLL(profileId)}`,
