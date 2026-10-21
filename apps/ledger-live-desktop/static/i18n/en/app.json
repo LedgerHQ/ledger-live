@@ -309,6 +309,7 @@
     "menu": {
       "changeName": "Change name",
       "viewAdvancedLogs": "View advanced logs",
+      "viewExplorer": "View Explorer",
       "removeAccount": "Remove account from portfolio"
     },
     "changeName": {

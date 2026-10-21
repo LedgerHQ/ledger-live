@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { MAX_ACCOUNT_NAME_LENGTH, validateNameEdition } from "@domain/entity-account-name";
 import type { AdvancedLogsContentProps } from "../AdvancedLogsContent/types";
+import { getAccountExplorerUrl } from "../../logic/getAccountExplorerUrl";
 import type { AccountSettingsAccount, AccountSettingsAdapter } from "./types.web";
 
 export type AccountSettingsViewModel = Readonly<{
@@ -11,6 +12,7 @@ export type AccountSettingsViewModel = Readonly<{
   advancedLogs: AdvancedLogsContentProps;
   onConfirmName: (name: string) => void;
   onConfirmRemove: () => void;
+  explorerUrl?: string;
 }>;
 
 export function useAccountSettingsViewModel<TAccount extends AccountSettingsAccount>(
@@ -52,5 +54,6 @@ export function useAccountSettingsViewModel<TAccount extends AccountSettingsAcco
     advancedLogs,
     onConfirmName,
     onConfirmRemove: onClose,
+    explorerUrl: getAccountExplorerUrl(account),
   };
 }

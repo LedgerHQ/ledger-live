@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { I18nWrapper } from "../../__tests__/i18nWrapper";
+import { I18nWrapper, openExternal } from "../../__tests__/i18nWrapper";
 import { AccountSettingsMenu } from "./AccountSettingsMenu";
 
 function renderMenu() {
@@ -39,5 +39,30 @@ describe("AccountSettingsMenu (Native)", () => {
     expect(handlers.onChangeName).toHaveBeenCalledTimes(1);
     expect(handlers.onViewAdvancedLogs).toHaveBeenCalledTimes(1);
     expect(handlers.onRemoveAccount).toHaveBeenCalledTimes(1);
+  });
+
+  describe("View Explorer", () => {
+    it("is hidden without an explorer URL", () => {
+      renderMenu();
+
+      expect(screen.queryByTestId("account-settings-view-explorer")).toBeNull();
+    });
+
+    it("shows under Advanced logs and opens the explorer when pressed", () => {
+      render(
+        <AccountSettingsMenu
+          accountName="Ethereum 1"
+          onChangeName={jest.fn()}
+          onViewAdvancedLogs={jest.fn()}
+          explorerUrl="https://explorer.test/address/0xabc"
+          onRemoveAccount={jest.fn()}
+        />,
+        { wrapper: I18nWrapper },
+      );
+
+      expect(screen.getByText("View Explorer")).toBeVisible();
+      fireEvent.press(screen.getByTestId("account-settings-view-explorer"));
+      expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/0xabc");
+    });
   });
 });
