@@ -53,7 +53,12 @@ async function verifySendCurrencyTokensWarning(app: Application, account: Accoun
 }
 
 for (const receive of nativeAccounts) {
+  const receiveBlockedOnLNS = isReceiveBlockedOnLNS(receive.account.currency.id);
   test.describe("Receive", () => {
+    test.skip(
+      receiveBlockedOnLNS && getSpeculosModel() === DeviceModelId.nanoS,
+      "Receive is blocked on Nano S",
+    );
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -66,7 +71,7 @@ for (const receive of nativeAccounts) {
       {
         tag: buildTags({
           currencyId: receive.account.currency.id,
-          skipLNS: isReceiveBlockedOnLNS(receive.account.currency.id),
+          skipLNS: receiveBlockedOnLNS,
           extraTags: receive.account === Account.ETH_1 ? ["@smoke"] : [],
         }),
         annotation: {
