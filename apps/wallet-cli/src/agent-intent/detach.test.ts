@@ -70,17 +70,24 @@ describe("withEnrollListenerLock", () => {
     expect(lockMode & 0o777).toBe(0o600);
   });
 
-  it("fails fast when another live process is the profile's listener", async () => {
+  it("fails at once, pointing at wait, when another live process is the profile's listener", async () => {
     const { lockPath } = enrollListenerPaths("my-agent");
     await withEnrollListenerLock("other", async () => {}); // creates the dir
     const holder = Bun.spawn([process.execPath, "-e", "await new Promise(() => {})"]);
     writeFileSync(lockPath, `${holder.pid}:a1b2c3d4e5f60718`);
+    let ran = false;
     try {
       const started = Date.now();
-      await expect(withEnrollListenerLock("my-agent", async () => "ran")).rejects.toThrow(
-        /Timed out waiting for a lock/,
+      await expect(
+        withEnrollListenerLock("my-agent", async () => {
+          ran = true;
+        }),
+      ).rejects.toThrow(
+        `An enrollment listener for profile "my-agent" is already running (pid ${holder.pid}). ` +
+          "Run `wallet-cli agent-intent wait --profile my-agent` to check on it.",
       );
-      expect(Date.now() - started).toBeLessThan(5_000);
+      expect(Date.now() - started).toBeLessThan(500);
+      expect(ran).toBe(false);
     } finally {
       holder.kill();
     }

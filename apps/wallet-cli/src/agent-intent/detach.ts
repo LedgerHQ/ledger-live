@@ -5,7 +5,7 @@ import { setTimeout as sleep } from "node:timers/promises";
 import { stateDir } from "@bunli/utils";
 import { z } from "zod";
 import { APP_NAME } from "../session/session-store";
-import { withFileLock } from "../shared/file-lock";
+import { readLiveLockHolderPid, withFileLock } from "../shared/file-lock";
 
 const LISTENER_DIR = "agent-intent-enroll";
 const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
@@ -25,14 +25,26 @@ function ensureListenerDir(): void {
   chmodSync(dir, 0o700);
 }
 
+/** Fails when a live listener already holds the profile's lock, pointing at `wait` instead. */
+export function assertNoLiveEnrollListener(profileId: string): void {
+  const runningPid = readLiveLockHolderPid(enrollListenerPaths(profileId).lockPath);
+  if (runningPid !== undefined) {
+    throw new Error(
+      `An enrollment listener for profile "${profileId}" is already running (pid ${runningPid}). ` +
+        `Run \`wallet-cli agent-intent wait --profile ${profileId}\` to check on it.`,
+    );
+  }
+}
+
 /** Runs `fn` as the profile's enrollment listener. A second listener for the same profile fails
- * fast instead of queueing behind the first. `wait` reads this lock to tell a running listener from
- * one that died. */
+ * at once instead of queueing behind the first. `wait` reads this lock to tell a running listener
+ * from one that died. */
 export async function withEnrollListenerLock<T>(
   profileId: string,
   fn: () => Promise<T>,
 ): Promise<T> {
   ensureListenerDir();
+  assertNoLiveEnrollListener(profileId);
   return withFileLock(enrollListenerPaths(profileId).lockPath, fn, LOCK_ACQUIRE_TIMEOUT_MS);
 }
 
