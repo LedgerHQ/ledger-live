@@ -1,6 +1,7 @@
 import {
   BroadcastLockBusyError,
   BroadcastLockLostError,
+  BroadcastLockStoreDownError,
   BroadcastLockStoreFatalError,
 } from "../errors";
 import type { AbandonableLease, LockLogger, LockRecord, LockStore, StoredLock } from "./types";
@@ -13,6 +14,8 @@ export type DistributedLockOptions = {
   readonly heartbeatMs: number;
   readonly pollMs: number;
   readonly acquireTimeoutMs: number;
+  /** Gives up once every lock store request has failed for this long, e.g. while it is down. */
+  readonly storeOutageMs?: number;
   readonly giveUpWhenHeld?: boolean;
   /** Waiters spread their claims over it when a settle window ends, the longest-waiting first. */
   readonly settleClaimSpreadMs?: number;
@@ -190,6 +193,7 @@ class Acquisition {
   private retryFrom: number;
   private lastHeld: StoredLock | undefined;
   private lastError: unknown;
+  private failingSince: number | undefined;
   private announcedWait = false;
   private rejectedEtag: string | undefined;
   private unchangedEtagRejections = 0;
@@ -229,10 +233,12 @@ class Acquisition {
       this.trackRejectedEtag(result);
       if (result.status === "held") this.lastHeld = result.current;
       this.lastError = undefined;
+      this.failingSince = undefined;
       return result;
     } catch (error) {
       if (isFatalStoreError(error)) throw error;
       this.lastError = error;
+      this.failingSince ??= this.now();
       this.options.log.warn(
         `[broadcastLock] lock store error on "${this.key}": ${errorMessage(error)}`,
       );
@@ -267,7 +273,7 @@ class Acquisition {
     return hold(this.store, this.key, this.record, etag, claimSentAt, this.options);
   }
 
-  /** Throws instead when the acquisition has to stop: given up, timed out. */
+  /** Throws instead when the acquisition has to stop: given up, store down, timed out. */
   private async waitBeforeNextClaim(held: StoredLock | undefined): Promise<void> {
     const settling = held?.record.released ? held : undefined;
     const { giveUpWhenHeld, pollMs } = this.options;
@@ -282,6 +288,7 @@ class Acquisition {
       this.retryFrom = this.now();
       return;
     }
+    this.throwIfStoreDown();
     this.throwIfTimedOut();
     await this.sleep(
       settling ? settleLeftMs(settling) + this.settleClaimDelayMs() : this.pollDelayMs(),
@@ -307,6 +314,16 @@ class Acquisition {
     this.options.log.info(`[broadcastLock] waiting for "${this.key}",${this.heldBy()}`);
   }
 
+  private throwIfStoreDown() {
+    const { storeOutageMs } = this.options;
+    if (storeOutageMs === undefined || this.failingSince === undefined) return;
+    const failingForMs = this.now() - this.failingSince;
+    if (failingForMs < storeOutageMs) return;
+    throw new BroadcastLockStoreDownError(
+      `[broadcastLock] every lock store request on "${this.key}" failed for ${failingForMs}ms; last store error: ${errorMessage(this.lastError)}`,
+    );
+  }
+
   private throwIfTimedOut() {
     const { acquireTimeoutMs, giveUpWhenHeld } = this.options;
     if (this.now() - this.retryFrom < acquireTimeoutMs) return;
@@ -330,8 +347,9 @@ class Acquisition {
 /**
  * Holds `key` until the returned lease is released. A holder that stops renewing is taken over
  * once its lease expires, and a released key stays closed for `settleMs` so the next holder
- * builds its transaction on top of the previous one's. Waiting past `acquireTimeoutMs`, or a
- * store error that retrying cannot fix, throws, and so does releasing a lease that was taken over.
+ * builds its transaction on top of the previous one's. Waiting past `acquireTimeoutMs`, a store
+ * failing every request for `storeOutageMs`, or a store error that retrying cannot fix, throws,
+ * and so does releasing a lease that was taken over.
  */
 export async function acquireDistributedLock(
   store: LockStore,

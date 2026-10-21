@@ -37,11 +37,13 @@ Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast what
    that includes the last transaction. The settle window is skipped when nothing was broadcast,
    when the CLI waited for confirmation, or for shared state.
 6. **Wait.** A waiter polls every 5–7.5 s for up to 30 min (`BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS`),
-   then fails. When a settle window ends, the waiter that has waited longest claims first.
+   then fails. When a settle window ends, the waiter that has waited longest claims first. If every
+   R2 request fails for 2 min, it fails then with `BroadcastLockStoreDownError`.
 7. **Nesting.** A CLI approval inside a test that already holds the account joins that hold instead
    of waiting for it. The test's release waits for the approval to finish.
-8. **Without R2.** If `E2E_BROADCAST_LOCK_*` is unset, a file lock under `$TMPDIR/ll-e2e-locks`
-   serializes processes on this machine only. On CI (`CI` set), that is an error.
+8. **Without R2.** If `E2E_BROADCAST_LOCK_*` is unset, or `E2E_BROADCAST_LOCK_MODE` is `local`, a
+   file lock under `$TMPDIR/ll-e2e-locks` serializes processes on this machine only. On CI (`CI`
+   set), only `local` allows it.
 
 If a mobile spec cannot get its lock, its tests fail. Its other hooks still run, so the app starts
 with broadcast disabled, and any later lock on those keys in the spec fails at once.
@@ -71,6 +73,10 @@ passes (default 2), the next pass waits for busy locks.
 | `E2E_BROADCAST_LOCK_ENDPOINT`, `_BUCKET`, `_ACCESS_KEY_ID`, `_SECRET_ACCESS_KEY` | The workflows, from the `R2_*` secrets. Set all four or none. Desktop removes them from the app's env |
 | `E2E_BROADCAST_LOCK_DEFERRAL_PASSES` | The `broadcast_deferral_passes` workflow input |
 | `E2E_BROADCAST_LOCK_DEFER` | The pass runners, on each pass. Do not set it |
+| `E2E_BROADCAST_LOCK_MODE` | The `broadcast_lock` workflow input: `remote` (default) or `local` |
+
+While R2 is down, dispatch with `broadcast_lock: local`. Each machine still keeps its own tests
+apart, but CI machines no longer keep each other away.
 
 Every run gets time for one full lock wait, since a run without broadcast still locks the Pay card
 and CLI approval accounts. The iOS step's timeout includes 30 extra minutes (60 to 120 min, 120 on
@@ -93,3 +99,4 @@ hides `info`.
 | `BroadcastLockRefusedError` | Mobile: the spec's own lock failed earlier |
 | `BroadcastLockConfigError` | `E2E_BROADCAST_LOCK_*` is missing on CI, or only partly set |
 | `BroadcastLockStoreFatalError` | R2 rejected the request in a way retrying cannot fix |
+| `BroadcastLockStoreDownError` | Every R2 request failed for 2 min. Rerun with `broadcast_lock: local` |

@@ -2,6 +2,10 @@ export class BroadcastLockStoreFatalError extends Error {
   override name = "BroadcastLockStoreFatalError";
 }
 
+export class BroadcastLockStoreDownError extends Error {
+  override name = "BroadcastLockStoreDownError";
+}
+
 export class BroadcastLockConfigError extends Error {
   override name = "BroadcastLockConfigError";
 }
