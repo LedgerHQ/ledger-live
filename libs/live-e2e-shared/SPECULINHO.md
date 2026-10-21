@@ -58,10 +58,3 @@ To watch the device during a local run, on Docker or Speculinho, `export SPECULO
 - `vnc` opens macOS Screen Sharing; on other systems the address and password are logged. On Speculinho it goes through a local bridge to the session's VNC websocket, which needs operator 2.0.0 with chart 0.6.0; without them the run carries on without a viewer. Each session has 4 viewer slots, and the gateway cuts connections after 10 minutes, so reconnect from Screen Sharing if the window goes blank.
 
 Watching is safe, but pressing buttons while the test drives the device will throw it off. Each test opens its own view, so on desktop run a single spec with `--workers 1`.
-
-## CI
-
-CI reads the operator URL from the `SPECULINHO_URL` secret.
-
-- Mobile E2E always uses Speculinho.
-- The desktop E2E workflow uses Docker unless it is dispatched with `remote_speculos`. The desktop smoke job uses Speculinho when its caller passes `SPECULINHO_URL`.
