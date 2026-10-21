@@ -1,7 +1,7 @@
 import React from "react";
 import { getEnv } from "@shared/env";
 import { Box } from "@ledgerhq/react-ui";
-import { Lottie } from "@shared/lottie";
+import { Lottie } from "@shared/lottie/web";
 
 import loaderLottie from "~/renderer/animations/common/loader.lottie";
 
