@@ -57,9 +57,12 @@ async function loadKeyFromOsKeychain(profileId: string): Promise<string> {
       "and dropped the field), set `keyStore: plaintext-file` for it in session.yaml."
     : "";
   assertOsKeychainAvailable(
-    `Profile "${profileId}" can't be read here: its agent key is in the OS keychain. If an older ` +
-      "wallet-cli enrolled it on this machine without one, the key went to the kernel keyring, " +
-      `which wallet-cli no longer reads: that key is gone. ${RE_ENROLL(profileId)} Pass ` +
+    `Profile "${profileId}" can't be read here: its agent key is in the OS keychain. Make the ` +
+      "Secret Service reachable and re-run (e.g. from the desktop session that enrolled the " +
+      "profile, or with that session's D-Bus bus in DBUS_SESSION_BUS_ADDRESS). Only if an older " +
+      "wallet-cli (before 2.12.0) enrolled it on this machine without one did the key go to the " +
+      `kernel keyring, which wallet-cli no longer reads: then that key is gone. ` +
+      `${RE_ENROLL(profileId)} Pass ` +
       "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
       `unencrypted on this machine.${keyFileHint}`,
   );
