@@ -3694,9 +3694,9 @@ DEPENDENCIES:
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.81.6_pa_b4b1954d42cef5b5ef4778516682253b/node_modules/react-native-svg`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_a9df717ecfdcce56e313bc9ac2181869/node_modules/react-native-worklets`)"
-  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_615be43634aa43e95515bb4cc3ac602b/node_modules/@segment/analytics-react-native`)"
+  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_25bff24d85333c8aa382711470ed9ac8/node_modules/@segment/analytics-react-native`)"
   - SocketRocket (~> 0.7.1)
-  - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_28becf2aa7c2a64bc522cfc5799c3d54/node_modules/@segment/sovran-react-native`)"
+  - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_37922983bbb4dd4e07d4e8a219154a80/node_modules/@segment/sovran-react-native`)"
   - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_1ec1dcb62bbfba0d57554a5005af0aad/node_modules/react-native-vision-camera`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/ReactCommon/yoga`)"
 
@@ -4000,9 +4000,9 @@ EXTERNAL SOURCES:
   RNWorklets:
     :path: "../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_a9df717ecfdcce56e313bc9ac2181869/node_modules/react-native-worklets"
   segment-analytics-react-native:
-    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_615be43634aa43e95515bb4cc3ac602b/node_modules/@segment/analytics-react-native"
+    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_25bff24d85333c8aa382711470ed9ac8/node_modules/@segment/analytics-react-native"
   sovran-react-native:
-    :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_28becf2aa7c2a64bc522cfc5799c3d54/node_modules/@segment/sovran-react-native"
+    :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_37922983bbb4dd4e07d4e8a219154a80/node_modules/@segment/sovran-react-native"
   VisionCamera:
     :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_1ec1dcb62bbfba0d57554a5005af0aad/node_modules/react-native-vision-camera"
   Yoga:
