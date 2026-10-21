@@ -632,6 +632,10 @@
       "title" : "Algo deu errado (Erro nº 17)",
       "description" : "Salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
     },
+    "CosmosMemoTooLong" : {
+      "title" : "O memo excede o comprimento máximo",
+      "description" : "Seu memo tem {{memoLength}} bytes, mas o máximo permitido é de {{maxLength}} bytes. Reduza o tamanho do memo."
+    },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Abra a Minha Ledger para atualizar este aplicativo",
       "description" : "Verificação do aplicativo não suportada."
@@ -1163,6 +1167,10 @@
       "title" : "Transação recusada no dispositivo",
       "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
     },
+    "TransferOfferExpiredError" : {
+      "title" : "Esta oferta expirou",
+      "description" : "A oferta de transferência expirou antes de ser aceita. Peça ao remetente para enviar uma nova."
+    },
     "TransportError" : {
       "title" : "Algo deu errado. Por favor, reconecte seu dispositivo.",
       "description" : "{{message}} Tente novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
@@ -1449,6 +1457,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "O memo é muito longo"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "O staking está pausado até o próximo ciclo de recompensa",
+      "description" : "A rede Stacks não aceita novas aplicações enquanto prepara o próximo ciclo de recompensa. O staking reabre em {{blocksUntilReopen}} blocos de Bitcoin."
     },
     "StellarWrongMemoFormat" : {
       "title" : "O formato do memo está incorreto"
@@ -1852,6 +1864,27 @@
     "ICPIncreaseStakeWarning" : {
       "title" : "Isso se soma a uma aplicação bloqueada",
       "description" : "A quantia se junta à aplicação existente do neuron e segue seu atraso de dissolução, portanto não pode ser gasta até que o neuron se dissolva."
+    }
+  },
+  "accountDetailSettings" : {
+    "title" : "Configurações de conta",
+    "menu" : {
+      "changeName" : "Alterar nome",
+      "viewAdvancedLogs" : "Visualizar registros avançados",
+      "removeAccount" : "Remover conta do portfólio"
+    },
+    "advancedLogs" : {
+      "title" : "Registros avançados",
+      "derivationTip" : "Esta é uma xpub {{tag}}. Ao importá-la para uma carteira externa, escolha o mesmo modo de derivação.",
+      "synchronised" : "{{date}} sincronizado",
+      "copy" : "Copiar registros",
+      "copied" : "Copiado"
+    },
+    "remove" : {
+      "title" : "Remover conta?",
+      "description" : "Os ativos vinculados a esta conta não estarão mais visíveis em seu portfólio. Seus ativos na blockchain permanecem inalterados.",
+      "confirm" : "Sim, remover.",
+      "cancel" : "Manter"
     }
   },
   "crash" : {
@@ -2525,6 +2558,35 @@
       "progress" : "Fique na Ledger Wallet enquanto os aplicativos são instalados.",
       "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",
       "skipped" : "Ainda não estão disponíveis para {{ productName }}"
+    }
+  },
+  "deviceOnboarding" : {
+    "checks" : {
+      "close" : "Fechar",
+      "synchronizing" : {
+        "title" : "Sincronizando…"
+      },
+      "idle" : {
+        "title" : "Verifique seu dispositivo",
+        "description" : "Vamos confirmar se o seu dispositivo Ledger é verdadeiro e está atualizado.",
+        "cta" : "Verificar meu dispositivo"
+      },
+      "checking" : {
+        "title" : "Verifique seu dispositivo",
+        "description" : "Confirmando se o seu autenticador Ledger é seguro para uso e está atualizado.",
+        "cta" : "Verificando…"
+      },
+      "succeeded" : {
+        "title" : "Dispositivo verdadeiro e atualizado",
+        "cta" : "Continuar"
+      }
+    },
+    "syncOffer" : {
+      "title" : "Sincronize sua carteira",
+      "description" : "Mantenha seu saldo e portfólio sincronizados ao trocar de smartphone ou usar um computador.",
+      "learnMore" : "Saiba mais",
+      "activate" : "Ativar",
+      "skip" : "Pular por enquanto"
     }
   },
   "onboarding" : {
@@ -3546,8 +3608,6 @@
       "buy" : "Comprar",
       "connect" : "Conectar",
       "buyLedger" : "Comprar uma Ledger",
-      "receive" : "Receber",
-      "send" : "Enviar",
       "transferDrawer" : {
         "title" : "Transferir",
         "receiveCrypto" : "Receber via endereço cripto",
@@ -4238,7 +4298,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Alertas de Transações (Beta)",
-        "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, BNB Chain, Avalanche e Ethereum Classic"
+        "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, Binance Smart Chain, Avalanche e Ethereum Classic"
       },
       "totalMarketCap" : {
         "title" : "Capitalização de mercado total",
@@ -4376,6 +4436,9 @@
       "featureFlagsRestoreAll" : "Restaurar os valores de todos os marcadores",
       "featureFlagsTabAll" : "Tudo",
       "featureFlagsTabGroups" : "Grupos",
+      "contentAbTests" : {
+        "invalidPayload" : "Payload inválido. “enabled” deve ser uma variável booleana e “copy” deve mapear chaves para strings."
+      },
       "firebaseProject" : "Projeto Firebase mirado por esta versão:",
       "showBannerDesc" : "Mostrar banner quando os marcadores estiverem desativados",
       "bannerTitle" : "Marcadores desativados localmente",
@@ -5345,6 +5408,35 @@
             "CUSTOM" : "Seleção de moeda personalizada"
           }
         }
+      },
+      "feePayment" : {
+        "insufficientFunds" : "Você não tem {{feeCurrency}} suficiente para cobrir a quantia e a taxa de aluguel de energia da {{provider}}."
+      },
+      "sponsoredRentSignature" : {
+        "crafting" : "Preparando o aluguel de energia…",
+        "strategy" : "Aluguel de energia - {{provider}}",
+        "fee" : "Taxa de aluguel: {{amount}}",
+        "cancelled" : {
+          "title" : "Aluguel de energia cancelado",
+          "description" : "Você rejeitou o pagamento da taxa de aluguel. Seus fundos não serão afetados."
+        }
+      },
+      "sponsoredPolling" : {
+        "title" : "Aguardando entrega de energia",
+        "waiting" : "{{provider}} está entregando a energia alugada. Isso pode levar alguns instantes.",
+        "elapsed" : "Decorrido: {{time}}"
+      },
+      "sponsoredFailure" : {
+        "rentPayment" : "Falha no pagamento de taxas — seus fundos não foram movimentados.",
+        "rentPaymentReportedFailed" : "{{provider}} relatou que o pagamento de taxas falhou, mas ainda pode ser concluído.",
+        "priceIncreased" : "O preço do aluguel de energia aumentou para {{fee}}. Seus fundos não foram movimentados.",
+        "deliveryFailed" : "A energia não foi entregue. Seu pagamento da taxa de aluguel foi enviado — entre em contato com o suporte da {{provider}} para obter um reembolso {{txidSuffix}}.",
+        "transfer" : "Sua transferência falhou, mas a energia alugada ainda é válida — você pode tentar a transferência novamente.",
+        "retryLocked" : "Para não pagar o aluguel duas vezes, é possível tentar novamente após {{time}}.",
+        "retry" : "Tentar Novamente",
+        "retryPaying" : "Pague novamente e tente de novo",
+        "acceptPrice" : "Aceitar novo preço",
+        "cancel" : "Cancelar"
       }
     },
     "pendingTxWarning" : "Você tem transações de entrada pendentes. Atenção: transações pendentes podem ser revertidas.",
@@ -5748,6 +5840,110 @@
     },
     "chooseAccountToFund" : "Escolha uma conta para adicionar fundos"
   },
+  "connectNewDevice" : {
+    "discovering" : {
+      "title" : "Buscando seus dispositivos Ledger",
+      "description" : {
+        "bluetooth" : "Certifique-se de que sua Ledger esteja desbloqueada e próxima ao smartphone com o qual você deseja emparelhá-la.",
+        "bluetoothAndUsb" : "Desbloqueie sua Ledger e conecte-a ao seu smartphone usando Bluetooth ou um cabo USB.",
+        "usb" : "Desbloqueie sua Ledger e conecte-a ao seu smartphone usando um cabo USB."
+      },
+      "select" : "Conectar",
+      "selectAccessibilityLabel" : "Conectar {{deviceName}}",
+      "deviceNotFound" : "Não vejo meu dispositivo"
+    },
+    "connecting" : {
+      "bluetooth" : {
+        "title" : "Emparelhando com {{deviceName}}",
+        "description" : "Se solicitado, confirme o código em sua {{productName}}"
+      },
+      "usb" : {
+        "title" : "Conectando a {{deviceName}}"
+      }
+    },
+    "connected" : {
+      "bluetooth" : {
+        "title" : "Seu dispositivo está emparelhado"
+      },
+      "usb" : {
+        "title" : "Seu dispositivo está conectado"
+      }
+    }
+  },
+  "osUpdates" : {
+    "actions" : {
+      "retry" : "Tentar novamente",
+      "cancel" : "Cancelar",
+      "close" : "Fechar"
+    },
+    "closeConfirmation" : {
+      "title" : "Atualização do OS em andamento",
+      "description" : "Se cancelar a atualização agora, seus aplicativos e configurações podem não ser restaurados corretamente.",
+      "continue" : "Continuar a atualização de OS",
+      "cancel" : "Cancelar a atualização de OS"
+    },
+    "whatsNew" : {
+      "productName" : "LedgerOS™",
+      "version" : "Versão {{version}}",
+      "banner" : "Como precaução, certifique-se de que sua frase de recuperação secreta de 24 palavras está anotada na folha de recuperação e disponível.",
+      "title" : "O que tem nesta atualização do sistema operacional?",
+      "start" : "Iniciar Atualização"
+    },
+    "preparing" : {
+      "title" : "Preparando para instalar"
+    },
+    "progress" : {
+      "updatingTitle" : "Atualizando seu {{productName}}",
+      "restoringTitle" : "Restaurando seus aplicativos e configurações",
+      "updateCount" : "Atualização {{index}} de {{count}}",
+      "description" : "Mantenha seu dispositivo conectado e próximo até que a atualização seja concluída."
+    },
+    "applied" : {
+      "title" : "Atualização concluída",
+      "description" : "A {{productName}} está atualizada"
+    },
+    "restored" : {
+      "title" : "Backup restaurado",
+      "description" : "Seus aplicativos e configurações estão de volta na sua {{productName}}."
+    },
+    "continueOnDevice" : {
+      "title" : "Continue na sua {{productName}}",
+      "description" : "Siga as instruções exibidas na sua Tela Segura."
+    },
+    "unlockDevice" : {
+      "title" : "Desbloqueie sua {{productName}}"
+    },
+    "deviceDisconnected" : {
+      "title" : "Dispositivo desconectado",
+      "description" : "Reconecte seu dispositivo Ledger para continuar. A atualização será retomada automaticamente."
+    },
+    "unexpectedError" : {
+      "title" : "Algo deu errado",
+      "description" : "A atualização do OS não pôde continuar. Contate o Suporte Ledger se o problema persistir."
+    },
+    "batteryTooLow" : {
+      "title" : "Carregue seu {{productName}}",
+      "description" : "A bateria do seu dispositivo está em {{percentage}}%. Conecte o dispositivo ou carregue-o acima de 20% para continuar."
+    },
+    "backupSelection" : {
+      "title" : "Usar seu backup existente?",
+      "description" : "Seu backup mais recente tem mais de 24 horas. É possível usá-lo ou criar um novo que o substituirá. As credenciais do Security Key fazem parte do backup.",
+      "useExisting" : "Usar backup existente",
+      "createNew" : "Criar um novo backup"
+    },
+    "secureConnectionRefused" : {
+      "title" : "Conexão segura recusada",
+      "description" : "A conexão segura foi recusada no seu dispositivo. Tente novamente para continuar."
+    },
+    "installFirmwareRefused" : {
+      "title" : "Instalação recusada",
+      "description" : "A instalação foi recusada em seu dispositivo, portanto a atualização não pode continuar."
+    },
+    "outOfMemory" : {
+      "title" : "Espaço insuficiente no seu dispositivo",
+      "description" : "Seu dispositivo não tem memória suficiente para continuar. Libere espaço e tente novamente."
+    }
+  },
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
@@ -5936,7 +6132,12 @@
               }
             },
             "bluetoothStateUnknownCheckOnly" : {
-              "title" : "Verificando Bluetooth…"
+              "title" : "O Bluetooth não está respondendo",
+              "description" : "Não foi possível verificar se o Bluetooth está ativado. Aguarde alguns segundos e tente novamente. Se isso continuar, desative e ative o Bluetooth novamente.",
+              "cta" : {
+                "retry" : "Tente novamente",
+                "ignore" : "Continuar com USB ao invés"
+              }
             },
             "bluetoothUnsupported" : {
               "title" : "Bluetooth não é compatível",
@@ -8500,6 +8701,73 @@
       }
     }
   },
+  "stacks" : {
+    "stake" : {
+      "stepperHeader" : {
+        "pool" : "Reserva",
+        "amount" : "Quantia",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conectar Dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "pool" : {
+        "description" : "Insira o endereço da pool para a qual você deseja delegar seus STX e por quantos ciclos de recompensa deseja bloqueá-los.",
+        "poolAddressLabel" : "Endereço da reserva",
+        "poolAddressError" : "Insira um endereço de contrato de pool, como SP….nome-da-pool",
+        "numCyclesLabel" : "Número de ciclos",
+        "numCyclesError" : "Digite um número inteiro de ciclos entre {{min}} e {{max}}"
+      },
+      "amount" : {
+        "disclaimer" : "Seus STX ficarão bloqueados até que a reserva de staking os libere.",
+        "pool" : "Reserva",
+        "numCycles" : "Número de ciclos",
+        "available" : "Disponível"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Você fez staking de seus ativos com sucesso",
+          "description" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação."
+        }
+      }
+    },
+    "unstake" : {
+      "title" : "Desaplicar",
+      "stepperHeader" : {
+        "summary" : "Desaplicar",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conectar Dispositivo"
+      },
+      "summary" : {
+        "info" : "A desdelegação encurta seu período de bloquear. Suas STX são liberadas assim que esse período reduzido terminar, não imediatamente.",
+        "pool" : "Reserva",
+        "noPosition" : "Esta conta não possui nenhuma posição de staking ativa para desaplicar."
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Desaplicação enviada",
+          "description" : "O cancelamento de delegação de seus STX foi transmitido com sucesso."
+        }
+      }
+    },
+    "account" : {
+      "staked" : "Aplicado",
+      "unlockCycle" : "Ciclo de desbloqueio"
+    },
+    "info" : {
+      "available" : {
+        "title" : "Disponível",
+        "description" : "Quantia de STX que você pode gastar ou aplicar."
+      },
+      "staked" : {
+        "title" : "Aplicado",
+        "description" : "Quantia de STX delegada à sua reserva de staking e bloqueada pelo pox-5."
+      },
+      "unlockCycle" : {
+        "title" : "Ciclo de desbloqueio",
+        "description" : "Ciclo de recompensa no qual suas STX aplicadas são liberadas."
+      }
+    }
+  },
   "sui" : {
     "info" : {
       "estimatedReward" : "Recompensas Recebidas",
@@ -10148,6 +10416,20 @@
       }
     }
   },
+  "accountDetail" : {
+    "assets" : {
+      "title" : "Ativos"
+    },
+    "transactions" : {
+      "title" : "Transações"
+    },
+    "editName" : {
+      "title" : "Alterar nome",
+      "description" : "Atribua um nome a este endereço para se organizar (ex. {{ticker}}-Trading, {{ticker}}-DeFi).",
+      "label" : "Nome do endereço",
+      "submit" : "Alterar nome"
+    }
+  },
   "assetDetail" : {
     "balanceGraph" : {
       "marketPrice" : "Preço de mercado",
@@ -10337,6 +10619,7 @@
     }
   },
   "largeMover" : {
+    "coinPosition" : "{{position}} de {{total}}",
     "info" : "Informações",
     "marketCap" : "Capitalização de mercado",
     "volume" : "Volume (24h)",
@@ -11232,13 +11515,16 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
-      "backup" : "Backup",
       "help" : "Ajuda",
       "referral" : "Indicação"
     },
+    "walletBackups" : {
+      "title" : "Backups de carteira",
+      "description" : "Não perca o acesso aos seus ativos."
+    },
     "contacts" : {
       "title" : "Contatos",
-      "description" : "Gerenciar seus contatos"
+      "description" : "Gerencie seus contatos"
     },
     "backupHub" : {
       "title" : "Backup para sua Frase de Recuperação Secreta",
@@ -11537,6 +11823,9 @@
         "unbondedAmount" : "Quantia desaplicada"
       }
     },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "Resgatar"
+    },
     "shared" : {
       "sponsoredByProvable" : "Patrocinado por Provable"
     }
@@ -11582,7 +11871,8 @@
     "addAddress" : "Adicionar endereço",
     "addYourAddress" : "Adicionar seu endereço",
     "searchPlaceholder" : "Pesquisar por nome",
-    "searchNoResults" : "Nenhum contato encontrado",
+    "searchNoResults" : "Nenhum contato encontrado com esse nome",
+    "searchNoResultsDescription" : "Tente outro nome ou grafia.",
     "addContactDrawer" : {
       "namePlaceholder" : "Nome do contato",
       "namingDisclaimer" : "Por privacidade, evite nomes completos. Use um apelido ou apenas o primeiro nome mais uma inicial, por exemplo: “João S”.",
@@ -11615,7 +11905,7 @@
       "continueToReview" : "Continuar para revisar",
       "invalidLabel" : "Não são permitidos caracteres especiais.",
       "duplicateLabel" : "Este nome de endereço já está em uso para este contato.",
-      "labelTooLong" : "Este nome de endereço é muito longo.",
+      "tooLongLabel" : "Este nome de endereço é muito longo.",
       "privacyPolicy" : "Saiba mais sobre a política de privacidade da Ledger."
     },
     "addAddressReview" : {
@@ -11635,7 +11925,6 @@
     "detail" : {
       "meDisplayName" : "{{name}} (Eu)",
       "ledgerWalletAddresses" : "Endereços da Ledger Wallet",
-      "myAddresses" : "Meus endereços",
       "emptyState" : {
         "contactTitle" : "Não há endereços salvos para {{name}}",
         "meTitle" : "Salve seus próprios endereços",
