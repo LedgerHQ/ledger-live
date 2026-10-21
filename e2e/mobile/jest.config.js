@@ -18,7 +18,7 @@ const path = require("node:path");
 const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
 // Node strips the types at require time, so specs that extend the default budget read the same value.
 const { TEST_TIMEOUT } = require("./utils/timeouts.ts");
-const { BROADCAST_DEFERRALS_DIR, deferralMarkerName } = require("./utils/broadcastDeferrals.ts");
+const { LOCK_DEFERRALS_DIR, deferralMarkerName } = require("./utils/lockDeferrals.ts");
 
 function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   const jestPaths = {};
@@ -47,9 +47,7 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
 // The spec skipped this pass because its broadcast accounts were busy, and runs again in the next.
 const wasDeferred = filePath => {
   const testFilePath = path.resolve(__dirname, ...[filePath ?? []].flat());
-  return fs.existsSync(
-    path.join(__dirname, BROADCAST_DEFERRALS_DIR, deferralMarkerName(testFilePath)),
-  );
+  return fs.existsSync(path.join(__dirname, LOCK_DEFERRALS_DIR, deferralMarkerName(testFilePath)));
 };
 
 // jest-allure2-reporter appends descriptions rather than replacing — QAA-1547

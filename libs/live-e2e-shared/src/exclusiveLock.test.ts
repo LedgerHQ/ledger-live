@@ -3,30 +3,30 @@ import os from "node:os";
 import test, { mock } from "node:test";
 import {
   accountLockKey,
-  acquireAccountBroadcastLock,
+  acquireExclusiveLock,
   PAY_CARD,
-  refuseAccountBroadcastLocks,
-  runWithAccountBroadcastLock,
-  takeBroadcastLockWaitedMs,
-  tryAcquireAccountBroadcastLock,
-} from "./broadcastLock";
+  refuseExclusiveLocks,
+  runWithExclusiveLock,
+  takeExclusiveLockWaitedMs,
+  tryAcquireExclusiveLock,
+} from "./exclusiveLock";
 import { Account, TokenAccount } from "./enum/Account";
 
 type Env = Record<string, string | undefined>;
 
 const NO_REMOTE_LOCK: Env = {
   CI: undefined,
-  E2E_BROADCAST_LOCK_ENDPOINT: undefined,
-  E2E_BROADCAST_LOCK_BUCKET: undefined,
-  E2E_BROADCAST_LOCK_ACCESS_KEY_ID: undefined,
-  E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: undefined,
+  E2E_EXCLUSIVE_LOCK_ENDPOINT: undefined,
+  E2E_EXCLUSIVE_LOCK_BUCKET: undefined,
+  E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: undefined,
+  E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: undefined,
 };
 
 const REMOTE_LOCK: Env = {
-  E2E_BROADCAST_LOCK_ENDPOINT: "account.r2.cloudflarestorage.com",
-  E2E_BROADCAST_LOCK_BUCKET: "ledger-live-cache",
-  E2E_BROADCAST_LOCK_ACCESS_KEY_ID: "key-id",
-  E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: "secret",
+  E2E_EXCLUSIVE_LOCK_ENDPOINT: "account.r2.cloudflarestorage.com",
+  E2E_EXCLUSIVE_LOCK_BUCKET: "ledger-live-cache",
+  E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: "key-id",
+  E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: "secret",
 };
 
 const withEnv = async (env: Env, fn: () => Promise<void>) => {
@@ -121,10 +121,10 @@ test(
     const steps: string[] = [];
 
     await withEnv(NO_REMOTE_LOCK, async () => {
-      const spec = await acquireAccountBroadcastLock([Account.ETH_1], "ios approval.spec.ts", {
+      const spec = await acquireExclusiveLock([Account.ETH_1], "ios approval.spec.ts", {
         allowNested: true,
       });
-      await runWithAccountBroadcastLock([TokenAccount.ETH_USDT_1], "token approve", async () => {
+      await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {
         steps.push("nested");
       });
       await spec.release();
@@ -138,20 +138,16 @@ test("waits for broadcasts nested in a lock before releasing it", { timeout: 10_
   const steps: string[] = [];
 
   await withEnv(NO_REMOTE_LOCK, async () => {
-    const spec = await acquireAccountBroadcastLock([Account.ETH_1], "ios approval.spec.ts", {
+    const spec = await acquireExclusiveLock([Account.ETH_1], "ios approval.spec.ts", {
       allowNested: true,
     });
     const approvalStarted = deferred();
     const approvalMayFinish = deferred();
-    const approval = runWithAccountBroadcastLock(
-      [TokenAccount.ETH_USDT_1],
-      "token approve",
-      async () => {
-        approvalStarted.resolve();
-        await approvalMayFinish.promise;
-        steps.push("approval done");
-      },
-    );
+    const approval = runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {
+      approvalStarted.resolve();
+      await approvalMayFinish.promise;
+      steps.push("approval done");
+    });
     await approvalStarted.promise;
 
     const specReleased = spec.release().then(() => steps.push("spec released"));
@@ -170,12 +166,12 @@ test(
     const steps: string[] = [];
 
     await withEnv(NO_REMOTE_LOCK, async () => {
-      const spec = await acquireAccountBroadcastLock([Account.ETH_1], "desktop provider.swap", {
+      const spec = await acquireExclusiveLock([Account.ETH_1], "desktop provider.swap", {
         allowNested: true,
       });
       const approvalStarted = deferred();
       const approvalMayFinish = deferred();
-      const approval = runWithAccountBroadcastLock(
+      const approval = runWithExclusiveLock(
         [TokenAccount.ETH_USDT_1],
         "token approve",
         async () => {
@@ -204,26 +200,18 @@ test(
     const steps: string[] = [];
 
     await withEnv(NO_REMOTE_LOCK, async () => {
-      const spec = await acquireAccountBroadcastLock([Account.ETH_1], "desktop provider.swap", {
+      const spec = await acquireExclusiveLock([Account.ETH_1], "desktop provider.swap", {
         allowNested: true,
       });
       const revokeStarted = deferred();
       const revokeMayContinue = deferred();
-      const revoke = runWithAccountBroadcastLock(
-        [TokenAccount.ETH_USDT_1],
-        "token revoke",
-        async () => {
-          revokeStarted.resolve();
-          await revokeMayContinue.promise;
-          await runWithAccountBroadcastLock(
-            [TokenAccount.ETH_USDT_1],
-            "token approve",
-            async () => {
-              steps.push("approval");
-            },
-          );
-        },
-      );
+      const revoke = runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token revoke", async () => {
+        revokeStarted.resolve();
+        await revokeMayContinue.promise;
+        await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {
+          steps.push("approval");
+        });
+      });
       await revokeStarted.promise;
 
       const specReleased = spec.release().then(() => steps.push("spec released"));
@@ -239,11 +227,11 @@ test("does not let a call join a lock whose release has started", { timeout: 10_
   const steps: string[] = [];
 
   await withEnv(NO_REMOTE_LOCK, async () => {
-    const spec = await acquireAccountBroadcastLock([Account.ETH_1], "ios approval.spec.ts", {
+    const spec = await acquireExclusiveLock([Account.ETH_1], "ios approval.spec.ts", {
       allowNested: true,
     });
     const specReleased = spec.release().then(() => steps.push("spec released"));
-    await runWithAccountBroadcastLock([TokenAccount.ETH_USDT_1], "late approval", async () => {
+    await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "late approval", async () => {
       steps.push("late approval");
     });
     await specReleased;
@@ -257,20 +245,20 @@ test(
   { timeout: 10_000 },
   async () => {
     await withEnv(NO_REMOTE_LOCK, async () => {
-      const refusal = refuseAccountBroadcastLocks(
+      const refusal = refuseExclusiveLocks(
         [Account.ETH_4],
         "could not be locked by ios borrow.spec.ts",
       );
       await assert.rejects(
-        runWithAccountBroadcastLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {}),
+        runWithExclusiveLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {}),
         {
-          name: "BroadcastLockRefusedError",
+          name: "ExclusiveLockRefusedError",
           message: /could not be locked by ios borrow\.spec\.ts/,
         },
       );
       await refusal.release();
 
-      await runWithAccountBroadcastLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {});
+      await runWithExclusiveLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {});
     });
   },
 );
@@ -283,10 +271,10 @@ for (const allowNested of [false, true]) {
       const steps: string[] = [];
 
       await withEnv(NO_REMOTE_LOCK, async () => {
-        const earlier = await acquireAccountBroadcastLock([Account.ETH_1], "timed out spec", {
+        const earlier = await acquireExclusiveLock([Account.ETH_1], "timed out spec", {
           allowNested,
         });
-        const next = acquireAccountBroadcastLock([Account.ETH_1], "next spec", {
+        const next = acquireExclusiveLock([Account.ETH_1], "next spec", {
           allowNested: true,
         }).then(lease => {
           steps.push("next spec acquired");
@@ -309,38 +297,38 @@ test(
   { timeout: 10_000 },
   async () => {
     await withEnv(NO_REMOTE_LOCK, async () => {
-      takeBroadcastLockWaitedMs();
-      const earlier = await acquireAccountBroadcastLock([Account.ETH_1], "earlier spec");
-      const next = acquireAccountBroadcastLock([Account.ETH_1], "next spec");
+      takeExclusiveLockWaitedMs();
+      const earlier = await acquireExclusiveLock([Account.ETH_1], "earlier spec");
+      const next = acquireExclusiveLock([Account.ETH_1], "next spec");
       await new Promise(resolve => setTimeout(resolve, 300));
       await earlier.release();
       await (await next).release();
     });
 
-    assert.ok(takeBroadcastLockWaitedMs() >= 300);
-    assert.equal(takeBroadcastLockWaitedMs(), 0);
+    assert.ok(takeExclusiveLockWaitedMs() >= 300);
+    assert.equal(takeExclusiveLockWaitedMs(), 0);
   },
 );
 
 test("locks each on-chain account once when several share it", { timeout: 10_000 }, async () => {
   await withEnv(NO_REMOTE_LOCK, async () => {
-    const lease = await acquireAccountBroadcastLock(
+    const lease = await acquireExclusiveLock(
       [TokenAccount.ETH_USDT_1, Account.ETH_1, Account.ATOM_1],
       "multi-account flow",
     );
     await lease.release();
     await lease.release();
 
-    await runWithAccountBroadcastLock([Account.ETH_1], "next flow", async () => {});
+    await runWithExclusiveLock([Account.ETH_1], "next flow", async () => {});
   });
 });
 
 test("refuses a partial remote configuration", async () => {
   await withEnv(
-    { ...NO_REMOTE_LOCK, E2E_BROADCAST_LOCK_ENDPOINT: "account.r2.cloudflarestorage.com" },
+    { ...NO_REMOTE_LOCK, E2E_EXCLUSIVE_LOCK_ENDPOINT: "account.r2.cloudflarestorage.com" },
     async () => {
       await assert.rejects(
-        acquireAccountBroadcastLock([Account.DOT_1], "partial config"),
+        acquireExclusiveLock([Account.DOT_1], "partial config"),
         /must be set together/,
       );
     },
@@ -349,22 +337,20 @@ test("refuses a partial remote configuration", async () => {
 
 test("refuses to fall back to a machine-local lock on CI", async () => {
   await withEnv({ ...NO_REMOTE_LOCK, CI: "true" }, async () => {
-    await assert.rejects(
-      acquireAccountBroadcastLock([Account.DOT_1], "CI without remote locking"),
-      { name: "BroadcastLockConfigError" },
-    );
-    await assert.rejects(
-      tryAcquireAccountBroadcastLock([Account.DOT_1], "CI without remote locking"),
-      { name: "BroadcastLockConfigError" },
-    );
+    await assert.rejects(acquireExclusiveLock([Account.DOT_1], "CI without remote locking"), {
+      name: "ExclusiveLockConfigError",
+    });
+    await assert.rejects(tryAcquireExclusiveLock([Account.DOT_1], "CI without remote locking"), {
+      name: "ExclusiveLockConfigError",
+    });
   });
 });
 
 test("locks on this machine only, even on CI, when told to", async () => {
   const r2 = mockR2();
   try {
-    await withEnv({ ...REMOTE_LOCK, CI: "true", E2E_BROADCAST_LOCK_MODE: "local" }, async () => {
-      await runWithAccountBroadcastLock([Account.DOT_1], "R2 down", async () => {});
+    await withEnv({ ...REMOTE_LOCK, CI: "true", E2E_EXCLUSIVE_LOCK_MODE: "local" }, async () => {
+      await runWithExclusiveLock([Account.DOT_1], "R2 down", async () => {});
     });
     assert.equal(r2.requests.length, 0);
   } finally {
@@ -373,9 +359,9 @@ test("locks on this machine only, even on CI, when told to", async () => {
 });
 
 test("refuses an unknown lock mode", async () => {
-  await withEnv({ ...NO_REMOTE_LOCK, E2E_BROADCAST_LOCK_MODE: "off" }, async () => {
-    await assert.rejects(acquireAccountBroadcastLock([Account.DOT_1], "unknown mode"), {
-      name: "BroadcastLockConfigError",
+  await withEnv({ ...NO_REMOTE_LOCK, E2E_EXCLUSIVE_LOCK_MODE: "off" }, async () => {
+    await assert.rejects(acquireExclusiveLock([Account.DOT_1], "unknown mode"), {
+      name: "ExclusiveLockConfigError",
     });
   });
 });
@@ -384,7 +370,7 @@ test("claims and releases the account in R2 when remote locking is configured", 
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      await runWithAccountBroadcastLock([Account.XRP_1], "Send XRP", async () => {});
+      await runWithExclusiveLock([Account.XRP_1], "Send XRP", async () => {});
     });
   } finally {
     r2.restore();
@@ -406,10 +392,10 @@ test("keeps the settle window when abandoning a lock a nested call released", as
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const lease = await acquireAccountBroadcastLock([Account.ETH_1], "desktop provider.swap", {
+      const lease = await acquireExclusiveLock([Account.ETH_1], "desktop provider.swap", {
         allowNested: true,
       });
-      await runWithAccountBroadcastLock([TokenAccount.ETH_USDT_1], "token approve", async () => {});
+      await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {});
       await lease.abandon();
     });
   } finally {
@@ -438,7 +424,7 @@ test("hands the account back without the settle window after a confirmed broadca
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      await runWithAccountBroadcastLock([Account.ETH_1], "token approve", async () => {}, {
+      await runWithExclusiveLock([Account.ETH_1], "token approve", async () => {}, {
         waitsForConfirmation: true,
       });
     });
@@ -457,7 +443,7 @@ test("keeps the settle window when a broadcast meant to be confirmed fails", asy
   try {
     await withEnv(REMOTE_LOCK, async () => {
       await assert.rejects(
-        runWithAccountBroadcastLock(
+        runWithExclusiveLock(
           [Account.ETH_1],
           "token approve",
           async () => {
@@ -482,15 +468,12 @@ test("abandons a lock without the settle window when its nested broadcasts were 
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const lease = await acquireAccountBroadcastLock([Account.ETH_1], "android swap.spec.ts", {
+      const lease = await acquireExclusiveLock([Account.ETH_1], "android swap.spec.ts", {
         allowNested: true,
       });
-      await runWithAccountBroadcastLock(
-        [TokenAccount.ETH_USDT_1],
-        "token approve",
-        async () => {},
-        { waitsForConfirmation: true },
-      );
+      await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {}, {
+        waitsForConfirmation: true,
+      });
       await lease.abandon();
     });
   } finally {
@@ -507,7 +490,7 @@ test("hands the account back without the settle window when nothing was broadcas
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const lease = await acquireAccountBroadcastLock([Account.ETH_1], "android swap.spec.ts");
+      const lease = await acquireExclusiveLock([Account.ETH_1], "android swap.spec.ts");
       await lease.abandon();
     });
   } finally {
@@ -531,7 +514,7 @@ test("gives up at once on an account another holder has", async () => {
   try {
     await withEnv(REMOTE_LOCK, async () => {
       assert.equal(
-        await tryAcquireAccountBroadcastLock([TokenAccount.ETH_USDT_1], "ios paytab.spec.ts"),
+        await tryAcquireExclusiveLock([TokenAccount.ETH_USDT_1], "ios paytab.spec.ts"),
         undefined,
       );
     });
@@ -550,7 +533,7 @@ test("hands back the accounts it got when another one is held", async () => {
   try {
     await withEnv(REMOTE_LOCK, async () => {
       assert.equal(
-        await tryAcquireAccountBroadcastLock([Account.ADA_1, Account.SOL_1], "ios borrow.spec.ts"),
+        await tryAcquireExclusiveLock([Account.ADA_1, Account.SOL_1], "ios borrow.spec.ts"),
         undefined,
       );
     });
@@ -577,7 +560,7 @@ test("locks a shared resource under its own key, apart from the accounts", async
   const r2 = mockR2WithHeldAccounts([Account.ETH_1]);
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const lease = await tryAcquireAccountBroadcastLock([PAY_CARD], "ios paytabFreeze.spec.ts");
+      const lease = await tryAcquireExclusiveLock([PAY_CARD], "ios paytabFreeze.spec.ts");
       assert.ok(lease);
       await lease.release();
     });
@@ -592,7 +575,7 @@ test("hands a shared resource back without the settle window", async () => {
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const lease = await acquireAccountBroadcastLock([PAY_CARD], "desktop paytab.spec.ts");
+      const lease = await acquireExclusiveLock([PAY_CARD], "desktop paytab.spec.ts");
       await lease.release();
     });
   } finally {
@@ -618,8 +601,8 @@ test(
     const steps: string[] = [];
 
     await withEnv(NO_REMOTE_LOCK, async () => {
-      const ios = await acquireAccountBroadcastLock([PAY_CARD], "ios paytabFreeze.spec.ts");
-      const android = acquireAccountBroadcastLock([PAY_CARD], "android paytabFreeze.spec.ts").then(
+      const ios = await acquireExclusiveLock([PAY_CARD], "ios paytabFreeze.spec.ts");
+      const android = acquireExclusiveLock([PAY_CARD], "android paytabFreeze.spec.ts").then(
         lease => {
           steps.push("android acquired");
           return lease;
@@ -640,7 +623,7 @@ test("takes a free account without waiting", async () => {
   const r2 = mockR2WithHeldAccounts([]);
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const lease = await tryAcquireAccountBroadcastLock([Account.XRP_1], "ios sendXRP.spec.ts");
+      const lease = await tryAcquireExclusiveLock([Account.XRP_1], "ios sendXRP.spec.ts");
       assert.ok(lease);
       await lease.release();
     });
@@ -653,10 +636,10 @@ test("joins a lock this process is holding without asking R2 again", async () =>
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const spec = await acquireAccountBroadcastLock([Account.ETH_4], "ios borrow.spec.ts", {
+      const spec = await acquireExclusiveLock([Account.ETH_4], "ios borrow.spec.ts", {
         allowNested: true,
       });
-      await runWithAccountBroadcastLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {});
+      await runWithExclusiveLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {});
       await spec.release();
     });
   } finally {
@@ -670,11 +653,11 @@ test("does not join a hold once it has been released", async () => {
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const spec = await acquireAccountBroadcastLock([Account.SOL_1], "first spec", {
+      const spec = await acquireExclusiveLock([Account.SOL_1], "first spec", {
         allowNested: true,
       });
       await spec.release();
-      await runWithAccountBroadcastLock([Account.SOL_1], "later approval", async () => {});
+      await runWithExclusiveLock([Account.SOL_1], "later approval", async () => {});
     });
   } finally {
     r2.restore();
@@ -684,11 +667,11 @@ test("does not join a hold once it has been released", async () => {
 });
 
 test("publishes joinable holds on node:os, the module every Jest context shares", async () => {
-  const registryKey = Symbol.for("@ledgerhq/live-e2e-shared/broadcastLock/liveHolds");
+  const registryKey = Symbol.for("@ledgerhq/live-e2e-shared/exclusiveLock/liveHolds");
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      const spec = await acquireAccountBroadcastLock([Account.ADA_1], "Send ADA", {
+      const spec = await acquireExclusiveLock([Account.ADA_1], "Send ADA", {
         allowNested: true,
       });
       const heldRegistry: unknown = Reflect.get(os, registryKey);

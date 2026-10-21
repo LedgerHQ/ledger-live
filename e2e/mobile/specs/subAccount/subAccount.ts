@@ -6,7 +6,7 @@ import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { getEnv } from "@shared/env";
 import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionStatus";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { declareBroadcastAccounts } from "@e2e/helpers/broadcastLock";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import invariant from "invariant";
 import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
 import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";

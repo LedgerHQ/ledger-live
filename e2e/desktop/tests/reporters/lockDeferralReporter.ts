@@ -2,16 +2,16 @@ import { writeFileSync } from "node:fs";
 import path from "node:path";
 import type { FullConfig, Reporter, Suite, TestCase } from "@playwright/test/reporter";
 import {
-  BROADCAST_DEFERRAL_REPORT_ENV,
-  BROADCAST_LOCK_DEFERRED_REASON,
-} from "tests/utils/broadcastDeferrals";
+  LOCK_DEFERRAL_REPORT_ENV,
+  EXCLUSIVE_LOCK_DEFERRED_REASON,
+} from "tests/utils/lockDeferrals";
 
 const isDeferred = (test: TestCase) => {
   const lastResult = test.results.at(-1);
   return (
     lastResult?.status === "skipped" &&
     lastResult.annotations.some(
-      ({ type, description }) => type === "skip" && description === BROADCAST_LOCK_DEFERRED_REASON,
+      ({ type, description }) => type === "skip" && description === EXCLUSIVE_LOCK_DEFERRED_REASON,
     )
   );
 };
@@ -57,10 +57,10 @@ const countOutcomes = (tests: readonly TestCase[]) => {
 
 /**
  * Writes, for scripts/playwrightWithDeferrals.mjs, the tests this pass deferred because their
- * broadcast locks were busy, every test it selected, the outcome counts of the others, and the
+ * exclusive locks were busy, every test it selected, the outcome counts of the others, and the
  * output directory that holds Playwright's .last-run.json.
  */
-class BroadcastDeferralReporter implements Reporter {
+class LockDeferralReporter implements Reporter {
   private rootDir = "";
   private suite: Suite | undefined;
 
@@ -70,7 +70,7 @@ class BroadcastDeferralReporter implements Reporter {
   }
 
   onEnd(): void {
-    const reportFile = process.env[BROADCAST_DEFERRAL_REPORT_ENV];
+    const reportFile = process.env[LOCK_DEFERRAL_REPORT_ENV];
     if (!reportFile || !this.suite) return;
     const tests = this.suite.allTests();
     const deferred = tests.filter(isDeferred).map(test => deferredTest(this.rootDir, test));
@@ -90,4 +90,4 @@ class BroadcastDeferralReporter implements Reporter {
   }
 }
 
-export default BroadcastDeferralReporter;
+export default LockDeferralReporter;

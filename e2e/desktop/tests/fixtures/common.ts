@@ -23,11 +23,11 @@ import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
-  BROADCAST_LOCK_FIXTURE_TIMEOUT,
+  EXCLUSIVE_LOCK_FIXTURE_TIMEOUT,
   lockDeclaredTargets,
   type LockDeclaration,
-} from "tests/utils/broadcastLock";
-import type { Lease } from "@ledgerhq/live-e2e-shared/broadcastLock";
+} from "tests/utils/exclusiveLock";
+import type { Lease } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import {
   canSkipSpeculosLaunch,
@@ -83,7 +83,7 @@ type TestFixtures = {
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
   lockDeclaration: LockDeclaration;
-  broadcastLock: Lease;
+  exclusiveLock: Lease;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -113,7 +113,7 @@ export const test = base.extend<TestFixtures>({
   // Automatic fixtures are set up before the others, so the lock is held before Speculos and the
   // app start, and released after they stop, unless the test releases it sooner. The Allure labels
   // and links come first, so a test whose lock fails still reports them.
-  broadcastLock: [
+  exclusiveLock: [
     async (
       { teamOwnerLabel: _teamOwnerLabel, annotationLinks: _annotationLinks, lockDeclaration, env },
       use,
@@ -126,7 +126,7 @@ export const test = base.extend<TestFixtures>({
         await lease?.release();
       }
     },
-    { auto: true, timeout: BROADCAST_LOCK_FIXTURE_TIMEOUT },
+    { auto: true, timeout: EXCLUSIVE_LOCK_FIXTURE_TIMEOUT },
   ],
 
   teamOwnerLabel: [

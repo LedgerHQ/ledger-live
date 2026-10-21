@@ -27,7 +27,7 @@ import {
 import { config as detoxConfig, session as detoxSession } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { isBroadcastLockDeferralPass } from "@ledgerhq/live-e2e-shared/broadcastLock/deferralPasses";
+import { isExclusiveLockDeferralPass } from "@ledgerhq/live-e2e-shared/exclusiveLock/deferralPasses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -51,12 +51,12 @@ import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
 import { armWorkerWatchdog, setWatchdogState, watchdogPhase } from "@e2e/helpers/workerWatchdog";
 import {
-  BROADCAST_DEFERRALS_DIR,
-  BROADCAST_LOCK_WAITS_DIR,
+  LOCK_DEFERRALS_DIR,
+  EXCLUSIVE_LOCK_WAITS_DIR,
   deferralMarkerName,
-  SPEC_BROADCAST_LOCK,
-  type SpecBroadcastLock,
-} from "@e2e/utils/broadcastDeferrals";
+  SPEC_EXCLUSIVE_LOCK,
+  type SpecExclusiveLock,
+} from "@e2e/utils/lockDeferrals";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
@@ -123,7 +123,7 @@ const hasEnabledTest = (block: Circus.DescribeBlock): boolean =>
       : child.mode !== "skip" && child.mode !== "todo",
   );
 
-const isSpecBroadcastLock = (value: unknown): value is SpecBroadcastLock =>
+const isSpecExclusiveLock = (value: unknown): value is SpecExclusiveLock =>
   typeof value === "object" &&
   value !== null &&
   "tryLock" in value &&
@@ -406,9 +406,9 @@ export default class TestEnvironment extends DetoxEnvironment {
     setWatchdogState({ spec: "<idle>", phase: "idle" });
   }
 
-  private specBroadcastLock(): SpecBroadcastLock | undefined {
-    const specLock: unknown = Reflect.get(this.global, SPEC_BROADCAST_LOCK);
-    return isSpecBroadcastLock(specLock) ? specLock : undefined;
+  private specExclusiveLock(): SpecExclusiveLock | undefined {
+    const specLock: unknown = Reflect.get(this.global, SPEC_EXCLUSIVE_LOCK);
+    return isSpecExclusiveLock(specLock) ? specLock : undefined;
   }
 
   private specMarker(dir: string) {
@@ -419,29 +419,29 @@ export default class TestEnvironment extends DetoxEnvironment {
 
   /** Skips the whole file, before the app starts, when its broadcast accounts are busy. */
   private async deferIfBroadcastAccountsBusy(state: Circus.State): Promise<boolean> {
-    const specLock = this.specBroadcastLock();
+    const specLock = this.specExclusiveLock();
     if (!specLock || !hasEnabledTest(state.rootDescribeBlock)) return false;
     try {
       if (await specLock.tryLock()) return false;
     } catch (error) {
-      console.warn(`[broadcastLock] could not check the spec's accounts: ${sanitizeError(error)}`);
+      console.warn(`[exclusiveLock] could not check the spec's accounts: ${sanitizeError(error)}`);
       return false;
     }
     skipWholeFile(state.rootDescribeBlock);
-    const marker = this.specMarker(BROADCAST_DEFERRALS_DIR);
+    const marker = this.specMarker(LOCK_DEFERRALS_DIR);
     await mkdir(dirname(marker.path), { recursive: true });
     await writeFile(marker.path, marker.specPath);
     console.warn(
-      `[broadcastLock] ${basename(this.testPath)} moved to a later pass: its broadcast accounts are busy`,
+      `[exclusiveLock] ${basename(this.testPath)} moved to a later pass: its broadcast accounts are busy`,
     );
     return true;
   }
 
   /** Only the first attempt is timed: Detox retries write no results. */
-  private async recordBroadcastLockWait() {
-    const waitedMs = this.specBroadcastLock()?.takeWaitedMs() ?? 0;
+  private async recordExclusiveLockWait() {
+    const waitedMs = this.specExclusiveLock()?.takeWaitedMs() ?? 0;
     if (isDetoxRetry() || this.deferred || waitedMs === 0) return;
-    const marker = this.specMarker(BROADCAST_LOCK_WAITS_DIR);
+    const marker = this.specMarker(EXCLUSIVE_LOCK_WAITS_DIR);
     await mkdir(dirname(marker.path), { recursive: true });
     await writeFile(marker.path, JSON.stringify({ spec: marker.specPath, waitedMs }));
   }
@@ -467,13 +467,13 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   private async onRunStart(state: Circus.State) {
-    this.specBroadcastLock()?.takeWaitedMs();
+    this.specExclusiveLock()?.takeWaitedMs();
     this.deferred =
       !isDetoxRetry() &&
-      isBroadcastLockDeferralPass() &&
+      isExclusiveLockDeferralPass() &&
       (await this.deferIfBroadcastAccountsBusy(state));
     // A marker left by an earlier attempt of this file in the same Detox run must not outlive it.
-    if (!this.deferred) await rm(this.specMarker(BROADCAST_DEFERRALS_DIR).path, { force: true });
+    if (!this.deferred) await rm(this.specMarker(LOCK_DEFERRALS_DIR).path, { force: true });
     if (retryTestNames) {
       const kept = skipToRetrySet(state.rootDescribeBlock, retryTestNames);
       // Detox only retries spec files that failed, and narrowing is all-or-nothing, so every
@@ -493,10 +493,10 @@ export default class TestEnvironment extends DetoxEnvironment {
 
   private async onRunFinish() {
     try {
-      await this.recordBroadcastLockWait();
+      await this.recordExclusiveLockWait();
     } catch (error) {
-      console.warn(`[broadcastLock] could not record the lock wait: ${sanitizeError(error)}`);
+      console.warn(`[exclusiveLock] could not record the lock wait: ${sanitizeError(error)}`);
     }
-    await this.specBroadcastLock()?.release();
+    await this.specExclusiveLock()?.release();
   }
 }

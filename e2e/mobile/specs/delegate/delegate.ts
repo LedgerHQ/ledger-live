@@ -23,7 +23,7 @@ import type { PartialFeatures } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoSSupports, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
-import { declareBroadcastAccounts } from "@e2e/helpers/broadcastLock";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 
 const DELEGATE_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, FF_BABYLON_STAKING_ENABLED],

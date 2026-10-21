@@ -140,7 +140,7 @@ export const tokenApprovalBroadcastAccounts = (
 ): readonly Account[] => (needsTokenAllowance(fromAccount, provider) ? [fromAccount] : []);
 
 /**
- * For a test whose broadcast lock fixture holds `fromAccount` in its `cliBroadcastAccounts`, so the
+ * For a test whose exclusive lock fixture holds `fromAccount` in its `cliBroadcastAccounts`, so the
  * check, the approval and the swap all run under the lock.
  */
 export async function ensureTokenApproval(

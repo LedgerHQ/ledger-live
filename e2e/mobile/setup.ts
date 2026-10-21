@@ -6,11 +6,11 @@ import { close as closeBridge } from "@e2e/bridge/server";
 import { setAllureDescription } from "@e2e/helpers/allure/allure-helper";
 import { deleteSpeculos } from "@e2e/utils/speculosUtils";
 import {
-  BROADCAST_LOCK_ACQUIRE_HOOK_TIMEOUT,
-  BROADCAST_LOCK_RELEASE_HOOK_TIMEOUT,
-  lockDeclaredBroadcastAccounts,
-  releaseDeclaredBroadcastAccounts,
-} from "@e2e/helpers/broadcastLock";
+  EXCLUSIVE_LOCK_ACQUIRE_HOOK_TIMEOUT,
+  EXCLUSIVE_LOCK_RELEASE_HOOK_TIMEOUT,
+  lockDeclaredTargets,
+  releaseDeclaredTargets,
+} from "@e2e/helpers/exclusiveLock";
 
 const LAUNCH_TIMEOUT = 150_000;
 const TEARDOWN_TIMEOUT = 60_000;
@@ -20,13 +20,13 @@ setupEnvironment();
 
 beforeAll(async () => {
   try {
-    await lockDeclaredBroadcastAccounts();
+    await lockDeclaredTargets();
   } catch (error) {
     process.env.DISABLE_TRANSACTION_BROADCAST = "1";
     setupEnvironment();
     throw error;
   }
-}, BROADCAST_LOCK_ACQUIRE_HOOK_TIMEOUT);
+}, EXCLUSIVE_LOCK_ACQUIRE_HOOK_TIMEOUT);
 
 beforeAll(async () => {
   const port = await launchApp({ newInstance: true, delete: true });
@@ -65,5 +65,5 @@ afterAll(async () => {
 }, TEARDOWN_TIMEOUT);
 
 afterAll(async () => {
-  await releaseDeclaredBroadcastAccounts();
-}, BROADCAST_LOCK_RELEASE_HOOK_TIMEOUT);
+  await releaseDeclaredTargets();
+}, EXCLUSIVE_LOCK_RELEASE_HOOK_TIMEOUT);

@@ -115,7 +115,7 @@ test("refuses a lock whose age the server's clock headers cannot give", async ()
   );
 
   await assert.rejects(store.read("key"), {
-    name: "BroadcastLockStoreFatalError",
+    name: "ExclusiveLockStoreFatalError",
     message: /unreadable Date or Last-Modified header/,
   });
 });
@@ -165,7 +165,7 @@ test("marks an R2 failure that retrying cannot fix as fatal", async () => {
   const { store } = createStore(() => new Response("AccessDenied", { status: 403 }));
 
   await assert.rejects(store.create("key", record), {
-    name: "BroadcastLockStoreFatalError",
+    name: "ExclusiveLockStoreFatalError",
     message: /R2 PUT .* failed with 403: AccessDenied/,
   });
 });
@@ -189,7 +189,7 @@ test("refuses to treat an unrelated object as a lock", async () => {
   );
 
   await assert.rejects(store.read("key"), {
-    name: "BroadcastLockStoreFatalError",
+    name: "ExclusiveLockStoreFatalError",
     message: /is not a lock record/,
   });
 });
@@ -199,7 +199,7 @@ test("refuses an object that is not JSON as a lock", async () => {
     () => new Response("<html>gateway</html>", { status: 200, headers: { etag: '"x"' } }),
   );
 
-  await assert.rejects(store.read("key"), { name: "BroadcastLockStoreFatalError" });
+  await assert.rejects(store.read("key"), { name: "ExclusiveLockStoreFatalError" });
 });
 
 test("gives up on a request that stalls past its timeout", async () => {

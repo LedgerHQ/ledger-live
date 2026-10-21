@@ -15,7 +15,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { buildTags } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
-import { exclusiveLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
 const suiLock = exclusiveLockFor({ broadcastAccounts: [suiAccount.account] });

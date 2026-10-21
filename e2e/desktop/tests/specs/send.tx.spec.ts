@@ -11,7 +11,7 @@ import { test } from "tests/fixtures/common";
 import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
-import { exclusiveLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const legacySendTransactions: Array<{
   transaction: Transaction;

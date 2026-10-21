@@ -12,7 +12,7 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
-import { exclusiveLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
@@ -234,14 +234,14 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
           description: xrayTicket,
         },
       },
-      async ({ app, speculos, broadcastLock }) => {
+      async ({ app, speculos, exclusiveLock }) => {
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
-        if (!needsTokenAllowance(fromAccount, provider)) await broadcastLock.release();
+        if (!needsTokenAllowance(fromAccount, provider)) await exclusiveLock.release();
         await ensureTokenApproval(fromAccount, provider, minAmount);
         await app.swap.checkQuoteCardCtaPresence(provider.uiName);
 

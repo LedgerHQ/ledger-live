@@ -17,7 +17,7 @@ import {
 } from "tests/utils/featureFlagUtils";
 import { type NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import { exclusiveLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 export type ContactsEntry = NewSendFlowEntry & {
   /**

@@ -3,7 +3,7 @@ import test from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { acquireAccountBroadcastLock, type Lease } from "@ledgerhq/live-e2e-shared/broadcastLock";
+import { acquireExclusiveLock, type Lease } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import {
   DEFAULT_LOAN,
   ensureRepayTestPrecondition,
@@ -16,7 +16,7 @@ import {
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import { BROADCAST_LOCK_FIXTURE_TIMEOUT, exclusiveLockFor } from "tests/utils/broadcastLock";
+import { EXCLUSIVE_LOCK_FIXTURE_TIMEOUT, exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 test.describe.configure({ mode: "default" });
 
@@ -24,7 +24,7 @@ const coldStartAccount = Account.ETH_1;
 const openLoanAccount = Account.ETH_4;
 const NANO_APP_CATALOG = resolvePath(__dirname, "../artifacts/appVersion/nano-app-catalog.json");
 
-const BORROW_HOOK_TIMEOUT_MS = 600_000 + BROADCAST_LOCK_FIXTURE_TIMEOUT;
+const BORROW_HOOK_TIMEOUT_MS = 600_000 + EXCLUSIVE_LOCK_FIXTURE_TIMEOUT;
 const BORROW_TEST_TIMEOUT_MS = 480_000;
 
 // This file runs in default mode, so Playwright holds the loan lock for the whole file.
@@ -32,7 +32,7 @@ const loanLock = exclusiveLockFor({ broadcastAccounts: [openLoanAccount] });
 
 /**
  * Holds the loan account from `prepare` until the loan is reset after the tests, so no other CI
- * machine changes the loan in between. The tests therefore take no broadcast lock of their own.
+ * machine changes the loan in between. The tests therefore take no exclusive lock of their own.
  */
 const holdLoanAccount = (
   flowName: string,
@@ -43,7 +43,7 @@ const holdLoanAccount = (
 
   test.beforeAll(async () => {
     test.setTimeout(prepareTimeoutMs);
-    lease = await acquireAccountBroadcastLock([openLoanAccount], `desktop borrow ${flowName}`, {
+    lease = await acquireExclusiveLock([openLoanAccount], `desktop borrow ${flowName}`, {
       allowNested: true,
     });
     await prepare();

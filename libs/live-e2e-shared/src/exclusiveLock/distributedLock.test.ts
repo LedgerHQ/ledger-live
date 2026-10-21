@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BroadcastLockStoreFatalError } from "../errors";
+import { ExclusiveLockStoreFatalError } from "../errors";
 import { acquireDistributedLock, type DistributedLockOptions } from "./distributedLock";
 import type { AbandonableLease, LockRecord, LockStore, StoredLock } from "./types";
 
@@ -311,7 +311,7 @@ test("fails the release of a lease another holder took over, leaving their lock 
   await flushTimers();
 
   await assert.rejects(lease.release(), {
-    name: "BroadcastLockLostError",
+    name: "ExclusiveLockLostError",
     message: /lost "key" to intruder \(intruder\) while holding it/,
   });
   assert.equal(lostReported, true);
@@ -327,7 +327,7 @@ test("fails the release of a lease taken over since its last renewal", async () 
 
   store.overwriteAsAnotherHolder("key");
 
-  await assert.rejects(lease.release(), { name: "BroadcastLockLostError" });
+  await assert.rejects(lease.release(), { name: "ExclusiveLockLostError" });
   assert.equal(store.objects.get("key")?.record.released, false);
 });
 
@@ -436,7 +436,7 @@ test("marks the lease lost once failed renewals leave it about to lapse", async 
   store.failuresLeft = 0;
 
   assert.equal(lostReported, true);
-  await assert.rejects(lease.release(), { name: "BroadcastLockLostError" });
+  await assert.rejects(lease.release(), { name: "ExclusiveLockLostError" });
 });
 
 test("fails a release it could not write once the lease has lapsed", async () => {
@@ -447,7 +447,7 @@ test("fails a release it could not write once the lease has lapsed", async () =>
   store.failuresLeft = Number.POSITIVE_INFINITY;
   clock.now = 70_000;
 
-  await assert.rejects(lease.release(), { name: "BroadcastLockLostError" });
+  await assert.rejects(lease.release(), { name: "ExclusiveLockLostError" });
 });
 
 test("gives up on a release it could not write while the lease is still alive", async () => {
@@ -489,7 +489,7 @@ test("stops waiting at the first lock store error that retrying cannot fix", asy
   const clock = { now: 0 };
   const store = new MemoryLockStore(clock);
   store.failuresLeft = 1;
-  store.failure = new BroadcastLockStoreFatalError("R2 PUT failed with 403: AccessDenied");
+  store.failure = new ExclusiveLockStoreFatalError("R2 PUT failed with 403: AccessDenied");
 
   await assert.rejects(
     acquireDistributedLock(store, "key", options(clock, "ios")),
@@ -505,7 +505,7 @@ test("stops at once when the store keeps rejecting the ETag it returned for a fr
   await first.release();
 
   await assert.rejects(acquireDistributedLock(store, "key", options(clock, "android")), {
-    name: "BroadcastLockStoreFatalError",
+    name: "ExclusiveLockStoreFatalError",
     message: /keeps rejecting "key" at ETag W\/"v2"/,
   });
   assert.ok(clock.now < 10_000, "failed within a few polls instead of waiting out the timeout");
@@ -531,7 +531,7 @@ test("gives up as soon as the key is held when told not to wait", async () => {
 
   await assert.rejects(
     acquireDistributedLock(store, "key", options(clock, "android", { giveUpWhenHeld: true })),
-    { name: "BroadcastLockBusyError", message: /gave up on "key" held by ios/ },
+    { name: "ExclusiveLockBusyError", message: /gave up on "key" held by ios/ },
   );
   assert.equal(clock.now, 0);
   await ios.release();
@@ -681,7 +681,7 @@ test("gives up when another holder takes the key while it settles", async () => 
         },
       }),
     ),
-    { name: "BroadcastLockBusyError", message: /gave up on "key" held by rival/ },
+    { name: "ExclusiveLockBusyError", message: /gave up on "key" held by rival/ },
   );
   await rival?.release();
 });
@@ -716,7 +716,7 @@ test("gives up when another holder takes and releases the key while it settles",
         },
       }),
     ),
-    { name: "BroadcastLockBusyError", message: /gave up on "key" held by rival/ },
+    { name: "ExclusiveLockBusyError", message: /gave up on "key" held by rival/ },
   );
 });
 
@@ -743,7 +743,7 @@ test("gives up on a settle window whose age stops advancing", async () => {
         },
       }),
     ),
-    { name: "BroadcastLockBusyError" },
+    { name: "ExclusiveLockBusyError" },
   );
   assert.equal(sleeps, 1);
 });
@@ -788,7 +788,7 @@ test("does not announce a wait for a key it gives up on", async () => {
       "key",
       options(clock, "android", { giveUpWhenHeld: true, log: logger.log }),
     ),
-    { name: "BroadcastLockBusyError" },
+    { name: "ExclusiveLockBusyError" },
   );
   assert.deepEqual(
     logger.infos.filter(message => message.includes("waiting for")),
@@ -827,7 +827,7 @@ test("gives up once every lock store request has failed for the outage budget", 
   await assert.rejects(
     acquireDistributedLock(store, "key", options(clock, "ios", { storeOutageMs: 120_000 })),
     {
-      name: "BroadcastLockStoreDownError",
+      name: "ExclusiveLockStoreDownError",
       message: /failed for \d+ms; last store error: R2 unavailable/,
     },
   );

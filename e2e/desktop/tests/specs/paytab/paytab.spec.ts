@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/contacts";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { PAY_CARD } from "@ledgerhq/live-e2e-shared/broadcastLock";
+import { PAY_CARD } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -19,7 +19,7 @@ import {
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
-import { exclusiveLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const ALL_STABLECOINS = "All stablecoins";
 const FILTER_TICKER = "USDT";

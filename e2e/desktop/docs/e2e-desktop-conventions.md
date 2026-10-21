@@ -80,9 +80,9 @@ test(
 
 Supplementary checks (copy, extra UI state) can use [soft assertions](soft-expect.md). Journey gates stay hard `expect(...)` so they fail fast and prevent further execution when a critical condition is not met.
 
-## Broadcast lock implementation
+## Exclusive lock implementation
 
-What a test declares: [Broadcast lock](../../docs/e2e-conventions.md#broadcast-lock). Use `exclusiveLockFor` ([`tests/utils/broadcastLock.ts`](../tests/utils/broadcastLock.ts)), with its `names` on the `lock` detail and its `fixtures` in `test.use`:
+What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#exclusive-lock). Use `exclusiveLockFor` ([`tests/utils/exclusiveLock.ts`](../tests/utils/exclusiveLock.ts)), with its `names` on the `lock` detail and its `fixtures` in `test.use`:
 
 ```ts
 const delegateLock = exclusiveLockFor({ broadcastAccounts: [delegate.account] });
@@ -91,4 +91,4 @@ test.describe("Delegate", { lock: delegateLock.names }, () => {
   test.use(delegateLock.fixtures);
 ```
 
-Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `broadcastLock` fixture's `release()`, as `send.swap` does once its provider needs no token approval. The `lock` detail still holds until the test ends.
+Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `exclusiveLock` fixture's `release()`, as `send.swap` does once its provider needs no token approval. The `lock` detail still holds until the test ends.

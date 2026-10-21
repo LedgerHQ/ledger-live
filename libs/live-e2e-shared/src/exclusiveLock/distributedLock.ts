@@ -1,8 +1,8 @@
 import {
-  BroadcastLockBusyError,
-  BroadcastLockLostError,
-  BroadcastLockStoreDownError,
-  BroadcastLockStoreFatalError,
+  ExclusiveLockBusyError,
+  ExclusiveLockLostError,
+  ExclusiveLockStoreDownError,
+  ExclusiveLockStoreFatalError,
 } from "../errors";
 import type { AbandonableLease, LockLogger, LockRecord, LockStore, StoredLock } from "./types";
 
@@ -42,7 +42,7 @@ const defaultSleep = (ms: number) => new Promise<void>(resolve => setTimeout(res
 const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 const isFatalStoreError = (error: unknown) =>
-  error instanceof Error && error.name === "BroadcastLockStoreFatalError";
+  error instanceof Error && error.name === "ExclusiveLockStoreFatalError";
 
 const isLockFree = ({ record, ageMs }: StoredLock) =>
   (record.released && ageMs >= record.settleMs) || ageMs > record.leaseMs;
@@ -82,15 +82,15 @@ function hold(
   const sleep = options.sleep ?? defaultSleep;
   let etag = initialEtag;
   let renewedAt = claimSentAt;
-  let lost: BroadcastLockLostError | undefined;
+  let lost: ExclusiveLockLostError | undefined;
   let stopped = false;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let pendingBeat: Promise<void> = Promise.resolve();
 
   const markLost = (takenBy: StoredLock | undefined) => {
     const newHolder = takenBy ? ` to ${takenBy.record.holder} (${takenBy.record.label})` : "";
-    lost = new BroadcastLockLostError(
-      `[broadcastLock] lost "${key}"${newHolder} while holding it: its lease expired, so broadcasts from it may have overlapped`,
+    lost = new ExclusiveLockLostError(
+      `[exclusiveLock] lost "${key}"${newHolder} while holding it: its lease expired, so broadcasts from it may have overlapped`,
     );
     options.onLost?.();
     log.warn(lost.message);
@@ -133,7 +133,7 @@ function hold(
     try {
       await writeOwnRecord(record);
     } catch (error) {
-      log.warn(`[broadcastLock] heartbeat for "${key}" failed: ${errorMessage(error)}`);
+      log.warn(`[exclusiveLock] heartbeat for "${key}" failed: ${errorMessage(error)}`);
       markLostIfLeaseLapsesWithin(heartbeatMs);
     }
   };
@@ -151,7 +151,7 @@ function hold(
   const writeReleasedRecord = async (settleMs: number, attempt = 1): Promise<void> => {
     try {
       if (await writeOwnRecord({ ...record, released: true, settleMs }, attempt > 1)) {
-        log.info(`[broadcastLock] released "${key}" (${record.label})`);
+        log.info(`[exclusiveLock] released "${key}" (${record.label})`);
       }
     } catch (error) {
       if (attempt < RELEASE_ATTEMPTS && !isFatalStoreError(error)) {
@@ -161,7 +161,7 @@ function hold(
       markLostIfLeaseLapsesWithin(0);
       if (!lost) {
         log.warn(
-          `[broadcastLock] failed to release "${key}", it frees itself once its lease expires: ${errorMessage(error)}`,
+          `[exclusiveLock] failed to release "${key}", it frees itself once its lease expires: ${errorMessage(error)}`,
         );
       }
     }
@@ -240,7 +240,7 @@ class Acquisition {
       this.lastError = error;
       this.failingSince ??= this.now();
       this.options.log.warn(
-        `[broadcastLock] lock store error on "${this.key}": ${errorMessage(error)}`,
+        `[exclusiveLock] lock store error on "${this.key}": ${errorMessage(error)}`,
       );
       return undefined;
     }
@@ -254,8 +254,8 @@ class Acquisition {
       this.rejectedEtag &&
       this.unchangedEtagRejections >= UNCHANGED_ETAG_REJECTIONS_BEFORE_FATAL
     ) {
-      throw new BroadcastLockStoreFatalError(
-        `[broadcastLock] the lock store keeps rejecting "${this.key}" at ETag ${this.rejectedEtag} although nothing rewrote it, so its If-Match cannot be trusted`,
+      throw new ExclusiveLockStoreFatalError(
+        `[exclusiveLock] the lock store keeps rejecting "${this.key}" at ETag ${this.rejectedEtag} although nothing rewrote it, so its If-Match cannot be trusted`,
       );
     }
   }
@@ -264,11 +264,11 @@ class Acquisition {
     const { log } = this.options;
     if (previous && !previous.record.released) {
       log.warn(
-        `[broadcastLock] took over "${this.key}" from ${previous.record.holder} (${previous.record.label}): its lease expired ${previous.ageMs - previous.record.leaseMs}ms ago`,
+        `[exclusiveLock] took over "${this.key}" from ${previous.record.holder} (${previous.record.label}): its lease expired ${previous.ageMs - previous.record.leaseMs}ms ago`,
       );
     }
     log.info(
-      `[broadcastLock] acquired "${this.key}" after ${this.now() - this.startedAt}ms (${this.options.label})`,
+      `[exclusiveLock] acquired "${this.key}" after ${this.now() - this.startedAt}ms (${this.options.label})`,
     );
     return hold(this.store, this.key, this.record, etag, claimSentAt, this.options);
   }
@@ -278,7 +278,7 @@ class Acquisition {
     const settling = held?.record.released ? held : undefined;
     const { giveUpWhenHeld, pollMs } = this.options;
     if (held && giveUpWhenHeld && !(settling && this.settleCountsDown(settling))) {
-      throw new BroadcastLockBusyError(`[broadcastLock] gave up on "${this.key}"${this.heldBy()}`);
+      throw new ExclusiveLockBusyError(`[exclusiveLock] gave up on "${this.key}"${this.heldBy()}`);
     }
     if (held) this.announceWait();
     if (settling && giveUpWhenHeld) {
@@ -311,7 +311,7 @@ class Acquisition {
   private announceWait() {
     if (this.announcedWait) return;
     this.announcedWait = true;
-    this.options.log.info(`[broadcastLock] waiting for "${this.key}",${this.heldBy()}`);
+    this.options.log.info(`[exclusiveLock] waiting for "${this.key}",${this.heldBy()}`);
   }
 
   private throwIfStoreDown() {
@@ -319,8 +319,8 @@ class Acquisition {
     if (storeOutageMs === undefined || this.failingSince === undefined) return;
     const failingForMs = this.now() - this.failingSince;
     if (failingForMs < storeOutageMs) return;
-    throw new BroadcastLockStoreDownError(
-      `[broadcastLock] every lock store request on "${this.key}" failed for ${failingForMs}ms; last store error: ${errorMessage(this.lastError)}`,
+    throw new ExclusiveLockStoreDownError(
+      `[exclusiveLock] every lock store request on "${this.key}" failed for ${failingForMs}ms; last store error: ${errorMessage(this.lastError)}`,
     );
   }
 
@@ -328,9 +328,9 @@ class Acquisition {
     const { acquireTimeoutMs, giveUpWhenHeld } = this.options;
     if (this.now() - this.retryFrom < acquireTimeoutMs) return;
     const cause = this.lastError ? `; last store error: ${errorMessage(this.lastError)}` : "";
-    const message = `[broadcastLock] timed out after ${acquireTimeoutMs}ms waiting for "${this.key}"${this.heldBy()}${cause}`;
+    const message = `[exclusiveLock] timed out after ${acquireTimeoutMs}ms waiting for "${this.key}"${this.heldBy()}${cause}`;
     const keptByHolder = this.lastHeld && !giveUpWhenHeld;
-    throw keptByHolder ? new BroadcastLockBusyError(message) : new Error(message);
+    throw keptByHolder ? new ExclusiveLockBusyError(message) : new Error(message);
   }
 
   private heldBy() {
@@ -357,7 +357,7 @@ export async function acquireDistributedLock(
   options: DistributedLockOptions,
 ): Promise<AbandonableLease> {
   if (options.heartbeatMs >= options.leaseMs) {
-    throw new Error("[broadcastLock] heartbeatMs must be shorter than leaseMs");
+    throw new Error("[exclusiveLock] heartbeatMs must be shorter than leaseMs");
   }
   return new Acquisition(store, key, options).acquire();
 }

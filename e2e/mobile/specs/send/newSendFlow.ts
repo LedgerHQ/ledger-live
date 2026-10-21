@@ -1,7 +1,7 @@
 import { Transaction, TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { declareBroadcastAccounts } from "@e2e/helpers/broadcastLock";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { BST_SEND_CURRENCIES, beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
 
 const beforeAllTokenFunction = async (transaction: TransactionType, options?: SendTestOptions) => {

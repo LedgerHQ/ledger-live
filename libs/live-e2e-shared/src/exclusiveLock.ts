@@ -1,18 +1,18 @@
-// How the lock works, how tests declare it, and how to read its logs: e2e/docs/broadcast-lock.md
+// How the lock works, how tests declare it, and how to read its logs: e2e/docs/exclusive-lock.md
 import { randomUUID } from "node:crypto";
 import os from "node:os";
-import { byCodeUnit } from "./broadcastLock/byCodeUnit";
-import { acquireDistributedLock } from "./broadcastLock/distributedLock";
-import { BroadcastLockConfigError, BroadcastLockRefusedError } from "./errors";
-import { createR2LockStore } from "./broadcastLock/r2LockStore";
+import { byCodeUnit } from "./exclusiveLock/byCodeUnit";
+import { acquireDistributedLock } from "./exclusiveLock/distributedLock";
+import { ExclusiveLockConfigError, ExclusiveLockRefusedError } from "./errors";
+import { createR2LockStore } from "./exclusiveLock/r2LockStore";
 import { acquireCrossProcessLock } from "./crossProcessLock";
-import type { AbandonableLease, Lease, LockLogger, LockStore } from "./broadcastLock/types";
+import type { AbandonableLease, Lease, LockLogger, LockStore } from "./exclusiveLock/types";
 import type { Account } from "./enum/Account";
 
-export type { AbandonableLease, Lease } from "./broadcastLock/types";
+export type { AbandonableLease, Lease } from "./exclusiveLock/types";
 
-export const BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS = 30 * 60_000;
-export const BROADCAST_LOCK_NESTED_DRAIN_MS = 60_000;
+export const EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS = 30 * 60_000;
+export const EXCLUSIVE_LOCK_NESTED_DRAIN_MS = 60_000;
 const LEASE_MS = 120_000;
 // A lease of failed requests: by then every holder has lost its lock too.
 const STORE_OUTAGE_MS = LEASE_MS;
@@ -26,8 +26,8 @@ const SETTLE_MS = 45_000;
 const SETTLE_CLAIM_SPREAD_MS = 3_500;
 const R2_KEY_PREFIX = "e2e-broadcast-locks/";
 const HOLDER_PREFIX = `${os.hostname()}:${process.pid}:`;
-const LIVE_HOLDS = Symbol.for("@ledgerhq/live-e2e-shared/broadcastLock/liveHolds");
-const WAITED_MS = Symbol.for("@ledgerhq/live-e2e-shared/broadcastLock/waitedMs");
+const LIVE_HOLDS = Symbol.for("@ledgerhq/live-e2e-shared/exclusiveLock/liveHolds");
+const WAITED_MS = Symbol.for("@ledgerhq/live-e2e-shared/exclusiveLock/waitedMs");
 
 // Detox runs on CI at --loglevel warn, which drops console.info.
 const consoleLogger: LockLogger = {
@@ -43,7 +43,7 @@ type LiveHold = {
 };
 type LiveHolds = Record<string, LiveHold>;
 
-type AccountBroadcastLockOptions = { readonly allowNested?: boolean };
+type ExclusiveLockOptions = { readonly allowNested?: boolean };
 
 const isLiveHolds = (value: unknown): value is LiveHolds =>
   typeof value === "object" && value !== null;
@@ -96,23 +96,23 @@ const waitedMsSoFar = (): number => {
 };
 
 /**
- * Time this process spent acquiring broadcast locks since the last call. Kept on node:os, like the
+ * Time this process spent acquiring exclusive locks since the last call. Kept on node:os, like the
  * live holds, so jest.environment.ts can read what the spec file's module copies waited.
  */
-export function takeBroadcastLockWaitedMs(): number {
+export function takeExclusiveLockWaitedMs(): number {
   const waited = waitedMsSoFar();
   Reflect.set(os, WAITED_MS, 0);
   return waited;
 }
 
 /** "local" locks on this machine only, even on CI, e.g. while R2 is down. */
-const BROADCAST_LOCK_MODE_ENV = "E2E_BROADCAST_LOCK_MODE";
+const EXCLUSIVE_LOCK_MODE_ENV = "E2E_EXCLUSIVE_LOCK_MODE";
 
 const isMachineLocalMode = (): boolean => {
-  const mode = process.env[BROADCAST_LOCK_MODE_ENV] || "remote";
+  const mode = process.env[EXCLUSIVE_LOCK_MODE_ENV] || "remote";
   if (mode !== "remote" && mode !== "local") {
-    throw new BroadcastLockConfigError(
-      `[broadcastLock] ${BROADCAST_LOCK_MODE_ENV} must be "remote" or "local", not "${mode}"`,
+    throw new ExclusiveLockConfigError(
+      `[exclusiveLock] ${EXCLUSIVE_LOCK_MODE_ENV} must be "remote" or "local", not "${mode}"`,
     );
   }
   return mode === "local";
@@ -120,14 +120,14 @@ const isMachineLocalMode = (): boolean => {
 
 function remoteLockStoreFromEnv(): LockStore | undefined {
   if (isMachineLocalMode()) return undefined;
-  const endpoint = process.env.E2E_BROADCAST_LOCK_ENDPOINT;
-  const bucket = process.env.E2E_BROADCAST_LOCK_BUCKET;
-  const accessKeyId = process.env.E2E_BROADCAST_LOCK_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY;
+  const endpoint = process.env.E2E_EXCLUSIVE_LOCK_ENDPOINT;
+  const bucket = process.env.E2E_EXCLUSIVE_LOCK_BUCKET;
+  const accessKeyId = process.env.E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY;
   if (!endpoint && !bucket && !accessKeyId && !secretAccessKey) return undefined;
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
-    throw new BroadcastLockConfigError(
-      "[broadcastLock] E2E_BROADCAST_LOCK_ENDPOINT, _BUCKET, _ACCESS_KEY_ID and _SECRET_ACCESS_KEY must be set together",
+    throw new ExclusiveLockConfigError(
+      "[exclusiveLock] E2E_EXCLUSIVE_LOCK_ENDPOINT, _BUCKET, _ACCESS_KEY_ID and _SECRET_ACCESS_KEY must be set together",
     );
   }
   return createR2LockStore({
@@ -146,17 +146,17 @@ async function acquireMachineLocalLock(
 ): Promise<AbandonableLease> {
   const localMode = isMachineLocalMode();
   if (process.env.CI && !localMode) {
-    throw new BroadcastLockConfigError(
-      `[broadcastLock] E2E_BROADCAST_LOCK_* must be set on CI: a machine-local lock on "${key}" does not stop other CI machines from broadcasting from it`,
+    throw new ExclusiveLockConfigError(
+      `[exclusiveLock] E2E_EXCLUSIVE_LOCK_* must be set on CI: a machine-local lock on "${key}" does not stop other CI machines from broadcasting from it`,
     );
   }
   if (!warnedMachineLocal) {
     warnedMachineLocal = true;
     const reason = localMode
-      ? `${BROADCAST_LOCK_MODE_ENV} is "local"`
-      : "E2E_BROADCAST_LOCK_* is not set";
+      ? `${EXCLUSIVE_LOCK_MODE_ENV} is "local"`
+      : "E2E_EXCLUSIVE_LOCK_* is not set";
     console.warn(
-      `[broadcastLock] ${reason}: broadcasts are only serialized between processes on this machine`,
+      `[exclusiveLock] ${reason}: broadcasts are only serialized between processes on this machine`,
     );
   }
   const release = await acquireCrossProcessLock(key, { acquireTimeoutMs });
@@ -183,9 +183,9 @@ async function waitForNestedHolds(key: string, hold: LiveHold): Promise<void> {
   if (hold.nested === 0) return;
   const slowDrainWarning = setTimeout(() => {
     console.warn(
-      `[broadcastLock] keeping "${key}" locked while a broadcast nested in it still runs after ${BROADCAST_LOCK_NESTED_DRAIN_MS}ms`,
+      `[exclusiveLock] keeping "${key}" locked while a broadcast nested in it still runs after ${EXCLUSIVE_LOCK_NESTED_DRAIN_MS}ms`,
     );
-  }, BROADCAST_LOCK_NESTED_DRAIN_MS);
+  }, EXCLUSIVE_LOCK_NESTED_DRAIN_MS);
   await new Promise<void>(resolve => {
     hold.onNestedDone = resolve;
   });
@@ -207,7 +207,7 @@ async function acquireKey(
   const holds = liveHolds();
   const outer = holds[key];
   if (outer?.refusedBecause && !allowNested) {
-    throw new BroadcastLockRefusedError(`[broadcastLock] "${key}" ${outer.refusedBecause}`);
+    throw new ExclusiveLockRefusedError(`[exclusiveLock] "${key}" ${outer.refusedBecause}`);
   }
   if (outer && !allowNested) return joinHold(outer);
 
@@ -270,34 +270,34 @@ async function endAll(
 
 /**
  * Locks the on-chain accounts a broadcast mutates, or shared resources, across every CI machine
- * when E2E_BROADCAST_LOCK_* points at an R2 bucket, otherwise, or when E2E_BROADCAST_LOCK_MODE is
+ * when E2E_EXCLUSIVE_LOCK_* points at an R2 bucket, otherwise, or when E2E_EXCLUSIVE_LOCK_MODE is
  * "local", across this machine only.
  * Calls made while an `allowNested` lock is held, e.g. a CLI token approval inside a spec, run
  * under it instead of waiting for it, and its release waits for them. Releasing a lease another
  * holder took over throws. Abandoning it instead, when nothing was broadcast under it, spares the
  * next holder the settle window.
  */
-export function acquireAccountBroadcastLock(
+export function acquireExclusiveLock(
   targets: readonly LockTarget[],
   label: string,
-  { allowNested = false }: AccountBroadcastLockOptions = {},
+  { allowNested = false }: ExclusiveLockOptions = {},
 ): Promise<AbandonableLease> {
   return lockTargets(targets, label, { allowNested, giveUpIfHeld: false });
 }
 
 /**
- * Same as {@link acquireAccountBroadcastLock} without waiting: resolves to undefined when another
- * holder has one of the targets. Without E2E_BROADCAST_LOCK_* it still waits for this machine.
+ * Same as {@link acquireExclusiveLock} without waiting: resolves to undefined when another
+ * holder has one of the targets. Without E2E_EXCLUSIVE_LOCK_* it still waits for this machine.
  */
-export async function tryAcquireAccountBroadcastLock(
+export async function tryAcquireExclusiveLock(
   targets: readonly LockTarget[],
   label: string,
-  { allowNested = false }: AccountBroadcastLockOptions = {},
+  { allowNested = false }: ExclusiveLockOptions = {},
 ): Promise<AbandonableLease | undefined> {
   try {
     return await lockTargets(targets, label, { allowNested, giveUpIfHeld: true });
   } catch (error) {
-    if (!(error instanceof Error) || error.name !== "BroadcastLockBusyError") throw error;
+    if (!(error instanceof Error) || error.name !== "ExclusiveLockBusyError") throw error;
     consoleLogger.info(error.message);
     return undefined;
   }
@@ -326,7 +326,7 @@ async function lockTargets(
     targets.filter(isSharedResource).map(({ lockKey }) => lockKey),
   );
   const startedAt = Date.now();
-  const deadline = startedAt + BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS;
+  const deadline = startedAt + EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS;
   const leases: AbandonableLease[] = [];
   try {
     await acquireInOrder(keys, label, { ...options, deadline, sharedResourceKeys }, leases);
@@ -345,10 +345,10 @@ async function lockTargets(
 }
 
 /**
- * Makes every broadcast lock on these targets in this process fail at once until released,
+ * Makes every exclusive lock on these targets in this process fail at once until released,
  * e.g. for the rest of a spec whose own lock could not be taken.
  */
-export function refuseAccountBroadcastLocks(targets: readonly LockTarget[], reason: string): Lease {
+export function refuseExclusiveLocks(targets: readonly LockTarget[], reason: string): Lease {
   const holds = liveHolds();
   const refusal: LiveHold = { nested: 0, refusedBecause: reason };
   const keys = lockKeys(targets);
@@ -367,13 +367,13 @@ export function refuseAccountBroadcastLocks(targets: readonly LockTarget[], reas
  * Runs `fn` under the lock of `targets`. With `waitsForConfirmation`, `fn` only returns once its
  * transactions are confirmed, so on success the targets are handed back without the settle window.
  */
-export async function runWithAccountBroadcastLock<T>(
+export async function runWithExclusiveLock<T>(
   targets: readonly LockTarget[],
   label: string,
   fn: () => Promise<T>,
   { waitsForConfirmation = false }: { readonly waitsForConfirmation?: boolean } = {},
 ): Promise<T> {
-  const lease = await acquireAccountBroadcastLock(targets, label);
+  const lease = await acquireExclusiveLock(targets, label);
   let confirmed = false;
   try {
     const result = await fn();
