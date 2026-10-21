@@ -26,27 +26,23 @@ async function buildUnsignedSwapTxHex(
   const calldataHex = transactionData.data.replace(/^0x/, "");
   const data = calldataHex.length > 0 ? Buffer.from(calldataHex, "hex") : Buffer.alloc(0);
 
-  const { transaction } = await craftTransaction(
-    buildContext<EvmConfigInfo>(currency.id),
-    currency.id,
-    {
-      transactionIntent: {
-        intentType: "transaction",
-        type: "send-eip1559",
-        sender: account.freshAddress,
-        recipient: transactionData.to,
-        amount: BigInt(transactionData.value || "0"),
-        asset: { type: "native" },
-        data: { type: "buffer", value: data },
-      } satisfies Parameters<typeof craftTransaction>[2]["transactionIntent"],
-      customFees: {
-        value: 0n,
-        // Pin the medium tier and gasLimit; `craftTransaction` fetches
-        // `maxFeePerGas` / `maxPriorityFeePerGas` from the node.
-        parameters: { feesStrategy: "medium", gasLimit: BigInt(transactionData.gasLimit) },
-      },
+  const { transaction } = await craftTransaction(buildContext<EvmConfigInfo>(currency.id), {
+    transactionIntent: {
+      intentType: "transaction",
+      type: "send-eip1559",
+      sender: account.freshAddress,
+      recipient: transactionData.to,
+      amount: BigInt(transactionData.value || "0"),
+      asset: { type: "native" },
+      data: { type: "buffer", value: data },
+    } satisfies Parameters<typeof craftTransaction>[1]["transactionIntent"],
+    customFees: {
+      value: 0n,
+      // Pin the medium tier and gasLimit; `craftTransaction` fetches
+      // `maxFeePerGas` / `maxPriorityFeePerGas` from the node.
+      parameters: { feesStrategy: "medium", gasLimit: BigInt(transactionData.gasLimit) },
     },
-  );
+  });
 
   return transaction;
 }
