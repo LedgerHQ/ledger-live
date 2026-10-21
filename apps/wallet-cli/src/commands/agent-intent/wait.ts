@@ -71,6 +71,12 @@ export default defineCommand({
         const listenerPid = readLiveLockHolderPid(lockPath);
         const profile = (await Session.read()).getAgentIntentProfile(profileId);
         if (!profile) {
+          // A live listener that has not saved its profile yet (keypair, keychain unlock) is starting.
+          const startingMs = listenerPid === undefined ? 0 : deadline - Date.now();
+          if (startingMs > 0) {
+            await sleep(Math.min(POLL_INTERVAL_MS, startingMs));
+            continue;
+          }
           throw new CodedCommandError(
             "profile_not_found",
             `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent list\` ` +
