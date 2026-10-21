@@ -11,6 +11,7 @@ import {
   selfCommand,
   spawnDetached,
   withEnrollListenerLock,
+  withEnrollStartLock,
 } from "./detach";
 
 const isPosix = process.platform !== "win32";
@@ -91,6 +92,19 @@ describe("withEnrollListenerLock", () => {
     } finally {
       holder.kill();
     }
+  });
+});
+
+describe("withEnrollStartLock", () => {
+  it("does not share a lock file with the listener of profile <id>.start", async () => {
+    await withEnrollListenerLock("bot.start", async () => {
+      const started = Date.now();
+      expect(await withEnrollStartLock("bot", async () => "started")).toBe("started");
+      expect(Date.now() - started).toBeLessThan(500);
+    });
+    await withEnrollStartLock("bot", async () => {
+      expect(await withEnrollListenerLock("bot.start", async () => "listening")).toBe("listening");
+    });
   });
 });
 

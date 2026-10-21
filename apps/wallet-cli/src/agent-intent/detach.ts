@@ -53,7 +53,8 @@ export async function withEnrollListenerLock<T>(
  * first one's startup instead of racing it; the listener child never takes this lock. */
 export async function withEnrollStartLock<T>(profileId: string, fn: () => Promise<T>): Promise<T> {
   ensureListenerDir();
-  const lockPath = join(stateDir(APP_NAME), LISTENER_DIR, `${profileId}.start.lock`);
+  // Not `<id>.start.lock`: that is the listener lock of the valid profile id `<id>.start`.
+  const lockPath = join(stateDir(APP_NAME), LISTENER_DIR, `${profileId}.lock.start`);
   return withFileLock(lockPath, fn, STARTUP_TIMEOUT_MS + START_LOCK_MARGIN_MS);
 }
 
