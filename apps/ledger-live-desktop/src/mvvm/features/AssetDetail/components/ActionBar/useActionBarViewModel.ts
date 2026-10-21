@@ -6,6 +6,7 @@ import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/type
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { useTradeAvailability } from "@ledgerhq/asset-detail";
 import useEnv from "@features/platform-env";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import {
@@ -22,6 +23,8 @@ import { useTranslation } from "react-i18next";
 import { setTrackingSource, track } from "@shared/analytics";
 import { useBuyNavigation } from "LLD/features/Market/hooks/useBuyNavigation";
 import { useSellNavigation } from "LLD/features/Market/hooks/useSellNavigation";
+import { useSwapNavigation } from "LLD/features/Market/hooks/useSwapNavigation";
+import { useSwapConsoleAbtest } from "LLD/features/AssetDetail/hooks/useSwapConsoleAbtest";
 import { resolveRampLedgerIds } from "LLD/features/AssetDetail/utils/resolveRampLedgerIds";
 
 type UseActionBarViewModelProps = Readonly<{
@@ -34,20 +37,20 @@ type UseActionBarViewModelProps = Readonly<{
   isMarketLoading: boolean;
 }>;
 
+export type ActionBarActionId = "swap" | "receive" | "buy" | "sell" | "send";
+
+export type ActionBarAction = Readonly<{
+  id: ActionBarActionId;
+  label: string;
+  isDisabled: boolean;
+  onClick: () => void;
+  isHighlighted: boolean;
+}>;
+
 export type ActionBarViewModel = Readonly<{
   showSkeleton: boolean;
   isCurrencySupported: boolean;
-  receiveLabel: string;
-  buyLabel: string;
-  sellLabel: string;
-  sendLabel: string;
-  isBuyEnabled: boolean;
-  isSellEnabled: boolean;
-  isSendEnabled: boolean;
-  onBuy: () => void;
-  onSell: () => void;
-  onSend: () => void;
-  onReceive: () => void;
+  actions: readonly ActionBarAction[];
 }>;
 
 function pickPrimaryAccount(accounts: AccountLike[]): AccountLike | undefined {
@@ -94,6 +97,8 @@ export function useActionBarViewModel({
   const openSendFlow = useOpenSendFlow();
   const { navigateToBuy } = useBuyNavigation();
   const { navigateToSell } = useSellNavigation();
+  const { navigateToSwap } = useSwapNavigation();
+  const { isQuickActionEnabled } = useSwapConsoleAbtest();
   const { isCurrencyAvailable } = useRampCatalog();
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
@@ -123,6 +128,9 @@ export function useActionBarViewModel({
     [rampMarketCurrencyRef, isCurrencyAvailable],
   );
 
+  const { availableOnSwap } = useTradeAvailability(rampActiveLedgerIds);
+  const isSwapVisible = isQuickActionEnabled && availableOnSwap && ledgerCurrency !== undefined;
+
   const primaryAccount = useMemo(
     () => resolvePrimaryAccount(distributionItem, ledgerCurrency, allAccounts),
     [distributionItem, ledgerCurrency, allAccounts],
@@ -147,15 +155,6 @@ export function useActionBarViewModel({
     isDistributionLoading,
     isMarketLoading,
     Boolean(marketCurrencyData),
-  );
-
-  const { isBuyEnabled, isSellEnabled, isSendEnabled } = useMemo(
-    () => ({
-      isBuyEnabled: canBuyOnRamp,
-      isSellEnabled: canSellOnRamp && walletAllowsSellSend,
-      isSendEnabled: walletAllowsSellSend,
-    }),
-    [canBuyOnRamp, canSellOnRamp, walletAllowsSellSend],
   );
 
   const trackingCurrencyId =
@@ -214,19 +213,72 @@ export function useActionBarViewModel({
     );
   }, [dispatch, primaryAccount, primaryParentAccount, trackingCurrencyId]);
 
-  return {
-    showSkeleton: isPageLoading,
-    isCurrencySupported: rampActiveLedgerIds.length > 0,
-    receiveLabel: t("quickActions.receive"),
-    buyLabel: t("quickActions.buy"),
-    sellLabel: t("quickActions.sell"),
-    sendLabel: t("quickActions.send"),
-    isBuyEnabled,
-    isSellEnabled,
-    isSendEnabled,
+  const onSwap = useCallback(() => {
+    if (!ledgerCurrency) return;
+    track("button_clicked", {
+      button: "swap",
+      currency: trackingCurrencyId,
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+    });
+    setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
+    navigateToSwap(ledgerCurrency);
+  }, [ledgerCurrency, navigateToSwap, trackingCurrencyId]);
+
+  const actions = useMemo(() => {
+    const candidates: Array<ActionBarAction | false> = [
+      isSwapVisible && {
+        id: "swap",
+        label: t("quickActions.swap"),
+        isDisabled: false,
+        onClick: onSwap,
+        isHighlighted: true,
+      },
+      {
+        id: "receive",
+        label: t("quickActions.receive"),
+        isDisabled: false,
+        onClick: onReceive,
+        isHighlighted: !isSwapVisible,
+      },
+      canBuyOnRamp && {
+        id: "buy",
+        label: t("quickActions.buy"),
+        isDisabled: false,
+        onClick: onBuy,
+        isHighlighted: false,
+      },
+      {
+        id: "sell",
+        label: t("quickActions.sell"),
+        isDisabled: !(canSellOnRamp && walletAllowsSellSend),
+        onClick: onSell,
+        isHighlighted: false,
+      },
+      {
+        id: "send",
+        label: t("quickActions.send"),
+        isDisabled: !walletAllowsSellSend,
+        onClick: onSend,
+        isHighlighted: false,
+      },
+    ];
+    return candidates.filter((action): action is ActionBarAction => action !== false);
+  }, [
+    t,
+    isSwapVisible,
+    canBuyOnRamp,
+    canSellOnRamp,
+    walletAllowsSellSend,
+    onSwap,
+    onReceive,
     onBuy,
     onSell,
     onSend,
-    onReceive,
+  ]);
+
+  return {
+    showSkeleton: isPageLoading,
+    isCurrencySupported: rampActiveLedgerIds.length > 0,
+    actions,
   };
 }

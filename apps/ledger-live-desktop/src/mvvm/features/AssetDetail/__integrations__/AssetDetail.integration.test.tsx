@@ -50,6 +50,7 @@ const TEST_ID = {
   ACTION_RECEIVE: "asset-detail-action-receive",
   ACTION_SELL: "asset-detail-action-sell",
   ACTION_SEND: "asset-detail-action-send",
+  ACTION_SWAP: "asset-detail-action-swap",
   HEADER_OPTIONS: "asset-detail-header-options-trigger",
   STAKING_SECTION: "asset-detail-staking-section",
   EARN_BANNER: "asset-detail-earn-banner",
@@ -1068,6 +1069,66 @@ describe("AssetDetail integration", () => {
       expect(screen.queryByTestId(TEST_ID.ACTION_BUY)).not.toBeInTheDocument();
       expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+    });
+  });
+
+  describe("swap console A/B test", () => {
+    const actionTestIds = () =>
+      within(screen.getByTestId(TEST_ID.ACTION_BAR))
+        .getAllByRole("button")
+        .map(button => button.dataset.testid);
+
+    it("does not show the swap action when the A/B test is disabled", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.ACTION_SWAP)).not.toBeInTheDocument();
+    });
+
+    it("shows the swap action first when the quick action param is on", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />, {
+        initialState: withFlagOverrides({
+          lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+        }),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_SWAP)).toBeEnabled();
+      });
+
+      expect(actionTestIds()).toEqual([
+        TEST_ID.ACTION_SWAP,
+        TEST_ID.ACTION_RECEIVE,
+        TEST_ID.ACTION_BUY,
+        TEST_ID.ACTION_SELL,
+        TEST_ID.ACTION_SEND,
+      ]);
+    });
+
+    it("does not show the swap action when the quick action param is off", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />, {
+        initialState: withFlagOverrides({
+          lwdSwapConsoleAbtest: { enabled: true, params: { console: true, quickAction: false } },
+        }),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.ACTION_SWAP)).not.toBeInTheDocument();
     });
   });
 

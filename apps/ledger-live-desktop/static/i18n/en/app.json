@@ -9770,6 +9770,7 @@
     "receive": "Receive",
     "buy": "Buy",
     "sell": "Sell",
+    "swap": "Swap",
     "connect": "Connect",
     "buyALedger": "Buy a Ledger"
   },
