@@ -39,7 +39,11 @@ import {
   E2E_WEBVIEW_CONSOLE_LOG_TYPE,
   E2E_WEBVIEW_NETWORK_LOG_TYPE,
 } from "../../e2e/webviewNetworkLogCapture";
-import { webviewLogStore } from "../../e2e/webviewLogStore";
+import {
+  webviewLogStore,
+  type WebviewConsoleLog,
+  type WebviewNetworkLog,
+} from "../../e2e/webviewLogStore";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 import { reportDomainCheckViolation, reportIfStrictlyDisallowed } from "./domainCheckReport";
 import { walletSelector } from "~/reducers/wallet";
@@ -60,6 +64,11 @@ import {
   openWindowExternally,
   shouldStartLoadWithManifestDomains,
 } from "./manifestDomainGuard";
+import {
+  getAllowedSenderOrigin,
+  getMessagingAllowedOrigins,
+  useBridgeAllowedDomains,
+} from "./bridge";
 export function useWebView(
   {
     manifest,
@@ -181,6 +190,12 @@ export function useWebView(
     };
   }, [webviewRef]);
 
+  const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
+  const messagingAllowedOrigins = useMemo(
+    () => getMessagingAllowedOrigins(allowedDomains),
+    [allowedDomains],
+  );
+
   const walletState = useSelector(walletSelector);
 
   const {
@@ -226,38 +241,44 @@ export function useWebView(
 
   const onMessage = useCallback(
     (e: WebViewMessageEvent) => {
-      if (e.nativeEvent?.data) {
-        reportIfStrictlyDisallowed({
-          manifest,
-          url: e.nativeEvent.url,
-          frameType: "unknown",
-          kind: "bridge",
-        });
-        try {
-          const msg = JSON.parse(e.nativeEvent.data);
+      const data = e.nativeEvent?.data;
+      if (!data) return;
+      reportIfStrictlyDisallowed({
+        manifest,
+        url: e.nativeEvent.url,
+        frameType: "unknown",
+        kind: "bridge",
+      });
 
-          if (Config.DETOX && msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
-            webviewLogStore.addNetworkLog(msg.payload);
-            return;
-          }
-          if (Config.DETOX && msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
-            webviewLogStore.addConsoleLog(msg.payload);
-            return;
-          }
+      let msg: { type?: unknown; payload?: unknown } | null | undefined;
+      try {
+        msg = JSON.parse(data);
+      } catch {
+        msg = undefined;
+      }
 
-          if (Config.MOCK && msg.type === "e2eTest") {
-            sendWalletAPIResponse(msg.payload);
-          } else if (msg.type === "dapp") {
-            onDappMessage(msg);
-          } else {
-            onMessageRaw(e.nativeEvent.data);
-          }
-        } catch {
-          onMessageRaw(e.nativeEvent.data);
-        }
+      if (Config.DETOX && msg?.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+        webviewLogStore.addNetworkLog(msg.payload as WebviewNetworkLog);
+        return;
+      }
+      if (Config.DETOX && msg?.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+        webviewLogStore.addConsoleLog(msg.payload as WebviewConsoleLog);
+        return;
+      }
+      if (Config.MOCK && msg?.type === "e2eTest") {
+        sendWalletAPIResponse(msg.payload as Record<string, unknown>);
+        return;
+      }
+
+      if (!getAllowedSenderOrigin(e, allowedDomains)) return;
+
+      if (msg?.type === "dapp") {
+        onDappMessage(msg as Parameters<typeof onDappMessage>[0]);
+      } else {
+        onMessageRaw(data);
       }
     },
-    [manifest, onDappMessage, onMessageRaw],
+    [allowedDomains, manifest, onDappMessage, onMessageRaw],
   );
 
   const onOpenWindow = useCallback(
@@ -303,6 +324,7 @@ export function useWebView(
   return {
     onLoadError,
     onMessage,
+    messagingAllowedOrigins,
     onOpenWindow,
     onShouldStartLoadWithRequest,
     isBlockedByDomainCheck,

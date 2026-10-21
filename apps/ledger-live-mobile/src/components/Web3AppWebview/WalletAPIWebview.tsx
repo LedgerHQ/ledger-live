@@ -43,6 +43,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const {
       onMessage,
+      messagingAllowedOrigins,
       onLoadError,
       onOpenWindow,
       onShouldStartLoadWithRequest,
@@ -123,6 +124,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           }
           allowsInlineMediaPlayback
           onMessage={onMessage}
+          messagingAllowedOrigins={messagingAllowedOrigins}
           onError={(event: { nativeEvent?: { description?: string; code?: number } }) => {
             if (Config.DETOX) {
               const desc = event?.nativeEvent?.description;

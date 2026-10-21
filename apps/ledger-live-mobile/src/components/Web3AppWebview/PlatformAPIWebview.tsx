@@ -48,6 +48,11 @@ import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNaviga
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import {
+  getAllowedSenderOrigin,
+  getMessagingAllowedOrigins,
+  useBridgeAllowedDomains,
+} from "./bridge";
 import { closePlatformExchange } from "./closePlatformExchange";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 import { reportIfStrictlyDisallowed } from "./domainCheckReport";
@@ -121,6 +126,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const listPlatformCurrencies = useListPlatformCurrencies(deactivatedCurrencyIdsSet);
 
     const { openDrawer: openModularDrawer } = useModularDrawerController();
+
+    const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
+    const messagingAllowedOrigins = useMemo(
+      () => getMessagingAllowedOrigins(allowedDomains),
+      [allowedDomains],
+    );
 
     const requestAccount = useCallback(
       ({
@@ -476,9 +487,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           kind: "bridge",
         });
 
-        try {
-          const msg = JSON.parse(data);
-          if (Config.DETOX) {
+        if (Config.DETOX) {
+          try {
+            const msg = JSON.parse(data);
             if (msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
               webviewLogStore.addNetworkLog(msg.payload);
               return;
@@ -487,13 +498,20 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               webviewLogStore.addConsoleLog(msg.payload);
               return;
             }
+          } catch {
+            // Not an E2E log: handled below.
           }
-          void receive(msg);
+        }
+
+        if (!getAllowedSenderOrigin(e, allowedDomains)) return;
+
+        try {
+          void receive(JSON.parse(data));
         } catch {
           void receive(data); // let JSON-RPC handle / error-respond
         }
       },
-      [manifest, receive],
+      [allowedDomains, manifest, receive],
     );
 
     const handleError = useCallback(
@@ -551,6 +569,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         }
         allowsInlineMediaPlayback
         onMessage={handleMessage}
+        messagingAllowedOrigins={messagingAllowedOrigins}
         onError={handleError}
         onOpenWindow={onOpenWindow}
         overScrollMode="content"
