@@ -17,7 +17,7 @@ mock.module("@napi-rs/keyring", () => ({
       return store.get(this.#k) ?? null;
     }
     deletePassword() {
-      store.delete(this.#k);
+      return store.delete(this.#k);
     }
   },
 }));

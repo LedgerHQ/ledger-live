@@ -49,7 +49,7 @@ function installKeychainMock(): void {
         return _store.get(this.#k) ?? null;
       }
       deletePassword() {
-        _store.delete(this.#k);
+        return _store.delete(this.#k);
       }
     },
   }));
