@@ -76,6 +76,7 @@ function entryWaiver() {
 /** @type {Record<string, Record<string, { rules: string[], reason: string }>>} */
 const COMPONENT_EXCEPTIONS = {
   "features/flow/account-detail-settings": {
+    AccountSettings: componentWaiver("R1"),
     AccountSettingsDialog: componentWaiver("R1"),
     AccountSettingsSheet: componentWaiver("R1"),
   },
