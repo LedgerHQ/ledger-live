@@ -3648,7 +3648,7 @@ DEPENDENCIES:
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_88fba3067278955e1853613372910fc3/node_modules/@react-native-vector-icons/material-design-icons`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_3476369c6b501856d0c306ef52d862bc/node_modules/react-native-video`)"
   - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._c4798cdda4c62cea287294c91811a346/node_modules/react-native-view-shot`)"
-  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=0e99117_9dd4080c4671818fd6effcb0e112ce8d/node_modules/react-native-webview`)"
+  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=058c1b5_19c193612b00401622cfb120dc734bfe/node_modules/react-native-webview`)"
   - "React-NativeModulesApple (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
   - "React-oscompat (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/ReactCommon/oscompat`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/ReactCommon/reactperflogger`)"
@@ -3908,7 +3908,7 @@ EXTERNAL SOURCES:
   react-native-view-shot:
     :path: "../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._c4798cdda4c62cea287294c91811a346/node_modules/react-native-view-shot"
   react-native-webview:
-    :path: "../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=0e99117_9dd4080c4671818fd6effcb0e112ce8d/node_modules/react-native-webview"
+    :path: "../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=058c1b5_19c193612b00401622cfb120dc734bfe/node_modules/react-native-webview"
   React-NativeModulesApple:
     :path: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-oscompat:

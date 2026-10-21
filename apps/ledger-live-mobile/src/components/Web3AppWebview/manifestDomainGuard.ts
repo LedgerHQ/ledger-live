@@ -3,20 +3,15 @@ import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/
 import type { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
 
 const LEDGER_DEEPLINK_PROTOCOLS = new Set(["ledgerlive:", "ledgerwallet:"]);
-const EXTERNALLY_OPENABLE_PROTOCOLS = new Set(["https:", ...LEDGER_DEEPLINK_PROTOCOLS]);
+// about:, blob: and data: documents inherit their creator's origin or get an opaque one.
+const SUBFRAME_PROTOCOLS = new Set(["https:", "about:", "blob:", "data:"]);
 
 /**
- * react-native-webview matches originWhitelist entries as prefixes ("https://a.com" also
- * matches "https://a.com.evil.com"), so it is only a scheme guard here and the main-frame
- * decision belongs to onShouldStartLoadWithRequest. Ledger deeplinks are listed so they reach
- * that callback instead of the library's canOpenURL fallback, which iOS answers with false for
- * schemes missing from LSApplicationQueriesSchemes.
+ * Every request reaches onShouldStartLoadWithRequest: on an originWhitelist miss,
+ * react-native-webview hands the URL to Linking (e.g. an http link opens the external browser),
+ * even from a subframe. shouldStartLoadWithManifestDomains decides for every scheme instead.
  */
-export const MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST: string[] = [
-  "https://*",
-  "ledgerlive://*",
-  "ledgerwallet://*",
-];
+export const MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST: string[] = ["*"];
 
 function getProtocol(url: string): string | null {
   try {
@@ -31,15 +26,17 @@ export function isLedgerDeeplink(url: string): boolean {
   return protocol !== null && LEDGER_DEEPLINK_PROTOCOLS.has(protocol);
 }
 
+/**
+ * Popups carry no source frame, so they never open Ledger deeplinks: an iframe could open one.
+ */
 export function isExternallyOpenableUrl(url: string): boolean {
-  const protocol = getProtocol(url);
-  return protocol !== null && EXTERNALLY_OPENABLE_PROTOCOLS.has(protocol);
+  return getProtocol(url) === "https:";
 }
 
 /**
  * Main frame: loads only on an origin listed in manifest.domains, and Ledger deeplinks are
- * handed to Linking instead of being loaded. Subframes stay on the originWhitelist scheme guard
- * so 3-D Secure / KYC iframes keep working, but cannot trigger deeplinks. A request without
+ * handed to Linking instead of being loaded. Subframes load https (3-D Secure / KYC iframes)
+ * and local about:, blob: and data: documents, but cannot trigger deeplinks. A request without
  * isTopFrame is treated as a main-frame request.
  */
 export function shouldStartLoadWithManifestDomains(
@@ -53,7 +50,10 @@ export function shouldStartLoadWithManifestDomains(
     return false;
   }
 
-  if (!isMainFrame) return true;
+  if (!isMainFrame) {
+    const protocol = getProtocol(request.url);
+    return protocol !== null && SUBFRAME_PROTOCOLS.has(protocol);
+  }
 
   return isUrlAllowedByManifestDomains(request.url, domains);
 }
