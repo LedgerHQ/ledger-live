@@ -7,7 +7,7 @@ import {
   listenToCardApi,
   signedInCardApiHandlers,
 } from "@domain/api-card-management/mock/card-api";
-import { cardApiWrapper } from "../../__tests__/cardApiStore";
+import { cardApiStoreWrapper } from "../../__tests__/cardApiStore";
 import {
   ADD_TO_WALLET_COPY,
   CARD_COPY,
@@ -27,7 +27,7 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 listenToCardApi(signedInCardApiHandlers);
 
-const StoreWrapper = cardApiWrapper({ signedIn: true });
+const StoreWrapper = cardApiStoreWrapper({ signedIn: true });
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
 
 function Wrapper({ children }: PropsWithChildren) {

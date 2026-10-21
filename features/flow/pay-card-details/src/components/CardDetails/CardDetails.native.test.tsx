@@ -12,7 +12,7 @@ import {
   revealCardDetailsHandler,
   signedInCardApiHandlers,
 } from "@domain/api-card-management/mock/card-api";
-import { cardApiWrapper } from "../../__tests__/cardApiStore";
+import { cardApiStoreWrapper } from "../../__tests__/cardApiStore";
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
 import type { CardDetailsProps, CardVisualProps } from "../../types";
@@ -34,7 +34,7 @@ jest.mock("@features/flow-pay-card-assets", () => ({
 
 listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 
-const StoreWrapper = cardApiWrapper({ signedIn: true });
+const StoreWrapper = cardApiStoreWrapper({ signedIn: true });
 const assets = {
   currencies: new Map(),
   getCounterValue: () => 125.4,

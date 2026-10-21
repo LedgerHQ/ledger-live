@@ -4,7 +4,7 @@ import {
   listenToCardApi,
   signedInCardApiHandlers,
 } from "@domain/api-card-management/mock/card-api";
-import { cardApiWrapper } from "../../__tests__/cardApiStore";
+import { cardApiStoreWrapper } from "../../__tests__/cardApiStore";
 import { CARD_COPY, MORE_COPY } from "../../__tests__/i18nWrapper";
 import { renderWeb } from "../../__tests__/renderWeb";
 import type { RevealTileProps } from "../../types";
@@ -12,7 +12,7 @@ import { CardActions } from "./CardActions";
 
 listenToCardApi(signedInCardApiHandlers);
 
-const Wrapper = cardApiWrapper({ signedIn: true });
+const Wrapper = cardApiStoreWrapper({ signedIn: true });
 
 const reveal: RevealTileProps = {
   status: "idle",

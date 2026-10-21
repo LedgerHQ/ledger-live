@@ -1,4 +1,4 @@
-import React, { useMemo, type PropsWithChildren } from "react";
+import React, { useState, type PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { cardManagementApi } from "@domain/api-card-management";
@@ -39,14 +39,23 @@ export function CardApiStoreProvider({
   return <Provider store={store}>{children}</Provider>;
 }
 
-export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
-  return function CardApiWrapper({ children }: PropsWithChildren) {
-    const store = useMemo(() => makeCardApiStore({ signedIn }), []);
+/** Redux only, for tests that mount their own i18n. */
+export function cardApiStoreWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
+  return function CardApiStoreWrapper({ children }: PropsWithChildren) {
+    const [store] = useState(() => makeCardApiStore({ signedIn }));
 
+    return <CardApiStoreProvider store={store}>{children}</CardApiStoreProvider>;
+  };
+}
+
+export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
+  const StoreWrapper = cardApiStoreWrapper({ signedIn });
+
+  return function CardApiWrapper({ children }: PropsWithChildren) {
     return (
-      <CardApiStoreProvider store={store}>
+      <StoreWrapper>
         <I18nTestProvider resources={CARD_RESOURCES}>{children}</I18nTestProvider>
-      </CardApiStoreProvider>
+      </StoreWrapper>
     );
   };
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, type PropsWithChildren } from "react";
+import React, { useState, type PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { cardManagementApi } from "@domain/api-card-management";
@@ -115,7 +115,7 @@ function CardApiStoreProvider({
 
 export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
   return function CardApiWrapper({ children }: PropsWithChildren) {
-    const store = useMemo(() => makeCardApiStore({ signedIn }), []);
+    const [store] = useState(() => makeCardApiStore({ signedIn }));
 
     return (
       <CardApiStoreProvider store={store}>

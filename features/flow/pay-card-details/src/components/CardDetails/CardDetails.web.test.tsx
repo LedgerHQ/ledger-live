@@ -7,7 +7,7 @@ import {
   revealCardDetailsHandler,
   signedInCardApiHandlers,
 } from "@domain/api-card-management/mock/card-api";
-import { cardApiWrapper } from "../../__tests__/cardApiStore";
+import { cardApiStoreWrapper } from "../../__tests__/cardApiStore";
 import { CARD_COPY, MORE_COPY, openExternalMock } from "../../__tests__/i18nWrapper";
 import { renderWeb } from "../../__tests__/renderWeb";
 import { urls } from "../../urls";
@@ -15,7 +15,7 @@ import { CardDetails } from "./CardDetails";
 
 listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 
-const Wrapper = cardApiWrapper({ signedIn: true });
+const Wrapper = cardApiStoreWrapper({ signedIn: true });
 
 describe("CardDetails (web)", () => {
   beforeEach(() => {
