@@ -597,6 +597,7 @@ jobs:
           "DOCKER_HOST=tcp://${dockerIp}:2375" >> $env:GITHUB_ENV
           if ($dockerIp -ne '127.0.0.1') { "SPECULOS_ADDRESS=http://$dockerIp" >> $env:GITHUB_ENV }
           "SPECULOS_COINAPPS_MOUNT=$mount" >> $env:GITHUB_ENV
+          "MSYS2_ENV_CONV_EXCL=SPECULOS_COINAPPS_MOUNT" >> $env:GITHUB_ENV
           Write-Output "coin-apps mounted from $mount"
 
       - name: Pull Speculos docker image
