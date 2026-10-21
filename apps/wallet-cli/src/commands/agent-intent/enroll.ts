@@ -244,7 +244,7 @@ async function startDetachedEnroll(
     const value = flags[name];
     if (name === "detach" || name === "output" || value === undefined) continue;
     if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
-      throw new Error(`--${name} has a value --detach cannot pass on to the listener.`);
+      throw new TypeError(`--${name} has a value --detach cannot pass on to the listener.`);
     }
     args.push(`--${name}=${String(value)}`);
   }

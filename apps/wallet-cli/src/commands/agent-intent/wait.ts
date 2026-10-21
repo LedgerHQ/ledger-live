@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { setTimeout as sleep } from "node:timers/promises";
 import { z } from "zod";
-import { Session } from "../../session/session-store";
+import { Session, type AgentIntentProfileMeta } from "../../session/session-store";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import {
   PROFILE_ID_RE,
@@ -16,7 +16,7 @@ import {
   readLogJsonLines,
 } from "../../agent-intent/detach";
 import { readLiveLockHolderPid } from "../../shared/file-lock";
-import { CodedCommandError, createCommandOutput } from "../../output";
+import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
 
 const POLL_INTERVAL_MS = 2_000;
 
@@ -36,6 +36,86 @@ function loggedEnrollmentUrl(logPath: string, profileId: string): string | undef
     const pending = PendingLineSchema.safeParse(line);
     if (pending.success && pending.data.profileId === profileId) return pending.data.enrollmentUrl;
   }
+  return undefined;
+}
+
+/** How long to keep polling for a profile not saved yet, or `profile_not_found`. A live listener
+ * that has not saved its profile yet (keypair, keychain unlock) is starting. */
+function checkMissingProfile(
+  profileId: string,
+  listenerPid: number | undefined,
+  deadline: number,
+): number {
+  const startingMs = listenerPid === undefined ? 0 : deadline - Date.now();
+  if (startingMs > 0) return startingMs;
+  throw new CodedCommandError(
+    "profile_not_found",
+    `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent list\` ` +
+      "to see your profiles.",
+  );
+}
+
+/** Fails when no listener can receive the approval any more. An expired link with a live listener
+ * passes: a `persist` that started before expiry may still be finishing. */
+function assertListenerAlive(
+  profile: AgentIntentProfileMeta,
+  status: ReturnType<typeof agentIntentProfileStatus>,
+  listenerPid: number | undefined,
+  logPath: string,
+): asserts listenerPid is number {
+  if (listenerPid !== undefined) return;
+  const { profileId } = profile;
+  if (status === "expired") {
+    throw new CodedCommandError(
+      "enrollment_expired",
+      `The enrollment link of profile "${profileId}" expired at ` +
+        `${profile.enrollmentExpiresAt} without an approval. Start a fresh enrollment with a ` +
+        "new --profile id.",
+    );
+  }
+  const lastError = lastLoggedError(logPath);
+  throw new CodedCommandError(
+    "listener_exited",
+    `The enrollment listener of profile "${profileId}" is no longer running, so the ` +
+      "approval can no longer be received" +
+      (lastError === undefined ? "." : ` (last error: ${lastError}).`) +
+      ` Start a fresh enrollment with a new --profile id. Log: ${logPath}.`,
+  );
+}
+
+/** Reports a final result and returns undefined, or returns how long to keep polling. */
+function checkProfile(
+  out: CommandOutput,
+  profile: AgentIntentProfileMeta,
+  listenerPid: number | undefined,
+  deadline: number,
+  logPath: string,
+): number | undefined {
+  const { profileId } = profile;
+  const status = agentIntentProfileStatus(profile);
+  // "recovering" is an enrolled profile with a recovery in flight: enrolled as far as this goes.
+  if (profile.trustchainId && (status === "enrolled" || status === "recovering")) {
+    out.agentIntentEnrolled({
+      profileId,
+      trustchainId: profile.trustchainId,
+      accountAccessEnvironment: profile.accountAccess?.environment ?? profile.environment,
+    });
+    return undefined;
+  }
+  assertListenerAlive(profile, status, listenerPid, logPath);
+
+  // Capped at the expiry only while it is ahead; past it, --timeout applies as is.
+  const end =
+    status === "expired" ? deadline : Math.min(deadline, Date.parse(profile.enrollmentExpiresAt));
+  const remainingMs = end - Date.now();
+  if (remainingMs > 0) return remainingMs;
+  const enrollmentUrl = loggedEnrollmentUrl(logPath, profileId);
+  out.agentIntentEnrollmentWaiting({
+    profileId,
+    expiresAt: profile.enrollmentExpiresAt,
+    listenerPid,
+    ...(enrollmentUrl === undefined ? {} : { enrollmentUrl }),
+  });
   return undefined;
 }
 
@@ -70,67 +150,11 @@ export default defineCommand({
         // once the lock reads dead, the session read below already shows anything it saved.
         const listenerPid = readLiveLockHolderPid(lockPath);
         const profile = (await Session.read()).getAgentIntentProfile(profileId);
-        if (!profile) {
-          // A live listener that has not saved its profile yet (keypair, keychain unlock) is starting.
-          const startingMs = listenerPid === undefined ? 0 : deadline - Date.now();
-          if (startingMs > 0) {
-            await sleep(Math.min(POLL_INTERVAL_MS, startingMs));
-            continue;
-          }
-          throw new CodedCommandError(
-            "profile_not_found",
-            `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent list\` ` +
-              "to see your profiles.",
-          );
-        }
-        const status = agentIntentProfileStatus(profile);
-        // "recovering" is an enrolled profile with a recovery in flight: enrolled as far as this goes.
-        if (profile.trustchainId && (status === "enrolled" || status === "recovering")) {
-          out.agentIntentEnrolled({
-            profileId,
-            trustchainId: profile.trustchainId,
-            accountAccessEnvironment: profile.accountAccess?.environment ?? profile.environment,
-          });
-          return;
-        }
-        // An expired link with a live listener keeps polling: an approval made just before expiry
-        // may still be in `authenticate`.
-        if (status === "expired" && listenerPid === undefined) {
-          throw new CodedCommandError(
-            "enrollment_expired",
-            `The enrollment link of profile "${profileId}" expired at ` +
-              `${profile.enrollmentExpiresAt} without an approval. Start a fresh enrollment with a ` +
-              "new --profile id.",
-          );
-        }
-        if (listenerPid === undefined) {
-          const lastError = lastLoggedError(logPath);
-          throw new CodedCommandError(
-            "listener_exited",
-            `The enrollment listener of profile "${profileId}" is no longer running, so the ` +
-              "approval can no longer be received" +
-              (lastError === undefined ? "." : ` (last error: ${lastError}).`) +
-              ` Start a fresh enrollment with a new --profile id. Log: ${logPath}.`,
-          );
-        }
-
-        // Capped at the expiry only while it is ahead; past it, --timeout applies as is.
-        const end =
-          status === "expired"
-            ? deadline
-            : Math.min(deadline, Date.parse(profile.enrollmentExpiresAt));
-        const remainingMs = end - Date.now();
-        if (remainingMs <= 0) {
-          const enrollmentUrl = loggedEnrollmentUrl(logPath, profileId);
-          out.agentIntentEnrollmentWaiting({
-            profileId,
-            expiresAt: profile.enrollmentExpiresAt,
-            listenerPid,
-            ...(enrollmentUrl === undefined ? {} : { enrollmentUrl }),
-          });
-          return;
-        }
-        await sleep(Math.min(POLL_INTERVAL_MS, remainingMs));
+        const waitMs = profile
+          ? checkProfile(out, profile, listenerPid, deadline, logPath)
+          : checkMissingProfile(profileId, listenerPid, deadline);
+        if (waitMs === undefined) return;
+        await sleep(Math.min(POLL_INTERVAL_MS, waitMs));
       }
     });
   },
