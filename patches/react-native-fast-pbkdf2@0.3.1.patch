@@ -1,10 +1,19 @@
 diff --git a/android/build.gradle b/android/build.gradle
-index a022b38c398d5e64bb77df6c6fc1c2f73932f019..5765f939575cbbeaae36baad55195c8d39560cc3 100644
+index a022b38c398d5e64bb77df6c6fc1c2f73932f019..84240c99e72d3a083b86e2d67ba9e2dcc0bb1205 100644
 --- a/android/build.gradle
 +++ b/android/build.gradle
+@@ -2,7 +2,7 @@ buildscript {
+     if (project == rootProject) {
+         repositories {
+             google()
+-            jcenter()
++            mavenCentral()
+         }
+
+         dependencies {
 @@ -18,11 +18,11 @@ def safeExtGet(prop, fallback) {
  }
- 
+
  android {
 -    compileSdkVersion safeExtGet('Pbkdf2_compileSdkVersion', 29)
 +    compileSdkVersion safeExtGet('Pbkdf2_compileSdkVersion', 35)
@@ -15,7 +24,7 @@ index a022b38c398d5e64bb77df6c6fc1c2f73932f019..5765f939575cbbeaae36baad55195c8d
 +        targetSdkVersion safeExtGet('Pbkdf2_targetSdkVersion', 35)
          versionCode 1
          versionName "1.0"
- 
+
 @@ -37,8 +37,8 @@ android {
          disable 'GradleCompatible'
      }
@@ -26,4 +35,13 @@ index a022b38c398d5e64bb77df6c6fc1c2f73932f019..5765f939575cbbeaae36baad55195c8d
 +        targetCompatibility JavaVersion.VERSION_17
      }
  }
- 
+
+@@ -49,7 +49,7 @@ repositories {
+         url("$rootDir/../node_modules/react-native/android")
+     }
+     google()
+-    jcenter()
++    mavenCentral()
+ }
+
+ dependencies {

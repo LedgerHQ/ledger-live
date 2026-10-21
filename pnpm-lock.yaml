@@ -703,7 +703,7 @@ patchedDependencies:
     hash: 8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b
     path: patches/detox@20.51.3.patch
   react-native-fast-pbkdf2@0.3.1:
-    hash: 9dfb84332ee579fa33b0faf1675112a321afd26a1e30ded28e36597953aa86e2
+    hash: 53027d37521050d642bbbbb703abdaf5218dd350d2002e31c6fc0d1c93c7ad2d
     path: patches/react-native-fast-pbkdf2@0.3.1.patch
   react-native-image-crop-tools@1.6.4:
     hash: 8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2
@@ -2461,7 +2461,7 @@ importers:
         version: 8.6.3(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       react-native-fast-pbkdf2:
         specifier: 0.3.1
-        version: 0.3.1(patch_hash=9dfb84332ee579fa33b0faf1675112a321afd26a1e30ded28e36597953aa86e2)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+        version: 0.3.1(patch_hash=53027d37521050d642bbbbb703abdaf5218dd350d2002e31c6fc0d1c93c7ad2d)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       react-native-fast-shadow:
         specifier: 0.1.1
         version: 0.1.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -59992,7 +59992,7 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  react-native-fast-pbkdf2@0.3.1(patch_hash=9dfb84332ee579fa33b0faf1675112a321afd26a1e30ded28e36597953aa86e2)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
+  react-native-fast-pbkdf2@0.3.1(patch_hash=53027d37521050d642bbbbb703abdaf5218dd350d2002e31c6fc0d1c93c7ad2d)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
