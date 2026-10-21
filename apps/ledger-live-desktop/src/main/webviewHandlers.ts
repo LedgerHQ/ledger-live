@@ -1,4 +1,4 @@
-import { app, session, webContents } from "electron";
+import { app, ipcMain, session, webContents } from "electron";
 import {
   createDomainCheckReporter,
   getReportableOrigin,
@@ -11,11 +11,14 @@ import {
   applyWebviewAttachPolicy,
   createLiveAppSchemeChecker,
   createMainFrameOriginChecker,
+  getLoggableOrigin,
+  isBridgeSenderFrameAllowed,
+  isWebviewBridgeChannel,
   mergeCspHeaders,
   takeAllowedOrigins,
   takeDomainCheckReport,
 } from "./webviewHandlers.helpers";
-import { CHANNELS } from "~/bridge/contract";
+import { CHANNELS, type WebviewBridgeMessage } from "~/bridge/contract";
 import type {
   WebviewAllowedOrigins,
   WebviewDomainCheckReport,
@@ -129,7 +132,7 @@ const createGuestDomainCheckReport = (
  * whitelist, window-open routing).
  *
  * Enforces one-time setup during `app.on("ready", ...)` to avoid stacking
- * duplicate `onHeadersReceived`, `web-contents-created` and `onBeforeRequest` listeners.
+ * duplicate `onHeadersReceived`, `web-contents-created`, `onBeforeRequest` and IPC listeners.
  */
 export function setupWebviewHandlers(supportedSchemes: string[]) {
   if (webviewHandlersGlobal.__ledgerLiveWebviewHandlersSetup__) {
@@ -180,6 +183,35 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     if (strictDomains === undefined || isMainFrameUrlAllowed(url, strictDomains)) return;
     reportMainFrame(guestId, url, "would_block");
   };
+
+  // Live App bridge messages (Wallet API, Platform API, dapp provider) from the guest preload.
+  // The sender is identified here, from the frame that sent the message, not from the guest:
+  // only its main frame on an allowed origin reaches the embedder, tagged with that origin.
+  ipcMain.on(CHANNELS.webviewBridgeMessage, (event, channel: unknown, message: unknown) => {
+    const guest = event.sender;
+    if (guest.getType() !== "webview" || !isWebviewBridgeChannel(channel)) return;
+
+    const frame = event.senderFrame;
+    const embedder = guest.hostWebContents;
+    if (!frame || !embedder || embedder.isDestroyed()) return;
+
+    const sender = { origin: frame.origin, isMainFrame: frame.parent === null };
+    if (!isBridgeSenderFrameAllowed(sender, allowedOriginsByGuest.get(guest.id))) {
+      console.warn("Dropped a Live App bridge message from a disallowed frame", {
+        origin: getLoggableOrigin(sender.origin),
+        isMainFrame: sender.isMainFrame,
+      });
+      return;
+    }
+
+    const bridgeMessage: WebviewBridgeMessage = {
+      guestId: guest.id,
+      origin: sender.origin,
+      channel,
+      message,
+    };
+    embedder.send(CHANNELS.webviewBridgeMessage, bridgeMessage);
+  });
 
   // Inject a restrictive Content-Security-Policy on document responses served
   // to any <webview> guest session. Chromium enforces `frame-src` before

@@ -38,6 +38,8 @@ import {
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import { useWebviewBridgeMessages } from "./bridge";
+import type { WebviewBridgeMessage } from "~/bridge/contract";
 import { NetworkErrorScreen } from "./NetworkError";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -382,29 +384,20 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const [receive] = useJSONRPCServer(handlers, handleSend);
 
-    const handleMessage = useCallback(
-      (event: Electron.IpcMessageEvent) => {
-        if (event.channel === "webviewToParent") {
-          receive(JSON.parse(event.args[0]));
-        }
+    const handleBridgeMessage = useCallback(
+      ({ channel, message }: WebviewBridgeMessage) => {
+        if (channel !== "webviewToParent" || typeof message !== "string") return;
+        receive(JSON.parse(message));
       },
       [receive],
     );
 
+    useWebviewBridgeMessages(webviewRef, handleBridgeMessage);
+
     useEffect(() => {
       tracking.platformLoad(manifest);
-      const webview = webviewRef.current;
-      if (webview) {
-        webview.addEventListener("ipc-message", handleMessage);
-      }
-
-      return () => {
-        if (webview) {
-          webview.removeEventListener("ipc-message", handleMessage);
-        }
-      };
       // oxlint-disable-next-line react-hooks/exhaustive-deps
-    }, [manifest, handleMessage]);
+    }, [manifest]);
 
     const handleLoad = useCallback(() => {
       tracking.platformLoadSuccess(manifest);

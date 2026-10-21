@@ -3,7 +3,7 @@
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 6;
+export const BRIDGE_VERSION = 7;
 export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
@@ -65,9 +65,25 @@ export type DeeplinkBridge = {
   onOpen(callback: (url: string) => void): Unsubscribe;
 };
 
+/** The Live App <webview> preload channels: Wallet API / Platform API, and the dapp provider. */
+export const WEBVIEW_BRIDGE_CHANNELS = ["webviewToParent", "dappToParent"] as const;
+export type WebviewBridgeChannel = (typeof WEBVIEW_BRIDGE_CHANNELS)[number];
+
+/** A Live App message that main accepted: sent by the guest main frame, on an allowed origin. */
+export type WebviewBridgeMessage = {
+  /** WebContents id of the <webview> guest */
+  guestId: number;
+  /** Origin of the guest main frame when it sent the message, as seen by main */
+  origin: string;
+  channel: WebviewBridgeChannel;
+  message: unknown;
+};
+
 export type WebviewBridge = {
   /** Live App domain check violations seen by main, once per guest, origin and outcome. */
   onDomainCheckViolation(callback: (violation: DomainCheckViolation) => void): Unsubscribe;
+  /** Live App bridge messages that main accepted, for the guest's embedder. */
+  onMessage(callback: (message: WebviewBridgeMessage) => void): Unsubscribe;
 };
 
 export type SaveRequest = {
@@ -174,6 +190,8 @@ export const CHANNELS = {
   openExternal: "shell:open-external",
   clipboardMatchesText: "clipboard:matches-text",
   cardSessionBootstrap: "card-session:bootstrap",
+  // Live App <webview> guest -> main, then main -> the guest's embedder.
+  webviewBridgeMessage: "webview-bridge:message",
   // Sent by the preload itself, outside the bridge.
   reloadRenderer: "reloadRenderer",
   setBackgroundColor: "set-background-color",

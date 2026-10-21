@@ -30,6 +30,8 @@ import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { DappAccountGate } from "./DappAccountGate";
 import { getAttachedWebview, useWebviewState } from "./helpers";
+import { useWebviewBridgeMessages } from "./bridge";
+import type { WebviewBridgeMessage } from "~/bridge/contract";
 import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -357,33 +359,33 @@ function useWebView(
     mevProtected,
   });
 
-  const handleMessage = useCallback(
-    (event: Electron.IpcMessageEvent) => {
-      if (event.channel === "webviewToParent") {
-        onMessage(event.args[0]);
+  const handleBridgeMessage = useCallback(
+    ({ channel, message }: WebviewBridgeMessage) => {
+      if (channel === "webviewToParent" && typeof message === "string") {
+        onMessage(message);
       }
-      if (event.channel === "dappToParent") {
-        onDappMessage(event.args[0]);
+      if (channel === "dappToParent" && typeof message === "object" && message !== null) {
+        onDappMessage(message as Parameters<typeof onDappMessage>[0]);
       }
     },
     [onDappMessage, onMessage],
   );
+
+  useWebviewBridgeMessages(webviewRef, handleBridgeMessage);
 
   useEffect(() => {
     const webview = webviewRef.current;
 
     if (webview) {
       webview.addEventListener("did-finish-load", onLoad);
-      webview.addEventListener("ipc-message", handleMessage);
     }
 
     return () => {
       if (webview) {
         webview.removeEventListener("did-finish-load", onLoad);
-        webview.removeEventListener("ipc-message", handleMessage);
       }
     };
-  }, [handleMessage, onLoad, webviewRef]);
+  }, [onLoad, webviewRef]);
 
   const webviewStyle = useMemo(() => {
     return {

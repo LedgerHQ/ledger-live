@@ -1,4 +1,4 @@
-import { app, session, webContents } from "electron";
+import { app, ipcMain, session, webContents } from "electron";
 import { closeTrackedWebviewDevTools, setupWebviewHandlers } from "./webviewHandlers";
 import {
   UNRESTRICTED_ORIGINS,
@@ -11,6 +11,9 @@ jest.mock("electron", () => ({
   app: {
     on: jest.fn(),
     getVersion: jest.fn(() => "2.130.0"),
+  },
+  ipcMain: {
+    on: jest.fn(),
   },
   session: {
     defaultSession: {
@@ -404,6 +407,101 @@ describe("setupWebviewHandlers", () => {
         expect(emitWillEvent(guest, eventName, "https://evil.com/", false)).not.toHaveBeenCalled();
       },
     );
+
+    describe("bridge messages", () => {
+      beforeEach(() => {
+        jest.spyOn(console, "warn").mockImplementation(() => {});
+      });
+
+      afterEach(() => {
+        jest.mocked(console.warn).mockRestore();
+      });
+
+      type BridgeListener = (
+        event: { sender: unknown; senderFrame: unknown },
+        channel: unknown,
+        message: unknown,
+      ) => void;
+
+      const sendBridgeMessage = (
+        guest: Guest,
+        {
+          origin = "https://app.example.com",
+          isMainFrame = true,
+          channel = "webviewToParent" as unknown,
+        } = {},
+      ) => {
+        const listener = jest
+          .mocked(ipcMain.on)
+          .mock.calls.find(([name]) => name === CHANNELS.webviewBridgeMessage)?.[1] as
+          | BridgeListener
+          | undefined;
+        const embedder = { send: jest.fn(), isDestroyed: () => false };
+        listener?.(
+          {
+            sender: { ...guest, hostWebContents: embedder },
+            senderFrame: { origin, parent: isMainFrame ? null : {} },
+          },
+          channel,
+          "payload",
+        );
+        return embedder.send;
+      };
+
+      it("hands the guest main frame's messages to the embedder, tagged with its origin", () => {
+        const guest = attachGuest(domains);
+
+        expect(sendBridgeMessage(guest, { channel: "dappToParent" })).toHaveBeenCalledWith(
+          CHANNELS.webviewBridgeMessage,
+          {
+            guestId: 7,
+            origin: "https://app.example.com",
+            channel: "dappToParent",
+            message: "payload",
+          },
+        );
+      });
+
+      it("drops messages from a subframe, even on an allowed origin", () => {
+        const guest = attachGuest(domains);
+
+        expect(sendBridgeMessage(guest, { isMainFrame: false })).not.toHaveBeenCalled();
+      });
+
+      it("drops messages from a main frame outside the manifest origins", () => {
+        const guest = attachGuest(domains);
+
+        expect(sendBridgeMessage(guest, { origin: "https://evil.com" })).not.toHaveBeenCalled();
+        expect(sendBridgeMessage(guest, { origin: "null" })).not.toHaveBeenCalled();
+        expect(console.warn).toHaveBeenCalledWith(expect.any(String), {
+          origin: "https://evil.com",
+          isMainFrame: true,
+        });
+      });
+
+      it("drops messages from a guest without allowed origins", () => {
+        const guest = attachGuest("nativeWindowOpen=no");
+
+        expect(sendBridgeMessage(guest)).not.toHaveBeenCalled();
+      });
+
+      it("drops messages on an unknown channel or from a non-webview sender", () => {
+        const guest = attachGuest(domains);
+        const window = { ...makeGuest(9), getType: jest.fn(() => "window") };
+
+        expect(sendBridgeMessage(guest, { channel: "openWindow" })).not.toHaveBeenCalled();
+        expect(sendBridgeMessage(window)).not.toHaveBeenCalled();
+      });
+
+      it("answers any main-frame web origin when the domain check is off", () => {
+        const guest = attachGuest(serializeAllowedOrigins(UNRESTRICTED_ORIGINS));
+
+        expect(sendBridgeMessage(guest, { origin: "https://evil.com" })).toHaveBeenCalled();
+        expect(
+          sendBridgeMessage(guest, { origin: "https://evil.com", isMainFrame: false }),
+        ).not.toHaveBeenCalled();
+      });
+    });
 
     it("sends a guest that committed a disallowed main frame to about:blank", () => {
       const guest = attachGuest(domains);

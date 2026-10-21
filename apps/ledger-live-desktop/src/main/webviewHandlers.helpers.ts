@@ -5,6 +5,8 @@
 import path from "node:path";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import { getStrictManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
+import { isBridgeSenderAllowed } from "@ledgerhq/live-common/wallet-api/bridgeSession";
+import { WEBVIEW_BRIDGE_CHANNELS, type WebviewBridgeChannel } from "~/bridge/contract";
 import {
   ALLOWED_ORIGINS_PREFERENCE,
   DOMAIN_CHECK_REPORT_PREFERENCE,
@@ -106,6 +108,38 @@ export function createMainFrameOriginChecker(
     if (allowedOrigins === UNRESTRICTED_ORIGINS) return true;
     return isUrlAllowedByManifestDomains(url, allowedOrigins);
   };
+}
+
+/**
+ * Whether main hands a Live App bridge message over to the embedder: only the guest main
+ * frame is answered, on one of its allowed origins. A guest without allowed origins fails closed.
+ */
+export function isBridgeSenderFrameAllowed(
+  sender: { origin: string; isMainFrame: boolean },
+  allowedOrigins: WebviewAllowedOrigins | undefined,
+): boolean {
+  if (allowedOrigins === undefined || !sender.isMainFrame) return false;
+  return isBridgeSenderAllowed(
+    { url: sender.origin, isMainFrame: sender.isMainFrame },
+    allowedOrigins === UNRESTRICTED_ORIGINS ? undefined : allowedOrigins,
+  );
+}
+
+const webviewBridgeChannels: ReadonlySet<string> = new Set(WEBVIEW_BRIDGE_CHANNELS);
+
+export function isWebviewBridgeChannel(channel: unknown): channel is WebviewBridgeChannel {
+  return typeof channel === "string" && webviewBridgeChannels.has(channel);
+}
+
+/**
+ * Returns the origin of a URL for logs, without its path or query.
+ */
+export function getLoggableOrigin(url: string): string {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "invalid URL";
+  }
 }
 
 /**

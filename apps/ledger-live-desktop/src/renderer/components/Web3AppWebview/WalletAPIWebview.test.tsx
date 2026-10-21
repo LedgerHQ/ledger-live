@@ -5,9 +5,13 @@ import type { UiHook } from "@ledgerhq/live-common/wallet-api/react";
 import { app } from "~/renderer/bridge";
 import { WalletAPIWebview } from "./WalletAPIWebview";
 import { useWebviewState } from "./helpers";
+import type { WebviewBridgeMessage } from "~/bridge/contract";
 
 let mockUiHook: Partial<UiHook> = {};
 const mockDispatch = jest.fn();
+const mockOnMessage = jest.fn();
+const mockOnDappMessage = jest.fn();
+let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
 
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/wallet-api/react"),
@@ -18,14 +22,24 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
       widgetLoaded: true,
       onLoad: jest.fn(),
       onReload: jest.fn(),
-      onMessage: jest.fn(),
+      onMessage: mockOnMessage,
       server: undefined,
     };
   }),
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/useDappLogic", () => ({
-  useDappLogic: () => ({ onDappMessage: jest.fn(), noAccounts: false, isLoadingAccounts: false }),
+  useDappLogic: () => ({
+    onDappMessage: mockOnDappMessage,
+    noAccounts: false,
+    isLoadingAccounts: false,
+  }),
+}));
+
+jest.mock("./bridge", () => ({
+  useWebviewBridgeMessages: (_ref: unknown, onBridgeMessage: (m: WebviewBridgeMessage) => void) => {
+    mockOnBridgeMessage = onBridgeMessage;
+  },
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration", () => ({
@@ -150,4 +164,52 @@ describe("WalletAPIWebview UI hooks", () => {
       expect(app.show).not.toHaveBeenCalled();
     },
   );
+});
+
+describe("WalletAPIWebview bridge messages", () => {
+  const sendBridgeMessage = (message: Partial<WebviewBridgeMessage>) =>
+    mockOnBridgeMessage?.({
+      guestId: 1,
+      origin: "https://example.com",
+      channel: "webviewToParent",
+      message: "{}",
+      ...message,
+    });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(useWebviewState).mockReturnValue({
+      webviewState: { loading: false, isAppUnavailable: false, url: "https://example.com" },
+      webviewRef: { current: null },
+      setWebviewRef: jest.fn(),
+      webviewProps: {},
+      webviewPartition: {},
+      handleRefresh: jest.fn(),
+    } as never);
+    render(<WalletAPIWebview manifest={manifest} />);
+  });
+
+  it("hands Wallet API messages to the server", () => {
+    sendBridgeMessage({ message: '{"id":1}' });
+
+    expect(mockOnMessage).toHaveBeenCalledWith('{"id":1}');
+    expect(mockOnDappMessage).not.toHaveBeenCalled();
+  });
+
+  it("hands dapp messages to the dapp logic", () => {
+    const request = { jsonrpc: "2.0", id: 1, method: "eth_chainId" };
+
+    sendBridgeMessage({ channel: "dappToParent", message: request });
+
+    expect(mockOnDappMessage).toHaveBeenCalledWith(request);
+    expect(mockOnMessage).not.toHaveBeenCalled();
+  });
+
+  it("drops malformed payloads", () => {
+    sendBridgeMessage({ message: { not: "a string" } });
+    sendBridgeMessage({ channel: "dappToParent", message: "not an object" });
+
+    expect(mockOnMessage).not.toHaveBeenCalled();
+    expect(mockOnDappMessage).not.toHaveBeenCalled();
+  });
 });
