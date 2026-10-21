@@ -36,6 +36,8 @@ Always follow the [validate-before-finishing](/docs/validate-before-finishing.md
 
 Before adding or changing a `runs-on` in `.github/workflows/`, read the [ci-runners](./.agents/skills/ci-runners/SKILL.md) skill. Several `ledger-live-*` runners are deprecated.
 
+Reusable workflows and composite actions are called `@develop`, even from release and hotfix branches whose code is older. Before changing one, read the [ci-workflow-refs](./.agents/skills/ci-workflow-refs/SKILL.md) skill.
+
 ## Configuration and environment variables
 
 Before adding any configuration value — an environment variable, a URL, a partner key — read [/docs/configuration.md](/docs/configuration.md) to pick its home. `@shared/env` is deprecated and takes no new definitions.
