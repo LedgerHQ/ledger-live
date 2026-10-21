@@ -68,4 +68,13 @@ describe("AmountFooter", () => {
     expect(screen.getByTestId("send-sponsored-fee-error")).toHaveTextContent("Not enough USDT.");
     expect(screen.getByTestId("send-sponsored-rent-arriving")).toBeVisible();
   });
+
+  it("marks the review button busy while it loads", () => {
+    const { rerender } = render(<AmountFooter {...baseProps} reviewLoading />);
+
+    expect(screen.getByTestId("send-review-button")).toHaveAttribute("aria-busy", "true");
+
+    rerender(<AmountFooter {...baseProps} />);
+    expect(screen.getByTestId("send-review-button")).toHaveAttribute("aria-busy", "false");
+  });
 });
