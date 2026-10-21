@@ -304,6 +304,33 @@
     "coinControl" : "コインコントロール",
     "feesAmount" : "手数料"
   },
+  "accountDetailSettings" : {
+    "title" : "アカウント設定",
+    "menu" : {
+      "changeName" : "名前を変更",
+      "viewAdvancedLogs" : "詳細ログを表示",
+      "removeAccount" : "ポートフォリオからアカウントを削除する"
+    },
+    "changeName" : {
+      "title" : "アカウント名を変更",
+      "description" : "整理しやすいように、このアドレスに名前を付けます（例：{{ticker}}-トレード、{{ticker}}-DeFi）。",
+      "label" : "アドレス名",
+      "submit" : "名前を変更"
+    },
+    "advancedLogs" : {
+      "title" : "詳細ログ",
+      "derivationTip" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
+      "synchronised" : "{{date}}同期済み",
+      "copy" : "ログをコピー",
+      "copied" : "コピー済み"
+    },
+    "remove" : {
+      "title" : "アカウントの削除",
+      "description" : "このアカウントに紐付けられた資産は、ポートフォリオに表示されなくなります。ブロックチェーン上の資産は影響を受けません。",
+      "confirm" : "はい、削除します。",
+      "cancel" : "保持"
+    }
+  },
   "sidebar" : {
     "card" : "カード",
     "paytab" : "支払う",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle" : "満期を迎える資金",
         "pendingNotice" : "一部のシールドノートはまだ成熟中のため、使用できない可能性があります。"
       },
+      "aleoPublic" : {
+        "title" : "公開残高"
+      },
+      "aleoPrivate" : {
+        "title" : "プライベート残高"
+      },
       "zeroBalance" : {
         "warning" : "利用可能残高がありません"
+      },
+      "requiresSync" : {
+        "notice" : "同期が必要です"
       }
     }
   },
@@ -7783,6 +7819,14 @@
       "title" : "これらの資金はまだ使用できません",
       "description" : "数分後にもう一度お試しください"
     },
+    "ZcashShieldedNotSupportedOnDevice" : {
+      "title" : "このデバイスでは、トランスペアレントアドレス間でのみ送金できます。",
+      "description" : "プライベートアドレス宛て、またはプライベートアドレスからの送金を行うには、Ledger Nano S Plus、Nano X、Flex、またはStaxを使用してください。"
+    },
+    "ZcashPreparedBuildMismatch" : {
+      "title" : "確認後にトランザクションが変更されました。",
+      "description" : "残高または手数料が変更されました。トランザクションを再度確認してください。"
+    },
     "InvalidNonce" : {
       "title" : "ナンスは必須です"
     },
@@ -9829,7 +9873,7 @@
             "subtitle" : "シールド",
             "unavailable" : "プライベート残高は利用できません"
           },
-          "spendableWarning" : "利用可能残高は、総残高を下回る場合があります。最近シールドされた資金は、使用可能になるまでに承認と完全なスキャニング（～15分）が必要です。"
+          "spendableWarning" : "利用可能残高は、総残高を下回る場合があります。最近シールドされた資金は、使用可能になるまでに承認と完全なスキャニングが必要です。"
         },
         "memo" : {
           "label" : "メモ (任意)",
@@ -10090,11 +10134,25 @@
         "recordsUsed" : "使用された記録",
         "signingTime" : "署名する時間"
       },
+      "amount" : {
+        "signingTime" : {
+          "label" : "署名する時間",
+          "description" : "お使いのLedger署名用デバイスは、このトランザクションが使用する各レコードを承認します。プライベート残高からより多くの額を送金すると、より多くのレコードが使用され、時間がかかる場合があります。"
+        }
+      },
       "mandatoryPrivateSync" : {
         "title" : "プライベート残高を同期中（{{percentage}}％）",
         "desc" : "お待ちください",
         "errorTitle" : "プライベート同期に失敗しました。",
         "errorDesc" : "問題が発生しました。もう一度お試しください。"
+      },
+      "balanceTypeSync" : {
+        "title" : "プライベート残高を更新中",
+        "progress" : "{{percentage}}%",
+        "errorTitle" : "プライベート同期に失敗しました。",
+        "errorDescription" : "問題が発生しました。もう一度お試しください。",
+        "recordLimitTitle" : "最大{{amount}}まで送金できます。",
+        "recordLimitDescription" : "残高は複数の記録に分割されており、1回のトランザクションで使用できるのは最大{{maxRecords}}です。さらに送金するには、複数のトランザクションを行ってください。"
       }
     },
     "operationTypes" : {
@@ -10573,6 +10631,14 @@
           "description" : "Ledger Syncによりエンドツーエンドで暗号化します。"
         }
       }
+    }
+  },
+  "accountDetail" : {
+    "header" : {
+      "settings" : "アカウント設定"
+    },
+    "assets" : {
+      "title" : "資産"
     }
   },
   "assetDetails" : {
@@ -11113,6 +11179,9 @@
       "amountExceedsBalance" : "残高不足",
       "quoteUnavailable" : "{{provider}}から見積もりを取得できません。別の資産でお試しいただくか、しばらく経ってから再度お試しください。"
     }
+  },
+  "actionMenuDialog" : {
+    "a11yTitle" : "アクションを選択してください"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "入金の署名",
