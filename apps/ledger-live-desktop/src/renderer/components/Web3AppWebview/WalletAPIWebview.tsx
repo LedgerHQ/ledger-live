@@ -385,7 +385,8 @@ function useWebView(
         webview.removeEventListener("did-finish-load", onLoad);
       }
     };
-  }, [onLoad, webviewRef]);
+    // noAccounts: the webview only mounts once DappAccountGate is gone.
+  }, [onLoad, webviewRef, noAccounts]);
 
   const webviewStyle = useMemo(() => {
     return {

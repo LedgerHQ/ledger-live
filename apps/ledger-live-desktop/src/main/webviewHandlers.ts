@@ -1,6 +1,7 @@
 import { app, ipcMain, session, webContents } from "electron";
 import {
   getReportableOrigin,
+  type DomainCheckKind,
   type DomainCheckOutcome,
   type DomainCheckViolation,
 } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
@@ -162,7 +163,12 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
   const isGuestMainFrameUrlAllowed = (guestId: number, url: string) =>
     isMainFrameUrlAllowed(url, allowedOriginsByGuest.get(guestId));
 
-  const reportMainFrame = (guestId: number, url: string, outcome: DomainCheckOutcome) => {
+  const reportMainFrame = (
+    guestId: number,
+    url: string,
+    outcome: DomainCheckOutcome,
+    kind: DomainCheckKind = "navigation",
+  ) => {
     const guestReport = domainCheckReportByGuest.get(guestId);
     guestReport?.report({
       origin: getReportableOrigin(url),
@@ -170,17 +176,21 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
       appVersion: app.getVersion(),
       platform: "desktop",
       frameType: "main_frame",
-      kind: "navigation",
+      kind,
       outcome,
     });
   };
 
   // Report-only: a main frame the current check allows but the strict manifest
   // domains would not, so the lists can be fixed before the check tightens.
-  const reportIfStrictlyDisallowed = (guestId: number, url: string) => {
+  const reportIfStrictlyDisallowed = (
+    guestId: number,
+    url: string,
+    kind: DomainCheckKind = "navigation",
+  ) => {
     const strictDomains = domainCheckReportByGuest.get(guestId)?.strictDomains;
     if (strictDomains === undefined || isMainFrameUrlAllowed(url, strictDomains)) return;
-    reportMainFrame(guestId, url, "would_block");
+    reportMainFrame(guestId, url, "would_block", kind);
   };
 
   // Live App bridge messages (Wallet API, Platform API, dapp provider) from the guest preload.
@@ -202,6 +212,9 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
       });
       return;
     }
+
+    // Report-only: a sender the check accepts but the strict manifest domains would not.
+    reportIfStrictlyDisallowed(guest.id, sender.origin, "bridge");
 
     const bridgeMessage: WebviewBridgeMessage = {
       guestId: guest.id,

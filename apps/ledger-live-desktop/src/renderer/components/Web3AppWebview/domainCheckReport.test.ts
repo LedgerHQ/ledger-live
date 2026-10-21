@@ -2,11 +2,7 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 import { addAction } from "~/datadog/renderer";
 import { webview } from "~/renderer/bridge";
-import {
-  reportBlockedInitialLoad,
-  reportBridgeSenderOrigin,
-  startDomainCheckViolationReporting,
-} from "./domainCheckReport";
+import { reportBlockedInitialLoad, startDomainCheckViolationReporting } from "./domainCheckReport";
 
 jest.mock("~/datadog/renderer", () => ({
   addAction: jest.fn(),
@@ -54,45 +50,6 @@ describe("domainCheckReport", () => {
       listener(violation);
       listener(violation);
       listener(violation);
-
-      expect(addAction).toHaveBeenCalledTimes(2);
-    });
-  });
-
-  describe("reportBridgeSenderOrigin", () => {
-    it("reports a sender outside the strict manifest domains with its origin only", () => {
-      reportBridgeSenderOrigin(manifest, "https://evil.com/swap?address=0xabc");
-
-      expect(addAction).toHaveBeenCalledWith("live_app_domain_check_violation", {
-        origin: "https://evil.com",
-        manifestId: "swap",
-        appVersion: "2.0.0",
-        platform: "desktop",
-        frameType: "main_frame",
-        kind: "bridge",
-        outcome: "would_block",
-      });
-    });
-
-    it("does not report a sender on a listed origin", () => {
-      reportBridgeSenderOrigin(manifest, "https://app.example.com/swap");
-
-      expect(addAction).not.toHaveBeenCalled();
-    });
-
-    it("reports the same sender once", () => {
-      reportBridgeSenderOrigin({ ...manifest, id: "earn" }, "https://other.com/a");
-      reportBridgeSenderOrigin({ ...manifest, id: "earn" }, "https://other.com/b");
-
-      expect(addAction).toHaveBeenCalledTimes(1);
-    });
-
-    it("reports a sender again once Datadog accepts it", () => {
-      jest.mocked(addAction).mockReturnValueOnce(false);
-
-      reportBridgeSenderOrigin({ ...manifest, id: "card" }, "https://other.com/a");
-      reportBridgeSenderOrigin({ ...manifest, id: "card" }, "https://other.com/a");
-      reportBridgeSenderOrigin({ ...manifest, id: "card" }, "https://other.com/a");
 
       expect(addAction).toHaveBeenCalledTimes(2);
     });

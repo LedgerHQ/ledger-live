@@ -11,11 +11,10 @@ import {
   serializeDomainCheckReport,
 } from "~/bridge/webviewAllowedOrigins";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
-import { reportBlockedInitialLoad, reportBridgeSenderOrigin } from "./domainCheckReport";
+import { reportBlockedInitialLoad } from "./domainCheckReport";
 
 jest.mock("./domainCheckReport", () => ({
   reportBlockedInitialLoad: jest.fn(),
-  reportBridgeSenderOrigin: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
@@ -363,7 +362,6 @@ describe("useWebviewState", () => {
       "dom-ready",
       "did-fail-load",
       "render-process-gone",
-      "ipc-message",
     ];
 
     it("should attach listeners when the webview node is set and detach them on cleanup", () => {
@@ -397,30 +395,6 @@ describe("useWebviewState", () => {
       addEventListener.mock.calls.forEach(([eventName, handler]) => {
         expect(removeEventListener).toHaveBeenCalledWith(eventName, handler);
       });
-    });
-  });
-
-  describe("bridge sender report", () => {
-    it("checks the current main-frame URL of the webview on every bridge message", () => {
-      mockGetInitialURL.mockReturnValue("https://example.com/");
-      const addEventListener = jest.fn();
-      const mockWebview = {
-        addEventListener,
-        removeEventListener: jest.fn(),
-        getURL: () => "https://evil.com/page",
-      } as unknown as WebviewTag;
-
-      const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
-      act(() => {
-        result.current.setWebviewRef(mockWebview);
-      });
-      const handler = addEventListener.mock.calls.find(
-        ([event]: [string]) => event === "ipc-message",
-      )?.[1];
-
-      handler({ channel: "webviewToParent", args: ["{}"] });
-
-      expect(reportBridgeSenderOrigin).toHaveBeenCalledWith(mockManifest, "https://evil.com/page");
     });
   });
 

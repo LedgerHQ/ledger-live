@@ -494,6 +494,51 @@ describe("setupWebviewHandlers", () => {
         expect(sendBridgeMessage(window)).not.toHaveBeenCalled();
       });
 
+      describe("report-only check of accepted senders", () => {
+        const report = serializeDomainCheckReport({
+          manifestId: "swap",
+          domains: ["https://*", "https://app.example.com"],
+        });
+
+        const bridgeViolations = (guest: Guest) =>
+          (guest.hostWebContents?.send.mock.calls ?? [])
+            .filter(([channel]) => channel === CHANNELS.webviewDomainCheckViolation)
+            .map(([, violation]) => violation);
+
+        it.each([
+          ["on", serializeAllowedOrigins(["https://*", "https://app.example.com"])],
+          ["off", serializeAllowedOrigins(UNRESTRICTED_ORIGINS)],
+        ])(
+          "reports a sender outside the strict manifest domains with the check %s",
+          (_, origins) => {
+            const guest = attachGuest(`${origins},${report}`);
+
+            expect(sendBridgeMessage(guest, { origin: "https://evil.com" })).toHaveBeenCalled();
+            sendBridgeMessage(guest, { origin: "https://app.example.com" });
+
+            expect(bridgeViolations(guest)).toEqual([
+              {
+                origin: "https://evil.com",
+                manifestId: "swap",
+                appVersion: "2.130.0",
+                platform: "desktop",
+                frameType: "main_frame",
+                kind: "bridge",
+                outcome: "would_block",
+              },
+            ]);
+          },
+        );
+
+        it("does not report a dropped sender", () => {
+          const guest = attachGuest(`${domains},${report}`);
+
+          sendBridgeMessage(guest, { origin: "https://evil.com" });
+
+          expect(bridgeViolations(guest)).toEqual([]);
+        });
+      });
+
       it("answers any main-frame web origin when the domain check is off", () => {
         const guest = attachGuest(serializeAllowedOrigins(UNRESTRICTED_ORIGINS));
 

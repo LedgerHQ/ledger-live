@@ -23,7 +23,7 @@ import {
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { reportBlockedInitialLoad, reportBridgeSenderOrigin } from "./domainCheckReport";
+import { reportBlockedInitialLoad } from "./domainCheckReport";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -287,12 +287,6 @@ export function useWebviewState(
     }));
   }, []);
 
-  const handleIpcMessage = useCallback(() => {
-    const webview = webviewRef.current;
-    if (!webview) return;
-    reportBridgeSenderOrigin(manifest, webview.getURL());
-  }, [manifest]);
-
   const handleRefresh = useCallback(() => {
     getAttachedWebview(webviewRef)?.reload();
   }, [webviewRef]);
@@ -312,7 +306,6 @@ export function useWebviewState(
     webview.addEventListener("dom-ready", handleDomReady);
     webview.addEventListener("did-fail-load", handleFailLoad);
     webview.addEventListener("render-process-gone", handleCrashed);
-    webview.addEventListener("ipc-message", handleIpcMessage);
 
     return () => {
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
@@ -323,7 +316,6 @@ export function useWebviewState(
       webview.removeEventListener("dom-ready", handleDomReady);
       webview.removeEventListener("did-fail-load", handleFailLoad);
       webview.removeEventListener("render-process-gone", handleCrashed);
-      webview.removeEventListener("ipc-message", handleIpcMessage);
     };
   }, [
     handleDidNavigate,
@@ -334,7 +326,6 @@ export function useWebviewState(
     handleDomReady,
     handleFailLoad,
     handleCrashed,
-    handleIpcMessage,
     webviewNode,
   ]);
 
