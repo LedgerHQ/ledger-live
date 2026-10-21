@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
+import { MockServerDevice } from "@ledgerhq/device-mockserver-react";
 import { getEnv } from "@shared/env";
 import {
   buildMockServerDeviceId,
@@ -10,8 +11,10 @@ import {
   SPECULOS_MODELS,
   type TransportKind,
 } from "../deviceTarget";
-import { getMockServerUiUrl, useMockServerToken } from "../mockServerSession";
+import { getMockServerUiUrl, useMockServerSession } from "../mockServerSession";
 import { Actionable } from "./Actionable";
+
+const MOCK_SERVER_DEVICE_ZOOM = 1.5;
 
 const fieldClassName = "bg-base border border-base rounded-md px-8 py-6 body-2 text-base";
 
@@ -26,7 +29,8 @@ export function AppSetDeviceId({
   const [speculosUrl, setSpeculosUrl] = useState(DEFAULT_SPECULOS_URL);
   const [speculosModel, setSpeculosModel] = useState<DeviceModelId>(DEFAULT_SPECULOS_MODEL);
   const [mockServerToken, setMockServerToken] = useState("");
-  const sessionToken = useMockServerToken(deviceId);
+  const mockServerSession = useMockServerSession(deviceId);
+  const mockServerUrl = getEnv("MOCK_SERVER_TRANSPORT_URL");
 
   useEffect(() => {
     const target = parseDeviceId(deviceId);
@@ -104,19 +108,31 @@ export function AppSetDeviceId({
           />
         ) : null}
       </Actionable>
-      {sessionToken ? (
+      {mockServerSession ? (
         <div className="flex items-center gap-8 my-4 body-3">
           <code className="flex-1 bg-muted rounded-md px-8 py-6 text-base truncate">
-            {sessionToken}
+            {mockServerSession.token}
           </code>
           <a
             className="text-base underline"
-            href={getMockServerUiUrl(getEnv("MOCK_SERVER_TRANSPORT_URL"), sessionToken)}
+            href={getMockServerUiUrl(mockServerUrl, mockServerSession.token)}
             target="_blank"
             rel="noreferrer"
           >
             Open mock server
           </a>
+        </div>
+      ) : null}
+      {mockServerSession?.mockDeviceId ? (
+        // The package exposes no size prop; `zoom` (unlike `transform`) keeps the window fixed to
+        // the viewport.
+        <div className="pointer-events-auto text-base" style={{ zoom: MOCK_SERVER_DEVICE_ZOOM }}>
+          <MockServerDevice
+            url={mockServerUrl}
+            token={mockServerSession.token}
+            deviceId={mockServerSession.mockDeviceId}
+            floating
+          />
         </div>
       ) : null}
     </>

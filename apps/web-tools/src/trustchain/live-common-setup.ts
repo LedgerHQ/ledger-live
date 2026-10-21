@@ -16,7 +16,7 @@ import { listen } from "@ledgerhq/logs";
 import { getEnv } from "@shared/env";
 import { firstValueFrom, type Subscription } from "rxjs";
 import { parseDeviceId, type DeviceTarget } from "./deviceTarget";
-import { setMockServerToken } from "./mockServerSession";
+import { setMockServerDeviceId, setMockServerToken } from "./mockServerSession";
 
 listen(log => {
   console.log(log.type + ": " + log.message);
@@ -152,7 +152,10 @@ async function doOpen(deviceId: string, target: DeviceTarget): Promise<DmkCompat
     device,
     sessionRefresherOptions: { isRefresherDisabled: true },
   });
-  if (target.kind === "mockserver") await openLedgerSyncApp(dmk, sessionId);
+  if (target.kind === "mockserver") {
+    setMockServerDeviceId(deviceId, (await dmk.getConnectedDevice({ sessionId })).id);
+    await openLedgerSyncApp(dmk, sessionId);
+  }
   const transport = new DmkCompatTransport(dmk, sessionId);
 
   const clearIfCurrent = () => {

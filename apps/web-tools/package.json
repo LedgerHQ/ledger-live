@@ -51,6 +51,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-mockserver-client": "catalog:",
+    "@ledgerhq/device-mockserver-react": "catalog:",
     "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/device-transport-kit-web-ble": "catalog:",

@@ -1,13 +1,30 @@
 import { useSyncExternalStore } from "react";
 
-// Tokens of the mock server sessions the transport module opened (or joined), keyed by deviceId,
-// so the UI can link to the mock server's own interface to act on the emulated device.
-const tokens = new Map<string, string>();
+export type MockServerSession = {
+  token: string;
+  // Id of the emulated device on the mock server, known once the DMK is connected to it.
+  mockDeviceId?: string;
+};
+
+// Mock server sessions the transport module opened (or joined), keyed by deviceId, so the UI can
+// show the emulated device and link to the mock server's own interface.
+const sessions = new Map<string, MockServerSession>();
 const listeners = new Set<() => void>();
 
-export function setMockServerToken(deviceId: string, token: string): void {
-  tokens.set(deviceId, token);
+function notify() {
   listeners.forEach(listener => listener());
+}
+
+export function setMockServerToken(deviceId: string, token: string): void {
+  sessions.set(deviceId, { token });
+  notify();
+}
+
+export function setMockServerDeviceId(deviceId: string, mockDeviceId: string): void {
+  const session = sessions.get(deviceId);
+  if (!session) return;
+  sessions.set(deviceId, { ...session, mockDeviceId });
+  notify();
 }
 
 function subscribe(listener: () => void): () => void {
@@ -17,8 +34,8 @@ function subscribe(listener: () => void): () => void {
   };
 }
 
-export function useMockServerToken(deviceId: string): string | undefined {
-  return useSyncExternalStore(subscribe, () => tokens.get(deviceId));
+export function useMockServerSession(deviceId: string): MockServerSession | undefined {
+  return useSyncExternalStore(subscribe, () => sessions.get(deviceId));
 }
 
 export function getMockServerUiUrl(baseUrl: string, token: string): string {
