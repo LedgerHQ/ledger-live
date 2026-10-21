@@ -27,6 +27,7 @@ export type AgentIntentMockOverrides = {
   tokenLookup?: Partial<Record<(typeof TOKEN_LOOKUP_KEYS)[number], AnyFn>>;
   swapQuote?: Partial<Record<(typeof SWAP_QUOTE_KEYS)[number], AnyFn>>;
   confirmPrompt?: Partial<Record<(typeof CONFIRM_PROMPT_KEYS)[number], AnyFn>>;
+  detach?: Partial<Record<(typeof DETACH_KEYS)[number], AnyFn>>;
 };
 
 const SDK_KEYS = [
@@ -66,6 +67,8 @@ const SWAP_QUOTE_KEYS = ["fetchAgentSwapQuote"] as const;
 
 const CONFIRM_PROMPT_KEYS = ["canAskToConfirm", "askToConfirm"] as const;
 
+const DETACH_KEYS = ["spawnDetached", "readFirstLogJsonLine"] as const;
+
 // Snapshot the genuine exports into PLAIN objects before any mock is installed: `mock.module` re-binds
 // the live namespace to the mock, so a pass-through reading from the namespace would recurse forever.
 const realSessionStore = { ...(await import("../../../session/session-store")) };
@@ -96,6 +99,7 @@ const realConfirmPrompt = { ...(await import("../../../agent-intent/confirm-prom
   string,
   unknown
 >;
+const realDetach = { ...(await import("../../../agent-intent/detach")) } as Record<string, unknown>;
 
 let active: AgentIntentMockOverrides | null = null;
 
@@ -183,6 +187,14 @@ function installMocks(): void {
       realConfirmPrompt,
       CONFIRM_PROMPT_KEYS,
       key => active?.confirmPrompt?.[key as (typeof CONFIRM_PROMPT_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../agent-intent/detach", () => ({
+    ...realDetach,
+    ...gatedMembers(
+      realDetach,
+      DETACH_KEYS,
+      key => active?.detach?.[key as (typeof DETACH_KEYS)[number]],
     ),
   }));
 }
