@@ -67,8 +67,8 @@ catalogs:
       specifier: 13.0.2
       version: 13.0.2
     '@ledgerhq/coin-xrp':
-      specifier: 12.0.1
-      version: 12.0.1
+      specifier: 12.1.0
+      version: 12.1.0
     '@ledgerhq/crypto-icons':
       specifier: 2.0.6
       version: 2.0.6
@@ -15441,7 +15441,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 12.1.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -24196,6 +24196,9 @@ packages:
   '@ledgerhq/coin-module-framework@10.0.0':
     resolution: {integrity: sha512-TCfRLAI+EztxE+6Ndz7dERfvWIhnZDoxrNti85wvXIlOSiezgqcb9oNFC0OhKbFyf/QbDAWNSw4n/mAdolCqaA==}
 
+  '@ledgerhq/coin-module-framework@10.0.3':
+    resolution: {integrity: sha512-FWAsbl3LULbImfT0PzSbXcdqfbnziwbX+5aLryFTKRdRcpEnvzdvM1ObZh2/ARi/Oo/0/dH8Clgj+1q9pe19fw==}
+
   '@ledgerhq/coin-stellar@12.0.0':
     resolution: {integrity: sha512-2MnpA9oi+zVhSAE3a586srdxVkfbBuDY6ew5aQuoPoSQ6qQxPkezXATA89H9X8FmToezFCtApI8Z/1xu+aM3DQ==}
     peerDependencies:
@@ -24206,8 +24209,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-xrp@12.0.1':
-    resolution: {integrity: sha512-7chs5ATn08Szlh0lzHmsfh4lLFUVTcrxUxqwkV4U8SFUbTY20iOOunHGhFDpUsquKAb9nxCr8QoXV3ZmsRQ3Vw==}
+  '@ledgerhq/coin-xrp@12.1.0':
+    resolution: {integrity: sha512-qqeYDl28wJVdAHJTOivvRIhapeU14I7oKKF8kzcI4h0gZcJN1DH5JrdtJJLcokeIxmOdPMztoj877Nf9owlPKQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -44594,6 +44597,10 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
 
+  '@ledgerhq/coin-module-framework@10.0.3':
+    dependencies:
+      bignumber.js: 9.1.2
+
   '@ledgerhq/coin-stellar@12.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
@@ -44616,9 +44623,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@ledgerhq/coin-xrp@12.1.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 10.0.0
+      '@ledgerhq/coin-module-framework': 10.0.3
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       bignumber.js: 9.1.2
       invariant: 2.2.4
