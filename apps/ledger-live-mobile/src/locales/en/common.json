@@ -3441,10 +3441,10 @@
       "skipCta": "I’ll do it later",
       "skip": {
         "title": "Are you sure?",
-        "description": "If you skip this, you'll have to manually re-add all your accounts, balances, and history if you switch to a new phone or computer.",
-        "descriptionEmphasis": "You can always disable it from your settings.",
-        "skipCTA": "Yes, skip",
-        "syncCTA": "No, sync my wallet"
+        "description": "If you change phone or use Ledger Wallet on another phone or computer, you'll need to sync your accounts manually.",
+        "descriptionEmphasis": "Please note that you can always enable or disable it from your settings",
+        "skipCTA": "Yes skip",
+        "syncCTA": "No, enable sync"
       }
     },
     "seedStep": {
