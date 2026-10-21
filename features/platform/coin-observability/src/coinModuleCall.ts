@@ -18,6 +18,11 @@ export type CoinModuleCallEvent = {
    */
   status: "success" | "failure" | "not_supported";
   errorName?: string;
+  /**
+   * The error's message, already sanitized by the emitter: long hex and encoded runs (transactions,
+   * addresses, keys) replaced and the length capped. Never the raw text.
+   */
+  errorMessage?: string;
   /** Normalized cause, classified by the emitter; this package stays free of legacy imports. */
   errorCategory?: string;
 };

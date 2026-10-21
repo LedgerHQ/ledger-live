@@ -1,3 +1,4 @@
+import { sanitizeErrorMessage } from "./errorMessage";
 import { TransactionStage, type LogEvent } from "./logEvent";
 
 export type DatadogBroadcastLog = {
@@ -16,10 +17,9 @@ export type DatadogBroadcastLog = {
  * `broadcastLogger` cannot guarantee.
  *
  * Everything sent is in an allow-list of attributes. `txPayload` (the signed transaction) and
- * validators are left out, and so are the error's message and stack: their text comes from the
- * node or the coin module and can quote the transaction (coin-zcash redacts long hex runs in its
- * own log, then rethrows the original error). A failure carries its name and normalized category
- * instead, which is what a broadcast dashboard groups on.
+ * validators are left out, and so is the error's stack. The error's message is sent only through
+ * {@link sanitizeErrorMessage}: its text comes from the node or the coin module and can quote the
+ * transaction (coin-zcash redacts long hex runs in its own log, then rethrows the original error).
  */
 export function toDatadogBroadcastLog(event: LogEvent): DatadogBroadcastLog | null {
   // Intents only exist at the sign stage, so this also leaves success and failure only.
@@ -47,6 +47,7 @@ export function toDatadogBroadcastLog(event: LogEvent): DatadogBroadcastLog | nu
     attributes: {
       ...attributes,
       error_name: event.error.name,
+      error_message: sanitizeErrorMessage(event.error.message),
       error_category: event.errorCategory,
     },
   };

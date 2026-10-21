@@ -10,7 +10,11 @@ import {
   hasCoinModuleCallObservers,
   type CoinModuleCallEvent,
 } from "@features/platform-coin-observability";
-import { classifyTransactionError, toError } from "@ledgerhq/transaction-observability";
+import {
+  classifyTransactionError,
+  sanitizeErrorMessage,
+  toError,
+} from "@ledgerhq/transaction-observability";
 
 const now = (): number => globalThis.performance?.now() ?? Date.now();
 
@@ -50,6 +54,7 @@ export function withMetrics<
         const err = toError(error);
         event.status = stubs.has(method) ? "not_supported" : "failure";
         event.errorName = err.name;
+        event.errorMessage = sanitizeErrorMessage(err.message);
         if (event.status === "failure") event.errorCategory = classifyTransactionError(err);
       }
       emitCoinModuleCall(event);

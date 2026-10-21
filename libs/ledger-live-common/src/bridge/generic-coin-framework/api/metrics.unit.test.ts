@@ -61,9 +61,21 @@ describe("withMetrics", () => {
         method: "lastBlock",
         status: "failure",
         errorName: "NetworkDown",
+        errorMessage: "node down",
         errorCategory: expect.any(String),
       }),
     ]);
+  });
+
+  it("reports the failure message sanitized, never an address it quotes", async () => {
+    const address = "7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV";
+    const error = new Error(`account ${address} not found`);
+    const api = withMetrics(makeApi({ lastBlock: jest.fn().mockRejectedValue(error) }), labels);
+
+    await expect(api.lastBlock({})).rejects.toBe(error);
+
+    expect(events[0].errorMessage).toBe("account [data] not found");
+    expect(JSON.stringify(events)).not.toContain(address);
   });
 
   it("reports a sync failure and rethrows", () => {

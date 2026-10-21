@@ -375,8 +375,9 @@ describe("datadog logs", () => {
       );
     });
 
-    it("logs a broadcast failure by name and category, never its text or the signed payload", () => {
-      const error = Object.assign(new Error("rejected 0xRAW_TX_IN_MESSAGE: nonce too low"), {
+    it("logs a broadcast failure with its sanitized message, never the signed payload", () => {
+      const rawTx = "0x02f8b1" + "ab".repeat(120);
+      const error = Object.assign(new Error(`rejected ${rawTx}: nonce too low`), {
         name: "NonceTooLow",
       });
       transactionBroadcastLogger({
@@ -390,14 +391,14 @@ describe("datadog logs", () => {
       expect(datadogLogs.logger.error).toHaveBeenCalledWith("tx_broadcast", {
         broadcast: expect.objectContaining({
           error_name: "NonceTooLow",
+          error_message: "rejected [hex]: nonce too low",
           error_category: ErrorCategory.Blockchain,
         }),
       });
-      // Every argument handed to the SDK: no `Error` object, so no message or stack.
+      // Every argument handed to the SDK: no `Error` object, so no raw message or stack.
       const sent = datadogLogs.logger.error.mock.calls[0];
       expect(sent).toHaveLength(2);
-      expect(JSON.stringify(sent)).not.toContain("0xRAW_TX_IN_MESSAGE");
-      expect(JSON.stringify(sent)).not.toContain("nonce too low");
+      expect(JSON.stringify(sent)).not.toContain(rawTx);
       expect(JSON.stringify(sent)).not.toContain("0xSIGNED");
     });
 
