@@ -4,12 +4,19 @@ import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fix
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { track } from "@shared/analytics";
 import ExportKeyModal from "../index";
 import { StepId } from "../types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
 const mockedUseAccountBridge = jest.mocked(useAccountBridge);
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
+const mockedTrack = jest.mocked(track);
 
 const mockDispatch = jest.fn();
 const mockSyncStateUpdater = jest.fn();
@@ -51,12 +58,14 @@ jest.mock("~/renderer/components/Modal", () => {
 jest.mock("../Body", () => {
   return function MockBody({
     onUfvkChanged,
+    onConnectionFailed,
     handleBirthdayChange,
     handleSyncFromZero,
     handleEnableShieldedBalance,
     invalidBirthday,
   }: {
-    onUfvkChanged: (ufvk: string) => void;
+    onUfvkChanged: (ufvk: string, shieldedAddress?: string | null, error?: Error | null) => void;
+    onConnectionFailed: (error: Error) => void;
     handleBirthdayChange: (birthday: string) => void;
     handleSyncFromZero: () => void;
     handleEnableShieldedBalance: (options: { startSyncNow: boolean }) => void;
@@ -66,6 +75,29 @@ jest.mock("../Body", () => {
       <div>
         <button type="button" onClick={() => onUfvkChanged("test-ufvk")}>
           set ufvk
+        </button>
+        <button type="button" onClick={() => onUfvkChanged("test-ufvk", "u1test-shielded-address")}>
+          export with address
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const refused = new Error("refused by the user on the device");
+            refused.name = "UserRefusedOnDevice";
+            onUfvkChanged("", null, refused);
+          }}
+        >
+          refuse export
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const disconnected = new Error("device disconnected");
+            disconnected.name = "DisconnectedDevice";
+            onConnectionFailed(disconnected);
+          }}
+        >
+          fail connection
         </button>
         <button type="button" onClick={() => handleBirthdayChange("2026-08-01")}>
           set birthday
@@ -91,6 +123,9 @@ jest.mock("../Body", () => {
 
 const RealBody = jest.requireActual("../Body").default;
 
+// Set by a test to make the connect-app step fail.
+let mockConnectError: Error | null = null;
+
 // Mock useConnectAppAction to prevent actual device connection attempts
 jest.mock("~/renderer/hooks/useConnectAppAction", () => {
   const mockDevice: Device = {
@@ -103,6 +138,16 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => {
     __esModule: true,
     default: () => ({
       useHook: () => {
+        if (mockConnectError) {
+          return {
+            device: mockDevice,
+            isLoading: false,
+            error: mockConnectError,
+            isLocked: false,
+            opened: false,
+            displayUpgradeWarning: false,
+          };
+        }
         // Return a state that indicates device is connected and ready
         // mapResult requires: opened=true, device exists, displayUpgradeWarning=false
         return {
@@ -118,9 +163,9 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => {
           },
         };
       },
-      mapResult: (hookState: { device?: Device }) => {
+      mapResult: (hookState: { device?: Device; opened?: boolean }) => {
         // Return a payload when device is connected
-        if (hookState.device) {
+        if (hookState.device && hookState.opened) {
           return { device: hookState.device };
         }
         return null;
@@ -176,6 +221,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -234,6 +280,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -264,6 +311,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -298,6 +346,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -329,6 +378,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={handleStepIdChanged}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={currentBirthday}
@@ -381,6 +431,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={null}
         onStepIdChanged={jest.fn()}
         onUfvkChanged={onUfvkChanged}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={new Date().toISOString().split("T")[0]}
@@ -404,6 +455,47 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
     });
   });
 
+  it("reports a failed device connection to onConnectionFailed", async () => {
+    const connectError = new Error("device locked");
+    connectError.name = "LockedDeviceError";
+    mockConnectError = connectError;
+    const onConnectionFailed = jest.fn();
+
+    try {
+      render(
+        <RealBody
+          stepId="device"
+          ufvk=""
+          ufvkExportError={null}
+          onStepIdChanged={jest.fn()}
+          onUfvkChanged={jest.fn()}
+          onConnectionFailed={onConnectionFailed}
+          onRetry={jest.fn()}
+          onClose={jest.fn()}
+          birthday={new Date().toISOString().split("T")[0]}
+          invalidBirthday={false}
+          syncFromZero={false}
+          handleBirthdayChange={jest.fn()}
+          handleSyncFromZero={jest.fn()}
+          handleEnableShieldedBalance={jest.fn()}
+          params={{ account }}
+        />,
+        {
+          initialState: {
+            settings: AFTER_ONBOARDING_STATE,
+            devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          },
+        },
+      );
+
+      await waitFor(() => {
+        expect(onConnectionFailed).toHaveBeenCalledWith(connectError);
+      });
+    } finally {
+      mockConnectError = null;
+    }
+  });
+
   it("disables Continue on the birthday step when the birthday is invalid", async () => {
     render(
       <RealBody
@@ -412,6 +504,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={jest.fn()}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday="2000-02-11"
@@ -441,6 +534,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         ufvkExportError={ufvkExportError}
         onStepIdChanged={jest.fn()}
         onUfvkChanged={jest.fn()}
+        onConnectionFailed={jest.fn()}
         onRetry={jest.fn()}
         onClose={jest.fn()}
         birthday={birthday}
@@ -610,5 +704,92 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
         );
       });
     });
+  });
+});
+
+describe("ZCash Export UFVK Flow - activation tracking", () => {
+  const account = createFixtureAccount();
+  const trackedCalls = (name: string) => mockedTrack.mock.calls.filter(([n]) => n === name);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSyncStateUpdater.mockReturnValue({ type: "TEST_SYNC_STATE_ACTION" });
+  });
+
+  it.each([
+    ["Close", false],
+    ["Start sync", true],
+  ])("tracks one enabled event when clicking %s", async (label, startSyncNow) => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /set ufvk/i }));
+    await userEvent.click(screen.getByRole("button", { name: new RegExp(label, "i") }));
+
+    expect(trackedCalls("zcash_private_balance_enabled")).toEqual([
+      [
+        "zcash_private_balance_enabled",
+        { flow: "exportUfvk", currency: "zcash", syncFromZero: false, startSyncNow },
+      ],
+    ]);
+  });
+
+  it("reports syncFromZero as a boolean", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /set ufvk/i }));
+    await userEvent.click(screen.getByRole("button", { name: /sync from zero/i }));
+    await userEvent.click(screen.getByRole("button", { name: /close/i }));
+
+    expect(trackedCalls("zcash_private_balance_enabled")[0][1]).toMatchObject({
+      syncFromZero: true,
+    });
+  });
+
+  it("tracks a failed enable with the reason when the export is refused on the device", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /refuse export/i }));
+
+    expect(trackedCalls("zcash_private_balance_enable_failed")).toEqual([
+      [
+        "zcash_private_balance_enable_failed",
+        { flow: "exportUfvk", currency: "zcash", reason: "user_refused" },
+      ],
+    ]);
+    expect(trackedCalls("zcash_private_balance_enabled")).toHaveLength(0);
+  });
+
+  it("tracks a failed enable when the device connection fails", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /fail connection/i }));
+
+    expect(trackedCalls("zcash_private_balance_enable_failed")).toEqual([
+      [
+        "zcash_private_balance_enable_failed",
+        { flow: "exportUfvk", currency: "zcash", reason: "device_error" },
+      ],
+    ]);
+  });
+
+  it("never puts the key, the address, the birthday or a balance in a tracked payload", async () => {
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /refuse export/i }));
+    await userEvent.click(screen.getByRole("button", { name: /export with address/i }));
+    await userEvent.click(screen.getByRole("button", { name: /set birthday/i }));
+    await userEvent.click(screen.getByRole("button", { name: /start sync/i }));
+
+    expect(mockedTrack).toHaveBeenCalled();
+    for (const [, properties] of mockedTrack.mock.calls) {
+      const payload = JSON.stringify(properties);
+      expect(payload).not.toContain("test-ufvk");
+      expect(payload).not.toContain("u1test-shielded-address");
+      expect(payload).not.toContain("2026-08-01");
+      expect(payload).not.toContain("refused by the user");
+      for (const key of ["ufvk", "shieldedAddress", "birthday", "balance"]) {
+        expect(properties).not.toHaveProperty(key);
+      }
+    }
   });
 });

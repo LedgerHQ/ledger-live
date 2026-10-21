@@ -30,6 +30,7 @@ type OwnProps = {
   ufvkExportError: Error | undefined | null;
   onStepIdChanged: (stepId: StepId) => void;
   onUfvkChanged: (ufvk: string, shieldedAddress?: string | null, error?: Error | null) => void;
+  onConnectionFailed: (error: Error) => void;
   onRetry: () => void;
   birthday: string;
   invalidBirthday: boolean;
@@ -96,6 +97,7 @@ const Body = ({
   ufvkExportError,
   onStepIdChanged,
   onUfvkChanged,
+  onConnectionFailed,
   onRetry,
   birthday,
   invalidBirthday,
@@ -140,6 +142,7 @@ const Body = ({
     ufvkExportError,
     onStepChange: handleStepChange,
     onUfvkChanged,
+    onConnectionFailed,
     birthday,
     invalidBirthday,
     syncFromZero,

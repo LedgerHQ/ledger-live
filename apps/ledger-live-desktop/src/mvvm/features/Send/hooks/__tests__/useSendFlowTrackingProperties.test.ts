@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountTrackingAttributes } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useSendFlowTrackingProperties } from "../useSendFlowTrackingProperties";
 import { useSendFlowData } from "../../context/SendFlowContext";
@@ -8,12 +9,16 @@ jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: { getTrackingAttributes: jest.fn(() => ({})) },
 }));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/registry", () => ({
+  getAccountTrackingAttributes: jest.fn(() => ({})),
+}));
 jest.mock("../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(),
 }));
 
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedGetTrackingAttributes = jest.mocked(sendFeatures.getTrackingAttributes);
+const mockedGetAccountTrackingAttributes = jest.mocked(getAccountTrackingAttributes);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 
 const zcashCurrency = { id: "zcash" };
@@ -83,5 +88,27 @@ describe("useSendFlowTrackingProperties", () => {
 
     expect(mockedGetAccountCurrency).toHaveBeenCalledWith(zcashAccount);
     expect(mockedGetTrackingAttributes).toHaveBeenCalledWith(zcashCurrency, null);
+  });
+
+  it("adds the attributes the coin declares for the account", () => {
+    mockedGetAccountTrackingAttributes.mockReturnValue({ accountAttribute: true });
+    mockFlow({ currency: zcashCurrency, transaction: null });
+
+    const { result } = renderHook(() => useSendFlowTrackingProperties());
+
+    expect(mockedGetAccountTrackingAttributes).toHaveBeenCalledWith(zcashAccount);
+    expect(result.current).toEqual(
+      expect.objectContaining({ flow: "send", accountAttribute: true }),
+    );
+  });
+
+  it("adds no account attribute for a currency that declares none", () => {
+    mockedGetAccountTrackingAttributes.mockReturnValue({});
+    mockedGetTrackingAttributes.mockReturnValue({});
+    mockFlow({ currency: { id: "bitcoin" }, transaction: null });
+
+    const { result } = renderHook(() => useSendFlowTrackingProperties());
+
+    expect(result.current).not.toHaveProperty("accountAttribute");
   });
 });

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountTrackingAttributes } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { useSendFlowData } from "../context/SendFlowContext";
@@ -15,6 +16,7 @@ export function useSendFlowTrackingProperties(newSendFlow = true) {
     () => ({
       ...getSendFlowTrackingProperties(account, parentAccount, newSendFlow, source),
       ...sendFeatures.getTrackingAttributes(currency ?? undefined, transaction),
+      ...(account ? getAccountTrackingAttributes(account) : {}),
     }),
     [account, parentAccount, newSendFlow, source, currency, transaction],
   );

@@ -1,5 +1,6 @@
 import { zcashBalanceTypeConfig } from "./balanceType";
-import { descriptor, getPrivacyAttributes } from "./index";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { descriptor, getPrivacyAttributes, transparentOnlyDescriptor } from "./index";
 
 // Vectors shared with coin-zcash's `logic/address.test.ts`.
 const UA_WITH_ORCHARD =
@@ -112,6 +113,75 @@ describe("zcash send descriptor", () => {
     it("returns undefined for a non-transaction value", () => {
       expect(getPrivacyAttributes(null)).toBeUndefined();
       expect(getPrivacyAttributes(undefined)).toBeUndefined();
+    });
+  });
+
+  describe("getAccountTrackingAttributes", () => {
+    const zcashAccount = (ufvk?: string): AccountLike =>
+      ({
+        type: "Account",
+        currency: { id: "zcash" },
+        privateInfo: ufvk === undefined ? undefined : { ufvk },
+      }) as unknown as AccountLike;
+
+    it.each([
+      ["descriptor", descriptor],
+      ["transparent-only descriptor", transparentOnlyDescriptor],
+    ])("%s reports shieldedEnabled true when the account holds a viewing key", (_, d) => {
+      expect(d.getAccountTrackingAttributes?.(zcashAccount("uview1test"))).toEqual({
+        shieldedEnabled: true,
+      });
+    });
+
+    it.each([
+      ["descriptor", descriptor],
+      ["transparent-only descriptor", transparentOnlyDescriptor],
+    ])("%s reports shieldedEnabled false without a viewing key", (_, d) => {
+      expect(d.getAccountTrackingAttributes?.(zcashAccount())).toEqual({ shieldedEnabled: false });
+      expect(d.getAccountTrackingAttributes?.(zcashAccount(""))).toEqual({
+        shieldedEnabled: false,
+      });
+    });
+
+    it("never carries the viewing key itself", () => {
+      const attributes = descriptor.getAccountTrackingAttributes?.(zcashAccount("uview1test"));
+      expect(JSON.stringify(attributes)).not.toContain("uview1test");
+    });
+
+    it("reports nothing for a token account", () => {
+      const tokenAccount = { type: "TokenAccount" } as unknown as AccountLike;
+      expect(descriptor.getAccountTrackingAttributes?.(tokenAccount)).toEqual({});
+    });
+  });
+
+  describe("getUserTrackingAttributes", () => {
+    const account = (currencyId: string, ufvk?: string): AccountLike =>
+      ({
+        type: "Account",
+        currency: { id: currencyId },
+        privateInfo: ufvk === undefined ? undefined : { ufvk },
+      }) as unknown as AccountLike;
+
+    it.each([
+      ["descriptor", descriptor],
+      ["transparent-only descriptor", transparentOnlyDescriptor],
+    ])("%s counts only the Zcash accounts that hold a viewing key", (_, d) => {
+      expect(
+        d.getUserTrackingAttributes?.([
+          account("zcash", "uview1a"),
+          account("zcash", "uview1b"),
+          account("zcash"),
+          account("zcash", ""),
+          account("bitcoin", "uview1c"),
+          { type: "TokenAccount" } as unknown as AccountLike,
+        ]),
+      ).toEqual({ zcashShieldedEnabledAccounts: 2 });
+    });
+
+    it("reports 0 without any Zcash account, so a removed account leaves no stale value", () => {
+      expect(descriptor.getUserTrackingAttributes?.([])).toEqual({
+        zcashShieldedEnabledAccounts: 0,
+      });
     });
   });
 });

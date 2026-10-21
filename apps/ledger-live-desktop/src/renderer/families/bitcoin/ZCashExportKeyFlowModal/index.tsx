@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { track } from "@shared/analytics";
 import { useDispatch } from "LLD/hooks/redux";
 
 import {
@@ -13,6 +14,12 @@ import Body from "./Body";
 import { StepId } from "./types";
 import { syncStateUpdater } from "./sync";
 import { useZcashShieldedSync } from "../useZcashShieldedSync";
+import {
+  getEnableFailureReason,
+  markPrivateBalanceEnabled,
+  ZCASH_PRIVATE_BALANCE_ENABLED,
+  ZCASH_PRIVATE_BALANCE_ENABLE_FAILED,
+} from "../zcashActivationTracking";
 
 const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   const [stepId, setStepId] = useState<StepId>("birthday");
@@ -73,6 +80,16 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
     setUfvkExportError(null);
   };
 
+  // Stable: the device action reports a connection failure from an effect that depends
+  // on this callback, so a new reference on each render would report it again.
+  const trackEnableFailure = useCallback((error: Error) => {
+    track(ZCASH_PRIVATE_BALANCE_ENABLE_FAILED, {
+      flow: "exportUfvk",
+      currency: "zcash",
+      reason: getEnableFailureReason(error),
+    });
+  }, []);
+
   const handleUfvkChanged = (
     viewKey: string,
     shieldedAddr?: string | null,
@@ -81,6 +98,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
     if ((error as { name?: string })?.name === "UserRefusedOnDevice") {
       logger.critical(error);
     }
+    if (error) trackEnableFailure(error);
     setUfvkExportError(error);
     setUfvk(viewKey);
     setShieldedAddress(shieldedAddr ?? null);
@@ -99,6 +117,14 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
       birthday,
       shieldedAddress,
     });
+    // Booleans only: neither the key, the address nor the birthday is reported.
+    track(ZCASH_PRIVATE_BALANCE_ENABLED, {
+      flow: "exportUfvk",
+      currency: "zcash",
+      syncFromZero,
+      startSyncNow,
+    });
+    markPrivateBalanceEnabled(account.id);
 
     if (startSyncNow) startShieldedSync();
   };
@@ -119,6 +145,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
           ufvkExportError={ufvkExportError}
           onStepIdChanged={setStepId}
           onUfvkChanged={handleUfvkChanged}
+          onConnectionFailed={trackEnableFailure}
           onRetry={onHandleReset}
           onClose={onClose}
           params={data ?? {}}
