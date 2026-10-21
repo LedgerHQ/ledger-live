@@ -1158,6 +1158,25 @@ describe("agent-intent enroll --detach", () => {
     expect(spawnedCommands).toEqual([]);
   });
 
+  it("starts a second --detach for the profile only after the first one's startup ends", async () => {
+    let releaseFirst = () => {};
+    firstLogLine = () =>
+      new Promise(resolve => {
+        releaseFirst = () => resolve(pendingLine);
+      });
+    const first = runEnroll({ detach: true });
+    while (spawnedCommands.length === 0) await Bun.sleep(10);
+    firstLogLine = async () => pendingLine;
+
+    const second = runEnroll({ detach: true });
+    await Bun.sleep(300);
+    expect(spawnedCommands).toHaveLength(1);
+
+    releaseFirst();
+    await Promise.all([first, second]);
+    expect(spawnedCommands).toHaveLength(2);
+  });
+
   it("is not supported on Windows", async () => {
     const platform = Object.getOwnPropertyDescriptor(process, "platform");
     Object.defineProperty(process, "platform", { value: "win32" });

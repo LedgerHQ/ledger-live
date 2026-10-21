@@ -11,6 +11,7 @@ const LISTENER_DIR = "agent-intent-enroll";
 const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
 const STARTUP_TIMEOUT_MS = 30_000;
 const STARTUP_POLL_MS = 100;
+const START_LOCK_MARGIN_MS = 5_000;
 
 /** Per-profile files of an `enroll` listener under the CLI state dir. Computed lazily so it follows
  * the current `stateDir()`, like the session paths. */
@@ -46,6 +47,14 @@ export async function withEnrollListenerLock<T>(
   ensureListenerDir();
   assertNoLiveEnrollListener(profileId);
   return withFileLock(enrollListenerPaths(profileId).lockPath, fn, LOCK_ACQUIRE_TIMEOUT_MS);
+}
+
+/** Runs `fn` while holding the profile's `enroll --detach` start lock. A second start waits for the
+ * first one's startup instead of racing it; the listener child never takes this lock. */
+export async function withEnrollStartLock<T>(profileId: string, fn: () => Promise<T>): Promise<T> {
+  ensureListenerDir();
+  const lockPath = join(stateDir(APP_NAME), LISTENER_DIR, `${profileId}.start.lock`);
+  return withFileLock(lockPath, fn, STARTUP_TIMEOUT_MS + START_LOCK_MARGIN_MS);
 }
 
 /** Command line that re-runs this CLI with `args`. The compiled binary is its own entry point (its

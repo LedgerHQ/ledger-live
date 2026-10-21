@@ -47,6 +47,7 @@ import {
   selfCommand,
   spawnDetached,
   withEnrollListenerLock,
+  withEnrollStartLock,
 } from "../../agent-intent/detach";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
 import { errMessage } from "../../shared/error-message";
@@ -236,8 +237,6 @@ async function startDetachedEnroll(
   }
   const profileId = flags.profile;
   const { logPath } = enrollListenerPaths(profileId);
-  // Checked before the spawn truncates the log a running listener still writes to.
-  assertNoLiveEnrollListener(profileId);
 
   const args = ["agent-intent", "enroll"];
   // Only enroll's own options: `flags` also carries bunli's global flags (--help, --version, ...).
@@ -251,10 +250,14 @@ async function startDetachedEnroll(
   }
   args.push("--output=json");
 
-  // Two concurrent --detach runs for one profile can both pass the check above and share the log,
-  // so one parent may report the other's line; one listener still loses the lock. Accepted: rare.
-  const child = spawnDetached(selfCommand(args), logPath);
-  const first = await readFirstLogJsonLine(child, logPath);
+  // The start lock keeps a concurrent --detach for this profile from passing the check, then
+  // truncating and sharing the log, until this listener holds its own lock or has failed.
+  const { child, first } = await withEnrollStartLock(profileId, async () => {
+    // Checked before the spawn truncates the log a running listener still writes to.
+    assertNoLiveEnrollListener(profileId);
+    const started = spawnDetached(selfCommand(args), logPath);
+    return { child: started, first: await readFirstLogJsonLine(started, logPath) };
+  });
   const pending = PendingLineSchema.safeParse(first);
   if (pending.success) {
     const { enrollmentUrl, fingerprint, expiresAt } = pending.data;
