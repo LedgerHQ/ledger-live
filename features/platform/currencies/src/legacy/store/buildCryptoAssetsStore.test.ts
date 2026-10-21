@@ -128,6 +128,34 @@ describe("buildCryptoAssetsStore", () => {
     await expect(store.findTokenById("id")).rejects.toThrow("Unknown parsing_error error");
   });
 
+  describe("getTokensSyncHash on a failed check", () => {
+    it.each([
+      [{ status: "TIMEOUT_ERROR", error: "timeout" }],
+      [{ status: "FETCH_ERROR", error: "Failed to fetch" }],
+      [{ status: 500, data: {} }],
+      [{ status: 503, data: {} }],
+    ])("returns the last known hash on transient error %p", async error => {
+      const { store, dispatch } = setup();
+      dispatch.mockResolvedValue({ data: "abc123", error });
+      await expect(store.getTokensSyncHash("ethereum")).resolves.toBe("abc123");
+    });
+
+    it("throws LedgerAPI4xx on a 4xx even when a hash is known", async () => {
+      const { store, dispatch } = setup();
+      dispatch.mockResolvedValue({
+        data: "abc123",
+        error: { status: 404, data: { message: "Currency not found" } },
+      });
+      await expect(store.getTokensSyncHash("ethereum")).rejects.toBeInstanceOf(LedgerAPI4xx);
+    });
+
+    it("throws on a transient error when no hash is known", async () => {
+      const { store, dispatch } = setup();
+      dispatch.mockResolvedValue({ data: undefined, error: { status: 503, data: {} } });
+      await expect(store.getTokensSyncHash("ethereum")).rejects.toBeInstanceOf(LedgerAPI5xx);
+    });
+  });
+
   it("defaults to the shared cryptoAssetsApi when no api is injected", () => {
     expect(() =>
       buildCryptoAssetsStore({ dispatch: jest.fn() as unknown as CryptoAssetsStoreDispatch }),

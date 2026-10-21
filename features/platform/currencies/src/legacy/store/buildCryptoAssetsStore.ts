@@ -79,6 +79,8 @@ export function buildCryptoAssetsStore({
 
     async getTokensSyncHash(currencyId) {
       const { data, error } = await dispatch(api.endpoints.getTokensSyncHash.initiate(currencyId));
+      // RTK Query keeps the last fulfilled hash on a rejected refetch: use it while the service is down.
+      if (error && isTransientError(error) && typeof data === "string") return data;
       if (error) throw remapRtkQueryError(error);
       // A successful query always yields the commit hash; guard the type envelope
       // (string | undefined) instead of an unsafe cast so undefined can't escape.
@@ -105,6 +107,13 @@ export function remapRtkQueryError(error: FetchBaseQueryError | SerializedError)
     return new Error("error" in error ? toErrorMessage(error.error, status) : String(status));
   }
   return new Error(error.message ?? "Unknown crypto-assets store error");
+}
+
+function isTransientError(error: FetchBaseQueryError | SerializedError): boolean {
+  if (!("status" in error)) return false;
+  const { status } = error;
+  if (typeof status === "number") return status >= 500 && status < 600;
+  return status === "TIMEOUT_ERROR" || status === "FETCH_ERROR";
 }
 
 function toErrorMessage(rawError: unknown, status: string): string {
