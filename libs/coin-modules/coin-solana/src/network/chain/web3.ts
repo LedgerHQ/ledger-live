@@ -386,9 +386,20 @@ export async function getStakeAccountAddressWithSeed({
   return pubkey.toBase58();
 }
 
+// microLamports per CU. The recent-fee median is often 0 on uncontended accounts, and an unpriced
+// transaction is the first one dropped under load.
+const DEFAULT_MIN_PRIORITY_FEE = 10_000;
+
 export async function getPriorityFee(api: ChainAPI, accounts: string[]): Promise<number> {
   const recentFees = await api.getRecentPrioritizationFees(uniq(accounts));
-  return median(recentFees.map(item => item.prioritizationFee));
+  const configuredFloor = api.config.minPriorityFee ?? 0;
+  const floor =
+    Number.isFinite(configuredFloor) && configuredFloor > 0
+      ? configuredFloor
+      : DEFAULT_MIN_PRIORITY_FEE;
+  // setComputeUnitPrice encodes a u64 through BigInt, which throws on the .5 an even-count
+  // median can produce.
+  return Math.ceil(Math.max(median(recentFees.map(item => item.prioritizationFee)), floor));
 }
 
 export async function appendMaybePriorityFeeInstructions(
@@ -405,17 +416,17 @@ export async function appendMaybePriorityFeeInstructions(
     buildComputeUnitInstruction(api, instructions, payer),
   ]);
 
-  if (priorityFeeIx) instructions.unshift(priorityFeeIx);
+  instructions.unshift(priorityFeeIx);
   if (computeUnitsIx) instructions.unshift(computeUnitsIx);
   return instructions;
 }
 
+// The name predates the floor: the price is always set now. Kept because it is exported.
 export async function buildMaybePriorityFeeInstruction(
   api: ChainAPI,
   accounts: string[],
-): Promise<TransactionInstruction | null> {
+): Promise<TransactionInstruction> {
   const priorityFee = await getPriorityFee(api, accounts);
-  if (priorityFee === 0) return null;
 
   return ComputeBudgetProgram.setComputeUnitPrice({
     microLamports: priorityFee,

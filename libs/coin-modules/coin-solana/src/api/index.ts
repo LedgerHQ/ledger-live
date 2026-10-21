@@ -46,7 +46,10 @@ async function chainAPIFromContext(
   config: SolanaCoinConfig;
 }> {
   const config = await context.config();
-  const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currencyId) });
+  const api = getChainAPI({
+    endpoint: endpointByCurrencyId(config, currencyId),
+    ...(config.minPriorityFee !== undefined ? { minPriorityFee: config.minPriorityFee } : {}),
+  });
   return { api, config };
 }
 

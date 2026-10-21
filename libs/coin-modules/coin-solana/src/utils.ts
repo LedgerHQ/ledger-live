@@ -228,11 +228,11 @@ export function median(values: number[]): number {
   const sorted = values.sort((a, b) => a - b);
   const middle = Math.floor(length / 2);
   return length % 2
-    ? BigNumber(sorted[middle])
+    ? sorted[middle]
+    : BigNumber(sorted[middle])
         .plus(sorted[middle - 1])
         .div(2)
-        .toNumber()
-    : sorted[middle];
+        .toNumber();
 }
 
 export function isParsedAccount(entry: {

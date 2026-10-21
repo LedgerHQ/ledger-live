@@ -414,16 +414,20 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
       expect(latestOperation.value).toStrictEqual(latestOperation.fee);
       expect(latestOperation.senders).toStrictEqual([]);
       expect(latestOperation.recipients).toStrictEqual([]);
+      // Delegation, stake rent exemption (2282880) and the transaction fee, priority fee included.
+      const staked = new BigNumber(1e9 + 2282880).plus(latestOperation.fee);
       expect(latestOperation.extra).toMatchObject({
-        stake: { address: VOTE_ACCOUNT?.votePubkey, amount: new BigNumber(1e9 + 2287880) }, // amount + rent exempt reserve + fee
+        stake: { address: VOTE_ACCOUNT?.votePubkey, amount: staked },
       });
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
-      // 1e9 (delegation) + 2287880 (stake rent exempt) + 5000 (tx fee) + 5000 (unstakeReserve = 1 withdrawFee)
-      expect(currentAccount.spendableBalance).toStrictEqual(
-        previousAccount.spendableBalance.minus(1e9 + 2297880),
-      );
+      // Spendable also holds back the unstake reserve: the future undelegate and withdraw fees, each
+      // the 5000 base fee plus a priority fee of at least 1, which follows the recent-fee median.
+      const reserve = previousAccount.spendableBalance
+        .minus(currentAccount.spendableBalance)
+        .minus(staked);
+      expect(reserve.isGreaterThan(2 * 5000)).toBe(true);
       // Verify staking resources are populated after sync with delegation to the validator
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
       expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
@@ -496,9 +500,14 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
-      expect(currentAccount.spendableBalance).toStrictEqual(
-        previousAccount.spendableBalance.plus(WITHDRAWABLE_AMOUNT),
-      );
+      // Emptying the stake account releases its share of the unstake reserve: a withdraw fee estimated
+      // on a dummy transaction priced on the runtime default compute-unit limit, above the simulated
+      // limit the real withdraw signs, so it covers the fee paid and may exceed it.
+      expect(
+        currentAccount.spendableBalance
+          .minus(previousAccount.spendableBalance)
+          .isGreaterThanOrEqualTo(WITHDRAWABLE_AMOUNT),
+      ).toBe(true);
       // Verify staking resources still exist after partial withdrawal
       // (spendableBalance increase above already validates the withdraw landed)
       expectStakingResourcesDefined(currentAccount);
@@ -523,7 +532,9 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
-      expect(currentAccount.spendableBalance).toStrictEqual(new BigNumber(0));
+      // The fee is estimated on a dummy delegating 0 lamports, which cannot be simulated, so it is
+      // priced on the runtime default compute-unit limit: what it overestimates stays spendable.
+      expect(currentAccount.spendableBalance.isLessThan(latestOperation.fee)).toBe(true);
       // Verify staking resources reflect the new stake
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
       expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
