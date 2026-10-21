@@ -8,6 +8,7 @@ import { marketApi } from "./marketApi";
 import { createMockMarketItemResponse } from "../utils/fixtures";
 
 let store: ReturnType<typeof createTestStore>;
+const basePath = "/countervalue";
 const server = setupServer();
 
 beforeAll(() => {
@@ -57,7 +58,7 @@ describe("marketApi", () => {
 
       expect(seenUrls).toHaveLength(1);
       const url = new URL(seenUrls[0]);
-      expect(url.pathname).toBe("/v3/markets/chart/1h/ethereum");
+      expect(url.pathname).toBe(`${basePath}/v3/markets/chart/1h/ethereum`);
       expect(url.searchParams.get("to")).toBe("EUR");
     });
 
@@ -89,7 +90,7 @@ describe("marketApi", () => {
         getAssetChartData.initiate({ id: "bitcoin", counterCurrency: "usd", range }),
       );
 
-      expect(new URL(seenUrls[0]).pathname).toBe(`/v3/markets/chart/${segment}/bitcoin`);
+      expect(new URL(seenUrls[0]).pathname).toBe(`${basePath}/v3/markets/chart/${segment}/bitcoin`);
     });
 
     it("percent-encodes the asset id so reserved characters do not break the URL path", async () => {
@@ -108,7 +109,7 @@ describe("marketApi", () => {
 
       expect(seenUrls).toHaveLength(1);
       const url = new URL(seenUrls[0]);
-      expect(url.pathname).toBe(`/v3/markets/chart/1w/${encodeURIComponent(ledgerId)}`);
+      expect(url.pathname).toBe(`${basePath}/v3/markets/chart/1w/${encodeURIComponent(ledgerId)}`);
       expect(decodeURIComponent(url.pathname.split("/").pop() ?? "")).toBe(ledgerId);
     });
 
@@ -123,7 +124,7 @@ describe("marketApi", () => {
 
       await store.dispatch(getAssetChartData.initiate({ id: "bitcoin", counterCurrency: "usd" }));
 
-      expect(new URL(seenUrls[0]).pathname).toBe("/v3/markets/chart/1d/bitcoin");
+      expect(new URL(seenUrls[0]).pathname).toBe(`${basePath}/v3/markets/chart/1d/bitcoin`);
     });
 
     it("transforms `{ values: [[ts, value]] }` into `{ [range]: [[ts, value]] }`", async () => {
@@ -208,7 +209,7 @@ describe("marketApi", () => {
       await store.dispatch(getTrendingCategories.initiate());
 
       expect(seenUrls).toHaveLength(1);
-      expect(new URL(seenUrls[0]).pathname).toBe("/v3/categories/trending");
+      expect(new URL(seenUrls[0]).pathname).toBe(`${basePath}/v3/categories/trending`);
     });
 
     it("returns the validated trending categories", async () => {

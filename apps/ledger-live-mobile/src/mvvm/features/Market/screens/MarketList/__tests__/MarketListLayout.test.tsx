@@ -21,7 +21,7 @@ const withEmptyStarredFilter = (state: State): State => ({
   settings: { ...state.settings, starredMarketCoins: [] },
 });
 
-const COUNTERVALUES_API = "https://countervalues.live.ledger.com";
+const COUNTERVALUES_API = "https://global.api.prd.ledger.com/countervalue";
 
 type TestStackParamList = {
   [ScreenName.MarketList]: undefined;

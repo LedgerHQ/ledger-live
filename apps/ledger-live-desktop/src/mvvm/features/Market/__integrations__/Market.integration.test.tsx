@@ -6,8 +6,9 @@ import Market from "../index";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 
-const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
-const TRENDING_CATEGORIES_ENDPOINT = "https://countervalues.live.ledger.com/v3/categories/trending";
+const MARKET_API_ENDPOINT = "https://global.api.prd.ledger.com/countervalue/v3/markets";
+const TRENDING_CATEGORIES_ENDPOINT =
+  "https://global.api.prd.ledger.com/countervalue/v3/categories/trending";
 
 const mockNavigate = jest.fn();
 

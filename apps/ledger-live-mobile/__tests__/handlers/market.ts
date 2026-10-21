@@ -79,20 +79,20 @@ const marketsResolver = ({ request }: { request: Request }) => {
 };
 
 const handlers = [
-  http.get("https://countervalues.live.ledger.com/v3/markets", marketsResolver),
-  http.get("https://countervalues.live.ledger.com/v3/currencies/trending", () => {
+  http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", marketsResolver),
+  http.get("https://global.api.prd.ledger.com/countervalue/v3/currencies/trending", () => {
     return HttpResponse.json(marketsMock.slice(0, 7).map(({ id }) => ({ id, supported: true })));
   }),
-  http.get("https://countervalues.live.ledger.com/v3/categories/trending", () => {
+  http.get("https://global.api.prd.ledger.com/countervalue/v3/categories/trending", () => {
     return HttpResponse.json([
       { id: "infrastructure", name: "Infrastructure" },
       { id: "yield-farming", name: "Yield Farming" },
     ]);
   }),
-  http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () => {
+  http.get("https://global.api.prd.ledger.com/countervalue/v3/supported/fiat", () => {
     return HttpResponse.json(["usd", "eur", "gbp"]);
   }),
-  http.get("https://countervalues.live.ledger.com/v3/markets/chart/:range/:id", () => {
+  http.get("https://global.api.prd.ledger.com/countervalue/v3/markets/chart/:range/:id", () => {
     return HttpResponse.json({
       values: [
         [1700000000000, 50000],
