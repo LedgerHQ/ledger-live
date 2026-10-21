@@ -4,7 +4,7 @@ describe("wallet-api helpers", () => {
   describe("isWhitelistedDomain (via getInitialURL)", () => {
     const mockManifest = {
       url: "https://default.example.com/",
-      domains: ["ledger.com", "*.subdomain.ledger.com", "approved.io"],
+      domains: ["https://default.example.com", "https://default.example.com:8080"],
     };
 
     describe("malicious URL bypass attempts", () => {
@@ -75,7 +75,7 @@ describe("wallet-api helpers", () => {
           process.env.NODE_ENV = "production";
           const httpManifest = {
             url: "http://localhost:3000/",
-            domains: ["localhost"],
+            domains: ["http://localhost:3000"],
           };
           const inputs = {
             goToURL: "http://localhost:3000/some/path",
@@ -89,7 +89,7 @@ describe("wallet-api helpers", () => {
           process.env.NODE_ENV = "development";
           const httpManifest = {
             url: "http://localhost:3000/",
-            domains: ["localhost"],
+            domains: ["http://localhost:3000"],
           };
           const inputs = {
             goToURL: "http://localhost:3000/some/path",
@@ -113,7 +113,7 @@ describe("wallet-api helpers", () => {
           process.env.NODE_ENV = "development";
           const httpManifest = {
             url: "http://localhost:3000/",
-            domains: ["localhost"],
+            domains: ["http://localhost:3000"],
           };
           const inputs = {
             goToURL: "http://localhost:8080/some/path",
@@ -219,7 +219,7 @@ describe("wallet-api helpers", () => {
       it("should allow URL on same domain with different case", () => {
         const manifestWithUppercase = {
           url: "https://default.example.com/",
-          domains: ["LEDGER.COM"],
+          domains: ["https://default.example.com"],
         };
         const inputs = {
           goToURL: "https://DEFAULT.EXAMPLE.COM/page",
@@ -281,7 +281,7 @@ describe("wallet-api helpers", () => {
       it("should handle IDN domains (punycode) on same domain", () => {
         const manifestWithIDN = {
           url: "https://münchen.de/",
-          domains: ["münchen.de"],
+          domains: ["https://xn--mnchen-3ya.de"],
         };
         const inputs = {
           goToURL: "https://xn--mnchen-3ya.de/page", // punycode for münchen.de
@@ -294,7 +294,7 @@ describe("wallet-api helpers", () => {
       it("should handle IDN domains in unicode form on same domain", () => {
         const manifestWithIDN = {
           url: "https://xn--mnchen-3ya.de/",
-          domains: ["münchen.de"],
+          domains: ["https://xn--mnchen-3ya.de"],
         };
         const inputs = {
           goToURL: "https://münchen.de/page",
@@ -392,7 +392,7 @@ describe("wallet-api helpers", () => {
         const trustedDappUrl = "https://default.example.com/app";
         const manifest = {
           url: "https://default.example.com/",
-          domains: ["default.example.com"],
+          domains: ["https://default.example.com"],
           params: {
             dappUrl: trustedDappUrl,
             networks: [{ currency: "ethereum", chainID: 1 }],
@@ -414,6 +414,43 @@ describe("wallet-api helpers", () => {
         const params = JSON.parse(resultUrl.searchParams.get("params") ?? "{}");
         expect(params.dappUrl).toBe(trustedDappUrl);
         expect(result).not.toContain("other.example");
+      });
+    });
+
+    describe("manifest domains", () => {
+      it("should reject a subdomain of the manifest's domain that is not in its domains", () => {
+        const inputs = {
+          goToURL: "https://evil.example.com/page",
+        };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        const result = getInitialURL(inputs, mockManifest);
+        expect(result).toBe(mockManifest.url);
+      });
+
+      it("should reject any goToURL when the manifest has no domains", () => {
+        const manifestWithoutDomains = {
+          url: "https://default.example.com/",
+          domains: [],
+        };
+        const inputs = {
+          goToURL: "https://default.example.com/page",
+        };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        const result = getInitialURL(inputs, manifestWithoutDomains);
+        expect(result).toBe(manifestWithoutDomains.url);
+      });
+
+      it("should keep the same-domain check when domains has a wildcard", () => {
+        const manifestWithWildcard = {
+          url: "https://default.example.com/",
+          domains: ["https://*"],
+        };
+        const inputs = {
+          goToURL: "https://other.example/page",
+        };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        const result = getInitialURL(inputs, manifestWithWildcard);
+        expect(result).toBe(manifestWithWildcard.url);
       });
     });
 
@@ -465,7 +502,7 @@ describe("wallet-api helpers", () => {
     it("should append params when goToURL is not provided", () => {
       const manifest = {
         url: "https://example.com",
-        domains: ["example.com"],
+        domains: ["https://example.com"],
         params: { foo: "bar" },
       };
       const inputs = { customParam: "value" };
@@ -480,7 +517,7 @@ describe("wallet-api helpers", () => {
     it("should use goToURL as-is when on same domain and manifest has no params", () => {
       const manifest = {
         url: "https://example.com",
-        domains: ["allowed.com"],
+        domains: ["https://example.com"],
       };
       const inputs = {
         goToURL: "https://example.com/page",
@@ -497,7 +534,7 @@ describe("wallet-api helpers", () => {
     it("should pin trusted manifest.params onto goToURL when on same domain", () => {
       const manifest = {
         url: "https://example.com",
-        domains: ["allowed.com"],
+        domains: ["https://example.com"],
         params: { foo: "bar" },
       };
       const inputs = {
@@ -516,7 +553,7 @@ describe("wallet-api helpers", () => {
     it("should override params already present in goToURL with trusted manifest.params", () => {
       const manifest = {
         url: "https://example.com",
-        domains: ["allowed.com"],
+        domains: ["https://example.com"],
         params: { foo: "bar" },
       };
       const inputs = {

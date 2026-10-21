@@ -237,10 +237,18 @@ describe("manifestDomainUtils", () => {
   });
 
   describe("applyCustomDappUrl", () => {
+    const domains = [
+      "https://example.com",
+      "https://www.example.com",
+      "https://app.example.com",
+      "https://api.example.com",
+    ];
+
     describe("manifest with params.dappUrl", () => {
       it("should apply customDappUrl when domains match", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/original",
             otherParam: "value",
@@ -252,6 +260,7 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toEqual({
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/custom",
             otherParam: "value",
@@ -262,6 +271,7 @@ describe("manifestDomainUtils", () => {
       it("should not apply customDappUrl when domains do not match", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/original",
             otherParam: "value",
@@ -278,6 +288,7 @@ describe("manifestDomainUtils", () => {
       it("should apply customDappUrl when subdomain differs but base domain matches", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://app.example.com/original",
           },
@@ -288,6 +299,7 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toEqual({
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://api.example.com/custom",
           },
@@ -297,6 +309,7 @@ describe("manifestDomainUtils", () => {
       it("should apply customDappUrl from subdomain to base domain", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://app.example.com/original",
           },
@@ -307,6 +320,7 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toEqual({
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/custom",
           },
@@ -316,6 +330,7 @@ describe("manifestDomainUtils", () => {
       it("should apply customDappUrl from base domain to subdomain", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/original",
           },
@@ -326,6 +341,7 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toEqual({
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://www.example.com/custom",
           },
@@ -335,6 +351,7 @@ describe("manifestDomainUtils", () => {
       it("should not apply customDappUrl when protocol differs", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/original",
           },
@@ -351,6 +368,7 @@ describe("manifestDomainUtils", () => {
       it("should apply customDappUrl when domains match", () => {
         const manifest = {
           id: "app1",
+          domains,
           dapp: true,
           url: "https://example.com/original",
           name: "My App",
@@ -361,6 +379,7 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toEqual({
           id: "app1",
+          domains,
           dapp: true,
           url: "https://example.com/custom",
           name: "My App",
@@ -370,6 +389,7 @@ describe("manifestDomainUtils", () => {
       it("should not apply customDappUrl when domains do not match", () => {
         const manifest = {
           id: "app1",
+          domains,
           dapp: true,
           url: "https://example.com/original",
           name: "My App",
@@ -385,6 +405,7 @@ describe("manifestDomainUtils", () => {
       it("should not apply customDappUrl when protocol differs", () => {
         const manifest = {
           id: "app1",
+          domains,
           dapp: true,
           url: "https://example.com/original",
           name: "My App",
@@ -395,6 +416,30 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toEqual(manifest);
         expect(result).toBe(manifest);
+      });
+    });
+
+    describe("manifest domains", () => {
+      it("should not apply customDappUrl on the same base domain when its origin is not in domains", () => {
+        const manifest = {
+          id: "app1",
+          domains,
+          params: { dappUrl: "https://example.com/original" },
+        };
+
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        expect(applyCustomDappUrl(manifest, "https://evil.example.com/custom")).toBe(manifest);
+      });
+
+      it("should not apply customDappUrl when the manifest has no domains", () => {
+        const manifest = {
+          id: "app1",
+          dapp: true,
+          url: "https://example.com/original",
+        };
+
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        expect(applyCustomDappUrl(manifest, "https://example.com/custom")).toBe(manifest);
       });
     });
 
@@ -410,6 +455,7 @@ describe("manifestDomainUtils", () => {
       it("should return manifest when customDappUrl is null", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: { dappUrl: "https://example.com/original" },
         };
 
@@ -420,6 +466,7 @@ describe("manifestDomainUtils", () => {
       it("should return manifest when customDappUrl is undefined", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: { dappUrl: "https://example.com/original" },
         };
 
@@ -430,6 +477,7 @@ describe("manifestDomainUtils", () => {
       it("should return manifest when customDappUrl is empty string", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: { dappUrl: "https://example.com/original" },
         };
 
@@ -440,6 +488,7 @@ describe("manifestDomainUtils", () => {
       it("should return manifest when it has no params or dapp", () => {
         const manifest = {
           id: "app1",
+          domains,
           name: "My App",
         };
 
@@ -450,6 +499,7 @@ describe("manifestDomainUtils", () => {
       it("should return manifest when params exists but has no dappUrl", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: { otherParam: "value" },
         };
 
@@ -460,6 +510,7 @@ describe("manifestDomainUtils", () => {
       it("should return manifest when dapp is true but no url property", () => {
         const manifest = {
           id: "app1",
+          domains,
           dapp: true,
           name: "My App",
         };
@@ -471,6 +522,7 @@ describe("manifestDomainUtils", () => {
       it("should prioritize params.dappUrl over manifest.url when both exist", () => {
         const manifest = {
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/original",
           },
@@ -483,6 +535,7 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toEqual({
           id: "app1",
+          domains,
           params: {
             dappUrl: "https://example.com/custom",
           },

@@ -11,6 +11,7 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
 import {
   SetCurrentAccountHistDb,
   useDAppManifestCurrencyIds,
@@ -38,7 +39,10 @@ export const initialWebviewState: WebviewState = {
 type UseWebviewStateParams = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | boolean | undefined>;
-  /** When true, loadURL only allows URLs matching manifest.domains (same as lldWebviewManifestDomainCheck) */
+  /**
+   * When true, the main process only lets the main frame load origins from manifest.domains,
+   * and loadURL rejects other URLs (lldWebviewManifestDomainCheck)
+   */
   manifestDomainCheckEnabled?: boolean;
 };
 
@@ -73,6 +77,8 @@ type UseWebviewStateReturn = {
   webviewState: WebviewState;
   webviewProps: {
     src: string;
+    /** Carries the allowed main-frame origins to the main process */
+    webpreferences: string;
   };
   webviewRef: RefObject<WebviewTag | null>;
   setWebviewRef: (node: WebviewTag) => () => void;
@@ -314,8 +320,17 @@ export function useWebviewState(
     webviewNode,
   ]);
 
+  const webpreferences = useMemo(
+    () =>
+      serializeAllowedOrigins(
+        manifestDomainCheckEnabled ? (manifest.domains ?? []) : UNRESTRICTED_ORIGINS,
+      ),
+    [manifest.domains, manifestDomainCheckEnabled],
+  );
+
   const props = {
     src: webviewSrc,
+    webpreferences,
   };
 
   const webviewPartition = useMemo(() => {

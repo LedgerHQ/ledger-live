@@ -167,7 +167,6 @@ export const CHANNELS = {
   cardSessionBootstrap: "card-session:bootstrap",
   // Sent by the preload itself, outside the bridge.
   reloadRenderer: "reloadRenderer",
-  webviewDomReady: "webview-dom-ready",
   setBackgroundColor: "set-background-color",
   readyToShow: "ready-to-show",
 } as const;
