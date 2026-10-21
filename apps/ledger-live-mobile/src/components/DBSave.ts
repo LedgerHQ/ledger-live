@@ -363,6 +363,8 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,
     lense: extractPersistedCALFromState,
+    // The hash check can evict stale tokens before this saver mounts.
+    saveAtStart: true,
   });
 
   useDBSaveEffect({
