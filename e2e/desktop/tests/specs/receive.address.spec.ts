@@ -144,6 +144,7 @@ test.describe("Receive", () => {
       await app.receive.expectValidReceiveAddress(displayedAddress);
       await app.speculos.expectValidAddressDevice(tokenAccount.account, displayedAddress);
       await app.receive.expectApproveLabel();
+      await app.receive.expectDeviceDeprecationError("Ledger Nano S");
     },
   );
 });
