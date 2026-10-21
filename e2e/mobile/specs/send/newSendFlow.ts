@@ -2,6 +2,7 @@ import { Transaction, TransactionType } from "@ledgerhq/live-e2e-shared/models/T
 import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { setEnv } from "@shared/env";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
 
@@ -30,13 +31,19 @@ export const beforeAllTokenFunction = async (
   await app.mainNavigation.waitForWallet40Ready();
 };
 
+type TokenSendTestOptions = SendTestOptions & {
+  /** Never broadcasts, even on a broadcast run, so it locks no account. */
+  disableBroadcast?: boolean;
+};
+
 export function runNewSendFlowTokenTest(
   transaction: TransactionType,
   tmsLinks: string[],
   tags: string[],
-  options?: SendTestOptions,
+  options?: TokenSendTestOptions,
 ) {
-  declareBroadcastAccounts(transaction.accountToDebit);
+  if (options?.disableBroadcast) setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+  else declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: sendFolder(transaction.accountToDebit),
     scenario: SendScenario.TRANSACTION,

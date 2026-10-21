@@ -44,9 +44,14 @@ export function runDelegateTest(
   delegation: DelegateType,
   tmsLinks: string[],
   tags: string[],
-  options?: { skipLNS?: boolean },
+  options?: {
+    skipLNS?: boolean;
+    /** Never broadcasts, even on a broadcast run, so it locks no account. */
+    disableBroadcast?: boolean;
+  },
 ) {
-  declareBroadcastAccounts(delegation.account);
+  if (options?.disableBroadcast) setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+  else declareBroadcastAccounts(delegation.account);
   setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
