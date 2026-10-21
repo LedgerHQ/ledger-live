@@ -12,11 +12,14 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommand
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
+import { holdLockLikeBroadcastOnlyFlow } from "tests/utils/lockPlaceholder";
 
 const xrayTicket = "B2CQA-5632";
 const fromAccount = TokenAccount.ETH_USDC_1;
 const approvalLock = exclusiveLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_1;
+const flowTitle = `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`;
+const flowTags = [...DEVICE_TAGS, "@ethereum", "@family-evm"];
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
   SwapProvider.UNISWAP,
@@ -27,6 +30,9 @@ const eligibleProviders = [
 ];
 // Approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
 const APPROVAL_TEST_TIMEOUT_MS = 480_000;
+
+// 96 s on the 2026-10-19 broadcast nightly.
+holdLockLikeBroadcastOnlyFlow({ flowTitle, tags: flowTags, lock: approvalLock, holdMs: 96_000 });
 
 test.describe("Swap - token approval", { lock: approvalLock.names }, () => {
   test.skip(
@@ -58,9 +64,9 @@ test.describe("Swap - token approval", { lock: approvalLock.names }, () => {
   });
 
   test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`,
+    flowTitle,
     {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
+      tag: flowTags,
       annotation: [
         {
           type: "TMS",
