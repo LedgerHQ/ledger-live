@@ -15,10 +15,10 @@ import {
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { buildTags } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
-import { broadcastLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/broadcastLock";
 
 const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
-const suiLock = broadcastLockFor({ broadcastAccounts: [suiAccount.account] });
+const suiLock = exclusiveLockFor({ broadcastAccounts: [suiAccount.account] });
 
 test.describe("Undelegate", { lock: suiLock.names }, () => {
   test.use({
@@ -59,7 +59,7 @@ test.describe("Undelegate", { lock: suiLock.names }, () => {
   );
 });
 
-const minaPairLock = broadcastLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
+const minaPairLock = exclusiveLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
 
 // Tests are skipped while waiting for LIVE-37757 to be done
 test.describe.skip("Undelegate - MINA", { lock: minaPairLock.names }, () => {

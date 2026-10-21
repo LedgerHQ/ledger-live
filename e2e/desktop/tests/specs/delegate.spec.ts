@@ -26,7 +26,7 @@ import type { Application } from "tests/page";
 import type { DelegateTxType } from "tests/page/drawer/delegate.drawer";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
-import { broadcastLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/broadcastLock";
 
 const DISABLE_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "1" };
 // `getEnv` does not read process.env in the test runner, so it would always return the default here.
@@ -162,7 +162,7 @@ async function completeProviderStep(app: Application, provider: string, step: Pr
 for (const scenario of delegateScenarios) {
   const { delegate } = scenario;
   const { currency } = delegate.account;
-  const delegateLock = broadcastLockFor({
+  const delegateLock = exclusiveLockFor({
     broadcastAccounts: scenario.disableBroadcast ? [] : [delegate.account],
   });
 
@@ -248,7 +248,7 @@ test.describe("Delegate", () => {
   );
 });
 
-const seiLock = broadcastLockFor({ broadcastAccounts: [Account.SEI_EVM_1] });
+const seiLock = exclusiveLockFor({ broadcastAccounts: [Account.SEI_EVM_1] });
 
 test.describe("Delegate", { lock: seiLock.names }, () => {
   const seiDelegation = new Delegate(Account.SEI_EVM_1, "1", "first-available");
@@ -300,7 +300,7 @@ test.describe("Delegate", { lock: seiLock.names }, () => {
 });
 
 const celoStaking = new Delegate(Account.CELO_1, "0.001", "N/A");
-const celoLock = broadcastLockFor({ broadcastAccounts: [celoStaking.account] });
+const celoLock = exclusiveLockFor({ broadcastAccounts: [celoStaking.account] });
 
 // Lock and Vote spend from the same account, and the Celo bridge reads its nonce from the latest
 // block: run in parallel, the second transaction reuses the first one's nonce and is rejected.
@@ -573,7 +573,7 @@ for (const scenario of stakingLiveAppScenarios) {
   });
 }
 
-const minaPairLock = broadcastLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
+const minaPairLock = exclusiveLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
 
 // Tests are skipped while waiting for LIVE-37757 to be done
 test.describe.skip("Delegate - MINA", { lock: minaPairLock.names }, () => {
@@ -626,7 +626,7 @@ test.describe.skip("Delegate - MINA", { lock: minaPairLock.names }, () => {
   );
 });
 
-const minaRedelegationLock = broadcastLockFor({ broadcastAccounts: [MINA_REDELEGATION_ACCOUNT] });
+const minaRedelegationLock = exclusiveLockFor({ broadcastAccounts: [MINA_REDELEGATION_ACCOUNT] });
 
 // Tests are skipped while waiting for LIVE-37757 to be done
 test.describe.skip("Redelegate - MINA", { lock: minaRedelegationLock.names }, () => {

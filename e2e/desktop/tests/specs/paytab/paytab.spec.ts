@@ -19,7 +19,7 @@ import {
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
-import { broadcastLockFor } from "tests/utils/broadcastLock";
+import { exclusiveLockFor } from "tests/utils/broadcastLock";
 
 const ALL_STABLECOINS = "All stablecoins";
 const FILTER_TICKER = "USDT";
@@ -31,8 +31,8 @@ const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
 const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
-const paymentLock = broadcastLockFor({ broadcastAccounts: [transaction.accountToDebit] });
-const cardLock = broadcastLockFor({ sharedResources: [PAY_CARD] });
+const paymentLock = exclusiveLockFor({ broadcastAccounts: [transaction.accountToDebit] });
+const cardLock = exclusiveLockFor({ sharedResources: [PAY_CARD] });
 
 function payContactSeed(address: string): ContactSeed {
   return {

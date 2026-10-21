@@ -249,8 +249,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
-    # A broadcast run (E2E_BROADCAST_ENABLED) can also wait up to 30 minutes for each busy broadcast lock.
-    timeout-minutes: ${{ (inputs.enable_broadcast || github.event.schedule == '0 1 * * 1') && 70 || 40 }}
+    timeout-minutes: 90
     env:
       NODE_OPTIONS: "--max-old-space-size=14336"
       INSTRUMENT_BUILD: true
@@ -451,6 +450,9 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
+        # Every run can also wait up to 30 minutes for a busy broadcast lock: without broadcast, tests
+        # still lock the Pay card and the accounts CLI token approvals broadcast from.
+        timeout-minutes: 70
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
@@ -491,7 +493,7 @@ jobs:
             repeat_each=${{ inputs.repeat_each }}
 
       - name: Upload Allure test results artifact
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results${{ matrix.artifact_suffix }}

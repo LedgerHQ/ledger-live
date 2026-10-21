@@ -7,9 +7,7 @@ import { withTemporarySpeculos } from "@e2e/utils/speculosUtils";
 import { revokeAllowance } from "@e2e/utils/allowanceUtils";
 import { QUOTES_FETCH_TIMEOUT } from "@e2e/utils/constants";
 import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
-import { holderLabel } from "@e2e/helpers/broadcastLock";
-import { acquireAccountBroadcastLock } from "@ledgerhq/live-e2e-shared/broadcastLock";
-import { needsTokenAllowance, type TokenAllowanceProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
@@ -71,50 +69,17 @@ export async function performSwapUntilQuoteSelectionStep(
     await app.swapLiveApp.waitForQuotes();
   }
 }
-
 export async function ensureTokenApproval(
   fromAccount: Account | TokenAccount,
   provider: SwapProvider,
   minAmount: string,
 ) {
   if (!needsTokenAllowance(fromAccount, provider)) return;
-  if (!(await isTokenApprovalExpected(fromAccount, provider, minAmount))) return;
+  const approvalNeeded = await isTokenApprovalExpected(fromAccount, provider, minAmount);
+  if (!approvalNeeded) return;
+    
   // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
   await revokeTokenApproval(fromAccount, provider);
-  await approveToken(fromAccount, provider, minAmount);
-}
-
-/**
- * {@link ensureTokenApproval} for a spec that does not hold the account's broadcast lock: the
- * allowance check and the approval run under it, so no other machine's revoke lands in between.
- * The approval waits for its confirmation, so the lock is handed back without the settle window.
- */
-export async function ensureTokenApprovalUnderLock(
-  fromAccount: Account | TokenAccount,
-  provider: SwapProvider,
-  minAmount: string,
-) {
-  if (!needsTokenAllowance(fromAccount, provider)) return;
-
-  const lease = await acquireAccountBroadcastLock([fromAccount], holderLabel(), {
-    allowNested: true,
-  });
-  try {
-    if (await isTokenApprovalExpected(fromAccount, provider, minAmount)) {
-      // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
-      await revokeTokenApproval(fromAccount, provider);
-      await approveToken(fromAccount, provider, minAmount);
-    }
-  } finally {
-    await lease.abandon();
-  }
-}
-
-async function approveToken(
-  fromAccount: Account | TokenAccount,
-  provider: TokenAllowanceProvider,
-  minAmount: string,
-) {
   await withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {
     const result = await approveTokenCommand(
       fromAccount,

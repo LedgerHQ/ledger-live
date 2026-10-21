@@ -6,42 +6,19 @@ and one is rejected. The lock lives in `libs/live-e2e-shared/src/broadcastLock.t
 
 ## Declare what a test broadcasts from
 
-Declare the account the app spends from, e.g. `accountToDebit` or `delegation.account`. A token
-account locks its parent: both spend from the same address.
-
-**Mobile.** Declare it while the spec is collected, before `describe`
-(`e2e/mobile/helpers/broadcastLock.ts`):
-
-```ts
-export function runDelegateTest(delegation: DelegateType /* … */) {
-  declareBroadcastAccounts(delegation.account);
-  describe("Delegate", () => {
-```
-
-**Desktop.** Give the names to Playwright's `lock` detail and the fixtures to `test.use`
-(`e2e/desktop/tests/utils/broadcastLock.ts`):
-
-```ts
-const delegateLock = broadcastLockFor({ broadcastAccounts: [delegate.account] });
-
-test.describe("Delegate", { lock: delegateLock.names }, () => {
-  test.use(delegateLock.fixtures);
-```
-
-The `lock` detail only keeps this run's workers apart. The fixture keeps other machines away too.
+What to declare: [E2E conventions](e2e-conventions.md#broadcast-lock). How:
+[Mobile](../mobile/docs/e2e-mobile-conventions.md#broadcast-lock-implementation) and
+[Desktop](../desktop/docs/e2e-desktop-conventions.md#broadcast-lock-implementation).
 
 | Target | Mobile | Desktop | Locked |
 | --- | --- | --- | --- |
 | Account the app broadcasts from | `declareBroadcastAccounts` | `broadcastAccounts` | When the app broadcasts |
-| Account a CLI command broadcasts from | `ensureTokenApprovalUnderLock` in a `beforeAll` | `cliBroadcastAccounts` | Every run |
+| Account a CLI command broadcasts from | `declareCliBroadcastAccounts` | `cliBroadcastAccounts` | Every run |
 | Shared state, e.g. `PAY_CARD` | `declareSharedResources` | `sharedResources` | Every run |
 
 The app broadcasts on mobile unless `DISABLE_TRANSACTION_BROADCAST` is set, and on desktop when it
 is `0`. CI turns it on for the Monday desktop nightly, the Wednesday iOS nightly, the Friday
 Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast whatever the flag says.
-
-On mobile, a file-level `afterAll` runs after the release, so a cleanup that broadcasts goes inside
-a `describe`.
 
 ## How it works
 
@@ -95,9 +72,11 @@ passes (default 2), the next pass waits for busy locks.
 | `E2E_BROADCAST_LOCK_DEFERRAL_PASSES` | The `broadcast_deferral_passes` workflow input |
 | `E2E_BROADCAST_LOCK_DEFER` | The pass runners, on each pass. Do not set it |
 
-A broadcast run gets extra time for one full lock wait: the iOS step gets 120 min and the desktop
-job 70 min. Android's 90 min already covers it. Desktop broadcast runs share the
-`desktop-e2e-broadcast` concurrency group, so two never overlap.
+Every run gets time for one full lock wait, since a run without broadcast still locks the Pay card
+and CLI approval accounts. The iOS step's timeout includes 30 extra minutes (60 to 120 min, 120 on
+a broadcast run), and the desktop test step gets 70 min. Android's 90 min already covers it. The
+timeout is on the test step, so the results finished before it are still uploaded. Desktop
+broadcast runs share the `desktop-e2e-broadcast` concurrency group, so two never overlap.
 
 ## Reading the logs
 

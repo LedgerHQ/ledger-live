@@ -20,12 +20,21 @@ export const BROADCAST_LOCK_ACQUIRE_HOOK_TIMEOUT = BROADCAST_LOCK_ACQUIRE_TIMEOU
 export const BROADCAST_LOCK_RELEASE_HOOK_TIMEOUT = BROADCAST_LOCK_NESTED_DRAIN_MS + 60_000;
 
 const declaredAccounts: Account[] = [];
+const declaredCliAccounts: Account[] = [];
 const declaredResources: SharedResource[] = [];
 let lease: Lease | undefined;
 let specFinished = false;
 
 const accountsToLock = () => (isAppBroadcastDisabled() ? [] : declaredAccounts);
-const targetsToLock = (): LockTarget[] => [...accountsToLock(), ...declaredResources];
+const targetsToLock = (): LockTarget[] => [
+  ...accountsToLock(),
+  ...declaredCliAccounts,
+  ...declaredResources,
+];
+
+/** CLI broadcasts wait for their confirmation, so only an app broadcast leaves a settle window. */
+const specLease = (acquired: AbandonableLease): Lease =>
+  accountsToLock().length > 0 ? acquired : { release: () => acquired.abandon() };
 
 export const holderLabel = () => {
   const platform = process.env.DETOX_CONFIGURATION?.startsWith("ios") ? "ios" : "android";
@@ -44,6 +53,15 @@ const lockOptions = { allowNested: true };
  */
 export function declareBroadcastAccounts(...accounts: Account[]): void {
   declaredAccounts.push(...accounts);
+}
+
+/**
+ * Declares, while the spec file is collected, an account the spec broadcasts from with the CLI,
+ * e.g. a token approval. It is locked on every run along with the broadcast accounts, and the CLI
+ * broadcast runs under that lock.
+ */
+export function declareCliBroadcastAccounts(...accounts: Account[]): void {
+  declaredCliAccounts.push(...accounts);
 }
 
 /**
@@ -73,7 +91,7 @@ async function tryLockDeclaredBroadcastAccounts(): Promise<boolean> {
     await acquired.abandon();
     throw error;
   }
-  lease = acquired;
+  lease = specLease(acquired);
   return true;
 }
 
@@ -95,7 +113,7 @@ export async function lockDeclaredBroadcastAccounts(): Promise<void> {
     await acquired.abandon();
     return;
   }
-  lease = acquired;
+  lease = specLease(acquired);
 }
 
 export async function releaseDeclaredBroadcastAccounts(): Promise<void> {

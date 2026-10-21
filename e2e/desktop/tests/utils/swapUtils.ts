@@ -19,7 +19,6 @@ import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";
 import { withTemporarySpeculos } from "tests/utils/speculosUtils";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
-import { withBroadcastLockBudget } from "tests/utils/broadcastLock";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   test.use({
@@ -143,6 +142,10 @@ export const tokenApprovalBroadcastAccounts = (
   provider: SwapProvider,
 ): readonly Account[] => (needsTokenAllowance(fromAccount, provider) ? [fromAccount] : []);
 
+/**
+ * For a test whose broadcast lock fixture holds `fromAccount` in its `cliBroadcastAccounts`, so the
+ * check, the approval and the swap all run under the lock.
+ */
 export async function ensureTokenApproval(
   fromAccount: Account | TokenAccount,
   provider: SwapProvider,
@@ -160,17 +163,14 @@ export async function ensureTokenApproval(
 
   // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
   await revokeTokenApproval(fromAccount, provider);
-  const spender = provider.contractAddress;
-  await withBroadcastLockBudget(test.info(), () =>
-    withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {
-      const result = await approveTokenCommand(
-        fromAccount,
-        spender,
-        new BigNumber(minAmount).times(12).div(10).toFixed(),
-      );
-      await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
-    }),
-  );
+  await withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {
+    const result = await approveTokenCommand(
+      fromAccount,
+      provider.contractAddress,
+      new BigNumber(minAmount).times(12).div(10).toFixed(),
+    );
+    await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+  });
 }
 
 export async function revokeTokenApproval(
