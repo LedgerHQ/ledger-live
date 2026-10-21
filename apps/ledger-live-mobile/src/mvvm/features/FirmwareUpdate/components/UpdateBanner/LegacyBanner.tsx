@@ -4,7 +4,7 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { getDeviceIcon } from "LLM/utils/getDeviceIcon";
 import type { ViewProps, DrawerProps } from "./ViewProps";
-import UnsupportedUpdateDrawer from "./UnsupportedUpdateDrawer";
+import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
 
 type LegacyBannerProps = {
   lastConnectedDevice: ViewProps["lastConnectedDevice"];

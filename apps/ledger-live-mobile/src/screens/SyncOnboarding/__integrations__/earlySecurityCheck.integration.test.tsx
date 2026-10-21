@@ -27,7 +27,7 @@ jest.mock("@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware",
   }),
 }));
 
-jest.mock("../FirmwareUpdateAvailableDrawer", () => ({
+jest.mock("LLM/components/FirmwareUpdateAvailableDrawer", () => ({
   __esModule: true,
   default: ({ isOpen, onUpdate }: { isOpen: boolean; onUpdate: () => void }) =>
     isOpen ? (
