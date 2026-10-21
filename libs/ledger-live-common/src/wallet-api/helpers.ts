@@ -11,7 +11,7 @@ import type {
 } from "./types";
 import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
-import { isSameDomain } from "./manifestDomainUtils";
+import { isSameDomain, isUrlAllowedByManifestDomains } from "./manifestDomainUtils";
 
 export function isWalletAPISupportedCurrency(
   currency: Currency,
@@ -88,11 +88,15 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
  * accepted; http: is permitted in development so http://localhost manifests
  * can be loaded.
  *
+ * The URL's origin must also be listed in the manifest's `domains`, so a
+ * subdomain the manifest does not declare is rejected.
+ *
  * @param url - The URL to validate
- * @param manifestUrl - The manifest URL to compare against
- * @returns true if the URL passes the registrable-domain + protocol check
+ * @param manifest - The manifest whose URL and domains the URL is checked against
+ * @returns true if the URL passes the registrable-domain, protocol and manifest-domains checks
  */
-const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
+const isWhitelistedDomain = (url: string, manifest: AppManifest): boolean => {
+  const manifestUrl = manifest.url.toString();
   try {
     const parsedUrl = new URL(url);
     const parsedManifestUrl = new URL(manifestUrl);
@@ -129,6 +133,11 @@ const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
       return false;
     }
 
+    if (!isUrlAllowedByManifestDomains(url, manifest.domains ?? [])) {
+      log("wallet-api/helpers", "isWhitelistedDomain: URL origin not in manifest domains");
+      return false;
+    }
+
     return true;
   } catch (error) {
     // Invalid URL format
@@ -142,10 +151,7 @@ export const getInitialURL = (
   manifest: AppManifest,
 ) => {
   try {
-    if (
-      typeof inputs?.goToURL === "string" &&
-      isWhitelistedDomain(inputs.goToURL, manifest.url.toString())
-    ) {
+    if (typeof inputs?.goToURL === "string" && isWhitelistedDomain(inputs.goToURL, manifest)) {
       if (manifest.params) {
         const goToURL = new URL(inputs.goToURL);
         goToURL.searchParams.set("params", JSON.stringify(manifest.params));

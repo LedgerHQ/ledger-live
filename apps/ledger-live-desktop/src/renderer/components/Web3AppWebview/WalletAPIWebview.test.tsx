@@ -104,7 +104,7 @@ const callbacks = { onSuccess: jest.fn(), onError: jest.fn(), onCancel: jest.fn(
 describe("WalletAPIWebview UI hooks", () => {
   beforeAll(() => {
     Object.defineProperty(globalThis, "api", {
-      value: { appDirname: "/fake/path", openWindow: jest.fn() },
+      value: { appDirname: "/fake/path" },
       writable: true,
     });
   });

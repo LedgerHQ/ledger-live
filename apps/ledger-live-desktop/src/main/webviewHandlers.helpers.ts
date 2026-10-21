@@ -3,6 +3,13 @@
  * imports so they can be unit-tested without mocking the Electron runtime.
  */
 import path from "node:path";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import {
+  ALLOWED_ORIGINS_PREFERENCE,
+  UNRESTRICTED_ORIGINS,
+  parseAllowedOrigins,
+  type WebviewAllowedOrigins,
+} from "~/bridge/webviewAllowedOrigins";
 
 const WEBVIEW_PRELOADS: ReadonlySet<string> = new Set([
   "webviewPreloader.bundle.js",
@@ -40,6 +47,59 @@ export function applyWebviewAttachPolicy(
   }
 
   return isSrcAllowed(src);
+}
+
+/**
+ * Removes the renderer-supplied allowed origins from a <webview>'s preferences
+ * (Electron does not know the key) and returns them.
+ */
+export function takeAllowedOrigins(
+  webPreferences: Electron.WebPreferences,
+): WebviewAllowedOrigins | undefined {
+  const preferences = webPreferences as Record<string, unknown>;
+  const allowedOrigins = parseAllowedOrigins(preferences[ALLOWED_ORIGINS_PREFERENCE]);
+  delete preferences[ALLOWED_ORIGINS_PREFERENCE];
+  return allowedOrigins;
+}
+
+/**
+ * Builds the main-frame origin check of Live App <webview> guests.
+ *
+ * A guest without allowed origins fails closed. `about:blank` always passes: it is
+ * where a blocked guest is sent. Ledger Live's own deep links pass for any guest
+ * that has allowed origins, since Ledger Live handles them itself.
+ */
+export function createMainFrameOriginChecker(
+  supportedSchemes: string[],
+): (url: string, allowedOrigins: WebviewAllowedOrigins | undefined) => boolean {
+  const deepLinkProtocols = new Set(supportedSchemes.map(scheme => `${scheme}:`));
+
+  return (url, allowedOrigins) => {
+    if (url === "about:blank") return true;
+    if (allowedOrigins === undefined) return false;
+
+    let protocol: string;
+    try {
+      protocol = new URL(url).protocol;
+    } catch {
+      return false;
+    }
+
+    if (deepLinkProtocols.has(protocol)) return true;
+    if (allowedOrigins === UNRESTRICTED_ORIGINS) return true;
+    return isUrlAllowedByManifestDomains(url, allowedOrigins);
+  };
+}
+
+/**
+ * Returns the origin of a URL for logs, without its path or query.
+ */
+export function getLoggableOrigin(url: string): string {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "invalid URL";
+  }
 }
 
 /**

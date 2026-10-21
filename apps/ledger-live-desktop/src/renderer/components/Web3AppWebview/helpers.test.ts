@@ -5,6 +5,7 @@ import { track } from "@shared/analytics";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewTag } from "./types";
 import type { RefObject } from "react";
+import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
@@ -147,6 +148,46 @@ describe("useWebviewState", () => {
       rerender({ manifest: updatedManifest });
 
       expect(result.current.webviewProps.src).toBe("https://new.example.com");
+    });
+  });
+
+  describe("webviewProps.webpreferences", () => {
+    beforeEach(() => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+    });
+
+    it("carries the manifest domains when the domain check is on", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        serializeAllowedOrigins(["https://example.com"]),
+      );
+    });
+
+    it("carries an empty origin list when the manifest has no domains", () => {
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: { ...mockManifest, domains: undefined as unknown as string[] },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(serializeAllowedOrigins([]));
+    });
+
+    it("marks the guest as unrestricted when the domain check is off", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: false }, null),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        serializeAllowedOrigins(UNRESTRICTED_ORIGINS),
+      );
     });
   });
 

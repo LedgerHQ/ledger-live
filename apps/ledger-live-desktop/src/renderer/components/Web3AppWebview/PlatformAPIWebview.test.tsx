@@ -176,7 +176,7 @@ const mockUseWebviewState = jest.mocked(useWebviewState);
 describe("PlatformAPIWebview", () => {
   beforeAll(() => {
     Object.defineProperty(global, "api", {
-      value: { appDirname: "/fake/path", openWindow: jest.fn() },
+      value: { appDirname: "/fake/path" },
       writable: true,
     });
   });

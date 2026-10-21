@@ -3,8 +3,12 @@ import {
   WEBVIEW_GUEST_CSP,
   applyWebviewAttachPolicy,
   createLiveAppSchemeChecker,
+  createMainFrameOriginChecker,
+  getLoggableOrigin,
   mergeCspHeaders,
+  takeAllowedOrigins,
 } from "./webviewHandlers.helpers";
+import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
 
 describe("createLiveAppSchemeChecker", () => {
   const isAllowed = createLiveAppSchemeChecker(["ledgerlive", "ledgerwallet"]);
@@ -246,4 +250,98 @@ describe("applyWebviewAttachPolicy", () => {
       expect(applyWebviewAttachPolicy({}, src, options)).toBe(false);
     },
   );
+});
+
+const preferencesFrom = (attribute: string) =>
+  Object.fromEntries(
+    attribute.split(",").map(entry => entry.split("=") as [string, string]),
+  ) as Electron.WebPreferences;
+
+describe("takeAllowedOrigins", () => {
+  it("reads the origins serialized by the renderer and removes them from the preferences", () => {
+    const webPreferences = preferencesFrom(
+      `nativeWindowOpen=no,${serializeAllowedOrigins(["https://a.com", "https://*.b.com"])}`,
+    );
+
+    expect(takeAllowedOrigins(webPreferences)).toEqual(["https://a.com", "https://*.b.com"]);
+    expect(webPreferences).toEqual({ nativeWindowOpen: "no" });
+  });
+
+  it("reads an empty origin list", () => {
+    expect(takeAllowedOrigins(preferencesFrom(serializeAllowedOrigins([])))).toEqual([]);
+  });
+
+  it("reads the unrestricted marker", () => {
+    expect(takeAllowedOrigins(preferencesFrom(serializeAllowedOrigins(UNRESTRICTED_ORIGINS)))).toBe(
+      UNRESTRICTED_ORIGINS,
+    );
+  });
+
+  it.each([
+    ["missing", {}],
+    ["coerced to a boolean by Electron", { ledgerLiveAllowedOrigins: true }],
+    ["not JSON", { ledgerLiveAllowedOrigins: "https://a.com" }],
+    ["not a string array", { ledgerLiveAllowedOrigins: encodeURIComponent("[1]") }],
+    ["not an array", { ledgerLiveAllowedOrigins: encodeURIComponent('"https://a.com"') }],
+  ])("returns undefined when the value is %s", (_, webPreferences) => {
+    expect(takeAllowedOrigins(webPreferences as Electron.WebPreferences)).toBeUndefined();
+  });
+});
+
+describe("createMainFrameOriginChecker", () => {
+  const isAllowed = createMainFrameOriginChecker(["ledgerlive", "ledgerwallet"]);
+  const origins = ["https://app.example.com", "https://*.cdn.example.com"];
+
+  it.each([
+    ["https://app.example.com/path?q=1"],
+    ["https://img.cdn.example.com/"],
+    ["about:blank"],
+    ["ledgerlive://discover"],
+    ["ledgerwallet://deeplink"],
+  ])("allows %s for a guest with manifest origins", url => {
+    expect(isAllowed(url, origins)).toBe(true);
+  });
+
+  it.each([
+    ["https://evil.com"],
+    ["https://app.example.com.evil.com"],
+    ["http://app.example.com"],
+    ["https://example.com"],
+    ["data:text/html,hi"],
+    ["javascript:alert(1)"],
+    ["file:///etc/hosts"],
+    ["about:srcdoc"],
+    ["not a url"],
+  ])("blocks %s for a guest with manifest origins", url => {
+    expect(isAllowed(url, origins)).toBe(false);
+  });
+
+  it("blocks everything but about:blank for a guest without origins", () => {
+    expect(isAllowed("https://app.example.com", undefined)).toBe(false);
+    expect(isAllowed("ledgerlive://discover", undefined)).toBe(false);
+    expect(isAllowed("about:blank", undefined)).toBe(true);
+  });
+
+  it("blocks everything but about:blank and deep links for an empty origin list", () => {
+    expect(isAllowed("https://app.example.com", [])).toBe(false);
+    expect(isAllowed("ledgerlive://discover", [])).toBe(true);
+    expect(isAllowed("about:blank", [])).toBe(true);
+  });
+
+  it("allows any web origin when unrestricted", () => {
+    expect(isAllowed("https://evil.com", UNRESTRICTED_ORIGINS)).toBe(true);
+    expect(isAllowed("not a url", UNRESTRICTED_ORIGINS)).toBe(false);
+  });
+});
+
+describe("getLoggableOrigin", () => {
+  it("keeps only the origin", () => {
+    expect(getLoggableOrigin("https://app.example.com:8443/path?token=secret#x")).toBe(
+      "https://app.example.com:8443",
+    );
+  });
+
+  it("does not throw on malformed URLs", () => {
+    expect(getLoggableOrigin("not a url")).toBe("invalid URL");
+  });
 });

@@ -411,38 +411,20 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       setWidgetLoaded(true);
     }, [manifest, tracking]);
 
-    const handleDomReady = useCallback(() => {
-      const webview = webviewRef.current;
-      if (!webview) {
-        return;
-      }
-
-      const id = webview.getWebContentsId();
-
-      // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-      // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
-      globalThis.api?.openWindow(
-        id,
-        manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined,
-      );
-    }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
-
     useEffect(() => {
       const webview = webviewRef.current;
 
       if (webview) {
         webview.addEventListener("did-finish-load", handleLoad);
-        webview.addEventListener("dom-ready", handleDomReady);
       }
 
       return () => {
         if (webview) {
           webview.removeEventListener("did-finish-load", handleLoad);
-          webview.removeEventListener("dom-ready", handleDomReady);
         }
       };
       // oxlint-disable-next-line react-hooks/exhaustive-deps
-    }, [handleLoad, handleDomReady]);
+    }, [handleLoad]);
 
     const isNetworkErrorVisible = !webviewState.loading && webviewState.isAppUnavailable;
 

@@ -295,7 +295,6 @@ function useWebView(
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
-  manifestDomainCheckEnabled?: boolean,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
@@ -370,39 +369,21 @@ function useWebView(
     [onDappMessage, onMessage],
   );
 
-  const handleDomReady = useCallback(() => {
-    const webview = webviewRef.current;
-    if (!webview) {
-      return;
-    }
-
-    const id = webview.getWebContentsId();
-
-    // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-    // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
-    globalThis.api?.openWindow(
-      id,
-      manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined,
-    );
-  }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
-
   useEffect(() => {
     const webview = webviewRef.current;
 
     if (webview) {
       webview.addEventListener("did-finish-load", onLoad);
       webview.addEventListener("ipc-message", handleMessage);
-      webview.addEventListener("dom-ready", handleDomReady);
     }
 
     return () => {
       if (webview) {
         webview.removeEventListener("did-finish-load", onLoad);
         webview.removeEventListener("ipc-message", handleMessage);
-        webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
-  }, [handleDomReady, handleMessage, onLoad, webviewRef]);
+  }, [handleMessage, onLoad, webviewRef]);
 
   const webviewStyle = useMemo(() => {
     return {
@@ -493,7 +474,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking,
       serverRef,
       customWebviewStyle,
-      manifestDomainCheckEnabled,
     );
     const isNetworkErrorVisible = !webviewState.loading && webviewState.isAppUnavailable;
     const displayedWebviewStyle = useMemo(
@@ -537,8 +517,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           // @ts-expect-error: see above comment
           allowpopups="true"
-          webpreferences="nativeWindowOpen=no"
           {...webviewProps}
+          webpreferences={`nativeWindowOpen=no,${webviewProps.webpreferences}`}
           {...webviewPartition}
         />
         {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}

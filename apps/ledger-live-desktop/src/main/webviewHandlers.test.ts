@@ -1,11 +1,9 @@
-import { app, ipcMain, session, webContents } from "electron";
+import { app, session, webContents } from "electron";
 import { closeTrackedWebviewDevTools, setupWebviewHandlers } from "./webviewHandlers";
+import { UNRESTRICTED_ORIGINS, serializeAllowedOrigins } from "~/bridge/webviewAllowedOrigins";
 
 jest.mock("electron", () => ({
   app: {
-    on: jest.fn(),
-  },
-  ipcMain: {
     on: jest.fn(),
   },
   session: {
@@ -17,12 +15,10 @@ jest.mock("electron", () => ({
     },
   },
   webContents: {
-    fromId: jest.fn(),
     getAllWebContents: jest.fn(() => []),
   },
 }));
 
-type DomReadyHandler = (event: Electron.IpcMainEvent, id: number, domains?: string[]) => void;
 type WebContentsCreatedHandler = (event: Electron.Event, contents: Electron.WebContents) => void;
 type SchemeGuard = (event: Electron.Event<{ url: string }>) => void;
 type ContentsListener = (...args: unknown[]) => void;
@@ -46,6 +42,30 @@ const makeOwner = (id: number, type: string, devToolsWebContents: unknown) => ({
   devToolsWebContents,
 });
 
+const getBeforeRequest = () =>
+  jest.mocked(session.defaultSession.webRequest.onBeforeRequest).mock.calls[0] as unknown as [
+    Electron.WebRequestFilter,
+    (
+      details: {
+        url: string;
+        resourceType: string;
+        webContents?: { id: number; getType: () => string };
+      },
+      callback: jest.Mock,
+    ) => void,
+  ];
+
+const makeGuest = (id: number) => ({
+  id,
+  getType: jest.fn(() => "webview"),
+  on: jest.fn(),
+  once: jest.fn(),
+  setWindowOpenHandler: jest.fn(),
+  loadURL: jest.fn(() => Promise.resolve()),
+});
+
+type Guest = ReturnType<typeof makeGuest>;
+
 describe("setupWebviewHandlers", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -53,52 +73,10 @@ describe("setupWebviewHandlers", () => {
       .__ledgerLiveWebviewHandlersSetup__;
   });
 
-  const getDomReadyHandler = () =>
-    (jest.mocked(ipcMain.on) as jest.Mock).mock.calls.find(
-      ([eventName]) => eventName === "webview-dom-ready",
-    )?.[1] as DomReadyHandler | undefined;
-
   const getWebContentsCreatedHandler = () =>
     (jest.mocked(app.on) as jest.Mock).mock.calls.find(
       ([eventName]) => eventName === "web-contents-created",
     )?.[1] as WebContentsCreatedHandler | undefined;
-
-  it("ignores webview-dom-ready events for non-webview contents", () => {
-    setupWebviewHandlers(["ledgerlive"]);
-
-    const domReadyHandler = getDomReadyHandler();
-
-    const nonWebviewContents = {
-      getType: jest.fn(() => "window"),
-      off: jest.fn(),
-      on: jest.fn(),
-    };
-    jest.mocked(webContents.fromId).mockReturnValue(nonWebviewContents as never);
-
-    domReadyHandler?.({} as Electron.IpcMainEvent, 42, ["https://app.example.com"]);
-
-    expect(nonWebviewContents.getType).toHaveBeenCalled();
-    expect(nonWebviewContents.off).not.toHaveBeenCalled();
-    expect(nonWebviewContents.on).not.toHaveBeenCalled();
-  });
-
-  it("attaches a will-navigate handler for webview contents", () => {
-    setupWebviewHandlers(["ledgerlive"]);
-
-    const domReadyHandler = getDomReadyHandler();
-
-    const webviewContents = {
-      getType: jest.fn(() => "webview"),
-      off: jest.fn(),
-      on: jest.fn(),
-    };
-    jest.mocked(webContents.fromId).mockReturnValue(webviewContents as never);
-
-    domReadyHandler?.({} as Electron.IpcMainEvent, 7, ["https://app.example.com"]);
-
-    expect(webviewContents.on).toHaveBeenCalledWith("will-navigate", expect.any(Function));
-    expect(webviewContents.off).not.toHaveBeenCalled();
-  });
 
   it("registers its one-time listeners during setup", () => {
     setupWebviewHandlers(["ledgerlive"]);
@@ -110,21 +88,202 @@ describe("setupWebviewHandlers", () => {
     );
   });
 
-  it("cancels file requests from webview guests only", () => {
+  it("cancels file frame loads from webview guests only", () => {
     setupWebviewHandlers(["ledgerlive"]);
 
-    const [filter, listener] = jest.mocked(session.defaultSession.webRequest.onBeforeRequest).mock
-      .calls[0] as unknown as [
-      Electron.WebRequestFilter,
-      (details: { webContents?: { getType: () => string } }, callback: jest.Mock) => void,
-    ];
+    const [filter, listener] = getBeforeRequest();
     const callback = jest.fn();
 
-    listener({ webContents: { getType: () => "webview" } }, callback);
-    listener({ webContents: { getType: () => "window" } }, callback);
+    listener(
+      {
+        url: "file:///etc/hosts",
+        resourceType: "subFrame",
+        webContents: { id: 7, getType: () => "webview" },
+      },
+      callback,
+    );
+    listener(
+      {
+        url: "file:///etc/hosts",
+        resourceType: "mainFrame",
+        webContents: { id: 1, getType: () => "window" },
+      },
+      callback,
+    );
 
-    expect(filter).toEqual({ urls: ["file://*/*"] });
-    expect(callback.mock.calls).toEqual([[{ cancel: true }], [{ cancel: false }]]);
+    expect(filter).toEqual({ urls: ["<all_urls>"], types: ["mainFrame", "subFrame"] });
+    expect(callback.mock.calls).toEqual([[{ cancel: true }], [{}]]);
+  });
+
+  describe("manifest origin enforcement", () => {
+    type AttachHandler = (
+      event: { preventDefault: jest.Mock },
+      webPreferences: Electron.WebPreferences,
+      params: Record<string, string>,
+    ) => void;
+
+    // Mirrors Electron's createGuest: `will-attach-webview` on the embedder, then
+    // `web-contents-created` for the guest, synchronously.
+    const attachGuest = (
+      webpreferences: string | undefined,
+      { id = 7, src = "https://app.example.com" } = {},
+    ): Guest => {
+      const embedder = makeWindow();
+      getWebContentsCreatedHandler()?.(
+        {} as Electron.Event,
+        embedder as unknown as Electron.WebContents,
+      );
+      const attach = embedder.on.mock.calls.find(
+        ([eventName]) => eventName === "will-attach-webview",
+      )?.[1] as AttachHandler;
+
+      const webPreferences = Object.fromEntries(
+        (webpreferences ?? "")
+          .split(",")
+          .filter(Boolean)
+          .map(entry => entry.split("=")),
+      ) as Electron.WebPreferences;
+      const preventDefault = jest.fn();
+      attach({ preventDefault }, webPreferences, { src });
+      if (preventDefault.mock.calls.length > 0) return makeGuest(id);
+
+      const guest = makeGuest(id);
+      getWebContentsCreatedHandler()?.(
+        {} as Electron.Event,
+        guest as unknown as Electron.WebContents,
+      );
+      return guest;
+    };
+
+    const requestMainFrame = (guest: Guest, url: string) => {
+      const [, listener] = getBeforeRequest();
+      const callback = jest.fn();
+      listener({ url, resourceType: "mainFrame", webContents: guest }, callback);
+      return callback.mock.calls[0][0];
+    };
+
+    const getGuestListeners = (guest: Guest, eventName: string) =>
+      guest.on.mock.calls
+        .filter(([name]) => name === eventName)
+        .map(([, listener]) => listener as ContentsListener);
+
+    const emitWillEvent = (guest: Guest, eventName: string, url: string, isMainFrame = true) => {
+      const preventDefault = jest.fn();
+      for (const listener of getGuestListeners(guest, eventName)) {
+        listener({ url, isMainFrame, preventDefault });
+      }
+      return preventDefault;
+    };
+
+    const emitDidFrameNavigate = (guest: Guest, url: string, isMainFrame = true) => {
+      for (const listener of getGuestListeners(guest, "did-frame-navigate")) {
+        listener({}, url, 200, "OK", isMainFrame, 1, 1);
+      }
+    };
+
+    const domains = serializeAllowedOrigins(["https://app.example.com"]);
+
+    beforeEach(() => {
+      jest.spyOn(console, "warn").mockImplementation(() => {});
+      setupWebviewHandlers(["ledgerlive"]);
+    });
+
+    afterEach(() => {
+      jest.mocked(console.warn).mockRestore();
+    });
+
+    it("lets main-frame loads through only on the manifest origins", () => {
+      const guest = attachGuest(`nativeWindowOpen=no,${domains}`);
+
+      expect(requestMainFrame(guest, "https://app.example.com/path")).toEqual({});
+      expect(requestMainFrame(guest, "ledgerlive://discover")).toEqual({});
+      expect(requestMainFrame(guest, "https://evil.com/")).toEqual({ cancel: true });
+      expect(requestMainFrame(guest, "http://app.example.com/")).toEqual({ cancel: true });
+      expect(console.warn).toHaveBeenCalledWith(expect.any(String), {
+        origin: "https://evil.com",
+      });
+    });
+
+    it("does not check subframe loads against the manifest origins", () => {
+      const guest = attachGuest(domains);
+      const [, listener] = getBeforeRequest();
+      const callback = jest.fn();
+
+      listener(
+        { url: "https://3ds.bank.example/", resourceType: "subFrame", webContents: guest },
+        callback,
+      );
+
+      expect(callback).toHaveBeenCalledWith({});
+    });
+
+    it("fails closed for a guest attached without allowed origins", () => {
+      const guest = attachGuest("nativeWindowOpen=no");
+
+      expect(requestMainFrame(guest, "https://app.example.com/")).toEqual({ cancel: true });
+    });
+
+    it("fails closed for a guest whose attach was blocked", () => {
+      attachGuest(domains, { src: "file:///etc/hosts" });
+      const guest = makeGuest(8);
+      getWebContentsCreatedHandler()?.(
+        {} as Electron.Event,
+        guest as unknown as Electron.WebContents,
+      );
+
+      expect(requestMainFrame(guest, "https://app.example.com/")).toEqual({ cancel: true });
+    });
+
+    it("binds origins to the guest they were attached with", () => {
+      const first = attachGuest(domains, { id: 7 });
+      const second = attachGuest(serializeAllowedOrigins(["https://other.example"]), { id: 8 });
+
+      expect(requestMainFrame(first, "https://other.example/")).toEqual({ cancel: true });
+      expect(requestMainFrame(second, "https://other.example/")).toEqual({});
+      expect(requestMainFrame(second, "https://app.example.com/")).toEqual({ cancel: true });
+    });
+
+    it("allows any web origin when the domain check is off", () => {
+      const guest = attachGuest(serializeAllowedOrigins(UNRESTRICTED_ORIGINS));
+
+      expect(requestMainFrame(guest, "https://evil.com/")).toEqual({});
+    });
+
+    it("forgets a guest's origins once it is destroyed", () => {
+      const guest = attachGuest(domains);
+      const destroyed = guest.once.mock.calls.find(([name]) => name === "destroyed")?.[1];
+
+      destroyed();
+
+      expect(requestMainFrame(guest, "https://app.example.com/")).toEqual({ cancel: true });
+    });
+
+    it.each(["will-navigate", "will-redirect"])(
+      "cancels %s early for a main frame leaving the manifest origins",
+      eventName => {
+        const guest = attachGuest(domains);
+
+        expect(emitWillEvent(guest, eventName, "https://evil.com/")).toHaveBeenCalled();
+        expect(
+          emitWillEvent(guest, eventName, "https://app.example.com/next"),
+        ).not.toHaveBeenCalled();
+        expect(emitWillEvent(guest, eventName, "https://evil.com/", false)).not.toHaveBeenCalled();
+      },
+    );
+
+    it("sends a guest that committed a disallowed main frame to about:blank", () => {
+      const guest = attachGuest(domains);
+
+      emitDidFrameNavigate(guest, "https://app.example.com/");
+      emitDidFrameNavigate(guest, "https://evil.com/", false);
+      expect(guest.loadURL).not.toHaveBeenCalled();
+
+      emitDidFrameNavigate(guest, "https://evil.com/");
+      expect(guest.loadURL).toHaveBeenCalledWith("about:blank");
+
+      emitDidFrameNavigate(guest, "about:blank");
+      expect(guest.loadURL).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("will-attach-webview", () => {

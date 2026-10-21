@@ -46,7 +46,23 @@ export function isSameDomain(url1: string | undefined, url2: string | undefined)
 }
 
 /**
+ * A custom URL may replace a manifest URL only if it stays on the same base domain
+ * and its origin is listed in the manifest's `domains`.
+ */
+function isCustomDappUrlAllowed(
+  customDappUrl: string,
+  originalUrl: string | undefined,
+  domains: string[] | undefined,
+): boolean {
+  return (
+    isSameDomain(customDappUrl, originalUrl) &&
+    isUrlAllowedByManifestDomains(customDappUrl, domains ?? [])
+  );
+}
+
+/**
  * Applies a custom dapp URL to a manifest if it's on the same domain as the original URL
+ * and allowed by the manifest's domains
  */
 export function applyCustomDappUrl<T extends LiveAppManifest>(
   manifest: T | null | undefined,
@@ -60,7 +76,7 @@ export function applyCustomDappUrl<T extends LiveAppManifest>(
   if (
     manifest.params &&
     "dappUrl" in manifest.params &&
-    isSameDomain(customDappUrl, manifest.params.dappUrl)
+    isCustomDappUrlAllowed(customDappUrl, manifest.params.dappUrl, manifest.domains)
   ) {
     return {
       ...manifest,
@@ -72,7 +88,10 @@ export function applyCustomDappUrl<T extends LiveAppManifest>(
   }
 
   // Handle manifest.dapp case
-  if (manifest.dapp && isSameDomain(customDappUrl, String(manifest.url))) {
+  if (
+    manifest.dapp &&
+    isCustomDappUrlAllowed(customDappUrl, String(manifest.url), manifest.domains)
+  ) {
     return {
       ...manifest,
       url: customDappUrl,
