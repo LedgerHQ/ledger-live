@@ -50,6 +50,7 @@ const COIN_MODULE_API_METHODS = [
   "craftTransaction",
   "craftRawTransaction",
   "estimateFees",
+  "listFeeOptions",
   "getBalance",
   "listOperations",
   "lastBlock",

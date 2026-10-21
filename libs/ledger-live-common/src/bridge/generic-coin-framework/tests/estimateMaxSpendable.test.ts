@@ -117,7 +117,35 @@ describe("genericEstimateMaxSpendable", () => {
     expect(estimateFeesMock).toHaveBeenCalledWith(
       expect.anything(), // context
       expect.objectContaining({ data: { type: "familyx" } }),
+      undefined,
     );
+  });
+
+  it.each([
+    [
+      "a non-empty feeOptionId",
+      { feeOptionId: "tronify" },
+      { feeOption: { feeOptionId: "tronify" } },
+    ],
+    ["an empty feeOptionId", { feeOptionId: "" }, undefined],
+    ["a non-string feeOptionId", { feeOptionId: 1 }, undefined],
+    ["no feeOptionId", {}, undefined],
+  ])("should forward the fee option when the transaction has %s", async (_, extra, expected) => {
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
+    });
+
+    await genericEstimateMaxSpendable(
+      "testnet",
+      "local",
+    )({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: { ...extra } as any,
+    });
+
+    expect(estimateFeesMock).toHaveBeenCalledWith(expect.anything(), expect.anything(), expected);
   });
 
   it("subtracts additionalFees surfaced in parameters", async () => {

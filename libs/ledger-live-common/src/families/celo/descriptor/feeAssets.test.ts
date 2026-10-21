@@ -5,6 +5,8 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { celoFeeAssets } from "./feeAssets";
 
+const USDT_CONTRACT = "0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e";
+
 const celoCurrency = {
   id: "celo",
   type: "CryptoCurrency",
@@ -59,7 +61,7 @@ describe("celoFeeAssets.getOptions", () => {
 
     expect(options).toHaveLength(1);
     expect(options[0]).toMatchObject({
-      id: "celo",
+      id: "standard",
       ticker: "CELO",
       currency: celoCurrency,
     });
@@ -74,7 +76,7 @@ describe("celoFeeAssets.getOptions", () => {
 
     const options = celoFeeAssets.getOptions({ mainAccount, transaction: {} });
 
-    expect(options.map(o => o.id)).toEqual(["celo", usdtSubAccount.id]);
+    expect(options.map(o => o.id)).toEqual(["standard", USDT_CONTRACT]);
 
     const tokenOption = options[1];
     expect(tokenOption.currency).toBe(usdtSubAccount.token);
@@ -92,7 +94,7 @@ describe("celoFeeAssets.getOptions", () => {
 
     const options = celoFeeAssets.getOptions({ mainAccount, transaction: {} });
 
-    expect(options.map(o => o.id)).toEqual(["celo"]);
+    expect(options.map(o => o.id)).toEqual(["standard"]);
   });
 
   it("omits tokens that are not allowlisted fee currencies", () => {
@@ -107,7 +109,7 @@ describe("celoFeeAssets.getOptions", () => {
 
     const options = celoFeeAssets.getOptions({ mainAccount, transaction: {} });
 
-    expect(options.map(o => o.id)).toEqual(["celo"]);
+    expect(options.map(o => o.id)).toEqual(["standard"]);
   });
 
   it("leaves currency/balance unset on the hydrating transient token option", () => {
@@ -122,7 +124,64 @@ describe("celoFeeAssets.getOptions", () => {
 
     expect(options).toHaveLength(2);
     const hydratingOption = options[1];
+    expect(hydratingOption.id).toBe(USDT_CONTRACT);
     expect(hydratingOption.currency).toBeUndefined();
     expect(hydratingOption.balance).toBeUndefined();
+  });
+});
+
+describe("celoFeeAssets selection", () => {
+  const usdtSubAccount = createUsdtSubAccount();
+  const mainAccount = createMainAccount({ subAccounts: [usdtSubAccount] });
+
+  it("selects standard when no fee currency is set", () => {
+    expect(celoFeeAssets.getSelectedOptionId({ mainAccount, transaction: {} })).toBe("standard");
+  });
+
+  it("derives the selected id from the lowercased unwrapped fee currency", () => {
+    const transaction = { feeCurrencyUnwrapped: USDT_CONTRACT.toUpperCase().replace("0X", "0x") };
+
+    expect(celoFeeAssets.getSelectedOptionId({ mainAccount, transaction })).toBe(USDT_CONTRACT);
+  });
+
+  it("builds the reset patch for standard", () => {
+    expect(celoFeeAssets.buildPatch("standard", { mainAccount, transaction: {} })).toEqual({
+      feeCurrency: null,
+      feeCurrencyUnwrapped: null,
+      feeCurrencyAccountId: null,
+    });
+  });
+
+  it("round-trips: a token option id patches the transaction and reads back as selected", () => {
+    const patch = celoFeeAssets.buildPatch(USDT_CONTRACT, { mainAccount, transaction: {} });
+
+    expect(patch).toEqual({
+      feeCurrency: "0x0e2a3e05bc9a16f5292a6170456a710cb89c6f72",
+      feeCurrencyUnwrapped: USDT_CONTRACT,
+      feeCurrencyAccountId: usdtSubAccount.id,
+    });
+    expect(celoFeeAssets.getSelectedOptionId({ mainAccount, transaction: patch })).toBe(
+      USDT_CONTRACT,
+    );
+  });
+
+  it("resets for an option whose token account is not held", () => {
+    const noTokens = createMainAccount({ subAccounts: [] });
+
+    expect(
+      celoFeeAssets.buildPatch(USDT_CONTRACT, { mainAccount: noTokens, transaction: {} }),
+    ).toEqual({ feeCurrency: null, feeCurrencyUnwrapped: null, feeCurrencyAccountId: null });
+  });
+
+  it("reconciles by resetting a selection whose token account disappeared", () => {
+    const transaction = { feeCurrencyAccountId: usdtSubAccount.id };
+
+    expect(celoFeeAssets.reconcile?.({ mainAccount, transaction })).toBeNull();
+    expect(
+      celoFeeAssets.reconcile?.({
+        mainAccount: createMainAccount({ subAccounts: [] }),
+        transaction,
+      }),
+    ).toEqual({ feeCurrency: null, feeCurrencyUnwrapped: null, feeCurrencyAccountId: null });
   });
 });
