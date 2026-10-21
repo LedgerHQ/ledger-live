@@ -8,8 +8,8 @@ import {
   type RouteProp,
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useFeature } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { NavigatorName, ScreenName } from "~/const";
 import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -18,6 +18,9 @@ import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/ty
 import { useCompleteSeededOnboarding } from "../../hooks/useCompleteSeededOnboarding";
 import { resetToPortfolio } from "../../utils/exitActions";
 import type { SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
+
+const LEDGER_SYNC_LEARN_MORE_URL =
+  "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy";
 
 type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingSyncOffer>;
 
@@ -31,7 +34,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const allowLeave = useRef(false);
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
   const { notifyFlowCompleted } = useNotificationsPrompt();
-  const learnMoreLink = useFeature("llmWalletSync")?.params?.learnMoreLink;
+  const learnMoreUrl = useLocalizedUrl(LEDGER_SYNC_LEARN_MORE_URL);
 
   useEffect(
     () =>
@@ -70,8 +73,8 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   }, [device, dispatch, navigation]);
 
   const onLearnMore = useCallback(() => {
-    if (learnMoreLink) Linking.openURL(learnMoreLink);
-  }, [learnMoreLink]);
+    Linking.openURL(learnMoreUrl);
+  }, [learnMoreUrl]);
 
   return {
     onActivate,
