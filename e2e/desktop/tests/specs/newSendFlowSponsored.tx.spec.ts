@@ -133,7 +133,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
         await app.newSendFlow.expectRentArriving();
         const feesBefore = await app.newSendFlow.networkFees();
 
-        await tronify.landPaidRents();
+        tronify.landPaidRents();
         await app.newSendFlow.expectFeesReestimatedOnRentDelivery(feesBefore);
         await tronify.expectRentPaidOnce();
       },

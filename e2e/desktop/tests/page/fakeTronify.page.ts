@@ -61,8 +61,8 @@ export class FakeTronifyPage {
       .toBe(true);
   }
 
-  @step("Land the paid rent's energy late")
-  async landPaidRents() {
+  /** Delivers the energy of every paid rent, as a rent landing late. */
+  landPaidRents() {
     this.fake.landPaidRents();
   }
 }
