@@ -18,7 +18,13 @@ const EXCEPTIONS_FILE = "tools/nx-plugins/enforce-package-structure/exceptions.j
 
 const LAYER_ROOTS = ["domain", "shared", "features"];
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "lib-es", "build", ".turbo", ".cache"]);
-const PLATFORMS = ["web", "native"];
+const NATIVE_EXTENSIONS = require("./components.config.json").extensions.native;
+// Re.Pack builds iOS and Android apart, so a `.ios` file does not hide its `.android` sibling.
+const RESOLUTIONS = [
+  { platform: "web" },
+  { platform: "native", extensions: NATIVE_EXTENSIONS.filter(ext => !ext.startsWith(".android.")) },
+  { platform: "native", extensions: NATIVE_EXTENSIONS.filter(ext => !ext.startsWith(".ios.")) },
+];
 const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 
 /**
@@ -92,14 +98,16 @@ function applyComponentWaivers(projectRoot, violations, waivers) {
 }
 
 /**
- * The files a relative specifier loads, as each platform's bundler resolves it.
+ * The files a relative specifier loads, as the web, iOS and Android bundles resolve it.
  *
  * @param {string} fromFile absolute path of the importing file
  * @param {string} specifier relative specifier
  * @returns {string[]} absolute paths
  */
 function resolveModule(fromFile, specifier) {
-  const files = PLATFORMS.map(platform => resolveRelative(fromFile, specifier, platform));
+  const files = RESOLUTIONS.map(({ platform, extensions }) =>
+    resolveRelative(fromFile, specifier, platform, extensions),
+  );
   return [...new Set(files.filter(file => file !== null))];
 }
 

@@ -334,3 +334,16 @@ test("`export *` below JSX in a reached component is still followed", () => {
     [["shared/thing/src/deeper.ts", "hidden-barrel"]],
   );
 });
+
+test("an `.ios` file does not hide its `.android` sibling", () => {
+  const root = workspace({
+    "shared/thing/src/index.ts": 'export * from "./theme";\n',
+    "shared/thing/src/theme.ts": "export const theme = {};\n",
+    "shared/thing/src/theme.ios.ts": 'export { a } from "./a";\n',
+    "shared/thing/src/theme.android.ts": 'export { b } from "./b";\n',
+  });
+  assert.deepEqual(
+    checkPackage(root, "shared/thing").map(v => v.file),
+    ["shared/thing/src/theme.android.ts", "shared/thing/src/theme.ios.ts"],
+  );
+});
