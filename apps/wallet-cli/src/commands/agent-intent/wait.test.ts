@@ -293,7 +293,32 @@ describe("agent-intent wait", () => {
     });
   });
 
-  it("fails with profile_not_found for an unknown profile", async () => {
+  it("keeps polling while a live listener has not saved its profile yet", async () => {
+    profileReads = [undefined, undefined, ENROLLED];
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(0);
+      expect(line).toMatchObject({ enrolled: true });
+    });
+    expect(sessionReadCalls).toBe(3);
+  });
+
+  it("fails with profile_not_found at --timeout when a live listener never saves its profile", async () => {
+    profileReads = [undefined];
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const started = Date.now();
+      const { code, line } = await runWaitJson(stdout, { timeout: "1s" });
+
+      expect(Date.now() - started).toBeGreaterThanOrEqual(900);
+      expect(code).toBe(1);
+      expect(line).toMatchObject({ error: { code: "profile_not_found" } });
+    });
+  });
+
+  it("fails with profile_not_found for an unknown profile with no listener", async () => {
     profileReads = [undefined];
 
     const { code, line } = await runWaitJson(stdout);
