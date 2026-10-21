@@ -1,44 +1,58 @@
 import { MAX_ERROR_MESSAGE_LENGTH, sanitizeErrorMessage } from "./errorMessage";
 
 describe("sanitizeErrorMessage", () => {
-  it("keeps an ordinary message as is", () => {
-    expect(sanitizeErrorMessage("nonce too low")).toBe("nonce too low");
-    expect(sanitizeErrorMessage("timeout of 30000ms exceeded")).toBe("timeout of 30000ms exceeded");
+  it.each([
+    "utxos already spent",
+    "Ledger sequence too high.",
+    "Insufficient funds for rent",
+    "Blockhash not found",
+    "Broadcast failed due to DUP_TRANSACTION_ERROR",
+    "ERR_INSUFFICIENT_FUNDS_FOR_GAS_AND_VALUE: tx rejected",
+    "Network Error",
+  ])("keeps a message made of words and error codes: %s", message => {
+    expect(sanitizeErrorMessage(message)).toBe(message);
   });
 
-  it("keeps long error codes, which are what a dashboard groups on", () => {
-    expect(sanitizeErrorMessage("ERR_INSUFFICIENT_FUNDS_FOR_GAS_AND_VALUE: tx rejected")).toBe(
-      "ERR_INSUFFICIENT_FUNDS_FOR_GAS_AND_VALUE: tx rejected",
+  it.each([
+    // Named and numeric accounts, which a length-based redaction misses.
+    ["Near: no access key found for alice.near", "Near: no access key found for [id]"],
+    ["hedera: evm address is missing for 0.0.1234", "hedera: evm address is missing for [id]"],
+    ["transfer to vitalik.eth failed", "transfer to [id] failed"],
+    ["stake for f01234 rejected", "stake for [id] rejected"],
+    // Short and long addresses of every encoding.
+    ["no balance for rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY", "no balance for [id]"],
+    ["utxos for 1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2 spent", "utxos for [id] spent"],
+    [
+      "insufficient funds for 0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      "insufficient funds for [id]",
+    ],
+    ["account 7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV not found", "account [id] not found"],
+    ["to cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgp8apuk3", "to [id]"],
+    // Transactions, hashes, amounts, URLs and emails.
+    [`rejected 0x02f8b1${"ab".repeat(120)}: nonce too low`, "rejected [id]: nonce too low"],
+    ["timeout of 30000ms exceeded", "timeout of [id] exceeded"],
+    ["txn-mempool-conflict (-26) (102)", "txn-mempool-conflict ([n]) ([n])"],
+    ["request to https://node.example.com/v1/tx failed", "request to [id] failed"],
+    ["contact user@example.com", "contact [id]"],
+    ["payload AQABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEi rejected", "payload [id] rejected"],
+  ])("replaces identifiers by their shape: %s", (message, expected) => {
+    expect(sanitizeErrorMessage(message)).toBe(expected);
+  });
+
+  it("gives the same message for the same failure on different accounts", () => {
+    expect(sanitizeErrorMessage("Near: no access key found for alice.near")).toBe(
+      sanitizeErrorMessage("Near: no access key found for bob.testnet"),
     );
   });
 
-  it("redacts a raw transaction and a hash, with or without 0x", () => {
-    const rawTx = "0x02f8b1" + "ab".repeat(120);
-    const hash = "9f".repeat(32);
-    expect(sanitizeErrorMessage(`rejected ${rawTx}: nonce too low (tx ${hash})`)).toBe(
-      "rejected [hex]: nonce too low (tx [hex])",
+  it("keeps the whitespace and punctuation around words", () => {
+    expect(sanitizeErrorMessage("failed:  account (0.0.42),  retry")).toBe(
+      "failed:  account ([id]),  retry",
     );
-  });
-
-  it("redacts an EVM address", () => {
-    expect(
-      sanitizeErrorMessage("insufficient funds for 0x71C7656EC7ab88b098defB751B7401B5f6d8976F"),
-    ).toBe("insufficient funds for [hex]");
-  });
-
-  it("redacts base58, base64 and bech32 runs", () => {
-    expect(
-      sanitizeErrorMessage(
-        "account 7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV not found, " +
-          "payload AQABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4f= rejected, " +
-          "to cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgp8apuk3",
-      ),
-    ).toBe("account [data] not found, payload [data] rejected, to [data]");
   });
 
   it("caps a long message", () => {
-    const message = "node said: " + "too many requests, ".repeat(40);
-    const sanitized = sanitizeErrorMessage(message);
+    const sanitized = sanitizeErrorMessage("node said: " + "too many requests, ".repeat(40));
     expect(sanitized).toHaveLength(MAX_ERROR_MESSAGE_LENGTH + 1);
     expect(sanitized.endsWith("…")).toBe(true);
   });

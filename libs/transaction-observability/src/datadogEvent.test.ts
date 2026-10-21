@@ -81,7 +81,7 @@ describe("toDatadogBroadcastLog", () => {
       status: "failure",
       attributes: {
         error_name: "NonceTooLow",
-        error_message: "rejected [hex]: nonce too low",
+        error_message: "rejected [id]: nonce too low",
         error_category: ErrorCategory.Blockchain,
         family: "evm",
       },
@@ -93,5 +93,22 @@ describe("toDatadogBroadcastLog", () => {
     expect(serialized).not.toContain("0xRAW");
     expect(serialized).not.toContain("0xVALIDATOR");
     expect(Object.keys(log ?? {})).toEqual(["message", "status", "attributes"]);
+  });
+
+  // Named and numeric accounts, which no length-based redaction would catch.
+  it.each([
+    ["Near: no access key found for alice.near", "alice.near"],
+    ["hedera: evm address is missing for 0.0.1234", "0.0.1234"],
+  ])("never sends the account a broadcast error names: %s", (message, account) => {
+    const log = toDatadogBroadcastLog({
+      status: "failure",
+      stage: TransactionStage.Broadcast,
+      error: new Error(message),
+      errorCategory: ErrorCategory.Unknown,
+      ...common,
+    });
+
+    expect(log?.attributes.error_message).toContain("[id]");
+    expect(JSON.stringify(log)).not.toContain(account);
   });
 });

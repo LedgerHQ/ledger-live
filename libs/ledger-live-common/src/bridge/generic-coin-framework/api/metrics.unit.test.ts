@@ -74,8 +74,25 @@ describe("withMetrics", () => {
 
     await expect(api.lastBlock({})).rejects.toBe(error);
 
-    expect(events[0].errorMessage).toBe("account [data] not found");
+    expect(events[0].errorMessage).toBe("account [id] not found");
     expect(JSON.stringify(events)).not.toContain(address);
+  });
+
+  // The errors coin-near and coin-hedera actually throw: a named and a numeric account, which no
+  // length-based redaction would catch.
+  it.each([
+    ["Near: no access key found for alice.near", "alice.near"],
+    ["hedera: evm address is missing for 0.0.1234", "0.0.1234"],
+  ])("never reports the account a coin-module error names: %s", async (message, account) => {
+    const api = withMetrics(
+      makeApi({ lastBlock: jest.fn().mockRejectedValue(new Error(message)) }),
+      labels,
+    );
+
+    await expect(api.lastBlock({})).rejects.toThrow(message);
+
+    expect(events[0].errorMessage).toContain("[id]");
+    expect(JSON.stringify(events)).not.toContain(account);
   });
 
   it("reports a sync failure and rethrows", () => {

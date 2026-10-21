@@ -391,7 +391,7 @@ describe("datadog logs", () => {
       expect(datadogLogs.logger.error).toHaveBeenCalledWith("tx_broadcast", {
         broadcast: expect.objectContaining({
           error_name: "NonceTooLow",
-          error_message: "rejected [hex]: nonce too low",
+          error_message: "rejected [id]: nonce too low",
           error_category: ErrorCategory.Blockchain,
         }),
       });
