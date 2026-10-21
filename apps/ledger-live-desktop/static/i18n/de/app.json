@@ -304,6 +304,33 @@
     "coinControl" : "Coin-Kontrolle",
     "feesAmount" : "Gebührenbetrag"
   },
+  "accountDetailSettings" : {
+    "title" : "Konto-Einstellungen",
+    "menu" : {
+      "changeName" : "Namen ändern",
+      "viewAdvancedLogs" : "Erweiterte Logs anzeigen",
+      "removeAccount" : "Konto aus Portfolio entfernen"
+    },
+    "changeName" : {
+      "title" : "Kontonamen ändern",
+      "description" : "Gib dieser Adresse einen Namen, um den Überblick zu behalten. (z. B. {{ticker}}-Handel, {{ticker}}-DeFi).",
+      "label" : "Adressname",
+      "submit" : "Namen ändern"
+    },
+    "advancedLogs" : {
+      "title" : "Erweiterte Logs",
+      "derivationTip" : "Das ist ein {{tag}}-xPub. Wenn du es in die Wallet eines Drittanbieters importierst, wähle denselben Ableitungsmodus aus.",
+      "synchronised" : "{{date}} synchronisiert",
+      "copy" : "Logs kopieren",
+      "copied" : "Kopiert"
+    },
+    "remove" : {
+      "title" : "Konto entfernen",
+      "description" : "Die mit diesem Konto verknüpften Assets werden in deinem Portfolio nicht mehr sichtbar sein. Deine Assets auf der Blockchain bleiben unberührt.",
+      "confirm" : "Ja, entfernen.",
+      "cancel" : "Behalten"
+    }
+  },
   "sidebar" : {
     "card" : "Card",
     "paytab" : "Bezahlen",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle" : "Fällig werdendes Guthaben",
         "pendingNotice" : "Einige geschützte Notes reifen noch und können eventuell noch nicht ausgegeben werden"
       },
+      "aleoPublic" : {
+        "title" : "Öffentlicher Kontostand"
+      },
+      "aleoPrivate" : {
+        "title" : "Privater Kontostand"
+      },
       "zeroBalance" : {
         "warning" : "Kein verfügbares Guthaben"
+      },
+      "requiresSync" : {
+        "notice" : "Sync nötig"
       }
     }
   },
@@ -7783,6 +7819,14 @@
       "title" : "Dieses Guthaben kann noch nicht ausgegeben werden",
       "description" : "Bitte versuche es in einigen Minuten erneut"
     },
+    "ZcashShieldedNotSupportedOnDevice" : {
+      "title" : "Dieses Gerät kann nur zwischen transparenten Adressen senden",
+      "description" : "Verwende einen Ledger Nano S Plus, Nano X, Flex oder Stax, um an eine oder von einer privaten Adresse zu senden."
+    },
+    "ZcashPreparedBuildMismatch" : {
+      "title" : "Die Transaktion hat sich seit der Überprüfung geändert",
+      "description" : "Dein Kontostand oder deine Gebühren haben sich geändert. Bitte überprüfe die Transaktion erneut."
+    },
     "InvalidNonce" : {
       "title" : "Nonce ist erforderlich"
     },
@@ -9829,7 +9873,7 @@
             "subtitle" : "Abgeschirmt",
             "unavailable" : "Privater Kontostand nicht verfügbar"
           },
-          "spendableWarning" : "Der verfügbare Kontostand kann niedriger sein als der gesamte Kontostand. Kürzlich geschütztes Guthaben benötigt Bestätigungen und ein vollständiges Scannen (~15 Minuten), bevor es ausgegeben werden kann."
+          "spendableWarning" : "Der verfügbare Kontostand kann niedriger sein als der gesamte Kontostand. Kürzlich geschütztes Guthaben benötigt Bestätigungen und ein vollständiges Scannen, bevor es ausgegeben werden kann."
         },
         "memo" : {
           "label" : "Memo (Optional)",
@@ -10090,11 +10134,25 @@
         "recordsUsed" : "Genutzte Einträge",
         "signingTime" : "Signierzeit"
       },
+      "amount" : {
+        "signingTime" : {
+          "label" : "Signierzeit",
+          "description" : "Dein Ledger-Signer genehmigt jeden Datensatz, den diese Transaktion verwendet. Das Senden von mehr Guthaben von deinem privaten Kontostand kann mehr Datensätze beanspruchen und länger dauern."
+        }
+      },
       "mandatoryPrivateSync" : {
         "title" : "Synchronisierung deines privaten Guthabens ({{percentage}}%)",
         "desc" : "Bitte warten",
         "errorTitle" : "Private Synchronisierung fehlgeschlagen.",
         "errorDesc" : "Etwas ist schiefgelaufen, bitte versuche es noch einmal."
+      },
+      "balanceTypeSync" : {
+        "title" : "Dein privater Kontostand wird aktualisiert",
+        "progress" : "{{percentage}} %",
+        "errorTitle" : "Private Synchronisierung fehlgeschlagen.",
+        "errorDescription" : "Etwas ist schiefgelaufen, bitte versuche es noch einmal.",
+        "recordLimitTitle" : "Du kannst bis zu {{amount}} senden",
+        "recordLimitDescription" : "Dein Kontostand ist auf mehrere Datensätze aufgeteilt, und eine Transaktion kann maximal {{maxRecords}} verwenden. Um mehr zu senden, führe mehrere Transaktionen durch."
       }
     },
     "operationTypes" : {
@@ -10573,6 +10631,14 @@
           "description" : "Ende-zu-Ende-verschlüsselt mit Ledger Sync."
         }
       }
+    }
+  },
+  "accountDetail" : {
+    "header" : {
+      "settings" : "Konto-Einstellungen"
+    },
+    "assets" : {
+      "title" : "Assets"
     }
   },
   "assetDetails" : {
@@ -11113,6 +11179,9 @@
       "amountExceedsBalance" : "Unzureichendes Guthaben",
       "quoteUnavailable" : "Wir können kein Angebot von {{provider}} SwapKit erhalten. Versuche es mit einem anderen Asset oder komm später wieder."
     }
+  },
+  "actionMenuDialog" : {
+    "a11yTitle" : "Aktion auswählen"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Einzahlung signieren",
