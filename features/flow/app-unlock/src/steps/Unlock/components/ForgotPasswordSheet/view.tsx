@@ -5,7 +5,7 @@ import {
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import { InfoState } from "@shared/ui-info-state/native";
+import { InfoState } from "@shared/ui-info-state";
 import React, { useCallback, useEffect, useRef } from "react";
 import type { ForgotPasswordSheetProps } from "./types";
 

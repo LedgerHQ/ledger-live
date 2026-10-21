@@ -11,8 +11,6 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.web.ts"
     },
-    "./native": "./src/index.native.ts",
-    "./web": "./src/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

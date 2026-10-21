@@ -1,7 +1,7 @@
-const NATIVE_FEATURE_PACKAGE_PATTERN = /^@features\//;
+const NATIVE_WORKSPACE_PACKAGE_PATTERN = /^@(features|shared)\//;
 
 module.exports = (request, options) => {
-  const conditions = NATIVE_FEATURE_PACKAGE_PATTERN.test(request)
+  const conditions = NATIVE_WORKSPACE_PACKAGE_PATTERN.test(request)
     ? ["react-native", ...(options.conditions ?? [])]
     : options.conditions;
 

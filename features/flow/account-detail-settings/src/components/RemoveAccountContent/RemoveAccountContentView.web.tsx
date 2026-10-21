@@ -1,5 +1,5 @@
 import React from "react";
-import { InfoState } from "@shared/ui-info-state/web";
+import { InfoState } from "@shared/ui-info-state";
 import type { RemoveAccountContentViewProps } from "./types";
 
 export function RemoveAccountContentView({
