@@ -1,11 +1,10 @@
-import React, { type PropsWithChildren } from "react";
-import {
-  CARD_API_BASE_URL,
-  cardApiWrapper as storeWrapper,
-} from "@support/msw-features-flow-pay-card";
+import React, { useState, type PropsWithChildren } from "react";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import { cardManagementApi } from "@domain/api-card-management";
+import { mockCardApiExtraArgument } from "@domain/api-card-management/mock/card-api";
+import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import { I18nTestProvider } from "@shared/i18n/testing";
-
-export const CARD_TRANSACTIONS_URL = `${CARD_API_BASE_URL}/v1/card/transactions`;
 
 export const CATEGORY_LABELS = {
   SUBSCRIPTIONS: "Subscriptions",
@@ -85,14 +84,43 @@ const CARD_TRANSACTIONS_RESOURCES = {
   },
 };
 
-export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
-  const StoreWrapper = storeWrapper({ signedIn });
+function makeCardApiStore({ signedIn = false }: { signedIn?: boolean } = {}) {
+  return configureStore({
+    reducer: {
+      [cardManagementApi.reducerPath]: cardManagementApi.reducer,
+      payCardAuth: payCardAuthSlice.reducer,
+    },
+    preloadedState: {
+      payCardAuth: {
+        hasCard: signedIn,
+        pendingLoginType: null,
+        status: signedIn ? "signedIn" : "signedOut",
+        isSessionResolving: false,
+      } satisfies PayCardAuthState,
+    },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+        thunk: { extraArgument: mockCardApiExtraArgument() },
+      }).concat(cardManagementApi.middleware),
+  });
+}
 
+function CardApiStoreProvider({
+  store,
+  children,
+}: PropsWithChildren<{ store: ReturnType<typeof makeCardApiStore> }>) {
+  return <Provider store={store}>{children}</Provider>;
+}
+
+export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
   return function CardApiWrapper({ children }: PropsWithChildren) {
+    const [store] = useState(() => makeCardApiStore({ signedIn }));
+
     return (
-      <StoreWrapper>
+      <CardApiStoreProvider store={store}>
         <I18nTestProvider resources={CARD_TRANSACTIONS_RESOURCES}>{children}</I18nTestProvider>
-      </StoreWrapper>
+      </CardApiStoreProvider>
     );
   };
 }

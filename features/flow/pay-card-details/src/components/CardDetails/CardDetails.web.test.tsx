@@ -3,11 +3,11 @@ import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   CARD_DETAILS_IMAGE_URL,
-  cardApiWrapper,
   listenToCardApi,
   revealCardDetailsHandler,
   signedInCardApiHandlers,
-} from "@support/msw-features-flow-pay-card";
+} from "@domain/api-card-management/mock/card-api";
+import { cardApiStoreWrapper } from "../../__tests__/cardApiStore";
 import { CARD_COPY, MORE_COPY, openExternalMock } from "../../__tests__/i18nWrapper";
 import { renderWeb } from "../../__tests__/renderWeb";
 import { urls } from "../../urls";
@@ -15,7 +15,7 @@ import { CardDetails } from "./CardDetails";
 
 listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 
-const Wrapper = cardApiWrapper({ signedIn: true });
+const Wrapper = cardApiStoreWrapper({ signedIn: true });
 
 describe("CardDetails (web)", () => {
   beforeEach(() => {

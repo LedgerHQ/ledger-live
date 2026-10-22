@@ -1,6 +1,0 @@
-{
-  "extends": "@support/tsconfig/client-react",
-  "compilerOptions": {
-    "types": ["jest", "node"]
-  }
-}

@@ -1,8 +1,0 @@
-{
-  "name": "@support/msw-features-flow-pay-card",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}
