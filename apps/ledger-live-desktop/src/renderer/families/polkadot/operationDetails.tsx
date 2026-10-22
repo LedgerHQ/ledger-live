@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { Currency } from "@domain/entity-currency";
 import { OperationType } from "@ledgerhq/types-live";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { openURL } from "~/renderer/linking";
 import {
   OpDetailsTitle,

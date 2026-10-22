@@ -34,13 +34,13 @@ import {
   decodeAccountId,
   shortAddressPreview,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
+  findCryptoCurrencyById,
   getAddressExplorer,
   getDefaultExplorerView,
   getTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { syncAccount } from "../logic/syncAccount";
 
 type App = {

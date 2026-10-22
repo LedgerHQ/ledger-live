@@ -5,7 +5,7 @@ import { useMultiversXPreloadData } from "@ledgerhq/live-common/families/multive
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "~/context/hooks";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 
 import type { MultiversXPreloadData } from "@ledgerhq/live-common/families/multiversx/types";
 import type { DetailsPropsType } from "./types";

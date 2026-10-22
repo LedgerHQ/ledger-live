@@ -1,5 +1,9 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import Box from "~/renderer/components/Box";
@@ -12,7 +16,6 @@ import { isDefaultValidatorGroup } from "@ledgerhq/live-common/families/celo/log
 import { Trans } from "react-i18next";
 import * as S from "./RevokeVoteRow.styles";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 
 type Props = {
