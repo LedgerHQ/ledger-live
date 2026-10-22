@@ -159,6 +159,8 @@ export function useDeviceOnboardingActor({
   const discardActor = useCallback(() => {
     stopActor();
     previousSnapshotRef.current = null;
+    lastLoggedStep.current = null;
+    setSnapshot(null);
     setLog([]);
     setExit(null);
     setSessionReady(false);
@@ -261,6 +263,7 @@ export function useDeviceOnboardingActor({
     exit,
     sendableEvents,
     nextStates,
+    sessionReady,
     setSessionReady,
     actorRef,
     portsRef,

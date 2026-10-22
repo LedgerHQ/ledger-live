@@ -58,6 +58,7 @@ function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboar
     send,
     reset: jest.fn(),
     closeFirmwareHandover: jest.fn(),
+    abortFirmwareReconnect: jest.fn(),
     ...overrides,
   };
 }
@@ -220,6 +221,93 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     useSession.mock.calls[0][0].onLeave?.();
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
+  });
+
+  it("should wait for the device on the connecting screen after a completed update", () => {
+    const abortFirmwareReconnect = jest.fn();
+    const closeFirmwareHandover = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        abortFirmwareReconnect,
+        closeFirmwareHandover,
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    if (result.current.status !== "connecting") throw new Error(result.current.status);
+
+    result.current.onQuit();
+
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(goBack).not.toHaveBeenCalled();
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should retry without closing the handover when reconnecting after the update fails", () => {
+    const connect = jest.fn();
+    const closeFirmwareHandover = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        error: "Unable to connect to the device",
+        connect,
+        closeFirmwareHandover,
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    if (result.current.status !== "failed") throw new Error(result.current.status);
+
+    connect.mockClear();
+    result.current.onRetry();
+
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should abort the reconnect when back is pressed while the device is connecting", () => {
+    const abortFirmwareReconnect = jest.fn();
+    const reset = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        status: "connecting",
+        state: "awaitingSessionAfterFirmwareUpdate",
+        abortFirmwareReconnect,
+        reset,
+      }),
+    );
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(reset).not.toHaveBeenCalled();
+    expect(goBack).not.toHaveBeenCalled();
+  });
+
+  it("should leave instead of closing the handover when back is pressed while reconnecting", () => {
+    const abortFirmwareReconnect = jest.fn();
+    const closeFirmwareHandover = jest.fn();
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSessionAfterFirmwareUpdate",
+        abortFirmwareReconnect,
+        closeFirmwareHandover,
+      }),
+    );
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(goBack).not.toHaveBeenCalled();
+    expect(closeFirmwareHandover).not.toHaveBeenCalled();
   });
 
   it("should close the firmware handover from the waiting screen", () => {
