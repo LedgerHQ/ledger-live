@@ -8,11 +8,19 @@ const transaction = new Transaction(
   undefined,
   "noTag",
 );
-runSendInvalidAddressTest(
+runSendInvalidAddressTest({
   transaction,
-  "Recipient account has not opted in the selected ASA.",
-  undefined,
-  ["B2CQA-2702"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@algorand", "@family-algorand"],
-  transaction.accountToDebit.currency.name,
-);
+  expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
+  tmsLinks: ["B2CQA-2702"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@algorand",
+    "@family-algorand",
+  ],
+  accountName: transaction.accountToDebit.currency.name,
+});

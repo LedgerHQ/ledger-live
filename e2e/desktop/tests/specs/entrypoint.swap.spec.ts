@@ -87,7 +87,6 @@ test.describe("Swap - entry points", () => {
         await app.market.startSwapForSelectedTicker(
           swapEntryPoint.swap.accountToDebit.currency.ticker,
         );
-        await app.modularDialog.selectAccountByName(swapEntryPoint.swap.accountToDebit);
       });
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
       await app.swap.checkAssetToAccountNameContains(

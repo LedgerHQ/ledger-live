@@ -1,8 +1,11 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+
 export type AccountSettingsAccount = Readonly<{
   id: string;
   type: string;
   index: number;
-  currency: Readonly<{ name: string; ticker: string }>;
+  currency: Readonly<{ name: string; ticker: string }> & Pick<CryptoCurrency, "explorerViews">;
+  freshAddress: string;
   xpub?: string;
   freshAddressPath: string;
   blockHeight: number;

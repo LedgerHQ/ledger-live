@@ -34,6 +34,7 @@ function StepContent(props: AccountSettingsDialogViewProps) {
           onClose={props.onClose}
           onShowChangeName={props.onShowChangeName}
           onShowAdvancedLogs={props.onShowAdvancedLogs}
+          explorerUrl={props.explorerUrl}
           onShowRemove={props.onShowRemove}
         />
       );

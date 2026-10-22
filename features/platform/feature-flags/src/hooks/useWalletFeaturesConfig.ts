@@ -30,13 +30,14 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
-      shouldDisplayMyWallet: isEnabled && Boolean(params?.myWallet),
+      shouldDisplayMyWallet:
+        platform === "desktop" ? true : isEnabled && Boolean(params?.myWallet),
       shouldDisplayPnl: isEnabled && Boolean(params?.pnl),
       shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
       shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
     };
-  }, [walletFeatureFlag]);
+  }, [platform, walletFeatureFlag]);
 }
 
 /** Keys for the wallet feature flags */

@@ -29,8 +29,10 @@
   },
   "dependencies": {
     "@domain/entity-account-name": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@shared/clipboard": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/linking": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },

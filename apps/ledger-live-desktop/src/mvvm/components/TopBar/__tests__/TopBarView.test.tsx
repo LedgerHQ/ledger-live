@@ -46,11 +46,7 @@ describe("TopBarView", () => {
   });
 
   it("should render the UserAvatar", () => {
-    render(<TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />, {
-      initialState: withFlagOverrides({
-        lwdWallet40: { enabled: true, params: { myWallet: true } },
-      }),
-    });
+    render(<TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />);
 
     expect(screen.getByTestId("my-wallet-avatar")).toBeInTheDocument();
   });
