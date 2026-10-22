@@ -256,16 +256,21 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    it("returns operations from account", async () => {
-      const block = await api.lastBlock(context);
+    // Block heights of the sender's fixture transactions (txIN, then txOUT).
+    const txINBlockHeight = 352387922;
+    const txOUTBlockHeight = 352397553;
 
+    it("returns operations from account", async () => {
       const { items: operations } = await api.listOperations(context, sender.freshAddress, {
-        minHeight: block.height,
+        minHeight: txINBlockHeight,
         order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);
       expect(operations.length).toBeGreaterThanOrEqual(2);
+      operations.forEach(operation =>
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(txINBlockHeight),
+      );
 
       const txINHash = "0xe1987b67878faff326a179d59ab0f5df89cc10cdcbccab1147b52735579832a5";
       const txOUTHash = "0xee3866ab35797a39102aeff6bdeb70d3d4df65adedf9efedfddad88f27dc6fa4";
@@ -299,19 +304,39 @@ describe("createApi", () => {
         },
       });
     });
+
+    it("excludes operations below minHeight and includes the minHeight block", async () => {
+      const { items: operations } = await api.listOperations(context, sender.freshAddress, {
+        minHeight: txOUTBlockHeight,
+        order: "asc",
+      });
+
+      const ids = operations.map(operation => operation.id);
+      expect(ids).toContain("0xee3866ab35797a39102aeff6bdeb70d3d4df65adedf9efedfddad88f27dc6fa4");
+      expect(ids).not.toContain(
+        "0xe1987b67878faff326a179d59ab0f5df89cc10cdcbccab1147b52735579832a5",
+      );
+      operations.forEach(operation =>
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(txOUTBlockHeight),
+      );
+    });
   });
 
   describe("listOperationsTokens", () => {
     it("returns operations from account", async () => {
-      const block = await api.lastBlock(context);
+      // Block height of the earliest fixture transaction (txINNativeHash).
+      const minHeight = 352519802;
 
       const { items: operations } = await api.listOperations(context, tokenAccount.freshAddress, {
-        minHeight: block.height,
+        minHeight,
         order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);
       expect(operations.length).toBeGreaterThanOrEqual(1);
+      operations.forEach(operation =>
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(minHeight),
+      );
 
       const txINNativeHash = "0xd841b502ce333e5b9ac394db81e6597d9bbbe475e5b12966b98b843d91cc0a09";
       const txOUTNativeHash = "0xb1114396c5b6f2f5ba955fa8e4102d0e3983d5ccdb0717ff792f6e4848e72366";
