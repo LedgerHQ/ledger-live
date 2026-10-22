@@ -14,6 +14,7 @@ const jestSonarReporter = [
 
 const repositoryRoot = path.resolve(__dirname, "../../..");
 
+/** @param {string} projectRoot */
 const lcovCoverageReporters = projectRoot => [
   "json",
   ["lcov", { file: "lcov.info", projectRoot }],
