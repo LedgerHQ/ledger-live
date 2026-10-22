@@ -1,7 +1,8 @@
-import type {
-  DeviceManagementKit,
-  DeviceSessionId,
-  GetOsVersionResponse,
+import {
+  CloseAppCommand,
+  type DeviceManagementKit,
+  type DeviceSessionId,
+  type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import { fromCallback } from "xstate";
 import { readOnboardingState, sendOsVersionCommand } from "../device/onboardingState";
@@ -52,13 +53,23 @@ export function mapDeviceState(response: GetOsVersionResponse): ReadDeviceStateE
   return { type: "DEVICE_STATE_READ", state, firmwareVersion };
 }
 
+/** The OS version command works only on the dashboard, so any open app is closed first. */
+async function readOnDashboard(
+  dmk: DeviceManagementKit,
+  sessionId: DeviceSessionId,
+): Promise<GetOsVersionResponse> {
+  await dmk.sendCommand({ sessionId, command: new CloseAppCommand() });
+
+  return sendOsVersionCommand(dmk, sessionId);
+}
+
 export const readDeviceState = fromCallback<ReadDeviceStateEvent, ReadDeviceStateInput>(
   ({ input, sendBack }) => {
     let stopped = false;
 
     const policy = input.retryPolicy ?? createRetryPolicy(() => true);
 
-    withRetries(() => sendOsVersionCommand(input.dmk, input.sessionId), policy, {
+    withRetries(() => readOnDashboard(input.dmk, input.sessionId), policy, {
       isCancelled: () => stopped,
     })
       .then(response => {

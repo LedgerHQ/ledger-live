@@ -1,4 +1,5 @@
 import {
+  CloseAppCommand,
   CommandResultFactory,
   DeviceActionStatus,
   GenuineCheckDeviceAction,
@@ -24,6 +25,8 @@ export type ScriptedCommand<Data, ErrorCodes = void> =
   | CommandResult<Data, ErrorCodes>
   | { throws: unknown };
 
+const appClosed = CommandResultFactory({ data: undefined });
+
 export type FakeCommandDmk = {
   dmk: DeviceManagementKit;
   sendCommand: jest.Mock;
@@ -31,14 +34,16 @@ export type FakeCommandDmk = {
 
 /**
  * Serves the scripted results in order, then repeats the last one, so that a script of one entry
- * answers every retry the same way.
+ * answers every retry the same way. Closing the app always succeeds and takes no entry.
  */
 export function createFakeCommandDmk<Data, ErrorCodes = void>(
   script: ScriptedCommand<Data, ErrorCodes>[],
 ): FakeCommandDmk {
   const commands = scriptQueue(script, "command");
 
-  const sendCommand = jest.fn(() => played(commands.next()));
+  const sendCommand = jest.fn(({ command }) =>
+    command instanceof CloseAppCommand ? Promise.resolve(appClosed) : played(commands.next()),
+  );
   const dmk = createDeviceManagementKit({ sendCommand });
 
   return { dmk, sendCommand };
@@ -174,6 +179,10 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
   const toggles: number[] = [];
 
   const sendCommand = jest.fn(({ command }) => {
+    if (command instanceof CloseAppCommand) {
+      return Promise.resolve(appClosed);
+    }
+
     if (command instanceof ToggleEarlyCheckCommand) {
       toggles.push(command.getApdu().p2);
 

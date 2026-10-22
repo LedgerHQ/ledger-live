@@ -4,7 +4,6 @@ import {
   type DeviceManagementKit,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
-import { ReadOnboardingVersionCommand } from "../device/onboardingVersionCommand";
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
@@ -131,16 +130,22 @@ describe("mapDeviceState", () => {
 
 describe("readDeviceState", () => {
   it("reports the state read from the OS version command", async () => {
-    const { dmk, sendCommand } = createFakeCommandDmk([success(onboardedDevice)]);
+    const { dmk } = createFakeCommandDmk([success(onboardedDevice)]);
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledWith({
-      sessionId: "session",
-      command: expect.any(ReadOnboardingVersionCommand),
-    });
     expect(received).toEqual([readEvent]);
+    stop();
+  });
+
+  it("closes any open app first, since the OS version command works only on the dashboard", async () => {
+    const { dmk, sendCommand } = createFakeCommandDmk([success(onboardedDevice)]);
+    const { stop } = start(dmk);
+
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["closeApp", "getOsVersion"]);
     stop();
   });
 
@@ -153,7 +158,7 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledTimes(2);
+    expect(stateReads(sendCommand)).toBe(2);
     expect(received).toEqual([readEvent]);
     stop();
   });
@@ -165,7 +170,7 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledTimes(3);
+    expect(stateReads(sendCommand)).toBe(3);
     expect(received).toEqual([{ type: "DEVICE_STATE_FAILED", output: error }]);
     stop();
   });
@@ -177,7 +182,7 @@ describe("readDeviceState", () => {
     stop();
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(stateReads(sendCommand)).toBe(1);
     expect(received).toEqual([]);
   });
 
@@ -207,6 +212,14 @@ function success(
   options: Parameters<typeof createOsVersionResponse>[0],
 ): ScriptedCommand<GetOsVersionResponse> {
   return CommandResultFactory({ data: createOsVersionResponse(options) });
+}
+
+function sentCommands(sendCommand: jest.Mock): string[] {
+  return sendCommand.mock.calls.map(([{ command }]) => command.name);
+}
+
+function stateReads(sendCommand: jest.Mock): number {
+  return sentCommands(sendCommand).filter(name => name === "getOsVersion").length;
 }
 
 function start(dmk: DeviceManagementKit) {
