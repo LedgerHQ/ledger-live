@@ -113,7 +113,7 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
   const countervaluesState = useCountervaluesCache();
-  // The amount is typed in the counter value, like deposit.
+
   const counterValueUnit = counterValueCurrency.units[0];
   const sourceCurrency = getAccountCurrency(sourceAccount);
   const sourceUnit = sourceCurrency.units[0];
