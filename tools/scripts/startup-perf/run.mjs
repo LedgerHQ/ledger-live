@@ -101,7 +101,11 @@ const android = {
   async install(device, apk) {
     await run("adb", ["-s", device, "uninstall", APP_ID], { allowFail: true });
     // -g grants runtime permissions up front, so no permission prompt covers the launch.
-    await run("adb", ["-s", device, "install", "-r", "-g", apk], { timeoutMs: 600_000 });
+    // --no-incremental: an incremental install (picked when an .idsig sits next to the APK) skips
+    // install-time dexopt on Android 16, which no user's install does.
+    await run("adb", ["-s", device, "install", "--no-incremental", "-r", "-g", apk], {
+      timeoutMs: 600_000,
+    });
     this.components.delete(device);
   },
   async component(device) {
@@ -328,8 +332,12 @@ async function inject(device, userdata) {
     bridge.send("navigate", "Base");
     if (userdata.accounts.length) bridge.send("importAccounts", userdata.accounts);
     if (userdata.postOnboarding) bridge.send("importPostOnboarding", userdata.postOnboarding);
-    // Accounts are saved as soon as they are imported; settings go through the store's save.
-    await sleep(20_000);
+    // Accounts are saved as soon as they are imported. Settings are only saved by the store's
+    // save effect, which may not be mounted yet on a fresh install: send them again once it is.
+    await sleep(10_000);
+    bridge.send("acceptTerms");
+    bridge.send("importSettings", { ...userdata.settings });
+    await sleep(10_000);
     await P.stop(device);
   } finally {
     await bridge.close();

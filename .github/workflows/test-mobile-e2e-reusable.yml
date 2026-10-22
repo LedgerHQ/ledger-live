@@ -419,7 +419,7 @@ jobs:
             [[ -f "$dir/app.apk" ]] || continue
             "$BT/zipalign" -f -p 4 "$dir/app.apk" "$dir/aligned.apk"
             # shellcheck disable=SC2086
-            "$BT/apksigner" sign --ks "$KS_PATH" --ks-pass $KS_PASS --ks-key-alias staging --key-pass $KS_PASS --out "$dir/signed.apk" "$dir/aligned.apk"
+            "$BT/apksigner" sign --v4-signing-enabled false --ks "$KS_PATH" --ks-pass $KS_PASS --ks-key-alias staging --key-pass $KS_PASS --out "$dir/signed.apk" "$dir/aligned.apk"
             echo "$dir: $(cat "$dir/sha.txt")"
           done
 
@@ -439,17 +439,30 @@ jobs:
           set -euo pipefail
           tools/scripts/cleanup-android-emulators.sh || true
           mkdir -p "$RESULTS_DIR/android"
+          # Cold boot: the cached snapshot was taken with 2 cores and cannot be loaded with 3.
           # shellcheck disable=SC2086
-          nohup "$ANDROID_HOME/emulator/emulator" -avd "$AVD_NAME" -port 5554 $AVD_OPTIONS -no-snapshot-save -cores "$PERF_AVD_CORES" > "$RESULTS_DIR/android/emulator-1.log" 2>&1 &
+          nohup "$ANDROID_HOME/emulator/emulator" -avd "$AVD_NAME" -port 5554 $AVD_OPTIONS -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$RESULTS_DIR/android/emulator-1.log" 2>&1 &
           # shellcheck disable=SC2086
-          nohup "$ANDROID_HOME/emulator/emulator" -avd "${AVD_NAME}_2" -port 5556 $AVD_OPTIONS -no-snapshot-save -cores "$PERF_AVD_CORES" > "$RESULTS_DIR/android/emulator-2.log" 2>&1 &
+          nohup "$ANDROID_HOME/emulator/emulator" -avd "${AVD_NAME}_2" -port 5556 $AVD_OPTIONS -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$RESULTS_DIR/android/emulator-2.log" 2>&1 &
           for serial in emulator-5554 emulator-5556; do
             timeout 900 adb -s "$serial" wait-for-device
             timeout 900 adb -s "$serial" shell 'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 2; done'
+            # The cached AVD was saved with animations off; a user's phone has them on.
+            for key in window_animation_scale transition_animation_scale animator_duration_scale; do
+              adb -s "$serial" shell settings put global "$key" 1
+            done
             echo "$serial booted"
           done
-          # Animations stay on, as on a user's phone. Let both emulators settle after boot.
-          sleep 90
+          # Wait until post-boot work is done: 1-minute load average below 1 on both (max 15 min).
+          deadline=$((SECONDS + 900))
+          for serial in emulator-5554 emulator-5556; do
+            while (( SECONDS < deadline )); do
+              load=$(adb -s "$serial" shell cat /proc/loadavg | cut -d' ' -f1)
+              awk -v l="$load" 'BEGIN { exit !(l < 1.0) }' && break
+              echo "$serial load $load, waiting"
+              sleep 15
+            done
+          done
           adb devices
 
       - name: Measure
@@ -557,8 +570,13 @@ jobs:
       - name: Create and boot two simulators
         run: |
           set -euo pipefail
+          # Simulators left booted by earlier E2E jobs on this pool would compete for the CPU.
+          xcrun simctl list devices booted
+          xcrun simctl shutdown all || true
           RUNTIME=$(xcrun simctl list runtimes iOS -j | jq -r '[.runtimes[] | select(.isAvailable)] | last | .identifier')
-          TYPE=$(xcrun simctl list devicetypes -j | jq -r '[.devicetypes[] | select(.name | test("^iPhone [0-9]+ Pro$"))] | last | .identifier')
+          # Newest "iPhone N Pro" the runtime supports (list order differs between Xcode versions).
+          TYPE=$(xcrun simctl list runtimes iOS -j | jq -r --arg rt "$RUNTIME" '.runtimes[] | select(.identifier==$rt) | [.supportedDeviceTypes[] | select(.name|test("^iPhone [0-9]+ Pro$"))] | max_by(.name|capture("(?<n>[0-9]+)").n|tonumber) | .identifier')
+          [[ -n "$TYPE" && "$TYPE" != null ]] || { echo "::error::no iPhone Pro device type for $RUNTIME"; exit 1; }
           echo "Runtime $RUNTIME, device type $TYPE"
           SIM_1=$(xcrun simctl create "Startup Perf 1" "$TYPE" "$RUNTIME")
           SIM_2=$(xcrun simctl create "Startup Perf 2" "$TYPE" "$RUNTIME")
