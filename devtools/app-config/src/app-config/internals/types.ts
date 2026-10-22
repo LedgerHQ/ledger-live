@@ -15,6 +15,8 @@ interface RowState<Choice extends string> {
   readonly currentChoice: Choice;
   /** What the next session runs on. */
   readonly selectedChoice: Choice;
+  /** The next session runs on its dev values, so they are text fields. */
+  readonly isOnDev: boolean;
   /** The next session runs on another choice, or other values, than this one. */
   readonly isPending: boolean;
   /** Runs on, or will run on, another choice than the default. */
@@ -48,8 +50,21 @@ export interface AppConfigViewModel {
   readonly setSearch: (search: string) => void;
   readonly filter: RowFilter;
   readonly setFilter: (filter: RowFilter) => void;
-  /** Saves what a switch selects, or resets the switch when it is the default. */
+  /** Saves the unsaved drafts, then what a switch selects, or resets the switch to the default. */
   readonly selectOption: (switchId: string, selectionId: ConfigSelectionId) => void;
-  /** Reloads the app on the saved selections and dev values. */
+  /** Saves the unsaved drafts, then puts a fixed value on Dev or resets it to the fixed value. */
+  readonly selectFixed: (name: string, choice: FixedChoice) => void;
+  /** Saves a dev value, and returns whether the host took it. */
+  readonly setDevValue: (name: string, value: string) => boolean;
+  readonly removeDevValue: (name: string) => void;
+  /**
+   * Keeps `commit`, which saves an unsaved draft and returns whether the host took it, for the next
+   * reload or selection change, until the returned function drops it.
+   */
+  readonly registerDraft: (commit: () => boolean) => () => void;
+  /**
+   * Saves every unsaved draft, then reloads the app on the saved selections and dev values, unless
+   * the host refused a draft: the field then shows why.
+   */
   readonly reload: () => void;
 }

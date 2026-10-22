@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@support/jest/devtools/native";
-import type { ConfigOptionId } from "@shared/app-config";
+import { useState } from "react";
+import type { ConfigOptionId, RejectedDevValue } from "@shared/app-config";
 import type { ConfigFixedValueState, ConfigSwitchState } from "../types";
 import { AppConfig } from "./AppConfig";
 
@@ -10,6 +11,9 @@ const keycloakBaseUrl = {
   name: "keycloakBaseUrl",
   currentValue: prodUrl,
   nextValue: prodUrl,
+  baseValue: prodUrl,
+  hasDevValue: false,
+  rejectedDevValue: undefined,
 };
 
 const ledgerKeyRing: ConfigSwitchState = {
@@ -20,10 +24,23 @@ const ledgerKeyRing: ConfigSwitchState = {
   values: [keycloakBaseUrl],
 };
 
+/** The switch of a staging-default build, on Dev with no dev value yet. */
+const ledgerKeyRingOnDev: ConfigSwitchState = {
+  ...ledgerKeyRing,
+  currentSelectionId: "staging",
+  savedSelectionId: "dev",
+  values: [
+    { ...keycloakBaseUrl, currentValue: stagingUrl, nextValue: stagingUrl, baseValue: stagingUrl },
+  ],
+};
+
 const keycloakRealm: ConfigFixedValueState = {
   name: "keycloakRealm",
   currentValue: "ledger-bc-customers",
   nextValue: "ledger-bc-customers",
+  baseValue: "ledger-bc-customers",
+  hasDevValue: false,
+  rejectedDevValue: undefined,
   isDevCurrent: false,
   isDevSaved: false,
 };
@@ -46,15 +63,16 @@ describe("AppConfig (native)", () => {
     expect(screen.getByText("staging")).toBeOnTheScreen();
     expect(screen.getByText("Current: staging")).toBeOnTheScreen();
     expect(screen.getByText("Default: prod")).toBeOnTheScreen();
-    expect(screen.getByText(stagingUrl)).toBeOnTheScreen();
+    const field = screen.getByLabelText("keycloakBaseUrl");
+    expect(field).toHaveDisplayValue(stagingUrl);
+    expect(field).toHaveProp("editable", false);
   });
 
-  it("should let the switch id and the value names and values be selected", () => {
+  it("should let the switch id and the value names be selected", () => {
     renderAppConfig();
 
     expect(screen.getByText("ledgerKeyRing")).toHaveProp("selectable", true);
     expect(screen.getByText("keycloakBaseUrl")).toHaveProp("selectable", true);
-    expect(screen.getByText(prodUrl)).toHaveProp("selectable", true);
   });
 
   it("should save a selected option without restarting", () => {
@@ -129,8 +147,123 @@ describe("AppConfig (native)", () => {
 
     expect(screen.getByText("Fixed values")).toBeOnTheScreen();
     expect(screen.getByText("keycloakRealm")).toBeOnTheScreen();
-    expect(screen.getByText("ledger-bc-customers")).toBeOnTheScreen();
+    expect(screen.getByLabelText("keycloakRealm")).toHaveDisplayValue("ledger-bc-customers");
+    expect(screen.getByLabelText("keycloakRealm")).toHaveProp("editable", false);
     expect(screen.queryByText("dev")).toBeNull();
+  });
+
+  describe("dev values", () => {
+    it("should put a fixed value on Dev", () => {
+      const { onSelect } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [],
+        fixedValues: [keycloakRealm],
+      });
+
+      fireEvent.press(screen.getByText("dev"));
+
+      expect(onSelect).toHaveBeenCalledWith("keycloakRealm", "dev");
+    });
+
+    it("should save a text typed on Dev once editing ends", () => {
+      const { onSetDevValue } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [ledgerKeyRingOnDev],
+      });
+      const field = screen.getByLabelText("keycloakBaseUrl");
+
+      expect(field).toHaveDisplayValue(stagingUrl);
+      expect(field).toHaveProp("editable", true);
+
+      fireEvent.changeText(field, "http://localhost:8080");
+      expect(onSetDevValue).not.toHaveBeenCalled();
+      fireEvent(field, "endEditing");
+
+      expect(onSetDevValue).toHaveBeenCalledWith("keycloakBaseUrl", "http://localhost:8080");
+    });
+
+    it("should save a text typed on Dev before restarting, while its field is still focused", () => {
+      const { onSetDevValue, onReloadApp } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [ledgerKeyRingOnDev],
+      });
+
+      fireEvent.changeText(screen.getByLabelText("keycloakBaseUrl"), "http://localhost:8080");
+      fireEvent.press(screen.getByText("Restart"));
+
+      expect(onSetDevValue).toHaveBeenCalledWith("keycloakBaseUrl", "http://localhost:8080");
+      expect(onReloadApp).toHaveBeenCalledTimes(1);
+      expect(onSetDevValue.mock.invocationCallOrder[0]).toBeLessThan(
+        onReloadApp.mock.invocationCallOrder[0],
+      );
+    });
+
+    it("should not restart when the host refuses the text typed on Dev", () => {
+      const { onSetDevValue, onReloadApp } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [ledgerKeyRingOnDev],
+      });
+      onSetDevValue.mockReturnValue(false);
+
+      fireEvent.changeText(screen.getByLabelText("keycloakBaseUrl"), "not a url");
+      fireEvent.press(screen.getByText("Restart"));
+
+      expect(onSetDevValue).toHaveBeenCalledWith("keycloakBaseUrl", "not a url");
+      expect(onReloadApp).not.toHaveBeenCalled();
+    });
+
+    it("should not restart on a second try while the text typed on Dev is refused", () => {
+      const onReloadApp = jest.fn();
+      render(<RefusingHost onReloadApp={onReloadApp} />);
+
+      fireEvent.changeText(screen.getByLabelText("keycloakBaseUrl"), "not a url");
+      fireEvent.press(screen.getByText("Restart"));
+      expect(screen.getByText("Invalid URL")).toBeOnTheScreen();
+      fireEvent.press(screen.getByText("Restart"));
+
+      expect(onReloadApp).not.toHaveBeenCalled();
+      expect(screen.getByLabelText("keycloakBaseUrl")).toHaveDisplayValue("not a url");
+    });
+
+    it("should save a text typed on Dev before switching away, while its field is still focused", () => {
+      const { onSetDevValue, onResetSelection } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [ledgerKeyRingOnDev],
+      });
+
+      fireEvent.changeText(screen.getByLabelText("keycloakBaseUrl"), "http://localhost:8080");
+      fireEvent.press(screen.getByText("staging"));
+
+      expect(onSetDevValue).toHaveBeenCalledWith("keycloakBaseUrl", "http://localhost:8080");
+      expect(onSetDevValue.mock.invocationCallOrder[0]).toBeLessThan(
+        onResetSelection.mock.invocationCallOrder[0],
+      );
+    });
+
+    it("should show a refused dev value with why, and reset a saved one", () => {
+      const { onRemoveDevValue } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [
+          {
+            ...ledgerKeyRingOnDev,
+            values: [
+              {
+                ...ledgerKeyRingOnDev.values[0],
+                hasDevValue: true,
+                rejectedDevValue: { value: "not a url", message: "Invalid URL" },
+              },
+            ],
+          },
+        ],
+      });
+
+      expect(screen.getByLabelText("keycloakBaseUrl")).toHaveDisplayValue("not a url");
+      expect(screen.getByText("Invalid URL")).toBeOnTheScreen();
+
+      fireEvent.press(screen.getByLabelText("Reset"));
+
+      expect(onRemoveDevValue).toHaveBeenCalledWith("keycloakBaseUrl");
+    });
   });
 });
 
@@ -146,8 +279,37 @@ function renderAppConfig({
   const callbacks = {
     onSelect: jest.fn(),
     onResetSelection: jest.fn(),
+    onSetDevValue: jest.fn(() => true),
+    onRemoveDevValue: jest.fn(),
     onReloadApp: jest.fn(),
   };
   render(<AppConfig session={{ defaultOptionId, switches, fixedValues }} {...callbacks} />);
   return callbacks;
+}
+
+/** A host that refuses every dev value with why, as the middleware refuses one that does not parse. */
+function RefusingHost({ onReloadApp }: Readonly<{ onReloadApp: () => void }>) {
+  const [rejectedDevValue, setRejectedDevValue] = useState<RejectedDevValue>();
+  return (
+    <AppConfig
+      session={{
+        defaultOptionId: "staging",
+        switches: [
+          {
+            ...ledgerKeyRingOnDev,
+            values: [{ ...ledgerKeyRingOnDev.values[0], rejectedDevValue }],
+          },
+        ],
+        fixedValues: [],
+      }}
+      onSelect={jest.fn()}
+      onResetSelection={jest.fn()}
+      onSetDevValue={(_, value) => {
+        setRejectedDevValue({ value, message: "Invalid URL" });
+        return false;
+      }}
+      onRemoveDevValue={jest.fn()}
+      onReloadApp={onReloadApp}
+    />
+  );
 }

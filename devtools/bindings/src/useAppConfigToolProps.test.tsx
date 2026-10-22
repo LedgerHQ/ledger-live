@@ -27,6 +27,8 @@ const switches = {
   },
 };
 
+const noDevValue = { hasDevValue: false, rejectedDevValue: undefined };
+
 describe("useAppConfigToolProps", () => {
   it("should give the default once, each switch and each fixed value with their values", async () => {
     const { result } = await renderToolProps({ selections: { backend: "staging" } });
@@ -43,6 +45,8 @@ describe("useAppConfigToolProps", () => {
             name: "apiBaseUrl",
             currentValue: stagingUrl,
             nextValue: stagingUrl,
+            baseValue: prodUrl,
+            ...noDevValue,
           },
         ],
       },
@@ -52,6 +56,8 @@ describe("useAppConfigToolProps", () => {
         name: "clientVersion",
         currentValue: "test/1.0.0",
         nextValue: "test/1.0.0",
+        baseValue: "test/1.0.0",
+        ...noDevValue,
         isDevCurrent: false,
         isDevSaved: false,
       },
@@ -72,11 +78,14 @@ describe("useAppConfigToolProps", () => {
         {
           currentValue: "http://localhost:3000",
           nextValue: "http://localhost:3000",
+          baseValue: stagingUrl,
+          hasDevValue: true,
         },
       ],
     });
     expect(result.current.session?.fixedValues[0]).toMatchObject({
       currentValue: "dev/1.0.0",
+      baseValue: "test/1.0.0",
       isDevCurrent: true,
       isDevSaved: true,
     });
@@ -106,6 +115,58 @@ describe("useAppConfigToolProps", () => {
     expect(savedSelections()).toEqual({});
     expect(reload).not.toHaveBeenCalled();
     expect(result.current.session?.switches[0].savedSelectionId).toBeUndefined();
+  });
+
+  it("should save a dev value, which only the next session runs on", async () => {
+    const { result, savedDevValues } = await renderToolProps({
+      defaultOptionId: "staging",
+      selections: { backend: "dev" },
+    });
+
+    let isSaved: boolean | undefined;
+    act(() => {
+      isSaved = result.current.onSetDevValue("apiBaseUrl", "http://localhost:3000");
+    });
+
+    expect(isSaved).toBe(true);
+    expect(savedDevValues()).toEqual({ apiBaseUrl: "http://localhost:3000" });
+    expect(result.current.session?.switches[0].values[0]).toMatchObject({
+      currentValue: stagingUrl,
+      nextValue: "http://localhost:3000",
+      hasDevValue: true,
+    });
+  });
+
+  it("should hand back a dev value that does not parse, with why, and save nothing", async () => {
+    const { result, savedDevValues } = await renderToolProps({
+      defaultOptionId: "staging",
+      selections: { backend: "dev" },
+    });
+
+    let isSaved: boolean | undefined;
+    act(() => {
+      isSaved = result.current.onSetDevValue("apiBaseUrl", "not a url");
+    });
+
+    expect(isSaved).toBe(false);
+    expect(savedDevValues()).toEqual({});
+    expect(result.current.session?.switches[0].values[0].rejectedDevValue).toEqual({
+      value: "not a url",
+      message: "Invalid URL",
+    });
+  });
+
+  it("should remove a dev value", async () => {
+    const { result, savedDevValues } = await renderToolProps({
+      defaultOptionId: "staging",
+      selections: { backend: "dev" },
+      devValues: { apiBaseUrl: "http://localhost:3000" },
+    });
+
+    act(() => result.current.onRemoveDevValue("apiBaseUrl"));
+
+    expect(savedDevValues()).toEqual({});
+    expect(result.current.session?.switches[0].values[0].nextValue).toBe(stagingUrl);
   });
 
   it("should reload on reload", async () => {

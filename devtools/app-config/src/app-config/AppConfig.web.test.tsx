@@ -1,6 +1,7 @@
 import { render, screen } from "@support/jest/devtools/web";
 import userEvent from "@testing-library/user-event";
-import type { ConfigOptionId } from "@shared/app-config";
+import { useState } from "react";
+import type { ConfigOptionId, RejectedDevValue } from "@shared/app-config";
 import type { ConfigFixedValueState, ConfigSwitchState } from "../types";
 import { AppConfig } from "./AppConfig";
 
@@ -11,6 +12,9 @@ const keycloakBaseUrl = {
   name: "keycloakBaseUrl",
   currentValue: prodUrl,
   nextValue: prodUrl,
+  baseValue: prodUrl,
+  hasDevValue: false,
+  rejectedDevValue: undefined,
 };
 
 const ledgerKeyRing: ConfigSwitchState = {
@@ -21,10 +25,23 @@ const ledgerKeyRing: ConfigSwitchState = {
   values: [keycloakBaseUrl],
 };
 
+/** The switch of a staging-default build, on Dev with no dev value yet. */
+const ledgerKeyRingOnDev: ConfigSwitchState = {
+  ...ledgerKeyRing,
+  currentSelectionId: "staging",
+  savedSelectionId: "dev",
+  values: [
+    { ...keycloakBaseUrl, currentValue: stagingUrl, nextValue: stagingUrl, baseValue: stagingUrl },
+  ],
+};
+
 const keycloakRealm: ConfigFixedValueState = {
   name: "keycloakRealm",
   currentValue: "ledger-bc-customers",
   nextValue: "ledger-bc-customers",
+  baseValue: "ledger-bc-customers",
+  hasDevValue: false,
+  rejectedDevValue: undefined,
   isDevCurrent: false,
   isDevSaved: false,
 };
@@ -43,7 +60,7 @@ describe("AppConfig.web", () => {
     expect(screen.queryByText(/^Next:/)).toBeNull();
   });
 
-  it("should show the values the next session runs on", () => {
+  it("should show the values the next session runs on in read-only fields", () => {
     renderAppConfig({
       switches: [
         {
@@ -54,7 +71,9 @@ describe("AppConfig.web", () => {
       ],
     });
 
-    expect(screen.getByText(stagingUrl)).toBeVisible();
+    const field = screen.getByRole("textbox", { name: "keycloakBaseUrl" });
+    expect(field).toHaveValue(stagingUrl);
+    expect(field).toHaveAttribute("readonly");
   });
 
   it("should let the switch id and the value names and values be selected", () => {
@@ -145,9 +164,129 @@ describe("AppConfig.web", () => {
 
     expect(screen.getByText("Fixed values")).toBeVisible();
     expect(screen.getByText("keycloakRealm")).toBeVisible();
-    expect(screen.getByText("ledger-bc-customers")).toBeVisible();
     expect(screen.queryByRole("radio", { name: "dev" })).toBeNull();
-    expect(screen.queryByRole("textbox", { name: "keycloakRealm" })).toBeNull();
+    const field = screen.getByRole("textbox", { name: "keycloakRealm" });
+    expect(field).toHaveValue("ledger-bc-customers");
+    expect(field).toHaveAttribute("readonly");
+  });
+
+  describe("dev values", () => {
+    it("should offer Dev, and put a fixed value on it", async () => {
+      const { onSelect } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [{ ...ledgerKeyRingOnDev, savedSelectionId: undefined }],
+        fixedValues: [keycloakRealm],
+      });
+
+      expect(screen.getAllByRole("radio", { name: "dev" })).toHaveLength(2);
+      expect(screen.getByRole("radio", { name: "fixed" })).toBeChecked();
+
+      await userEvent.click(screen.getAllByRole("radio", { name: "dev" })[1]);
+
+      expect(onSelect).toHaveBeenCalledWith("keycloakRealm", "dev");
+    });
+
+    it("should save a text typed on Dev once the field loses focus", async () => {
+      const { onSetDevValue } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [ledgerKeyRingOnDev],
+      });
+      const field = screen.getByRole("textbox", { name: "keycloakBaseUrl" });
+
+      expect(field).toHaveValue(stagingUrl);
+      expect(field).not.toHaveAttribute("readonly");
+
+      await userEvent.clear(field);
+      await userEvent.type(field, "http://localhost:8080");
+      expect(onSetDevValue).not.toHaveBeenCalled();
+      await userEvent.tab();
+
+      expect(onSetDevValue).toHaveBeenCalledWith("keycloakBaseUrl", "http://localhost:8080");
+    });
+
+    it("should save a text typed on Dev on Enter", async () => {
+      const { onSetDevValue } = renderAppConfig({
+        defaultOptionId: "staging",
+        fixedValues: [{ ...keycloakRealm, isDevSaved: true }],
+      });
+
+      await userEvent.type(screen.getByRole("textbox", { name: "keycloakRealm" }), "-dev{Enter}");
+
+      expect(onSetDevValue).toHaveBeenCalledWith("keycloakRealm", "ledger-bc-customers-dev");
+    });
+
+    it("should show a refused dev value with why", () => {
+      renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [
+          {
+            ...ledgerKeyRingOnDev,
+            values: [
+              {
+                ...ledgerKeyRingOnDev.values[0],
+                rejectedDevValue: { value: "not a url", message: "Invalid URL" },
+              },
+            ],
+          },
+        ],
+      });
+
+      expect(screen.getByRole("textbox", { name: "keycloakBaseUrl" })).toHaveValue("not a url");
+      expect(screen.getByText("Invalid URL")).toBeVisible();
+    });
+
+    it("should not reload while a refused text is shown, once its field is left", async () => {
+      const onReloadApp = jest.fn();
+      render(<RefusingHost onReloadApp={onReloadApp} />);
+      const field = screen.getByRole("textbox", { name: "keycloakBaseUrl" });
+
+      await userEvent.clear(field);
+      await userEvent.type(field, "not a url");
+      await userEvent.tab();
+      expect(screen.getByText("Invalid URL")).toBeVisible();
+      await userEvent.click(screen.getByRole("button", { name: "Reload" }));
+
+      expect(onReloadApp).not.toHaveBeenCalled();
+      expect(field).toHaveValue("not a url");
+    });
+
+    it("should reset a saved dev value", async () => {
+      const { onRemoveDevValue } = renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [
+          {
+            ...ledgerKeyRingOnDev,
+            values: [
+              {
+                ...ledgerKeyRingOnDev.values[0],
+                nextValue: "http://localhost:8080",
+                hasDevValue: true,
+              },
+            ],
+          },
+        ],
+      });
+
+      await userEvent.click(screen.getByRole("button", { name: "Reset" }));
+
+      expect(onRemoveDevValue).toHaveBeenCalledWith("keycloakBaseUrl");
+    });
+
+    it("should keep a value that is not a string read-only on Dev", () => {
+      renderAppConfig({
+        defaultOptionId: "staging",
+        switches: [
+          {
+            ...ledgerKeyRingOnDev,
+            values: [{ ...keycloakBaseUrl, name: "timeoutMs", nextValue: 3000, baseValue: 3000 }],
+          },
+        ],
+      });
+
+      const field = screen.getByRole("textbox", { name: "timeoutMs" });
+      expect(field).toHaveValue("3000");
+      expect(field).toHaveAttribute("readonly");
+    });
   });
 });
 
@@ -163,8 +302,37 @@ function renderAppConfig({
   const callbacks = {
     onSelect: jest.fn(),
     onResetSelection: jest.fn(),
+    onSetDevValue: jest.fn(() => true),
+    onRemoveDevValue: jest.fn(),
     onReloadApp: jest.fn(),
   };
   render(<AppConfig session={{ defaultOptionId, switches, fixedValues }} {...callbacks} />);
   return callbacks;
+}
+
+/** A host that refuses every dev value with why, as the middleware refuses one that does not parse. */
+function RefusingHost({ onReloadApp }: Readonly<{ onReloadApp: () => void }>) {
+  const [rejectedDevValue, setRejectedDevValue] = useState<RejectedDevValue>();
+  return (
+    <AppConfig
+      session={{
+        defaultOptionId: "staging",
+        switches: [
+          {
+            ...ledgerKeyRingOnDev,
+            values: [{ ...ledgerKeyRingOnDev.values[0], rejectedDevValue }],
+          },
+        ],
+        fixedValues: [],
+      }}
+      onSelect={jest.fn()}
+      onResetSelection={jest.fn()}
+      onSetDevValue={(_, value) => {
+        setRejectedDevValue({ value, message: "Invalid URL" });
+        return false;
+      }}
+      onRemoveDevValue={jest.fn()}
+      onReloadApp={onReloadApp}
+    />
+  );
 }

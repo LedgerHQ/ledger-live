@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   APP_CONFIG_OPTION_IDS,
   type ConfigOptionId,
@@ -18,10 +18,15 @@ import type {
   SwitchRowState,
 } from "./types";
 
+const DEV_SWITCH_CHOICES: readonly ConfigSelectionId[] = ["dev", ...APP_CONFIG_OPTION_IDS];
+const FIXED_CHOICES: readonly FixedChoice[] = ["dev", "fixed"];
+
 export function useAppConfigViewModel({
   session,
   onSelect,
   onResetSelection,
+  onSetDevValue,
+  onRemoveDevValue,
   onReloadApp,
 }: AppConfigToolProps): AppConfigViewModel {
   const [search, setSearch] = useState("");
@@ -37,7 +42,7 @@ export function useAppConfigViewModel({
     [session],
   );
   const fixedRows = useMemo<readonly FixedRowState[]>(
-    () => session?.fixedValues.map(fixedRowOf) ?? [],
+    () => session?.fixedValues.map(value => fixedRowOf(value, session.defaultOptionId)) ?? [],
     [session],
   );
 
@@ -65,8 +70,28 @@ export function useAppConfigViewModel({
 
   const pendingCount = [...switchRows, ...fixedRows].filter(({ isPending }) => isPending).length;
 
+  // The commits of the fields whose text is not saved yet. On mobile, Restart and the option
+  // controls do not end the editing of the focused field, so they run them first.
+  const drafts = useRef(new Set<() => boolean>());
+  const registerDraft = useCallback((commit: () => boolean) => {
+    drafts.current.add(commit);
+    return () => {
+      drafts.current.delete(commit);
+    };
+  }, []);
+  /** Runs every draft commit, and returns whether the host took them all. */
+  const commitDrafts = useCallback(() => {
+    let isEverySaved = true;
+    for (const commit of drafts.current) isEverySaved = commit() && isEverySaved;
+    return isEverySaved;
+  }, []);
+  const reload = useCallback(() => {
+    if (commitDrafts()) onReloadApp();
+  }, [commitDrafts, onReloadApp]);
+
   const selectOption = useCallback(
     (switchId: string, selectionId: ConfigSelectionId) => {
+      commitDrafts();
       // Selecting the default removes the saved selection, so the switch follows the default again.
       if (selectionId === defaultOptionId) {
         onResetSelection(switchId);
@@ -74,7 +99,19 @@ export function useAppConfigViewModel({
         onSelect(switchId, selectionId);
       }
     },
-    [defaultOptionId, onSelect, onResetSelection],
+    [commitDrafts, defaultOptionId, onSelect, onResetSelection],
+  );
+
+  const selectFixed = useCallback(
+    (name: string, choice: FixedChoice) => {
+      commitDrafts();
+      if (choice === "fixed") {
+        onResetSelection(name);
+      } else {
+        onSelect(name, "dev");
+      }
+    },
+    [commitDrafts, onSelect, onResetSelection],
   );
 
   return {
@@ -88,7 +125,11 @@ export function useAppConfigViewModel({
     filter,
     setFilter,
     selectOption,
-    reload: onReloadApp,
+    selectFixed,
+    setDevValue: onSetDevValue,
+    removeDevValue: onRemoveDevValue,
+    registerDraft,
+    reload,
   };
 }
 
@@ -100,22 +141,25 @@ function switchRowOf(configSwitch: ConfigSwitchState, defaultOptionId: ConfigOpt
     id,
     label,
     values,
-    choices: APP_CONFIG_OPTION_IDS,
+    // Only a build whose default is staging offers Dev.
+    choices: defaultOptionId === "staging" ? DEV_SWITCH_CHOICES : APP_CONFIG_OPTION_IDS,
     currentChoice: currentSelectionId,
     selectedChoice,
+    isOnDev: selectedChoice === "dev",
     isPending: selectedChoice !== currentSelectionId || values.some(hasNewValue),
     isSwitched: selectedChoice !== defaultOptionId || currentSelectionId !== defaultOptionId,
   } satisfies SwitchRowState;
 }
 
-function fixedRowOf(value: ConfigFixedValueState) {
+function fixedRowOf(value: ConfigFixedValueState, defaultOptionId: ConfigOptionId) {
   const currentChoice: FixedChoice = value.isDevCurrent ? "dev" : "fixed";
   const selectedChoice: FixedChoice = value.isDevSaved ? "dev" : "fixed";
   return {
     value,
-    choices: [],
+    choices: defaultOptionId === "staging" ? FIXED_CHOICES : [],
     currentChoice,
     selectedChoice,
+    isOnDev: value.isDevSaved,
     isPending: selectedChoice !== currentChoice || hasNewValue(value),
     isSwitched: value.isDevCurrent || value.isDevSaved,
   } satisfies FixedRowState;

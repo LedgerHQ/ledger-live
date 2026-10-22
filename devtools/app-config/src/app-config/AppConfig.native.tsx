@@ -3,32 +3,42 @@ import {
   Box,
   Button,
   createSegmentedControl,
+  IconButton,
   SearchInput,
   Tag,
   Text,
+  TextInput,
+  useStyleSheet,
   useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
+import { RefreshBack } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { ConfigSelectionId } from "@shared/app-config";
 import type { AppConfigToolProps, ConfigValueState } from "../types";
 import { formatValue } from "./internals/formatValue";
+import { nextLabel } from "./internals/nextLabel";
 import { pendingLabel } from "./internals/pendingLabel";
 import type {
   AppConfigViewModel,
+  FixedChoice,
   FixedRowState,
   RowFilter,
   SwitchRowState,
 } from "./internals/types";
 import { useAppConfigViewModel } from "./internals/useAppConfigViewModel";
+import { isTypeable, useDevValueField } from "./internals/useDevValueField";
 
 const { SegmentedControl: FilterControl, SegmentedControlButton: FilterButton } =
   createSegmentedControl<RowFilter>();
 const { SegmentedControl: OptionControl, SegmentedControlButton: OptionButton } =
   createSegmentedControl<ConfigSelectionId>();
+const { SegmentedControl: FixedControl, SegmentedControlButton: FixedButton } =
+  createSegmentedControl<FixedChoice>();
 
 const ROW_LX = { padding: "s16", gap: "s12" } as const;
 const HEADER_LX = { flexDirection: "row", alignItems: "center", gap: "s8" } as const;
 const TAGS_LX = { flexDirection: "row", gap: "s4" } as const;
 const VALUE_LX = { gap: "s2" } as const;
+const FIELD_LX = { flexDirection: "row", alignItems: "flex-start", gap: "s8" } as const;
 const FOOTER_LX = { padding: "s16", gap: "s12", backgroundColor: "canvas" } as const;
 const TOOLBAR_LX = { padding: "s16", gap: "s16" } as const;
 const DEFAULT_LX = {
@@ -92,7 +102,7 @@ export function AppConfig(props: AppConfigToolProps) {
           </Box>
         ) : null}
         {fixedRows.map(row => (
-          <FixedRow key={row.value.name} row={row} />
+          <FixedRow key={row.value.name} row={row} actions={viewModel} />
         ))}
         <Footer pendingCount={pendingCount} onRestart={reload} hidden />
       </ScrollView>
@@ -104,6 +114,8 @@ export function AppConfig(props: AppConfigToolProps) {
     </Box>
   );
 }
+
+type DevValueActions = Pick<AppConfigViewModel, "setDevValue" | "removeDevValue" | "registerDraft">;
 
 function Footer({
   pendingCount,
@@ -142,9 +154,7 @@ function RowTags({
   return (
     <Box lx={TAGS_LX}>
       <Tag size="sm" appearance="accent-subtle" label={`Current: ${row.currentChoice}`} />
-      {row.isPending ? (
-        <Tag size="sm" appearance="warning" label={`Next: ${row.selectedChoice}`} />
-      ) : null}
+      {row.isPending ? <Tag size="sm" appearance="warning" label={nextLabel(row)} /> : null}
     </Box>
   );
 }
@@ -154,7 +164,7 @@ function SwitchRow({
   actions,
 }: Readonly<{
   row: SwitchRowState;
-  actions: Pick<AppConfigViewModel, "selectOption">;
+  actions: Pick<AppConfigViewModel, "selectOption"> & DevValueActions;
 }>) {
   const { theme } = useTheme();
 
@@ -191,14 +201,24 @@ function SwitchRow({
           <Text typography="body3" lx={{ color: "muted" }} selectable>
             {value.name}
           </Text>
-          <ValueText value={value} />
+          {row.isOnDev && isTypeable(value) ? (
+            <DevValueInput value={value} actions={actions} />
+          ) : (
+            <ReadOnlyValueInput value={value} />
+          )}
         </Box>
       ))}
     </Box>
   );
 }
 
-function FixedRow({ row }: Readonly<{ row: FixedRowState }>) {
+function FixedRow({
+  row,
+  actions,
+}: Readonly<{
+  row: FixedRowState;
+  actions: Pick<AppConfigViewModel, "selectFixed"> & DevValueActions;
+}>) {
   const { theme } = useTheme();
   const { value } = row;
 
@@ -212,15 +232,90 @@ function FixedRow({ row }: Readonly<{ row: FixedRowState }>) {
       >
         {value.name}
       </Text>
-      <ValueText value={value} />
+      {row.choices.length > 0 ? (
+        <>
+          <FixedControl
+            selectedValue={row.selectedChoice}
+            onSelectedChange={choice => actions.selectFixed(value.name, choice)}
+          >
+            {row.choices.map(choice => (
+              <FixedButton key={choice} value={choice}>
+                {choice}
+              </FixedButton>
+            ))}
+          </FixedControl>
+          <RowTags row={row} />
+        </>
+      ) : null}
+      {row.isOnDev && isTypeable(value) ? (
+        <DevValueInput value={value} actions={actions} />
+      ) : (
+        <ReadOnlyValueInput value={value} />
+      )}
     </Box>
   );
 }
 
-function ValueText({ value }: Readonly<{ value: ConfigValueState }>) {
+function ReadOnlyValueInput({ value }: Readonly<{ value: ConfigValueState }>) {
+  const styles = useFieldStyles();
+
   return (
-    <Text typography="body3" lx={{ color: "base" }} style={{ fontFamily: "monospace" }} selectable>
-      {formatValue(value.nextValue)}
-    </Text>
+    <TextInput
+      accessibilityLabel={value.name}
+      value={formatValue(value.nextValue)}
+      readOnly
+      containerStyle={styles.container}
+      inputStyle={styles.readOnlyInput}
+    />
   );
+}
+
+function DevValueInput({
+  value,
+  actions,
+}: Readonly<{ value: ConfigValueState; actions: DevValueActions }>) {
+  const { draft, setDraft, error, commit } = useDevValueField(value, actions);
+  const styles = useFieldStyles();
+
+  return (
+    <Box lx={FIELD_LX}>
+      <TextInput
+        lx={{ flex: 1 }}
+        accessibilityLabel={value.name}
+        value={draft}
+        onChangeText={setDraft}
+        onEndEditing={commit}
+        status={error === undefined ? undefined : "error"}
+        helperText={error}
+        containerStyle={styles.container}
+        inputStyle={styles.input}
+      />
+      {value.hasDevValue ? (
+        <IconButton
+          appearance="gray"
+          size="xs"
+          icon={RefreshBack}
+          accessibilityLabel="Reset"
+          onPress={() => actions.removeDevValue(value.name)}
+        />
+      ) : null}
+    </Box>
+  );
+}
+
+/** A compact field, whether it is editable or not, so that switching a row on or off Dev keeps its layout. */
+function useFieldStyles() {
+  return useStyleSheet(t => {
+    const input = { ...t.typographies.body3, fontFamily: "monospace" };
+
+    return {
+      container: {
+        minHeight: t.sizes.s32,
+        paddingHorizontal: t.spacings.s8,
+        borderRadius: t.borderRadius.xs,
+      },
+      input,
+      readOnlyInput: { ...input, color: t.colors.text.muted },
+    };
+  }, []);
 }
