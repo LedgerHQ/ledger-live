@@ -349,7 +349,8 @@ describe("scripted device onboarding", () => {
       modelId: DeviceModelId.STAX,
     });
     expect(device.isWatching(device.sessionId)).toBe(true);
-    expect(device.dmk.sendCommand).toHaveBeenCalledTimes(4);
+    // 4 scripted commands, and the app check before the first read.
+    expect(device.dmk.sendCommand).toHaveBeenCalledTimes(5);
     expect(device.dmk.executeDeviceAction).toHaveBeenCalledTimes(2);
   });
 

@@ -105,6 +105,11 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
   let onEarlyCheckScreen = false;
 
   const sendCommand = jest.fn(async ({ command }: { command: object }) => {
+    // The machine checks the open app before each read. The device is on the dashboard: it
+    // answers at once and takes no reply the test queued.
+    if ("name" in command && command.name === "getAppAndVersion") {
+      return CommandResultFactory({ data: { name: "BOLOS", version: "1.0.0" } });
+    }
     const reply = await commandReplies.next();
     if (
       command instanceof ToggleEarlyCheckCommand &&
