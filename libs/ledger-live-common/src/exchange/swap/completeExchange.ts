@@ -27,7 +27,14 @@ import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import { CompleteExchangeError, CompleteExchangeStep, convertTransportError } from "../error";
-import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
+import type {
+  CompleteExchangeInputSwap,
+  CompleteExchangeRequestEvent,
+  ConfirmExchangeCallbacks,
+  ConfirmExchangeSequence,
+} from "../platform/types";
+import type Transport from "@ledgerhq/hw-transport";
+import type { Transaction } from "../../coin-modules/transaction-types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
@@ -251,338 +258,381 @@ export function enrichSwapDeserializationError(
   return new CompleteExchangeError(step, errorName, violation.message);
 }
 
+/** What the swap confirmation needs, whichever way the device is reached. */
+export type ConfirmSwapExchangeInput = Pick<
+  CompleteExchangeInputSwap,
+  | "exchange"
+  | "provider"
+  | "binaryPayload"
+  | "signature"
+  | "rateType"
+  | "exchangeType"
+  | "transaction"
+  | "deviceModelId"
+>;
+
+/**
+ * Builds the Exchange app confirmation sequence for a swap: partner key, payload, signature,
+ * payout and refund address checks, then `signCoinTransaction`.
+ *
+ * It runs against whatever {@link Transport} `run` is given, so the legacy `withDevice` path and
+ * the Device Intent job share it. It never closes the transport.
+ */
+export function createSwapConfirmSequence(
+  input: ConfirmSwapExchangeInput,
+  { isCancelled, onConfirmationRequested }: ConfirmExchangeCallbacks,
+): ConfirmExchangeSequence {
+  let { transaction } = input; // TODO build a tx from the data
+  const { deviceModelId, exchange: swapExchange, provider, binaryPayload, signature } = input;
+  const { rateType, exchangeType } = input;
+
+  const { fromAccount, fromParentAccount } = swapExchange;
+  const { toAccount, toParentAccount } = swapExchange;
+
+  let ignoreTransportError = false;
+  let currentStep: CompleteExchangeStep = "INIT";
+
+  const run = async (transport: Transport): Promise<void> => {
+    const providerConfig = await getSwapProvider(provider);
+    if (providerConfig.useInExchangeApp === false) {
+      throw new Error(`Unsupported provider type ${providerConfig.type}`);
+    }
+
+    const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
+
+    const refundAccount = getMainAccount(fromAccount, fromParentAccount);
+    const payoutAccount = getMainAccount(toAccount, toParentAccount);
+    const accountBridge = await getAccountBridge(refundAccount);
+    const payoutAccountBridge = await getAccountBridge(payoutAccount);
+    const mainPayoutCurrency = getAccountCurrency(payoutAccount);
+    const payoutCurrency = getAccountCurrency(toAccount);
+    const refundCurrency = getAccountCurrency(fromAccount);
+    const mainRefundCurrency = getAccountCurrency(refundAccount);
+
+    const sanctionedAddresses: string[] = [];
+    for (const acc of [refundAccount, payoutAccount]) {
+      const isSanctioned = await isAddressSanctioned(acc.currency, acc.freshAddress);
+      if (isSanctioned) sanctionedAddresses.push(acc.freshAddress);
+    }
+
+    if (sanctionedAddresses.length > 0) {
+      throw new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: sanctionedAddresses,
+      });
+    }
+    if (mainPayoutCurrency.type !== "CryptoCurrency")
+      throw new Error("This should be a cryptocurrency");
+    if (mainRefundCurrency.type !== "CryptoCurrency")
+      throw new Error("This should be a cryptocurrency");
+
+    const isDex = ["lifi", "thorswap"].includes(provider.toLowerCase());
+
+    // Thorswap/LiFi ERC20 token exception hack:
+    // - We remove subAccountId to prevent EVM calldata swap during prepareTransaction.
+    // - Set amount to 0 to ensure correct handling of the transaction
+    //   (this is adjusted during prepareTransaction before signing the actual EVM transaction for tokens but we skip it).
+    // - Since it's an ERC20 token transaction (not ETH), amount is set to 0 ETH
+    //   because no ETH is being sent, only tokens.
+    // - This workaround can't be applied earlier in the flow as the amount is used for display purposes and checks.
+    //   We must set the amount to 0 at this stage to avoid issues during the transaction.
+    // - This ensures proper handling of Thorswap/LiFi ERC20-specific transactions.
+    // - Arc's native coin is itself spent through an ERC20 alias by the LiFi router, so the
+    //   swap calldata must also be sent with amount 0 even though it has no subAccountId.
+    // See https://ledgerhq.atlassian.net/browse/LIVE-32179
+    if (
+      shouldForceZeroAmountForDexSwap({
+        isDex,
+        family: transaction.family,
+        hasSubAccountId: Boolean(transaction.subAccountId),
+        fromCurrencyId: mainRefundCurrency.id,
+      })
+    ) {
+      const transactionFixed = {
+        ...transaction,
+        subAccountId: undefined,
+        amount: BigNumber(0),
+      };
+      transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+    } else if (
+      shouldSendArcAsAliasTransfer({
+        isDex,
+        family: transaction.family,
+        hasSubAccountId: Boolean(transaction.subAccountId),
+        fromCurrencyId: mainRefundCurrency.id,
+      })
+    ) {
+      const transactionFixed = {
+        ...transaction,
+        subAccountId: undefined,
+        ...buildArcAliasTransfer({
+          currencyId: mainRefundCurrency.id,
+          recipient: transaction.recipient,
+          amount: transaction.amount,
+        }),
+      };
+      transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+    } else {
+      transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
+    }
+
+    if (transaction.family === "bitcoin") {
+      const transactionFixed = {
+        ...transaction,
+        rbf: true,
+      };
+      transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+    }
+
+    if (isCancelled()) return;
+
+    // The result of estimateGas is quite accurate in calculating how much gas the user will have to pay
+    // for after the execution of the transaction,
+    // but it does not represent how much gas the blockchain requires to successfully evaluate a transaction.
+    // This is due to gas refunds of storage slots that get set and cleaned in the same transaction,
+    // gas buffers in some implementations and other things.
+    // Please always add a buffer on top of that value, LiFi recommends 25-30%.
+    if (
+      isDex &&
+      transaction.family === "evm" &&
+      transaction.gasLimit &&
+      BigNumber.isBigNumber(transaction.gasLimit)
+    ) {
+      const gasLimit = getBufferedDexGasLimit({
+        gasLimit: transaction.gasLimit,
+        fromCurrencyId: mainRefundCurrency.id,
+      });
+      const transactionFixed = {
+        ...transaction,
+        fees: undefined, // to be recalculated
+        customGasLimit: gasLimit,
+      };
+      transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+    }
+
+    const status = await accountBridge.getTransactionStatus(refundAccount, transaction);
+    const { errors, estimatedFees } = status;
+    if (isCancelled()) return;
+
+    const errorsKeys = Object.keys(errors);
+
+    if (errorsKeys.length > 0) {
+      const firstError = errors[errorsKeys[0]];
+      if (firstError instanceof Error) {
+        throw enrichNotEnoughBalanceError(
+          enrichEvmNotEnoughGasError(firstError, {
+            family: transaction.family,
+            nativeBalance: refundAccount.balance,
+            nativeCurrency: mainRefundCurrency.ticker,
+            totalFees: readTotalFees(status, estimatedFees),
+            gasLimit:
+              readOptionalBigNumber(transaction, "customGasLimit") ??
+              readOptionalBigNumber(transaction, "gasLimit"),
+            gasPrice: readOptionalBigNumber(transaction, "gasPrice"),
+            maxFeePerGas: readOptionalBigNumber(transaction, "maxFeePerGas"),
+            maxPriorityFeePerGas: readOptionalBigNumber(transaction, "maxPriorityFeePerGas"),
+          }),
+          {
+            balance: fromAccount.balance,
+            spendableBalance: fromAccount.spendableBalance,
+            pendingOperationsCount: fromAccount.pendingOperations.length,
+            unit: getAccountCurrency(fromAccount).units[0],
+          },
+        );
+      }
+      throw firstError;
+    }
+
+    currentStep = "SET_PARTNER_KEY";
+    await exchange.setPartnerKey(
+      convertToAppExchangePartnerKey(providerConfig as CEXProviderConfig),
+    );
+    if (isCancelled()) return;
+
+    currentStep = "CHECK_PARTNER";
+    await exchange.checkPartner((providerConfig as CEXProviderConfig).signature);
+    if (isCancelled()) return;
+
+    currentStep = "PROCESS_TRANSACTION";
+    const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
+      exchange.transactionType === ExchangeTypes.SwapNg
+        ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
+        : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+
+    await exchange.processTransaction(payload, estimatedFees, format);
+    if (isCancelled()) return;
+
+    const goodSign = convertSignature(signature, exchange.transactionType);
+
+    currentStep = "CHECK_TRANSACTION_SIGNATURE";
+    await exchange.checkTransactionSignature(goodSign);
+    if (isCancelled()) return;
+
+    // Hedera swap payload is filled with user account address,
+    // but the device app requires the related public key for verification.
+    // Since this key is stored on-chain, we use the TrustedService
+    // to fetch a signed descriptor linking the address to its public key.
+    const hederaCurrency = getCryptoCurrencyById("hedera");
+    let hederaAccount: Account | null = null;
+    if (payoutAccount.currency.family === hederaCurrency.family) {
+      hederaAccount = payoutAccount;
+    } else if (refundAccount.currency.family === hederaCurrency.family) {
+      hederaAccount = refundAccount;
+    }
+
+    if (hederaAccount) {
+      invariant(deviceModelId, "hedera: deviceModelId is not available");
+      await handleHederaTrustedFlow({ exchange, hederaAccount, deviceModelId });
+      if (isCancelled()) return;
+    }
+
+    const payoutAddressParameters = payoutAccountBridge.getSerializedAddressParameters(
+      payoutAccount,
+      mainPayoutCurrency.id,
+    );
+    if (isCancelled()) return;
+    if (!payoutAddressParameters) {
+      throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+    }
+
+    //-- CHECK_PAYOUT_ADDRESS
+    const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
+      await getCurrencyExchangeConfig(payoutCurrency);
+    if (isCancelled()) return;
+
+    try {
+      currentStep = "CHECK_PAYOUT_ADDRESS";
+      await exchange.validatePayoutOrAsset(
+        payoutAddressConfig,
+        payoutAddressConfigSignature,
+        payoutAddressParameters,
+      );
+    } catch (e) {
+      const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
+      if (transportErr?.name === "TransportStatusError" && transportErr?.statusCode === 0x6a83) {
+        throw new WrongDeviceForAccountPayout(
+          getExchangeErrorMessage(transportErr.statusCode, currentStep).errorMessage,
+          {
+            accountName: getDefaultAccountName(payoutAccount),
+          },
+        );
+      }
+
+      throw convertTransportError(currentStep, e);
+    }
+
+    onConfirmationRequested(estimatedFees.toString());
+
+    // Swap specific checks to confirm the refund address is correct.
+    if (isCancelled()) return;
+    const refundAddressParameters = accountBridge.getSerializedAddressParameters(
+      refundAccount,
+      mainRefundCurrency.id,
+    );
+    if (isCancelled()) return;
+    if (!refundAddressParameters) {
+      throw new Error(`Family not supported: ${mainRefundCurrency.family}`);
+    }
+
+    const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
+      await getCurrencyExchangeConfig(refundCurrency);
+    if (isCancelled()) return;
+
+    try {
+      currentStep = "CHECK_REFUND_ADDRESS";
+      await exchange.checkRefundAddress(
+        refundAddressConfig,
+        refundAddressConfigSignature,
+        refundAddressParameters,
+      );
+      log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
+    } catch (e) {
+      const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
+      if (transportErr?.name === "TransportStatusError" && transportErr?.statusCode === 0x6a83) {
+        log(COMPLETE_EXCHANGE_LOG, "transport error");
+        throw new WrongDeviceForAccountRefund(
+          getExchangeErrorMessage(transportErr.statusCode, currentStep).errorMessage,
+          {
+            accountName: getDefaultAccountName(refundAccount),
+          },
+        );
+      }
+
+      throw convertTransportError(currentStep, e);
+    }
+
+    if (isCancelled()) return;
+    ignoreTransportError = true;
+    currentStep = "SIGN_COIN_TRANSACTION";
+    await exchange.signCoinTransaction();
+  };
+
+  // Maps what `run` threw, and swallows what a successful confirmation produces (see below).
+  const handleError = (e: unknown): void => {
+    // `signCoinTransaction` makes the Exchange app hand over to the coin app, which can drop the
+    // link before answering: that is the expected end of the confirmation, not a failure.
+    if (ignoreTransportError) return;
+
+    // During signature delegation, Exchange does not remap refusal errors from the coin app/OS.
+    // 0x6a84: user refused the proposal for an owned destination address.
+    // 0x5501: BOLOS/OS-level refusal (not an Exchange app error code).
+    const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
+    if (
+      transportErr?.name === "TransportStatusError" &&
+      (transportErr?.statusCode === 0x6a84 || transportErr?.statusCode === 0x5501)
+    ) {
+      throw new TransactionRefusedOnDevice();
+    }
+
+    const enrichedError = enrichSwapDeserializationError(currentStep, binaryPayload, e);
+    if (enrichedError) throw enrichedError;
+
+    throw convertTransportError(currentStep, e);
+  };
+
+  return { run, handleError, getTransaction: () => transaction };
+}
+
+/**
+ * Runs the swap confirmation on an already opened transport and resolves with the fee-prepared
+ * transaction to sign.
+ */
+export async function confirmSwapExchange(
+  input: ConfirmSwapExchangeInput,
+  { transport, ...callbacks }: ConfirmExchangeCallbacks & { transport: Transport },
+): Promise<Transaction> {
+  const sequence = createSwapConfirmSequence(input, callbacks);
+  await sequence.run(transport).catch(sequence.handleError);
+  return sequence.getTransaction();
+}
+
 const completeExchange = (
   input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
-  let { transaction } = input; // TODO build a tx from the data
-  const {
-    deviceId,
-    deviceModelId,
-    exchange,
-    provider,
-    binaryPayload,
-    signature,
-    rateType,
-    exchangeType,
-  } = input;
-
-  const { fromAccount, fromParentAccount } = exchange;
-  const { toAccount, toParentAccount } = exchange;
+  const { deviceId } = input;
 
   return new Observable(o => {
     let unsubscribed = false;
-    let ignoreTransportError = false;
-    let currentStep: CompleteExchangeStep = "INIT";
+
+    const sequence = createSwapConfirmSequence(input, {
+      isCancelled: () => unsubscribed,
+      onConfirmationRequested: estimatedFees => {
+        o.next({ type: "complete-exchange-requested", estimatedFees });
+      },
+    });
 
     const confirmExchange = async () => {
       if (deviceId === undefined) {
         throw new DisconnectedDeviceDuringOperation();
       }
 
-      await withDevicePromise(deviceId, async transport => {
-        const providerConfig = await getSwapProvider(provider);
-        if (providerConfig.useInExchangeApp === false) {
-          throw new Error(`Unsupported provider type ${providerConfig.type}`);
-        }
-
-        const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
-
-        const refundAccount = getMainAccount(fromAccount, fromParentAccount);
-        const payoutAccount = getMainAccount(toAccount, toParentAccount);
-        const accountBridge = await getAccountBridge(refundAccount);
-        const payoutAccountBridge = await getAccountBridge(payoutAccount);
-        const mainPayoutCurrency = getAccountCurrency(payoutAccount);
-        const payoutCurrency = getAccountCurrency(toAccount);
-        const refundCurrency = getAccountCurrency(fromAccount);
-        const mainRefundCurrency = getAccountCurrency(refundAccount);
-
-        const sanctionedAddresses: string[] = [];
-        for (const acc of [refundAccount, payoutAccount]) {
-          const isSanctioned = await isAddressSanctioned(acc.currency, acc.freshAddress);
-          if (isSanctioned) sanctionedAddresses.push(acc.freshAddress);
-        }
-
-        if (sanctionedAddresses.length > 0) {
-          throw new AddressesSanctionedError("AddressesSanctionedError", {
-            addresses: sanctionedAddresses,
-          });
-        }
-        if (mainPayoutCurrency.type !== "CryptoCurrency")
-          throw new Error("This should be a cryptocurrency");
-        if (mainRefundCurrency.type !== "CryptoCurrency")
-          throw new Error("This should be a cryptocurrency");
-
-        const isDex = ["lifi", "thorswap"].includes(provider.toLowerCase());
-
-        // Thorswap/LiFi ERC20 token exception hack:
-        // - We remove subAccountId to prevent EVM calldata swap during prepareTransaction.
-        // - Set amount to 0 to ensure correct handling of the transaction
-        //   (this is adjusted during prepareTransaction before signing the actual EVM transaction for tokens but we skip it).
-        // - Since it's an ERC20 token transaction (not ETH), amount is set to 0 ETH
-        //   because no ETH is being sent, only tokens.
-        // - This workaround can't be applied earlier in the flow as the amount is used for display purposes and checks.
-        //   We must set the amount to 0 at this stage to avoid issues during the transaction.
-        // - This ensures proper handling of Thorswap/LiFi ERC20-specific transactions.
-        // - Arc's native coin is itself spent through an ERC20 alias by the LiFi router, so the
-        //   swap calldata must also be sent with amount 0 even though it has no subAccountId.
-        // See https://ledgerhq.atlassian.net/browse/LIVE-32179
-        if (
-          shouldForceZeroAmountForDexSwap({
-            isDex,
-            family: transaction.family,
-            hasSubAccountId: Boolean(transaction.subAccountId),
-            fromCurrencyId: mainRefundCurrency.id,
-          })
-        ) {
-          const transactionFixed = {
-            ...transaction,
-            subAccountId: undefined,
-            amount: BigNumber(0),
-          };
-          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
-        } else if (
-          shouldSendArcAsAliasTransfer({
-            isDex,
-            family: transaction.family,
-            hasSubAccountId: Boolean(transaction.subAccountId),
-            fromCurrencyId: mainRefundCurrency.id,
-          })
-        ) {
-          const transactionFixed = {
-            ...transaction,
-            subAccountId: undefined,
-            ...buildArcAliasTransfer({
-              currencyId: mainRefundCurrency.id,
-              recipient: transaction.recipient,
-              amount: transaction.amount,
-            }),
-          };
-          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
-        } else {
-          transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
-        }
-
-        if (transaction.family === "bitcoin") {
-          const transactionFixed = {
-            ...transaction,
-            rbf: true,
-          };
-          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
-        }
-
-        if (unsubscribed) return;
-
-        // The result of estimateGas is quite accurate in calculating how much gas the user will have to pay
-        // for after the execution of the transaction,
-        // but it does not represent how much gas the blockchain requires to successfully evaluate a transaction.
-        // This is due to gas refunds of storage slots that get set and cleaned in the same transaction,
-        // gas buffers in some implementations and other things.
-        // Please always add a buffer on top of that value, LiFi recommends 25-30%.
-        if (
-          isDex &&
-          transaction.family === "evm" &&
-          transaction.gasLimit &&
-          BigNumber.isBigNumber(transaction.gasLimit)
-        ) {
-          const gasLimit = getBufferedDexGasLimit({
-            gasLimit: transaction.gasLimit,
-            fromCurrencyId: mainRefundCurrency.id,
-          });
-          const transactionFixed = {
-            ...transaction,
-            fees: undefined, // to be recalculated
-            customGasLimit: gasLimit,
-          };
-          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
-        }
-
-        const status = await accountBridge.getTransactionStatus(refundAccount, transaction);
-        const { errors, estimatedFees } = status;
-        if (unsubscribed) return;
-
-        const errorsKeys = Object.keys(errors);
-
-        if (errorsKeys.length > 0) {
-          const firstError = errors[errorsKeys[0]];
-          if (firstError instanceof Error) {
-            throw enrichNotEnoughBalanceError(
-              enrichEvmNotEnoughGasError(firstError, {
-                family: transaction.family,
-                nativeBalance: refundAccount.balance,
-                nativeCurrency: mainRefundCurrency.ticker,
-                totalFees: readTotalFees(status, estimatedFees),
-                gasLimit:
-                  readOptionalBigNumber(transaction, "customGasLimit") ??
-                  readOptionalBigNumber(transaction, "gasLimit"),
-                gasPrice: readOptionalBigNumber(transaction, "gasPrice"),
-                maxFeePerGas: readOptionalBigNumber(transaction, "maxFeePerGas"),
-                maxPriorityFeePerGas: readOptionalBigNumber(transaction, "maxPriorityFeePerGas"),
-              }),
-              {
-                balance: fromAccount.balance,
-                spendableBalance: fromAccount.spendableBalance,
-                pendingOperationsCount: fromAccount.pendingOperations.length,
-                unit: getAccountCurrency(fromAccount).units[0],
-              },
-            );
-          }
-          throw firstError;
-        }
-
-        currentStep = "SET_PARTNER_KEY";
-        await exchange.setPartnerKey(
-          convertToAppExchangePartnerKey(providerConfig as CEXProviderConfig),
-        );
-        if (unsubscribed) return;
-
-        currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner((providerConfig as CEXProviderConfig).signature);
-        if (unsubscribed) return;
-
-        currentStep = "PROCESS_TRANSACTION";
-        const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
-          exchange.transactionType === ExchangeTypes.SwapNg
-            ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
-            : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
-
-        await exchange.processTransaction(payload, estimatedFees, format);
-        if (unsubscribed) return;
-
-        const goodSign = convertSignature(signature, exchange.transactionType);
-
-        currentStep = "CHECK_TRANSACTION_SIGNATURE";
-        await exchange.checkTransactionSignature(goodSign);
-        if (unsubscribed) return;
-
-        // Hedera swap payload is filled with user account address,
-        // but the device app requires the related public key for verification.
-        // Since this key is stored on-chain, we use the TrustedService
-        // to fetch a signed descriptor linking the address to its public key.
-        const hederaCurrency = getCryptoCurrencyById("hedera");
-        let hederaAccount: Account | null = null;
-        if (payoutAccount.currency.family === hederaCurrency.family) {
-          hederaAccount = payoutAccount;
-        } else if (refundAccount.currency.family === hederaCurrency.family) {
-          hederaAccount = refundAccount;
-        }
-
-        if (hederaAccount) {
-          invariant(deviceModelId, "hedera: deviceModelId is not available");
-          await handleHederaTrustedFlow({ exchange, hederaAccount, deviceModelId });
-          if (unsubscribed) return;
-        }
-
-        const payoutAddressParameters = payoutAccountBridge.getSerializedAddressParameters(
-          payoutAccount,
-          mainPayoutCurrency.id,
-        );
-        if (unsubscribed) return;
-        if (!payoutAddressParameters) {
-          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
-        }
-
-        //-- CHECK_PAYOUT_ADDRESS
-        const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          await getCurrencyExchangeConfig(payoutCurrency);
-
-        try {
-          currentStep = "CHECK_PAYOUT_ADDRESS";
-          await exchange.validatePayoutOrAsset(
-            payoutAddressConfig,
-            payoutAddressConfigSignature,
-            payoutAddressParameters,
-          );
-        } catch (e) {
-          const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
-          if (
-            transportErr?.name === "TransportStatusError" &&
-            transportErr?.statusCode === 0x6a83
-          ) {
-            throw new WrongDeviceForAccountPayout(
-              getExchangeErrorMessage(transportErr.statusCode, currentStep).errorMessage,
-              {
-                accountName: getDefaultAccountName(payoutAccount),
-              },
-            );
-          }
-
-          throw convertTransportError(currentStep, e);
-        }
-
-        o.next({
-          type: "complete-exchange-requested",
-          estimatedFees: estimatedFees.toString(),
-        });
-
-        // Swap specific checks to confirm the refund address is correct.
-        if (unsubscribed) return;
-        const refundAddressParameters = accountBridge.getSerializedAddressParameters(
-          refundAccount,
-          mainRefundCurrency.id,
-        );
-        if (unsubscribed) return;
-        if (!refundAddressParameters) {
-          throw new Error(`Family not supported: ${mainRefundCurrency.family}`);
-        }
-
-        const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
-          await getCurrencyExchangeConfig(refundCurrency);
-        if (unsubscribed) return;
-
-        try {
-          currentStep = "CHECK_REFUND_ADDRESS";
-          await exchange.checkRefundAddress(
-            refundAddressConfig,
-            refundAddressConfigSignature,
-            refundAddressParameters,
-          );
-          log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
-        } catch (e) {
-          const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
-          if (
-            transportErr?.name === "TransportStatusError" &&
-            transportErr?.statusCode === 0x6a83
-          ) {
-            log(COMPLETE_EXCHANGE_LOG, "transport error");
-            throw new WrongDeviceForAccountRefund(
-              getExchangeErrorMessage(transportErr.statusCode, currentStep).errorMessage,
-              {
-                accountName: getDefaultAccountName(refundAccount),
-              },
-            );
-          }
-
-          throw convertTransportError(currentStep, e);
-        }
-
-        if (unsubscribed) return;
-        ignoreTransportError = true;
-        currentStep = "SIGN_COIN_TRANSACTION";
-        await exchange.signCoinTransaction();
-      }).catch(e => {
-        if (ignoreTransportError) return;
-
-        // During signature delegation, Exchange does not remap refusal errors from the coin app/OS.
-        // 0x6a84: user refused the proposal for an owned destination address.
-        // 0x5501: BOLOS/OS-level refusal (not an Exchange app error code).
-        const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
-        if (
-          transportErr?.name === "TransportStatusError" &&
-          (transportErr?.statusCode === 0x6a84 || transportErr?.statusCode === 0x5501)
-        ) {
-          throw new TransactionRefusedOnDevice();
-        }
-
-        const enrichedError = enrichSwapDeserializationError(currentStep, binaryPayload, e);
-        if (enrichedError) throw enrichedError;
-
-        throw convertTransportError(currentStep, e);
-      });
+      await withDevicePromise(deviceId, transport => sequence.run(transport)).catch(
+        sequence.handleError,
+      );
       await delay(3000);
       if (unsubscribed) return;
       o.next({
         type: "complete-exchange-result",
-        completeExchangeResult: transaction,
+        completeExchangeResult: sequence.getTransaction(),
       });
     };
 

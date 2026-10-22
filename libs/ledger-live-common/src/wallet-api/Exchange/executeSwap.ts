@@ -174,6 +174,7 @@ async function executeSwapAttempt(
         (resolve, reject) => {
           uiExchangeStart({
             exchangeParams: exchangeStartParams,
+            continuesOnDevice: true,
             onSuccess: (nonce, device, meta) => {
               exchangeAppVersion = meta?.exchangeAppVersion;
               signingAppName = meta?.signingAppName;
