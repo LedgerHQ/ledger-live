@@ -5,9 +5,10 @@ import base from "./libs.mts";
 // suspicious ones as warnings, forbid import cycles, and keep the generic coin framework between
 // a coin module and the rest of the wallet.
 //
-// `env`, `globals` and `settings` are re-declared rather than inherited: `extends` does not carry
-// them through. The base and libs test overrides do come through; the coin modules' own test
-// override comes after them and covers every test file these packages have, all under src/.
+// A preset rather than an override in `libs`: an override cannot set `categories`, and the
+// correctness rules are errors here but warnings in the rest of libs/. The base and libs test
+// overrides come through `extends`; the coin modules' own test override comes after them and
+// covers every test file these packages have, all under src/.
 const createApiRestriction = {
   group: ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
   importNamePattern: "^createApi$",
@@ -22,14 +23,8 @@ const createApiRestriction = {
 
 export default defineConfig({
   extends: [base],
-  env: { browser: true, es6: true, node: true },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
-  globals: { Atomics: "readonly", SharedArrayBuffer: "readonly" },
-  settings: { react: { version: "19.0.0" } },
   rules: {
-    // The base value, re-declared: a rule's options do not survive `extends` either.
-    "eslint/no-console": ["error", { allow: ["warn", "error"] }],
-
     // What the coin modules add.
     "eslint/eqeqeq": "error",
     "eslint/no-restricted-imports": ["error", { patterns: [createApiRestriction] }],
@@ -47,7 +42,6 @@ export default defineConfig({
 
     // Rules the coin modules never ran. React and jsx-a11y come with the base plugins; of their
     // rules only rules-of-hooks reports anything here, on test helpers named `use*`.
-    "eslint/no-empty-pattern": "off",
     "eslint/no-useless-constructor": "off",
     "eslint/preserve-caught-error": "off",
     "import/no-duplicates": "off",
