@@ -308,6 +308,13 @@ export class Account {
     index: 3,
     accountPath: "44'/60'/3'/0/0",
   });
+  // Swaps that may approve a token with the CLI on every run, kept off Ethereum 1's broadcast flows
+  static readonly ETH_5 = new Account({
+    currency: Currency.ETH,
+    accountName: "Ethereum 5",
+    index: 4,
+    accountPath: "44'/60'/4'/0/0",
+  });
   static readonly SANCTIONED_ETH = new Account({
     currency: Currency.ETH,
     accountName: "Sanctioned Ethereum",
@@ -748,6 +755,24 @@ export class TokenAccount extends Account {
     accountPath: Account.ETH_4.accountPath,
     tokenType: TokenType.ERC20,
     parentAccount: Account.ETH_4,
+  });
+
+  static readonly ETH_USDC_5 = new TokenAccount({
+    currency: Currency.ETH_USDC,
+    accountName: "USD Coin 5",
+    index: 4,
+    accountPath: Account.ETH_5.accountPath,
+    tokenType: TokenType.ERC20,
+    parentAccount: Account.ETH_5,
+  });
+
+  static readonly ETH_USDT_5 = new TokenAccount({
+    currency: Currency.ETH_USDT,
+    accountName: "(Ethereum) Tether USD 5",
+    index: 4,
+    accountPath: Account.ETH_5.accountPath,
+    tokenType: TokenType.ERC20,
+    parentAccount: Account.ETH_5,
   });
 
   static readonly SOL_GIGA_1 = new TokenAccount({
