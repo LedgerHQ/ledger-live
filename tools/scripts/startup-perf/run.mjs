@@ -5,8 +5,10 @@
 // Each launch is a plain `adb shell am start` / `xcrun simctl launch` with no test tool attached.
 // Maestro only opens Settings > Debug > Performance afterwards to read "App startup time".
 // Accounts are injected once per install through the E2E bridge (bridge.mjs), then persisted by the app.
-// Halfway through each scenario the builds swap devices, so a difference between the two
-// devices cancels out of B − A (analyze.mjs reports it as "instance bias").
+// Launches strictly alternate between the two devices, so every launch follows one on the other
+// device: in run 39731729203 a launch right after one on the same simulator was ~270 ms faster.
+// Halfway through each scenario the builds swap devices and the starting side flips, so a
+// difference between the two devices cancels out of B − A (analyze.mjs reports it as "device bias").
 import { execFile } from "node:child_process";
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -345,14 +347,22 @@ async function inject(device, userdata) {
 }
 
 let consecutiveFailures = 0;
+let lastLaunchDevice = null;
 
 async function sample(meta) {
-  const record = { platform: PLATFORM, ...meta, startedAt: new Date().toISOString(), ok: false };
+  const record = {
+    platform: PLATFORM,
+    ...meta,
+    afterSameDevice: lastLaunchDevice === meta.device,
+    startedAt: new Date().toISOString(),
+    ok: false,
+  };
   const name = `${meta.scenario}-p${meta.phase}-r${meta.round}-${meta.side}`;
   try {
     // Stop the app on both devices so the idle one is not syncing in the background.
     for (const device of DEVICES) await P.stop(device);
     await sleep(IDLE_MS);
+    lastLaunchDevice = meta.device;
     const launch = await P.launch(meta.device, { mock: "0" });
     await sleep(SETTLE_MS);
     const perf = await readPerformance(meta.device, name);
@@ -411,7 +421,10 @@ async function main() {
     for (const phase of [0, 1]) {
       const placement =
         phase === 0 ? { A: DEVICES[0], B: DEVICES[1] } : { A: DEVICES[1], B: DEVICES[0] };
-      for (const side of ["A", "B"]) {
+      // A B A B … in the first half, B A B A … after the swap: never the same device twice in a row.
+      // Warm-ups use the same order, so the last one is on the other device from the first launch.
+      const order = phase === 0 ? ["A", "B"] : ["B", "A"];
+      for (const side of order) {
         const device = placement[side];
         log(`installing ${side} on ${device} and injecting ${scenario}`);
         await P.install(device, APPS[side]);
@@ -421,7 +434,6 @@ async function main() {
         }
       }
       for (let round = 0; round < PAIRS / 2; round++) {
-        const order = round % 2 === 0 ? ["A", "B"] : ["B", "A"];
         for (const side of order) {
           await sample({ scenario, phase, round, side, device: placement[side], warmup: false });
         }
