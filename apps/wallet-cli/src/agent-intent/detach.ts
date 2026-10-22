@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { stateDir } from "@bunli/utils";
 import { z } from "zod";
+import { DETACHED_LISTENER_ENV } from "../analytics/lifecycle-analytics";
 import { APP_NAME } from "../session/session-store";
 import { readLiveLockHolderPid, withFileLock } from "../shared/file-lock";
 
@@ -70,14 +71,19 @@ export function selfCommand(args: readonly string[]): string[] {
 
 /** Starts `command` in its own session, detached from this process, with stdout and stderr in a
  * fresh 0600 log at `logPath`. The child never holds this process's stdio, so a caller reading our
- * output through a pipe is not kept waiting for it. */
+ * output through a pipe is not kept waiting for it. Its env marks it as a detached listener, which
+ * tags its analytics. */
 export function spawnDetached(command: readonly string[], logPath: string): ChildProcess {
   ensureListenerDir();
   const logFd = openSync(logPath, "w", 0o600);
   try {
     fchmodSync(logFd, 0o600); // `mode` only applies on create; a reused log keeps its old one
     const [file, ...args] = command;
-    const child = spawn(file, args, { detached: true, stdio: ["ignore", logFd, logFd] });
+    const child = spawn(file, args, {
+      detached: true,
+      stdio: ["ignore", logFd, logFd],
+      env: { ...process.env, [DETACHED_LISTENER_ENV]: "1" },
+    });
     child.unref();
     return child;
   } finally {
