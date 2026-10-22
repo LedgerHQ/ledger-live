@@ -208,13 +208,13 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
   const pickDestinationAccount = useCallback(() => {
     openDrawer({
       enableAccountSelection: true,
-      areCurrenciesFiltered: true,
-      currencies: currencyIds ?? [],
+      useCase: "swap",
+      areCurrenciesFiltered: false,
       uiUseCase: PERPS_UI_USE_CASE.withdraw,
       flow: PERPS_UI_USE_CASE.withdraw,
       onAccountSelected: account => setDestinationAccountId(account.id),
     });
-  }, [currencyIds, openDrawer]);
+  }, [openDrawer]);
 
   // TODO(LIVE-39368): open the withdraw summary.
   const handleReview = useCallback(() => undefined, []);
