@@ -265,6 +265,11 @@ export const deviceOnboardingMachine = setup({
             LOCKED: stopsHere,
             TRANSPORT_LOST: stopsHere,
             QUIT: stopsHere,
+            SESSION_CHANGED: stopsHere,
+            FIRMWARE_UPDATE_RECONNECT_REQUIRED: {
+              target: "#deviceOnboarding.awaitingSessionAfterFirmwareUpdate",
+              actions: ["forgetFirmwareCheck", "clearGenuineVerdict"],
+            },
             FIRMWARE_UPDATE_FLOW_CLOSED: {
               target: "#deviceOnboarding.readingState",
               actions: ["forgetFirmwareCheck", "forgetAttestationAfterUpdate"],
@@ -381,6 +386,15 @@ export const deviceOnboardingMachine = setup({
     awaitingSession: {
       on: {
         SESSION_READY: { target: "readingState", actions: "startNewSession" },
+      },
+    },
+    awaitingSessionAfterFirmwareUpdate: {
+      on: {
+        SESSION_READY: { target: "readingState", actions: "startNewSession" },
+        QUIT: "#deviceOnboarding.exitOnboarding",
+        LOCKED: stopsHere,
+        TRANSPORT_LOST: stopsHere,
+        SESSION_CHANGED: stopsHere,
       },
     },
 

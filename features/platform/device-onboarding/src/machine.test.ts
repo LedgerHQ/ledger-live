@@ -698,24 +698,33 @@ describe("the firmware handover", () => {
   it("carries the session read after the update rather than the initial one", async () => {
     const { actor } = await start(handoverScript([os(unseeded), os({ isBootloader: true })]));
 
-    await handOverAndReturn(actor, "session-after-update");
+    await handOverAfterReboot(actor);
 
     expect(exitOf(actor)).toMatchObject({ sessionId: "session-after-update" });
   });
 
   it("waits through the reboot that drops the transport, rather than leaving the handover", async () => {
-    const { actor } = await start(
+    const { actor, fake } = await start(
       handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
     );
 
     actor.send({ type: "USER_ACCEPT" });
     await settle();
+    const reads = fake.sendCommand.mock.calls.length;
     actor.send({ type: "TRANSPORT_LOST" });
     await settle();
 
     expect(stateOf(actor)).toBe("firmwareUpdateDelegated");
 
-    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session-after-update" });
+    actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("awaitingSessionAfterFirmwareUpdate");
+    expect(fake.sendCommand).toHaveBeenCalledTimes(reads);
+    expect(actor.getSnapshot().context.sessionId).toBe("session");
+    expect(actor.getSnapshot().context.genuineVerdict).toBeNull();
+
+    actor.send({ type: "SESSION_READY", sessionId: "session-after-update" });
     await settle();
 
     expectChecksPassed(actor);
@@ -755,7 +764,7 @@ describe("the firmware handover", () => {
       handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
     );
 
-    await handOverAndReturn(actor, "session-after-update");
+    await handOverAfterReboot(actor);
 
     expect(fake.genuineCheckRuns()).toBe(2);
     expect(fake.earlyCheckToggles()).toEqual([
@@ -766,12 +775,60 @@ describe("the firmware handover", () => {
     expectChecksPassed(actor);
   });
 
+  it("repeats the genuine check when the rebooted session reuses the previous id", async () => {
+    const { actor, fake } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    await handOverAfterReboot(actor, "session");
+
+    expect(fake.genuineCheckRuns()).toBe(2);
+    expectChecksPassed(actor);
+  });
+
+  it("ignores a lock, a lost transport and a late close while it waits for the rebooted session", async () => {
+    const { actor, fake } = await start(handoverScript([os(unseeded)]));
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+    await settle();
+    const reads = fake.sendCommand.mock.calls.length;
+
+    actor.send({ type: "LOCKED" });
+    actor.send({ type: "TRANSPORT_LOST" });
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-late" });
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session-late" });
+    actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("awaitingSessionAfterFirmwareUpdate");
+    expect(actor.getSnapshot().context.sessionId).toBe("session");
+    expect(fake.sendCommand).toHaveBeenCalledTimes(reads);
+  });
+
+  it("quits the post-update wait without talking to the dead session", async () => {
+    const { actor, fake } = await start(handoverScript([os(unseeded)]));
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+    await settle();
+    const toggles = fake.earlyCheckToggles().length;
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
+    expect(fake.earlyCheckToggles()).toHaveLength(toggles);
+  });
+
   it("never reaches the setup when the genuine check fails after the update", async () => {
     const { actor } = await start(
       handoverScript([os(unseeded)], { genuineCheck: [genuine, deviceRefusal] }),
     );
 
-    await handOverAndReturn(actor, "session-after-update");
+    await handOverAfterReboot(actor);
     actor.send({ type: "CLOSE" });
     await settle();
 
@@ -1463,6 +1520,18 @@ async function handOverAndReturn(actor: OnboardingActor, sessionId = "session"):
   actor.send({ type: "USER_ACCEPT" });
   await settle();
   actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId });
+  await settle();
+}
+
+async function handOverAfterReboot(
+  actor: OnboardingActor,
+  sessionId = "session-after-update",
+): Promise<void> {
+  actor.send({ type: "USER_ACCEPT" });
+  await settle();
+  actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+  await settle();
+  actor.send({ type: "SESSION_READY", sessionId });
   await settle();
 }
 

@@ -61,7 +61,9 @@ Screens show the current state and send the user's events: `CONTINUE`, `RETRY`, 
 first device read.
 
 The app also sends what only it can see: `LOCKED`, `UNLOCKED` and `TRANSPORT_LOST` from
-`sessionListener`, and `FIRMWARE_UPDATE_FLOW_CLOSED` when its firmware update flow returns.
+`sessionListener`, and `FIRMWARE_UPDATE_FLOW_CLOSED` when its firmware update flow returns on a
+session that can still be read. `FIRMWARE_UPDATE_RECONNECT_REQUIRED` means that flow returned after
+the device rebooted: the machine waits, and the host opens the next session.
 
 ### The session
 
@@ -69,9 +71,9 @@ The app also sends what only it can see: `LOCKED`, `UNLOCKED` and `TRANSPORT_LOS
 
 | Event | When the app sends it |
 |---|---|
-| `SESSION_READY` | After a `TRANSPORT_LOST`, when the new session is open and watched. Only this event leaves `awaitingSession`. |
+| `SESSION_READY` | When the new session is open. It leaves `awaitingSession` and `awaitingSessionAfterFirmwareUpdate`. Watch the session after sending it on the post-update wait: a lock reported before the transition would be ignored. |
 | `SESSION_CHANGED` | When the app moves to a new session in the middle of a run. |
-| `FIRMWARE_UPDATE_FLOW_CLOSED` | When the firmware update returns. The device rebooted onto a new session. |
+| `FIRMWARE_UPDATE_FLOW_CLOSED` | When the firmware update returns on a session that can still be read. |
 
 The app sends these events without the id. `stampSession(event, currentSessionId)` adds it,
 because only the app knows the live session.
