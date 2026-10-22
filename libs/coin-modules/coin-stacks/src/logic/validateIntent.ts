@@ -121,20 +121,12 @@ async function validateNotInPreparePhase(
   }
 }
 
-function validateTransfer(
+function validateTransferAmount(
   intent: TransactionIntent<StacksMemo, StacksTxData>,
   balances: Balance[],
   estimatedFees: bigint,
   errors: Record<string, Error>,
 ): { amount: bigint; totalSpent: bigint } {
-  if (!intent.recipient) {
-    errors.recipient = new RecipientRequired();
-  } else if (!isValidStacksAddress(intent.recipient).isValid) {
-    errors.recipient = new InvalidAddress("", { currencyName: "Stacks" });
-  } else if (intent.sender === intent.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  }
-
   const isToken = intent.asset.type !== "native";
   const assetReference = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
   const available = spendable(balances, isToken, assetReference);
@@ -153,12 +145,31 @@ function validateTransfer(
     errors.amount = new NotEnoughBalance();
   }
 
+  const totalSpent = isToken ? amount : amount + estimatedFees;
+  return { amount, totalSpent };
+}
+
+function validateTransfer(
+  intent: TransactionIntent<StacksMemo, StacksTxData>,
+  balances: Balance[],
+  estimatedFees: bigint,
+  errors: Record<string, Error>,
+): { amount: bigint; totalSpent: bigint } {
+  if (!intent.recipient) {
+    errors.recipient = new RecipientRequired();
+  } else if (!isValidStacksAddress(intent.recipient).isValid) {
+    errors.recipient = new InvalidAddress("", { currencyName: "Stacks" });
+  } else if (intent.sender === intent.recipient) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+
+  const { amount, totalSpent } = validateTransferAmount(intent, balances, estimatedFees, errors);
+
   const memo = memoFromIntent("memo" in intent ? intent.memo : undefined);
   if (memo && !validateMemo(memo)) {
     errors.transaction = new StacksMemoTooLong();
   }
 
-  const totalSpent = isToken ? amount : amount + estimatedFees;
   return { amount, totalSpent };
 }
 
