@@ -13,7 +13,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
-import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
 import {
   isCompoundRewardSupported,
   resolveClaimRewardMode,

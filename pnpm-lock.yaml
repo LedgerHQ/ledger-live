@@ -1195,9 +1195,6 @@ importers:
       '@ledgerhq/coin-concordium':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-concordium
-      '@ledgerhq/coin-cosmos':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
         version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
@@ -2087,9 +2084,6 @@ importers:
       '@ledgerhq/coin-concordium':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-concordium
-      '@ledgerhq/coin-cosmos':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
         version: 15.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)

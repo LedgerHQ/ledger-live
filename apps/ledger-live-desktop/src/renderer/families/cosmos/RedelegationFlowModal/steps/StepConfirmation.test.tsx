@@ -32,6 +32,7 @@ const buildAccount = (): CosmosAccount =>
   ({
     type: "Account",
     currency: getCryptoCurrencyById("cosmos"),
+    stakingResources: { validators: [VALIDATOR_A] },
   }) as unknown as CosmosAccount;
 
 const buildOperation = (): Operation =>

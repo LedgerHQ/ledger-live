@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";

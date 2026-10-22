@@ -67,8 +67,8 @@ describe("Cosmos Delegation StepDelegation", () => {
     expect(chosenVoteAccAddrSeen).toBe("validatorA");
   });
 
-  it("defaults the chosen validator to an empty string when valAddress is unset", () => {
-    render(<StepDelegation {...buildProps({})} />);
+  it("passes an empty chosen validator when valAddress is empty", () => {
+    render(<StepDelegation {...buildProps({ valAddress: "" })} />);
     expect(chosenVoteAccAddrSeen).toBe("");
   });
 

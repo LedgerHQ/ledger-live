@@ -1,8 +1,9 @@
+import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { type CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { TokenAccount } from "@ledgerhq/types-live";
+import { isStakingAccount, TokenAccount } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
@@ -24,6 +25,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const label = useGetStakeLabelLocaleBased();
   const navigate = useNavigate();
   const mainAccount = getMainAccount(account, parentAccount);
+  invariant(isStakingAccount(mainAccount), "cosmos staking account required");
   const earnRewardEnabled = canDelegate(mainAccount);
   const hasDelegations = mainAccount.stakingResources.delegations.length > 0;
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";

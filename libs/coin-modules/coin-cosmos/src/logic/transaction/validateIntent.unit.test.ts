@@ -3,6 +3,7 @@ import { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/
 jest.mock("../validateAddress", () => ({
   validateAddress: jest.fn(),
 }));
+import { COSMOS_MAX_UNBONDINGS } from "../../logic";
 import { validateAddress } from "../validateAddress";
 import { validateIntent } from "./validateIntent";
 const mockedValidateAddress = validateAddress as jest.Mock;
@@ -376,5 +377,79 @@ describe("logic/transaction/validateIntent", () => {
     const res = await validateIntent("cosmos", intent, balances, fees);
     expect(res.errors).toEqual({});
     expect(res.warnings.claimRewardsFee).toBeUndefined();
+  });
+
+  describe("account staking rules", () => {
+    const stakeBalance = (
+      delegate: string,
+      state: "active" | "deactivating",
+      amount: bigint,
+      index = 0,
+    ): Balance => ({
+      value: amount,
+      asset: { type: "native" },
+      stake: {
+        uid: `${delegate}-${state}-${index}`,
+        address: "cosmos1sender",
+        delegate,
+        state,
+        actions: [],
+        asset: { type: "native" },
+        amount,
+      },
+    });
+    const pendingUnbondings = (delegate: string) =>
+      Array.from({ length: COSMOS_MAX_UNBONDINGS }, (_, i) =>
+        stakeBalance(delegate, "deactivating", 1n, i),
+      );
+    const undelegate = (valAddress: string, amount = 1_000n) =>
+      ({
+        intentType: "staking",
+        type: "undelegate",
+        mode: "undelegate",
+        sender: "cosmos1sender",
+        recipient: "",
+        amount,
+        valAddress,
+        asset: { type: "native" },
+      }) as unknown as TransactionIntent;
+
+    it("flags an undelegate exceeding the amount delegated to the validator", async () => {
+      const res = await validateIntent(
+        "cosmos",
+        undelegate("cosmosvaloper1a", 2_000n),
+        [...balances, stakeBalance("cosmosvaloper1a", "active", 1_000n)],
+        fees,
+      );
+      expect(res.errors.unbonding?.name).toBe("NotEnoughDelegationBalance");
+    });
+
+    it("flags an undelegate once the validator reaches the unbonding entry limit", async () => {
+      const res = await validateIntent(
+        "cosmos",
+        undelegate("cosmosvaloper1a"),
+        [
+          ...balances,
+          stakeBalance("cosmosvaloper1a", "active", 1_000n),
+          ...pendingUnbondings("cosmosvaloper1a"),
+        ],
+        fees,
+      );
+      expect(res.errors.unbonding?.name).toBe("CosmosTooManyUnbondings");
+    });
+
+    it("does not count unbondings pending on another validator", async () => {
+      const res = await validateIntent(
+        "cosmos",
+        undelegate("cosmosvaloper1b"),
+        [
+          ...balances,
+          stakeBalance("cosmosvaloper1b", "active", 1_000n),
+          ...pendingUnbondings("cosmosvaloper1a"),
+        ],
+        fees,
+      );
+      expect(res.errors.unbonding).toBeUndefined();
+    });
   });
 });

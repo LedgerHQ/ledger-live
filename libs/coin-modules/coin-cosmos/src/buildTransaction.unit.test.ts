@@ -6,7 +6,7 @@ import {
   MsgWrappedUndelegate,
   protobufPackage as epochingPackage,
 } from "@keplr-wallet/proto-types/babylon/epoching/v1/tx";
-import { Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
+import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import BigNumber from "bignumber.js";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
@@ -16,22 +16,54 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import cryptoFactory from "./chain/chain";
 
 import {
   buildTransaction,
+  CosmosTransactionParams,
   messageParamsFromTransaction,
+  normalizeCosmosOperationMode,
+  getDstValAddress,
+  getValAddress,
   resolveSourceValidator,
+  resolveTransactionValidators,
   txToMessages,
 } from "./buildTransaction";
 import Babylon, { BABYLON_STAKING_MESSAGES } from "./chain/Babylon";
 import Cosmos from "./chain/Cosmos";
-import { CosmosAccount, CosmosDelegationInfo, Transaction } from "./types";
+import { CosmosAccount, CosmosDelegationInfo, CosmosOperationMode, Transaction } from "./types";
+
+/** What txToMessages consumes, in the shape the message builders were historically tested with. */
+type LegacyShapedTransaction = {
+  mode: CosmosOperationMode;
+  recipient: string;
+  amount: BigNumber;
+  validators: CosmosDelegationInfo[];
+  sourceValidator: string | null | undefined;
+};
+
+function toParams(
+  account: CosmosAccount,
+  transaction: LegacyShapedTransaction,
+): CosmosTransactionParams {
+  return {
+    mode: normalizeCosmosOperationMode(transaction.mode),
+    senderAddress: account.freshAddress,
+    currencyId: account.currency.id,
+    denom: account.currency.units[1].code,
+    recipient: transaction.recipient,
+    amount: transaction.amount,
+    memo: "",
+    validators: transaction.validators,
+    ...(transaction.sourceValidator ? { sourceValidator: transaction.sourceValidator } : {}),
+  };
+}
 
 const veryBigNumber = new BigNumber(3333300000000000000000);
 const cosmos = new Cosmos();
 
 describe("txToMessages", () => {
-  const transaction: Transaction = {} as Transaction;
+  const transaction = {} as LegacyShapedTransaction;
   const account: CosmosAccount = {
     freshAddress: "accAddress",
     currency: { units: [{ code: "atom" }, { code: "uatom" }] },
@@ -46,10 +78,7 @@ describe("txToMessages", () => {
       it("should return a MsgSend message if transaction is complete", () => {
         transaction.recipient = "address";
         transaction.amount = new BigNumber(1000);
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [aminoMsg] = aminoMsgs;
         expect(aminoMsg.type).toContain("MsgSend");
         expect(aminoMsg.value.to_address).toEqual(transaction.recipient);
@@ -61,10 +90,7 @@ describe("txToMessages", () => {
       it("should not include exponential part on big numbers", () => {
         transaction.recipient = "address";
         transaction.amount = veryBigNumber;
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [aminoMsg] = aminoMsgs;
         expect(aminoMsg.value.amount[0].amount.includes("e")).toEqual(false);
       });
@@ -72,28 +98,19 @@ describe("txToMessages", () => {
       it("should return no message if recipient isn't defined", () => {
         transaction.amount = new BigNumber(10);
         transaction.recipient = "";
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
       it("should return no message if amount is zero", () => {
         transaction.amount = new BigNumber(0);
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
       it("should return no message if amount is negative", () => {
         transaction.amount = new BigNumber(-10);
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
     });
@@ -102,10 +119,7 @@ describe("txToMessages", () => {
       it("should return a MsgSend message if transaction is complete", () => {
         transaction.recipient = "address";
         transaction.amount = new BigNumber(1000);
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [protoMsg] = protoMsgs;
         const value = MsgSend.decode(protoMsg.value);
         expect(protoMsg.typeUrl).toContain("MsgSend");
@@ -118,10 +132,7 @@ describe("txToMessages", () => {
       it("should not include exponential part on big numbers", () => {
         transaction.recipient = "address";
         transaction.amount = veryBigNumber;
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [protoMsg] = protoMsgs;
         const value = MsgSend.decode(protoMsg.value);
         expect(value.amount[0].amount?.includes("e")).toEqual(false);
@@ -130,28 +141,19 @@ describe("txToMessages", () => {
       it("should return no message if recipient isn't defined", () => {
         transaction.amount = new BigNumber(10);
         transaction.recipient = "";
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
       it("should return no message if amount is zero", () => {
         transaction.amount = new BigNumber(0);
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
       it("should return no message if amount is negative", () => {
         transaction.amount = new BigNumber(-10);
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
     });
@@ -171,10 +173,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = aminoMsgs;
         expect(message.type).toContain("MsgDelegate");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
@@ -192,10 +191,7 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = aminoMsgs;
         expect(message.value.amount?.amount.includes("e")).toEqual(false);
       });
@@ -203,38 +199,26 @@ describe("txToMessages", () => {
       it("should return no message if tx has a 0 amount", () => {
         transaction.amount = new BigNumber(0);
         transaction.validators = [{ address: "realAddressTrustMe" } as CosmosDelegationInfo];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
       it("should return no message if tx has a negative amount", () => {
         transaction.amount = new BigNumber(-1);
         transaction.validators = [{ address: "realAddressTrustMe" } as CosmosDelegationInfo];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
       it("should return no message if validators has no address", () => {
         transaction.validators = [{} as CosmosDelegationInfo];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
       it("should return no message if validators aren't defined", () => {
         transaction.validators = [];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
     });
@@ -248,10 +232,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = protoMsgs;
         expect(message.typeUrl).toContain("MsgDelegate");
         const value = MsgDelegate.decode(message.value);
@@ -269,10 +250,7 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = protoMsgs;
         const value = MsgDelegate.decode(message.value);
         expect(value.amount?.amount.includes("e")).toEqual(false);
@@ -281,38 +259,26 @@ describe("txToMessages", () => {
       it("should return no message if tx has a 0 amount", () => {
         transaction.amount = new BigNumber(0);
         transaction.validators = [{ address: "realAddressTrustMe" } as CosmosDelegationInfo];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
       it("should return no message if tx has a negative amount", () => {
         transaction.amount = new BigNumber(-1);
         transaction.validators = [{ address: "realAddressTrustMe" } as CosmosDelegationInfo];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
       it("should return no message if validators has no address", () => {
         transaction.validators = [{} as CosmosDelegationInfo];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
       it("should return no message if validators aren't defined", () => {
         transaction.validators = [];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
     });
@@ -332,10 +298,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = aminoMsgs;
         expect(message.type).toContain("MsgUndelegate");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
@@ -352,20 +315,14 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = aminoMsgs;
         expect(message.value.amount?.amount.includes("e")).toEqual(false);
       });
 
       it("should return no message if validators aren't defined", () => {
         transaction.validators = [];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
@@ -376,10 +333,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
@@ -390,10 +344,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(0),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
@@ -404,10 +355,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(-10),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
     });
@@ -421,10 +369,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = protoMsgs;
         expect(message.typeUrl).toContain("MsgUndelegate");
         const value = MsgUndelegate.decode(message.value);
@@ -442,10 +387,7 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = protoMsgs;
         const value = MsgUndelegate.decode(message.value);
         expect(value.amount?.amount.includes("e")).toEqual(false);
@@ -453,10 +395,7 @@ describe("txToMessages", () => {
 
       it("should return no message if validators aren't defined", () => {
         transaction.validators = [];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
@@ -467,10 +406,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
@@ -481,10 +417,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(0),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
@@ -495,10 +428,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(-10),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
     });
@@ -518,10 +448,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = aminoMsgs;
         expect(message.type).toContain("MsgBeginRedelegate");
         expect(message.value.validator_src_address).toEqual(transaction.sourceValidator);
@@ -539,10 +466,7 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = aminoMsgs;
         expect(message.value.amount.amount.includes("e")).toEqual(false);
       });
@@ -555,10 +479,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
@@ -569,10 +490,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
       it("should return no message if validator amount is 0", () => {
@@ -582,10 +500,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(0),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
       it("should return no message if validator amount is negative", () => {
@@ -595,10 +510,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(-10),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
     });
@@ -612,10 +524,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = protoMsgs;
         expect(message.typeUrl).toContain("MsgBeginRedelegate");
         const value = MsgBeginRedelegate.decode(message.value);
@@ -634,10 +543,7 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = protoMsgs;
         const value = MsgBeginRedelegate.decode(message.value);
         expect(value.amount?.amount.includes("e")).toEqual(false);
@@ -651,10 +557,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
@@ -665,10 +568,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(100),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
       it("should return no message if validator amount is 0", () => {
@@ -678,10 +578,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(0),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
       it("should return no message if validator amount is negative", () => {
@@ -691,10 +588,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(-10),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
     });
@@ -713,10 +607,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(1000),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = aminoMsgs;
         expect(message.type).toContain("MsgWithdrawDelegationReward");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
@@ -725,10 +616,7 @@ describe("txToMessages", () => {
 
       it("should return no message if validator isn't defined", () => {
         transaction.validators = [];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
 
@@ -739,10 +627,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(1000),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
     });
@@ -755,10 +640,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(1000),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [message] = protoMsgs;
         expect(message.typeUrl).toContain("MsgWithdrawDelegatorReward");
         const value = MsgWithdrawDelegatorReward.decode(message.value);
@@ -768,10 +650,7 @@ describe("txToMessages", () => {
 
       it("should return no message if validator isn't defined", () => {
         transaction.validators = [];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
 
@@ -782,10 +661,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(1000),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
     });
@@ -804,10 +680,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(1000),
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [withDrawMessage, delegateMessage] = aminoMsgs;
         expect(withDrawMessage.type).toContain("MsgWithdrawDelegationReward");
         expect(withDrawMessage.value.validator_address).toEqual(transaction.validators[0].address);
@@ -828,10 +701,7 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [, delegateMessage] = aminoMsgs;
         expect(delegateMessage.value.amount.amount.includes("e")).toEqual(false);
       });
@@ -845,10 +715,7 @@ describe("txToMessages", () => {
             amount: new BigNumber(1000),
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [withDrawMessage, delegateMessage] = protoMsgs;
         expect(withDrawMessage.typeUrl).toContain("MsgWithdrawDelegatorReward");
         const withDrawMessageValue = MsgWithdrawDelegatorReward.decode(withDrawMessage.value);
@@ -871,10 +738,7 @@ describe("txToMessages", () => {
             amount: veryBigNumber,
           } as CosmosDelegationInfo,
         ];
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         const [, delegateMessage] = protoMsgs;
         const delegateMessageValue = MsgDelegate.decode(delegateMessage.value);
         expect(delegateMessageValue.amount?.amount.includes("e")).toEqual(false);
@@ -887,10 +751,7 @@ describe("txToMessages", () => {
       it("should return no message", () => {
         // @ts-expect-error Random mode that isn't listed in typescript type
         transaction.mode = "RandomModeThatICreatedMyself";
-        const { aminoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { aminoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(aminoMsgs.length).toEqual(0);
       });
     });
@@ -898,10 +759,7 @@ describe("txToMessages", () => {
       it("should return no message", () => {
         // @ts-expect-error Random mode that isn't listed in typescript type
         transaction.mode = "RandomModeThatICreatedMyself";
-        const { protoMsgs } = txToMessages(
-          messageParamsFromTransaction(account, transaction),
-          cosmos,
-        );
+        const { protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
         expect(protoMsgs.length).toEqual(0);
       });
     });
@@ -1004,32 +862,78 @@ describe("txToMessages — generic shape (valAddress/dstValAddress/compoundRewar
   });
 });
 
-const redelegate = (fields: Partial<Transaction>): Transaction =>
-  ({ mode: "redelegate", sourceValidator: "legacySrc", ...fields }) as Transaction;
-
 describe("resolveSourceValidator", () => {
-  it("uses valAddress as the source of a generic-shape redelegation", () => {
-    expect(resolveSourceValidator(redelegate({ valAddress: "src", dstValAddress: "dst" }))).toBe(
-      "src",
-    );
-  });
-
-  it("does not fall back to the legacy sourceValidator once dstValAddress is set without valAddress", () => {
-    expect(resolveSourceValidator(redelegate({ dstValAddress: "dst" }))).toBeUndefined();
-  });
-
-  it("falls back to the legacy sourceValidator when no generic field is set", () => {
-    expect(resolveSourceValidator(redelegate({}))).toBe("legacySrc");
-  });
-
-  it("ignores valAddress outside redelegate mode", () => {
+  it("uses valAddress as the source of a redelegation", () => {
     expect(
       resolveSourceValidator({
-        mode: "delegate",
-        valAddress: "val",
-        sourceValidator: "legacySrc",
+        mode: "redelegate",
+        valAddress: "src",
+        dstValAddress: "dst",
       } as Transaction),
-    ).toBe("legacySrc");
+    ).toBe("src");
+  });
+
+  it.each(["send", "delegate", "undelegate", "claimReward", "claimRewardCompound"] as const)(
+    "has no source validator in %s mode",
+    mode => {
+      expect(resolveSourceValidator({ mode, valAddress: "val" } as Transaction)).toBeUndefined();
+    },
+  );
+
+  it("falls back to the legacy sourceValidator of a redelegation", () => {
+    expect(
+      resolveSourceValidator({ mode: "redelegate", sourceValidator: "src" } as Transaction),
+    ).toBe("src");
+  });
+});
+
+describe("resolveTransactionValidators", () => {
+  const amount = new BigNumber(42);
+
+  it("has no validator for a send", () => {
+    expect(resolveTransactionValidators({ mode: "send", amount } as Transaction)).toEqual([]);
+  });
+
+  it("targets the destination validator for a redelegation", () => {
+    expect(
+      resolveTransactionValidators({
+        mode: "redelegate",
+        amount,
+        valAddress: "src",
+        dstValAddress: "dst",
+      } as Transaction),
+    ).toEqual([{ address: "dst", amount }]);
+  });
+
+  it.each([
+    "delegate",
+    "undelegate",
+    "claimReward",
+    "claimRewardCompound",
+    "compoundReward",
+  ] as const)("targets valAddress for %s", mode => {
+    expect(
+      resolveTransactionValidators({ mode, amount, valAddress: "val" } as Transaction),
+    ).toEqual([{ address: "val", amount }]);
+  });
+
+  it("keeps the legacy validators and their amounts when no mode-specific address is set", () => {
+    const validators = [{ address: "val", amount: new BigNumber(100) }];
+    expect(
+      resolveTransactionValidators({
+        mode: "undelegate",
+        amount: new BigNumber(0),
+        validators,
+      } as Transaction),
+    ).toEqual(validators);
+    expect(
+      resolveTransactionValidators({
+        mode: "redelegate",
+        amount: new BigNumber(0),
+        sourceValidator: "src",
+        validators,
+      } as Transaction),
+    ).toEqual(validators);
   });
 });
 
@@ -1049,13 +953,10 @@ describe("txToMessages — babylon epoching wrapping", () => {
       validators: [
         { address: validatorAddress, amount: new BigNumber(399180) } as CosmosDelegationInfo,
       ],
-    } as Transaction;
+    } as LegacyShapedTransaction;
 
     it("amino: type /babylon.epoching.v1.MsgWrappedDelegate with the inner MsgDelegate nested under `msg`", () => {
-      const { aminoMsgs } = txToMessages(
-        messageParamsFromTransaction(account, transaction),
-        babylon,
-      );
+      const { aminoMsgs } = txToMessages(toParams(account, transaction), babylon);
       expect(aminoMsgs).toHaveLength(1);
       const [msg] = aminoMsgs;
       expect(msg.type).toEqual("/babylon.epoching.v1.MsgWrappedDelegate");
@@ -1067,10 +968,7 @@ describe("txToMessages — babylon epoching wrapping", () => {
     });
 
     it("proto: typeUrl /babylon.epoching.v1.MsgWrappedDelegate carrying the inner MsgDelegate", () => {
-      const { protoMsgs } = txToMessages(
-        messageParamsFromTransaction(account, transaction),
-        babylon,
-      );
+      const { protoMsgs } = txToMessages(toParams(account, transaction), babylon);
       expect(protoMsgs).toHaveLength(1);
       const [msg] = protoMsgs;
       expect(msg.typeUrl).toEqual("/babylon.epoching.v1.MsgWrappedDelegate");
@@ -1081,10 +979,7 @@ describe("txToMessages — babylon epoching wrapping", () => {
     });
 
     it("proto: matches the exact wire bytes cross-checked against the live chain", () => {
-      const { protoMsgs } = txToMessages(
-        messageParamsFromTransaction(account, transaction),
-        babylon,
-      );
+      const { protoMsgs } = txToMessages(toParams(account, transaction), babylon);
       expect(Buffer.from(protoMsgs[0].value).toString("hex")).toEqual(
         "0a6f0a2a62626e3175777077733037376130613970636c61707633663266796a3575306d6c683665776d6473386e123162626e76616c6f7065723130303471673677397a72336d6337796864306d73396172376c357834747430306c6c616334741a0e0a047562626e1206333939313830",
       );
@@ -1098,13 +993,10 @@ describe("txToMessages — babylon epoching wrapping", () => {
       validators: [
         { address: validatorAddress, amount: new BigNumber(500) } as CosmosDelegationInfo,
       ],
-    } as Transaction;
+    } as LegacyShapedTransaction;
 
     it("amino: type /babylon.epoching.v1.MsgWrappedUndelegate with the inner nested under `msg`", () => {
-      const { aminoMsgs } = txToMessages(
-        messageParamsFromTransaction(account, transaction),
-        babylon,
-      );
+      const { aminoMsgs } = txToMessages(toParams(account, transaction), babylon);
       const [msg] = aminoMsgs;
       expect(msg.type).toEqual("/babylon.epoching.v1.MsgWrappedUndelegate");
       expect(msg.value.msg).toEqual({
@@ -1115,10 +1007,7 @@ describe("txToMessages — babylon epoching wrapping", () => {
     });
 
     it("proto: typeUrl /babylon.epoching.v1.MsgWrappedUndelegate carrying the inner MsgUndelegate", () => {
-      const { protoMsgs } = txToMessages(
-        messageParamsFromTransaction(account, transaction),
-        babylon,
-      );
+      const { protoMsgs } = txToMessages(toParams(account, transaction), babylon);
       const [msg] = protoMsgs;
       expect(msg.typeUrl).toEqual("/babylon.epoching.v1.MsgWrappedUndelegate");
       const decoded = MsgWrappedUndelegate.decode(msg.value);
@@ -1136,13 +1025,10 @@ describe("txToMessages — babylon epoching wrapping", () => {
       validators: [
         { address: validatorAddress, amount: new BigNumber(700) } as CosmosDelegationInfo,
       ],
-    } as Transaction;
+    } as LegacyShapedTransaction;
 
     it("amino: type /babylon.epoching.v1.MsgWrappedBeginRedelegate with the inner nested under `msg`", () => {
-      const { aminoMsgs } = txToMessages(
-        messageParamsFromTransaction(account, transaction),
-        babylon,
-      );
+      const { aminoMsgs } = txToMessages(toParams(account, transaction), babylon);
       const [msg] = aminoMsgs;
       expect(msg.type).toEqual("/babylon.epoching.v1.MsgWrappedBeginRedelegate");
       expect(msg.value.msg).toEqual({
@@ -1154,10 +1040,7 @@ describe("txToMessages — babylon epoching wrapping", () => {
     });
 
     it("proto: typeUrl /babylon.epoching.v1.MsgWrappedBeginRedelegate carrying the inner msg", () => {
-      const { protoMsgs } = txToMessages(
-        messageParamsFromTransaction(account, transaction),
-        babylon,
-      );
+      const { protoMsgs } = txToMessages(toParams(account, transaction), babylon);
       const [msg] = protoMsgs;
       expect(msg.typeUrl).toEqual("/babylon.epoching.v1.MsgWrappedBeginRedelegate");
       const decoded = MsgWrappedBeginRedelegate.decode(msg.value);
@@ -1171,11 +1054,8 @@ describe("txToMessages — babylon epoching wrapping", () => {
     const transaction = {
       mode: "claimReward",
       validators: [{ address: validatorAddress, amount: new BigNumber(0) } as CosmosDelegationInfo],
-    } as Transaction;
-    const { aminoMsgs, protoMsgs } = txToMessages(
-      messageParamsFromTransaction(account, transaction),
-      babylon,
-    );
+    } as LegacyShapedTransaction;
+    const { aminoMsgs, protoMsgs } = txToMessages(toParams(account, transaction), babylon);
     expect(aminoMsgs[0].type).toEqual("cosmos-sdk/MsgWithdrawDelegationReward");
     expect(protoMsgs[0].typeUrl).toEqual("/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward");
   });
@@ -1186,8 +1066,8 @@ describe("txToMessages — babylon epoching wrapping", () => {
       validators: [
         { address: validatorAddress, amount: new BigNumber(1000) } as CosmosDelegationInfo,
       ],
-    } as Transaction;
-    expect(() => txToMessages(messageParamsFromTransaction(account, transaction), babylon)).toThrow(
+    } as LegacyShapedTransaction;
+    expect(() => txToMessages(toParams(account, transaction), babylon)).toThrow(
       /not supported on babylon/,
     );
   });
@@ -1227,11 +1107,8 @@ describe("txToMessages — the cosmos chain uses standard cosmos-sdk staking msg
       validators: [
         { address: "cosmosvaloper1x", amount: new BigNumber(100) } as CosmosDelegationInfo,
       ],
-    } as Transaction;
-    const { aminoMsgs, protoMsgs } = txToMessages(
-      messageParamsFromTransaction(account, transaction),
-      cosmos,
-    );
+    } as LegacyShapedTransaction;
+    const { aminoMsgs, protoMsgs } = txToMessages(toParams(account, transaction), cosmos);
     expect(aminoMsgs[0].type).toEqual("cosmos-sdk/MsgDelegate");
     expect(aminoMsgs[0].value.msg).toBeUndefined();
     expect(protoMsgs[0].typeUrl).toEqual("/cosmos.staking.v1beta1.MsgDelegate");
@@ -1255,11 +1132,8 @@ describe("txToMessages — babylon amino sign-doc verifies against a real on-cha
           amount: new BigNumber(1000000),
         } as CosmosDelegationInfo,
       ],
-    } as Transaction;
-    const { aminoMsgs } = txToMessages(
-      messageParamsFromTransaction(account, transaction),
-      new Babylon(),
-    );
+    } as LegacyShapedTransaction;
+    const { aminoMsgs } = txToMessages(toParams(account, transaction), new Babylon());
 
     // mirror signOperation: wrap the amino msgs in the StdSignDoc the device signs
     const signDoc = makeSignDoc(
@@ -1372,5 +1246,74 @@ describe("buildTransaction", () => {
     expect(txRawEncodeSpy).toHaveBeenCalledWith(
       expect.objectContaining({ signatures: [signature] }),
     );
+  });
+});
+
+describe("getValAddress", () => {
+  it("returns an empty string for a send", () => {
+    expect(getValAddress({ mode: "send" } as Transaction)).toBe("");
+  });
+
+  it.each(["delegate", "undelegate", "claimReward", "redelegate"] as const)(
+    "returns the validator address for %s",
+    mode => {
+      expect(getValAddress({ mode, valAddress: "val" } as Transaction)).toBe("val");
+    },
+  );
+});
+
+describe("getDstValAddress", () => {
+  it("returns the destination validator of a redelegation", () => {
+    expect(
+      getDstValAddress({
+        mode: "redelegate",
+        valAddress: "src",
+        dstValAddress: "dst",
+      } as Transaction),
+    ).toBe("dst");
+  });
+
+  it("returns an empty string for any other mode", () => {
+    expect(getDstValAddress({ mode: "delegate", valAddress: "val" } as Transaction)).toBe("");
+  });
+});
+
+describe("buildTransaction signer info per chain", () => {
+  const pubKey = Buffer.alloc(33, 2).toString("base64");
+
+  it.each([
+    ["cosmos", "/cosmos.crypto.secp256k1.PubKey"],
+    ["injective", "/injective.crypto.v1beta1.ethsecp256k1.PubKey"],
+  ])("declares the %s chain's own public key type in the encoded transaction", (id, typeUrl) => {
+    const bytes = buildTransaction({
+      protoMsgs: [],
+      memo: "memo",
+      pubKey,
+      pubKeyType: cryptoFactory(id).defaultPubKeyType,
+      sequence: 1,
+      signature: new Uint8Array(),
+      feeAmount: undefined,
+      gasLimit: undefined,
+    });
+
+    const { signerInfos } = AuthInfo.decode(TxRaw.decode(bytes).authInfoBytes);
+
+    expect(signerInfos).toHaveLength(1);
+    expect(signerInfos[0].publicKey?.typeUrl).toBe(typeUrl);
+  });
+
+  it("carries the memo in the encoded transaction body", () => {
+    const bytes = buildTransaction({
+      protoMsgs: [],
+      memo: "invoice 42",
+      pubKey,
+      pubKeyType: cryptoFactory("cosmos").defaultPubKeyType,
+      sequence: 1,
+      signature: new Uint8Array(),
+      feeAmount: undefined,
+      gasLimit: undefined,
+    });
+
+    expect(TxBody.decode(TxRaw.decode(bytes).bodyBytes).memo).toBe("invoice 42");
   });
 });
