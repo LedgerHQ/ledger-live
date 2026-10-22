@@ -1,5 +1,12 @@
 # @domain/api-currency-fiat
 
+## 0.4.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1
+
 ## 0.4.8-next.0
 
 ### Patch Changes

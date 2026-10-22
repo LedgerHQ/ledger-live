@@ -1,5 +1,18 @@
 # @ledgerhq/coin-celo
 
+## 3.6.0
+
+### Minor Changes
+
+- [#23003](https://github.com/LedgerHQ/ledger-live/pull/23003) [`57b4652`](https://github.com/LedgerHQ/ledger-live/commit/57b4652a1d0ae95af20419210139039642cedb9c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Adapt to `@ledgerhq/coin-evm` 15
+
+### Patch Changes
+
+- Updated dependencies [[`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+  - @ledgerhq/hw-app-eth@7.11.1
+
 ## 3.6.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,20 @@
 # @ledgerhq/coin-filecoin
 
+## 2.5.0
+
+### Minor Changes
+
+- [#22508](https://github.com/LedgerHQ/ledger-live/pull/22508) [`ad58765`](https://github.com/LedgerHQ/ledger-live/commit/ad58765b6151457022f8587d6ddcad3325ce96ac) Thanks [@pawell24](https://github.com/pawell24)! - fix(filecoin): open transactions on Blockscout from operation details
+
+  Blockscout identifies a Filecoin message by its Ethereum-style hash, so the explorer link is now
+  built from the message CID's digest instead of the CID itself.
+
+### Patch Changes
+
+- Updated dependencies [[`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+
 ## 2.5.0-next.0
 
 ### Minor Changes

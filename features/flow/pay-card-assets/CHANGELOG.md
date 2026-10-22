@@ -1,5 +1,20 @@
 # @features/flow-pay-card-assets
 
+## 0.4.0
+
+### Minor Changes
+
+- [#23429](https://github.com/LedgerHQ/ledger-live/pull/23429) [`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump Lumen to lumen-design-core 0.1.32, lumen-ui-react 0.1.64, lumen-ui-rnative 0.1.67 and lumen-utils-shared 0.1.16, and migrate `Spot` to its palette API (`icon` required, `appearance="icon"` dropped, `check`/`info`/`error`/`warning`/`loader` mapped to explicit icons, `number` moved to `SpotNumber`). The devtools native jest preset now mocks `react-native-gesture-handler`, which the new lumen `Toaster` imports.
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`2e198e2`](https://github.com/LedgerHQ/ledger-live/commit/2e198e2394723873a79e56635cfe21a2ab763454)]:
+  - @features/flow-pay-card-transactions@0.6.0
+  - @features/flow-pay-card-auth@0.10.1
+  - @domain/entity-currency@0.4.7
+  - @features/flow-pay-card-wallets@0.6.1
+  - @domain/api-card-management@0.8.2
+
 ## 0.4.0-next.0
 
 ### Minor Changes

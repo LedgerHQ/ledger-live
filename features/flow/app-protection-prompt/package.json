@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-app-protection-prompt",
-  "version": "0.1.1-next.0",
+  "version": "0.1.1",
   "private": true,
   "description": "App protection prompt for Ledger Wallet Mobile: asking to enable biometrics or a password before a protected feature, and confirming it",
   "main": "src/index.ts",

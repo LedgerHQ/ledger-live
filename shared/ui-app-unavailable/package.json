@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-app-unavailable",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Full-screen app unavailable view for web (Desktop) and React Native (Mobile)",
   "main": "src/index.web.ts",

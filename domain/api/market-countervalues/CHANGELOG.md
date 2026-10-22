@@ -1,5 +1,14 @@
 # @domain/api-market-countervalues
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`2621f1e`](https://github.com/LedgerHQ/ledger-live/commit/2621f1ebe6c1a8f8cff0a797740771ae5fc084be), [`bcf98ff`](https://github.com/LedgerHQ/ledger-live/commit/bcf98ffbb1d119fba86c53e4c005abdad251b62a)]:
+  - @domain/entity-market-countervalues@0.4.0
+  - @domain/entity-currency@0.4.7
+  - @shared/api-services@0.10.1
+
 ## 0.2.1-next.0
 
 ### Patch Changes

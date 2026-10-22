@@ -1,5 +1,12 @@
 # @domain/api-push-devices
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1
+
 ## 0.2.9-next.0
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-app-unlock",
-  "version": "0.1.1-next.0",
+  "version": "0.1.1",
   "private": true,
   "description": "App unlock flow for Ledger Wallet Mobile: the unlock screen and the forgotten password sheet",
   "main": "src/index.ts",

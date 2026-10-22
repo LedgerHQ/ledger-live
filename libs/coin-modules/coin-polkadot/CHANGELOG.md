@@ -1,5 +1,28 @@
 # @ledgerhq/coin-polkadot
 
+## 9.0.0
+
+### Major Changes
+
+- [#23337](https://github.com/LedgerHQ/ledger-live/pull/23337) [`c1cbfec`](https://github.com/LedgerHQ/ledger-live/commit/c1cbfececf814d382ad6319806b966cb341eb1fd) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-polkadot): stop resolving the currency with `getCryptoCurrencyById` on broadcast, crafting and fee estimation
+
+  `broadcast`, `craftTransaction` and `estimateFees` no longer look the currency up: the API's
+  `currencyId` is passed straight through to the sidecar, which only ever read the currency id (to pick
+  the `assethub_polkadot` / `westend` sidecar routes and as a cache key). Crafting, fee estimation and
+  broadcasting now hit the same sidecar route for a given currency.
+
+  Breaking: `createApi(currencyId)` now requires the currency id, and `broadcast` takes it as a required
+  third parameter. The `network/sidecar` functions, `network/node` `fetchStakingInfo`, every method of the
+  `polkadotAPI` facade (`network`) and its `hydrateValidators` / `hydrateStakingProgress` /
+  `hydrateMinimumBondBalance` helpers take a currency id instead of a `CryptoCurrency`, as do
+  `craftTransaction`, `craftEstimationTransaction` and `estimateFees`.
+
+### Patch Changes
+
+- Updated dependencies [[`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+
 ## 9.0.0-next.0
 
 ### Major Changes

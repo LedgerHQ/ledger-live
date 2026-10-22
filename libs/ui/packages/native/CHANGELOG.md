@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.69.0
+
+### Minor Changes
+
+- [#23439](https://github.com/LedgerHQ/ledger-live/pull/23439) [`722c6f3`](https://github.com/LedgerHQ/ledger-live/commit/722c6f312e9fd8c33c932ef2f4df15d9062ade31) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - chore(rn-upgrade): replace absoluteFillObject with absoluteFill (LIVE-39313)
+
 ## 0.69.0-next.0
 
 ### Minor Changes

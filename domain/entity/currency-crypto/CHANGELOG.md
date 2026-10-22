@@ -1,5 +1,26 @@
 # @domain/entity-currency-crypto
 
+## 0.16.0
+
+### Minor Changes
+
+- [#23332](https://github.com/LedgerHQ/ledger-live/pull/23332) [`d6ab47c`](https://github.com/LedgerHQ/ledger-live/commit/d6ab47c28339866ad88ef0deba75d314c2f6c4f0) Thanks [@henri-ly](https://github.com/henri-ly)! - feat(xrp): add the ripple_devnet currency (XRPL devnet)
+
+- [#23278](https://github.com/LedgerHQ/ledger-live/pull/23278) [`393a02a`](https://github.com/LedgerHQ/ledger-live/commit/393a02a42be9f0410b75c0c34203915bcde27e43) Thanks [@henri-ly](https://github.com/henri-ly)! - feat(xrp): add the ripple_testnet currency (XRPL altnet); send memo labels of testnets resolve to their mainnet
+
+- [#23327](https://github.com/LedgerHQ/ledger-live/pull/23327) [`7da1ea9`](https://github.com/LedgerHQ/ledger-live/commit/7da1ea9534a1bdde063e31545363a27f0fdf5abb) Thanks [@lysyi3m](https://github.com/lysyi3m)! - fix(currencies): correct the cardano_testnet address explorer URL
+
+- [#23386](https://github.com/LedgerHQ/ledger-live/pull/23386) [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574) Thanks [@dilaouid](https://github.com/dilaouid)! - Remove the Zenrock and Quicksilver integrations, including their chain adapters, currency definitions, feature flags and LCD endpoints
+
+- [#23331](https://github.com/LedgerHQ/ledger-live/pull/23331) [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - remove velas_evm and its feature flag
+
+- [#22508](https://github.com/LedgerHQ/ledger-live/pull/22508) [`ad58765`](https://github.com/LedgerHQ/ledger-live/commit/ad58765b6151457022f8587d6ddcad3325ce96ac) Thanks [@pawell24](https://github.com/pawell24)! - fix(filecoin): open transactions on Blockscout from operation details
+
+  Blockscout identifies a Filecoin message by its Ethereum-style hash, so the explorer link is now
+  built from the message CID's digest instead of the CID itself.
+
+- [#23405](https://github.com/LedgerHQ/ledger-live/pull/23405) [`37a49df`](https://github.com/LedgerHQ/ledger-live/commit/37a49df18649912157d8f269c3b4153d54b7817e) Thanks [@semeano](https://github.com/semeano)! - add the alpen_testnet evm currency
+
 ## 0.16.0-next.0
 
 ### Minor Changes

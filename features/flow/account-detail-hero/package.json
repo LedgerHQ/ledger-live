@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-account-detail-hero",
-  "version": "0.1.0-next.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Account Detail hero (balance, quick actions, empty state) for Ledger Wallet",
   "main": "src/index.ts",

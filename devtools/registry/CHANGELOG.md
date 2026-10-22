@@ -1,5 +1,17 @@
 # @devtools/registry
 
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`004d896`](https://github.com/LedgerHQ/ledger-live/commit/004d8965c325b6ff60d5a2ebcc1c763b7a7bf4d1), [`4d77514`](https://github.com/LedgerHQ/ledger-live/commit/4d775144f5032153be92d736a2f029aeb1223280), [`b88647d`](https://github.com/LedgerHQ/ledger-live/commit/b88647dca4c613663bca4ba0d62c2296b95ac083)]:
+  - @devtools/pay-card@0.10.0
+  - @devtools/device-onboarding@0.4.0
+  - @devtools/feature-flags@0.10.3
+  - @devtools/cloud-sync@0.2.0
+  - @devtools/env@0.2.0
+  - @devtools/trustchain@0.2.0
+
 ## 0.5.3-next.0
 
 ### Patch Changes

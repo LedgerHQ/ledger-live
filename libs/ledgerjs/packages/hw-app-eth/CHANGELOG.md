@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 7.11.1
+
+### Patch Changes
+
+- Updated dependencies [[`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a)]:
+  - @ledgerhq/types-live@6.128.0
+
 ## 7.11.1-next.0
 
 ### Patch Changes

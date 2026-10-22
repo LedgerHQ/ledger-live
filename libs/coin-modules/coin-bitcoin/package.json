@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "1.0.0-next.0",
+  "version": "1.0.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",

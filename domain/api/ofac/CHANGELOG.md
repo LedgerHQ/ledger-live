@@ -1,5 +1,12 @@
 # @domain/api-ofac
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1
+
 ## 0.1.1-next.0
 
 ### Patch Changes

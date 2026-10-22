@@ -1,5 +1,13 @@
 # @ledgerhq/transaction-observability
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`ee508db`](https://github.com/LedgerHQ/ledger-live/commit/ee508db35d572d43e03cf58e811177cc3b2389a9), [`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`68cebc0`](https://github.com/LedgerHQ/ledger-live/commit/68cebc06f2ec8f4cc38ac1caca779317a8fe0711)]:
+  - @shared/env@0.11.0
+  - @ledgerhq/types-live@6.128.0
+
 ## 0.5.1-next.0
 
 ### Patch Changes

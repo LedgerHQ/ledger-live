@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.19.15
+
+### Patch Changes
+
+- Updated dependencies [[`3d5d5c7`](https://github.com/LedgerHQ/ledger-live/commit/3d5d5c7582f6e93c4bd0eeae217eedc068409846), [`bc0aa4f`](https://github.com/LedgerHQ/ledger-live/commit/bc0aa4ff32efa315ab4dfaf756bb562db4400df3), [`8ebcf5c`](https://github.com/LedgerHQ/ledger-live/commit/8ebcf5c5507558750fb9f7980e9de4f0f5a637ce)]:
+  - @ledgerhq/coin-aleo@2.8.0
+
 ## 0.19.15-next.0
 
 ### Patch Changes

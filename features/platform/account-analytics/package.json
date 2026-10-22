@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-analytics",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Account-derived analytics properties shared by desktop and mobile",
   "main": "src/index.ts",

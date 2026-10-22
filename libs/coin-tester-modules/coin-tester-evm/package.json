@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.36.1-next.2",
+  "version": "1.36.1",
   "private": true,
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",

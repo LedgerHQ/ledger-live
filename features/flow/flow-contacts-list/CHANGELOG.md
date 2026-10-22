@@ -1,5 +1,19 @@
 # @features/flow-contacts-list
 
+## 0.10.0
+
+### Minor Changes
+
+- [#23429](https://github.com/LedgerHQ/ledger-live/pull/23429) [`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump Lumen to lumen-design-core 0.1.32, lumen-ui-react 0.1.64, lumen-ui-rnative 0.1.67 and lumen-utils-shared 0.1.16, and migrate `Spot` to its palette API (`icon` required, `appearance="icon"` dropped, `check`/`info`/`error`/`warning`/`loader` mapped to explicit icons, `number` moved to `SpotNumber`). The devtools native jest preset now mocks `react-native-gesture-handler`, which the new lumen `Toaster` imports.
+
+- [#23434](https://github.com/LedgerHQ/ledger-live/pull/23434) [`6abfd98`](https://github.com/LedgerHQ/ledger-live/commit/6abfd98fd3d0359864687b2fc125390f3643a6db) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Contacts list copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @features/platform-contacts@0.11.0
+  - @domain/entity-contact@0.12.1
+
 ## 0.10.0-next.0
 
 ### Minor Changes

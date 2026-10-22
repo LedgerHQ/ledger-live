@@ -1,5 +1,32 @@
 # @ledgerhq/coin-zcash
 
+## 1.0.0
+
+### Major Changes
+
+- [#22964](https://github.com/LedgerHQ/ledger-live/pull/22964) [`ca063c4`](https://github.com/LedgerHQ/ledger-live/commit/ca063c4cfad79f12118c5af5bc0ef323857f90bd) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(wallet-btc): inject `logger` instead of using `@ledgerhq/logs`
+
+### Minor Changes
+
+- [#23343](https://github.com/LedgerHQ/ledger-live/pull/23343) [`9365d3a`](https://github.com/LedgerHQ/ledger-live/commit/9365d3ad499ac5c80d445e7816c30adbfe05ffd8) Thanks [@cted-ledger](https://github.com/cted-ledger)! - take the zcash network from the account's currency instead of the zaino url, and pass it to the device signer for transparent sends; the viewing-key export keeps the testnet coin type (1') instead of rejecting it
+
+- [#23215](https://github.com/LedgerHQ/ledger-live/pull/23215) [`ef80ee4`](https://github.com/LedgerHQ/ledger-live/commit/ef80ee46eb564e25090ce08d8459212739158117) Thanks [@cted-ledger](https://github.com/cted-ledger)! - add a transparent-only mode to the zcash bridge, for hosts that do not run the shielded engine
+
+- [#23324](https://github.com/LedgerHQ/ledger-live/pull/23324) [`6b23210`](https://github.com/LedgerHQ/ledger-live/commit/6b232105c11b8b8b86fcb6a715ef19a0b3453b74) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Select the Zcash fee per logical action from the account's synced height and network (ZIP 2009): 1,000 zatoshis from mainnet height 3,590,000 (applied 100 blocks late) and on test networks, 5,000 before. Bump `@ledgerhq/zcash-utils` to 2.7.0. The mainnet switch height can be delayed or the switch disabled through the optional `zip2009.mainnetHeight` coin-config setting (`null` disables it); a height below 3,590,000 is raised to it.
+
+- [#23390](https://github.com/LedgerHQ/ledger-live/pull/23390) [`6582ee6`](https://github.com/LedgerHQ/ledger-live/commit/6582ee63c343dd6f64a31068fddd038af4eb9bd2) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Sign Nano S transparent Zcash sends through the legacy device path when the shielded engine is on, with the inputs and fee shown at review.
+
+- [#23108](https://github.com/LedgerHQ/ledger-live/pull/23108) [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@noble/curves` to 2.4.0 (ESM-only), use the `.js` subpaths and pass `prehash: false` where a digest is signed or verified. CommonJS consumers of `@ledgerhq/hw-app-btc` and `@ledgerhq/wallet-btc` now need Node >= 20.19 (synchronous `require(esm)`) or an ESM-capable bundler.
+
+### Patch Changes
+
+- Updated dependencies [[`9365d3a`](https://github.com/LedgerHQ/ledger-live/commit/9365d3ad499ac5c80d445e7816c30adbfe05ffd8), [`e505c53`](https://github.com/LedgerHQ/ledger-live/commit/e505c537cafd5f44999f201cfe0a773a90cf5671), [`b599cb2`](https://github.com/LedgerHQ/ledger-live/commit/b599cb25afbc5ce2dbdcd0cc1b6126a49bba8068), [`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`ca063c4`](https://github.com/LedgerHQ/ledger-live/commit/ca063c4cfad79f12118c5af5bc0ef323857f90bd), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/live-signer-zcash@0.11.0
+  - @ledgerhq/hw-app-btc@12.0.0
+  - @ledgerhq/wallet-btc@1.0.0
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+
 ## 1.0.0-next.1
 
 ### Patch Changes

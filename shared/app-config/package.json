@@ -1,6 +1,6 @@
 {
   "name": "@shared/app-config",
-  "version": "0.1.0-next.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values and the thunk extraArgument contracts they feed",
   "main": "src/index.ts",

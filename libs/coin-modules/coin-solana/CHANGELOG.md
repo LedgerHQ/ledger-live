@@ -1,5 +1,31 @@
 # @ledgerhq/coin-solana
 
+## 2.5.0
+
+### Minor Changes
+
+- [#23295](https://github.com/LedgerHQ/ledger-live/pull/23295) [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(solana): refresh the blockhash after the device review to avoid "Blockhash not found"
+
+- [#23349](https://github.com/LedgerHQ/ledger-live/pull/23349) [`6639142`](https://github.com/LedgerHQ/ledger-live/commit/6639142cc619d0758ba7873dafbc3e32944f250f) Thanks [@qperrot](https://github.com/qperrot)! - Use config.name instead of intent.asset.name as currency name in validateIntent
+
+- [#23190](https://github.com/LedgerHQ/ledger-live/pull/23190) [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-solana): partition the native balance between the system account and the stake accounts, summed by the generic adapter through `partitionsNativeBalance` and the family's `getHeldNativeAmount`, so delegated SOL is counted once
+
+- [#23320](https://github.com/LedgerHQ/ledger-live/pull/23320) [`5aa4154`](https://github.com/LedgerHQ/ledger-live/commit/5aa41540bc68cb4fedfe45d4cc8d0105ba36cb66) Thanks [@qperrot](https://github.com/qperrot)! - Remove the unused `parseAPIValue` export
+
+- [#21840](https://github.com/LedgerHQ/ledger-live/pull/21840) [`dbed44c`](https://github.com/LedgerHQ/ledger-live/commit/dbed44ca28d6bdb0291bb66247cce0a524f6c805) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Remove the Solana legacy bridge, now that the family is served by the generic coin framework: `prepareTransaction`, `getTransactionStatus`, `signOperation`, `createTransaction`, `estimateMaxSpendable`, the synchronisation, the transaction serializer, the device transaction config, the on-chain instruction parsers and the helpers and types only they used are deleted. `rxjs` goes with them.
+
+  The deterministic tester drops its legacy strategy and runs the generic adapter alone.
+
+- [#23672](https://github.com/LedgerHQ/ledger-live/pull/23672) [`fe74104`](https://github.com/LedgerHQ/ledger-live/commit/fe74104174a41357be9cb911d9b762e4360cbf46) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): check the stake minimum before a validator is picked
+
+  The mobile delegation flow asks for the amount before the validator, so the recipient is still empty when the amount is validated. The minimum-delegation check was skipped in that case, which let an amount below 1 SOL through to the summary. The summary now also shows its validation error in the alert colour.
+
+### Patch Changes
+
+- Updated dependencies [[`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+
 ## 2.5.0-next.1
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/wallet-cli
 
+## 2.12.0
+
+### Minor Changes
+
+- [#23036](https://github.com/LedgerHQ/ledger-live/pull/23036) [`b50561d`](https://github.com/LedgerHQ/ledger-live/commit/b50561d318555decaf22dd4988291051b63e81fc) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Load only the invoked command's modules at startup, build the binaries without Bunli command generation, and report `ring encrypt` and `ring decrypt` under their own names in analytics
+
+- [#23368](https://github.com/LedgerHQ/ledger-live/pull/23368) [`2a42474`](https://github.com/LedgerHQ/ledger-live/commit/2a424743c0aa773caccdb8d270c2bfd73dc1441f) Thanks [@LL782](https://github.com/LL782)! - Read an SPL mint's token program through getMaybeTokenMint
+
+- [#23298](https://github.com/LedgerHQ/ledger-live/pull/23298) [`6f440f6`](https://github.com/LedgerHQ/ledger-live/commit/6f440f6c7d1a297826a48abbcd4d02cbffe3fc45) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - fix(wallet-cli): keep swap quotes authenticated while the keychain dialog is open
+
+  The 10 s auth timeout no longer counts the time the macOS keychain dialog waits for the user. Before, answering it slowly sent the quote without a token.
+
 ## 2.12.0-next.0
 
 ### Minor Changes

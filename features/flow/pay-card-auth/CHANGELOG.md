@@ -1,5 +1,15 @@
 # @features/flow-pay-card-auth
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies [[`2ebd029`](https://github.com/LedgerHQ/ledger-live/commit/2ebd029cd006cb89ceb240705247ccf5529c3c50), [`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @shared/ui-queued-bottom-sheet@0.7.0
+  - @shared/ui-info-state@0.5.0
+  - @domain/api-card-management@0.8.2
+  - @features/platform-card@0.8.1
+
 ## 0.10.1-next.0
 
 ### Patch Changes

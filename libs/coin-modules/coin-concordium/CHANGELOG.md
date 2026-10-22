@@ -1,5 +1,21 @@
 # @ledgerhq/coin-concordium
 
+## 1.6.0
+
+### Minor Changes
+
+- [#23263](https://github.com/LedgerHQ/ledger-live/pull/23263) [`c9beaff`](https://github.com/LedgerHQ/ledger-live/commit/c9beaff3b51d3a50f310be73a830bf6e944e61fa) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Concordium API listOperations: report native OUT value net of fees, matching getBlock
+
+- [#23281](https://github.com/LedgerHQ/ledger-live/pull/23281) [`4831311`](https://github.com/LedgerHQ/ledger-live/commit/4831311fd859631a9248441e469f52c18fb42c52) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Concordium API listOperations: set tx.feesPayer to the transaction sender, matching getBlock. tx.fees stays the fee the listed account paid, so it is 0 on a row another account paid for.
+
+- [#23316](https://github.com/LedgerHQ/ledger-live/pull/23316) [`0ace271`](https://github.com/LedgerHQ/ledger-live/commit/0ace2718ac29bc9926858af41424177ff3363d47) Thanks [@qperrot](https://github.com/qperrot)! - Remove the unused `parseAPIValue` export, which always read the first unit of `concordium`
+
+### Patch Changes
+
+- Updated dependencies [[`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+
 ## 1.6.0-next.0
 
 ### Minor Changes

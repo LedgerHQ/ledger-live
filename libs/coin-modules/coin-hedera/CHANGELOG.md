@@ -1,5 +1,29 @@
 # @ledgerhq/coin-hedera
 
+## 3.0.0
+
+### Major Changes
+
+- [#23276](https://github.com/LedgerHQ/ledger-live/pull/23276) [`8daaded`](https://github.com/LedgerHQ/ledger-live/commit/8daaded1316cb30dc1b3a8634301acc176ca97af) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-hedera): stop resolving the currency with `getCryptoCurrencyById` / `findCryptoCurrencyById`
+
+  The module no longer needs the host currencies resolver. Fee estimation and token-association
+  validation use the input `currencyId` instead of looking the currency up: the countervalues request
+  sends it as `froms`, and the rate cache is keyed by it instead of the ticker. The `InvalidAddress`
+  message of `safeParseAccountId` takes the name of the resolved config. The API's `validateAddress` parses with the context config instead of a currency id.
+
+  Breaking: `getCurrencyToUSDRate` takes a currency id instead of a `Currency`, and `getTokenFromAsset`
+  takes `(currencyId, asset)` instead of `(currency, asset)`.
+
+### Minor Changes
+
+- [#23271](https://github.com/LedgerHQ/ledger-live/pull/23271) [`d7017e3`](https://github.com/LedgerHQ/ledger-live/commit/d7017e3ac831a9078845b2deea86a2f852522ed9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix sponsored native outgoing operation values
+
+### Patch Changes
+
+- Updated dependencies [[`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+
 ## 3.0.0-next.0
 
 ### Major Changes

@@ -1,5 +1,17 @@
 # @features/flow-contacts-add-contact
 
+## 0.8.0
+
+### Minor Changes
+
+- [#23432](https://github.com/LedgerHQ/ledger-live/pull/23432) [`fc846e5`](https://github.com/LedgerHQ/ledger-live/commit/fc846e53bbe5023223aa847b6e00b68fb22ace4a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Add contact copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @features/platform-contacts@0.11.0
+  - @domain/entity-contact@0.12.1
+
 ## 0.8.0-next.0
 
 ### Minor Changes

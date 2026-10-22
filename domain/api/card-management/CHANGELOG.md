@@ -1,5 +1,12 @@
 # @domain/api-card-management
 
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1
+
 ## 0.8.2-next.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.19.10
+
+### Patch Changes
+
+- Updated dependencies [[`ee508db`](https://github.com/LedgerHQ/ledger-live/commit/ee508db35d572d43e03cf58e811177cc3b2389a9), [`68cebc0`](https://github.com/LedgerHQ/ledger-live/commit/68cebc06f2ec8f4cc38ac1caca779317a8fe0711)]:
+  - @shared/env@0.11.0
+
 ## 1.19.10-next.0
 
 ### Patch Changes

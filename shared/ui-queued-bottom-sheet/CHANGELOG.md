@@ -1,5 +1,13 @@
 # @shared/ui-queued-bottom-sheet
 
+## 0.7.0
+
+### Minor Changes
+
+- [#23134](https://github.com/LedgerHQ/ledger-live/pull/23134) [`2ebd029`](https://github.com/LedgerHQ/ledger-live/commit/2ebd029cd006cb89ceb240705247ccf5529c3c50) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - fix(bottom-sheet): hold reopen content until the sheet has closed (LIVE-37745)
+
+- [#23285](https://github.com/LedgerHQ/ledger-live/pull/23285) [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Keep a contacts device sheet mounted until iOS has closed it, and close it once the device step is finished.
+
 ## 0.7.0-next.0
 
 ### Minor Changes
