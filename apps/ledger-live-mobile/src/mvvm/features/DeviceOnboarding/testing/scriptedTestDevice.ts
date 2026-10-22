@@ -86,6 +86,7 @@ export type ScriptedTestDevice = {
   passGenuineCheck(): void;
   failGenuineCheck(): void;
   reportFirmwareUpToDate(): void;
+  reportAvailableFirmware(): void;
   failFirmwareCheck(): void;
   isWatching(sessionId: string): boolean;
   /** What the device screen shows: the early-check (genuine check) screen once Enter is accepted. */
@@ -196,10 +197,13 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     reportFirmwareUpToDate() {
       last(firmwareChecks).push({
         status: DeviceActionStatus.Completed,
-        output: {
-          firmwareVersion: { os: "1.4.0", mcu: "1.0.0", bootloader: "1.0.0" },
-          firmwareUpdateContext: { availableUpdate: undefined },
-        } as GetDeviceMetadataDAOutput,
+        output: firmwareMetadata(undefined),
+      });
+    },
+    reportAvailableFirmware() {
+      last(firmwareChecks).push({
+        status: DeviceActionStatus.Completed,
+        output: firmwareMetadata({ finalFirmware: { version: "2.0.0" } }),
       });
     },
     failFirmwareCheck() {
@@ -221,6 +225,13 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     sessions.set(id, states);
     return states;
   }
+}
+
+function firmwareMetadata(availableUpdate: object | undefined): GetDeviceMetadataDAOutput {
+  return {
+    firmwareVersion: { os: "1.4.0", mcu: "1.0.0", bootloader: "1.0.0" },
+    firmwareUpdateContext: { availableUpdate },
+  } as GetDeviceMetadataDAOutput;
 }
 
 function createReplyQueue<T>() {

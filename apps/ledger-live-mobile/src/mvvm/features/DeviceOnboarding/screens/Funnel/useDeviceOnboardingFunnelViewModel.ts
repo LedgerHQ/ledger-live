@@ -24,6 +24,7 @@ import { toChecksError, toChecksScreenState, toFirmwareUpdate } from "../../util
 type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
 const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
+const awaitingSessionAfterFirmwareUpdateState = "awaitingSessionAfterFirmwareUpdate";
 
 /** Back must not quit here: a quit would skip the update and complete onboarding. */
 const firmwareUpdateOfferState = "checks.firmwareUpdateOffered";
@@ -86,6 +87,11 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     navigation.goBack();
   }, [navigation, onboarding]);
 
+  const leaveFirmwareReconnect = useCallback(() => {
+    allowLeave.current = true;
+    onboarding.abortFirmwareReconnect();
+  }, [onboarding]);
+
   const quitMachine = useCallback(() => {
     send({ type: "QUIT" });
   }, [send]);
@@ -116,6 +122,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         const action = event.data.action.type;
         if (action !== "GO_BACK" && action !== "POP") return;
         event.preventDefault();
+        if (onboarding.state === awaitingSessionAfterFirmwareUpdateState) {
+          leaveFirmwareReconnect();
+          return;
+        }
         if (onboarding.status === "running" && onboarding.state) {
           if (onboarding.state === firmwareUpdateDelegatedState) closeFirmwareHandover();
           else if (onboarding.state !== firmwareUpdateOfferState) quitMachine();
@@ -123,7 +133,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         }
         leave();
       }),
-    [closeFirmwareHandover, leave, navigation, onboarding.state, onboarding.status, quitMachine],
+    [
+      closeFirmwareHandover,
+      leave,
+      leaveFirmwareReconnect,
+      navigation,
+      onboarding.state,
+      onboarding.status,
+      quitMachine,
+    ],
   );
 
   const screenState = toChecksScreenState(
@@ -132,6 +150,25 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
+
+  if (onboarding.state === awaitingSessionAfterFirmwareUpdateState) {
+    if (onboarding.error) {
+      return {
+        status: "failed",
+        title: t("deviceOnboarding.connection.failed"),
+        retryLabel: t("common.retry"),
+        closeLabel,
+        onRetry: reconnect,
+        onQuit: leaveFirmwareReconnect,
+      };
+    }
+    return {
+      status: "connecting",
+      title: t("deviceOnboarding.connection.connecting"),
+      closeLabel,
+      onQuit: leaveFirmwareReconnect,
+    };
+  }
 
   if (onboarding.state === "awaitingSession") {
     return {

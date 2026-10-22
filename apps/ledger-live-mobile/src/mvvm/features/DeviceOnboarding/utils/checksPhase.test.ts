@@ -8,6 +8,7 @@ import {
 describe("toChecksScreenState", () => {
   it("should hide the checks screen before the checks phase", () => {
     expect(toChecksScreenState("readingState", false)).toBeNull();
+    expect(toChecksScreenState("awaitingSessionAfterFirmwareUpdate", false)).toBeNull();
     expect(toChecksScreenState("legacyFallback", false)).toBeNull();
     expect(toChecksScreenState(null, false)).toBeNull();
   });

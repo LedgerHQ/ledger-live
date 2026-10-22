@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useLayoutEffect } from "react";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName, BASE_NAVIGATOR_ID } from "~/const";
-import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { isRebootedDevice, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 
 const mockPush = jest.fn();
@@ -143,6 +143,67 @@ describe("useFirmwareUpdateHandover", () => {
     expect(send).toHaveBeenCalledWith({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
   });
 
+  it("should ask for a new session once when the update completed", async () => {
+    const send = jest.fn();
+    const onReconnectRequired = jest.fn();
+    const { rerender } = renderDelegated(send, { onReconnectRequired });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalled());
+    const params = mockPush.mock.calls[0][1] as {
+      onBackFromUpdate: (updateStep: string) => void;
+    };
+
+    act(() => {
+      params.onBackFromUpdate("completed");
+      mockFocusCallback?.();
+    });
+
+    expect(mockGoBack).toHaveBeenCalledTimes(1);
+    expect(onReconnectRequired).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should ask for a new session when the user leaves a rebooted update before it completes", async () => {
+    const send = jest.fn();
+    const onReconnectRequired = jest.fn();
+    const { rerender } = renderDelegated(send, { onReconnectRequired });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalled());
+    const params = mockPush.mock.calls[0][1] as {
+      onBackFromUpdate: (updateStep: string) => void;
+    };
+
+    rerender({ currentSessionId: null });
+    act(() => params.onBackFromUpdate("appsRestore"));
+
+    expect(onReconnectRequired).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should ask for a new session when the update screen is popped after the device rebooted", async () => {
+    const send = jest.fn();
+    const onReconnectRequired = jest.fn();
+    const { rerender } = renderDelegated(send, { onReconnectRequired });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalled());
+
+    rerender({ currentSessionId: null });
+    act(() => {
+      mockFocusCallback?.();
+      mockFocusCallback?.();
+    });
+
+    expect(mockGoBack).not.toHaveBeenCalled();
+    expect(onReconnectRequired).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("closes from focus alone when the screen was popped without the back callback", async () => {
     const send = jest.fn();
     const { rerender } = renderDelegated(send);
@@ -211,7 +272,9 @@ describe("useFirmwareUpdateHandover", () => {
         device,
         isDeviceOnboarded: false,
         machineState: delegated,
+        currentSessionId: "session-1",
         send,
+        onReconnectRequired: jest.fn(),
       });
       useLayoutEffect(() => {
         if (closeOnLayout.current) handover.close();
@@ -237,7 +300,9 @@ describe("useFirmwareUpdateHandover", () => {
         device,
         isDeviceOnboarded: false,
         machineState: "checks.firmwareUpdateOffered",
+        currentSessionId: "session-1",
         send: jest.fn(),
+        onReconnectRequired: jest.fn(),
       }),
     );
 
@@ -251,26 +316,63 @@ const delegated = "checks.firmwareUpdateDelegated";
 
 function renderDelegated(
   send: (event: HostOnboardingEvent) => void,
-  { isDeviceOnboarded = false }: { isDeviceOnboarded?: boolean } = {},
+  {
+    isDeviceOnboarded = false,
+    onReconnectRequired = jest.fn(),
+    currentSessionId = "session-1",
+    connectedDevice = device,
+  }: {
+    isDeviceOnboarded?: boolean;
+    onReconnectRequired?: () => void;
+    currentSessionId?: string | null;
+    connectedDevice?: typeof device;
+  } = {},
 ) {
-  const props = { machineState: delegated };
+  const props = { machineState: delegated, currentSessionId, connectedDevice };
   const rendered = renderHook(() =>
     useFirmwareUpdateHandover({
-      device,
+      device: props.connectedDevice,
       isDeviceOnboarded,
       machineState: props.machineState,
+      currentSessionId: props.currentSessionId,
       send,
+      onReconnectRequired,
     }),
   );
 
   return {
     ...rendered,
-    rerender: ({ machineState }: { machineState: string }) => {
-      props.machineState = machineState;
+    rerender: ({
+      machineState,
+      currentSessionId,
+      connectedDevice,
+    }: {
+      machineState?: string;
+      currentSessionId?: string | null;
+      connectedDevice?: typeof device;
+    }) => {
+      if (machineState !== undefined) props.machineState = machineState;
+      if (currentSessionId !== undefined) props.currentSessionId = currentSessionId;
+      if (connectedDevice !== undefined) props.connectedDevice = connectedDevice;
       rendered.rerender(undefined);
     },
   };
 }
+
+describe("isRebootedDevice", () => {
+  it("recognises the same touchscreen after its BLE address and advertised name change", () => {
+    const before = { ...device, deviceName: "Ledger Stax 1A2B" };
+    const after = { ...device, deviceId: "new-ble-address", deviceName: "1A2B" };
+
+    expect(isRebootedDevice(before, after)).toBe(true);
+  });
+
+  it("rejects a different model", () => {
+    expect(
+      isRebootedDevice(device, { ...device, modelId: DeviceModelId.nanoX, deviceName: "Nano X" }),
+    ).toBe(false);
+  });
+});
 
 function reportFirmware(
   status: "idle" | "ongoing" | "error" | "no-available-firmware" | "available-firmware",
