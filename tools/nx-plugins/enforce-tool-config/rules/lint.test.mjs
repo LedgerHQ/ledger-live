@@ -17,10 +17,10 @@ const LAYERS = {
   "devtools/oxlint.config.mts": layer("devtools"),
   "domain/oxlint.config.mts": layer("base"),
   "features/flow/oxlint.config.mts": layer("features-flow"),
-  "features/platform/oxlint.config.mts": layer("base"),
+  "features/platform/oxlint.config.mts": layer("features-platform"),
   "libs/oxlint.config.mts": layer("libs"),
   "libs/coin-tester-modules/oxlint.config.mts": layer("libs-coin-tester"),
-  "shared/oxlint.config.mts": layer("base"),
+  "shared/oxlint.config.mts": layer("shared"),
   "support/oxlint.config.mts": layer("support"),
   "tools/oxlint.config.mts": layer("tools"),
 };
@@ -151,9 +151,31 @@ test("a layer config that does more than re-export its own preset is reported", 
     "tools/b/package.json": manifest(),
   });
   assert.deepEqual(messages(root, "shared/a"), [
-    'a layer config only re-exports its preset: `export { default } from "@support/lint/base";`',
+    'a layer config only re-exports its preset: `export { default } from "@support/lint/shared";`',
   ]);
   assert.equal(messages(root, "tools/b").length, 1);
+});
+
+test("features/platform and shared re-export presets of their own, not base", () => {
+  const passing = workspace({
+    "features/platform/a/package.json": manifest(),
+    "shared/b/package.json": manifest(),
+  });
+  assert.deepEqual(messages(passing, "features/platform/a"), []);
+  assert.deepEqual(messages(passing, "shared/b"), []);
+
+  const onBase = workspace({
+    "features/platform/oxlint.config.mts": layer("base"),
+    "features/platform/a/package.json": manifest(),
+    "shared/oxlint.config.mts": layer("base"),
+    "shared/b/package.json": manifest(),
+  });
+  assert.deepEqual(messages(onBase, "features/platform/a"), [
+    'a layer config only re-exports its preset: `export { default } from "@support/lint/features-platform";`',
+  ]);
+  assert.deepEqual(messages(onBase, "shared/b"), [
+    'a layer config only re-exports its preset: `export { default } from "@support/lint/shared";`',
+  ]);
 });
 
 test("a config flag on an oxlint call is reported, in any script and any spelling", () => {

@@ -22,6 +22,39 @@ const FATAL_REACT_COMPILER = [
 // require. The rest of the layer had the rule fatal and keeps it.
 const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
 
+// Packages that still import with a platform suffix. Each entry goes when its package's cleanup
+// lands, so the list only shrinks.
+const PLATFORM_SUFFIX_WAIVERS = [
+  "account-detail",
+  "account-detail-hero",
+  "account-detail-settings",
+  "contacts",
+  "fear-and-greed",
+  "flow-contacts-add-address",
+  "flow-contacts-add-contact",
+  "flow-contacts-delete-address",
+  "flow-contacts-delete-contact",
+  "flow-contacts-detail",
+  "flow-contacts-edit-address",
+  "flow-contacts-edit-contact",
+  "flow-contacts-introduction",
+  "flow-contacts-list",
+  "large-screen-upsell",
+  "lazy-onboarding-banner",
+  "market-banner",
+  "pay-balance",
+  "pay-bank-transfer",
+  "pay-card-assets",
+  "pay-card-auth",
+  "pay-card-details",
+  "pay-card-transactions",
+  "pay-card-widget",
+  "pay-contact",
+  "pay-deposit",
+  "pay-feature-tour",
+  "pay-request",
+];
+
 export default defineConfig({
   extends: [base],
   rules: {
@@ -63,6 +96,7 @@ export default defineConfig({
     "jest/no-standalone-expect": "error",
     "jest/valid-describe-callback": "error",
     "jest/valid-expect": "error",
+    "suffix-imports/no-platform-suffix": "error",
   },
   overrides: [
     {
@@ -86,6 +120,10 @@ export default defineConfig({
         `${pkg}/**/__tests__/**`,
       ]),
       rules: { "react/no-children-prop": "off" },
+    },
+    {
+      files: PLATFORM_SUFFIX_WAIVERS.map(pkg => `${pkg}/**`),
+      rules: { "suffix-imports/no-platform-suffix": "off" },
     },
   ],
 });

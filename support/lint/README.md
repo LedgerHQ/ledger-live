@@ -27,9 +27,11 @@ rule that several packages of a layer need belongs in that layer's preset.
 
 | Preset | Layer | Differs from `base` |
 | --- | --- | --- |
-| `base` | `domain/`, `shared/`, `features/platform/` | The baseline |
+| `base` | `domain/` | The baseline |
 | `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on, `jsx-a11y/aria-role` off in native files |
-| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal |
+| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on, with waivers |
+| `features-platform` | `features/platform/` | Platform-suffix rule on, with waivers |
+| `shared` | `shared/` | Platform-suffix rule on, with waivers |
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
 | `libs` | `libs/` | Correctness rules as warnings, suspicious off |
@@ -53,17 +55,56 @@ suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
 ### `suffix-imports/no-platform-suffix`
 
-Disallows explicit `.web` or `.native` suffixes in import paths. Platform resolution should be left
-to the bundler (Metro / webpack). `base` registers it off; `devtools` turns it on.
+Platform variants are carried by file names (`Foo.web.tsx` / `Foo.native.tsx`) and resolved by
+configuration: `moduleSuffixes` in tsc, `moduleFileExtensions` in jest, `resolve.extensions` in
+rspack, `preferNativePlatform` in Re.Pack. A suffix in the specifier itself is redundant, hides
+cross-platform contamination from tsc, and rots on a rename. See [tsconfig.md](../../docs/tsconfig.md).
 
-**Autofix available**: run `oxlint --fix` to strip the suffix automatically.
+`base` registers the rule off. `devtools`, `features-flow`, `features-platform` and `shared`
+turn it on. It checks `import`, `export`, dynamic `import()`, `require()` and the `jest.mock`
+family, and reports three shapes.
+
+**A trailing `.web` or `.native`.** Autofixable: `oxlint --fix` strips the suffix.
 
 ```ts
 // ✗
-import Foo from "./foo.native";
-import Bar from "../bar.web";
+import Foo from "./Foo.native";
+jest.mock("./internals/digest.web");
 
 // ✓
-import Foo from "./foo";
-import Bar from "../bar";
+import Foo from "./Foo";
+jest.mock("./internals/digest");
 ```
+
+**A relative `web` or `native` module.** Reported without an autofix: dropping the segment
+resolves to another module, so the fix is to rename the file.
+
+```ts
+// ✗
+export * from "./steps/Detail/native"; // steps/Detail/native.ts
+
+// ✓
+export * from "./steps/Detail"; // steps/Detail/index.native.ts
+```
+
+**A platform entry imported from the other platform.** A `/native` or `/web` subpath of an
+`@features/*`, `@shared/*` or `@domain/*` package is a
+[platform entry](../../docs/adr/universal-components.md) (R5). Only code of that platform imports
+it: a `.native.*` file, a file of `apps/ledger-live-mobile/`, or a package with a
+`tsconfig.native.json` and no `tsconfig.web.json`, and the mirror for `/web` with
+`apps/ledger-live-desktop/`. Reported without an autofix, since the universal entry does not export
+the same components.
+
+```ts
+// Lottie.web.tsx
+import { Lottie } from "@shared/lottie/native"; // ✗
+import { Lottie } from "@shared/lottie/web"; // ✓
+```
+
+Third-party entry points (`styled-components/native`, `@react-navigation/native`) and `@support/*`
+subpaths (`@support/jest-devtools/native`) are never reported.
+
+Packages that still carry suffixed specifiers are listed in `PLATFORM_SUFFIX_WAIVERS` of their
+layer's preset. A package leaves the list in the change that cleans it up, so the list only shrinks.
+
+Run the rule's tests with `nx run @support/lint:test`.

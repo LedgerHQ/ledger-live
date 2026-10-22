@@ -15,10 +15,10 @@ const LAYER_CONFIGS = new Map([
   ["devtools/oxlint.config.mts", "devtools"],
   ["domain/oxlint.config.mts", "base"],
   ["features/flow/oxlint.config.mts", "features-flow"],
-  ["features/platform/oxlint.config.mts", "base"],
+  ["features/platform/oxlint.config.mts", "features-platform"],
   ["libs/oxlint.config.mts", "libs"],
   ["libs/coin-tester-modules/oxlint.config.mts", "libs-coin-tester"],
-  ["shared/oxlint.config.mts", "base"],
+  ["shared/oxlint.config.mts", "shared"],
   ["support/oxlint.config.mts", "support"],
   ["tools/oxlint.config.mts", "tools"],
 ]);
