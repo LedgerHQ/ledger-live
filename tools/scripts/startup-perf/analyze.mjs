@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Summarises samples.jsonl written by run.mjs. Launches are paired by (scenario, phase, round);
 // the difference is B − A on "App startup time", estimated with Hodges–Lehmann and a Wilcoxon
-// signed-rank 95% interval. Writes a markdown table to stdout and, with --summary, appends it there.
+// signed-rank 95% interval. Writes a markdown table to stdout and, with --summary, appends it there,
+// followed by how the CPU load recorded around each launch relates to its startup time.
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -117,6 +118,109 @@ export function summarise(samples, { preset, thresholdMs }) {
   });
 }
 
+function ranks(values) {
+  const order = values.map((v, i) => [v, i]).sort((a, b) => a[0] - b[0]);
+  const result = new Array(values.length);
+  for (let i = 0; i < order.length;) {
+    let j = i;
+    while (j + 1 < order.length && order[j + 1][0] === order[i][0]) j++;
+    for (let k = i; k <= j; k++) result[order[k][1]] = (i + j) / 2 + 1;
+    i = j + 1;
+  }
+  return result;
+}
+
+// Spearman rank correlation: Pearson on the ranks, ties averaged.
+export function spearman(x, y) {
+  const rx = ranks(x);
+  const ry = ranks(y);
+  const mean = v => v.reduce((a, b) => a + b, 0) / v.length;
+  const mx = mean(rx);
+  const my = mean(ry);
+  let sxy = 0;
+  let sxx = 0;
+  let syy = 0;
+  for (let i = 0; i < rx.length; i++) {
+    sxy += (rx[i] - mx) * (ry[i] - my);
+    sxx += (rx[i] - mx) ** 2;
+    syy += (ry[i] - my) ** 2;
+  }
+  return sxx && syy ? sxy / Math.sqrt(sxx * syy) : null;
+}
+
+const LOAD_MEASURES = [
+  ["Runner CPU busy, 5 s before launch (%)", s => s.load?.beforeLaunch?.hostBusyPct],
+  ["Runner CPU busy, during launch (%)", s => s.load?.duringLaunch?.hostBusyPct],
+  ["Runner CPU throttled, during launch (ms)", s => s.load?.duringLaunch?.throttledMs],
+  ["Device CPU busy, 5 s before launch (%)", s => s.load?.beforeLaunch?.deviceBusyPct],
+  ["Device load average, before launch", s => s.load?.beforeLaunch?.deviceLoadavg1],
+  ["Device CPU steal, during launch (%)", s => s.load?.duringLaunch?.deviceStealPct],
+];
+
+// How the load recorded by run.mjs around each launch relates to its startup time. The startup
+// time is taken relative to the median of its device, side and half, so neither the device bias
+// nor B − A shows up as a correlation.
+export function loadSummary(samples) {
+  const groups = new Map();
+  for (const s of samples) {
+    if (!s.ok || s.warmup || !s.load || !Number.isFinite(s.appStartupTime)) continue;
+    const key = `${s.platform}|${s.scenario}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(s);
+  }
+  return [...groups.entries()].map(([key, group]) => {
+    const [platform, scenario] = key.split("|");
+    const cell = s => `${s.device}|${s.side}|${s.phase}`;
+    const cellMedian = new Map();
+    for (const c of new Set(group.map(cell))) {
+      cellMedian.set(c, median(group.filter(s => cell(s) === c).map(s => s.appStartupTime)));
+    }
+    const residual = s => s.appStartupTime - cellMedian.get(cell(s));
+    const measures = [];
+    for (const [label, get] of LOAD_MEASURES) {
+      const points = group.filter(s => Number.isFinite(get(s)));
+      if (points.length < 6) continue;
+      const rho = spearman(points.map(residual), points.map(get));
+      measures.push({
+        label,
+        n: points.length,
+        median: median(points.map(get)),
+        rho,
+        // Two-sided 5% critical value of Spearman's rho, normal approximation.
+        related: rho !== null && Math.abs(rho) > Z_95 / Math.sqrt(points.length - 1),
+      });
+    }
+    return {
+      platform,
+      scenario,
+      launches: group.length,
+      otherPaused: group.filter(s => s.load.otherPaused).length,
+      measures,
+    };
+  });
+}
+
+export function loadToMarkdown(rows) {
+  const lines = [
+    "### Load around the launches",
+    "",
+    "Correlation (Spearman) between each measure and the startup time, taken relative to its own device, side and half. Marked ⚠ when it is unlikely to be chance (5% level): that load explains part of the spread.",
+    "",
+    "| Platform | Scenario | Other emulator paused | Measure | Median | Correlation with startup time |",
+    "| --- | --- | --- | --- | --- | --- |",
+  ];
+  for (const r of rows) {
+    for (const m of r.measures) {
+      const value = Number.isInteger(m.median) ? m.median : m.median.toFixed(1);
+      const rho = m.rho === null ? "–" : `${m.rho.toFixed(2)}${m.related ? " ⚠" : ""}`;
+      lines.push(
+        `| ${r.platform} | ${r.scenario} | ${r.otherPaused}/${r.launches} | ${m.label} | ${value} | ${rho} |`,
+      );
+    }
+  }
+  return lines.join("\n") + "\n";
+}
+
 const fmt = v =>
   v === null || v === undefined || !Number.isFinite(v) ? "–" : String(Math.round(v));
 const signed = v => (Number.isFinite(v) ? `${v > 0 ? "+" : ""}${Math.round(v)}` : "–");
@@ -170,9 +274,10 @@ async function main() {
     labelB: values["label-b"],
   };
   const rows = summarise(samples, options);
-  const markdown = rows.length
-    ? toMarkdown(rows, options)
-    : "### Startup time\n\nNo samples were recorded.\n";
+  const loadRows = loadSummary(samples).filter(r => r.measures.length);
+  const markdown =
+    (rows.length ? toMarkdown(rows, options) : "### Startup time\n\nNo samples were recorded.\n") +
+    (loadRows.length ? "\n" + loadToMarkdown(loadRows) : "");
   console.log(markdown);
   if (values.summary) await appendFile(values.summary, markdown + "\n");
   if (values.json) {
