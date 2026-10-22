@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
-import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { calculate } from "@domain/entity-market-countervalues";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
+import {
+  useCalculateCountervalueCallback,
+  useCountervaluesCache,
+} from "@features/platform-market-countervalues";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
@@ -42,8 +45,6 @@ export type WithdrawFormError = Readonly<{
   labelKey: string;
   values?: Record<string, string>;
 }>;
-
-const USD_UNIT = getFiatCurrencyByTicker("USD").units[0];
 
 function toQuoteError(error: Error): WithdrawFormError {
   if (error instanceof WithdrawMinimumAmountError) {
@@ -94,12 +95,17 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
   const discreet = useSelector(discreetModeSelector);
   const { openDrawer } = useModularDrawerController();
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
+  const countervaluesState = useCountervaluesCache();
+
+  const counterValueUnit = counterValueCurrency.units[0];
   const { currencyIds, isError: currenciesUnavailable } = useWithdrawCurrencies();
 
   // The store copy stays in sync while the screen is open.
   const sourceAccount =
     accounts.find(({ id }) => id === route.params.sourceAccount.id) ?? route.params.sourceAccount;
   const availableBalance = useMemo(() => getPerpsAvailableBalance(sourceAccount), [sourceAccount]);
+  const sourceCurrency = getAccountCurrency(sourceAccount);
+  const sourceUnit = sourceCurrency.units[0];
 
   const [amountText, setAmountText] = useState("");
   const [destinationAccountId, setDestinationAccountId] = useState<string | undefined>();
@@ -111,6 +117,35 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     const parsed = Number(amountText);
     return Number.isFinite(parsed) ? parsed : 0;
   }, [amountText]);
+
+  const usdcAmount = useMemo(() => {
+    if (!amount) return new BigNumber(0);
+    const atomic = calculate(countervaluesState, {
+      from: sourceCurrency,
+      to: counterValueCurrency,
+      value: new BigNumber(amount).shiftedBy(counterValueUnit.magnitude).toNumber(),
+      reverse: true,
+      disableRounding: true,
+    });
+    return atomic == null
+      ? null
+      : new BigNumber(atomic)
+          .shiftedBy(-sourceUnit.magnitude)
+          .decimalPlaces(sourceUnit.magnitude, BigNumber.ROUND_DOWN);
+  }, [
+    amount,
+    counterValueCurrency,
+    counterValueUnit,
+    countervaluesState,
+    sourceCurrency,
+    sourceUnit,
+  ]);
+
+  const toCounterValue = useCallback(
+    (usdc: BigNumber) =>
+      calculateCountervalue(sourceCurrency, usdc.shiftedBy(sourceUnit.magnitude)) ?? undefined,
+    [calculateCountervalue, sourceCurrency, sourceUnit],
+  );
 
   const getFiatBalance = useCallback(
     (account: AccountLike) =>
@@ -139,24 +174,23 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     : undefined;
 
   const balanceError = validateWithdrawAmount({
-    amount: new BigNumber(amount),
+    amount: usdcAmount ?? new BigNumber(0),
     availableBalance,
   });
+  const rateUnavailable = amount > 0 && usdcAmount === null;
 
   const {
     quote,
     isLoading: isQuoteLoading,
     error: quoteError,
   } = usePerpsWithdrawQuote({
-    // An amount the fee check rejects is never priced.
-    amount: balanceError ? "" : amountText,
+    amount: balanceError || !usdcAmount ? "" : usdcAmount.toFixed(),
     sourceAccount,
     destinationAccount,
     accounts,
     counterValueCurrency: counterValueCurrency.ticker,
   });
 
-  const counterValueUnit = counterValueCurrency.units[0];
   const destinationCounterValue = useMemo(() => {
     const fiat = destinationAccount ? getFiatBalance(destinationAccount) : undefined;
     return fiat
@@ -164,21 +198,24 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
       : null;
   }, [counterValueUnit, destinationAccount, discreet, getFiatBalance, locale]);
 
-  const maxAmount = useMemo(
-    () =>
-      getWithdrawMaxAmount(availableBalance)
-        .decimalPlaces(USD_UNIT.magnitude, BigNumber.ROUND_DOWN)
-        .toNumber(),
-    [availableBalance],
-  );
+  const maxAmount = useMemo(() => {
+    const fiat = toCounterValue(getWithdrawMaxAmount(availableBalance));
+    return fiat
+      ? fiat
+          .shiftedBy(-counterValueUnit.magnitude)
+          .decimalPlaces(counterValueUnit.magnitude, BigNumber.ROUND_DOWN)
+          .toNumber()
+      : 0;
+  }, [availableBalance, counterValueUnit, toCounterValue]);
 
   const statusError = useMemo<WithdrawFormError | null>(() => {
     if (balanceError) return { labelKey: "perpsWithdraw.formErrors.insufficientBalance" };
     if (currenciesUnavailable) {
       return { labelKey: "perpsWithdraw.formErrors.currenciesUnavailable" };
     }
+    if (rateUnavailable) return { labelKey: "perpsWithdraw.formErrors.quoteUnavailable" };
     return quoteError ? toQuoteError(quoteError) : null;
-  }, [balanceError, currenciesUnavailable, quoteError]);
+  }, [balanceError, currenciesUnavailable, quoteError, rateUnavailable]);
 
   const canReview =
     amount > 0 &&
@@ -197,13 +234,14 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
   }, [destinationCurrency, locale, quote]);
 
   const pressAmountKey = useCallback(
-    (key: string) => setAmountText(current => applyAmountKey(current, key, USD_UNIT.magnitude)),
-    [],
+    (key: string) =>
+      setAmountText(current => applyAmountKey(current, key, counterValueUnit.magnitude)),
+    [counterValueUnit],
   );
 
   const selectAmountRatio = useCallback(
-    (ratioAmount: number) => setAmountText(toAmountText(ratioAmount, USD_UNIT.magnitude)),
-    [],
+    (ratioAmount: number) => setAmountText(toAmountText(ratioAmount, counterValueUnit.magnitude)),
+    [counterValueUnit],
   );
 
   const pickDestinationAccount = useCallback(() => {
@@ -221,20 +259,23 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
   const handleReview = useCallback(() => undefined, []);
 
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
-  const formattedAvailable = formatCurrencyUnit(
-    USD_UNIT,
-    availableBalance.shiftedBy(USD_UNIT.magnitude),
-    { showCode: true, discreet, locale },
-  );
+  const fiatAvailable = toCounterValue(availableBalance);
+  const formattedAvailable = fiatAvailable
+    ? formatCurrencyUnit(counterValueUnit, fiatAvailable, { showCode: true, discreet, locale })
+    : formatCurrencyUnit(sourceUnit, sourceAccount.spendableBalance, {
+        showCode: true,
+        discreet,
+        locale,
+      });
 
   return {
     headerDescription: `${sourceName} · ${formattedAvailable}`,
     amountText,
     amount,
-    currencyCode: USD_UNIT.code,
+    currencyCode: counterValueUnit.code,
     quotedAmount,
     isQuoteLoading,
-    maxDecimalLength: USD_UNIT.magnitude,
+    maxDecimalLength: counterValueUnit.magnitude,
     pressAmountKey,
     selectAmountRatio,
     maxAmount,
