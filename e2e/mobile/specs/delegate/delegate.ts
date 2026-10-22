@@ -98,7 +98,7 @@ export function runDelegateTest(
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode, fees);
+      await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode, fees });
     });
   });
 }
@@ -129,7 +129,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode });
     });
   });
 }
@@ -224,7 +224,7 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
         await app.speculos.signDelegationTransaction(delegation);
         await app.common.successViewDetails();
 
-        await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+        await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode });
       },
       MINA_PAIR_TEST_TIMEOUT_MS,
     );
@@ -327,7 +327,7 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode });
     });
   });
 }
@@ -364,7 +364,11 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(votedDelegation, amountWithCode, undefined, "VOTE");
+      await verifyStakeOperationDetailsInfo({
+        delegation: votedDelegation,
+        amount: amountWithCode,
+        operationType: "VOTE",
+      });
     });
   });
 }

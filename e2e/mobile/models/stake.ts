@@ -39,12 +39,17 @@ export async function verifyAppValidationStakeInfo(
   }
 }
 
+type VerifyStakeOperationDetailsInfoOptions = {
+  delegation: DelegateType;
+  amount: string;
+  fees?: string;
+  operationType?: "VOTE";
+};
+
 export async function verifyStakeOperationDetailsInfo(
-  delegation: DelegateType,
-  amount: string,
-  fees?: string,
-  operationType?: "VOTE",
+  options: VerifyStakeOperationDetailsInfoOptions,
 ) {
+  const { delegation, amount, fees, operationType } = options;
   const currenciesForProvider = [
     Currency.ATOM,
     Currency.INJ,
