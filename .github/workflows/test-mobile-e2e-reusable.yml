@@ -71,6 +71,11 @@ on:
         required: false
         type: boolean
         default: false
+      pause_idle_emulator:
+        description: "Android: pause the other emulator from each launch until its read, so it takes no CPU"
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: mobile-startup-perf-${{ github.ref_name }}
@@ -500,6 +505,7 @@ jobs:
           PAIRS: ${{ inputs.pairs }}
           SETTLE: ${{ inputs.settle_seconds }}
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
+          PAUSE_IDLE: ${{ inputs.pause_idle_emulator }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -511,6 +517,7 @@ jobs:
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" --settle-ms "$((SETTLE * 1000))" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
+            --pause-idle "$PAUSE_IDLE" \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse

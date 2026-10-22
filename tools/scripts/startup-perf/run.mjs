@@ -9,8 +9,11 @@
 // device: in run 39731729203 a launch right after one on the same simulator was ~270 ms faster.
 // Halfway through each scenario the builds swap devices and the starting side flips, so a
 // difference between the two devices cancels out of B − A (analyze.mjs reports it as "device bias").
+// On Android the other emulator is paused from the launch until the read, so it takes no host CPU,
+// and each sample records the CPU load on the host and in the device before and after the launch.
 import { execFile } from "node:child_process";
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
@@ -37,6 +40,7 @@ const { values: opts } = parseArgs({
     flow: { type: "string", default: path.join(import.meta.dirname, "read-performance.yaml") },
     maestro: { type: "string", default: "maestro" },
     "bridge-port": { type: "string", default: "8099" },
+    "pause-idle": { type: "string", default: "true" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -54,6 +58,9 @@ const WARMUPS = Number(opts.warmups);
 const IDLE_MS = Number(opts["idle-ms"]);
 const SETTLE_MS = Number(opts["settle-ms"]);
 const BRIDGE_PORT = Number(opts["bridge-port"]);
+const PAUSE_IDLE = opts["pause-idle"] === "true";
+// The startup being measured ends within ~5 s of the launch command returning.
+const LOAD_WINDOW_MS = 5000;
 const OUT_DIR = opts["out-dir"];
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
@@ -210,6 +217,29 @@ const android = {
     }
     return cleared;
   },
+  // Freezes the emulator (console "avd stop"): its virtual CPUs stop, so it takes no host CPU while
+  // the other one launches. adb commands sent to it wait until "avd start".
+  async pause(device) {
+    const { stdout } = await run("adb", ["-s", device, "emu", "avd", "stop"], {
+      timeoutMs: 30_000,
+    });
+    if (!/^OK/m.test(stdout)) throw new Error(`avd stop on ${device}: ${stdout.trim()}`);
+    return true;
+  },
+  async resume(device) {
+    const { stdout } = await run("adb", ["-s", device, "emu", "avd", "start"], {
+      timeoutMs: 30_000,
+    });
+    if (!/^OK/m.test(stdout)) throw new Error(`avd start on ${device}: ${stdout.trim()}`);
+  },
+  async cpuStat(device) {
+    const { stdout, failed } = await run(
+      "adb",
+      ["-s", device, "shell", "cat", "/proc/loadavg", "/proc/stat"],
+      { allowFail: true, timeoutMs: 20_000 },
+    );
+    return failed ? null : parseCpuStat(stdout);
+  },
   async diagnostics(device, file) {
     const { stdout } = await run("adb", ["-s", device, "logcat", "-d", "-t", "3000"], {
       allowFail: true,
@@ -217,6 +247,24 @@ const android = {
     await writeFile(file, stdout);
   },
 };
+
+// /proc/loadavg followed by /proc/stat: 1-minute load average and the cumulative CPU time of all
+// cores, in ticks. Steal is time the virtual CPUs were ready to run but the host ran something else.
+export function parseCpuStat(text) {
+  const cpu = text.match(/^cpu\s+(.+)$/m);
+  if (!cpu) return null;
+  const [user, nice, system, idle, iowait = 0, irq = 0, softirq = 0, steal = 0] = cpu[1]
+    .trim()
+    .split(/\s+/)
+    .map(Number);
+  const loadavg = text.match(/^(\d+\.\d+) \d+\.\d+ \d+\.\d+/m);
+  return {
+    loadavg1: loadavg ? Number(loadavg[1]) : null,
+    busy: user + nice + system + irq + softirq,
+    steal,
+    total: user + nice + system + idle + iowait + irq + softirq + steal,
+  };
+}
 
 export function parseBlockingDialog(dumpsysWindow) {
   return (
@@ -247,6 +295,14 @@ const ios = {
   },
   async clearDialogs() {
     return [];
+  },
+  // Simulators are processes on the host: nothing to pause, and their load is the host's.
+  async pause() {
+    return false;
+  },
+  async resume() {},
+  async cpuStat() {
+    return null;
   },
   async diagnostics(device, file) {
     const { stdout } = await run(
@@ -407,6 +463,60 @@ async function inject(device, userdata) {
   }
 }
 
+// Cumulative CPU time of the runner (all its cores, whoever uses them), in ms.
+function hostCpuTimes() {
+  let busy = 0;
+  let total = 0;
+  for (const { times } of os.cpus()) {
+    busy += times.user + times.nice + times.sys + times.irq;
+    total += times.user + times.nice + times.sys + times.irq + times.idle;
+  }
+  return { busy, total };
+}
+
+// Time this job's cgroup was held back by its CPU quota, in µs; null on a VM or without a quota.
+async function cgroupThrottledUs() {
+  const sources = [
+    ["/sys/fs/cgroup/cpu.stat", "throttled_usec", 1],
+    ["/sys/fs/cgroup/cpu/cpu.stat", "throttled_time", 1e-3],
+  ];
+  for (const [file, key, toUs] of sources) {
+    const text = await readFile(file, "utf8").catch(() => "");
+    const value = text.match(new RegExp(`^${key} (\\d+)$`, "m"))?.[1];
+    if (value) return Number(value) * toUs;
+  }
+  return null;
+}
+
+async function loadSnapshot(device) {
+  return {
+    at: Date.now(),
+    host: hostCpuTimes(),
+    throttledUs: await cgroupThrottledUs(),
+    device: await P.cpuStat(device),
+  };
+}
+
+const percent = (part, whole) => (whole > 0 ? Math.round((part / whole) * 1000) / 10 : null);
+
+export function loadBetween(a, b) {
+  const load = {
+    ms: b.at - a.at,
+    hostBusyPct: percent(b.host.busy - a.host.busy, b.host.total - a.host.total),
+    hostLoadavg1: Math.round(os.loadavg()[0] * 100) / 100,
+  };
+  if (a.throttledUs !== null && b.throttledUs !== null) {
+    load.throttledMs = Math.round((b.throttledUs - a.throttledUs) / 1000);
+  }
+  if (a.device && b.device) {
+    const total = b.device.total - a.device.total;
+    load.deviceBusyPct = percent(b.device.busy - a.device.busy, total);
+    load.deviceStealPct = percent(b.device.steal - a.device.steal, total);
+    load.deviceLoadavg1 = b.device.loadavg1;
+  }
+  return load;
+}
+
 const consecutiveFailures = new Map();
 let lastLaunchDevice = null;
 
@@ -419,6 +529,8 @@ async function sample(meta) {
     ok: false,
   };
   const name = `${meta.scenario}-p${meta.phase}-r${meta.round}-${meta.side}`;
+  const other = DEVICES.find(d => d !== meta.device);
+  let paused = false;
   try {
     // Stop the app on both devices so the idle one is not syncing in the background.
     for (const device of DEVICES) await P.stop(device);
@@ -428,10 +540,36 @@ async function sample(meta) {
       record.clearedDialogs = dialogs;
       await sleep(DIALOG_RECOVERY_MS);
     }
+    const idleStart = await loadSnapshot(meta.device);
     await sleep(IDLE_MS);
+    const idleEnd = await loadSnapshot(meta.device);
+    if (PAUSE_IDLE) {
+      paused = await P.pause(other).catch(error => {
+        log(`  could not pause ${other}, launching with it running: ${error.message}`);
+        return false;
+      });
+    }
     lastLaunchDevice = meta.device;
+    // Host only: reading the device here would add work right before the launch.
+    const launchStart = {
+      ...idleEnd,
+      at: Date.now(),
+      host: hostCpuTimes(),
+      throttledUs: await cgroupThrottledUs(),
+    };
     const launch = await P.launch(meta.device, { mock: "0" });
-    await sleep(SETTLE_MS);
+    await sleep(Math.min(LOAD_WINDOW_MS, SETTLE_MS));
+    const launchEnd = await loadSnapshot(meta.device);
+    record.load = {
+      otherPaused: paused,
+      beforeLaunch: loadBetween(idleStart, idleEnd),
+      duringLaunch: loadBetween(launchStart, launchEnd),
+    };
+    await sleep(Math.max(0, SETTLE_MS - LOAD_WINDOW_MS));
+    if (paused) {
+      paused = false;
+      await P.resume(other);
+    }
     const perf = await readPerformance(meta.device, name);
     Object.assign(record, launch, perf, { ok: true });
     consecutiveFailures.set(meta.device, 0);
@@ -439,6 +577,9 @@ async function sample(meta) {
     record.error = String(error?.message ?? error).slice(0, 1500);
     consecutiveFailures.set(meta.device, (consecutiveFailures.get(meta.device) ?? 0) + 1);
     await P.diagnostics(meta.device, path.join(DEBUG_DIR, `${name}.log`)).catch(() => {});
+  } finally {
+    // A device left paused would hang every later adb command sent to it.
+    if (paused) await P.resume(other);
   }
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
   const what = record.ok
@@ -470,6 +611,8 @@ async function main() {
         warmups: WARMUPS,
         idleMs: IDLE_MS,
         settleMs: SETTLE_MS,
+        pauseIdle: PAUSE_IDLE && PLATFORM === "android",
+        hostCpus: os.cpus().length,
         userdata: {
           "no-accounts": opts["no-accounts-userdata"],
           accounts: opts["accounts-userdata"],
