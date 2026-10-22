@@ -71,10 +71,6 @@ export const EXCLUSIONS = {
       "project that references it; no lib preset emits from that layout. Exit condition: the " +
       "package builds from src/ like the other libs, then extends @support/tsconfig/lib.",
   },
-  "libs/ledger-services": {
-    rules: ["lint"],
-    reason: `TEMPORARY. The ledger-services packages ${LINT_LEAVES}`,
-  },
   "libs/ledgerjs": {
     rules: ["lint", "tsconfig", "jest"],
     reason:
