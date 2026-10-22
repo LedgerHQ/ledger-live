@@ -1,10 +1,9 @@
 import React, { type RefObject } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { PerpsWebView } from "LLM/features/Perps/components/PerpsWebView";
-import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import type { PerpsWebviewInputs } from "./usePerpsLiveAppViewModel";
 import type { AccountLike } from "@ledgerhq/types-live";
 
@@ -27,18 +26,16 @@ export function PerpsLiveAppView({
   webviewInputs,
   accounts,
 }: PerpsLiveAppViewProps) {
-  const { backgroundColor } = useWallet40Theme();
-
   if (error) {
     return (
-      <Flex flex={1} justifyContent="center" alignItems="center">
-        {isLoading ? <InfiniteLoader /> : <GenericErrorView error={error} />}
-      </Flex>
+      <Box lx={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        {isLoading ? <Spinner /> : <GenericErrorView error={error} />}
+      </Box>
     );
   }
 
   return (
-    <Flex flex={1} testID="perps-tab" backgroundColor={backgroundColor}>
+    <Box lx={{ flex: 1 }} testID="perps-tab">
       {manifest && (
         <PerpsWebView
           ref={webviewRef}
@@ -48,6 +45,6 @@ export function PerpsLiveAppView({
           accounts={accounts}
         />
       )}
-    </Flex>
+    </Box>
   );
 }

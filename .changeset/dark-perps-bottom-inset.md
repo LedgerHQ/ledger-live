@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-Match the Perps live app background in the bottom safe area.
+Use the Lumen stack navigation config for the Perps navigator so the bottom safe area matches the live app background.

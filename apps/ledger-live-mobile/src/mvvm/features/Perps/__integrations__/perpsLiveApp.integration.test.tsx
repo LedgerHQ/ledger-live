@@ -18,10 +18,4 @@ describe("Perps feature integration test", () => {
 
     expect(screen.getByTestId("perps-tab")).toBeOnTheScreen();
   });
-
-  it("should paint the container with the live app background so the bottom safe area matches", () => {
-    render(<PerpsLiveAppWrapper />);
-
-    expect(screen.getByTestId("perps-tab")).toHaveStyle({ backgroundColor: "#000000" });
-  });
 });
