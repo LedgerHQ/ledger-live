@@ -57,33 +57,33 @@ export function mapDeviceState(response: GetOsVersionResponse): ReadDeviceStateE
 }
 
 /**
- * Closes the app only when one is open: on the dashboard, close app would still make DMK wait for
- * a disconnection, and a failed wait ends the session. When the app is unknown, the read goes on.
- */
-async function closeOpenApp(dmk: DeviceManagementKit, sessionId: DeviceSessionId): Promise<void> {
-  const app = await dmk.sendCommand({ sessionId, command: new GetAppAndVersionCommand() });
-
-  if (isSuccessCommandResult(app) && !isDashboardName(app.data.name)) {
-    await dmk.sendCommand({ sessionId, command: new CloseAppCommand() });
-  }
-}
-
-/**
- * The OS version command works only on the dashboard. An actor stopped while the app closes must
- * not reach the device again: the next flow may already use it.
+ * The OS version command works only on the dashboard, so an open app is closed first. Only an open
+ * app: on the dashboard, close app would still make DMK wait for a disconnection, and a failed wait
+ * ends the session. When the app is unknown, the read goes on.
+ *
+ * An actor stopped between two commands must not reach the device again: the next flow may
+ * already use it.
  */
 async function readOnDashboard(
   dmk: DeviceManagementKit,
   sessionId: DeviceSessionId,
   isCancelled: () => boolean,
 ): Promise<GetOsVersionResponse> {
-  await closeOpenApp(dmk, sessionId);
+  const app = await dmk.sendCommand({ sessionId, command: new GetAppAndVersionCommand() });
+  stopIfCancelled(isCancelled);
 
-  if (isCancelled()) {
-    throw new Error("The read stopped while the app was closing");
+  if (isSuccessCommandResult(app) && !isDashboardName(app.data.name)) {
+    await dmk.sendCommand({ sessionId, command: new CloseAppCommand() });
+    stopIfCancelled(isCancelled);
   }
 
   return sendOsVersionCommand(dmk, sessionId);
+}
+
+function stopIfCancelled(isCancelled: () => boolean): void {
+  if (isCancelled()) {
+    throw new Error("The read stopped before reaching the device again");
+  }
 }
 
 export const readDeviceState = fromCallback<ReadDeviceStateEvent, ReadDeviceStateInput>(

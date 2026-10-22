@@ -168,19 +168,35 @@ describe("readDeviceState", () => {
     stop();
   });
 
-  it("does not read the state once stopped while the app is closing", async () => {
-    let finishClosingApp: (() => void) | undefined;
-    const closing = new Promise(resolve => {
-      finishClosingApp = () => resolve(appClosed);
-    });
+  it("does not close the app once stopped during the app check", async () => {
+    let stopActor: (() => void) | undefined;
     const { dmk, sendCommand } = fakeDevice({
-      app: () => running("Bitcoin"),
-      closeApp: () => closing,
+      app: () => {
+        stopActor?.();
+        return running("Bitcoin");
+      },
     });
     const { received, stop } = start(dmk);
+    stopActor = stop;
 
-    stop();
-    finishClosingApp?.();
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion"]);
+    expect(received).toEqual([]);
+  });
+
+  it("does not read the state once stopped while the app is closing", async () => {
+    let stopActor: (() => void) | undefined;
+    const { dmk, sendCommand } = fakeDevice({
+      app: () => running("Bitcoin"),
+      closeApp: () => {
+        stopActor?.();
+        return Promise.resolve(appClosed);
+      },
+    });
+    const { received, stop } = start(dmk);
+    stopActor = stop;
+
     await settle();
 
     expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "closeApp"]);
@@ -270,17 +286,21 @@ type DeviceAnswers = {
   read?(): Promise<unknown>;
 };
 
-/** A device on the dashboard that reads `onboardedDevice`, unless the test answers otherwise. */
+/**
+ * A device on the dashboard that reads `onboardedDevice`, unless the test answers otherwise. Like a
+ * real device, it answers after the command is sent, never during the call.
+ */
 function fakeDevice({
   app = () => running("BOLOS"),
   closeApp = () => Promise.resolve(appClosed),
   read = () => Promise.resolve(success(onboardedDevice)),
 }: DeviceAnswers) {
-  const sendCommand = jest.fn(({ command }) => {
+  const answer = (command: object) => {
     if (command instanceof GetAppAndVersionCommand) return app();
     if (command instanceof CloseAppCommand) return closeApp();
     return read();
-  });
+  };
+  const sendCommand = jest.fn(({ command }) => Promise.resolve().then(() => answer(command)));
 
   return { dmk: createDeviceManagementKit({ sendCommand }), sendCommand };
 }
