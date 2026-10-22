@@ -1,9 +1,10 @@
 // oxlint: one preset per layer, in support/lint, which each layer root re-exports from a one-line
-// oxlint.config.mts. oxlint uses the config nearest to each file, so a config in a package, below
-// it, in a directory between it and its layer root or at the workspace root overrides the preset
-// for that subtree, and a missing layer config leaves its packages on whatever config is found
-// next. A `-c` flag replaces it for one script. A package that needs one rule of its own passes it
-// on its `lint` script, from the allowlist below.
+// oxlint.config.mts; a layer root can be a package of its own, as libs/wallet-btc is. oxlint uses
+// the config nearest to each file, so a config in a package, below it, in a directory between it
+// and its layer root or at the workspace root overrides the preset for that subtree, and a missing
+// layer config leaves its packages on whatever config is found next. A `-c` flag replaces it for
+// one script. A package that needs one rule of its own passes it on its `lint` script, from the
+// allowlist below.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -17,7 +18,9 @@ const LAYER_CONFIGS = new Map([
   ["features/flow/oxlint.config.mts", "features-flow"],
   ["features/platform/oxlint.config.mts", "base"],
   ["libs/oxlint.config.mts", "libs"],
+  ["libs/coin-modules/oxlint.config.mts", "libs-coin"],
   ["libs/coin-tester-modules/oxlint.config.mts", "libs-coin-tester"],
+  ["libs/wallet-btc/oxlint.config.mts", "libs-coin"],
   ["shared/oxlint.config.mts", "base"],
   ["support/oxlint.config.mts", "support"],
   ["tools/oxlint.config.mts", "tools"],
@@ -91,10 +94,19 @@ function ancestors(projectRoot) {
 
 /**
  * @param {string} projectRoot
+ * @returns {string[]} the directories a layer config of the project can sit in, nearest first: the
+ *   project itself, then the directories above it
+ */
+function layerDirs(projectRoot) {
+  return [projectRoot, ...ancestors(projectRoot)];
+}
+
+/**
+ * @param {string} projectRoot
  * @returns {string | undefined} the layer config that applies to the project, if it is in a layer
  */
 function requiredLayerConfig(projectRoot) {
-  return ancestors(projectRoot)
+  return layerDirs(projectRoot)
     .map(dir => `${dir}/oxlint.config.mts`)
     .find(file => LAYER_CONFIGS.has(file));
 }
@@ -170,12 +182,17 @@ export default {
     "{workspaceRoot}/**/oxlint.config.*",
   ],
   check({ workspaceRoot, projectRoot }) {
-    const inPackage = configsBelow(workspaceRoot, projectRoot);
-    const above = ancestors(projectRoot).flatMap(dir => configsIn(workspaceRoot, dir));
+    const dirs = layerDirs(projectRoot);
+    const isLayerConfig = file =>
+      LAYER_CONFIGS.has(file) && dirs.includes(path.posix.dirname(file));
+    const found = [
+      ...configsBelow(workspaceRoot, projectRoot),
+      ...ancestors(projectRoot).flatMap(dir => configsIn(workspaceRoot, dir)),
+    ];
     const required = requiredLayerConfig(projectRoot);
 
     return [
-      ...(required && !above.includes(required)
+      ...(required && !found.includes(required)
         ? [
             {
               file: required,
@@ -185,15 +202,15 @@ export default {
             },
           ]
         : []),
-      ...[...inPackage, ...above.filter(file => !LAYER_CONFIGS.has(file))].map(file => ({
-        file,
-        message:
-          "oxlint config outside a layer root: delete it, and set what this package needs in " +
-          "its layer's support/lint preset",
-      })),
-      ...above
-        .filter(file => LAYER_CONFIGS.has(file))
-        .flatMap(file => layerConfig(workspaceRoot, file)),
+      ...found
+        .filter(file => !isLayerConfig(file))
+        .map(file => ({
+          file,
+          message:
+            "oxlint config outside a layer root: delete it, and set what this package needs in " +
+            "its layer's support/lint preset",
+        })),
+      ...found.filter(isLayerConfig).flatMap(file => layerConfig(workspaceRoot, file)),
       ...scriptFlags(workspaceRoot, projectRoot),
     ];
   },

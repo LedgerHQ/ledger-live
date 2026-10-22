@@ -40,10 +40,6 @@ export const EXCLUSIONS = {
       "native project of @support/jest/features-flow for its UI folders. Exit condition: a preset " +
       "covers features/platform packages.",
   },
-  "libs/coin-modules": {
-    rules: ["lint"],
-    reason: `TEMPORARY. The coin modules, and coin-bitcoin on top of them, ${LINT_LEAVES}`,
-  },
   "libs/coin-modules/coin-bitcoin": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/coin-modules/coin-zcash": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ledger-live-common": {
@@ -76,11 +72,10 @@ export const EXCLUSIONS = {
       "extends a @support/tsconfig preset.",
   },
   "libs/wallet-btc": {
-    rules: ["lint", "jest"],
+    rules: ["jest"],
     reason:
-      `TEMPORARY. lint: wallet-btc ${LINT_LEAVES} ` +
-      "jest: its jest configs only take withEsmDeps from @support/jest/shared. Exit condition: " +
-      "they are built by a preset factory.",
+      "TEMPORARY. Its jest configs only take withEsmDeps from @support/jest/shared. Exit " +
+      "condition: they are built by a preset factory.",
   },
   tests: {
     rules: ["lint", "tsconfig"],
