@@ -715,6 +715,20 @@ test("R3 fails: a typeof query on a DOM global", () => {
   );
 });
 
+test("R3 fails: a typeof query on a global that only a type declaration shares a name with", () => {
+  assert.deepEqual(
+    check(
+      card(
+        contract(
+          "eventConstructor: typeof Event;\nwrapped: Wrap<string>;",
+          "type Event = { value: string };\ntype Wrap<HTMLElement> = { node: typeof HTMLElement };\n",
+        ),
+      ),
+    ),
+    ["R3 contract-global-type Card", "R3 contract-global-type Card"],
+  );
+});
+
 test("R3 fails: a global hidden only by a type parameter of another declaration", () => {
   assert.deepEqual(
     check(
@@ -881,6 +895,19 @@ test("R3 checks the local types a contract's props hold, at any depth", () => {
     ),
     ["R3 contract-gesture-callback Card", "R3 contract-platform-prop Card"],
   );
+});
+
+test("R3 checks the props a local generic contract receives as type arguments", () => {
+  for (const contractModule of [
+    "type Box<T> = { value: T };\nexport type CardProps = Box<{ onPress(): void }>;\n",
+    "interface Box<T> { value: T }\nexport interface CardProps extends Box<{ onPress(): void }> {}\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
 });
 
 test("R3 passes: platform-only props that are optional primitives or string literal unions", () => {

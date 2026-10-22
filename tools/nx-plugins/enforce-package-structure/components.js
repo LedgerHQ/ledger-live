@@ -722,20 +722,38 @@ function standardGlobalNames() {
 
 /**
  * @param {ReturnType<typeof parseModule>} module
- * @returns {Set<string>} the names a module imports or declares at its top level
+ * @returns {{ types: Set<string>, values: Set<string> }} the type and value names a module imports
+ *   or declares at its top level
  */
 function moduleScopeNames(module) {
-  const names = new Set(module.imports.keys());
-  for (const statement of module.sourceFile.statements) {
-    if (ts.isVariableStatement(statement)) {
-      for (const declaration of statement.declarationList.declarations) {
-        for (const name of bindingNames(declaration.name)) names.add(name);
-      }
-    } else if (statement.name && ts.isIdentifier(statement.name)) {
-      names.add(statement.name.text);
-    }
+  const names = { types: new Set(module.imports.keys()), values: new Set(module.imports.keys()) };
+  for (const declared of module.sourceFile.statements.flatMap(statementNames)) {
+    if (declared.type) names.types.add(declared.name);
+    if (declared.value) names.values.add(declared.name);
   }
   return names;
+}
+
+/**
+ * @param {ts.Statement} statement
+ * @returns {Array<{ name: string, type: boolean, value: boolean }>} the names a statement declares,
+ *   and whether each names a type, a value or both: `type Event = …` does not hide the global
+ *   `Event` from `typeof Event`
+ */
+function statementNames(statement) {
+  if (ts.isVariableStatement(statement)) {
+    return statement.declarationList.declarations.flatMap(declaration =>
+      bindingNames(declaration.name).map(name => ({ name, type: false, value: true })),
+    );
+  }
+  if (!statement.name || !ts.isIdentifier(statement.name)) return [];
+  return [
+    {
+      name: statement.name.text,
+      type: !ts.isFunctionDeclaration(statement),
+      value: !ts.isInterfaceDeclaration(statement) && !ts.isTypeAliasDeclaration(statement),
+    },
+  ];
 }
 
 /**
@@ -754,28 +772,30 @@ function inferredNames(node) {
 
 /**
  * @param {ts.Node} node
- * @param {boolean} values whether the parameters of enclosing functions count, for `typeof`
- * @returns {Set<string>} the names in scope at `node` below the module: the type parameters of
- *   enclosing declarations, mapped types and `infer` clauses, and the declarations of enclosing
- *   namespaces
+ * @param {boolean} values whether to read value names, for `typeof`, or type names
+ * @returns {Set<string>} the names in scope at `node` below the module: the parameters of
+ *   enclosing functions for values; the type parameters of enclosing declarations, mapped types
+ *   and `infer` clauses for types; the declarations of enclosing namespaces for both
  */
 function enclosingScopeNames(node, values) {
   const names = new Set();
   let child = node;
   for (let scope = node.parent; scope && !ts.isSourceFile(scope); scope = scope.parent) {
-    for (const parameter of scope.typeParameters ?? []) names.add(parameter.name.text);
-    if (ts.isMappedTypeNode(scope)) names.add(scope.typeParameter.name.text);
-    if (ts.isConditionalTypeNode(scope) && child === scope.trueType) {
-      for (const name of inferredNames(scope.extendsType)) names.add(name);
-    }
     if (values && ts.isFunctionLike(scope)) {
       for (const parameter of scope.parameters) {
         for (const name of bindingNames(parameter.name)) names.add(name);
       }
     }
+    if (!values) {
+      for (const parameter of scope.typeParameters ?? []) names.add(parameter.name.text);
+      if (ts.isMappedTypeNode(scope)) names.add(scope.typeParameter.name.text);
+      if (ts.isConditionalTypeNode(scope) && child === scope.trueType) {
+        for (const name of inferredNames(scope.extendsType)) names.add(name);
+      }
+    }
     if (ts.isModuleBlock(scope)) {
-      for (const statement of scope.statements) {
-        if (statement.name && ts.isIdentifier(statement.name)) names.add(statement.name.text);
+      for (const declared of scope.statements.flatMap(statementNames)) {
+        if (values ? declared.value : declared.type) names.add(declared.name);
       }
     }
     child = scope;
@@ -853,6 +873,13 @@ function reachableProps(declaration, module) {
     }
     ts.forEachChild(node, visit);
   }
+  // A local generic contract, `Box<{ onPress(): void }>`, holds props in its type arguments.
+  if (ts.isTypeAliasDeclaration(declaration)) visit(declaration.type);
+  for (const clause of ts.isInterfaceDeclaration(declaration)
+    ? (declaration.heritageClauses ?? [])
+    : []) {
+    for (const type of clause.types) visit(type);
+  }
   for (let index = 0; index < pending.length; index++) {
     const prop = pending[index];
     if (props.has(prop)) continue;
@@ -903,7 +930,8 @@ function checkContractModule(module) {
   }
   const moduleNames = moduleScopeNames(module);
   function isDeclared(node, name, values = false) {
-    return moduleNames.has(name) || enclosingScopeNames(node, values).has(name);
+    const moduleLevel = values ? moduleNames.values : moduleNames.types;
+    return moduleLevel.has(name) || enclosingScopeNames(node, values).has(name);
   }
   const reported = new Set();
   function reportOnce(node, code, message) {
