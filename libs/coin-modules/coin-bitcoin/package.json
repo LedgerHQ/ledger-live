@@ -60,7 +60,7 @@
     "@noble/hashes": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "bitcoinjs-lib": "^7.0.2",
+    "bitcoinjs-lib": "catalog:",
     "bs58": "catalog:",
     "cashaddrjs": "^0.4.4",
     "invariant": "^2.2.2",
