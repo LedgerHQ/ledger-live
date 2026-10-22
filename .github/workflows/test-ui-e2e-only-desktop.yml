@@ -519,7 +519,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -613,6 +613,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
+          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -638,6 +639,7 @@ jobs:
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+            echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
@@ -685,6 +687,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
+        timeout-minutes: 70
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
@@ -702,6 +705,12 @@ jobs:
           BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
+          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -712,6 +721,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
+            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}
@@ -721,7 +731,7 @@ jobs:
             repeat_each=${{ inputs.repeat_each }}
 
       - name: Upload Allure test results artifact
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results-macos
