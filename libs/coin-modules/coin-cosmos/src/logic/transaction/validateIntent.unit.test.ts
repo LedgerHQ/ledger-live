@@ -1,10 +1,17 @@
-import { COSMOS_MAX_UNBONDINGS } from "../../logic";
+import { BigNumber } from "bignumber.js";
 import { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 
 jest.mock("../validateAddress", () => ({
   validateAddress: jest.fn(),
 }));
-import { COSMOS_MAX_UNBONDINGS } from "../../logic";
+const mockGetRedelegationsWithQueued = jest.fn();
+jest.mock("../../network/Cosmos", () => ({
+  CosmosAPI: jest.fn().mockImplementation(() => ({
+    getRedelegationsWithQueued: mockGetRedelegationsWithQueued,
+  })),
+}));
+import { CosmosCoinConfig } from "../../config";
+import { COSMOS_MAX_REDELEGATIONS, COSMOS_MAX_UNBONDINGS } from "../../logic";
 import { validateAddress } from "../validateAddress";
 import { validateIntent } from "./validateIntent";
 const mockedValidateAddress = validateAddress as jest.Mock;
@@ -565,10 +572,10 @@ describe("logic/transaction/validateIntent account staking rules", () => {
     expect(res.errors.unbonding).toBeUndefined();
   });
 
-  it("refuses an undelegate once the account holds the maximum number of unbondings", async () => {
+  it("refuses an undelegate once the validator holds the maximum number of unbondings", async () => {
     const intent = stakingIntent({ type: "undelegate", mode: "undelegate" });
     const unbondings = Array.from({ length: COSMOS_MAX_UNBONDINGS }, (_, i) =>
-      unbondingFrom(`cosmosvaloper1unbonding${i}`, i % 2 ? "withdrawable" : "deactivating"),
+      unbondingFrom("cosmosvaloper1source", i % 2 ? "withdrawable" : "deactivating"),
     );
 
     const res = await validateIntent(
@@ -616,5 +623,83 @@ describe("logic/transaction/validateIntent account staking rules", () => {
 
       expect(res.errors.unbonding).toBeUndefined();
     }
+  });
+});
+
+describe("logic/transaction/validateIntent redelegation rules", () => {
+  const config = { denom: "uatom" } as CosmosCoinConfig;
+  const balancesWithSource: Balance[] = [
+    ...balances,
+    delegationTo("cosmosvaloper1source", 500_000n),
+  ];
+  const redelegateIntent = stakingIntent({
+    type: "redelegate",
+    mode: "redelegate",
+    dstValAddress: "cosmosvaloper1destination",
+  });
+  const redelegation = (validatorDstAddress: string, completionDate: Date) => ({
+    validatorSrcAddress: "cosmosvaloper1other",
+    validatorDstAddress,
+    amount: new BigNumber(1),
+    completionDate,
+  });
+  const tomorrow = () => new Date(Date.now() + 86_400_000);
+
+  beforeEach(() => {
+    mockedValidateAddress.mockResolvedValue(true);
+    mockGetRedelegationsWithQueued.mockReset();
+  });
+
+  it("refuses a redelegation once the account holds the maximum number of redelegations", async () => {
+    mockGetRedelegationsWithQueued.mockResolvedValue(
+      Array.from({ length: COSMOS_MAX_REDELEGATIONS }, (_, i) =>
+        redelegation(`cosmosvaloper1dst${i}`, tomorrow()),
+      ),
+    );
+
+    const res = await validateIntent("cosmos", redelegateIntent, balancesWithSource, fees, config);
+
+    expect(res.errors.redelegation?.name).toBe("CosmosTooManyRedelegations");
+    expect(mockGetRedelegationsWithQueued).toHaveBeenCalledWith("cosmos1sender", "uatom");
+  });
+
+  it("refuses a redelegation away from a validator still receiving one", async () => {
+    mockGetRedelegationsWithQueued.mockResolvedValue([
+      redelegation("cosmosvaloper1source", tomorrow()),
+    ]);
+
+    const res = await validateIntent("cosmos", redelegateIntent, balancesWithSource, fees, config);
+
+    expect(res.errors.redelegation?.name).toBe("CosmosRedelegationInProgress");
+  });
+
+  it("allows a redelegation away from a validator whose incoming redelegation completed", async () => {
+    mockGetRedelegationsWithQueued.mockResolvedValue([
+      redelegation("cosmosvaloper1source", new Date(Date.now() - 1000)),
+    ]);
+
+    const res = await validateIntent("cosmos", redelegateIntent, balancesWithSource, fees, config);
+
+    expect(res.errors.redelegation).toBeUndefined();
+  });
+
+  it("does not block the redelegation when the lookup fails", async () => {
+    mockGetRedelegationsWithQueued.mockRejectedValue(new Error("network down"));
+
+    const res = await validateIntent("cosmos", redelegateIntent, balancesWithSource, fees, config);
+
+    expect(res.errors.redelegation).toBeUndefined();
+  });
+
+  it("only looks redelegations up for a redelegate", async () => {
+    await validateIntent(
+      "cosmos",
+      stakingIntent({ type: "delegate", mode: "delegate" }),
+      balancesWithSource,
+      fees,
+      config,
+    );
+
+    expect(mockGetRedelegationsWithQueued).not.toHaveBeenCalled();
   });
 });

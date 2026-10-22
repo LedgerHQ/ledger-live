@@ -116,6 +116,7 @@ describe("getStakes validator bond status via MSW", () => {
     ["BOND_STATUS_UNBONDING", "unbonding"],
     ["BOND_STATUS_UNBONDED", "unbonded"],
   ])("reports a delegation to a %s validator as %s", async (validatorStatus, expected) => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(DELEGATIONS, () =>
@@ -135,7 +136,7 @@ describe("getStakes validator bond status via MSW", () => {
       http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
     );
 
-    const page = await getStakes(api, ADDR);
+    const page = await getStakes(config, api, ADDR);
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0].details).toEqual({ status: expected });

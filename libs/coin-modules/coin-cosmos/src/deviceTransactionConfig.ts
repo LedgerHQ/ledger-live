@@ -3,6 +3,7 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/ledger-wallet-fram
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { resolveTransactionValidators } from "./buildTransaction";
+import { STAKING_DEFAULT_MEMO } from "./logic/transaction/intentAdapter";
 import type { Transaction, TransactionStatus } from "./types";
 
 export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
@@ -65,6 +66,12 @@ const getSendFields = ({
   return fields;
 };
 
+/** The memo the signed document carries, as `intentToMessageParams` resolves it. */
+function resolveSignedMemo(transaction: Transaction): string {
+  const memo = transaction.memoValue || transaction.memo || "";
+  return memo || (transaction.mode === "send" ? "" : STAKING_DEFAULT_MEMO);
+}
+
 async function getDeviceTransactionConfig({
   account,
   parentAccount,
@@ -76,7 +83,8 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<CosmosTransactionFieldType>> {
-  const { mode, memo } = transaction;
+  const { mode } = transaction;
+  const memo = resolveSignedMemo(transaction);
   const validators = resolveTransactionValidators(transaction);
   const { estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);

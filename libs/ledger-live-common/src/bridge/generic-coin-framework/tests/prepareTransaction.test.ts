@@ -943,5 +943,36 @@ describe("genericPrepareTransaction", () => {
       );
       expect((result as any).fees.toString()).toBe("11000");
     });
+
+    it("prepares a persisted claimRewardCompound transaction as compoundReward", async () => {
+      const estimateFees = await setupCosmos(4_000n);
+      const { fromTransactionRaw } = await import("@ledgerhq/coin-cosmos/transaction");
+      const transaction = fromTransactionRaw({
+        family: "cosmos",
+        mode: "claimRewardCompound",
+        amount: "100",
+        recipient: "",
+        fees: null,
+        gas: null,
+        memo: null,
+        networkInfo: null,
+        validators: [{ address: "cosmosvaloper1validator", amount: "100" }],
+      } as any);
+
+      const prepareTransaction = genericPrepareTransaction("cosmos", "cosmos");
+      const result = await prepareTransaction(cosmosAccount, transaction as any);
+
+      expect(estimateFees).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          type: "compoundReward",
+          intentType: "staking",
+          mode: "compoundReward",
+          valAddress: "cosmosvaloper1validator",
+        }),
+        { customFeesParameters: {} },
+      );
+      expect((result as any).fees.toString()).toBe("4000");
+    });
   });
 });

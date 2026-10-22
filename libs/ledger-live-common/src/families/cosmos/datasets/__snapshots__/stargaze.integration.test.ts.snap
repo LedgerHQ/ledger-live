@@ -13,10 +13,11 @@ exports[`stargaze currency bridge scanAccounts stargaze seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
     "spendableBalance": "2000010",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x46359dd5",
     "used": true,
-    "xpub": "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
+    "xpub": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
   },
   {
     "balance": "0",
@@ -29,10 +30,11 @@ exports[`stargaze currency bridge scanAccounts stargaze seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
     "spendableBalance": "0",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x46359dd5",
     "used": false,
-    "xpub": "stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l",
+    "xpub": "02c8f29e73a2c99d11de0544615a87afc6c6575d22746af18a8ef733066f088b1f",
   },
 ]
 `;

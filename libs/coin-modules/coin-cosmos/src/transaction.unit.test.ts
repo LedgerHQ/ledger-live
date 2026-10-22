@@ -79,7 +79,13 @@ describe("fromTransactionRaw", () => {
   });
 
   it("ignores validator fields on a send transaction", () => {
-    const result = fromTransactionRaw({ ...baseRaw, valAddress: SOURCE, sourceValidator: SOURCE });
+    const result = fromTransactionRaw({
+      ...baseRaw,
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+      sourceValidator: SOURCE,
+      validators: [{ address: DESTINATION, amount: "100" }],
+    });
     expect(result).not.toHaveProperty("valAddress");
     expect(result).not.toHaveProperty("dstValAddress");
     expect(result).not.toHaveProperty("validators");
@@ -104,6 +110,15 @@ describe("fromTransactionRaw", () => {
       valAddress: SOURCE,
       dstValAddress: DESTINATION,
     });
+  });
+
+  it("migrates the legacy claimRewardCompound mode to compoundReward", () => {
+    const result = fromTransactionRaw({
+      ...baseRaw,
+      mode: "claimRewardCompound",
+      validators: [{ address: SOURCE, amount: "100" }],
+    });
+    expect(result).toMatchObject({ mode: "compoundReward", valAddress: SOURCE });
   });
 
   it("migrates the legacy validators of a staking transaction to valAddress", () => {

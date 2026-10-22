@@ -47,6 +47,24 @@ describe("logic/transaction/craftTransaction", () => {
     expect(payload.signable.length).toBeGreaterThan(0);
   });
 
+  it.each([
+    ["the supplied sequence", 4n, "4"],
+    ["a supplied zero sequence", 0n, "0"],
+    ["the network sequence when none is supplied", undefined, "3"],
+  ])("signs and crafts %s", async (_, sequence, expected) => {
+    const intent = { ...sendIntent, sequence } as unknown as TransactionIntent;
+
+    const crafted = await craftTransaction(config, makeApi(), "cosmos", intent, {
+      value: 500n,
+      parameters: { gasLimit: "200000" },
+    });
+    const payload = JSON.parse(crafted.transaction) as CosmosCraftedTransaction;
+    const signDoc = JSON.parse(Buffer.from(payload.signable, "base64").toString("utf-8"));
+
+    expect(payload.sequence).toBe(expected);
+    expect(signDoc.sequence).toBe(expected);
+  });
+
   it("crafts a delegate staking transaction with a MsgDelegate proto message", async () => {
     const api = makeApi();
 
@@ -114,7 +132,7 @@ describe("logic/transaction/craftTransaction", () => {
 describe("logic/transaction/craftTransaction memo", () => {
   const craft = async (memo: unknown) => {
     const intent = { ...sendIntent, memo } as unknown as TransactionIntent;
-    const crafted = await craftTransaction(makeApi(), "cosmos", intent, {
+    const crafted = await craftTransaction(config, makeApi(), "cosmos", intent, {
       value: 500n,
       parameters: { gasLimit: "200000" },
     });
@@ -153,7 +171,7 @@ describe("logic/transaction/craftTransaction staking memo", () => {
     }) as unknown as TransactionIntent;
 
   const craft = async (intent: TransactionIntent) => {
-    const crafted = await craftTransaction(makeApi(), "cosmos", intent, {
+    const crafted = await craftTransaction(config, makeApi(), "cosmos", intent, {
       value: 500n,
       parameters: { gasLimit: "250000" },
     });
