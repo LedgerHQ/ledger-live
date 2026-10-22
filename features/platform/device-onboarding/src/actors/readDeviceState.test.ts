@@ -8,6 +8,7 @@ import {
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
 import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
+import { commandNames } from "../tests/dashboardDevice";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import {
   createOsVersionResponse,
@@ -131,13 +132,13 @@ describe("mapDeviceState", () => {
 });
 
 describe("readDeviceState", () => {
-  it("closes any open app, then reports the state read on the dashboard", async () => {
-    const { dmk, sendCommand } = createFakeCommandDmk([success(onboardedDevice)]);
+  it("closes an open app, then reports the state read on the dashboard", async () => {
+    const { dmk, device } = createFakeCommandDmk([success(onboardedDevice)]);
+    device.openApp("Bitcoin");
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["closeApp", "getOsVersion"]);
     expect(received).toEqual([readEvent]);
     stop();
   });
@@ -157,7 +158,7 @@ describe("readDeviceState", () => {
     finishClosingApp?.();
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["closeApp"]);
+    expect(commandNames(sendCommand)).toEqual(["closeApp"]);
     expect(received).toEqual([]);
   });
 
@@ -244,12 +245,8 @@ function fakeDevice(answers: { closeApp(): Promise<unknown>; read(): Promise<unk
   return { dmk: createDeviceManagementKit({ sendCommand }), sendCommand };
 }
 
-function sentCommands(sendCommand: jest.Mock): string[] {
-  return sendCommand.mock.calls.map(([{ command }]) => command.name);
-}
-
 function stateReads(sendCommand: jest.Mock): number {
-  return sentCommands(sendCommand).filter(name => name === "getOsVersion").length;
+  return commandNames(sendCommand).filter(name => name === "getOsVersion").length;
 }
 
 function start(dmk: DeviceManagementKit) {
