@@ -13,7 +13,8 @@ import {
 import { CARD_LOGIN_INTRO_FLOW, CARD_LOGIN_INTRO_PAGE } from "../analytics";
 import { mapSnapshotToViewModel, useCardLoginViewModel } from "../useCardLoginViewModel";
 import type { CardLoginCopy, CardLoginIntroViewProps, MobileWallet } from "../types";
-import type { CardLoginOauthConfig, CardLoginPorts, HostedLoginResult } from "../../../state/types";
+import type { CardLoginOauthConfig, HostedLoginResult } from "../../../state/hostTypes";
+import type { CardLoginPorts } from "../../../state/types";
 import { CARD_LOGIN_INTRO_RESOURCES } from "./fixtures";
 
 jest.mock("@features/platform-pay-analytics", () =>

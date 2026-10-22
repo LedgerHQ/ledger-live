@@ -1,6 +1,6 @@
 import { readCardUsEnv } from "@features/platform-card";
 import type { CardAssetPathBuilder } from "./hostedPaths";
-import type { OpenCardHostedPage } from "./types";
+import type { OpenCardHostedPage } from "./hostTypes";
 
 /** Best effort on purpose: a hosted page that fails to open must never throw into the caller. */
 export async function openHostedPageSafely(

@@ -18,9 +18,6 @@ const OWNING_TEAM_DEFERRAL =
 
 /** @type {Record<string, { skip?: boolean, allowNonRelative?: boolean, reason: string }>} */
 const PACKAGE_EXCEPTIONS = {
-  // @ledgerhq/ptx
-  "features/flow/pay-card-auth": { skip: true, reason: OWNING_TEAM_DEFERRAL },
-
   "shared/env": {
     skip: true,
     reason:

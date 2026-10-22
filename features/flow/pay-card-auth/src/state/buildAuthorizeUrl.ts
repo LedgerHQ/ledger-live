@@ -1,4 +1,4 @@
-import type { CardLoginOauthConfig } from "./types";
+import type { CardLoginOauthConfig } from "./hostTypes";
 
 const AUTHORIZE_PATH = "/v1/auth/oauth2/authorize";
 
