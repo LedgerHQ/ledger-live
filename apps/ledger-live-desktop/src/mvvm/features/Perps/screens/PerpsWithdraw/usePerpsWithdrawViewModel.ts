@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -47,7 +48,8 @@ export type WithdrawFormError = Readonly<{
 }>;
 
 const EMPTY_AMOUNT_TEXT = "0";
-const AMOUNT_DECIMALS = 2;
+// The amount is typed in dollars, so it uses the USD unit's symbol and decimals.
+const USD_UNIT = getFiatCurrencyByTicker("USD").units[0];
 
 function toAmountText(amount: number): string {
   return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
@@ -177,7 +179,7 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   const maxAmount = useMemo(
     () =>
       getWithdrawMaxAmount(availableBalance)
-        .decimalPlaces(AMOUNT_DECIMALS, BigNumber.ROUND_DOWN)
+        .decimalPlaces(USD_UNIT.magnitude, BigNumber.ROUND_DOWN)
         .toNumber(),
     [availableBalance],
   );
@@ -216,7 +218,7 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   );
 
   const selectMax = useCallback(
-    () => setAmountText(toAmountText(applyRatio(maxAmount, 1, AMOUNT_DECIMALS))),
+    () => setAmountText(toAmountText(applyRatio(maxAmount, 1, USD_UNIT.magnitude))),
     [maxAmount],
   );
 
@@ -235,10 +237,9 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   const handleReview = useCallback(() => undefined, []);
 
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
-  const sourceUnit = getAccountCurrency(sourceAccount).units[0];
   const formattedAvailable = formatCurrencyUnit(
-    sourceUnit,
-    availableBalance.shiftedBy(sourceUnit.magnitude),
+    USD_UNIT,
+    availableBalance.shiftedBy(USD_UNIT.magnitude),
     { showCode: true, discreet, locale },
   );
 
@@ -246,10 +247,10 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
     headerDescription: `${sourceName} · ${formattedAvailable}`,
     amountText,
     amount,
-    currencyCode: sourceUnit.code,
+    currencyCode: USD_UNIT.code,
     quotedAmount,
     isQuoteLoading,
-    maxDecimalLength: AMOUNT_DECIMALS,
+    maxDecimalLength: USD_UNIT.magnitude,
     changeAmount,
     selectAmountRatio,
     maxAmount,
