@@ -9,7 +9,6 @@ import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
-  revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
@@ -25,8 +24,8 @@ const providerFlowTests = [
     bugTickets: ["LIVE-29454", "LIVE-29858"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: Account.ETH_1,
+    fromAccount: TokenAccount.ETH_USDT_5,
+    toAccount: Account.ETH_5,
     provider: SwapProvider.OKX,
     xrayTicket: "B2CQA-4728",
     bugTickets: ["LIVE-29858"],
@@ -75,7 +74,6 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
       },
       async ({ app }) => {
         await app.speculos.enableBlindSigningOnNanoS();
-        await revokeTokenApproval(fromAccount, provider);
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
