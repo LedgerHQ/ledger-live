@@ -23,10 +23,12 @@ describe("isolated", () => {
   });
 
   describe("buildJobs", () => {
-    it("puts big accounts first, keeps currency order and skips missing accounts", () => {
-      expect(buildJobs(["bitcoin", "solana", "tezos"], ["pristine", "big"])).toEqual([
+    it("puts big then huge accounts first, keeps currency order and skips missing accounts", () => {
+      expect(buildJobs(["bitcoin", "solana", "tezos"], ["pristine", "huge", "big"])).toEqual([
         ["solana", "big"],
         ["tezos", "big"],
+        ["solana", "huge"],
+        ["tezos", "huge"],
         ["bitcoin", "pristine"],
         ["solana", "pristine"],
         ["tezos", "pristine"],

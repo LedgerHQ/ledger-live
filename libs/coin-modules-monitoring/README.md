@@ -64,12 +64,12 @@ pnpm start monitor --account-types big,huge --isolated --concurrency 4
 
 ### Command Options
 
-| Option                          | Description                                                                    | Default                   | Example                   |
-| ------------------------------- | ------------------------------------------------------------------------------ | ------------------------- | ------------------------- |
-| `-c, --currencies <currencies>` | (Optional) Comma-separated list of currencies to monitor                       | `all`                     | `bitcoin,ethereum,solana` |
-| `-t, --account-types <types>`   | (Optional) Comma-separated account types to test                               | `pristine,average,big`    | `pristine,big`            |
-| `-i, --isolated`                | (Optional) Flag to run each currency/account combination in isolated processes | `false` (meaning no flag) | `--isolated` (for true)   |
-| `-j, --concurrency <n>`         | (Optional) Number of isolated processes run in parallel, with `--isolated`     | `$MONITOR_CONCURRENCY` or `1` | `4`                   |
+| Option                          | Description                                                                    | Default                       | Example                   |
+| ------------------------------- | ------------------------------------------------------------------------------ | ----------------------------- | ------------------------- |
+| `-c, --currencies <currencies>` | (Optional) Comma-separated list of currencies to monitor                       | `all`                         | `bitcoin,ethereum,solana` |
+| `-t, --account-types <types>`   | (Optional) Comma-separated account types to test                               | `pristine,average,big`        | `pristine,big`            |
+| `-i, --isolated`                | (Optional) Flag to run each currency/account combination in isolated processes | `false` (meaning no flag)     | `--isolated` (for true)   |
+| `-j, --concurrency <n>`         | (Optional) Number of isolated processes run in parallel, with `--isolated`     | `$MONITOR_CONCURRENCY` or `1` | `4`                       |
 
 ### Account Types
 
@@ -127,13 +127,13 @@ The tool provides detailed performance metrics:
 
 ### Environment Variables
 
-| Variable      | Description                              | Required | Default        |
-| ------------- | ---------------------------------------- | -------- | -------------- |
-| `DD_API_KEY`  | Datadog API key for metrics submission   | No       | -              |
-| `DD_APP_KEY`  | Datadog application key                  | No       | -              |
-| `DD_DOMAIN`   | Datadog site domain                      | No       | `datadoghq.eu` |
-| `SUBMIT_LOGS` | Enable/disable log submission to Datadog | No       | -              |
-| `MONITOR_CONCURRENCY` | Default value of `--concurrency`  | No       | `1`            |
+| Variable              | Description                              | Required | Default        |
+| --------------------- | ---------------------------------------- | -------- | -------------- |
+| `DD_API_KEY`          | Datadog API key for metrics submission   | No       | -              |
+| `DD_APP_KEY`          | Datadog application key                  | No       | -              |
+| `DD_DOMAIN`           | Datadog site domain                      | No       | `datadoghq.eu` |
+| `SUBMIT_LOGS`         | Enable/disable log submission to Datadog | No       | -              |
+| `MONITOR_CONCURRENCY` | Default value of `--concurrency`         | No       | `1`            |
 
 ### Datadog Integration
 

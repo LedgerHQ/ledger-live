@@ -1,6 +1,6 @@
-import { spawn } from "child_process";
-import path from "path";
-import readline from "readline";
+import { spawn } from "node:child_process";
+import path from "node:path";
+import readline from "node:readline";
 import currencies, { type AccountType } from "./currencies";
 
 export type Job = readonly [currency: string, accountType: AccountType];
@@ -12,14 +12,17 @@ export function validateConcurrency(value: number): number {
   return value;
 }
 
+// A big scan takes minutes, a huge throughput 2 minutes
+const LONGEST_FIRST: Partial<Record<AccountType, number>> = { big: 2, huge: 1 };
+
 export function buildJobs(currencyIds: string[], accountTypes: AccountType[]): Job[] {
   return (
     currencyIds
       .flatMap(currency => accountTypes.map(accountType => [currency, accountType] as const))
       // Do not spawn a process for a currency without this account type
       .filter(([currency, accountType]) => currencies[currency].accounts[accountType])
-      // "big" first as a proxy for longest-first, Datadog durations would pack better if needed
-      .sort(([, a], [, b]) => Number(b === "big") - Number(a === "big"))
+      // Longest first, by account type: Datadog durations would pack better if needed
+      .sort(([, a], [, b]) => (LONGEST_FIRST[b] ?? 0) - (LONGEST_FIRST[a] ?? 0))
   );
 }
 
@@ -28,8 +31,9 @@ export function runIsolatedMonitor(
   script = path.join(__dirname, "cli.js"),
 ): Promise<void> {
   return new Promise((resolve, reject) => {
+    // The running node binary, rather than whichever "node" comes first in the PATH
     const child = spawn(
-      "node",
+      process.execPath,
       [script, "monitor", "--currencies", currency, "--account-types", accountType],
       { stdio: ["ignore", "pipe", "pipe"], env: process.env },
     );
@@ -46,7 +50,8 @@ export function runIsolatedMonitor(
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`Process exited with code ${code}${signal ? ` (signal ${signal})` : ""}`));
+        const suffix = signal ? ` (signal ${signal})` : "";
+        reject(new Error(`Process exited with code ${code}${suffix}`));
       }
     });
 

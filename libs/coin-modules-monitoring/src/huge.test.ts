@@ -55,6 +55,18 @@ describe("measureThroughput", () => {
     });
   });
 
+  it("rejects a cursor served twice", async () => {
+    mockPages([
+      { items: 100, next: "a" },
+      { items: 100, next: "b" },
+      { items: 100, next: "a" },
+    ]);
+
+    await expect(measureThroughput("ethereum", "evm", "0xaddress")).rejects.toThrow(
+      "Cursor a was served twice",
+    );
+  });
+
   it("sends no limit to a family not known to support it", async () => {
     const listOperations = mockPages([{ items: 10 }]);
 

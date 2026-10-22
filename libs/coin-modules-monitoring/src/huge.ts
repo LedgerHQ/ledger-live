@@ -28,6 +28,7 @@ export async function measureThroughput(
   const { pageSize } = resolveOperationHistoryBound(currencyId, family);
   const start = Date.now();
   const pageDurations: number[] = [];
+  const followed = new Set<string>();
   let operations = 0;
   let cursor: string | undefined;
 
@@ -43,6 +44,11 @@ export async function measureThroughput(
     operations += items.length;
     // A falsy `next` ends the stream; an empty page with a `next` does not
     cursor = next || undefined;
+    // Same guard as the bridge: re-reading pages would inflate the throughput
+    if (cursor && followed.has(cursor)) {
+      throw new Error(`Cursor ${cursor} was served twice`);
+    }
+    if (cursor) followed.add(cursor);
   } while (cursor && Date.now() - start < budgetMs);
 
   return { operations, pageDurations, exhausted: !cursor };

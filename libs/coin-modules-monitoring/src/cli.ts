@@ -128,7 +128,6 @@ async function runMonitorCommand(options: CommandLineOptions) {
   }
 
   const accountTypes = validateAccountTypes(options["account-types"]);
-  const concurrency = validateConcurrency(options.concurrency);
   const filteredCurrencies =
     options.currencies === "all" ? VALID_CURRENCIES : validateCurrencies(options.currencies);
 
@@ -146,6 +145,8 @@ async function runMonitorCommand(options: CommandLineOptions) {
   }
 
   if (options.isolated) {
+    // Only validated when used, so that a bad MONITOR_CONCURRENCY does not break a non-isolated run
+    const concurrency = validateConcurrency(options.concurrency);
     const jobs = buildJobs(monitoredCurrencies, accountTypes);
     if (!jobs.length) {
       console.log("No account to monitor. Exit now.");
