@@ -182,13 +182,14 @@ type FooterSlotProps = BottomSheetFooterProps &
 function FooterSlot({
   store,
   onHeightChange,
+  animatedFooterPosition,
   ...footerProps
 }: FooterSlotProps): React.JSX.Element | null {
   const content = useSyncExternalStore(store.subscribe, store.getContent, store.getContent);
   if (content === null || content === undefined) return null;
 
   return (
-    <BottomSheetFooter {...footerProps}>
+    <BottomSheetFooter animatedFooterPosition={animatedFooterPosition} {...footerProps}>
       <QueuedBottomSheetFooter onHeightChange={onHeightChange}>{content}</QueuedBottomSheetFooter>
     </BottomSheetFooter>
   );

@@ -65,6 +65,35 @@ describe("setFirmwareDistributionSalt", () => {
   });
 });
 
+describe("mock server transport", () => {
+  it("should pass the session to the transport and the kit when configured before init", async () => {
+    await jest.isolateModulesAsync(async () => {
+      const { mockserverTransportFactory } =
+        await import("@ledgerhq/device-transport-kit-mockserver");
+      const { DeviceManagementKitBuilder } = await import("@ledgerhq/device-management-kit");
+      const addTransport = jest.spyOn(DeviceManagementKitBuilder.prototype, "addTransport");
+      const addConfig = jest.spyOn(DeviceManagementKitBuilder.prototype, "addConfig");
+      const { configureMockServerTransport } = await import("../mockServerTransportConfig");
+      const { getDeviceManagementKit } = await import("./useDeviceManagementKit");
+
+      configureMockServerTransport({ url: "https://mock.example/", token: "session" });
+      getDeviceManagementKit();
+
+      expect(mockserverTransportFactory).toHaveBeenCalledWith("https://mock.example", "session");
+      const results = jest.mocked(mockserverTransportFactory).mock.results;
+      const transport = results[results.length - 1]?.value;
+      expect(addTransport).toHaveBeenCalledWith(transport);
+      expect(addConfig).toHaveBeenCalledWith({
+        mockUrl: "https://mock.example",
+        webSocketUrl: "wss://mock.example/secure-channel/session",
+      });
+
+      addTransport.mockRestore();
+      addConfig.mockRestore();
+    });
+  });
+});
+
 describe("useDeviceManagementKit hook", () => {
   it("returns dmk instance when used inside provider with feature enabled", () => {
     // when

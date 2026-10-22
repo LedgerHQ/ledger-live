@@ -40,8 +40,12 @@ import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
 import {
   buildSpeculosLegacyDeviceId,
+  configureMockServerTransport,
+  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
   getDeviceManagementKit,
+  getMockScriptRunnerBaseUrl,
   isSpeculosLegacyDeviceId,
+  mockserverIdentifier,
   speculosIdentifier,
   speculosTargetSubject,
 } from "@ledgerhq/live-dmk-mobile";
@@ -50,6 +54,7 @@ import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
+import { readLaunchForceProvider } from "~/launchForceProvider";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -99,7 +104,46 @@ function overrideLedgerSyncEnvironment() {
   );
 }
 
+function applyMockServerLaunchArgs() {
+  const args = LaunchArguments.value();
+  const token = args["mockServerToken"];
+  const model = args["mockServerModel"];
+  if (typeof token !== "string" || !token || typeof model !== "string" || !model) return;
+
+  const provider = readLaunchForceProvider(args["forceProvider"]);
+  if (provider !== undefined) {
+    setEnv("FORCE_PROVIDER", provider);
+  }
+  const launchUrl = args["mockServerUrl"];
+  const url =
+    typeof launchUrl === "string" && launchUrl ? launchUrl : DEFAULT_MOCK_SERVER_TRANSPORT_URL;
+  configureMockServerTransport({ url, token });
+  const scriptRunnerUrl = getMockScriptRunnerBaseUrl(url, token);
+  if (scriptRunnerUrl) {
+    setEnv("BASE_SOCKET_URL", scriptRunnerUrl);
+  }
+
+  seedMockServerKnownDevice(model as DeviceModelId);
+}
+
+function seedMockServerKnownDevice(model: DeviceModelId) {
+  const alreadySeeded = knownDevicesSelector(store.getState()).some(
+    device => device.transport === mockserverIdentifier && device.deviceModelId === model,
+  );
+  if (alreadySeeded) return;
+
+  store.dispatch(
+    addKnownDevice({
+      transport: mockserverIdentifier,
+      id: "",
+      name: null,
+      deviceModelId: model,
+    }),
+  );
+}
+
 export function init() {
+  applyMockServerLaunchArgs();
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const wsToken = LaunchArguments.value()["wsToken"];
   const mock = LaunchArguments.value()["mock"];
@@ -377,8 +421,13 @@ export function sendEarnLiveAppReady() {
   });
 }
 
+const redactSecureChannelToken = (value: string): string =>
+  value
+    .replace(/(\/secure-channel\/)[^/?#"\\]+/g, "$1***")
+    .replace(/([?&]token=)[^&#"]+/g, "$1***");
+
 async function postMessage(message: ServerData) {
-  log(`Message sending\n${JSON.stringify(message, null, 2)}`);
+  log(`Message sending\n${redactSecureChannelToken(JSON.stringify(message, null, 2))}`);
   try {
     if (ws) {
       ws.send(JSON.stringify(message));
