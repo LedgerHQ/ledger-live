@@ -1,5 +1,8 @@
 import {
   CloseAppCommand,
+  GetAppAndVersionCommand,
+  isDashboardName,
+  isSuccessCommandResult,
   type DeviceManagementKit,
   type DeviceSessionId,
   type GetOsVersionResponse,
@@ -54,15 +57,27 @@ export function mapDeviceState(response: GetOsVersionResponse): ReadDeviceStateE
 }
 
 /**
- * The OS version command works only on the dashboard, so any open app is closed first. An actor
- * stopped while the app closes must not reach the device again: the next flow may already use it.
+ * Closes the app only when one is open: on the dashboard, close app would still make DMK wait for
+ * a disconnection, and a failed wait ends the session. When the app is unknown, the read goes on.
+ */
+async function closeOpenApp(dmk: DeviceManagementKit, sessionId: DeviceSessionId): Promise<void> {
+  const app = await dmk.sendCommand({ sessionId, command: new GetAppAndVersionCommand() });
+
+  if (isSuccessCommandResult(app) && !isDashboardName(app.data.name)) {
+    await dmk.sendCommand({ sessionId, command: new CloseAppCommand() });
+  }
+}
+
+/**
+ * The OS version command works only on the dashboard. An actor stopped while the app closes must
+ * not reach the device again: the next flow may already use it.
  */
 async function readOnDashboard(
   dmk: DeviceManagementKit,
   sessionId: DeviceSessionId,
   isCancelled: () => boolean,
 ): Promise<GetOsVersionResponse> {
-  await dmk.sendCommand({ sessionId, command: new CloseAppCommand() });
+  await closeOpenApp(dmk, sessionId);
 
   if (isCancelled()) {
     throw new Error("The read stopped while the app was closing");

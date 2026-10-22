@@ -1,8 +1,8 @@
 import {
-  CloseAppCommand,
   CommandResultFactory,
   DeviceActionStatus,
   GenuineCheckDeviceAction,
+  GetAppAndVersionCommand,
   UserInteractionRequired,
   type CommandResult,
   type DeviceActionIntermediateValue,
@@ -25,7 +25,7 @@ export type ScriptedCommand<Data, ErrorCodes = void> =
   | CommandResult<Data, ErrorCodes>
   | { throws: unknown };
 
-const appClosed = CommandResultFactory({ data: undefined });
+const onDashboard = CommandResultFactory({ data: { name: "BOLOS", version: "1.0.0" } });
 
 export type FakeCommandDmk = {
   dmk: DeviceManagementKit;
@@ -34,7 +34,7 @@ export type FakeCommandDmk = {
 
 /**
  * Serves the scripted results in order, then repeats the last one, so that a script of one entry
- * answers every retry the same way. Closing the app always succeeds and takes no entry.
+ * answers every retry the same way. The device is on the dashboard: the app check takes no entry.
  */
 export function createFakeCommandDmk<Data, ErrorCodes = void>(
   script: ScriptedCommand<Data, ErrorCodes>[],
@@ -42,7 +42,9 @@ export function createFakeCommandDmk<Data, ErrorCodes = void>(
   const commands = scriptQueue(script, "command");
 
   const sendCommand = jest.fn(({ command }) =>
-    command instanceof CloseAppCommand ? Promise.resolve(appClosed) : played(commands.next()),
+    command instanceof GetAppAndVersionCommand
+      ? Promise.resolve(onDashboard)
+      : played(commands.next()),
   );
   const dmk = createDeviceManagementKit({ sendCommand });
 
@@ -179,8 +181,8 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
   const toggles: number[] = [];
 
   const sendCommand = jest.fn(({ command }) => {
-    if (command instanceof CloseAppCommand) {
-      return Promise.resolve(appClosed);
+    if (command instanceof GetAppAndVersionCommand) {
+      return Promise.resolve(onDashboard);
     }
 
     if (command instanceof ToggleEarlyCheckCommand) {

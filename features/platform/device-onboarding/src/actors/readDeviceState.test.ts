@@ -1,6 +1,7 @@
 import {
   CloseAppCommand,
   CommandResultFactory,
+  GetAppAndVersionCommand,
   InvalidStatusWordError,
   type DeviceManagementKit,
   type GetOsVersionResponse,
@@ -131,13 +132,38 @@ describe("mapDeviceState", () => {
 });
 
 describe("readDeviceState", () => {
-  it("closes any open app, then reports the state read on the dashboard", async () => {
+  it("reads the state on the dashboard without closing anything", async () => {
     const { dmk, sendCommand } = createFakeCommandDmk([success(onboardedDevice)]);
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["closeApp", "getOsVersion"]);
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
+    expect(received).toEqual([readEvent]);
+    stop();
+  });
+
+  it("closes an open app, then reads the state on the dashboard", async () => {
+    const { dmk, sendCommand } = fakeDevice({ app: () => running("Bitcoin") });
+    const { received, stop } = start(dmk);
+
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "closeApp", "getOsVersion"]);
+    expect(received).toEqual([readEvent]);
+    stop();
+  });
+
+  it("still reads the state when the device does not tell its app", async () => {
+    const { dmk, sendCommand } = fakeDevice({
+      app: () =>
+        Promise.resolve(CommandResultFactory({ error: new InvalidStatusWordError("6e00") })),
+    });
+    const { received, stop } = start(dmk);
+
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
     expect(received).toEqual([readEvent]);
     stop();
   });
@@ -148,8 +174,8 @@ describe("readDeviceState", () => {
       finishClosingApp = () => resolve(appClosed);
     });
     const { dmk, sendCommand } = fakeDevice({
+      app: () => running("Bitcoin"),
       closeApp: () => closing,
-      read: () => Promise.resolve(success(onboardedDevice)),
     });
     const { received, stop } = start(dmk);
 
@@ -157,7 +183,7 @@ describe("readDeviceState", () => {
     finishClosingApp?.();
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["closeApp"]);
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "closeApp"]);
     expect(received).toEqual([]);
   });
 
@@ -190,7 +216,6 @@ describe("readDeviceState", () => {
   it("does not send the command again when it is stopped during a retry delay", async () => {
     let stopActor: (() => void) | undefined;
     const { dmk, sendCommand } = fakeDevice({
-      closeApp: () => Promise.resolve(appClosed),
       read: () => {
         stopActor?.();
         return Promise.reject(new Error("transport failed"));
@@ -235,11 +260,27 @@ function success(
 
 const appClosed = CommandResultFactory({ data: undefined });
 
-/** A device that answers close app with `closeApp`, and the OS version command with `read`. */
-function fakeDevice(answers: { closeApp(): Promise<unknown>; read(): Promise<unknown> }) {
-  const sendCommand = jest.fn(({ command }) =>
-    command instanceof CloseAppCommand ? answers.closeApp() : answers.read(),
-  );
+function running(name: string) {
+  return Promise.resolve(CommandResultFactory({ data: { name, version: "1.0.0" } }));
+}
+
+type DeviceAnswers = {
+  app?(): Promise<unknown>;
+  closeApp?(): Promise<unknown>;
+  read?(): Promise<unknown>;
+};
+
+/** A device on the dashboard that reads `onboardedDevice`, unless the test answers otherwise. */
+function fakeDevice({
+  app = () => running("BOLOS"),
+  closeApp = () => Promise.resolve(appClosed),
+  read = () => Promise.resolve(success(onboardedDevice)),
+}: DeviceAnswers) {
+  const sendCommand = jest.fn(({ command }) => {
+    if (command instanceof GetAppAndVersionCommand) return app();
+    if (command instanceof CloseAppCommand) return closeApp();
+    return read();
+  });
 
   return { dmk: createDeviceManagementKit({ sendCommand }), sendCommand };
 }
