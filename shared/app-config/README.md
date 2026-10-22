@@ -18,9 +18,9 @@ to a pure `profileOf` that derives the profile from the build (`apps/*/src/setup
   (`prod`, `staging`). Selecting an option moves all its values together and never accepts a value
   the build did not declare.
 - The **selections** are the option id of each switch, read once and synchronously at boot from the
-  app's `ConfigStorage` (`apps/*/src/setup/storage.ts`): JSON under the `appConfigSelections`
-  `localStorage` key on desktop, one key per switch in a dedicated MMKV instance on mobile. A switch
-  without a selection resolves to the default. If the storage holds anything else than option ids,
+  app's `ConfigStorage` (`apps/*/src/setup/storage.ts`): JSON under the `appConfigSelections` key,
+  in `localStorage` on desktop and in the `app-config` MMKV instance on mobile, both built with
+  `jsonConfigStorage`. A switch without a selection resolves to the default. If the storage holds anything else than option ids,
   or cannot be read, `resolveAppConfig` clears it and every switch resolves to the default, so a
   tampered selection never fails the boot.
 - The **default** option is passed once for every switch. It is the `CONFIG_PROFILE` of the build's
@@ -147,6 +147,8 @@ The `app-config` devtool reads the slice and dispatches these actions through
 | `appConfigReducer`                 | Reducer of the `appConfig` slice                                  |
 | `appConfigSessionSelector`         | The session of the `appConfig` slice, or `null` until it is set   |
 | `appConfigSavedSelectionsSelector` | The selections the next session resolves from                     |
+| `jsonConfigStorage`                | A storage holding its entries as JSON in one persisted string     |
+| `readOnlyConfigStorage`            | A storage that only reads, for e2e runs                           |
 | `APP_CONFIG_OPTION_IDS`            | The id of each option every switch declares, in display order     |
 | `InvalidConfigOptionError`         | An option of a switch fails the schema of that switch             |
 | `DuplicateConfigValueError`        | A value name is declared more than once in the schema             |
@@ -157,6 +159,7 @@ The `app-config` devtool reads the slice and dispatches these actions through
 | `ConfigOptionId`                   | Type of an option id: `prod` or `staging`                         |
 | `ConfigOptions`                    | Type of the options of a switch, typed by its shape               |
 | `ConfigStorage`                    | Type of the storage the app persists the selections in            |
+| `StorageKey`                       | Type of one persisted key, which `jsonConfigStorage` holds        |
 | `AppConfig`                        | Type of the configuration a schema describes                      |
 | `AppConfigSession`                 | Type of what a configuration was resolved from: its `session`     |
 | `AppConfigMiddlewareConfig`        | Type of what `createAppConfigMiddleware` takes                    |

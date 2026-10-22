@@ -2,33 +2,20 @@ import { createMMKV } from "react-native-mmkv";
 import { appConfigStorage } from "./storage";
 
 describe("appConfigStorage", () => {
+  const mmkv = jest.mocked(createMMKV).mock.results[0].value;
+
   afterEach(() => {
     appConfigStorage.clear();
   });
 
-  it("persists the selections in the dedicated app-config MMKV instance", () => {
+  it("persists the selections as JSON under one key of the app-config MMKV instance", () => {
+    appConfigStorage.set("ledgerKeyRing", "staging");
+
     expect(createMMKV).toHaveBeenCalledWith({ id: "app-config" });
-  });
-
-  it("holds no selections by default", () => {
-    expect(appConfigStorage.getAll()).toEqual({});
-  });
-
-  it("persists one key per switch", () => {
-    appConfigStorage.set("ledgerKeyRing", "prod");
-    appConfigStorage.set("otherSwitch", "prod");
-    appConfigStorage.set("ledgerKeyRing", "staging");
-
-    expect(appConfigStorage.getAll()).toEqual({ ledgerKeyRing: "staging", otherSwitch: "prod" });
-  });
-
-  it("removes the selection of one switch, keeping the other switches", () => {
-    appConfigStorage.set("ledgerKeyRing", "staging");
-    appConfigStorage.set("otherSwitch", "prod");
-
-    appConfigStorage.remove("ledgerKeyRing");
-
-    expect(appConfigStorage.getAll()).toEqual({ otherSwitch: "prod" });
+    expect(mmkv.getString("appConfigSelections")).toBe(
+      JSON.stringify({ ledgerKeyRing: "staging" }),
+    );
+    expect(appConfigStorage.getAll()).toEqual({ ledgerKeyRing: "staging" });
   });
 
   it("clears the selections", () => {
@@ -36,6 +23,6 @@ describe("appConfigStorage", () => {
 
     appConfigStorage.clear();
 
-    expect(appConfigStorage.getAll()).toEqual({});
+    expect(mmkv.contains("appConfigSelections")).toBe(false);
   });
 });

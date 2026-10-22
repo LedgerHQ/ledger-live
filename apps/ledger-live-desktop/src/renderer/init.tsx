@@ -93,6 +93,7 @@ import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import { readOnlyConfigStorage } from "@shared/app-config";
 import { loadAppConfig } from "~/setup";
 
 const rootNode = document.getElementById("react-root");
@@ -149,7 +150,7 @@ async function init() {
         dateString: require("../../tests/time.js").default,
       });
     }
-    configStorage = { getAll: () => spectronData.appConfig, set() {}, remove() {}, clear() {} };
+    configStorage = readOnlyConfigStorage(() => spectronData.appConfig);
   }
   const store = createStore({
     dbMiddleware,

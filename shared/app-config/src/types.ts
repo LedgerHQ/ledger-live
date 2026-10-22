@@ -12,6 +12,13 @@ export type ConfigStorage = {
   readonly clear: () => void;
 };
 
+/** One key of what the app persists in, such as `localStorage` or MMKV. Unset, it reads as nothing. */
+export type StorageKey = {
+  readonly get: () => string | null | undefined;
+  readonly set: (value: string) => void;
+  readonly remove: () => void;
+};
+
 /** The value schemas of each switch, by switch id. Every option of a switch has that shape. */
 export type ConfigSchemaSwitches = Readonly<Record<string, z.ZodRawShape>>;
 
