@@ -43,8 +43,8 @@ function createAccount(id: string, currencyId: string, balance: BigNumber.Value)
   };
 }
 
-// 1000.5 in the source currency's units; the screen reads it as USDC.
-const sourceAccount = createAccount("source-1", "ethereum", "1000500000000000000000");
+// 1000.5 USDC in HyperCore's 6-decimal unit.
+const sourceAccount = createAccount("source-1", "hypercore", "1000500000");
 const ethAccount = createAccount("eth-1", "ethereum", 100_000);
 const btcAccount = createAccount("btc-1", "bitcoin", 50_000);
 const dogeAccount = createAccount("doge-1", "dogecoin", 900_000);
@@ -89,12 +89,20 @@ describe("PerpsWithdraw integration", () => {
     expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
   });
 
+  it("should label the amount with the source currency", () => {
+    renderWithdraw();
+    openWithdraw();
+
+    expect(screen.getByText("USDC")).toBeVisible();
+    expect(screen.queryByText("USD")).not.toBeInTheDocument();
+  });
+
   it("should show the title and the available balance", () => {
     renderWithdraw();
     openWithdraw();
 
     expect(screen.getByRole("dialog", { name: "Withdraw" })).toHaveAccessibleDescription(
-      /\$1,000\.50/,
+      /1,000\.5\sUSDC/,
     );
   });
 
@@ -103,7 +111,7 @@ describe("PerpsWithdraw integration", () => {
     openWithdraw({ sourceAccount: { ...sourceAccount, spendableBalance: new BigNumber(0) } });
 
     expect(screen.getByRole("dialog", { name: "Withdraw" })).toHaveAccessibleDescription(
-      /\$1,000\.50/,
+      /1,000\.5\sUSDC/,
     );
   });
 

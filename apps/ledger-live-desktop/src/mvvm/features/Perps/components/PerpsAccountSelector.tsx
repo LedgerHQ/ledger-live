@@ -18,7 +18,6 @@ type PerpsAccountSelectorProps = Readonly<{
   ledgerId: string;
   accountName: string | null;
   counterValue: string | null;
-  /** Interpolates `accountName`, `counterValue` and a `<balance>` tag. */
   accountLabelKey: string;
   noAccountLabel: string;
   exceedsBalance: boolean;
