@@ -18949,7 +18949,7 @@ importers:
     dependencies:
       '@ledgerhq/icons-ui':
         specifier: workspace:^
-        version: file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)
+        version: link:../icons
       '@ledgerhq/ui-shared':
         specifier: workspace:^
         version: link:../shared
@@ -18983,9 +18983,6 @@ importers:
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
-    dependenciesMeta:
-      '@ledgerhq/icons-ui':
-        injected: true
     devDependencies:
       '@rspack/core':
         specifier: 'catalog:'
@@ -24259,21 +24256,6 @@ packages:
 
   '@ledgerhq/hw-transport@6.36.1':
     resolution: {integrity: sha512-glmZmmqrC/M9CWGJQvkiNP7piKquH3oySyymA8s7TBkejyuZezDq44phk8njhkWzhntOCADKrEp36mWcwYeIFQ==}
-
-  '@ledgerhq/icons-ui@file:libs/ui/packages/icons':
-    resolution: {directory: libs/ui/packages/icons, type: directory}
-    peerDependencies:
-      '@types/react': 19.0.14
-      react: 19.1.4
-      react-native: '>=0.64.0'
-      react-native-svg: '>=12.1.1'
-      styled-components: '*'
-      styled-system: '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react-native:
-        optional: true
 
   '@ledgerhq/ledger-key-ring-protocol@1.1.0':
     resolution: {integrity: sha512-pm4yu9/pbJa4/5MwoBihH02R8n/KR/uO4AU60Q/JlgcyaX+AoKdVL/oBwh2QDtwaDY4dMODRxRfGolxoo3DEcA==}
@@ -44616,16 +44598,6 @@ snapshots:
       '@ledgerhq/devices': 8.18.1
       '@ledgerhq/logs': 6.19.0
       events: 3.3.0
-
-  '@ledgerhq/icons-ui@file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)':
-    dependencies:
-      react: 19.1.4
-      react-native-svg: 15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
-      styled-system: 5.1.5
-    optionalDependencies:
-      '@types/react': 19.0.14
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
   '@ledgerhq/ledger-key-ring-protocol@1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
