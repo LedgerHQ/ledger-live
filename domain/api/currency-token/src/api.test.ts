@@ -4,7 +4,7 @@ jest.mock("./converter", () => ({
   convertApiToken: jest.fn(),
 }));
 
-import { calApiExtra, calApi } from "@shared/api-services";
+import { calApiExtra, calApi, CAL_REQUEST_TIMEOUT_MS } from "@shared/api-services";
 import { convertApiToken } from "./converter";
 import {
   cryptoAssetsApi,
@@ -205,10 +205,10 @@ describe("cryptoAssetsApi requests", () => {
     );
 
     expect(result.data).toBe("commit-hash");
-    // getTokensSyncHash calls fetch with a URL object; stringify before asserting.
-    const url = String(fetchSpy.mock.calls[0][0]);
-    expect(url).toContain("https://cal.test/v1/currencies");
-    expect(url).toContain("id=ethereum");
+    const request = fetchSpy.mock.calls[0][0] as Request;
+    expect(request.url).toContain("https://cal.test/v1/currencies");
+    expect(request.url).toContain("id=ethereum");
+    expect(request.headers.get("X-Ledger-Client-Version")).toBe("1.2.3");
   });
 
   it("getTokensSyncHash preserves a path prefix in the base URL (Gravitee /cal prefix)", async () => {
@@ -228,8 +228,8 @@ describe("cryptoAssetsApi requests", () => {
 
     await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
 
-    const url = String(fetchSpy.mock.calls[0][0]);
-    expect(url).toContain("https://global.api.prd.ledger.com/cal/v1/currencies");
+    const request = fetchSpy.mock.calls[0][0] as Request;
+    expect(request.url).toContain("https://global.api.prd.ledger.com/cal/v1/currencies");
   });
 
   it("getTokensSyncHash errors with 404 on an empty currency array", async () => {
@@ -263,8 +263,7 @@ describe("cryptoAssetsApi requests", () => {
     );
 
     expect(result.data).toBe("f61ca8f4b4123c59");
-    // getTokenListHash calls fetch with a URL object; stringify before asserting.
-    const url = new URL(String(fetchSpy.mock.calls[0][0]));
+    const url = new URL((fetchSpy.mock.calls[0][0] as Request).url);
     expect(url.origin + url.pathname).toBe("https://cal.test/v1/networks");
     expect(url.searchParams.get("id")).toBe("solana");
     expect(url.searchParams.get("output")).toBe("id,token_list_hash");
@@ -308,7 +307,7 @@ describe("cryptoAssetsApi requests", () => {
     // change (commit), the account history must not (token list hash).
     const respond = (commit: string) => (input: RequestInfo | URL) =>
       Promise.resolve(
-        String(input).includes("/v1/networks")
+        (input as Request).url.includes("/v1/networks")
           ? new Response(JSON.stringify([{ id: "solana", token_list_hash: "same-list" }]), {
               headers: { "Content-Type": "application/json", "X-Ledger-Commit": commit },
             })
@@ -334,5 +333,57 @@ describe("cryptoAssetsApi requests", () => {
 
     expect(after.commit).not.toBe(before.commit);
     expect(after.list).toBe(before.list);
+  });
+
+  describe("when CAL does not answer", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it.each(["getTokensSyncHash", "getTokenListHash"] as const)(
+      "%s ends with a timeout error after CAL_REQUEST_TIMEOUT_MS",
+      async endpoint => {
+        fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
+          input =>
+            new Promise((_resolve, reject) => {
+              (input as Request).signal.addEventListener("abort", () =>
+                reject(new DOMException("Aborted", "AbortError")),
+              );
+            }),
+        );
+        const store = makeStore();
+
+        const pending = store.dispatch(cryptoAssetsApi.endpoints[endpoint].initiate("ethereum"));
+        await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+        const result = await pending;
+
+        expect(result.error).toMatchObject({ status: "TIMEOUT_ERROR" });
+      },
+    );
+
+    it.each(["getTokensSyncHash", "getTokenListHash"] as const)(
+      "%s keeps the HTTP status of a non-JSON error page",
+      async endpoint => {
+        fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(() =>
+          Promise.resolve(
+            new Response("<html>Bad Gateway</html>", {
+              status: 502,
+              headers: { "Content-Type": "text/html" },
+            }),
+          ),
+        );
+        const store = makeStore();
+
+        const pending = store.dispatch(cryptoAssetsApi.endpoints[endpoint].initiate("ethereum"));
+        await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+        const result = await pending;
+
+        expect(result.error).toMatchObject({ status: 502 });
+      },
+    );
   });
 });
