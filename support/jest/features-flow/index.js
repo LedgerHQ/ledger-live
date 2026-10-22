@@ -32,6 +32,7 @@ const nativeMocks = {
   "^react-native-safe-area-context$": path.join(__dirname, "mocks/safe-area-context.js"),
   "^react-native-fast-crypto$": path.join(__dirname, "mocks/fast-crypto.js"),
   "^expo-clipboard$": path.join(__dirname, "mocks/expo-clipboard.js"),
+  "^@react-navigation/native$": path.join(__dirname, "mocks/react-navigation-native.js"),
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),

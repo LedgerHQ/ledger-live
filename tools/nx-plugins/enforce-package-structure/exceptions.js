@@ -156,11 +156,8 @@ const COMPONENT_EXCEPTIONS = {
     TrackScreen: componentWaiver("R1"),
   },
   "shared/ui-info-state": {
-    "./native": entryWaiver(),
-    "./web": entryWaiver(),
-    DialogBackgroundGradient: componentWaiver("R1", "R5"),
-    DialogBackgroundToneProvider: componentWaiver("R1", "R5"),
-    InfoState: componentWaiver("R5"),
+    DialogBackgroundGradient: componentWaiver("R1"),
+    DialogBackgroundToneProvider: componentWaiver("R1"),
   },
   "shared/ui-queued-bottom-sheet": {
     QueuedBottomSheet: componentWaiver("R1"),
