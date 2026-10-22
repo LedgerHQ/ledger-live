@@ -82,7 +82,7 @@ catalog:
   "@ledgerhq/wallet-api-core": 2.1.0
   "@ledgerhq/wallet-api-server": 3.5.0
   "@ledgerhq/wallet-api-simulator": 2.4.0
-  "@ledgerhq/zcash-utils": 2.7.0
+  "@ledgerhq/zcash-utils": 2.8.0
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
