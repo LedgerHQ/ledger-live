@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { calApi, calApiExtra, getCalExtra } from "./api";
+import { CAL_REQUEST_TIMEOUT_MS, MAX_RETRIES } from "./constants";
 import type { CalApiExtra } from "./types";
 
 const valid = { calServiceUrl: "https://cal.test", ledgerClientVersion: "test" };
@@ -86,12 +87,78 @@ describe("calBaseQuery", () => {
     expect(headers.get("Content-Type")).toBe("application/json");
     expect(headers.get("X-Ledger-Client-Version")).toBe("test");
   });
+
+  describe("timeout", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("ends a hung request with a TIMEOUT_ERROR, without a retry", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(hangUntilAborted);
+
+      const { api, store } = probeStore(calApiExtra(valid));
+      const pending = store.dispatch(api.endpoints.probe.initiate());
+      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+      const result = await pending;
+
+      expect(result.error).toMatchObject({ status: "TIMEOUT_ERROR" });
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("clears its timer when the request settles", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+
+      const { api, store } = probeStore(calApiExtra(valid));
+      await store.dispatch(api.endpoints.probe.initiate());
+      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+
+      expect(request(fetchSpy).signal.aborted).toBe(false);
+    });
+
+    it("aborts the request when the query is cancelled", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(hangUntilAborted);
+
+      const { api, store } = probeStore(calApiExtra(valid));
+      const pending = store.dispatch(api.endpoints.probe.initiate());
+      await jest.advanceTimersByTimeAsync(0);
+      pending.abort();
+      await pending;
+
+      expect(request(fetchSpy).signal.aborted).toBe(true);
+    });
+
+    it("still retries a server error", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+
+      const { api, store } = probeStore(calApiExtra(valid));
+      const pending = store.dispatch(api.endpoints.probe.initiate());
+      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+      const result = await pending;
+
+      expect(result.error).toMatchObject({ status: 503 });
+      expect(fetchSpy).toHaveBeenCalledTimes(MAX_RETRIES + 1);
+    });
+  });
 });
 
-function jsonResponse(body: unknown): Response {
+function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
-    status: 200,
+    status,
     headers: { "content-type": "application/json" },
+  });
+}
+
+/** A fetch that never answers and rejects only when its request is aborted. */
+function hangUntilAborted(input: RequestInfo | URL): Promise<Response> {
+  const { signal } = input as Request;
+  return new Promise((_resolve, reject) => {
+    signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
   });
 }
 
