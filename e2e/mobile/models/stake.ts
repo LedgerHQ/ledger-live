@@ -1,10 +1,13 @@
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
-export async function verifyAppValidationStakeInfo(
-  delegation: DelegateType,
-  amount: string,
-  fees?: string,
-) {
+type VerifyAppValidationStakeInfoOptions = {
+  delegation: DelegateType;
+  amount: string;
+  fees?: string;
+};
+
+export async function verifyAppValidationStakeInfo(options: VerifyAppValidationStakeInfoOptions) {
+  const { delegation, amount, fees } = options;
   const currenciesForValidationAmount = [
     Currency.ATOM,
     Currency.NEAR,
