@@ -18,7 +18,7 @@ lockfile_platforms = [
 ]
 
 [tools]
-node = '24.14.0'
+node = '24.22.1'
 pnpm = '10.24.0'
 bun = '1.4.2'
 gitleaks = '8.30.1'
