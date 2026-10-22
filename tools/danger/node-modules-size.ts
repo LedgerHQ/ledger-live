@@ -62,6 +62,15 @@ function parseLockfile(text: string): Lockfile {
   let v9 = false;
   let cur: string | null = null;
   for (const line of text.split("\n")) {
+    // pnpm 12 prepends an env document (packageManagerDependencies); only the last one is the dependency graph.
+    if (line === "---") {
+      installs.length = 0;
+      meta.clear();
+      skipped.clear();
+      section = null;
+      cur = null;
+      continue;
+    }
     if (line && !/^\s/.test(line) && !line.startsWith("#")) {
       const idx = line.indexOf(":");
       section = line.slice(0, idx);
