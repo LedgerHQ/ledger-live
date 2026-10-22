@@ -40,6 +40,7 @@ const timedFetchBaseQuery: ReturnType<typeof fetchBaseQuery> = async (args, api,
     controller.abort();
   }, CAL_REQUEST_TIMEOUT_MS);
   const abort = () => controller.abort();
+  if (api.signal.aborted) abort();
   api.signal.addEventListener("abort", abort);
 
   try {

@@ -131,6 +131,21 @@ describe("calBaseQuery", () => {
       expect(request(fetchSpy).signal.aborted).toBe(true);
     });
 
+    it("sends no further request when the query is cancelled during a retry", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+
+      const { api, store } = probeStore(calApiExtra(valid));
+      const pending = store.dispatch(api.endpoints.probe.initiate());
+      await jest.advanceTimersByTimeAsync(0);
+      pending.abort();
+      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+      await pending;
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
     it("still retries a server error", async () => {
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
