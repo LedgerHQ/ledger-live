@@ -195,7 +195,7 @@ describe("PerpsWithdraw integration", () => {
     expect(reviewCta()).toBeDisabled();
   });
 
-  it("should only offer supported assets and keep the amount when the destination changes", async () => {
+  it("should let swap filter the destinations and keep the amount when they change", async () => {
     const { user } = renderWithdraw();
 
     await typeAmount(user, "500");
@@ -203,12 +203,14 @@ describe("PerpsWithdraw integration", () => {
 
     expect(mockOpenDrawer).toHaveBeenCalledWith(
       expect.objectContaining({
+        useCase: "swap",
         uiUseCase: "perpetuals:withdraw",
         flow: "perpetuals:withdraw",
-        currencies: ["ethereum", "bitcoin"],
-        areCurrenciesFiltered: true,
+        areCurrenciesFiltered: false,
       }),
     );
+    // A currency list would go in the assets URL and overflow it.
+    expect(mockOpenDrawer.mock.calls[0]?.[0]).not.toHaveProperty("currencies");
     expect(await screen.findByText("Withdraw to BTC")).toBeOnTheScreen();
     expect(input()).toHaveDisplayValue("500");
   });
