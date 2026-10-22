@@ -43,9 +43,22 @@ function startChild(script: string, logPath: string): ChildProcess {
 
 describe("enrollListenerPaths", () => {
   it.skipIf(!isPosix)("puts the log and lock under the CLI state dir", () => {
-    expect(enrollListenerPaths("my-agent")).toEqual({
-      logPath: join(stateHome, "ledger-wallet-cli", "agent-intent-enroll", "my-agent.log"),
-      lockPath: join(stateHome, "ledger-wallet-cli", "agent-intent-enroll", "my-agent.lock"),
+    const dir = join(stateHome, "ledger-wallet-cli", "agent-intent-enroll");
+    expect(enrollListenerPaths("My-Agent")).toEqual({
+      logPath: join(dir, "my-agent-b59f3481.log"),
+      lockPath: join(dir, "my-agent-b59f3481.lock"),
+    });
+  });
+
+  it("gives ids that differ only in case distinct files on a case-insensitive filesystem", async () => {
+    const upper = enrollListenerPaths("Bot");
+    const lower = enrollListenerPaths("bot");
+
+    expect(upper.logPath.toLowerCase()).not.toBe(lower.logPath.toLowerCase());
+    expect(upper.lockPath.toLowerCase()).not.toBe(lower.lockPath.toLowerCase());
+    await withEnrollListenerLock("Bot", async () => {
+      expect(await withEnrollListenerLock("bot", async () => "listening")).toBe("listening");
+      expect(await withEnrollStartLock("bot", async () => "started")).toBe("started");
     });
   });
 });
