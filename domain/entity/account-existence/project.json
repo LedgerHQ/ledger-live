@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-account-existence",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@features/platform-account-discovery",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Account discovery as a stream of account descriptors: candidates derived on the device, then asked to the account data sources whether they exist",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
+    "typecheck": "tsc --noEmit",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/account-discovery"
+  },
+  "dependencies": {
+    "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-existence": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-derivation": "workspace:*",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@domain/entity-account-data": "workspace:*",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

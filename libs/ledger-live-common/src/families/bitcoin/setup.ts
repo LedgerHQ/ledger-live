@@ -16,6 +16,9 @@ import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddres
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { SignMessage } from "../../hw/signMessage/types";
+import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/networks";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
+import type { DeriveAccountDescriptor } from "../../coin-modules/types";
 
 const createSigner = (transport: Transport, currency: CryptoCurrency): BitcoinSigner =>
   new Btc({ transport, currency: currency.id });
@@ -57,4 +60,21 @@ const resolver: Resolver = (
   return bitcoinResolver(signerContext, context.logger)("", addressOpt);
 };
 
-export { bridge, resolver, messageSigner, signerContext };
+/** A UTXO account is known by its xpub at the account-level path, as the bitcoin sync derives it. */
+const deriveAccountDescriptor: DeriveAccountDescriptor = async (deviceId, currency, candidate) => {
+  const xpubVersion = getNetworkParameters(currency.id).xpubVersion.readUInt32BE(0);
+  const path = candidate.accountPath.slice(2).replaceAll("h", "'");
+  const xpub = await signerContext(deviceId, currency, signer =>
+    signer.getWalletXpub({ path, xpubVersion }),
+  );
+  return AccountDescriptorSchema.parse({
+    purpose: "account",
+    version: "1",
+    type: "utxo",
+    network: candidate.network,
+    xpub,
+    path: candidate.accountPath,
+  });
+};
+
+export { bridge, resolver, messageSigner, signerContext, deriveAccountDescriptor };

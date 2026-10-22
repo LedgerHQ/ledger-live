@@ -1,0 +1,40 @@
+{
+  "name": "@devtools/account-discovery",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scan a currency for accounts: the discovery stream, as it arrives",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "lint": "oxlint src"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-utils-shared": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-utils-shared": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@types/react": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwind-merge": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {},
+  "react-native": "src/index.native.ts"
+}
