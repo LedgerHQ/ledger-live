@@ -2,8 +2,9 @@
 
 // Checks that every `index.*` in a new-architecture package is a pure barrel, that every module
 // those barrels reach through `export *`, or that `package.json#exports` names, re-exports like
-// one, and that the public components of a dual-platform package keep one API and one kind of
-// entry (components.js). The barrel rule follows a file's role, not its name.
+// one, and that the public components of a dual-platform package keep one API, one neutral props
+// contract and one kind of entry (components.js). The barrel rule follows a file's role, not its
+// name.
 //
 // Run for one package (the inferred `lint:structure` target passes its project root) or for all
 // of them at once (no argument), which is handy to audit the workspace.
@@ -287,6 +288,15 @@ function main() {
   }
   if (violations.some(v => v.rule)) {
     console.error("\nR1: a universal component is exported on both platforms under the same name.");
+    console.error(
+      "R2: both implementations take one props type, declared in one unsuffixed module.",
+    );
+    console.error(
+      "R3: that contract has no platform import, type, className, style or gesture name.",
+    );
+    console.error(
+      "R4: a platform module that declares a universal component exports nothing else.",
+    );
     console.error("R5: a component is exported from universal entries or from platform entries,");
     console.error("never both, and a platform entry points at a suffixed module of its own.");
     console.error("See docs/adr/universal-components.md.");

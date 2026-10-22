@@ -126,7 +126,7 @@ test("every component waiver names a package, its rules and an exit condition", 
     );
     for (const [subject, waiver] of Object.entries(waivers)) {
       assert.ok(waiver.rules.length > 0, `${root} ${subject} must name the rules it waives`);
-      for (const rule of waiver.rules) assert.match(rule, /^R[15]$/);
+      for (const rule of waiver.rules) assert.match(rule, /^R[1-5]$/);
       assert.match(waiver.reason, /exit condition/i, `${root} ${subject} needs an exit condition`);
     }
   }
