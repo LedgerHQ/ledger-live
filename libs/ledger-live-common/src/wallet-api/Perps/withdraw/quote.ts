@@ -7,6 +7,7 @@ import { resolveQuotesInput } from "../../Exchange/quotes/resolveQuotesInput";
 import { fetchQuotes } from "../../Exchange/quotes/service/fetchQuotes";
 import { PERPS_SWAPKIT_PROVIDER } from "../constants";
 import { toWithdrawError, WithdrawApiError } from "./errors";
+import { WithdrawPayloadSchema, type WithdrawPayload } from "./schemas";
 
 // Swap quotes carry no expiry, so a withdraw quote is refreshed like swap rates.
 export const PERPS_WITHDRAW_QUOTE_TTL_MS = DEFAULT_SWAP_RATES_INTERVAL_MS;
@@ -27,6 +28,8 @@ export type WithdrawQuote = {
   amountTo: BigNumber;
   payoutNetworkFees: BigNumber;
   expiry: number;
+  /** Typed data to sign, resubmitted unmodified with the signature. */
+  payload?: WithdrawPayload;
 };
 
 export async function fetchPerpsWithdrawQuote({
@@ -53,11 +56,13 @@ export async function fetchPerpsWithdrawQuote({
 
   const [quote] = rawQuotes;
   if (quote) {
+    const payload = WithdrawPayloadSchema.safeParse(quote.customFields);
     return {
       quoteId: resolveQuoteId(quote),
       amountTo: new BigNumber(quote.amountTo),
       payoutNetworkFees: new BigNumber(quote.payoutNetworkFees?.value ?? 0),
       expiry: Date.now() + PERPS_WITHDRAW_QUOTE_TTL_MS,
+      ...(payload.success ? { payload: payload.data } : {}),
     };
   }
 

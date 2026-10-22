@@ -5,6 +5,7 @@ import { fetchQuotes } from "../../Exchange/quotes/service/fetchQuotes";
 import type { FetchQuotesResult } from "../../Exchange/quotes/service/types";
 import { PERPS_SWAPKIT_PROVIDER } from "../constants";
 import { WithdrawApiError, WithdrawLowLiquidityError, WithdrawMinimumAmountError } from "./errors";
+import { mayanWithdrawPayload } from "./__fixtures__/responses";
 import { fetchPerpsWithdrawQuote, PERPS_WITHDRAW_QUOTE_TTL_MS } from "./quote";
 
 jest.mock("../../Exchange/quotes/service/fetchQuotes");
@@ -154,5 +155,25 @@ describe("fetchPerpsWithdrawQuote", () => {
       WithdrawApiError,
     );
     expect(mockedFetchQuotes).not.toHaveBeenCalled();
+  });
+
+  it("keeps the withdraw payload to sign from the quote's custom fields", async () => {
+    const payload = mayanWithdrawPayload;
+    mockedFetchQuotes.mockResolvedValue({
+      rawQuotes: [{ ...rawQuote, customFields: payload } as unknown as RawQuote],
+      providerErrors: [],
+    });
+
+    const quote = await fetchPerpsWithdrawQuote(request);
+
+    expect(quote.payload).toEqual({ swapId: payload.swapId, typedData: payload.typedData });
+  });
+
+  it("has no payload when the quote carries no typed data", async () => {
+    mockedFetchQuotes.mockResolvedValue({ rawQuotes: [rawQuote], providerErrors: [] });
+
+    const quote = await fetchPerpsWithdrawQuote(request);
+
+    expect(quote.payload).toBeUndefined();
   });
 });

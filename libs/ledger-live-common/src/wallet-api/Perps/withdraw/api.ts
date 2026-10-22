@@ -9,7 +9,6 @@ import {
   type WithdrawSubmitResult,
 } from "./schemas";
 
-// TODO(LIVE-39366): confirm the submit body with the backend.
 export type WithdrawSubmitParams = {
   payload: WithdrawPayload;
   signature: string;
@@ -27,7 +26,6 @@ async function request({ method, path, data }: WithdrawRequest): Promise<unknown
     method,
     url: `${getSwapAPIBaseURL()}${path}`,
     timeout: DEFAULT_SWAP_TIMEOUT_MS,
-    // Keep the error body so SwapKit error codes can be mapped.
     validateStatus: () => true,
     ...(data !== undefined ? { data } : {}),
     ...(headers !== undefined ? { headers } : {}),
@@ -39,7 +37,6 @@ async function request({ method, path, data }: WithdrawRequest): Promise<unknown
   return response.data;
 }
 
-/** Never retried: an unknown outcome throws `WithdrawSubmitUnknownOutcomeError`. */
 export async function submitWithdraw({
   payload,
   signature,
@@ -61,7 +58,6 @@ export async function submitWithdraw({
   return result.data;
 }
 
-// Gateway errors may hide a submit that already reached Hyperliquid.
 const UNKNOWN_OUTCOME_STATUSES = [502, 504];
 
 function isDefiniteSubmitFailure(error: unknown): boolean {

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import { DecimalSchema, WithdrawPayloadSchema, getWithdrawTypedData } from "./schemas";
-import { mayanPayloadResponse, nearPayloadResponse } from "./__fixtures__/responses";
+import { DecimalSchema, WithdrawPayloadSchema } from "./schemas";
+import { mayanWithdrawPayload, nearWithdrawPayload } from "./__fixtures__/responses";
 
 describe("withdraw schemas", () => {
   it("reads decimal string amounts as BigNumber", () => {
@@ -16,41 +16,24 @@ describe("withdraw schemas", () => {
     expect(DecimalSchema.safeParse(value).success).toBe(false);
   });
 
-  it("reads the typed data at the root for a Mayan payload", () => {
-    const payload = WithdrawPayloadSchema.parse(mayanPayloadResponse);
-    expect(getWithdrawTypedData(payload)).toEqual(mayanPayloadResponse.typedData);
-  });
-
-  it("reads the nested typed data for a NEAR payload", () => {
-    const payload = WithdrawPayloadSchema.parse(nearPayloadResponse);
-    expect(getWithdrawTypedData(payload)).toEqual(nearPayloadResponse.hyperCoreAction.typedData);
-  });
-
-  it("keeps every field of a NEAR hyperCoreAction so it can be resubmitted unmodified", () => {
-    const payload = WithdrawPayloadSchema.parse(nearPayloadResponse);
-    expect(payload).toEqual(nearPayloadResponse);
-  });
-
-  it("keeps unknown fields inside EIP-712 type entries", () => {
-    const withExtra = {
-      ...mayanPayloadResponse,
-      typedData: {
-        ...mayanPayloadResponse.typedData,
-        types: { Withdraw: [{ name: "amount", type: "string", extra: "keep-me" }] },
-      },
-    };
-
-    expect(WithdrawPayloadSchema.parse(withExtra)).toEqual(withExtra);
-  });
-
-  it("signs the HyperCore action when a payload carries both shapes", () => {
-    const rootTypedData = { ...mayanPayloadResponse.typedData, primaryType: "Root" };
-    const payload = WithdrawPayloadSchema.parse({
-      ...nearPayloadResponse,
-      typedData: rootTypedData,
+  it("keeps only the NEAR swap id and its untouched hyperCoreAction", () => {
+    expect(WithdrawPayloadSchema.parse(nearWithdrawPayload)).toEqual({
+      swapId: nearWithdrawPayload.swapId,
+      hyperCoreAction: nearWithdrawPayload.hyperCoreAction,
     });
+  });
 
-    expect(getWithdrawTypedData(payload)).toEqual(nearPayloadResponse.hyperCoreAction.typedData);
+  it("keeps only the Mayan swap id and its untouched typedData", () => {
+    expect(WithdrawPayloadSchema.parse(mayanWithdrawPayload)).toEqual({
+      swapId: mayanWithdrawPayload.swapId,
+      typedData: mayanWithdrawPayload.typedData,
+    });
+  });
+
+  it("rejects a payload without a swap id", () => {
+    const { swapId: _swapId, ...withoutSwapId } = mayanWithdrawPayload;
+
+    expect(WithdrawPayloadSchema.safeParse(withoutSwapId).success).toBe(false);
   });
 
   it("rejects a payload carrying no typed data", () => {
