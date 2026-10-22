@@ -352,33 +352,27 @@ test("a `.ts` module is parsed without JSX, so a type assertion is not a tag", (
   );
 });
 
-test("checkBarrelLocation allows the root barrel and entry targets, platform variants included", () => {
-  const entries = ["./src/index.ts", "./src/state/index.ts", "./src/hooks/index.native.ts"];
-  for (const file of [
-    "shared/thing/src/index.ts",
-    "shared/thing/src/index.native.ts",
-    "shared/thing/src/index.web.tsx",
-    "shared/thing/src/state/index.ts",
-    "shared/thing/src/state/index.web.ts",
-    "shared/thing/src/hooks/index.ts",
-    "shared/thing/src/hooks/index.native.ts",
+test("checkBarrelLocation allows an entry, a first-level barrel and an internals barrel", () => {
+  for (const [file, depth] of [
+    ["shared/thing/src/index.ts", 0],
+    ["shared/thing/src/state/index.web.ts", 0],
+    ["shared/thing/src/hooks/index.native.ts", 1],
+    ["shared/thing/src/internals/index.ts", undefined],
+    ["shared/thing/src/data/internals/deep/index.ts", 3],
   ]) {
-    assert.deepEqual(checkBarrelLocation("shared/thing", file, entries), [], file);
+    assert.deepEqual(checkBarrelLocation("shared/thing", file, depth), [], file);
   }
 });
 
-test("checkBarrelLocation reports any other index, with the package root", () => {
-  const entries = ["./src/index.ts", "./src/schema.ts", "./src/state/slice.ts"];
-  for (const file of [
-    "shared/thing/src/state/index.ts",
-    "shared/thing/src/hooks/index.native.ts",
-    "shared/thing/src/components/Card/index.tsx",
+test("checkBarrelLocation reports an orphan and a nested barrel, with the package root", () => {
+  for (const [depth, code] of [
+    [undefined, "orphan-barrel"],
+    [2, "nested-barrel"],
   ]) {
-    const found = checkBarrelLocation("shared/thing", file, entries);
+    const found = checkBarrelLocation("shared/thing", "shared/thing/src/hooks/index.ts", depth);
     assert.deepEqual(
       found.map(v => v.code),
-      ["intermediate-barrel"],
-      file,
+      [code],
     );
     assert.match(found[0].message, /^shared\/thing: /);
   }

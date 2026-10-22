@@ -316,46 +316,45 @@ function checkReachedModule(source, options = {}, file = "module.tsx") {
   return violations;
 }
 
-// The intermediate barrel rule, worded once for the violation, the CLI hint and the waivers.
-const INTERMEDIATE_BARREL = {
-  rule: "An `index.*` under src/ is a barrel only as src/index.* or a package.json#exports target",
-  fix:
-    "re-export the declaring files from the entry and delete the barrel, or name an index " +
-    "holding code after what it declares",
+// Where an `index.*` under src/ may sit: as an entry (src/index.* or a package.json#exports
+// target), one `export *` level below an entry, or in an internals location. Each code is worded
+// once for the violation, the CLI hint and the waivers.
+const BARREL_LOCATION = {
+  "orphan-barrel": {
+    rule: "No entry reaches this barrel through `export *`",
+    fix:
+      "if another package uses what it groups, re-export it from the root with one " +
+      '`export * from "./dir"` line; otherwise delete the barrel and import the files directly, ' +
+      "or move the folder under internals/. Expose only code another package imports",
+  },
+  "nested-barrel": {
+    rule: "This barrel is reached more than one `export *` level below its entry",
+    fix: "re-export the files from the first-level barrel instead of chaining barrels",
+  },
 };
 
 /**
- * Report a barrel that breaks INTERMEDIATE_BARREL. Platform variants of an index share its
- * directory, so `index.native.ts` is allowed wherever `index.ts` is.
+ * Report an `index.*` that BARREL_LOCATION does not allow.
  *
  * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
  * @param {string} file posix-style path of the `index.*`, from the repo root
- * @param {string[]} entryFiles `package.json#exports` targets, relative to the package
+ * @param {number | undefined} depth barrels from its nearest entry to it, itself included: 0 for
+ *   an entry, undefined when no entry reaches it
  * @returns {Violation[]}
  */
-function checkBarrelLocation(projectRoot, file, entryFiles) {
-  const directory = path.posix.dirname(file.slice(projectRoot.length + 1));
-  const allowed = new Set(["src"]);
-  for (const entry of entryFiles) {
-    const normalized = path.posix.normalize(entry);
-    if (isBarrelFile(normalized)) allowed.add(path.posix.dirname(normalized));
-  }
-  if (allowed.has(directory)) return [];
-  return [
-    {
-      line: 1,
-      code: "intermediate-barrel",
-      message: `${projectRoot}: ${INTERMEDIATE_BARREL.rule}. Fix: ${INTERMEDIATE_BARREL.fix}`,
-      text: "",
-    },
-  ];
+function checkBarrelLocation(projectRoot, file, depth) {
+  if (isInternalSpecifier(path.posix.dirname(file.slice(projectRoot.length + 1)))) return [];
+  if (depth !== undefined && depth <= 1) return [];
+  const code = depth === undefined ? "orphan-barrel" : "nested-barrel";
+  const { rule, fix } = BARREL_LOCATION[code];
+  return [{ line: 1, code, message: `${projectRoot}: ${rule}. Fix: ${fix}`, text: "" }];
 }
 
 module.exports = {
+  BARREL_LOCATION,
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,
-  INTERMEDIATE_BARREL,
   isBarrelFile,
   isInternalSpecifier,
   isInRepoSpecifier,

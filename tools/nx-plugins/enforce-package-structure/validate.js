@@ -1,7 +1,7 @@
 "use strict";
 
 // Checks that every `index.*` in a new-architecture package is a pure barrel where
-// INTERMEDIATE_BARREL (rules.js) allows one, that every module
+// BARREL_LOCATION (rules.js) allows one, that every module
 // those barrels reach through `export *`, or that `package.json#exports` names, re-exports like
 // one, and that the public components of a dual-platform package keep one API, one neutral props
 // contract and one kind of entry (components.js). The barrel rule follows a file's role, not its
@@ -13,10 +13,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const {
+  BARREL_LOCATION,
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,
-  INTERMEDIATE_BARREL,
   isBarrelFile,
   starReexportTargets,
 } = require("./rules");
@@ -161,6 +161,59 @@ function entryPointsOf(exportsField, withTestSupport = false) {
 }
 
 /**
+ * A barrel and its platform variants, which the bundlers treat as one module; any other file
+ * alone.
+ *
+ * @param {string} file absolute path
+ * @returns {string[]}
+ */
+function indexVariants(file) {
+  if (!isBarrelFile(file)) return [file];
+  const directory = path.dirname(file);
+  try {
+    return fs
+      .readdirSync(directory)
+      .filter(isBarrelFile)
+      .map(name => path.join(directory, name));
+  } catch {
+    return [file];
+  }
+}
+
+/**
+ * How many barrels each file sits below its nearest entry, following relative `export *` the way
+ * the bundlers resolve it. An entry is 0, so an entry reached from another entry counts from
+ * itself; a barrel an entry reaches, directly or through plain modules, is 1.
+ *
+ * @param {string[]} entries absolute paths
+ * @returns {Map<string, number>} absolute path to depth, for the files an entry reaches
+ */
+function barrelDepths(entries) {
+  const entrySet = new Set(entries.flatMap(indexVariants));
+  const depths = new Map([...entrySet].map(file => [file, 0]));
+  const queue = [...entrySet];
+  while (queue.length > 0) {
+    const file = queue.shift();
+    let source;
+    try {
+      source = fs.readFileSync(file, "utf8");
+    } catch {
+      continue;
+    }
+    for (const specifier of starReexportTargets(source, file)) {
+      for (const target of resolveModule(file, specifier).flatMap(indexVariants)) {
+        if (entrySet.has(target)) continue;
+        const depth = depths.get(file) + (isBarrelFile(target) ? 1 : 0);
+        if (depth >= (depths.get(target) ?? Infinity)) continue;
+        depths.set(target, depth);
+        queue.push(target);
+      }
+    }
+  }
+  return depths;
+}
+
+/**
  * @param {string} workspaceRoot
  * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
  * @param {Record<string, Record<string, { rules: string[] }>>} [componentExceptions]
@@ -229,11 +282,15 @@ function checkPackage(
       visit(path.join(packageDir, entry));
     }
 
-    const entryFiles = entryPointsOf(manifest.exports, true);
+    const sourceRoot = path.join(packageDir, "src");
+    const depths = barrelDepths([
+      ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
+      ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),
+    ]);
     for (const barrel of barrels) {
       const relative = path.relative(workspaceRoot, barrel).split(path.sep).join("/");
       if (Object.hasOwn(intermediateBarrelWaivers, relative)) continue;
-      for (const violation of checkBarrelLocation(projectRoot, relative, entryFiles)) {
+      for (const violation of checkBarrelLocation(projectRoot, relative, depths.get(barrel))) {
         found.push({ file: relative, ...violation });
       }
     }
@@ -284,7 +341,7 @@ function auditList(workspaceRoot, list, violationsWithout) {
 function auditFileExceptions(workspaceRoot, fileExceptions) {
   return auditList(workspaceRoot, fileExceptions, projectRoot =>
     checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, {}).filter(
-      v => v.code !== "intermediate-barrel",
+      v => !Object.hasOwn(BARREL_LOCATION, v.code),
     ),
   );
 }
@@ -298,8 +355,8 @@ function auditFileExceptions(workspaceRoot, fileExceptions) {
  */
 function auditIntermediateBarrelWaivers(workspaceRoot, waivers) {
   return auditList(workspaceRoot, waivers, projectRoot =>
-    checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, {}).filter(
-      v => v.code === "intermediate-barrel",
+    checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, {}).filter(v =>
+      Object.hasOwn(BARREL_LOCATION, v.code),
     ),
   );
 }
@@ -330,7 +387,7 @@ function main() {
     if (violation.text) console.error(`       ${violation.text}`);
   }
 
-  if (violations.some(v => !v.rule && v.code !== "intermediate-barrel")) {
+  if (violations.some(v => !v.rule && !Object.hasOwn(BARREL_LOCATION, v.code))) {
     console.error(
       '\nAn `index.*` may only contain `export * from "./x"` and an optional default re-export.',
     );
@@ -340,9 +397,10 @@ function main() {
     console.error("Move anything private to an internals location: internals/, internals.ts,");
     console.error("or a <name>.internals.ts companion. See .agents/skills/package-public-api.");
   }
-  if (violations.some(v => v.code === "intermediate-barrel")) {
-    console.error(`\n${INTERMEDIATE_BARREL.rule}.`);
-    console.error(`Fix: ${INTERMEDIATE_BARREL.fix}. See .agents/skills/package-public-api.`);
+  for (const [code, { rule, fix }] of Object.entries(BARREL_LOCATION)) {
+    if (!violations.some(v => v.code === code)) continue;
+    console.error(`\n${code}: ${rule}.`);
+    console.error(`Fix: ${fix}. See .agents/skills/package-public-api.`);
   }
   if (violations.some(v => v.rule)) {
     console.error("\nR1: a universal component is exported on both platforms under the same name.");
