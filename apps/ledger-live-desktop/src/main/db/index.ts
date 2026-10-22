@@ -13,7 +13,7 @@ import {
   initialState as walletInitialState,
 } from "~/renderer/reducers/wallet.core";
 import { contactsInitialState } from "@domain/entity-contact";
-import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell/constants";
+import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
