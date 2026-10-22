@@ -1,5 +1,6 @@
 export type AccountSettingsMenuProps = Readonly<{
   accountName: string;
+  explorerUrl?: string;
   onChangeName: () => void;
   onViewAdvancedLogs: () => void;
   onRemoveAccount: () => void;
@@ -8,8 +9,9 @@ export type AccountSettingsMenuProps = Readonly<{
 export type AccountSettingsMenuLabels = Readonly<{
   changeName: string;
   viewAdvancedLogs: string;
+  viewExplorer: string;
   removeAccount: string;
 }>;
 
-export type AccountSettingsMenuViewProps = AccountSettingsMenuProps &
-  Readonly<{ labels: AccountSettingsMenuLabels }>;
+export type AccountSettingsMenuViewProps = Omit<AccountSettingsMenuProps, "explorerUrl"> &
+  Readonly<{ labels: AccountSettingsMenuLabels; onViewExplorer?: () => void }>;
