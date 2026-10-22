@@ -29,6 +29,13 @@ export function getModularDialogStepHeading(
     };
   }
 
+  if (step === MODULAR_DIALOG_STEP.ASSET_SELECTION && perpsUseCase === PERPS_UI_USE_CASE.withdraw) {
+    return {
+      titleKey: "modularAssetDrawer.selectWithdrawCurrencyTitle",
+      descriptionKey: "modularAssetDrawer.selectWithdrawCurrencyDescription",
+    };
+  }
+
   if (
     step === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
     perpsUseCase === PERPS_UI_USE_CASE.receive

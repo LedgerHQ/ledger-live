@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import {
   ListItem,
   ListItemContent,
@@ -12,40 +12,45 @@ import { ChevronDown } from "@ledgerhq/lumen-ui-react/symbols";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { cn } from "LLD/utils/cn";
 
-type DepositAccountSelectorProps = Readonly<{
+type PerpsAccountSelectorProps = Readonly<{
+  title: string;
   ticker: string;
   ledgerId: string;
   accountName: string | null;
   counterValue: string | null;
+  accountLabelKey: string;
+  noAccountLabel: string;
   exceedsBalance: boolean;
   missingAccount: boolean;
   onSelect: () => void;
+  testId: string;
 }>;
 
-function DepositAccountDescription({
+function AccountDescription({
   accountName,
   counterValue,
+  accountLabelKey,
+  noAccountLabel,
   exceedsBalance,
   missingAccount,
 }: Pick<
-  DepositAccountSelectorProps,
-  "accountName" | "counterValue" | "exceedsBalance" | "missingAccount"
+  PerpsAccountSelectorProps,
+  | "accountName"
+  | "counterValue"
+  | "accountLabelKey"
+  | "noAccountLabel"
+  | "exceedsBalance"
+  | "missingAccount"
 >) {
-  const { t } = useTranslation();
-
   if (accountName === null) {
-    return (
-      <span className={cn(missingAccount && "text-error")}>
-        {t("perpsDeposit.selectCurrencyNoAccount")}
-      </span>
-    );
+    return <span className={cn(missingAccount && "text-error")}>{noAccountLabel}</span>;
   }
 
   if (counterValue === null) return <span>{accountName}</span>;
 
   return (
     <Trans
-      i18nKey="perpsDeposit.selectCurrencyAccount"
+      i18nKey={accountLabelKey}
       values={{ accountName, counterValue }}
       components={{
         balance: <span className={cn(exceedsBalance && "text-error")} />,
@@ -54,36 +59,22 @@ function DepositAccountDescription({
   );
 }
 
-export function DepositAccountSelector({
+export function PerpsAccountSelector({
+  title,
   ticker,
   ledgerId,
-  accountName,
-  counterValue,
-  exceedsBalance,
-  missingAccount,
   onSelect,
-}: DepositAccountSelectorProps) {
-  const { t } = useTranslation();
-
+  testId,
+  ...descriptionProps
+}: PerpsAccountSelectorProps) {
   return (
-    <ListItem
-      className="bg-surface mt-24"
-      onClick={onSelect}
-      data-testid="perps-deposit-select-currency"
-    >
+    <ListItem className="bg-surface mt-24" onClick={onSelect} data-testid={testId}>
       <ListItemLeading>
         <CryptoIcon size={32} ledgerId={ledgerId} ticker={ticker} />
         <ListItemContent>
-          <ListItemTitle>
-            {t("perpsDeposit.selectCurrencyTitle", { currencyTicker: ticker })}
-          </ListItemTitle>
+          <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription>
-            <DepositAccountDescription
-              accountName={accountName}
-              counterValue={counterValue}
-              exceedsBalance={exceedsBalance}
-              missingAccount={missingAccount}
-            />
+            <AccountDescription {...descriptionProps} />
           </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
