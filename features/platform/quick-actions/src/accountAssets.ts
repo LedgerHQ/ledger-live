@@ -10,31 +10,25 @@ export type HeldAsset<TCurrency extends WithId, TAccount extends Spendable, TPar
 
 type TokenAccountLike = Spendable & Readonly<{ token: WithId }>;
 
-type AccountWithTokens = Spendable &
-  Readonly<{ currency: WithId; subAccounts?: readonly TokenAccountLike[] }>;
+type AccountWithTokens<TCoin extends WithId, TTokenAccount extends TokenAccountLike> = Spendable &
+  Readonly<{ currency: TCoin; subAccounts?: readonly TTokenAccount[] }>;
 
-type TokenAccountOf<TAccount> = TAccount extends { subAccounts?: readonly (infer T)[] } ? T : never;
-
-type TokenOf<TAccount> = TokenAccountOf<TAccount> extends { token: infer T } ? T : never;
-
-type CoinOf<TAccount> = TAccount extends { currency: infer C } ? C : never;
-
-export function listHeldAssets<TAccount extends AccountWithTokens>(
-  account: TAccount,
+export function listHeldAssets<
+  TCoin extends WithId,
+  TTokenAccount extends TokenAccountLike,
+  TAccount extends Spendable,
+>(
+  account: TAccount & AccountWithTokens<TCoin, TTokenAccount>,
   blacklistedTokenIds: ReadonlySet<string>,
-): readonly HeldAsset<
-  CoinOf<TAccount> | TokenOf<TAccount>,
-  TAccount | TokenAccountOf<TAccount>,
-  TAccount
->[] {
+): readonly HeldAsset<TCoin | TTokenAccount["token"], TAccount | TTokenAccount, TAccount>[] {
   const tokens = (account.subAccounts ?? [])
     .filter(({ token }) => !blacklistedTokenIds.has(token.id))
     .map(tokenAccount => ({
-      currency: tokenAccount.token as TokenOf<TAccount>,
-      account: tokenAccount as TokenAccountOf<TAccount>,
+      currency: tokenAccount.token,
+      account: tokenAccount,
       parentAccount: account,
     }));
-  return [{ currency: account.currency as CoinOf<TAccount>, account }, ...tokens];
+  return [{ currency: account.currency, account }, ...tokens];
 }
 
 const hasSpendableBalance = ({ account }: HeldAsset<WithId, Spendable, unknown>) =>
