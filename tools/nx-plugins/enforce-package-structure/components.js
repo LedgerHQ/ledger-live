@@ -247,7 +247,8 @@ function hasDefaultModifier(node) {
  *
  * `declarations` holds the top-level declarations, `bindings` maps a local name to the value import
  * it comes from, `localExports` maps an exported name to a local name, `named` maps an exported name
- * to a re-export, `stars` lists the `export * from` specifiers. `types` holds the top-level type
+ * to a re-export, `typeExports` maps a name a type-only local export clause exports to a local name,
+ * `stars` lists the `export * from` specifiers. `types` holds the top-level type
  * aliases and interfaces, `imports` maps a local name to any import, type-only and namespace ones
  * included.
  *
@@ -273,6 +274,8 @@ function parseModule(file, source) {
   const bindings = new Map();
   /** @type {Map<string, string>} exported name to local name */
   const localExports = new Map();
+  /** @type {Map<string, string>} exported name to local name, for `export type { X }` */
+  const typeExports = new Map();
   /** @type {Map<string, { specifier: string, imported: string }>} */
   const named = new Map();
   /** @type {string[]} */
@@ -339,28 +342,43 @@ function parseModule(file, source) {
       if (clause.namedBindings && ts.isNamespaceImport(clause.namedBindings)) {
         imports.set(clause.namedBindings.name.text, { specifier, imported: "*" });
       }
-    } else if (ts.isExportDeclaration(statement) && !statement.isTypeOnly) {
+    } else if (ts.isExportDeclaration(statement)) {
       const specifier =
         statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)
           ? statement.moduleSpecifier.text
           : null;
       const clause = statement.exportClause;
       if (!clause) {
-        if (specifier) stars.push(specifier);
+        if (specifier && !statement.isTypeOnly) stars.push(specifier);
         continue;
       }
       if (!ts.isNamedExports(clause)) continue;
       for (const element of clause.elements) {
-        if (element.isTypeOnly) continue;
         const exported = element.name.text;
         const local = (element.propertyName ?? element.name).text;
-        if (specifier) named.set(exported, { specifier, imported: local });
-        else localExports.set(exported, local);
+        if (statement.isTypeOnly || element.isTypeOnly) {
+          if (!specifier) typeExports.set(exported, local);
+        } else if (specifier) {
+          named.set(exported, { specifier, imported: local });
+        } else {
+          localExports.set(exported, local);
+        }
       }
     }
   }
 
-  return { sourceFile, lineOf, declarations, types, bindings, imports, localExports, named, stars };
+  return {
+    sourceFile,
+    lineOf,
+    declarations,
+    types,
+    bindings,
+    imports,
+    localExports,
+    typeExports,
+    named,
+    stars,
+  };
 }
 
 /**
@@ -543,8 +561,8 @@ function camelCaseGlob(glob) {
  * @param {ReturnType<typeof parseModule>} module
  * @param {Set<string>} [seen]
  * @returns {{ fn?: ts.SignatureDeclaration, typeArgument?: ts.TypeNode } | null} the function a
- *   component evaluates to, with the props type a `forwardRef<Ref, Props>` call names; that type
- *   is the public contract, so it is kept when the render function is out of reach
+ *   component evaluates to, with the props type a `forwardRef<Ref, Props>` or `memo<Props>` call
+ *   names; that type is the public contract, so it is kept when the render function is out of reach
  */
 function componentFunction(node, module, seen = new Set()) {
   if (!node) return null;
@@ -567,7 +585,7 @@ function componentFunction(node, module, seen = new Set()) {
       : "";
   if (!COMPONENT_WRAPPERS.has(name)) return null;
   const inner = componentFunction(expression.arguments[0], module, seen);
-  const typeArgument = name === "forwardRef" ? expression.typeArguments?.[1] : undefined;
+  const typeArgument = expression.typeArguments?.[name === "forwardRef" ? 1 : 0];
   if (!inner && !typeArgument) return null;
   return { fn: inner?.fn, typeArgument: typeArgument ?? inner?.typeArgument };
 }
@@ -625,7 +643,11 @@ function contractOf(file, name, platform, load) {
   const contract = target ? load(target) : null;
   const declaration =
     contract?.types.get(imported.imported) ??
-    contract?.types.get(contract.localExports.get(imported.imported) ?? "");
+    contract?.types.get(
+      contract.localExports.get(imported.imported) ??
+        contract.typeExports.get(imported.imported) ??
+        "",
+    );
   if (!target || !declaration) return { code: "contract-reexported", imported: target ?? "" };
   return { file: target, declaration };
 }
@@ -1026,7 +1048,7 @@ function extraExportsOf(file, module) {
     return Boolean(
       declaration?.isFunction &&
       file.endsWith(".tsx") &&
-      (local === "*default*" || PASCAL_CASE.test(exported)),
+      (local === "*default*" || PASCAL_CASE.test(exported === "default" ? local : exported)),
     );
   }
   const extra = [];

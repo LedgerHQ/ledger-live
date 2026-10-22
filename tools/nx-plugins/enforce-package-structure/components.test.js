@@ -458,6 +458,13 @@ function memoCard(platform) {
   return `import { memo } from "react";\nimport { CardImpl } from "./CardImpl.${platform}";\nexport const Card = memo(CardImpl);\n`;
 }
 
+/**
+ * @param {string} props the memo props argument; the render callback takes no parameter
+ */
+function memoPropsCard(props) {
+  return `import { memo } from "react";\nimport type { ${props} } from "./Card.types";\nexport const Card = memo<${props}>(() => null);\n`;
+}
+
 test("R2 reads the forwardRef props argument before the render function's annotation", () => {
   const files = {
     ...card({
@@ -468,6 +475,21 @@ test("R2 reads the forwardRef props argument before the render function's annota
     "src/Card.native.tsx": annotatedForwardRefCard("NativeProps"),
   };
   assert.deepEqual(check(files), ["R2 props-name-mismatch Card"]);
+});
+
+test("R2 reads the props argument of memo when the render callback takes no parameter", () => {
+  const files = {
+    ...card({
+      "Card.types.ts":
+        "export type WebProps = { onPress(): void };\nexport type NativeProps = WebProps;\n",
+    }),
+    "src/Card.web.tsx": memoPropsCard("WebProps"),
+    "src/Card.native.tsx": memoPropsCard("NativeProps"),
+  };
+  assert.deepEqual(check(files), [
+    "R2 props-name-mismatch Card",
+    "R3 contract-gesture-callback Card",
+  ]);
 });
 
 test("R2 keeps the forwardRef props argument when the render function is imported", () => {
@@ -493,6 +515,8 @@ test("R2 passes: a default-exported contract imported by both implementations", 
   for (const contractModule of [
     "export default interface CardProps { title: string }\n",
     "type CardProps = { title: string };\nexport { CardProps as default };\n",
+    "type CardProps = { title: string };\nexport type { CardProps as default };\n",
+    "type CardProps = { title: string };\nexport { type CardProps as default };\n",
   ]) {
     const implementation =
       'import type CardProps from "./Card.types";\nexport function Card(props: CardProps) { return null; }\n';
@@ -924,6 +948,17 @@ test("R4 passes: a platform module that exports its component, also as default",
       ...card(contract("title: string;")),
       "src/Card.web.tsx":
         'import type { CardProps } from "./Card.types";\nfunction Card(props: CardProps) { return null; }\nexport { Card };\nexport default Card;\n',
+    }),
+    [],
+  );
+});
+
+test("R4 passes: a component exported again as default in the same clause", () => {
+  assert.deepEqual(
+    check({
+      ...card(contract("title: string;")),
+      "src/Card.web.tsx":
+        'import type { CardProps } from "./Card.types";\nfunction Card(props: CardProps) { return null; }\nexport { Card, Card as default };\n',
     }),
     [],
   );
