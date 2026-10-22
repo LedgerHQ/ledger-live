@@ -69,7 +69,6 @@ describe("Coin Modules Monitoring", () => {
       expect(logs).toEqual({
         entries: expect.arrayContaining([
           {
-            outcome: "success",
             duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
@@ -101,7 +100,6 @@ describe("Coin Modules Monitoring", () => {
             callsPerOperation: 0,
           },
           {
-            outcome: "success",
             duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
@@ -131,7 +129,6 @@ describe("Coin Modules Monitoring", () => {
             networkCallsByDomain: {},
           },
           {
-            outcome: "success",
             duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
@@ -163,7 +160,6 @@ describe("Coin Modules Monitoring", () => {
             callsPerOperation: 0,
           },
           {
-            outcome: "success",
             duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
@@ -193,23 +189,11 @@ describe("Coin Modules Monitoring", () => {
             networkCallsByDomain: {},
           },
         ]),
-        failures: [
-          {
-            outcome: "error",
-            error: "Unavailable",
-            failedAfter: expect.any(Number),
-            currencyName: "solana",
-            coinModuleName: "solana",
-            operationType: "scan",
-            accountType: "big",
-            accountAddressOrXpub: "3ot74WntJpc7mUQQyxi8zF2c21Hb2qM6K28Mb3epLc9U",
-          },
-        ],
         failed: true,
       });
     });
 
-    it("keeps the scan and reports the sync when only the sync fails", async () => {
+    it("keeps the scan when only the sync fails", async () => {
       let calls = 0;
       jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockResolvedValue({
         sync: makeSync({
@@ -235,15 +219,7 @@ describe("Coin Modules Monitoring", () => {
       const logs = await run(["solana"], ["average"]);
 
       expect(logs).toEqual({
-        entries: [expect.objectContaining({ operationType: "scan", outcome: "success" })],
-        failures: [
-          expect.objectContaining({
-            operationType: "sync",
-            outcome: "error",
-            error: "Sync unavailable",
-            failedAfter: expect.any(Number),
-          }),
-        ],
+        entries: [expect.objectContaining({ operationType: "scan" })],
         failed: true,
       });
     });
@@ -265,7 +241,6 @@ describe("Coin Modules Monitoring", () => {
       expect(logs).toEqual({
         entries: [
           expect.objectContaining({
-            outcome: "success",
             operationType: "throughput",
             accountType: "huge",
             duration: 300,
@@ -275,7 +250,6 @@ describe("Coin Modules Monitoring", () => {
             exhausted: false,
           }),
         ],
-        failures: [],
         failed: false,
       });
     });
@@ -285,18 +259,7 @@ describe("Coin Modules Monitoring", () => {
 
       const logs = await run(["solana"], ["huge"]);
 
-      expect(logs).toEqual({
-        entries: [],
-        failures: [
-          expect.objectContaining({
-            outcome: "error",
-            error: "HTTP 429",
-            operationType: "throughput",
-            accountType: "huge",
-          }),
-        ],
-        failed: false,
-      });
+      expect(logs).toEqual({ entries: [], failed: false });
     });
   });
 });

@@ -141,7 +141,6 @@ When `SUBMIT_LOGS` environment variable is set, the tool automatically submits p
 
 ```json
 {
-  "outcome": "success",
   "duration": 1234,
   "currencyName": "ethereum",
   "coinModuleName": "ethereum",
@@ -162,8 +161,6 @@ When `SUBMIT_LOGS` environment variable is set, the tool automatically submits p
 ```
 
 `opsPerSecond` and `callsPerOperation` are set on `scan` and `throughput` entries. `throughput` entries also have `pages`, `pageDuration` and `exhausted` (whether the history ended within the budget).
-
-A failed phase is submitted too, with `outcome` set to `timeout` or `error`, the `error` message and `failedAfter` (milliseconds until the failure), so that dashboards show a failure instead of a gap. Failed entries have no `duration`, so they stay out of duration graphs.
 
 ## 📈 Metrics Collected
 

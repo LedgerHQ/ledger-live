@@ -13,18 +13,14 @@ configuration.setServerVariables({
 });
 const apiV2 = new v2.LogsApi(configuration);
 
-interface BaseLogEntry {
+export interface LogEntry {
+  duration: number;
   currencyName: string;
   coinModuleName: string;
   operationType: "scan" | "sync" | "throughput";
   accountType: AccountType;
-  accountAddressOrXpub: string;
-}
-
-export interface LogEntry extends BaseLogEntry {
-  outcome: "success";
-  duration: number;
   transactions: number;
+  accountAddressOrXpub: string;
   totalNetworkCalls: number;
   networkCallsByDomain: Record<string, number>;
   cpu: Dist;
@@ -36,17 +32,7 @@ export interface LogEntry extends BaseLogEntry {
   exhausted?: boolean;
 }
 
-/**
- * A failed phase is logged too, so that a timeout shows up in Datadog instead of a gap.
- * It has no `duration`, to keep failures out of the existing duration graphs
- */
-export interface FailureLogEntry extends BaseLogEntry {
-  outcome: "timeout" | "error";
-  error: string;
-  failedAfter: number;
-}
-
-export async function submitLogs(entries: (LogEntry | FailureLogEntry)[]) {
+export async function submitLogs(entries: LogEntry[]) {
   if (!process.env.SUBMIT_LOGS) {
     return;
   }

@@ -21,13 +21,12 @@ import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { isGenericCoinFrameworkFamily } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import currencies, { AccountInfo, AccountType } from "./currencies";
-import { FailureLogEntry, LogEntry, submitLogs } from "./datadog";
+import { LogEntry, submitLogs } from "./datadog";
 import { measureThroughput } from "./huge";
 import { Dist, computeStats, measureCalls } from "./measure";
 
 interface RunResult {
   entries: LogEntry[];
-  failures: FailureLogEntry[];
   failed: boolean;
 }
 
@@ -164,12 +163,10 @@ function getSync(currency: CryptoCurrency) {
 
 const ACCOUNT_SYNC_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes per scan or sync phase
 
-class TimeoutError extends Error {}
-
 function withTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(
-      () => reject(new TimeoutError(`${label} timed out after ${ACCOUNT_SYNC_TIMEOUT_MS / 1000}s`)),
+      () => reject(new Error(`${label} timed out after ${ACCOUNT_SYNC_TIMEOUT_MS / 1000}s`)),
       ACCOUNT_SYNC_TIMEOUT_MS,
     );
     promise.then(resolve, reject).finally(() => clearTimeout(timer));
@@ -196,7 +193,6 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
   });
   const result: RunResult = {
     entries: [],
-    failures: [],
     failed: false,
   };
 
@@ -223,10 +219,6 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
       console.log(
         `\n[${++i} / ${nbOfAccounts}] Start (currency = "${currencyId}" account = "${accountType}")`,
       );
-
-      // Phase in progress, to report a failure on the right operation
-      let operationType: LogEntry["operationType"] = accountType === "huge" ? "throughput" : "scan";
-      let phaseStart = Date.now();
 
       try {
         if (accountType === "huge") {
@@ -260,7 +252,6 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
           );
 
           result.entries.push({
-            outcome: "success",
             duration,
             currencyName: currency.id,
             coinModuleName: currency.family,
@@ -298,7 +289,6 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
 
         // Pushed before the sync, so that a failing sync does not drop the scan measurements
         result.entries.push({
-          outcome: "success",
           duration: scanDuration,
           currencyName: currency.id,
           coinModuleName: currency.family,
@@ -314,8 +304,6 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         });
 
         const startSync = Date.now();
-        operationType = "sync";
-        phaseStart = startSync;
         const {
           totalCalls: syncCalls,
           callsByDomain: syncRoutes,
@@ -345,7 +333,6 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         );
 
         result.entries.push({
-          outcome: "success",
           duration: syncDuration,
           currencyName: currency.id,
           coinModuleName: currency.family,
@@ -368,16 +355,6 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         if (err instanceof Error) {
           logErrorProperties(err);
         }
-        result.failures.push({
-          outcome: err instanceof TimeoutError ? "timeout" : "error",
-          error: err instanceof Error ? err.message : String(err),
-          failedAfter: Date.now() - phaseStart,
-          currencyName: currency.id,
-          coinModuleName: currency.family,
-          operationType,
-          accountType,
-          accountAddressOrXpub: info.xpub ?? info.address,
-        });
         // A huge account only reports its throughput, its failures do not fail the run
         if (accountType !== "huge") {
           result.failed = true;
@@ -386,7 +363,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
     }
   }
 
-  await submitLogs([...result.entries, ...result.failures]);
+  await submitLogs(result.entries);
 
   return result;
 }
