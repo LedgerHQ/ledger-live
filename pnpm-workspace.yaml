@@ -267,6 +267,8 @@ minimumReleaseAgeExclude:
 autoInstallPeers: false
 enablePrePostScripts: true
 saveExact: true
+# pnpm 11 defaults to "install", which would turn CI's filtered installs into full ones on the next pnpm run
+verifyDepsBeforeRun: false
 # Workaround for Prefab 2.1.0 / Clikt bug splitting paths at '='
 # See: https://github.com/google/prefab/issues/187
 virtualStoreDirMaxLength: 80
@@ -330,23 +332,28 @@ patchedDependencies:
   "usb@2.17.0": "patches/usb@2.17.0.patch"
   "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
 
-onlyBuiltDependencies:
-  - "@apollo/protobufjs"
-  - "@datadog/mobile-react-native"
-  - "@swc/core"
-  - "@taquito/taquito"
-  - "bigint-buffer"
-  - "bufferutil"
-  - "core-js"
-  - "core-js-pure"
-  - "detox"
-  - "dtrace-provider"
-  - "electron"
-  - "esbuild"
-  - "keccak"
-  - "msw"
-  - "nx"
-  - "protobufjs"
-  - "sqlite3"
-  - "utf-8-validate"
-  - "usb"
+allowBuilds:
+  "@apollo/protobufjs": true
+  "@datadog/mobile-react-native": true
+  "@firebase/util": false
+  "@parcel/watcher": false
+  "@sentry/node-native-stacktrace": false
+  "@swc/core": true
+  "@taquito/taquito": true
+  "bigint-buffer": true
+  "bufferutil": true
+  "core-js": true
+  "core-js-pure": true
+  "detox": true
+  "dtrace-provider": true
+  "electron": true
+  "esbuild": true
+  "keccak": true
+  "msw": true
+  "nx": true
+  "protobufjs": true
+  "secp256k1": false
+  "sqlite3": true
+  "unrs-resolver": false
+  "usb": true
+  "utf-8-validate": true
