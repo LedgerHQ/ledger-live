@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess } from "node:child_process";
+import { createHash } from "node:crypto";
 import { chmodSync, closeSync, fchmodSync, mkdirSync, openSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -14,11 +15,20 @@ const STARTUP_TIMEOUT_MS = 30_000;
 const STARTUP_POLL_MS = 100;
 const START_LOCK_MARGIN_MS = 5_000;
 
+/** File name stem of a profile's listener files: the id lowercased, plus a hash of the exact id.
+ * Profile ids are case-sensitive, so `Bot` and `bot` must not share files on a case-insensitive
+ * filesystem (macOS by default). Every stem ends in its hash, so no suffix makes one stem another. */
+function fileStem(profileId: string): string {
+  const hash = createHash("sha256").update(profileId).digest("hex").slice(0, 8);
+  return `${profileId.toLowerCase()}-${hash}`;
+}
+
 /** Per-profile files of an `enroll` listener under the CLI state dir. Computed lazily so it follows
  * the current `stateDir()`, like the session paths. */
 export function enrollListenerPaths(profileId: string): { logPath: string; lockPath: string } {
   const dir = join(stateDir(APP_NAME), LISTENER_DIR);
-  return { logPath: join(dir, `${profileId}.log`), lockPath: join(dir, `${profileId}.lock`) };
+  const stem = fileStem(profileId);
+  return { logPath: join(dir, `${stem}.log`), lockPath: join(dir, `${stem}.lock`) };
 }
 
 function ensureListenerDir(): void {
@@ -54,8 +64,8 @@ export async function withEnrollListenerLock<T>(
  * first one's startup instead of racing it; the listener child never takes this lock. */
 export async function withEnrollStartLock<T>(profileId: string, fn: () => Promise<T>): Promise<T> {
   ensureListenerDir();
-  // Not `<id>.start.lock`: that is the listener lock of the valid profile id `<id>.start`.
-  const lockPath = join(stateDir(APP_NAME), LISTENER_DIR, `${profileId}.lock.start`);
+  // Ends in neither `.lock` nor `.log`, so it is never a listener's lock or log.
+  const lockPath = join(stateDir(APP_NAME), LISTENER_DIR, `${fileStem(profileId)}.lock.start`);
   return withFileLock(lockPath, fn, STARTUP_TIMEOUT_MS + START_LOCK_MARGIN_MS);
 }
 
