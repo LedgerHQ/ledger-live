@@ -4,6 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { CliProcessExitError } from "../../cli-process-exit-error";
+import { createCommandOutput } from "../../output";
 import { installOutputCapture } from "../../shared/ui";
 import {
   activateAgentIntentMocks,
@@ -43,7 +44,7 @@ afterAll(() => {
   rmSync(stateHome, { recursive: true, force: true });
 });
 
-const { default: waitCommand } = await import("./wait");
+const { default: waitCommand, pollEnrollment } = await import("./wait");
 const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
 
 // Resolved per test: XDG_STATE_HOME only points at the temp dir once `beforeAll` has run.
@@ -77,14 +78,20 @@ function runWait(flags: { timeout?: string; output?: "human" | "json" } = {}) {
   ).handler({ flags: { profile: "test-agent", timeout: "25s", ...flags } });
 }
 
-/** Runs `wait --output json` to completion, returning its exit code and its single output line. */
-async function runWaitJson(
+/** Runs the polling loop the handler runs, with a 10 ms interval, so polling tests do not sleep. */
+function pollWait(timeoutMs = 25_000, format: "human" | "json" = "json") {
+  const out = createCommandOutput(format, { command: "agent-intent wait", network: "all" });
+  return out.run(() => pollEnrollment(out, "test-agent", { timeoutMs, intervalMs: 10 }));
+}
+
+/** Runs `run` to completion, returning its exit code and its single JSON output line. */
+async function jsonResult(
   stdout: string[],
-  flags: { timeout?: string } = {},
+  run: () => Promise<void>,
 ): Promise<{ code: number; line: Record<string, unknown> }> {
   let code = 0;
   try {
-    await runWait({ ...flags, output: "json" });
+    await run();
   } catch (e) {
     if (!(e instanceof CliProcessExitError)) throw e;
     code = e.code;
@@ -92,6 +99,15 @@ async function runWaitJson(
   const lines = stdout.join("").trim().split("\n");
   expect(lines).toHaveLength(1);
   return { code, line: JSON.parse(lines[0]) };
+}
+
+/** Runs `wait --output json` through its handler. */
+function runWaitJson(stdout: string[], flags: { timeout?: string } = {}) {
+  return jsonResult(stdout, () => runWait({ ...flags, output: "json" }));
+}
+
+function pollWaitJson(stdout: string[], timeoutMs?: number) {
+  return jsonResult(stdout, () => pollWait(timeoutMs));
 }
 
 describe("agent-intent wait", () => {
@@ -142,7 +158,7 @@ describe("agent-intent wait", () => {
     profileReads = [pendingProfile(), ENROLLED];
 
     await withEnrollListenerLock("test-agent", async () => {
-      const { code, line } = await runWaitJson(stdout);
+      const { code, line } = await pollWaitJson(stdout);
 
       expect(code).toBe(0);
       expect(line).toMatchObject({ enrolled: true });
@@ -161,7 +177,7 @@ describe("agent-intent wait", () => {
     };
     profileReads = [pendingProfile(), ENROLLED];
 
-    const { code, line } = await runWaitJson(stdout);
+    const { code, line } = await pollWaitJson(stdout);
 
     expect(code).toBe(0);
     expect(line).toMatchObject({ enrolled: true });
@@ -182,7 +198,7 @@ describe("agent-intent wait", () => {
     ]);
 
     await withEnrollListenerLock("test-agent", async () => {
-      const { code, line } = await runWaitJson(stdout, { timeout: "1s" });
+      const { code, line } = await pollWaitJson(stdout, 50);
 
       expect(code).toBe(0);
       expect(line).toEqual({
@@ -199,7 +215,7 @@ describe("agent-intent wait", () => {
 
   it("omits the link from enrollment-waiting when the log no longer has it", async () => {
     await withEnrollListenerLock("test-agent", async () => {
-      const { line } = await runWaitJson(stdout, { timeout: "1s" });
+      const { line } = await pollWaitJson(stdout, 50);
 
       expect(line.type).toBe("enrollment-waiting");
       expect(line).not.toHaveProperty("enrollmentUrl");
@@ -270,9 +286,9 @@ describe("agent-intent wait", () => {
 
     await withEnrollListenerLock("test-agent", async () => {
       const started = Date.now();
-      const { code, line } = await runWaitJson(stdout, { timeout: "1s" });
+      const { code, line } = await pollWaitJson(stdout, 100);
 
-      expect(Date.now() - started).toBeGreaterThanOrEqual(900);
+      expect(Date.now() - started).toBeGreaterThanOrEqual(90);
       expect(code).toBe(0);
       expect(line).toMatchObject({
         type: "enrollment-waiting",
@@ -298,7 +314,7 @@ describe("agent-intent wait", () => {
     profileReads = [pendingProfile(-1_000), ENROLLED];
 
     await withEnrollListenerLock("test-agent", async () => {
-      const { code, line } = await runWaitJson(stdout, { timeout: "25s" });
+      const { code, line } = await pollWaitJson(stdout);
 
       expect(code).toBe(0);
       expect(line).toMatchObject({ enrolled: true });
@@ -309,7 +325,7 @@ describe("agent-intent wait", () => {
     profileReads = [undefined, undefined, ENROLLED];
 
     await withEnrollListenerLock("test-agent", async () => {
-      const { code, line } = await runWaitJson(stdout);
+      const { code, line } = await pollWaitJson(stdout);
 
       expect(code).toBe(0);
       expect(line).toMatchObject({ enrolled: true });
@@ -322,9 +338,9 @@ describe("agent-intent wait", () => {
 
     await withEnrollListenerLock("test-agent", async () => {
       const started = Date.now();
-      const { code, line } = await runWaitJson(stdout, { timeout: "1s" });
+      const { code, line } = await pollWaitJson(stdout, 100);
 
-      expect(Date.now() - started).toBeGreaterThanOrEqual(900);
+      expect(Date.now() - started).toBeGreaterThanOrEqual(90);
       expect(code).toBe(1);
       expect(line).toMatchObject({ error: { code: "profile_not_found" } });
     });

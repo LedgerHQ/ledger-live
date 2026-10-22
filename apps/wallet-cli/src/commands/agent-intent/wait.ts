@@ -124,6 +124,30 @@ function checkProfile(
   return undefined;
 }
 
+/** Polls local state until the enrollment of `profileId` is enrolled, failed, or still pending at
+ * `timeoutMs`, and reports that on `out`. `intervalMs` is injectable so tests need not sleep. */
+export async function pollEnrollment(
+  out: CommandOutput,
+  profileId: string,
+  opts: { timeoutMs: number; intervalMs?: number },
+): Promise<void> {
+  const { timeoutMs, intervalMs = POLL_INTERVAL_MS } = opts;
+  const deadline = Date.now() + timeoutMs;
+  const { logPath, lockPath } = enrollListenerPaths(profileId);
+
+  for (;;) {
+    // Read before the session: the listener saves its result before releasing the lock, so
+    // once the lock reads dead, the session read below already shows anything it saved.
+    const listenerPid = readLiveLockHolderPid(lockPath);
+    const profile = (await Session.read()).getAgentIntentProfile(profileId);
+    const waitMs = profile
+      ? checkProfile(out, profile, listenerPid, deadline, logPath)
+      : checkMissingProfile(profileId, listenerPid, deadline);
+    if (waitMs === undefined) return;
+    await sleep(Math.min(intervalMs, waitMs));
+  }
+}
+
 export default defineCommand({
   name: "wait",
   description:
@@ -145,22 +169,10 @@ export default defineCommand({
       command: "agent-intent wait",
       network: "all",
     });
-    await out.run(async () => {
-      const profileId = flags.profile;
-      const deadline = Date.now() + parseDurationMs(flags.timeout, "timeout");
-      const { logPath, lockPath } = enrollListenerPaths(profileId);
-
-      for (;;) {
-        // Read before the session: the listener saves its result before releasing the lock, so
-        // once the lock reads dead, the session read below already shows anything it saved.
-        const listenerPid = readLiveLockHolderPid(lockPath);
-        const profile = (await Session.read()).getAgentIntentProfile(profileId);
-        const waitMs = profile
-          ? checkProfile(out, profile, listenerPid, deadline, logPath)
-          : checkMissingProfile(profileId, listenerPid, deadline);
-        if (waitMs === undefined) return;
-        await sleep(Math.min(POLL_INTERVAL_MS, waitMs));
-      }
-    });
+    await out.run(() =>
+      pollEnrollment(out, flags.profile, {
+        timeoutMs: parseDurationMs(flags.timeout, "timeout"),
+      }),
+    );
   },
 });
