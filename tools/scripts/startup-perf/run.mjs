@@ -57,7 +57,10 @@ const BRIDGE_PORT = Number(opts["bridge-port"]);
 const OUT_DIR = opts["out-dir"];
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
-const MAX_CONSECUTIVE_FAILURES = 6;
+// Per device: with strict alternation, a device that never reads would otherwise go unnoticed.
+const MAX_CONSECUTIVE_FAILURES = 4;
+// After a dialog's process is restarted, let the device settle before the next launch.
+const DIALOG_RECOVERY_MS = 30_000;
 
 function validateOptions() {
   if (!["android", "ios"].includes(PLATFORM)) throw new Error("--platform must be android or ios");
@@ -170,6 +173,43 @@ const android = {
       },
     };
   },
+  // Package named by a system dialog that has the focus ("System UI isn't responding", a crash
+  // dialog), or null. It covers the app, so Maestro cannot read the screen.
+  async blockingDialog(device) {
+    const { stdout } = await run("adb", ["-s", device, "shell", "dumpsys", "window"], {
+      allowFail: true,
+    });
+    return parseBlockingDialog(stdout);
+  },
+  // Emulators under load show these after boot. Restart the process, like
+  // tools/scripts/wait_emulator_idle.sh does for the E2E emulators.
+  async clearDialogs(device) {
+    const cleared = [];
+    let pkg = await this.blockingDialog(device);
+    while (pkg && cleared.length < 5) {
+      log(`  ${device}: dialog from ${pkg} on screen, restarting ${pkg}`);
+      cleared.push(pkg);
+      await run("adb", ["-s", device, "shell", "su", "0", "killall", pkg], { allowFail: true });
+      if (pkg === "com.android.systemui") {
+        await run(
+          "adb",
+          [
+            "-s",
+            device,
+            "shell",
+            "am",
+            "start-service",
+            "-n",
+            "com.android.systemui/.SystemUIService",
+          ],
+          { allowFail: true },
+        );
+      }
+      await sleep(5000);
+      pkg = await this.blockingDialog(device);
+    }
+    return cleared;
+  },
   async diagnostics(device, file) {
     const { stdout } = await run("adb", ["-s", device, "logcat", "-d", "-t", "3000"], {
       allowFail: true,
@@ -177,6 +217,14 @@ const android = {
     await writeFile(file, stdout);
   },
 };
+
+export function parseBlockingDialog(dumpsysWindow) {
+  return (
+    dumpsysWindow.match(
+      /mCurrentFocus=.*(?:Application Not Responding|Application Error): ([\w.]+)/,
+    )?.[1] ?? null
+  );
+}
 
 const ios = {
   async install(device, app) {
@@ -193,6 +241,12 @@ const ios = {
     const args = Object.entries(launchArgs).flatMap(([k, v]) => [`-${k}`, String(v)]);
     await run("xcrun", ["simctl", "launch", device, APP_ID, ...args]);
     return {};
+  },
+  async blockingDialog() {
+    return null;
+  },
+  async clearDialogs() {
+    return [];
   },
   async diagnostics(device, file) {
     const { stdout } = await run(
@@ -277,6 +331,12 @@ async function readPerformance(device, debugName) {
       if (parsed) return parsed;
       await sleep(2000);
     }
+    // A second attempt cannot get past a system dialog; the launch is not trusted either.
+    const dialog = await P.blockingDialog(device);
+    if (dialog) {
+      lastTexts.unshift(`(dialog from ${dialog} has the focus)`);
+      break;
+    }
   }
   await writeFile(
     path.join(DEBUG_DIR, `${debugName}.txt`),
@@ -325,6 +385,7 @@ async function inject(device, userdata) {
   try {
     // Only the app being injected may connect: both devices reach the bridge on the same host port.
     for (const d of DEVICES) await P.stop(d);
+    await P.clearDialogs(device);
     await P.launch(device, { mock: "0", wsPort: BRIDGE_PORT, wsToken: "startup-perf" });
     await bridge.waitForClient(180_000);
     // Let the client finish its handshake before the first message.
@@ -346,7 +407,7 @@ async function inject(device, userdata) {
   }
 }
 
-let consecutiveFailures = 0;
+const consecutiveFailures = new Map();
 let lastLaunchDevice = null;
 
 async function sample(meta) {
@@ -361,16 +422,22 @@ async function sample(meta) {
   try {
     // Stop the app on both devices so the idle one is not syncing in the background.
     for (const device of DEVICES) await P.stop(device);
+    const dialogs = [];
+    for (const device of DEVICES) dialogs.push(...(await P.clearDialogs(device)));
+    if (dialogs.length) {
+      record.clearedDialogs = dialogs;
+      await sleep(DIALOG_RECOVERY_MS);
+    }
     await sleep(IDLE_MS);
     lastLaunchDevice = meta.device;
     const launch = await P.launch(meta.device, { mock: "0" });
     await sleep(SETTLE_MS);
     const perf = await readPerformance(meta.device, name);
     Object.assign(record, launch, perf, { ok: true });
-    consecutiveFailures = 0;
+    consecutiveFailures.set(meta.device, 0);
   } catch (error) {
     record.error = String(error?.message ?? error).slice(0, 1500);
-    consecutiveFailures++;
+    consecutiveFailures.set(meta.device, (consecutiveFailures.get(meta.device) ?? 0) + 1);
     await P.diagnostics(meta.device, path.join(DEBUG_DIR, `${name}.log`)).catch(() => {});
   }
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
@@ -378,9 +445,9 @@ async function sample(meta) {
     ? `${record.appStartupTime} ms${record.amStart?.totalTime ? ` (am start ${record.amStart.totalTime} ms)` : ""}`
     : `FAILED: ${record.error.split("\n")[0]}`;
   log(`${meta.warmup ? "warm-up " : ""}${name} on ${meta.device}: ${what}`);
-  if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+  if (consecutiveFailures.get(meta.device) >= MAX_CONSECUTIVE_FAILURES) {
     throw new Error(
-      `${MAX_CONSECUTIVE_FAILURES} launches in a row failed; stopping (see ${DEBUG_DIR})`,
+      `${MAX_CONSECUTIVE_FAILURES} launches in a row failed on ${meta.device}; stopping (see ${DEBUG_DIR})`,
     );
   }
   return record;
