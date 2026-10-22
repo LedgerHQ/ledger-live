@@ -18,10 +18,24 @@ jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
 
-// Countervalues are priced 1:1 with the balance: 100_000 (2 decimals for USD) is $1,000.00.
+// 1 USDC (6 decimals) is worth 2 of the counter value (2 decimals); other assets are priced 1:1
+// with their balance, so 100_000 is 1,000.00.
+const USDC_TO_FIAT = 2 / 10_000;
+const isHyperCore = (currency: unknown) =>
+  typeof currency === "object" &&
+  currency !== null &&
+  "id" in currency &&
+  currency.id === "hypercore";
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
+  useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
+    isHyperCore(currency) ? value.times(USDC_TO_FIAT) : value,
+  useCountervaluesCache: () => ({}),
+}));
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
+  calculate: (_state: unknown, { from, value }: { from: unknown; value: number }) =>
+    isHyperCore(from) ? value / USDC_TO_FIAT : value,
 }));
 
 const mockUseWithdrawCurrencies = jest.fn();
@@ -42,8 +56,7 @@ function createAccount(id: string, currencyId: string, balance: BigNumber.Value)
   };
 }
 
-// 1000.5 in the source currency's units; the screen reads it as USDC.
-// 1000.5 USDC in HyperCore's 6-decimal unit.
+// 1000.5 USDC in HyperCore's 6-decimal unit, worth $2,001.00.
 const sourceAccount = createAccount("source-1", "hypercore", "1000500000");
 const ethAccount = createAccount("eth-1", "ethereum", 100_000);
 const btcAccount = createAccount("btc-1", "bitcoin", 50_000);
@@ -97,17 +110,36 @@ describe("PerpsWithdraw integration", () => {
     mockOpenDrawer.mockImplementation(({ onAccountSelected }) => onAccountSelected(btcAccount));
   });
 
-  it("should show the available balance and label the amount in dollars", () => {
+  it("should show the available balance and label the amount in the counter value", () => {
     renderWithdraw();
 
-    expect(screen.getByText(/\$1,000\.50/)).toBeOnTheScreen();
+    expect(screen.getByText(/\$2,001\.00/)).toBeOnTheScreen();
     expect(screen.getByText("$")).toBeOnTheScreen();
+  });
+
+  it("should follow the user's counter value currency", () => {
+    render(
+      <PerpsWithdrawScreen
+        navigation={mockNavigation as never}
+        route={{ params: { sourceAccount } } as never}
+      />,
+      {
+        overrideInitialState: state => ({
+          ...state,
+          settings: { ...state.settings, counterValue: "EUR" },
+          accounts: { ...state.accounts, active: [sourceAccount, ethAccount] },
+        }),
+      },
+    );
+
+    expect(screen.getByText("€")).toBeOnTheScreen();
+    expect(screen.getByText(/2,001\.00/)).toBeOnTheScreen();
   });
 
   it("should read the balance from the wallet's copy of the source account", () => {
     renderWithdraw({ ...sourceAccount, spendableBalance: new BigNumber(0) });
 
-    expect(screen.getByText(/\$1,000\.50/)).toBeOnTheScreen();
+    expect(screen.getByText(/\$2,001\.00/)).toBeOnTheScreen();
   });
 
   it("should preselect the supported account with the highest fiat balance", () => {
@@ -118,14 +150,15 @@ describe("PerpsWithdraw integration", () => {
     expect(reviewCta()).toBeDisabled();
   });
 
-  it("should keep the 1 USDC fee out of Max and the ratios", async () => {
+  it("should keep the 1 USDC fee out of Max and the ratios, in the counter value", async () => {
     const { user } = renderWithdraw();
 
+    // 999.5 USDC withdrawable, at $2 each.
     await user.press(screen.getByTestId("perps-withdraw-ratio-MAX"));
-    expect(input()).toHaveDisplayValue("999.5");
+    expect(input()).toHaveDisplayValue(/^1\s?999$/);
 
     await user.press(screen.getByTestId("perps-withdraw-ratio-50%"));
-    expect(input()).toHaveDisplayValue("499.75");
+    expect(input()).toHaveDisplayValue("999.5");
   });
 
   it("should show the estimate and enable Review", async () => {
@@ -136,9 +169,10 @@ describe("PerpsWithdraw integration", () => {
     expect(screen.getByText(/Withdraw ~0\.3/)).toBeOnTheScreen();
     expect(screen.getByText("Swap and withdraw via SwapKit")).toBeOnTheScreen();
     expect(reviewCta()).toBeEnabled();
+    // $500 at $2 per USDC.
     expect(mockUsePerpsWithdrawQuote).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        amount: "500",
+        amount: "250",
         sourceAccount: expect.objectContaining({ id: sourceAccount.id }),
         destinationAccount: expect.objectContaining({ id: ethAccount.id }),
         counterValueCurrency: "USD",
@@ -149,7 +183,8 @@ describe("PerpsWithdraw integration", () => {
   it("should flag an amount that leaves no room for the fee, without quoting it", async () => {
     const { user } = renderWithdraw();
 
-    await typeAmount(user, "1000");
+    // $2,000 is 1,000 USDC, but only 999.5 is withdrawable after the fee.
+    await typeAmount(user, "2000");
 
     expect(formError()).toHaveTextContent("Insufficient balance");
     expect(reviewCta()).toBeDisabled();
