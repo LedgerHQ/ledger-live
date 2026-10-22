@@ -354,19 +354,24 @@ command and no manual JSON fallback. **Keep the process running** until it print
 `enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
 `accountAccessEnvironment`). The wait is bounded by `--expires-in` (default 30m).
 
-**Relay the URL whole.** The enrollment (and recovery) URL is ~500 characters and signed: if any
-character is cut off or added, the frontend rejects it ("Agent link not valid"). Chat apps and
-message previews often truncate long URLs. When you hand it to the human:
+**Relay the URL whole.** The enrollment (and recovery) URL is 500+ characters (past 1,000 with a long
+`--name` or `--description`) and signed: if any character is cut off or added, the frontend rejects
+it ("Agent link not valid"). Chat apps and message previews often truncate long URLs. When you hand
+it to the human:
 
 - Send the exact URL from the command output, alone in its own message (in a code block if the chat
-  supports it). No surrounding sentence, no trailing punctuation.
+  supports it). No surrounding sentence, no trailing punctuation. Send the fingerprint in a separate
+  message right after it.
 - Never shorten, redact, summarise or retype any part of it, and never replace part of it with `…`.
   There is nothing to redact (public keys and a signature, no secret key), but send it only to the
   person who will approve it.
-- If the human reports "Agent link not valid", assume the URL was damaged on the way. Check that their
-  copy ends with the full 128-hex-character `signature`, then resend the same URL another way (e.g. as
-  a text file attachment) while `enroll` is still running. Start a new enrollment (new `--profile`)
-  only once that process has exited.
+- If the human reports "Agent link not valid", ask for the sentence under it. Resending the same URL
+  does not fix an expired link, a link for another environment or a link from an outdated CLI: follow
+  that sentence instead. Otherwise assume the URL was damaged on the way: check that their copy is as
+  long as the original and ends with the full 128-hex-character `signature`, then resend the same URL
+  another way (e.g. as a text file attachment) while the wait is still open. Once it has ended,
+  re-run `recover --profile <id>` for a recovery; for an enrollment, start a new one with a new
+  `--profile`.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
