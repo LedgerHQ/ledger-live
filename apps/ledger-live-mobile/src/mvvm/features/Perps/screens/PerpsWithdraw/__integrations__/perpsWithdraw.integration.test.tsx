@@ -43,7 +43,8 @@ function createAccount(id: string, currencyId: string, balance: BigNumber.Value)
 }
 
 // 1000.5 in the source currency's units; the screen reads it as USDC.
-const sourceAccount = createAccount("source-1", "ethereum", "1000500000000000000000");
+// 1000.5 USDC in HyperCore's 6-decimal unit.
+const sourceAccount = createAccount("source-1", "hypercore", "1000500000");
 const ethAccount = createAccount("eth-1", "ethereum", 100_000);
 const btcAccount = createAccount("btc-1", "bitcoin", 50_000);
 const dogeAccount = createAccount("doge-1", "dogecoin", 900_000);
@@ -96,17 +97,18 @@ describe("PerpsWithdraw integration", () => {
     mockOpenDrawer.mockImplementation(({ onAccountSelected }) => onAccountSelected(btcAccount));
   });
 
-  it("should show the available balance in dollars", () => {
+  it("should show the available balance and label the amount in the source currency", () => {
     renderWithdraw();
 
-    expect(screen.getByText(/\$1,000\.50/)).toBeOnTheScreen();
-    expect(screen.getByText("$")).toBeOnTheScreen();
+    expect(screen.getByText(/1,000\.5\sUSDC/)).toBeOnTheScreen();
+    expect(screen.getByText("USDC")).toBeOnTheScreen();
+    expect(screen.queryByText("$")).not.toBeOnTheScreen();
   });
 
   it("should read the balance from the wallet's copy of the source account", () => {
     renderWithdraw({ ...sourceAccount, spendableBalance: new BigNumber(0) });
 
-    expect(screen.getByText(/\$1,000\.50/)).toBeOnTheScreen();
+    expect(screen.getByText(/1,000\.5\sUSDC/)).toBeOnTheScreen();
   });
 
   it("should preselect the supported account with the highest fiat balance", () => {
