@@ -14,6 +14,8 @@ type UseFirmwareUpdateHandoverInput = {
   isDeviceOnboarded: boolean;
   machineState: string | null;
   send: (event: HostOnboardingEvent) => void;
+  /** A completed update rebooted the device. The host opens the next session. */
+  onUpdateCompleted: () => void;
 };
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -27,6 +29,7 @@ export function useFirmwareUpdateHandover({
   isDeviceOnboarded,
   machineState,
   send,
+  onUpdateCompleted,
 }: UseFirmwareUpdateHandoverInput) {
   const navigation = useNavigation<BaseNavigation>();
   const baseNavigation = navigation.getParent<BaseNavigation>(BASE_NAVIGATOR_ID) ?? navigation;
@@ -37,6 +40,8 @@ export function useFirmwareUpdateHandover({
   const freshResultRef = useRef(false);
   const delegatedRef = useRef(false);
   const wasDelegatedRef = useRef(false);
+  const onUpdateCompletedRef = useRef(onUpdateCompleted);
+  onUpdateCompletedRef.current = onUpdateCompleted;
   if (delegated && !wasDelegatedRef.current) closedRef.current = false;
   wasDelegatedRef.current = delegated;
   delegatedRef.current = delegated;
@@ -56,11 +61,21 @@ export function useFirmwareUpdateHandover({
     send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
   }, [send]);
 
-  const onBackFromUpdate = useCallback(() => {
-    if (closedRef.current) return;
-    baseNavigation.goBack();
-    closeHandoverOnce();
-  }, [baseNavigation, closeHandoverOnce]);
+  const onBackFromUpdate = useCallback(
+    (updateStep?: string) => {
+      if (closedRef.current) return;
+      // Focus also reports the return. Mark it handled before goBack runs that effect.
+      awaitingReturnRef.current = false;
+      baseNavigation.goBack();
+      if (updateStep === "completed") {
+        closedRef.current = true;
+        onUpdateCompletedRef.current();
+        return;
+      }
+      closeHandoverOnce();
+    },
+    [baseNavigation, closeHandoverOnce],
+  );
 
   useEffect(() => {
     if (!delegated) {

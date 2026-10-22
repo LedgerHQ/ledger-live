@@ -659,6 +659,32 @@ describe("the firmware handover", () => {
     expect(fake.executeDeviceAction).toHaveBeenCalledTimes(actions);
   });
 
+  it("waits for a new session after a completed update, then checks the device again", async () => {
+    const { actor, fake } = await start(
+      handoverScript([os(seeded), os(seeded)], {
+        firmwareCheck: [updateAvailable, upToDate],
+      }),
+    );
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    const readsBeforeReturn = fake.sendCommand.mock.calls.length;
+    actor.send({ type: "FIRMWARE_UPDATE_COMPLETED" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("awaitingSession");
+    expect(fake.sendCommand).toHaveBeenCalledTimes(readsBeforeReturn);
+
+    actor.send({ type: "SESSION_READY", sessionId: "session-after-update" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({
+      reason: "completed",
+      sessionId: "session-after-update",
+    });
+    expect(fake.genuineCheckRuns()).toBe(2);
+  });
+
   it("re-reads the device when the app's flow returns control", async () => {
     const { actor } = await start(handoverScript([os(unseeded), os({ isBootloader: true })]));
 

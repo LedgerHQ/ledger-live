@@ -265,6 +265,8 @@ export const deviceOnboardingMachine = setup({
             LOCKED: stopsHere,
             TRANSPORT_LOST: stopsHere,
             QUIT: stopsHere,
+            // The OS update rebooted the device. Wait for the next session, then read it.
+            FIRMWARE_UPDATE_COMPLETED: "#deviceOnboarding.awaitingSession",
             FIRMWARE_UPDATE_FLOW_CLOSED: {
               target: "#deviceOnboarding.readingState",
               actions: ["forgetFirmwareCheck", "forgetAttestationAfterUpdate"],

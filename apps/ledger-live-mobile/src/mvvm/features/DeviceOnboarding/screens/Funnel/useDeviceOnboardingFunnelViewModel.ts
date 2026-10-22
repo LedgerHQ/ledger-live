@@ -134,6 +134,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const closeLabel = t("deviceOnboarding.checks.close");
 
   if (onboarding.state === "awaitingSession") {
+    if (!onboarding.error && (onboarding.status === "connecting" || sessionReady)) {
+      return {
+        status: "connecting",
+        title: t("deviceOnboarding.connection.connecting"),
+        closeLabel,
+        onQuit: quitOrLeave,
+      };
+    }
     return {
       status: "failed",
       title: t("deviceOnboarding.connection.failed"),

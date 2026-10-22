@@ -368,6 +368,7 @@ describe("nextStatesFrom", () => {
     } as Parameters<typeof nextStatesFrom>[0];
 
     expect(nextStatesFrom(snapshot)).toEqual([
+      { event: "FIRMWARE_UPDATE_COMPLETED", state: "awaitingSession" },
       { event: "FIRMWARE_UPDATE_FLOW_CLOSED", state: "readingState" },
     ]);
   });
