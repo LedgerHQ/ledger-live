@@ -63,7 +63,7 @@ describe("AccountSettingsSheet (Native)", () => {
     expect(screen.queryByTestId("account-settings-remove-content")).toBeNull();
   });
 
-  it("shows View Explorer when the account currency has an explorer, and opens the address", async () => {
+  it("shows View in explorer when the account currency has an explorer, and opens the address", async () => {
     const { user } = renderSheet({
       account: {
         currency: { explorerViews: [{ address: "https://explorer.test/address/$address" }] },
@@ -78,7 +78,7 @@ describe("AccountSettingsSheet (Native)", () => {
     expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("bc1qaddress"));
   });
 
-  it("hides View Explorer when the account currency has no explorer", () => {
+  it("hides View in explorer when the account currency has no explorer", () => {
     renderSheet();
 
     expect(screen.queryByTestId("account-settings-view-explorer")).toBeNull();

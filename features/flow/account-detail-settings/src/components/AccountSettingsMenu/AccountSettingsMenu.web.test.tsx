@@ -37,7 +37,7 @@ describe("AccountSettingsMenu (Web)", () => {
     expect(handlers.onRemoveAccount).toHaveBeenCalledTimes(1);
   });
 
-  describe("View Explorer", () => {
+  describe("View in explorer", () => {
     it("is hidden without an explorer URL", () => {
       renderMenu();
 
@@ -56,7 +56,7 @@ describe("AccountSettingsMenu (Web)", () => {
         { wrapper: I18nWrapper },
       );
 
-      expect(screen.getByText("View Explorer")).toBeVisible();
+      expect(screen.getByText("View in explorer")).toBeVisible();
       await userEvent.setup().click(screen.getByTestId("account-settings-view-explorer"));
       expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/0xabc");
       expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");

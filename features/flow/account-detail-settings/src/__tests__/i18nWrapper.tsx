@@ -13,7 +13,7 @@ const resources = {
         menu: {
           changeName: "Change name",
           viewAdvancedLogs: "View advanced logs",
-          viewExplorer: "View Explorer",
+          viewExplorer: "View in explorer",
           removeAccount: "Remove account from portfolio",
         },
         changeName: {

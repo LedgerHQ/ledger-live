@@ -111,7 +111,7 @@ describe("AccountSettings (Web)", () => {
     expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("bc1qaddress"));
   });
 
-  it("hides View Explorer when the account currency has no explorer", () => {
+  it("hides View in explorer when the account currency has no explorer", () => {
     renderSettings();
 
     expect(screen.queryByTestId("account-settings-view-explorer")).toBeNull();

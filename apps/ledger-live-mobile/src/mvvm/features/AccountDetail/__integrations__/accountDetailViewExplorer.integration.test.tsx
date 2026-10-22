@@ -35,15 +35,15 @@ function renderAccountDetail(account: Account) {
 }
 
 describe("AccountDetail view explorer", () => {
-  it("shows View Explorer in the settings sheet when the currency has an explorer", async () => {
+  it("shows View in explorer in the settings sheet when the currency has an explorer", async () => {
     const { user } = renderAccountDetail(btcAccount);
 
     await user.press(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.settingsButton));
 
-    expect(screen.getByText("View Explorer")).toBeVisible();
+    expect(screen.getByText("View in explorer")).toBeVisible();
   });
 
-  it("hides View Explorer when the currency has no explorer", async () => {
+  it("hides View in explorer when the currency has no explorer", async () => {
     const account: Account = {
       ...btcAccount,
       currency: { ...btcAccount.currency, explorerViews: [] },
@@ -53,6 +53,6 @@ describe("AccountDetail view explorer", () => {
     await user.press(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.settingsButton));
 
     expect(screen.getByText("View advanced logs")).toBeVisible();
-    expect(screen.queryByText("View Explorer")).toBeNull();
+    expect(screen.queryByText("View in explorer")).toBeNull();
   });
 });
