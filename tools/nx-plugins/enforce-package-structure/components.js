@@ -145,16 +145,17 @@ function isFile(file) {
  * @param {string} fromFile absolute path of the importing module
  * @param {string} specifier
  * @param {Platform} platform
+ * @param {string[]} [extensions] the platform's own by default
  * @returns {string | null} absolute path, or null for a package specifier or a missing file
  */
-function resolveRelative(fromFile, specifier, platform) {
+function resolveRelative(fromFile, specifier, platform, extensions = EXTENSIONS[platform]) {
   if (!specifier.startsWith(".")) return null;
   const base = path.resolve(path.dirname(fromFile), specifier);
   if (isFile(base)) return base;
-  for (const ext of EXTENSIONS[platform]) {
+  for (const ext of extensions) {
     if (isFile(base + ext)) return base + ext;
   }
-  for (const ext of EXTENSIONS[platform]) {
+  for (const ext of extensions) {
     const index = path.join(base, `index${ext}`);
     if (isFile(index)) return index;
   }
@@ -588,6 +589,7 @@ module.exports = {
   checkComponents,
   classifyEntries,
   collectEntryComponents,
+  isIgnoredEntry,
   parseModule,
   resolveRelative,
 };
