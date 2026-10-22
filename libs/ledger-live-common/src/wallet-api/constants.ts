@@ -26,9 +26,9 @@ export const WALLET_API_VERSION = "2.0.0";
  * Without `hwAppId` the currency's own app signs. Any other name is rejected before the device
  * is used, so a live app cannot send a PSBT to an unvetted app. Security-relevant: review changes.
  */
-export const BITCOIN_SIGN_PSBT_ALLOWED_APPS: Readonly<Record<string, readonly string[]>> = {
-  bitcoin: ["Hashi"],
-  bitcoin_testnet: ["Hashi Test"],
+export const BITCOIN_SIGN_PSBT_ALLOWED_APPS: Readonly<Record<string, ReadonlySet<string>>> = {
+  bitcoin: new Set(["Hashi"]),
+  bitcoin_testnet: new Set(["Hashi Test"]),
 };
 
 export const BROWSE_SEARCH_OPTIONS: Fuse.IFuseOptions<AppManifest> = {

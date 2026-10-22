@@ -37,7 +37,7 @@ export function isBitcoinSignPsbtOptionsAllowed(
 ): boolean {
   if (options?.dependencies?.length) return false;
   if (options?.hwAppId === undefined) return true;
-  return BITCOIN_SIGN_PSBT_ALLOWED_APPS[currencyId]?.includes(options.hwAppId) ?? false;
+  return BITCOIN_SIGN_PSBT_ALLOWED_APPS[currencyId]?.has(options.hwAppId) ?? false;
 }
 
 export function isWalletAPICryptoCurrency(
