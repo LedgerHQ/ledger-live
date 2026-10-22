@@ -1,6 +1,7 @@
 "use strict";
 
-// Checks that every `index.*` in a new-architecture package is a pure barrel, that every module
+// Checks that every `index.*` in a new-architecture package is a pure barrel at `src/index.*` or
+// at a `package.json#exports` target (intermediate-barrels.js lists the debt), that every module
 // those barrels reach through `export *`, or that `package.json#exports` names, re-exports like
 // one, and that the public components of a dual-platform package keep one API, one neutral props
 // contract and one kind of entry (components.js). The barrel rule follows a file's role, not its
@@ -11,9 +12,16 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { checkBarrel, checkReachedModule, isBarrelFile, starReexportTargets } = require("./rules");
+const {
+  checkBarrel,
+  checkBarrelLocation,
+  checkReachedModule,
+  isBarrelFile,
+  starReexportTargets,
+} = require("./rules");
 const { checkComponents, isIgnoredEntry, resolveRelative } = require("./components");
 const { COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, PACKAGE_EXCEPTIONS } = require("./exceptions");
+const { INTERMEDIATE_BARREL_WAIVERS } = require("./intermediate-barrels");
 
 const EXCEPTIONS_FILE = "tools/nx-plugins/enforce-package-structure/exceptions.js";
 
@@ -132,20 +140,22 @@ function targetFilesOf(target) {
 }
 
 /**
- * Every source file named in `package.json#exports`, test support entries left out as
- * components.js does.
+ * Every source file named in `package.json#exports`. Test support entries are left out as
+ * components.js does, unless asked for: they are still entries, so their barrels are not
+ * intermediate.
  *
  * @param {unknown} exportsField
+ * @param {boolean} [withTestSupport]
  * @returns {string[]}
  */
-function entryPointsOf(exportsField) {
+function entryPointsOf(exportsField, withTestSupport = false) {
   if (!exportsField || typeof exportsField !== "object") return targetFilesOf(exportsField);
   // An object of conditions alone is the target of the root entry.
   if (!Object.keys(exportsField).some(key => key.startsWith("."))) {
     return targetFilesOf(exportsField);
   }
   return Object.entries(exportsField).flatMap(([subpath, target]) =>
-    isIgnoredEntry(subpath) ? [] : targetFilesOf(target),
+    !withTestSupport && isIgnoredEntry(subpath) ? [] : targetFilesOf(target),
   );
 }
 
@@ -155,6 +165,7 @@ function entryPointsOf(exportsField) {
  * @param {Record<string, Record<string, { rules: string[] }>>} [componentExceptions]
  * @param {Record<string, string>} [fileExceptions] the exception audit passes `{}` to see what
  *   each entry hides
+ * @param {Record<string, string>} [intermediateBarrelWaivers] likewise for its own audit
  * @returns {Array<{ file: string, line: number, code: string, message: string, text: string, rule?: string }>}
  */
 function checkPackage(
@@ -162,6 +173,7 @@ function checkPackage(
   projectRoot,
   componentExceptions = COMPONENT_EXCEPTIONS,
   fileExceptions = FILE_EXCEPTIONS,
+  intermediateBarrelWaivers = INTERMEDIATE_BARREL_WAIVERS,
 ) {
   const found = applyComponentWaivers(
     projectRoot,
@@ -199,8 +211,11 @@ function checkPackage(
 
   // `skip` exempts the package from the barrel rule, traversal included.
   if (!options.skip) {
+    const barrels = [];
     walk(path.join(packageDir, "src"), file => {
-      if (isBarrelFile(path.basename(file))) visit(file);
+      if (!isBarrelFile(path.basename(file))) return;
+      barrels.push(file);
+      visit(file);
     });
 
     let manifest = {};
@@ -212,23 +227,34 @@ function checkPackage(
     for (const entry of entryPointsOf(manifest.exports)) {
       visit(path.join(packageDir, entry));
     }
+
+    const entryFiles = entryPointsOf(manifest.exports, true);
+    for (const barrel of barrels) {
+      const relative = path.relative(workspaceRoot, barrel).split(path.sep).join("/");
+      if (Object.hasOwn(intermediateBarrelWaivers, relative)) continue;
+      for (const violation of checkBarrelLocation(projectRoot, relative, entryFiles)) {
+        found.push({ file: relative, ...violation });
+      }
+    }
   }
 
   return found.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
 }
 
 /**
- * Problems with the file exception list itself: an entry must name an existing file, hide at
- * least one violation, and state its exit condition, so the list only ever shrinks.
+ * Problems with a list of files allowed to keep their violations: an entry must name an existing
+ * file, hide at least one violation, and state its exit condition, so the list only ever shrinks.
  *
  * @param {string} workspaceRoot
- * @param {Record<string, string>} fileExceptions
+ * @param {Record<string, string>} list
+ * @param {(projectRoot: string) => Array<{ file: string }>} violationsWithout what each package
+ *   reports with the list emptied
  * @returns {string[]}
  */
-function auditFileExceptions(workspaceRoot, fileExceptions) {
+function auditList(workspaceRoot, list, violationsWithout) {
   const problems = [];
   const reported = new Map();
-  for (const [file, reason] of Object.entries(fileExceptions)) {
+  for (const [file, reason] of Object.entries(list)) {
     if (!/exit condition/i.test(reason)) {
       problems.push(`${file}: the reason states no exit condition`);
     }
@@ -238,16 +264,43 @@ function auditFileExceptions(workspaceRoot, fileExceptions) {
     }
     const projectRoot = file.slice(0, file.indexOf("/src/"));
     if (!reported.has(projectRoot)) {
-      const files = new Set(
-        checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, {}).map(v => v.file),
-      );
-      reported.set(projectRoot, files);
+      reported.set(projectRoot, new Set(violationsWithout(projectRoot).map(v => v.file)));
     }
     if (!reported.get(projectRoot).has(file)) {
       problems.push(`${file}: no violation left to except, delete the entry`);
     }
   }
   return problems;
+}
+
+/**
+ * Problems with the file exception list itself, see auditList.
+ *
+ * @param {string} workspaceRoot
+ * @param {Record<string, string>} fileExceptions
+ * @returns {string[]}
+ */
+function auditFileExceptions(workspaceRoot, fileExceptions) {
+  return auditList(workspaceRoot, fileExceptions, projectRoot =>
+    checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, {}).filter(
+      v => v.code !== "intermediate-barrel",
+    ),
+  );
+}
+
+/**
+ * Problems with the intermediate barrel waiver list itself, see auditList.
+ *
+ * @param {string} workspaceRoot
+ * @param {Record<string, string>} waivers
+ * @returns {string[]}
+ */
+function auditIntermediateBarrelWaivers(workspaceRoot, waivers) {
+  return auditList(workspaceRoot, waivers, projectRoot =>
+    checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, {}).filter(
+      v => v.code === "intermediate-barrel",
+    ),
+  );
 }
 
 function main() {
@@ -276,7 +329,7 @@ function main() {
     if (violation.text) console.error(`       ${violation.text}`);
   }
 
-  if (violations.some(v => !v.rule)) {
+  if (violations.some(v => !v.rule && v.code !== "intermediate-barrel")) {
     console.error(
       '\nAn `index.*` may only contain `export * from "./x"` and an optional default re-export.',
     );
@@ -285,6 +338,15 @@ function main() {
     );
     console.error("Move anything private to an internals location: internals/, internals.ts,");
     console.error("or a <name>.internals.ts companion. See .agents/skills/package-public-api.");
+  }
+  if (violations.some(v => v.code === "intermediate-barrel")) {
+    console.error(
+      "\nUnder src/, an `index.*` is a barrel only as src/index.* or a package.json#exports target.",
+    );
+    console.error(
+      "Re-export the declaring files from the entry, then delete the intermediate one.",
+    );
+    console.error("See .agents/skills/package-public-api.");
   }
   if (violations.some(v => v.rule)) {
     console.error("\nR1: a universal component is exported on both platforms under the same name.");
@@ -306,7 +368,12 @@ function main() {
   process.exit(1);
 }
 
-module.exports = { auditFileExceptions, checkPackage, findPackageRoots };
+module.exports = {
+  auditFileExceptions,
+  auditIntermediateBarrelWaivers,
+  checkPackage,
+  findPackageRoots,
+};
 
 if (require.main === module) {
   main();

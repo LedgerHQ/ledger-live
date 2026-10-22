@@ -8,6 +8,7 @@
 // location. Re-exporting another package turns the barrel into a proxy: two import paths for the
 // same symbol, and no obvious original provider.
 
+const path = require("node:path");
 const ts = require("typescript");
 
 /** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
@@ -315,8 +316,40 @@ function checkReachedModule(source, options = {}, file = "module.tsx") {
   return violations;
 }
 
+/**
+ * Report a barrel that is neither the root `src/index.*` nor the target of a
+ * `package.json#exports` entry. Such an intermediate barrel is an indirection no consumer ever
+ * imports, and it outlives the entry that once named it. Platform variants of an index share its
+ * directory, so `index.native.ts` is allowed wherever `index.ts` is.
+ *
+ * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
+ * @param {string} file posix-style path of the `index.*`, from the repo root
+ * @param {string[]} entryFiles `package.json#exports` targets, relative to the package
+ * @returns {Violation[]}
+ */
+function checkBarrelLocation(projectRoot, file, entryFiles) {
+  const directory = path.posix.dirname(file.slice(projectRoot.length + 1));
+  const allowed = new Set(["src"]);
+  for (const entry of entryFiles) {
+    const normalized = path.posix.normalize(entry);
+    if (isBarrelFile(normalized)) allowed.add(path.posix.dirname(normalized));
+  }
+  if (allowed.has(directory)) return [];
+  return [
+    {
+      line: 1,
+      code: "intermediate-barrel",
+      message:
+        `${projectRoot} exposes this barrel neither as src/index.* nor through package.json#exports: ` +
+        "export the declaring files from an entry and delete it",
+      text: "",
+    },
+  ];
+}
+
 module.exports = {
   checkBarrel,
+  checkBarrelLocation,
   checkReachedModule,
   isBarrelFile,
   isInternalSpecifier,

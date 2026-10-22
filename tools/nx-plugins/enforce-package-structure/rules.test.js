@@ -4,6 +4,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
   checkBarrel,
+  checkBarrelLocation,
   checkReachedModule,
   isBarrelFile,
   isInternalSpecifier,
@@ -349,4 +350,36 @@ test("a `.ts` module is parsed without JSX, so a type assertion is not a tag", (
     checkReachedModule(source, {}, "cast.ts").map(v => [v.code, v.line]),
     [["hidden-barrel", 2]],
   );
+});
+
+test("checkBarrelLocation allows the root barrel and entry targets, platform variants included", () => {
+  const entries = ["./src/index.ts", "./src/state/index.ts", "./src/hooks/index.native.ts"];
+  for (const file of [
+    "shared/thing/src/index.ts",
+    "shared/thing/src/index.native.ts",
+    "shared/thing/src/index.web.tsx",
+    "shared/thing/src/state/index.ts",
+    "shared/thing/src/state/index.web.ts",
+    "shared/thing/src/hooks/index.ts",
+    "shared/thing/src/hooks/index.native.ts",
+  ]) {
+    assert.deepEqual(checkBarrelLocation("shared/thing", file, entries), [], file);
+  }
+});
+
+test("checkBarrelLocation reports any other index, with the package root", () => {
+  const entries = ["./src/index.ts", "./src/schema.ts", "./src/state/slice.ts"];
+  for (const file of [
+    "shared/thing/src/state/index.ts",
+    "shared/thing/src/hooks/index.native.ts",
+    "shared/thing/src/components/Card/index.tsx",
+  ]) {
+    const found = checkBarrelLocation("shared/thing", file, entries);
+    assert.deepEqual(
+      found.map(v => v.code),
+      ["intermediate-barrel"],
+      file,
+    );
+    assert.match(found[0].message, /^shared\/thing /);
+  }
 });

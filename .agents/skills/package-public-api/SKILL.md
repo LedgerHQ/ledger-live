@@ -40,6 +40,34 @@ anything, but it re-exports like a barrel: `export *` from a relative file and a
 re-export only. So `export * from "./exports"` in the index with the sorting or the proxy in
 `exports.ts` fails the same way (`hidden-barrel`, `cross-package-reexport`, …).
 
+## Only entries are barrels
+
+Under `src/`, an `index.*` (platform variants included) may exist only as the root `src/index.*`
+or as the target of a `package.json#exports` entry. Test support entries count as entries here.
+Any other one is an intermediate barrel (`intermediate-barrel`).
+
+```text
+src/
+├── index.ts            # ✅ root barrel
+├── state/index.ts      # ✅ only if package.json#exports has "./state": "./src/state/index.ts"
+└── hooks/index.ts      # ❌ no entry points here: intermediate
+```
+
+**Why.** An intermediate barrel is an indirection no consumer ever sees: they import the entry,
+never `src/hooks`. It also outlives its entry: drop `"./state"` from `exports` and
+`state/index.ts` stays behind, regrouping files for nobody. So the check needs no second rule: a
+barrel whose entry is removed becomes intermediate and fails.
+
+**Fix.** Delete the barrel and re-export the declaring files from the entry:
+`export * from "./hooks/useThing"` in `src/index.ts`. An `index.tsx` that holds code is a module,
+not a barrel: rename it after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
+
+The debt found when the check landed sits in
+[`intermediate-barrels.js`](../../../tools/nx-plugins/enforce-package-structure/intermediate-barrels.js).
+It only shrinks: deleting a listed barrel means deleting its entry, and a test fails on an entry
+whose file is gone or no longer intermediate. Never add one. Packages with `skip` in
+`exceptions.js` are not checked.
+
 ## Where private code goes
 
 Three recognised forms, usable at any depth:
@@ -134,3 +162,4 @@ Refuse and point here when you see:
 - an `import`, a declaration or a local `export default` in any `index.*`
 - `export * as ns from` — namespacing is still sorting
 - a barrel re-exporting `internals`, or re-exporting another workspace package
+- a new `index.*` below `src/` that no `package.json#exports` entry targets

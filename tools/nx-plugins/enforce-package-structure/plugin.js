@@ -37,6 +37,7 @@ function buildTarget(projectRoot) {
       `{workspaceRoot}/${PLUGIN_ROOT}/components.config.json`,
       `{workspaceRoot}/${PLUGIN_ROOT}/validate.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/exceptions.js`,
+      `{workspaceRoot}/${PLUGIN_ROOT}/intermediate-barrels.js`,
       { externalDependencies: ["typescript"] },
     ],
     options: {
