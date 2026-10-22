@@ -1,4 +1,7 @@
 import type { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import type { Transaction } from "../../../coin-modules/transaction-types";
+import { fromTransactionRaw, toTransactionRaw } from "../../../transaction";
 import { intentToMessageParams } from "@ledgerhq/coin-cosmos/logic/transaction/intentAdapter";
 import { transactionToIntent } from "../../generic-coin-framework/utils";
 import type { GenericTransaction } from "../../generic-coin-framework/types";
@@ -242,5 +245,24 @@ describe("Stacks memo survives shared intent construction end to end", () => {
     } as unknown as GenericTransaction;
 
     expect(transactionToIntent(account, transaction).memo).toEqual({ type: "none" });
+  });
+
+  it("still yields the StringMemo after a raw serialization round trip", async () => {
+    const transaction = {
+      family: "stacks",
+      amount: new BigNumber(1000),
+      recipient: "SP1abc",
+      useAllAmount: false,
+      ...stacksMemoPatch("1234"),
+    } as unknown as Transaction;
+
+    const raw = JSON.parse(JSON.stringify(await toTransactionRaw(transaction)));
+    const restored = (await fromTransactionRaw(raw)) as unknown as GenericTransaction;
+
+    expect(transactionToIntent(account, restored).memo).toEqual({
+      type: "string",
+      kind: "memo",
+      value: "1234",
+    });
   });
 });
