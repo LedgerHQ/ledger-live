@@ -606,6 +606,7 @@ export function runSwapDiscreetModeTest(
   tmsLinks: string[],
   tags: string[],
 ) {
+  setTeamOwner(Team.SWAP);
   describe("Swap - discreet mode", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
@@ -623,7 +624,6 @@ export function runSwapDiscreetModeTest(
       });
     });
 
-    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
@@ -634,6 +634,7 @@ export function runSwapDiscreetModeTest(
       await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
     });
 
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it("Swap balance is hidden in the swap main form in discreet mode", async () => {
       // Masking is currency-agnostic, so a single account is enough here.
       await app.swapLiveApp.tapFromCurrency();
