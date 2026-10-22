@@ -385,7 +385,7 @@
     "@swc/helpers": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "@rsdoctor/rspack-plugin": "catalog:",
+    "@rsdoctor/core": "catalog:",
     "hermes-parser": "0.32.1",
     "@testing-library/react-native": "13.3.3",
     "@types/color": "3.0.6",

@@ -198,7 +198,7 @@ export const isRsdoctorEnabled = () =>
 export function getRsdoctorPlugin(bundleName: string): Plugins {
   if (isRsdoctorEnabled()) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+    const { RsdoctorRspackPlugin } = require("@rsdoctor/core");
     const isCI = process.env.CI === "true" || process.env.CI === "1";
     const repoRoot = path.resolve(lldRoot, "..", "..");
     const reportDir = path.join(repoRoot, "rsdoctor", `desktop-${bundleName}`);
