@@ -13,6 +13,7 @@
     "componentWrappers",
     "bannedImportPrefixes",
     "neutralReactTypes",
+    "sharedGlobals",
     "bannedPropNames",
     "gestureWords",
     "bannedCallbackNames"
@@ -112,6 +113,13 @@
       "uniqueItems": true,
       "items": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9]*$" },
       "examples": [["ReactNode", "Ref", "JSX"]]
+    },
+    "sharedGlobals": {
+      "description": "R3. Host globals both platforms provide, which a contract module may reference although the ECMAScript library does not declare them, as in `ReturnType<typeof setTimeout>`. Any other global outside that library is a DOM type.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*$" },
+      "examples": [["setTimeout", "clearTimeout"]]
     },
     "bannedPropNames": {
       "description": "R3. Props a contract may not declare, matched exactly. Each implementation styles its own surface.",

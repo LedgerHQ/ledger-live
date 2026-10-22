@@ -15,15 +15,16 @@
 // Repack.getResolveOptions(platform, { preferNativePlatform: true }) for native), `conditions`
 // pick an entry's file per platform, `platformEntries` name the platform subpaths and
 // `componentWrappers` the calls that still return a component. The `banned*` settings and
-// `gestureWords` list what a contract may not import or name, `neutralReactTypes` the React types
-// it may reference (R3).
+// `gestureWords` list what a contract may not import or name, `neutralReactTypes` and
+// `sharedGlobals` the React types and host globals it may reference (R3).
 //
 // R1: a universal component is exported on both platforms under the same name.
 // R2: both implementations annotate their first parameter with one props type name, declared in
 // one unsuffixed module, the contract, with no platform-suffixed sibling.
-// R3: the contract imports no platform package, references no global type outside the ECMAScript
-// library and no React type outside `neutralReactTypes`, and declares no `className`, `style` or
-// gesture callback; a `@platform` prop is an optional primitive.
+// R3: the contract imports no platform package, references no global outside the ECMAScript
+// library or `sharedGlobals` and no React type outside `neutralReactTypes`, and declares no
+// `className`, `style` or gesture callback, nested local types included; a `@platform` prop is an
+// optional primitive.
 // R4: a platform module that declares a universal component exports components only.
 // R5: a component is exported from universal entries or from platform entries, never both, and a
 // platform entry points at a module of its own that carries its platform's suffix.
@@ -63,6 +64,7 @@ const PLATFORM_SUFFIXES = [".web", ".native", ".ios", ".android"];
 const CONTRACT_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx"];
 const BANNED_IMPORT_PREFIXES = CONFIG.bannedImportPrefixes;
 const NEUTRAL_REACT_TYPES = new Set(CONFIG.neutralReactTypes);
+const SHARED_GLOBALS = new Set(CONFIG.sharedGlobals);
 const BANNED_PROP_NAMES = new Set(CONFIG.bannedPropNames);
 const BANNED_CALLBACK_NAMES = CONFIG.bannedCallbackNames.map(camelCaseGlob);
 const GESTURE_WORDS = new Set(CONFIG.gestureWords);
@@ -317,6 +319,7 @@ function parseModule(file, source) {
       }
     } else if (ts.isTypeAliasDeclaration(statement) || ts.isInterfaceDeclaration(statement)) {
       types.set(statement.name.text, statement);
+      if (hasDefaultModifier(statement)) types.set("default", statement);
     } else if (ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier)) {
       const clause = statement.importClause;
       if (!clause) continue;
@@ -539,8 +542,9 @@ function camelCaseGlob(glob) {
  * @param {ts.Node | undefined} node
  * @param {ReturnType<typeof parseModule>} module
  * @param {Set<string>} [seen]
- * @returns {{ fn: ts.SignatureDeclaration, typeArgument?: ts.TypeNode } | null} the function a
- *   component evaluates to, with the props type a `forwardRef<Ref, Props>` call names
+ * @returns {{ fn?: ts.SignatureDeclaration, typeArgument?: ts.TypeNode } | null} the function a
+ *   component evaluates to, with the props type a `forwardRef<Ref, Props>` call names; that type
+ *   is the public contract, so it is kept when the render function is out of reach
  */
 function componentFunction(node, module, seen = new Set()) {
   if (!node) return null;
@@ -561,12 +565,11 @@ function componentFunction(node, module, seen = new Set()) {
     : ts.isIdentifier(callee)
       ? callee.text
       : "";
-  const inner = COMPONENT_WRAPPERS.has(name)
-    ? componentFunction(expression.arguments[0], module, seen)
-    : null;
-  if (!inner) return null;
+  if (!COMPONENT_WRAPPERS.has(name)) return null;
+  const inner = componentFunction(expression.arguments[0], module, seen);
   const typeArgument = name === "forwardRef" ? expression.typeArguments?.[1] : undefined;
-  return { fn: inner.fn, typeArgument: inner.typeArgument ?? typeArgument };
+  if (!inner && !typeArgument) return null;
+  return { fn: inner?.fn, typeArgument: typeArgument ?? inner?.typeArgument };
 }
 
 /**
@@ -582,18 +585,19 @@ function propsTypeName(type) {
 }
 
 /**
- * The props a component takes: none, a type name, or something else.
+ * The props a component takes: none, a type name, something else, or out of reach, such as
+ * `memo` around an imported function. The props argument of `forwardRef<Ref, Props>` comes
+ * before the render function's own annotation.
  *
  * @param {ExportInfo} info
  * @param {ReturnType<typeof parseModule>} module
- * @returns {{ kind: "none" } | { kind: "unnamed" } | { kind: "named", name: string } | null} null
- *   when the component's function is out of reach, such as `memo` around an imported function
+ * @returns {{ kind: "none" } | { kind: "unnamed" } | { kind: "unreadable" } | { kind: "named", name: string }}
  */
 function propsOf(info, module) {
   const component = componentFunction(info.node, module);
-  if (!component) return null;
-  const [parameter] = component.fn.parameters;
-  const type = parameter?.type ?? component.typeArgument;
+  if (!component) return { kind: "unreadable" };
+  const [parameter] = component.fn?.parameters ?? [];
+  const type = component.typeArgument ?? parameter?.type;
   if (!parameter && !type) return { kind: "none" };
   const name = propsTypeName(type);
   return name ? { kind: "named", name } : { kind: "unnamed" };
@@ -618,7 +622,10 @@ function contractOf(file, name, platform, load) {
     return { code: "contract-outside-package", imported: imported.specifier };
   }
   const target = resolveRelative(file, imported.specifier, platform);
-  const declaration = target ? load(target)?.types.get(imported.imported) : undefined;
+  const contract = target ? load(target) : null;
+  const declaration =
+    contract?.types.get(imported.imported) ??
+    contract?.types.get(contract.localExports.get(imported.imported) ?? "");
   if (!target || !declaration) return { code: "contract-reexported", imported: target ?? "" };
   return { file: target, declaration };
 }
@@ -693,28 +700,64 @@ function standardGlobalNames() {
 
 /**
  * @param {ReturnType<typeof parseModule>} module
- * @returns {Set<string>} every name a module declares or imports, at any depth, type parameters
- *   included
+ * @returns {Set<string>} the names a module imports or declares at its top level
  */
-function declaredNames(module) {
+function moduleScopeNames(module) {
   const names = new Set(module.imports.keys());
-  function visit(node) {
-    if (
-      (ts.isTypeParameterDeclaration(node) ||
-        ts.isInterfaceDeclaration(node) ||
-        ts.isTypeAliasDeclaration(node) ||
-        ts.isClassDeclaration(node) ||
-        ts.isEnumDeclaration(node) ||
-        ts.isModuleDeclaration(node) ||
-        ts.isImportEqualsDeclaration(node)) &&
-      node.name &&
-      ts.isIdentifier(node.name)
-    ) {
-      names.add(node.name.text);
+  for (const statement of module.sourceFile.statements) {
+    if (ts.isVariableStatement(statement)) {
+      for (const declaration of statement.declarationList.declarations) {
+        for (const name of bindingNames(declaration.name)) names.add(name);
+      }
+    } else if (statement.name && ts.isIdentifier(statement.name)) {
+      names.add(statement.name.text);
     }
-    ts.forEachChild(node, visit);
   }
-  visit(module.sourceFile);
+  return names;
+}
+
+/**
+ * @param {ts.Node} node
+ * @returns {Set<string>} the names an `infer` clause declares in `node`
+ */
+function inferredNames(node) {
+  const names = new Set();
+  function visit(child) {
+    if (ts.isInferTypeNode(child)) names.add(child.typeParameter.name.text);
+    ts.forEachChild(child, visit);
+  }
+  visit(node);
+  return names;
+}
+
+/**
+ * @param {ts.Node} node
+ * @param {boolean} values whether the parameters of enclosing functions count, for `typeof`
+ * @returns {Set<string>} the names in scope at `node` below the module: the type parameters of
+ *   enclosing declarations, mapped types and `infer` clauses, and the declarations of enclosing
+ *   namespaces
+ */
+function enclosingScopeNames(node, values) {
+  const names = new Set();
+  let child = node;
+  for (let scope = node.parent; scope && !ts.isSourceFile(scope); scope = scope.parent) {
+    for (const parameter of scope.typeParameters ?? []) names.add(parameter.name.text);
+    if (ts.isMappedTypeNode(scope)) names.add(scope.typeParameter.name.text);
+    if (ts.isConditionalTypeNode(scope) && child === scope.trueType) {
+      for (const name of inferredNames(scope.extendsType)) names.add(name);
+    }
+    if (values && ts.isFunctionLike(scope)) {
+      for (const parameter of scope.parameters) {
+        for (const name of bindingNames(parameter.name)) names.add(name);
+      }
+    }
+    if (ts.isModuleBlock(scope)) {
+      for (const statement of scope.statements) {
+        if (statement.name && ts.isIdentifier(statement.name)) names.add(statement.name.text);
+      }
+    }
+    child = scope;
+  }
   return names;
 }
 
@@ -763,6 +806,41 @@ function propsOfContract(node, module, seen = new Set()) {
 }
 
 /**
+ * The props of a contract and of the local types its props hold, at any depth: a list of tiles
+ * whose items declare `onPress` is checked like the contract itself. Callback parameters and types
+ * from other modules are not followed.
+ *
+ * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
+ * @param {ReturnType<typeof parseModule>} module
+ * @returns {Set<ts.PropertySignature | ts.MethodSignature>}
+ */
+function reachableProps(declaration, module) {
+  const seen = new Set();
+  const props = new Set();
+  const pending = propsOfContract(declaration, module, seen);
+  function visit(node) {
+    if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) return;
+    if (ts.isTypeLiteralNode(node)) {
+      pending.push(...propsOfContract(node, module, seen));
+      return;
+    }
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+      if (module.types.has(node.typeName.text)) {
+        pending.push(...propsOfContract(node, module, seen));
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+  for (let index = 0; index < pending.length; index++) {
+    const prop = pending[index];
+    if (props.has(prop)) continue;
+    props.add(prop);
+    if (ts.isPropertySignature(prop) && prop.type) visit(prop.type);
+  }
+  return props;
+}
+
+/**
  * @param {string} name
  * @returns {boolean} true for a gesture or DOM event name, such as `onPress` or `onEditPress`
  */
@@ -801,7 +879,10 @@ function checkContractModule(module) {
   function report(node, code, message) {
     found.push({ line: module.lineOf(node), code, message });
   }
-  const declared = declaredNames(module);
+  const moduleNames = moduleScopeNames(module);
+  function isDeclared(node, name, values = false) {
+    return moduleNames.has(name) || enclosingScopeNames(node, values).has(name);
+  }
   const reported = new Set();
   function reportOnce(node, code, message) {
     if (reported.has(message)) return;
@@ -815,6 +896,15 @@ function checkContractModule(module) {
       node,
       "contract-react-type",
       `the contract references \`${name}\` from \`react\`, which is not one of the neutralReactTypes`,
+    );
+  }
+  function checkGlobal(node, name, values) {
+    if (isDeclared(node, name, values) || SHARED_GLOBALS.has(name)) return;
+    if (standardGlobalNames().has(name)) return;
+    reportOnce(
+      node,
+      "contract-global-type",
+      `the contract references the global \`${name}\`, which the ECMAScript library does not declare`,
     );
   }
   function visit(node) {
@@ -845,15 +935,14 @@ function checkContractModule(module) {
         node,
         imported.imported === "*" || imported.imported === "default" ? rest[0] : imported.imported,
       );
-    } else if (head === "React" && !declared.has(head)) {
+    } else if (head === "React" && !isDeclared(node, head)) {
       checkReactType(node, rest[0]);
-    } else if (head && !declared.has(head) && !standardGlobalNames().has(head)) {
-      reportOnce(
-        node,
-        "contract-global-type",
-        `the contract references the global \`${head}\`, which the ECMAScript library does not declare`,
-      );
+    } else if (head && !ts.isConstTypeReference(node)) {
+      checkGlobal(node, head, false);
     }
+    // `typeof document` exposes a DOM value as much as `Document` does.
+    const [query] = ts.isTypeQueryNode(node) ? nameSegments(node.exprName) : [];
+    if (query && query !== "React") checkGlobal(node, query, true);
     ts.forEachChild(node, visit);
   }
   ts.forEachChild(module.sourceFile, visit);
@@ -872,7 +961,7 @@ function checkContractProps(module, declaration) {
   function report(node, code, message) {
     found.push({ line: module.lineOf(node), code, message });
   }
-  for (const prop of propsOfContract(declaration, module)) {
+  for (const prop of reachableProps(declaration, module)) {
     if (!ts.isIdentifier(prop.name) && !ts.isStringLiteral(prop.name)) continue;
     const name = prop.name.text;
     if (BANNED_PROP_NAMES.has(name)) {
@@ -932,12 +1021,12 @@ function bindingNames(name) {
  * @returns {Array<{ name: string, line: number }>}
  */
 function extraExportsOf(file, module) {
-  function isComponent(local) {
+  function isComponent(local, exported = local) {
     const declaration = module.declarations.get(local);
     return Boolean(
       declaration?.isFunction &&
       file.endsWith(".tsx") &&
-      (local === "*default*" || PASCAL_CASE.test(local)),
+      (local === "*default*" || PASCAL_CASE.test(exported)),
     );
   }
   const extra = [];
@@ -953,7 +1042,9 @@ function extraExportsOf(file, module) {
         for (const element of clause.elements) {
           const local = (element.propertyName ?? element.name).text;
           const reexport = statement.isTypeOnly || element.isTypeOnly || statement.moduleSpecifier;
-          if (reexport || !isComponent(local)) extra.push({ name: element.name.text, line });
+          if (reexport || !isComponent(local, element.name.text)) {
+            extra.push({ name: element.name.text, line });
+          }
         }
       }
     } else if (ts.isExportAssignment(statement)) {
@@ -1092,6 +1183,14 @@ function checkOneContract(name, { web, native }, relative) {
   const shared = web.info.file === native.info.file && web.info.line === native.info.line;
   if (shared && web.props.kind !== "named") return null;
   for (const [platform, implementation] of Object.entries({ web, native })) {
+    if (implementation.props.kind === "unreadable") {
+      return {
+        file: implementation.info.file,
+        line: implementation.info.line,
+        code: "props-unreadable",
+        message: `the ${platform} implementation of \`${name}\` wraps a function declared in another module, so its props cannot be read: declare the function next to the component, or name the props in \`forwardRef<Ref, Props>\``,
+      };
+    }
     if (implementation.props.kind !== "unnamed") continue;
     return {
       file: implementation.info.file,

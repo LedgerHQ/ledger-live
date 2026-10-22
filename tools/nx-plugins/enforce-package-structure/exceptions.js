@@ -152,6 +152,9 @@ const COMPONENT_EXCEPTIONS = {
   "features/flow/lazy-onboarding-banner": {
     LazyOnboardingBannerView: componentWaiver("R1", "R3"),
   },
+  "features/flow/pay-balance": {
+    ActionTiles: componentWaiver("R3"),
+  },
   "features/flow/pay-card-assets": {
     CardAssetDetailsDrawer: componentWaiver("R1"),
     CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
@@ -195,6 +198,9 @@ const COMPONENT_EXCEPTIONS = {
   "shared/analytics-react": {
     TrackPage: componentWaiver("R1", "R4"),
     TrackScreen: componentWaiver("R1", "R4"),
+  },
+  "shared/ui-app-unavailable": {
+    AppUnavailable: componentWaiver("R3"),
   },
   "shared/ui-info-state": {
     DialogBackgroundGradient: componentWaiver("R1"),

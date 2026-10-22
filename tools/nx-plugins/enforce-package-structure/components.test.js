@@ -444,6 +444,67 @@ test("R2 reads the forwardRef props type when the render callback takes no param
   assert.deepEqual(check(files), ["R3 contract-gesture-callback Card"]);
 });
 
+/**
+ * @param {string} props the forwardRef props argument; the render callback takes `SharedProps`
+ */
+function annotatedForwardRefCard(props) {
+  return `import { forwardRef } from "react";\nimport type { ${props}, SharedProps } from "./Card.types";\nexport const Card = forwardRef<unknown, ${props}>((props: SharedProps, ref) => null);\n`;
+}
+
+/**
+ * @param {string} platform suffix of the module that declares the render function
+ */
+function memoCard(platform) {
+  return `import { memo } from "react";\nimport { CardImpl } from "./CardImpl.${platform}";\nexport const Card = memo(CardImpl);\n`;
+}
+
+test("R2 reads the forwardRef props argument before the render function's annotation", () => {
+  const files = {
+    ...card({
+      "Card.types.ts":
+        "export type SharedProps = { title: string };\nexport type WebProps = SharedProps;\nexport type NativeProps = SharedProps;\n",
+    }),
+    "src/Card.web.tsx": annotatedForwardRefCard("WebProps"),
+    "src/Card.native.tsx": annotatedForwardRefCard("NativeProps"),
+  };
+  assert.deepEqual(check(files), ["R2 props-name-mismatch Card"]);
+});
+
+test("R2 keeps the forwardRef props argument when the render function is imported", () => {
+  const imported = `import { forwardRef } from "react";\nimport { render } from "./render";\nimport type { CardProps } from "./Card.types";\nexport const Card = forwardRef<unknown, CardProps>(render);\n`;
+  const files = {
+    ...card(contract("onPress: () => void;")),
+    "src/Card.web.tsx": imported,
+    "src/Card.native.tsx": imported,
+  };
+  assert.deepEqual(check(files), ["R3 contract-gesture-callback Card"]);
+});
+
+test("R2 fails: a component that wraps a render function declared in another module", () => {
+  const files = {
+    ...card(contract("title: string;")),
+    "src/Card.web.tsx": memoCard("web"),
+    "src/Card.native.tsx": memoCard("native"),
+  };
+  assert.deepEqual(check(files), ["R2 props-unreadable Card"]);
+});
+
+test("R2 passes: a default-exported contract imported by both implementations", () => {
+  for (const contractModule of [
+    "export default interface CardProps { title: string }\n",
+    "type CardProps = { title: string };\nexport { CardProps as default };\n",
+  ]) {
+    const implementation =
+      'import type CardProps from "./Card.types";\nexport function Card(props: CardProps) { return null; }\n';
+    const files = {
+      ...card({ "Card.types.ts": contractModule }),
+      "src/Card.web.tsx": implementation,
+      "src/Card.native.tsx": implementation,
+    };
+    assert.deepEqual(check(files), [], contractModule);
+  }
+});
+
 test("R2 fails: one shared implementation whose contract resolves per platform", () => {
   const props = "export type CardProps = { title: string };\n";
   assert.deepEqual(
@@ -597,6 +658,8 @@ test("R3 fails: a contract that references a global DOM type, once per name", ()
             "anchor?: Ref<Element>;",
             "target?: Ref<HTMLElement>;",
             "onHover: (event: MouseEvent) => void;",
+            "onSearch: (event: Event) => void;",
+            "source?: EventTarget;",
             "layout: CSSStyleDeclaration;",
           ].join("\n"),
           'import type { Ref } from "react";\n',
@@ -608,7 +671,37 @@ test("R3 fails: a contract that references a global DOM type, once per name", ()
       "R3 contract-global-type Card",
       "R3 contract-global-type Card",
       "R3 contract-global-type Card",
+      "R3 contract-global-type Card",
+      "R3 contract-global-type Card",
     ],
+  );
+});
+
+test("R3 fails: a typeof query on a DOM global", () => {
+  assert.deepEqual(
+    check(
+      card(
+        contract(
+          "target?: typeof document;\nref?: Ref<InstanceType<typeof HTMLInputElement>>;",
+          'import type { Ref } from "react";\n',
+        ),
+      ),
+    ),
+    ["R3 contract-global-type Card", "R3 contract-global-type Card"],
+  );
+});
+
+test("R3 fails: a global hidden only by a type parameter of another declaration", () => {
+  assert.deepEqual(
+    check(
+      card(
+        contract(
+          "onInspect(value: Event): void;\nhandle: Handler<string>;",
+          "type Handler<Event> = (value: Event) => void;\n",
+        ),
+      ),
+    ),
+    ["R3 contract-global-type Card"],
   );
 });
 
@@ -664,11 +757,16 @@ test("R3 passes: declared, imported, ECMAScript and neutral React types", () => 
             "items: ReadonlyArray<Record<string, Date>>;",
             "load: () => Promise<Map<string, Set<number>>>;",
             "pick: <T extends string>(value: T) => Partial<{ [K in T]: Uppercase<K> }>;",
+            "value: Unwrap<Promise<string>>;",
+            "size: (typeof sizes)[number];",
+            "timer?: ReturnType<typeof setTimeout>;",
           ].join("\n"),
           [
             'import type { JSX, ReactNode, Ref } from "react";',
             'import type { TrackingEvent } from "./tracking";',
             "interface CardHandle { focus(): void }",
+            "type Unwrap<T> = T extends Promise<infer U> ? U : T;",
+            'const sizes = ["s", "m"] as const;',
             "",
           ].join("\n"),
         ),
@@ -742,6 +840,25 @@ test("R3 follows the contract's own types, not imported ones", () => {
   );
 });
 
+test("R3 checks the local types a contract's props hold, at any depth", () => {
+  assert.deepEqual(
+    check(
+      card({
+        "Card.types.ts": [
+          "type Tile = { onPress: () => void; children?: readonly Tile[] };",
+          "interface Group { items: Array<{ style?: object }> }",
+          "export type CardProps = Readonly<{",
+          "  tiles: readonly Tile[];",
+          "  groups: Group[];",
+          "  onSelect: (tile: { onClick(): void }) => void;",
+          "}>;",
+        ].join("\n"),
+      }),
+    ),
+    ["R3 contract-gesture-callback Card", "R3 contract-platform-prop Card"],
+  );
+});
+
 test("R3 passes: platform-only props that are optional primitives or string literal unions", () => {
   assert.deepEqual(
     check(
@@ -807,6 +924,17 @@ test("R4 passes: a platform module that exports its component, also as default",
       ...card(contract("title: string;")),
       "src/Card.web.tsx":
         'import type { CardProps } from "./Card.types";\nfunction Card(props: CardProps) { return null; }\nexport { Card };\nexport default Card;\n',
+    }),
+    [],
+  );
+});
+
+test("R4 passes: a component exported under an alias", () => {
+  assert.deepEqual(
+    check({
+      ...card(contract("title: string;")),
+      "src/Card.web.tsx":
+        'import type { CardProps } from "./Card.types";\nfunction renderCard(props: CardProps) { return null; }\nexport { renderCard as Card };\n',
     }),
     [],
   );

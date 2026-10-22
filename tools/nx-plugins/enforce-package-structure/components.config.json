@@ -42,6 +42,7 @@
     "Key",
     "JSX"
   ],
+  "sharedGlobals": ["setTimeout", "clearTimeout", "setInterval", "clearInterval"],
   "bannedPropNames": ["className", "style"],
   "gestureWords": ["Click", "Press", "Tap", "Touch", "Mouse", "Pointer"],
   "bannedCallbackNames": ["onChange", "onChangeText", "onSubmit", "onFocus", "onBlur", "onKey*"]
