@@ -50,8 +50,8 @@ const prefixHex = (hex: string): `0x${string}` =>
 // `craftRawTransaction` is the one capability neither this module nor the EVM api it composes
 // provides, so it is absent here; the consumer resolver applies `withDefaults`, which answers
 // "not supported" for it. `register` is likewise left to the wrapper rather than stubbed.
-export function createApi(currencyId = "celo") {
-  const evmApi = createEvmApi(currencyId);
+export function createApi() {
+  const evmApi = createEvmApi();
 
   // Bridge the gap between the built lib's MemoNotSupported-typed evmApi and the real v6
   // EvmConfigInfo-typed authoring shape; the cast is needed because coin-evm is consumed through

@@ -21,7 +21,13 @@ export const getWallet40Attributes = (
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
     operationsList: wallet40FeatureFlag?.params?.operationsList ?? false,
-    myWallet: wallet40FeatureFlag?.params?.myWallet ?? false,
+    myWallet:
+      platform === "lwd" ||
+      Boolean(
+        wallet40FeatureFlag?.params &&
+        "myWallet" in wallet40FeatureFlag.params &&
+        wallet40FeatureFlag.params.myWallet,
+      ),
     assetDiscoverability: wallet40FeatureFlag?.params?.assetDiscoverability ?? false,
     aggregatedAssets: wallet40FeatureFlag?.params?.aggregatedAssets ?? false,
     pnl: wallet40FeatureFlag?.params?.pnl ?? false,

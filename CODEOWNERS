@@ -458,7 +458,6 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/productTour.
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/__tests__/productTour.handler.test.ts @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts                      @ledgerhq/engagement
-apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useActionCards.tsx                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useNotifications.ts                                @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts                                        @ledgerhq/engagement

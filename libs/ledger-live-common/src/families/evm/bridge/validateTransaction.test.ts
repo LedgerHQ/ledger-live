@@ -89,7 +89,7 @@ describe("validateTransaction", () => {
     const result = await validateTransaction(mockCurrency, { signature });
 
     expect(result.error?.name).toBe("InvalidTransactionError");
-    expect(mockGetNextSequence).toHaveBeenCalledWith(expect.anything(), mockCurrency.id, "0xfrom");
+    expect(mockGetNextSequence).toHaveBeenCalledWith(expect.anything(), "0xfrom");
   });
 
   it("returns no error when transaction can be broadcasted", async () => {

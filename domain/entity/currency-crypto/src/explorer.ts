@@ -1,7 +1,8 @@
 import type { CryptoCurrency, ExplorerView } from "./schema";
 
-export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | undefined =>
-  currency.explorerViews?.[0];
+export const getDefaultExplorerView = (
+  currency: Pick<CryptoCurrency, "explorerViews">,
+): ExplorerView | undefined => currency.explorerViews?.[0];
 
 export const getTransactionExplorer = (
   explorerView: ExplorerView | undefined,

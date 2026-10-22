@@ -119,6 +119,17 @@ describe("useOpenLink", () => {
     expect(openExternal).toHaveBeenCalled();
   });
 
+  it("reports only the origin of a sensitive link and opens the full URL", () => {
+    const openExternal = jest.fn();
+    const onLinkOpened = jest.fn();
+    const openLink = renderHookWithProvider(() => useOpenLink(), { openExternal, onLinkOpened });
+
+    openLink("https://explorer.test/address/bc1qaddress", { sensitive: true });
+
+    expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
+    expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/bc1qaddress");
+  });
+
   it("does not call onLinkOpened when URL is unsafe", () => {
     const openExternal = jest.fn();
     const onLinkOpened = jest.fn();
