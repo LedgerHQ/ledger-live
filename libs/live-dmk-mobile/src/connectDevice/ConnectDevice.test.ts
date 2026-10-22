@@ -8,6 +8,11 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
 import { connectDevice } from "./connectDevice";
+import {
+  configureMockServerTransport,
+  resetMockServerTransport,
+} from "../mockServerTransportConfig";
+import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
@@ -35,6 +40,13 @@ jest.mock("../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySo
   })),
 }));
 
+jest.mock("../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource", () => ({
+  MockServerDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
+    listen: jest.fn(),
+    transportId: "mockserver",
+  })),
+}));
+
 const mockedSharedConnectDeviceUseCase = jest.mocked(sharedConnectDeviceUseCase);
 
 const knownDevice: KnownDevice = {
@@ -46,6 +58,7 @@ const knownDevice: KnownDevice = {
 
 describe("mobile connectDevice", () => {
   afterEach(() => {
+    resetMockServerTransport();
     jest.clearAllMocks();
   });
 
@@ -80,5 +93,21 @@ describe("mobile connectDevice", () => {
     expect(mockedSharedConnectDeviceUseCase.mock.calls[0][0]).not.toHaveProperty(
       "mapUnexpectedDiscoveryError",
     );
+    expect(MockServerDeviceDiscoverySource).not.toHaveBeenCalled();
+  });
+
+  it("should register the mock server source when that transport is enabled", () => {
+    const dmk = {} as DeviceManagementKit;
+    configureMockServerTransport({ url: "https://mock.example", token: "session" });
+
+    connectDevice({
+      dmk,
+      knownDevices: [knownDevice],
+      onConnected: jest.fn(),
+    });
+
+    expect(MockServerDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
+    expect(RnBleDeviceDiscoverySource).not.toHaveBeenCalled();
+    expect(RnHidDeviceDiscoverySource).not.toHaveBeenCalled();
   });
 });
