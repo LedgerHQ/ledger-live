@@ -104,6 +104,11 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
   let onEarlyCheckScreen = false;
 
   const sendCommand = jest.fn(async ({ command }: { command: object }) => {
+    // The machine closes any open app before each read. The device is on the dashboard, so the
+    // close succeeds at once and takes no reply the test queued.
+    if ("name" in command && command.name === "closeApp") {
+      return CommandResultFactory({ data: undefined });
+    }
     const reply = await commandReplies.next();
     if (
       command instanceof ToggleEarlyCheckCommand &&
