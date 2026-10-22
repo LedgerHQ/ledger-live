@@ -157,8 +157,6 @@ export function makeCosmosScenario(
         name: options.delegateLabel,
         family: "cosmos",
         mode: "delegate",
-        // Delegate reads transaction.amount (unlike undelegate/redelegate, which read
-        // validators[].amount); genericToCosmosTransaction sets both — see bridges.ts.
         valAddress: validatorAddress,
         amount: parseCurrencyUnit(unit, "100"),
         expect: (previousAccount, currentAccount) => {

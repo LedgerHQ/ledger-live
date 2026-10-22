@@ -3,7 +3,6 @@ import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["stakingResources.validators"],
   FIXME_ignorePreloadFields: ["tokens"],
   FIXME_ignoreAccountFields: ["sequence", "stakingResources", "operationsCount", "operations"],
   scanAccounts: [

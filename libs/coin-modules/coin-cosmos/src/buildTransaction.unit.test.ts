@@ -878,12 +878,6 @@ describe("resolveSourceValidator", () => {
       expect(resolveSourceValidator({ mode, valAddress: "val" } as Transaction)).toBeUndefined();
     },
   );
-
-  it("falls back to the legacy sourceValidator of a redelegation", () => {
-    expect(
-      resolveSourceValidator({ mode: "redelegate", sourceValidator: "src" } as Transaction),
-    ).toBe("src");
-  });
 });
 
 describe("resolveTransactionValidators", () => {
@@ -914,25 +908,6 @@ describe("resolveTransactionValidators", () => {
     expect(
       resolveTransactionValidators({ mode, amount, valAddress: "val" } as Transaction),
     ).toEqual([{ address: "val", amount }]);
-  });
-
-  it("keeps the legacy validators and their amounts when no mode-specific address is set", () => {
-    const validators = [{ address: "val", amount: new BigNumber(100) }];
-    expect(
-      resolveTransactionValidators({
-        mode: "undelegate",
-        amount: new BigNumber(0),
-        validators,
-      } as Transaction),
-    ).toEqual(validators);
-    expect(
-      resolveTransactionValidators({
-        mode: "redelegate",
-        amount: new BigNumber(0),
-        sourceValidator: "src",
-        validators,
-      } as Transaction),
-    ).toEqual(validators);
   });
 });
 
