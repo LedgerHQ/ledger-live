@@ -1,4 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import { DeviceModelId, type DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { OnboardingStep } from "@features/platform-device-onboarding";
 import {
   DeviceManagementKitBLETransport,
@@ -19,8 +19,22 @@ jest.mock("../hooks/useLeaveOnboarding", () => ({
   useLeaveOnboarding: jest.fn(() => leaveOnboarding),
 }));
 
+type CompletedUpdateHandover = { onUpdateCompleted: () => void };
+
+const captureFirmwareHandover: {
+  (props: CompletedUpdateHandover): { close: jest.Mock };
+  latest: CompletedUpdateHandover;
+} = Object.assign(
+  (props: CompletedUpdateHandover) => {
+    captureFirmwareHandover.latest = props;
+    return { close: jest.fn() };
+  },
+  { latest: { onUpdateCompleted: () => undefined } },
+);
+
 jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
-  useFirmwareUpdateHandover: jest.fn(() => ({ close: jest.fn() })),
+  useFirmwareUpdateHandover: (props: { onUpdateCompleted: () => void }) =>
+    captureFirmwareHandover(props),
 }));
 
 const leaveHook = jest.mocked(useLeaveOnboarding);
@@ -475,6 +489,39 @@ describe("scripted device onboarding", () => {
     );
     await waitFor(() => expect(result.current.status).toBe("exited"));
     expect(result.current.exit?.reason).toBe("completed");
+  });
+
+  it("opens a new session after a completed OS update and waits to read it", async () => {
+    const device = createScriptedTestDevice();
+    const calls: string[] = [];
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.passGenuineCheck());
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheck"));
+    act(() => device.offerFirmwareUpdate());
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareUpdateOffered"));
+    act(() => result.current.send({ type: "USER_ACCEPT" }));
+    await waitFor(() => expect(result.current.state).toBe("checks.firmwareUpdateDelegated"));
+
+    device.dmk.disconnect = (async ({ sessionId }: { sessionId: string }) => {
+      calls.push(`disconnect:${sessionId}`);
+    }) as DeviceManagementKit["disconnect"];
+    device.dmk.listConnectedDevices = (() => {
+      calls.push("list");
+      return [];
+    }) as DeviceManagementKit["listConnectedDevices"];
+    device.setSession("session-2");
+    device.show();
+
+    act(() => captureFirmwareHandover.latest.onUpdateCompleted());
+
+    await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
+    expect(calls.indexOf("disconnect:session-1")).toBeLessThan(calls.indexOf("list"));
+    expect(result.current.state).toBe("awaitingSession");
+    expect(result.current.sendableEvents.some(({ event }) => event.type === "SESSION_READY")).toBe(
+      true,
+    );
   });
 });
 

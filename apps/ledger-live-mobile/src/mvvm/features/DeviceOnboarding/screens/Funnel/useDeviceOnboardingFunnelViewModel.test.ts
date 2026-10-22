@@ -135,6 +135,21 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(result.current.status).toBe("connecting");
   });
 
+  it("should show connecting while a completed update waits for the device", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSession",
+        status: "connecting",
+        liveDevice: null,
+        error: null,
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("connecting");
+  });
+
   it("should reconnect a lost session without restarting onboarding", () => {
     const connect = jest.fn();
     const reset = jest.fn();

@@ -143,6 +143,28 @@ describe("useFirmwareUpdateHandover", () => {
     expect(send).toHaveBeenCalledWith({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
   });
 
+  it("asks for a new session when the update completed, and does not close the old one", async () => {
+    const send = jest.fn();
+    const onUpdateCompleted = jest.fn();
+    const { rerender } = renderDelegated(send, { onUpdateCompleted });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalled());
+    const params = mockPush.mock.calls[0][1] as {
+      onBackFromUpdate: (updateStep?: string) => void;
+    };
+
+    act(() => {
+      params.onBackFromUpdate("completed");
+      mockFocusCallback?.();
+    });
+
+    expect(mockGoBack).toHaveBeenCalledTimes(1);
+    expect(onUpdateCompleted).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("closes from focus alone when the screen was popped without the back callback", async () => {
     const send = jest.fn();
     const { rerender } = renderDelegated(send);
@@ -212,6 +234,7 @@ describe("useFirmwareUpdateHandover", () => {
         isDeviceOnboarded: false,
         machineState: delegated,
         send,
+        onUpdateCompleted: jest.fn(),
       });
       useLayoutEffect(() => {
         if (closeOnLayout.current) handover.close();
@@ -238,6 +261,7 @@ describe("useFirmwareUpdateHandover", () => {
         isDeviceOnboarded: false,
         machineState: "checks.firmwareUpdateOffered",
         send: jest.fn(),
+        onUpdateCompleted: jest.fn(),
       }),
     );
 
@@ -251,7 +275,10 @@ const delegated = "checks.firmwareUpdateDelegated";
 
 function renderDelegated(
   send: (event: HostOnboardingEvent) => void,
-  { isDeviceOnboarded = false }: { isDeviceOnboarded?: boolean } = {},
+  {
+    isDeviceOnboarded = false,
+    onUpdateCompleted = jest.fn(),
+  }: { isDeviceOnboarded?: boolean; onUpdateCompleted?: () => void } = {},
 ) {
   const props = { machineState: delegated };
   const rendered = renderHook(() =>
@@ -260,6 +287,7 @@ function renderDelegated(
       isDeviceOnboarded,
       machineState: props.machineState,
       send,
+      onUpdateCompleted,
     }),
   );
 

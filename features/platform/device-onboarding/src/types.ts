@@ -107,6 +107,7 @@ export type OnboardingEvent =
       };
     }
   | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
+  | { type: "FIRMWARE_UPDATE_COMPLETED" }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED"; sessionId: DeviceSessionId }
   | { type: "RETRY" }
   | { type: "SKIP" }
