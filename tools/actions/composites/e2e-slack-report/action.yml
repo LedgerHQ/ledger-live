@@ -95,6 +95,29 @@ inputs:
     required: false
     default: ""
 
+  # Row 3 (desktop: macOS)
+  row3_emoji:
+    required: false
+    default: ""
+  row3_label:
+    required: false
+    default: ""
+  row3_flags:
+    required: false
+    default: ""
+  row3_summary:
+    required: false
+    default: ""
+  row3_report_url:
+    required: false
+    default: ""
+  row3_status:
+    required: false
+    default: ""
+  row3_qaa_url:
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   steps:
@@ -129,6 +152,13 @@ runs:
         ROW2_STATUS: ${{ inputs.row2_status }}
         ROW2_MISSING_SHARDS: ${{ inputs.row2_missing_shards }}
         ROW2_QAA_URL: ${{ inputs.row2_qaa_url }}
+        ROW3_EMOJI: ${{ inputs.row3_emoji }}
+        ROW3_LABEL: ${{ inputs.row3_label }}
+        ROW3_FLAGS: ${{ inputs.row3_flags }}
+        ROW3_SUMMARY: ${{ inputs.row3_summary }}
+        ROW3_REPORT_URL: ${{ inputs.row3_report_url }}
+        ROW3_STATUS: ${{ inputs.row3_status }}
+        ROW3_QAA_URL: ${{ inputs.row3_qaa_url }}
       with:
         script: |
           const path = require("path");
