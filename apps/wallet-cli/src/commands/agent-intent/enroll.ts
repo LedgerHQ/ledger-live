@@ -62,16 +62,9 @@ const REFUSED_WRITE_HINT =
   "Unlock the keychain collection and re-run, or re-run with --allow-plaintext-key only after " +
   "the human explicitly agrees to store the agent key unencrypted on this machine.";
 
-/** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
- * right before writing — a concurrent enroll of the same profile id could pass the first check and
- * still lose the race to the second. Also returns where the agent key will be stored: the second
- * check reuses the first one's keychain probe (`prechecked`) and only re-reads the entry. */
-function checkProfileAndChooseKeyStore(
-  session: Session,
-  profileId: string,
-  allowPlaintextKey: boolean,
-  prechecked?: AgentIntentKeyStore,
-): AgentIntentKeyStore {
+/** The session part of `checkProfileAndChooseKeyStore`, which `--detach` checks without the
+ * keychain. */
+function assertProfileNotInSession(session: Session, profileId: string): void {
   if (session.getAgentIntentProfile(profileId)) {
     throw new Error(
       `Agent Intent profile "${profileId}" already exists. Choose a different --profile id, or ` +
@@ -84,6 +77,19 @@ function checkProfileAndChooseKeyStore(
         "it in session.yaml (or choose a different --profile id) before re-enrolling.",
     );
   }
+}
+
+/** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
+ * right before writing — a concurrent enroll of the same profile id could pass the first check and
+ * still lose the race to the second. Also returns where the agent key will be stored: the second
+ * check reuses the first one's keychain probe (`prechecked`) and only re-reads the entry. */
+function checkProfileAndChooseKeyStore(
+  session: Session,
+  profileId: string,
+  allowPlaintextKey: boolean,
+  prechecked?: AgentIntentKeyStore,
+): AgentIntentKeyStore {
+  assertProfileNotInSession(session, profileId);
   if (hasAgentIntentKeyFile(profileId)) {
     throw new Error(
       `An agent key file for profile "${profileId}" already exists ` +
@@ -253,8 +259,10 @@ async function startDetachedEnroll(
   // The start lock keeps a concurrent --detach for this profile from passing the check, then
   // truncating and sharing the log, until this listener holds its own lock or has failed.
   const { child, first } = await withEnrollStartLock(profileId, async () => {
-    // Checked before the spawn truncates the log a running listener still writes to.
+    // Checked before the spawn truncates the log: a running listener still writes to it, and an
+    // existing profile's log is the only record of how its enrollment ended.
     assertNoLiveEnrollListener(profileId);
+    assertProfileNotInSession(await Session.read(), profileId);
     const started = spawnDetached(selfCommand(args), logPath);
     return { child: started, first: await readFirstLogJsonLine(started, logPath) };
   });

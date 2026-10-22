@@ -1006,6 +1006,10 @@ describe("agent-intent enroll --detach", () => {
     spawnedCommands = [];
     firstLogLine = async () => pendingLine;
     childKilled = false;
+    storedProfile = undefined;
+    profileOnLockedRecheck = "same-as-stored";
+    invalidProfileIds = [];
+    hasSecretKeyImpl = () => false;
     sessionReadCalls = 0;
     savedSecretKeys.clear();
     stdout = [];
@@ -1034,8 +1038,8 @@ describe("agent-intent enroll --detach", () => {
       "--output=json",
     ]);
     expect(command[0]).toBe(process.execPath);
-    // The parent itself creates nothing: the listener does.
-    expect(sessionReadCalls).toBe(0);
+    // The parent only checks the profile id is free; the listener creates the profile.
+    expect(sessionReadCalls).toBe(1);
     expect(savedSecretKeys.size).toBe(0);
   });
 
@@ -1155,6 +1159,22 @@ describe("agent-intent enroll --detach", () => {
         `An enrollment listener for profile "test-agent" is already running (pid ${process.pid}).`,
       );
     });
+    expect(spawnedCommands).toEqual([]);
+  });
+
+  it("refuses a profile id already recorded in the session before the spawn truncates its log", async () => {
+    storedProfile = { profileId: "test-agent" };
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(
+      'Agent Intent profile "test-agent" already exists.',
+    );
+    expect(spawnedCommands).toEqual([]);
+  });
+
+  it("refuses a profile id that matches an invalid session record", async () => {
+    invalidProfileIds = ["test-agent"];
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(/invalid Agent Intent record/);
     expect(spawnedCommands).toEqual([]);
   });
 
