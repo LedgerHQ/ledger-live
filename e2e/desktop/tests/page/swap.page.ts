@@ -147,7 +147,9 @@ export class SwapPage extends WebViewAppPage {
   async checkQuoteCardCtaLabel(providerUiName: string, approvalRequired = false): Promise<void> {
     const buttonLocator = await this.checkQuoteCardCtaPresence(providerUiName);
     const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
-    await expect.soft(buttonLocator).toHaveText(`${ctaVerb} with ${providerUiName}`);
+    await this.softExpect(async soft => {
+      await soft(buttonLocator).toHaveText(`${ctaVerb} with ${providerUiName}`);
+    });
   }
 
   @step("Get provider list")
@@ -171,8 +173,10 @@ export class SwapPage extends WebViewAppPage {
   async checkElementsPresenceOnSwapApprovalStep() {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
-    await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
-    await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
+      await soft(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
+    });
   }
 
   @step("Click Continue button")
@@ -212,45 +216,53 @@ export class SwapPage extends WebViewAppPage {
         this.providerContainerInfoSelector(provider, SwapPage.FIAT_AMOUNT_LABEL_SUFFIX),
       ),
     ).toBeVisible();
-    await expect(
-      webview.locator(
-        this.providerContainerInfoSelector(provider, SwapPage.NETWORK_FEES_HEADING_SUFFIX),
-      ),
-    ).toBeVisible();
-    await expect(
-      webview
-        .locator(this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX))
-        .getByText(/Floating rate|Fixed rate/),
-    ).toBeVisible();
-    await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, SwapPage.RATE_INFO_ICON_SUFFIX)),
-    ).toBeVisible();
-    await expect(
-      webview
-        .locator(this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX))
-        .getByText(ticker),
-    ).toBeVisible();
-    if (
-      provider === SwapProvider.ONE_INCH.name ||
-      provider === SwapProvider.VELORA.name ||
-      provider === SwapProvider.UNISWAP.name ||
-      provider === SwapProvider.LIFI.name
-    ) {
-      await expect(
+    await this.softExpect(async soft => {
+      await soft(
+        webview.locator(
+          this.providerContainerInfoSelector(provider, SwapPage.NETWORK_FEES_HEADING_SUFFIX),
+        ),
+      ).toBeVisible();
+      await soft(
         webview
           .locator(
             this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
           )
-          .getByText("Max Slippage"),
+          .getByText(/Floating rate|Fixed rate/),
       ).toBeVisible();
-      await expect(
+      await soft(
+        webview.locator(
+          this.providerContainerInfoSelector(provider, SwapPage.RATE_INFO_ICON_SUFFIX),
+        ),
+      ).toBeVisible();
+      await soft(
         webview
           .locator(
             this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
           )
-          .getByText("%"),
+          .getByText(ticker),
       ).toBeVisible();
-    }
+      if (
+        provider === SwapProvider.ONE_INCH.name ||
+        provider === SwapProvider.VELORA.name ||
+        provider === SwapProvider.UNISWAP.name ||
+        provider === SwapProvider.LIFI.name
+      ) {
+        await soft(
+          webview
+            .locator(
+              this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
+            )
+            .getByText("Max Slippage"),
+        ).toBeVisible();
+        await soft(
+          webview
+            .locator(
+              this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
+            )
+            .getByText("%"),
+        ).toBeVisible();
+      }
+    });
     await this.checkQuoteCardCtaLabel(providerList[0]);
   }
 

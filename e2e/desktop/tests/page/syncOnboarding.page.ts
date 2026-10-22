@@ -166,7 +166,9 @@ export class SyncOnboardingPage extends AppPage {
   @step("Expect the restore sources to be offered")
   async expectRestoreChoices() {
     await expect(this.restoreChoiceStep).toBeVisible();
-    for (const source of this.restoreChoiceSources) await expect(source).toBeVisible();
+    await this.softExpect(async soft => {
+      for (const source of this.restoreChoiceSources) await soft(source).toBeVisible();
+    });
   }
 
   @step("Expect the restore to run from the Ledger Recovery Key")

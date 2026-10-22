@@ -46,7 +46,10 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Expect activation success screen")
   async expectActivationSuccess() {
-    await expect(this.activateSuccessTitle).toContainText("Sync complete");
+    await expect(this.activateSuccessTitle).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.activateSuccessTitle).toContainText("Sync complete");
+    });
   }
 
   @step("Check if Ledger Sync management drawer is visible")
@@ -75,9 +78,12 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Check if the backup deletion was successful")
   async expectBackupDeletion() {
-    await expect(this.backupDeletionSuccessTextId).toContainText(
-      "Your Ledger Wallet apps are no longer synced",
-    );
+    await expect(this.backupDeletionSuccessTextId).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.backupDeletionSuccessTextId).toContainText(
+        "Your Ledger Wallet apps are no longer synced",
+      );
+    });
   }
 
   private async waitForManageInstancesButton() {

@@ -121,7 +121,9 @@ export class AddAccountModal extends Modal {
 
   @step("Check that add account modal elements are visible")
   async expectModalVisibility() {
-    expect(await this.title.textContent()).toBe("Add accounts");
     await expect(this.selectAccount).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.title).toHaveText("Add accounts");
+    });
   }
 }

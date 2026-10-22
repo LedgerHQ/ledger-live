@@ -20,10 +20,11 @@ export class SwapConfirmationDrawer extends Drawer {
     await expect(this.swapCompletedMessage).toHaveText("Transaction broadcast successfully", {
       timeout: 120000,
     });
-    await expect(this.swapCompletedDescription).toHaveText(
-      `Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your ${currencyToReceive}.`,
-      { timeout: 60000 },
-    );
+    await this.softExpect(async soft => {
+      await soft(this.swapCompletedDescription).toHaveText(
+        `Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your ${currencyToReceive}.`,
+      );
+    });
   }
 
   @step("Check error message: $0")
@@ -41,6 +42,8 @@ export class SwapConfirmationDrawer extends Drawer {
   @step("Check share your feedback link is visible")
   async checkShareYourFeedbackLinkVisible() {
     await expect(this.shareYourFeedbackLink).toBeVisible();
-    await expect(this.shareYourFeedbackLink).toHaveText(/tell us about your experience/i);
+    await this.softExpect(async soft => {
+      await soft(this.shareYourFeedbackLink).toHaveText(/tell us about your experience/i);
+    });
   }
 }

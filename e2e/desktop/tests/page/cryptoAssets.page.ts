@@ -22,8 +22,10 @@ export class CryptoAssetsPage extends AppPage {
   async expectAssetsPage() {
     const headerText = this.category === "cryptos" ? "Crypto" : "Stablecoins";
     await expect(this.page).toHaveURL(new RegExp(String.raw`/assets\?category=${this.category}`));
-    await expect(this.header.title).toHaveText(headerText, { ignoreCase: true });
     await expect(this.content).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.header.title).toHaveText(headerText, { ignoreCase: true });
+    });
   }
 
   @step("Click back button in crypto assets page header")

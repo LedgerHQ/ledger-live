@@ -56,7 +56,9 @@ export abstract class Component extends PageHolder {
   @step("Check toaster is visible")
   async expectTransactionSentToasterToBeVisible() {
     await expect(this.toaster).toBeVisible();
-    await expect(this.toaster).toContainText(this.transactionSentText);
+    await this.softExpect(async soft => {
+      await soft(this.toaster).toContainText(this.transactionSentText);
+    });
   }
 }
 

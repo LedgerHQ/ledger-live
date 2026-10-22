@@ -557,7 +557,9 @@ export class BorrowPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.repayCompletionCard)).toBeVisible({
       timeout: SCREEN_TIMEOUT_MS,
     });
-    await expect(webview.getByTestId(this.viewMyLoan)).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(webview.getByTestId(this.viewMyLoan)).toBeVisible();
+    });
   }
 
   @step("Click Withdraw collateral on overview")

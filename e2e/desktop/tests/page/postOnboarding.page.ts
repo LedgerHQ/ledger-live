@@ -63,16 +63,20 @@ export class PostOnboardingPage extends AppPage {
   async expectActionPending(actionId: string) {
     const row = this.actionRow(actionId);
     await expect(row).toBeVisible();
-    await expect(row).not.toContainText(ACTION_COMPLETED_LABEL);
     await expect(row).toHaveAttribute("data-post-onboarding-action-completed", "false");
+    await this.softExpect(async soft => {
+      await soft(row).not.toContainText(ACTION_COMPLETED_LABEL);
+    });
   }
 
   @step("Expect post-onboarding action $0 to be completed")
   async expectActionCompleted(actionId: string) {
     const row = this.actionRow(actionId);
     await expect(row).toBeVisible();
-    await expect(row).toContainText(ACTION_COMPLETED_LABEL);
     await expect(row).toHaveAttribute("data-post-onboarding-action-completed", "true");
+    await this.softExpect(async soft => {
+      await soft(row).toContainText(ACTION_COMPLETED_LABEL);
+    });
   }
 
   @step("Expect the finish-onboarding dialog to list $0")

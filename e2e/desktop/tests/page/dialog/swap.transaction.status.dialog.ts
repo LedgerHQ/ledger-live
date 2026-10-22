@@ -31,10 +31,6 @@ export class SwapTransactionStatusDialog extends Dialog {
     },
   ) {
     await expect(this.dialog).toBeVisible();
-    await expect(this.title).toBeVisible();
-    await expect(this.title).toHaveText(/Swap/);
-    await expect(this.date).toBeVisible();
-    await expect(this.date).toContainText(details.date);
     await expect(this.sendRow).toBeVisible();
     await expect(this.sentAmount).toBeVisible();
     await expect(this.sentAmount).toHaveText(details.sentAmount);
@@ -47,12 +43,18 @@ export class SwapTransactionStatusDialog extends Dialog {
     await expect(this.receiveAccount).toHaveText(details.receiveAccount);
     await expect(this.swapId).toContainText(swapIdPrefix);
     await expect(this.provider).toHaveText(provider.uiName);
-    if (details.providerUrl) {
-      await expect(this.provider).toHaveAttribute("data-href", details.providerUrl);
-    } else {
-      await expect(this.provider).not.toHaveAttribute("data-href");
-    }
-    await expect(this.viewExplorerBtn).toBeVisible();
-    await expect(this.viewExplorerBtn).toHaveAttribute("data-href", /^https:\/\/.+/);
+    await this.softExpect(async soft => {
+      await soft(this.title).toBeVisible();
+      await soft(this.title).toHaveText(/Swap/);
+      await soft(this.date).toBeVisible();
+      await soft(this.date).toContainText(details.date);
+      if (details.providerUrl) {
+        await soft(this.provider).toHaveAttribute("data-href", details.providerUrl);
+      } else {
+        await soft(this.provider).not.toHaveAttribute("data-href");
+      }
+      await soft(this.viewExplorerBtn).toBeVisible();
+      await soft(this.viewExplorerBtn).toHaveAttribute("data-href", /^https:\/\/.+/);
+    });
   }
 }

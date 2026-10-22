@@ -196,10 +196,12 @@ export class DelegateModal extends Modal {
   async checkCeloManageAssetModal() {
     await expect(this.celoLockButton).toBeVisible();
     await expect(this.celoVoteButton).toBeVisible();
-    await expect(this.celoActivateVoteButton).toBeVisible();
-    await expect(this.celoRevokeVoteButton).toBeVisible();
-    await expect(this.celoUnlockButton).toBeVisible();
-    await expect(this.celoWithdrawButton).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.celoActivateVoteButton).toBeVisible();
+      await soft(this.celoRevokeVoteButton).toBeVisible();
+      await soft(this.celoUnlockButton).toBeVisible();
+      await soft(this.celoWithdrawButton).toBeVisible();
+    });
   }
 
   @step("Click on lock button for CELO")

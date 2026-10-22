@@ -125,10 +125,12 @@ export class HistoryPage extends AppPage {
 
   @step("Expect four-column layout (Type, Address, Amount, Value)")
   async expectFourColumnLayout() {
-    await expect(this.columnType).toHaveText("Type");
-    await expect(this.columnAddress).toHaveText("Address");
-    await expect(this.columnAmount).toHaveText("Amount");
-    await expect(this.columnValue).toHaveText("Value");
+    await this.softExpect(async soft => {
+      await soft(this.columnType).toHaveText("Type");
+      await soft(this.columnAddress).toHaveText("Address");
+      await soft(this.columnAmount).toHaveText("Amount");
+      await soft(this.columnValue).toHaveText("Value");
+    });
   }
 
   @step("Expect row renders for IN operation")

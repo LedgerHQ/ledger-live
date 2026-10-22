@@ -125,18 +125,22 @@ export class MyLedgerPage extends AppPage {
   @step("Expect the device summary to report $0")
   async expectDeviceSummary(deviceName: string) {
     await expect(this.storageCard).toContainText(deviceName);
-    await expect(this.osVersion).toContainText("OS version");
-    await expect(this.osVersion).toContainText(/\d+\.\d+/);
-    await expect(this.genuineBadge).toContainText("Ledger Genuine check");
+    await this.softExpect(async soft => {
+      await soft(this.osVersion).toContainText("OS version");
+      await soft(this.osVersion).toContainText(/\d+\.\d+/);
+      await soft(this.genuineBadge).toContainText("Ledger Genuine check");
+    });
   }
 
   /** Sizes are matched as a value and a unit, because the capacity differs per model. */
   @step("Expect the device storage to report $0 installed apps")
   async expectStorageSummary(appsCount: number) {
     await expect(this.storageAppsCount).toHaveText(String(appsCount));
-    await expect(this.storageUsed).toHaveText(BYTE_SIZE);
-    await expect(this.storageCapacity).toHaveText(BYTE_SIZE);
-    await expect(this.storageFree).toContainText(BYTE_SIZE);
+    await this.softExpect(async soft => {
+      await soft(this.storageUsed).toHaveText(BYTE_SIZE);
+      await soft(this.storageCapacity).toHaveText(BYTE_SIZE);
+      await soft(this.storageFree).toContainText(BYTE_SIZE);
+    });
   }
 
   @step("Read the device storage figures")
@@ -208,7 +212,10 @@ export class MyLedgerPage extends AppPage {
   /** Unsupported assets read "Requires 3rd-party wallet" where supported ones read supported. */
   @step("Expect $0 to be marked as not supported by Ledger Wallet")
   async expectAppNotSupported(app: AppInfos) {
-    await expect(this.appRow(app)).toContainText("Requires 3rd-party wallet");
+    await expect(this.appRow(app)).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.appRow(app)).toContainText("Requires 3rd-party wallet");
+    });
   }
 
   @step("Expect $0 to offer Learn more rather than Add account")
@@ -234,12 +241,14 @@ export class MyLedgerPage extends AppPage {
   @step("Expect the modal to ask to install the app $0 depends on")
   async expectDependencyInstallModal(app: AppInfos, dependency: AppInfos) {
     await expect(this.modal).toContainText(`${dependency.name} app is required`);
-    await expect(this.modal).toContainText(
-      `The ${dependency.name} app will also be installed because the ${app.name} app needs it.`,
-    );
-    await expect(this.modal.locator("img")).toHaveCount(2);
-    await expect(this.confirmModalButton).toHaveText("Install apps");
-    await expect(this.cancelModalButton).toHaveText("Cancel");
+    await this.softExpect(async soft => {
+      await soft(this.modal).toContainText(
+        `The ${dependency.name} app will also be installed because the ${app.name} app needs it.`,
+      );
+      await soft(this.modal.locator("img")).toHaveCount(2);
+      await soft(this.confirmModalButton).toHaveText("Install apps");
+      await soft(this.cancelModalButton).toHaveText("Cancel");
+    });
   }
 
   @step("Uninstall $0")
@@ -258,15 +267,19 @@ export class MyLedgerPage extends AppPage {
   async expectInstallSuccessBanner(app: AppInfos) {
     await expect(this.installSuccessBanner).toContainText(app.name);
     await expect(this.manageAccountsButton).toBeVisible();
-    await expect(this.manageAccountsButton).toContainText("Manage my accounts");
+    await this.softExpect(async soft => {
+      await soft(this.manageAccountsButton).toContainText("Manage my accounts");
+    });
   }
 
   /** A supported asset reads supported and offers Add account where an unsupported one offers Learn more. */
   @step("Expect $0 to offer Add account rather than Learn more")
   async expectAddAccountOffered(app: AppInfos) {
-    await expect(this.appRow(app)).toContainText("Ledger Wallet supported");
     await expect(this.appRow(app).getByRole("button", { name: "Add account" })).toBeVisible();
     await expect(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeHidden();
+    await this.softExpect(async soft => {
+      await soft(this.appRow(app)).toContainText("Ledger Wallet supported");
+    });
   }
 
   @step("Expect $0 to be uninstalled")
@@ -294,11 +307,13 @@ export class MyLedgerPage extends AppPage {
   @step("Expect the modal to ask to uninstall the apps that depend on $0")
   async expectDependentsUninstallModal(app: AppInfos, dependents: AppInfos[]) {
     await expect(this.modal).toContainText(`Uninstall ${app.name} and its related apps?`);
-    await expect(this.modal).toContainText(
-      `Some of your installed apps are linked to ${app.name} app. They will be uninstalled as well.`,
-    );
-    await expect(this.confirmModalButton).toHaveText(`Uninstall ${app.name} and other apps`);
-    await expect(this.cancelModalButton).toHaveText("Cancel");
+    await this.softExpect(async soft => {
+      await soft(this.modal).toContainText(
+        `Some of your installed apps are linked to ${app.name} app. They will be uninstalled as well.`,
+      );
+      await soft(this.confirmModalButton).toHaveText(`Uninstall ${app.name} and other apps`);
+      await soft(this.cancelModalButton).toHaveText("Cancel");
+    });
 
     await this.modal.getByText("Show apps to uninstall").click();
     await Promise.all(

@@ -128,22 +128,30 @@ export class PayTabPage extends AppPage {
 
   @step("Expect the request QR code")
   async expectRequestQrCode() {
-    await expect(this.requestQr).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.requestQr).toBeVisible();
+    });
   }
 
   @step("Expect the request Save action")
   async expectRequestSave() {
-    await expect(this.requestSave).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.requestSave).toBeVisible();
+    });
   }
 
   @step("Expect the request Copy action")
   async expectRequestCopy() {
-    await expect(this.requestCopy).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.requestCopy).toBeVisible();
+    });
   }
 
   @step("Expect the request Verify action")
   async expectRequestVerify() {
-    await expect(this.requestVerify).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.requestVerify).toBeVisible();
+    });
   }
 
   @step("Dismiss the verify address hint when it is shown")
@@ -165,7 +173,9 @@ export class PayTabPage extends AppPage {
   @step("Expect the Pay success screen")
   async expectYouPaid() {
     await expect(this.successStep).toBeVisible();
-    await expect(this.successStep).toContainText("You paid");
+    await this.softExpect(async soft => {
+      await soft(this.successStep).toContainText("You paid");
+    });
   }
 
   @step("Select contact $0")
@@ -181,8 +191,10 @@ export class PayTabPage extends AppPage {
   @step("Expect the Pay success screen to mention $0")
   async expectPaySuccess(recipient: string) {
     await expect(this.successStep).toBeVisible();
-    await expect(this.successStep).toContainText("You paid");
     await expect(this.successStep).toContainText(recipient);
+    await this.softExpect(async soft => {
+      await soft(this.successStep).toContainText("You paid");
+    });
   }
 
   @step("Close the Pay success screen")
@@ -198,7 +210,9 @@ export class PayTabPage extends AppPage {
 
   @step("Expect the cashback row")
   async expectCashbackRow() {
-    await expect(this.reward).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.reward).toBeVisible();
+    });
   }
 
   @step("Expect the freeze tile to read $0")

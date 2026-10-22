@@ -67,26 +67,34 @@ test.describe("Swap - amount formatting by language", () => {
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: TEST_AMOUNT });
 
         const separators = getExpectedSeparators(languageId);
+        const page = app.swap.getPage();
 
         const sentAmount = await app.swap.getAmountToSend();
         await expectFormattedAmount(
+          page,
           sentAmount,
           { decimal: separators.decimal, thousands: SEND_INPUT_THOUSANDS },
           "send amount input",
         );
 
         const countervalue = await app.swap.getSendCountervalueText();
-        await expectFormattedAmount(countervalue, separators, "send amount countervalue");
+        await expectFormattedAmount(page, countervalue, separators, "send amount countervalue");
 
         const receivedAmount = await app.swap.getAmountToReceive();
-        await expectFormattedAmount(receivedAmount, separators, "receive amount");
+        await expectFormattedAmount(page, receivedAmount, separators, "receive amount");
 
         // Provider list is sorted best-first, so the first entry is the "Best Offer" card.
         const providerList = await app.swap.getProviderList();
         const bestQuoteProvider = providerList[0];
         const { amount, fiatAmount } = await app.swap.getQuoteAmountTexts(bestQuoteProvider);
-        await expectFormattedAmount(amount, separators, `best quote (${bestQuoteProvider}) amount`);
         await expectFormattedAmount(
+          page,
+          amount,
+          separators,
+          `best quote (${bestQuoteProvider}) amount`,
+        );
+        await expectFormattedAmount(
+          page,
           fiatAmount,
           separators,
           `best quote (${bestQuoteProvider}) fiat amount`,

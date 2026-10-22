@@ -188,8 +188,10 @@ export class EarnV2Page extends EarnBasePage {
     const webview = await this.getWebView();
     const description = webview.getByTestId(this.swapDescription);
     await expect(description).toBeVisible();
-    await expect(description).toContainText(fromTicker);
-    await expect(description).toContainText(toTicker);
+    await this.softExpect(async soft => {
+      await soft(description).toContainText(fromTicker);
+      await soft(description).toContainText(toTicker);
+    });
   }
 
   @step("Continue to swap")

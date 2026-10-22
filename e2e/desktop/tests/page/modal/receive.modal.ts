@@ -59,9 +59,11 @@ export class ReceiveModal extends Modal {
   @step("Verify send currency / tokens warning message $1")
   async verifySendCurrencyTokensWarningMessage(account: Account, specificTokens: string) {
     await expect(this.warningMessage).toBeVisible();
-    await expect(this.warningMessage).toContainText(
-      this.sendAssetWarningMessage(account, specificTokens),
-    );
+    await this.softExpect(async soft => {
+      await soft(this.warningMessage).toContainText(
+        this.sendAssetWarningMessage(account, specificTokens),
+      );
+    });
   }
 
   @step("Verify receive menu visibility")
