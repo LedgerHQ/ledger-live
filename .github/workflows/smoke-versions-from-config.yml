@@ -1,0 +1,83 @@
+name: "[Smoke] - Versions from config files (PR #23719)"
+
+on:
+  push:
+    branches:
+      - smoke/versions-from-config-files
+
+permissions: {}
+
+jobs:
+  pnpm-from-package-manager:
+    name: pnpm/action-setup reads packageManager
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - name: Assert versions match config files
+        run: |
+          set -euo pipefail
+          expected_pnpm="$(jq -r .packageManager package.json | sed 's/^pnpm@//')"
+          expected_node="$(cat .nvmrc)"
+          echo "pnpm $(pnpm --version) (expected $expected_pnpm), node $(node --version) (expected v$expected_node)"
+          [ "$(pnpm --version)" = "$expected_pnpm" ]
+          [ "$(node --version)" = "v$expected_node" ]
+
+  zizmor-from-mise:
+    name: zizmor-action runs the mise.toml version
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+      # Copy of the ci-sast steps from test-additional.yml on this branch
+      - name: Read zizmor version from mise.toml
+        id: zizmor-version
+        run: |
+          version="$(mise current zizmor)"
+          [ -n "$version" ] || { echo "::error::zizmor is not pinned in mise.toml"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
+        with:
+          version: ${{ steps.zizmor-version.outputs.version }}
+          min-severity: high
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  monitor-with-mise-toolchain:
+    name: monitor composite on the mise toolchain
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+      # Composite from the PR branch; no Datadog keys and no log submission
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@ci/versions-from-config-files
+        with:
+          MONITOR_FILTER_CURRENCIES: bitcoin
+          MONITOR_FILTER_ACCOUNT_TYPES: pristine
