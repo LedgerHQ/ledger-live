@@ -15,13 +15,15 @@
 // Repack.getResolveOptions(platform, { preferNativePlatform: true }) for native), `conditions`
 // pick an entry's file per platform, `platformEntries` name the platform subpaths and
 // `componentWrappers` the calls that still return a component. The `banned*` settings and
-// `gestureWords` list what a contract may not import, reference or name (R3).
+// `gestureWords` list what a contract may not import or name, `neutralReactTypes` the React types
+// it may reference (R3).
 //
 // R1: a universal component is exported on both platforms under the same name.
 // R2: both implementations annotate their first parameter with one props type name, declared in
 // one unsuffixed module, the contract, with no platform-suffixed sibling.
-// R3: the contract imports no platform package, references no DOM or React Native type, and
-// declares no `className`, `style` or gesture callback; a `@platform` prop is an optional primitive.
+// R3: the contract imports no platform package, references no global type outside the ECMAScript
+// library and no React type outside `neutralReactTypes`, and declares no `className`, `style` or
+// gesture callback; a `@platform` prop is an optional primitive.
 // R4: a platform module that declares a universal component exports components only.
 // R5: a component is exported from universal entries or from platform entries, never both, and a
 // platform entry points at a module of its own that carries its platform's suffix.
@@ -55,10 +57,12 @@ const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const COMPONENT_WRAPPERS = new Set(CONFIG.componentWrappers);
 
+// The ECMAScript declaration files TypeScript ships, without the DOM and host ones.
+const STANDARD_LIB_FILE = /^lib\.(?:es\d+|esnext|decorators)(?:\.[\w-]+)*\.d\.ts$/;
 const PLATFORM_SUFFIXES = [".web", ".native", ".ios", ".android"];
 const CONTRACT_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx"];
 const BANNED_IMPORT_PREFIXES = CONFIG.bannedImportPrefixes;
-const BANNED_TYPE_NAMES = CONFIG.bannedTypeNames.map(camelCaseGlob);
+const NEUTRAL_REACT_TYPES = new Set(CONFIG.neutralReactTypes);
 const BANNED_PROP_NAMES = new Set(CONFIG.bannedPropNames);
 const BANNED_CALLBACK_NAMES = CONFIG.bannedCallbackNames.map(camelCaseGlob);
 const GESTURE_WORDS = new Set(CONFIG.gestureWords);
@@ -242,7 +246,8 @@ function hasDefaultModifier(node) {
  * `declarations` holds the top-level declarations, `bindings` maps a local name to the value import
  * it comes from, `localExports` maps an exported name to a local name, `named` maps an exported name
  * to a re-export, `stars` lists the `export * from` specifiers. `types` holds the top-level type
- * aliases and interfaces, `imports` maps a local name to any import, type-only ones included.
+ * aliases and interfaces, `imports` maps a local name to any import, type-only and namespace ones
+ * included.
  *
  * @param {string} file
  * @param {string} source
@@ -327,6 +332,9 @@ function parseModule(file, source) {
           if (clause.isTypeOnly || element.isTypeOnly) continue;
           bindings.set(element.name.text, { specifier, imported });
         }
+      }
+      if (clause.namedBindings && ts.isNamespaceImport(clause.namedBindings)) {
+        imports.set(clause.namedBindings.name.text, { specifier, imported: "*" });
       }
     } else if (ts.isExportDeclaration(statement) && !statement.isTypeOnly) {
       const specifier =
@@ -635,24 +643,79 @@ function suffixedSiblings(file) {
 }
 
 /**
- * @param {ts.Node} node
- * @returns {string | null} the rightmost name of a type reference, `React.ChangeEvent` read as
- *   `ChangeEvent`, or the original name of an import, so an alias does not hide it. A name under
- *   the `JSX` namespace is neutral and returns null, so `JSX.Element` is not read as `Element`
+ * @param {ts.Node} name
+ * @returns {string[]} the segments of an entity name, `React.JSX.Element` read as three, or none
+ *   for an expression that is not a name
  */
-function referencedTypeName(node) {
-  if (ts.isImportSpecifier(node)) return (node.propertyName ?? node.name).text;
-  let name;
-  if (ts.isTypeReferenceNode(node)) name = node.typeName;
-  else if (ts.isImportTypeNode(node)) name = node.qualifier;
-  else if (ts.isExpressionWithTypeArguments(node)) name = node.expression;
-  if (!name) return null;
-  if (ts.isQualifiedName(name)) {
-    const namespace = ts.isQualifiedName(name.left) ? name.left.right : name.left;
-    return namespace.text === "JSX" ? null : name.right.text;
+function nameSegments(name) {
+  if (ts.isIdentifier(name)) return [name.text];
+  const [left, right] = ts.isQualifiedName(name)
+    ? [name.left, name.right]
+    : ts.isPropertyAccessExpression(name)
+      ? [name.expression, name.name]
+      : [];
+  const segments = left ? nameSegments(left) : [];
+  return segments.length > 0 ? [...segments, right.text] : [];
+}
+
+/** @type {Set<string> | undefined} */
+let standardGlobals;
+
+/**
+ * @returns {Set<string>} the global names the ECMAScript library of the installed TypeScript
+ *   declares, such as `Record`, `Promise` or `Date`; the DOM library is not read
+ */
+function standardGlobalNames() {
+  if (standardGlobals) return standardGlobals;
+  standardGlobals = new Set();
+  const directory = path.dirname(ts.getDefaultLibFilePath({}));
+  for (const file of fs.readdirSync(directory).filter(name => STANDARD_LIB_FILE.test(name))) {
+    const source = ts.createSourceFile(
+      file,
+      fs.readFileSync(path.join(directory, file), "utf8"),
+      ts.ScriptTarget.Latest,
+    );
+    for (const statement of source.statements) {
+      if (ts.isVariableStatement(statement)) {
+        for (const declaration of statement.declarationList.declarations) {
+          if (ts.isIdentifier(declaration.name)) standardGlobals.add(declaration.name.text);
+        }
+      } else if (statement.name && ts.isIdentifier(statement.name)) {
+        standardGlobals.add(statement.name.text);
+      }
+    }
   }
-  if (ts.isPropertyAccessExpression(name)) return name.name.text;
-  return ts.isIdentifier(name) ? name.text : null;
+  if (standardGlobals.size === 0) {
+    throw new Error(`no ECMAScript declaration file next to TypeScript, in ${directory}`);
+  }
+  return standardGlobals;
+}
+
+/**
+ * @param {ReturnType<typeof parseModule>} module
+ * @returns {Set<string>} every name a module declares or imports, at any depth, type parameters
+ *   included
+ */
+function declaredNames(module) {
+  const names = new Set(module.imports.keys());
+  function visit(node) {
+    if (
+      (ts.isTypeParameterDeclaration(node) ||
+        ts.isInterfaceDeclaration(node) ||
+        ts.isTypeAliasDeclaration(node) ||
+        ts.isClassDeclaration(node) ||
+        ts.isEnumDeclaration(node) ||
+        ts.isModuleDeclaration(node) ||
+        ts.isImportEqualsDeclaration(node)) &&
+      node.name &&
+      ts.isIdentifier(node.name)
+    ) {
+      names.add(node.name.text);
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(module.sourceFile);
+  return names;
 }
 
 /**
@@ -738,7 +801,22 @@ function checkContractModule(module) {
   function report(node, code, message) {
     found.push({ line: module.lineOf(node), code, message });
   }
-  const reportedTypes = new Set();
+  const declared = declaredNames(module);
+  const reported = new Set();
+  function reportOnce(node, code, message) {
+    if (reported.has(message)) return;
+    reported.add(message);
+    report(node, code, message);
+  }
+  /** @param {string | undefined} name a type `react` exports */
+  function checkReactType(node, name) {
+    if (!name || NEUTRAL_REACT_TYPES.has(name)) return;
+    reportOnce(
+      node,
+      "contract-react-type",
+      `the contract references \`${name}\` from \`react\`, which is not one of the neutralReactTypes`,
+    );
+  }
   function visit(node) {
     const specifier =
       (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
@@ -753,14 +831,28 @@ function checkContractModule(module) {
     if (specifier && BANNED_IMPORT_PREFIXES.some(prefix => specifier.startsWith(prefix))) {
       report(node, "contract-platform-import", `the contract imports \`${specifier}\``);
     }
-    const typeName = referencedTypeName(node);
-    if (
-      typeName &&
-      !reportedTypes.has(typeName) &&
-      BANNED_TYPE_NAMES.some(pattern => pattern.test(typeName))
-    ) {
-      reportedTypes.add(typeName);
-      report(node, "contract-platform-type", `the contract references \`${typeName}\``);
+    if (ts.isImportTypeNode(node) && !node.isTypeOf && node.qualifier && specifier === "react") {
+      checkReactType(node, nameSegments(node.qualifier)[0]);
+    }
+    const [head, ...rest] = ts.isTypeReferenceNode(node)
+      ? nameSegments(node.typeName)
+      : ts.isExpressionWithTypeArguments(node)
+        ? nameSegments(node.expression)
+        : [];
+    const imported = head ? module.imports.get(head) : undefined;
+    if (imported?.specifier === "react") {
+      checkReactType(
+        node,
+        imported.imported === "*" || imported.imported === "default" ? rest[0] : imported.imported,
+      );
+    } else if (head === "React" && !declared.has(head)) {
+      checkReactType(node, rest[0]);
+    } else if (head && !declared.has(head) && !standardGlobalNames().has(head)) {
+      reportOnce(
+        node,
+        "contract-global-type",
+        `the contract references the global \`${head}\`, which the ECMAScript library does not declare`,
+      );
     }
     ts.forEachChild(node, visit);
   }

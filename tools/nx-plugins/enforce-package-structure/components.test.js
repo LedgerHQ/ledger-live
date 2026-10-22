@@ -587,42 +587,69 @@ test("R3 fails: a contract that imports a platform package", () => {
   ]);
 });
 
-test("R3 fails: a contract that references a DOM or React Native type", () => {
+test("R3 fails: a contract that references a global DOM type, once per name", () => {
   assert.deepEqual(
     check(
       card(
         contract(
           [
-            "onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;",
             "ref?: Ref<HTMLElement>;",
             "anchor?: Ref<Element>;",
-            "layout: CSSProperties;",
-            "inset: ViewStyle;",
+            "target?: Ref<HTMLElement>;",
+            "onHover: (event: MouseEvent) => void;",
+            "layout: CSSStyleDeclaration;",
           ].join("\n"),
+          'import type { Ref } from "react";\n',
         ),
       ),
-    ).toSorted(),
+    ),
     [
-      "R3 contract-platform-type Card",
-      "R3 contract-platform-type Card",
-      "R3 contract-platform-type Card",
-      "R3 contract-platform-type Card",
-      "R3 contract-platform-type Card",
-      "R3 contract-platform-type Card",
+      "R3 contract-global-type Card",
+      "R3 contract-global-type Card",
+      "R3 contract-global-type Card",
+      "R3 contract-global-type Card",
     ],
   );
 });
 
-test("R3 fails: a banned type imported under an alias", () => {
+test("R3 fails: a React type outside the neutral ones, however it is reached", () => {
   assert.deepEqual(
     check(
-      card(contract("layout?: Styles;", 'import type { CSSProperties as Styles } from "react";\n')),
+      card(
+        contract(
+          [
+            "layout?: Styles;",
+            "onSearch: (event: R.ChangeEvent<string>) => void;",
+            "onShortcut: React.KeyboardEventHandler;",
+            'attributes: import("react").HTMLAttributes<object>;',
+          ].join("\n"),
+          [
+            'import type { CSSProperties as Styles } from "react";',
+            'import * as R from "react";',
+            "interface Extra extends React.ButtonHTMLAttributes<object> {}",
+            "",
+          ].join("\n"),
+        ),
+      ),
     ),
-    ["R3 contract-platform-type Card"],
+    [
+      "R3 contract-react-type Card",
+      "R3 contract-react-type Card",
+      "R3 contract-react-type Card",
+      "R3 contract-react-type Card",
+      "R3 contract-react-type Card",
+    ],
   );
 });
 
-test("R3 passes: neutral types that share a word with a banned one", () => {
+test("R3 fails: a React Native type through its import alone", () => {
+  assert.deepEqual(
+    check(card(contract("inset: ViewStyle;", 'import type { ViewStyle } from "react-native";\n'))),
+    ["R3 contract-platform-import Card"],
+  );
+});
+
+test("R3 passes: declared, imported, ECMAScript and neutral React types", () => {
   assert.deepEqual(
     check(
       card(
@@ -634,6 +661,15 @@ test("R3 passes: neutral types that share a word with a banned one", () => {
             "icon: JSX.Element;",
             "badge: React.JSX.Element;",
             'footer: import("react").JSX.Element;',
+            "items: ReadonlyArray<Record<string, Date>>;",
+            "load: () => Promise<Map<string, Set<number>>>;",
+            "pick: <T extends string>(value: T) => Partial<{ [K in T]: Uppercase<K> }>;",
+          ].join("\n"),
+          [
+            'import type { JSX, ReactNode, Ref } from "react";',
+            'import type { TrackingEvent } from "./tracking";',
+            "interface CardHandle { focus(): void }",
+            "",
           ].join("\n"),
         ),
       ),
