@@ -9,14 +9,15 @@
     "./devtools/native": "./devtools/src/index.native.ts",
     "./devtools/web": "./devtools/src/index.web.ts",
     "./features-flow": "./features-flow/index.js",
+    "./lib": "./lib/index.js",
     "./shared": "./shared/index.js",
     "./shared/mocks/*": "./shared/mocks/*.js",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "format": "oxfmt devtools features-flow shared",
-    "format:check": "oxfmt devtools features-flow shared --check",
-    "typecheck": "tsc --noEmit -p devtools/tsconfig.web.json && tsc --noEmit -p devtools/tsconfig.native.json && tsc --noEmit -p features-flow && tsc --noEmit -p shared"
+    "format": "oxfmt devtools features-flow lib shared",
+    "format:check": "oxfmt devtools features-flow lib shared --check",
+    "typecheck": "tsc --noEmit -p devtools/tsconfig.web.json && tsc --noEmit -p devtools/tsconfig.native.json && tsc --noEmit -p features-flow && tsc --noEmit -p lib && tsc --noEmit -p shared"
   },
   "peerDependencies": {
     "@gorhom/bottom-sheet": "catalog:",

@@ -1,27 +1,6 @@
-const { withEsmDeps } = require("@support/jest/shared");
+const { createLibJestConfig } = require("@support/jest/lib");
 
-const config = {
-  testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
-  transform: {
-    "^.+\\.(ts|tsx)?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
+module.exports = createLibJestConfig({
+  rootDir: __dirname,
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!tests/**/*.test.ts"],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
-};
-
-module.exports = withEsmDeps(config);
+});

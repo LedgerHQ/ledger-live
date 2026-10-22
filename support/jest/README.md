@@ -10,7 +10,12 @@ preset is code rather than a JSON file, which is why jest configuration lives in
 | --- | --- | --- |
 | [`@support/jest/devtools`](./devtools) | `devtools/*` | Dual web/native presets plus themed render fixtures (`/web`, `/native`) |
 | [`@support/jest/features-flow`](./features-flow) | `features/flow/*` | Dual web/native preset plus Lumen passthrough stubs |
+| [`@support/jest/lib`](./lib) | `libs/*`, uncovered node packages | Node preset with the ESM-only dependency handling of `withEsmDeps` |
 | [`@support/jest/shared`](./shared) | `shared/*` | Node preset for logic packages, web/native and native-only presets for UI packages |
+
+`lib` and the `shared` node preset both build a flat node config. `lib` adds `withEsmDeps` and the
+`github-actions` reporter, keeps jest's default test files and derives the lcov root from
+`rootDir`; a `shared/*` package keeps `shared`. See [`lib`](./lib#when-to-use-it-over-shared).
 
 A consumer declares `"@support/jest": "workspace:*"` in its `devDependencies` and keeps a
 `jest.config.js` built by a preset factory:
