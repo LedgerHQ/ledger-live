@@ -29,13 +29,13 @@ import { listOperations } from "../logic/listOperations";
 import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
 import { ChainAPI, getChainAPI } from "../network";
-import { endpointByCurrencyId } from "../utils";
+import { chainConfigFrom } from "../utils";
 
 type SolanaCoinModuleImpl = CoinModuleImpl<SolanaCoinConfig, StringMemo | MemoNotSupported>;
 
 /**
  * Resolves the coin configuration from the {@link SolanaContext} and builds the {@link ChainAPI}
- * for the context's currency, threading the resolved config into {@link endpointByCurrencyId}
+ * for the context's currency, threading the resolved config into {@link chainConfigFrom}
  * rather than seeding the module-level singleton (ADR-019).
  */
 async function chainAPIFromContext(
@@ -46,7 +46,7 @@ async function chainAPIFromContext(
   config: SolanaCoinConfig;
 }> {
   const config = await context.config();
-  const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currencyId) });
+  const api = getChainAPI(chainConfigFrom(config, currencyId));
   return { api, config };
 }
 
@@ -79,8 +79,8 @@ export function createApi(currencyId: string) {
       intent: TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent,
       options?: { customFees?: FeeEstimation },
     ) => {
-      const { api } = await chainAPIFromContext(context, currencyId);
-      return craftTransaction(api, intent, options?.customFees);
+      const { api, config } = await chainAPIFromContext(context, currencyId);
+      return craftTransaction(api, config, intent, options?.customFees);
     },
     craftRawTransaction: async (
       _context: SolanaContext,
@@ -96,14 +96,14 @@ export function createApi(currencyId: string) {
       intent: TransactionIntent<StringMemo | MemoNotSupported>,
       options?: { customFeesParameters?: FeeEstimation["parameters"] },
     ) => {
-      const { api } = await chainAPIFromContext(context, currencyId);
-      return estimateFees(api, intent, options?.customFeesParameters);
+      const { api, config } = await chainAPIFromContext(context, currencyId);
+      return estimateFees(api, config, intent, options?.customFeesParameters);
     },
     getBalance: async (context: SolanaContext, address: string, options?: BalanceOptions) => {
       const { api, config } = await chainAPIFromContext(context, currencyId);
       return rejectBalanceOptions(
         () =>
-          getBalance(api, address, {
+          getBalance(api, config, address, {
             token2022Enabled: config.token2022Enabled,
           }),
         options,
@@ -118,12 +118,12 @@ export function createApi(currencyId: string) {
       address: string,
       options: ListOperationsOptions,
     ) => {
-      const { api } = await chainAPIFromContext(context, currencyId);
-      return listOperations(api, address, options);
+      const { api, config } = await chainAPIFromContext(context, currencyId);
+      return listOperations(api, config, address, options);
     },
     getValidators: async (context: SolanaContext, _options?) => {
       const { config } = await chainAPIFromContext(context, currencyId);
-      return getValidators(config.validatorsUrl);
+      return getValidators(config.validatorsUrl, config.staking?.validatorsSummaryUrl);
     },
     getStakes: async (context: SolanaContext, address: string, options?: { cursor?: Cursor }) => {
       const { api } = await chainAPIFromContext(context, currencyId);

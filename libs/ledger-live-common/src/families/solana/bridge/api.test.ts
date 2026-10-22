@@ -38,7 +38,7 @@ jest.mock("@ledgerhq/coin-solana/network/index", () => ({
 jest.mock("../../../config", () => ({ getCurrencyConfiguration: () => ({}) }));
 jest.mock("@ledgerhq/coin-solana/utils", () => ({
   ...jest.requireActual("@ledgerhq/coin-solana/utils"),
-  endpointByCurrencyId: () => "endpoint",
+  chainConfigFrom: () => ({ endpoint: "endpoint" }),
 }));
 
 const mockToken = {
