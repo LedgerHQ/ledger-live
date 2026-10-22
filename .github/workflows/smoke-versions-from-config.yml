@@ -60,7 +60,7 @@ jobs:
 
   monitor-with-mise-toolchain:
     name: monitor composite on the mise toolchain
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-8cpu-aws-public-cached
     timeout-minutes: 60
     permissions:
       id-token: write
