@@ -158,12 +158,65 @@ describe("index", () => {
               .fn()
               .mockResolvedValue({ blockhash: "b", lastValidBlockHeight: 1 }),
             confirmTransaction: jest.fn().mockRejectedValue(expiry),
+            getSignatureStatus: jest.fn().mockResolvedValue({ value: null }),
           }) as unknown as Connection,
       );
 
       await expect(getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0))).rejects.toBe(
         expiry,
       );
+    });
+
+    describe("on an exceeded block height", () => {
+      const mockConnection = (getSignatureStatus: jest.Mock) =>
+        jest.mocked(Connection).mockImplementation(
+          () =>
+            ({
+              sendRawTransaction: jest.fn().mockResolvedValue("sig"),
+              getLatestBlockhash: jest
+                .fn()
+                .mockResolvedValue({ blockhash: "b", lastValidBlockHeight: 1 }),
+              confirmTransaction: jest
+                .fn()
+                .mockRejectedValue(new TransactionExpiredBlockheightExceededError("sig")),
+              getSignatureStatus,
+            }) as unknown as Connection,
+        );
+
+      it.each(["confirmed", "finalized"])(
+        "returns the signature when the transaction landed successfully on-chain (%s)",
+        async confirmationStatus => {
+          const getSignatureStatus = jest.fn().mockResolvedValue({
+            value: { slot: 1, confirmations: null, err: null, confirmationStatus },
+          });
+          mockConnection(getSignatureStatus);
+
+          await expect(getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0))).resolves.toBe(
+            "sig",
+          );
+          expect(getSignatureStatus).toHaveBeenCalledWith("sig", {
+            searchTransactionHistory: true,
+          });
+        },
+      );
+
+      it.each([
+        ["failed on-chain", jest.fn().mockResolvedValue({ value: { slot: 1, err: "boom" } })],
+        ["did not land", jest.fn().mockResolvedValue({ value: null })],
+        [
+          "is only processed",
+          jest.fn().mockResolvedValue({
+            value: { slot: 1, err: null, confirmationStatus: "processed" },
+          }),
+        ],
+        ["cannot be looked up", jest.fn().mockRejectedValue(new Error("rpc down"))],
+      ])("keeps the expiry when the transaction %s", async (_n, getSignatureStatus) => {
+        mockConnection(getSignatureStatus);
+
+        await expect(
+          getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0)),
+        ).rejects.toBeInstanceOf(TransactionExpiredBlockheightExceededError);
+      });
     });
 
     describe("getSignaturesForAddressBatch", () => {
