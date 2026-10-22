@@ -20484,6 +20484,9 @@ importers:
 
   support/lint:
     devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       oxlint:
         specifier: 'catalog:'
         version: 1.82.0

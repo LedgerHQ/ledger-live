@@ -12,4 +12,13 @@ export default defineConfig({
     // Devtools talk to the developer through the console; that is the product, not a slip.
     "eslint/no-console": "off",
   },
+  overrides: [
+    {
+      // jsx-a11y encodes DOM and ARIA semantics. On React Native `role` is an ordinary prop with
+      // its own vocabulary, and components define their own `role` too, so the rule misfires.
+      // devtools never ran jsx-a11y before this preset; the layers that did keep it on.
+      files: ["**/*.native.*"],
+      rules: { "jsx-a11y/aria-role": "off" },
+    },
+  ],
 });

@@ -17,6 +17,11 @@ const FATAL_REACT_COMPILER = [
   "pay-deposit",
 ];
 
+// Packages that linted with `react/no-children-prop` off before this preset. Their test wrappers
+// pass `children` in the props of `createElement(Provider, ...)`, which react-redux's types
+// require. The rest of the layer had the rule fatal and keeps it.
+const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
+
 export default defineConfig({
   extends: [base],
   rules: {
@@ -74,6 +79,13 @@ export default defineConfig({
         "react/static-components": "error",
         "react/use-memo": "error",
       },
+    },
+    {
+      files: CHILDREN_PROP_IN_TESTS.flatMap(pkg => [
+        `${pkg}/**/*.test.{ts,tsx}`,
+        `${pkg}/**/__tests__/**`,
+      ]),
+      rules: { "react/no-children-prop": "off" },
     },
   ],
 });

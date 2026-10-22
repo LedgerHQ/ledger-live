@@ -6,12 +6,34 @@ import test from "node:test";
 import lint from "./lint.mjs";
 
 /**
- * @param {Record<string, string>} files paths relative to the workspace root
+ * @param {string} preset
+ * @returns {string} a layer config re-exporting the preset
+ */
+function layer(preset) {
+  return `export { default } from "@support/lint/${preset}";\n`;
+}
+
+const LAYERS = {
+  "devtools/oxlint.config.mts": layer("devtools"),
+  "domain/oxlint.config.mts": layer("base"),
+  "features/flow/oxlint.config.mts": layer("features-flow"),
+  "features/platform/oxlint.config.mts": layer("base"),
+  "libs/oxlint.config.mts": layer("libs"),
+  "libs/coin-tester-modules/oxlint.config.mts": layer("libs-coin-tester"),
+  "shared/oxlint.config.mts": layer("base"),
+  "support/oxlint.config.mts": layer("support"),
+  "tools/oxlint.config.mts": layer("tools"),
+};
+
+/**
+ * @param {Record<string, string | null>} files paths relative to the workspace root, on top of
+ *   every layer config; `null` leaves that file out
  * @returns {string} workspace root
  */
 function workspace(files) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "tool-config-lint-test-"));
-  for (const [file, content] of Object.entries(files)) {
+  for (const [file, content] of Object.entries({ ...LAYERS, ...files })) {
+    if (content === null) continue;
     const full = path.join(root, file);
     fs.mkdirSync(path.dirname(full), { recursive: true });
     fs.writeFileSync(full, content);
@@ -28,14 +50,6 @@ function manifest(scripts = {}) {
 }
 
 /**
- * @param {string} preset
- * @returns {string} a layer config re-exporting the preset
- */
-function layer(preset) {
-  return `export { default } from "@support/lint/${preset}";\n`;
-}
-
-/**
  * @param {string} workspaceRoot
  * @param {string} projectRoot
  * @returns {string[]} the reported messages
@@ -46,13 +60,10 @@ function messages(workspaceRoot, projectRoot) {
 
 test("a package under its layer config, without config or flag of its own, passes", () => {
   const root = workspace({
-    "features/flow/oxlint.config.mts": layer("features-flow"),
     "features/flow/a/package.json": manifest({
       lint: "oxlint src",
       "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     }),
-    "libs/oxlint.config.mts": layer("libs"),
-    "libs/coin-tester-modules/oxlint.config.mts": layer("libs-coin-tester"),
     "libs/coin-tester-modules/b/package.json": manifest({ lint: "oxlint src" }),
   });
   assert.deepEqual(lint.check({ workspaceRoot: root, projectRoot: "features/flow/a" }), []);
@@ -93,6 +104,42 @@ test("a config between the package and the root is reported unless it is a layer
       .map(v => v.file)
       .sort(),
     ["features/flow/.oxlintrc.json", "features/oxlint.config.mts"],
+  );
+});
+
+test("a missing layer config is reported for the packages it covers", () => {
+  const root = workspace({
+    "features/flow/oxlint.config.mts": null,
+    "features/flow/a/package.json": manifest(),
+    "libs/coin-tester-modules/oxlint.config.mts": null,
+    "libs/coin-tester-modules/b/package.json": manifest(),
+    "libs/c/package.json": manifest(),
+  });
+  assert.deepEqual(
+    lint.check({ workspaceRoot: root, projectRoot: "features/flow/a" }).map(v => v.file),
+    ["features/flow/oxlint.config.mts"],
+  );
+  assert.match(messages(root, "features/flow/a")[0], /@support\/lint\/features-flow/);
+  // The libs/ config still exists, but it is not the preset coin testers run on.
+  assert.deepEqual(
+    lint.check({ workspaceRoot: root, projectRoot: "libs/coin-tester-modules/b" }).map(v => v.file),
+    ["libs/coin-tester-modules/oxlint.config.mts"],
+  );
+  assert.deepEqual(messages(root, "libs/c"), []);
+});
+
+test("a config at the workspace root is reported", () => {
+  const root = workspace({
+    ".oxlintrc.json": "{}",
+    "oxlint.config.mts": "export default {};",
+    "shared/a/package.json": manifest(),
+  });
+  assert.deepEqual(
+    lint
+      .check({ workspaceRoot: root, projectRoot: "shared/a" })
+      .map(v => v.file)
+      .sort(),
+    [".oxlintrc.json", "oxlint.config.mts"],
   );
 });
 
