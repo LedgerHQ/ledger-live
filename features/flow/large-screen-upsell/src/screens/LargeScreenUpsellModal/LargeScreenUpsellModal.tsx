@@ -1,9 +1,7 @@
 import React from "react";
 import { LargeScreenUpsellModalView } from "./LargeScreenUpsellModalView.web";
-import {
-  useLargeScreenUpsellModalViewModel,
-  type UseLargeScreenUpsellModalViewModelInput,
-} from "./useLargeScreenUpsellModalViewModel";
+import { useLargeScreenUpsellModalViewModel } from "./useLargeScreenUpsellModalViewModel";
+import type { UseLargeScreenUpsellModalViewModelInput } from "./types";
 
 export type LargeScreenUpsellModalProps = UseLargeScreenUpsellModalViewModelInput;
 

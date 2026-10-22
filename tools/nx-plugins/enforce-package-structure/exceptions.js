@@ -20,7 +20,6 @@ const OWNING_TEAM_DEFERRAL =
 const PACKAGE_EXCEPTIONS = {
   // @ledgerhq/engagement
   "features/flow/analytics-consent": { skip: true, reason: OWNING_TEAM_DEFERRAL },
-  "features/flow/large-screen-upsell": { skip: true, reason: OWNING_TEAM_DEFERRAL },
   "features/flow/lazy-onboarding-banner": { skip: true, reason: OWNING_TEAM_DEFERRAL },
 
   // @ledgerhq/ptx

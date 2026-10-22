@@ -7,6 +7,7 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./constants": "./src/state/constants.ts",
     "./utils/getNanoOnlyDeviceModel": "./src/utils/getNanoOnlyDeviceModel.ts",
     "./utils/getLnsUpsellCopyKeys": "./src/utils/getLnsUpsellCopyKeys.ts",
     "./utils/isLargeScreenUpsellBannerEnabled": "./src/utils/isLargeScreenUpsellBannerEnabled.ts",
