@@ -3,7 +3,8 @@ import { appConfigSchema } from "./schema";
 
 /**
  * The default option of the build: its `CONFIG_PROFILE`, which the build script defines as staging
- * in development mode. Any other value than staging, or none, is prod.
+ * in development mode and prod otherwise, unless the `.env` file sets it. Any other value than
+ * staging, or none, is prod.
  */
 export const profileOf = (configProfile: string | undefined): "prod" | "staging" =>
   configProfile === "staging" ? "staging" : "prod";
