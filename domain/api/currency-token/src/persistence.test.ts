@@ -1,6 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
 import { calApi, calApiExtra } from "@shared/api-services";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
 import { cryptoAssetsApi } from "./api";
 import { PERSISTENCE_VERSION, UNCHECKED_TOKEN_TTL } from "./internals";
 import {
@@ -55,10 +57,8 @@ function persistedToken(timestamp: number, hashes?: Record<string, string>): Per
 }
 
 /** A CAL `/v1/currencies` answer for ethereum, carrying `commit` as the sync hash. */
-function commitResponse(commit: string): Response {
-  return new Response(JSON.stringify([{ id: "ethereum" }]), {
-    headers: { "Content-Type": "application/json", "X-Ledger-Commit": commit },
-  });
+function commitResponse(commit: string) {
+  return HttpResponse.json([{ id: "ethereum" }], { headers: { "X-Ledger-Commit": commit } });
 }
 
 function hashCheckStatus(store: CalStore) {
@@ -259,22 +259,29 @@ describe("Token Persistence", () => {
 
   describe("restoreTokensToCache", () => {
     const storedHash = "commit-before";
-    let fetchSpy: jest.SpyInstance | undefined;
+    const currencies = jest.fn();
+    const server = setupServer(http.get("https://cal.test/v1/currencies", currencies));
 
+    beforeAll(() => {
+      server.listen({ onUnhandledRequest: "error" });
+    });
+    beforeEach(() => {
+      currencies.mockReset();
+    });
     afterEach(() => {
       jest.useRealTimers();
-      fetchSpy?.mockRestore();
-      fetchSpy = undefined;
+      server.resetHandlers();
+    });
+    afterAll(() => {
+      server.close();
     });
 
     it("should restore the tokens and the stored hash before the hash check answers", async () => {
-      let answer: ((response: Response) => void) | undefined;
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
-        () =>
-          new Promise(resolve => {
-            answer = resolve;
-          }),
-      );
+      let answer: ((commit: string) => void) | undefined;
+      const answered = new Promise<string>(resolve => {
+        answer = resolve;
+      });
+      currencies.mockImplementation(async () => commitResponse(await answered));
       const store = makeCalStore();
 
       restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
@@ -284,14 +291,12 @@ describe("Token Persistence", () => {
       expect(saved.tokens.map(entry => entry.data.id)).toEqual([mockToken.id]);
       expect(saved.hashes).toEqual({ ethereum: storedHash });
 
-      answer?.(commitResponse(storedHash));
+      answer?.(storedHash);
       await settleHashCheck(store);
     });
 
     it("should keep the tokens when the hash is unchanged", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(() => Promise.resolve(commitResponse(storedHash)));
+      currencies.mockImplementation(() => commitResponse(storedHash));
       const store = makeCalStore();
 
       restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
@@ -303,9 +308,7 @@ describe("Token Persistence", () => {
     });
 
     it("should evict the tokens and keep the new hash when the hash changed", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(() => Promise.resolve(commitResponse("commit-after")));
+      currencies.mockImplementation(() => commitResponse("commit-after"));
       const store = makeCalStore();
 
       restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
@@ -318,13 +321,7 @@ describe("Token Persistence", () => {
 
     it("should keep the tokens and the stored hash when the hash check fails", async () => {
       jest.useFakeTimers();
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(() =>
-          Promise.resolve(
-            new Response("{}", { status: 503, headers: { "Content-Type": "application/json" } }),
-          ),
-        );
+      currencies.mockImplementation(() => HttpResponse.json({}, { status: 503 }));
       const store = makeCalStore();
 
       restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
@@ -338,9 +335,7 @@ describe("Token Persistence", () => {
     });
 
     it("should restore a token of any age when its currency has a stored hash", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(() => Promise.resolve(commitResponse(storedHash)));
+      currencies.mockImplementation(() => commitResponse(storedHash));
       const store = makeCalStore();
 
       restoreTokensToCache(
@@ -353,17 +348,15 @@ describe("Token Persistence", () => {
     });
 
     it("should skip a token older than UNCHECKED_TOKEN_TTL when its currency has no stored hash", () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockRejectedValue(new Error("unexpected"));
       const store = makeCalStore();
 
       restoreTokensToCache(store.dispatch, persistedToken(Date.now() - 2 * UNCHECKED_TOKEN_TTL));
 
       expect(extractTokensFromState(store.getState())).toHaveLength(0);
-      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(hashCheckStatus(store)).toBeUndefined();
     });
 
     it("should restore a recent token without a stored hash, with no hash check", () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockRejectedValue(new Error("unexpected"));
       const store = makeCalStore();
 
       restoreTokensToCache(store.dispatch, persistedToken(Date.now()));
@@ -371,7 +364,7 @@ describe("Token Persistence", () => {
       const saved = extractPersistedCALFromState(store.getState());
       expect(saved.tokens).toHaveLength(1);
       expect(saved.hashes).toBeUndefined();
-      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(hashCheckStatus(store)).toBeUndefined();
     });
 
     it("should restore tokens even when the parent currency is unknown (guard moved to the converter)", () => {
