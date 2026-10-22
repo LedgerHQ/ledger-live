@@ -97,18 +97,17 @@ describe("PerpsWithdraw integration", () => {
     mockOpenDrawer.mockImplementation(({ onAccountSelected }) => onAccountSelected(btcAccount));
   });
 
-  it("should show the available balance and label the amount in the source currency", () => {
+  it("should show the available balance and label the amount in dollars", () => {
     renderWithdraw();
 
-    expect(screen.getByText(/1,000\.5\sUSDC/)).toBeOnTheScreen();
-    expect(screen.getByText("USDC")).toBeOnTheScreen();
-    expect(screen.queryByText("$")).not.toBeOnTheScreen();
+    expect(screen.getByText(/\$1,000\.50/)).toBeOnTheScreen();
+    expect(screen.getByText("$")).toBeOnTheScreen();
   });
 
   it("should read the balance from the wallet's copy of the source account", () => {
     renderWithdraw({ ...sourceAccount, spendableBalance: new BigNumber(0) });
 
-    expect(screen.getByText(/1,000\.5\sUSDC/)).toBeOnTheScreen();
+    expect(screen.getByText(/\$1,000\.50/)).toBeOnTheScreen();
   });
 
   it("should preselect the supported account with the highest fiat balance", () => {
