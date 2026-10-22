@@ -632,6 +632,10 @@
       "title" : "Bir hata oluştu (Error #17)",
       "description" : "Lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
+    "CosmosMemoTooLong" : {
+      "title" : "Memo, azami uzunluğu aşıyor",
+      "description" : "Memo’nuz {{memoLength}} bayt; ancak izin verilen maksimum boyut {{maxLength}} bayttır. Memo boyutunu lütfen küçültün."
+    },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Bu uygulamayı güncellemek için My Ledger'ı açın",
       "description" : "Uygulama doğrulaması desteklenmiyor."
@@ -1163,6 +1167,10 @@
       "title" : "İşlem cihazdan reddedildi",
       "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
+    "TransferOfferExpiredError" : {
+      "title" : "Bu teklifin süresi doldu",
+      "description" : "Transfer teklifinin süresi kabul edilmeden önce doldu. Göndericiden yeni bir teklif göndermesini isteyin."
+    },
     "TransportError" : {
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "{{message}} Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
@@ -1449,6 +1457,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "Memo çok fazla uzun"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "Staking işlemi bir sonraki ödül döngüsüne kadar duraklatıldı.",
+      "description" : "Stacks ağı, bir sonraki ödül döngüsüne hazırlanırken yeni stake işlemlerini kabul etmiyor. Staking işlemleri {{blocksUntilReopen}} Bitcoin bloğu sonra yeniden açılacaktır."
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo biçimi yanlış"
@@ -1852,6 +1864,27 @@
     "ICPIncreaseStakeWarning" : {
       "title" : "Bu işlem, kilitli bir stake tutarına ekleme yapar.",
       "description" : "İlgili tutar, nöronun mevcut stake miktarına katılır ve onun çözülme süresine tabi olur; dolayısıyla nöron tamamen çözülene kadar harcanabilir duruma gelmez."
+    }
+  },
+  "accountDetailSettings" : {
+    "title" : "Hesap ayarları",
+    "menu" : {
+      "changeName" : "Adı değiştir",
+      "viewAdvancedLogs" : "Kapsamlı log'ları görüntüle",
+      "removeAccount" : "Hesabı portföyden kaldır"
+    },
+    "advancedLogs" : {
+      "title" : "Kapsamlı log'lar",
+      "derivationTip" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
+      "synchronised" : "{{date}} senkronize edildi",
+      "copy" : "Log kopyala",
+      "copied" : "Kopyalandı"
+    },
+    "remove" : {
+      "title" : "Hesap kaldırılsın mı?",
+      "description" : "Bu hesaba bağlı varlıklar artık portföyünüzde görünmeyecek. Blok zincirindeki varlıklarınız bu durumdan etkilenmez.",
+      "confirm" : "Evet, kaldır.",
+      "cancel" : "Tut"
     }
   },
   "crash" : {
@@ -2525,6 +2558,35 @@
       "progress" : "Uygulamalar yüklenirken Ledger Wallet'ta kalın.",
       "skippedInfo" : "Bazı uygulamalar mevcut değil. Henüz {{ productName }} için geliştirilmediler.",
       "skipped" : "Henüz {{ productName }} ile kullanılamıyor"
+    }
+  },
+  "deviceOnboarding" : {
+    "checks" : {
+      "close" : "Kapat",
+      "synchronizing" : {
+        "title" : "Senkronize ediliyor..."
+      },
+      "idle" : {
+        "title" : "Cihazınızı kontrol edin",
+        "description" : "Ledger cihazınızın orijinal ve güncel olduğunu doğrulayalım.",
+        "cta" : "Cihazımı kontrol et"
+      },
+      "checking" : {
+        "title" : "Cihazınızı kontrol edin",
+        "description" : "Ledger imzalayıcınızın güvenli ve güncel olduğu doğrulanıyor.",
+        "cta" : "Kontrol ediliyor..."
+      },
+      "succeeded" : {
+        "title" : "Cihaz orijinal ve güncel",
+        "cta" : "Devam"
+      }
+    },
+    "syncOffer" : {
+      "title" : "Cüzdanınızı senkronize edin",
+      "description" : "Telefon değiştirirken veya bilgisayar kullanırken bakiyenizi ve portföyünüzü senkronize tutun.",
+      "learnMore" : "Daha fazla bilgi",
+      "activate" : "Etkinleştir",
+      "skip" : "Şimdilik atla"
     }
   },
   "onboarding" : {
@@ -3546,8 +3608,6 @@
       "buy" : "Satın al",
       "connect" : "Bağlan",
       "buyLedger" : "Ledger satın alın",
-      "receive" : "Al",
-      "send" : "Gönder",
       "transferDrawer" : {
         "title" : "Transfer",
         "receiveCrypto" : "Kripto adresiyle transfer alın",
@@ -4238,7 +4298,7 @@
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
-        "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
+        "desc" : "Ethereum, Polygon, BNB Smart Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
       },
       "totalMarketCap" : {
         "title" : "Toplam Piyasa Değeri",
@@ -4376,6 +4436,9 @@
       "featureFlagsRestoreAll" : "Tüm bayrak değerlerini geri yükle",
       "featureFlagsTabAll" : "Tümü",
       "featureFlagsTabGroups" : "Gruplar",
+      "contentAbTests" : {
+        "invalidPayload" : "Geçersiz veri yükü. \"enabled\" parametresi boolean olmalı, \"copy\" ise anahtarları string (metin) değerleriyle eşlemelidir."
+      },
       "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "showBannerDesc" : "Bayraklar geçersiz bırakıldığında banner'ı göster",
       "bannerTitle" : "Bayraklar yerel olarak uygulandı",
@@ -5345,6 +5408,35 @@
             "CUSTOM" : "Özel coin seçimi"
           }
         }
+      },
+      "feePayment" : {
+        "insufficientFunds" : "Tutarı ve {{provider}} enerji kiralama ücretini karşılamak için yeterli {{feeCurrency}} bakiyeniz yok."
+      },
+      "sponsoredRentSignature" : {
+        "crafting" : "Enerji kiralama hazırlanıyor…",
+        "strategy" : "Enerji kiralama - {{provider}}",
+        "fee" : "Kiralama ücreti: {{amount}}",
+        "cancelled" : {
+          "title" : "Enerji kiralama iptal edildi",
+          "description" : "Kiralama ücreti ödemesini reddettiniz. Fonlarınız etkilenmeyecektir."
+        }
+      },
+      "sponsoredPolling" : {
+        "title" : "Enerji teslimatı bekleniyor",
+        "waiting" : "{{provider}} kiralanan enerjiyi teslim ediyor. Bu işlem biraz sürebilir.",
+        "elapsed" : "Geçen süre: {{time}}"
+      },
+      "sponsoredFailure" : {
+        "rentPayment" : "Ücret ödemesi başarısız oldu; fonlarınız taşınmadı.",
+        "rentPaymentReportedFailed" : "{{provider}} ücret ödemesinin başarısız olduğunu bildirdi ancak ödeme yine de gerçekleşebilir.",
+        "priceIncreased" : "Enerji kiralama fiyatı {{fee}} seviyesine yükseldi. Bakiyeniz taşınmadı.",
+        "deliveryFailed" : "Enerji teslim edilmedi. Kiralama ücreti ödemeniz gönderildi: {{txidSuffix}} iadesi için {{provider}} desteğiyle iletişime geçin.",
+        "transfer" : "Transferiniz başarısız oldu ancak kiralanan enerji hâlâ geçerli; transferi tekrar deneyebilirsiniz.",
+        "retryLocked" : "Kiralama ödemesini iki kez yapmamanız için {{time}} sonra tekrar deneyebilirsiniz.",
+        "retry" : "Tekrar dene",
+        "retryPaying" : "Yeniden öde ve tekrar dene",
+        "acceptPrice" : "Yeni fiyatı kabul et",
+        "cancel" : "İptal et"
       }
     },
     "pendingTxWarning" : "Beklemede olan gelen işlemleriniz var. Bekleyen işlemlerin geri alınabileceğini lütfen unutmayın.",
@@ -5748,6 +5840,110 @@
     },
     "chooseAccountToFund" : "Fonların ekleneceği bir hesap seçin"
   },
+  "connectNewDevice" : {
+    "discovering" : {
+      "title" : "Ledger cihazlarınız aranıyor",
+      "description" : {
+        "bluetooth" : "Ledger cihazınızın kilidinin açık ve eşlemek istediğiniz cep telefonuna yakın bir yerde olduğundan emin olun.",
+        "bluetoothAndUsb" : "Ledger cihazınızın kilidini açın ve Bluetooth veya USB kablosu kullanarak telefonunuza bağlayın.",
+        "usb" : "Ledger cihazınızın kilidini açın ve bir USB kablosu kullanarak telefonunuza bağlayın."
+      },
+      "select" : "Bağlan",
+      "selectAccessibilityLabel" : "{{deviceName}} cihazını bağla",
+      "deviceNotFound" : "Cihazımı göremiyorum"
+    },
+    "connecting" : {
+      "bluetooth" : {
+        "title" : "{{deviceName}} ile eşleniyor",
+        "description" : "İstenirse {{productName}} cihazınızda kodu onaylayın."
+      },
+      "usb" : {
+        "title" : "{{deviceName}} cihazına bağlanıyor"
+      }
+    },
+    "connected" : {
+      "bluetooth" : {
+        "title" : "Cihazınız eşlendi"
+      },
+      "usb" : {
+        "title" : "Cihazınız bağlandı"
+      }
+    }
+  },
+  "osUpdates" : {
+    "actions" : {
+      "retry" : "Tekrar dene",
+      "cancel" : "İptal et",
+      "close" : "Kapat"
+    },
+    "closeConfirmation" : {
+      "title" : "Güncelleme devam ediyor",
+      "description" : "Güncellemeyi şimdi iptal ederseniz ayarlarınız ve uygulamalarınız düzgün bir şekilde geri yüklenmeyebilir.",
+      "continue" : "Güncellemeye devam et",
+      "cancel" : "Güncellemeyi iptal et"
+    },
+    "whatsNew" : {
+      "productName" : "LedgerOS™",
+      "version" : "Sürüm {{version}}",
+      "banner" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.",
+      "title" : "Bu güncellemede neler var?",
+      "start" : "Güncellemeyi başlat"
+    },
+    "preparing" : {
+      "title" : "Kurulum için hazırlanıyor"
+    },
+    "progress" : {
+      "updatingTitle" : "{{productName}} cihazınız güncelleniyor",
+      "restoringTitle" : "Uygulama ve ayarlarınız geri yükleniyor",
+      "updateCount" : "{{index}} / {{count}} güncelleniyor",
+      "description" : "Güncelleme tamamlanıncaya kadar cihazınızı bağlı ve yakınınızda tutun."
+    },
+    "applied" : {
+      "title" : "Güncelleme tamamlandı",
+      "description" : "{{productName}} cihazınız güncel"
+    },
+    "restored" : {
+      "title" : "Yedekleme geri yüklendi",
+      "description" : "Uygulamalarınız ve ayarlarınız tekrar {{productName}} cihazınızda."
+    },
+    "continueOnDevice" : {
+      "title" : "{{productName}} üzerinde devam edin",
+      "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin."
+    },
+    "unlockDevice" : {
+      "title" : "{{productName}} kilidini açın"
+    },
+    "deviceDisconnected" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Devam etmek için Ledger cihazınızı yeniden bağlayın. Güncelleme otomatik olarak devam edecek."
+    },
+    "unexpectedError" : {
+      "title" : "Bir hata oluştu",
+      "description" : "İşletim sistemi güncellemesi devam edemedi. Sorun devam ederse Ledger Destek ile iletişime geçin."
+    },
+    "batteryTooLow" : {
+      "title" : "{{productName}} cihazınızı şarj edin",
+      "description" : "Cihazınızın pil seviyesi %{{percentage}}. Devam etmek için fişe takın veya %20'nin üzerinde şarj edin."
+    },
+    "backupSelection" : {
+      "title" : "Mevcut yedeklemenizi kullanmak ister misiniz?",
+      "description" : "En son yedeklemeniz 24 saatten daha eski. Bunu kullanabilir veya onun yerine geçecek yeni bir yedekleme oluşturabilirsiniz. Security Key kimlik bilgileri yedeğe dahildir.",
+      "useExisting" : "Mevcut yedeklemeyi kullan",
+      "createNew" : "Yeni bir yedekleme oluştur"
+    },
+    "secureConnectionRefused" : {
+      "title" : "Güvenli bağlantı reddedildi",
+      "description" : "Cihazınızda güvenli bağlantıyı reddettiniz. Devam etmek için tekrar deneyin."
+    },
+    "installFirmwareRefused" : {
+      "title" : "Kurulum reddedildi",
+      "description" : "Kurulum cihazınızda reddedildi, bu nedenle güncelleme devam edemiyor."
+    },
+    "outOfMemory" : {
+      "title" : "Cihazınızda yeterli alan yok",
+      "description" : "Devam etmek için cihazınızda yeterli alan yok. Biraz yer açın ve tekrar deneyin."
+    }
+  },
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
@@ -5936,7 +6132,12 @@
               }
             },
             "bluetoothStateUnknownCheckOnly" : {
-              "title" : "Bluetooth kontrol ediliyor..."
+              "title" : "Bluetooth yanıt vermiyor",
+              "description" : "Bluetooth'un açık olup olmadığını kontrol edemedik. Birkaç saniye bekleyin, ardından tekrar deneyin. Bu durum devam ederse Bluetooth'u kapatıp tekrar açın.",
+              "cta" : {
+                "retry" : "Tekrar deneyin",
+                "ignore" : "Bunun yerine USB ile devam et"
+              }
             },
             "bluetoothUnsupported" : {
               "title" : "Bluetooth desteklenmiyor",
@@ -8500,6 +8701,73 @@
       }
     }
   },
+  "stacks" : {
+    "stake" : {
+      "stepperHeader" : {
+        "pool" : "Havuz",
+        "amount" : "Tutar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "pool" : {
+        "description" : "STX'leriniz ile yetki devretmek istediğiniz havuzun adresini ve varlıklarınızı kaç ödül döngüsü boyunca kilitleyeceğinizi girin.",
+        "poolAddressLabel" : "Havuz adresi",
+        "poolAddressError" : "SP….pool-name gibi bir havuz sözleşmesi adresi girin",
+        "numCyclesLabel" : "Döngü sayısı",
+        "numCyclesError" : "{{min}} ile {{max}} arasında tam sayı değerinde bir döngü sayısı girin."
+      },
+      "amount" : {
+        "disclaimer" : "STX'leriniz, staking havuzundan serbest kalana kadar kilitli kalacaktır.",
+        "pool" : "Havuz",
+        "numCycles" : "Döngü sayısı",
+        "available" : "Mevcut"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Varlıklarınızı başarıyla stake ettiniz",
+          "description" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecektir."
+        }
+      }
+    },
+    "unstake" : {
+      "title" : "Stake'i durdur",
+      "stepperHeader" : {
+        "summary" : "Stake'i durdur",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "summary" : {
+        "info" : "Stake'i durdurmak kilitleme sürenizi kısaltır. STX'leriniz hemen değil, bu kısaltılmış süre sona erdiğinde serbest bırakılır.",
+        "pool" : "Havuz",
+        "noPosition" : "Bu hesapta durdurulabilecek aktif bir stake pozisyonu bulunmuyor."
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Stake durdurma işlemi gönderildi",
+          "description" : "STX yetki devrini geri çekme işleminiz başarıyla yayımlandı."
+        }
+      }
+    },
+    "account" : {
+      "staked" : "Stake edildi",
+      "unlockCycle" : "Kilit açma döngüsü"
+    },
+    "info" : {
+      "available" : {
+        "title" : "Mevcut",
+        "description" : "Harcayabileceğiniz veya stake edebileceğiniz STX tutarı."
+      },
+      "staked" : {
+        "title" : "Stake edildi",
+        "description" : "Staking havuzunuza yetkisi devredilen ve pox-5 tarafından kilitlenen STX tutarı."
+      },
+      "unlockCycle" : {
+        "title" : "Kilit açma döngüsü",
+        "description" : "Stake ettiğiniz STX'lerin serbest bırakılacağı ödül döngüsü."
+      }
+    }
+  },
   "sui" : {
     "info" : {
       "estimatedReward" : "Kazanılan ödüller",
@@ -10148,6 +10416,20 @@
       }
     }
   },
+  "accountDetail" : {
+    "assets" : {
+      "title" : "Varlıklar"
+    },
+    "transactions" : {
+      "title" : "İşlemler"
+    },
+    "editName" : {
+      "title" : "Adı değiştir",
+      "description" : "Düzenli kalmak için bu adrese bir ad verin (ör. {{ticker}}-Alım Satım, {{ticker}}-DeFi).",
+      "label" : "Adres adı",
+      "submit" : "Adı değiştir"
+    }
+  },
   "assetDetail" : {
     "balanceGraph" : {
       "marketPrice" : "Piyasa fiyatı",
@@ -10337,6 +10619,7 @@
     }
   },
   "largeMover" : {
+    "coinPosition" : "{{position}} / {{total}}",
     "info" : "Bilgi",
     "marketCap" : "Piyasa değeri",
     "volume" : "Hacim (24 sa.)",
@@ -11111,7 +11394,7 @@
     "contacts" : {
       "title" : "Ödeme yapın",
       "pay" : "Yeni",
-      "seeAllTitle" : "Kişiye ödeme yapın",
+      "seeAllTitle" : "Ödeme kişisi",
       "me" : "Ben",
       "addressPicker" : {
         "title" : "{{name}} için adres seçin",
@@ -11232,13 +11515,16 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
-      "backup" : "Yedekle",
       "help" : "Yardım",
       "referral" : "Referans"
     },
+    "walletBackups" : {
+      "title" : "Cüzdan yedeklemeleri",
+      "description" : "Varlıklarınıza erişiminizi kaybetmeyin."
+    },
     "contacts" : {
       "title" : "Kişiler",
-      "description" : "Kişilerinizi yönetin"
+      "description" : "Kişilerinizi yönetin."
     },
     "backupHub" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
@@ -11537,6 +11823,9 @@
         "unbondedAmount" : "Stake’i durdurulan tutar"
       }
     },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "Ödülleri topla"
+    },
     "shared" : {
       "sponsoredByProvable" : "Provable sponsorluğunda"
     }
@@ -11582,7 +11871,8 @@
     "addAddress" : "Adres ekle",
     "addYourAddress" : "Adresinizi ekleyin",
     "searchPlaceholder" : "İsme göre ara",
-    "searchNoResults" : "Kişi bulunamadı",
+    "searchNoResults" : "Bu isimle bir kişi bulunamadı",
+    "searchNoResultsDescription" : "Başka bir isim veya yazım deneyin.",
     "addContactDrawer" : {
       "namePlaceholder" : "Kişi adı",
       "namingDisclaimer" : "Gizlilik için tam ad kullanmaktan kaçının. Bir takma ad veya yalnızca ad + soyadın baş harfi kombinasyonunu kullanın, ör. \"John S.\"",
@@ -11615,7 +11905,7 @@
       "continueToReview" : "İnceleme adımına geç",
       "invalidLabel" : "Özel karakterler desteklenmez.",
       "duplicateLabel" : "Bu adres adı bu kişi için zaten kullanılıyor.",
-      "labelTooLong" : "Bu adres adı çok uzun.",
+      "tooLongLabel" : "Bu adres adı çok uzun.",
       "privacyPolicy" : "Ledger'ın Gizlilik Politikası hakkında daha fazla bilgi edinin."
     },
     "addAddressReview" : {
@@ -11635,7 +11925,6 @@
     "detail" : {
       "meDisplayName" : "{{name}} (Ben)",
       "ledgerWalletAddresses" : "Ledger Wallet adresleri",
-      "myAddresses" : "Adreslerim",
       "emptyState" : {
         "contactTitle" : "{{name}} için kayıtlı adres bulunmuyor",
         "meTitle" : "Kendi adreslerinizi kaydedin",
