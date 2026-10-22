@@ -95,9 +95,17 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Read zizmor version from mise.toml
+        id: zizmor-version
+        run: |
+          version="$(mise current zizmor)"
+          [ -n "$version" ] || { echo "::error::zizmor is not pinned in mise.toml"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
         with:
+          version: ${{ steps.zizmor-version.outputs.version }}
           min-severity: high
           token: ${{ secrets.GITHUB_TOKEN }}
 
