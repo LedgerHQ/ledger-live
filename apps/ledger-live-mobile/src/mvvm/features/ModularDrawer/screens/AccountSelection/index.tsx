@@ -16,18 +16,8 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
-import type { TFunction } from "i18next";
-import {
-  getPerpsUiUseCase,
-  PERPS_UI_USE_CASE,
-} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { PAY_ACCOUNT_UI_USE_CASE } from "../../types";
-
-type DescribeHeaderParams = {
-  isPerpsReceive: boolean;
-  hasAccounts: boolean;
-  network: string;
-};
+import { getPerpsDrawerHeading } from "../../utils/getPerpsDrawerHeading";
 
 export type AccountSelectionStepProps = {
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
@@ -39,16 +29,6 @@ export type AccountSelectionStepProps = {
 const HEADER_HEIGHT = 64;
 const ROW_HEIGHT = 80;
 const MARGIN_BOTTOM = HEADER_HEIGHT + ROW_HEIGHT;
-
-function describeHeader(
-  t: TFunction,
-  { isPerpsReceive, hasAccounts, network }: DescribeHeaderParams,
-): string | undefined {
-  if (isPerpsReceive && hasAccounts) return t("modularDrawer.selectAccountPerpsDescription");
-  if (isPerpsReceive) return t("modularDrawer.selectAccountPerpsEmptyDescription");
-  if (!hasAccounts) return t("modularDrawer.emptyAccounts", { network });
-  return undefined;
-}
 
 const AccountSelectionContent = ({
   asset,
@@ -90,19 +70,20 @@ const AccountSelectionContent = ({
     );
   }, [onAddNewAccountOnClick, t]);
 
-  const isPerpsReceive = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.receive;
+  const hasAccounts = detailedAccounts.length > 0;
+  const perpsHeading = getPerpsDrawerHeading("account", uiUseCase, hasAccounts);
 
-  const headerTitle = isPerpsReceive
-    ? t("modularDrawer.selectAccountPerpsTitle")
+  const headerTitle = perpsHeading
+    ? t(perpsHeading.titleKey)
     : uiUseCase === PAY_ACCOUNT_UI_USE_CASE
       ? t("modularDrawer.selectAccountToPayFrom")
       : t("modularDrawer.selectAccount");
 
-  const headerDescription = describeHeader(t, {
-    isPerpsReceive,
-    hasAccounts: detailedAccounts.length > 0,
-    network: asset.name,
-  });
+  const headerDescription = perpsHeading?.descriptionKey
+    ? t(perpsHeading.descriptionKey)
+    : hasAccounts
+      ? undefined
+      : t("modularDrawer.emptyAccounts", { network: asset.name });
 
   return (
     <>

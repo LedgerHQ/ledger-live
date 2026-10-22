@@ -10736,6 +10736,10 @@
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
     "selectDepositCurrencyTitle": "Select asset to deposit",
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
+    "selectWithdrawCurrencyTitle": "Select asset to withdraw to",
+    "selectWithdrawCurrencyDescription": "Your USDC will be swapped automatically into the asset you choose.",
+    "selectAccountPerpsWithdrawFromDescription": "Select the account you want to withdraw funds from",
+    "selectAccountPerpsWithdrawFromEmptyDescription": "To withdraw, you need a Hyperliquid account. Add one to continue.",
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "notAvailableYet": "Not available yet",
@@ -10795,6 +10799,25 @@
     "formErrors": {
       "amountExceedsBalance": "Insufficient balance",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    }
+  },
+  "perpsWithdraw": {
+    "title": "Withdraw",
+    "review": "Review",
+    "keypadDelete": "Delete last digit",
+    "estimatedAmount": "Withdraw ~{{value}}",
+    "inputSubText": "Swap and withdraw via {{provider}}",
+    "selectCurrencyTitle": "Withdraw to {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount": "No account",
+    "formErrors": {
+      "insufficientBalance": "Insufficient balance",
+      "minimumAmount": "The minimum withdrawal is {{minAmount}} USDC.",
+      "minimumAmountUnknown": "This amount is too low to withdraw.",
+      "lowLiquidity": "This asset is temporarily unavailable. Try again later or choose another asset.",
+      "addressScreening": "This withdrawal can’t be processed to this account.",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
+      "currenciesUnavailable": "We can’t load the assets you can withdraw to. Try again later."
     }
   },
   "swapErrors": {
