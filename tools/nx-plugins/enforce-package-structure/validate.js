@@ -168,7 +168,7 @@ function entryPointsOf(exportsField, withTestSupport = false) {
  * @returns {string[]}
  */
 function indexVariants(file) {
-  if (!isBarrelFile(file)) return [file];
+  if (!isBarrelFile(path.basename(file))) return [file];
   const directory = path.dirname(file);
   try {
     return fs
@@ -203,7 +203,7 @@ function barrelDepths(entries) {
     for (const specifier of starReexportTargets(source, file)) {
       for (const target of resolveModule(file, specifier).flatMap(indexVariants)) {
         if (entrySet.has(target)) continue;
-        const depth = depths.get(file) + (isBarrelFile(target) ? 1 : 0);
+        const depth = depths.get(file) + (isBarrelFile(path.basename(target)) ? 1 : 0);
         if (depth >= (depths.get(target) ?? Infinity)) continue;
         depths.set(target, depth);
         queue.push(target);
