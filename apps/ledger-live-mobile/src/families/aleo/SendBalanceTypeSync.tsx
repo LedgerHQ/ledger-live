@@ -52,16 +52,19 @@ function SendBalanceTypeSyncView({
       lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s16", padding: "s24" }}
       testID="aleo-balance-type-sync-syncing"
     >
-      <Spinner size={48} />
-      <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-        {viewModel.title}
-      </Text>
-      <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-        {viewModel.description}
-      </Text>
-      <Text typography="body3" lx={{ color: "muted" }} testID="aleo-private-sync-progress">
-        {viewModel.progressLabel}
-      </Text>
+      <Spinner size={32} />
+      <Box lx={{ alignItems: "center", gap: "s8" }}>
+        <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
+          {viewModel.title}
+        </Text>
+        <Text
+          typography="body2"
+          lx={{ color: "muted", textAlign: "center" }}
+          testID="aleo-private-sync-progress"
+        >
+          {viewModel.progressLabel}
+        </Text>
+      </Box>
     </Box>
   );
 }

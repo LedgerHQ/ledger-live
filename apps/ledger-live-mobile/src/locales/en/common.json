@@ -11835,8 +11835,7 @@
     "send": {
       "balanceTypeSync": {
         "title": "Refreshing your private balance",
-        "description": "This can take up to a minute",
-        "progress": "{{percentage}}% synced",
+        "progress": "{{percentage}}%",
         "errorTitle": "Private sync failed",
         "errorDescription": "Something went wrong, please try again",
         "recordLimitTitle": "You can send up to {{amount}}",

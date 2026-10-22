@@ -102,7 +102,7 @@ describe("aleoSendBalanceTypeSync", () => {
     renderSync();
 
     expect(screen.getByText("Refreshing your private balance")).toBeOnTheScreen();
-    expect(screen.getByText("42% synced")).toBeOnTheScreen();
+    expect(screen.getByText("42%")).toBeOnTheScreen();
     expect(mockOnComplete).not.toHaveBeenCalled();
   });
 

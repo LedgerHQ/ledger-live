@@ -1,10 +1,14 @@
 import React, { useCallback } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable } from "react-native";
 import {
   BottomSheet,
   BottomSheetHeader,
   BottomSheetView,
-  Text,
+  DescriptionItem,
+  DescriptionItemLabel,
+  DescriptionItemLeading,
+  DescriptionItemTrailing,
+  DescriptionItemValue,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -34,9 +38,7 @@ function EstimatedTimeRow({ viewModel }: EstimatedTimeRowProps) {
   const styles = useStyleSheet(
     theme => ({
       row: {
-        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
         paddingVertical: theme.spacings.s12,
         marginBottom: theme.spacings.s8,
       },
@@ -59,23 +61,23 @@ function EstimatedTimeRow({ viewModel }: EstimatedTimeRowProps) {
 
   return (
     <>
-      <View style={styles.row} testID="send-estimated-time-row">
-        <Pressable
-          onPress={handleOpenInfo}
-          style={styles.labelSection}
-          accessibilityRole="button"
-          accessibilityLabel={info.title}
-          testID="send-estimated-time-info-button"
-        >
-          <Text typography="body3" lx={{ color: "base" }}>
-            {label}
-          </Text>
-          <Information size={16} lx={{ color: "muted" }} />
-        </Pressable>
-        <Text typography="body3" lx={{ color: "base" }} testID="send-estimated-time-value">
-          {value}
-        </Text>
-      </View>
+      <DescriptionItem size="sm" style={styles.row} testID="send-estimated-time-row">
+        <DescriptionItemLeading>
+          <Pressable
+            onPress={handleOpenInfo}
+            style={styles.labelSection}
+            accessibilityRole="button"
+            accessibilityLabel={info.title}
+            testID="send-estimated-time-info-button"
+          >
+            <DescriptionItemLabel>{label}</DescriptionItemLabel>
+            <Information size={16} lx={{ color: "muted" }} />
+          </Pressable>
+        </DescriptionItemLeading>
+        <DescriptionItemTrailing>
+          <DescriptionItemValue testID="send-estimated-time-value">{value}</DescriptionItemValue>
+        </DescriptionItemTrailing>
+      </DescriptionItem>
 
       <BottomSheet
         ref={infoBottomSheetRef}

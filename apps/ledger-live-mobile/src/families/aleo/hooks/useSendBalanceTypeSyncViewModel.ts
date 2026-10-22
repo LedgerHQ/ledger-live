@@ -25,7 +25,7 @@ type RecordLimit = Readonly<{
 }>;
 
 export type SendBalanceTypeSyncViewModel =
-  | Readonly<{ status: "syncing"; title: string; description: string; progressLabel: string }>
+  | Readonly<{ status: "syncing"; title: string; progressLabel: string }>
   | Readonly<{
       status: "error";
       title: string;
@@ -145,7 +145,6 @@ export function useSendBalanceTypeSyncViewModel({
   return {
     status: "syncing",
     title: t("aleo.send.balanceTypeSync.title"),
-    description: t("aleo.send.balanceTypeSync.description"),
     progressLabel: t("aleo.send.balanceTypeSync.progress", {
       percentage: Math.min(Math.round(progress), 100),
     }),
