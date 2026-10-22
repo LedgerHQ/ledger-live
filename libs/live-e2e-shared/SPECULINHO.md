@@ -64,4 +64,4 @@ Watching is safe, but pressing buttons while the test drives the device will thr
 CI reads the operator URL from the `SPECULINHO_URL` secret.
 
 - Mobile E2E always uses Speculinho.
-- The desktop E2E workflow uses Docker unless it is dispatched with `remote_speculos`. The desktop smoke job uses Speculinho when its caller passes `SPECULINHO_URL`.
+- The desktop E2E workflow always uses Speculinho: its 16cpu runner has no Docker daemon. The desktop smoke job uses Speculinho when its caller passes `SPECULINHO_URL`.
