@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
 
 jest.mock("./converter", () => ({
   convertApiToken: jest.fn(),
@@ -119,24 +121,24 @@ describe("param interfaces", () => {
   });
 });
 
+// Wired the way the apps wire it: the store registers the *service api*, and the endpoints only
+// exist because importing this package injected them.
+const makeStore = () =>
+  configureStore({
+    reducer: { [calApi.reducerPath]: calApi.reducer },
+    middleware: gdm =>
+      gdm({
+        thunk: {
+          extraArgument: calApiExtra({
+            calServiceUrl: "https://cal.test",
+            ledgerClientVersion: "1.2.3",
+          }),
+        },
+      }).concat(calApi.middleware),
+  });
+
 describe("cryptoAssetsApi requests", () => {
   let fetchSpy: jest.SpyInstance;
-
-  // Wired the way the apps wire it: the store registers the *service api*, and the endpoints only
-  // exist because importing this package injected them.
-  const makeStore = () =>
-    configureStore({
-      reducer: { [calApi.reducerPath]: calApi.reducer },
-      middleware: gdm =>
-        gdm({
-          thunk: {
-            extraArgument: calApiExtra({
-              calServiceUrl: "https://cal.test",
-              ledgerClientVersion: "1.2.3",
-            }),
-          },
-        }).concat(calApi.middleware),
-    });
 
   function mockFetch(body: unknown, headers: Record<string, string> = {}) {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
@@ -334,56 +336,65 @@ describe("cryptoAssetsApi requests", () => {
     expect(after.commit).not.toBe(before.commit);
     expect(after.list).toBe(before.list);
   });
+});
 
-  describe("when CAL does not answer", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
+describe("cryptoAssetsApi hash requests when CAL does not answer", () => {
+  const cal = jest.fn();
+  const server = setupServer(
+    http.get("https://cal.test/v1/currencies", cal),
+    http.get("https://cal.test/v1/networks", cal),
+  );
 
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
-    it.each(["getTokensSyncHash", "getTokenListHash"] as const)(
-      "%s ends with a timeout error after CAL_REQUEST_TIMEOUT_MS",
-      async endpoint => {
-        fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
-          input =>
-            new Promise((_resolve, reject) => {
-              (input as Request).signal.addEventListener("abort", () =>
-                reject(new DOMException("Aborted", "AbortError")),
-              );
-            }),
-        );
-        const store = makeStore();
-
-        const pending = store.dispatch(cryptoAssetsApi.endpoints[endpoint].initiate("ethereum"));
-        await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
-        const result = await pending;
-
-        expect(result.error).toMatchObject({ status: "TIMEOUT_ERROR" });
-      },
-    );
-
-    it.each(["getTokensSyncHash", "getTokenListHash"] as const)(
-      "%s keeps the HTTP status of a non-JSON error page",
-      async endpoint => {
-        fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(() =>
-          Promise.resolve(
-            new Response("<html>Bad Gateway</html>", {
-              status: 502,
-              headers: { "Content-Type": "text/html" },
-            }),
-          ),
-        );
-        const store = makeStore();
-
-        const pending = store.dispatch(cryptoAssetsApi.endpoints[endpoint].initiate("ethereum"));
-        await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
-        const result = await pending;
-
-        expect(result.error).toMatchObject({ status: 502 });
-      },
-    );
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: "error" });
   });
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    cal.mockReset();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    server.resetHandlers();
+  });
+
+  afterAll(() => {
+    server.close();
+  });
+
+  it.each(["getTokensSyncHash", "getTokenListHash"] as const)(
+    "%s ends with a timeout error after CAL_REQUEST_TIMEOUT_MS",
+    async endpoint => {
+      cal.mockImplementation(() => new Promise(() => {}));
+      const store = makeStore();
+
+      const pending = store.dispatch(cryptoAssetsApi.endpoints[endpoint].initiate("ethereum"));
+      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+      const result = await pending;
+
+      expect(result.error).toMatchObject({ status: "TIMEOUT_ERROR" });
+      expect(cal).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each(["getTokensSyncHash", "getTokenListHash"] as const)(
+    "%s keeps the HTTP status of a non-JSON error page",
+    async endpoint => {
+      cal.mockImplementation(
+        () =>
+          new HttpResponse("<html>Bad Gateway</html>", {
+            status: 502,
+            headers: { "Content-Type": "text/html" },
+          }),
+      );
+      const store = makeStore();
+
+      const pending = store.dispatch(cryptoAssetsApi.endpoints[endpoint].initiate("ethereum"));
+      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+      const result = await pending;
+
+      expect(result.error).toMatchObject({ status: 502 });
+    },
+  );
 });

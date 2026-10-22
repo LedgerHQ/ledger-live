@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
 import { calApi, calApiExtra, getCalExtra } from "./api";
 import { CAL_REQUEST_TIMEOUT_MS, MAX_RETRIES } from "./constants";
 import type { CalApiExtra } from "./types";
@@ -47,21 +49,21 @@ describe("getCalExtra", () => {
   });
 });
 
+// The base query is private, so drive it the way a use case does: through an injected endpoint.
+function probeStore(extra: CalApiExtra) {
+  const api = calApi.injectEndpoints({
+    endpoints: build => ({ probe: build.query<unknown, void>({ query: () => "/probe" }) }),
+    overrideExisting: true,
+  });
+  const store = configureStore({
+    reducer: { [calApi.reducerPath]: calApi.reducer },
+    middleware: gdm => gdm({ thunk: { extraArgument: extra } }).concat(calApi.middleware),
+  });
+  return { api, store };
+}
+
 describe("calBaseQuery", () => {
   let fetchSpy: jest.SpyInstance;
-
-  // The base query is private, so drive it the way a use case does: through an injected endpoint.
-  function probeStore(extra: CalApiExtra) {
-    const api = calApi.injectEndpoints({
-      endpoints: build => ({ probe: build.query<unknown, void>({ query: () => "/probe" }) }),
-      overrideExisting: true,
-    });
-    const store = configureStore({
-      reducer: { [calApi.reducerPath]: calApi.reducer },
-      middleware: gdm => gdm({ thunk: { extraArgument: extra } }).concat(calApi.middleware),
-    });
-    return { api, store };
-  }
 
   afterEach(() => {
     fetchSpy?.mockRestore();
@@ -87,93 +89,99 @@ describe("calBaseQuery", () => {
     expect(headers.get("Content-Type")).toBe("application/json");
     expect(headers.get("X-Ledger-Client-Version")).toBe("test");
   });
+});
 
-  describe("timeout", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
+describe("calBaseQuery timeout", () => {
+  const probe = jest.fn();
+  const server = setupServer(http.get("https://cal.test/probe", probe));
 
-    afterEach(() => {
-      jest.useRealTimers();
-    });
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: "error" });
+  });
 
-    it("ends a hung request with a TIMEOUT_ERROR, without a retry", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(hangUntilAborted);
+  beforeEach(() => {
+    jest.useFakeTimers();
+    probe.mockReset();
+  });
 
-      const { api, store } = probeStore(calApiExtra(valid));
-      const pending = store.dispatch(api.endpoints.probe.initiate());
-      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
-      const result = await pending;
+  afterEach(() => {
+    jest.useRealTimers();
+    server.resetHandlers();
+  });
 
-      expect(result.error).toMatchObject({ status: "TIMEOUT_ERROR" });
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
-    });
+  afterAll(() => {
+    server.close();
+  });
 
-    it("clears its timer when the request settles", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+  /** The request that CAL received on the given call. */
+  function received(call = 0): Request {
+    return probe.mock.calls[call][0].request;
+  }
 
-      const { api, store } = probeStore(calApiExtra(valid));
-      await store.dispatch(api.endpoints.probe.initiate());
-      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+  it("ends a hung request with a TIMEOUT_ERROR, without a retry", async () => {
+    probe.mockImplementation(() => new Promise(() => {}));
 
-      expect(request(fetchSpy).signal.aborted).toBe(false);
-    });
+    const { api, store } = probeStore(calApiExtra(valid));
+    const pending = store.dispatch(api.endpoints.probe.initiate());
+    await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+    const result = await pending;
 
-    it("aborts the request when the query is cancelled", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(hangUntilAborted);
+    expect(result.error).toMatchObject({ status: "TIMEOUT_ERROR" });
+    expect(probe).toHaveBeenCalledTimes(1);
+  });
 
-      const { api, store } = probeStore(calApiExtra(valid));
-      const pending = store.dispatch(api.endpoints.probe.initiate());
-      await jest.advanceTimersByTimeAsync(0);
-      pending.abort();
-      await pending;
+  it("clears its timer when the request settles", async () => {
+    probe.mockImplementation(() => HttpResponse.json({ ok: true }));
 
-      expect(request(fetchSpy).signal.aborted).toBe(true);
-    });
+    const { api, store } = probeStore(calApiExtra(valid));
+    await store.dispatch(api.endpoints.probe.initiate());
+    await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
 
-    it("sends no further request when the query is cancelled during a retry", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+    expect(received().signal.aborted).toBe(false);
+  });
 
-      const { api, store } = probeStore(calApiExtra(valid));
-      const pending = store.dispatch(api.endpoints.probe.initiate());
-      await jest.advanceTimersByTimeAsync(0);
-      pending.abort();
-      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
-      await pending;
+  it("aborts the request when the query is cancelled", async () => {
+    probe.mockImplementation(() => new Promise(() => {}));
 
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
-    });
+    const { api, store } = probeStore(calApiExtra(valid));
+    const pending = store.dispatch(api.endpoints.probe.initiate());
+    await jest.advanceTimersByTimeAsync(0);
+    pending.abort();
+    await pending;
 
-    it("still retries a server error", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+    expect(received().signal.aborted).toBe(true);
+  });
 
-      const { api, store } = probeStore(calApiExtra(valid));
-      const pending = store.dispatch(api.endpoints.probe.initiate());
-      await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
-      const result = await pending;
+  it("sends no further request when the query is cancelled during a retry", async () => {
+    probe.mockImplementation(() => HttpResponse.json({}, { status: 503 }));
 
-      expect(result.error).toMatchObject({ status: 503 });
-      expect(fetchSpy).toHaveBeenCalledTimes(MAX_RETRIES + 1);
-    });
+    const { api, store } = probeStore(calApiExtra(valid));
+    const pending = store.dispatch(api.endpoints.probe.initiate());
+    await jest.advanceTimersByTimeAsync(0);
+    pending.abort();
+    await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+    await pending;
+
+    expect(probe).toHaveBeenCalledTimes(1);
+  });
+
+  it("still retries a server error", async () => {
+    probe.mockImplementation(() => HttpResponse.json({}, { status: 503 }));
+
+    const { api, store } = probeStore(calApiExtra(valid));
+    const pending = store.dispatch(api.endpoints.probe.initiate());
+    await jest.advanceTimersByTimeAsync(CAL_REQUEST_TIMEOUT_MS);
+    const result = await pending;
+
+    expect(result.error).toMatchObject({ status: 503 });
+    expect(probe).toHaveBeenCalledTimes(MAX_RETRIES + 1);
   });
 });
 
-function jsonResponse(body: unknown, status = 200): Response {
+function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
-    status,
+    status: 200,
     headers: { "content-type": "application/json" },
-  });
-}
-
-/** A fetch that never answers and rejects only when its request is aborted. */
-function hangUntilAborted(input: RequestInfo | URL): Promise<Response> {
-  const { signal } = input as Request;
-  return new Promise((_resolve, reject) => {
-    signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
   });
 }
 
