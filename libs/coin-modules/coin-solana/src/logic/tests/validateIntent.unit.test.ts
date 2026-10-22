@@ -564,46 +564,43 @@ describe("validateIntent", () => {
         expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
       });
 
-      it("should skip getStakeMinimumDelegation when recipient is missing", async () => {
-        const api = makeApi(1_000_000_000);
+      it("should report an amount below the minimum before a validator is picked", async () => {
         const result = await validateIntentRaw(
-          api,
+          makeApi(1_000_000_000),
           CONFIG,
-          makeStakeIntent({ recipient: "" }),
+          makeStakeIntent({ recipient: "", amount: 10_000_000n }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
         );
 
         expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
-        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
       });
 
-      it("should skip getStakeMinimumDelegation when recipient is invalid", async () => {
-        const api = makeApi(1_000_000_000);
+      it("should report an amount below the minimum alongside an invalid validator", async () => {
         const result = await validateIntentRaw(
-          api,
+          makeApi(1_000_000_000),
           CONFIG,
-          makeStakeIntent({ recipient: "not-valid!!!" }),
+          makeStakeIntent({ recipient: "not-valid!!!", amount: 10_000_000n }),
           makeBalances(5_000_000_000n, 0n),
           { value: 5000n },
         );
 
         expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
-        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
       });
 
-      it("should skip getStakeMinimumDelegation when useAllAmount with missing recipient", async () => {
-        const api = makeApi(1_000_000_000);
+      it("should report a send-max below the minimum before a validator is picked", async () => {
         const result = await validateIntentRaw(
-          api,
+          makeApi(1_000_000_000),
           CONFIG,
           makeStakeIntent({ recipient: "", amount: 0n, useAllAmount: true }),
-          makeBalances(5_000_000_000n, 890_880n),
+          makeBalances(500_000_000n, 0n),
           { value: 5000n },
         );
 
         expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
-        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
       });
 
       it("should return validation errors instead of rejecting when getStakeMinimumDelegation would fail and recipient is invalid", async () => {
@@ -622,7 +619,6 @@ describe("validateIntent", () => {
         ).resolves.toMatchObject({
           errors: { recipient: expect.any(InvalidAddress) },
         });
-        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
       });
 
       it("skips the minimum-delegation check when the RPC call fails (best-effort)", async () => {

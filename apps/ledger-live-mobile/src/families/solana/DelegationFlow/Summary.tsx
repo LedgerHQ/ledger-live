@@ -227,7 +227,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
             <SupportLinkError error={status.errors.sender} type="alert" />
           </>
         ) : (
-          <TranslatedError error={error} />
+          <Text color="alert">
+            <TranslatedError error={error} />
+          </Text>
         )}
         <Button
           event="SummaryContinue"
