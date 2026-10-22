@@ -102,7 +102,10 @@ runs:
       shell: bash
       run: |
         echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        echo "cache-path=$(pnpm cache path 2>/dev/null || true)" >> $GITHUB_OUTPUT
+        # pnpm 10 prints its help for `pnpm cache path` (release branches still on pnpm 10 load this action @develop)
+        if [ "$(pnpm --version | cut -d. -f1)" -ge 11 ]; then
+          echo "cache-path=$(pnpm cache path)" >> $GITHUB_OUTPUT
+        fi
 
     # pnpm 11 checks every lockfile entry against the registry (supply-chain policies) unless this record matches
     - name: Cache pnpm lockfile verification
