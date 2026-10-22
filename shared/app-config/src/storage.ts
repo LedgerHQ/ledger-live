@@ -1,8 +1,8 @@
 import type { ConfigStorage, StorageKey } from "./types";
 
 /**
- * A storage that only reads what `read` returns, for runs that pass their selections at launch, such
- * as e2e runs. Writes do nothing, so the devtool changes nothing they boot with.
+ * A storage that only reads what `read` returns, for runs that pass their selections or dev values
+ * at launch, such as e2e runs. Writes do nothing, so the devtool changes nothing they boot with.
  */
 export const readOnlyConfigStorage = (read: () => unknown): ConfigStorage => ({
   getAll: read,

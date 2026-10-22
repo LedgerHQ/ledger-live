@@ -1,31 +1,46 @@
-import type { ConfigOptionId } from "@shared/app-config";
+import type { ConfigOptionId, ConfigSelectionId } from "@shared/app-config";
+
+/** A value of a switch, or a fixed value, as the tool lists it. */
+export interface ConfigValueState {
+  readonly name: string;
+  /** The value this session runs on. */
+  readonly currentValue: unknown;
+  /** The value the next session runs on. */
+  readonly nextValue: unknown;
+}
 
 /** A switch of the session, as the tool lists it. */
 export interface ConfigSwitchState {
   readonly id: string;
   readonly label: string;
-  readonly options: readonly {
-    readonly id: ConfigOptionId;
-    readonly values: Readonly<Record<string, unknown>>;
-  }[];
-  /** The option this session runs on, resolved at boot. */
-  readonly currentOptionId: ConfigOptionId;
-  /** The option saved for the next session, or `undefined` when it follows the default. */
-  readonly savedOptionId: ConfigOptionId | undefined;
+  /** What this session runs on, resolved at boot. */
+  readonly currentSelectionId: ConfigSelectionId;
+  /** What is saved for the next session, or `undefined` when it follows the default. */
+  readonly savedSelectionId: ConfigSelectionId | undefined;
+  readonly values: readonly ConfigValueState[];
+}
+
+/** A fixed value of the session, as the tool lists it. */
+export interface ConfigFixedValueState extends ConfigValueState {
+  /** This session runs on its dev value. */
+  readonly isDevCurrent: boolean;
+  /** Dev is saved for the next session. */
+  readonly isDevSaved: boolean;
 }
 
 export interface AppConfigToolProps {
-  /**
-   * The option of every switch without a saved one. It depends on the build, and is `undefined`
-   * until the host has the session, when there are no switches either.
-   */
-  readonly defaultOptionId: ConfigOptionId | undefined;
-  /** Each switch with its options, its current and saved option. */
-  readonly switches: readonly ConfigSwitchState[];
-  /** Saves an option of a switch for the next session. Nothing reloads. */
-  readonly onSelectOption: (switchId: string, optionId: ConfigOptionId) => void;
-  /** Removes the saved option of a switch: the next session follows the default. Nothing reloads. */
-  readonly onResetSwitch: (switchId: string) => void;
-  /** Reloads the app, which then runs on the saved options. */
+  /** What the tool lists, or `undefined` until the host has the session. */
+  readonly session?: {
+    /** The option of every switch without a saved one. It depends on the build. */
+    readonly defaultOptionId: ConfigOptionId;
+    /** Each switch with its current and saved selection, and its values. */
+    readonly switches: readonly ConfigSwitchState[];
+    readonly fixedValues: readonly ConfigFixedValueState[];
+  };
+  /** Saves what a switch or a fixed value selects for the next session. Nothing reloads. */
+  readonly onSelect: (id: string, selectionId: ConfigSelectionId) => void;
+  /** Removes the saved selection of a switch or a fixed value: the next session follows the default. */
+  readonly onResetSelection: (id: string) => void;
+  /** Reloads the app, which then runs on the saved selections and dev values. */
   readonly onReloadApp: () => void;
 }

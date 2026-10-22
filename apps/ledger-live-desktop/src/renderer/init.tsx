@@ -150,7 +150,10 @@ async function init() {
         dateString: require("../../tests/time.js").default,
       });
     }
-    configStorage = readOnlyConfigStorage(() => spectronData.appConfig);
+    configStorage = {
+      selections: readOnlyConfigStorage(() => spectronData.appConfig),
+      devValues: readOnlyConfigStorage(() => spectronData.appConfigDevValues),
+    };
   }
   const store = createStore({
     dbMiddleware,

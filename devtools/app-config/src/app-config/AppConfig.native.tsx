@@ -8,17 +8,22 @@ import {
   Text,
   useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
-import type { ConfigOptionId } from "@shared/app-config";
-import type { AppConfigToolProps } from "../types";
+import type { ConfigSelectionId } from "@shared/app-config";
+import type { AppConfigToolProps, ConfigValueState } from "../types";
 import { formatValue } from "./internals/formatValue";
 import { pendingLabel } from "./internals/pendingLabel";
-import type { AppConfigViewModel, SwitchFilter, SwitchRowState } from "./internals/types";
+import type {
+  AppConfigViewModel,
+  FixedRowState,
+  RowFilter,
+  SwitchRowState,
+} from "./internals/types";
 import { useAppConfigViewModel } from "./internals/useAppConfigViewModel";
 
 const { SegmentedControl: FilterControl, SegmentedControlButton: FilterButton } =
-  createSegmentedControl<SwitchFilter>();
+  createSegmentedControl<RowFilter>();
 const { SegmentedControl: OptionControl, SegmentedControlButton: OptionButton } =
-  createSegmentedControl<ConfigOptionId>();
+  createSegmentedControl<ConfigSelectionId>();
 
 const ROW_LX = { padding: "s16", gap: "s12" } as const;
 const HEADER_LX = { flexDirection: "row", alignItems: "center", gap: "s8" } as const;
@@ -34,54 +39,60 @@ const DEFAULT_LX = {
 } as const;
 
 export function AppConfig(props: AppConfigToolProps) {
+  const viewModel = useAppConfigViewModel(props);
   const {
     defaultOptionId,
-    rows,
-    switchCount,
+    switchRows,
+    fixedRows,
+    rowCount,
     pendingCount,
     search,
     setSearch,
     filter,
     setFilter,
-    select,
     reload,
-  } = useAppConfigViewModel(props);
+  } = viewModel;
   const { theme } = useTheme();
   const isPending = pendingCount > 0;
+  const borderBottom = { borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle };
 
   return (
     <Box lx={{ flex: 1 }}>
       <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         {defaultOptionId ? (
-          <Box
-            lx={DEFAULT_LX}
-            style={{ borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle }}
-          >
+          <Box lx={DEFAULT_LX} style={borderBottom}>
             <Tag size="sm" appearance="gray" label={`Default: ${defaultOptionId}`} />
             <Text typography="body3" lx={{ color: "muted" }} style={{ flexShrink: 1 }}>
               Used by every switch without a saved option.
             </Text>
           </Box>
         ) : null}
-        <Box
-          lx={TOOLBAR_LX}
-          style={{ borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle }}
-        >
-          <SearchInput value={search} onChangeText={setSearch} placeholder="Search switches..." />
+        <Box lx={TOOLBAR_LX} style={borderBottom}>
+          <SearchInput value={search} onChangeText={setSearch} placeholder="Search config..." />
           <FilterControl selectedValue={filter} onSelectedChange={setFilter}>
             <FilterButton value="all">All</FilterButton>
             <FilterButton value="switched">Switched</FilterButton>
           </FilterControl>
         </Box>
-        {rows.length === 0 && switchCount > 0 ? (
+        {switchRows.length + fixedRows.length === 0 && rowCount > 0 ? (
           <Box lx={{ padding: "s16" }}>
             <Text typography="body3" lx={{ color: "muted" }}>
-              No switch matches.
+              Nothing matches.
             </Text>
           </Box>
         ) : null}
-        {rows.map(row => (
-          <SwitchRow key={row.id} row={row} onSelect={select} />
+        {switchRows.map(row => (
+          <SwitchRow key={row.id} row={row} actions={viewModel} />
+        ))}
+        {fixedRows.length > 0 ? (
+          <Box lx={{ padding: "s16" }} style={borderBottom}>
+            <Text typography="body2SemiBold" lx={{ color: "muted" }}>
+              Fixed values
+            </Text>
+          </Box>
+        ) : null}
+        {fixedRows.map(row => (
+          <FixedRow key={row.value.name} row={row} />
         ))}
         <Footer pendingCount={pendingCount} onRestart={reload} hidden />
       </ScrollView>
@@ -123,12 +134,27 @@ function Footer({
   );
 }
 
+function RowTags({
+  row,
+}: Readonly<{
+  row: Pick<SwitchRowState | FixedRowState, "currentChoice" | "selectedChoice" | "isPending">;
+}>) {
+  return (
+    <Box lx={TAGS_LX}>
+      <Tag size="sm" appearance="accent-subtle" label={`Current: ${row.currentChoice}`} />
+      {row.isPending ? (
+        <Tag size="sm" appearance="warning" label={`Next: ${row.selectedChoice}`} />
+      ) : null}
+    </Box>
+  );
+}
+
 function SwitchRow({
   row,
-  onSelect,
+  actions,
 }: Readonly<{
   row: SwitchRowState;
-  onSelect: AppConfigViewModel["select"];
+  actions: Pick<AppConfigViewModel, "selectOption">;
 }>) {
   const { theme } = useTheme();
 
@@ -150,36 +176,51 @@ function SwitchRow({
         </Box>
       </Box>
       <OptionControl
-        selectedValue={row.selectedOptionId}
-        onSelectedChange={optionId => onSelect(row.id, optionId)}
+        selectedValue={row.selectedChoice}
+        onSelectedChange={selectionId => actions.selectOption(row.id, selectionId)}
       >
-        {row.options.map(({ id }) => (
-          <OptionButton key={id} value={id}>
-            {id}
+        {row.choices.map(choice => (
+          <OptionButton key={choice} value={choice}>
+            {choice}
           </OptionButton>
         ))}
       </OptionControl>
-      <Box lx={TAGS_LX}>
-        <Tag size="sm" appearance="accent-subtle" label={`Current: ${row.currentOptionId}`} />
-        {row.isPending ? (
-          <Tag size="sm" appearance="warning" label={`Next: ${row.selectedOptionId}`} />
-        ) : null}
-      </Box>
-      {Object.entries(row.selectedValues ?? {}).map(([name, value]) => (
-        <Box key={name} lx={VALUE_LX}>
+      <RowTags row={row} />
+      {row.values.map(value => (
+        <Box key={value.name} lx={VALUE_LX}>
           <Text typography="body3" lx={{ color: "muted" }} selectable>
-            {name}
+            {value.name}
           </Text>
-          <Text
-            typography="body3"
-            lx={{ color: "base" }}
-            style={{ fontFamily: "monospace" }}
-            selectable
-          >
-            {formatValue(value)}
-          </Text>
+          <ValueText value={value} />
         </Box>
       ))}
     </Box>
+  );
+}
+
+function FixedRow({ row }: Readonly<{ row: FixedRowState }>) {
+  const { theme } = useTheme();
+  const { value } = row;
+
+  return (
+    <Box lx={ROW_LX} style={{ borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle }}>
+      <Text
+        typography="body3"
+        lx={{ color: "muted" }}
+        style={{ fontFamily: "monospace" }}
+        selectable
+      >
+        {value.name}
+      </Text>
+      <ValueText value={value} />
+    </Box>
+  );
+}
+
+function ValueText({ value }: Readonly<{ value: ConfigValueState }>) {
+  return (
+    <Text typography="body3" lx={{ color: "base" }} style={{ fontFamily: "monospace" }} selectable>
+      {formatValue(value.nextValue)}
+    </Text>
   );
 }

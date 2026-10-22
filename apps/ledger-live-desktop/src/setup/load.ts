@@ -1,4 +1,4 @@
-import { type ConfigStorage, resolveAppConfig } from "@shared/app-config";
+import { type AppConfigStorage, resolveAppConfig } from "@shared/app-config";
 import { appConfigSchema } from "./schema";
 
 /**
@@ -9,7 +9,7 @@ import { appConfigSchema } from "./schema";
 export const profileOf = (configProfile: string | undefined): "prod" | "staging" =>
   configProfile === "staging" ? "staging" : "prod";
 
-export const loadAppConfig = (storage: ConfigStorage, profile: "prod" | "staging") =>
+export const loadAppConfig = (storage: AppConfigStorage, profile: "prod" | "staging") =>
   resolveAppConfig({
     schema: appConfigSchema,
     storage,

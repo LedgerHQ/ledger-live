@@ -1,8 +1,9 @@
-import { jsonConfigStorage, type ConfigStorage, type StorageKey } from "@shared/app-config";
+import { jsonConfigStorage, type AppConfigStorage, type StorageKey } from "@shared/app-config";
 
-export const appConfigStorage: ConfigStorage = jsonConfigStorage(
-  localStorageKey("appConfigSelections"),
-);
+export const appConfigStorage: AppConfigStorage = {
+  selections: jsonConfigStorage(localStorageKey("appConfigSelections")),
+  devValues: jsonConfigStorage(localStorageKey("appConfigDevValues")),
+};
 
 function localStorageKey(key: string): StorageKey {
   return {
