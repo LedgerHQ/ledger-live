@@ -64,6 +64,17 @@ const PLATFORM_SUFFIXES = [".web", ".native", ".ios", ".android"];
 const CONTRACT_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx"];
 const BANNED_IMPORT_PREFIXES = CONFIG.bannedImportPrefixes;
 const NEUTRAL_REACT_TYPES = new Set(CONFIG.neutralReactTypes);
+// Library types whose arguments keep all their props; `Pick` and `Omit` drop some, so R3 does not
+// read their arguments, nor those of imported types.
+const PROPS_PRESERVING_TYPES = new Set([
+  "Readonly",
+  "Partial",
+  "Required",
+  "NonNullable",
+  "Array",
+  "ReadonlyArray",
+  "Record",
+]);
 const SHARED_GLOBALS = new Set(CONFIG.sharedGlobals);
 const BANNED_PROP_NAMES = new Set(CONFIG.bannedPropNames);
 const BANNED_CALLBACK_NAMES = CONFIG.bannedCallbackNames.map(camelCaseGlob);
@@ -851,8 +862,9 @@ function propsOfContract(node, module, seen = new Set()) {
 
 /**
  * The props of a contract and of the local types its props hold, at any depth: a list of tiles
- * whose items declare `onPress` is checked like the contract itself. Callback parameters and types
- * from other modules are not followed.
+ * whose items declare `onPress` is checked like the contract itself. Callback parameters, types
+ * from other modules and the arguments of `Pick`, `Omit` and other library types that drop props
+ * are not followed.
  *
  * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
  * @param {ReturnType<typeof parseModule>} module
@@ -868,9 +880,12 @@ function reachableProps(declaration, module) {
       pending.push(...propsOfContract(node, module, seen));
       return;
     }
-    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
-      if (module.types.has(node.typeName.text)) {
+    if (ts.isTypeReferenceNode(node)) {
+      const name = ts.isIdentifier(node.typeName) ? node.typeName.text : "";
+      if (module.types.has(name)) {
         pending.push(...propsOfContract(node, module, seen));
+      } else if (!PROPS_PRESERVING_TYPES.has(name)) {
+        return;
       }
     }
     ts.forEachChild(node, visit);

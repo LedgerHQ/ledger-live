@@ -921,6 +921,21 @@ test("R3 checks the props a local generic contract receives as type arguments", 
   }
 });
 
+test("R3 passes: Pick and Omit drop the props they leave out", () => {
+  const base = "type Base = { title: string; style?: string; onPress(): void };\n";
+  for (const props of [
+    'Pick<Base, "title">',
+    'Omit<Base, "style" | "onPress">',
+    'Readonly<{ header: Pick<Base, "title"> }>',
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": `${base}export type CardProps = ${props};\n` })),
+      [],
+      props,
+    );
+  }
+});
+
 test("R3 passes: platform-only props that are optional primitives or string literal unions", () => {
   assert.deepEqual(
     check(
