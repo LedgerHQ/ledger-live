@@ -60,6 +60,7 @@ import {
 import type { ZcashContext } from "../config";
 import { bindExplorer } from "./explorer";
 import { getZCashClient } from "../logic/engineClient";
+import { birthdayTimestamp } from "../logic/birthday";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
 import { composeXpub } from "../signer/xpub";
 import { releaseConfirmedNullifiers, releaseRetiredReservations } from "./note-reservation";
@@ -700,8 +701,7 @@ async function resolveStartBlockHeight(
     return lastProcessedBlock + 1;
   }
   if (birthday) {
-    const ts = Math.floor(new Date(birthday).getTime() / 1000);
-    return findBlockHeight(ts);
+    return findBlockHeight(birthdayTimestamp(birthday));
   }
   return 0;
 }
