@@ -78,7 +78,7 @@ export function PerpsWithdrawView({
   headerDescription,
   amountText,
   amount,
-  currencySymbol,
+  currencyCode,
   quotedAmount,
   isQuoteLoading,
   maxDecimalLength,
@@ -112,7 +112,7 @@ export function PerpsWithdrawView({
         <Box lx={{ flex: 1, justifyContent: "center", alignItems: "center", gap: "s8" }}>
           <AmountInput
             value={amountText}
-            currencyText={currencySymbol}
+            currencyText={currencyCode}
             autoFocus
             showSoftInputOnFocus={false}
             // The in-app keypad is the only input path, so the field is display-only.
