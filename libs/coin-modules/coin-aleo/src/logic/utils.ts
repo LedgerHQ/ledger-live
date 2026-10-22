@@ -1360,8 +1360,6 @@ function buildTransactionIntentBase(
       ? {
           type: tokenAccount.token.tokenType,
           assetReference: tokenAccount.token.contractAddress,
-          name: tokenAccount.token.name,
-          unit: tokenAccount.token.units[0],
         }
       : { type: "native" },
     recipient: transaction.recipient,

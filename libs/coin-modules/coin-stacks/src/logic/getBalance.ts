@@ -2,13 +2,12 @@ import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/ind
 import { fetchAllTokenBalances, fetchBalances } from "../network/api";
 import { getStakes } from "./getStakes";
 
-export const NATIVE_ASSET: AssetInfo = { type: "native", name: "STX" };
+export const NATIVE_ASSET: AssetInfo = { type: "native" };
 
 export const tokenAsset = (tokenId: string, owner: string): AssetInfo => ({
   type: "token",
   assetReference: tokenId,
   assetOwner: owner,
-  name: tokenId,
 });
 
 /** Native STX (incl. locked/stake position) + all SIP-010 token balances for `address`. */

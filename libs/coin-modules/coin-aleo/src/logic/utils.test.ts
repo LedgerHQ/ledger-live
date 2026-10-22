@@ -2681,8 +2681,6 @@ describe("createTransactionIntent", () => {
       asset: {
         type: tokenSubAccount.token.tokenType,
         assetReference: tokenSubAccount.token.contractAddress,
-        name: tokenSubAccount.token.name,
-        unit: tokenSubAccount.token.units[0],
       },
       type: mode,
       amount: BigInt(transaction.amount.toString()),
@@ -2745,8 +2743,6 @@ describe("createTransactionIntent", () => {
         asset: {
           type: tokenAccount.token.tokenType,
           assetReference: tokenAccount.token.contractAddress,
-          name: tokenAccount.token.name,
-          unit: tokenAccount.token.units[0],
         },
         data: {
           type: mode,
