@@ -1,6 +1,7 @@
 import React, { useId } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
+import { useAddContactLabels } from "./copy/useAddContactLabels";
 import type { ContactsAddContactContentProps } from "./types";
 
 export function ContactsAddContactContent({
@@ -8,10 +9,10 @@ export function ContactsAddContactContent({
   isSaving,
   draftName,
   invalidNameError,
-  labels,
   onDraftNameChange,
   onConfirm,
 }: ContactsAddContactContentProps): React.ReactNode {
+  const labels = useAddContactLabels();
   const namingDisclaimerId = useId();
   const nameValidationError =
     invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];

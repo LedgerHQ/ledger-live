@@ -4,7 +4,6 @@ import { getRedelegations } from "./getRedelegations";
 const mockGetRedelegationsWithQueued = jest.fn();
 jest.mock("../../network/Cosmos", () => ({
   CosmosAPI: jest.fn().mockImplementation(() => ({
-    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getRedelegationsWithQueued: mockGetRedelegationsWithQueued,
   })),
 }));
@@ -23,17 +22,14 @@ describe("logic/staking/getRedelegations", () => {
     ];
     mockGetRedelegationsWithQueued.mockResolvedValue(redelegations);
 
-    const result = await getRedelegations("cosmos", "cosmos1a");
+    const result = await getRedelegations("cosmos", "uatom", "cosmos1a");
 
     expect(result).toEqual(redelegations);
-    expect(mockGetRedelegationsWithQueued).toHaveBeenCalledWith(
-      "cosmos1a",
-      expect.objectContaining({ id: "cosmos" }),
-    );
+    expect(mockGetRedelegationsWithQueued).toHaveBeenCalledWith("cosmos1a", "uatom");
   });
 
   it("returns an empty array when the account has no redelegations", async () => {
     mockGetRedelegationsWithQueued.mockResolvedValue([]);
-    expect(await getRedelegations("cosmos", "cosmos1a")).toEqual([]);
+    expect(await getRedelegations("cosmos", "uatom", "cosmos1a")).toEqual([]);
   });
 });

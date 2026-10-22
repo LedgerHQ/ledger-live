@@ -1,8 +1,8 @@
 {
   "name": "@features/platform-market-countervalues",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Countervalues React and Redux glue: the provider, the hooks reading it and the Redux slice",
+  "description": "Countervalues Redux glue: the slice, the middleware polling rates into it and the hooks reading it",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -13,7 +13,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -49,6 +49,7 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-redux": "catalog:",
     "typescript": "catalog:"
   }
 }

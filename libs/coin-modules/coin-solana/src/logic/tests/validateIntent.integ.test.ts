@@ -29,7 +29,7 @@ const validateIntent = (
   balances: Balance[],
   customFees: FeeEstimation | undefined,
   chainApi: ChainAPI,
-) => validateIntentRaw(chainApi, intent, balances, customFees);
+) => validateIntentRaw(chainApi, config, intent, balances, customFees);
 
 const VIBECODOOR_MINT = "Aj1mSpD4vJDN5r3xptnHsjHQgGWDLge8bRQi2W6pump";
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";

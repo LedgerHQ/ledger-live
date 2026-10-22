@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { SectionList, type SectionListRenderItem } from "react-native";
 import { Box, Skeleton, Spinner, Spot } from "@ledgerhq/lumen-ui-rnative";
-import { CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { CreditCard, InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { StatusMessage, type StatusMessageProps } from "./components/StatusMessage";
 import { DayHeader } from "./components/DayHeader";
 import { HistoryRow } from "./components/HistoryRow";
@@ -70,7 +70,7 @@ export function CardTransactionHistoryView({
             cardVisual ? (
               <Box lx={{ width: "full", paddingHorizontal: "s16" }}>{cardVisual}</Box>
             ) : (
-              <Spot appearance="icon" icon={CreditCard} size={72} />
+              <Spot icon={CreditCard} size={72} />
             )
           }
           titleKey="payTab.cardTransactions.history.signedOut.title"
@@ -88,7 +88,7 @@ export function CardTransactionHistoryView({
             cardVisual ? (
               <Box lx={{ width: "full", paddingHorizontal: "s16" }}>{cardVisual}</Box>
             ) : (
-              <Spot appearance="icon" icon={CreditCard} size={72} />
+              <Spot icon={CreditCard} size={72} />
             )
           }
           titleKey="payTab.cardTransactions.history.unclaimed.title"
@@ -110,7 +110,7 @@ export function CardTransactionHistoryView({
     case "error":
       return (
         <StatusMessage
-          spot={<Spot appearance="info" size={72} />}
+          spot={<Spot appearance="muted" icon={InformationFill} size={72} />}
           titleKey="payTab.cardTransactions.history.error.title"
           descriptionKey="payTab.cardTransactions.history.error.description"
           testId="card-history-error-state"
@@ -119,7 +119,7 @@ export function CardTransactionHistoryView({
     case "empty":
       return (
         <StatusMessage
-          spot={<Spot appearance="icon" icon={CreditCard} size={72} />}
+          spot={<Spot icon={CreditCard} size={72} />}
           titleKey="payTab.cardTransactions.history.empty.title"
           descriptionKey="payTab.cardTransactions.history.empty.description"
           testId="card-history-empty-state"

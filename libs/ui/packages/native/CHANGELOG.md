@@ -1,5 +1,17 @@
 # @ledgerhq/native-ui
 
+## 0.69.0
+
+### Minor Changes
+
+- [#23439](https://github.com/LedgerHQ/ledger-live/pull/23439) [`722c6f3`](https://github.com/LedgerHQ/ledger-live/commit/722c6f312e9fd8c33c932ef2f4df15d9062ade31) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - chore(rn-upgrade): replace absoluteFillObject with absoluteFill (LIVE-39313)
+
+## 0.69.0-next.0
+
+### Minor Changes
+
+- [#23439](https://github.com/LedgerHQ/ledger-live/pull/23439) [`722c6f3`](https://github.com/LedgerHQ/ledger-live/commit/722c6f312e9fd8c33c932ef2f4df15d9062ade31) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - chore(rn-upgrade): replace absoluteFillObject with absoluteFill (LIVE-39313)
+
 ## 0.68.0
 
 ### Minor Changes
@@ -145,35 +157,5 @@
 - [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
 
 - [#14937](https://github.com/LedgerHQ/ledger-live/pull/14937) [`89c9aaa`](https://github.com/LedgerHQ/ledger-live/commit/89c9aaae69c843b12678f4e78ea125b51f45fba1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - replace broken rn-range-slider with @react-native-community/slider
-
-## 0.58.0
-
-### Minor Changes
-
-- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
-
-- [#14688](https://github.com/LedgerHQ/ledger-live/pull/14688) [`ed0368f`](https://github.com/LedgerHQ/ledger-live/commit/ed0368f4a18b455f5eba1e0fef13d5cd0e0a405d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: add trackings wallet v4 tour
-
-- [#14596](https://github.com/LedgerHQ/ledger-live/pull/14596) [`e030c16`](https://github.com/LedgerHQ/ledger-live/commit/e030c161668c4fb2a79a96640eaed881251a3e86) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat(mobile): add lottie animations to Wallet V4 Tour drawer slides
-
-### Patch Changes
-
-- Updated dependencies [[`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77)]:
-  - @ledgerhq/icons-ui@0.20.0
-
-## 0.58.0-next.0
-
-### Minor Changes
-
-- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
-
-- [#14688](https://github.com/LedgerHQ/ledger-live/pull/14688) [`ed0368f`](https://github.com/LedgerHQ/ledger-live/commit/ed0368f4a18b455f5eba1e0fef13d5cd0e0a405d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: add trackings wallet v4 tour
-
-- [#14596](https://github.com/LedgerHQ/ledger-live/pull/14596) [`e030c16`](https://github.com/LedgerHQ/ledger-live/commit/e030c161668c4fb2a79a96640eaed881251a3e86) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat(mobile): add lottie animations to Wallet V4 Tour drawer slides
-
-### Patch Changes
-
-- Updated dependencies [[`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77)]:
-  - @ledgerhq/icons-ui@0.20.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

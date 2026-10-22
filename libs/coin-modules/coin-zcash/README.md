@@ -1,20 +1,25 @@
 # @ledgerhq/coin-zcash
 
 > [!CAUTION]
-> **Status: UNSTABLE** — new standalone Zcash coin-module; API under active development; coexists with the coin-bitcoin Zcash adapter during transition.
+> **Status: UNSTABLE** — new standalone Zcash coin-module; API under active development.
 
 Standalone Zcash coin-module, following the [`coin-module-boilerplate`](../coin-module-boilerplate) layout.
 
 ## Scope
 
-Owns all four Zcash transfer flows (transparent → transparent, transparent → shielded,
-shielded → transparent, shielded → shielded): each is crafted, signed and broadcast as a
-PCZT via the native `@ledgerhq/zcash-utils` engine, with no legacy PSBT path. Unlike the
-Zcash chain-adapter living in `@ledgerhq/coin-bitcoin`, this module owns the transparent
-(UTXO) path itself — via `@ledgerhq/wallet-btc` — instead of falling back to the Bitcoin
-bridge. The two implementations coexist temporarily; routing between them is controlled by
-the `zcashShielded` feature flag in `ledger-live-common` (see
-`libs/ledger-live-common/src/bridge/zcashRouting.ts`).
+Serves every Zcash account in Ledger Live, in one of two modes. The host picks the mode
+from the `zcashShielded` feature flag (see `libs/ledger-live-common/src/bridge/zcashRouting.ts`):
+
+- **Shielded** (the native `@ledgerhq/zcash-utils` engine is available): owns all four
+  transfer flows (transparent → transparent, transparent → shielded, shielded → transparent,
+  shielded → shielded), each crafted, signed and broadcast as a PCZT, and syncs the
+  shielded pools alongside the transparent one.
+- **Transparent-only** (no native engine — React Native, or the desktop app with the flag
+  off): syncs and sends transparent funds only, through `@ledgerhq/wallet-btc` and the
+  device's legacy transaction signing (`src/legacy`). A shielded recipient is refused.
+
+Either way this module owns the transparent (UTXO) path itself; `@ledgerhq/coin-bitcoin` no
+longer carries any Zcash code.
 
 Two of those flows do not complete on a NU6.3 chain, where newly shielded value goes to
 the Ironwood pool: a shielded send to a third party (z→z) has no builder at all, because it

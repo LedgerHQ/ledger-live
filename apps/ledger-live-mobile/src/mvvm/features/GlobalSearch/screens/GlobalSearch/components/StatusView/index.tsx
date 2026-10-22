@@ -5,7 +5,7 @@ import type { SpotProps } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 
 type Props = Readonly<{
-  icon: Extract<SpotProps, { appearance: "icon" }>["icon"];
+  icon: SpotProps["icon"];
   message: string;
   testID?: string;
 }>;
@@ -14,7 +14,7 @@ export function StatusView({ icon, message, testID }: Props) {
   return (
     <Box lx={statusStyle} testID={testID}>
       <View style={topSpacerStyle} />
-      <Spot appearance="icon" icon={icon} size={72} />
+      <Spot icon={icon} size={72} />
       <Text
         typography="heading4SemiBold"
         lx={{ color: "base", textAlign: "center", marginTop: "s24" }}

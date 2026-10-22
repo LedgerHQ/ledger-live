@@ -59,7 +59,23 @@ module.exports = new Proxy(
       if (prop in target) return target[prop];
       if (typeof prop !== "string") return undefined;
       if (prop === "useTheme") {
-        return () => ({ theme: { colors: { text: { base: "#000000" } } } });
+        return () => ({
+          theme: {
+            colors: {
+              text: {
+                base: "#000000",
+                error: "#F87274",
+                warning: "#FF9900",
+                success: "#6EC85C",
+                muted: "#888888",
+              },
+              bg: {
+                muted: "#f5f5f5",
+                mutedPressed: "#e0e0e0",
+              },
+            },
+          },
+        });
       }
       if (prop.startsWith("use")) {
         return () => ({ current: null });

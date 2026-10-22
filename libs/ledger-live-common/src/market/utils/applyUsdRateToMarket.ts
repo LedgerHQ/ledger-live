@@ -1,4 +1,4 @@
-import type { MarketCurrencyData } from "./types";
+import type { MarketCurrencyData, MarketItemResponse } from "./types";
 
 /**
  * Convert the USD-denominated fields of a {@link MarketCurrencyData} into the
@@ -17,5 +17,32 @@ export function applyUsdRateToMarket(data: MarketCurrencyData, rate: number): Ma
     low24h: data.low24h * rate,
     ath: data.ath * rate,
     atl: data.atl * rate,
+  };
+}
+
+/**
+ * Convert the USD-denominated fields of a raw market row into the user's
+ * countervalue. Percentages, supplies, ranks and dates stay unchanged.
+ */
+export function applyUsdRateToMarketItem(
+  item: MarketItemResponse,
+  rate: number,
+): MarketItemResponse {
+  if (rate === 1) return item;
+
+  const scale = (value: number) => value * rate;
+  return {
+    ...item,
+    price: scale(item.price),
+    high24h: scale(item.high24h),
+    low24h: scale(item.low24h),
+    marketCap: scale(item.marketCap),
+    marketCapChange24h: scale(item.marketCapChange24h),
+    fullyDilutedValuation: scale(item.fullyDilutedValuation),
+    totalVolume: scale(item.totalVolume),
+    allTimeHigh: scale(item.allTimeHigh),
+    allTimeLow: scale(item.allTimeLow),
+    priceChange24h: scale(item.priceChange24h),
+    sparkline: item.sparkline.map(scale),
   };
 }

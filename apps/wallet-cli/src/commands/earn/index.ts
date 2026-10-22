@@ -3,9 +3,10 @@ import YieldsCommand from "./yields";
 import PositionsCommand from "./positions";
 import DepositCommand from "./deposit";
 import WithdrawCommand from "./withdraw";
+import { commandDescription } from "../registry";
 
 export default defineGroup({
   name: "earn",
-  description: "Earn (staking & DeFi yield) commands",
+  description: commandDescription("earn"),
   commands: [YieldsCommand, PositionsCommand, DepositCommand, WithdrawCommand],
 });

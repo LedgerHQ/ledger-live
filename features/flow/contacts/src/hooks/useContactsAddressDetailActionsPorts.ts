@@ -3,11 +3,11 @@ import type { ContactDeviceIntentsPort, ContactsConfigResolver } from "@features
 import { useMemo } from "react";
 import { useDispatch, useStore } from "react-redux";
 import {
+  createContactAddressDetailActionsPorts,
   createMockContactSignerValidationPort,
+  type ContactAddressDetailActionsPorts,
   type ContactSignerValidationPort,
-} from "../platform/contactSignerValidationPort";
-import { createContactAddressDetailActionsPorts } from "../steps/Detail/createContactAddressDetailActionsPorts";
-import type { ContactAddressDetailActionsPorts } from "../steps/Detail/model/ports";
+} from "@features/flow-contacts-detail";
 
 type ContactsStateRoot = Parameters<typeof selectContactAddressById>[0];
 

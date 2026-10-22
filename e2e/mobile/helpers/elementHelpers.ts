@@ -22,6 +22,18 @@ interface WebElementWithMatcher extends WebElement {
   };
 }
 
+const HARD_TIMEOUT_MARKER = "possible bridge hang";
+const CONCURRENT_INTERACTION_MARKER = "multiple interactions taking place";
+
+/**
+ * True when a Detox request was abandoned or rejected before the app answered it, so the check
+ * it carried never ran. Detox keeps such a request in flight and rejects every later atomic one.
+ */
+export function isUnansweredDetoxRequestError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(HARD_TIMEOUT_MARKER) || message.includes(CONCURRENT_INTERACTION_MARKER);
+}
+
 function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
   return (
     (isIos() && typeof obj === "object" && obj !== null && "matcher" in obj) ||
@@ -55,21 +67,39 @@ async function withHardTimeout<T>(
       new Promise<never>((_, reject) => {
         timer = setTimeout(
           () =>
-            reject(new Error(`Detox action timed out after ${timeoutMs}ms (possible bridge hang)`)),
+            reject(
+              new Error(`Detox action timed out after ${timeoutMs}ms (${HARD_TIMEOUT_MARKER})`),
+            ),
           timeoutMs,
         );
       }),
     ]);
   } catch (err) {
     // Not swallowed: the rejected action never happened, so the caller must still fail.
-    if (err instanceof Error && err.message.includes("multiple interactions taking place")) {
+    if (err instanceof Error && err.message.includes(CONCURRENT_INTERACTION_MARKER)) {
       log.warn(
-        `${err.message}\nMay be caused by an earlier abandoned timeout - check for a preceding "possible bridge hang" warning.`,
+        `${err.message}\nMay be caused by an earlier abandoned timeout - check for a preceding "${HARD_TIMEOUT_MARKER}" warning.`,
       );
     }
     throw err;
   } finally {
     clearTimeout(timer);
+  }
+}
+
+/**
+ * Resolves a Detox wait to true when it matches, false when it does not. Rethrows only when the
+ * hard timeout fires: Detox starts the wait's own timeout only once the app is idle, so an app
+ * that never idles would otherwise hold the probe until the Jest test timeout.
+ */
+async function probeNativeElement(wait: Promise<unknown>, timeout: number): Promise<boolean> {
+  try {
+    await withHardTimeout(wait, timeout + TIMEOUT.xxxlarge);
+    return true;
+  } catch (error) {
+    const appNeverAnswered = error instanceof Error && error.message.includes(HARD_TIMEOUT_MARKER);
+    if (appNeverAnswered) throw error;
+    return false;
   }
 }
 
@@ -80,6 +110,13 @@ function unwrapScriptResult(raw: unknown): unknown {
 const scroller = new PageScroller();
 
 const DEFAULT_WEB_ELEMENT_INTERVAL = INTERVAL.long;
+
+/**
+ * Headroom past a native wait's own timeout: the native wait answers by itself once it elapses,
+ * so the hard timeout must outlast it or it abandons a call that is still in flight. It never
+ * drops below withHardTimeout's default, since a busy app can answer a short wait late.
+ */
+const NATIVE_WAIT_HARD_TIMEOUT_GRACE = TIMEOUT.xlarge;
 
 /** How far past the viewport edge revealForTap pushes a target so an overlay cannot intercept it. */
 const EDGE_CLEARANCE_PIXELS = 200;
@@ -175,7 +212,10 @@ export const NativeElementHelpers = {
     timeout: number = TIMEOUT.xxlarge,
     options?: WaitForElementOptions,
   ) {
-    return withHardTimeout(awaitNativeElement(nativeElement, timeout, options));
+    return withHardTimeout(
+      awaitNativeElement(nativeElement, timeout, options),
+      Math.max(TIMEOUT.xxxlarge, timeout + NATIVE_WAIT_HARD_TIMEOUT_GRACE),
+    );
   },
 
   async waitForElementById(
@@ -286,21 +326,17 @@ export const NativeElementHelpers = {
   },
 
   async isIdVisible(id: string | RegExp, timeout: number = TIMEOUT.xxsmall): Promise<boolean> {
-    try {
-      await waitFor(NativeElementHelpers.getElementById(id)).toBeVisible().withTimeout(timeout);
-      return true;
-    } catch {
-      return false;
-    }
+    return probeNativeElement(
+      waitFor(NativeElementHelpers.getElementById(id)).toBeVisible().withTimeout(timeout),
+      timeout,
+    );
   },
 
   async isIdPresent(id: string | RegExp, timeout: number = TIMEOUT.xxsmall): Promise<boolean> {
-    try {
-      await waitFor(NativeElementHelpers.getElementById(id)).toExist().withTimeout(timeout);
-      return true;
-    } catch {
-      return false;
-    }
+    return probeNativeElement(
+      waitFor(NativeElementHelpers.getElementById(id)).toExist().withTimeout(timeout),
+      timeout,
+    );
   },
 
   async tapById(id: string | RegExp, index = 0) {

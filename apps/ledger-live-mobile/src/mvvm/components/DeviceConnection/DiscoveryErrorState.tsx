@@ -8,7 +8,6 @@ import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import type { DiscoveryErrorUIState } from "@ledgerhq/live-dmk-shared";
 import { InfoState } from "@shared/ui-info-state";
 import { useTranslation } from "~/context/Locale";
-import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 
 type DiscoveryErrorStateProps = {
   state: DiscoveryErrorUIState<DiscoveryError>;
@@ -27,12 +26,7 @@ type DiscoveryErrorViewState = {
 
 type DiscoveryErrorType = DiscoveryError["type"];
 
-type DiscoveryErrorViewStates = {
-  [DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly]: { title: string };
-} & Record<
-  Exclude<DiscoveryErrorType, DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly>,
-  DiscoveryErrorViewState
->;
+type DiscoveryErrorViewStates = Record<DiscoveryErrorType, DiscoveryErrorViewState>;
 
 const discoveryErrorTranslationBaseKey =
   "deviceIntentExecutor.connectDevice.states.discoveryError.errors";
@@ -191,25 +185,20 @@ export function DiscoveryErrorState({
       primaryCta: retryCta(`${discoveryErrorTranslationBaseKey}.unknown.cta.retry`),
     },
     [DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly]: {
+      preset: "error",
       title: `${discoveryErrorTranslationBaseKey}.bluetoothStateUnknownCheckOnly.title`,
+      description: `${discoveryErrorTranslationBaseKey}.bluetoothStateUnknownCheckOnly.description`,
+      primaryCta: retryCta(
+        `${discoveryErrorTranslationBaseKey}.bluetoothStateUnknownCheckOnly.cta.retry`,
+      ),
+      secondaryCta:
+        platform === "android"
+          ? ignoreCta(
+              `${discoveryErrorTranslationBaseKey}.bluetoothStateUnknownCheckOnly.cta.ignore`,
+            )
+          : undefined,
     },
   };
-
-  if (state.error.type === DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly) {
-    const errorState = discoveryErrorViewStates[state.error.type];
-
-    return (
-      <Box lx={{ width: "full", alignItems: "center", paddingTop: "s16" }}>
-        <Spinner size={32} color="base" />
-        <Text
-          typography="heading4SemiBold"
-          lx={{ color: "base", textAlign: "center", paddingTop: "s16", paddingBottom: "s32" }}
-        >
-          {t(errorState.title)}
-        </Text>
-      </Box>
-    );
-  }
 
   const errorState = discoveryErrorViewStates[state.error.type];
 

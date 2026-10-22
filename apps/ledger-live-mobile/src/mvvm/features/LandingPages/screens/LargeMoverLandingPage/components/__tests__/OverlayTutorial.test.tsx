@@ -10,7 +10,7 @@ import {
 } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { mockChartData, mockCurrencyData } from "../../fixtures/currency";
+import { mockChartData } from "../../fixtures/currency";
 import { INITIAL_STATE } from "~/reducers/settings";
 
 jest.mock("LLM/components/Swiper/components/Swiper", () => ({
@@ -30,7 +30,6 @@ jest.mock("../../hooks/useLargeMover", () => ({
   useLargeMover: () => ({
     currencies: { cryptoOrTokenCurrencies: {} },
     currenciesIds: ["bitcoin", "ethereum"],
-    chartIds: ["bitcoin", "ethereum"],
     loading: false,
     isError: false,
   }),
@@ -38,27 +37,18 @@ jest.mock("../../hooks/useLargeMover", () => ({
 
 jest.mock("@ledgerhq/live-common/market/hooks/useLargeMoverChartData", () => ({
   useLargeMoverChartData: () => ({
-    chartDataArray: [
-      {
-        idChartData: "ethereum",
-        chartData: mockChartData,
-        isLoading: false,
-        isError: false,
-      },
-    ],
-    loadingChart: false,
+    chartData: mockChartData,
+    isLoading: false,
+    isError: false,
   }),
 }));
 
 jest.mock("@ledgerhq/live-common/market/hooks/useLargeMoverCurrencies", () => ({
-  useLargeMoverCurrencies: () => [
-    {
-      id: "ethereum",
-      data: mockCurrencyData,
-      isLoading: false,
-      isError: false,
-    },
-  ],
+  useLargeMoverCurrencies: () => ({
+    markets: [],
+    isLoading: false,
+    isError: false,
+  }),
 }));
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

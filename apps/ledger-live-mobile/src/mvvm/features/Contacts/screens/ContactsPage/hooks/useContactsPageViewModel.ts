@@ -1,5 +1,4 @@
 import {
-  type ContactsListViewLabels,
   type ContactsViewNativeProps,
   useContactsSearchViewModel,
   useContactsMeContact,
@@ -10,12 +9,11 @@ import {
   useContactsLedgerSyncMutationGuard,
 } from "@features/flow-contacts";
 import {
-  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   isContactsLedgerSyncActivationRequired,
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
@@ -23,7 +21,6 @@ import { useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { ScreenName } from "~/const";
-import { useTranslation } from "~/context/Locale";
 import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
 import { useContactsFeatureIntroductionPreference } from "../../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsLedgerSyncStatus } from "../../../hooks/useContactsLedgerSyncStatus";
@@ -37,40 +34,16 @@ type NavigationProp = BaseNavigationComposite<
 export function useContactsPageViewModel(
   onSelectContact?: (contact: Contact) => void,
 ): ContactsPageViewModel {
-  const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const labels = useMemo<ContactsListViewLabels>(
-    () => ({
-      title: t("contacts.title"),
-      searchPlaceholder: t("contacts.searchPlaceholder"),
-      searchNoResults: t("contacts.searchNoResults"),
-      searchNoResultsDescription: t("contacts.searchNoResultsDescription"),
-      addContact: t("contacts.addContact"),
-      ledgerSyncCheckingAccessibilityLabel: t(
-        "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
-      ),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
   const preference = useContactsFeatureIntroductionPreference();
   const { isRequested: isFeatureIntroductionRequested, dismiss: dismissFeatureIntroduction } =
     useContactsFeatureIntroductionState({
       isContactsEntryAvailable: true,
       preference,
     });
-  const featureIntroductionHighlights = useMemo(
-    () =>
-      CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({
-        icon,
-        title: t(`contacts.featureIntroduction.highlights.${translationKey}.title`),
-        description: t(`contacts.featureIntroduction.highlights.${translationKey}.description`),
-      })),
-    [t],
-  );
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
   const { ledgerSyncActivationDrawer, openLedgerSyncActivationDrawer } =
@@ -140,25 +113,17 @@ export function useContactsPageViewModel(
 
   return {
     viewModel,
-    labels,
     searchQuery,
     onSearchQueryChange,
     onOpenContact,
     ledgerSyncStatus,
     featureIntroduction: {
       isOpen: showFeatureIntroduction,
-      title: t("contacts.featureIntroduction.title"),
-      highlights: featureIntroductionHighlights,
-      primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       onComplete: dismissFeatureIntroduction,
       onClose: dismissFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
-      title: t("contacts.ledgerSyncIntroduction.title"),
-      description: t("contacts.ledgerSyncIntroduction.description"),
-      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-      dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onActivate: onActivateIntroduction,
       onDismiss: onDismissLedgerSyncIntroduction,
     },

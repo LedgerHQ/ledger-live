@@ -8,8 +8,10 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { hasCompound } from "@ledgerhq/live-common/families/evm/staking/logic";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
+import {
+  getStakingContractAddress,
+  hasCompound,
+} from "@ledgerhq/live-common/families/evm/staking/logic";
 import type {
   GenericTransaction,
   GenericTransactionMode,

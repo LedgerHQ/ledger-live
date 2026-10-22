@@ -244,6 +244,195 @@ describe("marketApi", () => {
     });
   });
 
+  describe("[endpoint] getMarketsByLedgerIds", () => {
+    const { getMarketsByLedgerIds } = marketApi.endpoints;
+
+    it("requests ledger ids together with a fitting page size and keeps request order", async () => {
+      const seenUrls: string[] = [];
+      server.use(
+        http.get("*/v3/markets", ({ request }) => {
+          seenUrls.push(request.url);
+          return HttpResponse.json([
+            createMockMarketItemResponse({
+              id: "ethereum",
+              ledgerIds: ["ethereum"],
+              ticker: "ETH",
+            }),
+            createMockMarketItemResponse({ id: "bitcoin", ledgerIds: ["bitcoin"], ticker: "BTC" }),
+          ]);
+        }),
+      );
+
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({
+          ledgerIds: ["bitcoin", "missing", "ethereum"],
+          counterCurrency: "usd",
+        }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data?.map(item => item.id)).toEqual(["bitcoin", "ethereum"]);
+
+      expect(seenUrls).toHaveLength(1);
+      const url = new URL(seenUrls[0]);
+      expect(url.searchParams.get("to")).toBe("usd");
+      expect(url.searchParams.get("ledgerIds")).toBe("bitcoin,missing,ethereum");
+      expect(url.searchParams.get("pageSize")).toBe("5");
+    });
+
+    it("keeps a requested ledger id on its own market when another row lists that id", async () => {
+      server.use(
+        http.get("*/v3/markets", () =>
+          HttpResponse.json([
+            createMockMarketItemResponse({
+              id: "ethereum",
+              ledgerIds: ["base", "arbitrum", "ethereum", "boba", "optimism", "linea"],
+              ticker: "ETH",
+            }),
+            createMockMarketItemResponse({
+              id: "optimism",
+              ledgerIds: ["optimism", "ethereum/erc20/optimism"],
+              ticker: "OP",
+            }),
+          ]),
+        ),
+      );
+
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({
+          ledgerIds: ["optimism", "ethereum"],
+          counterCurrency: "usd",
+        }),
+      );
+
+      expect(result.data?.map(item => item.id)).toEqual(["optimism", "ethereum"]);
+    });
+
+    it.each([
+      ["1", 1],
+      ["20", 6],
+      ["50", 50],
+    ] as const)("requests pageSize %s for %s ledger ids", async (pageSize, count) => {
+      const seenUrls: string[] = [];
+      server.use(
+        http.get("*/v3/markets", ({ request }) => {
+          seenUrls.push(request.url);
+          return HttpResponse.json([]);
+        }),
+      );
+
+      await store.dispatch(
+        getMarketsByLedgerIds.initiate({
+          ledgerIds: Array.from({ length: count }, (_, index) => `id-${index}`),
+          counterCurrency: "eur",
+        }),
+      );
+
+      expect(seenUrls).toHaveLength(1);
+      expect(new URL(seenUrls[0]).searchParams.get("pageSize")).toBe(pageSize);
+    });
+
+    it("requests another page only when there are more ledger ids than one page allows", async () => {
+      const seenUrls: string[] = [];
+      server.use(
+        http.get("*/v3/markets", ({ request }) => {
+          seenUrls.push(request.url);
+          const ids = new URL(request.url).searchParams.get("ledgerIds")?.split(",") ?? [];
+          return HttpResponse.json(
+            ids.map(id => createMockMarketItemResponse({ id, ledgerIds: [id], ticker: id })),
+          );
+        }),
+      );
+
+      const ledgerIds = Array.from({ length: 51 }, (_, index) => `id-${index}`);
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({ ledgerIds, counterCurrency: "eur" }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data?.map(item => item.id)).toEqual(ledgerIds);
+
+      expect(seenUrls).toHaveLength(2);
+      const [firstPage, secondPage] = seenUrls.map(url => new URL(url));
+      expect(firstPage.searchParams.get("pageSize")).toBe("50");
+      expect(firstPage.searchParams.get("ledgerIds")?.split(",")).toEqual(ledgerIds.slice(0, 50));
+      expect(secondPage.searchParams.get("pageSize")).toBe("1");
+      expect(secondPage.searchParams.get("ledgerIds")).toBe("id-50");
+    });
+
+    it("omits a failed page and keeps the markets from the pages that succeeded", async () => {
+      server.use(
+        http.get("*/v3/markets", ({ request }) => {
+          const ids = new URL(request.url).searchParams.get("ledgerIds")?.split(",") ?? [];
+          if (ids.length === 1) return new HttpResponse(null, { status: 500 });
+          return HttpResponse.json(
+            ids.map(id => createMockMarketItemResponse({ id, ledgerIds: [id], ticker: id })),
+          );
+        }),
+      );
+
+      const ledgerIds = Array.from({ length: 51 }, (_, index) => `id-${index}`);
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({ ledgerIds, counterCurrency: "eur" }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data?.map(item => item.id)).toEqual(ledgerIds.slice(0, 50));
+    });
+
+    it("returns an error when every page fails", async () => {
+      server.use(http.get("*/v3/markets", () => new HttpResponse(null, { status: 500 })));
+
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({
+          ledgerIds: ["bitcoin", "ethereum"],
+          counterCurrency: "usd",
+        }),
+      );
+
+      expect(result.isError).toBe(true);
+      expect(result.data).toBeUndefined();
+    });
+
+    it("omits a page whose body is not a market list and keeps the pages that are", async () => {
+      server.use(
+        http.get("*/v3/markets", ({ request }) => {
+          const ids = new URL(request.url).searchParams.get("ledgerIds")?.split(",") ?? [];
+          if (ids.length === 1) return HttpResponse.json({ unexpected: true });
+          return HttpResponse.json(
+            ids.map(id => createMockMarketItemResponse({ id, ledgerIds: [id], ticker: id })),
+          );
+        }),
+      );
+
+      const ledgerIds = Array.from({ length: 51 }, (_, index) => `id-${index}`);
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({ ledgerIds, counterCurrency: "eur" }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data?.map(item => item.id)).toEqual(ledgerIds.slice(0, 50));
+    });
+
+    it("returns an error when every page body is not a market list", async () => {
+      server.use(http.get("*/v3/markets", () => HttpResponse.json({ unexpected: true })));
+
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({
+          ledgerIds: ["bitcoin", "ethereum"],
+          counterCurrency: "usd",
+        }),
+      );
+
+      expect(result.isError).toBe(true);
+      expect(result.error).toEqual({
+        status: "CUSTOM_ERROR",
+        error: "Invalid markets response",
+      });
+      expect(result.data).toBeUndefined();
+    });
+  });
+
   describe("[endpoint] getTrendingPerformers", () => {
     const { getTrendingPerformers } = marketApi.endpoints;
 

@@ -36,9 +36,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   );
   const shouldDisplayAllValidators =
     account.type === "Account" &&
-    ["quicksilver", "persistence", "mantra", "axelar", "osmo", "babylon"].includes(
-      account.currency.id,
-    );
+    ["persistence", "mantra", "axelar", "osmo", "babylon"].includes(account.currency.id);
 
   useEffect(() => {
     if (shouldDisplayAllValidators) {

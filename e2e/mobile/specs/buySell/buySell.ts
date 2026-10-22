@@ -19,7 +19,7 @@ export async function beforeAllFunction(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export async function runNavigateToBuyFromPortfolioPageTest(
+export function runNavigateToBuyFromPortfolioPageTest(
   buySell: BuySell,
   paymentMethod: string,
   tmsLinks: string[],
@@ -44,7 +44,7 @@ export async function runNavigateToBuyFromPortfolioPageTest(
   });
 }
 
-export async function runNavigateToBuyFromAccountPageTest(
+export function runNavigateToBuyFromAccountPageTest(
   buySell: BuySell,
   paymentMethod: string,
   tmsLinks: string[],
@@ -74,7 +74,7 @@ export async function runNavigateToBuyFromAccountPageTest(
   });
 }
 
-export async function runNavigateToBuyFromMarketPageTest(
+export function runNavigateToBuyFromMarketPageTest(
   buySell: BuySell,
   paymentMethod: string,
   tmsLinks: string[],
@@ -107,7 +107,7 @@ export async function runNavigateToBuyFromMarketPageTest(
   });
 }
 
-export async function runNavigateToBuyFromAssetPageTest(
+export function runNavigateToBuyFromAssetPageTest(
   buySell: BuySell,
   paymentMethod: string,
   tmsLinks: string[],
@@ -141,7 +141,7 @@ export async function runNavigateToBuyFromAssetPageTest(
   });
 }
 
-export async function runSellFlowTest(
+export function runSellFlowTest(
   buySell: Omit<BuySell, "amount">,
   provider: BuySellProvider,
   paymentMethod: string,
@@ -167,7 +167,7 @@ export async function runSellFlowTest(
   });
 }
 
-export async function runQueryParametersTest(
+export function runQueryParametersTest(
   buySell: BuySell,
   paymentMethod: string,
   tmsLinks: string[],

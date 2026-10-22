@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-e2e-shared",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": true,
   "description": "Shared E2E test-support code (enums, models, families, speculos/device helpers) for Ledger Live Desktop & Mobile E2E suites",
   "repository": {
@@ -45,6 +45,7 @@
     "expect": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:",
+    "undici": "catalog:",
     "uuid": "catalog:"
   },
   "devDependencies": {
@@ -60,8 +61,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint .",
-    "lint:fix": "oxfmt . && oxlint . --fix",
+    "lint": "oxlint . -A no-console",
+    "lint:fix": "oxfmt . && pnpm lint --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "test": "tsx --test \"src/**/*.test.ts\"",

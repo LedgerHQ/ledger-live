@@ -109,7 +109,7 @@ export function CardAssetDetailsDrawer({
           lx={{ alignItems: "center", gap: "s24", paddingVertical: "s24" }}
           testID="card-asset-details-transactions-empty"
         >
-          <Spot appearance="icon" icon={CreditCard} size={72} />
+          <Spot icon={CreditCard} size={72} />
           <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {t("payTab.cardTransactions.history.empty.title")}
           </Text>

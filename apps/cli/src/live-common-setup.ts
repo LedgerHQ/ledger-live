@@ -6,6 +6,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import {
   DeviceManagementKitTransportSpeculos,
+  getSpeculosDeviceModel,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import { configureStore } from "@reduxjs/toolkit";
@@ -38,6 +39,7 @@ export function registerSpeculosTransport(apiPort: number) {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
   const req: SpeculosHttpTransportOpts = {
     apiPort: apiPort.toString(),
+    model: getSpeculosDeviceModel(process.env.SPECULOS_DEVICE),
     ...(speculosAddress && { baseURL: speculosAddress }),
   };
 

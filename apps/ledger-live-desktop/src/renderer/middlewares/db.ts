@@ -19,6 +19,7 @@ import {
   trustchainStoreSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
+  cryptoAssetsApi,
   extractPersistedCALFromState,
   persistedCALContentEqual,
   type PersistedCAL,
@@ -139,7 +140,7 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     return res;
   }
 
-  if (action.type.startsWith("cryptoAssetsApi/")) {
+  if (action.type.startsWith(`${cryptoAssetsApi.reducerPath}/`)) {
     const res = next(action);
     const state = store.getState();
     saveCryptoAssetsCache(state);

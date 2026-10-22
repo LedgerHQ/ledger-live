@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { act, within } from "@testing-library/react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { CryptoTable } from "../CryptoTable";
 import {
   ETH_ACCOUNT,
@@ -184,6 +184,105 @@ describe("CryptoTable", () => {
     await user.click(screen.getByRole("button", { name: /USDT on Eth/ }));
     expect(mockOnRowClick).toHaveBeenCalledTimes(1);
     expect(mockOnRowClick).toHaveBeenCalledWith(tokenAccount, parentAccount);
+  });
+
+  describe("account settings", () => {
+    const SETTINGS_DIALOG_TEST_ID = "crypto-addresses-account-settings-dialog";
+
+    const renderWithAccountDetail = (
+      rows: Parameters<typeof CryptoTable>[0]["rows"],
+      accountDetail: { enabled: boolean; params?: { excludedCurrencyIds: string[] } },
+      names: Map<string, string>,
+    ) =>
+      render(
+        <CryptoTable
+          rows={rows}
+          lookupParentAccount={mockLookupParent}
+          onRowClick={mockOnRowClick}
+        />,
+        {
+          initialState: {
+            ...withFlagOverrides({ accountDetail }),
+            ...createWalletState(names),
+          },
+        },
+      );
+
+    it("opens the account settings of the row instead of the edit name dialog", async () => {
+      const { user } = renderWithAccountDetail(
+        [ETH_ACCOUNT, ETH_ACCOUNT_2],
+        { enabled: true },
+        new Map([
+          [ETH_ACCOUNT.id, "Main"],
+          [ETH_ACCOUNT_2.id, "Secondary"],
+        ]),
+      );
+
+      const mainRow = screen.getByTestId("crypto-account-row-Main");
+      expect(within(mainRow).queryByRole("button", { name: "Edit name" })).not.toBeInTheDocument();
+      await user.click(within(mainRow).getByRole("button", { name: "Account settings" }));
+
+      const dialog = await screen.findByTestId(SETTINGS_DIALOG_TEST_ID);
+      expect(within(dialog).getByText("Main")).toBeVisible();
+      expect(within(dialog).getByText("View advanced logs")).toBeVisible();
+      expect(mockOnRowClick).not.toHaveBeenCalled();
+    });
+
+    it("renames the account from the settings dialog", async () => {
+      const { user } = renderWithAccountDetail(
+        [ETH_ACCOUNT],
+        { enabled: true },
+        new Map([[ETH_ACCOUNT.id, "Main"]]),
+      );
+
+      await user.click(screen.getByRole("button", { name: "Account settings" }));
+      await user.click(await screen.findByTestId("account-settings-change-name"));
+      const input = await screen.findByLabelText("Address name");
+      await user.clear(input);
+      await user.type(input, "Savings{Enter}");
+
+      expect(await screen.findByTestId("crypto-account-row-Savings")).toBeVisible();
+    });
+
+    it("keeps the edit name button for an excluded currency", () => {
+      renderWithAccountDetail(
+        [ETH_ACCOUNT],
+        { enabled: true, params: { excludedCurrencyIds: ["ethereum"] } },
+        new Map([[ETH_ACCOUNT.id, "Main"]]),
+      );
+
+      expect(screen.getByRole("button", { name: "Edit name" })).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Account settings" })).not.toBeInTheDocument();
+    });
+
+    it("keeps the edit name button for token rows", () => {
+      const tokenAccount = ETH_ACCOUNT_WITH_USDC.subAccounts![0];
+      const mainById = buildMainAccountByIdMap([ETH_ACCOUNT_WITH_USDC]);
+      mockLookupParent.mockImplementation(id => lookupParentAccountFromMap(mainById, id));
+
+      renderWithAccountDetail(
+        [tokenAccount],
+        { enabled: true },
+        new Map([
+          [ETH_ACCOUNT_WITH_USDC.id, "Parent"],
+          [tokenAccount.id, "USDC on Eth"],
+        ]),
+      );
+
+      expect(screen.getByRole("button", { name: "Edit name" })).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Account settings" })).not.toBeInTheDocument();
+    });
+
+    it("keeps the edit name button when the flag is off", () => {
+      renderWithAccountDetail(
+        [ETH_ACCOUNT],
+        { enabled: false },
+        new Map([[ETH_ACCOUNT.id, "Main"]]),
+      );
+
+      expect(screen.getByRole("button", { name: "Edit name" })).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Account settings" })).not.toBeInTheDocument();
+    });
   });
 
   describe("edit name dialog", () => {

@@ -40,7 +40,6 @@
         "{projectRoot}/artifacts/**",
         "{workspaceRoot}/e2e/mobile/artifacts/**",
         "{projectRoot}/main.jsbundle",
-        "{projectRoot}/main.jsbundle.minified",
         "{projectRoot}/build/**",
         "{projectRoot}/ios/build/**",
         "{projectRoot}/android/app/build/**"
@@ -56,6 +55,45 @@
         "{workspaceRoot}/e2e/mobile/detox.config.js",
         "{workspaceRoot}/e2e/mobile/scripts/**"
       ]
+    },
+    "e2e:bundle": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "cache": true,
+      "outputs": ["{projectRoot}/main.jsbundle"],
+      "inputs": [
+        "default",
+        "!{projectRoot}/ios/**",
+        "!{projectRoot}/android/**",
+        "!{projectRoot}/fastlane/**",
+        "!{projectRoot}/docs/**",
+        "!{projectRoot}/**/*.md",
+        "!{projectRoot}/**/__tests__/**",
+        "!{projectRoot}/**/__integrations__/**",
+        "!{projectRoot}/**/*.test.{ts,tsx,js}",
+        "^default",
+        "sharedEnv",
+        {
+          "env": "ENVFILE"
+        },
+        {
+          "env": "NODE_ENV"
+        }
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "env": {
+          "DETOX": "1"
+        }
+      },
+      "configurations": {
+        "ios": {
+          "command": "pnpm bundle:ios --dev false --minify false"
+        },
+        "android": {
+          "command": "pnpm bundle:android --dev false --minify false"
+        }
+      }
     },
     "build": {
       "executor": "nx:noop"

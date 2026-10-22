@@ -9,7 +9,11 @@ import {
   getSessionReservedNullifiers,
   _resetReservationsForTest,
 } from "./note-reservation";
-import { selectNotes, estimateMaxSpendableAmount } from "../logic/coin-selection";
+import {
+  LEGACY_MARGINAL_FEE,
+  selectNotes,
+  estimateMaxSpendableAmount,
+} from "../logic/coin-selection";
 import type { SpendableNote } from "../network/types";
 
 const ACCOUNT_A = "account-a";
@@ -294,7 +298,7 @@ describe("reservation filtering", () => {
     const allNotes = [note1, note2];
 
     // First send: select notes for 500_000
-    const first = selectNotes(allNotes, new BigNumber(500_000), "shielded");
+    const first = selectNotes(allNotes, new BigNumber(500_000), "shielded", LEGACY_MARGINAL_FEE);
     expect(first).not.toBeUndefined();
     const firstNullifiers = first!.selectedNotes.map(n => n.nullifier);
 
@@ -304,7 +308,7 @@ describe("reservation filtering", () => {
     // Second send: filter reserved notes, then select
     const reserved = getSessionReservedNullifiers(ACCOUNT_ID);
     const filtered = allNotes.filter(n => !reserved.has(n.nullifier));
-    const second = selectNotes(filtered, new BigNumber(500_000), "shielded");
+    const second = selectNotes(filtered, new BigNumber(500_000), "shielded", LEGACY_MARGINAL_FEE);
     expect(second).not.toBeUndefined();
     const secondNullifiers = second!.selectedNotes.map(n => n.nullifier);
 
@@ -327,9 +331,13 @@ describe("reservation filtering", () => {
     const filtered = [note].filter(n => !reserved.has(n.nullifier));
 
     // Filtered set is empty — selectNotes returns undefined
-    expect(selectNotes(filtered, new BigNumber(500_000), "shielded")).toBeUndefined();
+    expect(
+      selectNotes(filtered, new BigNumber(500_000), "shielded", LEGACY_MARGINAL_FEE),
+    ).toBeUndefined();
     // estimateMaxSpendableAmount on an empty set returns 0
-    expect(estimateMaxSpendableAmount(filtered, "shielded").toNumber()).toBe(0);
+    expect(estimateMaxSpendableAmount(filtered, "shielded", LEGACY_MARGINAL_FEE).toNumber()).toBe(
+      0,
+    );
   });
 
   it("selectNotes succeeds again over the full set after _resetReservationsForTest", () => {
@@ -348,7 +356,7 @@ describe("reservation filtering", () => {
     _resetReservationsForTest();
 
     // After reset the full note set is unfiltered — selection succeeds
-    const result = selectNotes([note], new BigNumber(500_000), "shielded");
+    const result = selectNotes([note], new BigNumber(500_000), "shielded", LEGACY_MARGINAL_FEE);
     expect(result).not.toBeUndefined();
     expect(result!.selectedNotes).toHaveLength(1);
   });

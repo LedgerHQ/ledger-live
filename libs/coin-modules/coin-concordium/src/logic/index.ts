@@ -12,5 +12,3 @@ export { listOperations } from "./history/listOperations";
 export { getNextValidSequence } from "./account/getNextSequence";
 
 export { checkRecipientRestrictions } from "./transaction/pltRecipientRestrictions";
-
-export { parseAPIValue } from "./common";

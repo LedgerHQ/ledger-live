@@ -34,7 +34,6 @@ const createMarketState = (
       order: Order.MarketCapDesc,
       search: "",
       liveCompatible: false,
-      page: 1,
       counterCurrency: "USD",
       ...marketParamsOverrides,
     },
@@ -85,13 +84,11 @@ describe("useMarketCategories", () => {
 
   it("resets pagination when switching categories", () => {
     const { result, store } = renderCategories("all", assetDiscoverabilityOn, {
-      marketParams: { page: 3 },
       currentPage: 3,
     });
 
     act(() => result.current.onSelectCategory("stocks"));
 
-    expect(store.getState().market.marketParams.page).toBe(1);
     expect(store.getState().market.currentPage).toBe(1);
   });
 

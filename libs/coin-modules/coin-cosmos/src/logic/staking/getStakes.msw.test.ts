@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { server, TEST_COSMOS_ENDPOINT, makeTestApi } from "../../test/msw.mock";
+import { server, TEST_COSMOS_ENDPOINT, makeTestApi, makeTestConfig } from "../../test/msw.mock";
 import { getStakes } from "./getStakes";
 
 const ADDR = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
@@ -18,6 +18,7 @@ afterAll(() => server.close());
 
 describe("getStakes via MSW", () => {
   it("maps a bonded delegation with rewards, plus an in-progress unbonding", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(DELEGATIONS, () =>
@@ -52,7 +53,7 @@ describe("getStakes via MSW", () => {
       ),
     );
 
-    const page = await getStakes(api, ADDR);
+    const page = await getStakes(config, api, ADDR);
 
     expect(page.items).toHaveLength(2);
 
@@ -78,6 +79,7 @@ describe("getStakes via MSW", () => {
   });
 
   it("returns empty items for a non-delegated, non-unbonding account", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(DELEGATIONS, () => HttpResponse.json({ delegation_responses: [] })),
@@ -87,7 +89,7 @@ describe("getStakes via MSW", () => {
       http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
     );
 
-    const page = await getStakes(api, ADDR);
+    const page = await getStakes(config, api, ADDR);
 
     expect(page.items).toEqual([]);
   });
@@ -95,6 +97,7 @@ describe("getStakes via MSW", () => {
   // `CosmosAPI.getDelegations` has no internal try/catch, so a failing request propagates; `getStakes`
   // awaits `Promise.all([getDelegations, getUnbondings])`, which rejects as soon as either does.
   it("throws when the delegations endpoint errors", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(DELEGATIONS, () => new HttpResponse(null, { status: 500 })),
@@ -103,6 +106,6 @@ describe("getStakes via MSW", () => {
       http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
     );
 
-    await expect(getStakes(api, ADDR)).rejects.toThrow();
+    await expect(getStakes(config, api, ADDR)).rejects.toThrow();
   });
 });

@@ -14,8 +14,8 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { DeviceContextInitializerComponentLWMView } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/DeviceContextInitializerComponentLWMView";
-import type { InitializerDevice } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/types";
+import { ContextInitializerView } from "LLM/components/DeviceIntentExecutor/ContextInitializer/ContextInitializerView";
+import type { InitializerDevice } from "LLM/components/DeviceIntentExecutor/ContextInitializer/types";
 import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 
 type InitializerStateScenario = Readonly<{
@@ -245,7 +245,7 @@ export default function DebugInitializerStatesScreen() {
           <BottomSheetHeader density="compact" />
           {selectedScenario ? (
             <DeviceIntentTrackingProvider value={{ sourceFlow: "debug" }}>
-              <DeviceContextInitializerComponentLWMView
+              <ContextInitializerView
                 state={selectedScenario.state}
                 device={mockDevice}
                 onCancel={() => setSelectedScenario(null)}

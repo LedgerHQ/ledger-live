@@ -40,7 +40,6 @@ export default function Market() {
     toggleFilterByStarredAccounts,
     toggleLiveCompatible,
     resetMarketPage,
-    refetchData,
     marketParams,
     supportedCounterCurrencies,
     timeRangeValue,
@@ -48,8 +47,6 @@ export default function Market() {
     starredMarketCoins,
     timeRanges,
     timeRangeSelectOptions,
-    refreshRate,
-    marketCurrentPage,
     categories,
     shouldDisplayAssetDiscoverability,
     t,
@@ -59,17 +56,9 @@ export default function Market() {
    * Reset the page to 1 when the component mounts to only refetch first page
    * */
   useEffect(() => {
-    resetMarketPage(marketParams.page ?? 1);
+    resetMarketPage();
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  /**
-   * Try to Refetch data every REFRESH_RATE time
-   */
-  useEffect(() => {
-    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
-    return () => clearInterval(intervalId);
-  }, [marketCurrentPage, refetchData, refreshRate]);
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
 

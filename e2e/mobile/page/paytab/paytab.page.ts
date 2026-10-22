@@ -108,7 +108,7 @@ export default class PayTabPage {
   @Step("Open request")
   async openRequest() {
     await tapById(this.requestTileId);
-    await waitForFullyVisibleById(app.modularDrawer.searchBarId);
+    await app.modularDrawer.waitForSearchBar();
   }
 
   @Step("Expect the request screen titled {{{0}}}")

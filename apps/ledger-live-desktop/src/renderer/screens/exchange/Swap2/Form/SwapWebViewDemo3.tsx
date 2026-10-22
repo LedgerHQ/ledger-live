@@ -375,10 +375,10 @@ const SwapWebView = ({
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const evmCtx = buildContext<EvmConfigInfo>(mainAccount.currency.id);
         const config = await evmCtx.config();
-        const nodeAPI = getNodeApi(config, mainAccount.currency.id, evmCtx.logger);
+        const nodeAPI = getNodeApi(config, evmCtx.logger);
 
         try {
-          const tx = await nodeAPI.getTransaction(mainAccount.currency.id, params.transactionHash);
+          const tx = await nodeAPI.getTransaction(params.transactionHash);
           return Promise.resolve(tx);
         } catch {
           // not a real error, the node just didn't find the transaction yet

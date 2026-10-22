@@ -1,7 +1,10 @@
-import { ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer } from "electron";
 import { CHANNELS } from "~/bridge/contract";
 
-jest.mock("electron", () => ({ ipcRenderer: { send: jest.fn(), invoke: jest.fn() } }));
+jest.mock("electron", () => ({
+  ipcRenderer: { send: jest.fn(), invoke: jest.fn() },
+  contextBridge: { exposeInMainWorld: jest.fn() },
+}));
 jest.mock("./bridge", () => ({ installBridge: jest.fn() }));
 jest.mock("@ledgerhq/react-ui/styles/index", () => ({
   palettes: {
@@ -15,6 +18,13 @@ const loadPreload = () => {
   jest.isolateModules(() => {
     require("./index");
   });
+};
+
+const loadExposedApi = (): Window["api"] => {
+  loadPreload();
+  expect(contextBridge.exposeInMainWorld).toHaveBeenCalledWith("api", expect.any(Object));
+  const [[, api]] = jest.mocked(contextBridge.exposeInMainWorld).mock.calls;
+  return api as Window["api"];
 };
 
 describe("preload", () => {
@@ -35,12 +45,12 @@ describe("preload", () => {
     jest.useRealTimers();
   });
 
-  it("should expose the renderer reload and webview hooks on window.api", async () => {
+  it("should expose the renderer reload and webview hooks through contextBridge", async () => {
     jest.mocked(ipcRenderer.invoke).mockResolvedValue(undefined);
-    loadPreload();
+    const api = loadExposedApi();
 
-    await window.api.reloadRenderer();
-    window.api.openWindow(4, ["ledger.com"]);
+    await api.reloadRenderer();
+    api.openWindow(4, ["ledger.com"]);
 
     expect(ipcRenderer.invoke).toHaveBeenCalledWith(CHANNELS.reloadRenderer);
     expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.webviewDomReady, 4, ["ledger.com"]);

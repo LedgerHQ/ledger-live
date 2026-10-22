@@ -29,7 +29,6 @@ export const INITIAL_STATE: MarketState = {
     order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
-    page: 1,
     counterCurrency: "USD",
   },
   marketFilterByStarredCurrencies: false,

@@ -8,8 +8,8 @@ import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/h
 import { shouldForceFirmwareUpdate } from "@ledgerhq/live-common/device/use-cases/shouldForceFirmwareUpdate";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AllowManagerDrawer from "./AllowManagerDrawer";
-import GenuineCheckErrorDrawer from "./GenuineCheckErrorDrawer";
-import GenuineCheckNonGenuineDrawer from "./GenuineCheckNonGenuineDrawer";
+import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
+import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { Linking, Platform } from "react-native";
 import { LanguagePrompt } from "./LanguagePrompt";

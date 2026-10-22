@@ -34,6 +34,19 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     BottomSheetView: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
     BottomSheetHeader: ({ title }: { title: React.ReactNode }) => <RN.Text>{title}</RN.Text>,
     Divider: () => null,
+    DescriptionItem: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
+    DescriptionItemLeading: ({ children }: { children: React.ReactNode }) => (
+      <RN.View>{children}</RN.View>
+    ),
+    DescriptionItemLabel: ({ children }: { children: React.ReactNode }) => (
+      <RN.Text>{children}</RN.Text>
+    ),
+    DescriptionItemTrailing: ({ children }: { children: React.ReactNode }) => (
+      <RN.View>{children}</RN.View>
+    ),
+    DescriptionItemValue: ({ children }: { children: React.ReactNode }) => (
+      <RN.Text>{children}</RN.Text>
+    ),
     useBottomSheetRef: () => ({ current: { present: jest.fn(), dismiss } }),
   };
 });
@@ -102,7 +115,7 @@ describe("NetworkFeesRow fee value", () => {
         }}
       />,
     );
-    expect(screen.getByText("$0.12")).toBeOnTheScreen();
+    expect(screen.getByText(/\$0\.12/)).toBeOnTheScreen();
     expect(screen.getByText("Medium")).toBeOnTheScreen();
   });
 

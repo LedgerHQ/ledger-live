@@ -42,6 +42,7 @@
     "custom.bottomSheet.menu",
     "custom.dialog.info",
     "custom.dialog.confirmation",
+    "custom.dialog.menu",
     "custom.liveApp.modal.open",
     "custom.liveApp.modal.getInitialPayload",
     "custom.liveApp.modal.close",
@@ -55,6 +56,7 @@
     "ptxEarnDrawerConfiguration",
     "stableSavings",
     "ptxEarnCtaOnMobile",
+    "earnWithdrawV2",
     "llmWalletApiDeviceIntentSign"
   ]
 }

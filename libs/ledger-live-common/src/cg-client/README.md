@@ -84,4 +84,4 @@ const chartData = await fetchCurrencyChartData({
 });
 ```
 
-For market coin detail charts, use `useAssetChartData` from `@ledgerhq/live-common/market/hooks/useMarketDataProvider` instead.
+For market coin detail charts, use `useAssetChartData` from `@ledgerhq/live-common/market/hooks/useAssetChartData` instead.

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Currency } from "@domain/entity-currency";
-import { CounterValuesState, calculate } from "@domain/entity-market-countervalues";
+import { CounterValuesCacheView, calculate } from "@domain/entity-market-countervalues";
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   BaseRawDetailedAccount,
@@ -15,7 +15,7 @@ import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
  * This contains the business logic that can be reused across platforms
  */
 export function useDetailedAccountsCore(
-  counterValuesState: CounterValuesState,
+  counterValuesState: CounterValuesCacheView,
   counterValueCurrency: Currency,
 ) {
   /**

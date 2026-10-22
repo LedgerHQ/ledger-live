@@ -8,9 +8,21 @@ type _FeeStrategiesExhaustive = AssertTrue<
   FeeStrategy extends (typeof FEE_STRATEGIES)[number] ? true : false
 >;
 
-export type IntentAsset =
-  | { type: "native"; ticker: string; decimals: number }
+/** The networks `agent-intent send` proposes on: always mainnet, whatever the profile's environment. */
+export type IntentNetwork = "ethereum" | "solana";
+
+type NativeAsset = { type: "native"; ticker: string; decimals: number };
+export type EthereumAsset =
+  | NativeAsset
   | { type: "erc20"; ticker: string; decimals: number; contract: string };
+export type SolanaAsset =
+  | NativeAsset
+  | { type: "spl-token"; ticker: string; decimals: number; mint: string };
+
+/** A network with an asset it can send, so an ERC-20 never reaches Solana or an SPL token Ethereum. */
+export type NetworkAsset =
+  | { network: "ethereum"; asset: EthereumAsset }
+  | { network: "solana"; asset: SolanaAsset };
 
 /** Everything `agent-intent send` validated, before (or without, for --dry-run) submitting it. */
 export type SendIntentSummary = {
@@ -18,16 +30,38 @@ export type SendIntentSummary = {
   environment: "staging" | "production";
   sender: string;
   recipient: string;
-  asset: IntentAsset;
   /** Exact base-unit integer, as decimal digits (never a JS number). */
   amount: string;
   /** The amount as the user typed it, for display only. */
   displayAmount: string;
-  feeStrategy: FeeStrategy;
   description?: string;
+} & (
+  | { network: "ethereum"; asset: EthereumAsset; feeStrategy: FeeStrategy }
+  /** No fee strategy: on Solana the service sets the priority fee. The memo goes on chain. */
+  | { network: "solana"; asset: SolanaAsset; memo?: string }
+);
+
+export const NETWORK_LABELS: Record<IntentNetwork, string> = {
+  ethereum: "Ethereum mainnet",
+  solana: "Solana mainnet",
 };
 
 export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
+  if (summary.network === "solana") {
+    return {
+      type: "send",
+      network: "solana",
+      sender: summary.sender,
+      recipient: summary.recipient,
+      amount: summary.amount,
+      asset:
+        summary.asset.type === "native"
+          ? { type: "native" }
+          : { type: "spl-token", assetReference: summary.asset.mint },
+      ...(summary.memo ? { memo: summary.memo } : {}),
+      ...(summary.description ? { description: summary.description } : {}),
+    };
+  }
   return {
     type: "send",
     network: "ethereum",

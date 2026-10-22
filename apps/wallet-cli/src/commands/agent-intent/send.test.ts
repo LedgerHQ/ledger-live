@@ -23,7 +23,14 @@ const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
 const RECIPIENT = "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359";
 const USDC = toChecksumAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 
-const DEEPLINK = "https://agent-intent.ledger-test.com/intents/intent-123";
+// The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
+const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
+const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
+// USDC is a classic SPL Token mint, PYUSD a Token-2022 one.
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const PYUSD_MINT = "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo";
+
+const DEEPLINK = "https://app.agents.ledger-test.com/intents/intent-123";
 
 const enrolledProfile = {
   profileId: "bot",
@@ -40,6 +47,11 @@ const enrolledProfile = {
 
 const accounts = [
   { label: "ethereum-1", descriptor: `account:1:address:ethereum:main:${SENDER}:m/44h/60h/0h/0/0` },
+  { label: "solana-1", descriptor: `account:1:address:solana:main:${SOL_SENDER}:m/44h/501h/0h/0h` },
+  {
+    label: "solana-corrupt",
+    descriptor: `account:1:address:solana:main:${SOL_SENDER}11:m/44h/501h/1h/0h`,
+  },
   {
     label: "bitcoin-native-1",
     descriptor:
@@ -56,6 +68,7 @@ let clientOptions: Array<Record<string, unknown>>;
 let makeClient: ((options: Record<string, unknown>) => unknown) | undefined;
 let stdout: string[];
 let stderr: string[];
+let mintPrograms: Record<string, string | undefined>;
 
 beforeAll(() =>
   activateAgentIntentMocks({
@@ -87,6 +100,12 @@ beforeAll(() =>
         contract.toLowerCase() === USDC.toLowerCase()
           ? { ticker: "USDC", decimals: 6, contract: USDC }
           : null,
+      findSolanaToken: async (mint: string) =>
+        ({
+          [USDC_MINT]: { ticker: "USDC", decimals: 6, mint: USDC_MINT },
+          [PYUSD_MINT]: { ticker: "PYUSD", decimals: 6, mint: PYUSD_MINT },
+        })[mint] ?? null,
+      findSolanaMintProgram: async (mint: string) => mintPrograms[mint],
     },
   }),
 );
@@ -101,7 +120,8 @@ type SendFlags = {
   to: string;
   amount: string;
   token?: string;
-  "fee-strategy": "slow" | "medium" | "fast";
+  "fee-strategy"?: "slow" | "medium" | "fast";
+  memo?: string;
   description?: string;
   "dry-run": boolean;
   output?: "human" | "json";
@@ -139,6 +159,7 @@ describe("agent-intent send", () => {
     makeClient = undefined;
     stdout = [];
     stderr = [];
+    mintPrograms = { [USDC_MINT]: "spl-token", [PYUSD_MINT]: "spl-token-2022" };
     restore = installOutputCapture({
       stdout: chunk => stdout.push(chunk),
       stderr: chunk => stderr.push(chunk),
@@ -165,6 +186,8 @@ describe("agent-intent send", () => {
       expect(jsonResult()).toMatchObject({
         status: "success",
         command: "agent-intent send",
+        // The envelope's network, unchanged by Solana support.
+        network: "ethereum:main",
         intentId: "intent-123",
         deeplink: DEEPLINK,
         profileId: "bot",
@@ -190,6 +213,15 @@ describe("agent-intent send", () => {
       ]);
     });
 
+    it("prints the network and fee level in human output", async () => {
+      await runSend({ "dry-run": true });
+
+      const text = stdout.join("");
+      expect(text).toContain("Network: Ethereum mainnet");
+      expect(text).toContain("Fee:     medium");
+      expect(text).not.toContain("Memo:");
+    });
+
     it("passes the fee strategy and description through", async () => {
       await runSend({ "fee-strategy": "fast", description: "Monthly rent" });
 
@@ -208,6 +240,175 @@ describe("agent-intent send", () => {
     });
   });
 
+  describe("native SOL", () => {
+    const sol = (overrides: Partial<SendFlags> = {}) =>
+      runSend({
+        from: SOL_SENDER,
+        to: SOL_RECIPIENT,
+        amount: "0.5 SOL",
+        "fee-strategy": undefined,
+        output: "json",
+        ...overrides,
+      });
+
+    it("proposes a Solana send in lamports, with its memo and no fee strategy", async () => {
+      await sol({ memo: "Invoice 42", description: "Pay supplier" });
+
+      expect(submittedIntents).toEqual([
+        {
+          type: "send",
+          network: "solana",
+          sender: SOL_SENDER,
+          recipient: SOL_RECIPIENT,
+          amount: "500000000",
+          asset: { type: "native" },
+          memo: "Invoice 42",
+          description: "Pay supplier",
+        },
+      ]);
+      const result = jsonResult();
+      expect(result).toMatchObject({
+        status: "success",
+        network: "solana:main",
+        asset: { type: "native", ticker: "SOL", decimals: 9 },
+        amount: "500000000",
+        memo: "Invoice 42",
+        submitted: true,
+      });
+      expect(result).not.toHaveProperty("feeStrategy");
+    });
+
+    it("resolves the sender from a Solana mainnet session label", async () => {
+      await sol({ from: undefined, account: "solana-1" });
+
+      expect(submittedIntents).toEqual([expect.objectContaining({ sender: SOL_SENDER })]);
+    });
+
+    it("refuses an Ethereum account for a SOL amount", async () => {
+      await expect(
+        sol({ from: undefined, account: "ethereum-1", output: undefined }),
+      ).rejects.toThrow(/on ethereum; this Agent Intent send needs a Solana mainnet account/);
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it.each([
+      [{ "fee-strategy": "fast" as const }, "--fee-strategy is Ethereum only"],
+      [{ to: `${SOL_RECIPIENT.slice(0, -1)}0` }, "Invalid intent: --to must be base58."],
+      [{ to: RECIPIENT }, "Invalid intent: --to must be base58."],
+      [{ from: `${SOL_SENDER}11` }, "Invalid intent: --from must be a 32-byte base58 address."],
+      [{ amount: "0 SOL" }, "Amount must be greater than zero."],
+      [{ amount: "0.0000000001 SOL" }, "SOL supports at most 9"],
+    ])("refuses %j", async (overrides, message) => {
+      await expect(sol({ ...overrides, output: undefined })).rejects.toThrow(message);
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("refuses a memo on an Ethereum send", async () => {
+      await expect(runSend({ memo: "Invoice 42" })).rejects.toThrow("--memo is Solana only.");
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("keeps an ERC-20 whose ticker is SOL on Ethereum", async () => {
+      // With --token the SOL ticker names an ERC-20, so the Ethereum path checks it against CAL.
+      await expect(runSend({ amount: "5 SOL", token: USDC })).rejects.toThrow(
+        `--amount is in SOL, but --token ${USDC} is USDC.`,
+      );
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("prints the network and memo, and no fee level, in human output", async () => {
+      await sol({ memo: "Invoice 42", output: undefined, "dry-run": true });
+
+      const text = stdout.join("");
+      expect(text).toContain("Network: Solana mainnet");
+      expect(text).toContain("Amount:  0.5 SOL");
+      expect(text).toContain("Memo:    Invoice 42");
+      expect(text).not.toContain("Fee:");
+    });
+
+    it("names the account label when the SDK refuses its address", async () => {
+      await expect(
+        sol({ from: undefined, account: "solana-corrupt", output: undefined }),
+      ).rejects.toThrow(
+        'Invalid intent: account "solana-corrupt" must be a 32-byte base58 address.',
+      );
+      expect(submittedIntents).toEqual([]);
+    });
+  });
+
+  describe("SPL token", () => {
+    const spl = (overrides: Partial<SendFlags> = {}) =>
+      runSend({
+        from: SOL_SENDER,
+        to: SOL_RECIPIENT,
+        amount: "25.5 USDC",
+        token: USDC_MINT,
+        "fee-strategy": undefined,
+        output: "json",
+        ...overrides,
+      });
+
+    it("proposes a Solana send of the mint in the token's base units", async () => {
+      await spl({ memo: "Invoice 42" });
+
+      expect(submittedIntents).toEqual([
+        {
+          type: "send",
+          network: "solana",
+          sender: SOL_SENDER,
+          recipient: SOL_RECIPIENT,
+          amount: "25500000",
+          asset: { type: "spl-token", assetReference: USDC_MINT },
+          memo: "Invoice 42",
+        },
+      ]);
+      expect(jsonResult()).toMatchObject({
+        network: "solana:main",
+        asset: { type: "spl-token", ticker: "USDC", decimals: 6, mint: USDC_MINT },
+        amount: "25500000",
+        displayAmount: "25.5",
+      });
+    });
+
+    it("picks Solana from a base58 --token, so an Ethereum account is refused", async () => {
+      await expect(
+        spl({ from: undefined, account: "ethereum-1", output: undefined }),
+      ).rejects.toThrow(/on ethereum; this Agent Intent send needs a Solana mainnet account/);
+    });
+
+    it("names the token and its mint in human output", async () => {
+      await spl({ output: undefined, "dry-run": true });
+
+      expect(stdout.join("")).toContain(`Amount:  25.5 USDC (${USDC_MINT})`);
+    });
+
+    it.each([
+      [
+        { amount: "1 PYUSD", token: PYUSD_MINT },
+        `--token ${PYUSD_MINT} (PYUSD) is a Token-2022 mint, which Agent Intent can't send yet.`,
+      ],
+      [
+        { amount: "1 XYZ", token: SOL_RECIPIENT },
+        `--token ${SOL_RECIPIENT} is not a known SPL token on Solana mainnet.`,
+      ],
+      [{ amount: "25 USDT" }, `--amount is in USDT, but --token ${USDC_MINT} is USDC.`],
+      [{ amount: "1.0000001 USDC" }, "7 decimal places, but USDC supports at most 6"],
+      [{ "fee-strategy": "fast" as const }, "--fee-strategy is Ethereum only"],
+    ])("refuses %j", async (overrides, message) => {
+      await expect(spl({ ...overrides, output: undefined })).rejects.toThrow(message);
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("refuses a mint the node can't confirm as a classic SPL Token mint", async () => {
+      mintPrograms = {};
+
+      await expect(spl({ output: undefined })).rejects.toThrow(
+        `--token ${USDC_MINT} (USDC) isn't a mint of the SPL Token program on Solana mainnet.`,
+      );
+      expect(submittedIntents).toEqual([]);
+    });
+  });
+
   describe("sender", () => {
     it("resolves an account label to its address", async () => {
       await runSend({ from: undefined, account: "ethereum-1" });
@@ -217,7 +418,7 @@ describe("agent-intent send", () => {
 
     it("rejects a label on a network Agent Intent doesn't support", async () => {
       await expect(runSend({ from: undefined, account: "bitcoin-native-1" })).rejects.toThrow(
-        /on bitcoin; Agent Intent send intents support Ethereum mainnet accounts only/,
+        /on bitcoin; this Agent Intent send needs an Ethereum mainnet account/,
       );
     });
 
@@ -461,7 +662,7 @@ describe("agent-intent send", () => {
     });
 
     it("succeeds with a null intent id and a warning when the link has an unexpected shape", async () => {
-      createSendIntentImpl = async () => "https://agent-intent.ledger-test.com/review?id=abc";
+      createSendIntentImpl = async () => "https://app.agents.ledger-test.com/review?id=abc";
 
       await runSend({ output: "json" });
 
@@ -527,7 +728,7 @@ describe("agent-intent send", () => {
       // The SDK rebases the service's link onto the environment's own frontend.
       expect(jsonResult()).toMatchObject({
         intentId: "wire-1",
-        deeplink: "https://agent-intent.ledger-test.com/intents/wire-1",
+        deeplink: "https://app.agents.ledger-test.com/intents/wire-1",
       });
     });
 

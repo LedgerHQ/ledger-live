@@ -20,7 +20,7 @@ import { useSelector } from "~/context/hooks";
 import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { hideTransactionsOnChartSelector } from "~/reducers/market";
-import { useCountervaluesState } from "~/reducers/countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
@@ -205,6 +205,7 @@ export function useBalanceGraphViewModel({
       atl,
       athTime,
       atlTime,
+      latestPrice: price == null ? undefined : { price, timestamp: Date.now() },
     });
     return {
       series: [
@@ -220,7 +221,7 @@ export function useBalanceGraphViewModel({
       timestamps: tsList,
       hasData: prices.length > 0,
     };
-  }, [chartData, range, ath, atl, athTime, atlTime]);
+  }, [chartData, range, ath, atl, athTime, atlTime, price]);
 
   // While the next timeframe loads, keep rendering the previous (non-empty)
   // series so the chart morphs from the old shape (Lumen transition-loading)
@@ -448,7 +449,7 @@ export function useBalanceGraphViewModel({
   // every tick) does not invalidate the `transactions` memo and force the memoized
   // chart to re-render. Historical fiat is treated as stable; if rates land after the
   // operation set settles, the dots refresh on the next change to that set.
-  const countervaluesState = useCountervaluesState();
+  const countervaluesState = useCountervaluesCache();
   const countervaluesStateRef = useRef(countervaluesState);
   countervaluesStateRef.current = countervaluesState;
 

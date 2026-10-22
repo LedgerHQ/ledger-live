@@ -8,7 +8,6 @@ import type {
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { validateAddress } from "../bridge/validateAddress";
 import {
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_OPERATION_TYPES,
@@ -38,7 +37,7 @@ import {
   mapIntentToSDKOperation,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
-import { getERC20BalancesForAccountV2 } from "../network/utils";
+import { getERC20BalancesForAccountV2, safeParseAccountId } from "../network/utils";
 import type {
   EstimateFeesParams,
   HederaMemo,
@@ -220,7 +219,12 @@ export function createApi(currencyId: string) {
           type: liveOp.type,
           senders: liveOp.senders,
           recipients: liveOp.recipients,
-          value: getOperationValue({ asset, operation: liveOp }),
+          value: getOperationValue({
+            asset,
+            operation: liveOp,
+            accountAddress: address,
+            ...(feesPayer && { feesPayer }),
+          }),
           asset,
           details: {
             ...(memo && { memo }),
@@ -279,7 +283,11 @@ export function createApi(currencyId: string) {
         customFees: options?.customFees,
       });
     },
-    validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
+    validateAddress: async (context: HederaContext, address) => {
+      const coinConfig = await context.config();
+      const [error] = await safeParseAccountId({ configOrCurrencyId: coinConfig, address });
+      return error === null;
+    },
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
   } satisfies CoinModuleImpl<HederaCoinConfig, HederaMemo, HederaTxData>;
 }

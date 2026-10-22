@@ -71,14 +71,12 @@ export type ContactsCompactRowProps = Readonly<{
 
 export type ContactsCompactListProps = Readonly<{
   contacts: readonly Contact[];
-  labels: ContactsCompactListLabels;
   maxContacts?: number;
   onContactSelect: (contact: Contact) => void;
 }>;
 
 export type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
-  labels: ContactsListViewLabels;
   searchQuery: string;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
@@ -106,6 +104,7 @@ export type ContactsListViewNativeProps = ContactsPageSharedProps &
   Readonly<{
     onSearchQueryChange: (query: string) => void;
     surface?: ContactsListSurface;
+    titleContext?: "contacts" | "selectContact";
   }>;
 
 export function isPopulatedContactsListViewModel(

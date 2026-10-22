@@ -37,7 +37,7 @@ export function RecipientQrScanner({ onPick, onErrorShown }: RecipientQrScannerP
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-muted">
         {error ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-10 px-24">
-            <Spot appearance="icon" icon={QrCodeScanner} size={56} />
+            <Spot icon={QrCodeScanner} size={56} />
             <p className="body-2 text-center text-muted">
               <TranslatedError error={error} />
             </p>

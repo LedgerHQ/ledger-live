@@ -9,7 +9,7 @@ import {
   counterValueCurrencySelector,
 } from "~/renderer/reducers/settings";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
-import { useAllCurrencyTrends } from "LLD/features/Assets/hooks/useAllCurrencyTrends";
+import { useAllCurrencyTrends } from "LLD/components/AssetsTable/useAllCurrencyTrends";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { setTrackingSource, track } from "@shared/analytics";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
@@ -26,7 +26,7 @@ import {
   EMPTY_STATE_STABLECOINS,
   type AssetsPageCategory,
 } from "LLD/features/Assets/constants";
-import type { AssetTableItem } from "LLD/features/Assets/types";
+import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 import type { CryptoAssetsViewModel } from "../types";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
 

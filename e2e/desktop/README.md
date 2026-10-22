@@ -12,6 +12,8 @@ prerequisite, validates your environment, builds the app, and runs a smoke test.
 
 ---
 
+To write or review a spec, follow [E2E conventions](../docs/e2e-conventions.md) and [Desktop E2E conventions](docs/e2e-desktop-conventions.md). Then follow [Adding or updating a desktop E2E test](docs/e2e-desktop-add-or-update.md).
+
 ## Quick Start
 
 All build and test commands below are run from the **repo root** (`ledger-live/`).
@@ -43,8 +45,6 @@ export SPECULOS_DEVICE=nanoSP       # Options: nanoSP | nanoX | nanoS | stax | f
 ```
 
 Consider adding these exports to your profile so they persist.
-
-Pay tab specs under `tests/specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
 
 ### 3. Build
 
@@ -79,58 +79,54 @@ pnpm e2e:desktop test:playwright
 pnpm e2e:desktop test:playwright <testFileName>
 ```
 
-### 5. More Documentation
+## Ledger Wallet Desktop Wiki
 
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
+## Filtering Tests
+
 To run only selected specs when dispatching an E2E workflow, see
 [Using `test_filter` in the E2E workflows](../tooling/filter/test-filter-guide.md).
 
-### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON override
+## Remote Speculos (Speculinho)
 
-You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.
+Tests run on a local Docker Speculos by default. To run them on remote Speculos instances instead, for example to debug a CI run, see the
+[Speculinho guide](../../libs/live-e2e-shared/SPECULINHO.md).
 
-Example shape:
+To watch the device screen during a local run, on Docker or Speculinho, set `SPECULOS_SCREEN`: see
+[Watch the device](../../libs/live-e2e-shared/SPECULINHO.md#watch-the-device).
 
-```json
-{
-  "myFeature": {
-    "enabled": true,
-    "params": {
-      "foo": "bar"
-    }
-  }
-}
-```
+## Pay tab
 
-Usage examples:
+Pay tab specs need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET` environment variables. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
 
-```bash
-# Enable one feature with params
-export E2E_FEATURE_FLAGS_JSON='{"myFeature":{"enabled":true,"params":{"foo":"bar"}}}'
+A spec that needs an injected Card session must live under `tests/specs/paytab/`. The card-session reporter
+mints once before workers when a selected spec path contains `/paytab/`. `--grep` is already applied,
+so a smoke run that does not select that spec does not log in. The fixture injects the session when
+the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
 
-```
+## Feature Flags
 
-Notes:
+### E2E_FEATURE_FLAGS_JSON
 
-- Arrays, scalars, or invalid JSON are rejected.
-- `E2E_FEATURE_FLAGS_JSON` OVERRIDES any other E2E feature flags.
-- Per-test `featureFlags` fixture values still override env-provided values when both set the same key.
+Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flag Resolution](../docs/e2e-conventions.md#feature-flags).
 
-### 7. Feature Flag presets
+### Feature Flag presets
 
 It is possible to choose an optional Feature Flag set for the test run.
 
-Set the env var to the desired value, eg:
+Set the env var to the desired value, for example:
 
 ```bash
 export E2E_DESKTOP_FEATURE_FLAGS="some-preset"
 ```
 
-Or use the "Choose a feature flag set" options dropdown on the Github workflow.
+Or use the "Choose a feature flag set" options dropdown on the GitHub workflow.
 
-### 8. Soft assertions
+See the `ffPresetMap` in `tests/utils/featureFlagUtils.ts` for available presets.
+
+## Soft assertions
 
 Soft assertions can be useful for gathering more feedback in a single test run.
 

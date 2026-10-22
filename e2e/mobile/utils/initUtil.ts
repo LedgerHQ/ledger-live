@@ -12,6 +12,7 @@ import {
   removeSpeculosAndDeregisterKnownSpeculos,
 } from "@e2e/utils/speculosUtils";
 import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
+import { showSpeculosScreen } from "@ledgerhq/live-e2e-shared/speculosScreen";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { TEST_TIMEOUT } from "@e2e/utils/timeouts";
 
@@ -292,6 +293,7 @@ async function setupMainSpeculosApp(
       log.info(
         `✅ [${speculosApp.name}] Main Speculos registered successfully on port ${main.speculosPort}`,
       );
+      await showSpeculosScreen(main.deviceId);
 
       lastError = undefined;
       break;

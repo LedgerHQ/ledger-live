@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Spot } from "@ledgerhq/lumen-ui-react";
+import { InformationFill } from "@ledgerhq/lumen-ui-react/symbols";
 
 type InfoContentProps = Readonly<{
   titleKey: string;
@@ -15,7 +16,7 @@ export const InfoContent = ({ titleKey, descriptionKey }: InfoContentProps) => {
       className="-mt-12 flex flex-col items-center gap-24"
       data-testid="send-confirmation-info-content"
     >
-      <Spot appearance="info" size={72} />
+      <Spot appearance="muted" icon={InformationFill} size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
         <h3 className="heading-3-semi-bold text-base" data-testid="send-confirmation-info-title">
           {t(titleKey)}

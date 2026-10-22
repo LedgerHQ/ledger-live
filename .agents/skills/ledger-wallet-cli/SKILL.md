@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/intents — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose EVM payments for human review and list the intents it proposed, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/swap/intents/status/cancel — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose Ethereum and Solana payments and Ethereum swaps for human review, list the intents it proposed, check their status and cancel them, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` (without `--dry-run`), `agent-intent intents` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` and `agent-intent swap` (without `--dry-run`), `agent-intent intents`, `agent-intent status`, `agent-intent cancel` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -50,7 +50,10 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
 | "pull my synced accounts", "import from Ledger Sync", "sync the agent's accounts"   | `agent-intent sync --profile <id>` (no device)                 |
 | "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
-| "what did the agent propose", "list the agent's intents", "is my intent approved"   | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
+| "have the agent propose a swap", "propose swapping X ETH to USDC for approval"        | `agent-intent swap --profile <id> --account <label> --from ethereum --to <currency id> --amount <amount>` (no device, never broadcasts) |
+| "what did the agent propose", "list the agent's intents"                           | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
+| "is my intent approved", "what's the status of intent X", "wait until it's signed"  | `agent-intent status --profile <id> --intent <id>` (no device; poll JSON `intent.status` for one state, `terminal` for a final one) |
+| "cancel intent X", "withdraw the proposal", "the agent changed its mind"            | `agent-intent cancel --profile <id> --intent <id> --yes` (no device; only before the user signs; irreversible) |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -106,10 +109,14 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `agent-intent show`  | No     | No           | No          | No      |
 | `agent-intent sync`  | No     | **Required** | No          | Yes     |
 | `agent-intent intents` | No   | **Required** | No          | Yes     |
+| `agent-intent status` | No    | **Required** | No          | Yes     |
+| `agent-intent cancel` | No    | **Required** | No§§        | Yes     |
 
 \*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
 †TTY: whether the command requires an interactive terminal for user input.
+
+§§`agent-intent cancel` asks for confirmation on a terminal; without one (scripts, AI agents) it needs `--yes`.
 
 ‡`ring init` requires a password to protect the ring. `WALLET_PASS` must already be provided in the environment by the developer/user before the command runs — the agent never sets or injects it (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)).
 
@@ -412,7 +419,7 @@ the profile's `accountAccess`.
 
 ### Proposing a payment (`agent-intent send`)
 
-`agent-intent send` **proposes** an Ethereum send for a human to review — it never signs or
+`agent-intent send` **proposes** an Ethereum or Solana send for a human to review — it never signs or
 broadcasts anything and needs no device. It signs the proposal with the profile's key, submits it
 to the Agent Intent service, and prints a review link; the payment only happens if a human opens
 that link and approves it on their Ledger device.
@@ -426,6 +433,14 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --from 0xSender \
   --to 0xRecipient --amount '25 USDC' --token 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
 
+# Native SOL: the 'SOL' ticker makes it a Solana send; base58 addresses, optional on-chain memo:
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
+  --to RecipientBase58 --amount '0.5 SOL' --memo "Invoice 42"
+
+# SPL token: a base58 --token is the mint, so the send is on Solana:
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
+  --to RecipientBase58 --amount '25 USDC' --token EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+
 # Validate everything and print the proposal without submitting (no keychain, no sign-in):
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
   --to 0xRecipient --amount '0.01 ETH' --dry-run
@@ -434,19 +449,64 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 - **Enrolled profile only** (its `agent-intent enroll` approval went through). It uses the
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
   `--bff-url`/`--keycloak-url` override carries over), and its key in the OS keychain.
-- **Ethereum mainnet only**, for both a `--account` label and a `--from` address. The Agent Intent
-  SDK has no testnet, so a staging profile also proposes an Ethereum mainnet transfer.
-- **Addresses:** `--from`, `--to` and `--token` must be `0x` + 40 hex characters. Mixed-case input
-  must pass its EIP-55 checksum, which catches a typo in a copied address.
+- **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
+  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `SOL`
+  → Solana and any other ticker → Ethereum. A `--account` label must be a mainnet account of that
+  network. The Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
+- **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
+  mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
+  Solana, `--from` and `--to` must be canonical base58 32-byte addresses.
+- **Tokens** are looked up in CAL (`assets token ethereum|solana <address>`), and the `--amount`
+  ticker must match. Token-2022 mints are refused, because Agent Intent can't send them yet.
+- **Solana** takes no `--fee-strategy`, because the service sets the priority fee. `--memo` (1-280
+  characters, an emoji counts as two; Solana only) goes on chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
-  above uint256 is an error. JSON output gives `amount` in base units as a string.
-- **`--fee-strategy slow|medium|fast`** (default `medium`) is the fee level the human is asked to
-  approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
+  above uint256 (u64 lamports on Solana) is an error. JSON output gives `amount` in base units
+  (wei, token units or lamports) as a string, and the envelope's `network` as `ethereum:main` or
+  `solana:main`.
+- **`--fee-strategy slow|medium|fast`** (Ethereum only, default `medium`) is the fee level the human
+  is asked to approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
   responsible for that.
 - **Don't retry blindly.** If the service accepted the request (a timeout, or an unreadable link),
   the intent may already exist. Check the frontend before re-running, or you'll propose a duplicate.
   A service rejection is explained with a next step (for example, re-enroll after an issuer mismatch).
 
+### Proposing a swap (`agent-intent swap`)
+
+`agent-intent swap` **proposes** an Ethereum swap for a human to review, in the same way as
+`agent-intent send`: it never signs or broadcasts, needs no device, and prints a review link.
+It first asks the Swap API for quotes, then signs the pair, the amounts and the provider of the
+best quote the Agent Intent frontend can prepare. When the human opens the link, the frontend
+fetches a fresh quote and builds the transaction.
+
+```bash
+# Sell 0.5 ETH for USDC at the best quote (currency ids, as in `swap quote`):
+pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
+  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --description "Rebalance"
+
+# Quote one provider only:
+pnpm --silent wallet-cli start agent-intent swap --profile my-bot --sender 0xSender \
+  --from ethereum/erc20/usd__coin --to ethereum --amount 1000 --provider oneinch
+
+# Quote and validate without submitting (doesn't read the agent key or sign in):
+pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
+  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --dry-run
+```
+
+- **Enrolled profile only**, as for `agent-intent send`. **Ethereum mainnet only**: `--from` and
+  `--to` are `ethereum` or an Ethereum ERC-20 currency id (`assets token ethereum <contract>`
+  prints it), and the sender is a `--account` label or a `--sender` address.
+- **Amounts are human units** (`0.5` ETH, `1000` USDC), never rounded. More decimals than the
+  asset has, zero, a sign or an exponent is an error. The quoted amount to receive is rounded
+  **down** to the bought asset's precision. JSON output gives `fromAmount` and `toAmount` as strings.
+- **Providers:** only `oneinch`, `velora`, `okx` and `lifi`, the ones the frontend can turn into a
+  transaction today (`1inch` is accepted for `oneinch`). A quote that needs a token approval or a
+  Permit2 signature is skipped, because the frontend can't prepare one yet and the intent would
+  stay stuck in review.
+- **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
+  quoted, so the provider is always one the frontend can prepare.
+- **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the
+  intent may already exist.
 ### Listing the agent's intents (`agent-intent intents`)
 
 `agent-intent intents` lists the intents an enrolled profile proposed, most recent first. It signs
@@ -464,7 +524,8 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
   JSON has a `nextCursor` (human output prints the follow-up command); it is `null` on the last
   page. With `--cursor`, `--status` and `--page-size` are ignored.
 - **`--status`** takes comma-separated states: `created`, `crafted`, `signed`, `broadcast`,
-  `success`, `failed`, `rejected`, `expired`. An unknown state is rejected before signing in.
+  `success`, `failed`, `rejected`, `cancelled`, `expired`. An unknown state is rejected before
+  signing in.
 - **JSON** (`--output json`): `profileId`, `count`, `nextCursor`, and `intents[]` with `id`,
   `status`, `type`, `network`, `sender`, `recipient`, `amount` (exact base units, a string),
   `displayAmount` (e.g. `"0.01 ETH"`, `null` when the asset is unknown), `asset`, `feeStrategy`,
@@ -472,6 +533,62 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
   `count: 0`.
 - **Read-only:** it never creates, approves or cancels anything, so a failure is always safe to
   re-run.
+
+### Checking one intent (`agent-intent status`)
+
+`agent-intent status` reads the current status and details of one intent the profile proposed, by
+the id `agent-intent send` printed (or `agent-intent intents` lists).
+
+```bash
+ID=0192f7a4-0000-7000-8000-000000000001
+pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID"
+
+# Poll while the intent is known to be in progress; stop on a final state (terminal: true),
+# an unknown one (terminal: null) or an error, then read the status:
+while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.terminal == false' >/dev/null; do sleep 30; done
+
+# To wait for one state, e.g. until the user signs, poll intent.status instead (signed is not final):
+while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.intent.status == "created" or .intent.status == "crafted"' >/dev/null; do sleep 30; done
+```
+
+- **States:** `created`, `crafted`, `signed`, `broadcast` are in progress (`terminal: false`);
+  `success`, `failed`, `rejected`, `cancelled`, `expired` are final (`terminal: true`). A state this wallet-cli
+  version doesn't know is shown as-is with `terminal: null`: don't treat it as final or as an error.
+- **JSON** (`--output json`): `profileId`, `terminal`, and `intent` with the same fields as an
+  `agent-intent intents` entry (exact base-unit `amount` as a string, `displayAmount`,
+  `failureReason` for a failed intent, timestamps).
+- **Not found:** an unknown id and another agent's intent get the same answer, so the error can't
+  tell them apart. A malformed id is rejected before signing in.
+- Needs a service that lets agents read single intents; an older one says so and points to
+  `agent-intent intents`.
+
+### Cancelling an intent (`agent-intent cancel`)
+
+`agent-intent cancel` withdraws an intent the profile proposed, while the user has not signed it
+yet. An intent can't be edited: to change a proposal before the user signs it, cancel it and send
+a new one.
+
+```bash
+pnpm --silent wallet-cli start agent-intent cancel --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001 --yes
+```
+
+- **When:** only a `created` or `crafted` intent can be cancelled. A state this wallet-cli version
+  doesn't know goes to the service, which decides. Any other known state (`signed`
+  included, since its transaction may still land on-chain) fails with the current state and changes
+  nothing. Cancellation is **irreversible**.
+- **Confirmation:** on a terminal it shows the intent and asks `[y/N]` on stderr. Without a
+  terminal (scripts, AI agents, piped input) it refuses unless `--yes` is given, before signing in.
+  As an agent, only pass `--yes` when the user asked to cancel this intent.
+- **Repeats:** cancelling an already cancelled intent succeeds and reports
+  `alreadyCancelled: true`, also when another cancel gets there first. If the user signs it in the
+  meantime, the command fails and reports the new state.
+- **JSON** (`--output json`): `profileId`, `cancelled: true`, `alreadyCancelled`, `readBack` and
+  `intent` as the service reports it after the cancellation (same fields as `agent-intent status`).
+  `readBack: false` means that read failed: `intent` is the earlier read marked `cancelled`. A
+  declined prompt prints `cancelled: false` and `declined: true` with the `intentId` (unlike
+  `ring destroy`, where `cancelled: true` means the prompt was declined).
+- **Not found:** an unknown id and another agent's intent get the same answer, as for
+  `agent-intent status`.
 
 ---
 

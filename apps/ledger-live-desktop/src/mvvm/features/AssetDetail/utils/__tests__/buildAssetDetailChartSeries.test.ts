@@ -42,4 +42,24 @@ describe("buildAssetDetailChartSeries", () => {
     expect(prices).toContain(500);
     expect(prices).toContain(50);
   });
+
+  it("should append the live price after the resampled tail", () => {
+    const chartData: MarketCoinDataChart = {
+      "1d": [
+        [1_000, 100],
+        [2_000, 110],
+        [3_000, 120],
+      ],
+    };
+
+    const { prices, timestamps } = buildAssetDetailChartSeries({
+      chartData,
+      selectedRange: "1d",
+      latestPrice: { price: 150, timestamp: 10_000 },
+    });
+
+    expect(prices.at(-2)).toBe(120);
+    expect(prices.at(-1)).toBe(150);
+    expect(timestamps.at(-1)).toBe(10_000);
+  });
 });

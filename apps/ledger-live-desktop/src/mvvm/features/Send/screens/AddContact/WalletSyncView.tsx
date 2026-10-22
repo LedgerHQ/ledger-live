@@ -21,7 +21,7 @@ export function WalletSyncView({
       <div className="pointer-events-none absolute inset-x-0 top-0 h-full bg-gradient-muted" />
       <div className="flex flex-col gap-32">
         <div className="flex w-full flex-col items-center gap-24">
-          <Spot appearance="icon" size={72} icon={Refresh} />
+          <Spot size={72} icon={Refresh} />
           <div className="flex flex-col items-center gap-8 text-center">
             <h3 className="heading-4-semi-bold text-base">
               {t("newSendFlow.addContact.syncWallet.title")}

@@ -86,7 +86,7 @@ export interface PltTransfer {
    */
   amount: bigint;
   /**
-   * The token's decimal places, 0 to 128.
+   * The token's decimal places, 0 to {@link PLT_MAX_DECIMALS}.
    *
    * Must equal the token's registered decimals. The chain compares the two and
    * rejects a mismatch with `deserializationFailure` rather than rescaling, and
@@ -181,8 +181,8 @@ export function encodePltAddress(address: AccountAddress, includeCoinInfo = fals
  * 256 bytes of text string and 261 with the wrapper, and the node checks the
  * former. Those 5 bytes count against {@link PLT_CBOR_MAX_SIZE} instead.
  *
- * The device app unwraps the tag but does not yet decode the content, so its
- * signing screen renders these bytes rather than the text until it does.
+ * The device app decodes the tag-24 content and shows the whole text on its
+ * signing screen. It refuses any other memo form.
  *
  * @throws If the memo exceeds {@link MAX_MEMO_LENGTH} bytes of UTF-8
  */

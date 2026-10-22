@@ -1,5 +1,19 @@
 # @ledgerhq/ledger-trust-service
 
+## 0.8.21
+
+### Patch Changes
+
+- Updated dependencies [[`ee508db`](https://github.com/LedgerHQ/ledger-live/commit/ee508db35d572d43e03cf58e811177cc3b2389a9), [`68cebc0`](https://github.com/LedgerHQ/ledger-live/commit/68cebc06f2ec8f4cc38ac1caca779317a8fe0711)]:
+  - @shared/env@0.11.0
+
+## 0.8.21-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ee508db`](https://github.com/LedgerHQ/ledger-live/commit/ee508db35d572d43e03cf58e811177cc3b2389a9), [`68cebc0`](https://github.com/LedgerHQ/ledger-live/commit/68cebc06f2ec8f4cc38ac1caca779317a8fe0711)]:
+  - @shared/env@0.11.0-next.0
+
 ## 0.8.20
 
 ### Patch Changes
@@ -141,19 +155,5 @@
 - Updated dependencies [[`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
   - @ledgerhq/live-network@3.0.0-next.0
   - @shared/env@0.1.1-next.0
-
-## 0.8.10
-
-### Patch Changes
-
-- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
-  - @ledgerhq/live-network@2.7.0
-
-## 0.8.10-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
-  - @ledgerhq/live-network@2.7.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

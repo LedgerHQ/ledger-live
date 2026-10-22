@@ -14,15 +14,6 @@ import { ContactsListView } from "./ContactsListView.web";
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
-const labels = {
-  title: "Contacts",
-  searchPlaceholder: "Search contact",
-  searchNoResults: "No contact found",
-  addContact: "Add contact",
-  ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
-  formatAddressCount: (count: number) => `${count} address`,
-};
-
 const getDisplayName = (contact: Contact) => contact.name;
 
 type RenderContactsPageOptions = Readonly<{
@@ -55,7 +46,6 @@ function renderContactsPage({
   render(
     <ContactsListView
       viewModel={viewModel}
-      labels={labels}
       onOpenMe={onOpenMe}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
@@ -105,10 +95,10 @@ describe("ContactsPage", () => {
     expect(screen.getByTestId("contacts-list-pane")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-pane").childElementCount).toBe(0);
     expect(contactsList).toBeVisible();
-    expect(pageLayout).toHaveTextContent("Contacts");
+    expect(pageLayout).toHaveTextContent("contacts.title");
     expect(contactsList).toHaveTextContent("Me");
-    expect(contactsList).toHaveTextContent("0 address");
-    expect(contactsList).toHaveTextContent("Add contact");
+    expect(contactsList).toHaveTextContent("contacts.addressCount");
+    expect(contactsList).toHaveTextContent("contacts.addContact");
     expect(screen.queryByTestId("contacts-section-A")).not.toBeInTheDocument();
   });
 
@@ -128,15 +118,13 @@ describe("ContactsPage", () => {
     expect(screen.getByTestId("contacts-section-D")).toBeVisible();
     expect(screen.getByTestId("contacts-section-O")).toBeVisible();
     expect(contactsList).toHaveTextContent("Ada");
-    expect(contactsList).toHaveTextContent("0 address");
+    expect(contactsList).toHaveTextContent("contacts.addressCount");
     expect(contactsList).toHaveTextContent("Ben");
-    expect(contactsList).toHaveTextContent("2 address");
     expect(contactsList).toHaveTextContent("Charlie");
-    expect(contactsList).toHaveTextContent("1 address");
     expect(contactsList).toHaveTextContent("Diana");
     expect(contactsList).toHaveTextContent("Olive");
     expect(screen.getByTestId("contacts-saved-avatar-contact-ada")).toHaveTextContent("A");
-    expect(contactsList).toHaveTextContent("Add contact");
+    expect(contactsList).toHaveTextContent("contacts.addContact");
   });
 
   it("renders the add contact row as the last item in the scrollable contacts list", () => {
@@ -225,7 +213,6 @@ describe("ContactsPage", () => {
     render(
       <ContactsListView
         viewModel={createContactsSearchViewModel(me, contacts, "ben", getDisplayName)}
-        labels={labels}
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}
         onAddContact={jest.fn()}
@@ -249,7 +236,6 @@ describe("ContactsPage", () => {
     render(
       <ContactsListView
         viewModel={createContactsSearchViewModel(me, contacts, "unknown", getDisplayName)}
-        labels={labels}
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}
         onAddContact={jest.fn()}
@@ -262,7 +248,7 @@ describe("ContactsPage", () => {
     const contactsList = screen.getByTestId("contacts-list");
 
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
-    expect(screen.getByText("No contact found")).toBeVisible();
+    expect(screen.getByText("contacts.searchNoResults")).toBeVisible();
     expect(contactsList).not.toHaveTextContent("Ben");
     expect(screen.queryByTestId("contacts-add-contact")).not.toBeInTheDocument();
     expect(screen.queryByTestId("contacts-add-contact-header")).not.toBeInTheDocument();

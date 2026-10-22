@@ -1,0 +1,18 @@
+{
+  "name": "@support/fmt",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The repository's oxfmt config, re-exported by the workspace root",
+  "exports": {
+    ".": "./oxfmt.config.mts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "format": "oxfmt oxfmt.config.mts",
+    "format:check": "oxfmt oxfmt.config.mts --check"
+  },
+  "devDependencies": {
+    "oxfmt": "catalog:"
+  }
+}

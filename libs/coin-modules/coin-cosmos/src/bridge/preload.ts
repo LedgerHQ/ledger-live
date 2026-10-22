@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
@@ -13,7 +12,7 @@ export const getPreloadStrategy = () => ({
 
 export const preload = async (currency: CryptoCurrency) => {
   const config = cosmosCoinConfig.getCoinConfig(currency.id);
-  const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById(currency.id), {
+  const cosmosValidatorsManager = new CosmosValidatorsManager(currency, {
     endPoint: (config as unknown as CosmosCurrencyConfig).lcd,
   });
   const validators = await cosmosValidatorsManager.getValidators();
@@ -49,7 +48,7 @@ export const hydrate = (
   relatedImpl.ledgerValidator = config?.ledgerValidator;
 
   if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
-  const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById(currency.id));
+  const cosmosValidatorsManager = new CosmosValidatorsManager(currency);
   cosmosValidatorsManager.hydrateValidators(validators);
   setCosmosPreloadData(currency.id, asSafeCosmosPreloadData(data));
 };

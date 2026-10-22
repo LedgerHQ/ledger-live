@@ -9,10 +9,27 @@ import { createBridges } from "./index";
 import { ZCASH_ESTIMATION_RECIPIENT } from "../constants";
 import type { SignerContext } from "../types/signer";
 import type { ZcashAccount } from "../types/bridge";
+import { firstValueFrom, of } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/devices";
+import type { SignOperationEvent } from "@ledgerhq/types-live";
+import { ZcashShieldedNotSupportedOnDevice } from "../types/errors";
+import { buildSignOperation } from "./signOperation";
+import { buildLegacySignOperation, buildPreparedLegacySignOperation } from "../legacy";
 import { getZCashClient } from "../logic/engineClient";
 import { testContext } from "../test/coinConfig";
 
 jest.mock("../logic/engineClient", () => ({ getZCashClient: jest.fn() }));
+
+// Each builder returns its own marker function, so a test can tell which one served the call.
+const shieldedSign = jest.fn(() => of({ type: "shielded" } as unknown as SignOperationEvent));
+const legacySign = jest.fn(() => of({ type: "legacy" } as unknown as SignOperationEvent));
+const nanoSSign = jest.fn(() => of({ type: "nanoS" } as unknown as SignOperationEvent));
+jest.mock("./signOperation", () => ({ buildSignOperation: jest.fn(() => shieldedSign) }));
+jest.mock("../legacy", () => ({
+  ...jest.requireActual("../legacy"),
+  buildLegacySignOperation: jest.fn(() => legacySign),
+  buildPreparedLegacySignOperation: jest.fn(() => nanoSSign),
+}));
 const mockedGetZCashClient = jest.mocked(getZCashClient);
 
 const currency = getCryptoCurrencyById("zcash");
@@ -86,5 +103,90 @@ describe("createBridges", () => {
     await accountBridge.getShieldedAddress(account, { deviceId: "device-1", display: true });
 
     expect(getShieldedAddress).toHaveBeenCalledWith("44'/133'/0'/0/4", true);
+  });
+});
+
+describe("signOperation routing", () => {
+  const sign = (
+    flag: { on: boolean },
+    deviceModelId: DeviceModelId | undefined,
+    transferType = "transparent",
+  ) => {
+    const { accountBridge } = createBridges(makeSignerContext(jest.fn()), testContext, {
+      isShieldedEnabled: () => flag.on,
+    });
+    return firstValueFrom(
+      accountBridge.signOperation({
+        account,
+        deviceId: "d",
+        deviceModelId,
+        transaction: { transferType },
+      } as never),
+    );
+  };
+
+  beforeEach(() => {
+    shieldedSign.mockClear();
+    legacySign.mockClear();
+    nanoSSign.mockClear();
+  });
+
+  it("builds each signer once from the bridge context", () => {
+    createBridges(makeSignerContext(jest.fn()), testContext);
+
+    expect(buildSignOperation).toHaveBeenCalled();
+    expect(buildLegacySignOperation).toHaveBeenCalled();
+    expect(buildPreparedLegacySignOperation).toHaveBeenCalled();
+  });
+
+  it.each([DeviceModelId.nanoS, DeviceModelId.nanoX, undefined])(
+    "uses the legacy signer for %s when the shielded engine is off",
+    async model => {
+      expect(await sign({ on: false }, model)).toEqual({ type: "legacy" });
+    },
+  );
+
+  it.each([DeviceModelId.nanoSP, DeviceModelId.nanoX, DeviceModelId.stax, undefined])(
+    "uses the shielded signer for %s when the engine is on",
+    async model => {
+      expect(await sign({ on: true }, model, "shielded")).toEqual({ type: "shielded" });
+    },
+  );
+
+  it("signs a Nano S transparent send through the prepared legacy path", async () => {
+    expect(await sign({ on: true }, DeviceModelId.nanoS)).toEqual({ type: "nanoS" });
+    expect(shieldedSign).not.toHaveBeenCalled();
+  });
+
+  it.each(["transparent-to-shielded", "shielded-to-transparent", "shielded"])(
+    "refuses a Nano S %s send with a dedicated error",
+    async transferType => {
+      await expect(sign({ on: true }, DeviceModelId.nanoS, transferType)).rejects.toBeInstanceOf(
+        ZcashShieldedNotSupportedOnDevice,
+      );
+      expect(shieldedSign).not.toHaveBeenCalled();
+      expect(legacySign).not.toHaveBeenCalled();
+      expect(nanoSSign).not.toHaveBeenCalled();
+    },
+  );
+
+  it("reads the flag on every call", async () => {
+    const flag = { on: false };
+    const { accountBridge } = createBridges(makeSignerContext(jest.fn()), testContext, {
+      isShieldedEnabled: () => flag.on,
+    });
+    const run = () =>
+      firstValueFrom(
+        accountBridge.signOperation({
+          account,
+          deviceId: "d",
+          deviceModelId: DeviceModelId.nanoX,
+          transaction: { transferType: "shielded" },
+        } as never),
+      );
+
+    expect(await run()).toEqual({ type: "legacy" });
+    flag.on = true;
+    expect(await run()).toEqual({ type: "shielded" });
   });
 });

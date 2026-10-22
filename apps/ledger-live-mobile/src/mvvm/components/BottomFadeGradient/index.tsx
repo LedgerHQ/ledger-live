@@ -26,11 +26,7 @@ export function BottomFadeGradient() {
       pointerEvents="none"
       style={[styles.container, { height: GRADIENT_HEIGHT + bottomInset }]}
     >
-      <LinearGradient
-        stops={GRADIENT_STOPS}
-        style={StyleSheet.absoluteFillObject}
-        pointerEvents="none"
-      />
+      <LinearGradient stops={GRADIENT_STOPS} style={StyleSheet.absoluteFill} pointerEvents="none" />
     </Box>
   );
 }

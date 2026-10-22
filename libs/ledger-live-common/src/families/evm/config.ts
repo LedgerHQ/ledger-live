@@ -580,26 +580,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_velas_evm: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 106,
-      name: "Velas EVM",
-      unit: { name: "VLX", code: "VLX", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://evmexplorer.velas.com/rpc",
-      },
-      explorer: {
-        type: "blockscout",
-        uri: "https://evmexplorer.velas.com/api",
-      },
-    },
-  },
   config_currency_syscoin: {
     type: "object",
     default: {
@@ -1279,6 +1259,23 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       node: { type: "external", uri: "https://rpc.testnet.chain.robinhood.com" },
       explorer: {
         type: "none",
+      },
+    },
+  },
+  config_currency_alpen_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      chainId: 20310,
+      name: "Alpen Testnet",
+      unit: { name: "BTC", code: "BTC", magnitude: 18 },
+      node: { type: "external", uri: "https://alpen.testnet.alpen.org" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.testnet.alpen.org/api",
       },
     },
   },

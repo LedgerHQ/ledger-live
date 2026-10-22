@@ -304,6 +304,33 @@
     "coinControl" : "币控制",
     "feesAmount" : "费用额度"
   },
+  "accountDetailSettings" : {
+    "title" : "账户设置",
+    "menu" : {
+      "changeName" : "更改名称",
+      "viewAdvancedLogs" : "查看高级日志",
+      "removeAccount" : "从资产组合中删除账户"
+    },
+    "changeName" : {
+      "title" : "修改账户名称",
+      "description" : "为此地址命名以方便管理（例如：{{ticker}}-交易、{{ticker}}-DeFi）。",
+      "label" : "地址名称",
+      "submit" : "修改名称"
+    },
+    "advancedLogs" : {
+      "title" : "高级日志",
+      "derivationTip" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
+      "synchronised" : "已同步 {{date}}",
+      "copy" : "复制日志",
+      "copied" : "已复制"
+    },
+    "remove" : {
+      "title" : "移除账号？",
+      "description" : "与该账户关联的资产将不再显示在您的资产组合中。您在区块链上的资产不受影响。",
+      "confirm" : "是的，移除。",
+      "cancel" : "保留"
+    }
+  },
   "sidebar" : {
     "card" : "卡",
     "paytab" : "付款",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle" : "资金到期中",
         "pendingNotice" : "部分隐蔽资金尚未成熟，暂时可能无法支出。"
       },
+      "aleoPublic" : {
+        "title" : "公开余额"
+      },
+      "aleoPrivate" : {
+        "title" : "私密余额"
+      },
       "zeroBalance" : {
         "warning" : "无可用余额"
+      },
+      "requiresSync" : {
+        "notice" : "需要同步"
       }
     }
   },
@@ -7783,6 +7819,14 @@
       "title" : "这些资金目前尚无法支出",
       "description" : "请在几分钟后重试"
     },
+    "ZcashShieldedNotSupportedOnDevice" : {
+      "title" : "该设备只能在透明地址之间发送。",
+      "description" : "使用 Ledger Nano S Plus、Nano X、Flex 或 Stax 向隐私地址发送或从隐私地址发送。"
+    },
+    "ZcashPreparedBuildMismatch" : {
+      "title" : "交易自您核对后已发生变化。",
+      "description" : "您的余额或费用已发生变化。请重新核对该交易。"
+    },
     "InvalidNonce" : {
       "title" : "需要 Nonce"
     },
@@ -9829,7 +9873,7 @@
             "subtitle" : "已屏蔽",
             "unavailable" : "私密余额不可用"
           },
-          "spendableWarning" : "可用余额可能低于总余额。最近转入屏蔽池的资金需经过区块确认和完整扫描（约 15 分钟）后方可使用。"
+          "spendableWarning" : "可用余额可能低于总余额。最近转入屏蔽池的资金需经过区块确认和完整扫描后方可使用。"
         },
         "memo" : {
           "label" : "Memo（可选）",
@@ -10090,11 +10134,25 @@
         "recordsUsed" : "已使用的记录",
         "signingTime" : "签署时间"
       },
+      "amount" : {
+        "signingTime" : {
+          "label" : "签署时间",
+          "description" : "您的 Ledger 签署设备批准该交易使用的每条记录。从您的私密余额中发送更多资金可能会使用更多记录，并需要更长时间。"
+        }
+      },
       "mandatoryPrivateSync" : {
         "title" : "正在同步您的私密余额 ({{percentage}}%)",
         "desc" : "请稍候",
         "errorTitle" : "私密同步失败",
         "errorDesc" : "出了点问题，请重试"
+      },
+      "balanceTypeSync" : {
+        "title" : "正在刷新您的私密余额",
+        "progress" : "{{percentage}}%",
+        "errorTitle" : "私密同步失败",
+        "errorDescription" : "出了点问题，请重试",
+        "recordLimitTitle" : "您最多可发送 {{amount}}",
+        "recordLimitDescription" : "您的余额分布在多条记录中，单笔交易最多可使用 {{maxRecords}}。如需发送更多，请分多笔交易进行。"
       }
     },
     "operationTypes" : {
@@ -10573,6 +10631,14 @@
           "description" : "通过 Ledger Sync 账户同步功能进行端到端加密。"
         }
       }
+    }
+  },
+  "accountDetail" : {
+    "header" : {
+      "settings" : "账户设置"
+    },
+    "assets" : {
+      "title" : "资产"
     }
   },
   "assetDetails" : {
@@ -11113,6 +11179,9 @@
       "amountExceedsBalance" : "余额不足",
       "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
     }
+  },
+  "actionMenuDialog" : {
+    "a11yTitle" : "选择操作"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "存款签署",

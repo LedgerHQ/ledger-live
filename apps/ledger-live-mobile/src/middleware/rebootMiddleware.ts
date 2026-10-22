@@ -1,6 +1,6 @@
 import { Middleware } from "@reduxjs/toolkit";
 import { AppStateActionTypes } from "../actions/types";
-import { wipeCountervalues } from "@features/platform-market-countervalues";
+import { wipeCountervalues } from "@domain/entity-market-countervalues";
 import { State } from "~/reducers/types";
 
 const isRebootAction = (action: unknown): boolean => {

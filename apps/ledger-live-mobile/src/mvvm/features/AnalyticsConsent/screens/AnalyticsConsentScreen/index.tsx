@@ -68,7 +68,7 @@ const AnalyticsConsent = () => {
               autoPlay
               loop={false}
               source={animationSource}
-              style={StyleSheet.absoluteFillObject}
+              style={StyleSheet.absoluteFill}
             />
 
             <Box style={{ marginTop: "auto" }} lx={{ paddingHorizontal: "s16", gap: "s32" }}>

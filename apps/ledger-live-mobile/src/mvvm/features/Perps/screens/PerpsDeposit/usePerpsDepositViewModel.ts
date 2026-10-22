@@ -8,7 +8,7 @@ import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/depo
 import { useFeature } from "@features/platform-feature-flags";
 import {
   useCalculateCountervalueCallback,
-  useCountervaluesState,
+  useCountervaluesCache,
 } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
@@ -159,7 +159,7 @@ export function usePerpsDepositViewModel({
   );
 
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
-  const countervaluesState = useCountervaluesState();
+  const countervaluesState = useCountervaluesCache();
 
   /** Prices the typed amount back into `currency`, in its smallest unit. */
   const toCurrencyAmount = useCallback(

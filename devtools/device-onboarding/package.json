@@ -1,6 +1,6 @@
 {
   "name": "@devtools/device-onboarding",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Run the shared device onboarding flow against a real device.",
   "main": "src/index.ts",
@@ -29,7 +29,7 @@
     "unimported": "pnpm knip --directory ../.. -c devtools/device-onboarding/knip.web.config.mjs -W devtools/device-onboarding --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/device-onboarding/knip.native.config.mjs -W devtools/device-onboarding --tsConfig tsconfig.native.json"
   },
   "dependencies": {
-    "@ledgerhq/device-onboarding": "workspace:*"
+    "@features/platform-device-onboarding": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-devtools": "workspace:*",

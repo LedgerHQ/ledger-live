@@ -1,0 +1,38 @@
+{
+  "name": "@shared/app-config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values and the thunk extraArgument contracts they feed",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -W shared/app-config",
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-shared": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

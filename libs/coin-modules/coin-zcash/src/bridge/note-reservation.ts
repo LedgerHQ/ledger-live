@@ -30,7 +30,7 @@ import type { ZcashOperationExtra } from "../types/bridge";
  * A sync reaching the chain tip is deliberately not one of them: catching up to
  * the tip a run started from is the outcome of nearly every poll of an account
  * that is not backlogged, and says nothing about a spend in flight, which needs
- * a block (~75s) at the very least to confirm.
+ * at least one new block to confirm.
  *
  * Scope: single-user desktop/mobile session. The store is module-level and
  * therefore shared for the lifetime of the process. It does not survive a

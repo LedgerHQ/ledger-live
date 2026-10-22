@@ -16,13 +16,19 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
 ];
 
 export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
-  // Not registered yet (absent from SEND_FLOW_STEP_ORDER): the balance-type selection step only
-  // exists on desktop so far. Kept to satisfy the Record<SendFlowStep, SendStepConfig> contract.
+  // Not registered yet (absent from SEND_FLOW_STEP_ORDER): the balance-type steps only exist
+  // on desktop so far. Kept to satisfy the Record<SendFlowStep, SendStepConfig> contract.
   [SEND_FLOW_STEP.BALANCE_TYPE]: {
     id: SEND_FLOW_STEP.BALANCE_TYPE,
     canGoBack: false,
     showHeaderRight: false,
     showTitle: true,
+  },
+  [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: {
+    id: SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
+    canGoBack: false,
+    showHeaderRight: false,
+    showTitle: false,
   },
   [SEND_FLOW_STEP.RECIPIENT]: {
     id: SEND_FLOW_STEP.RECIPIENT,

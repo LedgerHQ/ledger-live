@@ -44,7 +44,7 @@ export function ChartOptionsSheetView({
           testID={ASSET_DETAIL_TEST_IDS.chartOptionsToggleTransactionsRow}
         >
           <ListItemLeading>
-            <Spot appearance="icon" icon={isHidden ? Eye : EyeCross} />
+            <Spot icon={isHidden ? Eye : EyeCross} />
             <ListItemContent>
               <ListItemTitle>{toggleTransactionsTitle}</ListItemTitle>
             </ListItemContent>

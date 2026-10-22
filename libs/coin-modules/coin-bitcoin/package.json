@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "0.55.0",
+  "version": "1.0.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -36,6 +36,11 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -49,14 +54,13 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/psbtv2": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
     "@noble/hashes": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "bitcoinjs-lib": "^6.1.7",
+    "bitcoinjs-lib": "^7.0.2",
     "bs58": "catalog:",
     "cashaddrjs": "^0.4.4",
     "invariant": "^2.2.2",
@@ -65,7 +69,7 @@
     "utility-types": "^3.10.0"
   },
   "devDependencies": {
-    "@bitcoinerlab/secp256k1": "1.2.0",
+    "@bitcoinerlab/secp256k1": "2.0.0",
     "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -88,9 +92,10 @@
     "@types/sha.js": "^2.4.4",
     "bip32": "^4.0.0",
     "bip39": "^3.0.4",
-    "ecpair": "3.0.1",
+    "ecpair": "3.0.2",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
+    "msw": "catalog:",
     "object-hash": "^2.2.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

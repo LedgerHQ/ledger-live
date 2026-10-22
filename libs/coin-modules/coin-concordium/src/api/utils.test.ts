@@ -36,7 +36,7 @@ describe("mapRawOperationToApiOperation", () => {
 
     expect(result.tx.block.height).toBe(500);
 
-    expect(result.value).toBe(BigInt(1000500));
+    expect(result.value).toBe(BigInt(1000000));
     expect(result.tx.fees).toBe(BigInt(500));
     expect(result.type).toBe("OUT");
     expect(result.senders).toEqual([raw.sender]);
@@ -75,11 +75,19 @@ describe("mapRawOperationToApiOperation", () => {
   });
 
   it("should map IN operations correctly", () => {
-    const raw = createRawOperation({ type: "IN", value: "2000000", fee: "0" });
+    const raw = createRawOperation({ type: "IN", amount: "2000000", value: "2000000", fee: "0" });
     const result = mapRawOperationToApiOperation(raw, ADDRESS);
 
     expect(result.type).toBe("IN");
     expect(result.value).toBe(BigInt(2000000));
+  });
+
+  it("reports a fee-only operation as worth nothing, leaving the cost on tx.fees", () => {
+    const raw = createRawOperation({ amount: "0", value: "500", recipient: "", failed: true });
+    const result = mapRawOperationToApiOperation(raw, ADDRESS);
+
+    expect(result.value).toBe(BigInt(0));
+    expect(result.tx.fees).toBe(BigInt(500));
   });
 
   it("should mark failed transactions", () => {
@@ -87,6 +95,18 @@ describe("mapRawOperationToApiOperation", () => {
     const result = mapRawOperationToApiOperation(raw, ADDRESS);
 
     expect(result.tx.failed).toBe(true);
+  });
+
+  it("carries the fee payer onto the transaction", () => {
+    const raw = createRawOperation({ feesPayer: ADDRESS });
+
+    expect(mapRawOperationToApiOperation(raw, ADDRESS).tx.feesPayer).toBe(ADDRESS);
+  });
+
+  it("omits the fee payer when none is known", () => {
+    expect(mapRawOperationToApiOperation(createRawOperation(), ADDRESS).tx).not.toHaveProperty(
+      "feesPayer",
+    );
   });
 
   it("names no counterparty when the chain named none, rather than an empty address", () => {
@@ -97,7 +117,12 @@ describe("mapRawOperationToApiOperation", () => {
 
   describe("PLT operations", () => {
     it("reports the token rather than the native asset", () => {
-      const raw = createRawOperation({ tokenId: "trUSDT", decimals: 6, value: "3000000" });
+      const raw = createRawOperation({
+        tokenId: "trUSDT",
+        decimals: 6,
+        amount: "3000000",
+        value: "3000000",
+      });
       const result = mapRawOperationToApiOperation(raw, ADDRESS);
 
       expect(result.asset).toEqual({

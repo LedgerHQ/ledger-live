@@ -20,8 +20,9 @@
  * ...) is passed through untouched -- this is the real, unmocked engine
  * hitting the real, local zaino gRPC endpoint.
  */
-import type { ZCashClient, ZCashClientArgs } from "@ledgerhq/coin-zcash/network/types";
 import type {
+  ZCashClient,
+  ZCashClientArgs,
   BuildIronwoodTransactionArgs,
   BuildIronwoodTransactionResult,
   BuildTransactionArgs,
@@ -33,7 +34,7 @@ import { toRegtestAddress } from "./regtestAddress";
 // The pinned catalog @ledgerhq/zcash-utils only added regtest network support
 // (LIVE-36479) after this seam was first written; both build jobs now force
 // `network: "regtest"` (instead of forwarding whatever coin-zcash's own
-// zainoEndpoint() derived from the coin config -- see scenarii/zcash.ts, which
+// zainoEndpoint() derives for zcash_regtest -- see scenarii/zcash.ts, which
 // keeps that at "mainnet" for the *sync* path, which does not accept
 // "regtest" -- see network.rs's parse_network vs parse_any_network) so the
 // native builder's NU5/NU6.3 activation-height gate is satisfiable at all

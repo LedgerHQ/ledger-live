@@ -224,7 +224,8 @@ export function runCliLiveData(opts: LiveDataOpts): Promise<string> {
   if (opts.currency) cliOpts.push(`--currency+${opts.currency}`);
   if (opts.index !== undefined) cliOpts.push(`--index+${opts.index}`);
   if (opts.appjson) cliOpts.push(`--appjson+${opts.appjson}`);
-  if (opts.scheme) cliOpts.push(`--scheme+${opts.scheme}`);
+  // An empty scheme is meaningful: the CLI then scans only the legacy (BIP44) derivation.
+  if (opts.scheme !== undefined) cliOpts.push(`--scheme+${opts.scheme}`);
   if (opts.add) cliOpts.push("--add");
   return runCliCommandWithRetry(cliOpts.join("+"));
 }

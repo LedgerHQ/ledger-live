@@ -14,11 +14,12 @@ type Props = Readonly<{
   extra?: React.ReactNode;
   onBack?: () => void;
   trailing?: React.ReactNode;
+  className?: string;
 }>;
 
-export default function PageHeader({ title, extra, onBack, trailing }: Props) {
+export default function PageHeader({ title, extra, onBack, trailing, className }: Props) {
   return (
-    <NavBar data-testid="page-header">
+    <NavBar data-testid="page-header" className={className}>
       {onBack ? <NavBarBackButton onClick={onBack} /> : null}
       <NavBarLeading>
         <NavBarTitle>

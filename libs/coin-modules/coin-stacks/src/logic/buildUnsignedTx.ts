@@ -21,7 +21,7 @@ import {
   getConfiguredStacksNetwork,
   validateAddress,
 } from "../common-logic";
-import { STACKS_DUMMY_ADDRESS } from "../constants";
+import { STACKS_DUMMY_ADDRESS, STACKS_DUMMY_PUBLIC_KEY } from "../constants";
 import { fetchPoxInfo } from "../network/pox";
 import type { StacksTxData } from "../types";
 import { getBalance } from "./getBalance";
@@ -32,6 +32,22 @@ import { getStakes } from "./getStakes";
  * structurally in the tx with no "encode empty" fallback. Never reaches a real send. */
 function resolveRecipient(recipient: string): string {
   return validateAddress(recipient).isValid ? recipient : STACKS_DUMMY_ADDRESS;
+}
+
+function resolveSenderPublicKey(
+  senderPublicKey: string | undefined,
+  forEstimation: boolean,
+): string {
+  if (
+    senderPublicKey !== undefined &&
+    /^(?:0[23][0-9a-f]{64}|04[0-9a-f]{128})$/i.test(senderPublicKey)
+  ) {
+    return senderPublicKey;
+  }
+  if (forEstimation) {
+    return STACKS_DUMMY_PUBLIC_KEY;
+  }
+  throw new Error("stacks: senderPublicKey is required to craft a transaction");
 }
 
 function parseSip010AssetReference(assetReference: string): {
@@ -107,9 +123,7 @@ async function buildTransfer(
   nonce: bigint,
   forEstimation: boolean,
 ): Promise<StacksTransactionWire> {
-  if (!intent.senderPublicKey) {
-    throw new Error("stacks: senderPublicKey is required to craft a transaction");
-  }
+  const senderPublicKey = resolveSenderPublicKey(intent.senderPublicKey, forEstimation);
   const network = getConfiguredStacksNetwork();
   const feeAmount = new BigNumber(fee.toString());
   const nonceAmount = new BigNumber(nonce.toString());
@@ -128,7 +142,7 @@ async function buildTransfer(
       resolveRecipient(intent.recipient),
       AnchorMode.Any,
       network,
-      intent.senderPublicKey,
+      senderPublicKey,
       {
         fee: feeAmount,
         nonce: nonceAmount,
@@ -151,7 +165,7 @@ async function buildTransfer(
     recipientAddress: resolveRecipient(intent.recipient),
     anchorMode: AnchorMode.Any,
     network,
-    publicKey: intent.senderPublicKey,
+    publicKey: senderPublicKey,
     fee: feeAmount,
     nonce: nonceAmount,
   });
@@ -161,10 +175,9 @@ async function buildStaking(
   intent: StakingTransactionIntent<MemoNotSupported, StacksTxData>,
   fee: bigint,
   nonce: bigint,
+  forEstimation: boolean,
 ): Promise<StacksTransactionWire> {
-  if (!intent.senderPublicKey) {
-    throw new Error("stacks: senderPublicKey is required to craft a transaction");
-  }
+  const senderPublicKey = resolveSenderPublicKey(intent.senderPublicKey, forEstimation);
   const network = getConfiguredStacksNetwork();
 
   const poxInfo = await fetchPoxInfo();
@@ -195,7 +208,7 @@ async function buildStaking(
         signerCalldata ? someCV(bufferCV(Buffer.from(signerCalldata, "hex"))) : noneCV(),
       ],
       network,
-      publicKey: intent.senderPublicKey,
+      publicKey: senderPublicKey,
       fee: fee.toString(),
       nonce: nonce.toString(),
       // `stake` needs the amount bound `ustxToLock()` provides, unlike willPerformPox/
@@ -221,7 +234,7 @@ async function buildStaking(
       functionName: "unstake",
       functionArgs: [contractPrincipalCV(signerAddress, signerName)],
       network,
-      publicKey: intent.senderPublicKey,
+      publicKey: senderPublicKey,
       fee: fee.toString(),
       nonce: nonce.toString(),
       postConditions: [Pc.principal(intent.sender).willNotPerformPox()],
@@ -244,6 +257,7 @@ export async function buildUnsignedTx(
       intent as StakingTransactionIntent<MemoNotSupported, StacksTxData>,
       fee,
       nonce,
+      forEstimation,
     );
   }
   return buildTransfer(intent, fee, nonce, forEstimation);

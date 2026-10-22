@@ -8,7 +8,7 @@ const GenericError = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-8" data-testid="generic-error">
-      <Spot appearance="icon" icon={Warning} />
+      <Spot icon={Warning} />
       <span className="body-2-semi-bold text-base">{t("marketBanner.genericError")}</span>
     </div>
   );

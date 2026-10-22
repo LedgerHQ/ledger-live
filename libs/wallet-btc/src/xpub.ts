@@ -2,7 +2,7 @@ import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types"
 import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { NotEnoughBalance, RbfBuildError } from "./errors";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
@@ -95,7 +95,12 @@ class Xpub {
     this.freshAddressIndex = 0;
   }
 
-  async syncAddress(account: number, index: number, needReorg: boolean): Promise<boolean> {
+  async syncAddress(
+    logger: Logger,
+    account: number,
+    index: number,
+    needReorg: boolean,
+  ): Promise<boolean> {
     const address = await this.crypto.getAddress(this.derivationMode, this.xpub, account, index);
 
     this.storage.addAddress(
@@ -103,7 +108,7 @@ class Xpub {
       address,
     );
     if (needReorg) {
-      await this.checkAddressReorg(account, index);
+      await this.checkAddressReorg(logger, account, index);
     }
     // in case pendings have changed we clean them out
     const hasPendings = this.storage.hasPendingTx({
@@ -111,9 +116,9 @@ class Xpub {
       index,
     });
     if (hasPendings) {
-      this.storage.removePendingTxs({ account, index });
+      this.storage.removePendingTxs(logger, { account, index });
     }
-    await this.fetchHydrateAndStoreNewTxs(address, account, index);
+    await this.fetchHydrateAndStoreNewTxs(logger, address, account, index);
     const hasTx = this.storage.hasTx({
       account,
       index,
@@ -125,9 +130,14 @@ class Xpub {
     return hasTx;
   }
 
-  async checkAddressesBlock(account: number, index: number, needReorg: boolean): Promise<boolean> {
+  async checkAddressesBlock(
+    logger: Logger,
+    account: number,
+    index: number,
+    needReorg: boolean,
+  ): Promise<boolean> {
     const results = await Promise.allSettled(
-      range(this.GAP).map((_, key) => this.syncAddress(account, index + key, needReorg)),
+      range(this.GAP).map((_, key) => this.syncAddress(logger, account, index + key, needReorg)),
     );
     let hasTx = false;
     let loggedInvalidXpub = false;
@@ -136,7 +146,7 @@ class Xpub {
         hasTx = hasTx || !!result.value;
       } else if (result.reason instanceof Error && result.reason.name === "InvalidXpub") {
         if (!loggedInvalidXpub) {
-          log("btcwallet", "checkAddressesBlock: skipping block with undecodable xpub", {
+          logger("btcwallet", "checkAddressesBlock: skipping block with undecodable xpub", {
             account,
             error: result.reason.message,
           });
@@ -149,17 +159,17 @@ class Xpub {
     return hasTx;
   }
 
-  async syncAccount(account: number, needReorg: boolean): Promise<number> {
+  async syncAccount(logger: Logger, account: number, needReorg: boolean): Promise<number> {
     let index = 0;
     // eslint-disable-next-line no-await-in-loop
-    while (await this.checkAddressesBlock(account, index, needReorg)) {
+    while (await this.checkAddressesBlock(logger, account, index, needReorg)) {
       index += this.GAP;
     }
     return index;
   }
 
   // TODO : test fail case + incremental
-  async sync(): Promise<void> {
+  async sync(logger: Logger): Promise<void> {
     this.freshAddressIndex = 0;
     const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
     let needReorg = !!highestBlockFromStorage;
@@ -175,8 +185,8 @@ class Xpub {
       this.syncedBlockHeight = -1;
     }
     await Promise.all([
-      this.syncAccount(0, needReorg), // for receive addresses
-      this.syncAccount(1, needReorg), // for change addresses
+      this.syncAccount(logger, 0, needReorg), // for receive addresses
+      this.syncAccount(logger, 1, needReorg), // for change addresses
     ]);
     this.freshAddress = await this.crypto.getAddress(
       this.derivationMode,
@@ -227,7 +237,7 @@ class Xpub {
     return address;
   }
 
-  async buildTx(params: BuildTxParams): Promise<TransactionInfo> {
+  async buildTx(logger: Logger, params: BuildTxParams): Promise<TransactionInfo> {
     const {
       amount,
       opReturnData,
@@ -261,7 +271,7 @@ class Xpub {
         );
       }
     } else {
-      txSelection = await this.buildRegularSelection({
+      txSelection = await this.buildRegularSelection(logger, {
         outputs,
         utxoPickingStrategy,
         feePerByte,
@@ -399,7 +409,7 @@ class Xpub {
           throw new Error("Previous output not found");
         }
 
-        const address = scriptToAddress(prevOut.script, this.crypto);
+        const address = scriptToAddress(Buffer.from(prevOut.script), this.crypto);
 
         // Look up the derivation path for this address from storage
         const storedTx = this.storage.getTx(address, prevTxId);
@@ -452,17 +462,25 @@ class Xpub {
     };
   }
 
-  private async buildRegularSelection({
-    outputs,
-    utxoPickingStrategy,
-    feePerByte,
-    amount,
-    sequence,
-  }: Pick<BuildTxParams, "utxoPickingStrategy" | "feePerByte" | "amount" | "sequence"> & {
-    outputs: OutputInfo[];
-  }): Promise<BuildTxSelection> {
+  private async buildRegularSelection(
+    logger: Logger,
+    {
+      outputs,
+      utxoPickingStrategy,
+      feePerByte,
+      amount,
+      sequence,
+    }: Pick<BuildTxParams, "utxoPickingStrategy" | "feePerByte" | "amount" | "sequence"> & {
+      outputs: OutputInfo[];
+    },
+  ): Promise<BuildTxSelection> {
     const txHexMap = await this.prefetchTxHexAndExcludeUnavailableUtxos(utxoPickingStrategy);
-    const result = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
+    const result = await utxoPickingStrategy.selectUnspentUtxosToUse(
+      logger,
+      this,
+      outputs,
+      feePerByte,
+    );
     const unspentUtxoSelected = result.unspentUtxos;
     const fee = result.fee;
     const needChangeoutput = result.needChangeoutput;
@@ -577,11 +595,11 @@ class Xpub {
         const txid = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
         const prevTxHex = await this.explorer.getTxHex(txid);
         const prevTx = Transaction.fromHex(prevTxHex);
-        return prevTx.outs[input.index].value;
+        return Number(prevTx.outs[input.index].value);
       }),
     );
     const originalTotalInput = originalInputValues.reduce((a, b) => a + b, 0);
-    const originalTotalOutput = originalTxObj.outs.reduce((a, o) => a + o.value, 0);
+    const originalTotalOutput = originalTxObj.outs.reduce((a, o) => a + Number(o.value), 0);
     const originalFee = originalTotalInput - originalTotalOutput;
 
     const incrementalFeeRateSatVb = await getIncrementalFeeFloorSatVb(this.explorer);
@@ -638,6 +656,7 @@ class Xpub {
   }
 
   async fetchHydrateAndStoreNewTxs(
+    logger: Logger,
     address: string,
     account: number,
     index: number,
@@ -665,7 +684,7 @@ class Xpub {
         );
         txs = result.txs;
         token = result.nextPageToken;
-        inserted += this.storage.appendTxs(txs); // insert not pending tx
+        inserted += this.storage.appendTxs(logger, txs); // insert not pending tx
       } else {
         // if there is no token it means it's the first page, we need to fetch pending txs and non-pending txs
         const [pendingResult, txsResult]: [
@@ -692,14 +711,14 @@ class Xpub {
         pendingTxs = pendingResult.txs;
         txs = txsResult.txs;
         token = txsResult.nextPageToken;
-        inserted += this.storage.appendTxs(txs); // insert not pending tx
+        inserted += this.storage.appendTxs(logger, txs); // insert not pending tx
       }
     } while (token); // loop until no more txs, if there is a token it means there is more txs to fetch
-    inserted += this.storage.appendTxs(pendingTxs); // insert pending tx
+    inserted += this.storage.appendTxs(logger, pendingTxs); // insert pending tx
     return inserted;
   }
 
-  async checkAddressReorg(account: number, index: number): Promise<void> {
+  async checkAddressReorg(logger: Logger, account: number, index: number): Promise<void> {
     const lastConfirmedTxBlock = this.storage.getLastConfirmedTxBlock({
       account,
       index,
@@ -721,7 +740,7 @@ class Xpub {
     // TODO: delete only everything for this (address, block)
     // but need to think if its possible with current storage implem
 
-    this.storage.removeTxs({
+    this.storage.removeTxs(logger, {
       account,
       index,
     });

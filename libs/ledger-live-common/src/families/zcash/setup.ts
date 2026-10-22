@@ -16,6 +16,7 @@ import type Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createResolver, executeWithSigner, type CreateSigner } from "../../bridge/setup";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
+import { isZcashShieldedEnabled } from "../../bridge/zcashRouting";
 
 type TransportWithDmk = Transport &
   Partial<{
@@ -34,6 +35,7 @@ const signerContext = executeWithSigner(createSigner);
 const bridge: Bridge<ZcashTransaction, ZcashAccount, ZcashTransactionStatus> = createBridges(
   signerContext,
   buildContext<ZcashCoinConfig>("zcash"),
+  { isShieldedEnabled: isZcashShieldedEnabled },
 );
 
 const resolver = createResolver(createSigner, zcashAddressResolver);
@@ -44,6 +46,6 @@ export { bridge, resolver, signerContext };
 
 // Re-exported so the host apps can mirror the `zcashShielded` feature flag (via
 // `useFeature` → `setZcashShieldedEnabled`) from the same setup module they
-// already import. The bridge router reads that mirror to decide which module
-// serves a Zcash account -- see `bridge/zcashRouting.ts`.
+// already import. The bridge reads that mirror to decide whether it runs the
+// shielded engine or stays transparent-only -- see `bridge/zcashRouting.ts`.
 export { setZcashShieldedEnabled } from "../../bridge/zcashRouting";

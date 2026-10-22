@@ -9,7 +9,7 @@ export function EmptyState({ info, addContactLabel, onAddContact }: EmptyStatePr
       className="flex flex-col items-center gap-24 text-center"
       data-testid="pay-contacts-empty-state"
     >
-      <Spot appearance="icon" icon={Contact} size={72} />
+      <Spot icon={Contact} size={72} />
       <p className="heading-4-semi-bold text-base">{info}</p>
 
       <Button onClick={onAddContact} size="sm" data-testid="pay-contacts-add-contact">

@@ -15,6 +15,7 @@ import {
 } from "../impl";
 
 const ZCASH = getCryptoCurrencyById("zcash");
+const ZCASH_TESTNET = getCryptoCurrencyById("zcash_testnet");
 const BITCOIN = getCryptoCurrencyById("bitcoin");
 
 const loadersFor = (...families: string[]) =>
@@ -25,8 +26,7 @@ const coinZcash = () => import("../../families/zcash/setup");
 const coinBitcoin = () => import("../../families/bitcoin/setup");
 
 // genAccount gives a `mock:` id, which getAccountBridge serves from a family's
-// mock bridge when it has one (bitcoin does, zcash does not). A `js:` id keeps
-// both flag states on the module bridges the route picks between.
+// mock bridge. A `js:` id keeps the account on the module bridges.
 const genRoutedAccount = (name: string): Account => {
   const account = genAccount(name, { currency: ZCASH });
   return {
@@ -49,11 +49,9 @@ const signArg = (account: Account): SignOperationArg0<TransactionCommon, Account
   deviceId: "",
 });
 
-// The host app resolves the flag itself -- remote config, env override and the
-// developer drawer's override all folded in -- and mirrors that resolution here
-// (`setZcashShieldedEnabled`). The router reads that same mirror, so a flag
-// flipped from the drawer moves the routing with it.
-describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
+// Every Zcash account is served by coin-zcash; the `zcashShielded` flag the host
+// mirrors here only selects, inside coin-zcash, whether the shielded engine runs.
+describe("bridge/impl -- zcash routing", () => {
   beforeEach(() => {
     resetCoinModulesForTests();
     registerCoinModules(loadersFor("bitcoin", "zcash"));
@@ -67,59 +65,32 @@ describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
 
   afterAll(() => setZcashShieldedEnabled(false));
 
-  it("serves the zcash currency bridge from coin-zcash when the flag is on", async () => {
-    setZcashShieldedEnabled(true);
+  it.each([true, false])(
+    "serves the zcash currency bridge from coin-zcash (flag %s)",
+    async enabled => {
+      setZcashShieldedEnabled(enabled);
 
-    expect(await getCurrencyBridge(ZCASH)).toBe((await coinZcash()).bridge.currencyBridge);
-  });
+      expect(await getCurrencyBridge(ZCASH)).toBe((await coinZcash()).bridge.currencyBridge);
+    },
+  );
 
-  it("leaves zcash on coin-bitcoin's currency bridge when the flag is off", async () => {
-    expect(await getCurrencyBridge(ZCASH)).toBe((await coinBitcoin()).bridge.currencyBridge);
-  });
-
-  it("shares the bitcoin family entry when the flag is off, as an unrouted currency would", () => {
-    expect(getCurrencyBridge(ZCASH)).toBe(getCurrencyBridge(BITCOIN));
+  it("serves zcash testnet from coin-zcash too", async () => {
+    expect(await getCurrencyBridge(ZCASH_TESTNET)).toBe((await coinZcash()).bridge.currencyBridge);
   });
 
   it("never moves another currency of the bitcoin family", async () => {
-    setZcashShieldedEnabled(true);
-
     expect(await getCurrencyBridge(BITCOIN)).toBe((await coinBitcoin()).bridge.currencyBridge);
   });
 
-  it("routes a zcash account to the module the flag names", async () => {
-    const account = genAccount("zcash-routing-test", { currency: ZCASH });
+  it("keeps zcash on its currency family when the host registers no zcash module", async () => {
+    resetCoinModulesForTests();
+    registerCoinModules(loadersFor("bitcoin"));
+    clearBridgeCache();
 
-    setZcashShieldedEnabled(true);
-    const onBridge = await getAccountBridge(account);
-    setZcashShieldedEnabled(false);
-    const offBridge = await getAccountBridge(account);
-
-    // getAccountBridge wraps the module's bridge (sanction checks, extensions),
-    // so the wrapper is new but the methods it spreads come from the module.
-    expect(onBridge.createTransaction).toBe(
-      (await coinZcash()).bridge.accountBridge.createTransaction,
-    );
-    // Flag off, the account is served the bitcoin family bridge itself — the
-    // very entry every other bitcoin-family currency gets, as on develop.
-    expect(offBridge).toBe(await getAccountBridgeByFamily("bitcoin", account.id));
-    expect(offBridge.createTransaction).not.toBe(onBridge.createTransaction);
-  });
-
-  it("resolves the coin-zcash bridge again when the flag flips back", async () => {
-    const account = genAccount("zcash-flip-test", { currency: ZCASH });
-
-    setZcashShieldedEnabled(true);
-    const onBridge = await getAccountBridge(account);
-    setZcashShieldedEnabled(false);
-    await getAccountBridge(account);
-    setZcashShieldedEnabled(true);
-
-    expect(await getAccountBridge(account)).toBe(onBridge);
+    expect(await getCurrencyBridge(ZCASH)).toBe((await coinBitcoin()).bridge.currencyBridge);
   });
 
   it("evicts the zcash entry on clearBridgeCache('zcash')", async () => {
-    setZcashShieldedEnabled(true);
     const account = genAccount("zcash-cache-eviction-test", { currency: ZCASH });
     const first = getAccountBridge(account);
     await first;
@@ -139,9 +110,9 @@ describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
   // the routed method is never the module's own by identity. The wrapper reads
   // `bridge.signOperation` off the module at call time, so calling through it
   // is what shows which module signs.
-  it("t→t with flag on: signOperation comes from coin-zcash (PCZT path)", async () => {
-    setZcashShieldedEnabled(true);
-    const account = genRoutedAccount("zcash-tt-sign-test");
+  it.each([true, false])("signs a zcash send with coin-zcash (flag %s)", async enabled => {
+    setZcashShieldedEnabled(enabled);
+    const account = genRoutedAccount(`zcash-sign-test-${enabled}`);
     const zcashSignOperation = jest
       .spyOn((await coinZcash()).bridge.accountBridge, "signOperation")
       .mockReturnValue(EMPTY);
@@ -154,22 +125,5 @@ describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
 
     expect(zcashSignOperation).toHaveBeenCalledTimes(1);
     expect(bitcoinSignOperation).not.toHaveBeenCalled();
-  });
-
-  it("t→t with flag off: signOperation comes from coin-bitcoin (legacy path)", async () => {
-    setZcashShieldedEnabled(false);
-    const account = genRoutedAccount("zcash-tt-legacy-sign-test");
-    const zcashSignOperation = jest
-      .spyOn((await coinZcash()).bridge.accountBridge, "signOperation")
-      .mockReturnValue(EMPTY);
-    const bitcoinSignOperation = jest
-      .spyOn((await coinBitcoin()).bridge.accountBridge, "signOperation")
-      .mockReturnValue(EMPTY);
-
-    const bridge = await getAccountBridge(account);
-    bridge.signOperation(signArg(account)).subscribe();
-
-    expect(bitcoinSignOperation).toHaveBeenCalledTimes(1);
-    expect(zcashSignOperation).not.toHaveBeenCalled();
   });
 });

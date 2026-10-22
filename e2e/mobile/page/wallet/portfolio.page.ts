@@ -61,6 +61,7 @@ export default class PortfolioPage {
   cryptoListId = "CryptoList";
   stablecoinListId = "StablecoinList";
   cryptosSectionHeaderId = "portfolio-cryptos-section-header";
+  cryptoAddressesButtonId = "crypto-addresses-button";
   cryptoAddressesListId = "CryptoAddressesList";
   cryptoAddressItemId = (currencyId: string) => `crypto-address-item-${currencyId}`;
   stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
@@ -200,8 +201,8 @@ export default class PortfolioPage {
   async goToAccounts(currencyName: string, currencyId?: string) {
     await waitForElementById(this.accountsListView, TIMEOUT.medium);
     if (await isAggregatedAssetsEnabled()) {
-      await scrollToId("crypto-addresses-button", this.accountsListView);
-      await tapById("crypto-addresses-button");
+      await revealForTap(this.cryptoAddressesButtonId, { container: this.accountsListView });
+      await tapById(this.cryptoAddressesButtonId);
       await waitForElementById(this.cryptoAddressesListId);
       if (currencyId) {
         await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);

@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
+import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { PrivacyDescription } from "./PrivacyDescription";
 
@@ -15,7 +16,7 @@ export function PrivacyUpdateSheet({ privacyPolicyUrl, onGotIt }: PrivacyUpdateS
     <Box lx={{ width: "full" }}>
       <Box lx={{ width: "full", gap: "s32", paddingBottom: "s12" }}>
         <Box lx={{ width: "full", gap: "s24", alignItems: "center" }}>
-          <Spot appearance="info" size={72} />
+          <Spot appearance="muted" icon={InformationFill} size={72} />
           <Box lx={{ width: "full", gap: "s8", alignItems: "center" }}>
             <Text
               typography="heading4SemiBold"

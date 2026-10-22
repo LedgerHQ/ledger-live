@@ -15,7 +15,7 @@ import { ShieldCheckNotificationIcon } from "LLM/features/BackupHub/components/S
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 
-type BackupsIcon = Extract<SpotProps, { appearance: "icon" }>["icon"];
+type BackupsIcon = SpotProps["icon"];
 
 interface BackupsButtonViewModel {
   readonly title: string;

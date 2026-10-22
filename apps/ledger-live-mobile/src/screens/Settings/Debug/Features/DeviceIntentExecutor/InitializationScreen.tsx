@@ -8,7 +8,7 @@ import {
 import { Text, Flex, Button, SelectableList } from "@ledgerhq/native-ui";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { initializationEchoIntentLWMDefinition } from "./intents/initializationEchoIntent/intentLWMDefinition";
 import type { InitializationEchoIntentJobState } from "./intents/initializationEchoIntent/types";
 import { INITIALIZATION_SCENARIOS } from "./initializationScenarios";
@@ -175,7 +175,7 @@ export default function DebugDeviceIntentExecutorInitialization() {
           {enabled ? "Stop Initialization" : "Start Initialization"}
         </Button>
 
-        {enabled ? <DeviceIntentExecutorLWM sourceFlow="debug" {...executorProps} /> : null}
+        {enabled ? <DeviceIntentExecutor sourceFlow="debug" {...executorProps} /> : null}
       </ScrollView>
 
       <QueuedBottomSheet

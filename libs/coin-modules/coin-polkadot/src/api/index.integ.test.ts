@@ -27,7 +27,7 @@ describe("Polkadot Api", () => {
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
-    module = withDefaults(createApi());
+    module = withDefaults(createApi("polkadot"));
   });
 
   describe("estimateFees", () => {

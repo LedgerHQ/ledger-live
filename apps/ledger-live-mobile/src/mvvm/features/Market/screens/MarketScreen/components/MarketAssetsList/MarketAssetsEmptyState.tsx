@@ -47,12 +47,7 @@ export function MarketAssetsEmptyState({
   if (emptyState === "favorites") {
     return (
       <Box lx={emptyStateStyle} style={emptyStateSize}>
-        <Spot
-          appearance="icon"
-          icon={StarFill}
-          size={72}
-          testID={MARKET_SCREEN_TEST_IDS.assetsFavoritesEmptyIcon}
-        />
+        <Spot icon={StarFill} size={72} testID={MARKET_SCREEN_TEST_IDS.assetsFavoritesEmptyIcon} />
         <Text typography="heading5SemiBold" lx={{ color: "base", textAlign: "center" }}>
           {t("market.assets.emptyFavorites")}
         </Text>
@@ -67,7 +62,7 @@ export function MarketAssetsEmptyState({
         style={emptyStateSize}
         testID={MARKET_SCREEN_TEST_IDS.assetsStocksEmpty}
       >
-        <Spot appearance="icon" icon={Search} size={72} />
+        <Spot icon={Search} size={72} />
         <Text typography="heading5SemiBold" lx={{ color: "base", textAlign: "center" }}>
           {t("market.assets.emptyStocks")}
         </Text>
@@ -82,7 +77,7 @@ export function MarketAssetsEmptyState({
         style={emptyStateSize}
         testID={MARKET_SCREEN_TEST_IDS.assetsEmptySearch}
       >
-        <Spot appearance="icon" icon={Search} size={72} />
+        <Spot icon={Search} size={72} />
         <Text typography="heading4SemiBold" lx={{ textAlign: "center", color: "base" }}>
           {t("modularDrawer.emptyAssetList")}
         </Text>

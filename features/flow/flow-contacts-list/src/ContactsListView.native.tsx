@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
+import { useContactsListCopy } from "./copy/useContactsListCopy";
 import type { ContactsListItem, ContactsListSection, ContactsListViewNativeProps } from "./types";
 import { createContactsListRowLayouts } from "./utils";
 import { ContactsListHeader } from "./components/ListHeader/ContactsListHeader.native";
@@ -22,14 +23,15 @@ const listContentPaddingBottom = 8;
 
 export function ContactsListView({
   viewModel,
-  labels,
   onOpenContact,
   onAddContact,
   isLedgerSyncChecking,
   searchQuery,
   onSearchQueryChange,
   surface = "base",
+  titleContext = "contacts",
 }: ContactsListViewNativeProps): React.JSX.Element {
+  const labels = useContactsListCopy(titleContext);
   const isPopulated = viewModel.displayMode === "populated";
   const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
   const me = "me" in viewModel ? viewModel.me : undefined;

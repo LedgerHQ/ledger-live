@@ -27,8 +27,9 @@ Shared Add address flow for Desktop and Mobile.
 
 ## Public API
 
-Desktop and Mobile import this leaf directly when they mount Add address. Apps retain routing,
-translations, modal or drawer composition, and app-owned dependency injection. Contacts feature flags
-and network eligibility are provided by `@features/platform-contacts`.
+Desktop and Mobile import this leaf directly when they mount Add address. The package resolves its
+own copy with `@shared/i18n`. Apps retain routing, modal or drawer composition, and app-owned
+dependency injection. Contacts feature flags and network eligibility are provided by
+`@features/platform-contacts`.
 
 Files under `src/` are internal and must not be imported through package subpaths.

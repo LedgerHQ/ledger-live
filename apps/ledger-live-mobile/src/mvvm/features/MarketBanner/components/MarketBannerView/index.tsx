@@ -11,8 +11,8 @@ import { useTranslation } from "~/context/Locale";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import BannerItem, { ListItem } from "../BannerItem";
-import { FearAndGreed } from "LLM/components/FearAndGreed";
-import { useMoodIndexAvailability } from "LLM/components/FearAndGreed/useMoodIndexAvailability";
+import { FearAndGreed } from "@features/flow-fear-and-greed";
+import ArcGaugeIndicator from "LLM/components/ArcGaugeIndicator";
 import ViewAllTile from "../ViewAllTile";
 import { ErrorState } from "../ErrorState";
 import { SkeletonState } from "../SkeletonState";
@@ -27,6 +27,7 @@ interface MarketBannerViewProps {
   isError: boolean;
   showFilter: boolean;
   bannerFilter: MarketBannerFilterController;
+  moodIndexAvailable: boolean;
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;
   onSectionTitlePress: () => void;
@@ -44,13 +45,13 @@ const MarketBannerView = ({
   isError,
   showFilter,
   bannerFilter,
+  moodIndexAvailable,
   onTilePress,
   onViewAllPress,
   onSectionTitlePress,
   testID = "market-banner-container",
 }: MarketBannerViewProps) => {
   const { t } = useTranslation();
-  const isMoodIndexAvailable = useMoodIndexAvailability();
 
   const renderItem = useCallback(
     (props: { item: ListItem; index: number }) => (
@@ -90,15 +91,15 @@ const MarketBannerView = ({
           data={items}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-          ListHeaderComponent={isMoodIndexAvailable ? <FearAndGreed /> : null}
+          ListHeaderComponent={
+            moodIndexAvailable ? <FearAndGreed Gauge={ArcGaugeIndicator} /> : null
+          }
           ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
           ListEmptyComponent={<SkeletonState />}
           horizontal
           showsHorizontalScrollIndicator={false}
           testID="market-banner-list"
-          ListHeaderComponentStyle={
-            isMoodIndexAvailable ? { marginRight: MARGIN_RIGHT } : undefined
-          }
+          ListHeaderComponentStyle={moodIndexAvailable ? { marginRight: MARGIN_RIGHT } : undefined}
           contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
           style={{ marginHorizontal: MARGIN_HORIZONTAL }}
         />

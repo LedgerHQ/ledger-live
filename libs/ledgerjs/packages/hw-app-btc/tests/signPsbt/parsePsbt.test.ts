@@ -43,15 +43,15 @@ describe("parsePsbt / deserializePsbt", () => {
         index: 0,
         witnessUtxo: {
           script: Buffer.from("0014" + "00".repeat(20), "hex"),
-          value: 100000,
+          value: BigInt(100000),
         },
       });
       psbtv0.addOutput({
         script: Buffer.from("0014" + "11".repeat(20), "hex"),
-        value: 90000,
+        value: BigInt(90000),
       });
 
-      const buffer = psbtv0.toBuffer();
+      const buffer = Buffer.from(psbtv0.toBuffer());
       const result = deserializePsbt(buffer);
 
       expect(result).toBeInstanceOf(PsbtV2);

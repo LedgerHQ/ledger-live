@@ -127,7 +127,7 @@ import { formatAddress } from "./logic/formatAddress";
 ```
 
 - Web builds resolve `.web` variants; mobile builds resolve `.native` variants; shared files resolve as-is.
-- Platform-specific props are safe: `AddressRow.web.tsx` can accept a `style` prop of type `React.CSSProperties` while `AddressRow.native.tsx` accepts `ViewStyle` — no union needed, no cross-contamination.
+- Platform-specific types stay inside an implementation: `AddressRow.web.tsx` can use `React.CSSProperties` internally while `AddressRow.native.tsx` uses `ViewStyle`. A universal component, exported from an entry with a `react-native` condition, takes one props contract on both platforms instead. A component that cannot share its props goes behind a `./web` or `./native` platform entry, with its own props type per platform. See the [universal components ADR](./adr/universal-components.md).
 - TypeScript will error if a `.web` file tries to import something that only exists in a `.native` file, and vice versa.
 
 Explicit suffixes in imports (e.g. `import X from "./Foo.native"`) can still be used when a specific use case genuinely requires pinning to one platform file from shared code, but they should be removed when not strictly necessary — the tsconfig already handles the resolution.

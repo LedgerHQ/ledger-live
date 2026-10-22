@@ -41,15 +41,18 @@ export function buildRbfFixtureTxs({
   const fundingTx = new btc.Transaction();
   fundingTx.version = 2;
   fundingTx.addInput(Buffer.alloc(32, 0), 0, 0xffffffff);
-  fundingTx.addOutput(btc.address.toOutputScript(changeAddress, network), fundingOutputValue);
+  fundingTx.addOutput(
+    btc.address.toOutputScript(changeAddress, network),
+    BigInt(fundingOutputValue),
+  );
   const fundingTxHex = fundingTx.toHex();
   const fundingTxIdHex = fundingTx.getId();
 
   const rbfTx = new btc.Transaction();
   rbfTx.version = 2;
   rbfTx.addInput(Buffer.from(fundingTxIdHex, "hex").reverse(), 0, RBF_SEQUENCE);
-  rbfTx.addOutput(btc.address.toOutputScript(externalRecipient, network), amountToExternal);
-  rbfTx.addOutput(btc.address.toOutputScript(changeAddress, network), changeAmount);
+  rbfTx.addOutput(btc.address.toOutputScript(externalRecipient, network), BigInt(amountToExternal));
+  rbfTx.addOutput(btc.address.toOutputScript(changeAddress, network), BigInt(changeAmount));
   const originalTxId = rbfTx.getId();
   const rbfTxHex = rbfTx.toHex();
 
@@ -57,8 +60,11 @@ export function buildRbfFixtureTxs({
   const speedupTx = new btc.Transaction();
   speedupTx.version = 2;
   speedupTx.addInput(Buffer.from(fundingTxIdHex, "hex").reverse(), 0, RBF_SEQUENCE);
-  speedupTx.addOutput(btc.address.toOutputScript(externalRecipient, network), amountToExternal);
-  speedupTx.addOutput(btc.address.toOutputScript(changeAddress, network), changeAmount - 1);
+  speedupTx.addOutput(
+    btc.address.toOutputScript(externalRecipient, network),
+    BigInt(amountToExternal),
+  );
+  speedupTx.addOutput(btc.address.toOutputScript(changeAddress, network), BigInt(changeAmount - 1));
   const speedupTxId = speedupTx.getId();
   const speedupTxHex = speedupTx.toHex();
 
@@ -69,7 +75,7 @@ export function buildRbfFixtureTxs({
   cancelTx.addInput(Buffer.from(fundingTxIdHex, "hex").reverse(), 0, RBF_SEQUENCE);
   cancelTx.addOutput(
     btc.address.toOutputScript(changeAddress, network),
-    fundingOutputValue - cancelFeeSat,
+    BigInt(fundingOutputValue - cancelFeeSat),
   );
   const cancelTxId = cancelTx.getId();
   const cancelTxHex = cancelTx.toHex();
@@ -118,14 +124,20 @@ export function buildRbfFixtureTxsWithTwoUtxos({
   const fundingTx1 = new btc.Transaction();
   fundingTx1.version = 2;
   fundingTx1.addInput(Buffer.alloc(32, 0), 0, 0xffffffff);
-  fundingTx1.addOutput(btc.address.toOutputScript(changeAddress, network), fundingOutputValue1);
+  fundingTx1.addOutput(
+    btc.address.toOutputScript(changeAddress, network),
+    BigInt(fundingOutputValue1),
+  );
   const fundingTx1Hex = fundingTx1.toHex();
   const fundingTx1IdHex = fundingTx1.getId();
 
   const fundingTx2 = new btc.Transaction();
   fundingTx2.version = 2;
   fundingTx2.addInput(Buffer.alloc(32, 1), 0, 0xffffffff);
-  fundingTx2.addOutput(btc.address.toOutputScript(changeAddress, network), fundingOutputValue2);
+  fundingTx2.addOutput(
+    btc.address.toOutputScript(changeAddress, network),
+    BigInt(fundingOutputValue2),
+  );
   const fundingTx2Hex = fundingTx2.toHex();
   const fundingTx2IdHex = fundingTx2.getId();
 
@@ -133,8 +145,8 @@ export function buildRbfFixtureTxsWithTwoUtxos({
   rbfTx.version = 2;
   rbfTx.addInput(Buffer.from(fundingTx1IdHex, "hex").reverse(), 0, RBF_SEQUENCE);
   rbfTx.addInput(Buffer.from(fundingTx2IdHex, "hex").reverse(), 0, RBF_SEQUENCE);
-  rbfTx.addOutput(btc.address.toOutputScript(externalRecipient, network), amountToExternal);
-  rbfTx.addOutput(btc.address.toOutputScript(changeAddress, network), changeAmount);
+  rbfTx.addOutput(btc.address.toOutputScript(externalRecipient, network), BigInt(amountToExternal));
+  rbfTx.addOutput(btc.address.toOutputScript(changeAddress, network), BigInt(changeAmount));
   const originalTxId = rbfTx.getId();
   const rbfTxHex = rbfTx.toHex();
 

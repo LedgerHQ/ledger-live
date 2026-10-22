@@ -1,6 +1,6 @@
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { InitializerConfig } from "LLD/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWD";
+import type { InitializerConfig } from "LLD/components/DeviceIntentExecutor/ContextInitializer";
 import type { InitializationInput } from "LLD/components/DeviceIntentExecutor";
 
 export type InitializationScenario = {

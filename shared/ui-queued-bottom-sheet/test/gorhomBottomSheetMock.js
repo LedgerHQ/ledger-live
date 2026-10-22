@@ -10,7 +10,12 @@
  */
 const useBottomSheetInternal = () => null;
 
+const close = jest.fn();
+const useBottomSheet = () => ({ close });
+
 // gorhom positions the real footer with reanimated; here it is just its children.
 const BottomSheetFooter = ({ children }) => children;
 
-module.exports = { useBottomSheetInternal, BottomSheetFooter };
+const KEYBOARD_STATUS = { UNDETERMINED: 0, SHOWN: 1, HIDDEN: 2 };
+
+module.exports = { useBottomSheetInternal, BottomSheetFooter, useBottomSheet, KEYBOARD_STATUS };

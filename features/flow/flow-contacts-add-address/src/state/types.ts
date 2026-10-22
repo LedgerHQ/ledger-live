@@ -141,27 +141,3 @@ export type AddAddressFlowViewModel = Readonly<{
   goBack: () => void;
   close: () => void;
 }>;
-
-export type AddAddressEntryLabels = Readonly<{
-  title: string;
-  addressPlaceholder: string;
-  confirmAddress: string;
-  validatingAddress: string;
-  validAddress: string;
-  invalidAddress: string;
-  domainNotFound: string;
-  sanctionedAddress: string;
-  validationUnavailable: string;
-  ensDisclaimer: string;
-  ensDisclaimerDescription: string;
-  duplicateAddress: (contactName: string) => string;
-}>;
-
-export type AddAddressNameLabels = Readonly<{
-  title: string;
-  inputLabel: string;
-  namingDisclaimer: string;
-  continueToReview: string;
-  validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
-  privacyPolicy?: string;
-}>;

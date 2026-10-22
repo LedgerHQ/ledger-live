@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { track } from "@shared/analytics";
 import {
   SPONSORED_FAILURE_MESSAGE,
   formatSponsoredOfferedFee,
@@ -12,7 +13,11 @@ import { useSponsoredRetryLocked } from "@ledgerhq/live-common/flows/send/sponso
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
+import { getSendFlowTrackingPage } from "../../../utils/contactTracking";
 
 export type SponsoredFailureViewModel = Readonly<{
   message: string | null;
@@ -33,6 +38,20 @@ export function useSponsoredFailureViewModel(): SponsoredFailureViewModel {
   const { state, actions, mainAccount, providerName, feeCurrencyTicker } = useSponsoredSend();
   const account = flowState.account.account;
   const transaction = flowState.transaction.transaction;
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const { flowSessionId } = useSendFlowTracking();
+  const failureKind = state.failureKind;
+  const trackClick = useCallback(
+    (button: "retry" | "cancel") =>
+      track("button_clicked", {
+        button,
+        page: getSendFlowTrackingPage(SEND_FLOW_STEP.SPONSORED_FAILURE),
+        failure_kind: failureKind,
+        flow_session_id: flowSessionId,
+        ...sendFlowTrackingProperties,
+      }),
+    [failureKind, flowSessionId, sendFlowTrackingProperties],
+  );
 
   const retryUnaffordable = useMemo(
     () => isSponsoredRetryUnaffordable({ state, mainAccount, account, transaction }),
@@ -44,14 +63,16 @@ export function useSponsoredFailureViewModel(): SponsoredFailureViewModel {
   // A failed TX-C leaves the flow status on ERROR; clear it before signing again.
   const onRetry = useCallback(() => {
     if (retryDisabled) return;
+    trackClick("retry");
     operation.onRetry();
     status.resetStatus();
     actions.retry();
-  }, [retryDisabled, actions, operation, status]);
+  }, [retryDisabled, trackClick, actions, operation, status]);
 
   const onCancel = useCallback(() => {
+    trackClick("cancel");
     close();
-  }, [close]);
+  }, [trackClick, close]);
 
   const insufficientFunds = t("newSendFlow.feePayment.insufficientFunds", {
     feeCurrency: getSponsoredFailureFeeTicker(state, feeCurrencyTicker),

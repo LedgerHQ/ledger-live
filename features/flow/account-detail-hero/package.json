@@ -1,0 +1,48 @@
+{
+  "name": "@features/flow-account-detail-hero",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Account Detail hero (balance, quick actions, empty state) for Ledger Wallet",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage --passWithNoTests",
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.web.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.native.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.native.json"
+  },
+  "devDependencies": {
+    "@support/jest-features-flow": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:"
+  }
+}

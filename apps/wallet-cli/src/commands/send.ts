@@ -24,6 +24,7 @@ import {
   resolveAccountDescriptor,
   resolveOutputFormat,
 } from "./inputs";
+import { commandDescription } from "./registry";
 
 type SendFlags = {
   account?: string;
@@ -98,7 +99,7 @@ function classifySendAssetClass(currencyId: string): SendAssetClass {
 
 export default defineCommand({
   name: "send",
-  description: "Sign and broadcast a transaction",
+  description: commandDescription("send"),
   options: {
     account: accountOption,
     to: option(z.string().min(1, "Recipient address is required (--to <address>)"), {

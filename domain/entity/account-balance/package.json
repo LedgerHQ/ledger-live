@@ -1,0 +1,43 @@
+{
+  "name": "@domain/entity-account-balance",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Account balance entity: the crypto amount of each asset an account holds",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema.mock": "./src/schema.mock.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-balance"
+  },
+  "dependencies": {
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/schema-primitives": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

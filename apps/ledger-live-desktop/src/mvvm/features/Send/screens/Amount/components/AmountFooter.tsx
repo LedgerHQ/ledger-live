@@ -4,6 +4,7 @@ import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { FeeSelectorOption, SponsoredFeeDisplay } from "../types";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { AmountMessageText } from "./AmountMessageText";
+import { FamilySendAmountFooterRow } from "./FamilySendAmountFooterRow";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
 import type { SponsoredFeeNudgeProps } from "./Fees/SponsoredFeeNudge";
 
@@ -55,13 +56,15 @@ export function AmountFooter({
   const ctaTestId = reviewShowIcon ? "send-review-button" : "send-get-funds-button";
 
   return (
-    <DialogFooter data-testid="send-amount-footer" className="flex flex-col">
-      {sponsoredFeeError ? (
-        <AmountMessageText
-          message={{ type: "error", text: sponsoredFeeError }}
-          testId="send-sponsored-fee-error"
-        />
-      ) : null}
+    <DialogFooter data-testid="send-amount-footer" className="flex flex-col gap-0">
+      {sponsoredFeeError && (
+        <div className="pb-8">
+          <AmountMessageText
+            message={{ type: "error", text: sponsoredFeeError }}
+            testId="send-sponsored-fee-error"
+          />
+        </div>
+      )}
       <div className="border-t border-muted-subtle" />
       <NetworkFeesMenu
         display={{
@@ -74,6 +77,7 @@ export function AmountFooter({
         sponsoredNudge={sponsoredNudge}
         sponsoredFee={sponsoredFee}
       />
+      <FamilySendAmountFooterRow />
       <Button
         appearance="base"
         size="lg"

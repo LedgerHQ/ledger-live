@@ -42,7 +42,7 @@ export const CryptoAddressesButton: React.FC = () => {
       >
         <CardHeader>
           <CardLeading>
-            <Spot appearance="icon" icon={Wallet} />
+            <Spot icon={Wallet} />
             <CardContent>
               <CardContentTitle style={styles.cardContentTitle}>
                 {t("portfolio.cryptoAddresses.title")}

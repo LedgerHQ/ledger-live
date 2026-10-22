@@ -2,30 +2,30 @@ import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
-  type ContactsDeleteAddressDialogProps,
-  type ContactsEditSignerMismatchDialogProps,
-  type ContactAddressDetailDialogProps,
-  type ContactAddressDetailSendIntent,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
-  createActiveContactAddressDetailActionsUiState,
-  createInactiveContactAddressDetailActionsUiState,
-  resolveContactAddressDetailActionsLabels,
-  useContactAddressDetailActionsFlowBindings,
   useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
-  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
+import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
+import {
+  type ContactsEditSignerMismatchDialogProps,
+  type ContactAddressDetailDialogProps,
+  type ContactAddressDetailSendIntent,
+  createActiveContactAddressDetailActionsUiState,
+  createInactiveContactAddressDetailActionsUiState,
+  useContactAddressDetailActionsFlowBindings,
+  resolveContactAddressSupportsDomain,
+} from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDialogProps,
 } from "@features/flow-contacts-edit-address";
-import { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useCallback } from "react";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
@@ -63,7 +63,6 @@ export function useContactAddressDetailActionsAdapter(
   asset?: string,
   network?: string,
 ): ContactAddressDetailActionsDialogProps {
-  const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const ports = useContactsAddressDetailActionsPorts(deviceIntents, resolveCurrencyConfig);
   const addressValidation = useContactsAddressValidationAdapter();
@@ -128,10 +127,6 @@ export function useContactAddressDetailActionsAdapter(
     currencyId,
     sendFeatures.supportsDomain,
   );
-  const labels = useMemo(
-    () => resolveContactAddressDetailActionsLabels({ t, supportsDomain }),
-    [t, supportsDomain],
-  );
   const onEdit = useCallback(() => {
     trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
     flow.onEditPress();
@@ -161,10 +156,16 @@ export function useContactAddressDetailActionsAdapter(
   });
 
   if (!isSelectionActive) {
-    return mapUiStateToDialogProps(createInactiveContactAddressDetailActionsUiState(labels));
+    return mapUiStateToDialogProps(
+      createInactiveContactAddressDetailActionsUiState(supportsDomain),
+    );
   }
 
-  const uiState = createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels);
+  const uiState = createActiveContactAddressDetailActionsUiState(
+    flow,
+    renameViewModel,
+    supportsDomain,
+  );
 
   return {
     ...mapUiStateToDialogProps(uiState),

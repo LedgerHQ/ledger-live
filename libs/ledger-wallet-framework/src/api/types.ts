@@ -12,7 +12,9 @@ import type {
   Operation as LiveOperation,
   OperationType,
   SignRawOperationFnSignature,
+  StakingDelegation,
   StakingResources,
+  StakingUnbonding,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 
@@ -162,6 +164,11 @@ export type BridgeApi = {
    */
   stakingSupported?: boolean;
   /**
+   * Whether the chain keeps the account's next sequence number (`getNextSequence`) on the
+   * synced `account.sequence`
+   */
+  accountSequenceSupported?: boolean;
+  /**
    * When true, the chain consumes per-stake positions via
    * `account.stakingPositions` (raw `Stake[]` from `getBalance`) instead of
    * the EVM-style `stakingResources` aggregate. Used by chains where each
@@ -170,10 +177,18 @@ export type BridgeApi = {
    */
   usesStakingPositions?: boolean;
   /**
-   * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos).
-   * Opt-in: Solana's stakes overlap the first native entry; EVM's are extra and carry no `locked`.
+   * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos,
+   * Solana). The entries are disjoint parts of the account, so each unit of funds sits in exactly
+   * one of them; their order and what each carries (stake metadata, `locked`) is the family's.
+   * Opt-in: EVM's stakes are extra and carry no `locked`, so summing them would inflate the balance.
    */
   partitionsNativeBalance?: boolean;
+  /**
+   * The native funds a staking position holds in the account, when that is not its `amount` plus its
+   * `lockedReserve`. Used to carve the position out of the native balance when the family
+   * partitions it (see `partitionsNativeBalance`).
+   */
+  getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber;
   balanceOptions?: BalanceOptions;
   /**
    * Optional hook called after operations are merged, allowing a chain bridge to
@@ -210,8 +225,9 @@ export type BridgeApi = {
    */
   addressLookup?: AddressLookup;
   /**
-   * Defaults to `true`. Set `false` when the account shape returns the whole operation list, or the
-   * merge puts back the operations the shape left out.
+   * Defaults to `false` on the generic coin framework bridge, whose account shape already returns
+   * the merged, bounded list: merging again would put back the operations the bound dropped. Set
+   * `true` only for a family whose shape returns new operations alone, at the cost of that bound.
    */
   shouldMergeOps?: boolean;
   /**

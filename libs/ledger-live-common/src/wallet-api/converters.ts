@@ -1,4 +1,4 @@
-import type BigNumber from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -8,9 +8,11 @@ import {
   type AccountNamesState,
 } from "@domain/entity-account-name";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
+import { resolveFamily } from "../bridge/zcashRouting";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
 import { getAccountBridge } from "../bridge";
+import { getPendingTokenSpent } from "../bridge/generic-coin-framework/utils";
 import {
   WalletAPIAccount,
   WalletAPICurrency,
@@ -119,8 +121,16 @@ export const getWalletAPITransactionSignFlowInfos = async ({
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 }> => {
-  const liveFamily =
+  // A live app names the currency's family ("bitcoin" for Zcash); the adapter is the one of
+  // the module that serves the account, which for Zcash is coin-zcash. A transaction of
+  // another family keeps its own adapter, so the family check that follows rejects it.
+  const incomingFamily =
     FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
+  const mainCurrency = isTokenAccount(account) ? undefined : account.currency;
+  const liveFamily =
+    mainCurrency && incomingFamily === mainCurrency.family
+      ? resolveFamily(mainCurrency)
+      : incomingFamily;
 
   const familyModule = await loadWalletApiAdapterForFamily(liveFamily);
 
@@ -168,9 +178,11 @@ export async function resolveWalletApiSpendableBalance(
  *
  * Several bridges catch network/build failures and resolve `0` instead of rejecting
  * (Cardano, Kaspa, Concordium). `0` is also a genuine estimate for an empty account.
- * A zero result is kept only when the spendable balance exposed to Wallet API is already
- * zero (see `getWalletApiSpendableBalance`: for Zcash that is the transparent pool only, so
- * a shielded-only account legitimately estimates `0`); otherwise it is treated as an
+ * A zero result is kept only when the spendable balance exposed to Wallet API is zero (see
+ * `getWalletApiSpendableBalance`: for Zcash that is the transparent pool only, so a
+ * shielded-only account legitimately estimates `0`) or when pending token operations commit
+ * the whole token balance. Native pending-operation values have family-specific fee semantics,
+ * so they are deliberately excluded from this check. Otherwise, zero is treated as an
  * ambiguous failure and omitted. Send-flow callers still receive the raw `0` from those bridges.
  */
 export async function resolveWalletApiMaxSpendable(
@@ -183,12 +195,20 @@ export async function resolveWalletApiMaxSpendable(
 
     const walletApiSpendableBalance =
       bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
+    const pendingSpent =
+      account.type === "TokenAccount"
+        ? getPendingTokenSpent(account.pendingOperations ?? [])
+        : new BigNumber(0);
+    const availableBalance = BigNumber.max(0, walletApiSpendableBalance.minus(pendingSpent));
 
-    if (maxSpendable.isZero() && !walletApiSpendableBalance.isZero()) {
+    if (maxSpendable.isZero() && !availableBalance.isZero()) {
       log(
         "wallet-api/converters",
         "resolveWalletApiMaxSpendable: omitting ambiguous zero maxSpendable",
-        { walletApiSpendableBalance: walletApiSpendableBalance.toString() },
+        {
+          walletApiSpendableBalance: walletApiSpendableBalance.toString(),
+          pendingSpent: pendingSpent.toString(),
+        },
       );
       return undefined;
     }

@@ -1,0 +1,19 @@
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
+import { isValidAddress } from "./selectUtxos";
+
+export async function validateAddress(
+  address: string,
+  parameters: Partial<AddressValidationCurrencyParameters>,
+): Promise<boolean> {
+  if (!parameters.currencyId) {
+    throw new Error("Missing currency parameter for address validation on Bitcoin");
+  }
+
+  // Snippet derived from `isValidRecipient` inside `./src/logic.ts`
+  try {
+    return isValidAddress(address, parameters.currencyId);
+  } catch {
+    // isValidAddress() will throw Error if parameters.currencyId is not an actual Currency
+    return false;
+  }
+}

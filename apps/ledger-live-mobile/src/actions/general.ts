@@ -6,9 +6,8 @@ import {
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
-import { type TrackingPair, pairId } from "@domain/entity-market-countervalues";
+import type { TrackingPair } from "@domain/entity-market-countervalues";
 import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@features/platform-market-countervalues";
-import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import {
   useAssetDistribution,
@@ -16,20 +15,15 @@ import {
   type DistributionResult,
 } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
 import { appVersion } from "LLM/utils/appVersion";
-import { BehaviorSubject } from "rxjs";
 import { replaceAccounts, reorderAccounts } from "./accounts";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountsSelector } from "../reducers/accounts";
 import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { walletSelector } from "~/reducers/wallet";
-import { useFeature } from "@features/platform-feature-flags";
-
-const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
-  TrackingPair[]
->([]);
+import { trackingPairsSelector } from "~/reducers/countervalues";
+import { extraSessionTrackingPairsSelector } from "~/reducers/countervaluesExtraSessionTracking";
 
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
@@ -137,72 +131,10 @@ export function useCleanCache() {
   }, [dispatch, accounts]);
 }
 
-export function useUserSettings() {
-  const trackingPairs = useTrackingPairs();
-
-  const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
-  const granularitiesRates = useMemo(
-    () =>
-      granularitiesRatesConfig?.enabled
-        ? {
-            daily: Number(granularitiesRatesConfig.params?.daily),
-            hourly: Number(granularitiesRatesConfig.params?.hourly),
-          }
-        : undefined,
-    [granularitiesRatesConfig],
-  );
-
-  return useMemo(
-    () => ({
-      trackingPairs,
-      autofillGaps: true,
-      refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
-      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
-        "config_countervalues_marketCapBatchingAfterRank",
-      ),
-      granularitiesRates,
-    }),
-    [granularitiesRates, trackingPairs],
-  );
-}
-
-export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
-  addExtraSessionTrackingPairs([trackingPair]);
-}
-
-/**
- * Adds every pair that is not tracked yet, in one publish: a caller with a whole catalog to track
- * would otherwise notify each subscriber once per pair.
- *
- * Pairs are compared by `pairId`, not by currency identity, because a token refetched from CAL
- * comes back as a new object.
- */
-export function addExtraSessionTrackingPairs(trackingPairs: readonly TrackingPair[]) {
-  const value = extraSessionTrackingPairsChanges.value;
-  const tracked = new Set(value.map(pairId));
-  const missing = trackingPairs.filter(trackingPair => !tracked.has(pairId(trackingPair)));
-
-  if (missing.length === 0) return;
-
-  extraSessionTrackingPairsChanges.next(value.concat(missing));
-}
-
 export function useExtraSessionTrackingPair() {
-  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState<TrackingPair[]>([]);
-  useEffect(() => {
-    const sub = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
-    return () => sub && sub.unsubscribe();
-  }, []);
-  return extraSessionTrackingPair;
+  return useSelector(extraSessionTrackingPairsSelector);
 }
 
 export function useTrackingPairs(): TrackingPair[] {
-  const accounts = useSelector(accountsSelector);
-  const countervalue = useSelector(counterValueCurrencySelector);
-  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
-  const extraSessionTrackingPairs = useExtraSessionTrackingPair();
-  return useMemo(
-    () => extraSessionTrackingPairs.concat(trPairs),
-    [extraSessionTrackingPairs, trPairs],
-  );
+  return useSelector(trackingPairsSelector);
 }

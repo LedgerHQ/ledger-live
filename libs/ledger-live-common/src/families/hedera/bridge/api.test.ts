@@ -328,18 +328,22 @@ describe("hedera bridge", () => {
       fee,
       feePayer,
       token,
+      value = 1,
+      hasFailed = false,
     }: {
       type: Operation["type"];
       hash: string;
       fee: number;
       feePayer: string;
       token?: boolean;
+      value?: number;
+      hasFailed?: boolean;
     }): Operation {
       return {
         id: `${accountId}-${hash}-${type}`,
         hash,
         type,
-        value: new BigNumber(1),
+        value: new BigNumber(value),
         fee: new BigNumber(fee),
         senders: [address],
         recipients: ["0.0.5678"],
@@ -347,7 +351,7 @@ describe("hedera bridge", () => {
         blockHash: "block",
         accountId,
         date: new Date("2025-07-07T18:29:08.000Z"),
-        hasFailed: false,
+        hasFailed,
         extra: {
           feePayer,
           transactionId: "0.0.1234-1751912919-510086871",
@@ -439,6 +443,67 @@ describe("hedera bridge", () => {
       ];
 
       expect(adaptOperations(address, operations)).toEqual(operations);
+    });
+
+    it("takes a fee another account paid back out of a native OUT value", () => {
+      const sponsored = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 1056079,
+        feePayer: "0.0.5678",
+        value: 1066079,
+      });
+
+      expect(adaptOperations(address, [sponsored])).toEqual([
+        { ...sponsored, value: new BigNumber(10000) },
+      ]);
+    });
+
+    it("takes a fee another account paid out of a native OUT before a token operation", () => {
+      const sponsored = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 1056079,
+        feePayer: "0.0.5678",
+        value: 1066079,
+      });
+      const tokenTransfer = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 1056079,
+        feePayer: "0.0.5678",
+        token: true,
+      });
+
+      expect(adaptOperations(address, [sponsored, tokenTransfer])).toEqual([
+        { ...sponsored, value: new BigNumber(10000) },
+        tokenTransfer,
+      ]);
+    });
+
+    it("leaves a failed native OUT another account paid for unchanged", () => {
+      const sponsored = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 5505725,
+        feePayer: "0.0.5678",
+        value: 5505725,
+        hasFailed: true,
+      });
+
+      expect(adaptOperations(address, [sponsored])).toEqual([sponsored]);
+    });
+
+    it("keeps the fee in a native OUT value the account paid for", () => {
+      const selfPaid = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 1056079,
+        feePayer: address,
+        value: 1066079,
+      });
+
+      expect(adaptOperations(address, [selfPaid])).toEqual([selfPaid]);
     });
 
     it("only adds the FEES operation to the transaction that needs it", () => {

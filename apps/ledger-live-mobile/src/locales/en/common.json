@@ -1866,6 +1866,27 @@
       "description": "The amount joins the neuron's existing stake and follows its dissolve delay, so it is not spendable until the neuron dissolves."
     }
   },
+  "accountDetailSettings": {
+    "title": "Account settings",
+    "menu": {
+      "changeName": "Change name",
+      "viewAdvancedLogs": "View advanced logs",
+      "removeAccount": "Remove account from portfolio"
+    },
+    "advancedLogs": {
+      "title": "Advanced logs",
+      "derivationTip": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
+      "synchronised": "Synchronised {{date}}",
+      "copy": "Copy logs",
+      "copied": "Copied"
+    },
+    "remove": {
+      "title": "Remove account?",
+      "description": "The assets linked to this account will no longer be visible in your portfolio. Your assets on the blockchain remain unaffected.",
+      "confirm": "Yes, remove.",
+      "cancel": "Keep"
+    }
+  },
   "crash": {
     "title": "Something went wrong"
   },
@@ -2537,6 +2558,35 @@
       "progress": "Stay in Ledger Wallet while apps are installing.",
       "skippedInfo": "Some apps aren’t available. They are yet to be developed for {{ productName }}.",
       "skipped": "Not yet available for {{ productName }}"
+    }
+  },
+  "deviceOnboarding": {
+    "checks": {
+      "close": "Close",
+      "synchronizing": {
+        "title": "Synchronizing..."
+      },
+      "idle": {
+        "title": "Check your device",
+        "description": "Let's confirm that your Ledger device is genuine and up-to-date.",
+        "cta": "Check my device"
+      },
+      "checking": {
+        "title": "Check your device",
+        "description": "Confirming your Ledger signer is safe to use and up-to-date.",
+        "cta": "Checking..."
+      },
+      "succeeded": {
+        "title": "Device genuine and up-to-date",
+        "cta": "Continue"
+      }
+    },
+    "syncOffer": {
+      "title": "Sync your wallet",
+      "description": "Keep your balance and portfolio in sync when switching phones or using a computer.",
+      "learnMore": "Learn more",
+      "activate": "Activate",
+      "skip": "Skip for now"
     }
   },
   "onboarding": {
@@ -6080,7 +6130,12 @@
               }
             },
             "bluetoothStateUnknownCheckOnly": {
-              "title": "Checking Bluetooth..."
+              "title": "Bluetooth isn’t responding",
+              "description": "We couldn’t check if Bluetooth is on. Wait a few seconds, then try again. If this continues, turn Bluetooth off and on again.",
+              "cta": {
+                "retry": "Try again",
+                "ignore": "Continue with USB instead"
+              }
             },
             "bluetoothUnsupported": {
               "title": "Bluetooth not supported",
@@ -10367,6 +10422,20 @@
       }
     }
   },
+  "accountDetail": {
+    "assets": {
+      "title": "Assets"
+    },
+    "transactions": {
+      "title": "Transactions"
+    },
+    "editName": {
+      "title": "Change name",
+      "description": "Give this address a name to stay organized (ex. {{ticker}}-Trading, {{ticker}}-DeFi).",
+      "label": "Address name",
+      "submit": "Change name"
+    }
+  },
   "assetDetail": {
     "balanceGraph": {
       "marketPrice": "Market price",
@@ -11847,7 +11916,7 @@
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
-      "labelTooLong": "This address name is too long.",
+      "tooLongLabel": "This address name is too long.",
       "privacyPolicy": "Learn more about Ledger's Privacy Policy."
     },
     "addAddressReview": {
@@ -11867,7 +11936,6 @@
     "detail": {
       "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
-      "myAddresses": "My addresses",
       "emptyState": {
         "contactTitle": "No saved addresses for {{name}}",
         "meTitle": "Save your own addresses",

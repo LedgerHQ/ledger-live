@@ -2,6 +2,7 @@ import { ElectronApplication, Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-e2e-shared/speculos";
+import { fetchSpeculinhoLogs } from "@ledgerhq/live-e2e-shared/speculosCI";
 import { getEnv, setEnv } from "@shared/env";
 import { listen } from "@ledgerhq/logs";
 import * as allure from "allure-js-commons";
@@ -112,15 +113,13 @@ function serializeCliError(error: unknown) {
 }
 
 export async function addTmsLink(ids: string[]) {
-  for (const id of ids) {
-    await allure.tms(id);
-  }
+  await allure.links(...ids.map(id => ({ url: id, type: "tms" })));
+  await allure.tags(...ids.map(id => `tms:${id}`));
 }
 
 export async function addBugLink(ids: string[]) {
-  for (const id of ids) {
-    await allure.issue(id);
-  }
+  await allure.links(...ids.map(id => ({ url: id, type: "issue" })));
+  await allure.tags(...ids.map(id => `issue:${id}`));
 }
 
 export async function addAnnotationLinks(annotations: TestInfo["annotations"]) {
@@ -151,6 +150,14 @@ export async function attachMergedFeatureFlags(
   await testInfo.attach("Merged Feature Flags", {
     body: Buffer.from(JSON.stringify(mergedFeatureFlags, null, 2)),
     contentType: "application/json",
+  });
+}
+
+/** Speculinho keeps the emulator output of a remote device; fetch it before the release. */
+export async function attachSpeculinhoLogs(testInfo: TestInfo, deviceId: string): Promise<void> {
+  await testInfo.attach(`Speculos ${deviceId} logs`, {
+    body: await fetchSpeculinhoLogs(deviceId),
+    contentType: "text/plain",
   });
 }
 

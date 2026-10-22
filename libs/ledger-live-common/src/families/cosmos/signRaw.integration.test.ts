@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray } from "rxjs";
@@ -17,7 +17,9 @@ const PUBLIC_KEY = Buffer.from(secp256k1.getPublicKey(PRIVATE_KEY, true)).toStri
 const sha256 = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest();
 
 const mockDeviceSign = jest.fn(async (_path: number[], bytes: Buffer) => ({
-  signature: Buffer.from(secp256k1.sign(sha256(bytes), PRIVATE_KEY).toDERRawBytes()),
+  signature: Buffer.from(
+    secp256k1.sign(sha256(bytes), PRIVATE_KEY, { prehash: false, format: "der" }),
+  ),
   return_code: 0x9000,
 }));
 jest.mock("@ledgerhq/live-signer-cosmos", () => ({
@@ -84,6 +86,7 @@ describe("cosmos raw signing through the wallet-api on the generic bridge", () =
         Buffer.from(signature, "hex"),
         sha256(Buffer.from(CANONICAL_AMINO_SIGN_DOC)),
         Buffer.from(publicKey, "hex"),
+        { prehash: false },
       ),
     ).toBe(true);
   });

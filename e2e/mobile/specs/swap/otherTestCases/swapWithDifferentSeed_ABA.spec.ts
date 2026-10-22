@@ -7,6 +7,8 @@ const swapTestConfig = {
   tmsLinks: ["B2CQA-3090"],
   userData: "speculos-x-other-account",
   errorMessage: null,
+  lnsErrorMessage:
+    "This receiving account does not belong to the connected device. Please change and retry.",
   addressFrom: Addresses.BTC_NATIVE_SEGWIT_1,
   addressTo: Addresses.ETH_OTHER_SEED,
   tags: [
@@ -31,4 +33,5 @@ runSwapWithDifferentSeedTest(
   swapTestConfig.addressTo,
   swapTestConfig.tmsLinks,
   swapTestConfig.tags,
+  swapTestConfig.lnsErrorMessage,
 );

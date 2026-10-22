@@ -7,6 +7,7 @@ on:
     # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
     # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
     # broadcast from the shared QAA accounts on the same day.
+    # The device rotates per weekday (see WEEKDAY_DEVICE in prepare-devices).
     # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
     - cron: "0 1 * * 1"
     - cron: "0 1 * * 2-5"
@@ -60,6 +61,11 @@ on:
           - nanoGen5
           - nanoSP and stax
         default: nanoSP
+      remote_speculos:
+        description: "Run on Speculinho instead of Docker"
+        required: false
+        type: boolean
+        default: false
       smoke_tests:
         description: "Run smoke tests"
         required: false
@@ -121,6 +127,11 @@ on:
         description: "Device to be used"
         required: true
         type: string
+      remote_speculos:
+        description: "Run on Speculinho instead of Docker"
+        required: false
+        type: boolean
+        default: false
       smoke_tests:
         description: "Run smoke tests"
         required: false
@@ -166,12 +177,17 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoSP' }}
         run: |
+          # Nightly rotation, shared with the mobile one in test-mobile-e2e-reusable.yml: the three
+          # platforms use three different devices each weekday, and all six devices run every week.
+          # Wednesday alternates flex / nanoGen5 by ISO week parity, the opposite of Android that day.
+          # 10# keeps a zero-padded week such as "08" from being read as octal.
+          if [ $((10#$(date -u +%V) % 2)) -eq 0 ]; then WEDNESDAY_DEVICE=flex; else WEDNESDAY_DEVICE=nanoGen5; fi
           declare -A WEEKDAY_DEVICE=(
-            [1]=nanoSP    # Monday     - LNSP
-            [2]=stax      # Tuesday    - Stax
-            [3]=nanoX     # Wednesday  - LNX
-            [4]=flex      # Thursday   - Flex
-            [5]=nanoGen5  # Friday     - NG5
+            [1]=nanoSP              # Monday     - LNSP (broadcast)
+            [2]=nanoX               # Tuesday    - LNX
+            [3]=$WEDNESDAY_DEVICE   # Wednesday  - Flex on even ISO weeks, NG5 on odd ones
+            [4]=stax                # Thursday   - Stax
+            [5]=nanoS               # Friday     - LNS
           )
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
@@ -218,11 +234,13 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       npm_config_loglevel: warn
+      pnpm_config_loglevel: warn
       DO_NOT_TRACK: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
-      E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
+      REMOTE_SPECULOS: ${{ inputs.remote_speculos }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || (inputs.remote_speculos && 'speculos-38ccc68068db-coinapps-85c7e5c' || '1be65b91a8e0691866f880fd437ac05fce78af9d') }}
       COINAPPS: ${{ github.workspace }}/coin-apps
+      E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
       E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
@@ -252,6 +270,7 @@ jobs:
           fetch-depth: 1
 
       - name: Checkout coin-apps (device firmware binaries)
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: LedgerHQ/coin-apps
@@ -259,6 +278,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Setup caches
         id: caches
@@ -292,7 +312,8 @@ jobs:
             --github-output >> "$GITHUB_OUTPUT"
 
       - name: Pull Speculos docker image
-        run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
+        run: docker pull "$SPECULOS_IMAGE_TAG"
         shell: bash
 
       - name: JFrog npm auth
@@ -307,13 +328,14 @@ jobs:
           build_type: ${{ inputs.build_type || 'testing' }}
 
       - name: Verify Speculos Docker image is ready
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
         run: |
-          while ! docker image inspect ${{ env.SPECULOS_IMAGE_TAG }} > /dev/null 2>&1; do
+          while ! docker image inspect "$SPECULOS_IMAGE_TAG" > /dev/null 2>&1; do
             echo "Waiting for Speculos image pull to complete..."
             sleep 2
           done
-          echo "Speculos image ready: ${{ env.SPECULOS_IMAGE_TAG }}"
-          docker image inspect ${{ env.SPECULOS_IMAGE_TAG }} --format '{{.Size}}' | numfmt --to=iec
+          echo "Speculos image ready: $SPECULOS_IMAGE_TAG"
+          docker image inspect "$SPECULOS_IMAGE_TAG" --format '{{.Size}}' | numfmt --to=iec
         shell: bash
 
       - name: Configure test environment (API endpoints, broadcast settings)
@@ -333,6 +355,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
+          SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -352,6 +375,7 @@ jobs:
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICE"
+            echo "- **Speculos:** $SPECULOS_MODE"
             echo "- **Team:** $TEAM_INPUT"
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
@@ -412,6 +436,7 @@ jobs:
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
           BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
@@ -428,7 +453,7 @@ jobs:
 
   report-to-allure:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     outputs:
       status: ${{ steps.summary.outputs.status }}
@@ -472,7 +497,7 @@ jobs:
 
   report-to-allure-device2:
     name: "Create Allure Report - device 2"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     outputs:
@@ -516,7 +541,7 @@ jobs:
 
   qaa-allure-upload:
     name: "QAA Allure Upload - ${{ needs.prepare-devices.outputs.device_1 }} (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() }}
     continue-on-error: true
@@ -541,10 +566,11 @@ jobs:
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
 
   qaa-allure-upload-device2:
     name: "QAA Allure Upload - device 2 (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     continue-on-error: true
@@ -569,10 +595,11 @@ jobs:
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
 
   notify-to-slack:
     name: "Notify to Slack"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, report-to-allure, report-to-allure-device2, qaa-allure-upload, qaa-allure-upload-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:

@@ -11,38 +11,60 @@ const TRUNCATED_ADDRESS_VISIBLE_LENGTH = 8 + 3 + 8;
 export default class ContactDetailPage {
   renameDrawer = new ContactNameDrawer(RENAME_CONTACT_PREFIX);
 
-  addressValueRegExp = /^contacts-detail-address-.+-value$/;
-  addressDetailDialogId = "contacts-address-detail-dialog";
-  deleteAddressContentId = "contacts-delete-address-content";
+  private readonly addressValueRegExp = /^contacts-detail-address-.+-value$/;
+  private readonly addressDetailDialogId = "contacts-address-detail-dialog";
+  private readonly deleteAddressContentId = "contacts-delete-address-content";
+  private readonly actionsMenuContentId = "contacts-detail-actions-menu";
+  private readonly deleteContentId = "contacts-delete-contact-content";
+  private readonly addAddressInputId = "contacts-add-address-input";
 
-  screen = () => getElementById("contacts-detail-screen");
-  name = () => getElementById("contacts-detail-name");
-  addressCount = () => getElementById("contacts-detail-address-count");
-  emptyState = () => getElementById("contacts-detail-empty-state");
-  addAddressButton = () => getElementById("contacts-detail-add-address");
-  addAddressInputId = "contacts-add-address-input";
-  addAddressInput = () => getElementById(this.addAddressInputId);
-  addAddressEnsDisclaimer = () => getElementById("contacts-add-address-ens-disclaimer");
-  addAddressConfirmButton = () => getElementById("contacts-add-address-confirm");
-  addAddressNameInputId = "contacts-add-address-name-input";
-  addAddressNameInput = () => getElementById(this.addAddressNameInputId);
-  addAddressNameContinueId = "contacts-add-address-name-continue";
-  addAddressNameContinueButton = () => getElementById(this.addAddressNameContinueId);
-  registerAddressDeviceConfirmation = () =>
+  private readonly screen = () => getElementById("contacts-detail-screen");
+  private readonly name = () => getElementById("contacts-detail-name");
+  private readonly addressCount = () => getElementById("contacts-detail-address-count");
+  private readonly emptyState = () => getElementById("contacts-detail-empty-state");
+  private readonly addAddressButton = () => getElementById("contacts-detail-add-address");
+  private readonly addAddressInput = () => getElementById(this.addAddressInputId);
+  private readonly addAddressEnsDisclaimer = () =>
+    getElementById("contacts-add-address-ens-disclaimer");
+  private readonly addAddressConfirmButton = () => getElementById("contacts-add-address-confirm");
+  private readonly addAddressNameInputId = "contacts-add-address-name-input";
+  private readonly addAddressNameInput = () => getElementById(this.addAddressNameInputId);
+  private readonly addAddressNameContinueId = "contacts-add-address-name-continue";
+  private readonly addAddressNameContinueButton = () =>
+    getElementById(this.addAddressNameContinueId);
+  private readonly registerAddressDeviceConfirmation = () =>
     getElementById("contacts-register-external-address-continue-on-device");
-  deleteAddressAction = () => getElementById("contacts-address-detail-delete");
-  deleteAddressConfirmButton = () => getElementById("contacts-delete-address-confirm");
-  networkGroup = (networkId: string) =>
+  private readonly deleteAddressAction = () => getElementById("contacts-address-detail-delete");
+  private readonly deleteAddressConfirmButton = () =>
+    getElementById("contacts-delete-address-confirm");
+  private readonly networkGroup = (networkId: string) =>
     getElementById(`contacts-detail-network-group-${networkId}`);
-  addressLabel = (addressId: string) =>
+  private readonly addressLabel = (addressId: string) =>
     getElementById(`contacts-detail-address-${addressId}-label`);
-  addressRow = (rowId: string) => getElementById(rowId);
-  actionsTrigger = () => getElementById("contacts-detail-actions-trigger");
-  editAction = () => getElementById("contacts-detail-edit-action");
-  deleteAction = () => getElementById("contacts-detail-delete-action");
-  actionsMenuContentId = "contacts-detail-actions-menu";
-  deleteContentId = "contacts-delete-contact-content";
-  deleteConfirmButton = () => getElementById("contacts-delete-contact-confirm");
+  private readonly addressRow = (rowId: string) => getElementById(rowId);
+  private readonly actionsTrigger = () => getElementById("contacts-detail-actions-trigger");
+  private readonly editAction = () => getElementById("contacts-detail-edit-action");
+  private readonly deleteAction = () => getElementById("contacts-detail-delete-action");
+  private readonly deleteConfirmButton = () => getElementById("contacts-delete-contact-confirm");
+  private readonly addressValue = (address: string) =>
+    getElementByIdAndText(this.addressValueRegExp, this.truncatedAddress(address));
+
+  private truncatedAddress(address: string) {
+    return address.length <= TRUNCATED_ADDRESS_VISIBLE_LENGTH
+      ? address
+      : `${address.slice(0, 8)}...${address.slice(-8)}`;
+  }
+
+  // The id is assigned on save, so the row is found from the displayed value.
+  private async getAddressId(address: string): Promise<string> {
+    const valueId = await getIdOfElement(this.addressValue(address));
+
+    return valueId.replace(/^contacts-detail-address-/, "").replace(/-value$/, "");
+  }
+
+  private async getAddressRowId(address: string): Promise<string> {
+    return `contacts-detail-address-row-${await this.getAddressId(address)}`;
+  }
 
   @Step("Expect contact detail screen visible")
   async expectScreenVisible() {
@@ -64,11 +86,10 @@ export default class ContactDetailPage {
     await detoxExpect(this.addressCount()).toHaveText(expectedLabel);
   }
 
-  // iOS counts a view flush with the sheet edge as hidden, so waits target an inset anchor.
   @Step("Open Add address")
   async openAddAddress() {
     await tapByElement(this.addAddressButton());
-    await waitForFullyVisibleById(app.modularDrawer.searchBarId);
+    await app.modularDrawer.waitForSearchBar();
   }
 
   @Step("Enter address {{{0.addressInput}}} for {{0.networkName}}")
@@ -107,27 +128,6 @@ export default class ContactDetailPage {
   async addAddress(data: ContactAddressTestData) {
     await this.openAddAddress();
     await this.enterAddress(data);
-  }
-
-  private truncatedAddress(address: string) {
-    return address.length <= TRUNCATED_ADDRESS_VISIBLE_LENGTH
-      ? address
-      : `${address.slice(0, 8)}...${address.slice(-8)}`;
-  }
-
-  private addressValue(address: string) {
-    return getElementByIdAndText(this.addressValueRegExp, this.truncatedAddress(address));
-  }
-
-  // The id is assigned on save, so the row is found from the displayed value.
-  private async getAddressId(address: string): Promise<string> {
-    const valueId = await getIdOfElement(this.addressValue(address));
-
-    return valueId.replace(/^contacts-detail-address-/, "").replace(/-value$/, "");
-  }
-
-  private async getAddressRowId(address: string): Promise<string> {
-    return `contacts-detail-address-row-${await this.getAddressId(address)}`;
   }
 
   @Step("Expect {{{0}}} saved under {{1}}")

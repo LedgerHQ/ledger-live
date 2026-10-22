@@ -9,6 +9,7 @@ import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
 import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "./inputs";
 import { runObservable } from "./run-observable";
+import { commandDescription } from "./registry";
 
 const SOCKET_EVENT_PAYLOAD_GENUINE = "0000";
 
@@ -45,7 +46,7 @@ function mapGenuineCheckError(error: unknown): unknown {
 
 export default defineCommand({
   name: "genuine-check",
-  description: "Check whether the connected Ledger device is genuine",
+  description: commandDescription("genuine-check"),
   options: {
     output: outputOption,
     "device-timeout": deviceTimeoutOption,

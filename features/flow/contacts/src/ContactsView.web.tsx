@@ -5,7 +5,7 @@ import {
   ContactsLedgerSyncIntroductionDialog,
   isContactsLedgerSyncActivationRequired,
 } from "@features/flow-contacts-introduction";
-import { ContactDetailView } from "./steps/Detail/ContactDetailView.web";
+import { ContactDetailView } from "@features/flow-contacts-detail";
 import type { ContactsViewProps } from "./ContactsView.types";
 
 export function ContactsView({
@@ -27,10 +27,6 @@ export function ContactsView({
             isContactsLedgerSyncActivationRequired(ledgerSyncStatus) &&
             ledgerSyncIntroduction.isOpen
           }
-          title={ledgerSyncIntroduction.title}
-          description={ledgerSyncIntroduction.description}
-          activateLabel={ledgerSyncIntroduction.activateLabel}
-          dismissLabel={ledgerSyncIntroduction.dismissLabel}
           onActivate={ledgerSyncIntroduction.onActivate}
           onDismiss={ledgerSyncIntroduction.onDismiss}
         />

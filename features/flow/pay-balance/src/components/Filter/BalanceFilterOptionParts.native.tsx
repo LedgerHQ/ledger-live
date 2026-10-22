@@ -57,7 +57,7 @@ type FilterOptionIconProps = Readonly<{
 
 export function FilterOptionIcon({ ledgerId, ticker }: FilterOptionIconProps) {
   if (ledgerId == null) {
-    return <Spot appearance="icon" icon={Bundle} size={48} />;
+    return <Spot icon={Bundle} size={48} />;
   }
   return <CryptoIcon ledgerId={ledgerId} ticker={ticker ?? ""} size={48} />;
 }

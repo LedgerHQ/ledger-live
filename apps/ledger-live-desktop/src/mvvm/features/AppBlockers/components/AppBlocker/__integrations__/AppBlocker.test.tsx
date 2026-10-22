@@ -2,13 +2,6 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { AppBlocker } from "../index";
 
-jest.mock("~/renderer/linking", () => ({
-  openURL: jest.fn(),
-}));
-jest.mock("~/config/urls", () => ({
-  urls: { geoBlock: { learnMore: "https://test/learn-more" } },
-}));
-
 describe("AppBlocker", () => {
   beforeEach(() => {
     jest.clearAllMocks();

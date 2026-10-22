@@ -11,7 +11,7 @@ import type {
 } from "@features/platform-contacts/device/intents";
 import { registerExternalAddressIntentLWMDefinition } from "LLM/features/Contacts/deviceIntents/registerExternalAddressIntent/intentLWMDefinition";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
-import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 
 const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
@@ -120,7 +120,7 @@ export default function DebugDeviceIntentExecutorContactsValidation() {
         {enabled ? "Stop Contacts validation" : "Start Contacts validation"}
       </Button>
 
-      {enabled ? <DeviceIntentExecutorLWM sourceFlow="debug" {...executorProps} /> : null}
+      {enabled ? <DeviceIntentExecutor sourceFlow="debug" {...executorProps} /> : null}
     </ScrollView>
   );
 }

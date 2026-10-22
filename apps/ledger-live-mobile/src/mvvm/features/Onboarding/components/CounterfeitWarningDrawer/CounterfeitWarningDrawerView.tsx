@@ -7,6 +7,7 @@ import {
   Spot,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
+import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Trans } from "~/context/Locale";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { CounterfeitWarningDrawerViewProps } from "./useCounterfeitWarningDrawerViewModel";
@@ -55,7 +56,7 @@ const CounterfeitWarningDrawerView = ({
           alignItems: "center",
         }}
       >
-        <Spot appearance="info" size={72} />
+        <Spot appearance="muted" icon={InformationFill} size={72} />
         <Box lx={{ width: "full", gap: "s12", alignItems: "center" }}>
           <Text
             typography="heading4SemiBold"

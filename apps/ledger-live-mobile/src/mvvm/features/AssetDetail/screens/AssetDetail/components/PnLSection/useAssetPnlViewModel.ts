@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { useAssetGroupPnL } from "@ledgerhq/wallet-pnl/hooks";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
-import { useCountervaluesState } from "~/reducers/countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { usePnlViewModelBase } from "LLM/features/Pnl/hooks/usePnlViewModelBase";
 import type { PnlViewModel } from "LLM/features/Pnl/types";
@@ -18,7 +18,7 @@ type Props = {
 
 export function useAssetPnlViewModel({ distributionItem, enabled }: Props): PnlViewModel {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const countervalues = useCountervaluesState();
+  const countervalues = useCountervaluesCache();
 
   // Skip the (potentially expensive) per-asset walk when the section is hidden.
   const accounts = enabled ? distributionItem.accounts : EMPTY_ACCOUNTS;

@@ -1,5 +1,10 @@
 import React from "react";
 import { Spot } from "@ledgerhq/lumen-ui-react";
+import {
+  CheckmarkCircleFill,
+  DeleteCircleFill,
+  InformationFill,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import type { InfoStateProps } from "../types.web";
 
 const SPOT_SIZE = 72;
@@ -13,19 +18,13 @@ export function PresetVisual(props: InfoStateProps) {
         </div>
       );
     case "spot":
-      return (
-        <Spot
-          appearance="icon"
-          size={props.spotProps.size ?? SPOT_SIZE}
-          icon={props.spotProps.icon}
-        />
-      );
+      return <Spot size={props.spotProps.size ?? SPOT_SIZE} icon={props.spotProps.icon} />;
     case "success":
-      return <Spot appearance="check" size={SPOT_SIZE} />;
+      return <Spot appearance="success" icon={CheckmarkCircleFill} size={SPOT_SIZE} />;
     case "error":
-      return <Spot appearance="error" size={SPOT_SIZE} />;
+      return <Spot appearance="error" icon={DeleteCircleFill} size={SPOT_SIZE} />;
     case "info":
-      return <Spot appearance="info" size={SPOT_SIZE} />;
+      return <Spot appearance="muted" icon={InformationFill} size={SPOT_SIZE} />;
     case "text":
       return null;
     default:

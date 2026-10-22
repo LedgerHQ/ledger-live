@@ -2,7 +2,7 @@ import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { activeHidDeviceSessionSubject } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
-import { act, renderHook, waitFor } from "@tests/test-renderer";
+import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
 import { createTestDevice, knownStax } from "../testing/testDevice";
@@ -25,6 +25,43 @@ describe("useDeviceOnboarding", () => {
     jest.clearAllMocks();
     activeDeviceSessionSubject.next(null);
     activeHidDeviceSessionSubject.next(null);
+  });
+
+  it("saves each event on the state it led to", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    expect(result.current.log.at(-1)?.state).toBe("readingState");
+    expect(result.current.nextStates).toEqual(
+      expect.arrayContaining([{ event: "DEVICE_STATE_READ", state: "routing" }]),
+    );
+    expect(result.current.nextStates.map(row => row.event)).toEqual(
+      expect.not.arrayContaining(["LOCKED", "TRANSPORT_LOST", "QUIT"]),
+    );
+
+    await quit(result);
+    const quitRow = [...result.current.log].reverse().find(row => row.event?.type === "QUIT");
+    expect(quitRow?.state).toBe("exitOnboarding");
+  });
+
+  it("keeps the newest 200 log rows, so a long run does not grow without end", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    // A device that locks and unlocks again and again, the longest run QA sees.
+    for (let index = 0; index < 150; index++) {
+      act(() => result.current.send({ type: "LOCKED" }));
+      act(() => result.current.send({ type: "UNLOCKED" }));
+    }
+
+    await waitFor(() => expect(result.current.log).toHaveLength(200));
+    expect(result.current.log.at(-1)?.event?.type).toBe("UNLOCKED");
   });
 
   // A lost Bluetooth connection must bring Connect back.
@@ -145,6 +182,37 @@ describe("useDeviceOnboarding", () => {
         wired: false,
       },
     });
+  });
+
+  it("tells the machine the host can set up an unseeded device when that flag is on", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(
+      () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      {
+        overrideInitialState: withFlagOverrides({
+          deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+        }),
+      },
+    );
+
+    await connectStax(result, device);
+
+    expect(result.current.machineContext).toEqual(
+      expect.objectContaining({ hostsSeedSetup: true }),
+    );
+  });
+
+  it("leaves seed setup to legacy when the unseeded flag is off", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+
+    expect(result.current.machineContext).toEqual(
+      expect.objectContaining({ hostsSeedSetup: false }),
+    );
   });
 
   it("keeps the screen awake from connect until reset", async () => {

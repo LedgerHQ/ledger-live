@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { scaleMarketChartData } from "../utils/scaleMarketChartData";
 import type { MarketAssetChartDataRequestParams, MarketCoinDataChart } from "../utils/types";
-import { useAssetChartData } from "./useMarketDataProvider";
+import { useAssetChartData, type UseAssetChartDataOptions } from "./useAssetChartData";
 import { useResolveMarketCounterCurrency } from "./useResolveMarketCounterCurrency";
 
 type UseAssetChartDataInCounterValueParams = MarketAssetChartDataRequestParams & {
@@ -26,7 +26,7 @@ export type UseAssetChartDataInCounterValueResult = {
  */
 export function useAssetChartDataInCounterValue(
   { id, counterCurrency, range, isCryptoCountervalue }: UseAssetChartDataInCounterValueParams,
-  options?: { skip?: boolean },
+  options?: UseAssetChartDataOptions,
 ): UseAssetChartDataInCounterValueResult {
   const { requestCounterCurrency, displayCounterCurrency, needsUsdFallback, isResolutionLoading } =
     useResolveMarketCounterCurrency({
@@ -38,7 +38,12 @@ export function useAssetChartDataInCounterValue(
 
   const { data, currentData, isLoading, isFetching, isError } = useAssetChartData(
     { id, counterCurrency: requestCounterCurrency, range },
-    { skip: skipChart },
+    {
+      skip: skipChart,
+      ...(options?.pollingInterval !== undefined
+        ? { pollingInterval: options.pollingInterval }
+        : {}),
+    },
   );
 
   // Passing "usd" short-circuits the rate hook to 1 without a request.

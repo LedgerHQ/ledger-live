@@ -57,7 +57,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ledger-wallet-4cpu-aws-public
+    runs-on: ledger-wallet-4cpu-aws-public-cached
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -111,10 +111,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ledger-wallet-16cpu-aws-public
+      CI_OS: ledger-wallet-16cpu-aws-public-cached
       JEST_MAX_WORKERS: "12"
       JEST_CACHE_DIRECTORY: /tmp/jest-cache
-    runs-on: [ledger-wallet-16cpu-aws-public]
+    runs-on: [ledger-wallet-16cpu-aws-public-cached]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:

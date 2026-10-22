@@ -22,9 +22,15 @@ const SPECULOS_PREFIX = "speculos|";
 // to Stax). The e2e bridge sends the real model via `setSpeculosDeviceModel`,
 // which we then forward when opening the transport so the app behaves like it.
 let speculosDeviceModel: DeviceModelId | undefined;
+// Token of a protected Speculinho session, also sent by the e2e bridge.
+let speculosSessionToken: string | undefined;
 
 export function setSpeculosDeviceModel(model?: DeviceModelId) {
   speculosDeviceModel = model;
+}
+
+export function setSpeculosSessionToken(token?: string) {
+  speculosSessionToken = token;
 }
 
 /**
@@ -53,7 +59,13 @@ export const registerTransports = () => {
         if (!id.startsWith(SPECULOS_PREFIX)) return null;
         const baseURL = id.slice(SPECULOS_PREFIX.length);
         const model = speculosDeviceModel ? ledgerToDmkDeviceIdMap[speculosDeviceModel] : undefined;
-        return retry(() => DeviceManagementKitTransportSpeculos.open({ baseURL, model }));
+        return retry(() =>
+          DeviceManagementKitTransportSpeculos.open({
+            baseURL,
+            model,
+            bearerToken: speculosSessionToken,
+          }),
+        );
       },
       disconnect: id => (id.startsWith(SPECULOS_PREFIX) ? Promise.resolve() : null),
     });

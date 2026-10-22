@@ -7,7 +7,7 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { syncStateUpdater } from "../ZCashExportKeyFlowModal/sync";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import ZcashSyncStateBanner from "../ZcashSyncStateBanner";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({

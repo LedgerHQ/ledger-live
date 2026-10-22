@@ -39,7 +39,7 @@ const RecoverWidgetView = memo(function RecoverWidgetView({
       className="min-w-0 w-1/2 cursor-pointer border-none bg-transparent p-0 text-left"
     >
       <ContentBanner>
-        <Spot appearance="icon" icon={ShieldCheck} size={48} style={warningSpotStyle} />
+        <Spot icon={ShieldCheck} size={48} style={warningSpotStyle} />
         <ContentBannerContent>
           <ContentBannerTitle>{t(titleKey)}</ContentBannerTitle>
           <ContentBannerDescription>{t(descriptionKey)}</ContentBannerDescription>

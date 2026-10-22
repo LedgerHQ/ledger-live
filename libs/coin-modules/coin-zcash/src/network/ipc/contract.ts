@@ -51,13 +51,6 @@ export type RequestId = string;
 
 /**
  * Channel names -- centralized to keep renderer/main/utility in lock-step.
- *
- * The `zcash:` prefix is shared with the identical contract the Zcash
- * chain-adapter of `coin-bitcoin` declares, and that is deliberate: only one
- * host may `ipcMain.handle` a given channel (the second registration throws),
- * and the host the desktop app registers is this module's. The adapter's own
- * host is no longer built or registered -- it was only ever reached from its
- * shielded path, which the `zcashShielded` feature flag now routes here.
  */
 export const ZCASH_IPC = {
   /** invoke -> number (chain tip height) */

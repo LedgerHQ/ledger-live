@@ -16,7 +16,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const secretNetwork = useFeature("currencySecretNetwork");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
-  const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const avaxCChainFuji = useFeature("currencyAvalancheCChainFuji");
@@ -34,7 +33,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const mantleSepolia = useFeature("currencyMantleSepolia");
   const boba = useFeature("currencyBoba");
   const moonriver = useFeature("currencyMoonriver");
-  const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
@@ -66,7 +64,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const zksyncSepolia = useFeature("currencyZkSyncSepolia");
   const mantra = useFeature("currencyMantra");
   const xion = useFeature("currencyXion");
-  const zenrock = useFeature("currencyZenrock");
   const sonic = useFeature("currencySonic");
   const sui = useFeature("currencySui");
   const suiTestnet = useFeature("currencySuiTestnet");
@@ -98,6 +95,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const arcTestnet = useFeature("currencyArcTestnet");
   const robinhood = useFeature("currencyRobinhood");
   const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
+  const alpenTestnet = useFeature("currencyAlpenTestnet");
   const gonka = useFeature("currencyGonka");
 
   const featureFlaggedCurrencies = useMemo(
@@ -113,7 +111,6 @@ export function useCurrenciesUnderFeatureFlag() {
       secret_network: secretNetwork,
       desmos,
       dydx,
-      quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
       avalanche_c_chain_fuji: avaxCChainFuji,
@@ -131,7 +128,6 @@ export function useCurrenciesUnderFeatureFlag() {
       mantle_sepolia: mantleSepolia,
       boba,
       moonriver,
-      velas_evm: velasEvm,
       syscoin,
       internet_computer: internetComputer,
       telos_evm: telosEvm,
@@ -167,7 +163,6 @@ export function useCurrenciesUnderFeatureFlag() {
       zksync_sepolia: zksyncSepolia,
       mantra,
       xion,
-      zenrock,
       sonic,
       sui,
       sui_testnet: suiTestnet,
@@ -195,6 +190,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arc_testnet: arcTestnet,
       robinhood,
       robinhood_testnet: robinhoodTestnet,
+      alpen_testnet: alpenTestnet,
       gonka,
     }),
     [
@@ -208,7 +204,6 @@ export function useCurrenciesUnderFeatureFlag() {
       secretNetwork,
       desmos,
       dydx,
-      quicksilver,
       persistence,
       avaxCChain,
       avaxCChainFuji,
@@ -226,7 +221,6 @@ export function useCurrenciesUnderFeatureFlag() {
       mantleSepolia,
       boba,
       moonriver,
-      velasEvm,
       syscoin,
       internetComputer,
       telosEvm,
@@ -262,7 +256,6 @@ export function useCurrenciesUnderFeatureFlag() {
       zksyncSepolia,
       mantra,
       xion,
-      zenrock,
       sonic,
       sui,
       suiTestnet,
@@ -290,6 +283,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arcTestnet,
       robinhood,
       robinhoodTestnet,
+      alpenTestnet,
       gonka,
     ],
   );

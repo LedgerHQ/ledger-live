@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "38.3.0",
+  "version": "38.4.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -232,7 +232,6 @@
     "src"
   ],
   "peerDependencies": {
-    "@tanstack/react-query": ">=5",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
@@ -261,10 +260,12 @@
   },
   "dependencies": {
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^8.0.0",
+    "@domain/api-account-data": "workspace:^",
     "@domain/api-aggregated-assets": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/api-swap-quotes": "workspace:^",
+    "@domain/entity-account-data": "workspace:^",
     "@domain/entity-account-descriptor": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-client-identity": "workspace:^",
@@ -276,6 +277,7 @@
     "@domain/entity-interest-rate": "workspace:^",
     "@domain/entity-market-countervalues": "workspace:*",
     "@domain/entity-recent-addresses": "workspace:^",
+    "@features/platform-account-analytics": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:^",
@@ -440,7 +442,6 @@
     "@solana/web3.js": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@tanstack/react-query": "^5.28.9",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/bs58": "catalog:",

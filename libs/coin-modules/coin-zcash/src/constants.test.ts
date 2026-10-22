@@ -5,15 +5,26 @@ import { TEST_CONFIG } from "./test/coinConfig";
 // against a chain the account was never scanned on: both derive it here.
 describe("zainoEndpoint", () => {
   it("keeps the gRPC URL it is given", () => {
-    expect(zainoEndpoint(TEST_CONFIG.zaino.url).grpcUrl).toBe(TEST_CONFIG.zaino.url);
+    expect(zainoEndpoint(TEST_CONFIG.zaino.url, "zcash").grpcUrl).toBe(TEST_CONFIG.zaino.url);
   });
 
   it.each([
-    ["https://testnet.zec.rocks", "testnet"],
-    ["https://my-testnet-node.example:443", "testnet"],
-    ["https://zec-indexer.coin.ledger.com", "mainnet"],
-  ])("infers the network of %s as %s", (url, network) => {
-    expect(zainoEndpoint(url)).toEqual({ grpcUrl: url, network });
+    ["zcash", "mainnet"],
+    ["zcash_testnet", "testnet"],
+    // The coin-tester's local node: mainnet rules, see zcash_regtest's currency definition.
+    ["zcash_regtest", "mainnet"],
+  ])("takes the network of %s from the currency: %s", (currencyId, network) => {
+    expect(zainoEndpoint("https://zec-indexer.coin.ledger.com", currencyId)).toEqual({
+      grpcUrl: "https://zec-indexer.coin.ledger.com",
+      network,
+    });
+  });
+
+  it("never reads the network from the URL", () => {
+    expect(zainoEndpoint("https://testnet.zec.rocks", "zcash").network).toBe("mainnet");
+    expect(zainoEndpoint("https://zec-indexer.coin.ledger.com", "zcash_testnet").network).toBe(
+      "testnet",
+    );
   });
 });
 

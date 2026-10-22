@@ -1,4 +1,3 @@
-import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
 export type ChartDataPoint = [number, number];
@@ -16,7 +15,6 @@ export enum Order {
 export type MarketListRequestParams = {
   counterCurrency?: string;
   starred?: string[];
-  page?: number;
   limit?: number;
   range?: string;
   order?: Order;
@@ -32,33 +30,25 @@ export type MarketListRequestResult = {
   isLoading: boolean;
   isError: boolean;
   isFetching: boolean;
-  cachedMetadataMap: Map<string, HashMapBody>;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
+  /** Refetches every loaded page. */
+  refetch: () => void;
+  resetToFirstPage: () => void;
 };
 
-export type HashMapBody = {
-  updatedAt: number;
-  refetch: (options?: RefetchOptions | undefined) => Promise<
-    QueryObserverResult<
-      {
-        formattedData: MarketCurrencyData[];
-        page: number;
-      },
-      Error
-    >
-  >;
-};
-
-export type MarketCurrencyRequestParams = {
+type MarketCounterValueParams = {
   id?: string;
+  counterCurrency?: string;
+};
+
+export type MarketCurrencyRequestParams = MarketCounterValueParams & {
   /** Ledger currency ids to resolve via the /v3/markets `ledgerIds` filter. */
   ledgerIds?: string[];
-  counterCurrency?: string;
-  range?: string;
 };
 
-export type MarketAssetChartDataRequestParams = {
-  id?: string;
-  counterCurrency?: string;
+export type MarketAssetChartDataRequestParams = MarketCounterValueParams & {
   range?: string;
 };
 

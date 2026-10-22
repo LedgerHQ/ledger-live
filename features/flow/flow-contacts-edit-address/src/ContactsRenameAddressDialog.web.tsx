@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
+import { useEditAddressLabels } from "./copy/useEditAddressLabels";
 import type { ContactsRenameAddressDialogProps } from "./types";
 import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation.web";
 
@@ -22,12 +23,13 @@ export function ContactsRenameAddressDialog({
   invalidLabelError,
   addressEntry,
   isDeviceRequired,
-  labels,
+  supportsDomain,
   onClose,
   onDraftLabelChange,
   onAddressChange,
   onConfirm,
 }: ContactsRenameAddressDialogProps): React.ReactNode {
+  const labels = useEditAddressLabels(supportsDomain);
   const labelValidationError =
     invalidLabelError === null ? undefined : labels.labelValidationErrors[invalidLabelError];
   const addressInput = useEditAddressDialogPresentation({

@@ -5,7 +5,7 @@ import { TEST_ADDRESSES } from "../__tests__/fixtures/addresses.fixture";
 import type { CasperContext, CasperMemo } from "../types";
 import { createApi } from "./index";
 
-const context = {} as CasperContext;
+const context = { config: async () => ({ name: "Casper" }) } as unknown as CasperContext;
 const api = createApi();
 const validEd25519 = "016470ae57b0a3ad5a679d2e0422909bfb9ded445e20cbe6b4c9806f844c94d401";
 

@@ -172,7 +172,8 @@ describe("EarnMenuBottomSheet", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "stake",
       flow: "stake",
-      live_app: "earn",
+      partner: "earn",
+      live_app: "earn_dashboard",
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Base, {
@@ -274,7 +275,8 @@ describe("EarnMenuBottomSheet", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "external",
       flow: "external",
-      live_app: "other-app",
+      partner: "other-app",
+      live_app: "earn_dashboard",
     });
 
     expect(Linking.openURL).toHaveBeenCalledWith("https://external.example.com");
@@ -319,7 +321,8 @@ describe("EarnMenuBottomSheet", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "btn",
       flow: "f",
-      live_app: "other",
+      partner: "other",
+      live_app: "earn_dashboard",
     });
   });
 });

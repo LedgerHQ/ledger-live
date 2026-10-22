@@ -88,7 +88,7 @@ jobs:
 
       - name: publish nightly (JFrog)
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
 
         #NPM publishing - to be removed when all is migrated
 

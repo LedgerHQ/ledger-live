@@ -20,17 +20,18 @@ type DeviceControllerContext = {
   getButtonsController: () => ButtonsController;
 };
 
-const endpointKey = () => `${getSpeculosAddress()}:${getEnv("SPECULOS_API_PORT")}`;
-
 export const getDeviceControllerWithMemo = (() => {
   let cache: { key: string; client: DeviceControllerClient } | null = null;
   return () => {
-    const key = endpointKey();
+    const endpoint = `${getSpeculosAddress()}:${getEnv("SPECULOS_API_PORT")}`;
+    const bearerToken = process.env.SPECULOS_SESSION_TOKEN;
+    const key = `${endpoint}|${bearerToken ?? ""}`;
     if (!cache || cache.key !== key) {
       cache = {
         key,
-        client: deviceControllerClientFactory(key, {
+        client: deviceControllerClientFactory(endpoint, {
           timeoutMs: 10000,
+          bearerToken,
         }),
       };
     }

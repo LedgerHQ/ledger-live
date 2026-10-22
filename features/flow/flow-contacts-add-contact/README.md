@@ -3,8 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development as part of the Contacts migration.
 
-Shared Add contact flow for Desktop and Mobile. Applications inject contact creation, translations,
-navigation, and native drawer hosting.
+Shared Add contact flow for Desktop and Mobile. The package resolves its own copy with `@shared/i18n`.
+Applications inject contact creation, navigation, and native drawer hosting.
 
 ## Public API
 

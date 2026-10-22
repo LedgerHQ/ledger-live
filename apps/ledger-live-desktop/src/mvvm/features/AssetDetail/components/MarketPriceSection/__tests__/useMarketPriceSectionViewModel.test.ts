@@ -100,6 +100,23 @@ describe("useMarketPriceSectionViewModel", () => {
     expect(result.current.variationText).not.toBe("***");
   });
 
+  it("should pass the header price into the chart series", () => {
+    renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          ledgerId: "bitcoin",
+          marketData,
+          isDistributionLoading: false,
+          selectedRange: "1d",
+        }),
+      { initialState: { settings: { counterValue: "USD", locale: "en-US" } } },
+    );
+
+    expect(mockedUseAssetDetailChartSeries).toHaveBeenCalledWith(
+      expect.objectContaining({ latestPrice: 100 }),
+    );
+  });
+
   it("uses the live price and no scrubbed date when not scrubbing", () => {
     const { result } = renderHook(
       () =>

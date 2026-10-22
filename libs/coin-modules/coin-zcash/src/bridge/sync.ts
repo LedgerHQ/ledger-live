@@ -437,6 +437,7 @@ export async function performTransparentSync(
   info: AccountShapeInfo<ZcashAccount>,
   signerContext: SignerContext,
   context: ZcashContext,
+  isShieldedEnabled: () => boolean = () => true,
 ): Promise<Partial<ZcashAccount>> {
   const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
   const config = await context.config(currency.id);
@@ -487,7 +488,7 @@ export async function performTransparentSync(
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
   const blockHeight = currentBlock?.height || 0;
-  await wallet.syncAccount(walletAccount, blockHeight);
+  await wallet.syncAccount(context.logger, walletAccount, blockHeight);
 
   const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
@@ -505,15 +506,19 @@ export async function performTransparentSync(
   //
   // This reaches the network, and it is an enrichment: a sync that already holds
   // the explorer's answer must not be lost because that reach failed.
+  //
+  // Skipped without the shielded engine: the explorer's view is all there is.
   let resolved: ResolvedTransactions | undefined;
-  try {
-    resolved = await recoverTransactionDetails(
-      zainoEndpoint(config.zaino.url),
-      transactions,
-      initialAccount,
-    );
-  } catch (error) {
-    log(ZCASH_LOG_TYPE, "keeping the explorer's view of the transactions", { error });
+  if (isShieldedEnabled()) {
+    try {
+      resolved = await recoverTransactionDetails(
+        zainoEndpoint(config.zaino.url, currency.id),
+        transactions,
+        initialAccount,
+      );
+    } catch (error) {
+      log(ZCASH_LOG_TYPE, "keeping the explorer's view of the transactions", { error });
+    }
   }
 
   const destinations: ShieldedDestinations = {
@@ -598,7 +603,11 @@ export async function performTransparentSync(
     new BigNumber(0),
   );
 
-  const balance = computeZcashBalance(transparentBalance, initialAccount?.privateInfo);
+  // Without the shielded engine the notes a previous sync recorded can be neither refreshed nor
+  // spent, so only the transparent UTXOs count.
+  const balance = isShieldedEnabled()
+    ? computeZcashBalance(transparentBalance, initialAccount?.privateInfo)
+    : transparentBalance;
 
   return {
     id: accountId,
@@ -624,9 +633,10 @@ function createTransparentSyncObservable(
   info: AccountShapeInfo<ZcashAccount>,
   signerContext: SignerContext,
   context: ZcashContext,
+  isShieldedEnabled: () => boolean,
 ): Observable<Partial<ZcashAccount>> {
   return new Observable<Partial<ZcashAccount>>(subscriber => {
-    performTransparentSync(info, signerContext, context)
+    performTransparentSync(info, signerContext, context, isShieldedEnabled)
       .then(result => {
         subscriber.next(result);
         subscriber.complete();
@@ -1063,7 +1073,7 @@ export function buildExtraSyncObservable(
         zcashSyncShielded(
           info,
           syncConfig,
-          zainoEndpoint(config.zaino.url),
+          zainoEndpoint(config.zaino.url, info.currency.id),
           config.zaino.batchSize ?? ZCASH_SHIELDED_BATCH_SIZE,
         ),
       ).pipe(timeout(config.zaino.timeoutMs ?? ZCASH_SHIELDED_CHUNK_TIMEOUT_MS)),
@@ -1172,9 +1182,14 @@ export function buildSyncObservables(
   syncConfig: SyncConfig,
   signerContext: SignerContext,
   context: ZcashContext,
+  isShieldedEnabled: () => boolean = () => true,
 ): { syncs: Observable<Partial<ZcashAccount>>[]; syncType: number } {
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
   const syncs: Observable<Partial<ZcashAccount>>[] = [];
+  // The host can flip the mode while a sync runs: read it once, so the legs, the recipient
+  // recovery and the balance of one sync all agree on it.
+  const shieldedEnabled = isShieldedEnabled();
+  const syncMode = () => shieldedEnabled;
 
   const initialOps = (info.initialAccount?.operations || []) as BtcOperation[];
   const latest = {
@@ -1184,13 +1199,16 @@ export function buildSyncObservables(
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
     syncs.push(
-      createTransparentSyncObservable(info, signerContext, context).pipe(
+      createTransparentSyncObservable(info, signerContext, context, syncMode).pipe(
         map(result => reconcileLegOperations(latest, "transparent", result)),
       ),
     );
   }
 
-  const extraSync = buildExtraSyncObservable(info, syncConfig, context);
+  // No shielded leg without the engine that scans it.
+  const extraSync = shieldedEnabled
+    ? buildExtraSyncObservable(info, syncConfig, context)
+    : undefined;
   if (extraSync) {
     syncs.push(extraSync.pipe(map(result => reconcileLegOperations(latest, "shielded", result))));
   }
@@ -1201,10 +1219,17 @@ export function buildSyncObservables(
 export function makeGetAccountShape(
   signerContext: SignerContext,
   context: ZcashContext,
+  isShieldedEnabled: () => boolean = () => true,
 ): GetAccountShapeStream<ZcashAccount> {
   return (info: AccountShapeInfo<ZcashAccount>, syncConfig: SyncConfig) =>
     new Observable(o => {
-      const { syncs } = buildSyncObservables(info, syncConfig, signerContext, context);
+      const { syncs } = buildSyncObservables(
+        info,
+        syncConfig,
+        signerContext,
+        context,
+        isShieldedEnabled,
+      );
 
       if (syncs.length === 0) {
         o.complete();

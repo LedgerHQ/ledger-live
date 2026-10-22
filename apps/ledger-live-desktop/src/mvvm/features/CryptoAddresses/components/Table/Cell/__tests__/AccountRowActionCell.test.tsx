@@ -1,53 +1,59 @@
 import React from "react";
+import { PenEdit, Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import { render, screen, waitFor } from "tests/testSetup";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { AccountRowActionCell } from "../AccountRowActionCell";
 import { createWalletState } from "../../../../testUtils/createWalletState";
 
-const ARIA_LABEL = "Edit name";
-const onEditName = jest.fn();
+const onAction = jest.fn();
 
-const renderCell = (isSyncing: boolean) =>
-  render(
-    <AccountRowActionCell
-      account={ETH_ACCOUNT}
-      editNameAriaLabel={ARIA_LABEL}
-      isSyncing={isSyncing}
-      onEditName={onEditName}
-    />,
-    { initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH"]])) },
-  );
+const VARIANTS = [
+  { variant: "edit name", icon: PenEdit, ariaLabel: "Edit name" },
+  { variant: "account settings", icon: Settings, ariaLabel: "Account settings" },
+];
 
-describe("AccountRowActionCell", () => {
+describe.each(VARIANTS)("AccountRowActionCell ($variant)", ({ icon, ariaLabel }) => {
+  const renderCell = (isSyncing: boolean) =>
+    render(
+      <AccountRowActionCell
+        account={ETH_ACCOUNT}
+        icon={icon}
+        ariaLabel={ariaLabel}
+        isSyncing={isSyncing}
+        onAction={onAction}
+      />,
+      { initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH"]])) },
+    );
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe("when not syncing", () => {
-    it("renders an enabled edit button", () => {
+    it("renders an enabled button", () => {
       renderCell(false);
-      expect(screen.getByRole("button", { name: ARIA_LABEL })).toBeEnabled();
+      expect(screen.getByRole("button", { name: ariaLabel })).toBeEnabled();
     });
 
-    it("requests the name edition of its account when clicked", async () => {
+    it("runs the action for its account when clicked", async () => {
       const { user } = renderCell(false);
 
-      await user.click(screen.getByRole("button", { name: ARIA_LABEL }));
+      await user.click(screen.getByRole("button", { name: ariaLabel }));
 
-      expect(onEditName).toHaveBeenCalledWith(ETH_ACCOUNT);
+      expect(onAction).toHaveBeenCalledWith(ETH_ACCOUNT);
     });
   });
 
   describe("when syncing", () => {
-    it("renders a disabled edit button", () => {
+    it("renders a disabled button", () => {
       renderCell(true);
-      expect(screen.getByRole("button", { name: ARIA_LABEL })).toBeDisabled();
+      expect(screen.getByRole("button", { name: ariaLabel })).toBeDisabled();
     });
 
     it("shows a tooltip explaining sync is in progress on hover", async () => {
       const { user } = renderCell(true);
 
-      await user.hover(screen.getByRole("button", { name: ARIA_LABEL }));
+      await user.hover(screen.getByRole("button", { name: ariaLabel }));
 
       await waitFor(() => {
         const tooltips = screen.getAllByText("Sync in progress, please wait");
@@ -62,15 +68,16 @@ describe("AccountRowActionCell", () => {
       <div onClick={parentClick}>
         <AccountRowActionCell
           account={ETH_ACCOUNT}
-          editNameAriaLabel={ARIA_LABEL}
+          icon={icon}
+          ariaLabel={ariaLabel}
           isSyncing={false}
-          onEditName={onEditName}
+          onAction={onAction}
         />
       </div>,
       { initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH"]])) },
     );
 
-    await user.click(screen.getByRole("button", { name: ARIA_LABEL }));
+    await user.click(screen.getByRole("button", { name: ariaLabel }));
 
     expect(parentClick).not.toHaveBeenCalled();
   });

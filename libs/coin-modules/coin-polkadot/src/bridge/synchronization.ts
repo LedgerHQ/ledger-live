@@ -35,7 +35,7 @@ export const makeGetAccountShape =
       unlockings,
       nominations,
       numSlashingSpans,
-    } = await polkadotAPI.getAccount(context.logger, config, address, currencyToUse);
+    } = await polkadotAPI.getAccount(context.logger, config, address, currencyToUse.id);
 
     const accountId = encodeAccountId({
       type: "js",

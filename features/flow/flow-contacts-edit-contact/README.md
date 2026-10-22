@@ -19,4 +19,4 @@ resolves the Web dialog or Native drawer from the consumer's platform configurat
 
 `@features/platform-contacts` owns the shared contact-edit port implementation and contact-name
 input primitives. This leaf owns its Native drawer content. Applications own their container
-placement, navigation, translations, and analytics.
+placement, navigation, and analytics. This package resolves its own copy with `@shared/i18n`.

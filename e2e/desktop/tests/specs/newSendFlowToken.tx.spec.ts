@@ -29,6 +29,7 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(TokenAccount.TRX_USDT, TokenAccount.TRX_USDT_2, "0.01"),
     xrayTicket: "B2CQA-6111",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01"),

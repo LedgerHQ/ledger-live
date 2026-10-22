@@ -14,7 +14,7 @@ export function ContactsSearchNoResults({
       className="flex flex-col items-center justify-center gap-16 py-40"
       data-testid="contacts-search-no-results"
     >
-      <Spot appearance="icon" icon={Search} />
+      <Spot icon={Search} />
       <span className="heading-4-semi-bold text-base">{message}</span>
     </div>
   );

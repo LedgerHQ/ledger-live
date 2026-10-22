@@ -64,18 +64,20 @@ function toOutputScriptTemporary(validAddress: string, network: bjs.Network): Bu
   try {
     const decodeBase58 = bjs.address.fromBase58Check(validAddress);
     if (decodeBase58.version === network.pubKeyHash)
-      return bjs.payments.p2pkh({ hash: decodeBase58.hash }).output as Buffer;
+      return Buffer.from(bjs.payments.p2pkh({ hash: decodeBase58.hash }).output ?? []);
     if (decodeBase58.version === network.scriptHash)
-      return bjs.payments.p2sh({ hash: decodeBase58.hash }).output as Buffer;
+      return Buffer.from(bjs.payments.p2sh({ hash: decodeBase58.hash }).output ?? []);
   } catch {
     // It's not a base58 address, so it's a segwit address
   }
   const decodeBech32 = fromBech32(validAddress);
-  return bjs.script.compile([
-    // OP_0 is encoded as 0x00, but OP_1 through OP_16 are encoded as 0x51 though 0x60, see BIP173
-    decodeBech32.version + (decodeBech32.version > 0 ? 0x50 : 0),
-    decodeBech32.data,
-  ]);
+  return Buffer.from(
+    bjs.script.compile([
+      // OP_0 is encoded as 0x00, but OP_1 through OP_16 are encoded as 0x51 though 0x60, see BIP173
+      decodeBech32.version + (decodeBech32.version > 0 ? 0x50 : 0),
+      decodeBech32.data,
+    ]),
+  );
 }
 
 class Bitcoin extends Base {
@@ -160,7 +162,7 @@ class Bitcoin extends Base {
     // hash_tag(x) = SHA256(SHA256(tag) || SHA256(tag) || x), see BIP340
     // See https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification
     const h = bjs.crypto.sha256(Buffer.from("TapTweak", "utf-8"));
-    return bjs.crypto.sha256(Buffer.concat([h, h, x]));
+    return Buffer.from(bjs.crypto.sha256(Buffer.concat([h, h, x])));
   }
 
   private async getTaprootAddress(xpub: string, account: number, index: number): Promise<string> {

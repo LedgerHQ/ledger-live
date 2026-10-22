@@ -50,6 +50,7 @@ import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/valid
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
+import { createOpenActionMenuDialogHandler } from "./actionMenuDialogStore";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -381,6 +382,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         }
       },
       "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
+      "custom.dialog.menu": createOpenActionMenuDialogHandler(dispatch),
       "custom.syncAccount": async request => {
         const { fromAccountId, toAccountId } = request.params || {};
         if (!fromAccountId || !toAccountId) {

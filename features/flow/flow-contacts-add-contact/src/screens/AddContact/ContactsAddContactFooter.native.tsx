@@ -1,13 +1,14 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
+import { useAddContactLabels } from "./copy/useAddContactLabels";
 import type { ContactsAddContactFooterProps } from "./types";
 
 export function ContactsAddContactFooter({
   isConfirmEnabled,
   isSaving,
-  labels,
   onConfirm,
 }: ContactsAddContactFooterProps): React.JSX.Element {
+  const labels = useAddContactLabels();
   return (
     <Button
       appearance="base"

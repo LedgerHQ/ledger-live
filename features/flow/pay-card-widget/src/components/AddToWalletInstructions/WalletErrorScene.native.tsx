@@ -20,7 +20,7 @@ export function WalletErrorScene({
   return (
     <Box testID="pay-card-wallet-error">
       <Box lx={{ alignItems: "center", gap: "s16", paddingHorizontal: "s16" }}>
-        <Spot appearance="icon" icon={WarningFill} size={56} />
+        <Spot icon={WarningFill} size={56} />
         <Box lx={{ alignItems: "center", gap: "s8" }}>
           <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {title}

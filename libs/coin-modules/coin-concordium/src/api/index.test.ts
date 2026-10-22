@@ -147,7 +147,7 @@ describe("api/index", () => {
       );
       expect(result.items).toHaveLength(1);
       expect(result.items[0].type).toBe("OUT");
-      expect(result.items[0].value).toBe(BigInt(1000500));
+      expect(result.items[0].value).toBe(BigInt(1000000));
       expect(result.items[0].tx.fees).toBe(BigInt(500));
       expect(result.next).toBeUndefined();
     });

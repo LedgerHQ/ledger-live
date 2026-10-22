@@ -1,21 +1,23 @@
 import React from "react";
 import { IconButton, Tooltip, TooltipTrigger, TooltipContent } from "@ledgerhq/lumen-ui-react";
-import { PenEdit } from "@ledgerhq/lumen-ui-react/symbols";
+import type { IconButtonProps } from "@ledgerhq/lumen-ui-react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 
 type AccountRowActionCellProps = {
   readonly account: AccountLike;
-  readonly editNameAriaLabel: string;
+  readonly icon: IconButtonProps["icon"];
+  readonly ariaLabel: string;
   readonly isSyncing: boolean;
-  readonly onEditName: (account: AccountLike) => void;
+  readonly onAction: (account: AccountLike) => void;
 };
 
 export function AccountRowActionCell({
   account,
-  editNameAriaLabel,
+  icon,
+  ariaLabel,
   isSyncing,
-  onEditName,
+  onAction,
 }: AccountRowActionCellProps) {
   const { t } = useTranslation();
 
@@ -28,8 +30,8 @@ export function AccountRowActionCell({
               <IconButton
                 appearance="transparent"
                 size="sm"
-                icon={PenEdit}
-                aria-label={editNameAriaLabel}
+                icon={icon}
+                aria-label={ariaLabel}
                 disabled
               />
             </span>
@@ -42,9 +44,9 @@ export function AccountRowActionCell({
         <IconButton
           appearance="transparent"
           size="sm"
-          icon={PenEdit}
-          aria-label={editNameAriaLabel}
-          onClick={() => onEditName(account)}
+          icon={icon}
+          aria-label={ariaLabel}
+          onClick={() => onAction(account)}
         />
       )}
     </div>

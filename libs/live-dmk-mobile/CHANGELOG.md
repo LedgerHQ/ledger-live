@@ -1,5 +1,33 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.32.0
+
+### Minor Changes
+
+- [#23210](https://github.com/LedgerHQ/ledger-live/pull/23210) [`a2ef1bf`](https://github.com/LedgerHQ/ledger-live/commit/a2ef1bf1a96b8f59795897fcd9dcd0f0e6fd3295) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The Bluetooth discovery preflight now waits up to 3 s for the Bluetooth state to leave `Unknown` or `Resetting` before it reports an error. Before, turning off Bluetooth during a scan on Android could report `BluetoothStateUnknownCheckOnly` while the adapter was still turning off. The connect new device sheet then showed "Checking Bluetooth..." with no action.
+
+- [#23220](https://github.com/LedgerHQ/ledger-live/pull/23220) [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Support protected Speculinho sessions in E2E. Speculos transports take the session's `bearerToken` (`SpeculosHttpTransportOpts`, `SpeculosSessionTarget`, the mobile `SpeculosTarget`; `DeviceManagementKitTransportSpeculos` and the desktop transport default to `SPECULOS_SESSION_TOKEN`) and keep a separate DMK per token. E2E acquires sessions with `protected: true` and authenticates every operator and Speculos request; the mobile e2e bridge passes the token to the app and now requires a per-run connection token. Bumps `@ledgerhq/device-transport-kit-speculos` to 1.3.0 and `@ledgerhq/speculos-device-controller` to 0.4.0.
+
+### Patch Changes
+
+- Updated dependencies [[`ee508db`](https://github.com/LedgerHQ/ledger-live/commit/ee508db35d572d43e03cf58e811177cc3b2389a9), [`68cebc0`](https://github.com/LedgerHQ/ledger-live/commit/68cebc06f2ec8f4cc38ac1caca779317a8fe0711), [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0)]:
+  - @shared/env@0.11.0
+  - @ledgerhq/live-dmk-shared@0.36.0
+
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#23210](https://github.com/LedgerHQ/ledger-live/pull/23210) [`a2ef1bf`](https://github.com/LedgerHQ/ledger-live/commit/a2ef1bf1a96b8f59795897fcd9dcd0f0e6fd3295) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The Bluetooth discovery preflight now waits up to 3 s for the Bluetooth state to leave `Unknown` or `Resetting` before it reports an error. Before, turning off Bluetooth during a scan on Android could report `BluetoothStateUnknownCheckOnly` while the adapter was still turning off. The connect new device sheet then showed "Checking Bluetooth..." with no action.
+
+- [#23220](https://github.com/LedgerHQ/ledger-live/pull/23220) [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Support protected Speculinho sessions in E2E. Speculos transports take the session's `bearerToken` (`SpeculosHttpTransportOpts`, `SpeculosSessionTarget`, the mobile `SpeculosTarget`; `DeviceManagementKitTransportSpeculos` and the desktop transport default to `SPECULOS_SESSION_TOKEN`) and keep a separate DMK per token. E2E acquires sessions with `protected: true` and authenticates every operator and Speculos request; the mobile e2e bridge passes the token to the app and now requires a per-run connection token. Bumps `@ledgerhq/device-transport-kit-speculos` to 1.3.0 and `@ledgerhq/speculos-device-controller` to 0.4.0.
+
+### Patch Changes
+
+- Updated dependencies [[`ee508db`](https://github.com/LedgerHQ/ledger-live/commit/ee508db35d572d43e03cf58e811177cc3b2389a9), [`68cebc0`](https://github.com/LedgerHQ/ledger-live/commit/68cebc06f2ec8f4cc38ac1caca779317a8fe0711), [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0)]:
+  - @shared/env@0.11.0-next.0
+  - @ledgerhq/live-dmk-shared@0.36.0-next.0
+
 ## 0.31.0
 
 ### Minor Changes
@@ -197,25 +225,5 @@
 
 - Updated dependencies [[`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712)]:
   - @shared/env@0.2.0-next.0
-
-## 0.29.1
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f)]:
-  - @ledgerhq/errors@7.0.0
-  - @ledgerhq/hw-transport@6.35.7
-  - @shared/env@0.1.1
-  - @ledgerhq/live-dmk-shared@0.29.1
-
-## 0.29.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f)]:
-  - @ledgerhq/errors@7.0.0-next.0
-  - @ledgerhq/hw-transport@6.35.7-next.0
-  - @shared/env@0.1.1-next.0
-  - @ledgerhq/live-dmk-shared@0.29.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

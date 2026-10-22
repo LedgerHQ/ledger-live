@@ -20,7 +20,7 @@ type Props = {
 export const OptionButton = memo(({ onPress, title, Icon, subtitle, testID }: Props) => (
   <ListItem onPress={onPress} testID={testID} lx={{ marginHorizontal: "-s8" }}>
     <ListItemLeading>
-      <Spot appearance="icon" icon={Icon} />
+      <Spot icon={Icon} />
       <ListItemContent>
         <ListItemTitle>{title}</ListItemTitle>
         {subtitle ? <ListItemDescription>{subtitle}</ListItemDescription> : null}

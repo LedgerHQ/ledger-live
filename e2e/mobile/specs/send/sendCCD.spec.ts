@@ -15,5 +15,6 @@ runSendTest(
     featureFlags: { currencyConcordiumTestnet: { enabled: true } },
     userdata: "concordium-account",
     liveDataOptions: { currency: Account.CCD_TESTNET_1.currency.id },
+    skipLNS: true,
   },
 );

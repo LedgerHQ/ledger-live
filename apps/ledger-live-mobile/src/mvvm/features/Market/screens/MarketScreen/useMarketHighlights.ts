@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useWindowDimensions } from "react-native";
-import { useMoodIndexAvailability } from "LLM/components/FearAndGreed/useMoodIndexAvailability";
+import { isMoodIndexAvailable } from "@features/flow-fear-and-greed";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 
 const HORIZONTAL_PADDING = 16;
 const CARD_GAP = 8;
@@ -19,14 +20,14 @@ export interface MarketHighlights {
 
 export function useMarketHighlights(): MarketHighlights {
   const { width } = useWindowDimensions();
-  const isMoodIndexAvailable = useMoodIndexAvailability();
+  const moodIndexAvailable = isMoodIndexAvailable(getCountryLocale());
 
   return useMemo(() => {
     const cardWidth = (width - HORIZONTAL_PADDING * 2) / 2 - CARD_GAP;
 
     const highlightCards: MarketHighlightCard[] = [
       { key: "market-highlight-market-cap", type: "marketCap" },
-      ...(isMoodIndexAvailable
+      ...(moodIndexAvailable
         ? [{ key: "market-highlight-fear-and-greed", type: "fearAndGreed" } as const]
         : []),
       { key: "market-highlight-altcoin-season", type: "altcoinSeason" },
@@ -38,5 +39,5 @@ export function useMarketHighlights(): MarketHighlights {
       snapToInterval: cardWidth + CARD_GAP,
       highlightCards,
     };
-  }, [width, isMoodIndexAvailable]);
+  }, [width, moodIndexAvailable]);
 }

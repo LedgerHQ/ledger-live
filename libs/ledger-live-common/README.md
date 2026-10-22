@@ -48,9 +48,9 @@ pnpm common typecheck
 pnpm common test
 ```
 
-Linting uses oxlint with `.oxlintrc.json`. Formatting uses oxfmt with
-`.oxfmtrc.json`; run `pnpm common format` when you intentionally want to apply
-formatting.
+Linting uses oxlint with `.oxlintrc.json`. Formatting uses oxfmt with the
+repository config in `support/fmt`; run `pnpm common format` when you intentionally
+want to apply formatting.
 
 ## Related Docs
 

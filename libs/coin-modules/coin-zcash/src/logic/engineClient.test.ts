@@ -65,8 +65,8 @@ describe("assertCanSend", () => {
     );
   });
 
-  it("builds the client for the endpoint its context resolves", async () => {
-    await assertCanSend(contextWithZaino("https://testnet.zec.rocks"), "zcash");
+  it("builds the client for the endpoint its context resolves, on the currency's network", async () => {
+    await assertCanSend(contextWithZaino("https://testnet.zec.rocks"), "zcash_testnet");
 
     expect(createZCashClient).toHaveBeenCalledWith({
       grpcUrl: "https://testnet.zec.rocks",

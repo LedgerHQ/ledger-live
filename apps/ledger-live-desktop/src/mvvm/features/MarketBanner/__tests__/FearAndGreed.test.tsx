@@ -1,97 +1,11 @@
 import React from "react";
-import { render, screen, waitFor, act } from "tests/testSetup";
-import { FearAndGreedView } from "../../FearAndGreed";
-import { FearAndGreedIndicator } from "../../FearAndGreed/components/FearAndGreedIndicator";
+import { render, act } from "tests/testSetup";
+import { ArcGaugeIndicator } from "LLD/components/ArcGaugeIndicator";
 
-describe("FearAndGreed", () => {
-  it("renders without crashing", () => {
-    const props = {
-      isLoading: false,
-      data: { value: 50, classification: "Neutral" },
-    };
-    render(<FearAndGreedView {...props} />);
-    expect(screen.getByTestId("fear-and-greed-card")).toBeVisible();
-  });
+const FEAR_COLOR = "#F87274";
+const GREED_COLOR = "#6EC85C";
 
-  it("renders loading state", () => {
-    const props = {
-      isLoading: true,
-      data: undefined,
-    };
-    render(<FearAndGreedView {...props} />);
-    expect(screen.getByTestId("fear-and-greed-skeleton")).toBeVisible();
-  });
-
-  it("returns null when no data and not loading", () => {
-    const props = {
-      isLoading: false,
-      data: undefined,
-    };
-    const { container } = render(<FearAndGreedView {...props} />);
-    expect(container.firstChild).toBeNull();
-  });
-
-  describe("Dialog behavior", () => {
-    it("opens dialog when clicking on the tile", async () => {
-      const props = {
-        isLoading: false,
-        data: { value: 50, classification: "Neutral" },
-      };
-      const { user } = render(<FearAndGreedView {...props} />);
-
-      const moodTile = screen.getByTestId("fear-and-greed-card");
-      await user.click(moodTile);
-
-      expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
-    });
-
-    it("closes dialog when clicking the close button", async () => {
-      const props = {
-        isLoading: false,
-        data: { value: 50, classification: "Neutral" },
-      };
-      const { user } = render(<FearAndGreedView {...props} />);
-
-      const moodTile = screen.getByTestId("fear-and-greed-card");
-      await user.click(moodTile);
-
-      await waitFor(() => {
-        expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
-      });
-
-      const closeButton = screen.getByRole("button", { name: /close/i });
-      await user.click(closeButton);
-
-      await waitFor(() => {
-        expect(screen.queryByTestId("fear-and-greed-dialog-content")).not.toBeInTheDocument();
-      });
-    });
-
-    it("closes dialog when clicking the CTA button", async () => {
-      const props = {
-        isLoading: false,
-        data: { value: 50, classification: "Neutral" },
-      };
-      const { user } = render(<FearAndGreedView {...props} />);
-
-      const moodTile = screen.getByTestId("fear-and-greed-card");
-      await user.click(moodTile);
-
-      await waitFor(() => {
-        expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
-      });
-
-      const ctaButton = screen.getByTestId("fear-and-greed-dialog-cta");
-      await user.click(ctaButton);
-
-      await waitFor(() => {
-        expect(screen.queryByTestId("fear-and-greed-dialog-content")).not.toBeInTheDocument();
-      });
-    });
-  });
-});
-
-describe("FearAndGreedIndicator", () => {
+describe("ArcGaugeIndicator", () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -102,7 +16,9 @@ describe("FearAndGreedIndicator", () => {
   });
 
   it("renders the SVG gradient arc", () => {
-    const { container } = render(<FearAndGreedIndicator value={50} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={50} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
     const path = container.querySelector("path");
     expect(path).toBeVisible();
 
@@ -112,20 +28,26 @@ describe("FearAndGreedIndicator", () => {
   });
 
   it("renders the white indicator circle", () => {
-    const { container } = render(<FearAndGreedIndicator value={50} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={50} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
     const circle = container.querySelector("circle");
     expect(circle).toBeVisible();
     expect(circle?.getAttribute("fill")).toBe("white");
   });
 
   it("displays the initial value as 0", () => {
-    const { container } = render(<FearAndGreedIndicator value={75} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={75} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
     const text = container.querySelector("text");
     expect(text?.textContent).toBe("0");
   });
 
   it("animates to the target value", () => {
-    const { container } = render(<FearAndGreedIndicator value={75} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={75} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
     const text = container.querySelector("text");
 
     act(() => {
@@ -136,7 +58,9 @@ describe("FearAndGreedIndicator", () => {
   });
 
   it("positions the circle at the left for value 0", () => {
-    const { container } = render(<FearAndGreedIndicator value={0} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={0} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -144,12 +68,13 @@ describe("FearAndGreedIndicator", () => {
     const circle = container.querySelector("circle");
     const cx = parseFloat(circle?.getAttribute("cx") || "0");
 
-    // At value 0, angle is 180°, so x should be near left side
     expect(cx).toBeLessThan(21.5814);
   });
 
   it("positions the circle at the right for value 100", () => {
-    const { container } = render(<FearAndGreedIndicator value={100} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={100} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -161,7 +86,9 @@ describe("FearAndGreedIndicator", () => {
   });
 
   it("positions the circle at the center for value 50", () => {
-    const { container } = render(<FearAndGreedIndicator value={50} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={50} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -173,7 +100,9 @@ describe("FearAndGreedIndicator", () => {
   });
 
   it("displays rounded value during animation", () => {
-    const { container } = render(<FearAndGreedIndicator value={50} />);
+    const { container } = render(
+      <ArcGaugeIndicator value={50} startColor={FEAR_COLOR} endColor={GREED_COLOR} />,
+    );
     const text = container.querySelector("text");
 
     act(() => {

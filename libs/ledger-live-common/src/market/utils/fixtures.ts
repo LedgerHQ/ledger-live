@@ -3,6 +3,7 @@ import {
   MarketItemPerformer,
   MarketItemResponse,
   KeysPriceChange,
+  MarketListRequestResult,
 } from "./types";
 
 /**
@@ -185,6 +186,24 @@ export const createMockMarketCurrencyData = (
   overrides: Partial<MarketCurrencyData> = {},
 ): MarketCurrencyData => ({
   ...MOCK_MARKET_CURRENCY_DATA[0],
+  ...overrides,
+});
+
+const noop = () => {};
+
+export const createMockMarketListResult = (
+  overrides: Partial<MarketListRequestResult> = {},
+): MarketListRequestResult => ({
+  data: [],
+  isPending: false,
+  isLoading: false,
+  isError: false,
+  isFetching: false,
+  isFetchingNextPage: false,
+  hasNextPage: false,
+  fetchNextPage: noop,
+  refetch: noop,
+  resetToFirstPage: noop,
   ...overrides,
 });
 

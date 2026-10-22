@@ -57,13 +57,19 @@ type SwapQuoteRouteOptions = {
 
 /**
  * Swap API routes answering one paraswap quote for {@link SWAP_QUOTE_ARGS}, recording the
- * `authorization` header of every `/quote` request (`null` when it carried no token).
+ * `authorization` header of every `/quote` request (`null` when it carried no token) and its
+ * `user-agent`.
  */
 export function makeSwapQuoteRoutes({
   quote = { response: [MOCK_QUOTE_ROW] },
   rejectTokens = false,
-}: SwapQuoteRouteOptions = {}): { routes: Route[]; quoteAuthorizations: (string | null)[] } {
+}: SwapQuoteRouteOptions = {}): {
+  routes: Route[];
+  quoteAuthorizations: (string | null)[];
+  quoteUserAgents: (string | null)[];
+} {
   const quoteAuthorizations: (string | null)[] = [];
+  const quoteUserAgents: (string | null)[] = [];
   const routes: Route[] = [
     {
       method: "GET",
@@ -82,11 +88,12 @@ export function makeSwapQuoteRoutes({
       onRequest: request => {
         const authorization = request.headers.get("authorization");
         quoteAuthorizations.push(authorization);
+        quoteUserAgents.push(request.headers.get("user-agent"));
         if (rejectTokens && authorization) {
           return Response.json({ message: "invalid token" }, { status: 401 });
         }
       },
     },
   ];
-  return { routes, quoteAuthorizations };
+  return { routes, quoteAuthorizations, quoteUserAgents };
 }

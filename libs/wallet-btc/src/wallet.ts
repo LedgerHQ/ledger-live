@@ -1,6 +1,6 @@
 import flatten from "lodash/flatten";
 import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { WalletBtcCurrency } from "./crypto/types";
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { Currency } from "./crypto/types";
@@ -69,9 +69,9 @@ class BitcoinLikeWallet {
     };
   }
 
-  async syncAccount(account: Account, currentBlockHeight?: number): Promise<void> {
+  async syncAccount(logger: Logger, account: Account, currentBlockHeight?: number): Promise<void> {
     account.xpub.currentBlockHeight = currentBlockHeight;
-    await account.xpub.sync();
+    await account.xpub.sync(logger);
     if (currentBlockHeight) {
       account.xpub.syncedBlockHeight = currentBlockHeight;
     }
@@ -102,6 +102,7 @@ class BitcoinLikeWallet {
   }
 
   async estimateAccountMaxSpendable(
+    logger: Logger,
     account: Account,
     feePerByte: number,
     excludeUTXOs: Array<{ hash: string; outputIndex: number }>,
@@ -143,7 +144,7 @@ class BitcoinLikeWallet {
     });
 
     let balance = new BigNumber(0);
-    log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
+    logger("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     const fixedVBytes = utils.maxTxVBytesCeil(
       0,
@@ -193,8 +194,8 @@ class BitcoinLikeWallet {
         account.xpub.derivationMode,
       );
 
-    log("btcwallet", "estimateAccountMaxSpendable balance", balance);
-    log("btcwallet", "estimateAccountMaxSpendable fees", fees);
+    logger("btcwallet", "estimateAccountMaxSpendable balance", balance);
+    logger("btcwallet", "estimateAccountMaxSpendable fees", fees);
     const maxSpendable = balance.minus(fees);
     return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;
   }
@@ -244,12 +245,13 @@ class BitcoinLikeWallet {
   }
 
   async importFromSerializedAccount(
+    logger: Logger,
     account: SerializedAccount,
     cryptoCurrency: WalletBtcCurrency,
   ): Promise<Account> {
     const xpub = this.instantiateXpubFromSerializedAccount(account, cryptoCurrency);
 
-    await xpub.storage.load(account.xpub.data);
+    await xpub.storage.load(logger, account.xpub.data);
 
     return {
       ...account,
@@ -258,12 +260,13 @@ class BitcoinLikeWallet {
   }
 
   importFromSerializedAccountSync(
+    logger: Logger,
     account: SerializedAccount,
     cryptoCurrency: WalletBtcCurrency,
   ): Account {
     const xpub = this.instantiateXpubFromSerializedAccount(account, cryptoCurrency);
 
-    xpub.storage.loadSync(account.xpub.data);
+    xpub.storage.loadSync(logger, account.xpub.data);
 
     return {
       ...account,

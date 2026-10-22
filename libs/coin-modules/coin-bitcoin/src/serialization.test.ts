@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput, BitcoinOutputRaw } from "./types";
+
+const assignFromAccountRaw = makeAssignFromAccountRaw(jest.fn());
 
 describe("assignToAccountRaw", () => {
   let accountMock: BitcoinAccount = {} as BitcoinAccount;

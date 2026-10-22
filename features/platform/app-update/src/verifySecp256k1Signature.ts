@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import keyto from "@trust/keyto";
 
 // Electron replaced OpenSSL with BoringSSL, which has no secp256k1: verify with noble instead

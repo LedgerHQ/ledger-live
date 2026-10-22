@@ -173,6 +173,9 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
       mode === "development" ? firebaseConfigsByEnv() : null,
     ),
     "process.env.NODE_ENV": JSON.stringify(mode),
+    // No `.env` file is committed for dev builds. A local one can still set another profile: the
+    // `buildDotEnvDefine()` entries come after these.
+    ...(mode === "development" && { "process.env.CONFIG_PROFILE": JSON.stringify("staging") }),
   };
 }
 

@@ -1,37 +1,27 @@
-import { useQueries } from "@tanstack/react-query";
-import { fetchCurrencyChartData } from "../../cg-client/api";
-import { QUERY_KEY } from "../utils/queryKeys";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
+import { useAssetChartDataInCounterValue } from "./useAssetChartDataInCounterValue";
 
 type UseLargeMoverChartDataParams = {
-  ids: string[];
+  id: string;
   counterCurrency: string;
   range: string;
+  isCryptoCountervalue: boolean;
 };
 
 export const useLargeMoverChartData = ({
-  ids,
+  id,
   counterCurrency,
   range,
+  isCryptoCountervalue,
 }: UseLargeMoverChartDataParams) => {
-  const chartQueries = useQueries({
-    queries: ids.map(id => ({
-      queryKey: [QUERY_KEY.CurrencyChartData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyChartData({ id, counterCurrency, range }),
-      refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    })),
-  });
+  const { currentData, isLoading, isError } = useAssetChartDataInCounterValue(
+    { id, counterCurrency, range, isCryptoCountervalue },
+    { skip: !id, pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH },
+  );
 
-  const loadingChart = chartQueries.some(query => query.isLoading);
-  const errorChart = chartQueries.every(query => query.isError);
-
-  const chartDataArray = ids.map((id, index) => ({
-    idChartData: id,
-    chartData: chartQueries[index]?.data,
-    isLoading: chartQueries[index]?.isLoading || false,
-    isError: chartQueries[index]?.isError || false,
-  }));
-
-  return { chartDataArray, loadingChart, errorChart };
+  return {
+    chartData: currentData,
+    isLoading,
+    isError,
+  };
 };

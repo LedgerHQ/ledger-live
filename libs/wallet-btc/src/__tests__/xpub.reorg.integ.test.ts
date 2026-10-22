@@ -70,7 +70,7 @@ describe.skip("testing xpub reorg management", () => {
     await sleep(80000);
 
     try {
-      await xpubs[0].xpub.sync();
+      await xpubs[0].xpub.sync(jest.fn());
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log("praline explorer setup error", e);
@@ -101,7 +101,7 @@ describe.skip("testing xpub reorg management", () => {
     await sleep(80000);
 
     try {
-      await xpubs[0].xpub.sync();
+      await xpubs[0].xpub.sync(jest.fn());
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log("praline explorer setup error", e);
@@ -119,7 +119,7 @@ describe.skip("testing xpub reorg management", () => {
     };
 
     try {
-      await xpubs[0].xpub.sync();
+      await xpubs[0].xpub.sync(jest.fn());
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log("praline explorer setup error", e);

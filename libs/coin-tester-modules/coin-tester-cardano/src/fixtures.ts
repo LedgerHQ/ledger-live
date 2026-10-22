@@ -17,14 +17,15 @@ export const MOCK_API = "https://cardano-coin-tester.mock";
 // A Cardano native asset used by the token-send scenario. policyId is a 28-byte (56 hex) hash and
 // assetName is hex ("4d59544f4b454e" = "MYTOKEN"). The canonical Cardano asset id is policyId
 // concatenated with the asset name (no separator) — the same form getBalance emits as
-// `assetReference` and craftTransaction's parseTokenAssetReference parses; contractAddress must match
-// it (env.setup's mock store keys the token by contractAddress === that reference).
+// `assetReference` and craftTransaction's parseTokenAssetReference parses. The token itself is
+// shaped as CAL serves it: contractAddress holds the policyId, tokenIdentifier the assetName.
 export const TEST_TOKEN_POLICY_ID = "1234567890123456789012345678901234567890123456789012345a";
 export const TEST_TOKEN_ASSET_NAME = "4d59544f4b454e";
 export const TEST_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
   id: TokenCurrencyIdSchema.parse(`cardano/native/${TEST_TOKEN_POLICY_ID}${TEST_TOKEN_ASSET_NAME}`),
-  contractAddress: `${TEST_TOKEN_POLICY_ID}${TEST_TOKEN_ASSET_NAME}`,
+  contractAddress: TEST_TOKEN_POLICY_ID,
+  tokenIdentifier: TEST_TOKEN_ASSET_NAME,
   parentCurrencyId: CARDANO.id,
   tokenType: "native",
   name: "Coin Tester Token",

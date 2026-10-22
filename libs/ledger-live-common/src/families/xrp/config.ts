@@ -14,4 +14,28 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
       node: "https://xrp.coin.ledger.com",
     } satisfies XrpCoinConfig,
   },
+  config_currency_ripple_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      name: "XRP (Testnet)",
+      unit: { name: "XRP", code: "XRP", magnitude: 6 },
+      node: "https://s.altnet.rippletest.net:51234",
+    } satisfies XrpCoinConfig,
+  },
+  config_currency_ripple_devnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      name: "XRP (Devnet)",
+      unit: { name: "XRP", code: "XRP", magnitude: 6 },
+      node: "https://s.devnet.rippletest.net:51234",
+    } satisfies XrpCoinConfig,
+  },
 };

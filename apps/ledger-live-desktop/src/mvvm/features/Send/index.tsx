@@ -24,6 +24,7 @@ import { CoinControlScreen } from "./screens/CoinControl/CoinControlScreen";
 import { SkipMemoConfirmationScreen } from "./screens/SkipMemoConfirmation/SkipMemoConfirmationScreen";
 import { PaySuccessScreen } from "./screens/PaySuccess/PaySuccessScreen";
 import { BalanceTypeScreen } from "./screens/BalanceType/BalanceTypeScreen";
+import { BalanceTypeSyncScreen } from "./screens/BalanceTypeSync/BalanceTypeSyncScreen";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { SendFlowTrackingProvider } from "./context/SendFlowTrackingContext";
 import { AddNewContactHeaderProvider } from "./context/AddNewContactHeaderContext";
@@ -33,6 +34,7 @@ import { SponsoredSendProvider } from "./context/SponsoredSendContext";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.BALANCE_TYPE]: BalanceTypeScreen,
+  [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: BalanceTypeSyncScreen,
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: SkipMemoConfirmationScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,

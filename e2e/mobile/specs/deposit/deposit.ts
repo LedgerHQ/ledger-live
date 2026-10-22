@@ -16,7 +16,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export async function runSelectCryptoNetworkTest(
+export function runSelectCryptoNetworkTest(
   account: Account,
   networks: string[],
   withAccount: boolean,
@@ -48,7 +48,7 @@ export async function runSelectCryptoNetworkTest(
   });
 }
 
-export async function runSelectCryptoWithoutNetworkAndAccountTest(
+export function runSelectCryptoWithoutNetworkAndAccountTest(
   account: Account,
   tmsLinks: string[],
   tags: string[],

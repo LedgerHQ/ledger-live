@@ -28,19 +28,9 @@ export type UseRenameContactDialogViewModelOptions = Readonly<{
   requestSaveApproval?: () => Promise<boolean>;
 }>;
 
-export type ContactsRenameContactLabels = Readonly<{
-  title: string;
-  namePlaceholder: string;
-  namingDisclaimer: string;
-  applyChanges: string;
-  confirmName: string;
-  nameValidationErrors: Readonly<Record<ContactNameValidationErrorName, string>>;
-}>;
-
 export type ContactsRenameContactDialogProps = RenameContactDialogViewModel &
   Readonly<{
     isDeviceRequired: boolean;
-    labels: ContactsRenameContactLabels;
   }>;
 
 export type ContactsRenameContactDrawerProps = ContactsRenameContactDialogProps &
@@ -51,5 +41,5 @@ export type ContactsRenameContactDrawerProps = ContactsRenameContactDialogProps 
 
 export type ContactsRenameContactFooterProps = Pick<
   ContactsRenameContactDialogProps,
-  "isConfirmEnabled" | "isSaving" | "isDeviceRequired" | "labels" | "onConfirm"
+  "isConfirmEnabled" | "isSaving" | "isDeviceRequired" | "onConfirm"
 >;

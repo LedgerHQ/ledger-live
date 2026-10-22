@@ -1,191 +1,80 @@
 # wallet-cli (`@ledgerhq/wallet-cli`)
 
-Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.9.0**.
+Command-line tool for Ledger Wallet flows over USB, built on the Device Management Kit (DMK) and [Bunli](https://www.npmjs.com/package/bunli). It covers a focused set of flows and does not aim for parity with Ledger Wallet desktop or mobile.
 
-## Status (v2)
+Supported networks: **bitcoin**, **ethereum** and **solana**, including their tokens.
 
-wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups. The `2.1.0` release adds the **`skill`** command group, which installs the Ledger wallet-cli agent skill — embedded in the compiled binary — into your coding agent. The `2.9.0` release adds the **`agent-intent`** command group, which enrolls a remote agent's software identity, imports the Ledger Sync accounts it was granted and proposes EVM payments for human review — no device required, never broadcasts.
-
-**Supported networks** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). Token flows are supported for tokens on those networks.
-
-### Commands
-
-| Command                               | Role                                                                                                                                                                                                            |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `account discover`                    | Discover accounts for a network on the **connected Ledger** (USB). Each discovered account is saved to the session under a **label** (e.g. `ethereum-1`).                                                       |
-| `session view` / `session reset`      | List or wipe accounts stored in the session.                                                                                                                                                                    |
-| `balances`                            | Fetch **native and token balances** for an account (by session label). **No device** required.                                                                                                                  |
-| `operations`                          | **List operations** for an account (by session label). **No device** required. Optional pagination via `--limit` and `--cursor`.                                                                                |
-| `send`                                | Sign and broadcast a transaction. Requires `--amount` with ticker (e.g. `0.001 BTC`, `0.01 ETH`). Use `--dry-run` to validate without signing.                                                                  |
-| `receive`                             | Get the receive address for an account (optionally verify on device).                                                                                                                                           |
-| `swap quote`                          | Fetch swap quotes for supported currencies and tokens.                                                                                                                                                          |
-| `swap execute`                        | Execute the full swap flow with `--from`, `--to`, `--provider`, and `--amount`: prepare the swap, interact with the connected device as needed, complete the exchange, then sign and broadcast the transaction. |
-| `swap status`                         | Read the current swap status from the partner API.                                                                                                                                                              |
-| `assets token` / `assets token-by-id` | Resolve token metadata by contract address or token id.                                                                                                                                                         |
-| `genuine-check`                       | Check whether the connected Ledger device is genuine.                                                                                                                                                           |
-| `earn yields` / `earn positions`      | List yield opportunities (per-network deposit targets with `-n ethereum`/`-n solana`) and active staking/vault positions for an account. **No device** required.                                                |
-| `earn deposit` / `earn withdraw`      | Stake / deposit into a vault, or unstake / redeem. Ethereum ERC-4626 vaults and Solana native staking. Signs on the **device**; `--dry-run` validates without signing.                                          |
-| `ring init`                           | One-time provisioning of your Ledger Key Ring (LKRP) via the device. Prompts for a password unless `--unsecure-no-password`.                                                                                     |
-| `ring encrypt` / `ring decrypt`       | AES-256-GCM encrypt/decrypt of files (`-i`/`-o`) or text (stdin/stdout) under a named key (`--key`). **No device** after `init`; requires network to restore the trustchain.                                     |
-| `ring keys` / `ring destroy`          | List the keys this machine has used, or tear down the ring (local credentials + remote LKRP application).                                                                                                        |
-| `agent-intent enroll`                 | Create a pending Agent Intent profile (`--source` names the agent runtime; defaults to `other`), print its signed enrollment URL + public-key fingerprint, then **block** until the approval is relayed back over an encrypted Trustchain channel; the completion is verified (App-18 token + App-16 permission) before the Trustchain ID and account access are saved. Defaults to `--environment production`. On timeout or Ctrl+C the profile stays pending — enroll a fresh profile. **No device** required, but a working OS keychain is (on Linux: a Secret Service provider such as gnome-keyring). **Separate trust model from `ring`** — see the [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/SKILL.md#agent-intent). |
-| `agent-intent recover`                | Re-enroll an enrolled profile's existing key into its previous Trustchain: prints a signed recovery URL + fingerprint, marks the profile `recovering`, then **blocks** until the approval is relayed back and the App-18 token check passes. Account access is kept. On timeout or Ctrl+C the profile stays enrolled with its previous data. **No device** required. |
-| `agent-intent list` / `agent-intent show` | List local Agent Intent profiles, or show one profile's detail (fingerprint, status, environment, account access). Never reveals the secret key. **No device** required.                                                    |
-| `agent-intent sync`                   | Import the Ledger Sync accounts an enrolled agent was granted into the session, authenticating with the agent's own key (additive, idempotent; unsupported currency families are reported as skipped). Explicit — never runs automatically. **No device** required. |
-| `agent-intent send`                   | Propose an Ethereum send (ETH or ERC-20) from an enrolled profile for **human review** in the Agent Intent frontend; prints the review link. **Never signs or broadcasts** and needs **no device**; `--dry-run` validates without submitting. |
-| `agent-intent intents`                | List the intents an enrolled profile proposed, most recent first, one page at a time (`--status`, `--page-size`, `--cursor` from the previous page). The service scopes the list to the agent, so it never shows another agent's intents. JSON keeps amounts as exact base-unit strings. **No device** required. |
-| `skill list` / `skill retrieve`       | List the agent skills shipped inside the binary, or print one to stdout. **No device** required.                                                                                                                |
-| `skill install`                       | Install the embedded agent skill for `--agent` (`claude`, `cursor`, `codex`, or generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides. **No device** required.                             |
-| `skill doctor`                        | Detect drift between installed skills and those shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`); `--fix` self-heals, `--force` also overwrites local edits.              |
-
-Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the assigned **session label** (e.g. `--account ethereum-1`) to `balances`, `operations`, `send`, or `receive`. Use `session view` to see what's saved.
-
-For exact flags and defaults (from repo root):
+## Usage
 
 ```bash
-pnpm wallet-cli start -- --help
-pnpm wallet-cli start -- account discover --help
-pnpm wallet-cli start -- balances --help
-pnpm wallet-cli start -- operations --help
-pnpm wallet-cli start -- send --help
-pnpm wallet-cli start -- receive --help
-pnpm wallet-cli start -- assets token --help
-pnpm wallet-cli start -- genuine-check --help
-pnpm wallet-cli start -- swap quote --help
-pnpm wallet-cli start -- swap execute --help
-pnpm wallet-cli start -- swap status --help
-pnpm wallet-cli start -- earn yields --help
-pnpm wallet-cli start -- earn positions --help
-pnpm wallet-cli start -- earn deposit --help
-pnpm wallet-cli start -- earn withdraw --help
-pnpm wallet-cli start -- ring init --help
-pnpm wallet-cli start -- ring encrypt --help
-pnpm wallet-cli start -- ring decrypt --help
-pnpm wallet-cli start -- skill install --help
-pnpm wallet-cli start -- skill doctor --help
-pnpm wallet-cli start -- agent-intent enroll --help
-pnpm wallet-cli start -- agent-intent recover --help
-pnpm wallet-cli start -- agent-intent list --help
-pnpm wallet-cli start -- agent-intent show --help
-pnpm wallet-cli start -- agent-intent sync --help
-pnpm wallet-cli start -- agent-intent send --help
-pnpm wallet-cli start -- agent-intent intents --help
+wallet-cli account discover ethereum        # needs a Ledger on USB; saves accounts as ethereum-1, ethereum-2…
+wallet-cli balances --account ethereum-1    # session label from discover
+wallet-cli send --account ethereum-1 --to 0x… --amount "0.01 ETH" --dry-run
+wallet-cli <command> --help                 # exact flags and defaults
 ```
 
-From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).
+Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `agent-intent send` and `agent-intent swap` accept `--dry-run`, which validates without signing or submitting and needs no device. On a first deposit into an Ethereum vault, it validates only the `approve` step: the deposit itself can't be simulated until the allowance is on-chain.
 
-Most commands support `--output human` (default) or `--output json`.
+## Commands
+
+| Group | Commands | Device |
+| --- | --- | --- |
+| Accounts | `account discover`, `session view`, `session reset` | discover only |
+| Read | `balances`, `operations`, `assets token`, `assets token-by-id` | no |
+| Transfer | `receive`, `send` | yes, except `receive --no-verify` and `send --dry-run` |
+| Swap | `swap quote`, `swap status`, `swap execute` | execute only |
+| Earn | `earn yields`, `earn positions`, `earn deposit`, `earn withdraw` | deposit / withdraw, except with `--dry-run` |
+| Device | `genuine-check` | yes |
+| Key Ring | `ring init`, `ring encrypt`, `ring decrypt`, `ring keys`, `ring destroy` | init only |
+| Agent Intent | `agent-intent enroll`, `recover`, `list`, `show`, `sync`, `send`, `swap`, `intents`, `status`, `cancel` | no |
+| Agent skill | `skill list`, `skill retrieve`, `skill install`, `skill doctor` | no |
+
+- **Key Ring** encrypts files or text (AES-256-GCM) under named keys backed by Ledger Key Ring (LKRP). After `ring init`, it needs network access but no device.
+- **Agent Intent** gives a remote agent its own software identity. The agent proposes Ethereum and Solana sends and Ethereum swaps, and a human reviews them in the Agent Intent frontend. It needs no device or signer and never broadcasts, and its trust model is separate from `ring`. It needs a working OS keychain (on Linux, a Secret Service provider such as gnome-keyring).
+
+The wallet-cli skill documents each command, the safety rules and the Agent Intent flow in detail. Print it with `wallet-cli skill retrieve wallet-cli-usage`, or read the [source on GitHub](https://github.com/LedgerHQ/ledger-live/blob/develop/.agents/skills/ledger-wallet-cli/SKILL.md).
+
+## Agent skill
+
+AI agents should load the wallet-cli skill before running commands. The skill ships inside the binary as `wallet-cli-usage` (the old name `ledger-wallet-cli` still resolves):
+
+```bash
+wallet-cli skill install --agent claude   # also cursor, codex, agents; --global or --dir <path>
+wallet-cli skill doctor --fix             # reinstall outdated or missing skills
+```
+
+- `skill install` keeps existing files unless you pass `--force`. It writes a `.wallet-cli-skill.json` sidecar with the version and content hash.
+- `skill doctor` reports each install as `up-to-date`, `outdated`, `modified-locally` or `missing`, and exits non-zero on drift. `--fix` leaves local edits alone unless you add `--force`.
+- On the first command, wallet-cli prints a one-time hint to stderr that suggests `skill install`. The hint is silent with `--output json`. Set `WALLET_CLI_NO_NUDGE=1` to turn it off.
 
 ## Prerequisites
 
-- **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
-- **pnpm** and this monorepo checked out; install dependencies per [repo commands](../../docs/repo-commands.md) (e.g. `mise install`, `pnpm i`)
-- A **Ledger** on USB when using `account discover`, `send`, `swap execute`, `receive --verify`, `earn deposit`/`earn withdraw`, `genuine-check`, or `ring init`
-- **Linux:** USB/HID build deps, for example:
+- A Ledger on USB for the commands marked in the Device column
+- On Linux, the USB/HID libraries: `sudo apt-get install libudev-dev libusb-1.0-0-dev`
 
-  ```bash
-  sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
-  ```
+## Environment and storage
 
-## Setup and run
+- `USER_ID` defaults to `wallet-cli`, so the DMK firmware distribution salt stays stable.
+- `swap quote`, `swap execute` and `agent-intent swap` authenticate their quote requests to the Ledger API with a dedicated key. The key is stored in the OS keychain as `api-auth-key-<hash>` (service `ledger-wallet-cli`). Without a usable keychain, a one-off key authenticates that run only. It is not the Key Ring key, and `session reset` and `ring destroy` do not remove it. If authentication fails or takes more than 10 s (not counting a keychain dialog waiting for the user), the request is sent without a token.
+- `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults for development. The swap API stays on production.
 
-From an installed package:
+## Development
 
-```bash
-wallet-cli <command> [args]
-```
-
-From the **repository root** (after `pnpm i`):
+Running from source needs [Bun](https://bun.sh) ≥ 1.1.0 and the monorepo (see [repo commands](../../docs/repo-commands.md) for setup):
 
 ```bash
-pnpm wallet-cli start -- <command> [args]
+pnpm wallet-cli start -- <command> [args]   # from the repo root
+pnpm start -- <command> [args]              # from apps/wallet-cli
+pnpm test                                   # see src/testing/README.md
+pnpm build                                  # scripts/build.mjs: dist/<target>/cli
 ```
 
-From **this package** (`apps/wallet-cli`):
+- `pnpm build` compiles your own platform only. With `CI=true`, it compiles every release target, which needs every platform's native optional packages, such as `@napi-rs/keyring`. `prepare:npm`, `pack:check` and `smoke:npm` need that full build.
+- The embedded skill is generated from [`.agents/skills/`](../../.agents/skills) into `src/skills/manifest.gen.ts`. The file is gitignored and regenerated before `typecheck`, `test` and `build`. `pnpm check:skills` validates it.
+- The binary's copy and the copy published to [LedgerHQ/agent-skills](https://github.com/LedgerHQ/agent-skills) go through one transform, [`scripts/standalone-skill-transform.mjs`](./scripts/standalone-skill-transform.mjs). Don't add a second copy of its rules.
 
-```bash
-pnpm start -- <command> [args]
-```
+`@ledgerhq/live-cli` ([`apps/cli`](../cli)) is a separate tool. It is internal and Speculos-only, and is used by e2e suites and CI.
 
-`pnpm start` runs `bun run ./src/cli.ts`. Standalone builds under `dist/` rely on `init-cwd.ts` so Bunli config and native bindings resolve correctly; prefer the package scripts when developing from source.
+### Adding a command
 
-## Build (optional)
-
-- In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
-- From repo root: `pnpm build:wallet-cli`
-
-Locally, `pnpm build` compiles your own platform only. On CI (`CI` set), it compiles every release target, which needs the OpenTUI runtime packages of every platform: CI declares `supportedArchitectures` through the `pnpm-cross-platform-optional-deps` composite.
-
-## Tests
-
-`pnpm test` in `apps/wallet-cli`. Tests sit next to the code they validate; the naming convention and the shared helpers are described in [`src/testing/README.md`](src/testing/README.md).
-
-## Environment
-
-If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`live-common-setup.ts`).
-
-## API authentication
-
-`swap quote` and `swap execute` authenticate their quote requests against the production Ledger API with a key used for nothing else:
-
-- One key per profile (state directory). It is created on the first swap request and stored unencrypted in the OS keychain as `api-auth-key-<hash>` under the `ledger-wallet-cli` service, so it never asks for the Ledger Key Ring password.
-- It is not the Ledger Key Ring member key and carries no trustchain, so its tokens are unattested. `session reset` and `ring destroy` leave it in place.
-- The access token lives in memory for a single command.
-- Without a usable OS keychain, a one-off key authenticates that run.
-- If authentication fails or does not finish within 10 seconds, the shared authenticated base query sends the request without a token for now. If the swap API rejects a refreshed token, the command fails with `No quotes available: noQuotes`.
-- For development, `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults (`configureStore.ts`). They do not change the swap API, which stays on production.
-
-## Relation to `ledger-live` CLI
-
-This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cli`](../cli)), which is now an internal, Speculos-only tool used by the monorepo's e2e suites and CI. For human/manual hardware-wallet flows, use this `wallet-cli` (or the Ledger Live desktop/mobile app).
-
-## Agent guidance
-
-AI agents should read the [ledger-wallet-cli agent skill](../../.claude/skills/ledger-wallet-cli/SKILL.md) before running wallet-cli commands. It maps informal user requests to commands and documents hardware-wallet safety rules, session labels, USB sandbox requirements, and device-contention constraints.
-
-### First-run nudge
-
-On the first real command, wallet-cli prints a one-time hint to **stderr** pointing at `skill install`. When a known agent is detected (Claude Code, Cursor, Codex, …) the hint is tailored to it (e.g. `wallet-cli skill install --agent claude`); otherwise it shows the generic `wallet-cli skill install`. The nudge:
-
-- shows at most **once per user** — a marker is written under the XDG state dir (`stateDir("ledger-wallet-cli")`, honoring `XDG_STATE_HOME`);
-- writes to **stderr only**, so it never pollutes piped stdout, and is **silent under `--output json`**;
-- is **not shown for `skill *` commands** (you are already engaging with skills);
-- can be disabled entirely with `WALLET_CLI_NO_NUDGE=1`.
-
-It is fully best-effort: it never throws and never changes a command's exit code.
-
-The skill also **ships inside the compiled binary**, so it is available even from an installed npm package with no repo checkout, via the `skill` command group:
-
-```bash
-wallet-cli skill list                      # list embedded skills
-wallet-cli skill retrieve wallet-cli-usage # print SKILL.md (or --file references/business-logic.md)
-wallet-cli skill install --agent claude    # write into ./.claude/skills (also: cursor, codex, agents)
-wallet-cli skill install --dir ./my-skills # write into an explicit directory
-wallet-cli skill doctor                    # check installed skills against this binary
-wallet-cli skill doctor --fix              # reinstall outdated / missing skills
-```
-
-### Standalone vs monorepo form of the skill
-
-The canonical source at [`.agents/skills/ledger-wallet-cli/`](../../.agents/skills/ledger-wallet-cli) is written for **monorepo contributors**: it is named after its directory and its examples run `pnpm --silent wallet-cli start <command>` from the repo root. Neither holds for someone who installed the npm package, so both standalone artifacts — the copy embedded in the binary and the copy published to [`LedgerHQ/agent-skills`](https://github.com/LedgerHQ/agent-skills) — are derived by a transform that renames the skill to **`wallet-cli-usage`** and rewrites the examples to plain `wallet-cli <command>`.
-
-That transform lives in [`scripts/standalone-skill-transform.mjs`](./scripts/standalone-skill-transform.mjs) and is the single implementation behind both artifacts (`scripts/generate-skills-manifest.mjs` for the binary, `scripts/export-standalone-skill.mjs` for the sync workflow), so the two cannot drift apart. It fails the build if the source stops carrying an expected marker or if anything monorepo-only survives — do not add a second copy of these rules.
-
-`wallet-cli-usage` is therefore the name used everywhere on the standalone side: `skill list`, the manifest, install directories, and the `.wallet-cli-skill.json` sidecar. The pre-rename name **`ledger-wallet-cli` still resolves** in `skill retrieve` and `skill install` as a lookup alias, so older documented commands keep working; it always returns the canonical skill, and never installs a second copy under the old name. `skill doctor` reports any pre-rename install directory it finds as *superseded* (it never deletes it — that's your call).
-
-`skill install` maps `--agent` (`claude`, `cursor`, `codex`, `agents`) to the matching `.<agent>/skills` directory (`agents` → `.agents/skills`) under the current working directory, or the user home directory with `--global`. `--dir` overrides both. Existing files are preserved unless `--force` is passed.
-
-On install, a small provenance sidecar `.wallet-cli-skill.json` is written next to each skill. It records the wallet-cli version and a content hash at install time (it never touches the human-readable `SKILL.md`, and is always refreshed — even under `--force`). This version-locks installed skills to the wallet-cli that wrote them so drift can be detected later.
-
-`skill doctor` scans for installed skills and classifies each one against the skills shipped in the running binary:
-
-- **up-to-date** — on disk matches what this wallet-cli ships. (Also covers installs with no/unreadable provenance sidecar whose files still match the shipped content — e.g. legacy or manually copied installs.)
-- **outdated** — installed by an older wallet-cli; the shipped content is newer.
-- **modified-locally** — the on-disk files no longer match their provenance sidecar (edited after install), or an install with no/unreadable sidecar whose files don't match what this wallet-cli ships (without provenance we can't tell an old version from local edits, so it's treated conservatively).
-- **missing** — a shipped skill is not present in any scanned location.
-
-By default `doctor` scans the agent skill directories under the current working directory. Use `--global` to also scan the user home directory, or `--dir <path>` to scan an explicit directory. It exits non-zero when any drift remains.
-
-`--fix` self-heals conservatively: it reinstalls `outdated` and `missing` skills, but leaves `modified-locally` skills untouched unless you also pass `--force` (`skill doctor --fix --force`), which overwrites local edits.
-
-The embedded content is generated from the canonical `.agents/skills/` directory (`.claude/skills` is just a symlink to it) into `src/skills/manifest.gen.ts` by `pnpm generate:skills`. That file is **generated, not committed** (gitignored like `.bunli/commands.gen.ts`) and is regenerated automatically before `typecheck`, `test`, and `build` via the `pretypecheck` / `pretest` / `prebuild` npm hooks. `pnpm check:skills` validates that generation succeeds (every shipped skill is found in the sources).
+Top-level commands are listed in [`src/commands/registry.ts`](src/commands/registry.ts) with their name, description, subcommand names and a loader. `src/cli.ts` loads only the modules of the commands named on the command line. Root help, unknown-command suggestions and analytics read the registry. A command module takes its description from the registry with `commandDescription("<name>")`, and `registry.test.ts` fails when a command module is missing from the registry or its subcommands no longer match.

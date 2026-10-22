@@ -12,11 +12,12 @@ exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03f8e9b05b4de510b0b7d970060eac6a0f76d3c4eb07e11418c0747bc593c91c7d",
+    "sequence": 2,
     "spendableBalance": "542520137157243",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
-    "xpub": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
+    "xpub": "03f8e9b05b4de510b0b7d970060eac6a0f76d3c4eb07e11418c0747bc593c91c7d",
   },
   {
     "balance": "0",
@@ -28,11 +29,12 @@ exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
     "index": 1,
     "pendingOperations": [],
     "seedIdentifier": "03f8e9b05b4de510b0b7d970060eac6a0f76d3c4eb07e11418c0747bc593c91c7d",
+    "sequence": 0,
     "spendableBalance": "0",
     "swapHistory": [],
     "syncHash": undefined,
     "used": false,
-    "xpub": "inj1604wce9t0u8vne0zrj4t2rspjsg28dymyljzrm",
+    "xpub": "027b5d160be00e600ce13c072899f669527cfcd35795aa3e8c9cbd06ec5f770219",
   },
 ]
 `;

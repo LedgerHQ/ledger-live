@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-zcash",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "description": "Ledger Hardware Wallet ZCash Application API",
   "keywords": [
@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/device-signer-kit-zcash": "0.7.1",
+    "@ledgerhq/device-signer-kit-zcash": "0.9.0",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -50,7 +50,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage"

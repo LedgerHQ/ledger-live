@@ -60,9 +60,7 @@ function DelegateDetails({ operation, account }: { operation: Operation; account
     const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
     evmCtx
       .config()
-      .then(config =>
-        resolveStakingValidator(config, account.currency.id, operation, "delegate", evmCtx.logger),
-      )
+      .then(config => resolveStakingValidator(config, operation, "delegate", evmCtx.logger))
       .then(result => {
         if (!cancelled) setResolved(result);
       });
@@ -114,15 +112,7 @@ function UndelegateDetails({ operation, account }: { operation: Operation; accou
     const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
     evmCtx
       .config()
-      .then(config =>
-        resolveStakingValidator(
-          config,
-          account.currency.id,
-          operation,
-          "undelegate",
-          evmCtx.logger,
-        ),
-      )
+      .then(config => resolveStakingValidator(config, operation, "undelegate", evmCtx.logger))
       .then(result => {
         if (!cancelled) setResolved(result);
       });
@@ -178,9 +168,7 @@ function RedelegateDetails({ operation, account }: { operation: Operation; accou
     const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
     evmCtx
       .config()
-      .then(config =>
-        resolveRedelegationValidators(config, account.currency.id, operation, evmCtx.logger),
-      )
+      .then(config => resolveRedelegationValidators(config, operation, evmCtx.logger))
       .then(result => {
         if (!cancelled) setResolved(result);
       });
@@ -235,7 +223,7 @@ function RedelegateAmountCell({ operation, unit, currency }: AmountCellExtraProp
     const evmCtx = buildContext<EvmConfigInfo>(currency.id);
     evmCtx
       .config()
-      .then(config => resolveRedelegationValidators(config, currency.id, operation, evmCtx.logger))
+      .then(config => resolveRedelegationValidators(config, operation, evmCtx.logger))
       .then(result => {
         if (!cancelled && result) setAmount(result.amount);
       });

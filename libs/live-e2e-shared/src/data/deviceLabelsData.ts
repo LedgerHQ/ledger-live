@@ -50,11 +50,9 @@ const TOUCHSCREEN_DEVICE_CONFIG: LabelConfig = {
     default: DeviceLabels.CONFIRM,
   },
   delegateVerify: {
-    [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
     default: DeviceLabels.REVIEW_OPERATION,
   },
   delegateConfirm: {
-    [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
     default: DeviceLabels.HOLD_TO_SIGN,
   },
   sendVerify: {
@@ -70,7 +68,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     receiveVerify: {
       [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ADDRESS,
       [AppInfos.SOLANA.name]: DeviceLabels.PUBKEY,
-      [AppInfos.ZCASH.name]: DeviceLabels.VERIFY_ADDRESS,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.ADDRESS,
       [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.ADDRESS,
       default: DeviceLabels.ADDRESS,
@@ -78,8 +75,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     receiveConfirm: {
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
-      [AppInfos.TRON.name]: DeviceLabels.CONFIRM,
-      [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
@@ -90,15 +85,16 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.TEZOS.name]: DeviceLabels.REVIEW_OPERATION,
       [AppInfos.INJECTIVE.name]: DeviceLabels.CHAIN_ID,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CHAIN_ID,
+      [AppInfos.BABYLON.name]: DeviceLabels.CHAIN_ID,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     delegateConfirm: {
       [AppInfos.CELO.name]: DeviceLabels.ACCEPT,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
-      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
+      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTIONS,
       [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.SIGN,
-      [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT_RISK,
+      [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT,
       default: DeviceLabels.CAPS_APPROVE,
     },
     sendVerify: {
@@ -108,6 +104,9 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.POLKADOT.name]: DeviceLabels.CHAIN_STATEMINT,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.TRANSACTION_TYPE,
       [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.TRANSACTION_TYPE,
+      [AppInfos.INTERNET_COMPUTER.name]: DeviceLabels.TRANSACTION_TYPE,
+      [AppInfos.OSMOSIS.name]: DeviceLabels.CHAIN_ID,
+      [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {
@@ -158,7 +157,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     delegateVerify: {
       [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
-      [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
       [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION,
       [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,
@@ -169,7 +167,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.INJECTIVE.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
-      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
+      [AppInfos.NEAR.name]: DeviceLabels.SIGN_TRANSACTION,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.SOLANA.name]: DeviceLabels.SIGN,
       [AppInfos.SUI.name]: DeviceLabels.SIGN,

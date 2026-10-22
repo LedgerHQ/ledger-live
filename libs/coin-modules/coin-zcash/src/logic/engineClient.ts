@@ -37,7 +37,7 @@ export async function getZCashClient(args: {
  */
 export async function assertCanSend(context: ZcashContext, currencyId: string): Promise<void> {
   const { zaino } = await context.config(currencyId);
-  const client = await getZCashClient(zainoEndpoint(zaino.url));
+  const client = await getZCashClient(zainoEndpoint(zaino.url, currencyId));
   if (
     !client.buildTransaction ||
     !client.buildIronwoodTransaction ||

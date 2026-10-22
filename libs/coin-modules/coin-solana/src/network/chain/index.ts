@@ -51,8 +51,6 @@ export type ChainAPI = Readonly<{
 
   getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
 
-  getBalanceAndContext: (address: string) => ReturnType<Connection["getBalanceAndContext"]>;
-
   getParsedTokenAccountsByOwner: (
     address: string,
   ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
@@ -218,9 +216,6 @@ export function getChainAPI(
         .getFeeForMessage(msg)
         .then(r => r.value)
         .catch(remapErrors),
-
-    getBalanceAndContext: (address: string) =>
-      connection.getBalanceAndContext(new PublicKey(address)).catch(remapErrors),
 
     getParsedTokenAccountsByOwner: (address: string) => {
       const callback = () =>

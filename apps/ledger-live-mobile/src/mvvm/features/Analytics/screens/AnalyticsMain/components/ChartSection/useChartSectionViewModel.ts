@@ -5,7 +5,7 @@ import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVaria
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { formatPrice, formatSignedFiatVariation } from "@ledgerhq/live-currency-format";
-import { useCountervaluesState } from "~/reducers/countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { accountsSelector } from "~/reducers/accounts";
 import {
   counterValueCurrencySelector,
@@ -47,7 +47,7 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const accounts = useSelector(accountsSelector);
-  const countervalues = useCountervaluesState();
+  const countervalues = useCountervaluesCache();
   const discreet = useSelector(discreetModeSelector);
   const portfolio = usePortfolioAllAccounts();
   const { displayedBalance, isBalanceAvailable } = usePortfolioBalanceForDisplay();

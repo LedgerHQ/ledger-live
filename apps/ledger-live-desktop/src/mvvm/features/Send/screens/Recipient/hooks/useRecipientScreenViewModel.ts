@@ -113,7 +113,11 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
       // the transaction into self-transfer state (see `useSendFlowTransaction`'s
       // `buildSelfTransferPatch`, which every recipient write passes through).
       const selfTransferTarget = account
-        ? getAccountSelfTransferTarget(account, state.transaction.transaction)
+        ? getAccountSelfTransferTarget(
+            account,
+            state.transaction.transaction,
+            state.account.parentAccount,
+          )
         : null;
       const matchedSelfTransferTarget =
         selfTransferTarget && selfTransferTarget.address.toLowerCase() === address.toLowerCase()
@@ -136,7 +140,14 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         navigation.goToNextStep();
       }
     },
-    [account, transaction, state.recipient, state.transaction.transaction, navigation],
+    [
+      account,
+      transaction,
+      state.recipient,
+      state.transaction.transaction,
+      state.account.parentAccount,
+      navigation,
+    ],
   );
 
   if (!account || !currency || isScannerOpen) {

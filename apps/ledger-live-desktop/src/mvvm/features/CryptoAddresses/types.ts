@@ -1,5 +1,5 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { AssetTableItem } from "LLD/features/Assets/types";
+import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 
 export type CryptoAddressesViewModel = {
   readonly showBackButton: boolean;

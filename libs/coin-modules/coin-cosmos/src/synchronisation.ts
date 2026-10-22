@@ -18,7 +18,7 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
   });
 
   const { accountInfo, balances, blockHeight, txs, delegations, redelegations, unbondings } =
-    await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+    await new CosmosAPI(currency.id).getAccountInfo(address, currency.units[1].code);
 
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps({ address, unitCode: currency.units[1].code }, accountId, txs);
@@ -46,6 +46,11 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     spendableBalance = new BigNumber(0);
   }
 
+  const carriedPublicKey =
+    rest?.publicKey ||
+    initialAccount?.cosmosResources?.publicKey ||
+    (initialAccount?.xpub && initialAccount.xpub !== address ? initialAccount.xpub : "");
+
   const cosmosResources = {
     delegations,
     redelegations,
@@ -54,9 +59,7 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     pendingRewardsBalance,
     unbondingBalance,
     sequence: accountInfo.sequence,
-    // Captured from the device at scan (hw-getAddress); plain re-syncs have no device,
-    // so carry the previously-persisted value forward.
-    publicKey: rest?.publicKey ?? initialAccount?.cosmosResources?.publicKey ?? "",
+    publicKey: carriedPublicKey,
   };
 
   const stakingResources: StakingResources = {
@@ -70,11 +73,12 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
 
   const shape = {
     id: accountId,
-    xpub: address,
+    xpub: carriedPublicKey || address,
     balance: balance,
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
+    sequence: accountInfo.sequence,
     cosmosResources,
     stakingResources,
     used: !isAccountEmpty({ balance, cosmosResources }),

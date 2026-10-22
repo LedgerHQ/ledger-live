@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import {
-  DeviceIntentExecutorLWM,
+  DeviceIntentExecutor,
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
 import type {
@@ -45,7 +45,7 @@ export function SignatureScreenView({
 
   return (
     <View style={{ flex: 1 }} testID="send-signature-step">
-      <DeviceIntentExecutorLWM
+      <DeviceIntentExecutor
         enabled
         sourceFlow="send"
         deviceConnectionParams={deviceConnectionParams}

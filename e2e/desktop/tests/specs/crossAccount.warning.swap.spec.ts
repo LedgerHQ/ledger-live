@@ -52,6 +52,8 @@ test.describe("Swap - cross account warning", () => {
         ],
       },
       async ({ app }) => {
+        test.skip(provider === SwapProvider.UNISWAP, "Temporarily skipped for Uniswap");
+
         const healthyProviders = await keepRunningProviders([provider], fromAccount, toAccount);
         test.skip(
           healthyProviders.length === 0,

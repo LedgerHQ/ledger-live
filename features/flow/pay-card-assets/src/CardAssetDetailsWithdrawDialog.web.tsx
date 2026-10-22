@@ -37,7 +37,7 @@ export function CardAssetDetailsWithdrawDialog({
         <DialogHeader density="expanded" onClose={onClose} />
         <DialogBody className="flex flex-col items-center gap-32 px-24 pb-24 text-center">
           <div className="flex flex-col items-center gap-24">
-            <Spot appearance="icon" icon={InformationFill} size={56} />
+            <Spot icon={InformationFill} size={56} />
             <div className="flex flex-col gap-8">
               <span className="heading-4-semi-bold text-base">{copy.withdrawTitle}</span>
               <p className="body-2 text-muted">{copy.withdrawDescription}</p>

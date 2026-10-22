@@ -1,5 +1,41 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.43.0
+
+### Minor Changes
+
+- [#23180](https://github.com/LedgerHQ/ledger-live/pull/23180) [`519d317`](https://github.com/LedgerHQ/ledger-live/commit/519d317de3d15fcc3c5094c8b513633d679891bb) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Retry a failed E2E test once on CI instead of twice. Desktop records video only on the last retry of a test that already failed, so a run without retries records none.
+
+- [#23456](https://github.com/LedgerHQ/ledger-live/pull/23456) [`dacaf0a`](https://github.com/LedgerHQ/ledger-live/commit/dacaf0aa3165455b0d1f4cdd0dabe711668bb86c) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Disable Detox synchronization while the Buy/Sell deeplink opens the live app webview, so the busy network no longer hangs the wait. Give the native wait's hard timeout headroom past its own timeout so it stops abandoning in-flight calls, and drop unused `async` from the bridge `setFeatureFlag` and the buy/sell and deposit test factories.
+
+- [#23301](https://github.com/LedgerHQ/ledger-live/pull/23301) [`8366c55`](https://github.com/LedgerHQ/ledger-live/commit/8366c557f49390150e9f6695c9239ff875e92fee) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Send from each Bitcoin derivation's own account in the send E2E tests, so the legacy, segwit, native segwit and taproot tests no longer race for one account's UTXO. Desktop new send flow tests now fail as soon as the flow ends on an error or info screen instead of after the 41s expect timeout.
+
+- [#23410](https://github.com/LedgerHQ/ledger-live/pull/23410) [`65e90bb`](https://github.com/LedgerHQ/ledger-live/commit/65e90bb3973a012eb34969e461e2aad9d7718aac) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Skip on Nano S the mobile E2E tests that Desktop already skips there: SUI, VET, HBAR and ALEO tests, plus EGLD and SEI delegate, CELO lock and vote and CCD send. Desktop and Mobile now read the currencies with no Nano S coverage from one list in `@ledgerhq/live-e2e-shared`.
+
+- [#22756](https://github.com/LedgerHQ/ledger-live/pull/22756) [`2e198e2`](https://github.com/LedgerHQ/ledger-live/commit/2e198e2394723873a79e56635cfe21a2ab763454) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover opening a card transaction from the mobile Wallet history
+
+- [#23220](https://github.com/LedgerHQ/ledger-live/pull/23220) [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Support protected Speculinho sessions in E2E. Speculos transports take the session's `bearerToken` (`SpeculosHttpTransportOpts`, `SpeculosSessionTarget`, the mobile `SpeculosTarget`; `DeviceManagementKitTransportSpeculos` and the desktop transport default to `SPECULOS_SESSION_TOKEN`) and keep a separate DMK per token. E2E acquires sessions with `protected: true` and authenticates every operator and Speculos request; the mobile e2e bridge passes the token to the app and now requires a per-run connection token. Bumps `@ledgerhq/device-transport-kit-speculos` to 1.3.0 and `@ledgerhq/speculos-device-controller` to 0.4.0.
+
+- [#23470](https://github.com/LedgerHQ/ledger-live/pull/23470) [`ba07b05`](https://github.com/LedgerHQ/ledger-live/commit/ba07b0562bf91bb0e5468d4806bc5d7781785248) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Watch the Speculos screen during local E2E runs: `SPECULOS_SCREEN=web` opens the Speculos web page (through a local proxy that adds the Speculinho session token), `SPECULOS_SCREEN=vnc` a VNC viewer (through a local bridge to the Speculinho VNC websocket). Ignored in CI. Local Docker Speculos now always runs its VNC server, bound to 127.0.0.1.
+
+## 0.43.0-next.0
+
+### Minor Changes
+
+- [#23180](https://github.com/LedgerHQ/ledger-live/pull/23180) [`519d317`](https://github.com/LedgerHQ/ledger-live/commit/519d317de3d15fcc3c5094c8b513633d679891bb) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Retry a failed E2E test once on CI instead of twice. Desktop records video only on the last retry of a test that already failed, so a run without retries records none.
+
+- [#23456](https://github.com/LedgerHQ/ledger-live/pull/23456) [`dacaf0a`](https://github.com/LedgerHQ/ledger-live/commit/dacaf0aa3165455b0d1f4cdd0dabe711668bb86c) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Disable Detox synchronization while the Buy/Sell deeplink opens the live app webview, so the busy network no longer hangs the wait. Give the native wait's hard timeout headroom past its own timeout so it stops abandoning in-flight calls, and drop unused `async` from the bridge `setFeatureFlag` and the buy/sell and deposit test factories.
+
+- [#23301](https://github.com/LedgerHQ/ledger-live/pull/23301) [`8366c55`](https://github.com/LedgerHQ/ledger-live/commit/8366c557f49390150e9f6695c9239ff875e92fee) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Send from each Bitcoin derivation's own account in the send E2E tests, so the legacy, segwit, native segwit and taproot tests no longer race for one account's UTXO. Desktop new send flow tests now fail as soon as the flow ends on an error or info screen instead of after the 41s expect timeout.
+
+- [#23410](https://github.com/LedgerHQ/ledger-live/pull/23410) [`65e90bb`](https://github.com/LedgerHQ/ledger-live/commit/65e90bb3973a012eb34969e461e2aad9d7718aac) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Skip on Nano S the mobile E2E tests that Desktop already skips there: SUI, VET, HBAR and ALEO tests, plus EGLD and SEI delegate, CELO lock and vote and CCD send. Desktop and Mobile now read the currencies with no Nano S coverage from one list in `@ledgerhq/live-e2e-shared`.
+
+- [#22756](https://github.com/LedgerHQ/ledger-live/pull/22756) [`2e198e2`](https://github.com/LedgerHQ/ledger-live/commit/2e198e2394723873a79e56635cfe21a2ab763454) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover opening a card transaction from the mobile Wallet history
+
+- [#23220](https://github.com/LedgerHQ/ledger-live/pull/23220) [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Support protected Speculinho sessions in E2E. Speculos transports take the session's `bearerToken` (`SpeculosHttpTransportOpts`, `SpeculosSessionTarget`, the mobile `SpeculosTarget`; `DeviceManagementKitTransportSpeculos` and the desktop transport default to `SPECULOS_SESSION_TOKEN`) and keep a separate DMK per token. E2E acquires sessions with `protected: true` and authenticates every operator and Speculos request; the mobile e2e bridge passes the token to the app and now requires a per-run connection token. Bumps `@ledgerhq/device-transport-kit-speculos` to 1.3.0 and `@ledgerhq/speculos-device-controller` to 0.4.0.
+
+- [#23470](https://github.com/LedgerHQ/ledger-live/pull/23470) [`ba07b05`](https://github.com/LedgerHQ/ledger-live/commit/ba07b0562bf91bb0e5468d4806bc5d7781785248) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Watch the Speculos screen during local E2E runs: `SPECULOS_SCREEN=web` opens the Speculos web page (through a local proxy that adds the Speculinho session token), `SPECULOS_SCREEN=vnc` a VNC viewer (through a local bridge to the Speculinho VNC websocket). Ignored in CI. Local Docker Speculos now always runs its VNC server, bound to 127.0.0.1.
+
 ## 0.42.0
 
 ### Minor Changes
@@ -286,8 +322,10 @@ match one or more of the following constraints` — or before the button had
   mounted at all. 3/5 nightlies, still failing in the latest.
 
   Each of the three sheet taps now waits for the sheet's own container
-  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
-  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  (`transfer-drawer`) at 100% visibility, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
 - [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
@@ -314,7 +352,9 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
-  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+  timeout or adding a retry, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -358,8 +398,10 @@ match one or more of the following constraints` — or before the button had
   mounted at all. 3/5 nightlies, still failing in the latest.
 
   Each of the three sheet taps now waits for the sheet's own container
-  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
-  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  (`transfer-drawer`) at 100% visibility, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
 - [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
@@ -386,7 +428,9 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
-  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+  timeout or adding a retry, per
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -595,17 +639,5 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 - [#20261](https://github.com/LedgerHQ/ledger-live/pull/20261) [`ba6e9c1`](https://github.com/LedgerHQ/ledger-live/commit/ba6e9c1e542ad28a59b0163e3b453e2f047a48b9) Thanks [@ysitbon](https://github.com/ysitbon)! - Import currency accessors from the domain layer instead of the `@ledgerhq/live-common/currencies` barrel.
 
   Crypto accessors (`getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByKeyword`, `findCryptoCurrencyByTicker`, `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `hasCryptoCurrencyId`) now come from `@domain/entity-currency-crypto`, and fiat accessors (`getFiatCurrencyByTicker`, `findFiatCurrencyByTicker`, `listFiatCurrencies`, `hasFiatCurrencyTicker`) from `@domain/entity-currency-fiat`. The re-exports that forwarded them through `@ledgerhq/live-common/currencies` are removed; the barrel keeps its formatting, colour, helper, marketcap, support and URI-scheme exports. Behaviour is unchanged — the barrel already delegated to these same domain functions.
-
-## 0.32.0
-
-### Minor Changes
-
-- [#19828](https://github.com/LedgerHQ/ledger-live/pull/19828) [`f08cad1`](https://github.com/LedgerHQ/ledger-live/commit/f08cad15e523a210054d9a10f0bbb69bf42a963a) Thanks [@henri-ly](https://github.com/henri-ly)! - new send flow e2e mobile native send
-
-## 0.32.0-next.0
-
-### Minor Changes
-
-- [#19828](https://github.com/LedgerHQ/ledger-live/pull/19828) [`f08cad1`](https://github.com/LedgerHQ/ledger-live/commit/f08cad15e523a210054d9a10f0bbb69bf42a963a) Thanks [@henri-ly](https://github.com/henri-ly)! - new send flow e2e mobile native send
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

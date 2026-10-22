@@ -321,9 +321,6 @@ export const urls = {
     blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
     txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
   },
-  geoBlock: {
-    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
-  },
   nanoSUpgradeProgram: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
   nanoSLimitations: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
   deviceDeprecation: {

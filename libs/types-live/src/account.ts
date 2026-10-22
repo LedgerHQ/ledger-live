@@ -132,6 +132,8 @@ export type Account = {
   used: boolean;
   // generic, cross-chain readiness projection (see AccountReadiness)
   readiness?: AccountReadiness;
+  // next account sequence (nonce). Present only when the family opts in via accountSequenceSupported.
+  sequence?: number;
   // account balance in satoshi
   balance: BigNumber;
   // part of the balance that can effectively be spent
@@ -224,6 +226,7 @@ export type AccountRaw = {
   starred?: boolean;
   used?: boolean;
   readiness?: AccountReadiness;
+  sequence?: number;
   balance: string;
   spendableBalance?: string;
   blockHeight: number;

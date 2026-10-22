@@ -9,8 +9,7 @@ import { closeTrackedWebviewDevTools } from "./webviewHandlers";
 export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 1024);
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
 export { MIN_HEIGHT, MIN_WIDTH };
-const { DEV_TOOLS, DEV_TOOLS_MODE, DISABLE_DEV_TOOLS, BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } =
-  process.env;
+const { DEV_TOOLS, DEV_TOOLS_MODE, DISABLE_DEV_TOOLS, IGNORE_CERTIFICATE_ERRORS } = process.env;
 
 const DEV_TOOLS_MODES: ReadonlySet<string> = new Set([
   "detach",
@@ -53,16 +52,15 @@ const getWindowPosition = (width: number, height: number, display = screen.getPr
 };
 
 const webPreferences: WebPreferences = {
-  // https://ledgerhq.atlassian.net/browse/LIVE-6785 : This is a TEMPORARY workaround for some of our backend not yet supporting CORS. we will remove this once it's the case. this is only for develop mode because production don't do strict CORS check at the moment.
-  webSecurity: !(__DEV__ && BYPASS_CORS === "1"),
   // required for Live Apps integration (usage of <webview> in PlatformAPIWebview.tsx)
   webviewTag: true,
   // allow devtools to exists in development mode or when explicitly enabled with DEV_TOOLS env var
   devTools: !!(__DEV__ || DEV_TOOLS),
-  // Allow to use nodejs in renderer thread.
-  nodeIntegration: true, // FIXME https://ledgerhq.atlassian.net/browse/LIVE-10304
-  // disable the context isolation in order to be able to use "electron" on preloader/renderer side
-  contextIsolation: false,
+  // Change these three together: nodeIntegration alone also toggles the default sandbox,
+  // which strips Node from the preload and breaks the bridge. See LIVE-32057.
+  nodeIntegration: false,
+  contextIsolation: true,
+  sandbox: true,
   // globally disable spellchecks which aren't useful to us & problematic for crypto address fields & so on
   spellcheck: false, // FIXME we should overrides this directly on the input fields instead of globally disabling it
 };

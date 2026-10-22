@@ -7,6 +7,12 @@ import "node-libs-react-native/globals";
 // https://github.com/kmagiera/react-native-gesture-handler/issues/320#issuecomment-443815828
 import "react-native-gesture-handler";
 
+// Expo's runtime installs its own URL + URLSearchParams globals (whatwg-url-without-unicode, which
+// has no `URLSearchParams.size`) when `expo` is first imported, replacing whatever is already there.
+// Load it before the polyfill below so the polyfill is the implementation that stays installed:
+// libraries that gate on `size` (e.g. @aptos-labs/aptos-client) otherwise drop their query string.
+import "expo";
+
 // Polyfill URL + URLSearchParams — React Native's native URL doesn't support URLSearchParams.
 // https://github.com/facebook/react-native/issues/23922
 import "react-native-url-polyfill/auto";

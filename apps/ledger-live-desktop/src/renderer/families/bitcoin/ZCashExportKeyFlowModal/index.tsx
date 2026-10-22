@@ -6,7 +6,7 @@ import {
   ZCASH_ACTIVATION_DATE_STRING,
 } from "@ledgerhq/coin-zcash/constants";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import Modal from "~/renderer/components/Modal";
 import logger from "~/renderer/logger";
 import Body from "./Body";

@@ -14,14 +14,13 @@ import market, { MarketState } from "./market";
 import marketBanner, { MarketBannerState } from "./marketBanner";
 import wallet from "./wallet";
 import type { WalletState } from "./wallet";
-import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@shared/env";
 import {
   countervaluesReducer,
-  type CountervaluesState,
+  type CountervaluesStoreState,
 } from "@features/platform-market-countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
@@ -31,6 +30,9 @@ import { accountAliasSlice, type AccountAliasState } from "@domain/entity-accoun
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
+import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
+import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
+import { accountsSlice, type AccountsState as AccountEntriesState } from "@domain/entity-account";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
@@ -59,6 +61,7 @@ import dialogs, { DialogsState } from "./dialogs";
 import dialogsWithData, { DialogsWithDataState } from "./dialogsWithData";
 import ptxInfoDialog, { PtxInfoDialogState } from "./ptxInfoDialog";
 import actionDialog, { ActionDialogState } from "./actionDialog";
+import actionMenuDialog, { ActionMenuDialogState } from "./actionMenuDialog";
 import liveAppModal, { LiveAppModalState } from "./liveAppModal";
 import syncRefresh, { SyncRefreshState } from "./syncRefresh";
 import shieldedSyncSubscriptions, {
@@ -78,13 +81,12 @@ export type State = LLDRTKApiState & {
   accountAliases: AccountAliasState;
   accounts: AccountsState;
   application: ApplicationState;
-  countervalues: CountervaluesState;
+  countervalues: CountervaluesStoreState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
   featureFlags: FeatureFlagsState;
   history: HistoryState;
   identities: IdentitiesState;
-  authEnvironment: AuthEnvironmentState;
   market: MarketState;
   marketBanner: MarketBannerState;
   modals: ModalsState;
@@ -101,6 +103,7 @@ export type State = LLDRTKApiState & {
   dialogsWithData: DialogsWithDataState;
   ptxInfoDialog: PtxInfoDialogState;
   actionDialog: ActionDialogState;
+  actionMenuDialog: ActionMenuDialogState;
   liveAppModal: LiveAppModalState;
   syncRefresh: SyncRefreshState;
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
@@ -111,6 +114,9 @@ export type State = LLDRTKApiState & {
   knownDevices: KnownDevicesState;
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
+  accountData: AccountDataState;
+  accountBalances: AccountBalancesState;
+  accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
   payCardFeatureTour: PayCardFeatureTourState;
@@ -130,7 +136,6 @@ const appReducer = combineReducers({
   featureFlags,
   history,
   identities: identitiesSlice.reducer,
-  authEnvironment: authEnvironmentReducer,
   modals,
   modularDialog,
   sendFlow,
@@ -147,6 +152,7 @@ const appReducer = combineReducers({
   dialogsWithData,
   ptxInfoDialog,
   actionDialog,
+  actionMenuDialog,
   liveAppModal,
   syncRefresh,
   shieldedSyncSubscriptions,
@@ -157,6 +163,9 @@ const appReducer = combineReducers({
   knownDevices,
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
+  accountData: accountDataSlice.reducer,
+  accountBalances: accountBalancesSlice.reducer,
+  accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,

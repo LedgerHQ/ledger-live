@@ -25,6 +25,7 @@ const mockCvState = {} as CounterValuesState;
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesState: () => mockCvState,
+  useCountervaluesCache: () => mockCvState,
 }));
 
 const mockThrottledValues = jest.fn();

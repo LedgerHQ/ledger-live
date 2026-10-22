@@ -2,7 +2,7 @@ import { Observable, type Subscription } from "rxjs";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "tests/testSetup";
@@ -80,6 +80,37 @@ describe("useZcashShieldedSync", () => {
         subscription: expect.objectContaining({ unsubscribe: expect.any(Function) }),
       },
     ]);
+  });
+
+  it("starts a shielded sync for a zcash_testnet account too", async () => {
+    const account = {
+      ...buildAccount(),
+      currency: { id: "zcash_testnet" } as CryptoCurrency,
+    } as unknown as ZcashAccount;
+    const syncMock = jest.fn(
+      () =>
+        new Observable<(a: unknown) => unknown>(subscriber => {
+          subscriber.next(a => a);
+        }),
+    );
+    mockedGetAccountBridge.mockReturnValue({
+      sync: syncMock,
+    } as unknown as ReturnType<typeof getAccountBridge>);
+
+    const { result } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { shieldedSyncSubscriptions: [] },
+    });
+
+    act(() => {
+      result.current.startShieldedSync();
+    });
+
+    await waitFor(() => {
+      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      });
+    });
   });
 
   it("is a no-op when a sync is already in flight for the account", () => {

@@ -43,7 +43,7 @@ export function VerifyAddressSheet({
         <VerifyAddressSheetContent>
           <Box lx={{ gap: "s24", paddingTop: "s24" }} testID={contentTestId}>
             <Box lx={{ alignItems: "center", gap: "s12" }}>
-              <Spot appearance="icon" icon={icon} size={56} />
+              <Spot icon={icon} size={56} />
               <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
                 {title}
               </Text>

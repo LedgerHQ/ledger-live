@@ -1,5 +1,5 @@
 import { crypto } from "bitcoinjs-lib";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import {
   getXpubComponents,
   hardenedPathOf,
@@ -475,7 +475,7 @@ export default class BtcNew {
       psbt.setInputSighashType(i, sigHashType);
     }
     const inputTxBuffer = serializeTransaction(inputTx, true);
-    const inputTxid = crypto.hash256(inputTxBuffer);
+    const inputTxid = Buffer.from(crypto.hash256(inputTxBuffer));
     const xpubBase58 = await this.client.getExtendedPubkey(false, pathElements);
 
     const pubkey = pubkeyFromXpub(xpubBase58);

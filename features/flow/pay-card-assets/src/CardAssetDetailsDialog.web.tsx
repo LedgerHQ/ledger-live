@@ -130,7 +130,7 @@ export function CardAssetDetailsDialog({
                     className="flex flex-col items-center gap-24 py-24 text-center"
                     data-testid="card-asset-details-transactions-empty"
                   >
-                    <Spot appearance="icon" icon={CreditCard} size={72} />
+                    <Spot icon={CreditCard} size={72} />
                     <p className="heading-4-semi-bold text-base">
                       {t("payTab.cardTransactions.history.empty.title")}
                     </p>

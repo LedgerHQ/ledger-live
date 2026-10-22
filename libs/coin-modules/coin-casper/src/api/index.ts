@@ -34,8 +34,8 @@ export function createApi() {
     combine: (_context, tx, signature, options?) => combine(tx, signature, options?.pubkey),
     broadcast: (context, tx, _options?) => broadcast(context, tx),
     estimateFees,
-    validateIntent: async (_context, intent, balances, options?) =>
-      validateIntent(intent, balances, options?.customFees),
+    validateIntent: async (context, intent, balances, options?) =>
+      validateIntent(await context.config(), intent, balances, options?.customFees),
     // Casper uses (transaction hash + TTL) for replay protection rather than a
     // per-account nonce, so getNextSequence has no meaningful value here.
     getNextSequence: async (_context: CasperContext, _address: string) => 0n,

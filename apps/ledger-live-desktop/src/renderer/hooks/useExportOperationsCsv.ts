@@ -2,7 +2,7 @@ import { files } from "~/renderer/bridge";
 import type { SaveOutcome, SaveRequest } from "~/bridge/contract";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import type { Account } from "@ledgerhq/types-live";
@@ -35,7 +35,7 @@ export function useExportOperationsCsv({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const countervalueCurrency = useSelector(counterValueCurrencySelector);
-  const countervalueState = useCountervaluesState();
+  const countervalueState = useCountervaluesCache();
   const walletState = useSelector(walletSelector);
   const sync = useBridgeSync();
   const syncState = useBridgeSyncState();

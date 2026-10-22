@@ -7,9 +7,6 @@ import {
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
-  TransactionCommonRaw,
-  TransactionStatusCommon,
-  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type {
   BufferTxData,
@@ -254,11 +251,6 @@ export type Transaction = TransactionCommon & {
   templateId?: string;
 };
 
-export type TransactionRaw = TransactionCommonRaw & {
-  family: "solana";
-  model: string;
-};
-
 export type SolanaStake = {
   stakeAccAddr: string;
   hasStakeAuth: boolean;
@@ -336,10 +328,6 @@ export type SolanaTokenAccountRaw = TokenAccountRaw & {
   extensions?: string;
 };
 
-export type TransactionStatus = TransactionStatusCommon;
-
-export type TransactionStatusRaw = TransactionStatusCommonRaw;
-
 export type SolanaOperation = Operation<SolanaOperationExtra>;
 export type SolanaOperationRaw = Operation<SolanaOperationExtraRaw>;
 
@@ -361,11 +349,6 @@ export type SolanaOperationExtra = {
 export type SolanaOperationExtraRaw = {
   memo?: string | undefined;
   stake?: ExtraStakeInfoRaw;
-};
-
-export type SolanaExtraDeviceTransactionField = {
-  type: "solana.token.transferFee";
-  label: string;
 };
 
 /** Not a chain payload, but the intent carries no other slot for a crafting input. */

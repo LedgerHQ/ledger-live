@@ -4,7 +4,7 @@ import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   useCalculateCountervalueCallback,
-  useCountervaluesState,
+  useCountervaluesCache,
 } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
@@ -144,7 +144,7 @@ export function usePerpsDepositViewModel(
   const counterValueUnit = counterValueCurrency.units[0];
   const maxDecimalLength = Math.max(0, counterValueUnit.magnitude);
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
-  const countervaluesState = useCountervaluesState();
+  const countervaluesState = useCountervaluesCache();
 
   /** Prices the typed amount back into `currency`, in its smallest unit. */
   const toCurrencyAmount = useCallback(

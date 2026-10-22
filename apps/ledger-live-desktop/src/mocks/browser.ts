@@ -5,6 +5,7 @@ import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stab
 import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 import { mockLedgerStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/mocks/ledgerStatus";
 import { mockFearAndGreedLatest } from "@domain/api-market-index-fear-and-greed/mock";
+import altcoinSeasonHandlers from "../../tests/handlers/altcoinSeason";
 import countervaluesHandlers from "../../tests/handlers/countervalues";
 import marketHandlers from "../../tests/handlers/market";
 import cardHandlers from "./card/handler";
@@ -25,6 +26,7 @@ const handlers = [
   http.get("https://proxycmc.api.live.ledger.com/v3/fear-and-greed/latest", () => {
     return HttpResponse.json(mockFearAndGreedLatest);
   }),
+  ...altcoinSeasonHandlers,
   ...marketHandlers,
   ...countervaluesHandlers,
   ...cardHandlers,

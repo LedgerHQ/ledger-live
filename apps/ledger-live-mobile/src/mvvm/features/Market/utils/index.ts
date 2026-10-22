@@ -177,14 +177,6 @@ export function getAnalyticsProperties<P extends object>(
   };
 }
 
-export const isDataStale = (lastUpdate: number, refreshRate: number) => {
-  const currentTime = new Date();
-  const updatedAt = new Date(lastUpdate);
-  const elapsedTime = currentTime.getTime() - updatedAt.getTime();
-
-  return elapsedTime > refreshRate;
-};
-
 export function getCurrentPage(indexPosition: number, pageSize: number): number {
   return Math.floor(indexPosition / pageSize) + 1;
 }

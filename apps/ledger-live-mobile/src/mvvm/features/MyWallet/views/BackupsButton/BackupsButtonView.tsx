@@ -27,7 +27,7 @@ export function BackupsButtonView({
     >
       <CardHeader>
         <CardLeading>
-          <Spot appearance="icon" icon={icon} size={48} />
+          <Spot icon={icon} size={48} />
           <CardContent>
             <CardContentTitle>{title}</CardContentTitle>
             <CardContentDescription>{description}</CardContentDescription>

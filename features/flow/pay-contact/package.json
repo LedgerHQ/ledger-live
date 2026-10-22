@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-contact",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Pay tab contact flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
-    "@features/flow-contacts": "workspace:^",
+    "@features/flow-contacts-detail": "workspace:^",
     "@features/flow-contacts-add-contact": "workspace:^",
     "@features/platform-contacts": "workspace:^",
     "@shared/i18n": "workspace:*",

@@ -34,7 +34,16 @@ type Props = {
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function BitcoinSendRowsFee({
+// Zcash is a bitcoin-family currency served by coin-zcash: its fee is set by ZIP-317, with
+// no rate to pick, and its transaction carries no fee strategies.
+export default function BitcoinSendRowsFee(props: Props) {
+  // The shared Transaction union does not include coin-zcash's transaction.
+  const family: string = props.transaction.family;
+  if (family === "zcash") return null;
+  return <BitcoinFeeRows {...props} />;
+}
+
+function BitcoinFeeRows({
   account,
   transaction,
   parentAccount,

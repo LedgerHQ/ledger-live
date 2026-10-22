@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 const yargs = require("yargs");
-const Listr = require("listr");
-const verboseRenderer = require("listr-verbose-renderer");
 const path = require("path");
 const rimraf = require("rimraf");
 const pkg = require("../../package.json");
@@ -208,20 +206,33 @@ const mainTask = (args = {}) => {
 
 const setupList = (getTasks, args) => {
   verbose = !!args.verbose;
+  return getTasks(args);
+};
 
-  const tasks = getTasks(args);
-  const options = {
-    collapse: false,
-    renderer: verbose ? verboseRenderer : undefined,
-  };
-
-  return new Listr(tasks, options);
+const runList = async (tasks, depth = 0) => {
+  const indent = "  ".repeat(depth);
+  for (const { title, task, skip, enabled } of tasks) {
+    if (enabled && !enabled()) continue;
+    const skipped = skip && skip();
+    if (skipped) {
+      const reason = typeof skipped === "string" ? `: ${skipped}` : "";
+      console.log(`${indent}↓ ${title} [skipped${reason}]`);
+      continue;
+    }
+    console.log(`${indent}❯ ${title}`);
+    try {
+      const subtasks = await task();
+      if (Array.isArray(subtasks)) await runList(subtasks, depth + 1);
+    } catch (error) {
+      console.error(`${indent}✖ ${title}`);
+      throw error;
+    }
+    console.log(`${indent}✔ ${title}`);
+  }
 };
 
 const runTasks = (getTasks, args) => {
-  const listr = setupList(getTasks, args);
-
-  listr.run().catch(error => {
+  runList(setupList(getTasks, args)).catch(error => {
     console.error(error);
     process.exit(-1);
   });
@@ -280,7 +291,7 @@ yargs
   .option("verbose", {
     alias: "v",
     type: "boolean",
-    describe: "Do not pretty print progress (ncurses) and display output from called commands",
+    describe: "Display output from called commands",
   })
   .help("help")
   .alias("help", "h")

@@ -1,0 +1,88 @@
+{
+  "name": "@features/flow-contacts-detail",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Shared Contact Detail flow for Desktop and Mobile",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./native": "./src/index.native.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-detail/knip.web.config.mjs -W features/flow/flow-contacts-detail --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-detail/knip.native.config.mjs -W features/flow/flow-contacts-detail --tsConfig tsconfig.native.json"
+  },
+  "dependencies": {
+    "@domain/entity-contact": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@features/flow-contacts-delete-address": "workspace:^",
+    "@features/flow-contacts-delete-contact": "workspace:^",
+    "@features/flow-contacts-edit-address": "workspace:^",
+    "@features/flow-contacts-edit-contact": "workspace:^",
+    "@features/platform-contacts": "workspace:^",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@shared/clipboard": "workspace:*",
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-qr-code": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0",
+    "react-native-safe-area-context": ">=4.0.0",
+    "react-redux": ">=9.0.0",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-redux": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
+  }
+}

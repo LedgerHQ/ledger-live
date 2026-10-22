@@ -1,9 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-} from "@domain/entity-contact";
+import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsAddContactContent } from "../..";
 import type { ContactsAddContactContentProps } from "./types";
 
@@ -21,17 +19,6 @@ function createProps(
     draftName: "",
     avatarInitial: "",
     invalidNameError: null,
-    labels: {
-      title: "Add contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer:
-        "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      confirmAddContact: "Add contact",
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
-      },
-    },
     onDraftNameChange: jest.fn(),
     onConfirm: jest.fn(async () => undefined),
     reset: jest.fn(),
@@ -41,9 +28,9 @@ function createProps(
 
 describe("ContactsAddContactContent", () => {
   it("should render embeddable form content without a dialog", () => {
-    render(<ContactsAddContactContent {...createProps()} />);
+    render(<ContactsAddContactContent {...createProps()} />, { wrapper: I18nTestProvider });
 
-    expect(screen.getByText(/For privacy, avoid full names and surnames/)).toBeVisible();
+    expect(screen.getByText("contacts.addContactDrawer.namingDisclaimer")).toBeVisible();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
@@ -53,10 +40,11 @@ describe("ContactsAddContactContent", () => {
         <ContactsAddContactContent {...createProps()} />
         <ContactsAddContactContent {...createProps()} />
       </>,
+      { wrapper: I18nTestProvider },
     );
 
     const disclaimerIds = screen
-      .getAllByText(/For privacy, avoid full names and surnames/)
+      .getAllByText("contacts.addContactDrawer.namingDisclaimer")
       .map(disclaimer => disclaimer.parentElement?.id);
 
     expect(new Set(disclaimerIds).size).toBe(2);
@@ -70,12 +58,13 @@ describe("ContactsAddContactContent", () => {
           invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveValue("Cédric");
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveAttribute(
       "helpertext",
-      "Special characters are not allowed.",
+      "contacts.addContactDrawer.invalidNameError",
     );
     expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
   });
@@ -93,6 +82,7 @@ describe("ContactsAddContactContent", () => {
           onConfirm,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     fireEvent.change(screen.getByTestId("contacts-add-contact-name-input"), {
@@ -112,6 +102,7 @@ describe("ContactsAddContactContent", () => {
           isSaving: true,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveAttribute("readonly");

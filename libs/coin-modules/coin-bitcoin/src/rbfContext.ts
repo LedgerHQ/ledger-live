@@ -22,7 +22,7 @@ export async function getAmountAndRecipient(
   if (knownRecipient) {
     const recipientOutput = tx.outs.find(out => {
       try {
-        const address = scriptToAddress(out.script, crypto);
+        const address = scriptToAddress(Buffer.from(out.script), crypto);
         return address === knownRecipient;
       } catch {
         return false;
@@ -30,7 +30,7 @@ export async function getAmountAndRecipient(
     });
 
     if (recipientOutput) {
-      return { amountSent: recipientOutput.value, recipient: knownRecipient };
+      return { amountSent: Number(recipientOutput.value), recipient: knownRecipient };
     }
   }
 
@@ -46,8 +46,8 @@ export async function getAmountAndRecipient(
   const externalOutputs = tx.outs
     .map(out => {
       try {
-        const address = scriptToAddress(out.script, crypto);
-        return { address, value: out.value };
+        const address = scriptToAddress(Buffer.from(out.script), crypto);
+        return { address, value: Number(out.value) };
       } catch {
         return null;
       }

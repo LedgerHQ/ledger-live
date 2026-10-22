@@ -4,7 +4,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import React, { useState, useMemo } from "react";
 import { useLargeMover } from "./hooks/useLargeMover";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { Card } from "./components/Card";
+import { LargeMoverCard } from "./components/LargeMoverCard";
 import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -19,7 +19,6 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { LoadingIndicator } from "./components/Loading";
 import { CardType } from "./types";
 import { PAGE_NAME } from "./const";
-import { useLargeMoverChartData } from "@ledgerhq/live-common/market/hooks/useLargeMoverChartData";
 import { useLargeMoverCurrencies } from "@ledgerhq/live-common/market/hooks/useLargeMoverCurrencies";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
@@ -32,28 +31,22 @@ type LargeMoverLandingPageProps = StackNavigatorProps<
   ScreenName.LargeMoverLandingPage
 >;
 
-export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => {
+export const LargeMoverLandingPage = ({ route }: Readonly<LargeMoverLandingPageProps>) => {
   const { ledgerIds, initialRange = "day" } = route.params;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const [range, setRange] = useState<KeysPriceChange>(rangeMap[initialRange]);
 
-  const { currencies, currenciesIds, chartIds, loading, isError } = useLargeMover({
+  const { currencies, currenciesIds, loading, isError } = useLargeMover({
     ledgerIds,
   });
 
-  const { chartDataArray, loadingChart } = useLargeMoverChartData({
-    ids: chartIds,
+  const { markets, isLoading: loadingMarket } = useLargeMoverCurrencies({
+    ledgerIds: currenciesIds,
     counterCurrency: counterValueCurrency.ticker,
-    range,
+    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
   });
 
-  const marketDataArray = useLargeMoverCurrencies({
-    ids: chartIds,
-    counterCurrency: counterValueCurrency.ticker,
-  });
-
-  const loadingMarket = marketDataArray.some(entry => entry.isLoading);
   const isLoading = loading || loadingMarket;
 
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -80,52 +73,35 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const currenciesWithId = useMemo(() => {
     if (!currencies?.cryptoOrTokenCurrencies) return [];
 
+    const marketByLedgerId = new Map(markets.map(({ ledgerId, market }) => [ledgerId, market]));
+
     return currenciesIds.flatMap((currencyId, index) => {
       const currency = currencies.cryptoOrTokenCurrencies[currencyId];
-
-      const transformedId = chartIds[index];
-      const marketData = marketDataArray[index]?.data;
+      const marketData = marketByLedgerId.get(currencyId);
 
       if (!currency || !marketData) return [];
-
-      const chartDataEntry = chartDataArray.find(
-        chartData => chartData.idChartData === transformedId,
-      );
 
       return {
         id: currencyId,
         data: marketData,
-        chartData: chartDataEntry?.chartData,
-        loading: loadingChart,
         idCard: index,
       };
     });
-  }, [
-    chartDataArray,
-    chartIds,
-    currencies?.cryptoOrTokenCurrencies,
-    marketDataArray,
-    currenciesIds,
-    loadingChart,
-  ]);
+  }, [currencies?.cryptoOrTokenCurrencies, markets, currenciesIds]);
   const renderCard = (card: CardType, moveBy?: (step: 1 | -1) => void) => {
     if (!card.data) return null;
 
     const cardIndex = currenciesWithId.findIndex(c => c.id === card.id);
-    const transformedId = cardIndex >= 0 ? chartIds[cardIndex] : null;
-    const chartDataEntry = transformedId
-      ? chartDataArray.find(c => c.idChartData === transformedId)
-      : null;
-
     const currency = currencies?.cryptoOrTokenCurrencies?.[card.id];
     if (!currency) return null;
 
     return (
-      <Card
+      <LargeMoverCard
+        ledgerId={card.id}
+        counterCurrency={counterValueCurrency.ticker}
+        isCryptoCountervalue={counterValueCurrency.type === "CryptoCurrency"}
         data={card.data}
         currency={currency}
-        chartData={chartDataEntry?.chartData}
-        loading={loadingChart}
         height={height}
         range={range}
         setRange={setRange}

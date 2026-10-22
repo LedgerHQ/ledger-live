@@ -36,7 +36,7 @@ export default function cosmosBridge(_currency: CryptoCurrency): BridgeApi {
     },
     enrichStakingResources: async (currency, address, _operations, stakingResources) => ({
       ...stakingResources,
-      redelegations: await getRedelegations(currency.id, address),
+      redelegations: await getRedelegations(currency.id, currency.units[1].code, address),
     }),
     getDeviceSignOptions,
     signRawOperation: buildSignRawOperation(executeWithSigner(createSigner)),

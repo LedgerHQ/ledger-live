@@ -5,16 +5,13 @@ jest.mock("../../prepareTransaction", () => ({
   getEstimatedFees: jest.fn(),
 }));
 import { getEstimatedFees } from "../../prepareTransaction";
-import { CosmosAPI } from "../../network/Cosmos";
+import type { CosmosCoinConfig } from "../../config";
 import { estimateFees } from "./estimateFees";
 
 const mockedGetEstimatedFees = getEstimatedFees as jest.Mock;
 
-// estimateFees reads only the denom + id off the currency (offline registry lookup); the network
-// simulate is the mocked getEstimatedFees, so a getCurrency-only stub is enough.
-const api = {
-  getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
-} as unknown as CosmosAPI;
+// estimateFees reads only the denom off the config; the network simulate is the mocked getEstimatedFees.
+const config = { denom: "uatom" } as CosmosCoinConfig;
 
 const sendIntent = {
   intentType: "transaction",
@@ -32,7 +29,7 @@ describe("logic/transaction/estimateFees", () => {
       gasWantedFees: new BigNumber("6250"),
     });
 
-    const res = await estimateFees(api, sendIntent);
+    const res = await estimateFees(config, "cosmos", sendIntent);
 
     expect(res.value).toBe(6250n);
     expect(res.parameters?.gasLimit).toBe("250000");
@@ -44,9 +41,10 @@ describe("logic/transaction/estimateFees", () => {
       gasWantedFees: new BigNumber("1"),
     });
 
-    await estimateFees(api, sendIntent);
+    await estimateFees(config, "cosmos", sendIntent);
 
-    const [params] = mockedGetEstimatedFees.mock.calls[0];
+    const [calledConfig, params] = mockedGetEstimatedFees.mock.calls[0];
+    expect(calledConfig).toBe(config);
     expect(params.senderAddress).toBe("cosmos1sender");
     expect(params.currencyId).toBe("cosmos");
     expect(params.denom).toBe("uatom");

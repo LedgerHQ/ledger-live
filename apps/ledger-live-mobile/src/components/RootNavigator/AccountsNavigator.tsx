@@ -10,7 +10,7 @@ import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ScreenName } from "~/const";
 import Accounts from "~/screens/Accounts";
-import Account from "~/screens/Account";
+import Account from "LLM/features/AccountDetail/AccountScreen";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation/getStackNavigationConfigV4";
 import ReadOnlyAccounts from "~/screens/Accounts/ReadOnly/ReadOnlyAccounts";

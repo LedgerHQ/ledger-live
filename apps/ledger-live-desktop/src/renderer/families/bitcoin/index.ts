@@ -15,8 +15,9 @@ import { ZcashAmountStepSync } from "./ZcashAmountStepSync";
 import { ZcashSyncNotice } from "./ZcashSyncNotice";
 import { getAccountRecipientAddresses } from "./getAccountRecipientAddresses";
 import { BitcoinFamily } from "./types";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 const family: BitcoinFamily = {
   sendAmountFields,
@@ -28,7 +29,8 @@ const family: BitcoinFamily = {
   // also run the standard transparent-only confirmation. Anything else — no
   // shielded address yet, or the feature turned off — keeps the standard path.
   useCustomConfirmAddress: (account, featureFlags) => {
-    if (!featureFlags.zcashShielded?.enabled || account.currency.id !== "zcash") return false;
+    if (!featureFlags.zcashShielded?.enabled || !isZcashCurrencyId(account.currency.id))
+      return false;
     const privateInfo = (account as ZcashAccount).privateInfo as ZcashPrivateInfo | undefined;
     return !!privateInfo?.shieldedAddress;
   },

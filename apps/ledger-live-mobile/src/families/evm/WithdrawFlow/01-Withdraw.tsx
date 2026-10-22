@@ -9,7 +9,7 @@ import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
+import { getStakingContractAddress } from "@ledgerhq/live-common/families/evm/staking/logic";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Trans } from "~/context/Locale";

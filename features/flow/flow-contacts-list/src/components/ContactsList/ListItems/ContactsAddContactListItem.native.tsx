@@ -25,7 +25,7 @@ export function ContactsAddContactListItem({
       lx={{ marginHorizontal: "-s8" }}
     >
       <ListItemLeading>
-        <Spot appearance="icon" size={48} icon={Plus} />
+        <Spot size={48} icon={Plus} />
         <ListItemContent>
           <ListItemTitle>{label}</ListItemTitle>
         </ListItemContent>

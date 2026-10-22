@@ -1,5 +1,19 @@
 # @domain/api-market-sentiment
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1-next.0
+
 ## 0.4.1
 
 ### Patch Changes

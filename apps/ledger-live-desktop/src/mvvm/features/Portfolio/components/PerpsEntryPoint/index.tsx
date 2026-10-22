@@ -40,7 +40,7 @@ export const PerpsEntryPoint = () => {
         </Subheader>
         <ListItem onClick={handleClick} className="rounded-md bg-surface">
           <ListItemLeading>
-            <Spot appearance="icon" icon={Infinite} />
+            <Spot icon={Infinite} />
             <ListItemContent>
               <ListItemTitle>{t("portfolio.perpsEntry.description")}</ListItemTitle>
             </ListItemContent>

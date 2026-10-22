@@ -101,6 +101,12 @@ describe("listCryptoCurrencies", () => {
     expect(listCryptoCurrencies(true).some(c => c.id === "ethereum_sepolia")).toBe(true);
   });
 
+  it("alpen_testnet is absent by default, present with withDevCrypto, and does not take over the BTC ticker", () => {
+    expect(listCryptoCurrencies().some(c => c.id === "alpen_testnet")).toBe(false);
+    expect(listCryptoCurrencies(true)).toContain(CRYPTO_CURRENCIES_REGISTRY.alpen_testnet);
+    expect(findCryptoCurrencyByTicker("BTC")).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
+  });
+
   it("returns the same registry object references (not copies)", () => {
     const [first] = listCryptoCurrencies();
     expect(first).toBe(CRYPTO_CURRENCIES_REGISTRY[first.id]);

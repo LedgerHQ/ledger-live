@@ -6,6 +6,7 @@ import {
   waitForReviewTransaction,
   pressUntilTextFound,
   waitFor,
+  waitUntilScreenLeavesIdle,
   SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS,
 } from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
@@ -151,9 +152,23 @@ export const approveTokenButtonDevice = withDeviceController(
     },
 );
 
+/**
+ * The nanos app (1.16.2) has no "Review transaction to" title. A blind-signed approve opens on a
+ * "Blind signing" warning and ends on "Accept risk and send"; one its ERC-20 plugin describes ends
+ * on "Accept and send".
+ */
+export const approveTokenNanoS = withDeviceController(({ getButtonsController }) => async () => {
+  await waitUntilScreenLeavesIdle(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+  await pressUntilTextFound(DeviceLabels.ACCEPT);
+  await getButtonsController().both();
+});
+
 export async function approveToken() {
   if (isTouchDevice()) {
     return approveTokenTouchDevices();
+  }
+  if (getSpeculosModel() === DeviceModelId.nanoS) {
+    return approveTokenNanoS();
   }
   return approveTokenButtonDevice();
 }
@@ -197,9 +212,25 @@ export const signTypedMessageButtonDevice = withDeviceController(
     },
 );
 
+/**
+ * The nanos app (1.16.2) shows typed data as domain and message hashes only, behind a "Blind
+ * signing" warning, and ends on "Accept risk and sign".
+ */
+export const signTypedMessageNanoS = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      await waitUntilScreenLeavesIdle();
+      await pressUntilTextFound(DeviceLabels.ACCEPT_RISK);
+      await getButtonsController().both();
+    },
+);
+
 export async function signTypedMessage() {
   if (isTouchDevice()) {
     return signTypedMessageTouchDevices();
+  }
+  if (getSpeculosModel() === DeviceModelId.nanoS) {
+    return signTypedMessageNanoS();
   }
   return signTypedMessageButtonDevice();
 }

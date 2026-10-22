@@ -24,6 +24,8 @@ export type SpeculosTarget = Readonly<{
   url: string;
   /** Speculos cannot report its model, so the e2e bridge supplies it. */
   deviceModelId?: DeviceModelId;
+  /** Token of a protected Speculinho session, also supplied by the e2e bridge. */
+  bearerToken?: string;
 }>;
 
 /** Idle until the e2e bridge sets a Speculos target. */
@@ -39,7 +41,9 @@ export const isSpeculosLegacyDeviceId = (deviceId: string): boolean =>
 
 function openSpeculosTransport(args: TransportArgs) {
   return (target: SpeculosTarget) =>
-    speculosTransportFactory(target.url, true, target.deviceModelId)(args);
+    speculosTransportFactory(target.url, true, target.deviceModelId, {
+      bearerToken: target.bearerToken,
+    })(args);
 }
 
 /** Built lazily: the DMK starts before the e2e bridge knows the Speculos URL. */

@@ -1,5 +1,29 @@
 # @devtools/registry
 
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`004d896`](https://github.com/LedgerHQ/ledger-live/commit/004d8965c325b6ff60d5a2ebcc1c763b7a7bf4d1), [`4d77514`](https://github.com/LedgerHQ/ledger-live/commit/4d775144f5032153be92d736a2f029aeb1223280), [`b88647d`](https://github.com/LedgerHQ/ledger-live/commit/b88647dca4c613663bca4ba0d62c2296b95ac083)]:
+  - @devtools/pay-card@0.10.0
+  - @devtools/device-onboarding@0.4.0
+  - @devtools/feature-flags@0.10.3
+  - @devtools/cloud-sync@0.2.0
+  - @devtools/env@0.2.0
+  - @devtools/trustchain@0.2.0
+
+## 0.5.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`004d896`](https://github.com/LedgerHQ/ledger-live/commit/004d8965c325b6ff60d5a2ebcc1c763b7a7bf4d1), [`4d77514`](https://github.com/LedgerHQ/ledger-live/commit/4d775144f5032153be92d736a2f029aeb1223280), [`b88647d`](https://github.com/LedgerHQ/ledger-live/commit/b88647dca4c613663bca4ba0d62c2296b95ac083)]:
+  - @devtools/pay-card@0.10.0-next.0
+  - @devtools/device-onboarding@0.4.0-next.0
+  - @devtools/feature-flags@0.10.3-next.0
+  - @devtools/cloud-sync@0.2.0
+  - @devtools/env@0.2.0
+  - @devtools/trustchain@0.2.0
+
 ## 0.5.2
 
 ### Patch Changes
@@ -217,24 +241,5 @@
 - Updated dependencies [[`6bb6cb0`](https://github.com/LedgerHQ/ledger-live/commit/6bb6cb058d79074de3d7f23a89074bef3311cf8d), [`1e0edb4`](https://github.com/LedgerHQ/ledger-live/commit/1e0edb42fd2c8c0e6edc4249f4eb3a13162aea2a), [`9c2a85e`](https://github.com/LedgerHQ/ledger-live/commit/9c2a85ef5c1c6a264b53bc3f4581385a250be2ad), [`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`5edd732`](https://github.com/LedgerHQ/ledger-live/commit/5edd732aa9fd1769667a349b513ebdb985a1475c)]:
   - @devtools/pay-card@0.2.0
   - @devtools/feature-flags@0.7.0
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#20461](https://github.com/LedgerHQ/ledger-live/pull/20461) [`6bb6cb0`](https://github.com/LedgerHQ/ledger-live/commit/6bb6cb058d79074de3d7f23a89074bef3311cf8d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Card / Pay DevTool foundation package (`@devtools/pay-card`): shared `PayCardToolProps` contract, platform-neutral `usePayCardViewModel`, and registry wiring under the Wallet XP team (LIVE-35496).
-
-### Patch Changes
-
-- Updated dependencies [[`6bb6cb0`](https://github.com/LedgerHQ/ledger-live/commit/6bb6cb058d79074de3d7f23a89074bef3311cf8d), [`1e0edb4`](https://github.com/LedgerHQ/ledger-live/commit/1e0edb42fd2c8c0e6edc4249f4eb3a13162aea2a), [`9c2a85e`](https://github.com/LedgerHQ/ledger-live/commit/9c2a85ef5c1c6a264b53bc3f4581385a250be2ad), [`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`5edd732`](https://github.com/LedgerHQ/ledger-live/commit/5edd732aa9fd1769667a349b513ebdb985a1475c)]:
-  - @devtools/pay-card@0.2.0-next.0
-  - @devtools/feature-flags@0.7.0-next.0
-
-## 0.1.9
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.4
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

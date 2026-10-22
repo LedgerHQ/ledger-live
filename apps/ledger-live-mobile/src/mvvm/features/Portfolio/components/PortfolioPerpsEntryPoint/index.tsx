@@ -47,7 +47,7 @@ export const PortfolioPerpsEntryPoint = () => {
           lx={{ marginHorizontal: "-s8", marginTop: "s4" }}
         >
           <ListItemLeading>
-            <Spot appearance="icon" icon={Infinite} />
+            <Spot icon={Infinite} />
             <ListItemContent>
               <ListItemTitle>{t("portfolio.perpsEntry.description")}</ListItemTitle>
             </ListItemContent>

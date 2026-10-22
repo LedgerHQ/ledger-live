@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
+import { useEditContactLabels } from "./copy/useEditContactLabels";
 import type { ContactsRenameContactDialogProps } from "./types";
 
 const NAMING_DISCLAIMER_ID = "contacts-rename-contact-naming-disclaimer";
@@ -13,11 +14,11 @@ export function ContactsRenameContactDialog({
   draftName,
   invalidNameError,
   isDeviceRequired,
-  labels,
   onClose,
   onDraftNameChange,
   onConfirm,
 }: ContactsRenameContactDialogProps): React.ReactNode {
+  const labels = useEditContactLabels();
   const nameValidationError =
     invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
 

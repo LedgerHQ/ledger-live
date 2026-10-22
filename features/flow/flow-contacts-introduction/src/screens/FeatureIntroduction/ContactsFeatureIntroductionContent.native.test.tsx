@@ -1,5 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
 import { ContactsFeatureIntroductionContent } from "./ContactsFeatureIntroductionContent";
 
@@ -7,18 +8,8 @@ function renderContent(isOpen = true) {
   const onComplete = jest.fn();
 
   render(
-    <ContactsFeatureIntroductionContent
-      isOpen={isOpen}
-      title="Add contacts"
-      highlights={[
-        { icon: "Contact", title: "Save recipients", description: "Reuse an address safely." },
-        { icon: "ShieldCheck", title: "Send safely", description: "Trust the recipient." },
-        { icon: "Devices", title: "Keep in sync", description: "Use Ledger Sync." },
-      ]}
-      primaryActionLabel="Get started"
-      bottomInset={12}
-      onComplete={onComplete}
-    />,
+    <ContactsFeatureIntroductionContent isOpen={isOpen} bottomInset={12} onComplete={onComplete} />,
+    { wrapper: I18nTestProvider },
   );
 
   return { onComplete };
@@ -33,7 +24,9 @@ describe("ContactsFeatureIntroductionContent", () => {
       "source",
       CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE,
     );
-    expect(screen.getByText("Save recipients")).toBeVisible();
+    expect(
+      screen.getByText("contacts.featureIntroduction.highlights.saveAddresses.title"),
+    ).toBeVisible();
     expect(screen.getByTestId("contacts-feature-introduction-highlight-Contact")).toBeVisible();
     expect(screen.getByTestId("contacts-feature-introduction-highlight-ShieldCheck")).toBeVisible();
     expect(screen.getByTestId("contacts-feature-introduction-highlight-Devices")).toBeVisible();
@@ -47,6 +40,6 @@ describe("ContactsFeatureIntroductionContent", () => {
   it("should hide the introduction content when it is closed", () => {
     renderContent(false);
 
-    expect(screen.queryByText("Add contacts")).toBeNull();
+    expect(screen.queryByText("contacts.featureIntroduction.title")).toBeNull();
   });
 });

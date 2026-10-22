@@ -5,6 +5,7 @@ import {
   Order,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { createMockMarketListResult } from "@ledgerhq/live-common/market/utils/fixtures";
 import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useMarket } from "../useMarket";
@@ -22,6 +23,8 @@ jest.mock("@features/platform-market-countervalues", () => ({
 const mockedUseMarketData = jest.mocked(useMarketData);
 const mockedUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
 const mockedUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
+const mockFetchNextPage = jest.fn();
+const mockResetToFirstPage = jest.fn();
 
 const PRICE_CHANGE_ZERO: Record<KeysPriceChange, number> = {
   [KeysPriceChange.hour]: 0,
@@ -58,14 +61,13 @@ const createMarketCurrencyData = (
 });
 
 const mockMarketData = (data: MarketCurrencyData[] = []) =>
-  mockedUseMarketData.mockReturnValue({
-    data,
-    isLoading: false,
-    isPending: false,
-    isFetching: false,
-    isError: false,
-    cachedMetadataMap: new Map(),
-  } as unknown as ReturnType<typeof useMarketData>);
+  mockedUseMarketData.mockReturnValue(
+    createMockMarketListResult({
+      data,
+      fetchNextPage: mockFetchNextPage,
+      resetToFirstPage: mockResetToFirstPage,
+    }),
+  );
 
 const mockSupportedCounterCurrencies = (supportedCounterCurrencies?: string[]) =>
   mockedUseSupportedCounterCurrencies.mockReturnValue({
@@ -80,7 +82,6 @@ const createMarketState = (starred: string[] = []) => ({
     order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
-    page: 1,
     counterCurrency: "USD",
   },
   currentPage: 1,
@@ -301,26 +302,47 @@ describe("useMarket", () => {
     });
   });
 
-  describe("pagination reset", () => {
-    it("resets page and currentPage when sort order changes", async () => {
-      const initialState = {
-        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
-        settings: createSettingsState([]),
-        market: {
-          ...createMarketState([]),
-          marketParams: { ...createMarketState([]).marketParams, page: 3 },
-          currentPage: 3,
-        },
-      };
+  describe("pagination", () => {
+    const scrolledState = () => ({
+      ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
+      settings: createSettingsState([]),
+      market: { ...createMarketState([]), currentPage: 3 },
+    });
 
-      const { result } = renderHook(() => useMarket(), { initialState });
+    it("resets currentPage when sort order changes", async () => {
+      const { result } = renderHook(() => useMarket(), { initialState: scrolledState() });
 
       await act(async () => {
         result.current.toggleSortBy();
       });
 
-      expect(result.current.marketParams.page).toBe(1);
       expect(result.current.marketCurrentPage).toBe(1);
+    });
+
+    it("truncates the list to its first page on resetMarketPage", () => {
+      const { result } = renderHook(() => useMarket(), { initialState: scrolledState() });
+
+      act(() => result.current.resetMarketPage());
+
+      expect(mockResetToFirstPage).toHaveBeenCalledTimes(1);
+      expect(result.current.marketCurrentPage).toBe(1);
+    });
+
+    it("loads the next page", () => {
+      const { result } = renderHook(() => useMarket(), { initialState: scrolledState() });
+
+      act(() => result.current.onLoadNextPage());
+
+      expect(mockFetchNextPage).toHaveBeenCalledTimes(1);
+    });
+
+    it("polls the list at the refresh rate", () => {
+      const { result } = renderHook(() => useMarket(), { initialState: scrolledState() });
+
+      expect(mockedUseMarketData).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({ refreshRate: result.current.refreshRate }),
+      );
     });
   });
 
@@ -373,7 +395,7 @@ describe("useMarket", () => {
 
       expect(mockedUseMarketData).toHaveBeenLastCalledWith(
         expect.objectContaining({ counterCurrency: "cop" }),
-        { enabled: false },
+        expect.objectContaining({ enabled: false }),
       );
       expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: true });
       expect(result.current.marketData).toEqual([]);
@@ -390,7 +412,7 @@ describe("useMarket", () => {
       // The request is made in USD (the markets endpoint cannot serve COP)...
       expect(mockedUseMarketData).toHaveBeenLastCalledWith(
         expect.objectContaining({ counterCurrency: "usd" }),
-        { enabled: true },
+        expect.objectContaining({ enabled: true }),
       );
       // ...and the rate is fetched for the user's actual counter value.
       expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("cop", { skip: false });
@@ -430,7 +452,7 @@ describe("useMarket", () => {
 
       expect(mockedUseMarketData).toHaveBeenLastCalledWith(
         expect.objectContaining({ counterCurrency: "cop" }),
-        { enabled: true },
+        expect.objectContaining({ enabled: true }),
       );
       // No USD->fiat conversion request fires for a natively supported counter value.
       expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: false });
@@ -446,7 +468,7 @@ describe("useMarket", () => {
 
       expect(mockedUseMarketData).toHaveBeenLastCalledWith(
         expect.objectContaining({ counterCurrency: "usd" }),
-        { enabled: true },
+        expect.objectContaining({ enabled: true }),
       );
       expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("btc", { skip: false });
       expect(result.current.marketData[0].price).toBe(0.001);

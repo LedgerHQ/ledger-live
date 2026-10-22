@@ -26,6 +26,10 @@ inputs:
     required: false
     default: ""
     description: "Git branch the run came from, shown/filterable on the portal."
+  history_key:
+    required: false
+    default: ""
+    description: "Trend history key; reports with the same key and branch share one trend history. Defaults to the report name on the server."
   report_attachments:
     required: false
     default: ""
@@ -59,5 +63,6 @@ runs:
         QAA_ALLURE_HISTORY: ${{ inputs.history_level }}
         QAA_ALLURE_JOB_URL: ${{ inputs.job_url }}
         QAA_ALLURE_BRANCH: ${{ inputs.branch }}
+        QAA_ALLURE_HISTORY_KEY: ${{ inputs.history_key }}
         QAA_ALLURE_REPORT_ATTACHMENTS: ${{ inputs.report_attachments }}
       run: ${{ github.action_path }}/upload.sh

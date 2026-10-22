@@ -3,11 +3,13 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import ModularDrawerAddAccountFlowManager from "./ModularDrawerAddAccountFlowManager";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import createSendSteps from "./createSendSteps";
+import SendBalanceTypeSync from "./SendBalanceTypeSync/SendBalanceTypeSync";
 import StepSummaryFromAddress from "./modals/send/steps/StepSummaryFromAddress";
 import StepSummaryPostAlert from "./modals/send/steps/StepSummaryPostAlert";
 import StepSummaryAdditionalRows from "./modals/send/steps/StepSummaryAdditionalRows";
 import StepSummaryRecipientValue from "./modals/send/steps/StepSummaryRecipientValue";
 import operationDetails from "./operationDetails";
+import SendAmountFooterRow from "./SendAmountFooterRow";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import type { AleoFamily } from "./types";
 
@@ -23,6 +25,8 @@ const family: AleoFamily = {
   StepSummaryRecipientValue,
   StepSummaryPostAlert,
   StepSummaryAdditionalRows,
+  SendBalanceTypeSync,
+  SendAmountFooterRow,
   modalsToPreload: [
     "MODAL_ALEO_SELF_TRANSFER",
     "MODAL_ALEO_BOND_PUBLIC",

@@ -12,6 +12,6 @@ Reusable Contact deletion journey for Desktop and Mobile.
 - Web confirmation dialog and Native confirmation drawer content
 - Typed hooks, state and presentation props for app-owned modal mounting
 
-The package does not depend on Contact Detail. Applications own translations, analytics,
-navigation and modal or sheet mounting. Generic confirmation presentation is provided by
+The package does not depend on Contact Detail. It resolves its own copy with `@shared/i18n`.
+Applications own analytics, navigation and modal or sheet mounting. Generic confirmation presentation is provided by
 `@features/platform-contacts` because it is shared across Contacts journeys.

@@ -47,6 +47,17 @@ interface NoFundsStakeModalProps {
   entryPoint?: "get-funds" | undefined;
 }
 
+function pickSwapAccount(
+  account: AccountLike,
+  parentAccount: Account | null | undefined,
+  isAccountInStore: boolean,
+  isParentInStore: boolean,
+): AccountLike | undefined {
+  if (isAccountInStore) return account;
+  if (isParentInStore) return parentAccount ?? undefined;
+  return undefined;
+}
+
 const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeModalProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -70,6 +81,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     () => accounts.some(a => a.id === account.id),
     [accounts, account.id],
   );
+  const isParentInStore = !!parentAccount && accounts.some(a => a.id === parentAccount.id);
 
   const modalName = "MODAL_NO_FUNDS_STAKE";
 
@@ -105,11 +117,20 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
       state: buildSwapNavigationState({
         defaultCurrency: currency,
         fromPath: location.pathname,
-        account: isAccountInStore ? account : undefined,
-        parentAccount: parentAccount ?? undefined,
+        account: pickSwapAccount(account, parentAccount, isAccountInStore, isParentInStore),
+        parentAccount: isAccountInStore ? (parentAccount ?? undefined) : undefined,
       }),
     });
-  }, [currency, account, isAccountInStore, parentAccount, location, navigate, dispatch]);
+  }, [
+    currency,
+    account,
+    isAccountInStore,
+    isParentInStore,
+    parentAccount,
+    location,
+    navigate,
+    dispatch,
+  ]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {

@@ -44,7 +44,7 @@ export function getSolanaSignerInstance(
 }
 
 // No `bridge` export: the generic coin framework builds it from the Coin Module API.
-// `hw-signMessage` still reads the module's config singleton, which the legacy bridge installed.
+// `hw-signMessage` still reads the module's config singleton, so install it here.
 coinConfig.setCoinConfig(() => getCurrencyConfiguration<SolanaCoinConfig>("solana"));
 const messageSigner = {
   signMessage: createMessageSigner(getSolanaSignerInstance, signMessage),

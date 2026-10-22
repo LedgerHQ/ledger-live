@@ -33,7 +33,7 @@ class BitcoinCash extends Base {
       throw new InvalidAddress();
     }
     // TODO find a better way to calculate the script from bch address instead of converting to bitcoin address
-    return btcAddress.toOutputScript(bchaddr.toLegacyAddress(address), this.network);
+    return Buffer.from(btcAddress.toOutputScript(bchaddr.toLegacyAddress(address), this.network));
   }
 
   validateAddress(address: string): boolean {

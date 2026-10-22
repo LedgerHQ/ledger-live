@@ -5,7 +5,14 @@ import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { trackPage } from "@shared/analytics";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
+
+let mockFamily: { SendBalanceTypeSync?: unknown } = {};
+jest.mock("~/renderer/families", () => ({
+  useLLDCoinFamily: jest.fn(() => mockFamily),
+}));
 
 // Navigation mock
 const mockGoToStep = jest.fn();
@@ -22,8 +29,10 @@ const mockTransactionActions = {
   updateTransaction: mockUpdateTransactionAction,
 };
 
+type MockAccount = { id: string; type: string; currency?: unknown; token?: unknown };
+
 type MockState = {
-  account: { account: { id: string; type: string; currency: unknown } | null };
+  account: { account: MockAccount | null; parentAccount?: MockAccount | null };
   transaction: { transaction: { id: string; sender?: string } | null };
 };
 
@@ -62,7 +71,6 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
   useCalculateCountervalueCallback: jest.fn(() => (_from: unknown, value: unknown) => value),
 }));
 
@@ -77,6 +85,8 @@ jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
 const mockedTrackPage = jest.mocked(trackPage);
+const mockedUseAccountBridgeOrNull = jest.mocked(useAccountBridgeOrNull);
+const mockedUseLLDCoinFamily = jest.mocked(useLLDCoinFamily);
 
 const PUBLIC_POOL: BalanceTypeOption = {
   id: "public",
@@ -127,6 +137,7 @@ function renderViewModel(): HookApi | null {
 describe("useBalanceTypeScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFamily = {};
     mockUpdateTransaction.mockImplementation((tx, patch) => ({ ...tx, ...patch }));
     stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
 
@@ -174,15 +185,39 @@ describe("useBalanceTypeScreenViewModel", () => {
   test("formats each pool balance and flags the empty ones", () => {
     stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: new BigNumber(0) }]);
 
-    const vm = renderViewModel();
+    expect(renderViewModel()).toEqual(
+      expect.objectContaining({
+        ready: true,
+        options: [
+          expect.objectContaining({
+            formattedBalance: expect.stringContaining("ZEC"),
+            formattedCounterValue: expect.stringMatching(/.+/),
+            isZero: false,
+            requiresSync: false,
+          }),
+          expect.objectContaining({ isZero: true, requiresSync: false }),
+        ],
+      }),
+    );
+  });
 
-    expect(vm?.ready).toBe(true);
-    if (vm?.ready) {
-      expect(vm.options[0].formattedBalance).toBeTruthy();
-      expect(vm.options[0].formattedCounterValue).toBeTruthy();
-      expect(vm.options[0].isZero).toBe(false);
-      expect(vm.options[1].isZero).toBe(true);
-    }
+  test("shows a dash and flags a sync for a pool whose balance is unknown", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: null }]);
+
+    expect(renderViewModel()).toEqual(
+      expect.objectContaining({
+        ready: true,
+        options: [
+          expect.objectContaining({ requiresSync: false }),
+          expect.objectContaining({
+            formattedBalance: "-",
+            formattedCounterValue: "",
+            isZero: false,
+            requiresSync: true,
+          }),
+        ],
+      }),
+    );
   });
 
   test("propagates the pending-balance flag of a pool", () => {
@@ -194,6 +229,18 @@ describe("useBalanceTypeScreenViewModel", () => {
     if (vm?.ready) {
       expect(vm.options[0].hasPendingBalance).toBe(false);
       expect(vm.options[1].hasPendingBalance).toBe(true);
+    }
+  });
+
+  test("propagates the hidden-subtitle flag of a pool", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, hideSubtitle: true }]);
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      expect(vm.options[0].hideSubtitle).toBeUndefined();
+      expect(vm.options[1].hideSubtitle).toBe(true);
     }
   });
 
@@ -239,7 +286,7 @@ describe("useBalanceTypeScreenViewModel", () => {
     },
   );
 
-  test("keeps the recipient when the same pool is selected again", () => {
+  test("keeps the recipient and the transaction when the same pool is selected again", () => {
     stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
     mockState.transaction.transaction = { id: "tx1", sender: "public" };
 
@@ -251,7 +298,7 @@ describe("useBalanceTypeScreenViewModel", () => {
     }
 
     expect(mockResetRecipient).not.toHaveBeenCalled();
-    expect(mockUpdateTransactionAction).toHaveBeenCalledTimes(1);
+    expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
     expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
   });
 
@@ -287,6 +334,62 @@ describe("useBalanceTypeScreenViewModel", () => {
 
     expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
     expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  test.each(["public", "private"])(
+    "onSelect(%s) moves to the balance-type sync step when the family declares one",
+    optionId => {
+      mockFamily = { SendBalanceTypeSync: () => null };
+
+      const vm = renderViewModel();
+
+      expect(vm?.ready).toBe(true);
+      if (vm?.ready) {
+        vm.onSelect(optionId);
+      }
+
+      expect(mockGoToStep).toHaveBeenCalledTimes(1);
+      expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
+    },
+  );
+
+  test("runs the balance-type sync again when the same pool is picked again", () => {
+    mockFamily = { SendBalanceTypeSync: () => null };
+    mockState.transaction.transaction = { id: "tx1", sender: "private" };
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      vm.onSelect("private");
+    }
+
+    expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
+    expect(mockGoToStep).toHaveBeenCalledTimes(1);
+    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
+  });
+
+  test("resolves the bridge and the family through the parent of a token account", () => {
+    mockFamily = { SendBalanceTypeSync: () => null };
+    const parentAccount = { id: "aleo-acc", type: "Account", currency: { family: "aleo" } };
+    const tokenAccount = {
+      id: "aleo-token-acc",
+      type: "TokenAccount",
+      token: { id: "aleo-token" },
+    };
+    mockState.account = { account: tokenAccount, parentAccount };
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      vm.onSelect("private");
+    }
+
+    expect(mockedUseAccountBridgeOrNull).toHaveBeenLastCalledWith(tokenAccount, parentAccount);
+    expect(mockedUseLLDCoinFamily).toHaveBeenLastCalledWith("aleo");
+    expect(mockGoToStep).toHaveBeenCalledTimes(1);
+    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.BALANCE_TYPE_SYNC);
   });
 
   describe("page tracking", () => {

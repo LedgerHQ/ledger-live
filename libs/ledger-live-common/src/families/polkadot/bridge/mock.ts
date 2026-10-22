@@ -235,10 +235,10 @@ const hydrate = (data: unknown, currency: CryptoCurrency) => {
   if (!data || typeof data !== "object") return;
   const preloaded = data as PolkadotPreloadData;
   // Cache keys are per currency: seeding without it would leave assethub_polkadot empty.
-  if (Array.isArray(preloaded.validators)) hydrateValidators(preloaded.validators, currency);
-  if (preloaded.staking) hydrateStakingProgress(preloaded.staking, currency);
+  if (Array.isArray(preloaded.validators)) hydrateValidators(preloaded.validators, currency.id);
+  if (preloaded.staking) hydrateStakingProgress(preloaded.staking, currency.id);
   const minimumBondBalance = new BigNumber(preloaded.minimumBondBalance);
-  if (!minimumBondBalance.isNaN()) hydrateMinimumBondBalance(minimumBondBalance, currency);
+  if (!minimumBondBalance.isNaN()) hydrateMinimumBondBalance(minimumBondBalance, currency.id);
 };
 
 const currencyBridge: CurrencyBridge = {

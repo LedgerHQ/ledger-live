@@ -20,6 +20,7 @@ on:
     # One broadcast nightly per platform: iOS on Wednesday, Android on Friday. Both platforms still
     # run every weekday, only broadcast rotates — a single broadcasting platform per run keeps the
     # shared QAA on-chain accounts free of allowance/nonce races (desktop broadcasts on Monday).
+    # Each platform's device rotates per weekday (see "Resolve per-platform Speculos device").
     # These cron expressions are matched verbatim in the env block below — keep both in sync.
     - cron: "0 0 * * 3"
     - cron: "0 0 * * 5"
@@ -188,6 +189,16 @@ on:
         required: false
         type: boolean
         default: false
+      js_bundle_hash_ios:
+        description: "Nx hash of live-mobile:e2e:bundle:ios; when set, the iOS JS build is skipped if the Nx cache has it"
+        required: false
+        type: string
+        default: ""
+      js_bundle_hash_android:
+        description: "Nx hash of live-mobile:e2e:bundle:android; when set, the Android JS build is skipped if the Nx cache has it"
+        required: false
+        type: string
+        default: ""
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -256,8 +267,6 @@ env:
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-  SPECULOS_IMAGE_TAG_ANDROID: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
-  SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
   SMOKE_SPECULOS_FIRMWARE_VERSION: 2.8.0
   NIGHTLY_RUN: ${{ github.event_name == 'schedule' && !inputs.ci_smoke }}
   ANDROID_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
@@ -296,7 +305,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public-cached
     outputs:
       ios_device: ${{ steps.devices.outputs.ios_device }}
       android_device: ${{ steps.devices.outputs.android_device }}
@@ -307,9 +316,9 @@ jobs:
       ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
-      ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
+      ios_js_exists: ${{ steps.check-js.outputs.ios }}
       android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
-      android_js_exists: ${{ steps.check-android-js.outputs.cache-hit }}
+      android_js_exists: ${{ steps.check-js.outputs.android }}
       ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
       ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -362,21 +371,55 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      # The hashes come from the affected job (nx-affected-reusable.yml); without them the bundles are built
+      - name: Check if JS bundles exist in the Nx cache
+        id: check-js
+        env:
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          IOS_HASH: ${{ inputs.js_bundle_hash_ios }}
+          ANDROID_HASH: ${{ inputs.js_bundle_hash_android }}
+        run: |
+          # @nx/s3-cache stores each task result at <cacheKeyPrefix>/<hash>
+          exists() {
+            [ -n "$1" ] &&
+              aws s3api head-object --bucket "$CACHE_BUCKET" --key "${NX_CACHE_KEY_PREFIX}/$1" > /dev/null 2>&1 &&
+              echo true || echo false
+          }
+          echo "ios=$(exists "$IOS_HASH")" | tee -a "$GITHUB_OUTPUT"
+          echo "android=$(exists "$ANDROID_HASH")" | tee -a "$GITHUB_OUTPUT"
+
       - name: Resolve per-platform Speculos device
         id: devices
         shell: bash
         env:
           SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoX' }}
         run: |
-          # Per-platform mapping for scheduled nightly runs (QAA-1193)
-          declare -A PLATFORM_DEVICE=(
-            [ios]=stax        # iOS     - Stax
-            [android]=nanoX   # Android - LNX
+          # Per-platform, per-weekday mapping for scheduled nightly runs (QAA-1193), shared with the
+          # desktop rotation in test-ui-e2e-only-desktop.yml: the three platforms use three different
+          # devices each weekday, and all six devices run every week.
+          # nanoS and nanoSP have no Bluetooth, so they can't pair with an iPhone and stay off iOS.
+          # Wednesday alternates nanoGen5 / flex on Android by ISO week parity, the opposite of desktop.
+          # 10# keeps a zero-padded week such as "08" from being read as octal.
+          if [ $((10#$(date -u +%V) % 2)) -eq 0 ]; then ANDROID_WEDNESDAY_DEVICE=nanoGen5; else ANDROID_WEDNESDAY_DEVICE=flex; fi
+          declare -A IOS_WEEKDAY_DEVICE=(
+            [1]=stax        # Monday     - Stax
+            [2]=nanoGen5    # Tuesday    - NG5
+            [3]=nanoX       # Wednesday  - LNX (iOS broadcast)
+            [4]=nanoGen5    # Thursday   - NG5
+            [5]=flex        # Friday     - Flex
+          )
+          declare -A ANDROID_WEEKDAY_DEVICE=(
+            [1]=nanoX                       # Monday     - LNX
+            [2]=nanoS                       # Tuesday    - LNS
+            [3]=$ANDROID_WEDNESDAY_DEVICE   # Wednesday  - NG5 on even ISO weeks, Flex on odd ones
+            [4]=nanoSP                      # Thursday   - LNSP
+            [5]=stax                        # Friday     - Stax (Android broadcast)
           )
 
           if [ "$NIGHTLY_RUN" = "true" ]; then
-            echo "ios_device=${PLATFORM_DEVICE[ios]}"           >> $GITHUB_OUTPUT
-            echo "android_device=${PLATFORM_DEVICE[android]}"  >> $GITHUB_OUTPUT
+            DOW=$(date -u +%u)
+            echo "ios_device=${IOS_WEEKDAY_DEVICE[$DOW]:-stax}"           >> $GITHUB_OUTPUT
+            echo "android_device=${ANDROID_WEEKDAY_DEVICE[$DOW]:-nanoX}"  >> $GITHUB_OUTPUT
           else
             INPUT_DEVICE="$SPECULOS_DEVICE_INPUT"
             echo "ios_device=$INPUT_DEVICE"     >> $GITHUB_OUTPUT
@@ -551,34 +594,6 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-      - name: Check if iOS JS Build exists already
-        id: check-ios-js
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
-        with:
-          path: apps/ledger-live-mobile/main.jsbundle
-          key: ${{ steps.cache-keys.outputs.ios_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
-
-      - name: Check if Android JS Build exists already
-        id: check-android-js
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
-        with:
-          path: apps/ledger-live-mobile/main.jsbundle
-          key: ${{ steps.cache-keys.outputs.android_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
-
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ inputs.tests_type != 'iOS Only' }}
@@ -737,7 +752,7 @@ jobs:
       id-token: write
       contents: read
     needs: [build-ios, determine-builds]
-    if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    if: ${{ always() && !cancelled() && contains(fromJSON('["success","skipped"]'), needs.build-ios.result) && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: ${{ fromJSON(inputs.macos_runner_label && format('["{0}","macOS","ARM64"]', inputs.macos_runner_label) || '["qaa","macOS","ARM64","performance-pool"]') }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -745,6 +760,9 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.ios_device }}
+      # nanoS needs the pinned Speculinho snapshot. Keyed on the resolved device, not inputs.speculos_device,
+      # which is empty on nightlies. Keep the tag in sync with the Android job.
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.ios_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -829,6 +847,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
+        if: ${{ needs.determine-builds.outputs.ios_js_exists != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
@@ -839,9 +858,18 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Fetch JS Build from the Nx cache
+        if: ${{ needs.determine-builds.outputs.ios_js_exists == 'true' }}
+        env:
+          ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          REGION: ${{ secrets.AWS_CACHE_REGION }}
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          HASH: ${{ inputs.js_bundle_hash_ios }}
+        run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" apps/ledger-live-mobile/main.jsbundle
+
       - name: Copy JS build
         run: |
-          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }}
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Build e2e dependencies (CLI + libs)
@@ -903,7 +931,6 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           NX_SKIP_NX_CACHE: true
-          SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
@@ -938,7 +965,7 @@ jobs:
       id-token: write
       contents: read
     needs: [build-android, determine-builds, setup-android-avd]
-    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
+    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && contains(fromJSON('["success","skipped"]'), needs.build-android.result) && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: ${{ inputs.android_runner_label || 'ledger-live-linux-e2e-8CPU-32RAM' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -946,6 +973,8 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
+      # Same nanoS snapshot rule as the iOS job.
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.android_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -1017,6 +1046,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
+        if: ${{ needs.determine-builds.outputs.android_js_exists != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
@@ -1025,6 +1055,14 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Fetch JS Bundle from the Nx cache
+        if: ${{ needs.determine-builds.outputs.android_js_exists == 'true' }}
+        env:
+          REGION: ${{ secrets.AWS_CACHE_REGION }}
+          CACHE_BUCKET: ${{ env.cache-bucket }}
+          HASH: ${{ inputs.js_bundle_hash_android }}
+        run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" apps/ledger-live-mobile/main.jsbundle
 
       - name: Prepare APK
         run: |
@@ -1156,7 +1194,6 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
-          SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
           SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           REMOTE_SPECULOS: "true"
@@ -1321,7 +1358,7 @@ jobs:
 
   allure-report-ios:
     name: Allure Report iOS
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     continue-on-error: ${{ inputs.ci_smoke == true }}
     needs: [determine-builds, detox-tests-ios]
@@ -1402,7 +1439,7 @@ jobs:
 
   allure-report-android:
     name: Allure Report Android
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     continue-on-error: ${{ inputs.ci_smoke == true }}
     outputs:
@@ -1483,10 +1520,10 @@ jobs:
 
   qaa-allure-upload-ios:
     name: "QAA Allure Upload - iOS (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     continue-on-error: true
-    needs: [detox-tests-ios]
+    needs: [determine-builds, detox-tests-ios]
     timeout-minutes: 15
     outputs:
       report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
@@ -1503,16 +1540,18 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ios-test-artifacts
-          name: "mobile-e2e-ios-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["mobile","ios",{0}]', toJSON(env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          name: "mobile-e2e-ios-${{ needs.determine-builds.outputs.ios_device }}-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["mobile","ios",{0},{1}]', toJSON(needs.determine-builds.outputs.ios_device), toJSON(env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          # One trend history across the rotating devices, as before the device was in the name.
+          history_key: "mobile-e2e-ios-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
 
   qaa-allure-upload-android:
     name: "QAA Allure Upload - Android (Experimental)"
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public-cached]
     if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     continue-on-error: true
-    needs: [detox-tests-android]
+    needs: [determine-builds, detox-tests-android]
     timeout-minutes: 15
     outputs:
       report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
@@ -1535,9 +1574,11 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: android-test-artifacts
-          name: "mobile-e2e-android-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["mobile","android",{0}]', toJSON(env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          name: "mobile-e2e-android-${{ needs.determine-builds.outputs.android_device }}-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["mobile","android",{0},{1}]', toJSON(needs.determine-builds.outputs.android_device), toJSON(env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          # One trend history across the rotating devices, as before the device was in the name.
+          history_key: "mobile-e2e-android-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           report_attachments: report-attachments
 
   report-on-slack:

@@ -34,7 +34,7 @@ export const CryptoAddressesBannerView = memo(function CryptoAddressesBannerView
     <Card data-testid="crypto-addresses-banner" onClick={handleClick}>
       <CardHeader>
         <CardLeading>
-          <Spot appearance="icon" icon={Icon} />
+          <Spot icon={Icon} />
           <CardContent>
             <CardContentTitle>{title}</CardContentTitle>
             <div className="flex items-center gap-4">

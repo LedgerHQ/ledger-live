@@ -97,8 +97,14 @@ describe("getCoinFrameworkAccountBridge — shouldMergeOps", () => {
     return shouldMergeOps({ currency: { id: "x" } } as Account);
   };
 
-  it("merges stored operations for a family that sets nothing", async () => {
-    await expect(mergesOpsFor({})).resolves.toBe(true);
+  it("leaves the operation list to the account shape for a family that sets nothing", async () => {
+    // The shape already merges and bounds the history; the outer merge would re-add what the
+    // bound dropped.
+    await expect(mergesOpsFor({})).resolves.toBe(false);
+  });
+
+  it("merges stored operations for a family that opts back in", async () => {
+    await expect(mergesOpsFor({ shouldMergeOps: true })).resolves.toBe(true);
   });
 
   it("leaves the operation list to the account shape for a family that opts out", async () => {

@@ -36,5 +36,5 @@ export function MoreListItem({ rowId, onPress, children }: MoreListItemProps) {
 }
 
 export function MoreIcon({ rowId }: Readonly<{ rowId: MoreRowId }>) {
-  return <Spot appearance="icon" icon={ROW_ICONS[rowId]} size={48} />;
+  return <Spot icon={ROW_ICONS[rowId]} size={48} />;
 }

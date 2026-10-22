@@ -2,7 +2,7 @@ import { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 1 : 0,
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./tests/artifacts/test-results",
   expect: {
@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
-  workers: "100%",
+  workers: process.env.REMOTE_SPECULOS === "true" ? "150%" : "100%",
   reporter: process.env.CI
     ? [
         ["./tests/reporters/cardSessionReporter.ts"],

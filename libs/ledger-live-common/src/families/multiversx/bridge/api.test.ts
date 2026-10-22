@@ -115,8 +115,6 @@ describe("multiversx bridge", () => {
         type: "esdt",
         assetReference: "USDC-c76f1f",
         assetOwner: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
-        name: "WrappedUSDC",
-        unit: { name: "WrappedUSDC", code: "USDC", magnitude: 6 },
       });
     });
 
@@ -133,18 +131,6 @@ describe("multiversx bridge", () => {
         "assetOwner",
         "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
       );
-    });
-
-    it("uses token.units[0] for unit", () => {
-      const result = getAssetFromToken(mockToken);
-
-      expect(result?.unit).toBe(mockToken.units[0]);
-    });
-
-    it("uses token.name for name", () => {
-      const result = getAssetFromToken(mockToken);
-
-      expect(result?.name).toBe(mockToken.name);
     });
 
     it("returns undefined when tokenIdentifier is missing", () => {

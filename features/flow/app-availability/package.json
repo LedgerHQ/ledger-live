@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-app-availability",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "App availability flow: geo-block and service-unavailable gate for Ledger Wallet Desktop and Mobile",
   "main": "src/index.ts",
@@ -13,7 +13,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
-    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -23,6 +23,7 @@
   "dependencies": {
     "@domain/api-ofac": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/linking": "workspace:*",
     "@shared/ui-app-unavailable": "workspace:*"
   },
   "peerDependencies": {

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
@@ -6,6 +6,8 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
+import { useFeature } from "@features/platform-feature-flags";
+import CounterfeitWarningDialog from "LLD/features/Onboarding/components/CounterfeitWarningDialog";
 import { DeviceSelector } from "./DeviceSelector";
 import { TrackPage } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
@@ -38,11 +40,13 @@ export function SelectDevice() {
   const { setDeviceModelId } = useContext(OnboardingContext);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const fromQuickAction = !!location.state?.fromQuickAction;
+  const isTouchscreenCounterfeitWarningEnabled =
+    useFeature("lwdOnboardingCounterfeitWarningTouchscreens")?.enabled === true;
+  const [warningDeviceModelId, setWarningDeviceModelId] = useState<DeviceModelId | null>(null);
+  const [isWarningOpen, setIsWarningOpen] = useState(false);
 
-  const handleDeviceSelect = useCallback(
+  const proceedWithDevice = useCallback(
     (deviceModelId: DeviceModelId) => {
-      // TODO: use a feature flag to do this properly
-      track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
       if (isSyncOnboardingSupported(deviceModelId)) {
         navigate(`/onboarding/sync/${deviceModelId}`);
       } else {
@@ -52,6 +56,30 @@ export function SelectDevice() {
     },
     [navigate, setDeviceModelId],
   );
+
+  const handleDeviceSelect = useCallback(
+    (deviceModelId: DeviceModelId) => {
+      track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
+      if (isTouchscreenCounterfeitWarningEnabled && isSyncOnboardingSupported(deviceModelId)) {
+        setWarningDeviceModelId(deviceModelId);
+        setIsWarningOpen(true);
+        return;
+      }
+      proceedWithDevice(deviceModelId);
+    },
+    [isTouchscreenCounterfeitWarningEnabled, proceedWithDevice],
+  );
+
+  const handleCounterfeitWarningProceed = useCallback(() => {
+    setIsWarningOpen(false);
+    if (warningDeviceModelId) {
+      proceedWithDevice(warningDeviceModelId);
+    }
+  }, [warningDeviceModelId, proceedWithDevice]);
+
+  const handleCounterfeitWarningDismiss = useCallback(() => {
+    setIsWarningOpen(false);
+  }, []);
 
   return (
     <SelectDeviceContainer>
@@ -69,6 +97,14 @@ export function SelectDevice() {
       />
       <DeviceSelector onClick={handleDeviceSelect} />
       <TitleText variant="h1">{t("onboarding.screens.selectDevice.title")}</TitleText>
+      {warningDeviceModelId ? (
+        <CounterfeitWarningDialog
+          open={isWarningOpen}
+          deviceModelId={warningDeviceModelId}
+          onProceed={handleCounterfeitWarningProceed}
+          onDismiss={handleCounterfeitWarningDismiss}
+        />
+      ) : null}
     </SelectDeviceContainer>
   );
 }

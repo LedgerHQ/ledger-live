@@ -7,6 +7,8 @@ description: Check, update, and RUN Earn E2E tests for Ledger Wallet Desktop (Pl
 
 You are both a **test runner** and a **maintenance guide** for the Earn E2E suites. When invoked as a command (`/e2e-earn`), default behaviour is to **run the relevant Earn tests locally and triage any failures** — but always confirm scope with the user first (see "Running the Earn E2E tests").
 
+Writing rules: when editing desktop, follow [Desktop E2E](../../../e2e/desktop/AGENTS.md). When editing mobile, follow [Mobile E2E](../../../e2e/mobile/AGENTS.md).
+
 ## Use this skill when
 
 - Running the Earn E2E tests locally (`earn.v2`, `delegate`, or both) and triaging failures.
@@ -36,13 +38,13 @@ The `earn.v2` / `delegate` argument is a **path substring filter** Playwright ma
 
 These must be set in the shell that runs the tests. If any are missing, point the user to `/e2e-desktop-onboard` (or `/e2e-mobile-onboard`) rather than guessing.
 
-| Variable             | Required value / note                                                     |
-| -------------------- | ------------------------------------------------------------------------- |
-| `MOCK`               | `0` (Speculos mode)                                                       |
+| Variable             | Required value / note                                                      |
+| -------------------- | -------------------------------------------------------------------------- |
+| `MOCK`               | `0` (Speculos mode)                                                        |
 | `SEED`               | Non-empty. NEVER print or echo it. Read at runtime (e.g. from 1Password). |
-| `COINAPPS`           | Path to a cloned, up-to-date `coin-apps` repo                             |
-| `SPECULOS_IMAGE_TAG` | See "Speculos image" in Troubleshooting — pin to avoid `:latest` drift    |
-| `SPECULOS_DEVICE`    | e.g. `nanoSP` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5)       |
+| `COINAPPS`           | Path to a cloned, up-to-date `coin-apps` repo                              |
+| `SPECULOS_IMAGE_TAG` | See "Speculos image" in Troubleshooting — pin to avoid `:latest` drift     |
+| `SPECULOS_DEVICE`    | e.g. `nanoSP` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5)        |
 
 Docker Desktop must be running, and the Speculos image must be pulled.
 
@@ -88,25 +90,19 @@ On any failure, classify using the Troubleshooting taxonomy below and tell the u
 
 - **Desktop specs**: `e2e/desktop/tests/specs/earn.v2.spec.ts`, `e2e/desktop/tests/specs/delegate.spec.ts` (delegate is owned by the Earn team). The legacy Earn v1 suite (`earn.spec.ts`) has been removed.
 - **Desktop page objects**:
-  - `e2e/desktop/tests/page/earn.base.page.ts` — abstract `EarnBasePage extends WebViewAppPage` (`webviewIdentifier = "earn"`, `goAndWaitForEarnToBeReady`, `verifyProviderURL`).
-  - `e2e/desktop/tests/page/earn.v2.dashboard.page.ts` — `EarnV2Page` (dashboard states + deposit/withdrawal + provider selection).
+  - `e2e/desktop/tests/page/earn.base.page.ts` — abstract `EarnBasePage extends WebViewAppPage` (`webviewIdentifier = "earn"`, `goAndWaitForEarnToBeReady`).
+  - `e2e/desktop/tests/page/earn.v2.dashboard.page.ts` — `EarnV2Page` (dashboard states + deposit/withdrawal + provider selection). Assertion methods use `verify*`.
   - `e2e/desktop/tests/page/modal/delegate.modal.ts` — native delegation modal.
 - **Desktop utils / flags**: `e2e/desktop/tests/utils/featureFlagUtils.ts` (`EARN_V2_DESKTOP_FLAGS`, `FF_STAKE_PROGRAMS_MODAL`, `useLocalEarnManifest`), `e2e/desktop/tests/utils/earnLocalManifest.json`.
 - **Mobile specs/builders**: `e2e/mobile/specs/earn/**` (e.g. `earnV2_iceColdStart_ETH_3.spec.ts`, `earnV2_position_withdrawal_USDT.spec.ts`, `earnInlineAddAccount.spec.ts`), builder `e2e/mobile/specs/earn/earnV2.ts` (includes `runInlineAddAccountTest`). The legacy Earn v1 builder (`earn.ts`) and its consumer specs (`correctEarnPage_*`, `startStakingFromEarnDashboard_*`) have been removed.
 - **Mobile page objects**: `e2e/mobile/page/trade/earnV2Dashboard.page.ts`.
 
-## Platform model
+## Earn surfaces
 
-- **Desktop**:
-  - Electron exposes multiple windows (main app + one or more webviews). The Earn app is a **webview**.
-  - Resolve the Earn webview via `EarnBasePage.getWebView()` using `webviewIdentifier = "earn"` (title matching) — never fixed `electronApp.windows()[N]` indexes.
-  - The Earn app signals readiness via a console log: `goAndWaitForEarnToBeReady()` waits for the `"Earn Live App Loaded"` info message, then for the `loading-skeleton` test id to be hidden. Prefer this over ad-hoc waits.
-  - Native staking (the `delegate` modal) acts on the **main window**; the Earn dashboard/deposit flow acts on the **webview**.
-- **Mobile**:
-  - Webview operations use Detox web helpers; native operations use regular Detox matchers.
-  - Mirror desktop test ids where the Earn web app shares them (e.g. `asset-earn-cta-<ticker>`, `eth-provider-card-<provider>`).
+- **Desktop**: the Earn app is a webview with `webviewIdentifier = "earn"`. `goAndWaitForEarnToBeReady(earnFunction)` runs that navigation callback, waits for `earn-app-container`, then resolves the webview. It does not watch the console or `loading-skeleton`. Prefer that over an ad-hoc wait. Native staking (the `delegate` modal) acts on the main window. The dashboard and deposit flow act on the webview.
+- **Mobile**: force Earn v2 or the redirect flow with `E2E_FEATURE_FLAGS_JSON`. Per-test flags still win.
 
-## Earn flow & feature-flag model (critical)
+## Earn flow and feature flags
 
 Earn behaviour is feature-flag driven. Get this wrong and the app routes to the legacy modal instead of the Earn dashboard (or vice versa).
 
@@ -114,24 +110,13 @@ Earn behaviour is feature-flag driven. Get this wrong and the app routes to the 
 - `FF_STAKE_PROGRAMS_MODAL` (`stakePrograms`) controls native staking vs redirect-to-Earn per currency:
   - `params.list` — currencies that use **native** staking UI.
   - `params.redirects` — currencies that **redirect** into the Earn app (platform `earn`, with `queryParams`). For native ETH the redirect carries `cryptoAssetId: "ethereum"`, `intent: "deposit"`, and an `ethDepositCohort` (e.g. `"basic_sorting"`). Omitting `ethDepositCohort` yields a `missing_cohort_value` sentinel and the wrong screen.
-- Per-test `featureFlags` (passed via `test.use`) override env/remote flags. This is how specs force a deterministic flow.
+- Per-test `featureFlags` (passed via `test.use`) override env flags. That is how a spec forces one flow.
 
-## Desktop patterns (current API)
+## Desktop API
 
-- Keep assertion method prefixes consistent within a page object (`verify*`).
-- In `EarnV2Page`, resolve the webview with `const webview = await this.getWebView()`; act on `webview.getByTestId(...)`. Do not pass `electronApp` unless a method needs non-webview windows/events.
-- Keep test ids as class properties / id-builder functions in the page object (e.g. `asset-item-ticker-<ticker>`, `asset-earn-cta-<ticker>`, `eth-provider-card-<provider>`), never inline literals repeated across specs.
-- Current dashboard-state helpers: `verifyIceColdStartPage()`, `verifyColdStartPage()`, `verifyHotStartPage()`, `verifyAssetReadyToEarn(ticker)`, `verifyRewardsSummaryBoxes()`.
-- Deposit/withdrawal/provider helpers: `clickAssetEarnCta(ticker)`, `verifyDepositFlowVisible()` (URL `/deposit`), `verifyWithdrawalFlowVisible()` (URL `/redeem|intent=withdraw`), `selectEthProvider(providerId)` (clicks `eth-provider-card-<provider>`), `verifyProviderVisible()`, modular-selector helpers (`expectModularSelectorToBeVisible`, `selectAssetInModularSelector`, `addExistingAccountViaModularSelector`).
-- Provider redirect URL assertions live in `EarnBasePage.verifyProviderURL(provider, account)` — extend that switch rather than asserting URLs inline.
-- Native ETH "select validator" now flows through the Earn deposit screen (`delegate.spec.ts` uses `verifyDepositFlowVisible()` + `selectEthProvider(...)` for ETH), not the old `stake-provider-container-lido` modal. Don't reintroduce removed Lido-modal helpers.
-
-## Mobile patterns (current API)
-
-- Use the Page Object Model; native vs webview matchers as in "Platform model".
-- Keep flows in builders (`earnV2.ts` / `earn.ts`) and page objects, not inline in specs.
-- Custom flags can be injected globally via `E2E_FEATURE_FLAGS_JSON` (merged with defaults; per-test flags still win). Use this to force the Earn v2 / redirect behaviour on mobile.
-- Use the `.skip.spec.ts` suffix to temporarily exclude a spec from CI (don't comment-out).
+- Dashboard state: `verifyIceColdStartPage()`, `verifyColdStartPage()`, `verifyHotStartPage()`, `verifyAssetReadyToEarn(ticker)`, `verifyRewardsSummaryBoxes()`.
+- Deposit, withdrawal, and provider: `clickAssetEarnCta(ticker)`, `verifyDepositFlowVisible()` (URL `/deposit`, excluding `/v2/`), `verifyWithdrawalFlowVisible()` (URL `/redeem` or `intent=withdraw`), `selectEthProvider(providerId)` (clicks `eth-provider-card-<cardId>`), `selectAssetInModularSelector(app, currency)`, `addExistingAccountViaModularSelector(app)`.
+- Native ETH "select validator" flows through the Earn deposit screen (`delegate.spec.ts` uses `verifyDepositFlowVisible()` + `selectEthProvider(...)` for ETH), not the old `stake-provider-container-lido` modal. Do not reintroduce removed Lido-modal helpers.
 
 ## Troubleshooting / failure taxonomy
 
@@ -156,32 +141,12 @@ Classify every failure as **environment**, **build**, or **test-flow mismatch**,
 
 **Speculos image note:** pin (`sha-...` / `v...`) for reproducible, comparable runs (this is what the bot/smoke CI jobs do); `:latest` tracks the current device/firmware matrix (what the broad e2e matrix uses) but drifts and must be re-pulled. A SHA hardcoded in your shell unblocks a run now but becomes a liability long-term as the code's expected image advances — prefer pinning per-run, or unset `SPECULOS_IMAGE_TAG` to follow the code's own default.
 
-## Validation before finishing (for code changes)
-
-Run validation for the impacted E2E package(s), not the whole monorepo:
-
-- Desktop: `pnpm --filter ledger-live-desktop-e2e-tests typecheck`; run targeted `earn.v2` / `delegate` Playwright tests when the environment allows.
-- Mobile: `pnpm --filter ledger-live-mobile-e2e-tests typecheck`; run targeted Detox earn specs when the environment allows.
-- Pre-commit runs `oxfmt` (formatting) + `gitleaks`. If `oxfmt` flags a file, apply exactly its suggested change.
-
-Reuse an existing watch terminal when available before starting a new watcher. If unrelated pre-existing failures appear, report them as pre-existing and keep scope focused on Earn changes.
-
-## PR review comment workflow
-
-For each comment:
-
-1. Verify current code and usages (`rg` for symbol usage).
-2. Classify: real change needed / duplicate / stale (already addressed).
-3. Implement only real changes.
-4. Prepare explicit PR replies for stale/duplicate/already-fixed comments.
-
 ## Quick checklist
 
 - [ ] Scope confirmed with the user (earn.v2 / delegate / both; desktop and/or mobile).
 - [ ] Env verified (`MOCK=0`, `SEED` set but never printed, `COINAPPS`, pinned `SPECULOS_IMAGE_TAG`, `SPECULOS_DEVICE`); Docker running + image pulled.
 - [ ] Build freshness checked; rebuilt only when needed (and confirmed with the user).
-- [ ] Webview resolved via `webviewIdentifier = "earn"`; readiness via `goAndWaitForEarnToBeReady`.
-- [ ] No inline repeated test ids in specs when a page object exists; no dead selectors/helpers added.
-- [ ] Feature flags correct for the intended flow (`list` vs `redirects`, `ethDepositCohort`).
+- [ ] Readiness goes through `goAndWaitForEarnToBeReady` (`webviewIdentifier = "earn"`).
+- [ ] Feature flags match the intended flow (`list` vs `redirects`, `ethDepositCohort`).
 - [ ] Failures classified (environment vs build vs test-flow) with a concrete fix.
-- [ ] Typecheck + relevant test commands attempted/reported.
+- [ ] Follow the conventions docs and typecheck each changed package (`pnpm --filter ledger-live-desktop-e2e-tests typecheck` and/or `pnpm --filter ledger-live-mobile-e2e-tests typecheck`).

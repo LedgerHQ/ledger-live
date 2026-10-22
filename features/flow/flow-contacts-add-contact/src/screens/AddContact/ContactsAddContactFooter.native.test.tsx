@@ -1,9 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-} from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsAddContactFooter } from "./ContactsAddContactFooter.native";
 import type { ContactsAddContactFooterProps } from "./types";
 
@@ -13,16 +10,6 @@ function createProps(
   return {
     isConfirmEnabled: false,
     isSaving: false,
-    labels: {
-      title: "Add contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer: "Use a nickname or a first name and initial.",
-      confirmAddContact: "Save contact",
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
-      },
-    },
     onConfirm: jest.fn(async () => undefined),
     ...overrides,
   };
@@ -30,16 +17,18 @@ function createProps(
 
 describe("ContactsAddContactFooter", () => {
   it("should stay disabled until the draft name is valid", () => {
-    render(<ContactsAddContactFooter {...createProps()} />);
+    render(<ContactsAddContactFooter {...createProps()} />, { wrapper: I18nTestProvider });
 
     expect(screen.getByTestId("contacts-add-contact-save")).toHaveProp("disabled", true);
-    expect(screen.getByText("Save contact")).toBeVisible();
+    expect(screen.getByText("contacts.addContact")).toBeVisible();
   });
 
   it("should save the contact", () => {
     const onConfirm = jest.fn(async () => undefined);
 
-    render(<ContactsAddContactFooter {...createProps({ isConfirmEnabled: true, onConfirm })} />);
+    render(<ContactsAddContactFooter {...createProps({ isConfirmEnabled: true, onConfirm })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     fireEvent.press(screen.getByTestId("contacts-add-contact-save"));
 
@@ -47,7 +36,9 @@ describe("ContactsAddContactFooter", () => {
   });
 
   it("should show a loading state while saving", () => {
-    render(<ContactsAddContactFooter {...createProps({ isSaving: true })} />);
+    render(<ContactsAddContactFooter {...createProps({ isSaving: true })} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(screen.getByTestId("contacts-add-contact-save")).toHaveProp("loading", true);
   });

@@ -1,8 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
 import { Trans, useTranslation } from "~/context/Locale";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import {
+  NavigationContainerRefContext,
+  StackActions,
+  useNavigation,
+  useRoute,
+  useTheme,
+} from "@react-navigation/native";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import {
@@ -31,6 +37,7 @@ import byFamiliesOperationDetails from "../../generated/operationDetails";
 import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
 import DefaultOperationDetailsExtra from "./Extra";
 import Title from "./Title";
+import { countRoutesBackTo, type RouteLike } from "LLM/utils/countRoutesBackTo";
 import FormatDate from "~/components/DateFormat/FormatDate";
 import type {
   RootNavigationComposite,
@@ -81,7 +88,23 @@ export default function Content({
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
 
+  const route = useRoute();
+  const navigationContainer = useContext(NavigationContainerRefContext);
+
   const onPress = useCallback(() => {
+    const isThisAccountPage = ({ name, params }: RouteLike) => {
+      const accountId = (params as { accountId?: string } | undefined)?.accountId;
+      return (
+        (name === ScreenName.AccountDetail || name === ScreenName.Account) &&
+        (accountId === account.id || accountId === parentAccount?.id)
+      );
+    };
+    const rootState = navigationContainer?.getRootState();
+    const routesBack = rootState && countRoutesBackTo(rootState, route.key, isThisAccountPage);
+    if (routesBack) {
+      navigation.dispatch(StackActions.pop(routesBack));
+      return;
+    }
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Account,
       params: {
@@ -89,7 +112,7 @@ export default function Content({
         parentId: parentAccount?.id,
       },
     });
-  }, [account.id, navigation, parentAccount]);
+  }, [account.id, navigation, navigationContainer, parentAccount, route.key]);
 
   const onPressInfo = useCallback(() => {
     setIsModalOpened(true);

@@ -24,7 +24,7 @@ export function ContactAddressPickerAddAddress({
     <Card type="interactive" onClick={onAddNewAddress} data-testid="pay-contact-address-add">
       <CardHeader>
         <CardLeading>
-          <Spot appearance="icon" icon={Plus} size={ADD_ADDRESS_ICON_SIZE} />
+          <Spot icon={Plus} size={ADD_ADDRESS_ICON_SIZE} />
           <CardContent>
             <CardContentTitle>{label}</CardContentTitle>
           </CardContent>

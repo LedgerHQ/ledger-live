@@ -1,6 +1,5 @@
 import { lastValueFrom, Observable } from "rxjs";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
-import type { SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
 import { runCliStep } from "tests/utils/allureUtils";
 import { cleanSpeculos, launchSpeculos } from "tests/utils/speculosUtils";
 
@@ -46,11 +45,12 @@ export function canSkipSpeculosLaunch(
   );
 }
 
+/** Each app's Speculos is released once its commands ran: the test gets no device from here. */
 export async function runCliCommandsOnLaunchedApps(
   commands: { app: AppInfos; cmd: CliCommand }[],
   testTitle: string,
   userdataDestinationPath?: string,
-): Promise<SpeculosDevice | undefined> {
+): Promise<void> {
   const commandsByApp = new Map<string, { app: AppInfos; cmds: CliCommand[] }>();
   for (const { app, cmd } of commands) {
     const grouped = commandsByApp.get(app.name);
@@ -61,21 +61,12 @@ export async function runCliCommandsOnLaunchedApps(
     }
   }
 
-  const runOnApp = async (app: AppInfos, cmds: CliCommand[]): Promise<SpeculosDevice> => {
+  await runInOrder([...commandsByApp.values()], async ({ app, cmds }) => {
     const device = await launchSpeculos(app.name, testTitle);
     try {
       await executeCliCommands(cmds, userdataDestinationPath);
     } finally {
       await cleanSpeculos(device);
     }
-    return device;
-  };
-
-  const [first, ...rest] = [...commandsByApp.values()];
-  if (!first) return undefined;
-
-  return rest.reduce(
-    (previous, { app, cmds }) => previous.then(() => runOnApp(app, cmds)),
-    runOnApp(first.app, first.cmds),
-  );
+  });
 }

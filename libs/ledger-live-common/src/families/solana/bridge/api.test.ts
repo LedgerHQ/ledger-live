@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { Account, CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { Account, CryptoAssetsStore, StakingDelegation } from "@ledgerhq/types-live";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { log } from "@ledgerhq/logs";
 import {
@@ -20,6 +20,7 @@ import solanaBridge, {
   getDeviceSignOptions,
   describeOptimisticOperation,
   getAssetFromToken,
+  getHeldNativeAmount,
   getTokenFromAsset,
 } from "./api";
 
@@ -54,6 +55,36 @@ describe("solana bridge", () => {
   describe("staking", () => {
     it("declares staking support explicitly", () => {
       expect(solanaBridge(solana).stakingSupported).toBe(true);
+    });
+  });
+
+  describe("native balance", () => {
+    it("sums the native entries, which partition the account balance", () => {
+      expect(solanaBridge(solana).partitionsNativeBalance).toBe(true);
+    });
+
+    it("exposes the lamports a stake account holds", () => {
+      expect(solanaBridge(solana).getHeldNativeAmount).toBe(getHeldNativeAmount);
+    });
+
+    it("adds the active, inactive and reserve lamports of a stake account", () => {
+      expect(
+        getHeldNativeAmount({
+          amount: new BigNumber(1),
+          activeAmount: new BigNumber(300),
+          inactiveAmount: new BigNumber(700),
+          lockedReserve: new BigNumber(20),
+        } as StakingDelegation),
+      ).toEqual(new BigNumber(1_020));
+    });
+
+    it("falls back to the amount and the reserve without active and inactive lamports", () => {
+      expect(
+        getHeldNativeAmount({
+          amount: new BigNumber(500),
+          lockedReserve: new BigNumber(20),
+        } as StakingDelegation),
+      ).toEqual(new BigNumber(520));
     });
   });
 
@@ -166,8 +197,6 @@ describe("solana bridge", () => {
         type: "spl",
         assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
         assetOwner: owner,
-        name: "USD Coin",
-        unit: { name: "USDC", code: "USDC", magnitude: 6 },
       });
     });
 
@@ -187,18 +216,6 @@ describe("solana bridge", () => {
       const result = getAssetFromToken(mockToken, owner);
 
       expect(result).toHaveProperty("assetOwner", owner);
-    });
-
-    it("should use token.units[0] for unit", () => {
-      const result = getAssetFromToken(mockToken, owner);
-
-      expect(result.unit).toBe(mockToken.units[0]);
-    });
-
-    it("should use token.name for name", () => {
-      const result = getAssetFromToken(mockToken, owner);
-
-      expect(result.name).toBe(mockToken.name);
     });
   });
 

@@ -2,7 +2,10 @@ import { getBlock } from "./getBlock";
 
 const MINTED_BLOCK = 480818084;
 
-describe("getBlock (integration)", () => {
+// TODO: re-enable once api.kaspa.org stops throttling /blocks-from-bluescore. The upstream
+// provider rate-limits this endpoint hard (HTTP 429 even after the read retries), so the live
+// check fails the nightly run. The response mapping stays covered by getBlock.msw.test.ts.
+describe.skip("getBlock (integration)", () => {
   it("fetches the full block (metadata + transactions) at a known blue score", async () => {
     const block = await getBlock(MINTED_BLOCK);
 

@@ -19,7 +19,7 @@ import {
   MayBlockAccountError,
 } from "../constants";
 import { CasperInvalidTransferId } from "../errors";
-import type { CasperMemo } from "../types";
+import type { CasperConfig, CasperMemo } from "../types";
 import { getTransferIdFromMemo } from "./utils";
 import { isAddressValid } from "./validateAddress";
 import { validateMemo } from "./validateMemo";
@@ -89,6 +89,7 @@ function computeAmount(
 }
 
 export function validateIntent(
+  config: CasperConfig,
   intent: TransactionIntent<CasperMemo>,
   balances: Balance[],
   customFees?: FeeEstimation,
@@ -104,7 +105,7 @@ export function validateIntent(
   const warnings: Record<string, Error> = {};
 
   const { sender, recipient } = intent;
-  const currencyName = intent.asset.name ?? "Casper";
+  const currencyName = config.name;
 
   const nativeBalance = balances.find(b => b.asset.type === "native");
   const balance = nativeBalance?.value ?? 0n;

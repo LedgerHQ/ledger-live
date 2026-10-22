@@ -3,8 +3,6 @@ import { UnknownAction, Store } from "redux";
 import { State as StoreState } from "~/renderer/reducers";
 import App from "./App";
 import "./global.css";
-import { Countervalues } from "./storage";
-import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 
 type State = {
   error: unknown;
@@ -12,7 +10,6 @@ type State = {
 type Props = {
   store: Store<StoreState, UnknownAction>;
   language: string;
-  initialCountervalues: Countervalues;
 };
 class ReactRoot extends Component<Props, State> {
   state = {
@@ -26,13 +23,9 @@ class ReactRoot extends Component<Props, State> {
   }
 
   render() {
-    const { store, initialCountervalues } = this.props;
+    const { store } = this.props;
     const { error } = this.state;
-    return error ? (
-      String(error)
-    ) : (
-      <App store={store} initialCountervalues={initialCountervalues as CounterValuesStateRaw} />
-    );
+    return error ? String(error) : <App store={store} />;
   }
 }
 export default ReactRoot;

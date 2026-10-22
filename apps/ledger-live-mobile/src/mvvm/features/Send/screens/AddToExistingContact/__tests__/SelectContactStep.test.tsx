@@ -22,22 +22,12 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
 const me = mockMeContact();
 const ada = mockContact({ id: "contact-ada", name: "Ada" });
 const viewModel = createPopulatedContactsListViewModel(me, [me, ada]);
-const labels = {
-  title: "Select contact",
-  searchPlaceholder: "Search contact",
-  searchNoResults: "No contacts found by that name",
-  searchNoResultsDescription: "Try another name or spelling.",
-  addContact: "Add contact",
-  formatAddressCount: (count: number) => `${count} address`,
-};
 
 describe("SelectContactStep", () => {
   it("should render the searchable contacts list", () => {
     render(
       <SelectContactStep
-        title="Select contact"
         viewModel={viewModel}
-        labels={labels}
         searchQuery=""
         onSearchQueryChange={jest.fn()}
         onOpenContact={jest.fn()}
@@ -57,9 +47,7 @@ describe("SelectContactStep", () => {
     const user = userEvent.setup();
     render(
       <SelectContactStep
-        title="Select contact"
         viewModel={viewModel}
-        labels={labels}
         searchQuery=""
         onSearchQueryChange={jest.fn()}
         onOpenContact={onOpenContact}
@@ -77,9 +65,7 @@ describe("SelectContactStep", () => {
     render(
       <SafeAreaInsetsContext.Provider value={{ top: 0, right: 0, bottom: 48, left: 0 }}>
         <SelectContactStep
-          title="Select contact"
           viewModel={viewModel}
-          labels={labels}
           searchQuery=""
           onSearchQueryChange={jest.fn()}
           onOpenContact={jest.fn()}

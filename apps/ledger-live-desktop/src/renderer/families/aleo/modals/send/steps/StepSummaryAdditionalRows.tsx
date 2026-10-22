@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   getEstimatedSigningTime,
+  getSigningRecordCount,
   isPublicTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
 import Label from "~/renderer/components/Label";
@@ -45,9 +46,7 @@ const StepSummaryAdditionalRows: NonNullable<AleoFamily["StepSummaryAdditionalRo
     return null;
   }
 
-  const amountRecordCount = transaction.properties.amountRecordCommitments.length;
-  const feeRecordCount = transaction.properties.feeRecordCommitment ? 1 : 0;
-  const totalRecordCount = amountRecordCount + feeRecordCount;
+  const totalRecordCount = getSigningRecordCount(transaction);
 
   const signingTime = getEstimatedSigningTime(
     totalRecordCount,

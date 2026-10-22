@@ -2,7 +2,7 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
-import { DeviceIntentExecutor } from "@features/platform-device-intent/react";
+import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
 import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
@@ -12,22 +12,20 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
-import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
-import DeviceContextInitializerComponentLWM, {
-  InitializerConfig,
-} from "./DeviceContextInitializerComponentLWM";
+import Connection from "./Connection";
+import ContextInitializer, { InitializerConfig } from "./ContextInitializer";
 import {
   DeviceIntentTrackingProvider,
   type DeviceIntentTrackingProperties,
   type SourceFlow,
 } from "./utils/DeviceIntentTrackingContext";
 import type { InitializationInput } from "./types";
-import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
+import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewModel";
 
 export {
   buildDeviceInitializationInput,
   type BuildDeviceInitializationInputParams,
-} from "./DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput";
+} from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
 export type {
   DeviceIntentTrackingProperties,
@@ -51,11 +49,18 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecut
    * flow.
    */
   analyticsProperties?: DeviceIntentTrackingProperties;
+  /**
+   * Sheet open request when it must differ from `enabled`. A caller that stays mounted
+   * while the sheet closes sets this to false and unmounts from `onDeviceSheetDismissed`.
+   */
+  isRequestingToBeOpened?: boolean;
+  /** Fires once the sheet has left the screen, including when it never opened. */
+  onDeviceSheetDismissed?: () => void;
 };
 
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
-  DeviceConnectionComponent: DeviceConnectionComponentLWM,
-  DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
+  DeviceConnectionComponent: Connection,
+  DeviceContextInitializerComponent: ContextInitializer,
   DeviceDisconnectedComponent: DeviceDisconnected,
   IntentErrorComponent: IntentError,
   InvalidOperationComponent: InvalidOperation,
@@ -64,13 +69,14 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
 /**
  * LWM wrapper around `@features/platform-device-intent`'s `DeviceIntentExecutor`.
  */
-export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = undefined>(
+export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undefined>(
   props: Props<JobState, Input, ExtraProps, Result>,
 ): React.ReactElement {
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
   const maxDynamicContentSize = Platform.OS === "ios" ? "fullWithOffset" : windowHeight - topInset;
+  const { isRequestingToBeOpened, onDeviceSheetDismissed, ...executorProps } = props;
   const {
     wrappedProps,
     hasHeaderOverride,
@@ -78,12 +84,13 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = un
     trackingContextValue,
     onHeaderClosePressed,
     onBackdropPress,
-  } = useDeviceIntentExecutorLWMViewModel(props);
+  } = useDeviceIntentExecutorViewModel(executorProps);
 
   return (
     <QueuedBottomSheet
-      isRequestingToBeOpened={wrappedProps.enabled}
+      isRequestingToBeOpened={isRequestingToBeOpened ?? wrappedProps.enabled}
       onClose={wrappedProps.onUserCancel}
+      onModalHide={onDeviceSheetDismissed}
       onHeaderClosePressed={onHeaderClosePressed}
       onBackdropPress={onBackdropPress}
       hideHandle
@@ -97,7 +104,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = un
             showsVerticalScrollIndicator={false}
           >
             {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
-            <DeviceIntentExecutor
+            <BaseDeviceIntentExecutor
               {...wrappedProps}
               platformConfig={platformConfig}
               initializerConfig={wrappedProps.initializerConfig}

@@ -16,7 +16,7 @@ export function RewardView({ amount, countervalue, subtitle, onPress }: RewardVi
     <Card type={onPress ? "interactive" : "info"} onPress={onPress} testID="card-details-reward">
       <CardHeader>
         <CardLeading>
-          <Spot appearance="icon" icon={DollarConvert} size={48} />
+          <Spot icon={DollarConvert} size={48} />
           <CardContent>
             <CardContentTitle>{countervalue ?? amount}</CardContentTitle>
             <CardContentDescription>{subtitle}</CardContentDescription>

@@ -96,7 +96,6 @@ export type CurrencyFeatures = {
   currencyMantleSepolia: DefaultFeature;
   currencyBoba: DefaultFeature;
   currencyMoonriver: DefaultFeature;
-  currencyVelasEvm: DefaultFeature;
   currencySyscoin: DefaultFeature;
   currencyAptos: DefaultFeature;
   currencyAptosTestnet: DefaultFeature;
@@ -106,7 +105,6 @@ export type CurrencyFeatures = {
   currencyDydx: DefaultFeature;
   currencyStargaze: DefaultFeature;
   currencyPersistence: DefaultFeature;
-  currencyQuicksilver: DefaultFeature;
   currencyInternetComputer: DefaultFeature;
   currencyInjective: DefaultFeature;
   currencyTelosEvm: DefaultFeature;
@@ -137,7 +135,6 @@ export type CurrencyFeatures = {
   currencyZkSyncSepolia: DefaultFeature;
   currencyMantra: DefaultFeature;
   currencyXion: DefaultFeature;
-  currencyZenrock: DefaultFeature;
   currencySonic: DefaultFeature;
   currencySui: DefaultFeature;
   currencySuiTestnet: DefaultFeature;

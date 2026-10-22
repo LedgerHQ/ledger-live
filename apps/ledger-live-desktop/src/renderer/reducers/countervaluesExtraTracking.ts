@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { type TrackingPair, pairId } from "@domain/entity-market-countervalues";
-import { wipeCountervalues } from "@features/platform-market-countervalues";
+import { type TrackingPair, pairId, wipeCountervalues } from "@domain/entity-market-countervalues";
 
 export type CountervaluesExtraTrackingState = {
   extraTrackingPairs: TrackingPair[];

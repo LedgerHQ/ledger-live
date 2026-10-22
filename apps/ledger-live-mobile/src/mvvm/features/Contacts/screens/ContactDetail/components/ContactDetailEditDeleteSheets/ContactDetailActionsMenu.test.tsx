@@ -1,7 +1,7 @@
 import React from "react";
 import type { ReactTestInstance } from "react-test-renderer";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import { ContactDetailActionsMenu } from "@features/flow-contacts";
+import { ContactDetailActionsMenu } from "@features/flow-contacts-detail";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 
@@ -20,13 +20,7 @@ describe("ContactDetailActionsMenu", () => {
   beforeEach(() => {
     render(
       <QueuedBottomSheet isRequestingToBeOpened onClose={jest.fn()} enableDynamicSizing>
-        <ContactDetailActionsMenu
-          isOpen
-          canDelete
-          labels={{ editContact: "Edit name", deleteContact: "Delete contact" }}
-          onEdit={jest.fn()}
-          onDelete={jest.fn()}
-        />
+        <ContactDetailActionsMenu isOpen canDelete onEdit={jest.fn()} onDelete={jest.fn()} />
       </QueuedBottomSheet>,
     );
   });

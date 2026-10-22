@@ -1,4 +1,4 @@
-import type { DeviceOnboardingExitReason } from "@ledgerhq/device-onboarding";
+import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {

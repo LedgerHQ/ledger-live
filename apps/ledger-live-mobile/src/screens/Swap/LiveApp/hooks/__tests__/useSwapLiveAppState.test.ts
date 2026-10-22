@@ -118,6 +118,28 @@ describe("useSwapLiveAppState", () => {
     expect(result.current.webviewResetKey).toBe(2);
   });
 
+  it("should increment webviewResetKey when new route params arrive", () => {
+    let params: unknown = { toCurrencyId: "bitcoin" };
+    const { result, rerender } = renderHook(() => useSwapLiveAppState(params));
+
+    expect(result.current.webviewResetKey).toBe(0);
+
+    params = { toCurrencyId: "ethereum" };
+    rerender({});
+
+    expect(result.current.webviewResetKey).toBe(1);
+    expect(result.current.defaultParams).toStrictEqual({ toCurrencyId: "ethereum" });
+  });
+
+  it("should keep webviewResetKey when re-rendered with the same route params", () => {
+    const params = { toCurrencyId: "bitcoin" };
+    const { result, rerender } = renderHook(() => useSwapLiveAppState(params));
+
+    rerender({});
+
+    expect(result.current.webviewResetKey).toBe(0);
+  });
+
   describe("ensureWebviewReset", () => {
     const SWAP_FORM_URL = "https://swap.live.app/";
     const SUCCESS_URL = "https://swap.live.app/multi-step-transaction?transactionStatus=complete";
@@ -197,7 +219,8 @@ describe("useSwapLiveAppState", () => {
   });
 
   it("should return null defaultParams when params is an empty object", () => {
-    const { result } = renderHook(() => useSwapLiveAppState({}));
+    const params = {};
+    const { result } = renderHook(() => useSwapLiveAppState(params));
     expect(result.current.defaultParams).toBeNull();
   });
 

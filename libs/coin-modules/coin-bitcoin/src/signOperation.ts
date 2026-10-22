@@ -12,8 +12,6 @@ import { getWalletAccount } from "./getWalletAccount";
 import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
 import { fromAsyncOperation } from "./observable";
-import { getChainAdapter } from "./chain-adapters/registry";
-import { isZcashCurrencyId } from "./chain-adapters/zcash/currency";
 import type { BitcoinContext } from "./config";
 import { resolveAccountConfig } from "./explorer";
 
@@ -29,9 +27,7 @@ export function buildAdditionals(
   transaction: Transaction,
 ): string[] {
   const perCoin = perCoinLogic[currencyId];
-  // The signer recognises Zcash by the "zcash" marker alone, so every Zcash
-  // network carries it instead of its own currency id.
-  let additionals: string[] = [isZcashCurrencyId(currencyId) ? "zcash" : currencyId];
+  let additionals: string[] = [currencyId];
 
   if (derivationMode === "native_segwit") {
     additionals.push("bech32");
@@ -168,14 +164,9 @@ export const buildSignOperation =
     signerContext: SignerContext,
     context: BitcoinContext,
   ): AccountBridge<Transaction>["signOperation"] =>
-  ({ account, deviceId, transaction }) => {
-    const adapter = getChainAdapter(account.currency.id);
-    const custom = adapter.signOperation?.(account, deviceId, transaction, signerContext);
-    if (custom) return custom;
-
-    return fromAsyncOperation(o =>
+  ({ account, deviceId, transaction }) =>
+    fromAsyncOperation(o =>
       executeSignOperation(o, account, deviceId, transaction, signerContext, context),
     );
-  };
 
 export default buildSignOperation;

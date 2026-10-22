@@ -1,4 +1,3 @@
-import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { AccountLike } from "@ledgerhq/types-live";
 import {
   ACCOUNT_SIZE,
@@ -19,11 +18,6 @@ import {
   SolanaTokenProgram,
   TransferFeeCalculated,
 } from "../types";
-
-export async function tokenIsListedOnLedger(currencyId: string, mint: string): Promise<boolean> {
-  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);
-  return token?.type === "TokenCurrency";
-}
 
 export function isTokenAccountFrozen(account: AccountLike): boolean {
   return account.type === "TokenAccount" && (account as SolanaTokenAccount)?.state === "frozen";

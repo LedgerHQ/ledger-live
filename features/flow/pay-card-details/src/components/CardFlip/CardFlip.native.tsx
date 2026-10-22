@@ -84,7 +84,7 @@ function DetailsImage({
 
 const styles = StyleSheet.create({
   card: { width: "100%" },
-  back: { ...StyleSheet.absoluteFillObject },
-  imageFrame: { ...StyleSheet.absoluteFillObject, overflow: "hidden" },
+  back: { ...StyleSheet.flatten(StyleSheet.absoluteFill) },
+  imageFrame: { ...StyleSheet.flatten(StyleSheet.absoluteFill), overflow: "hidden" },
   image: { width: "100%", height: "100%" },
 });

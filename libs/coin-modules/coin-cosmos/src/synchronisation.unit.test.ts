@@ -257,6 +257,34 @@ describe("getAccountShape", () => {
     mockAccountInfo({});
     const account = await getAccountShape(infoMock, syncConfig);
     expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("");
+    expect(account.xpub).toEqual("address");
+    expect(account.sequence).toBe(0);
+  });
+
+  it("exposes the network sequence and the device public key on the account", async () => {
+    mockAccountInfo({ accountInfo: { sequence: 12, accountNumber: 0 } } as never);
+    const account = await getAccountShape(
+      {
+        ...infoMock,
+        rest: { publicKey: "02ab" },
+      } as AccountShapeInfo<CosmosAccount>,
+      syncConfig,
+    );
+    expect(account.sequence).toBe(12);
+    expect(account.xpub).toEqual("02ab");
+  });
+
+  it("keeps a previously persisted xpub when the re-sync has no device and no cosmosResources key", async () => {
+    mockAccountInfo({});
+    const account = await getAccountShape(
+      {
+        ...infoMock,
+        initialAccount: { xpub: "02persisted" } as CosmosAccount,
+      },
+      syncConfig,
+    );
+    expect(account.xpub).toEqual("02persisted");
+    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("02persisted");
   });
 
   it("should get the memo correctly", async () => {

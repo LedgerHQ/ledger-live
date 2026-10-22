@@ -1,14 +1,8 @@
 import { asBoolean, asRecord, asString, redactBody, redactSecretsInText } from "../http/body";
 import { ENV_VARS } from "../config";
-import {
-  BaanxHttpError,
-  BaanxNoTokenError,
-  BaanxOnboardingIncompleteError,
-  BaanxOtpError,
-} from "../errors";
+import { BaanxNoTokenError, BaanxOnboardingIncompleteError, BaanxOtpError } from "../errors";
 import { resolveExpiry } from "./expiry";
-import { sendJson, toTypedError } from "../http/send";
-import type { BaanxResponse } from "../http/send";
+import { sendJson, toTypedError, type BaanxResponse } from "../http/send";
 import { buildTotp, generateFreshTotpCode, normalizeBase32, systemClock } from "./totp";
 import { MIN_WINDOW_REMAINING_MS } from "../types";
 import type { BaanxAuthSession, FetchImpl, LoginDeps, ResolvedBaanxAuthConfig } from "../types";
@@ -22,7 +16,6 @@ import type { BaanxAuthSession, FetchImpl, LoginDeps, ResolvedBaanxAuthConfig } 
  */
 
 const LOGIN_PATH = "/v1/auth/login";
-const OTP_PATH = "/v1/auth/login/otp";
 
 export async function loginToBaanx(
   config: ResolvedBaanxAuthConfig,
@@ -47,33 +40,19 @@ export async function loginToBaanx(
   }
 
   if (asRecord(first.body).isOtpRequired === true) {
-    return completeOtpChallenge(config, first, deps, fetchImpl);
+    return completeOtpChallenge(config, deps, fetchImpl);
   }
 
   return toSession(config, first.body, { otpUsed: false });
 }
 
-/**
- * Answer the OTP challenge: trigger it, derive the code from the setup key, and
- * re-post the login. The retry carries no `phoneNumber` — only the code.
- */
+/** Derive the authenticator code and re-post the login with `otpCode` only. */
 async function completeOtpChallenge(
   config: ResolvedBaanxAuthConfig,
-  first: BaanxResponse,
   deps: LoginDeps,
   fetchImpl: FetchImpl,
 ): Promise<BaanxAuthSession> {
-  const userId = asString(asRecord(first.body).userId);
-  if (!userId) {
-    throw new BaanxOtpError(
-      "Baanx asked for an OTP but returned no userId, so the challenge cannot be triggered.",
-      redactBody(first.body, secretsOf(config)),
-    );
-  }
-
-  // test validity of the TOTP configuration before triggering the OTP challenge
   buildTotp(config.totp);
-  await triggerOtp(config, userId, fetchImpl, deps.requestTimeoutMs);
 
   const { code } = await generateFreshTotpCode(
     config.totp,
@@ -110,34 +89,6 @@ async function completeOtpChallenge(
   }
 
   return toSession(config, retry.body, { otpUsed: true, extraSecrets: [code] });
-}
-
-async function triggerOtp(
-  config: ResolvedBaanxAuthConfig,
-  userId: string,
-  fetchImpl: FetchImpl,
-  requestTimeoutMs?: number,
-): Promise<void> {
-  try {
-    await post(config, OTP_PATH, { userId }, fetchImpl, [], requestTimeoutMs);
-  } catch (error) {
-    // A precisely-typed failure already explains itself — a 429, a rejected
-    // client key or bad credentials are not mysteries about this endpoint, and
-    // callers branch on those types. Only an otherwise-unexplained HTTP error
-    // gets the authenticator hypothesis below.
-    if (!(error instanceof BaanxHttpError)) throw error;
-
-    // Baanx documents this endpoint as the SMS trigger. Our test users are
-    // provisioned with an authenticator secret instead, so if it starts
-    // failing, the trigger may simply not apply to them — say so rather than
-    // letting it read as a generic outage.
-    throw new BaanxOtpError(
-      `Could not trigger the OTP challenge (${OTP_PATH}). ` +
-        `If this user is authenticator-only, Baanx may not accept the trigger call for it. ` +
-        `Underlying failure: ${error.message}`,
-      error.body,
-    );
-  }
 }
 
 /** Values that must never survive into an error message. */

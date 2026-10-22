@@ -13,6 +13,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import {
   MOCK_MARKET_PERFORMERS,
   createMockMarketCurrencyData,
+  createMockMarketListResult,
   createMockMarketPerformer,
 } from "@ledgerhq/live-common/market/utils/fixtures";
 import { MarketItemPerformer, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
@@ -79,15 +80,7 @@ function mockMarketDataQuery(
     isError: boolean;
   }>,
 ) {
-  mockedUseMarketData.mockReturnValue({
-    data: [],
-    isPending: false,
-    isLoading: false,
-    isFetching: false,
-    isError: false,
-    cachedMetadataMap: new Map(),
-    ...overrides,
-  } as ReturnType<typeof useMarketData>);
+  mockedUseMarketData.mockReturnValue(createMockMarketListResult(overrides));
 }
 
 describe("MarketBanner view models", () => {

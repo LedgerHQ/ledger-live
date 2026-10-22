@@ -141,4 +141,21 @@ describe("usePerpsDepositSignViewModel", () => {
     expect(onNotEnoughBalance).toHaveBeenCalled();
     expect(onRefused).not.toHaveBeenCalled();
   });
+
+  it("does not reopen the summary when the sheet closes after a shortfall", () => {
+    const { result, onRefused } = renderSignViewModel(device);
+
+    act(() => capturedCallbacks?.onNotEnoughBalance());
+    act(() => result.current.handleDrawerClose());
+
+    expect(onRefused).not.toHaveBeenCalled();
+  });
+
+  it("reopens the summary when the holder closes the sheet", () => {
+    const { result, onRefused } = renderSignViewModel(device);
+
+    act(() => result.current.handleDrawerClose());
+
+    expect(onRefused).toHaveBeenCalledTimes(1);
+  });
 });

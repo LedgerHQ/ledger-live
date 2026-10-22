@@ -1,7 +1,7 @@
 import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
-import { INTERVAL } from "@e2e/utils/timeouts";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 const REVAMPED_LOCK_GRACE_MS = INTERVAL.long;
 
@@ -111,6 +111,7 @@ export default class SettingsGeneralPage {
   async setupRevampedPasswordAndLock(password: string) {
     await app.appLock.choosePassword(password);
     await app.appLock.confirmPassword(password);
+    await waitForElement(this.passwordSettingsSwitch(), TIMEOUT.medium);
     await this.expectPasswordToggleValue("ON");
     await this.sendToBackgroundAndBack(REVAMPED_LOCK_GRACE_MS);
   }

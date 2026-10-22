@@ -4,10 +4,9 @@ import {
   BitcoinAccount,
   Transaction,
   TransactionStatus,
-  ZcashAccount,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { useFeature } from "@features/platform-feature-flags";
 import React from "react";
 import { connect } from "react-redux";
@@ -18,6 +17,7 @@ import { State } from "~/renderer/reducers";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import ZcashSyncStateBanner from "./ZcashSyncStateBanner";
 import ZcashMemoField from "./ZcashMemoField";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 // FIXME: ConfirmationNB seems to be specific.
 // So we can't do
@@ -34,7 +34,7 @@ type Props = {
 const SendRecipientFields = (props: Props) => {
   const { confirmationsNb, account, transaction, status, onChange, autoFocus } = props;
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
-  const isZcash = account.currency.id === "zcash";
+  const isZcash = isZcashCurrencyId(account.currency.id);
   const pendingOperationError = new PendingOperation();
   const operations = account.pendingOperations.concat(account.operations);
   const incomingTransactionPending = operations.some(

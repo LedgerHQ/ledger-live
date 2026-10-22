@@ -66,11 +66,6 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "Coingecko API",
   },
-  MAPPING_SERVICE: {
-    def: "https://mapping-service.api.ledger.com",
-    parser: stringParser,
-    desc: "",
-  },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
     parser: intParser,

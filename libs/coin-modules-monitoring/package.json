@@ -1,13 +1,13 @@
 {
   "name": "@ledgerhq/coin-modules-monitoring",
-  "version": "2.26.7",
+  "version": "2.26.8",
   "private": true,
   "description": "Push monitoring metrics to Datadog",
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "rslib build && node scripts/postbuild.mjs",
-    "lint": "oxlint ./src",
+    "lint": "oxlint ./src -A no-console",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",

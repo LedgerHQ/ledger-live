@@ -3,12 +3,12 @@
  */
 import { renderHook } from "@testing-library/react";
 import { useAssetChartDataInCounterValue } from "../useAssetChartDataInCounterValue";
-import { useAssetChartData } from "../useMarketDataProvider";
+import { useAssetChartData } from "../useAssetChartData";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useSupportedCounterCurrencies } from "../../../cg-client/hooks/useCoingeckoDataProvider";
 import type { MarketCoinDataChart } from "../../utils/types";
 
-jest.mock("../useMarketDataProvider", () => ({ useAssetChartData: jest.fn() }));
+jest.mock("../useAssetChartData", () => ({ useAssetChartData: jest.fn() }));
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: jest.fn(),
@@ -205,6 +205,20 @@ describe("useAssetChartDataInCounterValue", () => {
       expect(result.current.data).toBeUndefined();
       expect(result.current.currentData).toBeUndefined();
       expect(result.current.isLoading).toBe(true);
+    });
+
+    it("forwards a polling interval to the chart request", () => {
+      renderHook(() =>
+        useAssetChartDataInCounterValue(
+          { id: "bitcoin", counterCurrency: "usd", range: "1d", isCryptoCountervalue: false },
+          { skip: false, pollingInterval: 180_000 },
+        ),
+      );
+
+      expect(mockUseAssetChartData).toHaveBeenCalledWith(
+        { id: "bitcoin", counterCurrency: "usd", range: "1d" },
+        { skip: false, pollingInterval: 180_000 },
+      );
     });
 
     it("skips the USD rate request when the chart request is skipped", () => {

@@ -38,24 +38,14 @@ export async function getBalance(
     api.getEpochInfo(),
   ]);
 
-  const stakedLamports = stakeAccounts.reduce(
-    (sum, sa) => sum + BigInt(sa.account.onChainAcc.account.lamports),
-    0n,
-  );
-
   const unstakeReserve = await computeUnstakeReserve(api, address, stakeAccounts);
 
   const balanceLamportBigInt = BigInt(balanceLamports);
-  const totalBalance = balanceLamportBigInt + stakedLamports;
-  const rentExemptMinBigInt = BigInt(rentExemptMin);
-  const lockedLamports =
-    balanceLamportBigInt < rentExemptMinBigInt ? balanceLamportBigInt : rentExemptMinBigInt;
-
-  const rawLocked = lockedLamports + stakedLamports + BigInt(unstakeReserve);
+  const rawLocked = BigInt(rentExemptMin) + BigInt(unstakeReserve);
   const nativeBalance: Balance = {
-    value: totalBalance,
+    value: balanceLamportBigInt,
     asset: { type: "native" },
-    locked: rawLocked > totalBalance ? totalBalance : rawLocked,
+    locked: rawLocked > balanceLamportBigInt ? balanceLamportBigInt : rawLocked,
   };
 
   const stakeBalances = mapStakeAccountsToBalances(stakeAccounts, address, epoch);
@@ -79,11 +69,15 @@ function mapStakeAccountsToBalances(
   mainAccountAddress: string,
   epoch: number,
 ): Balance[] {
-  return stakeAccounts.map(stakeAccount => ({
-    value: BigInt(stakeAccount.account.onChainAcc.account.lamports),
-    asset: { type: "native" as const },
-    stake: mapStakeAccountToFrameworkStake(stakeAccount, mainAccountAddress, epoch),
-  }));
+  return stakeAccounts.map(stakeAccount => {
+    const lamports = BigInt(stakeAccount.account.onChainAcc.account.lamports);
+    return {
+      value: lamports,
+      asset: { type: "native" as const },
+      locked: lamports,
+      stake: mapStakeAccountToFrameworkStake(stakeAccount, mainAccountAddress, epoch),
+    };
+  });
 }
 
 function mapTokenAccountsToBalances(

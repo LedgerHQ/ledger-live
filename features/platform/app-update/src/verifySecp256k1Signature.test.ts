@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { verifySecp256k1Signature } from "./verifySecp256k1Signature";
 
 const generateKeyPair = () =>
@@ -11,7 +11,11 @@ const generateKeyPair = () =>
 
 const sign = (message: string, privateKey: string) => {
   const der = crypto.createSign("sha256").update(message).sign(privateKey);
-  return Buffer.from(secp256k1.Signature.fromBytes(der, "der").normalizeS().toBytes("der"));
+  const sig = secp256k1.Signature.fromBytes(der, "der");
+  const lowS = sig.hasHighS()
+    ? new secp256k1.Signature(sig.r, secp256k1.Point.Fn.ORDER - sig.s)
+    : sig;
+  return Buffer.from(lowS.toBytes("der"));
 };
 
 describe("verifySecp256k1Signature", () => {

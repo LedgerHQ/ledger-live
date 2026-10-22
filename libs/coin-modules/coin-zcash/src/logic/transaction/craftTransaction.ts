@@ -70,7 +70,7 @@ export async function craftTransaction(
   plan: CraftPlan,
 ): Promise<BuildTransactionResult> {
   const { zaino } = await context.config(currencyId);
-  const { client, args } = await resolveCraft(zainoEndpoint(zaino.url), plan);
+  const { client, args } = await resolveCraft(zainoEndpoint(zaino.url, currencyId), plan);
 
   if (!client.buildTransaction) {
     throw new Error("Shielded Zcash transactions are not supported in this environment");
@@ -93,7 +93,7 @@ export async function craftIronwoodTransaction(
   plan: IronwoodCraftPlan,
 ): Promise<BuildIronwoodTransactionResult> {
   const { zaino } = await context.config(currencyId);
-  const { client, args } = await resolveCraft(zainoEndpoint(zaino.url), plan);
+  const { client, args } = await resolveCraft(zainoEndpoint(zaino.url, currencyId), plan);
 
   if (!client.buildIronwoodTransaction) {
     throw new Error("Zcash V6 (Ironwood) transactions are not supported in this environment");

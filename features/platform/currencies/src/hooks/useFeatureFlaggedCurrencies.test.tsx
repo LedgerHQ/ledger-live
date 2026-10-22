@@ -39,4 +39,19 @@ describe("useFeatureFlaggedCurrencies", () => {
     const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
     expect(result.current.deactivatedCurrencyIds.has("gonka")).toBe(false);
   });
+
+  it("deactivates alpen_testnet by default", () => {
+    const { Wrapper } = makeStoreWrapper();
+    const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
+    expect(result.current.featureFlaggedCurrencies.alpen_testnet).toBeDefined();
+    expect(result.current.deactivatedCurrencyIds.has("alpen_testnet")).toBe(true);
+  });
+
+  it("stops deactivating alpen_testnet once its gating flag is enabled", () => {
+    const { Wrapper } = makeStoreWrapper({
+      resolved: { ...FEATURE_FLAGS_DEFAULTS, currencyAlpenTestnet: { enabled: true } },
+    });
+    const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
+    expect(result.current.deactivatedCurrencyIds.has("alpen_testnet")).toBe(false);
+  });
 });

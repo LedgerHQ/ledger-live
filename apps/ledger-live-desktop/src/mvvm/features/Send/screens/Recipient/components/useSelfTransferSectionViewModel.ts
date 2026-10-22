@@ -22,8 +22,12 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
 
   const target = useMemo(() => {
     if (!account) return null;
-    return getAccountSelfTransferTarget(account, state.transaction.transaction);
-  }, [account, state.transaction.transaction]);
+    return getAccountSelfTransferTarget(
+      account,
+      state.transaction.transaction,
+      state.account.parentAccount,
+    );
+  }, [account, state.transaction.transaction, state.account.parentAccount]);
 
   const onSelfTransfer = useCallback(
     (displayLabel: string) => {

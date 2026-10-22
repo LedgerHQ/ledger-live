@@ -2,6 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import {
   activateContractData,
   enableBlindSigning,
+  enableBlindSigningOnNanoS,
   goToSettings,
   activateExpertMode,
   expectValidAddressDevice,
@@ -52,6 +53,11 @@ export default class SpeculosPage {
   @Step("Enable blind signing on Speculos")
   async enableBlindSigning() {
     await enableBlindSigning();
+  }
+
+  @Step("Enable blind signing if the device is a Nano S")
+  async enableBlindSigningOnNanoS() {
+    await enableBlindSigningOnNanoS();
   }
 
   @Step("Accept the blind-signing risk warning on Speculos")

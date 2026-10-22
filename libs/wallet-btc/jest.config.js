@@ -1,4 +1,6 @@
-module.exports = {
+const { withEsmDeps } = require("@support/jest-shared");
+
+const config = {
   passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
@@ -35,3 +37,5 @@ module.exports = {
     "@ledgerhq/test-quarantine/jest-retries",
   ],
 };
+
+module.exports = withEsmDeps(config);

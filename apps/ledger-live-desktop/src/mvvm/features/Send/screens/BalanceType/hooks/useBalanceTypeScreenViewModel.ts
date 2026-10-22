@@ -3,11 +3,15 @@ import { SEND_FLOW_STEP, type SendFlowState } from "@ledgerhq/live-common/flows/
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { trackPage } from "@shared/analytics";
 import {
   counterValueCurrencySelector,
@@ -19,6 +23,8 @@ import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackin
 
 type FlowTransaction = NonNullable<SendFlowState["transaction"]["transaction"]>;
 
+const UNKNOWN_BALANCE = "-";
+
 export type BalanceTypeOption = {
   id: string;
   /** i18n key suffix under `newSendFlow.`, owned by the currency's send descriptor. */
@@ -26,8 +32,10 @@ export type BalanceTypeOption = {
   formattedBalance: string;
   formattedCounterValue: string;
   isZero: boolean;
+  requiresSync: boolean;
   hasPendingBalance: boolean;
   icon: "lock" | "check";
+  hideSubtitle?: boolean;
 };
 
 export type BalanceTypeScreenViewModel =
@@ -50,10 +58,15 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     to: counterValueCurrency,
   });
 
-  const { account } = state.account;
+  const { account, parentAccount } = state.account;
   const { transaction } = state.transaction;
 
-  const bridge = useAccountBridgeOrNull<FlowTransaction>(account);
+  const mainAccount = account ? getMainAccount(account, parentAccount) : undefined;
+  const hasBalanceTypeSync = Boolean(
+    useLLDCoinFamily(mainAccount?.currency.family).SendBalanceTypeSync,
+  );
+
+  const bridge = useAccountBridgeOrNull<FlowTransaction>(account, parentAccount);
   const unit = useMaybeAccountUnit(account ?? undefined);
   const trackingProperties = useSendFlowTrackingProperties();
 
@@ -84,15 +97,16 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       const poolChanged = balanceTypeConfig.getSelectedOptionId(transaction) !== optionId;
       if (poolChanged) {
         resetRecipient();
+        transactionActions.updateTransaction(currentTransaction =>
+          bridge.updateTransaction(
+            currentTransaction,
+            balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
+          ),
+        );
       }
-
-      transactionActions.updateTransaction(currentTransaction =>
-        bridge.updateTransaction(
-          currentTransaction,
-          balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
-        ),
+      navigation.goToStep(
+        hasBalanceTypeSync ? SEND_FLOW_STEP.BALANCE_TYPE_SYNC : SEND_FLOW_STEP.RECIPIENT,
       );
-      navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
     },
     [
       account,
@@ -102,6 +116,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       bridge,
       balanceTypeConfig,
       navigation,
+      hasBalanceTypeSync,
     ],
   );
 
@@ -110,14 +125,22 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   }
 
   const options = balanceTypeConfig.getOptions({ account }).map(option => {
-    const counterValue = calculateCountervalue(getAccountCurrency(account), option.balance);
+    const { balance } = option;
+    const counterValue = balance
+      ? calculateCountervalue(getAccountCurrency(account), balance)
+      : null;
+
+    let formattedBalance = UNKNOWN_BALANCE;
+    if (balance) {
+      formattedBalance = unit
+        ? formatCurrencyUnit(unit, balance, { showCode: true, locale, discreet })
+        : "";
+    }
 
     return {
       id: option.id,
       translationKey: option.translationKey,
-      formattedBalance: unit
-        ? formatCurrencyUnit(unit, option.balance, { showCode: true, locale, discreet })
-        : "",
+      formattedBalance,
       formattedCounterValue: counterValue
         ? formatCurrencyUnit(counterValueCurrency.units[0], counterValue, {
             showCode: true,
@@ -125,9 +148,11 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
             discreet,
           })
         : "",
-      isZero: option.balance.isZero(),
+      isZero: balance?.isZero() ?? false,
+      requiresSync: balance === null,
       hasPendingBalance: option.hasPendingBalance,
       icon: option.icon,
+      hideSubtitle: option.hideSubtitle,
     };
   });
 

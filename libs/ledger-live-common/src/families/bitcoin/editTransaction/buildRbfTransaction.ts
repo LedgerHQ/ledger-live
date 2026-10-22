@@ -65,8 +65,9 @@ export async function buildRbfCancelTx(
   );
   // Cancel-of-cancel may have no external output and no persisted recipient.
   // In that case, preserve editable intent by using the first spendable output amount.
-  const fallbackAmountFromFirstSpendableOutput =
-    originalTx.outs.find(out => out.value > 0)?.value ?? 0;
+  const fallbackAmountFromFirstSpendableOutput = Number(
+    originalTx.outs.find(out => out.value > 0)?.value ?? 0,
+  );
   const amountSent =
     detectedAmountSent > 0 ? detectedAmountSent : fallbackAmountFromFirstSpendableOutput;
 

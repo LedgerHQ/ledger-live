@@ -30,7 +30,7 @@ export class WalletPolicy {
 
   getWalletId(): Buffer {
     // wallet_id (sha256 of the wallet serialization),
-    return crypto.sha256(this.serialize());
+    return Buffer.from(crypto.sha256(this.serialize()));
   }
 
   serialize(): Buffer {
@@ -43,7 +43,7 @@ export class WalletPolicy {
     buf.writeUInt8(0x02); // wallet policy version (2 is supported from version 2.1.0 of the app)
     buf.writeUInt8(0); // length of wallet name (empty string for default wallets)
     buf.writeVarInt(this.descriptorTemplate.length); // length of descriptor template
-    buf.writeSlice(crypto.sha256(Buffer.from(this.descriptorTemplate, "ascii"))); // hash of descriptor template
+    buf.writeSlice(Buffer.from(crypto.sha256(Buffer.from(this.descriptorTemplate, "ascii")))); // hash of descriptor template
     (buf.writeVarInt(this.keys.length), buf.writeSlice(m.getRoot()));
     return buf.buffer();
   }

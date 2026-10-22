@@ -6,10 +6,9 @@ import type { InfoStateBaseProps } from "./sharedTypes";
 export * from "./sharedTypes";
 
 type LumenSpotProps = ComponentProps<typeof Spot>;
-type LumenIconSpotProps = Extract<LumenSpotProps, { icon?: unknown }>;
 
 /** Props forwarded to the Lumen Spot for the custom spot preset (web). */
-export type InfoStateSpotProps = Pick<LumenIconSpotProps, "icon" | "size">;
+export type InfoStateSpotProps = Pick<LumenSpotProps, "icon" | "size">;
 
 /** Props for the web InfoState layout. */
 export type InfoStateProps =

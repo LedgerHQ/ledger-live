@@ -24,7 +24,7 @@ export function ConfirmBody({
   return (
     <>
       <div className="flex flex-col items-center gap-24">
-        <Spot appearance="icon" icon={SPOT_ICON[appearance]} size={56} />
+        <Spot icon={SPOT_ICON[appearance]} size={56} />
         <div className="flex flex-col gap-8">
           <span className="heading-4-semi-bold text-base">{t(titleKey)}</span>
           {descriptionKey ? (

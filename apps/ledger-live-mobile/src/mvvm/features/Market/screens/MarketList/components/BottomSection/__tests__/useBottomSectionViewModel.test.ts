@@ -28,7 +28,7 @@ describe("useBottomSectionViewModel", () => {
     expect(result.current.counterCurrency).toBe("eur");
   });
 
-  it("should toggle filterByStarredCurrencies and reset page", () => {
+  it("should toggle filterByStarredCurrencies and reset the visible page", () => {
     const { result, store } = renderHook(
       () => useBottomSectionViewModel(),
       withMarketState({ marketFilterByStarredCurrencies: false }),
@@ -42,7 +42,6 @@ describe("useBottomSectionViewModel", () => {
 
     expect(store.getState().market.marketFilterByStarredCurrencies).toBe(true);
     expect(store.getState().market.marketCurrentPage).toBe(1);
-    expect(store.getState().market.marketParams.page).toBe(1);
   });
 
   it("should track analytics when enabling starred filter", () => {
@@ -74,7 +73,7 @@ describe("useBottomSectionViewModel", () => {
     expect(mockedTrack).not.toHaveBeenCalled();
   });
 
-  it("should dispatch new params and reset page on onFilterChange", () => {
+  it("should dispatch new params and reset the visible page on onFilterChange", () => {
     const { result, store } = renderHook(() => useBottomSectionViewModel(), withMarketState());
 
     act(() => {
@@ -83,7 +82,6 @@ describe("useBottomSectionViewModel", () => {
 
     expect(store.getState().market.marketParams.range).toBe("30d");
     expect(store.getState().market.marketCurrentPage).toBe(1);
-    expect(store.getState().market.marketParams.page).toBe(1);
   });
 
   it("should track analytics with merged params on onFilterChange", () => {

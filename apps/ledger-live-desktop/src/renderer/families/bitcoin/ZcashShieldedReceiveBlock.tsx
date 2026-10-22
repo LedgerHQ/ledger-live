@@ -13,7 +13,7 @@ import Text from "~/renderer/components/Text";
 import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { getDefaultAccountName } from "@domain/entity-account-name";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashAccount as CoinZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
 import type { ZcashAccountBridge } from "@ledgerhq/coin-zcash/bridge";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";

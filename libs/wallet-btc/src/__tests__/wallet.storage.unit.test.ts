@@ -6,7 +6,7 @@ describe("Unit tests for bitcoin storage", () => {
   beforeEach(() => {
     storage = new BitcoinLikeStorage();
     // init with 2 confirmed txs and 1 unconfirmed tx in bitcoin storage
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
         inputs: [],
@@ -117,7 +117,7 @@ describe("Unit tests for bitcoin storage", () => {
   it("testing add transaction data and remove transaction data", async () => {
     // 1 pending txs and 2 confirmed txs
     expect(storage.txsSize()).toBe(3);
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
         inputs: [],
@@ -132,10 +132,10 @@ describe("Unit tests for bitcoin storage", () => {
     // same tx id, should not be added
     expect(storage.txsSize()).toBe(3);
     // remove pending tx
-    storage.removePendingTxs({ account: 0, index: 0 });
+    storage.removePendingTxs(jest.fn(), { account: 0, index: 0 });
     expect(storage.txsSize()).toBe(2);
     // remove all txs
-    storage.removeTxs({ account: 0, index: 0 });
+    storage.removeTxs(jest.fn(), { account: 0, index: 0 });
     expect(storage.txsSize()).toBe(0);
   }, 30000);
 
@@ -150,7 +150,7 @@ describe("Unit tests for bitcoin storage", () => {
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
     expect(storage.getLastUnconfirmedTx()).toMatchObject({ block: null });
     // remove pending tx
-    storage.removePendingTxs({ account: 0, index: 0 });
+    storage.removePendingTxs(jest.fn(), { account: 0, index: 0 });
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
     expect(storage.getLastConfirmedTxBlock({ account: 0, index: 0 })?.height).toEqual(120);
@@ -160,7 +160,7 @@ describe("Unit tests for bitcoin storage", () => {
 
     expect(storage.getLastUnconfirmedTx()).toBeUndefined();
     // remove all tx
-    storage.removeTxs({ account: 0, index: 0 });
+    storage.removeTxs(jest.fn(), { account: 0, index: 0 });
     expect(storage.getLastConfirmedTxBlock({ account: 0, index: 0 })).toBeNull();
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(false);
@@ -168,7 +168,7 @@ describe("Unit tests for bitcoin storage", () => {
   }, 30000);
 
   it("should update highest block when a higher block is added", () => {
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "new-tx",
         inputs: [],
@@ -195,7 +195,7 @@ describe("Unit tests for bitcoin storage", () => {
 
   it("should not change highest block if same height is added with a different hash", () => {
     const original = storage.getHighestBlockHeightAndHash();
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "another-tx",
         inputs: [],
@@ -215,8 +215,8 @@ describe("Unit tests for bitcoin storage", () => {
   });
 
   it("should return null for highest block when only pending txs exist", () => {
-    storage.removeTxs({ account: 0, index: 0 }); // remove all
-    storage.appendTxs([
+    storage.removeTxs(jest.fn(), { account: 0, index: 0 }); // remove all
+    storage.appendTxs(jest.fn(), [
       {
         id: "pending-only",
         inputs: [],
@@ -232,7 +232,7 @@ describe("Unit tests for bitcoin storage", () => {
   });
 
   it("should not duplicate tx if it exists as both pending and confirmed", () => {
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "duplicate-tx",
         inputs: [],
@@ -246,7 +246,7 @@ describe("Unit tests for bitcoin storage", () => {
     ]);
 
     // Simulate same tx confirmed later
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "duplicate-tx",
         inputs: [],
@@ -268,7 +268,7 @@ describe("Unit tests for bitcoin storage", () => {
 
   it("should replace earlier confirmed tx with newer version (higher block)", () => {
     const originalBlock = storage.getHighestBlockHeightAndHash();
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "replaced-tx",
         inputs: [],
@@ -292,7 +292,7 @@ describe("Unit tests for bitcoin storage", () => {
     // Step 1: Add 4 pending txs
     const baseTime = new Date("2021-07-28T16:00:00Z").toISOString();
     for (let i = 0; i < 4; i++) {
-      storage.appendTxs([
+      storage.appendTxs(jest.fn(), [
         {
           id: `tx-${i}`,
           inputs: [],
@@ -310,7 +310,7 @@ describe("Unit tests for bitcoin storage", () => {
     expect(storage.txsSize()).toBe(7);
 
     // Step 2: Confirm tx-2
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-2",
         inputs: [],
@@ -352,11 +352,11 @@ describe("Unit tests for bitcoin storage", () => {
       received_at: "2021-07-28T15:00:00Z",
     };
 
-    storage.appendTxs([pendingTx]);
+    storage.appendTxs(jest.fn(), [pendingTx]);
     expect(storage.txsSize()).toBe(4); // 3 fixtures + 1 pending
 
     // Simulate what xpub.syncAddress does: remove pending txs first
-    storage.removePendingTxs({ account: 0, index: 0 });
+    storage.removePendingTxs(jest.fn(), { account: 0, index: 0 });
 
     // Step 2: Add a confirmed version of the same tx
     const confirmedTx = {
@@ -369,7 +369,7 @@ describe("Unit tests for bitcoin storage", () => {
       received_at: "2021-07-28T15:05:00Z",
     };
 
-    storage.appendTxs([confirmedTx]);
+    storage.appendTxs(jest.fn(), [confirmedTx]);
 
     // Confirm it's replaced correctly
     const txs = storage.exportSync().txs;
@@ -382,7 +382,7 @@ describe("Unit tests for bitcoin storage", () => {
 
   it("[utxos] should not reuse spent UTXOs after broadcasting confirmed transaction", () => {
     // Initial state: One confirmed UTXO available
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-initial",
         inputs: [],
@@ -405,7 +405,7 @@ describe("Unit tests for bitcoin storage", () => {
     ]);
 
     // Simulate spending the UTXO
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-spend",
         inputs: [
@@ -454,7 +454,7 @@ describe("Unit tests for bitcoin storage", () => {
 
   it("[utxos] should not allow selecting spent UTXOs for new transactions", () => {
     // Setup: append a spent UTXO
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-spent",
         inputs: [],
@@ -504,7 +504,7 @@ describe("Unit tests for bitcoin storage", () => {
   });
 
   it("[utxos] should prevent race condition issues on UTXO updates", () => {
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-race",
         inputs: [],
@@ -527,9 +527,9 @@ describe("Unit tests for bitcoin storage", () => {
     ]);
 
     // Simulate rapid conflicting updates
-    storage.removeTxs({ account: 0, index: 0 });
+    storage.removeTxs(jest.fn(), { account: 0, index: 0 });
 
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-race",
         inputs: [],
@@ -564,7 +564,7 @@ describe("Unit tests for bitcoin storage", () => {
       output_index: 0,
       sequence: 0,
     };
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "coinbase-tx",
         inputs: [coinbaseLikeInput],
@@ -602,7 +602,7 @@ describe("Unit tests for bitcoin storage", () => {
 
   it("[utxos] should mark UTXOs as spent when spending from multiple addresses", () => {
     // Setup: Create UTXOs on two different addresses
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-create-utxo-addr1",
         inputs: [],
@@ -652,7 +652,7 @@ describe("Unit tests for bitcoin storage", () => {
     ).toHaveLength(1);
 
     // Critical test: Transaction that spends from both addresses but only synced on address-1
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "tx-spend-both",
         inputs: [

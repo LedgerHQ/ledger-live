@@ -27,6 +27,7 @@ function account({
   freshAddress = "t1transparent",
   withBitcoinResources = true,
   ufvk = "uview1test",
+  currencyId = "zcash",
 }: {
   utxoValues?: number[];
   notes?: { amount: number; blockHeight: number }[];
@@ -34,11 +35,12 @@ function account({
   freshAddress?: string;
   withBitcoinResources?: boolean;
   ufvk?: string | null;
+  currencyId?: string;
 } = {}): ZcashAccount {
   return {
     id: "js:2:zcash:xpub:",
     type: "Account",
-    currency: { id: "zcash" },
+    currency: { id: currencyId },
     freshAddress,
     blockHeight: REFERENCE_HEIGHT,
     pendingOperations: [],
@@ -75,6 +77,14 @@ describe("zcash balance-type config", () => {
         "balanceType.shielded",
       ]);
       expect(options.map(option => option.icon)).toEqual(["check", "lock"]);
+    });
+
+    it("offers both pools on a zcash testnet account", () => {
+      const options = zcashBalanceTypeConfig.getOptions({
+        account: account({ currencyId: "zcash_testnet" }),
+      });
+
+      expect(options.map(option => option.id)).toEqual(["public", "private"]);
     });
 
     it("sums the account's transparent UTXOs", () => {
@@ -168,6 +178,14 @@ describe("zcash balance-type config", () => {
   describe("getSelectableBalance", () => {
     it("returns the full transparent balance when there are ≤32 UTXOs", () => {
       const acc = account({ utxoValues: [1000, 250, 500] });
+
+      expect(
+        zcashBalanceTypeConfig.getSelectableBalance({ account: acc, optionId: "public" }),
+      ).toEqual(new BigNumber(1750));
+    });
+
+    it("returns the transparent balance of a zcash testnet account", () => {
+      const acc = account({ utxoValues: [1000, 250, 500], currencyId: "zcash_testnet" });
 
       expect(
         zcashBalanceTypeConfig.getSelectableBalance({ account: acc, optionId: "public" }),
@@ -312,9 +330,12 @@ describe("zcash balance-type config", () => {
     it.each([true, false])(
       "records a self-transfer of %s, which the bridge never infers from the recipient",
       isSelfTransfer => {
-        expect(zcashBalanceTypeConfig.buildSelfTransferPatch({ isSelfTransfer })).toEqual({
-          selfTransfer: isSelfTransfer,
-        });
+        expect(
+          zcashBalanceTypeConfig.buildSelfTransferPatch({
+            isSelfTransfer,
+            transaction: transaction("public"),
+          }),
+        ).toEqual({ selfTransfer: isSelfTransfer });
       },
     );
   });

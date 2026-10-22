@@ -112,6 +112,7 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
       "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
       "^@sbaiahmed1/react-native-blur$": here("mocks/react-native-blur.tsx"),
       "^react-native-worklets$": here("mocks/react-native-worklets.js"),
+      "^react-native-gesture-handler$": here("mocks/react-native-gesture-handler.tsx"),
       "^expo-haptics$": here("mocks/expo-haptics.ts"),
     },
     setupFilesAfterEnv: [here("setup/native.ts")],

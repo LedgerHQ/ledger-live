@@ -31,6 +31,9 @@ on:
         required: true
       SLACK_LIVE_CI_BOT_TOKEN:
         required: true
+      SPECULINHO_URL:
+        description: Base URL for the Speculinho operator. When set, the smoke tests run against remote Speculos instead of local Docker.
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -76,6 +79,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_DEVICE: nanoSP
+      REMOTE_SPECULOS: ${{ secrets.SPECULINHO_URL != '' && 'true' || 'false' }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: "true"
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
@@ -105,6 +109,7 @@ jobs:
         with:
           build_type: testing
       - name: Setup Speculos image and Coin Apps
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: coin-apps
@@ -151,8 +156,9 @@ jobs:
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
-          SPECULOS_IMAGE_TAG: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
+          SPECULOS_IMAGE_TAG: ${{ env.REMOTE_SPECULOS != 'true' && env.SMOKE_SPECULOS_IMAGE_TAG || 'ghcr.io/ledgerhq/speculos:latest' }}
           SPECULOS_FIRMWARE_VERSION: ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         continue-on-error: true
@@ -189,7 +195,7 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-wallet-16cpu-aws-public]
+    runs-on: [ledger-wallet-16cpu-aws-public-cached]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:

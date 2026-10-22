@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import hederaCoinConfig from "../config";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { craftTransaction } from "../logic/craftTransaction";
 import { combine } from "../logic/combine";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
@@ -48,6 +50,10 @@ const runSignOperation = (
   });
 
 describe("signOperation", () => {
+  beforeAll(() => {
+    hederaCoinConfig.setCoinConfig(() => getMockedConfig());
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     jest.mocked(logicUtils.isTokenAssociateTransaction).mockReturnValue(false);

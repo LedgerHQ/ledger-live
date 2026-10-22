@@ -1,4 +1,5 @@
 import { renderHook, act } from "tests/testSetup";
+import { track } from "@shared/analytics";
 import { BigNumber } from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import {
@@ -41,6 +42,14 @@ jest.mock("../../../../context/SendFlowContext", () => ({
       },
     },
   }),
+}));
+
+jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send" }),
+}));
+
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
 }));
 
 jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
@@ -240,5 +249,36 @@ describe("useFeePaymentViewModel", () => {
 
     expect(result.current.confirmDisabled).toBe(true);
     expect(mockGoToPreviousStep).not.toHaveBeenCalled();
+  });
+
+  it("tracks the fee option confirmed", () => {
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    act(() => {
+      result.current.onSelect(SPONSORED_ID);
+    });
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "confirm",
+      page: "step fee payment",
+      fee_option: SPONSORED_ID,
+      flow_session_id: "session-1",
+      flow: "send",
+    });
+  });
+
+  it("tracks nothing when Confirm is blocked", () => {
+    mockSponsoredSend.selectedFeeOptionId = SPONSORED_ID;
+    mockSponsoredSend.sponsoredMaxAmount = new BigNumber(0);
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(track).not.toHaveBeenCalled();
   });
 });

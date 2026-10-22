@@ -13,7 +13,7 @@ export function StatusMessage({ text, dataTestId }: StatusMessageProps) {
       className="flex flex-col items-center justify-center gap-10 px-24"
       data-testid={dataTestId}
     >
-      <Spot appearance="icon" icon={Search} size={56} />
+      <Spot icon={Search} size={56} />
       <p className="text-center mt-6 body-1-semi-bold">{text}</p>
     </div>
   );

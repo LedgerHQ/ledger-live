@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import orderBy from "lodash/orderBy";
 import { accountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
@@ -32,7 +32,7 @@ export const useDetailedAccounts = (
   onAccountSelected: ((account: AccountLike, parentAccount?: AccountLike) => void) | undefined,
 ) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const counterValuesState = useCountervaluesState();
+  const counterValuesState = useCountervaluesCache();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const nestedAccounts = useSelector(accountsSelector);
   const discreet = useSelector(discreetModeSelector);

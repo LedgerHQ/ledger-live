@@ -13,7 +13,7 @@ import {
   createSessionEventsActor,
   stateValueToString,
   type DeviceOnboardingOutput,
-} from "@ledgerhq/device-onboarding";
+} from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { createDeviceOnboardingPorts } from "../utils/ports";
@@ -62,9 +62,11 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
   const {
     state,
     context,
-    events,
+    machineContext,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     setSessionReady,
     actorRef,
     portsRef,
@@ -390,9 +392,11 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     device,
     state,
     context,
-    events,
+    machineContext,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     error,
     connect,
     send,

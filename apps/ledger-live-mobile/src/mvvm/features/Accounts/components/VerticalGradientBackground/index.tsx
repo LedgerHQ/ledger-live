@@ -6,7 +6,7 @@ export default function VerticalGradientBackground({ stopColor }: { stopColor: s
   return (
     <Svg
       style={{
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.flatten(StyleSheet.absoluteFill),
         top: 0,
         flexShrink: 0,
       }}

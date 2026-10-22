@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type PolkadotCoinConfig } from "../config";
 import polkadotAPI from "../network";
 import { CoreTransaction } from "../types";
@@ -8,11 +7,11 @@ import { fakeSignExtrinsic } from "./signTransaction";
 export async function estimateFees(
   config: PolkadotCoinConfig,
   { unsigned, registry }: CoreTransaction,
-  currency?: CryptoCurrency,
+  currencyId?: string,
 ): Promise<bigint> {
   await loadPolkadotCrypto();
 
   const fakeSignedTx = await fakeSignExtrinsic(unsigned, registry);
-  const payment = await polkadotAPI.paymentInfo(config, fakeSignedTx, currency);
+  const payment = await polkadotAPI.paymentInfo(config, fakeSignedTx, currencyId);
   return BigInt(payment.partialFee);
 }

@@ -20,7 +20,7 @@ export function CoinOptionRow({ onPress, title, Icon, testID, stateTestID }: Pro
   return (
     <ListItem onPress={onPress} testID={testID}>
       <ListItemLeading>
-        <Spot appearance="icon" icon={Icon} />
+        <Spot icon={Icon} />
         <ListItemContent testID={stateTestID}>
           <ListItemTitle>{title}</ListItemTitle>
         </ListItemContent>

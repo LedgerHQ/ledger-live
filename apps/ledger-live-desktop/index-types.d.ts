@@ -69,8 +69,6 @@ interface Window {
   // Read through `~/renderer/bridge`, which checks the version.
   lld: import("./src/bridge/contract").LedgerBridge;
 
-  // Electron's nodeIntegration provides require on window
-  require: NodeJS.Require;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
@@ -88,6 +86,7 @@ interface Window {
     removeDevice: (device: Device) => void;
     resetDevices: () => void;
     getMockServerSessionToken: () => string | undefined;
+    setSpeculosTarget: (address: string, sessionToken?: string) => void;
   };
 
   // used for the analytics, initialized in the index.html
@@ -133,7 +132,7 @@ interface Window {
 
 declare var api: Window["api"] | undefined; // eslint-disable-line no-var
 
-// Allow custom properties on global/globalThis (tests, AppGeoBlocker, etc.)
+// Allow custom properties on global/globalThis (tests, splash lift, etc.)
 declare global {
   interface GlobalThis {
     [key: string]: any;

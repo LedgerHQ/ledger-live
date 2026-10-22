@@ -40,8 +40,9 @@ import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from
 import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
-import type { SendIntentSummary } from "./agent-intent/send-intent";
-import type { IntentListEntry } from "./agent-intent/intent-list";
+import { NETWORK_LABELS, type SendIntentSummary } from "./agent-intent/send-intent";
+import { isTerminalIntentStatus, type IntentListEntry } from "./agent-intent/intent-list";
+import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
@@ -261,12 +262,48 @@ export interface CommandOutput {
   /** One page of `agent-intent intents` (human: table + next-page hint; json: envelope with
    * `intents`, `count` and `nextCursor`, `null` on the last page). */
   agentIntentIntents(result: AgentIntentIntentsPage): void;
+  /** Output a submitted `agent-intent swap` proposal (human: review link first; json: envelope). */
+  agentIntentSwap(
+    result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void;
+  /** Output a quoted and validated `agent-intent swap --dry-run` proposal that was not submitted. */
+  agentIntentSwapDryRun(summary: SwapIntentSummary): void;
+  /** One intent from `agent-intent status` (human: labeled lines; json: envelope with the intent's
+   * fields, `profileId` and `terminal`, `null` for a state this version doesn't know). */
+  agentIntentStatus(result: AgentIntentStatusResult): void;
+  /** The intent `agent-intent cancel` is about to cancel, before the prompt (both modes: stderr). */
+  agentIntentCancelPreview(result: AgentIntentCancelPreview): void;
+  /** Declined at the prompt (human: stderr line; json: `cancelled: false`, `declined: true`). */
+  agentIntentCancelAborted(result: { profileId: string; intentId: string }): void;
+  /** A cancelled intent (human: check line + details; json: envelope, `cancelled: true`). */
+  agentIntentCancel(result: AgentIntentCancelResult): void;
 }
 
 export type AgentIntentIntentsPage = {
   profileId: string;
   intents: readonly IntentListEntry[];
   nextCursor: string | null;
+};
+
+export type AgentIntentStatusResult = {
+  profileId: string;
+  intent: IntentListEntry;
+  terminal: boolean | null;
+};
+
+export type AgentIntentCancelPreview = {
+  profileId: string;
+  intent: IntentListEntry;
+};
+
+export type AgentIntentCancelResult = {
+  profileId: string;
+  intent: IntentListEntry;
+  /** The intent was cancelled before this run, so this run changed nothing. */
+  alreadyCancelled: boolean;
+  /** `false` when the state couldn't be read back after cancelling: `intent` is then the earlier
+   * read with status `cancelled`, and its `updatedAt` is stale. */
+  readBack: boolean;
 };
 
 export type AgentIntentEnrollmentPending = {
@@ -939,19 +976,106 @@ class HumanCommandOutput implements CommandOutput {
       );
     }
   }
+  agentIntentSwap(
+    result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    writeStdout(
+      `${colors.green("✔")} Intent proposed for human review — no transaction was signed or broadcast.`,
+    );
+    if (result.deeplink) writeStdout(result.deeplink);
+    writeStdout("");
+    writeStdout(
+      [
+        ...(result.intentId ? [`Intent:   ${result.intentId}`] : []),
+        ...swapIntentSummaryLines(result),
+      ].join("\n"),
+    );
+    writeStdout(
+      colors.dim(
+        "Open the link to review it; the frontend fetches a fresh quote, and the swap only " +
+          "executes once approved on a Ledger device.",
+      ),
+    );
+  }
+
+  agentIntentSwapDryRun(summary: SwapIntentSummary): void {
+    writeStdout(`Dry run — intent validated, nothing was submitted.`);
+    writeStdout(swapIntentSummaryLines(summary).join("\n"));
+  }
+
+  agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
+    writeStdout(intentDetailLines(profileId, intent, terminal).join("\n"));
+  }
+
+  agentIntentCancelPreview({ profileId, intent }: AgentIntentCancelPreview): void {
+    const terminal = isTerminalIntentStatus(intent.status);
+    writeStderr(`${intentDetailLines(profileId, intent, terminal).join("\n")}\n`);
+  }
+
+  agentIntentCancelAborted({ intentId }: { profileId: string; intentId: string }): void {
+    writeStderr(`Not cancelled: intent ${intentId} is unchanged.\n`);
+  }
+
+  agentIntentCancel({ profileId, intent, alreadyCancelled }: AgentIntentCancelResult): void {
+    const id = stripControlChars(intent.id);
+    const headline = alreadyCancelled
+      ? `Intent ${id} was already cancelled.`
+      : `${colors.green("✔")} Intent ${id} cancelled. The user can no longer sign it.`;
+    const terminal = isTerminalIntentStatus(intent.status);
+    writeStdout([headline, ...intentDetailLines(profileId, intent, terminal)].join("\n"));
+  }
+}
+
+/** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
+function intentDetailLines(
+  profileId: string,
+  i: IntentListEntry,
+  terminal: boolean | null,
+): string[] {
+  const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
+  const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
+  const amount = i.displayAmount ?? baseUnits;
+  return [
+    `Intent:  ${i.id}`,
+    `Status:  ${state}${terminal ? " (final)" : ""}`,
+    `Profile: ${profileId}`,
+    ...(amount ? [`Amount:  ${amount}`] : []),
+    ...(i.sender ? [`From:    ${i.sender}`] : []),
+    ...(i.recipient ? [`To:      ${i.recipient}`] : []),
+    ...(i.network ? [`Network: ${i.network}`] : []),
+    ...(i.description ? [`Note:    ${i.description}`] : []),
+    ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
+    `Created: ${i.createdAt}`,
+    `Updated: ${i.updatedAt}`,
+  ].map(stripControlChars);
+}
+
+function swapIntentSummaryLines(summary: SwapIntentSummary): string[] {
+  const source = summary.quoted ? "quoted" : "from --to-amount";
+  return [
+    `Profile:  ${summary.profileId} (${summary.environment})`,
+    `Sender:   ${summary.sender}`,
+    `Sell:     ${summary.fromAmount} ${summary.from.ticker} (${summary.from.id})`,
+    `Receive:  ${summary.toAmount} ${summary.to.ticker} (${summary.to.id}, ${source})`,
+    `Provider: ${summary.provider}`,
+    ...(summary.description ? [`Note:     ${summary.description}`] : []),
+  ];
 }
 
 function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
+  const { asset: sent } = summary;
   const asset =
-    summary.asset.type === "native"
-      ? summary.asset.ticker
-      : `${summary.asset.ticker} (${summary.asset.contract})`;
+    sent.type === "native"
+      ? sent.ticker
+      : `${sent.ticker} (${sent.type === "erc20" ? sent.contract : sent.mint})`;
   return [
     `Profile: ${summary.profileId} (${summary.environment})`,
     `From:    ${summary.sender}`,
     `To:      ${summary.recipient}`,
+    `Network: ${NETWORK_LABELS[summary.network]}`,
     `Amount:  ${summary.displayAmount} ${asset}`,
-    `Fee:     ${summary.feeStrategy}`,
+    ...(summary.network === "ethereum" ? [`Fee:     ${summary.feeStrategy}`] : []),
+    ...(summary.network === "solana" && summary.memo ? [`Memo:    ${summary.memo}`] : []),
     ...(summary.description ? [`Note:    ${summary.description}`] : []),
   ];
 }
@@ -1374,6 +1498,65 @@ class JsonCommandOutput implements CommandOutput {
   agentIntentIntents({ profileId, intents, nextCursor }: AgentIntentIntentsPage): void {
     this._writeNdjson(this._envelope({ profileId, count: intents.length, intents, nextCursor }));
   }
+  agentIntentSwap(
+    result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    this._writeNdjson(
+      this._envelope({
+        intentId: result.intentId,
+        deeplink: result.deeplink,
+        ...swapIntentSummaryJson(result),
+        submitted: true,
+      }),
+    );
+  }
+
+  agentIntentSwapDryRun(summary: SwapIntentSummary): void {
+    this._writeNdjson(
+      this._envelope({ ...swapIntentSummaryJson(summary), submitted: false, dryRun: true }),
+    );
+  }
+
+  agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
+    this._writeNdjson(this._envelope({ profileId, terminal, intent }));
+  }
+
+  agentIntentCancelPreview({ profileId, intent }: AgentIntentCancelPreview): void {
+    // Stdout carries only the final envelope; the prompt and what it is about go to stderr.
+    const terminal = isTerminalIntentStatus(intent.status);
+    writeStderr(`${intentDetailLines(profileId, intent, terminal).join("\n")}\n`);
+  }
+
+  agentIntentCancelAborted({ profileId, intentId }: { profileId: string; intentId: string }): void {
+    this._writeNdjson(this._envelope({ profileId, cancelled: false, declined: true, intentId }));
+  }
+
+  agentIntentCancel({
+    profileId,
+    intent,
+    alreadyCancelled,
+    readBack,
+  }: AgentIntentCancelResult): void {
+    this._writeNdjson(
+      this._envelope({ profileId, cancelled: true, alreadyCancelled, readBack, intent }),
+    );
+  }
+}
+
+/** Amounts stay the human-unit decimal strings the intent signs, never JSON numbers. */
+function swapIntentSummaryJson(summary: SwapIntentSummary): Record<string, unknown> {
+  return {
+    profileId: summary.profileId,
+    environment: summary.environment,
+    sender: summary.sender,
+    from: summary.from,
+    to: summary.to,
+    fromAmount: summary.fromAmount,
+    toAmount: summary.toAmount,
+    provider: summary.provider,
+    quoted: summary.quoted,
+    ...(summary.description ? { description: summary.description } : {}),
+  };
 }
 
 /** `amount` stays a base-unit decimal string: a JSON number would lose precision past 2^53. */
@@ -1386,7 +1569,8 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
     asset: summary.asset,
     amount: summary.amount,
     displayAmount: summary.displayAmount,
-    feeStrategy: summary.feeStrategy,
+    ...(summary.network === "ethereum" ? { feeStrategy: summary.feeStrategy } : {}),
+    ...(summary.network === "solana" && summary.memo ? { memo: summary.memo } : {}),
     ...(summary.description ? { description: summary.description } : {}),
   };
 }

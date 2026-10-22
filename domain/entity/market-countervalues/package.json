@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-market-countervalues",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Domain entity for countervalues: rate state, tracking pairs and the pure logic over them",
   "main": "src/index.ts",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@domain/entity-currency": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

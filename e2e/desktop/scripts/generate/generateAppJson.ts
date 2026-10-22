@@ -28,7 +28,7 @@ function groupAccountsByCoin(coins?: string[]): Map<string, CoinGroup> {
     if (id.includes("/")) continue;
     if (coins?.length && !coins.includes(id)) continue;
     const group = groups.get(id) ?? { currency: value.currency, accounts: [] };
-    const scheme = value.derivationMode || undefined;
+    const scheme = value.derivationMode;
     if (!group.accounts.some(a => a.index === value.index && a.scheme === scheme)) {
       group.accounts.push({ index: value.index, scheme });
     }
@@ -59,7 +59,7 @@ async function generateCoin(
       await runCliLiveData({
         currency: group.currency.speculosApp.name,
         index,
-        ...(scheme ? { scheme } : {}),
+        ...(scheme !== undefined ? { scheme } : {}),
         add: true,
         appjson: outPath,
       });

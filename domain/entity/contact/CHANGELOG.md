@@ -1,5 +1,21 @@
 # @domain/entity-contact
 
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies [[`d6ab47c`](https://github.com/LedgerHQ/ledger-live/commit/d6ab47c28339866ad88ef0deba75d314c2f6c4f0), [`393a02a`](https://github.com/LedgerHQ/ledger-live/commit/393a02a42be9f0410b75c0c34203915bcde27e43), [`7da1ea9`](https://github.com/LedgerHQ/ledger-live/commit/7da1ea9534a1bdde063e31545363a27f0fdf5abb), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`ad58765`](https://github.com/LedgerHQ/ledger-live/commit/ad58765b6151457022f8587d6ddcad3325ce96ac), [`37a49df`](https://github.com/LedgerHQ/ledger-live/commit/37a49df18649912157d8f269c3b4153d54b7817e)]:
+  - @domain/entity-currency-crypto@0.16.0
+  - @domain/entity-currency-token@0.5.6
+
+## 0.12.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d6ab47c`](https://github.com/LedgerHQ/ledger-live/commit/d6ab47c28339866ad88ef0deba75d314c2f6c4f0), [`393a02a`](https://github.com/LedgerHQ/ledger-live/commit/393a02a42be9f0410b75c0c34203915bcde27e43), [`7da1ea9`](https://github.com/LedgerHQ/ledger-live/commit/7da1ea9534a1bdde063e31545363a27f0fdf5abb), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`ad58765`](https://github.com/LedgerHQ/ledger-live/commit/ad58765b6151457022f8587d6ddcad3325ce96ac), [`37a49df`](https://github.com/LedgerHQ/ledger-live/commit/37a49df18649912157d8f269c3b4153d54b7817e)]:
+  - @domain/entity-currency-crypto@0.16.0-next.0
+  - @domain/entity-currency-token@0.5.6-next.0
+
 ## 0.12.0
 
 ### Minor Changes
@@ -285,29 +301,5 @@
 - [#20379](https://github.com/LedgerHQ/ledger-live/pull/20379) [`9d56877`](https://github.com/LedgerHQ/ledger-live/commit/9d568778b657961ef06ba04d5fa616677afec7b8) Thanks [@deepyjr](https://github.com/deepyjr)! - Standardize Contacts validation input schemas and error names
 
 - [#20321](https://github.com/LedgerHQ/ledger-live/pull/20321) [`9783675`](https://github.com/LedgerHQ/ledger-live/commit/97836755ebf605f62b5731f696ae66a9270a4c58) Thanks [@deepyjr](https://github.com/deepyjr)! - Block duplicate Contacts names before creation
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#20319](https://github.com/LedgerHQ/ledger-live/pull/20319) [`4d3ae1b`](https://github.com/LedgerHQ/ledger-live/commit/4d3ae1bea30b444281698844214072d95665e07a) Thanks [@deepyjr](https://github.com/deepyjr)! - Restrict Contacts address labels to printable ASCII characters
-
-- [#20316](https://github.com/LedgerHQ/ledger-live/pull/20316) [`36a08f1`](https://github.com/LedgerHQ/ledger-live/commit/36a08f1aea939fc42e7dafd8d734ef8dce88d7d0) Thanks [@deepyjr](https://github.com/deepyjr)! - Add address label validation and flow
-
-- [#20222](https://github.com/LedgerHQ/ledger-live/pull/20222) [`c6f620c`](https://github.com/LedgerHQ/ledger-live/commit/c6f620c3a0f7f944cb9de18ac129708dc69ec5a3) Thanks [@deepyjr](https://github.com/deepyjr)! - Model contact address labels with asset defaults and per-contact uniqueness
-
-- [#20252](https://github.com/LedgerHQ/ledger-live/pull/20252) [`e709463`](https://github.com/LedgerHQ/ledger-live/commit/e7094633d503367b7ccf4783f24dec7780b04707) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Desktop Me contact detail by default with Me display-name formatting and external address CTA.
-
-- [#20348](https://github.com/LedgerHQ/ledger-live/pull/20348) [`e7a22a6`](https://github.com/LedgerHQ/ledger-live/commit/e7a22a6e3c8c444640cfe8df88637ecad738e26a) Thanks [@deepyjr](https://github.com/deepyjr)! - Standardize contact validation error contracts.
-
-- [#20379](https://github.com/LedgerHQ/ledger-live/pull/20379) [`9d56877`](https://github.com/LedgerHQ/ledger-live/commit/9d568778b657961ef06ba04d5fa616677afec7b8) Thanks [@deepyjr](https://github.com/deepyjr)! - Standardize Contacts validation input schemas and error names
-
-- [#20321](https://github.com/LedgerHQ/ledger-live/pull/20321) [`9783675`](https://github.com/LedgerHQ/ledger-live/commit/97836755ebf605f62b5731f696ae66a9270a4c58) Thanks [@deepyjr](https://github.com/deepyjr)! - Block duplicate Contacts names before creation
-
-## 0.4.0
-
-### Minor Changes
-
-- [#20065](https://github.com/LedgerHQ/ledger-live/pull/20065) [`91da072`](https://github.com/LedgerHQ/ledger-live/commit/91da072ea17f564824d6c04d13934ec88d86d348) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared contact address detail view model with selected address payload, QR payload string, and not-found state.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

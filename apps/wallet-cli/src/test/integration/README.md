@@ -10,13 +10,13 @@ Keycloak/LKRP sign-in and the Agent Intent BFF of the profile's environment. Eac
 **pending** intent that nobody approves. No transaction is signed or broadcast, but reject it in the
 frontend afterwards.
 
-The deployed test frontend (`https://agent-intent.ledger-test.com/`) currently talks to the
+The deployed test frontend (`https://app.agents.ledger-test.com/`) currently talks to the
 **production** service stack, so its enrollment completion is for `production`. Enroll with that
 environment and point the handoff at the test frontend:
 
 ```bash
 wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" --source <runtime> \
-  --environment production --app-url https://agent-intent.ledger-test.com/
+  --environment production --app-url https://app.agents.ledger-test.com/
 ```
 
 `--source` is the runtime or harness the agent runs in, not its model provider: one of
@@ -24,8 +24,10 @@ wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" --source <
 matches (`--help` lists the same values). Omitting it defaults to `other`.
 
 Open the printed link and approve it with a Ledger device; `enroll` waits for the approval to be
-relayed back and saves it. A `--environment staging` profile only completes against a frontend
-wired to the staging service, which also needs the Ledger infra VPN.
+relayed back and saves it. The deployed test frontend rejects a `--environment staging` link with
+"This enrollment link is for the staging Agent Intent environment, but this app uses production."
+A staging profile only completes against a frontend wired to the staging service, which also needs
+the Ledger infra VPN.
 
 Prerequisites:
 

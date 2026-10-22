@@ -19,7 +19,7 @@ import {
   mockMeContact,
   mockPopulatedContacts,
 } from "@domain/entity-contact/schema.mock";
-import { ContactDetailView } from "@features/flow-contacts";
+import { ContactDetailView } from "@features/flow-contacts-detail";
 import { NavigatorName, ScreenName } from "~/const";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
@@ -200,7 +200,7 @@ function ContactsGatingTestApp() {
 function ContactDetailViewModelProbe() {
   const viewModel = useContactDetailScreenViewModel();
 
-  if (viewModel.status === "redirecting") {
+  if (viewModel.status !== "ready") {
     return null;
   }
 
@@ -270,7 +270,7 @@ function ContactDetailAddressEntryTestScreen() {
   const viewModel = useContactDetailScreenViewModel();
   const { handleCurrencySelected } = useModularDrawerController();
 
-  if (viewModel.status === "redirecting") {
+  if (viewModel.status !== "ready") {
     return null;
   }
 

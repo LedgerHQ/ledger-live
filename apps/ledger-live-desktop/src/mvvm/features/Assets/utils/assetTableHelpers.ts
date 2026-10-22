@@ -1,11 +1,4 @@
-import type { AssetTableItem } from "../types";
-
-export function sanitizeAssetNameForTestId(name: string): string {
-  return name
-    .toLowerCase()
-    .replaceAll(/\s+/g, "-")
-    .replaceAll(/[^a-z0-9-]/g, "");
-}
+import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 
 export function padItems(
   realItems: AssetTableItem[],

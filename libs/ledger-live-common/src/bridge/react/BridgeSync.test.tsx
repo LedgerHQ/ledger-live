@@ -583,45 +583,48 @@ describe("BridgeSync", () => {
     expect(typeof syncState).toBe("object");
   });
 
-  test("adds a combined syncType to a zcash account's syncConfig", async () => {
-    const account = createAccount("zec1", zcash);
-    const accounts = [account];
+  test.each([["zcash"], ["zcash_testnet"]])(
+    "adds a combined syncType to a %s account's syncConfig",
+    async currencyId => {
+      const account = createAccount("zec1", getCryptoCurrencyById(currencyId));
+      const accounts = [account];
 
-    const syncSpy = jest.fn(
-      (_acc: Account, _syncConfig: Record<string, unknown>) =>
-        new Observable<AccountUpdater>(observer => {
-          act(() => {
-            observer.next((acc: typeof account) => acc);
-            observer.complete();
-          });
-        }),
-    );
-    const mockBridge = { sync: syncSpy, getStakesCount: () => 0 };
-    mockedGetAccountBridge.mockImplementation(acc => {
-      if (acc.id === account.id) {
-        return Promise.resolve(mockBridge) as unknown as ReturnType<
-          typeof originalGetAccountBridge
-        >;
-      }
-      return originalGetAccountBridge(acc);
-    });
+      const syncSpy = jest.fn(
+        (_acc: Account, _syncConfig: Record<string, unknown>) =>
+          new Observable<AccountUpdater>(observer => {
+            act(() => {
+              observer.next((acc: typeof account) => acc);
+              observer.complete();
+            });
+          }),
+      );
+      const mockBridge = { sync: syncSpy, getStakesCount: () => 0 };
+      mockedGetAccountBridge.mockImplementation(acc => {
+        if (acc.id === account.id) {
+          return Promise.resolve(mockBridge) as unknown as ReturnType<
+            typeof originalGetAccountBridge
+          >;
+        }
+        return originalGetAccountBridge(acc);
+      });
 
-    await renderBridgeSyncAsync({ accounts });
+      await renderBridgeSyncAsync({ accounts });
 
-    // wait > SYNC_BOOT_DELAY (default 2s), matching the pattern already used
-    // by the other tests in this file that wait on the initial sync tick.
-    await waitFor(
-      () => {
-        expect(syncSpy).toHaveBeenCalled();
-      },
-      { timeout: 5000 },
-    );
+      // wait > SYNC_BOOT_DELAY (default 2s), matching the pattern already used
+      // by the other tests in this file that wait on the initial sync tick.
+      await waitFor(
+        () => {
+          expect(syncSpy).toHaveBeenCalled();
+        },
+        { timeout: 5000 },
+      );
 
-    const [, syncConfig] = syncSpy.mock.calls[0];
-    expect(syncConfig).toMatchObject({
-      syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
-    });
-  });
+      const [, syncConfig] = syncSpy.mock.calls[0];
+      expect(syncConfig).toMatchObject({
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      });
+    },
+  );
 
   test("does not add a syncType to a non-zcash account's syncConfig", async () => {
     const account = createAccount("btc1", bitcoin);

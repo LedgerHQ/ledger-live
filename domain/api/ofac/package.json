@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-ofac",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Domain API client for the OFAC geo-block check on the Countervalues Service: RTK Query endpoint returning blocked true or false",
   "main": "src/index.ts",
@@ -18,7 +18,7 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/ofac",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
-    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src"
+    "lint": "oxlint ./src"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",

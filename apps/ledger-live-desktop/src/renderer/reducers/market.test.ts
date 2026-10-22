@@ -9,7 +9,6 @@ const initialState: MarketState = {
     order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
-    page: 1,
     counterCurrency: "USD",
   },
   currentPage: 1,
@@ -21,7 +20,7 @@ describe("market reducer", () => {
   it("resets sort to default when switching category", () => {
     const withVolumeOnAll = marketReducer(initialState, {
       type: "MARKET_SET_VALUES",
-      payload: { order: Order.VolumeDesc, page: 1 },
+      payload: { order: Order.VolumeDesc },
     });
 
     expect(withVolumeOnAll.marketParams.order).toBe(Order.VolumeDesc);
@@ -33,7 +32,6 @@ describe("market reducer", () => {
 
     expect(onStocks.category).toBe("stocks");
     expect(onStocks.marketParams.order).toBe(Order.MarketCapDesc);
-    expect(onStocks.marketParams.page).toBe(1);
     expect(onStocks.currentPage).toBe(1);
 
     const backToAll = marketReducer(onStocks, {
@@ -44,20 +42,26 @@ describe("market reducer", () => {
     expect(backToAll.marketParams.order).toBe(Order.MarketCapDesc);
   });
 
-  it("resets currentPage when page is set back to 1", () => {
-    const paginatedState: MarketState = {
-      ...initialState,
-      currentPage: 3,
-      marketParams: { ...initialState.marketParams, page: 3 },
-    };
+  it("resets currentPage when the list identity changes", () => {
+    const scrolledState: MarketState = { ...initialState, currentPage: 3 };
 
-    const nextState = marketReducer(paginatedState, {
+    const nextState = marketReducer(scrolledState, {
       type: "MARKET_SET_VALUES",
-      payload: { order: Order.VolumeDesc, page: 1 },
+      payload: { order: Order.VolumeDesc },
     });
 
     expect(nextState.currentPage).toBe(1);
-    expect(nextState.marketParams.page).toBe(1);
+  });
+
+  it("keeps currentPage when only the countervalue changes", () => {
+    const scrolledState: MarketState = { ...initialState, currentPage: 3 };
+
+    const nextState = marketReducer(scrolledState, {
+      type: "MARKET_SET_VALUES",
+      payload: { counterCurrency: "EUR" },
+    });
+
+    expect(nextState.currentPage).toBe(3);
   });
 
   it("does nothing when selecting the same category", () => {
@@ -93,7 +97,7 @@ describe("market reducer", () => {
 
     const withSort = marketReducer(partialState, {
       type: "MARKET_SET_VALUES",
-      payload: { order: Order.VolumeDesc, page: 1 },
+      payload: { order: Order.VolumeDesc },
     });
 
     expect(withSort.marketParams.order).toBe(Order.VolumeDesc);

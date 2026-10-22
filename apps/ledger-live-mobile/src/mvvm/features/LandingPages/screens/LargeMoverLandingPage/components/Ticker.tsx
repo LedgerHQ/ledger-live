@@ -72,10 +72,7 @@ export const Ticker: React.FC<TickerProps> = ({ currency, width, coinPicker }) =
       >
         {reduceTransparencyEnabled ? (
           <View
-            style={[
-              StyleSheet.absoluteFillObject,
-              { backgroundColor: theme.colors.background.main },
-            ]}
+            style={[StyleSheet.absoluteFill, { backgroundColor: theme.colors.background.main }]}
           />
         ) : (
           <BlurView

@@ -4,26 +4,29 @@ import ContactDetailPage from "@e2e/page/wallet/contactDetail.page";
 const ME_CONTACT_DISPLAY_NAME = "My addresses (Me)";
 
 export default class ContactsPage {
-  savedContactNameRegExp = /^contacts-saved-contact-.+-name$/;
+  private readonly savedContactNameRegExp = /^contacts-saved-contact-.+-name$/;
 
   detail = new ContactDetailPage();
 
-  addContactContentId = "contacts-add-contact-content";
-  searchInputId = "contacts-search-input";
+  private readonly addContactContentId = "contacts-add-contact-content";
+  private readonly searchInputId = "contacts-search-input";
 
-  contactsContent = () => getElementById("contacts-content");
-  meName = () => getElementById("contacts-me-name");
-  meAddressCount = () => getElementById("contacts-me-address-count");
-  addContactHeaderButton = () => getElementById("contacts-add-contact-header");
-  addContactRow = () => getElementById("contacts-add-contact-row");
-  addContactNameInput = () => getElementById("contacts-add-contact-name-input");
-  addContactSaveButton = () => getElementById("contacts-add-contact-save");
-  searchInput = () => getElementById(this.searchInputId);
-  savedContactName = (name: string) => getElementByIdAndText(this.savedContactNameRegExp, name);
-  savedContactNameAtIndex = (index: number) => getElementById(this.savedContactNameRegExp, index);
-  savedContactRow = (rowId: string) => getElementById(rowId);
-  savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
-  savedContactAddressCount = (rowId: string) => getElementById(`${rowId}-address-count`);
+  private readonly contactsContent = () => getElementById("contacts-content");
+  private readonly meName = () => getElementById("contacts-me-name");
+  private readonly meAddressCount = () => getElementById("contacts-me-address-count");
+  private readonly addContactHeaderButton = () => getElementById("contacts-add-contact-header");
+  private readonly addContactRow = () => getElementById("contacts-add-contact-row");
+  private readonly addContactNameInput = () => getElementById("contacts-add-contact-name-input");
+  private readonly addContactSaveButton = () => getElementById("contacts-add-contact-save");
+  private readonly searchInput = () => getElementById(this.searchInputId);
+  private readonly savedContactName = (name: string) =>
+    getElementByIdAndText(this.savedContactNameRegExp, name);
+  private readonly savedContactNameAtIndex = (index: number) =>
+    getElementById(this.savedContactNameRegExp, index);
+  private readonly savedContactRow = (rowId: string) => getElementById(rowId);
+  private readonly savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
+  private readonly savedContactAddressCount = (rowId: string) =>
+    getElementById(`${rowId}-address-count`);
 
   @Step("Expect Contacts screen visible")
   async expectScreenVisible() {
@@ -60,6 +63,7 @@ export default class ContactsPage {
   }
 
   /** Rows carry a runtime uuid, so the id is resolved from the name label. Names are unique. */
+  @Step("Get row ID for saved contact {{0}}")
   async getSavedContactRowId(name: string): Promise<string> {
     const nameId = await getIdOfElement(this.savedContactName(name));
 

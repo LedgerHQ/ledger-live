@@ -58,8 +58,8 @@ async function resolve(
 export function createApi(currencyId: string) {
   return {
     getBalance: async (context, address, options?) => {
-      const { api } = await resolve(context, currencyId);
-      return rejectBalanceOptions(() => getBalance(api, address), options);
+      const { api, config } = await resolve(context, currencyId);
+      return rejectBalanceOptions(() => getBalance(config, api, address), options);
     },
     getNextSequence: async (context, address) => {
       const { api } = await resolve(context, currencyId);
@@ -77,16 +77,16 @@ export function createApi(currencyId: string) {
     craftTransaction: async (context, intent, options?) => {
       const { api, config } = await resolve(context, currencyId);
       return craftTransaction(
+        config,
         api,
         currencyId,
         intent as TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent,
         options?.customFees,
-        config,
       );
     },
     estimateFees: async (context, intent, options?) => {
-      const { api } = await resolve(context, currencyId);
-      return estimateFees(api, intent, options?.customFeesParameters);
+      const config = await context.config(currencyId);
+      return estimateFees(config, currencyId, intent, options?.customFeesParameters);
     },
     combine: (_context, tx, signature, options?) => combine(tx, signature, options?.pubkey),
     broadcast: async (context, tx, _options?) => {
@@ -95,8 +95,8 @@ export function createApi(currencyId: string) {
     },
 
     listOperations: async (context, address, options) => {
-      const { api } = await resolve(context, currencyId);
-      return listOperations(api, address, options);
+      const { api, config } = await resolve(context, currencyId);
+      return listOperations(config, api, address, options);
     },
     validateIntent: async (context, intent, balances, options?) => {
       const config = await context.config(currencyId);
@@ -104,8 +104,8 @@ export function createApi(currencyId: string) {
     },
 
     getStakes: async (context, address, options?) => {
-      const { api } = await resolve(context, currencyId);
-      return getStakes(api, address, options?.cursor);
+      const { api, config } = await resolve(context, currencyId);
+      return getStakes(config, api, address, options?.cursor);
     },
     getValidators: async (context, options?) => {
       const { api } = await resolve(context, currencyId);

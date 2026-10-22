@@ -40,5 +40,13 @@ export function CardTransactionHistory(props: CardTransactionHistoryProps) {
 function CardTransactionDetailSheetContent({ children }: Readonly<{ children: React.ReactNode }>) {
   const bottomInset = useBottomSheetBottomInset();
 
-  return <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>{children}</BottomSheetView>;
+  return (
+    <BottomSheetView
+      collapsable={false}
+      style={{ paddingBottom: bottomInset + 24 }}
+      testID="card-transaction-detail-sheet-content"
+    >
+      {children}
+    </BottomSheetView>
+  );
 }

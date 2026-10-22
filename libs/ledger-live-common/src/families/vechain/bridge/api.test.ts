@@ -74,8 +74,6 @@ describe("vechain bridge api", () => {
         type: "token",
         assetReference: mockToken.contractAddress,
         assetOwner: owner,
-        name: "VeThor",
-        unit: mockToken.units[0],
       });
     });
   });
@@ -104,8 +102,6 @@ describe("vechain bridge api", () => {
         type: "token",
         assetReference: mockToken.contractAddress,
         assetOwner: owner,
-        name: "VeThor",
-        unit: mockToken.units[0],
       });
     });
   });

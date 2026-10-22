@@ -38,7 +38,7 @@ function BottomSheetGradient({ style, tone }: BottomSheetGradientProps) {
         backgroundColor: theme.colors.bg.canvasSheet,
         overflow: "hidden" as const,
       },
-      statusGradient: StyleSheet.absoluteFillObject,
+      statusGradient: StyleSheet.flatten(StyleSheet.absoluteFill),
     }),
     [],
   );

@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
@@ -7,6 +7,7 @@ import {
   type MarketListRequestParams,
   type MarketListRequestResult,
 } from "@ledgerhq/live-common/market/utils/types";
+import { createMockMarketListResult } from "@ledgerhq/live-common/market/utils/fixtures";
 import type { State } from "~/reducers/types";
 import { createMarketCurrencyData } from "../../../__tests__/helpers";
 import { useMarketAssets } from "../useMarketAssets";
@@ -20,18 +21,13 @@ jest.mock("@features/platform-market-countervalues", () => ({
 const mockedUseMarketData = jest.mocked(useMarketData);
 const mockedUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
 const mockedUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
+const mockFetchNextPage = jest.fn();
 
 const bitcoin = createMarketCurrencyData({ id: "bitcoin", name: "Bitcoin" });
 const ethereum = createMarketCurrencyData({ id: "ethereum", name: "Ethereum", ticker: "eth" });
 const fullMarketPage = Array.from({ length: 20 }, (_, index) =>
   createMarketCurrencyData({ id: `asset-${index}`, name: `Asset ${index}` }),
 );
-const fullMarketPageWithDuplicate = [
-  ...Array.from({ length: 19 }, (_, index) =>
-    createMarketCurrencyData({ id: `asset-${index}`, name: `Asset ${index}` }),
-  ),
-  createMarketCurrencyData({ id: "asset-0", name: "Asset 0 duplicate" }),
-];
 const teslaStock = createMarketCurrencyData({
   id: "tesla-xstock",
   name: "Tesla xStock",
@@ -41,15 +37,13 @@ const teslaStock = createMarketCurrencyData({
   price: 411.28,
 });
 function mockMarketData(overrides: Partial<MarketListRequestResult> = {}) {
-  mockedUseMarketData.mockReturnValue({
-    data: [bitcoin, ethereum],
-    isLoading: false,
-    isPending: false,
-    isFetching: false,
-    isError: false,
-    cachedMetadataMap: new Map(),
-    ...overrides,
-  });
+  mockedUseMarketData.mockReturnValue(
+    createMockMarketListResult({
+      data: [bitcoin, ethereum],
+      fetchNextPage: mockFetchNextPage,
+      ...overrides,
+    }),
+  );
 }
 
 function mockSupportedCounterCurrencies(supportedCounterCurrencies?: string[]) {
@@ -62,18 +56,17 @@ function mockUsdToFiatRate(rate: ReturnType<typeof useUsdToFiatRate>) {
   mockedUseUsdToFiatRate.mockReturnValue(rate);
 }
 
+const DEFAULT_REFRESH_RATE = 3 * 60_000;
+
 function expectMarketDataLastCalledWith(
   params: Partial<MarketListRequestParams>,
-  options = { enabled: true },
+  options: { enabled?: boolean; refreshRate?: number } = {},
 ) {
-  expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining(params), options);
-}
-
-function expectMarketDataNotCalledWith(
-  params: Partial<MarketListRequestParams>,
-  options = { enabled: true },
-) {
-  expect(mockedUseMarketData).not.toHaveBeenCalledWith(expect.objectContaining(params), options);
+  expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining(params), {
+    enabled: true,
+    refreshRate: DEFAULT_REFRESH_RATE,
+    ...options,
+  });
 }
 
 // Force the locale so the expected formatted price is deterministic.
@@ -112,67 +105,61 @@ describe("useMarketAssets", () => {
   });
 
   it("does not request another page while the next page is fetching", () => {
-    mockMarketData({ data: fullMarketPage, isFetching: true });
+    mockMarketData({ data: fullMarketPage, hasNextPage: true, isFetchingNextPage: true });
     const { result } = renderHook(() => useMarketAssets());
 
-    // The first page is fetching, but it is not a "next page" load yet.
-    expect(result.current.isFetchingNextPage).toBe(false);
-
-    act(() => result.current.onEndReached());
-    expectMarketDataLastCalledWith({ page: 2 });
     expect(result.current.isFetchingNextPage).toBe(true);
 
     act(() => result.current.onEndReached());
-    expectMarketDataNotCalledWith({ page: 3 });
+    expect(mockFetchNextPage).not.toHaveBeenCalled();
+  });
+
+  it("does not flag a first-page refetch as a next page load", () => {
+    mockMarketData({ data: fullMarketPage, hasNextPage: true, isFetching: true });
+    const { result } = renderHook(() => useMarketAssets());
+
+    expect(result.current.isFetchingNextPage).toBe(false);
+  });
+
+  it("forwards a reset of the loaded pages", () => {
+    const resetToFirstPage = jest.fn();
+    mockMarketData({ resetToFirstPage });
+
+    const { result } = renderHook(() => useMarketAssets());
+    act(() => result.current.resetToFirstPage());
+
+    expect(resetToFirstPage).toHaveBeenCalledTimes(1);
   });
 
   it("requests the next page on end reached", () => {
-    mockMarketData({ data: fullMarketPage });
+    mockMarketData({ data: fullMarketPage, hasNextPage: true });
     const { result } = renderHook(() => useMarketAssets());
     act(() => result.current.onEndReached());
-    expectMarketDataLastCalledWith({ page: 2 });
+    expect(mockFetchNextPage).toHaveBeenCalledTimes(1);
   });
 
-  it("does not request the next page when the current page is incomplete", () => {
+  it("does not request the next page when there is none", () => {
     const { result } = renderHook(() => useMarketAssets());
 
     act(() => result.current.onEndReached());
 
-    expectMarketDataLastCalledWith({ page: 1 });
+    expect(mockFetchNextPage).not.toHaveBeenCalled();
   });
 
-  it("uses the fetched item count to decide whether the next page can load", () => {
-    mockMarketData({ data: fullMarketPageWithDuplicate });
-    const { result } = renderHook(() => useMarketAssets());
+  it("refreshes the list on the mobile market interval", () => {
+    renderHook(() => useMarketAssets(), {
+      overrideInitialState: withFlagOverrides({
+        llmRefreshMarketData: { enabled: true, params: { refreshTime: 1 } },
+      }),
+    });
 
-    expect(result.current.assets).toHaveLength(19);
-
-    act(() => result.current.onEndReached());
-
-    expectMarketDataLastCalledWith({ page: 2 });
+    expectMarketDataLastCalledWith({}, { refreshRate: 60_000 });
   });
 
   it("passes the trimmed search query", () => {
     renderHook(() => useMarketAssets({ search: " b " }));
 
     expectMarketDataLastCalledWith({ search: "b" });
-  });
-
-  it("resets the page when the search query changes", async () => {
-    mockMarketData({ data: fullMarketPage });
-    let search = "";
-    const { result, rerender } = renderHook(() => useMarketAssets({ search }));
-
-    act(() => result.current.onEndReached());
-    expectMarketDataLastCalledWith({ page: 2 });
-
-    search = "eth";
-    rerender(undefined);
-
-    await waitFor(() => {
-      expectMarketDataLastCalledWith({ page: 1, search: "eth" });
-    });
-    expectMarketDataNotCalledWith({ page: 2, search: "eth" });
   });
 
   it("maps sorting and timeframe to the market request params", () => {
@@ -193,12 +180,12 @@ describe("useMarketAssets", () => {
     expectMarketDataLastCalledWith({ range: "6m" });
   });
 
-  it("requests favorite assets with the starred ids sorted", () => {
+  it("requests favorite assets with the starred ids", () => {
     const { result } = renderHook(() =>
       useMarketAssets({ category: "starred", starredMarketCoins: ["ethereum", "bitcoin"] }),
     );
 
-    expectMarketDataLastCalledWith({ page: 1, starred: ["bitcoin", "ethereum"] });
+    expectMarketDataLastCalledWith({ starred: ["ethereum", "bitcoin"] });
     expect(result.current.emptyState).toBeUndefined();
   });
 
@@ -207,14 +194,14 @@ describe("useMarketAssets", () => {
       useMarketAssets({ category: "starred", starredMarketCoins: [] }),
     );
 
-    expectMarketDataLastCalledWith({ page: 0, starred: [] }, { enabled: false });
+    expectMarketDataLastCalledWith({ starred: [] }, { enabled: false });
     expect(result.current.assets).toEqual([]);
     expect(result.current.loading).toBe(false);
     expect(result.current.emptyState).toBe("favorites");
 
     act(() => result.current.onEndReached());
 
-    expectMarketDataLastCalledWith({ page: 0, starred: [] }, { enabled: false });
+    expect(mockFetchNextPage).not.toHaveBeenCalled();
   });
 
   it("searches all market assets while search is active", () => {
@@ -222,21 +209,21 @@ describe("useMarketAssets", () => {
       useMarketAssets({ search: " eth ", category: "starred", starredMarketCoins: [] }),
     );
 
-    expectMarketDataLastCalledWith({ page: 1, search: "eth", starred: undefined });
+    expectMarketDataLastCalledWith({ search: "eth", starred: undefined });
     expect(result.current.emptyState).toBeUndefined();
   });
 
   it("drops the stock category param while search is active", () => {
     renderHook(() => useMarketAssets({ search: " aapl ", category: "stocks" }));
 
-    expectMarketDataLastCalledWith({ page: 1, search: "aapl", categories: undefined });
+    expectMarketDataLastCalledWith({ search: "aapl", categories: undefined });
   });
 
   it("requests stocks from the dedicated CVS category", () => {
     mockMarketData({ data: [teslaStock] });
     const { result } = renderHook(() => useMarketAssets({ category: "stocks" }));
 
-    expectMarketDataLastCalledWith({ categories: "tokenized-stock", page: 1 });
+    expectMarketDataLastCalledWith({ categories: "tokenized-stock" });
     expect(result.current.assets).toHaveLength(1);
     expect(result.current.assets[0]).toMatchObject({
       id: "tesla-xstock",
@@ -324,13 +311,13 @@ describe("useMarketAssets", () => {
     it("does not request the next page when the rate request fails", () => {
       mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
       mockUsdToFiatRate({ status: "error", rate: null });
-      mockMarketData({ data: fullMarketPage });
+      mockMarketData({ data: fullMarketPage, hasNextPage: true });
 
       const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
 
       act(() => result.current.onEndReached());
 
-      expectMarketDataNotCalledWith({ page: 2 });
+      expect(mockFetchNextPage).not.toHaveBeenCalled();
     });
 
     it("requests the countervalue natively once it is known to be supported", () => {

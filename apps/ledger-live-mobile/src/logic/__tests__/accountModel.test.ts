@@ -1,4 +1,4 @@
-import type { AccountRaw } from "@ledgerhq/types-live";
+import { isStakingAccount, type AccountRaw } from "@ledgerhq/types-live";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import accountModel from "../accountModel";
 
@@ -63,20 +63,64 @@ describe("accountModel migrations", () => {
     });
   });
 
-  describe("crypto_org cosmosResources fallback", () => {
-    it("initialises cosmosResources when missing", async () => {
-      const [account] = await decodeStored({
+  describe("crypto_org staking resources fallback", () => {
+    const cryptoOrgRaw = (extra: Partial<AccountRaw> = {}): AccountRaw =>
+      ({
         ...baseRaw,
         id: "js:2:crypto_org:cosmos1address:",
         freshAddress: "cosmos1address",
         freshAddressPath: "44'/394'/0'/0/0",
         currencyId: "crypto_org",
-      } as AccountRaw);
-      const { cosmosResources } = account as typeof account & {
-        cosmosResources: Record<string, unknown>;
-      };
-      expect(cosmosResources).toBeDefined();
-      expect(cosmosResources.delegations).toEqual([]);
+        ...extra,
+      }) as AccountRaw;
+
+    it("initialises stakingResources and rebuilds cosmosResources when missing", async () => {
+      const [account] = await decodeStored(cryptoOrgRaw());
+      expect(isStakingAccount(account)).toBe(true);
+      expect(isStakingAccount(account) && account.stakingResources.delegations).toEqual([]);
+      expect(account).toHaveProperty("cosmosResources.delegations", []);
+      expect(account).toHaveProperty("cosmosResources.sequence", 0);
+    });
+
+    it("round-trips legacy Cosmos resources through the current persisted shape", async () => {
+      const decoded = await decodeStored(
+        cryptoOrgRaw({
+          xpub: "cosmos1address",
+          cosmosResources: {
+            delegations: [
+              {
+                validatorAddress: "cosmosvaloper1validator",
+                amount: "10",
+                pendingRewards: "2",
+                status: "bonded",
+              },
+            ],
+            redelegations: [],
+            unbondings: [],
+            delegatedBalance: "10",
+            pendingRewardsBalance: "2",
+            unbondingBalance: "0",
+            sequence: 7,
+            publicKey: "02legacy",
+          },
+        } as Partial<AccountRaw>),
+      );
+
+      const encoded = await accountModel.encode(decoded);
+      const [roundTrippedAccount] = await accountModel.decode(encoded);
+
+      expect(encoded.data).not.toHaveProperty("cosmosResources");
+      expect(encoded.data).toHaveProperty("sequence", 7);
+      expect(encoded.data).toHaveProperty("xpub", "02legacy");
+      expect(encoded.data).toHaveProperty("stakingResources.delegations.0.amount", "10");
+      expect(isStakingAccount(roundTrippedAccount)).toBe(true);
+      expect(
+        isStakingAccount(roundTrippedAccount) &&
+          roundTrippedAccount.stakingResources.delegations[0].amount.toString(),
+      ).toBe("10");
+      expect(roundTrippedAccount).toHaveProperty("sequence", 7);
+      expect(roundTrippedAccount).toHaveProperty("xpub", "02legacy");
+      expect(roundTrippedAccount).toHaveProperty("cosmosResources.delegatedBalance");
     });
   });
 

@@ -319,7 +319,10 @@ describe("useSendFlowTransaction", () => {
           result.current.actions.setRecipient({ address: "u1shielded", isSelfTransfer });
         });
 
-        expect(buildSelfTransferPatch).toHaveBeenCalledWith({ isSelfTransfer });
+        expect(buildSelfTransferPatch).toHaveBeenCalledWith({
+          isSelfTransfer,
+          transaction: mockTransaction,
+        });
         expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
           recipient: "u1shielded",
           selfTransfer: isSelfTransfer,
@@ -341,7 +344,10 @@ describe("useSendFlowTransaction", () => {
         result.current.actions.setRecipient({ address: "t1transparent" });
       });
 
-      expect(buildSelfTransferPatch).toHaveBeenCalledWith({ isSelfTransfer: false });
+      expect(buildSelfTransferPatch).toHaveBeenCalledWith({
+        isSelfTransfer: false,
+        transaction: mockTransaction,
+      });
     });
 
     it("should not update when account is null", () => {

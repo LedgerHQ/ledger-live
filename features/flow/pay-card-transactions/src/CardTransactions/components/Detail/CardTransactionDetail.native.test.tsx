@@ -23,8 +23,9 @@ describe("CardTransactionDetail (native)", () => {
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
     expect(screen.getByLabelText(CATEGORY_LABELS.SUBSCRIPTIONS)).toBeVisible();
     expect(screen.getByText(DETAIL_COPY.amount)).toBeVisible();
+    expect(screen.getByTestId("card-transaction-detail-value-amount")).toBeVisible();
     expect(screen.getByText("-12.99 EUR")).toBeVisible();
-    expect(screen.getByText(DETAIL_COPY.statusValues.CONFIRMED)).toBeVisible();
+    expect(screen.getByLabelText(DETAIL_COPY.statusValues.CONFIRMED)).toBeVisible();
     expect(screen.getByText("***9189")).toBeVisible();
     expect(screen.getByLabelText(DETAIL_COPY.cardInfo)).toBeVisible();
     expect(screen.getByText("-13.0214 USDC")).toBeVisible();

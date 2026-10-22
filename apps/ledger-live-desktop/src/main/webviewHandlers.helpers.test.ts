@@ -1,6 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import {
   WEBVIEW_GUEST_CSP,
+  applyWebviewAttachPolicy,
   createLiveAppSchemeChecker,
   mergeCspHeaders,
 } from "./webviewHandlers.helpers";
@@ -186,4 +187,63 @@ describe("WEBVIEW_GUEST_CSP", () => {
     expect(directives["child-src"]).not.toContain("data:");
     expect(directives["form-action"]).not.toContain("data:");
   });
+});
+
+describe("applyWebviewAttachPolicy", () => {
+  const options = {
+    appDir: "/app",
+    isSrcAllowed: createLiveAppSchemeChecker(["ledgerlive"]),
+  };
+
+  it("pins isolation, sandbox, web security and no Node", () => {
+    const webPreferences: Electron.WebPreferences = {
+      nodeIntegration: true,
+      nodeIntegrationInSubFrames: true,
+      nodeIntegrationInWorker: true,
+      contextIsolation: false,
+      sandbox: false,
+      webSecurity: false,
+    };
+
+    applyWebviewAttachPolicy(webPreferences, "https://example.com", options);
+
+    expect(webPreferences).toEqual({
+      nodeIntegration: false,
+      nodeIntegrationInSubFrames: false,
+      nodeIntegrationInWorker: false,
+      contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+    });
+  });
+
+  it.each(["webviewPreloader.bundle.js", "webviewDappPreloader.bundle.js"])(
+    "resolves the %s preload from the app dir",
+    preload => {
+      const webPreferences: Electron.WebPreferences = { preload: `/elsewhere/${preload}` };
+
+      applyWebviewAttachPolicy(webPreferences, "https://example.com", options);
+
+      expect(webPreferences.preload).toBe(`/app/${preload}`);
+    },
+  );
+
+  it("drops any other preload", () => {
+    const webPreferences: Electron.WebPreferences = { preload: "/app/preloader.bundle.js" };
+
+    applyWebviewAttachPolicy(webPreferences, "https://example.com", options);
+
+    expect(webPreferences).not.toHaveProperty("preload");
+  });
+
+  it.each(["https://example.com", "http://localhost:3000", "about:blank"])("allows %s", src => {
+    expect(applyWebviewAttachPolicy({}, src, options)).toBe(true);
+  });
+
+  it.each(["file:///etc/hosts", "javascript:alert(1)", "data:text/html,hi", ""])(
+    "rejects %j",
+    src => {
+      expect(applyWebviewAttachPolicy({}, src, options)).toBe(false);
+    },
+  );
 });

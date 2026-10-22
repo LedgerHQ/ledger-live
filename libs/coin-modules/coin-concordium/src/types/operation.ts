@@ -41,6 +41,8 @@ export interface RawOperation {
   blockHeight: number;
   failed: boolean;
   id: number;
+  /** The transaction sender, who pays its cost. Absent when the proxy names none. */
+  feesPayer?: string;
   tokenId?: string;
   decimals?: number;
   /** Set only on a rejected PLT transfer whose reason this layer could narrow. */

@@ -7,16 +7,28 @@ import {
   Text,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
+import {
+  CheckmarkCircleFill,
+  Download,
+  InformationFill,
+  WarningFill,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { ActionDialogIcon } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import { useSelector } from "~/context/hooks";
 import { earnActionDialogSelector } from "~/reducers/earn";
 import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 
-const SPOT_APPEARANCE = {
-  info: "info",
-  warning: "warning",
-  success: "check",
+const SPOT_PROPS = {
+  info: { appearance: "muted", icon: InformationFill },
+  warning: { appearance: "warning", icon: WarningFill },
+  success: { appearance: "success", icon: CheckmarkCircleFill },
 } as const;
+
+function ConfirmationSpot({ icon }: Readonly<{ icon: ActionDialogIcon }>) {
+  const props = icon === "withdraw" ? { icon: Download } : SPOT_PROPS[icon];
+  return <Spot {...props} size={72} />;
+}
 
 export function ActionConfirmationDialog() {
   const dialog = useSelector(earnActionDialogSelector);
@@ -67,7 +79,6 @@ export function ActionConfirmationDialog() {
   }
 
   const { title, description, ctaLabel, icon } = dialog;
-  const spotAppearance = SPOT_APPEARANCE[icon ?? "info"] ?? "info";
 
   return (
     <QueuedBottomSheet
@@ -78,7 +89,7 @@ export function ActionConfirmationDialog() {
       <BottomSheetView>
         <BottomSheetHeader />
         <Box lx={{ alignItems: "center", padding: "s16", paddingBottom: "s24", gap: "s24" }}>
-          <Spot appearance={spotAppearance} size={72} />
+          <ConfirmationSpot icon={icon ?? "info"} />
           <Box lx={{ alignItems: "center", gap: "s8" }}>
             <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
               {title}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Text, SpotNumber } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { InfoState } from "@shared/ui-info-state";
@@ -59,7 +59,7 @@ function NextStepsScreen({ onGotIt }: Readonly<{ onGotIt: () => void }>) {
               key={`${step.label}-${step.index}`}
               lx={{ alignItems: "center", flexDirection: "row", gap: "s12" }}
             >
-              <Spot appearance="number" number={step.index} size={32} />
+              <SpotNumber value={step.index} size={32} />
               <Text typography="body2" lx={{ color: "base", flexShrink: 1 }}>
                 {step.label}
               </Text>

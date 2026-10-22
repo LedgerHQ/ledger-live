@@ -9,7 +9,6 @@ import type { AddContactDialogViewModel, UseAddContactDialogViewModelOptions } f
  */
 export function useAddContactDialogViewModel({
   contactCreation,
-  labels,
   onSaveSuccess,
   callbacks,
 }: UseAddContactDialogViewModelOptions): AddContactDialogViewModel {
@@ -59,7 +58,6 @@ export function useAddContactDialogViewModel({
   return {
     ...contentViewModel,
     isOpen,
-    labels,
     onOpen,
     onClose,
     onConfirm,

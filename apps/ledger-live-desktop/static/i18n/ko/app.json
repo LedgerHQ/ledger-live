@@ -304,6 +304,33 @@
     "coinControl" : "코인 컨트롤",
     "feesAmount" : "수수료 비용"
   },
+  "accountDetailSettings" : {
+    "title" : "계정 설정",
+    "menu" : {
+      "changeName" : "이름 변경",
+      "viewAdvancedLogs" : "고급 로그 보기",
+      "removeAccount" : "포트폴리오에서 계정 삭제"
+    },
+    "changeName" : {
+      "title" : "계정 이름 변경",
+      "description" : "체계적인 관리를 위해 이 주소에 이름을 지정해 주세요 (예: {{ticker}}-거래, {{ticker}}-DeFi).",
+      "label" : "주소 별칭",
+      "submit" : "이름 변경"
+    },
+    "advancedLogs" : {
+      "title" : "고급 로그",
+      "derivationTip" : "{{tag}} xpub 입니다. 서드파티 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
+      "synchronised" : "동기화: {{date}}",
+      "copy" : "로그 복사",
+      "copied" : "복사됨"
+    },
+    "remove" : {
+      "title" : "계정을 삭제하시겠습니까?",
+      "description" : "이 계정과 연결된 자산은 더 이상 포트폴리오에 표시되지 않습니다. 블록체인상의 자산에는 아무런 영향을 미치지 않습니다.",
+      "confirm" : "계정 삭제",
+      "cancel" : "취소"
+    }
+  },
   "sidebar" : {
     "card" : "카드",
     "paytab" : "결제",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle" : "자산 활성화 대기 중",
         "pendingNotice" : "일부 비공개 노트(shielded notes)가 대기 상태에 있어 사용이 불가능할 수 있습니다"
       },
+      "aleoPublic" : {
+        "title" : "공개 수량"
+      },
+      "aleoPrivate" : {
+        "title" : "비공개 수량"
+      },
       "zeroBalance" : {
         "warning" : "이용 가능 수량 없음"
+      },
+      "requiresSync" : {
+        "notice" : "동기화 필요"
       }
     }
   },
@@ -7783,6 +7819,14 @@
       "title" : "해당 자산은 아직 사용할 수 없습니다",
       "description" : "몇 분 후에 다시 시도하세요"
     },
+    "ZcashShieldedNotSupportedOnDevice" : {
+      "title" : "이 장치는 투명 주소 간 전송만 지원합니다.",
+      "description" : "비공개 주소로 전송하거나 받으려면 Ledger Nano S Plus, Nano X, Flex 또는 Stax를 사용하세요."
+    },
+    "ZcashPreparedBuildMismatch" : {
+      "title" : "검토 후 트랜잭션 내역이 변경되었습니다.",
+      "description" : "수량 또는 수수료가 변경되었습니다. 트랜잭션을 다시 검토해 주세요."
+    },
     "InvalidNonce" : {
       "title" : "논스가 필요합니다"
     },
@@ -9829,7 +9873,7 @@
             "subtitle" : "Shielded(프라이빗)",
             "unavailable" : "비공개 수량 확인 불가"
           },
-          "spendableWarning" : "사용 가능한 잔액은 총 잔액보다 적을 수 있습니다. 최근 실딩된 자산은 승인 및 스캐닝 작업(약 15분)이 완료된 후 사용 가능합니다."
+          "spendableWarning" : "사용 가능한 잔액은 총 잔액보다 적을 수 있습니다. 최근 실딩된 자산은 확인 및 전체 스캐닝이 완료된 후 사용 가능합니다."
         },
         "memo" : {
           "label" : "메모(선택)",
@@ -10090,11 +10134,25 @@
         "recordsUsed" : "사용된 레코드",
         "signingTime" : "서명 시간"
       },
+      "amount" : {
+        "signingTime" : {
+          "label" : "서명 소요 시간",
+          "description" : "Ledger 사이너에서 이 트랜잭션에서 사용되는 각 레코드를 승인합니다. 비공개 수량에서 전송하는 금액이 커질수록 사용되는 레코드가 늘어나 처리 시간이 지연될 수 있습니다."
+        }
+      },
       "mandatoryPrivateSync" : {
         "title" : "비공개 수량 동기화 중({{percentage}}%)",
         "desc" : "잠시만 기다려 주세요",
         "errorTitle" : "비공개 수량 동기화 실패",
         "errorDesc" : "문제가 발생했습니다. 잠시 후 다시 시도하세요"
+      },
+      "balanceTypeSync" : {
+        "title" : "비공개 수량 새로고침 중",
+        "progress" : "{{percentage}}%",
+        "errorTitle" : "비공개 수량 동기화 실패",
+        "errorDescription" : "문제가 발생했습니다. 잠시 후 다시 시도하세요",
+        "recordLimitTitle" : "최대 {{amount}}까지 전송할 수 있습니다.",
+        "recordLimitDescription" : "자산이 여러 기록에 분할되어 있어, 한 번의 트랜잭션당 최대 {{maxRecords}}까지만 전송할 수 있습니다. 더 큰 금액을 전송하시려면 트랜잭션을 여러 번에 걸쳐 진행해 주시기 바랍니다."
       }
     },
     "operationTypes" : {
@@ -10573,6 +10631,14 @@
           "description" : "Ledger Sync를 통해 엔드투엔드로 암호화를 지원합니다."
         }
       }
+    }
+  },
+  "accountDetail" : {
+    "header" : {
+      "settings" : "계정 설정"
+    },
+    "assets" : {
+      "title" : "자산"
     }
   },
   "assetDetails" : {
@@ -11113,6 +11179,9 @@
       "amountExceedsBalance" : "보유 수량 부족",
       "quoteUnavailable" : "{{provider}}에서 견적을 불러올 수 없습니다. 다른 자산을 사용하거나 나중에 다시 시도하세요."
     }
+  },
+  "actionMenuDialog" : {
+    "a11yTitle" : "작업을 선택하세요"
   },
   "perpsDepositSign" : {
     "a11yTitle" : "입금 서명",

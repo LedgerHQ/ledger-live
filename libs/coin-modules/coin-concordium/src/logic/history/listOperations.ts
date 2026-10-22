@@ -25,19 +25,31 @@ export interface RawOperationPage {
 
 function transactionFields(
   tx: WalletProxyTransaction,
-): Pick<RawOperation, "hash" | "date" | "blockHash" | "blockHeight" | "id"> {
+  address: string,
+): Pick<RawOperation, "hash" | "date" | "blockHash" | "blockHeight" | "id" | "feesPayer"> {
+  const feesPayer = feesPayerOf(tx, address);
+
   return {
     hash: tx.transactionHash,
     date: new Date(Math.floor(tx.blockTime) * 1000),
     blockHash: tx.blockHash || null,
     blockHeight: tx.blockHeight,
     id: tx.id,
+    ...(feesPayer ? { feesPayer } : {}),
   };
 }
 
 /** `cost` is reported only to the payer, so elsewhere it is absent, not zero. */
 function isFeePayer(tx: WalletProxyTransaction): boolean {
   return tx.origin.type === "self";
+}
+
+/**
+ * The transaction sender, as `getBlock` reports it. The proxy names the sender
+ * as `origin`, replacing the address with `self` when it is the queried account.
+ */
+function feesPayerOf(tx: WalletProxyTransaction, address: string): string | undefined {
+  return isFeePayer(tx) ? address : tx.origin.address;
 }
 
 function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOperation | null {
@@ -62,7 +74,7 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
   const fee = String(tx.cost || 0);
 
   return {
-    ...transactionFields(tx),
+    ...transactionFields(tx, address),
     type: isOutgoing ? "OUT" : "IN",
     sender,
     recipient,
@@ -97,7 +109,7 @@ function feeOnlyOperation(
   const fee = String(tx.cost || 0);
 
   return {
-    ...transactionFields(tx),
+    ...transactionFields(tx, address),
     type: "OUT",
     sender: address,
     recipient: "",
@@ -162,7 +174,7 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
   }
 
   return {
-    ...transactionFields(tx),
+    ...transactionFields(tx, address),
     type: isOutgoing ? "OUT" : "IN",
     sender: transferSource,
     recipient: transferDestination,

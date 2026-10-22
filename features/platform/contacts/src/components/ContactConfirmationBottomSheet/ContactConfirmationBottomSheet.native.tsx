@@ -52,7 +52,7 @@ export function ContactConfirmationBottomSheet({
         <Box testID={contentTestID} lx={{ gap: "s24", paddingHorizontal: "s16" }}>
           <BottomSheetHeader />
           <Box lx={{ alignItems: "center", gap: "s16" }}>
-            <Spot appearance="icon" icon={icon} size={56} />
+            <Spot icon={icon} size={56} />
             <Box lx={{ alignItems: "center", gap: "s8" }}>
               <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
                 {labels.title}

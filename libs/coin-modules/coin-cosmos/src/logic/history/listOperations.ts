@@ -1,4 +1,5 @@
 import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
+import type { CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { toOperationExtraRaw } from "../../serialization";
 import { CosmosParsedOperation, parseCosmosOperations } from "./txToOps";
@@ -63,6 +64,7 @@ function toOperation(op: CosmosParsedOperation): Operation {
  * drops unknown message types, so an op-space offset would outrun the ops and skip txs.
  */
 export async function listOperations(
+  config: CosmosCoinConfig,
   api: CosmosAPI,
   address: string,
   options: ListOperationsOptions,
@@ -72,7 +74,7 @@ export async function listOperations(
     throw new Error("ascending order is not supported");
   }
 
-  const unitCode = api.getCurrency().units[1].code;
+  const unitCode = config.denom;
 
   const offset = options.cursor ? Math.max(0, Number.parseInt(options.cursor, 10) || 0) : 0;
   const limit = options.limit ?? PAGE_SIZE;

@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-app-unavailable",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Full-screen app unavailable view for web (Desktop) and React Native (Mobile)",
   "main": "src/index.web.ts",
@@ -17,7 +17,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
-    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",

@@ -1,3 +1,4 @@
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import {
@@ -90,7 +91,8 @@ export default function AccountBalanceFooter({ account }: Props) {
 
 function useInfo(account: Account): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
-  const stakingContract = STAKING_CONTRACTS[account.currency.id];
+  const { chainId } = getCurrencyConfiguration<EvmConfigInfo>(account.currency.id);
+  const stakingContract = STAKING_CONTRACTS[chainId];
   const unbondingPeriodDays = stakingContract ? stakingContract.unbondingPeriodDays : undefined;
   return {
     available: [

@@ -1,7 +1,13 @@
 import React, { useCallback } from "react";
 import { useAllocationTable } from "../../hooks/useAllocationTable";
 import { useInfiniteScroll } from "LLD/hooks/useInfiniteScroll";
-import { DataTable, DataTableRoot, Spot, DataTableRootProps } from "@ledgerhq/lumen-ui-react";
+import {
+  DataTable,
+  DataTableRoot,
+  Spot,
+  DataTableRootProps,
+  Spinner,
+} from "@ledgerhq/lumen-ui-react";
 import type { AllocationTableItem, AllocationViewProps } from "../../types";
 
 export const AllocationTable = ({ items, hasMore, showMore, onItemClick }: AllocationViewProps) => {
@@ -23,7 +29,7 @@ export const AllocationTable = ({ items, hasMore, showMore, onItemClick }: Alloc
           className="flex items-center justify-center py-16"
           data-testid="allocation-loader"
         >
-          <Spot appearance="loader" size={48} />
+          <Spot icon={Spinner} size={48} />
         </div>
       )}
     </div>

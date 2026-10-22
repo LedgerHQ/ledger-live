@@ -12,6 +12,12 @@ export const rootStyle: LumenViewStyle = {
 
 export const columnStyle: LumenViewStyle = {
   alignItems: "center",
+  gap: "s32",
+  width: "full",
+};
+
+export const contentStyle: LumenViewStyle = {
+  alignItems: "center",
   gap: "s24",
   width: "full",
 };

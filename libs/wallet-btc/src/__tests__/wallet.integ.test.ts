@@ -29,7 +29,7 @@ describe("testing wallet", () => {
   });
 
   it("should sync an account", async () => {
-    await wallet.syncAccount(account);
+    await wallet.syncAccount(jest.fn(), account);
     const balance = await wallet.getAccountBalance(account);
     syncedBalance = balance.toNumber();
 
@@ -44,6 +44,7 @@ describe("testing wallet", () => {
   it("should allow to store and load an account", async () => {
     const serializedAccount = await wallet.exportToSerializedAccount(account);
     const unserializedAccount = await wallet.importFromSerializedAccount(
+      jest.fn(),
       serializedAccount,
       walletBtcCurrency("bitcoin"),
     );

@@ -12,6 +12,7 @@ const ADDR = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
 const config = {
   lcd: HUB,
   minGasPrice: 0.025,
+  denom: "uatom",
   status: { type: "active" as const },
 } as unknown as CosmosCoinConfig;
 
@@ -27,7 +28,9 @@ describe("createApi (integ, Cosmos Hub)", () => {
   it("getBalance returns a native balance via the wired api", async () => {
     const balances = await api.getBalance(context, ADDR);
 
-    expect(balances.some(b => b.asset.type === "native")).toBe(true);
+    const native = balances.find(b => b.asset.type === "native");
+
+    expect(native?.value).toBeGreaterThan(0n);
   });
 
   it("lastBlock returns a positive height via the wired api", async () => {

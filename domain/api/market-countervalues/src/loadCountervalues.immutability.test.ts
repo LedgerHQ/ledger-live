@@ -1,12 +1,16 @@
 // loadCountervalues must leave the state it loads from untouched, so its result can live in a
 // store that freezes what it holds (immer, behind createSlice) and be fed back on the next poll.
 
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
+  countervaluesRatesSlice,
+  exportCountervalues,
+  importCountervalues,
   initialState,
   pairId,
+  setCountervaluesState,
+  wipeCountervalues,
   type CounterValuesState,
   type CountervaluesSettings,
 } from "@domain/entity-market-countervalues";
@@ -105,25 +109,83 @@ describe("loadCountervalues copy-on-write", () => {
     expect(twice.data[keys[1]]?.get("latest")).toBe(2003);
   });
 
-  test("keeps polling through a createSlice reducer", async () => {
-    const slice = createSlice({
-      name: "rates",
-      initialState,
-      reducers: {
-        set: (_state, action: PayloadAction<CounterValuesState>) => action.payload,
-      },
-    });
-    const rates = tickingRates();
-    let stored = slice.reducer(undefined, { type: "init" });
+  describe("through the rates slice the apps mount", () => {
+    const { reducer } = countervaluesRatesSlice;
 
-    for (let poll = 0; poll < 3; poll++) {
-      stored = slice.reducer(
+    /** Loads from the stored state, stores the result, and checks the previous one is untouched. */
+    async function poll(stored: CounterValuesState, rates: RateSource) {
+      const before = snapshot(stored);
+      const next = reducer(
         stored,
-        slice.actions.set(await loadCountervalues(stored, settings, { rates })),
+        setCountervaluesState(await loadCountervalues(stored, settings, { rates })),
       );
-      expect(Object.isFrozen(stored.data[keys[0]])).toBe(true);
+      expect(snapshot(stored)).toEqual(before);
+      expect(Object.isFrozen(next)).toBe(true);
+      return next;
     }
 
-    expect(stored.data[keys[0]]?.get("latest")).toBe(1003);
+    test("boots without a saved state, then loads twice", async () => {
+      const rates = tickingRates();
+      let stored = reducer(undefined, { type: "@@INIT" });
+
+      for (let i = 0; i < 3; i++) stored = await poll(stored, rates);
+
+      expect(stored.data[keys[0]]?.get("latest")).toBe(1003);
+      expect(stored.data[keys[1]]?.get("latest")).toBe(2003);
+      expect(initialState).toEqual({ data: {}, status: {}, cache: {} });
+    });
+
+    test("loads again after a wipe", async () => {
+      const rates = tickingRates();
+      const loaded = await poll(reducer(undefined, { type: "@@INIT" }), rates);
+      const wiped = reducer(loaded, wipeCountervalues());
+
+      expect(wiped).toBe(initialState);
+      const reloaded = await poll(wiped, rates);
+      expect(reloaded.data[keys[0]]?.get("latest")).toBe(1002);
+      expect(initialState).toEqual({ data: {}, status: {}, cache: {} });
+    });
+
+    test("drops a pair the service rejects with a 422 without touching the stored one", async () => {
+      const rates = tickingRates();
+      const stored = await poll(reducer(undefined, { type: "@@INIT" }), rates);
+      const rejectingBtc: RateSource = {
+        fetchHistorical: (_granularity, pair) =>
+          pairId(pair) === keys[0]
+            ? Promise.reject(Object.assign(new Error("unsupported"), { status: 422 }))
+            : rates.fetchHistorical(_granularity, pair),
+        fetchLatest: rates.fetchLatest,
+      };
+      // Let the next load ask for history again.
+      const stale = reducer(
+        stored,
+        setCountervaluesState({ ...stored, status: {}, checkHolesOnNextLoad: true }),
+      );
+
+      const historySize = stale.data[keys[0]]?.size ?? 0;
+      const next = await poll(stale, rejectingBtc);
+
+      // The 422 drops the pair's history; the same load's spot rate starts it again.
+      expect([...(next.data[keys[0]] ?? [])]).toEqual([["latest", 1002]]);
+      expect(historySize).toBeGreaterThan(1);
+      expect(stale.data[keys[0]]?.size).toBe(historySize);
+      expect(stale.data[keys[0]]?.get("latest")).toBe(1001);
+    });
+
+    test("restores a saved state, then loads", async () => {
+      const rates = tickingRates();
+      const saved = exportCountervalues(
+        await loadCountervalues(initialState, settings, { rates }),
+        settings.trackingPairs,
+      );
+      const restored = reducer(
+        initialState,
+        setCountervaluesState(importCountervalues(saved, settings)),
+      );
+
+      const next = await poll(restored, rates);
+
+      expect(next.data[keys[0]]?.get("latest")).toBe(1002);
+    });
   });
 });

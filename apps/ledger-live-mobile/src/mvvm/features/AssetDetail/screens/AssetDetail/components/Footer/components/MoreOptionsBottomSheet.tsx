@@ -49,7 +49,7 @@ export function MoreOptionsBottomSheet({
         {options.map(({ id, icon, label, testID, onPress }) => (
           <ListItem key={id} onPress={onPress} testID={testID}>
             <ListItemLeading>
-              <Spot appearance="icon" icon={icon} />
+              <Spot icon={icon} />
               <ListItemContent>
                 <ListItemTitle>{label}</ListItemTitle>
               </ListItemContent>

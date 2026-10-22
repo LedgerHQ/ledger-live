@@ -1,11 +1,19 @@
 import { BigNumber } from "bignumber.js";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { computeShieldedSpendFee, estimateMaxSpendableTransparent } from "../logic/coin-selection";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
+import {
+  LEGACY_MARGINAL_FEE,
+  ZIP2009_MARGINAL_FEE,
+  computeShieldedSpendFee,
+  estimateMaxSpendableTransparent,
+} from "../logic/coin-selection";
 import type { BitcoinOutput, Transaction, ZcashAccount } from "../types/bridge";
 import {
   ZCASH_MAX_TRANSPARENT_INPUTS,
   ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
 } from "../constants";
+import { contextWithZip2009, testContext } from "../test/coinConfig";
+
+const estimateMaxSpendable = buildEstimateMaxSpendable(testContext);
 
 const U_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
@@ -98,7 +106,7 @@ describe("estimateMaxSpendable, note maturity", () => {
     ]);
 
     // Only the 30k mature note counts: total 30k minus the 1-spend fee.
-    const fee = computeShieldedSpendFee(1, false, "shielded");
+    const fee = computeShieldedSpendFee(1, false, "shielded", LEGACY_MARGINAL_FEE);
     expect(await max(acc)).toEqual(BigNumber.max(new BigNumber(30_000).minus(fee), 0));
   });
 
@@ -110,7 +118,7 @@ describe("estimateMaxSpendable, note maturity", () => {
     ]);
 
     // Two mature notes, spent whole: 50k minus the 2-spend fee.
-    const fee = computeShieldedSpendFee(2, false, "shielded");
+    const fee = computeShieldedSpendFee(2, false, "shielded", LEGACY_MARGINAL_FEE);
     expect(await max(acc)).toEqual(BigNumber.max(new BigNumber(50_000).minus(fee), 0));
   });
 
@@ -129,7 +137,7 @@ describe("estimateMaxSpendable, note maturity", () => {
       { amount: 20_000, blockHeight: MATURE_BLOCK },
     ]);
 
-    const fee = computeShieldedSpendFee(2, false, "shielded");
+    const fee = computeShieldedSpendFee(2, false, "shielded", LEGACY_MARGINAL_FEE);
     expect(await max(acc)).toEqual(BigNumber.max(new BigNumber(50_000).minus(fee), 0));
   });
 });
@@ -158,6 +166,7 @@ describe("estimateMaxSpendable, transparent-input bound", () => {
     const expected = estimateMaxSpendableTransparent(
       boundedValues.map(v => new BigNumber(v)),
       "transparent",
+      LEGACY_MARGINAL_FEE,
     );
     expect(result).toEqual(expected);
   });
@@ -186,6 +195,7 @@ describe("estimateMaxSpendable, transparent-input bound", () => {
     const expected = estimateMaxSpendableTransparent(
       boundedValues.map(v => new BigNumber(v)),
       "transparent",
+      LEGACY_MARGINAL_FEE,
     );
     expect(result).toEqual(expected);
   });
@@ -210,8 +220,128 @@ describe("estimateMaxSpendable, transparent-input bound", () => {
     const expected = estimateMaxSpendableTransparent(
       values.map(v => new BigNumber(v)),
       "transparent",
+      LEGACY_MARGINAL_FEE,
     );
     expect(withoutTx).toEqual(expected);
     expect(withTx).toEqual(expected);
+  });
+});
+
+describe("estimateMaxSpendable, marginal fee by height", () => {
+  const at = (acc: ZcashAccount, currencyId: string, blockHeight: number): ZcashAccount =>
+    ({
+      ...acc,
+      currency: { id: currencyId, name: "Zcash" },
+      blockHeight,
+    }) as unknown as ZcashAccount;
+  const transparentSend = (transferType: Transaction["transferType"]): Transaction =>
+    ({
+      family: "zcash",
+      transferType,
+      amount: new BigNumber(0),
+      recipient: T_ADDRESS,
+      useAllAmount: true,
+    }) as Transaction;
+
+  it.each([
+    ["below the margin edge", "zcash", 3_590_098, 300_000 - 10_000],
+    ["at the margin edge", "zcash", 3_590_099, 300_000 - 2_000],
+    ["on a test network at height 0", "zcash_testnet", 0, 300_000 - 2_000],
+  ])(
+    "leaves a transparent balance minus the account's fee, %s",
+    async (_label, id, height, expected) => {
+      const acc = at(accountWithUtxos([100_000, 200_000]), id, height);
+
+      expect(
+        await estimateMaxSpendable({
+          account: acc,
+          transaction: transparentSend("transparent"),
+        } as never),
+      ).toEqual(new BigNumber(expected));
+      // No transaction: the same account-synced set, priced the same way.
+      expect(await estimateMaxSpendable({ account: acc } as never)).toEqual(
+        new BigNumber(expected),
+      );
+    },
+  );
+
+  it("prices the transparent-to-shielded layout at the account's fee", async () => {
+    const acc = at(accountWithUtxos([100_000, 200_000]), "zcash", 3_590_099);
+
+    expect(
+      await estimateMaxSpendable({
+        account: acc,
+        transaction: transparentSend("transparent-to-shielded"),
+      } as never),
+    ).toEqual(new BigNumber(300_000 - 4_000));
+  });
+
+  it.each([
+    ["below the margin edge", 3_590_098, LEGACY_MARGINAL_FEE],
+    ["at the margin edge", 3_590_099, ZIP2009_MARGINAL_FEE],
+  ])(
+    "leaves a shielded balance minus the account's fee, %s",
+    async (_label, height, marginalFee) => {
+      const acc = at(
+        accountWithIronwoodNotes([{ amount: 100_000, blockHeight: MATURE_BLOCK }]),
+        "zcash",
+        height,
+      );
+
+      const expected = new BigNumber(100_000).minus(
+        computeShieldedSpendFee(1, false, "shielded", marginalFee),
+      );
+      expect(await max(acc)).toEqual(expected);
+      expect(expected).toEqual(new BigNumber(100_000 - 2 * marginalFee));
+    },
+  );
+});
+
+describe("estimateMaxSpendable, zip2009 coin config", () => {
+  const at = (acc: ZcashAccount, blockHeight: number): ZcashAccount =>
+    ({ ...acc, blockHeight }) as unknown as ZcashAccount;
+  const transparent = {
+    family: "zcash",
+    transferType: "transparent",
+    amount: new BigNumber(0),
+    recipient: T_ADDRESS,
+    useAllAmount: true,
+  } as Transaction;
+
+  it.each([
+    ["absent", undefined, 3_600_000, 300_000 - 2_000],
+    ["delayed past the account height", { mainnetHeight: 3_700_000 }, 3_600_000, 300_000 - 10_000],
+    [
+      "delayed, account past the new switch",
+      { mainnetHeight: 3_700_000 },
+      3_700_099,
+      300_000 - 2_000,
+    ],
+    ["disabled", { mainnetHeight: null }, 4_500_000, 300_000 - 10_000],
+    ["below the builder's switch", { mainnetHeight: 3_500_000 }, 3_590_098, 300_000 - 10_000],
+  ])(
+    "leaves a transparent balance minus the fee of the setting %s",
+    async (_l, zip2009, h, max) => {
+      const estimate = buildEstimateMaxSpendable(contextWithZip2009(zip2009));
+      const acc = at(accountWithUtxos([100_000, 200_000]), h);
+
+      expect(await estimate({ account: acc, transaction: transparent } as never)).toEqual(
+        new BigNumber(max),
+      );
+      expect(await estimate({ account: acc } as never)).toEqual(new BigNumber(max));
+    },
+  );
+
+  it("leaves a shielded balance minus the fee of the setting", async () => {
+    const acc = at(
+      accountWithIronwoodNotes([{ amount: 100_000, blockHeight: MATURE_BLOCK }]),
+      3_600_000,
+    );
+    const delayed = buildEstimateMaxSpendable(contextWithZip2009({ mainnetHeight: 3_700_000 }));
+
+    expect(await delayed({ account: acc, transaction: shieldedTransaction } as never)).toEqual(
+      new BigNumber(100_000 - 2 * LEGACY_MARGINAL_FEE),
+    );
+    expect(await max(acc)).toEqual(new BigNumber(100_000 - 2 * ZIP2009_MARGINAL_FEE));
   });
 });

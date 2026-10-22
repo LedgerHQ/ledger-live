@@ -1,6 +1,6 @@
 import type { Config } from "jest";
 
-const esmDeps = ["ky"];
+const esmDeps = ["ky", "@noble\\+"];
 
 const config: Config = {
   testEnvironment: "node",

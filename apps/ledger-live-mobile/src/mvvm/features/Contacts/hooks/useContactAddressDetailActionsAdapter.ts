@@ -1,23 +1,24 @@
 import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/entity-contact";
 import {
-  type ContactAddressDetailSendIntent,
-  type ContactsDeleteAddressDrawerProps,
-  type ContactsEditSignerMismatchDrawerProps,
-  type ContactAddressDetailDialogNativeProps,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
-  createActiveContactAddressDetailActionsUiState,
-  createInactiveContactAddressDetailActionsUiState,
-  resolveContactAddressDetailActionsLabels,
-  useContactAddressDetailActionsFlowBindings,
   useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
-  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
+import type { ContactsDeleteAddressDrawerProps } from "@features/flow-contacts-delete-address";
+import {
+  type ContactAddressDetailSendIntent,
+  type ContactsEditSignerMismatchDrawerProps,
+  type ContactAddressDetailDialogNativeProps,
+  createActiveContactAddressDetailActionsUiState,
+  createInactiveContactAddressDetailActionsUiState,
+  useContactAddressDetailActionsFlowBindings,
+  resolveContactAddressSupportsDomain,
+} from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDrawerProps,
@@ -25,9 +26,8 @@ import type {
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { ScreenName } from "~/const";
-import { useTranslation } from "~/context/Locale";
 import {
   contactsCurrencyAnalyticsDependencies,
   resolveContactsCurrencyAnalytics,
@@ -67,7 +67,6 @@ export function useContactAddressDetailActionsAdapter(
   asset?: string,
   network?: string,
 ): ContactAddressDetailActionsFlowProps {
-  const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const ports = useContactsAddressDetailActionsPorts(deviceIntents, resolveCurrencyConfig);
   const addressValidation = useContactsAddressValidationAdapter();
@@ -140,15 +139,6 @@ export function useContactAddressDetailActionsAdapter(
     currencyId,
     sendFeatures.supportsDomain,
   );
-  const labels = useMemo(
-    () =>
-      resolveContactAddressDetailActionsLabels({
-        t,
-        addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
-        supportsDomain,
-      }),
-    [t, supportsDomain],
-  );
   const { onClose: closeRenameViewModel } = renameViewModel;
   const { editUiState } = flow;
   // Closing the edit sheet returns to the address detail it was opened from, the same way
@@ -189,11 +179,11 @@ export function useContactAddressDetailActionsAdapter(
   });
 
   if (!isSelectionActive) {
-    return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(labels));
+    return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(supportsDomain));
   }
 
   const uiState = mapUiStateToFlowProps(
-    createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels),
+    createActiveContactAddressDetailActionsUiState(flow, renameViewModel, supportsDomain),
   );
 
   return {

@@ -67,8 +67,8 @@ describe("withdrawableFromStake", () => {
       expect(withdrawable).toBe(0);
     });
 
-    test("returns 0 using amount-minus-activeAmount as activating (prepareTransaction call shape)", () => {
-      // prepareTransaction.ts derives activating as Math.max(0, amount - activeAmount).
+    test("returns 0 using amount-minus-activeAmount as activating (validateIntent call shape)", () => {
+      // validateIntent.ts derives activating as Math.max(0, amount - activeAmount).
       // For a newly delegated stake: amount=delegation, activeAmount=0 → activating=delegation.
       const delegation = 7717120;
       const stakeAccBalance = rentExemptReserve + delegation; // no MEV rewards yet

@@ -29,8 +29,6 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
     // `getAccountShape`'s vanished-token detection).
     assetReference: token.contractAddress,
     assetOwner: owner,
-    name: token.name,
-    unit: token.units[0],
   };
 }
 

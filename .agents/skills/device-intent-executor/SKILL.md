@@ -1,12 +1,12 @@
 ---
 name: device-intent-executor
-description: Device Intent Executor (DIE) and Device Intents reference. Read when working with features/platform/device-intent/, DeviceIntentExecutor / DeviceIntentExecutorLWM, Intent definitions (IntentDefinition, IntentPlatformDefinition, Job, createIntent), deviceInitializationInput / buildDeviceInitializationInput, DmkCompatTransport, or migrating a Ledger Wallet device flow off connectApp / DeviceAction / withDevice.
+description: Device Intent Executor (DIE) and Device Intents reference. Read when working with features/platform/device-intent/, DeviceIntentExecutor (package component or the apps' components/DeviceIntentExecutor wrappers), Intent definitions (IntentDefinition, IntentPlatformDefinition, Job, createIntent), deviceInitializationInput / buildDeviceInitializationInput, DmkCompatTransport, or migrating a Ledger Wallet device flow off connectApp / DeviceAction / withDevice.
 ---
 
 # Device Intent Executor (DIE)
 
 For tasks involving the `@features/platform-device-intent` package, the
-`DeviceIntentExecutor` / `DeviceIntentExecutorLWM` component, Device Intents
+`DeviceIntentExecutor` component (package or app wrapper), Device Intents
 (`IntentDefinition`, `IntentPlatformDefinition`, `Job`, `createIntent`),
 `deviceInitializationInput` / `buildDeviceInitializationInput`, the
 `DmkCompatTransport` bridge, or migrating a Ledger Wallet device flow off

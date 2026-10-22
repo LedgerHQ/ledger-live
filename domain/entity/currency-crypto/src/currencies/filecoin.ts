@@ -19,7 +19,7 @@ export const filecoin = currency({
   ],
   explorerViews: [
     {
-      tx: "https://beryx.io/v1/explore/fil/mainnet/transactions/$hash",
+      tx: "https://filecoin.blockscout.com/tx/$hash",
       address: "https://beryx.io/v1/explore/fil/mainnet/address/$address",
     },
   ],

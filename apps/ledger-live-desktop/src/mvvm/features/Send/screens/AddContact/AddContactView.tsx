@@ -56,7 +56,7 @@ export function AddContactView({ onAddNewContact, onAddToExistingContact }: AddC
     <div className="flex flex-col" data-testid="send-add-contact-step">
       <ListItem onClick={onAddNewContact} data-testid="send-add-contact-new">
         <ListItemLeading>
-          <Spot appearance="icon" icon={Plus} />
+          <Spot icon={Plus} />
           <ListItemContent>
             <ListItemTitle>{t("newSendFlow.addContact.newContact")}</ListItemTitle>
           </ListItemContent>
@@ -64,7 +64,7 @@ export function AddContactView({ onAddNewContact, onAddToExistingContact }: AddC
       </ListItem>
       <ListItem onClick={onAddToExistingContact} data-testid="send-add-contact-existing">
         <ListItemLeading>
-          <Spot appearance="icon" icon={Contact} />
+          <Spot icon={Contact} />
           <ListItemContent>
             <ListItemTitle>{t("newSendFlow.addContact.existingContact")}</ListItemTitle>
           </ListItemContent>

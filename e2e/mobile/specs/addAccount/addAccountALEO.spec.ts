@@ -1,11 +1,12 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
 
 const tmsLinks = ["B2CQA-4450", "B2CQA-4451", "B2CQA-4452"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aleo", "@family-aleo"];
 
-describe("Add account", () => {
+describeIfNanoSSupports(Currency.ALEO.id)("Add account", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",

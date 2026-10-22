@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, Button, Spot, Box } from "@ledgerhq/lumen-ui-rnative";
+import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 
 export type SyncErrorBottomSheetContentProps = {
@@ -18,7 +19,7 @@ export function SyncErrorBottomSheetContent({
   return (
     <>
       <Box lx={{ alignItems: "center", gap: "s24", marginBottom: "s32" }}>
-        <Spot size={72} appearance="warning" />
+        <Spot size={72} appearance="warning" icon={WarningFill} />
         <Box lx={{ alignItems: "center" }}>
           <Text lx={{ marginBottom: "s12", color: "base" }} typography="heading4">
             {t("syncIndicator.bottomSheet.title")}

@@ -17,7 +17,7 @@ export function PayTile({ label, onPress }: PayTileProps): React.JSX.Element {
       accessibilityLabel={label}
       centered
     >
-      <Spot size={56} appearance="icon" icon={Telegram} />
+      <Spot size={56} icon={Telegram} />
       <TileContent>
         <TileDescription>{label}</TileDescription>
       </TileContent>

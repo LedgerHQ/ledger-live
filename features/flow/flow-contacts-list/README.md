@@ -11,16 +11,17 @@ Reusable Contacts List leaf flow for Desktop and Mobile.
 - Platform variants colocated with their UI concept (`*.web.tsx` / `*.native.tsx`)
 - Themed folders such as `components/ListHeader` and `components/PageLayout`
 
-This package does not know `@features/flow-contacts`, Contact Detail, or introductions. The
-Introduction leaf is `@features/flow-contacts-introduction`; it is composed only by the parent
-orchestrator when the complete Contacts aggregate is needed.
+This package does not know `@features/flow-contacts`, `@features/flow-contacts-detail`, or
+introductions. The Introduction leaf is `@features/flow-contacts-introduction`; it is composed only
+by the parent orchestrator when the complete Contacts aggregate is needed.
 
 ## Public API
 
 Use `@features/flow-contacts-list` when a consumer only needs a contact list. The package root
 resolves to the relevant Web or React Native implementation. `ContactsCompactList` renders a
 consumer-provided ordered set of contacts without search, sections, headers, empty states, or
-navigation. Consumers provide its labels, optional maximum, and selection callback.
+navigation. Consumers provide its optional maximum and selection callback. The package resolves its
+own copy with `@shared/i18n`.
 
 Consumers must not import files under `src/` or use the internal Native entry point used by
 `@features/flow-contacts` for type-safe orchestration.

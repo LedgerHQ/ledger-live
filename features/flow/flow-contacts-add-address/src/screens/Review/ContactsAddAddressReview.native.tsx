@@ -1,7 +1,7 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { ContactsAddAddressReviewViewProps } from "./types";
+import { useAddAddressReviewLabels } from "../../copy/useAddAddressReviewLabels";
 
 function ReviewRow({
   label,
@@ -24,20 +24,25 @@ function ReviewRow({
   );
 }
 
-export type ContactsAddAddressReviewNativeProps = ContactsAddAddressReviewViewProps &
-  Readonly<{
-    bottomOffset?: number;
-  }>;
+export type ContactsAddAddressReviewNativeProps = Readonly<{
+  address: string;
+  currency: string;
+  network: string;
+  name: string;
+  bottomOffset?: number;
+  onContinue: () => void;
+}>;
 
 export function ContactsAddAddressReview({
   address,
   currency,
   network,
   name,
-  labels,
   bottomOffset = 0,
   onContinue,
 }: ContactsAddAddressReviewNativeProps): React.JSX.Element {
+  const labels = useAddAddressReviewLabels();
+
   return (
     <BottomSheetView
       testID="contacts-add-address-review"

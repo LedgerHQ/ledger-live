@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { ed25519 } from "@noble/curves/ed25519";
+import { ed25519 } from "@noble/curves/ed25519.js";
 import { StrKey } from "@stellar/stellar-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";

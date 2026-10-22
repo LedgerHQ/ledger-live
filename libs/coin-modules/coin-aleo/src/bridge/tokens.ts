@@ -636,8 +636,9 @@ export function attachPrivateTokenOpsToParent({
   privateTokenOpsByAccountId: Map<string, AleoOperation[]>;
   ledgerAccountId: string;
   address: string;
-}): void {
-  const coinOpsByHash = new Map<string, AleoOperation>(operations.map(op => [op.hash, op]));
+}): AleoOperation[] {
+  const updatedOperations = operations.map(op => ({ ...op }));
+  const coinOpsByHash = new Map<string, AleoOperation>(updatedOperations.map(op => [op.hash, op]));
 
   for (const privateOps of privateTokenOpsByAccountId.values()) {
     for (const privateOp of privateOps) {
@@ -646,7 +647,7 @@ export function attachPrivateTokenOpsToParent({
           ? ensureFeesParentCoinOp({
               privateOp,
               coinOpsByHash,
-              operations,
+              operations: updatedOperations,
               ledgerAccountId,
               address,
             })
@@ -659,6 +660,8 @@ export function attachPrivateTokenOpsToParent({
       }
     }
   }
+
+  return updatedOperations;
 }
 
 function upsertTxEntry({

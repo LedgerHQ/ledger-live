@@ -1,4 +1,6 @@
 export const STACKS_DUMMY_ADDRESS = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
+export const STACKS_DUMMY_PUBLIC_KEY =
+  "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 
 /** Cap for the Stacks indexer's paginated endpoints (transactions, token balances). */
 export const MAX_STACKS_PAGE_LIMIT = 50;

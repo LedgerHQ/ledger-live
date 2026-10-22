@@ -1,6 +1,7 @@
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 
 export interface SwapNavigationState {
@@ -38,9 +39,15 @@ export function buildSwapNavigationState({
   }
 
   if (account) {
-    baseState.defaultAccountId = account.id;
-    baseState.defaultParentAccountId =
+    const parentAccountId =
       parentAccount?.id ?? (isTokenAccount(account) ? account.parentId : undefined);
+
+    if (isTokenAccount(account) && isAccountEmpty(account) && parentAccountId) {
+      baseState.defaultAccountId = parentAccountId;
+    } else {
+      baseState.defaultAccountId = account.id;
+      baseState.defaultParentAccountId = parentAccountId;
+    }
   }
 
   return baseState;

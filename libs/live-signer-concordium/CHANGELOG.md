@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies [[`c9beaff`](https://github.com/LedgerHQ/ledger-live/commit/c9beaff3b51d3a50f310be73a830bf6e944e61fa), [`4831311`](https://github.com/LedgerHQ/ledger-live/commit/4831311fd859631a9248441e469f52c18fb42c52), [`0ace271`](https://github.com/LedgerHQ/ledger-live/commit/0ace2718ac29bc9926858af41424177ff3363d47)]:
+  - @ledgerhq/coin-concordium@1.6.0
+
+## 0.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c9beaff`](https://github.com/LedgerHQ/ledger-live/commit/c9beaff3b51d3a50f310be73a830bf6e944e61fa), [`4831311`](https://github.com/LedgerHQ/ledger-live/commit/4831311fd859631a9248441e469f52c18fb42c52), [`0ace271`](https://github.com/LedgerHQ/ledger-live/commit/0ace2718ac29bc9926858af41424177ff3363d47)]:
+  - @ledgerhq/coin-concordium@1.6.0-next.0
+
 ## 0.9.2
 
 ### Patch Changes
@@ -199,27 +213,5 @@
 
 - Updated dependencies [[`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d), [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add)]:
   - @ledgerhq/coin-concordium@0.20.0-next.0
-
-## 0.6.4
-
-### Patch Changes
-
-- Updated dependencies [[`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add)]:
-  - @ledgerhq/coin-concordium@0.19.0
-
-## 0.6.4-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add)]:
-  - @ledgerhq/coin-concordium@0.19.0-next.0
-
-## 0.6.3
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004), [`8ab9e50`](https://github.com/LedgerHQ/ledger-live/commit/8ab9e504a5b004e28f5e80f490b837b3c2526f44)]:
-  - @ledgerhq/errors@7.0.0
-  - @ledgerhq/coin-concordium@0.18.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -77,7 +77,7 @@ describe("Deeplinks", () => {
       await app.discover.openViaDeeplink();
       await app.discover.typeInCatalogSearchBar(randomLiveApp);
       await app.discover.expectCatalogAppCard(randomLiveApp);
-      await app.discover.catalogSearchCancelButton().tap();
+      await app.discover.tapCatalogSearchCancel();
       await app.discover.expectDiscoverPage();
     },
   );

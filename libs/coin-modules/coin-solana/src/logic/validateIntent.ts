@@ -71,9 +71,11 @@ import type {
   TransferFeeCalculated,
 } from "../types";
 import type { ChainAPI } from "../network";
+import type { SolanaCoinConfig } from "../config";
 
 export async function validateIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   transactionIntent: TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
   balances: Balance[],
   customFees?: FeeEstimation,
@@ -82,6 +84,7 @@ export async function validateIntent(
   const warnings: Record<string, Error> = {};
 
   const estimatedFees = customFees?.value ?? 0n;
+  const currencyName = config.name;
 
   if ("data" in transactionIntent && transactionIntent.data.type === "buffer") {
     return { errors, warnings, estimatedFees, amount: 0n, totalSpent: estimatedFees };
@@ -93,18 +96,24 @@ export async function validateIntent(
     isSolanaStakingTransactionIntent(transactionIntent) ||
     transactionIntent.type === "stake.split"
   ) {
-    return validateStakingIntent(api, transactionIntent, balances, estimatedFees);
+    return validateStakingIntent(api, transactionIntent, balances, estimatedFees, currencyName);
   }
 
   if (transactionIntent.type.startsWith("token.") && transactionIntent.type !== "token.transfer") {
-    return validateTokenAuthorityIntent(api, transactionIntent, balances, estimatedFees);
+    return validateTokenAuthorityIntent(
+      api,
+      transactionIntent,
+      balances,
+      estimatedFees,
+      currencyName,
+    );
   }
 
   await validateRecipientCommon(
     {
       sender: transactionIntent.sender,
       recipient: transactionIntent.recipient,
-      currencyName: transactionIntent.asset?.name ?? "Solana",
+      currencyName,
       allowATA: isTokenTransfer,
     },
     errors,
@@ -297,6 +306,7 @@ async function validateTokenAuthorityIntent(
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   estimatedFees: bigint,
+  currencyName: string,
 ): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -306,7 +316,7 @@ async function validateTokenAuthorityIntent(
       {
         sender: intent.sender,
         recipient: intent.recipient,
-        currencyName: intent.asset?.name ?? "Solana",
+        currencyName,
         allowATA: true,
       },
       errors,
@@ -335,11 +345,12 @@ async function validateStakingIntent(
   intent: TransactionIntent,
   balances: Balance[],
   estimatedFees: bigint,
+  currencyName: string,
 ): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  validateStakingRecipient(intent, errors);
+  validateStakingRecipient(intent, currencyName, errors);
 
   const available = spendableBalance(balances);
   const liquid = liquidBalance(balances);
@@ -557,11 +568,13 @@ function numericDetail(value: unknown): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function validateStakingRecipient(intent: TransactionIntent, errors: Record<string, Error>): void {
+function validateStakingRecipient(
+  intent: TransactionIntent,
+  currencyName: string,
+  errors: Record<string, Error>,
+): void {
   if (intent.recipient && !isValidBase58Address(intent.recipient)) {
-    errors.recipient = new InvalidAddress("", {
-      currencyName: intent.asset?.name ?? "Solana",
-    });
+    errors.recipient = new InvalidAddress("", { currencyName });
   }
 }
 
@@ -581,7 +594,8 @@ async function computeCreateAccountAmount(
     });
 
   // Best-effort: if the RPC is unavailable or unsupported, skip the minimum-delegation
-  // check rather than failing validation entirely.
+  // check rather than failing validation entirely. It runs whatever the recipient: the minimum
+  // does not depend on the validator, and mobile asks for the amount before one is picked.
   const fetchStakeMinimumDelegation = async (): Promise<bigint | null> => {
     try {
       return BigInt(await api.getStakeMinimumDelegation());
@@ -607,7 +621,7 @@ async function computeCreateAccountAmount(
     if (allAmount === 0n) {
       errors.amount = new NotEnoughBalance();
     }
-    if (!errors.recipient && !errors.amount && allAmount > 0n) {
+    if (!errors.amount && allAmount > 0n) {
       const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
       if (
         stakeMinimumDelegation !== null &&
@@ -622,7 +636,7 @@ async function computeCreateAccountAmount(
     errors.amount = new AmountRequired();
   } else if (intent.amount + estimatedFees + reserve + rent > available) {
     errors.amount = new NotEnoughBalance();
-  } else if (!errors.recipient) {
+  } else {
     const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
     if (stakeMinimumDelegation !== null && intent.amount < stakeMinimumDelegation) {
       errors.amount = amountTooLowError(stakeMinimumDelegation);
@@ -645,8 +659,7 @@ function spendableBalance(balances: Balance[]): bigint {
 /** More generous than `spendableBalance`: undelegate and withdraw may draw on the unstake reserve. */
 function liquidBalance(balances: Balance[]): bigint {
   const native = balances.find(b => b.asset.type === "native");
-  const staked = balances.reduce((sum, b) => (b.stake ? sum + b.value : sum), 0n);
-  return (native?.value ?? 0n) - staked;
+  return native?.value ?? 0n;
 }
 
 function validateFeeCoverage(

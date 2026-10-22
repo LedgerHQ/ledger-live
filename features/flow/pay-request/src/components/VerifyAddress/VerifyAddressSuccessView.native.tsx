@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Text, SpotNumber } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { VerifyAddressSheet } from "./VerifyAddressSheet.native";
 import type { VerifyAddressSuccessViewProps } from "../../types";
@@ -31,7 +31,7 @@ export function VerifyAddressSuccessView({
         </Text>
         {nextSteps.map(step => (
           <Box key={step.index} lx={{ alignItems: "flex-start", flexDirection: "row", gap: "s12" }}>
-            <Spot appearance="number" number={step.index} size={32} />
+            <SpotNumber value={step.index} size={32} />
             <Text typography="body3" lx={{ color: "base", flexShrink: 1 }}>
               {step.label}
             </Text>

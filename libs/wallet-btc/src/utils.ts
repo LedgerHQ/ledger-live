@@ -5,7 +5,7 @@ import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "./errors";
-import varuint from "varuint-bitcoin";
+import { encode as encodeVarInt } from "varuint-bitcoin";
 import { NetworkInfoResponse } from "./explorer/types";
 import { bech32m } from "./crypto/bech32m";
 
@@ -236,9 +236,8 @@ export function scriptToAddress(script: Buffer, crypto: ICrypto): string {
 
 export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/1f44f722d30cd14a1861c8546e6b455f73862c1e/src/bufferutils.js#L78
-  varuint.encode(i, buffer, offset);
-  offset += varuint.encode.bytes;
-  return offset;
+  const { bytes } = encodeVarInt(i, buffer, offset);
+  return offset + bytes;
 }
 
 /**

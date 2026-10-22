@@ -27,7 +27,7 @@ jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
     mockCalculateCountervalue(currency, value),
-  useCountervaluesState: () => ({}),
+  useCountervaluesCache: () => ({}),
 }));
 
 // Prices the typed amount back into the funding currency, in its smallest unit.

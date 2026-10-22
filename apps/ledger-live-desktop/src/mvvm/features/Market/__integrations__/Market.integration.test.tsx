@@ -1,4 +1,5 @@
 import React from "react";
+import type { JsonBodyType } from "msw";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import Market from "../index";
@@ -59,7 +60,6 @@ const createMarketState = (overrides = {}) => ({
     order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
-    page: 1,
     counterCurrency: "usd",
     ...overrides,
   },
@@ -83,27 +83,53 @@ const marketWithTopCardsOff = withFlagOverrides({
   lwdWallet40: { enabled: false },
 });
 
+const jsonMarkets = (body: JsonBodyType = MOCK_MARKET_CURRENCY_DATA) => HttpResponse.json(body);
+
+function renderMarket({
+  flags = marketFeatureFlagsState,
+  settings = createSettingsState(),
+  market = createMarketState(),
+  accounts,
+}: {
+  flags?: ReturnType<typeof withFlagOverrides>;
+  settings?: ReturnType<typeof createSettingsState>;
+  market?: ReturnType<typeof createMarketState>;
+  accounts?: [];
+} = {}) {
+  return render(<Market />, {
+    withRampCatalog: true,
+    initialState: {
+      market,
+      settings,
+      ...flags,
+      ...(accounts !== undefined && { accounts }),
+    },
+  });
+}
+
+function recordMarketRequests(
+  respond: (url: URL) => ReturnType<typeof HttpResponse.json> = () => jsonMarkets(),
+) {
+  const marketRequests: URL[] = [];
+  server.use(
+    http.get(MARKET_API_ENDPOINT, ({ request }) => {
+      const url = new URL(request.url);
+      marketRequests.push(url);
+      return respond(url);
+    }),
+  );
+  return marketRequests;
+}
+
 describe("Market Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     server.resetHandlers();
+    server.use(http.get(MARKET_API_ENDPOINT, () => jsonMarkets()));
   });
 
   it("should render top cards section when assetDiscoverability is enabled", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketWithTopCardsOn,
-      },
-    });
+    renderMarket({ flags: marketWithTopCardsOn });
 
     await waitFor(() => {
       expect(screen.getByRole("region", { name: /market top cards/i })).toBeVisible();
@@ -114,20 +140,7 @@ describe("Market Integration", () => {
   });
 
   it("should not render top cards section when assetDiscoverability is disabled", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketWithTopCardsOff,
-      },
-    });
+    renderMarket({ flags: marketWithTopCardsOff });
 
     await waitFor(() => {
       expect(screen.getByText("Market")).toBeVisible();
@@ -137,20 +150,7 @@ describe("Market Integration", () => {
   });
 
   it("should render market page with header", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
+    renderMarket();
 
     await waitFor(() => {
       expect(screen.getByText("Market")).toBeVisible();
@@ -159,20 +159,7 @@ describe("Market Integration", () => {
   });
 
   it("should render market list when data is loaded", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
+    renderMarket();
 
     await waitFor(() => {
       expect(screen.getByTestId("market-list-data")).toBeVisible();
@@ -180,24 +167,10 @@ describe("Market Integration", () => {
   });
 
   it("should show skeleton when loading", () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return new Promise(() => {
-          // Never resolves to simulate loading
-        });
-      }),
-    );
+    server.use(http.get(MARKET_API_ENDPOINT, () => new Promise(() => {})));
 
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
+    renderMarket();
 
-    // Skeleton should be visible during loading
     expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
     expect(screen.queryByTestId("market-list-data")).toBeNull();
   });
@@ -209,17 +182,9 @@ describe("Market Integration", () => {
       }),
     );
 
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
+    renderMarket();
 
     await waitFor(() => {
-      // Skeleton should be visible when there's an error
       expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
       expect(screen.queryByTestId("market-list-data")).toBeNull();
     });
@@ -232,17 +197,9 @@ describe("Market Integration", () => {
       }),
     );
 
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
+    renderMarket();
 
     await waitFor(() => {
-      // Skeleton should be visible when there's a network error
       expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
       expect(screen.queryByTestId("market-list-data")).toBeNull();
     });
@@ -254,21 +211,13 @@ describe("Market Integration", () => {
         const url = new URL(request.url);
         const search = url.searchParams.get("filter");
 
-        if (search === "bitcoin") {
-          return HttpResponse.json([MOCK_MARKET_CURRENCY_DATA[0]]);
-        }
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+        return jsonMarkets(
+          search === "bitcoin" ? [MOCK_MARKET_CURRENCY_DATA[0]] : MOCK_MARKET_CURRENCY_DATA,
+        );
       }),
     );
 
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
+    const { user } = renderMarket();
 
     await waitFor(() => {
       expect(screen.getByTestId("market-list-data")).toBeVisible();
@@ -282,20 +231,7 @@ describe("Market Integration", () => {
   });
 
   it("should toggle starred filter", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(["bitcoin"]),
-        ...marketFeatureFlagsState,
-      },
-    });
+    const { user } = renderMarket({ settings: createSettingsState(["bitcoin"]) });
 
     await waitFor(() => {
       expect(screen.getByTestId("market-star-button")).toBeInTheDocument();
@@ -306,20 +242,7 @@ describe("Market Integration", () => {
   });
 
   it("should show sell button when currency is available for selling", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
+    renderMarket();
 
     await waitFor(() => {
       expect(screen.getByTestId("market-list-data")).toBeVisible();
@@ -331,26 +254,9 @@ describe("Market Integration", () => {
   });
 
   it("should reset sort to default when switching category tab", async () => {
-    const marketRequests: URL[] = [];
-
-    server.use(
-      http.get(TRENDING_CATEGORIES_ENDPOINT, () => {
-        return HttpResponse.json([]);
-      }),
-      http.get(MARKET_API_ENDPOINT, ({ request }) => {
-        marketRequests.push(new URL(request.url));
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketWithTopCardsOn,
-      },
-    });
+    server.use(http.get(TRENDING_CATEGORIES_ENDPOINT, () => jsonMarkets([])));
+    const marketRequests = recordMarketRequests();
+    const { user } = renderMarket({ flags: marketWithTopCardsOn });
 
     await waitFor(() => {
       expect(screen.getByTestId("market-sort-volume")).toBeVisible();
@@ -390,29 +296,16 @@ describe("Market Integration", () => {
   });
 
   it("should still show results after sorting when paginated", async () => {
-    const marketRequests: URL[] = [];
     const pageSize = 50;
-
-    server.use(
-      http.get(TRENDING_CATEGORIES_ENDPOINT, () => {
-        return HttpResponse.json([]);
-      }),
-      http.get(MARKET_API_ENDPOINT, ({ request }) => {
-        const url = new URL(request.url);
-        marketRequests.push(url);
-        const page = Number(url.searchParams.get("page") ?? 0);
-        const start = page * pageSize;
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA.slice(start, start + pageSize));
-      }),
-    );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState({ page: 3 }),
-        settings: createSettingsState(),
-        ...marketWithTopCardsOn,
-      },
+    server.use(http.get(TRENDING_CATEGORIES_ENDPOINT, () => jsonMarkets([])));
+    const marketRequests = recordMarketRequests(url => {
+      const page = Number(url.searchParams.get("page") ?? 0);
+      const start = page * pageSize;
+      return jsonMarkets(MOCK_MARKET_CURRENCY_DATA.slice(start, start + pageSize));
+    });
+    const { user } = renderMarket({
+      flags: marketWithTopCardsOn,
+      market: { ...createMarketState(), currentPage: 3 },
     });
 
     await waitFor(() => {
@@ -437,26 +330,13 @@ describe("Market Integration", () => {
   });
 
   it("should append trending categories after the built-in tabs and filter the list when selected", async () => {
-    const marketRequests: URL[] = [];
-
     server.use(
-      http.get(TRENDING_CATEGORIES_ENDPOINT, () => {
-        return HttpResponse.json([{ id: "infrastructure", name: "Infrastructure" }]);
-      }),
-      http.get(MARKET_API_ENDPOINT, ({ request }) => {
-        marketRequests.push(new URL(request.url));
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
+      http.get(TRENDING_CATEGORIES_ENDPOINT, () =>
+        jsonMarkets([{ id: "infrastructure", name: "Infrastructure" }]),
+      ),
     );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketWithTopCardsOn,
-      },
-    });
+    const marketRequests = recordMarketRequests();
+    const { user } = renderMarket({ flags: marketWithTopCardsOn });
 
     const trendingChip = await screen.findByTestId("market-category-switcher-infrastructure");
     expect(trendingChip).toHaveTextContent("Infrastructure");
@@ -474,21 +354,7 @@ describe("Market Integration", () => {
   });
 
   it("should navigate to exchange with sell state when sell button is clicked", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-        accounts: [],
-      },
-    });
+    const { user } = renderMarket({ accounts: [] });
 
     await waitFor(() => {
       expect(screen.getByTestId("market-BTC-sell-button")).toBeVisible();

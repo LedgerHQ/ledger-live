@@ -30,7 +30,7 @@ Use these distinctions:
 - Move a feature-level element to `features/platform` when several flows or use cases need it, especially when it connects them to the domain.
 - Keep fully generic, business-agnostic elements in `shared` or the existing design-system package.
 - Keep app screens in each app. Let them compose exported flow entry points.
-- Keep `.web` and `.native` variants beside each other inside the owning feature.
+- Keep `.web` and `.native` variants beside each other inside the owning feature. A component exported from a universal entry takes one props contract on both platforms; one that cannot goes behind a `./web` or `./native` entry: see the [universal components ADR](../../../docs/adr/universal-components.md).
 
 ## Organize The Package
 

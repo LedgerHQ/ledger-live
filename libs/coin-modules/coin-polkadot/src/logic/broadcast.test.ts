@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { type PolkadotCoinConfig } from "../config";
 import { broadcast } from "./broadcast";
 
@@ -24,26 +23,15 @@ describe("broadcast", () => {
       const signedExtrinsic = "some signed extrinsic";
       await broadcast(config, signedExtrinsic, currencyId);
 
-      const currency = getCryptoCurrencyById(currencyId);
-
       expect(submitExtrinsicDryRunMock).toHaveBeenCalledTimes(1);
-      expect(submitExtrinsicDryRunMock.mock.lastCall).toEqual([config, signedExtrinsic, currency]);
+      expect(submitExtrinsicDryRunMock.mock.lastCall).toEqual([
+        config,
+        signedExtrinsic,
+        currencyId,
+      ]);
 
       expect(submitExtrinsicMock).toHaveBeenCalledTimes(1);
-      expect(submitExtrinsicMock.mock.lastCall).toEqual([config, signedExtrinsic, currency]);
+      expect(submitExtrinsicMock.mock.lastCall).toEqual([config, signedExtrinsic, currencyId]);
     },
   );
-
-  it("defaults to polkadot currency when no currencyId is provided", async () => {
-    const signedExtrinsic = "some signed extrinsic";
-    await broadcast(config, signedExtrinsic);
-
-    const polkadot = getCryptoCurrencyById("polkadot");
-
-    expect(submitExtrinsicDryRunMock).toHaveBeenCalledTimes(1);
-    expect(submitExtrinsicDryRunMock.mock.lastCall).toEqual([config, signedExtrinsic, polkadot]);
-
-    expect(submitExtrinsicMock).toHaveBeenCalledTimes(1);
-    expect(submitExtrinsicMock.mock.lastCall).toEqual([config, signedExtrinsic, polkadot]);
-  });
 });

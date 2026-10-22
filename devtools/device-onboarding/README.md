@@ -4,7 +4,7 @@
 > **Status: UNSTABLE** — Shipped ahead of its hosts; the props contract will move with them.
 
 DevTool for the shared device onboarding flow of
-[`@ledgerhq/device-onboarding`](../../libs/device-onboarding/README.md). It is how that flow is run
+[`@features/platform-device-onboarding`](../../features/platform/device-onboarding/README.md). It is how that flow is run
 against a real device before any onboarding screen exists, and the only consumer of it until the
 screens land.
 
@@ -14,8 +14,21 @@ Design and rationale live in the
 ## What it does
 
 Renders the flow and nothing else: the connected device with its model, transport and session id,
-the current state of the machine, the context fields worth watching, the event log, the exit
-reason, and one button per event the machine accepts right now.
+the context, and the log. Open Exit to read the reason, the session and the model.
+
+The device name sits under the status. Context sits under that name. It starts closed. Tap it to
+open the fields. Log and Config sit under that. Log is the run. Config lists each switch, with a
+short line under its name. The `deviceOnboarding` feature flag sits first,
+with one switch for `enabled` and one per param, when the host passes it. Override sits under that. It can mark the device genuine or not, or offer a
+firmware update. An exit never leaves this screen. Before a run, the log asks you to pair a device and
+tap Connect. The log reads upward. The newest state is on top.
+Each event sits under the state it led to. The host saves that pair when the machine updates.
+Under the current state, each event that can happen lists the state it can reach.
+Those lines are faded. Lock, a lost transport, and quit stay off that list.
+The buttons sit above the newest state.
+Export logs sits at the bottom. It shares a JSON log on a phone and downloads it on the web.
+The log keeps the newest 200 rows: a long run must not grow without end, and a phone's share
+sheet has a size limit.
 
 **The tool runs no machine.** The host owns the session and drives `deviceOnboardingMachine`; this
 package receives what the host observes through `DeviceOnboardingToolProps` and calls back with
@@ -29,7 +42,9 @@ branches on touchscreen versus nano, and it behaves differently over BLE and USB
 
 `DeviceOnboardingToolProps`, built by each host:
 
-- `status`, `device`, `state`, `context`, `events`, `exit`, `error` — what the host observes
+- `status`, `device`, `state`, `machineContext`, `log`, `exit`, `error` — what the host observes
+- `context` — deprecated: the old flat names (`flattenDeviceOnboardingContext`), kept while app
+  code still reads them. The tool does not show it. New code reads `machineContext`
 - `sendableEvents` — what the host offers to send, as whole `OnboardingEvent` values rather than
   types: `snapshot.can` needs the payload to answer, and the machine dereferences it. Each entry
   carries an optional `label`, which a host needs when it offers one type several ways
@@ -38,24 +53,28 @@ branches on touchscreen versus nano, and it behaves differently over BLE and USB
 A host offers only events it owns and has already made valid. `SESSION_READY` in particular means
 "the session I re-opened is ready": offering it before calling `openSession` again lets the machine
 re-read a device that is no longer there. When the transport goes away mid-run the host sets
-`device` to null, which re-enables Connect — that is where the session gets re-opened, and only
+`device` to null, which re-enables Connect. That is where the session gets re-opened, and only
 then does `SESSION_READY` belong in `sendableEvents`. The tool sends it with no session id: the host adds
 the live one (`stampSession`), because only the host knows it.
 
-`context` takes primitives under the closed list of names exported as `watchedContextFields`, and
-the view renders nothing outside that list. `verdictMatchesSession` is the row to watch: the
-machine discards the genuine attestation when the session id moved under it, which is the failure
-this tool exists to catch, and nothing else on screen shows it. Derive it from the raw
-`genuineVerdict`, never from the machine's own accessor, or the row can only ever agree with
-`isGenuine`.
+`machineContext` is the machine context as plain data (`toolContext`). The screen lists every field.
 
-The closed list is a privacy boundary, not a style choice. This panel runs while a recovery phrase
-is being entered, and it is read over shoulders and pasted into bug reports, so it must not be able
-to print `seedWordIndex`, `seedPhraseWordCount`, a device id, or `lastGenuineFailure.failure` —
-which is untyped and, for a fetch error, holds the backend URL and the response body. Two other
-fields answer to the same rule rather than to a host's discretion: an event `detail` is a closed
-set of three shapes, not free text, and the exit contract drops the machine's `device.id` and keeps
-`sessionId`, which tells two runs apart without naming the hardware.
+The panel runs while a recovery phrase is entered, and its export goes into bug reports. So the
+context and the event payloads never show `deviceId` (a hardware id), `seedWordIndex`,
+`seedPhraseWordCount`, `lastDeviceState`, the app `catalog`, `secureElementFlags` or the firmware
+file keys (`perso`, `firmwareKey`, `hash`, `nextFinalFirmware`, the file path). A key is hidden by
+its name at any depth, so an unrelated field with one of these names is hidden too. Installed apps
+show as counts only (`count`, `updates`, `bytes`, `devTools`, `withWarning`): their names tell which
+coins the user holds. `verdictMatchesSession` is the row to watch: the machine drops the genuine check
+when the session id moved. The host builds that row from the raw `genuineVerdict`.
+
+Tap an event to open its payload. Each object is a row that opens on its own fields, so a long
+path never runs off the screen. A chevron shows if a line is open. A list of plain values sits on
+one row. The device
+answer sits on `output`. Every field the rule above allows is shown, including an error body and a
+URL.
+The short `detail` on the closed line stays a closed set of three shapes. The exit contract drops the
+machine's `device.id` and keeps `sessionId`.
 
 ## Allowed imports
 
@@ -64,7 +83,7 @@ another tool. See [Tool boundaries](../README.md#tool-boundaries) for the full r
 
 What this package does import:
 
-- `@ledgerhq/device-onboarding`, type-only — the library the tool exercises, app-agnostic and
+- `@features/platform-device-onboarding`, type-only — the library the tool exercises, app-agnostic and
   carrying the event and exit reason types that make the props contract exact
 - `@ledgerhq/lumen-ui-react` and `@ledgerhq/lumen-ui-rnative` — the views
 

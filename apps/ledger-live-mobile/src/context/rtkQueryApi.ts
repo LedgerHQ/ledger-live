@@ -1,5 +1,4 @@
 import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
-import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
 import { aleoApi } from "@ledgerhq/live-common/families/aleo/state-manager/api";
@@ -26,7 +25,6 @@ const APIs = {
   [cgApi.reducerPath]: cgApi,
   [hederaApi.reducerPath]: hederaApi,
   [marketApi.reducerPath]: marketApi,
-  [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,
   [swapApi.reducerPath]: swapApi,
 };

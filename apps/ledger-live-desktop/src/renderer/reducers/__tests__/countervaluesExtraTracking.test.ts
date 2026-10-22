@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import { wipeCountervalues } from "@features/platform-market-countervalues";
+import { wipeCountervalues } from "@domain/entity-market-countervalues";
 import reducer, {
   addExtraTrackingPairs,
   selectExtraTrackingPairs,

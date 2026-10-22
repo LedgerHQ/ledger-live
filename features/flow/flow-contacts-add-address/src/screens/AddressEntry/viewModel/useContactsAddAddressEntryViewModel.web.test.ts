@@ -4,49 +4,20 @@ import {
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   ContactAddressValueSchema,
 } from "@domain/entity-contact";
-import type { ContactsAddAddressNameLabels } from "../../AddressName/types";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import type { ContactsAddAddressEntryWebProps } from "../components/ContactsAddAddressEntry/ContactsAddAddressEntry";
-import type { AddAddressEntryLabels } from "../../../state/types";
 import { useContactsAddAddressEntryViewModel } from "./useContactsAddAddressEntryViewModel";
 
-const labels: AddAddressEntryLabels = {
-  title: "Enter address",
-  addressPlaceholder: "Address or ENS",
-  confirmAddress: "Continue to review",
-  validatingAddress: "Validating address",
-  validAddress: "Valid address",
-  invalidAddress: "Invalid address",
-  domainNotFound: "Domain not found",
-  sanctionedAddress: "This address is sanctioned and cannot be used.",
-  validationUnavailable: "Address validation is temporarily unavailable.",
-  ensDisclaimer: "ENS disclaimer",
-  ensDisclaimerDescription: "ENS names can change over time.",
-  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
-};
 const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
   "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
 );
-const nameLabels: ContactsAddAddressNameLabels = {
-  inputLabel: "Address name",
-  namingDisclaimer: "Address naming disclaimer",
-  namingDisclaimerAccessibilityLabel: "Address name information",
-  continueToReview: "Continue to review",
-  validAddress: "Valid address",
-  validationErrors: {
-    InvalidContactAddressLabelError: "Special characters are not allowed.",
-    DuplicateContactAddressLabelError: "Duplicate address name.",
-    ContactAddressLabelTooLongError: "Address name is too long.",
-  },
-};
 
 type ContactsAddAddressEntryWebBaseOverrides = Partial<
-  Omit<ContactsAddAddressEntryWebProps, "addressLabel" | "nameLabels" | "onAddressLabelChange">
+  Omit<ContactsAddAddressEntryWebProps, "addressLabel" | "onAddressLabelChange">
 >;
 
 type ContactsAddAddressEntryWebWithLabelOverrides = ContactsAddAddressEntryWebBaseOverrides &
-  Required<
-    Pick<ContactsAddAddressEntryWebProps, "addressLabel" | "nameLabels" | "onAddressLabelChange">
-  >;
+  Required<Pick<ContactsAddAddressEntryWebProps, "addressLabel" | "onAddressLabelChange">>;
 
 function renderViewModel(
   overrides:
@@ -56,14 +27,16 @@ function renderViewModel(
   const onAddressChange = jest.fn();
   const props: ContactsAddAddressEntryWebProps = {
     addressEntry: { status: "empty", value: "", resolvedAddress: null, inputMethod: null },
-    labels,
+    supportsDomain: true,
     onAddressChange,
     ...overrides,
   } as ContactsAddAddressEntryWebProps;
 
   return {
     onAddressChange,
-    ...renderHook(() => useContactsAddAddressEntryViewModel(props)),
+    ...renderHook(() => useContactsAddAddressEntryViewModel(props), {
+      wrapper: I18nTestProvider,
+    }),
   };
 }
 
@@ -124,7 +97,7 @@ describe("useContactsAddAddressEntryViewModel", () => {
 
     expect(result.current).toMatchObject({
       inputStatus: "success",
-      helperText: "Valid address",
+      helperText: "contacts.addAddressEntry.validAddress",
       showEnsDisclaimer: true,
       isConfirmEnabled: true,
     });
@@ -153,21 +126,17 @@ describe("useContactsAddAddressEntryViewModel", () => {
         inputMethod: "manual",
         error: "sanctioned",
       },
-      sanctionedAddressBanner: {
-        description: "This wallet address is sanctioned.",
-        actionLabel: "Learn more",
-        onAction,
-      },
+      onSanctionedAddressLearnMore: onAction,
     });
 
     expect(result.current).toMatchObject({
       inputStatus: "error",
-      helperText: "This address is sanctioned and cannot be used.",
+      helperText: "contacts.addAddressEntry.sanctionedAddress",
       isConfirmEnabled: false,
     });
     expect(result.current.sanctionedAddressBanner).toEqual({
-      description: "This wallet address is sanctioned.",
-      actionLabel: "Learn more",
+      description: "contacts.addAddressEntry.sanctioned.description",
+      actionLabel: "contacts.addAddressEntry.sanctioned.learnMore",
       onAction,
     });
   });
@@ -187,13 +156,12 @@ describe("useContactsAddAddressEntryViewModel", () => {
         label: null,
         validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
-      nameLabels,
       onAddressLabelChange,
       onConfirm: jest.fn(),
     });
 
     expect(result.current.isConfirmEnabled).toBe(false);
-    expect(result.current.nameValidationMessage).toBe("Special characters are not allowed.");
+    expect(result.current.nameValidationMessage).toBe("contacts.addAddressName.invalidLabel");
 
     act(() => {
       result.current.onAddressLabelChange?.({

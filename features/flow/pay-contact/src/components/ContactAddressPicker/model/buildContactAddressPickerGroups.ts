@@ -4,7 +4,7 @@ import {
   defaultContactAddressCurrencyPort,
   resolveContactAddressIconProps,
   truncateContactAddress,
-} from "@features/flow-contacts/model";
+} from "@features/flow-contacts-detail";
 import type { ContactAddressPickerNetworkGroup } from "../../../types";
 
 export function buildContactAddressPickerGroups(

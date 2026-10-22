@@ -1,5 +1,27 @@
 # @ledgerhq/speculos-transport
 
+## 0.13.0
+
+### Minor Changes
+
+- [#23470](https://github.com/LedgerHQ/ledger-live/pull/23470) [`ba07b05`](https://github.com/LedgerHQ/ledger-live/commit/ba07b0562bf91bb0e5468d4806bc5d7781785248) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Watch the Speculos screen during local E2E runs: `SPECULOS_SCREEN=web` opens the Speculos web page (through a local proxy that adds the Speculinho session token), `SPECULOS_SCREEN=vnc` a VNC viewer (through a local bridge to the Speculinho VNC websocket). Ignored in CI. Local Docker Speculos now always runs its VNC server, bound to 127.0.0.1.
+
+### Patch Changes
+
+- Updated dependencies [[`307d5c0`](https://github.com/LedgerHQ/ledger-live/commit/307d5c0da2fc42ee1699e6b48073255276456dd6), [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0), [`ed89930`](https://github.com/LedgerHQ/ledger-live/commit/ed89930df1e705c535e5c4cccd62033654f5a145)]:
+  - @ledgerhq/live-dmk-speculos@0.12.0
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#23470](https://github.com/LedgerHQ/ledger-live/pull/23470) [`ba07b05`](https://github.com/LedgerHQ/ledger-live/commit/ba07b0562bf91bb0e5468d4806bc5d7781785248) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Watch the Speculos screen during local E2E runs: `SPECULOS_SCREEN=web` opens the Speculos web page (through a local proxy that adds the Speculinho session token), `SPECULOS_SCREEN=vnc` a VNC viewer (through a local bridge to the Speculinho VNC websocket). Ignored in CI. Local Docker Speculos now always runs its VNC server, bound to 127.0.0.1.
+
+### Patch Changes
+
+- Updated dependencies [[`307d5c0`](https://github.com/LedgerHQ/ledger-live/commit/307d5c0da2fc42ee1699e6b48073255276456dd6), [`a8d48a9`](https://github.com/LedgerHQ/ledger-live/commit/a8d48a97f1bae0c2adad5d2790c9cc8ab5d7c2b0), [`ed89930`](https://github.com/LedgerHQ/ledger-live/commit/ed89930df1e705c535e5c4cccd62033654f5a145)]:
+  - @ledgerhq/live-dmk-speculos@0.12.0-next.0
+
 ## 0.12.0
 
 ### Minor Changes

@@ -16,11 +16,11 @@ import { registerExternalAddressIntentLWDDefinition } from "LLD/features/Contact
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import {
-  DeviceIntentExecutorLWD,
+  DeviceIntentExecutor,
   type InitializationInput,
   type SourceFlow,
 } from "LLD/components/DeviceIntentExecutor";
-import type { InitializerConfig } from "LLD/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWD";
+import type { InitializerConfig } from "LLD/components/DeviceIntentExecutor/ContextInitializer";
 import { INITIALIZATION_SCENARIOS } from "../../initializationScenarios";
 import { initializationEchoIntentLWDDefinition } from "../../intents/initializationEchoIntent/intentLWDDefinition";
 import type {
@@ -190,7 +190,7 @@ function OrchestrationMode() {
       </section>
 
       {orchestration.enabled ? (
-        <DeviceIntentExecutorLWD sourceFlow="debug" {...orchestration.executorProps} />
+        <DeviceIntentExecutor sourceFlow="debug" {...orchestration.executorProps} />
       ) : null}
     </>
   );
@@ -306,7 +306,7 @@ function InitializationMode() {
         </Button>
       </section>
 
-      {enabled ? <DeviceIntentExecutorLWD {...executorProps} /> : null}
+      {enabled ? <DeviceIntentExecutor {...executorProps} /> : null}
     </>
   );
 }
@@ -393,7 +393,7 @@ function ContactsValidationMode() {
         </Button>
       </section>
 
-      {enabled ? <DeviceIntentExecutorLWD {...executorProps} /> : null}
+      {enabled ? <DeviceIntentExecutor {...executorProps} /> : null}
     </>
   );
 }

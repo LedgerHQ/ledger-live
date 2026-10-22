@@ -10,10 +10,10 @@ import {
   selectShieldedSubscriptions,
   upsertShieldedSubscription,
 } from "~/renderer/reducers/shieldedSyncSubscriptions";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
-import type { Currency } from "@ledgerhq/wallet-btc/index";
 import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 export function useZcashShieldedSync(account: ZcashAccount) {
   const dispatch = useDispatch();
@@ -53,8 +53,7 @@ export function useZcashShieldedSync(account: ZcashAccount) {
 
   const startShieldedSync = useCallback(() => {
     const currentAccount = currentAccountOf(account);
-    if (currentAccount.type !== "Account" || (currentAccount.currency.id as Currency) !== "zcash")
-      return;
+    if (currentAccount.type !== "Account" || !isZcashCurrencyId(currentAccount.currency.id)) return;
 
     // Without a UFVK the shielded sync observable throws immediately, so there's
     // nothing to start. Bail out before flipping the UI into "running".
@@ -101,8 +100,7 @@ export function useZcashShieldedSync(account: ZcashAccount) {
 
   const stopShieldedSync = useCallback(() => {
     const currentAccount = currentAccountOf(account);
-    if (currentAccount.type !== "Account" || (currentAccount.currency.id as Currency) !== "zcash")
-      return;
+    if (currentAccount.type !== "Account" || !isZcashCurrencyId(currentAccount.currency.id)) return;
 
     // No early return when nothing is tracked here: the very first sync after enabling
     // private balance runs unattended, driven by the automatic wallet sync (syncState

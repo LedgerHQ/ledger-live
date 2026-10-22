@@ -288,6 +288,12 @@ export class NewSendModal extends Modal {
   @step("Wait success confirmation screen")
   async waitForSuccessConfirmation() {
     await this.waitForConfirmation();
+    // The flow is over once a terminal screen shows: fail now rather than wait out the timeout.
+    const failureContent = this.confirmationErrorContent.or(this.confirmationInfoContent);
+    if (await failureContent.isVisible()) {
+      const details = await failureContent.locator("h3, p").allInnerTexts();
+      throw new Error(`Send ended on a non-success screen: ${details.join(" — ")}`);
+    }
     await expect(this.successConfirmationTitle).toBeVisible();
   }
 }

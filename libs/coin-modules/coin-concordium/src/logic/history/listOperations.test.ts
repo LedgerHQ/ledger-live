@@ -47,10 +47,69 @@ describe("parseTransaction", () => {
       recipient: VALID_ADDRESS_2,
       amount: "1000000",
       fee: "500",
+      feesPayer: VALID_ADDRESS,
       failed: false,
       id: 42,
     });
     expect(result!.value).toBe(String(BigInt(1000000) + BigInt(500)));
+  });
+
+  // The send and receive cancel, so the fee is the only net effect on-chain.
+  it("names the account as fee payer on a self-transfer", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      total: -500,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      fee: "500",
+      feesPayer: VALID_ADDRESS,
+    });
+  });
+
+  it("names the sender as fee payer on an incoming transfer", () => {
+    const { cost: _omitted, ...withoutCost } = baseTx;
+    const tx: WalletProxyTransaction = {
+      ...withoutCost,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "2000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      fee: "0",
+      feesPayer: VALID_ADDRESS_2,
+    });
+  });
+
+  it("names no fee payer when the origin carries no address", () => {
+    const tx = {
+      ...baseTx,
+      origin: { type: "account" },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "2000000",
+      },
+    } as WalletProxyTransaction;
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).not.toHaveProperty("feesPayer");
   });
 
   it("should parse an incoming transfer", () => {
@@ -116,6 +175,7 @@ describe("parseTransaction", () => {
       failed: true,
       value: "300",
       fee: "300",
+      feesPayer: VALID_ADDRESS,
       amount: "0",
       recipient: "",
     });
@@ -206,6 +266,7 @@ describe("parseTransaction, PLT", () => {
       recipient: VALID_ADDRESS_2,
       amount: "3000000",
       fee: "595400",
+      feesPayer: VALID_ADDRESS,
       tokenId: "trUSDT",
       decimals: 6,
       failed: false,
@@ -221,6 +282,7 @@ describe("parseTransaction, PLT", () => {
       type: "IN",
       value: "20000000",
       fee: "0",
+      feesPayer: VALID_ADDRESS_2,
       tokenId: "trUSDT",
     });
   });
@@ -269,6 +331,7 @@ describe("parseTransaction, PLT", () => {
       type: "OUT",
       value: "595400",
       fee: "595400",
+      feesPayer: VALID_ADDRESS,
       failed: false,
     });
     expect(parseTransaction(nonTransfer, VALID_ADDRESS)).not.toHaveProperty("tokenId");
@@ -548,6 +611,46 @@ describe("listOperations", () => {
     );
 
     expect(result.next).toBe("101");
+  });
+
+  it("returns a cursor when the proxy caps the requested limit", async () => {
+    // The proxy serves at most 1000 rows and echoes the capped limit, so a full
+    // page is measured against that, not against what was asked for.
+    const txs = Array.from({ length: 1000 }, (_, i) => ({
+      id: 2000 - i,
+      blockTime: Date.now() / 1000,
+      blockHash: "aabb",
+      blockHeight: 1000,
+      transactionHash: `${"cc".repeat(30)}${String(i).padStart(4, "0")}`,
+      cost: 100,
+      origin: { type: "self" as const },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000",
+      },
+      total: -1100,
+    }));
+
+    getTransactionsMock.mockResolvedValue({
+      transactions: txs,
+      count: 1000,
+      limit: 1000,
+      order: "descending",
+    });
+
+    const result = await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 2000 },
+      "concordium_testnet",
+    );
+
+    expect(getTransactionsMock.mock.calls[0][3]).toMatchObject({ limit: 2000 });
+    expect(result.items).toHaveLength(1000);
+    expect(result.next).toBe("1001");
   });
 
   it("should filter non-transfer transactions", async () => {

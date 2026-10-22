@@ -98,8 +98,6 @@ describe("celo bridge", () => {
         type: "erc20",
         assetReference: mockToken.contractAddress,
         assetOwner: owner,
-        name: "Celo Dollar",
-        unit: mockToken.units[0],
       });
     });
   });

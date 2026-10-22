@@ -5,7 +5,7 @@
 
 import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { useCurrencyData } from "../useMarketDataProvider";
+import { useCurrencyData } from "../useCurrencyData";
 import { marketApi } from "../../state-manager/marketApi";
 import { server } from "@tests/server";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";

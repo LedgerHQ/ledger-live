@@ -36,10 +36,11 @@ const savedEnv = {
   port: process.env.SPECULOS_API_PORT,
   address: process.env.SPECULOS_ADDRESS,
   device: process.env.SPECULOS_DEVICE,
+  token: process.env.SPECULOS_SESSION_TOKEN,
 };
 
 const restoreEnv = (
-  key: "SPECULOS_API_PORT" | "SPECULOS_ADDRESS" | "SPECULOS_DEVICE",
+  key: "SPECULOS_API_PORT" | "SPECULOS_ADDRESS" | "SPECULOS_DEVICE" | "SPECULOS_SESSION_TOKEN",
   value?: string,
 ) => {
   if (value === undefined) {
@@ -54,6 +55,7 @@ describe("SpeculosDmkTransport", () => {
     restoreEnv("SPECULOS_API_PORT", savedEnv.port);
     restoreEnv("SPECULOS_ADDRESS", savedEnv.address);
     restoreEnv("SPECULOS_DEVICE", savedEnv.device);
+    restoreEnv("SPECULOS_SESSION_TOKEN", savedEnv.token);
     jest.clearAllMocks();
   });
 
@@ -81,6 +83,7 @@ describe("SpeculosDmkTransport", () => {
       "http://127.0.0.1:40000",
       true,
       ledgerToDmkDeviceIdMap[DeviceModelId.nanoSP],
+      { bearerToken: undefined },
     );
 
     await expect(transport.connect({ deviceId: "speculos-device", onDisconnect })).resolves.toEqual(
@@ -122,6 +125,23 @@ describe("SpeculosDmkTransport", () => {
       "http://127.0.0.1:50000",
       true,
       expect.anything(),
+      { bearerToken: undefined },
+    );
+  });
+
+  it("authenticates against a protected Speculinho session", async () => {
+    process.env.SPECULOS_API_PORT = "443";
+    process.env.SPECULOS_ADDRESS = "https://run.speculos.ledgerlabs.net";
+    process.env.SPECULOS_SESSION_TOKEN = "session-token";
+    const transport = new SpeculosDmkTransport({} as TransportArgs);
+
+    await firstValueFrom(transport.listenToAvailableDevices());
+
+    expect(speculosTransportFactory).toHaveBeenCalledWith(
+      "https://run.speculos.ledgerlabs.net:443",
+      true,
+      expect.anything(),
+      { bearerToken: "session-token" },
     );
   });
 
@@ -137,7 +157,7 @@ describe("SpeculosDmkTransport", () => {
       "http://127.0.0.1:40000",
       true,
       ledgerToDmkDeviceIdMap[DeviceModelId.nanoSP],
+      { bearerToken: undefined },
     );
   });
-
 });

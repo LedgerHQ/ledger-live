@@ -4,9 +4,6 @@ import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { BitcoinAccount, Transaction } from "./types";
 import { inferFeePerByte } from "./logic";
 import { getWalletAccount } from "./getWalletAccount";
-import { getChainAdapter } from "./chain-adapters/registry";
-import type { BitcoinCoinConfig } from "./config";
-import type { Logger } from "@ledgerhq/coin-module-framework/config";
 /**
  * Build a list of UTXOs to exclude because their transactions can't be fetched.
  * This includes UTXOs from pending operations that were replaced, and any other
@@ -70,15 +67,9 @@ export function sameExcludeUTXOs(
 }
 
 export const prepareTransaction = async (
-  config: BitcoinCoinConfig,
-  logger: Logger,
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  const adapter = getChainAdapter(account.currency.id);
-  const custom = adapter.prepareTransaction?.(account, transaction);
-  if (custom) return custom;
-
   let networkInfo = transaction.networkInfo;
 
   if (!networkInfo) {
@@ -103,21 +94,7 @@ export const prepareTransaction = async (
 
   const utxoStrategy = { ...transaction.utxoStrategy, excludeUTXOs: mergedExclusions };
 
-  const inferredFeePerByte = inferFeePerByte(transaction, networkInfo);
-
-  // A chain whose fee is not a rate per vByte resolves the rate from the layout
-  // this transaction resolves to (see ChainAdapter.resolveFeePerByte). It runs on
-  // the merged exclusions, so the rate is resolved against the very UTXO set the
-  // transaction will be built from, and before the change detection below, so
-  // repeated preparations settle at a fixed point instead of re-deriving a rate
-  // that inferFeePerByte would discard.
-  const feePerByte =
-    (await adapter.resolveFeePerByte?.(config, logger, account, {
-      ...transaction,
-      networkInfo,
-      feePerByte: inferredFeePerByte,
-      utxoStrategy,
-    })) ?? inferredFeePerByte;
+  const feePerByte = inferFeePerByte(transaction, networkInfo);
 
   if (
     transaction.networkInfo === networkInfo &&

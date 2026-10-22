@@ -304,6 +304,33 @@
     "coinControl": "Coin Control",
     "feesAmount": "Fees Amount"
   },
+  "accountDetailSettings": {
+    "title": "Account settings",
+    "menu": {
+      "changeName": "Change name",
+      "viewAdvancedLogs": "View advanced logs",
+      "removeAccount": "Remove account from portfolio"
+    },
+    "changeName": {
+      "title": "Change account name",
+      "description": "Give this address a name to stay organized (ex. {{ticker}}-Trading, {{ticker}}-DeFi).",
+      "label": "Address name",
+      "submit": "Change name"
+    },
+    "advancedLogs": {
+      "title": "Advanced logs",
+      "derivationTip": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
+      "synchronised": "Synchronised {{date}}",
+      "copy": "Copy logs",
+      "copied": "Copied"
+    },
+    "remove": {
+      "title": "Remove account?",
+      "description": "The assets linked to this account will no longer be visible in your portfolio. Your assets on the blockchain remain unaffected.",
+      "confirm": "Yes, remove.",
+      "cancel": "Keep"
+    }
+  },
   "sidebar": {
     "card": "Card",
     "paytab": "Pay",
@@ -3065,8 +3092,17 @@
         "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
+      "aleoPublic": {
+        "title": "Public balance"
+      },
+      "aleoPrivate": {
+        "title": "Private balance"
+      },
       "zeroBalance": {
         "warning": "No available balance"
+      },
+      "requiresSync": {
+        "notice": "Sync required"
       }
     }
   },
@@ -7817,6 +7853,14 @@
       "title": "These funds are not spendable yet",
       "description": "Please try again in a few minutes"
     },
+    "ZcashShieldedNotSupportedOnDevice": {
+      "title": "This device can only send between transparent addresses",
+      "description": "Use a Ledger Nano S Plus, Nano X, Flex or Stax to send to or from a private address."
+    },
+    "ZcashPreparedBuildMismatch": {
+      "title": "The transaction changed since it was reviewed",
+      "description": "Your balance or fees changed. Please review the transaction again."
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -9863,7 +9907,7 @@
             "subtitle": "Shielded",
             "unavailable": "Private balance unavailable"
           },
-          "spendableWarning": "Spendable balance may be lower than total balance. Recently shielded funds need confirmations and full scanning (~15 minutes) before they can be spent."
+          "spendableWarning": "Spendable balance may be lower than total balance. Recently shielded funds need confirmations and full scanning before they can be spent."
         },
         "memo": {
           "label": "Memo (optional)",
@@ -10129,11 +10173,25 @@
         "recordsUsed": "Records used",
         "signingTime": "Signing time"
       },
+      "amount": {
+        "signingTime": {
+          "label": "Signing time",
+          "description": "Your Ledger signer approves each record this transaction uses. Sending more from your private balance can use more records and take longer."
+        }
+      },
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
         "desc": "Please wait",
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
+      },
+      "balanceTypeSync": {
+        "title": "Refreshing your private balance",
+        "progress": "{{percentage}}%",
+        "errorTitle": "Private sync failed",
+        "errorDescription": "Something went wrong, please try again",
+        "recordLimitTitle": "You can send up to {{amount}}",
+        "recordLimitDescription": "Your balance is split across several records, and one transaction can use a maximum of {{maxRecords}}. To send more, make multiple transactions."
       }
     },
     "operationTypes": {
@@ -10610,6 +10668,14 @@
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }
+    }
+  },
+  "accountDetail": {
+    "header": {
+      "settings": "Account settings"
+    },
+    "assets": {
+      "title": "Assets"
     }
   },
   "assetDetails": {
@@ -11150,6 +11216,9 @@
       "amountExceedsBalance": "Insufficient balance",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
     }
+  },
+  "actionMenuDialog": {
+    "a11yTitle": "Choose an action"
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",

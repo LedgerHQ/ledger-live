@@ -6,7 +6,7 @@ const swapCheckProviderTestConfig = {
   toAccount: Account.ETH_1,
   provider: SwapProvider.OKX,
   tmsLinks: ["B2CQA-4728"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
 runSwapDexNativeFlow(

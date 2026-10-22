@@ -94,6 +94,7 @@ async function getMinReplacementFeeSatFromOriginalTx(
 }
 
 export async function buildAccountTx(
+  logger: Logger,
   config: BitcoinCoinConfig,
   params: BuildAccountTxParams,
 ): Promise<TransactionInfo> {
@@ -105,7 +106,7 @@ export async function buildAccountTx(
     params.pendingOperations,
   );
 
-  const txInfo = await params.fromAccount.xpub.buildTx({
+  const txInfo = await params.fromAccount.xpub.buildTx(logger, {
     destAddress: params.dest,
     amount: params.amount,
     feePerByte: params.feePerByte,

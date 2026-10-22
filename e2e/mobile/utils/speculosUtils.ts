@@ -323,11 +323,20 @@ export async function registerSpeculos(speculosPort: number) {
   setEnv("SPECULOS_API_PORT", speculosPort);
 }
 
+function restoreProcessEnv(name: string, value: string | undefined) {
+  if (value === undefined) {
+    delete process.env[name];
+  } else {
+    process.env[name] = value;
+  }
+}
+
 /**
  * Runs `work` on a Speculos of its own, then puts the caller's device back.
  *
- * `registerSpeculos` restores the port but reads SPECULOS_ADDRESS as it finds it, so a remote
- * device — identified by URL, not port — needs its address restored here too.
+ * `registerSpeculos` restores the port but reads SPECULOS_ADDRESS and SPECULOS_SESSION_TOKEN as it
+ * finds them, so a remote device — identified by URL, not port, and protected by its own token —
+ * needs both restored here too.
  */
 export async function withTemporarySpeculos<T>(
   appName: string,
@@ -335,6 +344,7 @@ export async function withTemporarySpeculos<T>(
 ): Promise<T> {
   const previousPort = getEnv("SPECULOS_API_PORT");
   const previousAddress = process.env.SPECULOS_ADDRESS;
+  const previousSessionToken = process.env.SPECULOS_SESSION_TOKEN;
   const speculos = await launchSpeculos(appName);
   try {
     // A remote /acquire returns a sentinel port before the pod exists, and the readiness poll is
@@ -354,11 +364,8 @@ export async function withTemporarySpeculos<T>(
         `Could not release temporary Speculos ${speculos.id}: ${sanitizeError(error)}`,
       ),
     );
-    if (previousAddress === undefined) {
-      delete process.env.SPECULOS_ADDRESS;
-    } else {
-      process.env.SPECULOS_ADDRESS = previousAddress;
-    }
+    restoreProcessEnv("SPECULOS_ADDRESS", previousAddress);
+    restoreProcessEnv("SPECULOS_SESSION_TOKEN", previousSessionToken);
     if (previousPort > 0) {
       await registerSpeculos(previousPort);
     }

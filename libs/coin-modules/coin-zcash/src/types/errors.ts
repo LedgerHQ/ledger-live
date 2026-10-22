@@ -118,3 +118,27 @@ export class ZcashNotesNotYetSpendable extends Error {
     this.name = "ZcashNotesNotYetSpendable";
   }
 }
+
+/**
+ * Raised when a shielded send is attempted on a device whose Zcash app only
+ * speaks the legacy transparent protocol (Nano S). Distinct from a generic
+ * failure so the host can tell the user why this device cannot do it.
+ */
+export class ZcashShieldedNotSupportedOnDevice extends Error {
+  constructor(message = "This device can only send between transparent addresses") {
+    super(message);
+    this.name = "ZcashShieldedNotSupportedOnDevice";
+  }
+}
+
+/**
+ * Raised when the transaction built for the device does not match the one the
+ * user reviewed (inputs, fee or amount differ, or a reviewed input is gone).
+ * Fail-closed: the device is never asked to sign something else.
+ */
+export class ZcashPreparedBuildMismatch extends Error {
+  constructor(message = "The transaction changed since it was reviewed: please review it again") {
+    super(message);
+    this.name = "ZcashPreparedBuildMismatch";
+  }
+}

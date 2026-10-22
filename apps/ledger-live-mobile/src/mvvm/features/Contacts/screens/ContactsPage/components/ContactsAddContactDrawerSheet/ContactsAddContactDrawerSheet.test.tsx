@@ -14,17 +14,6 @@ function createViewModel(
     draftName: "",
     avatarInitial: "",
     invalidNameError: null,
-    labels: {
-      title: "Add contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer:
-        "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      confirmAddContact: "Add contact",
-      nameValidationErrors: {
-        InvalidContactNameError: "Special characters are not allowed.",
-        DuplicateContactNameError: "This contact name is already in use.",
-      },
-    },
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftNameChange: jest.fn(),
@@ -59,7 +48,7 @@ describe("ContactsAddContactDrawerSheet", () => {
     const [drawerTitle, saveLabel] = screen.getAllByText("Add contact");
     expect(drawerTitle).toBeVisible();
     expect(saveLabel).toBeVisible();
-    expect(screen.getByText(/For privacy, avoid full names and surnames/)).toBeVisible();
+    expect(screen.getByText(/For privacy, avoid full names\./)).toBeVisible();
     expect(screen.getByText("0/32")).toBeVisible();
     expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
   });

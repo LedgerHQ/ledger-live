@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import type { Currency } from "@domain/entity-currency";
 import { useCalculate, useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { TouchableOpacity, StyleSheet } from "react-native";
@@ -8,7 +8,8 @@ import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
+import { useTrackingPairs } from "~/actions/general";
+import { addExtraSessionTrackingPair } from "~/reducers/countervaluesExtraSessionTracking";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
@@ -67,6 +68,7 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
+  const dispatch = useDispatch();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
   const { poll } = useCountervaluesPolling();
@@ -78,18 +80,20 @@ export default function CounterValue({
     let t: ReturnType<typeof setTimeout> | undefined;
 
     if (!hasTrackingPair) {
-      addExtraSessionTrackingPair({
-        from: currency,
-        to: counterValueCurrency,
-        startDate: new Date(),
-      });
+      dispatch(
+        addExtraSessionTrackingPair({
+          from: currency,
+          to: counterValueCurrency,
+          startDate: new Date(),
+        }),
+      );
       t = setTimeout(poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
     }
 
     return () => {
       if (t) clearTimeout(t);
     };
-  }, [counterValueCurrency, currency, poll, hasTrackingPair, trackingPairs]);
+  }, [counterValueCurrency, currency, dispatch, poll, hasTrackingPair, trackingPairs]);
   const param = useMemo(
     () => ({
       from: currency,

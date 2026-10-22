@@ -17,8 +17,7 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openModal } from "~/renderer/actions/modals";
-import type { Currency } from "@ledgerhq/wallet-btc/index";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 import {
@@ -32,6 +31,7 @@ import {
 } from "@ledgerhq/coin-zcash/logic/account/spendability";
 import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 const Container = styled(Box).attrs(() => ({
   mt: 4,
@@ -244,7 +244,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const { startShieldedSync, stopShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
 
   const updateSyncState = () => {
-    if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") {
+    if (account.type !== "Account" || !isZcashCurrencyId(account.currency.id)) {
       return;
     }
 
@@ -277,7 +277,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   if (
     account.type !== "Account" ||
-    (account.currency.id as Currency) !== "zcash" ||
+    !isZcashCurrencyId(account.currency.id) ||
     !showPrivateBalanceComponent
   ) {
     return null;

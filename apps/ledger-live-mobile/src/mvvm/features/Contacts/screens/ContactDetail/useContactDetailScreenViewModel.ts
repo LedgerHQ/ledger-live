@@ -5,15 +5,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress } from "@domain/entity-contact";
 import {
-  type ContactAddressDetailDialogNativeLabels,
-  type ContactAddressDetailDialogNativeProps,
-  type ContactDetailLabels,
-  type ContactDetailViewProps,
-  useContactDetailSharedState,
-  useContactAddressDetailDialog,
   useContactsLedgerSyncMutationGuard,
-  useEmptyContactDetail,
-  usePopulatedContactDetail,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_EVENTS,
@@ -24,6 +16,14 @@ import {
   trackContactsLedgerSyncActivate,
   trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
+import {
+  type ContactAddressDetailDialogNativeProps,
+  type ContactDetailViewProps,
+  useContactDetailSharedState,
+  useContactAddressDetailDialog,
+  useEmptyContactDetail,
+  usePopulatedContactDetail,
+} from "@features/flow-contacts-detail";
 import {
   isContactsLedgerSyncActivationRequired,
   type ContactsLedgerSyncIntroduction,
@@ -55,7 +55,6 @@ import {
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
-import { useTranslation } from "~/context/Locale";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
@@ -71,6 +70,11 @@ const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 type ContactDetailScreenViewModel =
   | Readonly<{ status: "redirecting" }>
   | Readonly<{
+      status: "closing-delete-sheet";
+      editDeleteFlow: ContactDetailEditDeleteFlowProps;
+      onDeleteSheetDismissed: () => void;
+    }>
+  | Readonly<{
       status: "ready";
       addAddressFlowState: AddAddressFlowState;
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
@@ -82,6 +86,9 @@ type ContactDetailScreenViewModel =
       ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
       ledgerSyncActivationDrawer: ContactsLedgerSyncActivationDrawerProps;
       dieProps: ContactsDeviceIntentExecutorProps | undefined;
+      isDeviceSheetRequested: boolean;
+      onDeviceSheetDismissed: () => void;
+      onDeleteSheetDismissed: () => void;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -104,11 +111,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { ledgerSyncActivationDrawer, openLedgerSyncActivationDrawer } =
     useContactsLedgerSyncActivationDrawer();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
-  const { t } = useTranslation();
-  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
-    intents: contactsIntentLWMDefinitions,
-    getLiveConfigMinVersion: getMinVersion,
-  });
+  const { deviceIntents, dieProps, isDeviceSheetRequested, dismissDeviceSheet } =
+    useContactsIntentsOrchestrator({
+      intents: contactsIntentLWMDefinitions,
+      getLiveConfigMinVersion: getMinVersion,
+      retainUntilSheetDismissed: true,
+    });
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {
@@ -326,38 +334,26 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     completeAddressConfirmation,
     continueFromName,
   ]);
-  const labels = useMemo<ContactDetailLabels>(
-    () => ({
-      addAddress: t("contacts.addAddress"),
-      addYourAddress: t("contacts.addYourAddress"),
-      emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
-      emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
-      emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
-      emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
-      ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      myAddresses: t("contacts.detail.myAddresses"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
   const detailSharedState = useContactDetailSharedState(route.params.contactId);
-  const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
-    () => ({
-      send: t("contacts.addressDetail.send"),
-      copy: t("contacts.addressDetail.copy"),
-      copyAddress: t("contacts.addressDetail.copyAddress"),
-      copied: t("contacts.addressDetail.copied"),
-      edit: t("contacts.addressDetail.edit"),
-      share: t("contacts.addressDetail.share"),
-      delete: t("contacts.addressDetail.delete"),
-      formatNetworkTag: networkName =>
-        t("contacts.addressDetail.networkTag", { name: networkName }),
-    }),
-    [t],
-  );
-  const onDeleteSuccess = useCallback(() => {
-    navigation.navigate(ScreenName.MyWalletContacts);
+  const deleteSheetWasOpenRef = useRef(false);
+  const contactMissingRef = useRef(false);
+  const navigatedAfterDeleteRef = useRef(false);
+  const [deleteSheetDismissed, setDeleteSheetDismissed] = useState(false);
+  const returnToContacts = useCallback(() => {
+    navigatedAfterDeleteRef.current = true;
+    navigation.popTo(ScreenName.MyWalletContacts);
   }, [navigation]);
+  const onDeleteSheetDismissed = useCallback(() => {
+    const leave = deleteSheetWasOpenRef.current && contactMissingRef.current;
+    deleteSheetWasOpenRef.current = false;
+    setDeleteSheetDismissed(true);
+    if (!leave) return;
+    returnToContacts();
+  }, [returnToContacts]);
+  const onDeleteSuccess = useCallback(() => {
+    if (deleteSheetWasOpenRef.current) return;
+    returnToContacts();
+  }, [returnToContacts]);
   const addressDetailAsset = selection?.network?.networkTicker;
   const addressDetailNetwork = selection?.network?.networkName;
   const editDeleteFlow = useContactDetailEditDeleteAdapter(
@@ -384,7 +380,31 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
     onCloseAddressDetail();
   }, [isAddressDetailActionSheetOpen, onCloseAddressDetail]);
-  const shouldRedirect = !isEnabled || !contact;
+  if (editDeleteFlow.deleteDrawer.isOpen) {
+    deleteSheetWasOpenRef.current = true;
+  }
+  const contactMissing = !isEnabled || !contact;
+  contactMissingRef.current = contactMissing;
+  const waitingForDeleteSheet =
+    contactMissing && deleteSheetWasOpenRef.current && !deleteSheetDismissed;
+  const shouldRedirect = contactMissing && !waitingForDeleteSheet;
+
+  useEffect(() => {
+    if (editDeleteFlow.deleteDrawer.isOpen && deleteSheetDismissed) {
+      setDeleteSheetDismissed(false);
+    }
+  }, [deleteSheetDismissed, editDeleteFlow.deleteDrawer.isOpen]);
+
+  const isDeleteDrawerOpen = editDeleteFlow.deleteDrawer.isOpen;
+  const cancelDeleteDrawer = editDeleteFlow.deleteDrawer.onCancel;
+
+  useEffect(() => {
+    if (!waitingForDeleteSheet || !isDeleteDrawerOpen) {
+      return;
+    }
+
+    cancelDeleteDrawer();
+  }, [cancelDeleteDrawer, isDeleteDrawerOpen, waitingForDeleteSheet]);
 
   useEffect(() => {
     if (shouldRedirect) {
@@ -431,7 +451,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   }, [isOpen]);
 
   useLayoutEffect(() => {
-    if (shouldRedirect) {
+    if (shouldRedirect && !navigatedAfterDeleteRef.current) {
       if (navigation.canGoBack()) {
         navigation.goBack();
       } else {
@@ -442,13 +462,20 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
   const getDisplayName = useContactDisplayName();
 
-  if (shouldRedirect) {
+  if (waitingForDeleteSheet) {
+    return {
+      status: "closing-delete-sheet",
+      editDeleteFlow,
+      onDeleteSheetDismissed,
+    };
+  }
+
+  if (!isEnabled || !contact) {
     return { status: "redirecting" };
   }
 
   const pageProps: ContactDetailViewProps = {
     contact,
-    labels,
     onAddAddress,
     ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
     onLedgerWalletAccountsPress,
@@ -481,7 +508,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       contactName: getDisplayName(contact),
       row: selection?.row,
       network: selection?.network,
-      labels: addressDetailDialogLabels,
       onClose: onCloseAddressDetailSheet,
       ...addressDetailActions.addressDetailDialog,
     },
@@ -491,14 +517,13 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     ledgerSyncIntroduction: {
       isOpen:
         isContactsLedgerSyncActivationRequired(ledgerSyncStatus) && isLedgerSyncIntroductionOpen,
-      title: t("contacts.ledgerSyncIntroduction.title"),
-      description: t("contacts.ledgerSyncIntroduction.description"),
-      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-      dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onActivate: onActivateLedgerSync,
       onDismiss: onDismissLedgerSyncIntroduction,
     },
     ledgerSyncActivationDrawer,
     dieProps,
+    isDeviceSheetRequested,
+    onDeviceSheetDismissed: dismissDeviceSheet,
+    onDeleteSheetDismissed,
   };
 }

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { getStakingContractAddress, getValidators } from "@ledgerhq/coin-evm/staking";
+import { getValidators } from "@ledgerhq/coin-evm/staking";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { StakingOperation } from "@ledgerhq/coin-evm/types";
 import type { Cursor, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { Unit } from "@domain/entity-currency-unit";
-import { mapDelegations } from "./logic";
+import { getStakingContractAddress, mapDelegations } from "./logic";
 import { sortLedgerValidatorFirst } from "./ledgerValidator";
 import type { StakingAccount, StakingMappedDelegation } from "./types";
 import { getAccountCurrency } from "../../../account";
@@ -71,7 +71,7 @@ export function useEvmStakingValidators(
         const config = await evmCtx.config();
 
         do {
-          const result = await getValidators(config, currencyId, evmCtx.logger, cursor);
+          const result = await getValidators(config, evmCtx.logger, cursor);
           if (cancelled) return;
 
           items.push(...result.items.map(toStakingValidatorItem));

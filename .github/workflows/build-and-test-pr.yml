@@ -10,20 +10,29 @@ permissions:
   contents: read
 
 jobs:
+  # Syncs Renovate branches before anything else runs; must not be skipped (actions/runner#491).
+  determine-renovate-dirty:
+    name: "Renovate Sync"
+    permissions:
+      contents: read
+      id-token: write
+    if: ${{!github.event.pull_request.head.repo.fork}}
+    uses: ./.github/workflows/renovate-sync-reusable.yml
+    secrets:
+      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
   determine-affected:
     name: "Affected"
     permissions:
       contents: read
       id-token: write
-    if: ${{!github.event.pull_request.head.repo.fork}}
+    needs: determine-renovate-dirty
+    if: ${{ !github.event.pull_request.head.repo.fork && needs.determine-renovate-dirty.outputs.dirty != 'true' }}
     uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
-      close_smartling_pr: true
-    secrets:
-      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
-      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
   # LLD
   build-desktop:
@@ -247,7 +256,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features') || contains(needs.determine-affected.outputs.paths, 'enforce-i18n-keys')) && !github.event.pull_request.head.repo.fork}}
+    if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features') || contains(needs.determine-affected.outputs.paths, 'enforce-i18n-keys') || contains(needs.determine-affected.outputs.paths, 'enforce-tool-config') || contains(needs.determine-affected.outputs.paths, 'devtools') || contains(needs.determine-affected.outputs.paths, 'support') || contains(needs.determine-affected.outputs.paths, 'tests/') || contains(needs.determine-affected.outputs.paths, 'tools/')) && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -329,7 +338,8 @@ jobs:
 
   test-additional:
     name: "Test Additional"
-    if: ${{!github.event.pull_request.head.repo.fork}}
+    needs: determine-renovate-dirty
+    if: ${{ !github.event.pull_request.head.repo.fork && needs.determine-renovate-dirty.outputs.dirty != 'true' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
     permissions:
       security-events: write
@@ -468,9 +478,10 @@ jobs:
       - test-desktop-e2e-lint
       - test-e2e-tooling
       - determine-affected
+      - determine-renovate-dirty
     runs-on: ubuntu-22.04
-    if: always() && !cancelled() && needs.determine-affected.result == 'success'
+    if: always() && !cancelled() && (needs.determine-affected.result == 'success' || needs.determine-renovate-dirty.result == 'failure' || needs.determine-renovate-dirty.outputs.dirty == 'true')
     steps:
       - name: Check result
-        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || needs.determine-renovate-dirty.outputs.dirty == 'true'
         run: exit 1

@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     height: TILE_SIZE,
   },
   shadow: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.flatten(StyleSheet.absoluteFill),
     borderRadius: TILE_RADIUS,
     backgroundColor: "#000000",
     shadowColor: "#000000",

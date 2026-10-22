@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { server, TEST_COSMOS_ENDPOINT, makeTestApi } from "../../test/msw.mock";
+import { server, TEST_COSMOS_ENDPOINT, makeTestApi, makeTestConfig } from "../../test/msw.mock";
 import { getBalance } from "./getBalance";
 
 const ADDR = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
@@ -22,6 +22,7 @@ afterAll(() => server.close());
 
 describe("getBalance via MSW", () => {
   it("returns the native balance, summing only the uatom denom", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(BAL, () =>
@@ -35,31 +36,33 @@ describe("getBalance via MSW", () => {
       ...emptyStaking,
     );
 
-    const [native] = await getBalance(api, ADDR);
+    const [native] = await getBalance(config, api, ADDR);
 
     expect(native.asset).toMatchObject({ type: "native" });
     expect(native.value).toBe(5_000_000n);
   });
 
   it("returns zero when the address holds no uatom", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(BAL, () => HttpResponse.json({ balances: [] })),
       ...emptyStaking,
     );
 
-    const [native] = await getBalance(api, ADDR);
+    const [native] = await getBalance(config, api, ADDR);
 
     expect(native.value).toBe(0n);
   });
 
   it("throws when the balances endpoint errors", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(BAL, () => new HttpResponse(null, { status: 500 })),
       ...emptyStaking,
     );
 
-    await expect(getBalance(api, ADDR)).rejects.toThrow();
+    await expect(getBalance(config, api, ADDR)).rejects.toThrow();
   });
 });

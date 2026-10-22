@@ -1,16 +1,17 @@
 import React from "react";
 import { Banner, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ContactNameInput } from "@features/platform-contacts";
+import { useAddContactLabels } from "./copy/useAddContactLabels";
 import type { ContactsAddContactContentNativeProps } from "./types";
 
 export function ContactsAddContactContent({
   isSaving,
   draftName,
   invalidNameError,
-  labels,
   autoFocus,
   onDraftNameChange,
 }: ContactsAddContactContentNativeProps): React.JSX.Element {
+  const labels = useAddContactLabels();
   const nameValidationError =
     invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
 

@@ -26,6 +26,11 @@ describe("parseCommand", () => {
     expect(parseCommand(["account", "discover", "ethereum"])).toBe("account discover");
   });
 
+  it("resolves ring subcommands built by a factory", () => {
+    expect(parseCommand(["ring", "encrypt", "-k", "notes"])).toBe("ring encrypt");
+    expect(parseCommand(["ring", "decrypt"])).toBe("ring decrypt");
+  });
+
   it("returns just the group when no subcommand is given", () => {
     expect(parseCommand(["swap"])).toBe("swap");
   });
@@ -48,5 +53,27 @@ describe("parseCommand", () => {
 
   it("returns undefined when argv starts with a flag", () => {
     expect(parseCommand(["--help"])).toBeUndefined();
+  });
+
+  it("finds the command after global flags", () => {
+    expect(parseCommand(["--format", "json", "swap", "quote"])).toBe("swap quote");
+  });
+
+  it("finds the command after an empty word", () => {
+    expect(parseCommand(["", "swap", "quote"])).toBe("swap quote");
+  });
+
+  it("ignores later words that name another command", () => {
+    expect(parseCommand(["skill", "retrieve", "swap"])).toBe("skill retrieve");
+    expect(parseCommand(["agent-intent", "send", "--to", "x"])).toBe("agent-intent send");
+  });
+
+  it("ignores words after --", () => {
+    expect(parseCommand(["--", "swap"])).toBeUndefined();
+  });
+
+  it("returns undefined when an unknown word comes before a command", () => {
+    expect(parseCommand(["sesion", "send"])).toBeUndefined();
+    expect(parseCommand(["--unknown", "swap", "quote"])).toBeUndefined();
   });
 });

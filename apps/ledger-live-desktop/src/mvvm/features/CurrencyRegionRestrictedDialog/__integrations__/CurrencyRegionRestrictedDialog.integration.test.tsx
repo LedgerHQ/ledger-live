@@ -46,7 +46,7 @@ describe("CurrencyRegionRestrictedDialog Integration", () => {
 
     await user.click(screen.getByTestId("region-restricted-learn-more"));
 
-    expect(openURL).toHaveBeenCalledWith(urls.geoBlock.learnMore);
+    expect(openURL).toHaveBeenCalledWith(urls.errors.AddressesSanctionedError);
     expect(selectIsCurrencyRegionRestrictedDialogOpen(store.getState())).toBe(true);
   });
 

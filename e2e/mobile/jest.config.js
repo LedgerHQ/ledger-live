@@ -46,6 +46,13 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
 // jest-allure2-reporter appends descriptions rather than replacing — QAA-1547
 const dedupeParagraphs = paragraphs => [...new Set(paragraphs ?? [])];
 
+// Each issue/TMS link is also tagged `issue:<KEY>` / `tms:<KEY>`, for the Allure 3 Tags filter.
+const TAGGED_LINK_TYPES = new Set(["issue", "tms"]);
+const linkTags = links =>
+  (links ?? [])
+    .filter(link => TAGGED_LINK_TYPES.has(link.type) && (link.name || link.url))
+    .map(link => `${link.type}:${link.name || link.url}`);
+
 const WORKER_KILLED = /A jest worker process \(pid=(?<pid>\d+)\) was terminated/;
 
 function stallReportFor(testFile) {
@@ -76,6 +83,9 @@ const jestAllure2ReporterOptions = {
     },
     labels: {
       host: process.env.RUNNER_NAME,
+      tag: ({ value, testCaseMetadata }) => [
+        ...new Set([...[value ?? []].flat(), ...linkTags(testCaseMetadata.links)]),
+      ],
       // Bare spec-file basename (never a directory) so the rerun filter stays portable:
       // `filePath` may be an array of path segments or an absolute/relative path string.
       sourceFile: ({ filePath }) => {
@@ -107,8 +117,13 @@ const jestAllure2ReporterOptions = {
     },
     labels: {
       host: process.env.RUNNER_NAME,
-      tag: ({ testFile, value }) =>
-        stallReportFor(testFile) ? [...[value ?? []].flat(), "stall-watchdog"] : value,
+      tag: ({ testFile, testFileMetadata, value }) => [
+        ...new Set([
+          ...[value ?? []].flat(),
+          ...linkTags(testFileMetadata.links),
+          ...(stallReportFor(testFile) ? ["stall-watchdog"] : []),
+        ]),
+      ],
     },
   },
   overwrite: false,

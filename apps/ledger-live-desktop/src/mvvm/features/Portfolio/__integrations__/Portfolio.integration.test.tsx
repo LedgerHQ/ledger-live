@@ -96,10 +96,12 @@ let mockUseCountervaluesPolling: jest.SpyInstance<
   ReturnType<typeof countervaluesReact.useCountervaluesPolling>,
   Parameters<typeof countervaluesReact.useCountervaluesPolling>
 >;
+let mockUseCountervaluesLoadStatus: jest.SpyInstance<
+  ReturnType<typeof countervaluesReact.useCountervaluesLoadStatus>,
+  Parameters<typeof countervaluesReact.useCountervaluesLoadStatus>
+>;
 
 const defaultPollingMock = {
-  pending: false,
-  error: null,
   poll: jest.fn(),
   start: jest.fn(),
   stop: jest.fn(),
@@ -179,6 +181,8 @@ describe("PortfolioView", () => {
     jest.clearAllMocks();
     mockUsePortfolioThrottled = jest.mocked(portfolioReact.usePortfolioThrottled);
     mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
+    mockUseCountervaluesLoadStatus = jest.spyOn(countervaluesReact, "useCountervaluesLoadStatus");
+    mockUseCountervaluesLoadStatus.mockReturnValue({ pending: false, error: null });
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
     mockedUseNavigate.mockReturnValue(mockNavigate);
@@ -310,10 +314,7 @@ describe("PortfolioView", () => {
     });
 
     it("should display loading state when countervalues are being polled", () => {
-      mockUseCountervaluesPolling.mockReturnValue({
-        ...defaultPollingMock,
-        pending: true,
-      });
+      mockUseCountervaluesLoadStatus.mockReturnValue({ pending: true, error: null });
 
       render(<PortfolioView {...defaultProps} />, {
         initialState: {

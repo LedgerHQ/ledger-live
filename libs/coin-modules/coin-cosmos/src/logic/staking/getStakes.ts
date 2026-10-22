@@ -1,4 +1,5 @@
 import { Cursor, Page, Stake } from "@ledgerhq/coin-module-framework/api/index";
+import type { CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { buildStakes } from "./toStakes";
 
@@ -8,11 +9,11 @@ import { buildStakes } from "./toStakes";
  * delegations are merged in by `getStakingPositions`.
  */
 export async function getStakes(
+  config: CosmosCoinConfig,
   api: CosmosAPI,
   address: string,
   _cursor?: Cursor,
 ): Promise<Page<Stake>> {
-  const currency = api.getCurrency();
-  const positions = await api.getStakingPositions(address, currency);
+  const positions = await api.getStakingPositions(address, config.denom);
   return { items: buildStakes(address, positions) };
 }

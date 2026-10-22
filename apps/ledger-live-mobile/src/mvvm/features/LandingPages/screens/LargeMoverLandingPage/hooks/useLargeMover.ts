@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import { appVersion } from "LLM/utils/appVersion";
 import { parseLargeMoverLedgerIds } from "../utils/parseLargeMoverLedgerIds";
-import { useMapLedgerIdsToCoinGeckoIds } from "./useLedgerMapping";
 
 type UseLargeMoverProps = {
   ledgerIds: string;
@@ -10,12 +9,6 @@ type UseLargeMoverProps = {
 
 export const useLargeMover = ({ ledgerIds }: UseLargeMoverProps) => {
   const currenciesIds = useMemo(() => parseLargeMoverLedgerIds(ledgerIds), [ledgerIds]);
-
-  const {
-    coinGeckoIds: chartIds,
-    isLoading: mappingLoading,
-    error: mappingError,
-  } = useMapLedgerIdsToCoinGeckoIds(currenciesIds);
 
   const {
     data: currencies,
@@ -31,8 +24,7 @@ export const useLargeMover = ({ ledgerIds }: UseLargeMoverProps) => {
   return {
     currencies,
     currenciesIds,
-    chartIds,
-    loading: loading || mappingLoading,
-    isError: isError || !!mappingError,
+    loading,
+    isError,
   };
 };

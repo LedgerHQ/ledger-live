@@ -40,7 +40,6 @@ export const IDS = [
   "mantra",
   "crypto_org",
   "xion",
-  "zenrock",
   "babylon",
 ];
 
@@ -71,35 +70,6 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/axelar/txs/$hash",
         address: "https://www.mintscan.io/axelar/validators/$address",
-      },
-    ],
-  },
-  {
-    type: "CryptoCurrency",
-    id: CryptoCurrencyIdSchema.parse("quicksilver"),
-    coinType: 118,
-    name: "Quicksilver",
-    managerAppName: "Cosmos",
-    ticker: "QCK",
-    scheme: "quicksilver",
-    color: "#9b9b9b",
-    family: "cosmos",
-    units: [
-      {
-        name: "Quicksilver",
-        code: "QCK",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-Quicksilver",
-        code: "uqck",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/quicksilver/txs/$hash",
-        address: "https://www.mintscan.io/quicksilver/validators/$address",
       },
     ],
   },
@@ -559,35 +529,6 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/xion/txs/$hash",
         address: "https://www.mintscan.io/xion/validators/$address",
-      },
-    ],
-  },
-  {
-    type: "CryptoCurrency",
-    id: CryptoCurrencyIdSchema.parse("zenrock"),
-    coinType: 118,
-    name: "Zenrock",
-    managerAppName: "Cosmos",
-    ticker: "ROCK",
-    scheme: "zenrock",
-    color: "#000000",
-    family: "cosmos",
-    units: [
-      {
-        name: "Zenrock",
-        code: "ROCK",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-Zenrock",
-        code: "urock",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://explorer.diamond.zenrocklabs.io/transactions/$hash",
-        address: "https://explorer.diamond.zenrocklabs.io/validators/$address",
       },
     ],
   },

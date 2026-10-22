@@ -34,6 +34,7 @@ const makeLoader = (
 ): CoinModuleLoader => ({
   family,
   supportedCoins: [],
+  accountDescriptorType: "address",
   loadSetup: () => Promise.resolve(stubSetup),
   loadTransaction: () => Promise.resolve(stubTxModule),
   ...overrides,

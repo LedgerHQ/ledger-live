@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CellContext } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
+import { PenEdit, Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import type { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
 import { accountNameWithDefaultSelector, type WalletState } from "~/renderer/reducers/wallet";
 import { getAccountAssetsCurrencies } from "LLD/features/CryptoAddresses/utils/getAccountAssetsCurrencies";
@@ -24,6 +25,8 @@ export type CryptoTableCellData = {
   readonly aggregatedDataByAccountId: ReturnType<typeof computeAggregatedAccountsData> | null;
   readonly isSyncing: boolean;
   readonly onEditName: (account: AccountLike) => void;
+  readonly hasAccountSettings: (account: AccountLike) => boolean;
+  readonly onOpenSettings: (account: AccountLike) => void;
 };
 
 const CryptoTableCellDataContext = createContext<CryptoTableCellData | null>(null);
@@ -79,14 +82,27 @@ export function BalanceCell({ row }: CryptoCellProps) {
 
 export function ActionCell({ row }: CryptoCellProps) {
   const { t } = useTranslation();
-  const { isSyncing, onEditName } = useCryptoTableCellData();
+  const { isSyncing, onEditName, hasAccountSettings, onOpenSettings } = useCryptoTableCellData();
+
+  if (hasAccountSettings(row.original)) {
+    return (
+      <AccountRowActionCell
+        account={row.original}
+        icon={Settings}
+        ariaLabel={t("accountDetail.header.settings")}
+        isSyncing={isSyncing}
+        onAction={onOpenSettings}
+      />
+    );
+  }
 
   return (
     <AccountRowActionCell
       account={row.original}
-      editNameAriaLabel={t("cryptoAddresses.table.editName")}
+      icon={PenEdit}
+      ariaLabel={t("cryptoAddresses.table.editName")}
       isSyncing={isSyncing}
-      onEditName={onEditName}
+      onAction={onEditName}
     />
   );
 }

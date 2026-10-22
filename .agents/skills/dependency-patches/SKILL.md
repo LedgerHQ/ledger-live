@@ -1,6 +1,6 @@
 ---
 name: dependency-patches
-description: Read before creating or changing `patches/*.patch`, `pnpm.patchedDependencies`, or using `pnpm patch` to modify third-party dependency source.
+description: Read before creating or changing `patches/*.patch`, `patchedDependencies` (`pnpm-workspace.yaml`), or using `pnpm patch` to modify third-party dependency source.
 ---
 
 # Dependency patches

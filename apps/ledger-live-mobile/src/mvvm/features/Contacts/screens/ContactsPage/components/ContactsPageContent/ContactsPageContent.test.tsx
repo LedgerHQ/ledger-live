@@ -28,15 +28,6 @@ function createViewModel({
         addressCount: 0,
       },
     },
-    labels: {
-      title: "Contacts",
-      searchPlaceholder: "Search contact",
-      searchNoResults: "No contacts found by that name",
-      searchNoResultsDescription: "Try another name or spelling.",
-      addContact: "Add contact",
-      ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
-      formatAddressCount: count => `${count} address`,
-    },
     searchQuery: "",
     onSearchQueryChange: jest.fn(),
     onOpenContact: jest.fn(),
@@ -46,20 +37,12 @@ function createViewModel({
     featureIntroduction: isFeatureIntroductionOpen
       ? {
           isOpen: true,
-          title: "Introducing Contacts",
-          highlights: [],
-          primaryActionLabel: "Explore now",
           onComplete: jest.fn(),
           onClose: jest.fn(),
         }
       : createClosedContactsFeatureIntroduction(),
     ledgerSyncIntroduction: {
       isOpen: isFeatureIntroductionOpen ? false : isIntroductionOpen,
-      title: "Sync your wallet to add a contact",
-      description:
-        "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
-      activateLabel: "Sync my wallet",
-      dismissLabel: "Not now",
       onActivate,
       onDismiss,
     },
@@ -70,16 +53,6 @@ function createViewModel({
       draftName: "",
       avatarInitial: "",
       invalidNameError: null,
-      labels: {
-        title: "Add contact",
-        namePlaceholder: "Contact name",
-        namingDisclaimer: "Use a nickname.",
-        confirmAddContact: "Add contact",
-        nameValidationErrors: {
-          InvalidContactNameError: "Special characters are not allowed.",
-          DuplicateContactNameError: "This contact name is already in use.",
-        },
-      },
       onOpen: jest.fn(),
       onClose: jest.fn(),
       onDraftNameChange: jest.fn(),

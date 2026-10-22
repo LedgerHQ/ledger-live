@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/coin-hedera/constants";
+import { HEDERA_TRANSACTION_MODES, OP_TYPES_EXCLUDING_FEES } from "@ledgerhq/coin-hedera/constants";
 import type { HederaAccountInfo } from "@ledgerhq/coin-hedera/logic/getAccountInfo";
 import { getAssetFromToken } from "@ledgerhq/coin-hedera/logic/getAssetFromToken";
 import { getTokenFromAsset } from "@ledgerhq/coin-hedera/logic/getTokenFromAsset";
@@ -190,15 +190,30 @@ function feesOperationForTokenTransfer(
   };
 }
 
+// the bridge adds `fee` to native OUT-like values, even when another account paid it
+function withoutSponsorFee(address: string, operation: Operation): Operation {
+  if (isTokenOperation(operation)) return operation;
+  if (!OP_TYPES_EXCLUDING_FEES.includes(operation.type)) return operation;
+
+  const { feePayer } = getOperationExtra(operation);
+  if (typeof feePayer !== "string" || feePayer === address) return operation;
+
+  // a failed EVM call still charges its sender for gas, even when a relayer paid the fee (HIP-410)
+  if (operation.hasFailed) return operation;
+
+  return { ...operation, value: operation.value.minus(operation.fee) };
+}
+
 export function adaptOperations(address: string, operations: Operation[]): Operation[] {
   const operationsByHash = groupBy(operations, op => op.hash);
 
   return operations.flatMap(op => {
+    const adaptedOp = withoutSponsorFee(address, op);
     const transactionOperations = operationsByHash[op.hash];
-    if (op !== transactionOperations.at(-1)) return [op];
+    if (op !== transactionOperations.at(-1)) return [adaptedOp];
 
     const feesOperation = feesOperationForTokenTransfer(address, transactionOperations);
-    return feesOperation ? [op, feesOperation] : [op];
+    return feesOperation ? [adaptedOp, feesOperation] : [adaptedOp];
   });
 }
 
@@ -208,7 +223,7 @@ export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
       getAddresses: derived => getAddressesForPublicKey(currency, derived.publicKey),
       keyControlsAccount,
     },
-    getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
+    getTokenFromAsset: asset => getTokenFromAsset(currency.id, asset),
     getAssetFromToken,
     buildAccountShape,
     computeIntentType,

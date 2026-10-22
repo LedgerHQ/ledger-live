@@ -22,7 +22,7 @@ const TransferListItem = ({ action }: TransferListItemProps) => {
       accessibilityLabel={action.title}
     >
       <ListItemLeading>
-        <Spot appearance="icon" icon={action.icon} />
+        <Spot icon={action.icon} />
         <ListItemContent>
           <ListItemTitle>{action.title}</ListItemTitle>
           {action.description && <ListItemDescription>{action.description}</ListItemDescription>}

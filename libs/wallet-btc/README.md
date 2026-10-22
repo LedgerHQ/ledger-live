@@ -24,7 +24,7 @@ type WalletBtcCurrency = {
 };
 ```
 
-The caller resolves these values on its side (from the currency registry and `@ledgerhq/live-env`) and passes them in. This keeps the engine free of the Ledger Live currency registry, so it can be reused across several coin-modules. Its only `@ledgerhq` dependencies are `coin-module-framework`, `errors`, `live-network` and `logs`.
+The caller resolves these values on its side (from the currency registry and `@ledgerhq/live-env`) and passes them in. This keeps the engine free of the Ledger Live currency registry, so it can be reused across several coin-modules. Its only `@ledgerhq` dependencies are `coin-module-framework` and `live-network`.
 
 ## Main exports
 
@@ -72,7 +72,7 @@ const account = await engine.generateAccount(
   { id: "bitcoin", explorerId: "btc", explorerEndpoint: "https://explorers.api.live.ledger.com" },
 );
 
-await engine.syncAccount(account);
+await engine.syncAccount(console.log, account);
 const balance = await engine.getAccountBalance(account);
 ```
 

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cardano",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "Ledger Cardano Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -68,10 +68,11 @@
     "@stricahq/typhonjs": "^3.0.0",
     "bignumber.js": "^9",
     "bip39": "^3.1.0",
+    "chalk": "^4.1.2",
+    "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@bloxbean/yaci-devkit": "0.10.6",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

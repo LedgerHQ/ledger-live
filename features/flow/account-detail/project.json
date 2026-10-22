@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-account-detail",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

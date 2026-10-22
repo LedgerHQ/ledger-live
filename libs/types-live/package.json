@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-live",
-  "version": "6.127.0",
+  "version": "6.128.0",
   "description": "Ledger Live main types.",
   "keywords": [
     "Ledger"
@@ -43,7 +43,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage"

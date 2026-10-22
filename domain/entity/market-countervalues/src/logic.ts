@@ -1,4 +1,5 @@
 import type {
+  CounterValuesCacheView,
   CounterValuesState,
   CounterValuesStateRaw,
   CountervaluesSettings,
@@ -123,7 +124,7 @@ export const initialState: CounterValuesState = {
 };
 
 export function lenseRateMap(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   pair: {
     from: Currency;
     to: Currency;
@@ -157,7 +158,7 @@ export function lenseRate(
  * compare keys only within one process.
  */
 export function historyKey(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   from: Currency,
   to: Currency,
   lastOpDate: Date | null,
@@ -172,7 +173,7 @@ export function historyKey(
 }
 
 export function calculate(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   initialQuery: {
     value: number;
     from: Currency;
@@ -207,7 +208,7 @@ export function calculate(
 }
 
 export function calculateMany(
-  state: CounterValuesState,
+  state: CounterValuesCacheView,
   dataPoints: Array<{
     value: number;
     date: Date | null | undefined;
@@ -247,14 +248,26 @@ export function calculateMany(
 }
 
 /**
- * Returns `next` with fetched rate patches merged in and the cache of every pair they touch
+ * Returns `next` with fetched rate patches merged in and the cache of every pair they change
  * regenerated.
  *
  * `patches` are keyed by pair id, each holding date keys (and `latest`) to rates; non-numeric values
  * are skipped. `previous` supplies the cache stats to extend and the post-restore hole check.
  *
- * Copy-on-write: no argument is mutated. A patched pair gets a new `Map`, the others keep theirs,
- * so the result can be stored in a frozen (immer) store and fed back on the next load.
+ * Copy-on-write: no argument is mutated. A pair a patch changes gets a new `Map` and cache entry;
+ * a pair whose values all stay as they were keeps both, unless holes are checked or its cache entry
+ * was built with another `autofillGaps`, which rebuilds the entry. When no pair changes, `data` and
+ * `cache` are `previous`'s own objects, so a reader of the rates sees nothing new. The result can be
+ * stored in a frozen (immer) store and fed back on the next load.
+ *
+ * @param previous
+ * The state the load started from.
+ * @param next
+ * The state the load built: `previous`'s rates with its own status.
+ * @param patches
+ * The fetched rates, in the order they apply.
+ * @param settings
+ * The settings the cache is built with.
  */
 export function applyRatePatches(
   previous: CounterValuesState,
@@ -265,35 +278,49 @@ export function applyRatePatches(
   const data = { ...next.data };
   const cache = { ...next.cache };
   const { status } = next;
-  const changesKeys: Record<string, unknown> = {};
-  patches.forEach(patch => {
-    Object.keys(patch).forEach(key => {
-      if (!changesKeys[key]) {
-        changesKeys[key] = 1;
-        data[key] = new Map(data[key]);
+  const touched = new Set<string>();
+  const changed = new Set<string>();
+  for (const patch of patches) {
+    for (const key of Object.keys(patch)) {
+      touched.add(key);
+      for (const [k, v] of Object.entries(patch[key])) {
+        if (typeof v !== "number") continue;
+        if (!changed.has(key)) {
+          if (data[key]?.has(k) && Object.is(data[key].get(k), v)) continue;
+          data[key] = new Map(data[key]);
+          changed.add(key);
+        }
+        data[key].set(k, v);
       }
-
-      const map = data[key];
-      Object.entries(patch[key]).forEach(([k, v]) => {
-        if (typeof v === "number") map.set(k, v);
-      });
-    });
-  });
+      // A pair seen for the first time gets a Map even from an empty patch.
+      if (!data[key]) {
+        data[key] = new Map();
+        changed.add(key);
+      }
+    }
+  }
 
   // Synchronize cache. checkHoles on first run after restore (checkHolesOnNextLoad) or for new pairs (no status).
   const checkHolesOnNextLoad = previous.checkHolesOnNextLoad === true;
-  Object.keys(changesKeys).forEach(pair => {
+  for (const pair of touched) {
     const checkHoles = checkHolesOnNextLoad || !status[pair];
+    const kept = cache[pair];
+    if (!changed.has(pair) && !checkHoles && kept?.autofillGaps === settings.autofillGaps) continue;
     const previousStats = previous.cache[pair]?.stats;
     cache[pair] = generateCache(pair, data[pair], settings, checkHoles, previousStats);
-  });
+  }
 
   return {
-    data,
-    cache,
+    data: haveSameEntries(data, previous.data) ? previous.data : data,
+    cache: haveSameEntries(cache, previous.cache) ? previous.cache : cache,
     status,
     checkHolesOnNextLoad: false,
   };
+}
+
+function haveSameEntries<T>(a: Record<string, T>, b: Record<string, T>): boolean {
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every(key => a[key] === b[key]);
 }
 
 function generateCache(
@@ -368,6 +395,7 @@ function generateCache(
     map,
     stats,
     fallback,
+    autofillGaps: settings.autofillGaps,
   };
 }
 

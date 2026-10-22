@@ -42,7 +42,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   private fiatDrawer = "open-fiat-drawer";
   private fiatDrawerInput = "fiat-drawer-search-input";
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
-  private showMoreQuotes = "SHOW MORE QUOTES";
+  private expandQuotesButton = "expand-button";
   private amountInputError = "amount-input-section-error";
   private maxAmountButton = "max";
   private providerTitleCssSelector =
@@ -283,9 +283,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Select provider quote")
   async selectProviderQuote(operation: string, provider: BuySellProvider) {
-    if (await this.isTextVisible(this.showMoreQuotes)) {
-      await this.clickElementByText(this.showMoreQuotes);
-    }
+    await this.expandQuotesIfCollapsed();
     await this.scrollToElement(this.provider(provider.name));
     await this.clickElement(this.provider(provider.name));
     await this.verifyElementText(this.formCta, `${operation} with ${provider.uiName}`);
@@ -293,11 +291,15 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Get available providers")
   async getAvailableProviders(): Promise<string[]> {
-    if (await this.isTextVisible(this.showMoreQuotes)) {
-      await this.clickElementByText(this.showMoreQuotes);
-    }
+    await this.expandQuotesIfCollapsed();
     const titles = await this.getTextsByCssSelector(this.providerTitleCssSelector);
     return titles.map(title => title.trim());
+  }
+
+  private async expandQuotesIfCollapsed() {
+    if (await this.isElementVisible(this.expandQuotesButton)) {
+      await this.clickElement(this.expandQuotesButton);
+    }
   }
 
   @step("Select rotating provider")

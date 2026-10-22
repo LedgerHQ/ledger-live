@@ -18,7 +18,7 @@ import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { hmac } from "@noble/hashes/hmac";
 import { sha256 as nobleSha256, sha512 } from "@noble/hashes/sha2";
 import { ripemd160 as nobleRipemd160 } from "@noble/hashes/legacy";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import bs58 from "bs58";
 import { orchardAddressFromUfvk, testDeriveKeys, testSignPczt } from "@ledgerhq/zcash-utils";
 import type { BitcoinSigner } from "@ledgerhq/coin-zcash/types/signer";
@@ -189,6 +189,11 @@ export function buildSigner(accountIndex = 0): ZcashTestSigner {
           hex => new Uint8Array(Buffer.from(hex, "hex")),
         ),
       };
+    },
+    // The scenarios run the shielded engine, which signs PCZTs; the transparent-only
+    // path that signs this way is never reached here.
+    createPaymentTransaction: async () => {
+      throw new Error("createPaymentTransaction is not used by the Zcash coin-tester");
     },
   };
 

@@ -1,11 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import {
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressValueSchema,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameAddressDialog } from ".";
 import type { ContactsRenameAddressDialogProps } from "./types";
 
@@ -27,29 +26,7 @@ function createViewModel(
       inputMethod: "manual",
     },
     isDeviceRequired: true,
-    labels: {
-      title: "Edit address",
-      inputLabel: "Address label",
-      applyChanges: "Apply changes",
-      labelValidationErrors: {
-        [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Address label is invalid.",
-        [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Address label is already in use.",
-        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "Address label is too long.",
-      },
-      addressValidation: {
-        addressPlaceholder: "Address",
-        validatingAddress: "Validating address",
-        validAddress: "Valid address",
-        invalidAddress: "Invalid address",
-        domainNotFound: "Domain not found",
-        sanctionedAddress: "Sanctioned address",
-        validationUnavailable: "Validation unavailable",
-        ensDisclaimer: "ENS addresses are supported.",
-        ensDisclaimerDescription: "ENS names can change over time.",
-        duplicateAddress: (contactName: string) =>
-          `This address is already used for ${contactName}.`,
-      },
-    },
+    supportsDomain: true,
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftLabelChange: jest.fn(),
@@ -68,12 +45,13 @@ describe("ContactsRenameAddressDialog", () => {
           invalidLabelError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByTestId("contacts-rename-address-input")).toHaveValue("Treasury");
     expect(screen.getByTestId("contacts-rename-address-input")).toHaveAttribute(
       "helpertext",
-      "Address label is invalid.",
+      "contacts.editAddress.invalidLabelError",
     );
     expect(screen.getByTestId("contacts-rename-address-confirm")).toBeDisabled();
   });
@@ -90,6 +68,7 @@ describe("ContactsRenameAddressDialog", () => {
           onConfirm,
         })}
       />,
+      { wrapper: I18nTestProvider },
     );
 
     fireEvent.change(screen.getByTestId("contacts-rename-address-input"), {

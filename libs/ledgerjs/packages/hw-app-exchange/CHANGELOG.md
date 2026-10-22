@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.30.0
+
+### Minor Changes
+
+- [#23108](https://github.com/LedgerHQ/ledger-live/pull/23108) [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@noble/curves` to 2.4.0 (ESM-only), use the `.js` subpaths and pass `prehash: false` where a digest is signed or verified. CommonJS consumers of `@ledgerhq/hw-app-btc` and `@ledgerhq/wallet-btc` now need Node >= 20.19 (synchronous `require(esm)`) or an ESM-capable bundler.
+
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#23108](https://github.com/LedgerHQ/ledger-live/pull/23108) [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@noble/curves` to 2.4.0 (ESM-only), use the `.js` subpaths and pass `prehash: false` where a digest is signed or verified. CommonJS consumers of `@ledgerhq/hw-app-btc` and `@ledgerhq/wallet-btc` now need Node >= 20.19 (synchronous `require(esm)`) or an ESM-capable bundler.
+
 ## 0.29.0
 
 ### Minor Changes
@@ -161,21 +173,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.3-next.0
-
-## 0.22.2
-
-### Patch Changes
-
-- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
-  - @ledgerhq/errors@6.35.0
-  - @ledgerhq/hw-transport@6.35.2
-
-## 0.22.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
-  - @ledgerhq/errors@6.35.0-next.0
-  - @ledgerhq/hw-transport@6.35.2-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

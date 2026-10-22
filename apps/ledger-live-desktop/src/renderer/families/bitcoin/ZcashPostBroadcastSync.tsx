@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import type { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import {
   isShieldedTransfer,
   type Transaction as ZcashTransaction,
+  type ZcashAccount,
 } from "@ledgerhq/coin-zcash/types";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 type Props = {
   account: Account;
@@ -19,7 +21,7 @@ const ZCASH_POST_BROADCAST_SYNC_RETRY_INTERVAL_MS = 90_000;
 const ZcashPostBroadcastSync = ({ account, transaction }: Props) => {
   const { startShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
   const tx = transaction as unknown as ZcashTransaction;
-  const isZcashPrivateSend = account.currency.id === "zcash" && isShieldedTransfer(tx);
+  const isZcashPrivateSend = isZcashCurrencyId(account.currency.id) && isShieldedTransfer(tx);
 
   const startShieldedSyncRef = useRef(startShieldedSync);
   startShieldedSyncRef.current = startShieldedSync;

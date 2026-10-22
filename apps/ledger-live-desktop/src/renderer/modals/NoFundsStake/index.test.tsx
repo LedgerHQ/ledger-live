@@ -99,7 +99,7 @@ describe("NoFundsStakeModal", () => {
       expect(state.defaultParentAccountId).toBe(ethAccountWithUsdc.id);
     });
 
-    it("pre-fills the token instead of the account when the token account is absent from the store", () => {
+    it("passes the parent account with the token when the token account is absent from the store", () => {
       const syntheticUsdcAccount = makeEmptyTokenAccount(ETH_ACCOUNT, usdcToken);
 
       render(<NoFundsStakeModal account={syntheticUsdcAccount} parentAccount={ETH_ACCOUNT} />, {
@@ -111,8 +111,49 @@ describe("NoFundsStakeModal", () => {
       const state = mockNavigate.mock.calls[0][1].state;
       expect(state.defaultToken).toEqual({ toTokenId: usdcToken.id });
       expect(state.defaultCurrency).toEqual({ toCurrencyId: usdcToken.id });
-      expect(state.defaultAccountId).toBeUndefined();
+      expect(state.defaultAccountId).toBe(ETH_ACCOUNT.id);
       expect(state.defaultParentAccountId).toBeUndefined();
+    });
+
+    it("passes the token only when neither the token account nor its parent is in the store", () => {
+      const syntheticUsdcAccount = makeEmptyTokenAccount(ETH_ACCOUNT, usdcToken);
+
+      render(<NoFundsStakeModal account={syntheticUsdcAccount} parentAccount={ETH_ACCOUNT} />, {
+        initialState: { ...modalOpenState, accounts: [] },
+      });
+
+      fireEvent.click(screen.getByText("Swap"));
+
+      const state = mockNavigate.mock.calls[0][1].state;
+      expect(state.defaultToken).toEqual({ toTokenId: usdcToken.id });
+      expect(state.defaultAccountId).toBeUndefined();
+    });
+  });
+
+  describe("Buy and Receive buttons", () => {
+    it("opens the Buy flow on the parent account of a token account", () => {
+      const syntheticUsdcAccount = makeEmptyTokenAccount(ETH_ACCOUNT, usdcToken);
+
+      render(<NoFundsStakeModal account={syntheticUsdcAccount} parentAccount={ETH_ACCOUNT} />, {
+        initialState: modalOpenState,
+      });
+
+      fireEvent.click(screen.getByText("Buy"));
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/exchange",
+        expect.objectContaining({
+          state: expect.objectContaining({ account: ETH_ACCOUNT.id, currency: usdcToken.id }),
+        }),
+      );
+    });
+
+    it("closes the modal when Receive is clicked", () => {
+      render(<NoFundsStakeModal account={ETH_ACCOUNT} />, { initialState: modalOpenState });
+
+      fireEvent.click(screen.getByText("Receive"));
+
+      expect(screen.queryByText("Swap")).not.toBeInTheDocument();
     });
   });
 

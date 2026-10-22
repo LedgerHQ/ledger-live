@@ -1,5 +1,8 @@
 import { useCallback } from "react";
-import { useCountervaluesPolling } from "@features/platform-market-countervalues";
+import {
+  useCountervaluesLoadStatus,
+  useCountervaluesPolling,
+} from "@features/platform-market-countervalues";
 import { useBridgeSync } from "./context";
 import { useGlobalSyncState } from "./useGlobalSyncState";
 import { useStablePending } from "./useStablePending";
@@ -30,18 +33,19 @@ export interface SyncSourcesState {
  * context-based implementation (LLD / LLM WalletSyncContext).
  */
 export function useSyncSources(walletSyncState: WalletSyncUserState): SyncSourcesState {
-  const cvPolling = useCountervaluesPolling();
+  const { poll } = useCountervaluesPolling();
+  const cvLoadStatus = useCountervaluesLoadStatus();
   const globalSyncState = useGlobalSyncState();
   const bridgeSync = useBridgeSync();
 
-  const isPending = cvPolling.pending || globalSyncState.pending || walletSyncState.visualPending;
+  const isPending =
+    cvLoadStatus.pending || globalSyncState.pending || walletSyncState.visualPending;
   const stablePending = useStablePending(isPending, POLLING_FINISHED_DELAY_MS);
 
-  const hasCvOrBridgeError = !isPending && (!!cvPolling.error || !!globalSyncState.error);
+  const hasCvOrBridgeError = !isPending && (!!cvLoadStatus.error || !!globalSyncState.error);
   const hasWalletSyncError = !!walletSyncState.walletSyncError;
 
   const { onUserRefresh } = walletSyncState;
-  const { poll } = cvPolling;
 
   const triggerRefresh = useCallback(() => {
     onUserRefresh();
@@ -59,6 +63,6 @@ export function useSyncSources(walletSyncState: WalletSyncUserState): SyncSource
     hasCvOrBridgeError,
     hasWalletSyncError,
     triggerRefresh,
-    cvPending: cvPolling.pending,
+    cvPending: cvLoadStatus.pending,
   };
 }

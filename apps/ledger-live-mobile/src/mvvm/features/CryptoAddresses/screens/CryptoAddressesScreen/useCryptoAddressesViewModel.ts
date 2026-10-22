@@ -13,7 +13,7 @@ import {
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { Account } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
-import { useCountervaluesState } from "@features/platform-market-countervalues";
+import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useTranslation } from "~/context/Locale";
@@ -34,7 +34,7 @@ export default function useCryptoAddressesViewModel(
 ) {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const countervalueState = useCountervaluesState();
+  const countervalueState = useCountervaluesCache();
   const toCurrency = useSelector(counterValueCurrencySelector);
   const allAccounts = useSelector(accountsSelector, isEqual);
 

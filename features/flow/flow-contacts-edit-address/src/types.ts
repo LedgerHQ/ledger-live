@@ -84,18 +84,10 @@ export type EditAddressAddressEntryPresentation = Readonly<{
   onChangeText: (value: string) => void;
 }>;
 
-export type ContactsRenameAddressLabels = Readonly<{
-  title: string;
-  inputLabel: string;
-  applyChanges: string;
-  labelValidationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
-  addressValidation: ContactsEditAddressValidationLabels;
-}>;
-
 export type ContactsRenameAddressDialogProps = RenameAddressDialogViewModel &
   Readonly<{
     isDeviceRequired: boolean;
-    labels: ContactsRenameAddressLabels;
+    supportsDomain: boolean;
   }>;
 
 export type ContactsRenameAddressDrawerProps = ContactsRenameAddressDialogProps &

@@ -12,7 +12,5 @@ export function NotificationsOptInIllustration() {
   const { theme } = useTheme();
   const animationSource = theme === "dark" ? darkAnimationSource : lightAnimationSource;
 
-  return (
-    <Lottie source={animationSource} style={StyleSheet.absoluteFillObject} autoPlay loop={false} />
-  );
+  return <Lottie source={animationSource} style={StyleSheet.absoluteFill} autoPlay loop={false} />;
 }

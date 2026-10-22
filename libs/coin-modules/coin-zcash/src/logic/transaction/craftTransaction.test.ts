@@ -45,8 +45,8 @@ describe("craftTransaction", () => {
     expect(buildIronwoodTransaction).not.toHaveBeenCalled();
   });
 
-  it("carries the endpoint's network into the build arguments", async () => {
-    await craftTransaction(contextWithZaino("https://testnet.zec.rocks"), "zcash", plan);
+  it("carries the currency's network into the build arguments", async () => {
+    await craftTransaction(contextWithZaino("https://testnet.zec.rocks"), "zcash_testnet", plan);
 
     expect(buildTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ grpcUrl: "https://testnet.zec.rocks", network: "testnet" }),

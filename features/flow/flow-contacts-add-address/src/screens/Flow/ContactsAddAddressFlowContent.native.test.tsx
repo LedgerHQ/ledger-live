@@ -1,49 +1,18 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-
-jest.mock("@shared/linking", () => ({
-  useOpenLink: () => jest.fn(),
-  useLocalizedUrl: (url: string) => url,
-}));
-import {
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
-  ContactAddressLabelSchema,
-  ContactAddressValueSchema,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-} from "@domain/entity-contact";
-import type { AddAddressEntryLabels, AddAddressNameLabels } from "../../state/types";
+import { ContactAddressLabelSchema, ContactAddressValueSchema } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import {
   ContactsAddAddressFlowContent,
   type ContactsAddAddressFlowContentProps,
 } from "./ContactsAddAddressFlowContent";
 
+jest.mock("@shared/linking", () => ({
+  useOpenLink: () => jest.fn(),
+  useLocalizedUrl: (url: string) => url,
+}));
+
 const address = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
-const entryLabels: AddAddressEntryLabels = {
-  title: "Enter address",
-  addressPlaceholder: "Address or ENS",
-  confirmAddress: "Confirm address",
-  validatingAddress: "Validating address",
-  validAddress: "Valid address",
-  invalidAddress: "Invalid address",
-  domainNotFound: "Domain not found",
-  sanctionedAddress: "Address is sanctioned",
-  validationUnavailable: "Address validation is unavailable",
-  ensDisclaimer: "ENS disclaimer",
-  ensDisclaimerDescription: "ENS names can change over time.",
-  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
-};
-const nameLabels: AddAddressNameLabels = {
-  title: "Address name",
-  inputLabel: "Name",
-  namingDisclaimer: "Only you can see this name.",
-  continueToReview: "Continue to review",
-  validationErrors: {
-    [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Invalid characters",
-    [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Duplicate name",
-    [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "Name is too long",
-  },
-};
 function createProps(
   step: ContactsAddAddressFlowContentProps["step"],
 ): ContactsAddAddressFlowContentProps {
@@ -56,7 +25,7 @@ function createProps(
         resolvedAddress: address,
         inputMethod: "manual",
       },
-      labels: entryLabels,
+      supportsDomain: true,
       onChangeText: jest.fn(),
       onConfirm: jest.fn(),
       onQrCodeClick: jest.fn(),
@@ -68,7 +37,6 @@ function createProps(
         label: ContactAddressLabelSchema.parse("Ethereum"),
         validationError: null,
       },
-      labels: nameLabels,
       onChangeText: jest.fn(),
       onContinue: jest.fn(),
     },
@@ -77,14 +45,6 @@ function createProps(
       currency: "Ethereum",
       network: "Ethereum",
       name: "Ethereum",
-      labels: {
-        title: "Review address",
-        addressLabel: "Address",
-        currencyLabel: "Currency",
-        networkLabel: "Network",
-        nameLabel: "Address name",
-        continue: "Confirm address",
-      },
       onContinue: jest.fn(),
     },
   };
@@ -93,7 +53,9 @@ function createProps(
 describe("ContactsAddAddressFlowContent", () => {
   it("should render each step and call its action", () => {
     const addressProps = createProps("address");
-    const { rerender } = render(<ContactsAddAddressFlowContent {...addressProps} />);
+    const { rerender } = render(<ContactsAddAddressFlowContent {...addressProps} />, {
+      wrapper: I18nTestProvider,
+    });
 
     fireEvent.press(screen.getByTestId("contacts-add-address-confirm"));
     expect(addressProps.addressEntryProps?.onConfirm).toHaveBeenCalledTimes(1);

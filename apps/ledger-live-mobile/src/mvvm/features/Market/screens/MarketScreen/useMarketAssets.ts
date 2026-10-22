@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { resolveMarketListRefreshRate } from "@ledgerhq/live-common/market/utils/timers";
+import { useFeature } from "@features/platform-feature-flags";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
 import { useLocale, useTranslation } from "~/context/Locale";
@@ -24,11 +26,6 @@ import {
   getMarketDataForDisplay,
 } from "./marketAssetsHelpers";
 import { useMarketAssetCategoryState } from "./useMarketAssetCategoryState";
-import {
-  getNextPaginationState,
-  type PaginationParams,
-  useMarketAssetPagination,
-} from "./useMarketAssetPagination";
 
 const PAGE_SIZE = 20;
 
@@ -47,6 +44,7 @@ export interface MarketAssetsResult {
   isError: boolean;
   emptyState: EmptyState;
   onEndReached: () => void;
+  resetToFirstPage: () => void;
 }
 
 export function useMarketAssets({
@@ -76,25 +74,10 @@ export function useMarketAssets({
     isFavoritesCategory,
     isStocksCategory,
     marketCategoriesParam,
-    sortedFavoriteIds,
-    favoriteIdsKey,
+    favoriteIds,
     hasFavoriteIds,
     shouldFetchAssets,
   } = useMarketAssetCategoryState({ category, normalizedSearch, starredMarketCoins });
-  const paginationParams = useMemo<PaginationParams>(
-    () => ({
-      search: normalizedSearch,
-      category,
-      favoriteIdsKey,
-      sorting,
-      timeframe,
-    }),
-    [category, favoriteIdsKey, normalizedSearch, sorting, timeframe],
-  );
-  const { page, requestedPage, setPagination } = useMarketAssetPagination({
-    params: paginationParams,
-    shouldFetchAssets,
-  });
   const requestRange = getMarketListRequestRange(timeframe);
   const displayRange = getMarketListDisplayRange(timeframe);
   const order = getMarketListOrder(sorting);
@@ -104,6 +87,8 @@ export function useMarketAssets({
     { skip: !shouldFetchAssets || isResolutionLoading },
   );
   const rate = needsUsdFallback ? usdToCounterValueRate : 1;
+  const refreshMarketData = useFeature("llmRefreshMarketData");
+  const refreshRate = resolveMarketListRefreshRate(refreshMarketData?.params?.refreshTime);
 
   const result = useMarketData(
     {
@@ -112,13 +97,13 @@ export function useMarketAssets({
       order,
       limit: PAGE_SIZE,
       liveCompatible: true,
-      page: requestedPage,
       search: normalizedSearch,
       categories: marketCategoriesParam,
-      starred: sortedFavoriteIds,
+      starred: favoriteIds,
     },
-    { enabled: shouldFetchMarketData },
+    { enabled: shouldFetchMarketData, refreshRate },
   );
+  const { fetchNextPage, resetToFirstPage } = result;
   const marketData = getMarketDataForDisplay(result.data, shouldFetchMarketData);
 
   const assets = useMemo(
@@ -137,14 +122,14 @@ export function useMarketAssets({
   );
 
   const hasData = assets.length > 0;
-  const canLoadMore = shouldFetchAssets && marketData.length >= page * PAGE_SIZE;
+  const canLoadMore = shouldFetchAssets && result.hasNextPage;
   const isRateLoading = needsUsdFallback && rateStatus === "loading";
   const isRateError = needsUsdFallback && rateStatus === "error";
   const loading =
     shouldFetchAssets &&
     (isResolutionLoading || result.isLoading || result.isPending || isRateLoading) &&
     !hasData;
-  const isFetchingNextPage = shouldFetchAssets && page > 1 && result.isFetching && hasData;
+  const isFetchingNextPage = shouldFetchAssets && result.isFetchingNextPage;
 
   const onEndReached = useCallback(() => {
     if (
@@ -159,15 +144,14 @@ export function useMarketAssets({
       return;
     }
 
-    setPagination(current => getNextPaginationState(current, paginationParams));
+    fetchNextPage();
   }, [
     canLoadMore,
+    fetchNextPage,
     isFetchingNextPage,
     isRateError,
     loading,
-    paginationParams,
     result.isError,
-    setPagination,
     shouldFetchAssets,
   ]);
 
@@ -178,5 +162,6 @@ export function useMarketAssets({
     isError: shouldFetchAssets && (result.isError || isRateError),
     emptyState: getEmptyState({ isFavoritesCategory, hasFavoriteIds, isStocksCategory }),
     onEndReached,
+    resetToFirstPage,
   };
 }

@@ -9,6 +9,7 @@ export * from "./category";
 
 // Export asset-detail chart helpers (shared by desktop & mobile)
 export * from "./chartRangeVariation";
+export * from "./appendLatestPriceToChart";
 export * from "./buildMarketChartSeries";
 export * from "./scrubVariation";
 export * from "./rangePriceChangeKey";

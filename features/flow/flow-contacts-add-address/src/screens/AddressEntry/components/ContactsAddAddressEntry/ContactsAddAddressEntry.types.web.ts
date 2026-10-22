@@ -1,8 +1,8 @@
 import type { ChangeEvent, ClipboardEvent } from "react";
-import type { ContactsAddAddressNameLabels } from "../../../AddressName/types";
 import type { SanctionedAddressBannerProps } from "../../../../components/SanctionedAddressBanner/types";
+import type { AddAddressEntryLabels } from "../../../../copy/addAddressEntryLabels";
+import type { ContactsAddAddressNameLabels } from "../../../AddressName/types";
 import type {
-  AddAddressEntryLabels,
   AddAddressEntryState,
   AddAddressInputSource,
   AddAddressLabelState,
@@ -10,13 +10,11 @@ import type {
 
 export type AddressLabelConfiguration = Readonly<{
   addressLabel: AddAddressLabelState;
-  nameLabels: ContactsAddAddressNameLabels;
   onAddressLabelChange: (value: string) => void;
 }>;
 
 type WithoutAddressLabelConfiguration = Readonly<{
   addressLabel?: never;
-  nameLabels?: never;
   onAddressLabelChange?: never;
 }>;
 
@@ -36,8 +34,8 @@ type WithoutAddressLabelViewConfiguration = Readonly<{
 
 type ContactsAddAddressEntryWebBaseProps = Readonly<{
   addressEntry: AddAddressEntryState;
-  labels: AddAddressEntryLabels;
-  sanctionedAddressBanner?: SanctionedAddressBannerProps;
+  supportsDomain: boolean;
+  onSanctionedAddressLearnMore?: () => void;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onConfirm?: () => void;
 }>;

@@ -89,6 +89,7 @@ export function useMarketPriceSectionViewModel({
     atl: data?.atl,
     athTime: data?.athDate?.getTime(),
     atlTime: data?.atlDate?.getTime(),
+    latestPrice: data?.price,
     skip: !marketAssetId || !isChartDerivedRange,
   });
 

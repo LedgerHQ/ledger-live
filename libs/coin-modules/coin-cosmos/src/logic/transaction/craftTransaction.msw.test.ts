@@ -1,6 +1,6 @@
 import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { http, HttpResponse } from "msw";
-import { server, TEST_COSMOS_ENDPOINT, makeTestApi } from "../../test/msw.mock";
+import { server, TEST_COSMOS_ENDPOINT, makeTestApi, makeTestConfig } from "../../test/msw.mock";
 import { craftTransaction, CosmosCraftedTransaction } from "./craftTransaction";
 
 const SENDER = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
@@ -35,6 +35,7 @@ afterAll(() => server.close());
 
 describe("craftTransaction via MSW", () => {
   it("crafts a send payload, estimating fees via simulate when no customFees is given", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(ACCOUNTS, () => HttpResponse.json(ACCOUNT_RESPONSE)),
@@ -42,7 +43,7 @@ describe("craftTransaction via MSW", () => {
       http.get(NODE_INFO, () => HttpResponse.json(NODE_INFO_RESPONSE)),
     );
 
-    const crafted = await craftTransaction(api, "cosmos", sendIntent);
+    const crafted = await craftTransaction(config, api, "cosmos", sendIntent);
     const payload = JSON.parse(crafted.transaction) as CosmosCraftedTransaction;
 
     expect(payload.protoMsgs).toHaveLength(1);
@@ -58,6 +59,7 @@ describe("craftTransaction via MSW", () => {
   });
 
   it("skips fee estimation (no simulate call) when customFees is provided", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     // No SIMULATE handler registered: onUnhandledRequest:"error" would fail this test if
     // craftTransaction still called estimateFees/simulate despite customFees being supplied.
@@ -67,7 +69,7 @@ describe("craftTransaction via MSW", () => {
     );
     const customFees: FeeEstimation = { value: 500n, parameters: { gasLimit: "200000" } };
 
-    const crafted = await craftTransaction(api, "cosmos", sendIntent, customFees);
+    const crafted = await craftTransaction(config, api, "cosmos", sendIntent, customFees);
     const payload = JSON.parse(crafted.transaction) as CosmosCraftedTransaction;
 
     expect(payload.gasLimit).toBe("200000");
@@ -77,6 +79,7 @@ describe("craftTransaction via MSW", () => {
   // getAccount and simulate both swallow failures (see estimateFees.msw.test.ts), but getNodeInfo has
   // no try/catch — it's the one call in craftTransaction's flow whose failure propagates as a rejection.
   it("throws when the node_info lookup fails", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(ACCOUNTS, () => HttpResponse.json(ACCOUNT_RESPONSE)),
@@ -84,6 +87,6 @@ describe("craftTransaction via MSW", () => {
       http.get(NODE_INFO, () => new HttpResponse(null, { status: 500 })),
     );
 
-    await expect(craftTransaction(api, "cosmos", sendIntent)).rejects.toThrow();
+    await expect(craftTransaction(config, api, "cosmos", sendIntent)).rejects.toThrow();
   });
 });

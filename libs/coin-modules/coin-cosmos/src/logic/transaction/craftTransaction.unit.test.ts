@@ -1,4 +1,5 @@
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import type { CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { craftTransaction, CosmosCraftedTransaction } from "./craftTransaction";
 
@@ -11,9 +12,10 @@ const sendIntent = {
   asset: { type: "native" },
 } as unknown as TransactionIntent;
 
+const config = { denom: "uatom" } as CosmosCoinConfig;
+
 const makeApi = () =>
   ({
-    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getAccount: jest.fn().mockResolvedValue({
       accountNumber: 7,
       sequence: 3,
@@ -29,7 +31,7 @@ describe("logic/transaction/craftTransaction", () => {
   it("crafts a send payload with proto MsgSend, fee, sequence and chain id", async () => {
     const api = makeApi();
 
-    const crafted = await craftTransaction(api, "cosmos", sendIntent, {
+    const crafted = await craftTransaction(config, api, "cosmos", sendIntent, {
       value: 500n,
       parameters: { gasLimit: "200000" },
     });
@@ -59,7 +61,7 @@ describe("logic/transaction/craftTransaction", () => {
       asset: { type: "native" },
     } as unknown as TransactionIntent;
 
-    const crafted = await craftTransaction(api, "cosmos", delegateIntent, {
+    const crafted = await craftTransaction(config, api, "cosmos", delegateIntent, {
       value: 500n,
       parameters: { gasLimit: "250000" },
     });
@@ -72,9 +74,9 @@ describe("logic/transaction/craftTransaction", () => {
   it("throws when customFees carries no gas limit", async () => {
     const api = makeApi();
 
-    await expect(craftTransaction(api, "cosmos", sendIntent, { value: 500n })).rejects.toThrow(
-      "missing gas limit",
-    );
+    await expect(
+      craftTransaction(config, api, "cosmos", sendIntent, { value: 500n }),
+    ).rejects.toThrow("missing gas limit");
   });
 
   it("rejects an unsupported staking mode", async () => {
@@ -90,7 +92,7 @@ describe("logic/transaction/craftTransaction", () => {
       asset: { type: "native" },
     } as unknown as TransactionIntent;
 
-    await expect(craftTransaction(api, "cosmos", withdrawIntent)).rejects.toThrow(
+    await expect(craftTransaction(config, api, "cosmos", withdrawIntent)).rejects.toThrow(
       "unsupported staking mode",
     );
   });
@@ -100,7 +102,7 @@ describe("logic/transaction/craftTransaction", () => {
     const badSender = { ...sendIntent, sender: "cosmos1invalid" } as unknown as TransactionIntent;
 
     await expect(
-      craftTransaction(api, "cosmos", badSender, {
+      craftTransaction(config, api, "cosmos", badSender, {
         value: 500n,
         parameters: { gasLimit: "200000" },
       }),

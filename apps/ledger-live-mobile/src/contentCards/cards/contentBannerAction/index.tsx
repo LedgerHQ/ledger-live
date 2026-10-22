@@ -55,7 +55,7 @@ const ContentBannerActionCard = ContentCardBuilder<ContentCardProps>(props => {
     <Box key={metadata.id} lx={{ position: "relative", width: "full" }}>
       <Pressable onPress={metadata.actions?.onClick}>
         <ContentBanner>
-          <Spot appearance="icon" icon={icon} size={48} />
+          <Spot icon={icon} size={48} />
           <ContentBannerContent>
             <ContentBannerTitle>{title ?? ""}</ContentBannerTitle>
             {description ? (

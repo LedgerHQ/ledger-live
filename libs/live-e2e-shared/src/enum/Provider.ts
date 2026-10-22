@@ -31,6 +31,7 @@ export class SwapProvider extends BaseProvider {
     public readonly availableOnLns: boolean,
     public readonly contractAddress?: string,
     public readonly app?: AppInfos,
+    public readonly amountAlwaysShownOnDevice = true,
   ) {
     super(name, uiName);
   }
@@ -91,6 +92,7 @@ export class SwapProvider extends BaseProvider {
     false,
     "0x40aA958dd87FC8305b97f2BA922CDdCa374bcD7f",
     AppInfos.ETHEREUM,
+    false, // OKX router review may omit the amount (accepted by product)
   );
 }
 

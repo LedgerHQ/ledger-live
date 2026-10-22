@@ -10,7 +10,7 @@ import type {
 } from "@features/platform-verify-address-intent";
 import {
   buildDeviceInitializationInput,
-  DeviceIntentExecutorLWM,
+  DeviceIntentExecutor,
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
 import type { PayVerifyOutcome } from "../hooks/usePayTabVerifyAddress";
@@ -130,7 +130,7 @@ export function VerifyAddressExecutorLWM({
   if (!initInput) return null;
 
   return (
-    <DeviceIntentExecutorLWM<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
+    <DeviceIntentExecutor<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
       enabled
       sourceFlow="receive"
       deviceConnectionParams={CONNECTION_PARAMS}

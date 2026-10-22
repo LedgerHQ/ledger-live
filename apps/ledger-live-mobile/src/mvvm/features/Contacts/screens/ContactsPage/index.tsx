@@ -6,6 +6,7 @@ import type { Contact } from "@domain/entity-contact";
 import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts";
 import { useContactsFeature } from "@features/platform-contacts";
 import { ScreenName } from "~/const";
+import { useTranslation } from "~/context/Locale";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
@@ -29,6 +30,7 @@ type ContactsPageProps = Readonly<{
 }>;
 
 export function ContactsPage({ title, onSelectContact }: ContactsPageProps) {
+  const { t } = useTranslation();
   const pageViewModel = useContactsPageViewModel(onSelectContact);
   const { onSearchQueryChange } = pageViewModel;
   const onSaveSuccess = useCallback(() => {
@@ -45,7 +47,7 @@ export function ContactsPage({ title, onSelectContact }: ContactsPageProps) {
   };
 
   useContactsPageNavigationViewModel(
-    pageViewModel.labels.addContact,
+    t("contacts.addContact"),
     !isContactsSearchNoResultsViewModel(pageViewModel.viewModel),
     onAddContact,
     title,

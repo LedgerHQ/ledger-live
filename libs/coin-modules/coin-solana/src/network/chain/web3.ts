@@ -9,9 +9,7 @@ import {
   TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import {
-  ConfirmedSignatureInfo,
   Connection,
-  ParsedTransactionWithMeta,
   PublicKey,
   StakeProgram,
   SystemProgram,
@@ -23,7 +21,6 @@ import {
   TransactionMessage,
 } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
-import chunk from "lodash/chunk";
 import uniq from "lodash/uniq";
 import { getTokenAccountProgramId } from "../../helpers/token";
 import { Awaited } from "../../logic";
@@ -40,7 +37,7 @@ import {
   TokenTransferCommand,
   TransferCommand,
 } from "../../types";
-import { drainSeqAsyncGen, median } from "../../utils";
+import { median } from "../../utils";
 import {
   parseTokenAccountInfo,
   tryParseAsTokenAccount,
@@ -96,68 +93,6 @@ export function toStakeAccountWithInfo(
     return { onChainAcc, info };
   }
   return undefined;
-}
-
-export type TransactionDescriptor = {
-  parsed: ParsedTransactionWithMeta;
-  info: ConfirmedSignatureInfo;
-};
-
-async function* getTransactionsBatched(
-  address: string,
-  untilTxSignature: string | undefined,
-  api: ChainAPI,
-): AsyncGenerator<TransactionDescriptor[], void, unknown> {
-  // as per Ledger team - last 100 operations is a sane limit to begin with
-  const signatures = await api.getSignaturesForAddress(address, {
-    ...(untilTxSignature ? { until: untilTxSignature } : {}),
-    limit: 100,
-  });
-
-  // max req payload is 50K, around 200 transactions atm
-  // requesting 100 at a time to give some space for payload to change in future
-  const batchSize = 100;
-
-  for (const signaturesInfoBatch of chunk(signatures, batchSize)) {
-    const transactions = await api.getParsedTransactions(
-      signaturesInfoBatch.map(tx => tx.signature),
-    );
-    const sortedTransactions = transactions.sort((a, b) => (b?.slot ?? 0) - (a?.slot ?? 0));
-    const txsDetails = sortedTransactions.reduce((acc, tx) => {
-      if (tx && !tx.meta?.err && tx.blockTime) {
-        const info = signaturesInfoBatch.find(s =>
-          tx.transaction.signatures.includes(s.signature),
-        )!;
-        if (info) {
-          acc.push({
-            info,
-            parsed: tx,
-          });
-        }
-      }
-      return acc;
-    }, [] as TransactionDescriptor[]);
-
-    yield txsDetails;
-  }
-}
-
-async function* getTransactionsGen(
-  address: string,
-  untilTxSignature: string | undefined,
-  api: ChainAPI,
-): AsyncGenerator<TransactionDescriptor, void, undefined> {
-  for await (const txDetailsBatch of getTransactionsBatched(address, untilTxSignature, api)) {
-    yield* txDetailsBatch;
-  }
-}
-
-export function getTransactions(
-  address: string,
-  untilTxSignature: string | undefined,
-  api: ChainAPI,
-): Promise<TransactionDescriptor[]> {
-  return drainSeqAsyncGen(getTransactionsGen(address, untilTxSignature, api));
 }
 
 export const buildTransferInstructions = async (
@@ -391,30 +326,12 @@ export const getMaybeTokenMint = async (
   };
 };
 
-export const getMaybeTokenMintProgram = async (
-  address: string,
-  api: ChainAPI,
-): Promise<SolanaTokenProgram | undefined | Error> => {
-  const mintInfo = await api.getAccountInfo(address);
-
-  return mintInfo !== null && "parsed" in mintInfo.data
-    ? (mintInfo?.data.program as SolanaTokenProgram)
-    : undefined;
-};
-
 export function getStakeAccountMinimumBalanceForRentExemption(api: ChainAPI) {
   return api.getMinimumBalanceForRentExemption(StakeProgram.space);
 }
 
 export function getStakeMinimumDelegation(api: ChainAPI) {
   return api.getStakeMinimumDelegation();
-}
-
-export async function getAccountMinimumBalanceForRentExemption(api: ChainAPI, address: string) {
-  const accInfo = await api.getAccountInfo(address);
-  const accSpace = accInfo !== null && "parsed" in accInfo.data ? accInfo.data.space : 0;
-
-  return api.getMinimumBalanceForRentExemption(accSpace);
 }
 
 // for tokens2022 with interest bearing extension

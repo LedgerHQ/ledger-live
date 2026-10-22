@@ -1,5 +1,35 @@
 # @features/flow-contacts-edit-address
 
+## 0.5.0
+
+### Minor Changes
+
+- [#23506](https://github.com/LedgerHQ/ledger-live/pull/23506) [`2f9c159`](https://github.com/LedgerHQ/ledger-live/commit/2f9c1598145b8a7dadab43b12a5deb4ab9dc91c9) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Contact detail copy inside the package with @shared/i18n
+
+- [#23454](https://github.com/LedgerHQ/ledger-live/pull/23454) [`ff33162`](https://github.com/LedgerHQ/ledger-live/commit/ff331621a49337b1065c373f16aa479fa0ab5c8b) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Edit address copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`2ebd029`](https://github.com/LedgerHQ/ledger-live/commit/2ebd029cd006cb89ceb240705247ccf5529c3c50), [`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @shared/ui-queued-bottom-sheet@0.7.0
+  - @features/platform-contacts@0.11.0
+  - @domain/entity-contact@0.12.1
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#23506](https://github.com/LedgerHQ/ledger-live/pull/23506) [`2f9c159`](https://github.com/LedgerHQ/ledger-live/commit/2f9c1598145b8a7dadab43b12a5deb4ab9dc91c9) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Contact detail copy inside the package with @shared/i18n
+
+- [#23454](https://github.com/LedgerHQ/ledger-live/pull/23454) [`ff33162`](https://github.com/LedgerHQ/ledger-live/commit/ff331621a49337b1065c373f16aa479fa0ab5c8b) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Edit address copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`2ebd029`](https://github.com/LedgerHQ/ledger-live/commit/2ebd029cd006cb89ceb240705247ccf5529c3c50), [`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @shared/ui-queued-bottom-sheet@0.7.0-next.0
+  - @features/platform-contacts@0.11.0-next.0
+  - @domain/entity-contact@0.12.1-next.0
+
 ## 0.4.2
 
 ### Patch Changes

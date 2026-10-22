@@ -27,7 +27,8 @@ test.describe("Receive private address", () => {
   test(
     `[${account.currency.testLabel}] - Verify private address displayed`,
     {
-      tag: buildTags({ currencyId: account.currency.id }),
+      // The Nano S Zcash app (2.4.2) cannot derive a shielded address.
+      tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app }) => {

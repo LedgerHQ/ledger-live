@@ -22,7 +22,6 @@ import { computeDustAmount } from "@ledgerhq/wallet-btc/utils";
 import { Currency } from "@ledgerhq/wallet-btc/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { getChainAdapter } from "./chain-adapters/registry";
 import type { BitcoinCoinConfig } from "./config";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
@@ -174,10 +173,6 @@ export const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
-  const adapter = getChainAdapter(account.currency.id);
-  const custom = adapter.getTransactionStatus?.(account, transaction);
-  if (custom) return custom;
-
   const errors: ErrorMap = {};
   const warnings: ErrorMap = {};
   const useAllAmount = !!transaction.useAllAmount;

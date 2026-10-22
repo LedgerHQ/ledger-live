@@ -23,10 +23,10 @@ export const isTransactionConfirmed = async ({
   }
   const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
   const config = await evmCtx.config();
-  const nodeApi = getNodeApi(config, account.currency.id, evmCtx.logger);
+  const nodeApi = getNodeApi(config, evmCtx.logger);
 
   try {
-    const { blockHeight = null } = await nodeApi.getTransaction(account.currency.id, hash);
+    const { blockHeight = null } = await nodeApi.getTransaction(hash);
     return blockHeight !== null;
   } catch (e: unknown) {
     const err = e as { name?: string; status?: number } | null | undefined;

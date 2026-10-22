@@ -292,8 +292,6 @@ describe("tron bridge", () => {
         type: "trc20",
         assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
         assetOwner: owner,
-        name: "Tether USD",
-        unit: { name: "USDT", code: "USDT", magnitude: 6 },
       });
     });
 
@@ -304,8 +302,6 @@ describe("tron bridge", () => {
         type: "trc10",
         assetReference: "1002000",
         assetOwner: owner,
-        name: "BitTorrent",
-        unit: { name: "BTT", code: "BTT", magnitude: 6 },
       });
     });
 

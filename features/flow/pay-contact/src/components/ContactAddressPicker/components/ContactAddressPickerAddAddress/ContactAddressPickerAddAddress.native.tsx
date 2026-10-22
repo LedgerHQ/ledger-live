@@ -25,7 +25,7 @@ export function ContactAddressPickerAddAddress({
       lx={{ backgroundColor: "surface", borderRadius: "md" }}
     >
       <ListItemLeading>
-        <Spot appearance="icon" icon={Plus} size={48} />
+        <Spot icon={Plus} size={48} />
         <ListItemContent>
           <ListItemTitle>{label}</ListItemTitle>
         </ListItemContent>

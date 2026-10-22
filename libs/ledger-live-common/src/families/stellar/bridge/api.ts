@@ -39,8 +39,6 @@ export function getAssetFromToken(token: TokenCurrency): AssetInfo | undefined {
     type: token.tokenType,
     assetReference: token.tokenIdentifier,
     assetOwner: token.contractAddress,
-    name: token.name,
-    unit: token.units[0],
   };
 }
 

@@ -52,9 +52,8 @@ export async function getEvmTokenAllowance(
   createApi(account.currency.id);
   const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
   const config = await evmCtx.config();
-  const nodeApi = getNodeApi(config, account.currency.id, evmCtx.logger);
+  const nodeApi = getNodeApi(config, evmCtx.logger);
   const allowance = await nodeApi.getTokenAllowance(
-    account.currency.id,
     account.freshAddress,
     tokenCurrency.contractAddress,
     spender,

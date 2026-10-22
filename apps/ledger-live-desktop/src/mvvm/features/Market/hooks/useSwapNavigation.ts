@@ -2,20 +2,13 @@ import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate, useLocation } from "react-router";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { buildSwapNavigationState } from "../utils/swapNavigation";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
-export type SwapNavigationOptions = Readonly<{
-  currencyIds?: readonly string[];
-}>;
-
-type NavigateToSwap = (
-  ledgerCurrency: CryptoOrTokenCurrency,
-  options?: SwapNavigationOptions,
-) => void;
+type NavigateToSwap = (ledgerCurrency: CryptoOrTokenCurrency) => void;
 
 interface UseSwapNavigationResult {
   navigateToSwap: NavigateToSwap;
@@ -29,14 +22,10 @@ export function useSwapNavigation(): UseSwapNavigationResult {
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   const navigateToSwap = useCallback<NavigateToSwap>(
-    (ledgerCurrency: CryptoOrTokenCurrency, options?: SwapNavigationOptions) => {
+    (ledgerCurrency: CryptoOrTokenCurrency) => {
       const fromPath = location.pathname;
-      const currencyIds = options?.currencyIds?.length
-        ? [...new Set(options.currencyIds)]
-        : [ledgerCurrency.id];
-      const hasAccounts = currencyIds.some(
-        id => getAvailableAccountsById(id, flattenedAccounts).length > 0,
-      );
+      const availableAccounts = getAvailableAccountsById(ledgerCurrency.id, flattenedAccounts);
+      const hasAccounts = availableAccounts.length > 0;
 
       if (!hasAccounts) {
         navigate("/swap", {
@@ -45,16 +34,32 @@ export function useSwapNavigation(): UseSwapNavigationResult {
         return;
       }
 
-      // Swap only opens once the user has picked the network and account to swap from.
+      if (availableAccounts.length === 1) {
+        const account = availableAccounts[0];
+        const parentAccount = isTokenAccount(account)
+          ? allAccounts.find(a => a.id === account.parentId)
+          : undefined;
+
+        navigate("/swap", {
+          state: buildSwapNavigationState({
+            defaultCurrency: ledgerCurrency,
+            fromPath,
+            account,
+            parentAccount,
+          }),
+        });
+        return;
+      }
+
       openAssetAndAccount({
-        currencies: currencyIds,
+        currencies: [ledgerCurrency.id],
         areCurrenciesFiltered: true,
         useCase: "swap",
         drawerConfiguration: {},
         onSuccess: (account, parentAccount) => {
           navigate("/swap", {
             state: buildSwapNavigationState({
-              defaultCurrency: getAccountCurrency(account),
+              defaultCurrency: ledgerCurrency,
               fromPath,
               account,
               parentAccount,
@@ -63,7 +68,7 @@ export function useSwapNavigation(): UseSwapNavigationResult {
         },
       });
     },
-    [navigate, location.pathname, flattenedAccounts, openAssetAndAccount],
+    [navigate, location.pathname, flattenedAccounts, allAccounts, openAssetAndAccount],
   );
 
   return { navigateToSwap };

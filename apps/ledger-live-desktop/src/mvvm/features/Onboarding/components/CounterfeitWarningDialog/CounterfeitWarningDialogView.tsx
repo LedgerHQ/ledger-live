@@ -9,6 +9,7 @@ import {
   Link,
   Spot,
 } from "@ledgerhq/lumen-ui-react";
+import { InformationFill } from "@ledgerhq/lumen-ui-react/symbols";
 import type { CounterfeitWarningDialogViewProps } from "./useCounterfeitWarningDialogViewModel";
 
 type BodyLinkProps = Readonly<{
@@ -48,7 +49,7 @@ const CounterfeitWarningDialogView = ({
       >
         <DialogHeader density="compact" onClose={onDismiss} />
         <DialogBody className="items-center gap-24 px-24 pb-16 text-center">
-          <Spot appearance="info" size={72} />
+          <Spot appearance="muted" icon={InformationFill} size={72} />
           <div className="flex flex-col items-center gap-12">
             <h2 className="heading-4-semi-bold text-base">{title}</h2>
             <p className="body-2 text-muted">

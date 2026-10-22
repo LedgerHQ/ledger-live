@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-descriptor",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "AccountDescriptor entity: the account identity format shared with wallet-cli, its canonical key and AccountUUID",
   "main": "src/index.ts",
@@ -14,7 +14,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

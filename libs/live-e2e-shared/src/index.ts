@@ -36,7 +36,7 @@ export const formatFlagsData = (data: Partial<{ [key in FeatureId]: Feature }>) 
   return allureData;
 };
 
-const SENSITIVE_ENV_KEYS: Set<string> = new Set(["SEED"]);
+const SENSITIVE_ENV_KEYS: Set<string> = new Set(["SEED", "SPECULOS_SESSION_TOKEN"]);
 
 export const formatEnvData = (data: Record<string, unknown>) => {
   let allureData = "";

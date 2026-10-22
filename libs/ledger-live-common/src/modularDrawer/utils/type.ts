@@ -1,4 +1,4 @@
-import { CounterValuesState } from "@domain/entity-market-countervalues";
+import { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import { Unit } from "@domain/entity-currency-unit";
 import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -35,7 +35,7 @@ export type AssetWithBalance = AssetType & {
 
 export type UseBalanceDeps = () => {
   flattenedAccounts: AccountLike[];
-  state: CounterValuesState;
+  state: CounterValuesCacheView;
   counterValueCurrency: Currency;
   locale: string;
 };

@@ -1,4 +1,4 @@
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3";
 import { sha256 } from "@noble/hashes/sha2";
 import bs58 from "bs58";
@@ -25,10 +25,14 @@ export function buildTronTestSignerFromPrivateKeyHex(privateKeyHex: string): {
       return { publicKey, address };
     },
     async sign(_path, rawTxHex, _tokenSignatures) {
-      const sig = secp256k1.sign(sha256(Buffer.from(rawTxHex, "hex")), priv, { lowS: true });
+      const sig = secp256k1.sign(sha256(Buffer.from(rawTxHex, "hex")), priv, {
+        lowS: true,
+        prehash: false,
+        format: "recovered",
+      });
       const out = new Uint8Array(65);
-      out.set(sig.toBytes("compact"), 0);
-      out[64] = sig.recovery ?? 0;
+      out.set(sig.subarray(1), 0);
+      out[64] = sig[0];
       return Buffer.from(out).toString("hex");
     },
   };

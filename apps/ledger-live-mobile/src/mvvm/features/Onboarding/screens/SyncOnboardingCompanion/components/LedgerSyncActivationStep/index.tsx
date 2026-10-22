@@ -3,7 +3,7 @@ import React from "react";
 import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import IconsHeader from "LLM/features/WalletSync/components/Activation/IconsHeader";
-import SkipLedgerSyncDrawer from "./SkipLedgerSyncDrawer";
+import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
 import {
   useLedgerSyncActivationStepViewModel,
   type LedgerSyncActivationStepViewProps,

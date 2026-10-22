@@ -7,6 +7,7 @@ import type {
   Transaction as ZcashTransaction,
   ZcashTransferType,
 } from "@ledgerhq/coin-zcash/types";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
 
 const ZCASH_SEND_TITLE_KEY: Record<ZcashTransferType, string> = {
   transparent: "zcash.shielded.send.modalTitle.transparent",
@@ -28,7 +29,7 @@ const SendModalTitle = ({
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
 
   const transferType =
-    shieldedEnabled && account.currency.id === "zcash"
+    shieldedEnabled && isZcashCurrencyId(account.currency.id)
       ? (transaction as ZcashTransaction | undefined)?.transferType
       : undefined;
 

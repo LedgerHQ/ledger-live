@@ -35,22 +35,22 @@ export type CosmosCraftedTransaction = {
  * `combine` needs to rebuild the protobuf `TxRaw`. Fees: `customFees` or estimated.
  */
 export async function craftTransaction(
+  config: CosmosCoinConfig,
   api: CosmosAPI,
   currencyId: string,
   intent: TransactionIntent,
   customFees?: FeeEstimation,
-  config?: CosmosCoinConfig,
 ): Promise<CraftedTransaction> {
   if (!(await validateAddress(intent.sender, { currencyId }))) {
     throw new Error(`cosmos: invalid sender address: ${intent.sender}`);
   }
-  const params = intentToMessageParams(intent, currencyId, api.getCurrency().units[1].code);
+  const params = intentToMessageParams(intent, currencyId, config.denom);
   const chainInstance = cryptoFactory(currencyId, config);
 
   const { aminoMsgs, protoMsgs } = txToMessages(params, chainInstance);
   const { accountNumber, sequence, pubKeyType } = await api.getAccount(intent.sender);
 
-  const fees = customFees ?? (await estimateFees(api, intent));
+  const fees = customFees ?? (await estimateFees(config, currencyId, intent));
   const gasLimitValue = fees.parameters?.gasLimit;
   // customFees.parameters is optional; an empty gas crafts a chain-rejected tx, so fail loudly.
   if (gasLimitValue === undefined || gasLimitValue === null || String(gasLimitValue) === "") {

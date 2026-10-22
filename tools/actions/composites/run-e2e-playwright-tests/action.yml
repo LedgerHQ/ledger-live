@@ -46,14 +46,17 @@ runs:
       id: run-tests
       run: |
         export SPECULOS_IMAGE_TAG="${{ env.SPECULOS_IMAGE_TAG }}"
-        if [ -z "${COINAPPS}" ]; then
-          echo "Warning: COINAPPS not set, using default: $PWD/coin-apps"
-          export COINAPPS="$PWD/coin-apps"
-        fi
-        if [ ! -d "${COINAPPS}" ]; then
-          echo "Error: COINAPPS directory does not exist: ${COINAPPS}"
-          echo "Ensure the coin-apps repository is checked out before calling this action."
-          exit 1
+        # Speculinho (REMOTE_SPECULOS) ships the coin apps in its own image.
+        if [ "${REMOTE_SPECULOS}" != "true" ]; then
+          if [ -z "${COINAPPS}" ]; then
+            echo "Warning: COINAPPS not set, using default: $PWD/coin-apps"
+            export COINAPPS="$PWD/coin-apps"
+          fi
+          if [ ! -d "${COINAPPS}" ]; then
+            echo "Error: COINAPPS directory does not exist: ${COINAPPS}"
+            echo "Ensure the coin-apps repository is checked out before calling this action."
+            exit 1
+          fi
         fi
         export MOCK=0
 

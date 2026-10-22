@@ -71,7 +71,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
 
 ### LWM (Ledger Wallet Mobile)
 
-Fully supported via the `DeviceIntentExecutorLWM` wrapper at
+Fully supported via the app's `DeviceIntentExecutor` wrapper at
 `apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/`. Mount it
 as shown in [Mounting the executor](#mounting-the-executor) — the connection,
 context-initialisation, and intent-error screens are all wired with
@@ -79,7 +79,7 @@ platform-specific components.
 
 ### LWD (Ledger Wallet Desktop)
 
-Supported via the `DeviceIntentExecutorLWD` wrapper at
+Supported via the app's `DeviceIntentExecutor` wrapper at
 `apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/`. It mirrors
 the LWM integration and injects desktop-specific platform components for the
 connection, context-initialisation, and error screens. The shared core
@@ -285,9 +285,9 @@ sequenceDiagram
 
 ### Component (`src/DeviceIntentExecutor.tsx`)
 
-| Export                 | Description                                                                                                                                      |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `DeviceIntentExecutor` | Cross-platform React component that maps executor lifecycle phases to the platform-injected UI. Used by `DeviceIntentExecutorLWM` / `LWD` wrappers. |
+| Export                 | Description                                                                                                                                                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DeviceIntentExecutor` | Cross-platform React component that maps executor lifecycle phases to the platform-injected UI. Wrapped by each app's own `DeviceIntentExecutor` (`LLM/components/DeviceIntentExecutor`, `LLD/components/DeviceIntentExecutor`). |
 
 ## Usage Guide
 
@@ -380,13 +380,14 @@ implementation guide for adding a new intent.
 ### Mounting the executor
 
 The executor is typically placed inside a bottom sheet (LWM) or modal (LWD).
-Each platform provides a thin wrapper (`DeviceIntentExecutorLWM` /
-`DeviceIntentExecutorLWD`) that injects the platform-specific UI components
-(device connection, context initialiser, error screens). The caller screen
-mounts that wrapper and passes all the required props:
+Each app provides a thin wrapper, also named `DeviceIntentExecutor`, that injects
+the platform-specific UI components (device connection, context initialiser,
+error screens). The caller screen mounts that wrapper and passes all the
+required props:
 
-Do not import the raw `DeviceIntentExecutor` from `@features/platform-device-intent`;
-always use the existing platform wrapper.
+Do not import the raw `DeviceIntentExecutor` from `@features/platform-device-intent/react`;
+always import the app's wrapper from `LLM/components/DeviceIntentExecutor` or
+`LLD/components/DeviceIntentExecutor`.
 
 Both platform wrappers require a `sourceFlow` value for analytics. It is
 passed as a property on all DIE tracking events so they can be attributed to
@@ -394,6 +395,7 @@ the originating user flow.
 
 ```tsx
 import { createIntent } from "@features/platform-device-intent";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 
 function MyFlowScreen({ enabled, onDone }: Props) {
   const [intent, setIntent] = useState(() =>
@@ -403,7 +405,7 @@ function MyFlowScreen({ enabled, onDone }: Props) {
   );
 
   return (
-    <DeviceIntentExecutorLWM
+    <DeviceIntentExecutor
       enabled={enabled}
       sourceFlow="send" // several possible values (e.g "receive", "wallet_api" etc.)
       deviceConnectionParams={{ acceptedDeviceModelIds: [] }}
@@ -434,7 +436,7 @@ function MyFlowScreen({ enabled, onDone }: Props) {
 
 ### Custom headers from intent components
 
-`DeviceIntentExecutorLWM` and `DeviceIntentExecutorLWD` own their platform
+The LWM and LWD `DeviceIntentExecutor` wrappers own their platform
 chrome and render a default header. When a specific intent needs a more
 explicit title, description, or header density, its platform component can
 replace that default header by rendering
@@ -469,7 +471,7 @@ non-executor previews.
 
 ### Preventing the user from closing the drawer (LWM)
 
-The `DeviceIntentExecutorLWM` bottom sheet is **dismissable by default**: the
+The LWM `DeviceIntentExecutor` bottom sheet is **dismissable by default**: the
 user can close it by pressing the backdrop, dragging it down, or tapping the
 close button in the header.
 
@@ -513,7 +515,7 @@ only need to handle the pending states specific to your own intent.
 
 ### Preventing the user from closing the dialog (LWD)
 
-The `DeviceIntentExecutorLWD` dialog is dismissable by default. During a pending
+The LWD `DeviceIntentExecutor` dialog is dismissable by default. During a pending
 device action or operation, mount `DeviceBlocker` from
 `~/renderer/components/DeviceAction/DeviceBlocker` in the active desktop
 initializer or intent component:
@@ -570,7 +572,7 @@ LWM consumers should prefer the scoped name.
 
 [ensure-app-ready-uc]: ../../../libs/ledger-live-common/src/device/use-cases/ensureAppReady/ensureAppReadyUseCase.ts
 [build-input]: ../../../libs/ledger-live-common/src/device/use-cases/ensureAppReady/buildEnsureAppReadyInput.ts
-[build-input-lwm]: ../../../apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput.ts
+[build-input-lwm]: ../../../apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/ContextInitializer/utils/buildDeviceInitializationInput.ts
 
 #### Example: Sign Transaction flow
 
@@ -638,7 +640,7 @@ function SignTransactionStep({
   if (!deviceInitializationInput) return null;
 
   return (
-    <DeviceIntentExecutorLWM
+    <DeviceIntentExecutor
       enabled={enabled}
       deviceConnectionParams={{ acceptedDeviceModelIds: [] }}
       deviceInitializationInput={deviceInitializationInput}
@@ -1126,7 +1128,7 @@ function SwapFlowScreen({ enabled, quote, onClose }) {
   if (state.type === "done") return <SuccessScreen txHash={state.signedTxHash} />;
   if (state.type === "error") return <ErrorScreen error={state.error} />;
 
-  return <DeviceIntentExecutorLWM {...executorProps} />;
+  return <DeviceIntentExecutor {...executorProps} />;
 }
 ```
 

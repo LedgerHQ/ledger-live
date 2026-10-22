@@ -22,7 +22,7 @@ export function ReceiveOptionsView({ onGoToBank, onGoToCrypto }: ReceiveOptionsV
     <div className="flex flex-col gap-8" data-testid="receive-step-options">
       <ListItem onClick={onGoToCrypto} data-testid="receive-step-options-crypto">
         <ListItemLeading>
-          <Spot appearance="icon" icon={QrCode} />
+          <Spot icon={QrCode} />
           <ListItemContent>
             <ListItemTitle>{t("newReceive.steps.options.fromCrypto.title")}</ListItemTitle>
           </ListItemContent>
@@ -30,7 +30,7 @@ export function ReceiveOptionsView({ onGoToBank, onGoToCrypto }: ReceiveOptionsV
       </ListItem>
       <ListItem onClick={onGoToBank} data-testid="receive-step-options-bank">
         <ListItemLeading>
-          <Spot appearance="icon" icon={Bank} />
+          <Spot icon={Bank} />
           <ListItemContent>
             <ListItemTitle>{t("newReceive.steps.options.fromBank.title")}</ListItemTitle>
             <ListItemDescription>

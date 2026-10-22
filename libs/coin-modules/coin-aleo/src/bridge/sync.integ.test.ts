@@ -1,16 +1,22 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
+import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { SyncConfig } from "@ledgerhq/types-live";
+import { firstValueFrom, toArray } from "rxjs";
 import aleoConfig from "../config";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
-import { testnetAddress, testnetViewKey } from "../__tests__/fixtures/api.fixture";
+import {
+  TEST_TOKEN_PROGRAM_ID,
+  testnetAddress,
+  testnetViewKey,
+} from "../__tests__/fixtures/api.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
+import { deepFreezeLikeImmer } from "../__tests__/helpers/freeze";
 import { AleoApiConfigurationResetError } from "../errors";
-import { performPublicSync, performPrivateSync } from "./sync";
+import { makeGetAccountShape, performPublicSync, performPrivateSync } from "./sync";
 import type { AleoAccount, AleoResources } from "../types";
 
 const currency = getCryptoCurrencyById("aleo_testnet");
@@ -179,6 +185,50 @@ describe("performPrivateSync — account with private history", () => {
   it("reports monotonic progress ending at 100", () => {
     expect(progress.at(-1)).toBe(100);
     expect([...progress].sort((a, b) => a - b)).toEqual(progress);
+  });
+});
+
+describe("private-only sync — deep-frozen account migrating to private tokens", () => {
+  let tokensOffSync: Partial<AleoAccount> | null;
+  let frozenAccount: AleoAccount;
+  let resyncs: Partial<AleoAccount>[];
+
+  beforeAll(async () => {
+    const args = makePrivateSyncArgs();
+    tokensOffSync = await performPrivateSync(args);
+
+    aleoConfig.setCoinConfig(() => ({ ...getTestnetIntegConfig(), enableTokens: true }));
+    frozenAccount = deepFreezeLikeImmer({
+      ...args.info.initialAccount,
+      ...tokensOffSync,
+    } as AleoAccount);
+    resyncs = await firstValueFrom(
+      makeGetAccountShape()(makeShapeInfo(testnetAddress, frozenAccount), {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      }).pipe(toArray()),
+    );
+  });
+
+  afterAll(() => {
+    aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+  });
+
+  it("seeds the frozen account with a tokens-off private sync", () => {
+    expect(tokensOffSync).not.toBeNull();
+  });
+
+  it("re-syncs and attaches private token ops to their fee parent", () => {
+    expect(resyncs.at(-1)?.operations).toContainEqual(
+      expect.objectContaining({
+        type: "FEES",
+        subOperations: expect.arrayContaining([
+          expect.objectContaining({
+            extra: expect.objectContaining({ programId: TEST_TOKEN_PROGRAM_ID }),
+          }),
+        ]),
+      }),
+    );
   });
 });
 

@@ -1,8 +1,6 @@
 import { setupServer } from "msw/node";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import coinConfig, { CosmosCoinConfig } from "../config";
+import coinConfig, { cosmosConfig, CosmosCoinConfig } from "../config";
 import { CosmosAPI } from "../network/Cosmos";
-import type { CosmosCurrencyConfig } from "../types";
 
 // Ledger LCD proxies. MSW handlers register these exact hosts; the values only need to match what
 // `makeTestApi` configures the api with.
@@ -12,27 +10,27 @@ export const TEST_BABYLON_ENDPOINT = "https://babylon.coin.ledger.com";
 export const server = setupServer();
 
 /**
+ * The coin config for `currencyId` (name, unit and base denom from the served defaults), with its
+ * LCD pointed at `endpoint`.
+ */
+export function makeTestConfig(currencyId: string, endpoint: string): CosmosCoinConfig {
+  const defaults = cosmosConfig[`config_currency_${currencyId}`].default as CosmosCoinConfig;
+  return {
+    ...defaults,
+    lcd: endpoint,
+    minGasPrice: 0.025,
+    status: { type: "active" },
+  };
+}
+
+/**
  * Point BOTH cosmos endpoint-resolution paths at `endpoint`: the `coinConfig` path (estimateFees →
  * getEstimatedFees) and the `CosmosAPI`-instance path (getBalance/getStakes/… take the returned api).
  * `version` defaults to v1beta1, so MSW handler URLs use `/v1beta1/`.
  */
 export function makeTestApi(currencyId: string, endpoint: string): CosmosAPI {
-  // Flat runtime shape (CosmosCurrencyConfig + status/name/unit); the declared CosmosCoinConfig wraps every
-  // field in ConfigInfo (LiveConfig's stored shape), so cast through unknown — mirrors coin-tester-cosmos.
-  const currency = getCryptoCurrencyById(currencyId);
-  const unit = currency.units[0];
-  const config = {
-    lcd: endpoint,
-    minGasPrice: 0.025,
-    status: { type: "active" as const },
-    name: currency.name,
-    unit,
-  } satisfies CosmosCurrencyConfig & {
-    status: { type: "active" };
-    name: string;
-    unit: typeof unit;
-  };
-  coinConfig.setCoinConfig(() => config as unknown as CosmosCoinConfig);
+  const config = makeTestConfig(currencyId, endpoint);
+  coinConfig.setCoinConfig(() => config);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors network/Cosmos.integ.test.ts
   return new CosmosAPI(currencyId, { endpoint } as any);
 }

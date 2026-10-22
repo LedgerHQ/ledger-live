@@ -1,9 +1,9 @@
 import type { Contact } from "@domain/entity-contact";
-import type { ContactsCompactListProps } from "../../../types";
+import type { ContactsCompactListLabels, ContactsCompactListProps } from "../../../types";
 
 export function getCompactContactAddressDescription(
   contact: Contact,
-  labels: ContactsCompactListProps["labels"],
+  labels: ContactsCompactListLabels,
 ): string {
   if (contact.addresses.length === 0) {
     return labels.emptyAddress;

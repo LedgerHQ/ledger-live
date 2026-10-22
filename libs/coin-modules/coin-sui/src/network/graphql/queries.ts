@@ -149,9 +149,6 @@ export const EXCHANGE_RATE_AT_EPOCH = graphql(`
 export type ExchangeRateAtEpochResult = ResultOf<typeof EXCHANGE_RATE_AT_EPOCH>;
 
 /** 15-aliased batch of {@link EXCHANGE_RATE_AT_EPOCH}; alias count must stay in sync with `RATE_BATCH_CHUNK_SIZE`. */
-// @ts-expect-error TS2589 — gql.tada's type-instantiation depth overflows for 15 aliases.
-// SAFETY: structurally identical to 15× EXCHANGE_RATE_AT_EPOCH; runtime drift caught via
-// `parseExchangeRateNode`. Alias count vs `RATE_BATCH_CHUNK_SIZE` asserted in `utils.test.ts`.
 // prettier-ignore
 export const BATCH_RATES_15 = graphql(`
   query BatchExchangeRates(

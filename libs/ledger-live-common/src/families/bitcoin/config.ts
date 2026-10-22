@@ -4,6 +4,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin: {
     type: "object",
     default: {
+      transaction: { version: 2, signalsRbf: true },
       explorerId: "btc",
       status: {
         type: "active",
@@ -17,6 +18,8 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_cash: {
     type: "object",
     default: {
+      transaction: { additionals: ["bip143"] },
+      addressFormat: "cashaddr",
       explorerId: "bch",
       status: {
         type: "active",
@@ -30,6 +33,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_gold: {
     type: "object",
     default: {
+      transaction: { additionals: ["bip143"] },
       explorerId: "btg",
       status: {
         type: "active",
@@ -43,6 +47,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_regtest: {
     type: "object",
     default: {
+      transaction: { version: 2, signalsRbf: true },
       explorerId: "btc_regtest",
       status: {
         type: "active",
@@ -56,6 +61,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_testnet: {
     type: "object",
     default: {
+      transaction: { version: 2, signalsRbf: true },
       explorerId: "btc_testnet",
       status: {
         type: "active",
@@ -69,6 +75,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_dash: {
     type: "object",
     default: {
+      explorerId: "dash",
       status: {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
@@ -81,6 +88,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_decred: {
     type: "object",
     default: {
+      transaction: { expiryHeight: true },
       explorerId: "dcr",
       status: {
         type: "active",
@@ -120,6 +128,12 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_komodo: {
     type: "object",
     default: {
+      transaction: {
+        expiryHeight: true,
+        extraData: true,
+        interestLockTime: true,
+        additionals: ["sapling"],
+      },
       explorerId: "kmd",
       status: {
         type: "active",
@@ -146,6 +160,8 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_qtum: {
     type: "object",
     default: {
+      explorerId: "qtum",
+      transaction: { version: 2 },
       status: {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
@@ -153,45 +169,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       name: "Qtum",
       unit: { name: "qtum", code: "QTUM", magnitude: 8 },
       explorer: { url: "https://explorers.api.live.ledger.com" },
-    },
-  },
-  config_currency_zcash: {
-    type: "object",
-    default: {
-      explorerId: "zec",
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Zcash",
-      unit: { name: "zcash", code: "ZEC", magnitude: 8 },
-      zaino: { url: "https://zec-indexer.coin.ledger.com" },
-      explorer: { url: "https://explorers.api.live.ledger.com" },
-    },
-  },
-  config_currency_zcash_regtest: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Zcash Regtest",
-      unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
-    },
-  },
-  config_currency_zcash_testnet: {
-    type: "object",
-    default: {
-      explorerId: "zec_testnet",
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Zcash Testnet",
-      unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
-      zaino: { url: "https://testnet.zec.rocks:443" },
-      explorer: { url: "https://explorers.api.live.ledger-test.com" },
     },
   },
   config_currency_zencash: {

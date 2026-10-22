@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-icp",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": true,
   "description": "Ledger Hardware Wallet Internet Computer Application API",
   "keywords": [
@@ -40,7 +40,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",

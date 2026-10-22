@@ -1,5 +1,29 @@
 # @features/flow-app-availability
 
+## 0.2.0
+
+### Minor Changes
+
+- [#23296](https://github.com/LedgerHQ/ledger-live/pull/23296) [`e345c82`](https://github.com/LedgerHQ/ledger-live/commit/e345c829b04e28d489b9cf4d8384ed57dbad0321) Thanks [@LL782](https://github.com/LL782)! - Restore an optional Learn more action on the geo-blocking unavailable screen
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`e345c82`](https://github.com/LedgerHQ/ledger-live/commit/e345c829b04e28d489b9cf4d8384ed57dbad0321)]:
+  - @shared/ui-app-unavailable@0.2.0
+  - @domain/api-ofac@0.1.1
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#23296](https://github.com/LedgerHQ/ledger-live/pull/23296) [`e345c82`](https://github.com/LedgerHQ/ledger-live/commit/e345c829b04e28d489b9cf4d8384ed57dbad0321) Thanks [@LL782](https://github.com/LL782)! - Restore an optional Learn more action on the geo-blocking unavailable screen
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`e345c82`](https://github.com/LedgerHQ/ledger-live/commit/e345c829b04e28d489b9cf4d8384ed57dbad0321)]:
+  - @shared/ui-app-unavailable@0.2.0-next.0
+  - @domain/api-ofac@0.1.1-next.0
+
 ## 0.1.0
 
 ### Minor Changes

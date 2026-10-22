@@ -1,0 +1,173 @@
+import React, { useMemo } from "react";
+import {
+  TableCellItem,
+  TableCellContent,
+  TableCellContentTitle,
+  TableCellContentDescription,
+  TableInfoIcon,
+  useLumenDataTable,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@ledgerhq/lumen-ui-react";
+import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "LLD/hooks/redux";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import { ColumnDef } from "@tanstack/react-table";
+import { PriceCell } from "./Cells/PriceCell";
+import { BalanceCell } from "LLD/components/Cells/BalanceCell";
+import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
+import { TrendCell } from "./Cells/TrendCell";
+import { TruncatedText } from "LLD/components/TruncatedText";
+import { sanitizeAssetNameForTestId } from "./utils/sanitizeAssetNameForTestId";
+import type { AssetTableItem } from "./types";
+
+export type UseAssetTableOptions = {
+  /** When false, hides the info tooltip on the trend column header (e.g. full crypto assets page). */
+  readonly showTrendColumnTooltip?: boolean;
+  /** When false, hides the price column (e.g. assets of a single account). */
+  readonly showPriceColumn?: boolean;
+};
+
+function columnHeader(label: string) {
+  return () => <TruncatedText as="span" text={label} />;
+}
+
+export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
+  const showTrendColumnTooltip = options?.showTrendColumnTooltip ?? true;
+  const showPriceColumn = options?.showPriceColumn ?? true;
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
+  const { t } = useTranslation();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const emptyFiatValue = useMemo(
+    () => formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(0), { showCode: true }),
+    [counterValueCurrency],
+  );
+
+  const columns = useMemo<ColumnDef<AssetTableItem>[]>(
+    () => [
+      {
+        accessorKey: "currency",
+        header: columnHeader(t("assets.columns.name")),
+        enableSorting: false,
+        cell: ({ row }) => {
+          const assetTestId = sanitizeAssetNameForTestId(
+            `${row.original.currency.name}-${row.original.currency.id}`,
+          );
+          return (
+            <TableCellItem data-testid={`w40-asset-row-${assetTestId}`}>
+              {row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
+                <CryptoIcon
+                  ledgerId={row.original.currency.id}
+                  ticker={row.original.currency.ticker}
+                  size={getValidCryptoIconSize(32)}
+                />
+              ) : (
+                <CryptoCurrencyIcon currency={row.original.currency} size={32} />
+              )}
+              <TableCellContent>
+                <TableCellContentTitle>
+                  <TruncatedText text={row.original.currency.name} />
+                </TableCellContentTitle>
+                <TableCellContentDescription>
+                  {row.original.currency.ticker}
+                </TableCellContentDescription>
+              </TableCellContent>
+            </TableCellItem>
+          );
+        },
+      },
+      {
+        accessorKey: "price",
+        header: columnHeader(t("assets.columns.price")),
+        enableSorting: false,
+        cell: ({ row }) => (
+          <PriceCell currency={row.original.currency} marketPrice={row.original.marketPrice} />
+        ),
+        meta: { align: "end", hideBelow: "xl" },
+      },
+      {
+        accessorKey: "balance",
+        header: columnHeader(t("assets.columns.balance")),
+        enableSorting: false,
+        cell: ({ row }) => (
+          <BalanceCell currency={row.original.currency} balance={row.original.balance} />
+        ),
+        meta: { align: "end" },
+      },
+      {
+        accessorKey: "value",
+        header: columnHeader(t("assets.columns.value")),
+        enableSorting: false,
+        cell: ({ row }) => {
+          const assetValueTestId = sanitizeAssetNameForTestId(
+            `${row.original.currency.name}-${row.original.currency.id}`,
+          );
+          return row.original.isPlaceholder ? (
+            <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
+              <TableCellItem align="end">
+                <TableCellContent>
+                  <TableCellContentTitle>{emptyFiatValue}</TableCellContentTitle>
+                </TableCellContent>
+              </TableCellItem>
+            </div>
+          ) : (
+            <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
+              <CounterValueCell currency={row.original.currency} balance={row.original.balance} />
+            </div>
+          );
+        },
+        meta: { align: "end" },
+      },
+      {
+        accessorKey: "trend",
+        header: columnHeader(t("assets.columns.trend")),
+        enableSorting: false,
+        cell: ({ row }) =>
+          row.original.isPlaceholder ? (
+            <TableCellItem align="end">
+              <TableCellContent>
+                <TableCellContentTitle>
+                  <span className="text-muted">0.00%</span>
+                </TableCellContentTitle>
+              </TableCellContent>
+            </TableCellItem>
+          ) : (
+            <TrendCell trend={row.original.trend} />
+          ),
+        meta: {
+          align: "end",
+          ...(showTrendColumnTooltip
+            ? {
+                headerTrailingContent: (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TableInfoIcon />
+                    </TooltipTrigger>
+                    <TooltipContent>{t("assets.columns.trendTooltip")}</TooltipContent>
+                  </Tooltip>
+                ),
+              }
+            : {}),
+        },
+      },
+    ],
+    [t, emptyFiatValue, showTrendColumnTooltip, shouldDisplayAggregatedAssets],
+  );
+
+  const table = useLumenDataTable({
+    data: assets,
+    columns,
+    autoResetPageIndex: false,
+    state: { columnVisibility: { price: showPriceColumn } },
+  });
+
+  return table;
+};

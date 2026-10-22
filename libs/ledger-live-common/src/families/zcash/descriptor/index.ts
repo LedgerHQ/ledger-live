@@ -71,3 +71,17 @@ export const descriptor: CoinDescriptor = {
     getTrackingAttributes: transaction => getPrivacyAttributes(transaction) ?? {},
   },
 };
+
+/**
+ * The same send without the shielded engine (the mobile app, or the desktop app
+ * with shielded Zcash off): transparent only, so there is no pool to pick and no
+ * memo to carry.
+ */
+export const transparentOnlyDescriptor: CoinDescriptor = {
+  send: {
+    inputs: {},
+    fees: descriptor.send.fees,
+    selfTransfer: descriptor.send.selfTransfer,
+    getTrackingAttributes: descriptor.send.getTrackingAttributes,
+  },
+};

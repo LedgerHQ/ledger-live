@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import hederaCoinConfig from "../config";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -9,6 +11,10 @@ import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 describe("buildOptimisticOperation", () => {
+  beforeAll(() => {
+    hederaCoinConfig.setCoinConfig(() => getMockedConfig());
+  });
+
   it("builds optimistic operation for token association", async () => {
     const mockedAccount = getMockedAccount();
     const mockedToken = getMockedHTSTokenCurrency();

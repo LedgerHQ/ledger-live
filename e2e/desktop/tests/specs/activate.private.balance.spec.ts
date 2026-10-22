@@ -21,7 +21,8 @@ test.describe("Activate private balance", () => {
   test(
     `[${account.currency.testLabel}] - Activate private balance`,
     {
-      tag: buildTags({ currencyId: account.currency.id }),
+      // The Nano S Zcash app (2.4.2) cannot export a UFVK.
+      tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app }) => {

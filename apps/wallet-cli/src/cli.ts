@@ -6,29 +6,12 @@ import { createCLI } from "@bunli/core";
 import "./live-common-setup";
 import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
 import { maybeShowFirstRunNudge } from "./shared/first-run-nudge";
-// createCLI() normally tries to import .bunli/commands.gen.ts from process.cwd() via a file:// URL.
-// Our @bunli/core patch removes that dynamic import entirely because it can hang in Bun standalone
-// mode, this static import registers commands instead.
-// This side-effect import registers commands in the standalone binary.
-import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { disposeAnalytics, startAnalytics } from "./analytics/segment";
 import { withCommandLifecycleAnalytics } from "./analytics/lifecycle-analytics";
+import { loadCommands } from "./commands/registry";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 import { setupWalletCliStore } from "./state-manager/configureStore";
-import AccountGroup from "./commands/account/index";
-import AssetsGroup from "./commands/assets/index";
-import SessionGroup from "./commands/session/index";
-import BalancesCommand from "./commands/balances";
-import OperationsCommand from "./commands/operations";
-import ReceiveCommand from "./commands/receive";
-import SendCommand from "./commands/send";
-import SwapGroup from "./commands/swap/index";
-import EarnGroup from "./commands/earn/index";
-import GenuineCheckCommand from "./commands/genuine-check";
-import RingGroup from "./commands/ring/index";
-import SkillGroup from "./commands/skill/index";
-import AgentIntentGroup from "./commands/agent-intent/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -42,19 +25,7 @@ emitTestingBuildBannerIfNeeded();
 export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
   setupWalletCliStore();
   const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
-  cli.command(AccountGroup);
-  cli.command(AssetsGroup);
-  cli.command(SessionGroup);
-  cli.command(BalancesCommand);
-  cli.command(OperationsCommand);
-  cli.command(ReceiveCommand);
-  cli.command(SendCommand);
-  cli.command(SwapGroup);
-  cli.command(EarnGroup);
-  cli.command(GenuineCheckCommand);
-  cli.command(RingGroup);
-  cli.command(SkillGroup);
-  cli.command(AgentIntentGroup);
+  for (const command of await loadCommands(argv)) cli.command(command);
   maybeShowFirstRunNudge(argv);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;

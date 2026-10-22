@@ -1,7 +1,7 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
-import type { AssetTableItem } from "../types";
+import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 
 function toPlaceholderItem(currency: CryptoOrTokenCurrency, marketId: string): AssetTableItem {
   return {

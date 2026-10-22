@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { server, TEST_COSMOS_ENDPOINT, makeTestApi } from "../../test/msw.mock";
+import { server, TEST_COSMOS_ENDPOINT, makeTestApi, makeTestConfig } from "../../test/msw.mock";
 import { listOperations } from "./listOperations";
 
 const ADDR = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
@@ -43,6 +43,7 @@ afterAll(() => server.close());
 
 describe("listOperations via MSW", () => {
   it("returns a page of parsed operations for a native send", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(NODE_INFO, () => HttpResponse.json(NODE_INFO_RESPONSE)),
@@ -51,7 +52,7 @@ describe("listOperations via MSW", () => {
       http.get(TXS, () => HttpResponse.json({ tx_responses: [sendTx()], total: 1 })),
     );
 
-    const page = await listOperations(api, ADDR, { minHeight: 0 });
+    const page = await listOperations(config, api, ADDR, { minHeight: 0 });
 
     expect(page.items).toHaveLength(1);
     const op = page.items[0];
@@ -69,13 +70,14 @@ describe("listOperations via MSW", () => {
   });
 
   it("returns an empty page (no next cursor) when the address has no transaction history", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(NODE_INFO, () => HttpResponse.json(NODE_INFO_RESPONSE)),
       http.get(TXS, () => HttpResponse.json({ tx_responses: [], total: 0 })),
     );
 
-    const page = await listOperations(api, ADDR, { minHeight: 0 });
+    const page = await listOperations(config, api, ADDR, { minHeight: 0 });
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
@@ -86,13 +88,14 @@ describe("listOperations via MSW", () => {
   // 500 here does NOT propagate out of listOperations; it degrades to the same empty page as "no
   // history", independently for each stream.
   it("degrades to an empty page (does not throw) when the txs endpoint errors", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(NODE_INFO, () => HttpResponse.json(NODE_INFO_RESPONSE)),
       http.get(TXS, () => new HttpResponse(null, { status: 500 })),
     );
 
-    await expect(listOperations(api, ADDR, { minHeight: 0 })).resolves.toEqual({
+    await expect(listOperations(config, api, ADDR, { minHeight: 0 })).resolves.toEqual({
       items: [],
       next: undefined,
     });

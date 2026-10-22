@@ -14,7 +14,7 @@ export function SectionContentState({ isError, hasData, errorMessage, children }
   if (isError && !hasData) {
     return (
       <Box lx={errorContainerStyle}>
-        <Spot appearance="icon" icon={Warning} size={40} />
+        <Spot icon={Warning} size={40} />
         <Text
           typography="body2SemiBold"
           lx={{ color: "base", textAlign: "center", marginTop: "s8" }}

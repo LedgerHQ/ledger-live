@@ -8,6 +8,8 @@ Dev teams are responsible for **adding/updating tests** for new features.
 
 ---
 
+To write or review a spec, follow [E2E conventions](../docs/e2e-conventions.md) and [Mobile E2E conventions](docs/e2e-mobile-conventions.md). Then follow [Adding or updating a mobile E2E test](docs/e2e-mobile-add-or-update.md).
+
 ## Quick Start
 
 ### 1. Prerequisites
@@ -40,8 +42,6 @@ export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax
 ```
 
 Consider adding these exports to your profile so they persist.
-
-Specs under `specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md). CI mints one session before workers when its selected spec paths include `/paytab/`. Locally, login happens only when a selected Pay tab test reaches `launchApp`.
 
 ### 3. Build
 
@@ -97,60 +97,49 @@ pnpm test:android <testFileName>         # single file
 
 > For CI, sharding, and advanced flags, see [the full wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing).
 
-### 6. Full Documentation
-
-To write a new spec or page object, follow
-[Adding or updating a mobile E2E test](docs/add-or-update-e2e.md).
+## Ledger Wallet Mobile Wiki
 
 For complete setup, debugging, workflow, writing tests, and CI integration, see the official wiki:
 [Ledger Wallet Mobile E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing)
 
+## Filtering Tests
+
 To run only selected specs when dispatching an E2E workflow, see
 [Using `test_filter` in the E2E workflows](../tooling/filter/test-filter-guide.md).
 
-### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+## Remote Speculos (Speculinho)
 
-You can inject extra feature flags globally for Mobile E2E by setting `E2E_FEATURE_FLAGS_JSON`.
+Tests run on a local Docker Speculos by default. To run them on remote Speculos instances instead, for example to debug a CI run, see the
+[Speculinho guide](../../libs/live-e2e-shared/SPECULINHO.md).
 
-Example shape:
+To watch the device screen during a local run, on Docker or Speculinho, set `SPECULOS_SCREEN`: see
+[Watch the device](../../libs/live-e2e-shared/SPECULINHO.md#watch-the-device).
 
-```json
-{
-  "myFeature": {
-    "enabled": true,
-    "params": {
-      "foo": "bar"
-    }
-  }
-}
-```
+## Feature Flags
 
-Usage examples:
+### E2E_FEATURE_FLAGS_JSON
 
-```bash
-# Enable one feature with params
-export E2E_FEATURE_FLAGS_JSON='{"myFeature":{"enabled":true,"params":{"foo":"bar"}}}'
-```
+Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flag Resolution](../docs/e2e-conventions.md#feature-flags).
 
-Notes:
+### Feature Flag presets
 
-- Arrays, scalars, or invalid JSON are rejected.
-- `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
-- Per-test `featureFlags` passed to `InitializationManager.initialize` still override env-provided values when both set the same key.
+It is possible to choose an optional Feature Flag set for the test run.
 
-### Skipping Tests from CI
-
-To temporarily exclude a test file from CI runs, rename it with a `.skip.spec.ts` suffix instead of `.spec.ts`. For example:
+Set the env var to the desired value, for example:
 
 ```bash
-# This test will run:
-myFeature.spec.ts
-
-# This test will be skipped:
-myFeature.skip.spec.ts
+export E2E_MOBILE_FEATURE_FLAGS="some-preset"
 ```
 
-### Before committing a test change
+Or use the "Choose a feature flag set" options dropdown on the GitHub workflow.
+
+See the `ffPresetMap` in `utils/featureFlagUtils.ts` for available presets.
+
+## Skipping tests from CI
+
+To keep a spec out of CI, use a `.skip.spec.ts` suffix. See [Known failures and skips](docs/e2e-mobile-conventions.md#known-failures-and-skips).
+
+## Before committing a test change
 
 CI runs on a slower, software-rendered emulator, so a wait that is only just long enough passes
 locally and fails there. Run the spec you touched under degraded conditions first:
@@ -174,25 +163,13 @@ failure at `--load 4`. Below that threshold load is indistinguishable from run-t
 raise it until runs slow down, and treat a spec that fails *every* run as a hard limit rather than a
 flake.
 
-### Notes
+## Pay tab
 
-- Use Page Object Model (POM) for writing tests
-- Keep tests independent and deterministic
-- Bookmark this README for quick reference
+Pay tab specs need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET` environment variables. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
 
-### 8. Feature Flag presets
+A spec that needs an injected Card session must live under `specs/paytab/`. On CI, `globalSetup` mints once before workers when the selected spec paths include that directory. Locally, `globalSetup` does not mint; authentication happens only when a selected Pay tab test reaches `launchApp`. `launchApp` injects the session when the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
 
-It is possible to choose an optional Feature Flag set for the test run.
-
-Set the env var to the desired value, eg:
-
-```bash
-export E2E_MOBILE_FEATURE_FLAGS="some-preset"
-```
-
-Or use the "Choose a feature flag set" options dropdown on the Github workflow.
-
-### 9. Stall watchdog
+## Stall watchdog
 
 A forked jest worker whose event loop freezes is killed after 90 seconds, so Detox retries the spec
 instead of the shard hanging. Look for `[stall-watchdog]` in the log. Local runs are in-band and

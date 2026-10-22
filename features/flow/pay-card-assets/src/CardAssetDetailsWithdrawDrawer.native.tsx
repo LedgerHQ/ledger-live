@@ -23,7 +23,7 @@ export function CardAssetDetailsWithdrawDrawer({
       testID="card-asset-withdraw-drawer"
     >
       <Box lx={{ alignItems: "center", gap: "s24" }}>
-        <Spot appearance="icon" icon={InformationFill} size={56} />
+        <Spot icon={InformationFill} size={56} />
         <Box lx={{ alignItems: "center", gap: "s8" }}>
           <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {copy.withdrawTitle}

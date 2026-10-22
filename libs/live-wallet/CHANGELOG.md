@@ -1,5 +1,27 @@
 # @ledgerhq/live-wallet
 
+## 1.1.7
+
+### Patch Changes
+
+- Updated dependencies [[`d6ab47c`](https://github.com/LedgerHQ/ledger-live/commit/d6ab47c28339866ad88ef0deba75d314c2f6c4f0), [`393a02a`](https://github.com/LedgerHQ/ledger-live/commit/393a02a42be9f0410b75c0c34203915bcde27e43), [`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`7da1ea9`](https://github.com/LedgerHQ/ledger-live/commit/7da1ea9534a1bdde063e31545363a27f0fdf5abb), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`ad58765`](https://github.com/LedgerHQ/ledger-live/commit/ad58765b6151457022f8587d6ddcad3325ce96ac), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`37a49df`](https://github.com/LedgerHQ/ledger-live/commit/37a49df18649912157d8f269c3b4153d54b7817e), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @domain/entity-currency-crypto@0.16.0
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+  - @domain/entity-contact@0.12.1
+  - @domain/entity-account-name@0.2.3
+
+## 1.1.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d6ab47c`](https://github.com/LedgerHQ/ledger-live/commit/d6ab47c28339866ad88ef0deba75d314c2f6c4f0), [`393a02a`](https://github.com/LedgerHQ/ledger-live/commit/393a02a42be9f0410b75c0c34203915bcde27e43), [`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`7da1ea9`](https://github.com/LedgerHQ/ledger-live/commit/7da1ea9534a1bdde063e31545363a27f0fdf5abb), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`ad58765`](https://github.com/LedgerHQ/ledger-live/commit/ad58765b6151457022f8587d6ddcad3325ce96ac), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`37a49df`](https://github.com/LedgerHQ/ledger-live/commit/37a49df18649912157d8f269c3b4153d54b7817e), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @domain/entity-currency-crypto@0.16.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.8.0-next.0
+  - @ledgerhq/types-live@6.128.0-next.0
+  - @domain/entity-contact@0.12.1-next.0
+  - @domain/entity-account-name@0.2.3-next.0
+
 ## 1.1.6
 
 ### Patch Changes
@@ -252,64 +274,5 @@
   - @ledgerhq/types-live@6.119.0
   - @ledgerhq/ledger-wallet-framework@2.8.0
   - @domain/entity-recent-addresses@0.1.1
-
-## 1.0.0-next.0
-
-### Major Changes
-
-- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`44694e5`](https://github.com/LedgerHQ/ledger-live/commit/44694e54fa5b48e47595840638aee94a98213a37) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Complete the WalletSync DDD extraction: apps now compose the DDD slices directly
-
-  `@ledgerhq/live-wallet` no longer owns sync infrastructure. `src/cloudsync/`, `src/walletsync/`,
-  `src/accountName.ts` and `src/store.ts` are removed in favour of `@shared/cloud-sync`,
-  `@shared/wallet-sync`, `@features/platform-wallet-sync`, `@domain/entity-account-name` and
-  `@domain/entity-recent-addresses`. What remains is the account list sync module (`src/accounts/`)
-  plus `src/walletSyncComposition.ts`, which assembles the sync modules into the wallet-sync schema.
-
-  Desktop and mobile replace the monolithic `wallet` reducer with a `combineReducers` of the entity
-  slices (`accountNames`, `starredAccountIds`, `walletSync`, `recentAddresses`, `nonImportedAccountInfos`)
-  and wire the watch loop and trustchain lifecycle from `@features/platform-wallet-sync` at bootstrap.
-  `@ledgerhq/live-common` drops its `@ledgerhq/live-wallet` runtime dependency: the wallet-api,
-  platform and CSV-export helpers now take an `AccountNamesState` instead of the whole `WalletState`.
-
-- [#20539](https://github.com/LedgerHQ/ledger-live/pull/20539) [`60b4626`](https://github.com/LedgerHQ/ledger-live/commit/60b462653bad19429c46ebef439ec2b5bb234140) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Scope `@ledgerhq/live-wallet` down to wallet sync only
-
-  The package now exposes `./accounts` and `./walletSyncComposition` and nothing else.
-  `ordering.ts` and `addAccounts.ts` move to `@ledgerhq/live-common/account/*`, and
-  `accountRawToAccountUserData` joins `live-common/account/serialization` next to `fromAccountRaw`.
-  The `liveqr/` folder is gone: `importAccounts.ts` and `accountToAccountData` were unreachable, and
-  `accountDataToAccount` — whose only callers rehydrated a wallet-sync descriptor — becomes
-  `accounts/descriptorToAccount`. `live-common` no longer depends on `live-wallet`.
-
-### Patch Changes
-
-- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @domain/entity-currency-crypto@0.10.0-next.0
-  - @domain/entity-account-name@0.2.0-next.0
-  - @shared/cloud-sync-module@0.2.0-next.0
-  - @ledgerhq/types-live@6.119.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
-  - @domain/entity-recent-addresses@0.1.1-next.0
-
-## 0.30.2
-
-### Patch Changes
-
-- Updated dependencies [[`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
-  - @ledgerhq/types-live@6.118.0
-  - @shared/env@0.2.0
-  - @ledgerhq/ledger-key-ring-protocol@0.18.0
-  - @domain/entity-currency-crypto@0.9.0
-  - @ledgerhq/ledger-wallet-framework@2.7.0
-
-## 0.30.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
-  - @ledgerhq/types-live@6.118.0-next.0
-  - @shared/env@0.2.0-next.0
-  - @ledgerhq/ledger-key-ring-protocol@0.18.0-next.0
-  - @domain/entity-currency-crypto@0.9.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.7.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

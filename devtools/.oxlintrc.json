@@ -1,6 +1,0 @@
-{
-    "jsPlugins": ["../support/lint-rules/src/suffix-imports"],
-    "rules": {
-        "suffix-imports/no-platform-suffix":"error"
-    }
-}

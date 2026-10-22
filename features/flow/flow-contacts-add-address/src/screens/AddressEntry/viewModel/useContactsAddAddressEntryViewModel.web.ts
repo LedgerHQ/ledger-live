@@ -1,5 +1,7 @@
 import { useCallback, useMemo, type ChangeEvent, type ClipboardEvent } from "react";
 import { getPastedValue } from "@features/platform-contacts";
+import { useAddAddressEntryCopy } from "../../../copy/useAddAddressEntryCopy";
+import { useAddAddressNameLabels } from "../../../copy/useAddAddressNameLabels";
 import {
   resolveAddAddressEntryPresentation,
   shouldShowSanctionedAddressBanner,
@@ -12,22 +14,22 @@ import type {
 
 function getAddressLabelConfiguration({
   addressLabel,
-  nameLabels,
   onAddressLabelChange,
 }: Partial<AddressLabelConfiguration>): AddressLabelConfiguration | undefined {
-  return addressLabel && nameLabels && onAddressLabelChange
-    ? { addressLabel, nameLabels, onAddressLabelChange }
-    : undefined;
+  return addressLabel && onAddressLabelChange ? { addressLabel, onAddressLabelChange } : undefined;
 }
 
 export function useContactsAddAddressEntryViewModel({
   addressEntry,
-  labels,
-  sanctionedAddressBanner,
+  supportsDomain,
+  onSanctionedAddressLearnMore,
   onAddressChange,
   onConfirm,
   ...addressLabelProps
 }: ContactsAddAddressEntryWebProps): ContactsAddAddressEntryWebViewProps {
+  const { labels, sanctionedDescription, sanctionedLearnMore } =
+    useAddAddressEntryCopy(supportsDomain);
+  const nameLabels = useAddAddressNameLabels();
   const addressLabelConfiguration = getAddressLabelConfiguration(addressLabelProps);
   const presentation = useMemo(
     () => resolveAddAddressEntryPresentation(addressEntry, labels),
@@ -52,24 +54,22 @@ export function useContactsAddAddressEntryViewModel({
   const nameValidationMessage = useMemo(
     () =>
       addressLabelConfiguration?.addressLabel.validationError
-        ? addressLabelConfiguration.nameLabels.validationErrors[
-            addressLabelConfiguration.addressLabel.validationError
-          ]
+        ? nameLabels.validationErrors[addressLabelConfiguration.addressLabel.validationError]
         : undefined,
-    [addressLabelConfiguration],
+    [addressLabelConfiguration, nameLabels.validationErrors],
   );
   const isNameValid =
     addressLabelConfiguration === undefined ||
     addressLabelConfiguration.addressLabel.status === "valid";
   const showSanctionedAddressBanner = shouldShowSanctionedAddressBanner(
     addressEntry,
-    sanctionedAddressBanner,
+    onSanctionedAddressLearnMore !== undefined,
   );
 
   const addressLabelViewProps = addressLabelConfiguration
     ? {
         addressLabel: addressLabelConfiguration.addressLabel,
-        nameLabels: addressLabelConfiguration.nameLabels,
+        nameLabels,
         nameValidationMessage,
         onAddressLabelChange: onNameChange,
       }
@@ -79,7 +79,14 @@ export function useContactsAddAddressEntryViewModel({
     value: addressEntry.value,
     labels,
     ...presentation,
-    sanctionedAddressBanner: showSanctionedAddressBanner ? sanctionedAddressBanner : undefined,
+    sanctionedAddressBanner:
+      showSanctionedAddressBanner && onSanctionedAddressLearnMore
+        ? {
+            description: sanctionedDescription,
+            actionLabel: sanctionedLearnMore,
+            onAction: onSanctionedAddressLearnMore,
+          }
+        : undefined,
     ...addressLabelViewProps,
     isConfirmEnabled: presentation.isConfirmEnabled && isNameValid && onConfirm !== undefined,
     onChange,

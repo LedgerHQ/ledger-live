@@ -9,7 +9,7 @@ export function MarketFavoritesEmptyState({ t }: Readonly<{ t: TFunction }>) {
       className="flex flex-1 flex-col items-center justify-center gap-24"
       data-testid="market-favorites-empty"
     >
-      <Spot appearance="icon" icon={StarFill} />
+      <Spot icon={StarFill} />
       <span className="heading-4-semi-bold text-base text-center">
         {t("market.assets.emptyFavorites")}
       </span>

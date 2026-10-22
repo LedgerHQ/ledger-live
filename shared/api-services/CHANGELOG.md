@@ -1,5 +1,19 @@
 # @shared/api-services
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies [[`623f8e6`](https://github.com/LedgerHQ/ledger-live/commit/623f8e6181d92aed3a49aa993be9d4fe0bbd8e39)]:
+  - @shared/auth@0.7.0
+
+## 0.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`623f8e6`](https://github.com/LedgerHQ/ledger-live/commit/623f8e6181d92aed3a49aa993be9d4fe0bbd8e39)]:
+  - @shared/auth@0.7.0-next.0
+
 ## 0.10.0
 
 ### Minor Changes
