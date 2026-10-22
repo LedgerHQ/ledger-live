@@ -1,6 +1,6 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { calApi, getCalExtra, HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
-import { ApiTokenResponseSchema } from "./schema";
+import { ApiNetworkTokenListHashResponseSchema, ApiTokenResponseSchema } from "./schema";
 import {
   type GetTokensDataParams,
   type PageParam,
@@ -12,9 +12,13 @@ import {
   commitHeaderMissingError,
   currencyNotFoundError,
   DEFAULT_PAGE_SIZE,
+  EMPTY_TOKEN_LIST_HASH,
   fetchCurrencyError,
   fetchError,
+  fetchNetworkError,
   HEADER_X_LEDGER_COMMIT,
+  invalidNetworkResponseError,
+  networkNotFoundError,
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
@@ -67,6 +71,11 @@ export const cryptoAssetsApi = calApi
         providesTags: [...TOKEN_TAGS],
       }),
 
+      /**
+       * The CAL commit, which changes on any CAL deployment. It validates the token cache, since a
+       * token's metadata (decimals, name, signature) can change without a token being added or
+       * removed. Account sync uses {@link getTokenListHash} instead.
+       */
       getTokensSyncHash: build.query<string, string>({
         async queryFn(currencyId, queryApi) {
           const extra = getCalExtra(queryApi);
@@ -123,6 +132,48 @@ export const cryptoAssetsApi = calApi
         },
       }),
 
+      /**
+       * The CAL's hash of the token list of one network. It changes only when a token of that
+       * network is added or removed, so an account resyncs its history only when its own network's
+       * token list changed, not on every CAL deployment.
+       */
+      getTokenListHash: build.query<string, string>({
+        async queryFn(currencyId, queryApi) {
+          const extra = getCalExtra(queryApi);
+          try {
+            const url = new URL(`${extra.calServiceUrl}/v1/networks`);
+            url.searchParams.set("output", "id,token_list_hash");
+            url.searchParams.set("limit", "1");
+            url.searchParams.set("id", currencyId);
+
+            const response = await fetch(url, {
+              headers: {
+                "Content-Type": "application/json",
+                [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
+              },
+            });
+
+            if (!response.ok) {
+              return fetchNetworkError(response.status, response.statusText);
+            }
+
+            const parsed = ApiNetworkTokenListHashResponseSchema.safeParse(await response.json());
+            if (!parsed.success) {
+              return invalidNetworkResponseError();
+            }
+
+            const [network] = parsed.data;
+            if (!network) {
+              return networkNotFoundError(currencyId);
+            }
+
+            return { data: network.token_list_hash ?? EMPTY_TOKEN_LIST_HASH };
+          } catch (error) {
+            return fetchError(error);
+          }
+        },
+      }),
+
       getTokensData: build.infiniteQuery<TokensDataWithPagination, GetTokensDataParams, PageParam>({
         query({ pageParam, queryArg = {} }) {
           const { output, networkFamily, pageSize = DEFAULT_PAGE_SIZE, limit, ref } = queryArg;
@@ -158,6 +209,7 @@ export const {
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
   useGetTokensSyncHashQuery,
+  useGetTokenListHashQuery,
 } = cryptoAssetsApi;
 
 export type CryptoAssetsApi = typeof cryptoAssetsApi;
