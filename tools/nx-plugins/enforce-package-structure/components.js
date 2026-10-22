@@ -585,7 +585,9 @@ function componentFunction(node, module, seen = new Set()) {
       : "";
   if (!COMPONENT_WRAPPERS.has(name)) return null;
   const inner = componentFunction(expression.arguments[0], module, seen);
-  const typeArgument = expression.typeArguments?.[name === "forwardRef" ? 1 : 0];
+  const argument = expression.typeArguments?.[name === "forwardRef" ? 1 : 0];
+  // `memo<typeof CardImpl>(CardImpl)` names the component, not its props: read the function.
+  const typeArgument = argument && !ts.isTypeQueryNode(argument) ? argument : undefined;
   if (!inner && !typeArgument) return null;
   return { fn: inner?.fn, typeArgument: typeArgument ?? inner?.typeArgument };
 }

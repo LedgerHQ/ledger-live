@@ -492,6 +492,17 @@ test("R2 reads the props argument of memo when the render callback takes no para
   ]);
 });
 
+test("R2 passes: memo typed with the component it wraps", () => {
+  const implementation =
+    'import { memo } from "react";\nimport type { CardProps } from "./Card.types";\nfunction CardImpl(props: CardProps) { return null; }\nexport const Card = memo<typeof CardImpl>(CardImpl);\n';
+  const files = {
+    ...card(contract("title: string;")),
+    "src/Card.web.tsx": implementation,
+    "src/Card.native.tsx": implementation,
+  };
+  assert.deepEqual(check(files), []);
+});
+
 test("R2 keeps the forwardRef props argument when the render function is imported", () => {
   const imported = `import { forwardRef } from "react";\nimport { render } from "./render";\nimport type { CardProps } from "./Card.types";\nexport const Card = forwardRef<unknown, CardProps>(render);\n`;
   const files = {
