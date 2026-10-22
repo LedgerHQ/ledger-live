@@ -263,7 +263,6 @@ describe("createApi", () => {
     it("returns operations from account", async () => {
       const { items: operations } = await api.listOperations(context, sender.freshAddress, {
         minHeight: txINBlockHeight,
-        order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);
@@ -308,7 +307,6 @@ describe("createApi", () => {
     it("excludes operations below minHeight and includes the minHeight block", async () => {
       const { items: operations } = await api.listOperations(context, sender.freshAddress, {
         minHeight: txOUTBlockHeight,
-        order: "asc",
       });
 
       const ids = operations.map(operation => operation.id);
@@ -329,7 +327,6 @@ describe("createApi", () => {
 
       const { items: operations } = await api.listOperations(context, tokenAccount.freshAddress, {
         minHeight,
-        order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);
