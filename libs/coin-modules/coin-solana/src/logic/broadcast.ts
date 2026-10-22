@@ -37,19 +37,22 @@ function classifySimulationError(err: TransactionError): Error {
     case "BlockhashNotFound":
       return new InvalidTransactionError("Blockhash not found");
     case "InstructionError": {
-      const detail = (err as { InstructionError: [number, unknown] }).InstructionError?.[1];
-      if (detail === "InsufficientFunds") return new InvalidTransactionError("Insufficient funds");
+      const [instructionIndex, detail] =
+        (err as { InstructionError: [number, unknown] }).InstructionError ?? [];
+      const fields = { err, instructionIndex };
+      if (detail === "InsufficientFunds")
+        return new InvalidTransactionError("Insufficient funds", fields);
       if (detail && typeof detail === "object" && "Custom" in detail) {
         const custom = (detail as { Custom: number }).Custom;
         if (custom === SPL_TOKEN_ACCOUNT_FROZEN)
-          return new InvalidTransactionError("Token account frozen");
+          return new InvalidTransactionError("Token account frozen", fields);
         if (custom === SPL_TOKEN_INSUFFICIENT_FUNDS)
-          return new InvalidTransactionError("Insufficient funds");
+          return new InvalidTransactionError("Insufficient funds", fields);
       }
-      return new InvalidTransactionError("Transaction simulation failed");
+      return new InvalidTransactionError("Transaction simulation failed", fields);
     }
     default:
-      return new InvalidTransactionError("Transaction simulation failed");
+      return new InvalidTransactionError("Transaction simulation failed", { err });
   }
 }
 
