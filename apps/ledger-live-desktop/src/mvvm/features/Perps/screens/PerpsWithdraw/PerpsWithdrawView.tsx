@@ -20,6 +20,7 @@ export function PerpsWithdrawView({
   headerDescription,
   amountText,
   amount,
+  currencyCode,
   quotedAmount,
   isQuoteLoading,
   maxDecimalLength,
@@ -52,7 +53,7 @@ export function PerpsWithdrawView({
         <AmountInput
           value={amountText}
           onChange={event => changeAmount(event.target.value)}
-          currencyText="USD"
+          currencyText={currencyCode}
           aria-invalid={statusError !== null}
           maxDecimalLength={maxDecimalLength}
           data-testid={`${TEST_ID_PREFIX}-amount-input`}

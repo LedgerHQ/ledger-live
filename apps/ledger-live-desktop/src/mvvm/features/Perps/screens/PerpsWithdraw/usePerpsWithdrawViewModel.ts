@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -49,7 +48,6 @@ export type WithdrawFormError = Readonly<{
 
 const EMPTY_AMOUNT_TEXT = "0";
 const AMOUNT_DECIMALS = 2;
-const USD_UNIT = getFiatCurrencyByTicker("USD").units[0];
 
 function toAmountText(amount: number): string {
   return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
@@ -77,6 +75,7 @@ export type PerpsWithdrawViewModel = Readonly<{
   headerDescription: string;
   amountText: string;
   amount: number;
+  currencyCode: string;
   quotedAmount: string | null;
   isQuoteLoading: boolean;
   maxDecimalLength: number;
@@ -236,9 +235,10 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   const handleReview = useCallback(() => undefined, []);
 
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
+  const sourceUnit = getAccountCurrency(sourceAccount).units[0];
   const formattedAvailable = formatCurrencyUnit(
-    USD_UNIT,
-    availableBalance.shiftedBy(USD_UNIT.magnitude),
+    sourceUnit,
+    availableBalance.shiftedBy(sourceUnit.magnitude),
     { showCode: true, discreet, locale },
   );
 
@@ -246,6 +246,7 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
     headerDescription: `${sourceName} · ${formattedAvailable}`,
     amountText,
     amount,
+    currencyCode: sourceUnit.code,
     quotedAmount,
     isQuoteLoading,
     maxDecimalLength: AMOUNT_DECIMALS,
