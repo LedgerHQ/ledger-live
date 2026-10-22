@@ -181,6 +181,17 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
+      # Older commits (e.g. the LIVE-36190 pair) declare two unused mise plugins as "owner/repo",
+      # which the mise installed by setup-caches@develop reads as local folders and fails on.
+      # Their tools are commented out, so the section is dropped; tool versions stay the commit's own.
+      - name: Drop unused mise plugins (older commits)
+        run: |
+          awk '/^\[plugins\]/{skip=1; next} /^\[/{skip=0} !skip' mise.toml > "$RUNNER_TEMP/mise.toml"
+          if ! cmp -s mise.toml "$RUNNER_TEMP/mise.toml"; then
+            diff mise.toml "$RUNNER_TEMP/mise.toml" || true
+            cp "$RUNNER_TEMP/mise.toml" mise.toml
+          fi
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -273,6 +284,17 @@ jobs:
           ref: ${{ env.REF }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
+
+      # Older commits (e.g. the LIVE-36190 pair) declare two unused mise plugins as "owner/repo",
+      # which the mise installed by setup-caches@develop reads as local folders and fails on.
+      # Their tools are commented out, so the section is dropped; tool versions stay the commit's own.
+      - name: Drop unused mise plugins (older commits)
+        run: |
+          awk '/^\[plugins\]/{skip=1; next} /^\[/{skip=0} !skip' mise.toml > "$RUNNER_TEMP/mise.toml"
+          if ! cmp -s mise.toml "$RUNNER_TEMP/mise.toml"; then
+            diff mise.toml "$RUNNER_TEMP/mise.toml" || true
+            cp "$RUNNER_TEMP/mise.toml" mise.toml
+          fi
 
       - name: setup caches
         id: setup-caches
