@@ -49,7 +49,7 @@ async function getDeviceTransactionConfig(input: {
   fields.push({
     type: "stacks.memo",
     label: "Memo",
-    value: transaction.memo || "",
+    value: transaction.memo || transaction.memoValue || "",
   });
 
   return fields;

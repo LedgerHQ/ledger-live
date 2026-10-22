@@ -5,6 +5,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import i18next from "~/i18n/instance";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { stacksMemoPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
@@ -36,9 +37,7 @@ function StacksEditMemo({ navigation, route }: NavigationProps) {
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        memo: memo && memo.toString(),
-      }),
+      transaction: bridge.updateTransaction(transaction, stacksMemoPatch(memo)),
     });
   }, [navigation, route.params, account, bridge, memo]);
   return (

@@ -2,7 +2,12 @@ import type { Account } from "@ledgerhq/types-live";
 import { intentToMessageParams } from "@ledgerhq/coin-cosmos/logic/transaction/intentAdapter";
 import { transactionToIntent } from "../../generic-coin-framework/utils";
 import type { GenericTransaction } from "../../generic-coin-framework/types";
-import { applyMemoToTransaction, buildRecipientTransactionPatch, cosmosMemoPatch } from "./memo";
+import {
+  applyMemoToTransaction,
+  buildRecipientTransactionPatch,
+  cosmosMemoPatch,
+  stacksMemoPatch,
+} from "./memo";
 import { TEXT_MEMO_TYPE } from "../../../families/solana/transactions";
 
 it("solana: the inlined memo type is the one the family declares", () => {
@@ -35,6 +40,14 @@ describe("applyMemoToTransaction", () => {
 
     it("cosmos: empty string clears memo/memoType/memoValue", () => {
       expect(applyMemoToTransaction("cosmos", "")).toEqual({
+        memo: undefined,
+        memoType: null,
+        memoValue: undefined,
+      });
+    });
+
+    it("stacks: empty string clears memo/memoType/memoValue", () => {
+      expect(applyMemoToTransaction("stacks", "")).toEqual({
         memo: undefined,
         memoType: null,
         memoValue: undefined,
@@ -77,6 +90,14 @@ describe("applyMemoToTransaction", () => {
         memo: "hello",
         memoType: "text",
         memoValue: "hello",
+      });
+    });
+
+    it("stacks: sets memo for the legacy bridge and memoType/memoValue for the generic one", () => {
+      expect(applyMemoToTransaction("stacks", "1234")).toEqual({
+        memo: "1234",
+        memoType: "memo",
+        memoValue: "1234",
       });
     });
 
@@ -195,5 +216,31 @@ describe("Cosmos memo survives shared intent construction end to end", () => {
 
     const params = intentToMessageParams(intent, "cosmos", "uatom");
     expect(params.memo).toBe("");
+  });
+});
+
+describe("Stacks memo survives shared intent construction end to end", () => {
+  const account = { currency: { name: "stacks", units: [{}] } } as Account;
+
+  it("turns a UI write-site patch into the memo-kind StringMemo coin-stacks reads", () => {
+    const transaction = {
+      family: "stacks",
+      ...stacksMemoPatch("1234"),
+    } as unknown as GenericTransaction;
+
+    expect(transactionToIntent(account, transaction).memo).toEqual({
+      type: "string",
+      kind: "memo",
+      value: "1234",
+    });
+  });
+
+  it("resolves to no memo when the field is cleared", () => {
+    const transaction = {
+      family: "stacks",
+      ...stacksMemoPatch(undefined),
+    } as unknown as GenericTransaction;
+
+    expect(transactionToIntent(account, transaction).memo).toEqual({ type: "none" });
   });
 });
