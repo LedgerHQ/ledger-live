@@ -62,12 +62,12 @@ jobs:
           BASE: ${{ needs.changes.outputs.base }}
         run: git fetch --no-tags --depth=1 "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git" "$BASE"
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

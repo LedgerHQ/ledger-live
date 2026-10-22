@@ -34,7 +34,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         id: setup-caches
         with:
           use-mise: true
@@ -47,7 +47,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

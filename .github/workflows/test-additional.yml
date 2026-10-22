@@ -34,18 +34,18 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Install pnpm
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Changesets
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@test/pnpm-11-smoke
 
       - name: Validate CODEOWNERS
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-codeowners@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-codeowners@test/pnpm-11-smoke
 
   changes:
     name: Detect Workflow File Changes
@@ -90,7 +90,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup mise
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}

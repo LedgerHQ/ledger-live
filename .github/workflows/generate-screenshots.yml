@@ -68,11 +68,11 @@ jobs:
         run: gh pr checkout "$PR_NUMBER"
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@test/pnpm-11-smoke
 
       - name: Setup the toolchain
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -84,17 +84,17 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@test/pnpm-11-smoke
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@test/pnpm-11-smoke
         id: update-snapshots
         with:
           os: ubuntu-22.04

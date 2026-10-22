@@ -57,7 +57,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         id: setup-caches
         with:
           use-mise: true
@@ -71,7 +71,7 @@ jobs:
 
       # Before the install so every package is fetched through JFrog, not public npm.
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

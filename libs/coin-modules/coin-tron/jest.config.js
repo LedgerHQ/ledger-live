@@ -26,3 +26,4 @@ module.exports = {
     "@ledgerhq/test-quarantine/jest-retries",
   ],
 };
+// pnpm 11 smoke test, do not merge

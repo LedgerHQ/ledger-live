@@ -35,7 +35,7 @@ jobs:
           permission-workflows: write
 
       - name: Generate ref/tag version to use during main checkout
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@test/pnpm-11-smoke
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -47,20 +47,20 @@ jobs:
           ref: ${{ steps.format-app-tag.outputs.main_ref }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@test/pnpm-11-smoke
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
           git push -u origin hotfix
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: install dependencies
@@ -69,7 +69,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@test/pnpm-11-smoke
         with:
           from_level: minor
           to_level: patch
@@ -77,7 +77,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@test/pnpm-11-smoke
         with:
           from_level: major
           to_level: patch

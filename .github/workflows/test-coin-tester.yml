@@ -30,7 +30,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Run live-common-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@test/pnpm-11-smoke
         id: affected
 
       - name: Build matrix from affected paths or manual input
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -133,12 +133,12 @@ jobs:
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Setup environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@test/pnpm-11-smoke
 
       # TODO: the deploy key below is NOT the final way to authenticate. It is a stopgap until the GitHub App behind
       # GH_BOT_* is installed on LedgerHQ/coin-sandbox. Then uncomment this step, use its token in the checkout
@@ -207,7 +207,7 @@ jobs:
           key: ${{ runner.os }}-${{ runner.arch }}-clarinet-${{ hashFiles('libs/coin-tester-modules/coin-tester-stacks/docker/clarinet/**') }}
 
       - name: Run Coin Tester
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@test/pnpm-11-smoke
         with:
           chain: ${{ matrix.chain }}
 

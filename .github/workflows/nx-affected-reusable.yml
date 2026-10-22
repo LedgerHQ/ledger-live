@@ -47,14 +47,14 @@ jobs:
       # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
       # ones the repo pins. This also writes nx.cache-config.json.
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       # Before the install so every package is fetched through JFrog, not public npm.
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -88,7 +88,7 @@ jobs:
 
       - name: Get affected packages and paths
         id: nx-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@test/pnpm-11-smoke
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD

@@ -48,7 +48,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         id: setup-caches
         with:
           use-mise: true
@@ -63,7 +63,7 @@ jobs:
       # and every fork leg stay on GitHub-hosted runners and public npm.
       - name: JFrog npm auth
         if: ${{ matrix.os == 'ubuntu-22.04' && !github.event.pull_request.head.repo.fork }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: Install dependencies

@@ -63,14 +63,14 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@test/pnpm-11-smoke
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@test/pnpm-11-smoke
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -98,13 +98,13 @@ jobs:
         run: pnpm changeset version
 
       - name: Get desktop version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@test/pnpm-11-smoke
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
       - name: Get mobile version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@test/pnpm-11-smoke
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

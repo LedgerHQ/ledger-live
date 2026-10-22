@@ -20,7 +20,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -38,7 +38,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@test/pnpm-11-smoke
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -60,7 +60,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -75,7 +75,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -89,7 +89,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@test/pnpm-11-smoke
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -126,7 +126,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -142,7 +142,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -156,7 +156,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -170,7 +170,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -184,7 +184,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -198,7 +198,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -212,7 +212,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -226,7 +226,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -240,7 +240,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -251,7 +251,7 @@ jobs:
 
   test-additional:
     name: "Test Additional"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@test/pnpm-11-smoke
     permissions:
       security-events: write
       contents: read
@@ -262,7 +262,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -276,7 +276,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@test/pnpm-11-smoke
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
