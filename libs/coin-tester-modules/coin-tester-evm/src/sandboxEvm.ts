@@ -18,11 +18,23 @@ export function atlasOf(uri: string, explorerId: string) {
   /**
    * What Atlas answers, or nothing yet: its container is healthy before its indexer has stored a block, and the API
    * then answers `Internal server error` (not JSON). The sandbox waits for it too, so this is a second guard.
+   * The request and the read of its body stop at `deadline`: a stalled Atlas must not outlast the wait that asked.
    */
-  const get = async (path: string): Promise<AtlasAnswer | undefined> => {
-    const response = await fetch(`${uri}/blockchain/v4/${explorerId}${path}`);
-    if (!response.ok) return undefined;
-    return response.json().catch(() => undefined);
+  const get = async (path: string, deadline: number): Promise<AtlasAnswer | undefined> => {
+    const signal = AbortSignal.timeout(Math.max(deadline - Date.now(), 1));
+    try {
+      const response = await fetch(`${uri}/blockchain/v4/${explorerId}${path}`, { signal });
+      if (!response.ok) return undefined;
+      // Not JSON is "nothing yet", but an abort is not: it rethrows to the catch below
+      return await response.json().catch(error => {
+        if (signal.aborted) throw error;
+        return undefined;
+      });
+    } catch (error) {
+      if (signal.aborted)
+        throw new Error(`Atlas did not answer ${path} before the deadline`, { cause: error });
+      throw error;
+    }
   };
 
   return {
@@ -33,7 +45,7 @@ export function atlasOf(uri: string, explorerId: string) {
     waitForBlock: async (block: number): Promise<void> => {
       const deadline = Date.now() + TIMEOUT_MS;
       for (;;) {
-        const current = await get("/block/current");
+        const current = await get("/block/current", deadline);
         if (current?.height !== undefined && current.height >= block) return;
         if (Date.now() > deadline) throw new Error(`Atlas did not reach block ${block} in 60 s`);
         await sleep(250);
@@ -48,7 +60,7 @@ export function atlasOf(uri: string, explorerId: string) {
     waitForGasTracker: async (): Promise<void> => {
       const deadline = Date.now() + TIMEOUT_MS;
       for (;;) {
-        const barometer = await get("/gastracker/barometer?display=eip1559");
+        const barometer = await get("/gastracker/barometer?display=eip1559", deadline);
         if (barometer?.medium !== undefined && BigInt(barometer.medium) > 0n) return;
         if (Date.now() > deadline) throw new Error("Atlas's gas tracker still says 0 after 60 s");
         await sleep(250);
