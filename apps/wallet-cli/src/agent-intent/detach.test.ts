@@ -180,6 +180,20 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     expect(statSync(logPath).mode & 0o777).toBe(0o600);
   });
 
+  it("marks the child as a detached listener and keeps the rest of the env", async () => {
+    const { logPath } = enrollListenerPaths("my-agent");
+    const child = startChild(
+      "console.log(JSON.stringify({ marker: process.env.WALLET_CLI_DETACHED_LISTENER, " +
+        "stateHome: process.env.XDG_STATE_HOME }));",
+      logPath,
+    );
+
+    expect(await readFirstLogJsonLine(child, logPath, 10_000)).toEqual({
+      marker: "1",
+      stateHome,
+    });
+  });
+
   it("returns an error envelope the child printed before exiting", async () => {
     const { logPath } = enrollListenerPaths("my-agent");
     const child = startChild(

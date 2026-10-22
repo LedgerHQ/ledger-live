@@ -1,7 +1,7 @@
-import { afterAll, beforeEach, describe, expect, it, spyOn } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as analytics from "@shared/analytics";
 import { CliProcessExitError } from "../cli-process-exit-error";
-import { withCommandLifecycleAnalytics } from "./lifecycle-analytics";
+import { DETACHED_LISTENER_ENV, withCommandLifecycleAnalytics } from "./lifecycle-analytics";
 
 type TrackCall = { event: string; properties?: Record<string, unknown> | null };
 
@@ -65,6 +65,33 @@ describe("withCommandLifecycleAnalytics", () => {
 
     expect(events()).toEqual(["command_invoked", "command_failed"]);
     expect(trackCalls[1].properties?.errorName).not.toBe("process_exit");
+  });
+
+  describe("detached enroll listener", () => {
+    afterEach(() => {
+      delete process.env[DETACHED_LISTENER_ENV];
+    });
+
+    it("tags every lifecycle event of a detached listener", async () => {
+      process.env[DETACHED_LISTENER_ENV] = "1";
+
+      await withCommandLifecycleAnalytics(["agent-intent", "enroll"], async () => 0);
+      await withCommandLifecycleAnalytics(["agent-intent", "enroll"], async () => 1);
+
+      expect(events()).toEqual([
+        "command_invoked",
+        "command_completed",
+        "command_invoked",
+        "command_failed",
+      ]);
+      for (const call of trackCalls) expect(call.properties?.detachedListener).toBe(true);
+    });
+
+    it("leaves the events of a normal run untagged", async () => {
+      await withCommandLifecycleAnalytics(["agent-intent", "enroll"], async () => 0);
+
+      for (const call of trackCalls) expect(call.properties).not.toHaveProperty("detachedListener");
+    });
   });
 
   it("tracks nothing when no command can be parsed", async () => {
