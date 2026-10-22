@@ -21,6 +21,8 @@ import {
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import {
+  commandNames,
+  createDashboardDevice,
   createDeviceManagementKit,
   createSessionStream,
   createTestStream,
@@ -90,6 +92,10 @@ export type ScriptedTestDevice = {
   isWatching(sessionId: string): boolean;
   /** What the device screen shows: the early-check (genuine check) screen once Enter is accepted. */
   showsEarlyCheckScreen(): boolean;
+  /** Opens an app on the device: it refuses the OS version command until the app is closed. */
+  openApp(name: string): void;
+  /** The commands the device received, by name, in order. */
+  commands(): string[];
 };
 
 /** A Bluetooth Stax whose commands and checks answer only what the test queues. */
@@ -102,13 +108,11 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
   let sessionId = "session-1";
   const deviceId = "device-id";
   let onEarlyCheckScreen = false;
+  const dashboard = createDashboardDevice();
 
   const sendCommand = jest.fn(async ({ command }: { command: object }) => {
-    // The machine checks the open app before each read. The device is on the dashboard: it
-    // answers at once and takes no reply the test queued.
-    if ("name" in command && command.name === "getAppAndVersion") {
-      return CommandResultFactory({ data: { name: "BOLOS", version: "1.0.0" } });
-    }
+    const answer = dashboard.answer(command);
+    if (answer) return answer;
     const reply = await commandReplies.next();
     if (
       command instanceof ToggleEarlyCheckCommand &&
@@ -219,6 +223,8 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     showsEarlyCheckScreen() {
       return onEarlyCheckScreen;
     },
+    openApp: dashboard.openApp,
+    commands: () => commandNames(sendCommand),
   };
 
   function getSession(id: string): SessionStream {
