@@ -862,9 +862,9 @@ function propsOfContract(node, module, seen = new Set()) {
 
 /**
  * The props of a contract and of the local types its props hold, at any depth: a list of tiles
- * whose items declare `onPress` is checked like the contract itself. Callback parameters, types
- * from other modules and the arguments of `Pick`, `Omit` and other library types that drop props
- * are not followed.
+ * whose items declare `onPress` is checked like the contract itself, also behind a local alias
+ * such as `type Tiles = Tile[]`. Callback parameters, types from other modules and the arguments
+ * of `Pick`, `Omit` and other library types that drop props are not followed.
  *
  * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
  * @param {ReturnType<typeof parseModule>} module
@@ -872,6 +872,7 @@ function propsOfContract(node, module, seen = new Set()) {
  */
 function reachableProps(declaration, module) {
   const seen = new Set();
+  const aliases = new Set();
   const props = new Set();
   const pending = propsOfContract(declaration, module, seen);
   function visit(node) {
@@ -882,8 +883,13 @@ function reachableProps(declaration, module) {
     }
     if (ts.isTypeReferenceNode(node)) {
       const name = ts.isIdentifier(node.typeName) ? node.typeName.text : "";
-      if (module.types.has(name)) {
+      const local = module.types.get(name);
+      if (local) {
         pending.push(...propsOfContract(node, module, seen));
+        if (ts.isTypeAliasDeclaration(local) && !aliases.has(name)) {
+          aliases.add(name);
+          visit(local.type);
+        }
       } else if (!PROPS_PRESERVING_TYPES.has(name)) {
         return;
       }
@@ -891,7 +897,10 @@ function reachableProps(declaration, module) {
     ts.forEachChild(node, visit);
   }
   // A local generic contract, `Box<{ onPress(): void }>`, holds props in its type arguments.
-  if (ts.isTypeAliasDeclaration(declaration)) visit(declaration.type);
+  if (ts.isTypeAliasDeclaration(declaration)) {
+    aliases.add(declaration.name.text);
+    visit(declaration.type);
+  }
   for (const clause of ts.isInterfaceDeclaration(declaration)
     ? (declaration.heritageClauses ?? [])
     : []) {

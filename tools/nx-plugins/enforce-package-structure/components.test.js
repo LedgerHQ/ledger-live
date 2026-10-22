@@ -908,6 +908,35 @@ test("R3 checks the local types a contract's props hold, at any depth", () => {
   );
 });
 
+test("R3 checks the local types a prop holds behind a local alias", () => {
+  for (const aliases of [
+    "type Tile = { onPress(): void };\ntype Tiles = Tile[];",
+    "type Tiles = ReadonlyArray<{ onPress(): void }>;",
+    "type List<T> = Array<T & { onPress(): void }>;\ntype Tiles = List<{ title: string }>;",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": `${aliases}\nexport type CardProps = { items: Tiles };\n` })),
+      ["R3 contract-gesture-callback Card"],
+      aliases,
+    );
+  }
+});
+
+test("R3 follows cyclic local aliases once", () => {
+  assert.deepEqual(
+    check(
+      card({
+        "Card.types.ts": [
+          "type Tiles = Tile[];",
+          "type Tile = Tiles | { onPress(): void };",
+          "export type CardProps = { items: Tiles };",
+        ].join("\n"),
+      }),
+    ),
+    ["R3 contract-gesture-callback Card"],
+  );
+});
+
 test("R3 checks the props a local generic contract receives as type arguments", () => {
   for (const contractModule of [
     "type Box<T> = { value: T };\nexport type CardProps = Box<{ onPress(): void }>;\n",
