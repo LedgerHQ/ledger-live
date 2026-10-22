@@ -729,6 +729,15 @@ describe("HumanCommandOutput", () => {
       expect(writes.join("")).toContain("expired");
     });
 
+    it("agentIntentProfiles shows each profile's key store", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, keyStore: "plaintext-file" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("KEY STORE");
+      expect(out).toContain("plaintext-file");
+    });
+
     it("agentIntentProfiles renders dim message when there are no profiles", () => {
       createCommandOutput("human", ctx).agentIntentProfiles([]);
       expect(writes.join("")).toContain("No Agent Intent profiles");

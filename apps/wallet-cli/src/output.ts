@@ -785,12 +785,12 @@ class HumanCommandOutput implements CommandOutput {
     const w = Math.max(7, ...profiles.map(p => p.profileId.length));
     writeStdout(
       `${colors.bold("PROFILE".padEnd(w))}  ${colors.bold("NAME")}  ${colors.bold("SOURCE")}  ` +
-        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("ACCOUNT ACCESS")}`,
+        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("KEY STORE")}  ${colors.bold("ACCOUNT ACCESS")}`,
     );
     for (const p of profiles) {
       writeStdout(
         `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ` +
-          `${agentIntentProfileStatus(p)}  ${formatAccountAccess(p)}`,
+          `${agentIntentProfileStatus(p)}  ${p.keyStore}  ${formatAccountAccess(p)}`,
       );
     }
   }
