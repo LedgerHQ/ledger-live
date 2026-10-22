@@ -1,5 +1,6 @@
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
+import { platformSuffixWaivers } from "./src/suffix-imports.js";
 
 const CLIPBOARD_MESSAGE = "Use copyToClipboard / readClipboard from @shared/clipboard instead of";
 
@@ -22,8 +23,6 @@ const FATAL_REACT_COMPILER = [
 // require. The rest of the layer had the rule fatal and keeps it.
 const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
 
-// Packages that still import with a platform suffix. Each entry goes when its package's cleanup
-// lands, so the list only shrinks.
 const PLATFORM_SUFFIX_WAIVERS = [
   "account-detail",
   "account-detail-hero",
@@ -121,9 +120,6 @@ export default defineConfig({
       ]),
       rules: { "react/no-children-prop": "off" },
     },
-    {
-      files: PLATFORM_SUFFIX_WAIVERS.map(pkg => `${pkg}/**`),
-      rules: { "suffix-imports/no-platform-suffix": "off" },
-    },
+    platformSuffixWaivers(PLATFORM_SUFFIX_WAIVERS),
   ],
 });

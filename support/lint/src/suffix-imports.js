@@ -1,7 +1,4 @@
-// Platform variants are carried by file names (`Foo.web.tsx` / `Foo.native.tsx`) and resolved by
-// configuration: `moduleSuffixes` in tsc, `moduleFileExtensions` in jest, `resolve.extensions` in
-// rspack, `preferNativePlatform` in Re.Pack. A suffix in the specifier itself is redundant, defeats
-// tsc's cross-platform contamination check, and rots on a rename. See docs/tsconfig.md.
+// Rationale and reported shapes: support/lint/README.md#suffix-importsno-platform-suffix.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -105,6 +102,10 @@ function findPlatformSuffix(specifier, filename) {
 const CALLEE_NAMES = new Set(["require"]);
 const JEST_METHODS = new Set(["mock", "unmock", "doMock", "requireActual", "requireMock"]);
 
+/**
+ * @param {{ callee?: { type: string, name?: string, object?: { type: string, name?: string }, property?: { type: string, name?: string } } }} node
+ * @returns {boolean} whether the call takes a module specifier as its first argument
+ */
 function isSpecifierCall(node) {
   const callee = node.callee;
   if (!callee) return false;
@@ -121,6 +122,7 @@ function isSpecifierCall(node) {
 const noPlatformSuffixImports = {
   meta: { fixable: "code" },
   createOnce(context) {
+    /** @param {{ value?: unknown } | undefined} literal */
     function report(literal) {
       const match = findPlatformSuffix(literal?.value, context.filename);
       if (!match) return;
@@ -138,10 +140,12 @@ const noPlatformSuffixImports = {
       });
     }
 
+    /** @param {{ source?: { value?: unknown } }} node */
     function checkSource(node) {
       report(node.source);
     }
 
+    /** @param {Parameters<typeof isSpecifierCall>[0] & { arguments?: { value?: unknown }[] }} node */
     function checkCall(node) {
       if (isSpecifierCall(node)) report(node.arguments?.[0]);
     }
@@ -157,7 +161,22 @@ const noPlatformSuffixImports = {
   },
 };
 
-export { findPlatformSuffix };
+/**
+ * The override that waives the rule for `packages`, the packages of a layer that still import with
+ * a platform suffix. An entry goes in the change that cleans its package up, so the list only
+ * shrinks. Package names are globs relative to the layer config that re-exports the preset.
+ *
+ * @param {string[]} packages
+ * @returns {{ files: string[], rules: Record<string, "off"> }}
+ */
+function platformSuffixWaivers(packages) {
+  return {
+    files: packages.map(pkg => `${pkg}/**`),
+    rules: { "suffix-imports/no-platform-suffix": "off" },
+  };
+}
+
+export { findPlatformSuffix, platformSuffixWaivers };
 
 export default {
   meta: {

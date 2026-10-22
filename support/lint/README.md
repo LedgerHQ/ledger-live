@@ -104,7 +104,7 @@ import { Lottie } from "@shared/lottie/web"; // ✓
 Third-party entry points (`styled-components/native`, `@react-navigation/native`) and `@support/*`
 subpaths (`@support/jest-devtools/native`) are never reported.
 
-Packages that still carry suffixed specifiers are listed in `PLATFORM_SUFFIX_WAIVERS` of their
-layer's preset. A package leaves the list in the change that cleans it up, so the list only shrinks.
+Each preset waives its layer's remaining violators through `platformSuffixWaivers` in
+`src/suffix-imports.js`, which states the waiver policy.
 
 Run the rule's tests with `nx run @support/lint:test`.

@@ -199,14 +199,27 @@ test("visits every shape a specifier can appear in", () => {
   }
 });
 
+/**
+ * @param {object} callee
+ * @param {string} specifier
+ * @returns {object} a call expression passing `specifier` as its first argument
+ */
 function call(callee, specifier) {
   return { type: "CallExpression", callee, arguments: [{ type: "Literal", value: specifier }] };
 }
 
+/**
+ * @param {string} name
+ * @returns {object} an identifier node
+ */
 function identifier(name) {
   return { type: "Identifier", name };
 }
 
+/**
+ * @param {string} name
+ * @returns {object} the member expression `jest.<name>`
+ */
 function jestMember(name) {
   return { type: "MemberExpression", object: identifier("jest"), property: identifier(name) };
 }
