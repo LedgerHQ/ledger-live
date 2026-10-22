@@ -102,6 +102,15 @@ function layerDirs(projectRoot) {
 }
 
 /**
+ * @param {string} file an oxlint config, posix-style, relative to the workspace root
+ * @param {string} projectRoot
+ * @returns {boolean} whether the file is a layer config the project may sit under
+ */
+function isLayerConfig(file, projectRoot) {
+  return LAYER_CONFIGS.has(file) && layerDirs(projectRoot).includes(path.posix.dirname(file));
+}
+
+/**
  * @param {string} projectRoot
  * @returns {string | undefined} the layer config that applies to the project, if it is in a layer
  */
@@ -182,9 +191,6 @@ export default {
     "{workspaceRoot}/**/oxlint.config.*",
   ],
   check({ workspaceRoot, projectRoot }) {
-    const dirs = layerDirs(projectRoot);
-    const isLayerConfig = file =>
-      LAYER_CONFIGS.has(file) && dirs.includes(path.posix.dirname(file));
     const found = [
       ...configsBelow(workspaceRoot, projectRoot),
       ...ancestors(projectRoot).flatMap(dir => configsIn(workspaceRoot, dir)),
@@ -203,14 +209,16 @@ export default {
           ]
         : []),
       ...found
-        .filter(file => !isLayerConfig(file))
+        .filter(file => !isLayerConfig(file, projectRoot))
         .map(file => ({
           file,
           message:
             "oxlint config outside a layer root: delete it, and set what this package needs in " +
             "its layer's support/lint preset",
         })),
-      ...found.filter(isLayerConfig).flatMap(file => layerConfig(workspaceRoot, file)),
+      ...found
+        .filter(file => isLayerConfig(file, projectRoot))
+        .flatMap(file => layerConfig(workspaceRoot, file)),
       ...scriptFlags(workspaceRoot, projectRoot),
     ];
   },
