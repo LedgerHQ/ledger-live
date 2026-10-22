@@ -8,10 +8,10 @@ const transaction = new Transaction(
   "0.00001",
   Fee.MEDIUM,
 );
-runSendInvalidAddressTest(
+runSendInvalidAddressTest({
   transaction,
-  "This is not a valid Ethereum address",
-  Addresses.BTC_NATIVE_SEGWIT_1,
-  ["B2CQA-2709"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-);
+  expectedErrorMessage: "This is not a valid Ethereum address",
+  address: Addresses.BTC_NATIVE_SEGWIT_1,
+  tmsLinks: ["B2CQA-2709"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+});

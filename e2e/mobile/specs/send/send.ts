@@ -167,14 +167,17 @@ export function runSendTest(
   });
 }
 
-export function runSendInvalidAddressTest(
-  transaction: TransactionType,
-  expectedErrorMessage: string,
-  address: string | undefined,
-  tmsLinks: string[],
-  tags: string[],
-  accountName?: string,
-) {
+type RunSendInvalidAddressTestOptions = {
+  transaction: TransactionType;
+  expectedErrorMessage: string;
+  address?: string;
+  tmsLinks: string[];
+  tags: string[];
+  accountName?: string;
+};
+
+export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOptions) {
+  const { transaction, expectedErrorMessage, address, tmsLinks, tags, accountName } = options;
   setTeamOwner(
     BST_SEND_INVALID_ADDRESS_CURRENCIES.has(transaction.accountToDebit.currency.id)
       ? Team.BST
@@ -188,7 +191,7 @@ export function runSendInvalidAddressTest(
       await beforeAllInvalidAddressFunction(transaction, address);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid address error: ${expectedErrorMessage ?? "no error message"}`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid address error: ${expectedErrorMessage || "no error message"}`, async () => {
       const recipientAddress = address ?? transaction.accountToCredit.address ?? "";
       await app.send.navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       await app.send.setRecipient(recipientAddress, transaction.memoTag);
