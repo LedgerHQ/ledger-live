@@ -19,6 +19,7 @@ import {
   createStxTransferTransaction,
   createTokenTransferTransaction,
   getConfiguredStacksNetwork,
+  MIN_NUM_CYCLES,
   validateAddress,
 } from "../common-logic";
 import { STACKS_DUMMY_ADDRESS, STACKS_DUMMY_PUBLIC_KEY } from "../constants";
@@ -187,7 +188,14 @@ async function buildStaking(
   );
 
   if (intent.mode === "delegate") {
-    const { numCycles, startBurnHt, signerCalldata } = intent.data;
+    const { signerCalldata } = intent.data;
+    // The stake form probes the fee before the number of cycles is typed and while `startBurnHt`
+    // is still resolving; `validateIntent` reports those as status errors. A Clarity uint is
+    // fixed-size, so stand-ins leave the estimated length unchanged. Never reaches a real stake.
+    const numCycles = intent.data.numCycles ?? (forEstimation ? MIN_NUM_CYCLES : undefined);
+    const startBurnHt =
+      intent.data.startBurnHt ??
+      (forEstimation ? poxInfo.current_burnchain_block_height : undefined);
     if (numCycles === undefined || startBurnHt === undefined) {
       throw new Error("stacks: staking requires data.numCycles and data.startBurnHt");
     }

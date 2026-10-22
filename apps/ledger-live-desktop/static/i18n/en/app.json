@@ -8322,6 +8322,12 @@
       "title": "Something went wrong. Please reconnect your device",
       "description": "The Concordium app could not process the transaction. If the problem continues, please contact Ledger Support."
     },
+    "StacksInvalidNumCycles": {
+      "title": "Enter a whole number between {{min}} and {{max}}."
+    },
+    "StacksInvalidPoolAddress": {
+      "title": "Enter a valid pool contract address in the address.contract-name format."
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },

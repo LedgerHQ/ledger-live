@@ -154,6 +154,88 @@ describe("StakeFlowModal/StepValidator", () => {
       });
     },
   );
+
+  it("shows a bridge error on the pool step once the stake form is valid", () => {
+    act(() => {
+      render(
+        <StepValidator
+          {...makeProps({
+            error: new Error("fee estimation failed"),
+            transaction: makeTransaction({
+              valAddress: VALID_POOL_ADDRESS,
+              familySpecificData: { numCycles: 1 },
+            }),
+          })}
+        />,
+      );
+    });
+
+    expect(screen.getByText(/fee estimation failed/)).toBeInTheDocument();
+  });
+
+  it("does not show a bridge error before a pool address is entered", () => {
+    act(() => {
+      render(<StepValidator {...makeProps({ error: new Error("fee estimation failed") })} />);
+    });
+
+    expect(screen.queryByText(/fee estimation failed/)).not.toBeInTheDocument();
+  });
+
+  it("shows no validation message while both fields are empty", () => {
+    act(() => {
+      render(<StepValidator {...makeProps()} />);
+    });
+
+    expect(screen.queryByTestId("input-error")).not.toBeInTheDocument();
+  });
+
+  it("shows a validation message under an invalid pool address", () => {
+    act(() => {
+      render(
+        <StepValidator {...makeProps({ transaction: makeTransaction({ valAddress: "test" }) })} />,
+      );
+    });
+
+    expect(screen.getByTestId("input-error")).toHaveTextContent(
+      "Enter a valid pool contract address in the address.contract-name format.",
+    );
+  });
+
+  it.each(["0", "97", "100", "1.5", "ten"])(
+    "shows a validation message under a number of cycles of %s",
+    raw => {
+      act(() => {
+        render(<StepValidator {...makeProps()} />);
+      });
+
+      act(() => {
+        fireEvent.change(screen.getByTestId("stacks-stake-num-cycles-input"), {
+          target: { value: raw },
+        });
+      });
+
+      expect(screen.getByTestId("input-error")).toHaveTextContent(
+        "Enter a whole number between 1 and 96.",
+      );
+    },
+  );
+
+  it("shows no validation message for a valid pool address and number of cycles", () => {
+    act(() => {
+      render(
+        <StepValidator
+          {...makeProps({
+            transaction: makeTransaction({
+              valAddress: VALID_POOL_ADDRESS,
+              familySpecificData: { numCycles: 96 },
+            }),
+          })}
+        />,
+      );
+    });
+
+    expect(screen.queryByTestId("input-error")).not.toBeInTheDocument();
+  });
 });
 
 // Real, checksum-valid mainnet address (reused, unmocked, from coin-stacks's own
@@ -214,6 +296,39 @@ describe("StakeFlowModal/StepValidatorFooter", () => {
       render(<StepValidatorFooter {...props} />);
     });
     expect(screen.getByRole("button")).not.toBeDisabled();
+  });
+
+  it("shows no loading state on Continue for invalid input while the bridge is pending", () => {
+    const props = {
+      ...withValidatorFields({ valAddress: "test" }),
+      bridgePending: true,
+    };
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByRole("button")).toBeDisabled();
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+  });
+
+  it("shows no loading state on Continue for valid input when the bridge fails while pending a retry", () => {
+    const props = {
+      ...withValidatorFields(),
+      bridgePending: true,
+      error: new Error("fee estimation failed"),
+    };
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByRole("button")).toBeDisabled();
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+  });
+
+  it("shows the loading state on Continue for valid input while the bridge is pending", () => {
+    const props = { ...withValidatorFields(), bridgePending: true };
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
   });
 
   it("advances to the amount step when Continue is enabled and clicked", () => {

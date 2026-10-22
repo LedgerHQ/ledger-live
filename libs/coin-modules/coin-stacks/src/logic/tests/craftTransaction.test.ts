@@ -3,7 +3,7 @@ import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { makeUnsignedContractCall, Pc, transactionToHex } from "@stacks/transactions";
+import { makeUnsignedContractCall, Pc, transactionToHex, uintCV } from "@stacks/transactions";
 import { createStxTransferTransaction, createTokenTransferTransaction } from "../../common-logic";
 import { STACKS_DUMMY_ADDRESS } from "../../constants";
 import { fetchPoxInfo } from "../../network/pox";
@@ -11,6 +11,7 @@ import type { StacksTxData } from "../../types";
 import { getBalance } from "../getBalance";
 import { getNextSequence } from "../getNextSequence";
 import { getStakes } from "../getStakes";
+import { buildUnsignedTx } from "../buildUnsignedTx";
 import { craftTransaction } from "../craftTransaction";
 import { estimateFees } from "../estimateFees";
 
@@ -259,6 +260,16 @@ describe("craftTransaction", () => {
       await expect(
         craftTransaction(stakingIntent({ data: { type: "stacks-pox" } })),
       ).rejects.toThrow("numCycles and data.startBurnHt");
+    });
+
+    it("estimates a stake whose numCycles/startBurnHt are not set yet with stand-in values", async () => {
+      await buildUnsignedTx(stakingIntent({ data: { type: "stacks-pox" } }), 0n, 0n, {
+        forEstimation: true,
+      });
+
+      const [{ functionArgs }] = (makeUnsignedContractCall as jest.Mock).mock.calls[0];
+      expect(functionArgs[2]).toEqual(uintCV(1)); // numCycles: MIN_NUM_CYCLES
+      expect(functionArgs[3]).toEqual(uintCV(961566)); // startBurnHt: the pox tip
     });
 
     it("throws when senderPublicKey is missing", async () => {
