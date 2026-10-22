@@ -2,7 +2,8 @@
 // Summarises samples.jsonl written by run.mjs. Launches are paired by (scenario, phase, round);
 // the difference is B − A on "App startup time", estimated with Hodges–Lehmann and a Wilcoxon
 // signed-rank 95% interval. Writes a markdown table to stdout and, with --summary, appends it there.
-import { appendFile, readFile, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 
@@ -174,7 +175,10 @@ async function main() {
     : "### Startup time\n\nNo samples were recorded.\n";
   console.log(markdown);
   if (values.summary) await appendFile(values.summary, markdown + "\n");
-  if (values.json) await writeFile(values.json, JSON.stringify(rows, null, 2));
+  if (values.json) {
+    await mkdir(path.dirname(values.json), { recursive: true });
+    await writeFile(values.json, JSON.stringify(rows, null, 2));
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
