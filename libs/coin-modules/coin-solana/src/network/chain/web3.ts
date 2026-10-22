@@ -98,6 +98,7 @@ export function toStakeAccountWithInfo(
 export const buildTransferInstructions = async (
   api: ChainAPI,
   { sender, recipient, amount, memo }: TransferCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> => {
   const fromPublicKey = new PublicKey(sender);
   const toPublicKey = new PublicKey(recipient);
@@ -119,12 +120,13 @@ export const buildTransferInstructions = async (
     instructions.push(memoIx);
   }
 
-  return appendMaybePriorityFeeInstructions(api, instructions, fromPublicKey);
+  return appendMaybePriorityFeeInstructions(api, instructions, fromPublicKey, computeUnitMargin);
 };
 
 export const buildTokenTransferInstructions = async (
   api: ChainAPI,
   command: TokenTransferCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> => {
   const {
     ownerAddress,
@@ -200,7 +202,7 @@ export const buildTokenTransferInstructions = async (
     );
   }
 
-  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubkey);
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubkey, computeUnitMargin);
 };
 
 export const buildApproveTransactionInstructions = async (
@@ -214,6 +216,7 @@ export const buildApproveTransactionInstructions = async (
     decimals,
     tokenProgram,
   }: TokenCreateApproveCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> => {
   const instructions: TransactionInstruction[] = [];
 
@@ -237,12 +240,13 @@ export const buildApproveTransactionInstructions = async (
     ),
   );
 
-  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey, computeUnitMargin);
 };
 
 export const buildRevokeTransactionInstructions = async (
   api: ChainAPI,
   { account, owner, tokenProgram }: TokenCreateRevokeCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> => {
   const instructions: TransactionInstruction[] = [];
 
@@ -253,7 +257,7 @@ export const buildRevokeTransactionInstructions = async (
 
   instructions.push(createRevokeInstruction(accountPubKey, ownerPubKey, undefined, programId));
 
-  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey, computeUnitMargin);
 };
 
 export async function findAssociatedTokenAccountPubkey(
@@ -395,6 +399,7 @@ export async function appendMaybePriorityFeeInstructions(
   api: ChainAPI,
   ixs: TransactionInstruction[],
   payer: PublicKey,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> {
   const instructions = [...ixs];
   const writableAccs = instructions
@@ -402,7 +407,7 @@ export async function appendMaybePriorityFeeInstructions(
     .flat();
   const [priorityFeeIx, computeUnitsIx] = await Promise.all([
     buildMaybePriorityFeeInstruction(api, writableAccs),
-    buildComputeUnitInstruction(api, instructions, payer),
+    buildComputeUnitInstruction(api, instructions, payer, computeUnitMargin),
   ]);
 
   if (priorityFeeIx) instructions.unshift(priorityFeeIx);
@@ -425,17 +430,21 @@ export async function buildComputeUnitInstruction(
   api: ChainAPI,
   ixs: TransactionInstruction[],
   payer: PublicKey,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction | null> {
   const computeUnits = await api.getSimulationComputeUnits(ixs, payer);
-  // adding 10% more CPU to make sure it will work
+  // extra CPU on top of the simulation to make sure it will work
   return computeUnits
-    ? ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits * 0.1 + computeUnits })
+    ? ComputeBudgetProgram.setComputeUnitLimit({
+        units: computeUnits * computeUnitMargin + computeUnits,
+      })
     : null;
 }
 
 export function buildCreateAssociatedTokenAccountInstruction(
   api: ChainAPI,
   { mint, owner, associatedTokenAccountAddress, tokenProgram }: TokenCreateATACommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> {
   const ownerPubKey = new PublicKey(owner);
   const mintPubkey = new PublicKey(mint);
@@ -452,12 +461,13 @@ export function buildCreateAssociatedTokenAccountInstruction(
     ),
   ];
 
-  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey, computeUnitMargin);
 }
 
 export async function buildStakeDelegateInstructions(
   api: ChainAPI,
   { authorizedAccAddr, stakeAccAddr, voteAccAddr }: StakeDelegateCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> {
   const withdrawAuthority = new PublicKey(authorizedAccAddr);
   const stakeAcc = new PublicKey(stakeAccAddr);
@@ -468,12 +478,18 @@ export async function buildStakeDelegateInstructions(
     votePubkey: voteAcc,
   });
 
-  return appendMaybePriorityFeeInstructions(api, tx.instructions, withdrawAuthority);
+  return appendMaybePriorityFeeInstructions(
+    api,
+    tx.instructions,
+    withdrawAuthority,
+    computeUnitMargin,
+  );
 }
 
 export async function buildStakeUndelegateInstructions(
   api: ChainAPI,
   { authorizedAccAddr, stakeAccAddr }: StakeUndelegateCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> {
   const withdrawAuthority = new PublicKey(authorizedAccAddr);
   const stakeAcc = new PublicKey(stakeAccAddr);
@@ -482,12 +498,18 @@ export async function buildStakeUndelegateInstructions(
     stakePubkey: stakeAcc,
   });
 
-  return appendMaybePriorityFeeInstructions(api, tx.instructions, withdrawAuthority);
+  return appendMaybePriorityFeeInstructions(
+    api,
+    tx.instructions,
+    withdrawAuthority,
+    computeUnitMargin,
+  );
 }
 
 export async function buildStakeWithdrawInstructions(
   api: ChainAPI,
   { authorizedAccAddr, stakeAccAddr, amount, toAccAddr }: StakeWithdrawCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> {
   const withdrawAuthority = new PublicKey(authorizedAccAddr);
   const stakeAcc = new PublicKey(stakeAccAddr);
@@ -499,12 +521,18 @@ export async function buildStakeWithdrawInstructions(
     toPubkey: recipient,
   });
 
-  return appendMaybePriorityFeeInstructions(api, tx.instructions, withdrawAuthority);
+  return appendMaybePriorityFeeInstructions(
+    api,
+    tx.instructions,
+    withdrawAuthority,
+    computeUnitMargin,
+  );
 }
 
 export async function buildStakeSplitInstructions(
   api: ChainAPI,
   { authorizedAccAddr, stakeAccAddr, seed, amount, splitStakeAccAddr }: StakeSplitCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> {
   const basePk = new PublicKey(authorizedAccAddr);
   const stakePk = new PublicKey(stakeAccAddr);
@@ -517,7 +545,7 @@ export async function buildStakeSplitInstructions(
     basePubkey: basePk,
     seed,
   });
-  return appendMaybePriorityFeeInstructions(api, splitIx.instructions, basePk);
+  return appendMaybePriorityFeeInstructions(api, splitIx.instructions, basePk, computeUnitMargin);
 }
 
 export async function buildStakeCreateAccountInstructions(
@@ -530,6 +558,7 @@ export async function buildStakeCreateAccountInstructions(
     stakeAccRentExemptAmount,
     delegate,
   }: StakeCreateAccountCommand,
+  computeUnitMargin: number,
 ): Promise<TransactionInstruction[]> {
   const fromPubkey = new PublicKey(fromAccAddress);
   const stakePubkey = new PublicKey(stakeAccAddress);
@@ -553,5 +582,5 @@ export async function buildStakeCreateAccountInstructions(
       votePubkey: new PublicKey(delegate.voteAccAddress),
     }),
   );
-  return appendMaybePriorityFeeInstructions(api, tx.instructions, fromPubkey);
+  return appendMaybePriorityFeeInstructions(api, tx.instructions, fromPubkey, computeUnitMargin);
 }

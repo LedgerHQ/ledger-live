@@ -1,5 +1,6 @@
 import { estimateFees } from "../estimateFees";
 import { server, rpcHandler, createTestChainApi } from "./helpers/msw-rpc.mock";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -47,7 +48,7 @@ describe("estimateFees (MSW integration)", () => {
   it("should estimate fees for a native transfer intent via RPC", async () => {
     server.use(stubFeeEstimation(5000));
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -62,7 +63,7 @@ describe("estimateFees (MSW integration)", () => {
   it("should estimate fees for staking intent types", async () => {
     server.use(stubFeeEstimation(5000));
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "staking",
       type: "stake.createAccount",
       mode: "delegate",
@@ -80,7 +81,7 @@ describe("estimateFees (MSW integration)", () => {
     it("should estimate fees for SPL Token transfer — no error, fees higher than 0", async () => {
       server.use(stubFeeEstimation(5000));
 
-      const result = await estimateFees(api, {
+      const result = await estimateFees(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -99,7 +100,7 @@ describe("estimateFees (MSW integration)", () => {
     it("should estimate fees for Token-2022 transfer — no error, fees higher than 0", async () => {
       server.use(stubFeeEstimation(5000));
 
-      const result = await estimateFees(api, {
+      const result = await estimateFees(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,

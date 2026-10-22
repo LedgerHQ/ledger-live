@@ -1,6 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { getBalance } from "../getBalance";
 import { server, rpcHandler, createTestChainApi } from "../tests/helpers/msw-rpc.mock";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 
@@ -37,7 +38,7 @@ describe("getBalance (MSW integration)", () => {
       }),
     );
 
-    const result = await getBalance(api, TEST_ADDRESS);
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
     expect(result).toEqual([
       {
@@ -59,7 +60,7 @@ describe("getBalance (MSW integration)", () => {
       }),
     );
 
-    const result = await getBalance(api, TEST_ADDRESS);
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
     expect(result).toEqual([
       {
@@ -83,7 +84,7 @@ describe("getBalance (MSW integration)", () => {
       }),
     );
 
-    await expect(getBalance(api, TEST_ADDRESS)).rejects.toThrow(/RPC unavailable/);
+    await expect(getBalance(api, TEST_CONFIG, TEST_ADDRESS)).rejects.toThrow(/RPC unavailable/);
   });
 
   describe("SPL Token balances", () => {
@@ -133,7 +134,7 @@ describe("getBalance (MSW integration)", () => {
         }),
       );
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       expect(result).toHaveLength(2);
       expect(result[0]).toEqual({
@@ -244,7 +245,7 @@ describe("getBalance (MSW integration)", () => {
     it("reports the system lamports on the first native entry, with rent and unstake reserve locked", async () => {
       server.use(rpcHandler(stakeHandlers(2_000_000_000)));
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       const native = result[0];
       expect(native.value).toBe(1_000_000_000n);
@@ -255,7 +256,7 @@ describe("getBalance (MSW integration)", () => {
     it("partitions the account total across the native entries, counting the stake account once", async () => {
       server.use(rpcHandler(stakeHandlers(2_000_000_000)));
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       const natives = result.filter(balance => balance.asset.type === "native");
       expect(natives.reduce((total, balance) => total + balance.value, 0n)).toBe(3_000_000_000n);
@@ -314,7 +315,7 @@ describe("getBalance (MSW integration)", () => {
         }),
       );
 
-      const result = await getBalance(api, TEST_ADDRESS, { token2022Enabled: true });
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS, { token2022Enabled: true });
 
       expect(result).toHaveLength(2);
       expect(result[0]).toEqual({

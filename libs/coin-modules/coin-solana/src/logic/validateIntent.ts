@@ -96,7 +96,14 @@ export async function validateIntent(
     isSolanaStakingTransactionIntent(transactionIntent) ||
     transactionIntent.type === "stake.split"
   ) {
-    return validateStakingIntent(api, transactionIntent, balances, estimatedFees, currencyName);
+    return validateStakingIntent(
+      api,
+      config,
+      transactionIntent,
+      balances,
+      estimatedFees,
+      currencyName,
+    );
   }
 
   if (transactionIntent.type.startsWith("token.") && transactionIntent.type !== "token.transfer") {
@@ -342,6 +349,7 @@ async function validateTokenAuthorityIntent(
 
 async function validateStakingIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent,
   balances: Balance[],
   estimatedFees: bigint,
@@ -363,6 +371,7 @@ async function validateStakingIntent(
       await validateValidator(intent.recipient, errors, api);
       const created = await computeCreateAccountAmount(
         api,
+        config,
         intent,
         available,
         estimatedFees,
@@ -580,6 +589,7 @@ function validateStakingRecipient(
 
 async function computeCreateAccountAmount(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent,
   available: bigint,
   estimatedFees: bigint,
@@ -612,7 +622,7 @@ async function computeCreateAccountAmount(
   };
 
   const [reserve, rent] = await Promise.all([
-    unstakeReserve(api, intent.sender),
+    unstakeReserve(api, config, intent.sender),
     fetchStakeAccountRentExempt().then(value => value ?? 0n),
   ]);
 

@@ -1,9 +1,5 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { Cluster } from "@solana/web3.js";
 import { compact } from "lodash/fp";
-
-const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 
 export type ValidatorsAppValidatorRaw = {
   active_stake?: number | null;
@@ -33,27 +29,12 @@ type ValidatorApyRaw = {
   name: string;
 };
 
-const URLS = {
-  validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
-    if (cluster === "testnet") {
-      const baseUrl = getEnv("SOLANA_TESTNET_VALIDATORS_APP_BASE_URL");
-      return `${baseUrl}/${cluster}.json?order=score&limit=${MAX_VALIDATORS_NB}`;
-    }
-
-    const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
-    return baseUrl;
-  },
-  validatorApylist: getEnv("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
-};
-
-async function fetchFigmentApy(
-  cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
-): Promise<Record<string, number>> {
-  if (cluster !== "mainnet-beta") return {};
+async function fetchFigmentApy(validatorsSummaryUrl?: string): Promise<Record<string, number>> {
+  if (!validatorsSummaryUrl) return {};
   try {
     const response = await network({
       method: "GET",
-      url: URLS.validatorApylist,
+      url: validatorsSummaryUrl,
     });
 
     if (response.status === 200 && Array.isArray(response.data)) {
@@ -72,11 +53,12 @@ async function fetchFigmentApy(
 }
 
 export async function getValidators(
-  cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
+  validatorsUrl: string,
+  validatorsSummaryUrl?: string,
 ): Promise<ValidatorsAppValidator[]> {
   const [validatorsResponse, apyMap] = await Promise.all([
-    network({ method: "GET", url: URLS.validatorList(cluster) }),
-    fetchFigmentApy(cluster),
+    network({ method: "GET", url: validatorsUrl }),
+    fetchFigmentApy(validatorsSummaryUrl),
   ]);
 
   const allRawValidators =

@@ -1,9 +1,17 @@
-import { getEnv } from "@ledgerhq/live-env";
-import { AccountInfo, Cluster, ParsedAccountData, PublicKey, clusterApiUrl } from "@solana/web3.js";
+import { AccountInfo, Cluster, ParsedAccountData, PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { partition } from "lodash/fp";
 import { ValidatorsAppValidator } from "./network/validator-app";
-import { type SolanaConfig, type SolanaCoinConfig } from "./config";
+import { type SolanaCoinConfig, type SolanaCurrencyId } from "./config";
+import type { Config as ChainConfig } from "./network/chain";
+import {
+  DEFAULT_LEDGER_VALIDATORS,
+  LEDGER_VALIDATOR_BY_FIGMENT,
+  DEFAULT_BLOCKHASH_RETRIES,
+  DEFAULT_BLOCKHASH_RETRY_DELAY_MS,
+  DEFAULT_COMPUTE_UNIT_MARGIN,
+  DEFAULT_TX_FEE,
+} from "./constants";
 
 const SIGNATURE_SIZE = 64;
 const DUMMY_SIGNATURE_FILL = 1;
@@ -26,42 +34,6 @@ export function transactionHasNonPlaceholderSignatures(
   return false;
 }
 
-// Hardcoding the Ledger validators info as backup,
-// because backend is flaky and sometimes doesn't return it anymore
-export const LEDGER_VALIDATOR_BY_FIGMENT: ValidatorsAppValidator = {
-  voteAccount: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
-  name: "Ledger by Figment",
-  avatarUrl:
-    "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
-  wwwUrl: "https://www.ledger.com/staking",
-  activeStake: 8860644178046828,
-  commission: 7,
-  totalScore: 6,
-  apy: 0.078107,
-};
-
-export const LEDGER_VALIDATOR_BY_BITWISE: ValidatorsAppValidator = {
-  voteAccount: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
-  name: "Ledger by Bitwise",
-  avatarUrl:
-    "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
-  wwwUrl: "https://www.ledger.com/staking",
-  activeStake: 110738001000098,
-  commission: 7,
-  totalScore: 7,
-  apy: 0.07228,
-};
-
-export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
-
-// default validator first
-export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
-  LEDGER_VALIDATOR_BY_FIGMENT,
-  LEDGER_VALIDATOR_BY_BITWISE,
-];
-
-export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);
-
 export const SOLANA_DELEGATION_RESERVE = 0.01;
 
 export const assertUnreachable = (_: never): never => {
@@ -77,19 +49,41 @@ export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
 }
 
 export function endpointByCurrencyId(config: SolanaCoinConfig, currencyId: string): string {
-  const rpcUrls: SolanaConfig["rpcUrls"] = config.rpcUrls;
-  const endpoints: Record<string, string> = {
-    solana: rpcUrls?.solana ?? getEnv("API_SOLANA_PROXY"),
-    solana_devnet: rpcUrls?.solana_devnet ?? clusterApiUrl("devnet"),
-    solana_testnet: rpcUrls?.solana_testnet ?? clusterApiUrl("testnet"),
-  };
-
-  if (currencyId in endpoints) {
-    return endpoints[currencyId];
+  if (!isSolanaCurrencyId(currencyId)) {
+    throw Error(
+      `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
+    );
   }
 
-  throw Error(
-    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
+  const endpoint = config.rpcUrls?.[currencyId];
+  if (!endpoint) {
+    throw Error(`no rpcUrls.${currencyId} in the coin config of ${currencyId}`);
+  }
+
+  return endpoint;
+}
+
+export function feesOf(config: SolanaCoinConfig) {
+  return {
+    computeUnitMargin: config.fees?.computeUnitMargin ?? DEFAULT_COMPUTE_UNIT_MARGIN,
+    defaultTxFee: config.fees?.defaultTxFee ?? DEFAULT_TX_FEE,
+    blockhashRetries: config.fees?.blockhashRetries ?? DEFAULT_BLOCKHASH_RETRIES,
+    blockhashRetryDelayMs: config.fees?.blockhashRetryDelayMs ?? DEFAULT_BLOCKHASH_RETRY_DELAY_MS,
+  };
+}
+
+export function chainConfigFrom(config: SolanaCoinConfig, currencyId: string): ChainConfig {
+  return {
+    endpoint: endpointByCurrencyId(config, currencyId),
+    confirmationTimeoutMs: config.broadcast?.timeoutMs,
+    retries: config.node?.retries,
+    retryDelayMs: config.node?.retryDelayMs,
+  };
+}
+
+function isSolanaCurrencyId(currencyId: string): currencyId is SolanaCurrencyId {
+  return (
+    currencyId === "solana" || currencyId === "solana_devnet" || currencyId === "solana_testnet"
   );
 }
 
@@ -183,26 +177,36 @@ export type Functions<T> = keyof {
   [K in keyof T as T[K] extends Function ? K : never]: T[K];
 };
 
+export function ledgerValidatorsOf(config: SolanaCoinConfig): ValidatorsAppValidator[] {
+  return config.staking?.ledgerValidators ?? DEFAULT_LEDGER_VALIDATORS;
+}
+
+export function defaultLedgerValidatorOf(config: SolanaCoinConfig): ValidatorsAppValidator {
+  return ledgerValidatorsOf(config)[0] ?? LEDGER_VALIDATOR_BY_FIGMENT;
+}
+
 // move Ledger validators to the first positions
 export function ledgerFirstValidators(
   validators: ValidatorsAppValidator[],
+  ledgerList: ValidatorsAppValidator[],
 ): ValidatorsAppValidator[] {
+  const ledgerVoteAccounts = new Set(ledgerList.map(v => v.voteAccount));
+  const [ledgerDefault] = ledgerList;
   const [ledgerValidators, restValidators] = partition(
-    v => LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(v.voteAccount),
+    v => ledgerVoteAccounts.has(v.voteAccount),
     validators,
   );
 
   const LEDGER_FIRST_VALIDATOR =
-    ledgerValidators.find(v => v.voteAccount === LEDGER_VALIDATOR_DEFAULT.voteAccount) ||
-    LEDGER_VALIDATOR_DEFAULT;
+    ledgerValidators.find(v => v.voteAccount === ledgerDefault?.voteAccount) || ledgerDefault;
 
   const ledgerValidatorsFiltered = ledgerValidators.filter(
-    v => v.voteAccount !== LEDGER_FIRST_VALIDATOR.voteAccount,
+    v => v.voteAccount !== LEDGER_FIRST_VALIDATOR?.voteAccount,
   );
 
-  return ledgerValidators.length === 2
+  return ledgerValidators.length === ledgerList.length && LEDGER_FIRST_VALIDATOR
     ? [LEDGER_FIRST_VALIDATOR, ...ledgerValidatorsFiltered].concat(restValidators)
-    : LEDGER_VALIDATOR_LIST.concat(restValidators);
+    : ledgerList.concat(restValidators);
 }
 
 export function profitableValidators(validators: ValidatorsAppValidator[]) {
