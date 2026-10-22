@@ -282,6 +282,18 @@ describe("agent-intent wait", () => {
     });
   });
 
+  it("fails with enrollment_expired when the lock still names a live pid long after expiry", async () => {
+    // A listener killed without cleanup leaves its pid in the lock, and the OS may reuse it.
+    profileReads = [pendingProfile(-2 * 60_000)];
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const { code, line } = await runWaitJson(stdout);
+
+      expect(code).toBe(1);
+      expect(line).toMatchObject({ error: { code: "enrollment_expired" } });
+    });
+  });
+
   it("reports enrolled when an approval made near expiry is saved after the link expired", async () => {
     profileReads = [pendingProfile(-1_000), ENROLLED];
 
