@@ -148,7 +148,10 @@ async function buildTransfer(
       {
         fee: feeAmount,
         nonce: nonceAmount,
-        memo,
+        // A token-transfer memo is a fixed-width field, so leaving it out of a fee estimate keeps
+        // the length unchanged -- and keeps an oversized memo from throwing in `@stacks/transactions`
+        // before validateIntent can report it as `StacksMemoTooLong`.
+        memo: forEstimation ? undefined : memo,
       },
     );
   }
