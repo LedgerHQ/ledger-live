@@ -9,7 +9,6 @@ import {
 const QUOTE_DEBOUNCE_MS = 500;
 
 export type PerpsWithdrawQuoteParams = {
-  /** USDC amount, as typed. */
   amount: string;
   sourceAccount: AccountLike;
   destinationAccount: AccountLike | undefined;
