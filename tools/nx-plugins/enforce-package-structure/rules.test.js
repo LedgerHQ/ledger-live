@@ -380,6 +380,6 @@ test("checkBarrelLocation reports any other index, with the package root", () =>
       ["intermediate-barrel"],
       file,
     );
-    assert.match(found[0].message, /^shared\/thing /);
+    assert.match(found[0].message, /^shared\/thing: /);
   }
 });

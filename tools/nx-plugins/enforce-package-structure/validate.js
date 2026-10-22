@@ -1,7 +1,7 @@
 "use strict";
 
-// Checks that every `index.*` in a new-architecture package is a pure barrel at `src/index.*` or
-// at a `package.json#exports` target (intermediate-barrels.js lists the debt), that every module
+// Checks that every `index.*` in a new-architecture package is a pure barrel where
+// INTERMEDIATE_BARREL (rules.js) allows one, that every module
 // those barrels reach through `export *`, or that `package.json#exports` names, re-exports like
 // one, and that the public components of a dual-platform package keep one API, one neutral props
 // contract and one kind of entry (components.js). The barrel rule follows a file's role, not its
@@ -16,6 +16,7 @@ const {
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,
+  INTERMEDIATE_BARREL,
   isBarrelFile,
   starReexportTargets,
 } = require("./rules");
@@ -340,13 +341,8 @@ function main() {
     console.error("or a <name>.internals.ts companion. See .agents/skills/package-public-api.");
   }
   if (violations.some(v => v.code === "intermediate-barrel")) {
-    console.error(
-      "\nUnder src/, an `index.*` is a barrel only as src/index.* or a package.json#exports target.",
-    );
-    console.error(
-      "Re-export the declaring files from the entry, then delete the intermediate one.",
-    );
-    console.error("See .agents/skills/package-public-api.");
+    console.error(`\n${INTERMEDIATE_BARREL.rule}.`);
+    console.error(`Fix: ${INTERMEDIATE_BARREL.fix}. See .agents/skills/package-public-api.`);
   }
   if (violations.some(v => v.rule)) {
     console.error("\nR1: a universal component is exported on both platforms under the same name.");

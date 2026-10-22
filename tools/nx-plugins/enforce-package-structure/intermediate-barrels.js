@@ -1,15 +1,12 @@
 "use strict";
 
-// Barrels allowed below `src/index.*` without being the target of a `package.json#exports` entry,
-// keyed by posix path from the repo root. Such a barrel only regroups files for the barrel above
-// it, so it is an indirection no consumer sees, and it stays behind when its entry is dropped.
-// This is the debt the location check found when it landed. The list only shrinks: a test fails
-// on an entry whose file is gone or no longer intermediate.
+// Waivers for INTERMEDIATE_BARREL (rules.js), keyed by posix path from the repo root: the debt
+// found when the check landed. The list only shrinks: a test fails on an entry whose file is gone
+// or no longer intermediate.
 
-const INTERMEDIATE_BARREL =
-  "TEMPORARY. An `index.*` that is neither `src/index.*` nor a package.json#exports target. " +
-  "Exit condition: re-export the files it regroups from the entry barrel, or name the file " +
-  "after what it declares if it holds code, delete this barrel, then delete this entry.";
+const { INTERMEDIATE_BARREL: RULE } = require("./rules");
+
+const INTERMEDIATE_BARREL = `TEMPORARY. ${RULE.rule}. Exit condition: ${RULE.fix}, then delete this entry.`;
 
 /** @type {Record<string, string>} */
 const INTERMEDIATE_BARREL_WAIVERS = {

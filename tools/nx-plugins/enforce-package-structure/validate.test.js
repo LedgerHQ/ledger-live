@@ -445,7 +445,7 @@ test("a barrel below the root that no entry names is intermediate, on every plat
       ["shared/thing/src/hooks/index.web.ts", "intermediate-barrel"],
     ],
   );
-  assert.match(found[0].message, /^shared\/thing /);
+  assert.match(found[0].message, /^shared\/thing: /);
 });
 
 test("an intermediate `index.tsx` holding code is reported for both rules", () => {

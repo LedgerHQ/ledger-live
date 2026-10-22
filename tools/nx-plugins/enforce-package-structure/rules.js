@@ -316,10 +316,16 @@ function checkReachedModule(source, options = {}, file = "module.tsx") {
   return violations;
 }
 
+// The intermediate barrel rule, worded once for the violation, the CLI hint and the waivers.
+const INTERMEDIATE_BARREL = {
+  rule: "An `index.*` under src/ is a barrel only as src/index.* or a package.json#exports target",
+  fix:
+    "re-export the declaring files from the entry and delete the barrel, or name an index " +
+    "holding code after what it declares",
+};
+
 /**
- * Report a barrel that is neither the root `src/index.*` nor the target of a
- * `package.json#exports` entry. Such an intermediate barrel is an indirection no consumer ever
- * imports, and it outlives the entry that once named it. Platform variants of an index share its
+ * Report a barrel that breaks INTERMEDIATE_BARREL. Platform variants of an index share its
  * directory, so `index.native.ts` is allowed wherever `index.ts` is.
  *
  * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
@@ -339,9 +345,7 @@ function checkBarrelLocation(projectRoot, file, entryFiles) {
     {
       line: 1,
       code: "intermediate-barrel",
-      message:
-        `${projectRoot} exposes this barrel neither as src/index.* nor through package.json#exports: ` +
-        "export the declaring files from an entry and delete it",
+      message: `${projectRoot}: ${INTERMEDIATE_BARREL.rule}. Fix: ${INTERMEDIATE_BARREL.fix}`,
       text: "",
     },
   ];
@@ -351,6 +355,7 @@ module.exports = {
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,
+  INTERMEDIATE_BARREL,
   isBarrelFile,
   isInternalSpecifier,
   isInRepoSpecifier,
