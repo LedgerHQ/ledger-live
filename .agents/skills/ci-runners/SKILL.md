@@ -16,7 +16,7 @@ Do not add new usages of these labels. When touching a job that already uses one
 - `ledger-live-linux-e2e-8CPU-32RAM`
 - `ledger-live-linux-e2e-speculos-32CPU-128RAM`
 
-**Temporary exception:** Android jobs in `test-mobile-e2e-reusable.yml` may keep using `ledger-live-linux-e2e-8CPU-32RAM`, because the emulator needs `/dev/kvm` (see Gotchas). Don't migrate them, and don't copy this runner into other workflows.
+**Exception: Android emulator jobs.** The emulator needs `/dev/kvm`, which the runners below don't have (see Gotchas). Android E2E jobs in `test-mobile-e2e-reusable.yml` run on `ledger-wallet-8cpu-github-public-cached`, a GitHub larger runner on the `ledger-wallet-android-e2e` custom image (built in LedgerHQ/ledger-wallet-runners), which holds the toolchain and the E2E AVD. Use it only for jobs that run the emulator.
 
 ## ✅ Allowed runners
 
