@@ -23,7 +23,7 @@ describe("tron signer adapter", () => {
   describe("signTransaction", () => {
     it("sends the CAL signature for a TRC-10 token, so the device can clear-sign its name", async () => {
       await signer().signTransaction("44'/195'/0'/0/0", "abcd", {
-        token: { id: "tron/trc10/1002000", ledgerSignature: "cafe" },
+        token: { tokenType: "trc10", ledgerSignature: "cafe" },
       });
 
       expect(signTransaction).toHaveBeenCalledWith("44'/195'/0'/0/0", "abcd", ["cafe"]);
@@ -31,15 +31,7 @@ describe("tron signer adapter", () => {
 
     it("sends no token signature for a TRC-20 token", async () => {
       await signer().signTransaction("44'/195'/0'/0/0", "abcd", {
-        token: { id: "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t", ledgerSignature: "cafe" },
-      });
-
-      expect(signTransaction).toHaveBeenCalledWith("44'/195'/0'/0/0", "abcd", []);
-    });
-
-    it("matches the TRC-10 id prefix, not the substring, so another standard cannot opt in", async () => {
-      await signer().signTransaction("44'/195'/0'/0/0", "abcd", {
-        token: { id: "tron/trc20/trc10lookalike", ledgerSignature: "cafe" },
+        token: { tokenType: "trc20", ledgerSignature: "cafe" },
       });
 
       expect(signTransaction).toHaveBeenCalledWith("44'/195'/0'/0/0", "abcd", []);
@@ -48,7 +40,7 @@ describe("tron signer adapter", () => {
     it("sends no signature for a native send, or when the token has none in CAL", async () => {
       await signer().signTransaction("44'/195'/0'/0/0", "abcd");
       await signer().signTransaction("44'/195'/0'/0/0", "abcd", {
-        token: { id: "tron/trc10/1002000" },
+        token: { tokenType: "trc10" },
       });
 
       expect(signTransaction).toHaveBeenNthCalledWith(1, "44'/195'/0'/0/0", "abcd", []);

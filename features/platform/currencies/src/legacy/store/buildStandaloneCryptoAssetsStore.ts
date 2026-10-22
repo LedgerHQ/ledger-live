@@ -27,7 +27,7 @@ import type { CryptoAssetsStore } from "./port";
  *
  * @returns
  * A {@link CryptoAssetsStore} owning a private CAL cache — async `findTokenById`,
- * `findTokenByAddressInCurrency`, and `getTokensSyncHash`.
+ * `findTokenByAddressInCurrency`, `findTokenByTokenIdentifierInCurrency`, and `getTokensSyncHash`.
  *
  * @example
  * ```ts

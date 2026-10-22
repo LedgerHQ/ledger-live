@@ -13,7 +13,7 @@ export const ApiTokenResponseSchema = z.object({
   name: z.string(),
   ticker: z.string(),
   units: z.array(UnitSchema).min(1),
-  /** Only present for Cardano native assets, used to reconstruct the full assetId. */
+  /** The token's id within its contract (e.g. a Cardano asset name), or a TRON TRC10 asset id. */
   token_identifier: z.string().optional(),
   live_signature: z.string().optional(),
 });
@@ -33,6 +33,13 @@ export const PersistedTokenEntrySchema = z.object({
    * `contract_address` alone is not unique (e.g. MultiversX, Algorand, Cardano).
    */
   token_identifier: z.string().optional(),
+  /**
+   * The `token_identifier` of a `findTokenByTokenIdentifierInCurrency` query that resolved to this
+   * token, if any. Taken from that query, never derived from the token: an identifier names a single
+   * token on some networks (TRON TRC10 asset ids) but not on others (Tezos FA2 ids restart at 0 in
+   * every contract), and only a fulfilled lookup shows CAL found exactly one match.
+   */
+  token_identifier_lookup: z.string().optional(),
 });
 
 /** Schema for the root persisted CAL blob, with a version pin and an optional hash map. */

@@ -39,34 +39,9 @@ export async function buildAccountShape(address: string): Promise<FamilyAccountS
 }
 
 // A TRC10 transfer is crafted with the numeric asset id (encoded into the TransferAssetContract
-// `asset_name`), which CAL surfaces only inside `token.id` as `<currency>/trc10/<id>`; the token's
-// `contractAddress` holds the issuer address, not the asset id. These two helpers are the single
-// place that encodes that convention, keeping the send (asset→id) and sync (id→asset) directions in
-// lockstep.
-//
-// TODO(LIVE-37786): CAL identifiers carry no format guarantee, so parsing `token.id` couples us to
-// an undocumented convention. Migrate both directions to `token.tokenIdentifier` (ADR-052) once the
-// CAL exposes it for TRC10 tokens.
-const TRC10_ASSET_ID = /^\d+$/;
-
-function trc10AssetReference(token: TokenCurrency): string {
-  const [currencyId, standard, assetId, ...rest] = token.id.split("/");
-  if (
-    rest.length > 0 ||
-    currencyId !== token.parentCurrencyId ||
-    standard !== "trc10" ||
-    !assetId ||
-    !TRC10_ASSET_ID.test(assetId)
-  ) {
-    throw new Error(`Unexpected TRC10 token id, cannot derive asset id: ${token.id}`);
-  }
-  return assetId;
-}
-
-function trc10TokenId(currencyId: string, assetReference: string): string {
-  return `${currencyId}/trc10/${assetReference}`;
-}
-
+// `asset_name`), which CAL exposes as the token's `tokenIdentifier`; the token's `contractAddress`
+// holds the issuer address, not the asset id. A TRC10 balance names its asset by that id alone, so
+// the reverse lookup goes by identifier, not by address.
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
   asset: AssetInfo,
@@ -76,19 +51,27 @@ export async function getTokenFromAsset(
   }
   const store = getCryptoAssetsStore();
   if (asset.type === "trc10") {
-    return store.findTokenById(trc10TokenId(currency.id, asset.assetReference));
+    if (!store.findTokenByTokenIdentifierInCurrency) {
+      throw new Error("The crypto assets store cannot look up TRC10 tokens by token_identifier");
+    }
+    return await store.findTokenByTokenIdentifierInCurrency(asset.assetReference, currency.id);
   }
-  return store.findTokenByAddressInCurrency(asset.assetReference, currency.id);
+  return await store.findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
-  const assetReference =
-    token.tokenType === "trc10" ? trc10AssetReference(token) : token.contractAddress;
   return {
     type: token.tokenType,
-    assetReference,
+    assetReference: token.tokenType === "trc10" ? trc10AssetId(token) : token.contractAddress,
     assetOwner: owner,
   };
+}
+
+function trc10AssetId(token: TokenCurrency): string {
+  if (!token.tokenIdentifier) {
+    throw new Error(`TRC10 token ${token.id} has no tokenIdentifier, cannot derive its asset id`);
+  }
+  return token.tokenIdentifier;
 }
 
 /**
@@ -203,7 +186,7 @@ export function describeOptimisticOperation(
 /**
  * app-tron needs the token's CAL signature to clear-sign a TRC-10 token's name and decimals, and the
  * framework does not model that — `families/tron/signer.ts` reads it back off these options. Which
- * token standards need a signature is that signer's rule, so the token goes across whole.
+ * token standards need a signature is that signer's rule, so the standard goes across with it.
  */
 export function getDeviceSignOptions(
   transaction: Record<string, unknown>,
@@ -214,7 +197,7 @@ export function getDeviceSignOptions(
     ? account.subAccounts?.find(sub => sub.id === subAccountId)?.token
     : undefined;
   if (!token) return undefined;
-  return { token: { id: token.id, ledgerSignature: token.ledgerSignature } };
+  return { token: { tokenType: token.tokenType, ledgerSignature: token.ledgerSignature } };
 }
 
 export default function tronBridge(currency: CryptoCurrency): BridgeApi {

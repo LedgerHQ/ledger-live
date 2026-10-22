@@ -11,6 +11,7 @@ import {
   useGetTokensDataInfiniteQuery,
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
+  useFindTokenByTokenIdentifierInCurrencyQuery,
   useGetTokensSyncHashQuery,
 } from "./api";
 import { ApiResponseSchema } from "./schema";
@@ -80,9 +81,10 @@ describe("cryptoAssetsApi configuration", () => {
     expect(cryptoAssetsApi).toBe(calApi);
   });
 
-  it("should expose all four endpoints", () => {
+  it("should expose all five endpoints", () => {
     expect(cryptoAssetsApi.endpoints.findTokenById).toBeDefined();
     expect(cryptoAssetsApi.endpoints.findTokenByAddressInCurrency).toBeDefined();
+    expect(cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency).toBeDefined();
     expect(cryptoAssetsApi.endpoints.getTokensSyncHash).toBeDefined();
     expect(cryptoAssetsApi.endpoints.getTokensData).toBeDefined();
   });
@@ -91,6 +93,7 @@ describe("cryptoAssetsApi configuration", () => {
     expect(useGetTokensDataInfiniteQuery).toBeDefined();
     expect(useFindTokenByIdQuery).toBeDefined();
     expect(useFindTokenByAddressInCurrencyQuery).toBeDefined();
+    expect(useFindTokenByTokenIdentifierInCurrencyQuery).toBeDefined();
     expect(useGetTokensSyncHashQuery).toBeDefined();
   });
 });
@@ -181,6 +184,65 @@ describe("cryptoAssetsApi requests", () => {
     expect(request.url).toContain("https://cal.test/v1/tokens");
     expect(request.url).toContain("contract_address=0xabc");
     expect(request.url).toContain("network=ethereum");
+  });
+
+  it("findTokenByTokenIdentifierInCurrency asks for two matches of the identifier in the network", async () => {
+    mockFetch([mockApiTokenResponse]);
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
+        token_identifier: "1002000",
+        network: "tron",
+      }),
+    );
+
+    const url = new URL((fetchSpy.mock.calls[0][0] as Request).url);
+    expect(url.origin + url.pathname).toBe("https://cal.test/v1/tokens");
+    expect(url.searchParams.get("token_identifier")).toBe("1002000");
+    expect(url.searchParams.get("network")).toBe("tron");
+    expect(url.searchParams.get("limit")).toBe("2");
+    expect(url.searchParams.has("contract_address")).toBe(false);
+    expect(result.data).toEqual(mockTokenCurrency);
+  });
+
+  it("findTokenByTokenIdentifierInCurrency resolves undefined when nothing matches", async () => {
+    mockFetch([]);
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
+        token_identifier: "1002000",
+        network: "tron",
+      }),
+    );
+
+    expect(result.isSuccess).toBe(true);
+    expect(result.data).toBeUndefined();
+  });
+
+  it("findTokenByTokenIdentifierInCurrency errors instead of picking one of several matches", async () => {
+    // RTK Query logs the error thrown by the response transform.
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    mockFetch([mockApiTokenResponse, { ...mockApiTokenResponse, id: "tron/trc10/other" }]);
+    const store = makeStore();
+
+    try {
+      const result = await store.dispatch(
+        cryptoAssetsApi.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
+          token_identifier: "1002000",
+          network: "tron",
+        }),
+      );
+
+      expect(result.isError).toBe(true);
+      expect(result.error).toMatchObject({
+        message: expect.stringContaining('token_identifier "1002000" matches several tron tokens'),
+      });
+      expect(mockConvert).not.toHaveBeenCalled();
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("getTokensData uses the injected CAL service base URL", async () => {

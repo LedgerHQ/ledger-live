@@ -71,6 +71,23 @@ describe("buildRestoreCacheEntries", () => {
     ).toBe(true);
     expect(addressEntries.some(e => !("token_identifier" in e.arg))).toBe(true);
   });
+
+  it("adds a token_identifier lookup entry only for a token such a lookup resolved", () => {
+    const resolved = { ...entry("tron/trc10/1002000", "tron"), token_identifier_lookup: "1002000" };
+    const unresolved = entry("tezos/fa2/a", "tezos", "0");
+
+    const lookupEntries = buildRestoreCacheEntries([resolved, unresolved]).filter(
+      e => e.endpointName === "findTokenByTokenIdentifierInCurrency",
+    );
+
+    expect(lookupEntries).toEqual([
+      {
+        endpointName: "findTokenByTokenIdentifierInCurrency",
+        arg: { token_identifier: "1002000", network: "tron" },
+        value: resolved.data,
+      },
+    ]);
+  });
 });
 
 describe("resolveCurrenciesToEvict", () => {

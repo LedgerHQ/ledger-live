@@ -11,7 +11,7 @@ import { type CreateSigner, executeWithSigner } from "../../bridge/setup";
  * (`derivationMode`, recipient domain) into the same object; none of them concern app-tron.
  */
 type TronDeviceSignOptions = {
-  token?: { id: string; ledgerSignature?: string };
+  token?: { tokenType: string; ledgerSignature?: string };
 };
 
 /**
@@ -47,7 +47,7 @@ export const createSigner: CreateSigner<TronFrameworkSigner> = (transport: Trans
       // TRC-20 transfers are ordinary contract calls, which need no token signature.
       const token = options?.token;
       const tokenSignatures =
-        token?.id.startsWith("tron/trc10/") && token.ledgerSignature ? [token.ledgerSignature] : [];
+        token?.tokenType === "trc10" && token.ledgerSignature ? [token.ledgerSignature] : [];
       return tron.sign(path, rawTxHex, tokenSignatures);
     },
   };
