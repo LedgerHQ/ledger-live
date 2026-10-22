@@ -80,6 +80,17 @@ function effectiveAmount(t: Transaction): BigNumber {
   return t.amount.isZero() && validator ? validator.amount : t.amount;
 }
 
+/** `undefined` (never estimated) is kept apart from `null` (cleared): a round trip must keep both. */
+function gasFromRaw(gas: TransactionRaw["gas"]): Transaction["gas"] {
+  if (gas === undefined) return undefined;
+  return gas ? new BigNumber(gas) : null;
+}
+
+function gasToRaw(gas: Transaction["gas"]): TransactionRaw["gas"] {
+  if (gas === undefined) return undefined;
+  return gas ? gas.toString() : null;
+}
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const legacyAmount = legacyAmountRaw(tr);
   const common = fromTransactionCommonRaw(legacyAmount ? { ...tr, amount: legacyAmount } : tr);
@@ -113,7 +124,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       fees: new BigNumber(networkInfo.fees),
     },
     fees: tr.fees ? new BigNumber(tr.fees) : null,
-    gas: tr.gas === undefined ? undefined : tr.gas ? new BigNumber(tr.gas) : null,
+    gas: gasFromRaw(tr.gas),
     memo: tr.memo,
     ...(memoType !== undefined ? { memoType } : {}),
     ...(memoValue !== undefined ? { memoValue } : {}),
@@ -134,7 +145,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       fees: networkInfo.fees.toString(),
     },
     fees: t.fees ? t.fees.toString() : null,
-    gas: t.gas === undefined ? undefined : t.gas ? t.gas.toString() : null,
+    gas: gasToRaw(t.gas),
     memo: t.memo,
     ...(t.memoType !== undefined ? { memoType: t.memoType } : {}),
     ...(t.memoValue !== undefined ? { memoValue: t.memoValue } : {}),

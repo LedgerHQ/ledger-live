@@ -284,9 +284,6 @@ export function resolveTransactionValidators(
   transaction: CosmosLikeTransaction,
 ): CosmosDelegationInfo[] {
   if (transaction.mode === "send") return [];
-  const modeAddress =
-    transaction.mode === "redelegate" ? transaction.dstValAddress : transaction.valAddress;
-  if (!modeAddress && transaction.validators?.length) return transaction.validators;
   const address =
     transaction.mode === "redelegate" ? getDstValAddress(transaction) : getValAddress(transaction);
   return address ? [{ address, amount: transaction.amount }] : [];

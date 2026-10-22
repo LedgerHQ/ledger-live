@@ -1,4 +1,5 @@
 import createTransaction from "@ledgerhq/coin-cosmos/createTransaction";
+import { CosmosTooManyValidators } from "@ledgerhq/coin-cosmos/errors";
 import { CosmosTransaction as WalletAPICosmosTransaction } from "@ledgerhq/wallet-api-core";
 import {
   AreFeesProvided,
@@ -14,7 +15,7 @@ const CAN_EDIT_FEES = true;
 const VALIDATOR_AMOUNT_MODES: ReadonlySet<CosmosOperationMode> = new Set([
   "undelegate",
   "redelegate",
-  "claimRewardCompound",
+  "compoundReward",
 ]);
 
 const areFeesProvided: AreFeesProvided<WalletAPICosmosTransaction> = tx => !!tx.fees;
@@ -34,7 +35,11 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
   }
 
   if (walletApiTransaction.mode) {
-    liveTx.mode = walletApiTransaction.mode;
+    // The Wallet API still names compounding "claimRewardCompound", which the generic bridge rejects.
+    liveTx.mode =
+      walletApiTransaction.mode === "claimRewardCompound"
+        ? "compoundReward"
+        : walletApiTransaction.mode;
   }
 
   if (walletApiTransaction.fees) {
@@ -53,6 +58,10 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     return liveTx;
   }
 
+  // A transaction acts on one validator: refuse a request it could only partly carry out.
+  if ((walletApiTransaction.validators?.length ?? 0) > 1) {
+    throw new CosmosTooManyValidators();
+  }
   const validator = walletApiTransaction.validators?.[0];
   if (validator && VALIDATOR_AMOUNT_MODES.has(liveTx.mode)) {
     liveTx.amount = validator.amount;

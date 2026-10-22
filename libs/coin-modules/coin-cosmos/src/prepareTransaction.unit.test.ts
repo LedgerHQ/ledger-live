@@ -1,5 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
-import cryptoFactory from "./chain/chain";
 import { createEmptyStakingResources } from "@ledgerhq/types-live";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
@@ -377,14 +375,12 @@ describe("getEstimatedFees when the simulation fails", () => {
     network.mockResolvedValue({ data: { gas_info: { gas_used: 0 } } });
 
     const { gasWanted, gasWantedFees } = await getEstimatedFees(
+      cosmosCoinConfig.getCoinConfig("cosmos"),
       messageParamsFromTransaction(account, transaction),
     );
 
-    expect(gasWanted).toEqual(
-      new BigNumber(cryptoFactory("cosmos").defaultGas)
-        .times(getEnv("COSMOS_GAS_AMPLIFIER"))
-        .integerValue(BigNumber.ROUND_CEIL),
-    );
+    // gasWanted = ceil(defaultGas(100000) * COSMOS_GAS_AMPLIFIER(1.3))
+    expect(gasWanted).toEqual(new BigNumber(130000));
     expect(gasWantedFees.gt(0)).toBe(true);
   });
 });
