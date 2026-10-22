@@ -3,11 +3,16 @@
 //
 // `rules` names the rules an entry exempts the subtree from. A rule added before every package
 // conforms adds entries scoped to it, and its tool migration deletes them. Give every entry an exit
-// condition.
+// condition. A PERMANENT entry records a decision to keep a config as it is: its exit condition
+// says when to revisit that decision.
 
 const LINT_LEAVES =
   "keep their own oxlint config, which no support/lint preset reproduces yet. Exit condition: " +
   "the subtree moves onto its layer's preset and its config is deleted.";
+
+const PERMANENT_LEAF =
+  "PERMANENT: a leaf config with one consumer, which a preset would only wrap. Exit condition: " +
+  "revisit when a second package needs the same config.";
 
 // The jest rule: consumers of @support/jest whose config does not come out of a preset factory.
 const JEST_ESM_HELPER_ONLY =
@@ -24,18 +29,22 @@ export const EXCLUSIONS = {
   apps: {
     rules: ["lint", "tsconfig"],
     reason:
-      `TEMPORARY. lint: the applications ${LINT_LEAVES} ` +
-      "tsconfig: application configs carry bundler, platform and build settings no preset " +
-      "covers yet. Exit condition: an application archetype in @support/tsconfig, then each " +
-      "application moved onto it.",
+      `lint: the applications keep their own oxlint config. ${PERMANENT_LEAF} ` +
+      "tsconfig: TEMPORARY. Application configs carry bundler, platform and build settings no " +
+      "preset covers yet. Exit condition: an application archetype in @support/tsconfig, then " +
+      "each application moved onto it.",
   },
-  "apps/web-tools": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
+  "apps/web-tools": {
+    rules: ["jest"],
+    reason:
+      "A jsdom app config that only takes withEsmDeps from @support/jest/shared. " + PERMANENT_LEAF,
+  },
   e2e: {
     rules: ["lint", "tsconfig"],
     reason:
-      `TEMPORARY. lint: the end-to-end suites ${LINT_LEAVES} ` +
-      "tsconfig: end-to-end suites run their own TypeScript setups (Playwright, Detox). Exit " +
-      "condition: the suites moved onto a @support/tsconfig preset.",
+      `lint: the end-to-end suites keep their own oxlint config. ${PERMANENT_LEAF} ` +
+      "tsconfig: TEMPORARY. End-to-end suites run their own TypeScript setups (Playwright, " +
+      "Detox). Exit condition: the suites moved onto a @support/tsconfig preset.",
   },
   "features/flow/app-availability": {
     rules: ["jest"],
@@ -108,10 +117,10 @@ export const EXCLUSIONS = {
   tests: {
     rules: ["lint", "tsconfig"],
     reason:
-      `TEMPORARY. lint: the test apps ${LINT_LEAVES} ` +
-      "tsconfig: the dummy apps the end-to-end suites load are standalone web apps with their " +
-      "own compiler options. Exit condition: they move onto a @support/tsconfig preset with the " +
-      "e2e suites.",
+      `lint: the test apps keep their own oxlint config. ${PERMANENT_LEAF} ` +
+      "tsconfig: TEMPORARY. The dummy apps the end-to-end suites load are standalone web apps " +
+      "with their own compiler options. Exit condition: they move onto a @support/tsconfig preset " +
+      "with the e2e suites.",
   },
   tools: {
     rules: ["tsconfig"],
