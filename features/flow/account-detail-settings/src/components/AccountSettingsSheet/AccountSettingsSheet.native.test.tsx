@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { I18nWrapper, openExternal } from "../../__tests__/i18nWrapper";
+import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { AccountSettingsSheet } from "./AccountSettingsSheet.native";
 import type { AccountSettingsSheetProps } from "./types.native";
 
@@ -74,6 +74,8 @@ describe("AccountSettingsSheet (Native)", () => {
     await user.press(screen.getByTestId("account-settings-view-explorer"));
 
     expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/bc1qaddress");
+    expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
+    expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("bc1qaddress"));
   });
 
   it("hides View Explorer when the account currency has no explorer", () => {

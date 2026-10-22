@@ -11,7 +11,7 @@ export function useAccountSettingsMenuViewModel(explorerUrl: string | undefined)
   const openLink = useOpenLink();
 
   const onViewExplorer = useMemo(
-    () => (explorerUrl ? () => openLink(explorerUrl) : undefined),
+    () => (explorerUrl ? () => openLink(explorerUrl, { sensitive: true }) : undefined),
     [explorerUrl, openLink],
   );
 

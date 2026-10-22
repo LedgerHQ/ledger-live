@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { I18nWrapper, openExternal } from "../../__tests__/i18nWrapper";
+import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { advancedLogsInput } from "../../__tests__/fixtures";
 import { buildAdvancedLogs } from "../../logic/buildAdvancedLogs";
 import { AccountSettings } from "./AccountSettings.web";
@@ -107,6 +107,8 @@ describe("AccountSettings (Web)", () => {
     await user.click(screen.getByTestId("account-settings-view-explorer"));
 
     expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/bc1qaddress");
+    expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
+    expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("bc1qaddress"));
   });
 
   it("hides View Explorer when the account currency has no explorer", () => {

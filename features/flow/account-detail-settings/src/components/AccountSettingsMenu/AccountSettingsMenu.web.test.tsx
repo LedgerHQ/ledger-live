@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { I18nWrapper, openExternal } from "../../__tests__/i18nWrapper";
+import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { AccountSettingsMenu } from "./AccountSettingsMenu";
 
 function renderMenu() {
@@ -59,6 +59,8 @@ describe("AccountSettingsMenu (Web)", () => {
       expect(screen.getByText("View Explorer")).toBeVisible();
       await userEvent.setup().click(screen.getByTestId("account-settings-view-explorer"));
       expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/0xabc");
+      expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
+      expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("0xabc"));
     });
   });
 });

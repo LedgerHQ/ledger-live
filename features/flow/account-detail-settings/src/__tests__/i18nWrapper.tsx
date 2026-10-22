@@ -3,6 +3,7 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import { LinkingProvider } from "@shared/linking";
 
 export const openExternal = jest.fn();
+export const onLinkOpened = jest.fn();
 
 const resources = {
   en: {
@@ -44,7 +45,7 @@ const resources = {
 
 export function I18nWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <LinkingProvider config={{ openExternal }}>
+    <LinkingProvider config={{ openExternal, onLinkOpened }}>
       <I18nTestProvider resources={resources}>{children}</I18nTestProvider>
     </LinkingProvider>
   );

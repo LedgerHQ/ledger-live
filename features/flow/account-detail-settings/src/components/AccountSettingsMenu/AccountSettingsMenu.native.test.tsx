@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { I18nWrapper, openExternal } from "../../__tests__/i18nWrapper";
+import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { AccountSettingsMenu } from "./AccountSettingsMenu";
 
 function renderMenu() {
@@ -63,6 +63,8 @@ describe("AccountSettingsMenu (Native)", () => {
       expect(screen.getByText("View Explorer")).toBeVisible();
       fireEvent.press(screen.getByTestId("account-settings-view-explorer"));
       expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/0xabc");
+      expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
+      expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("0xabc"));
     });
   });
 });
