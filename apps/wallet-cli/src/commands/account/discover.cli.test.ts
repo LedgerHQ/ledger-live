@@ -22,15 +22,16 @@ describe("account discover command (mock DMK)", () => {
   afterAll(() => server.stop());
 
   it("json output: exits 0 and returns a discover envelope", async () => {
+    const fixture = makeSessionDir([]);
     const { stdout, exitCode, stderr } = await runCli(
       ["account", "discover", "--network", "ethereum", "--output", "json"],
-      MOCK_ENV(server.port),
-    );
+      { ...MOCK_ENV(server.port), ...fixture.env },
+    ).finally(fixture.cleanup);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
     const data = JSON.parse(stdout);
     expect(data.command).toBe("account discover");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(Array.isArray(data.accounts)).toBe(true);
     expect(data.accounts.length).toBeGreaterThan(0);
     for (const account of data.accounts) {

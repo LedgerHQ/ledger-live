@@ -1,7 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createCommandOutput } from "../../output";
-import { serializeNetwork } from "../../shared/accountDescriptor";
 import { walletCliDebug } from "../../shared/log";
 import { writeStderr } from "../../shared/ui";
 import { WalletAdapter } from "../../wallet";
@@ -47,16 +46,12 @@ export default defineCommand({
           "Earn positions are only supported for account-based networks (e.g. solana, ethereum).",
         );
       }
-      const network = v1.network.name;
+      const network = v1.network;
       const address = v1.address;
-      // Canonical `name:env` form for analytics/output, so mainnet vs devnet stays distinguishable
-      // and matches the network string deposit/withdraw emit. The bare `network` name below is only
-      // for the backend request / on-chain branch, which key off the env-less name.
-      const trackedNetwork = serializeNetwork(v1.network);
-      ctx.network = trackedNetwork;
+      ctx.network = network;
       ctx.account = address;
 
-      trackEarnPositionsRequested({ network: trackedNetwork });
+      trackEarnPositionsRequested({ network });
 
       const fresh = flags.fresh;
       // /v3/stakes = /v1/stakes (DB snapshot now + async provider refresh after the response) plus
@@ -94,7 +89,7 @@ export default defineCommand({
         data,
       }));
 
-      trackEarnPositionsReturned({ network: trackedNetwork, positionsCount: rows.length });
+      trackEarnPositionsReturned({ network, positionsCount: rows.length });
       await out.earnPositions(rows, stakes);
     });
   },

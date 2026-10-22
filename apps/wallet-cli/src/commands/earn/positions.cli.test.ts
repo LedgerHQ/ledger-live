@@ -76,7 +76,7 @@ describe("earn positions (ethereum): v3 wrapper + stale marker", () => {
     const data = JSON.parse(stdout);
     expect(data.status).toBe("success");
     expect(data.command).toBe("earn positions");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(data.account).toBe(MOCK_ETH_ADDRESS);
     expect(Array.isArray(data.positions)).toBe(true);
     expect(data.positions).toHaveLength(1);

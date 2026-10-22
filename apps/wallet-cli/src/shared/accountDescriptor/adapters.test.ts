@@ -26,7 +26,7 @@ describe("toV1 (V0 → V1)", () => {
   it("converts bitcoin native_segwit to utxo V1", () => {
     const v1 = toV1(BTC_V0);
     expect(v1.type).toBe("utxo");
-    expect(v1.network).toEqual({ name: "bitcoin", env: "main" });
+    expect(v1.network).toBe("bitcoin");
     expect((v1 as UtxoAccountDescriptorV1).xpub).toBe(XPUB);
     // native_segwit → purpose 84
     expect((v1 as UtxoAccountDescriptorV1).path).toMatch(/^m\/84h/);
@@ -41,7 +41,7 @@ describe("toV1 (V0 → V1)", () => {
   it("converts ethereum ethM to address V1", () => {
     const v1 = toV1(ETH_V0);
     expect(v1.type).toBe("address");
-    expect(v1.network).toEqual({ name: "ethereum", env: "main" });
+    expect(v1.network).toBe("ethereum");
     expect((v1 as AccountBasedDescriptorV1).address).toBe(ETH_ADDR);
     // BIP44 → purpose 44
     expect((v1 as AccountBasedDescriptorV1).path).toMatch(/^m\/44h/);
@@ -52,13 +52,13 @@ describe("toV1 (V0 → V1)", () => {
     expect(v1.path).toMatch(/2h$/);
   });
 
-  it("maps bitcoin_testnet currencyId to testnet env", () => {
+  it("maps bitcoin_testnet currencyId to the bitcoin_testnet network", () => {
     const v1 = toV1({
       ...BTC_V0,
       currencyId: "bitcoin_testnet",
       id: `js:2:bitcoin_testnet:${XPUB}:native_segwit`,
     });
-    expect(v1.network).toEqual({ name: "bitcoin", env: "testnet" });
+    expect(v1.network).toBe("bitcoin_testnet");
   });
 });
 
@@ -66,9 +66,9 @@ describe("toV0 (V1 → V0)", () => {
   it("converts a utxo bitcoin V1 back to V0", () => {
     const btcV1: AccountDescriptorV1 = {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
-      network: { name: "bitcoin", env: "main" },
+      network: "bitcoin",
       xpub: XPUB,
       path: "m/84h/0h/0h",
     };
@@ -107,9 +107,9 @@ describe("toV0 (V1 → V0)", () => {
   it("throws UnsupportedFamilyError when no derivation mode matches the path", () => {
     const badV1: AccountDescriptorV1 = {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
-      network: { name: "bitcoin", env: "main" },
+      network: "bitcoin",
       xpub: XPUB,
       path: "m/999h/0h/0h",
     };

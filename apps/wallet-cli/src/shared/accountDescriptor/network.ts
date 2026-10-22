@@ -1,4 +1,5 @@
-import { networkFromCurrencyId, type Network } from "@domain/entity-account-descriptor";
+import { UnknownNetworkError, type Network } from "@domain/entity-account-descriptor";
+import { networkFromLegacy } from "./v1";
 
 export {
   NetworkSchema,
@@ -8,51 +9,20 @@ export {
 } from "@domain/entity-account-descriptor";
 export type { Network } from "@domain/entity-account-descriptor";
 
-// ---------------------------------------------------------------------------
-// User-facing alias normalisation
-// ---------------------------------------------------------------------------
-
-/** Normalises user-facing env aliases to the canonical form. */
-const ENV_ALIASES: Record<string, string> = {
-  mainnet: "main",
-};
-
-function normalizeEnv(raw: string): string {
-  return ENV_ALIASES[raw.toLowerCase()] ?? raw.toLowerCase();
-}
-
 /**
- * Parse a CLI network argument.
+ * Parse a CLI network argument into a network id.
  *
  * Accepted forms:
- *   "ethereum"          → { name: "ethereum", env: "main" }   (no env = mainnet)
- *   "ethereum:mainnet"  → { name: "ethereum", env: "main" }
- *   "ethereum:main"     → { name: "ethereum", env: "main" }
- *   "bitcoin:testnet"   → { name: "bitcoin",  env: "testnet" }
- *   "solana:devnet"     → { name: "solana",   env: "devnet"  }
- *   "ethereum:goerli"   → { name: "ethereum", env: "goerli" }
+ *   "ethereum"          → "ethereum"
+ *   "bitcoin_testnet"   → "bitcoin_testnet"
+ *   "Ethereum_Sepolia"  → "ethereum_sepolia"
+ * and the deprecated version 1 `<name>:<env>` form:
+ *   "ethereum:mainnet"  → "ethereum"
+ *   "bitcoin:testnet"   → "bitcoin_testnet"
  */
 export function parseNetworkArg(input: string): Network {
-  const colonIdx = input.indexOf(":");
-  if (colonIdx === -1) {
-    return { name: input.toLowerCase(), env: "main" };
-  }
-  return {
-    name: input.slice(0, colonIdx).toLowerCase(),
-    env: normalizeEnv(input.slice(colonIdx + 1)),
-  };
-}
-
-/** Serialize a Network to its canonical string form, e.g. "ethereum:main". */
-export function serializeNetwork(network: Network): string {
-  return `${network.name}:${network.env}`;
-}
-
-/**
- * Shorthand for serializeNetwork(networkFromCurrencyId(currencyId)).
- * Converts a live-common currencyId directly to a canonical network string.
- * e.g. "bitcoin_testnet" → "bitcoin:testnet", "ethereum" → "ethereum:main"
- */
-export function networkStringFromCurrencyId(currencyId: string): string {
-  return serializeNetwork(networkFromCurrencyId(currencyId));
+  const [name, env, ...extra] = input.toLowerCase().split(":");
+  if (env === undefined) return name;
+  if (!env || extra.length > 0) throw new UnknownNetworkError(`Unknown network "${input}"`);
+  return networkFromLegacy(name, env === "mainnet" ? "main" : env);
 }

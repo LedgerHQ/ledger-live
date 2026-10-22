@@ -22,7 +22,7 @@ const out = {} as unknown as CommandOutput;
 // throw before any pipeline/HTTP call, so no wallet/device wiring is required.
 const baseWithdrawArgs: EarnWithdrawArgs = {
   descriptor,
-  network: "ethereum:main",
+  network: "ethereum",
   finalize: false,
   dryRun: true,
   wallet,
@@ -66,7 +66,7 @@ describe("Solana adapter required-flag guard", () => {
 describe("earn family adapter deposit routing", () => {
   const baseDepositArgs: EarnDepositArgs = {
     descriptor,
-    network: "ethereum:main",
+    network: "ethereum",
     product: "the-product",
     amount: "100 USDC",
     dryRun: true,
@@ -89,7 +89,7 @@ describe("earn family adapter deposit routing", () => {
     expect(depositEvm).toHaveBeenCalledTimes(1);
     expect(depositEvm.mock.calls[0][0]).toMatchObject({
       descriptor,
-      network: "ethereum:main",
+      network: "ethereum",
       productId: "the-product",
       amount: "100 USDC",
       dryRun: true,
@@ -99,13 +99,13 @@ describe("earn family adapter deposit routing", () => {
   it("Solana: forwards the deposit through depositSolana with product mapped to validator", async () => {
     const depositSolana = spyOn(solStake, "depositSolana").mockResolvedValue(sentinel);
 
-    const result = await solanaEarnAdapter.deposit({ ...baseDepositArgs, network: "solana:main" });
+    const result = await solanaEarnAdapter.deposit({ ...baseDepositArgs, network: "solana" });
 
     expect(result).toBe(sentinel);
     expect(depositSolana).toHaveBeenCalledTimes(1);
     expect(depositSolana.mock.calls[0][0]).toMatchObject({
       descriptor,
-      network: "solana:main",
+      network: "solana",
       validator: "the-product",
       amount: "100 USDC",
       dryRun: true,

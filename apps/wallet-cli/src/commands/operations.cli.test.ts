@@ -101,7 +101,7 @@ describe("operations command — empty history", () => {
 
     const data = JSON.parse(stdout);
     expect(data.command).toBe("operations");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(Array.isArray(data.operations)).toBe(true);
     expect(data.operations.length).toBe(0);
   });

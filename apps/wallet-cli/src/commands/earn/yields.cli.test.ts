@@ -9,7 +9,7 @@ import { MOCK_ETH_DESCRIPTOR, ETH_DESCRIPTOR } from "../../testing/constants";
 // so the staging Figment host and the validators host resolve here too with no env overrides.
 
 const SOL_DESCRIPTOR =
-  "account:1:address:solana:main:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44h/501h/0h/0h";
+  "account:2:address:solana:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44h/501h/0h/0h";
 
 // A /v0/grow payload spanning both supported networks (ethereum native + token, solana) plus an
 // unsupported one (cosmos) used to assert the no-network filter drops what the CLI cannot act on.
@@ -269,7 +269,7 @@ describe("earn yields --network ethereum", () => {
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     const { data, yields } = parseYields(stdout);
     // The envelope carries the canonical `name:env` network (matches deposit/withdraw/positions).
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
 
     // Only the active provider is surfaced, with its provider id + discover deeplink.
     const provider = yields.find(y => y.providerId !== undefined);

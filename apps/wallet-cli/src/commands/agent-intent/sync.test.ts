@@ -303,7 +303,7 @@ describe("agent-intent sync", () => {
     pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 42 });
     mergeSyncedAccountsImpl = () => ({
       ...emptyReport,
-      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum" }],
     });
 
     await runSync();

@@ -134,7 +134,7 @@ describe("createAccountDataRouter", () => {
     it("splits the accounts between the sources first for each", async () => {
       const { source: evm, calls } = batchSource({
         id: sourceIdOf("evm"),
-        supports: account => account.network.name === "ethereum",
+        supports: account => account.network === "ethereum",
       });
       const fallback = singleSource("fallback");
       fallback.release();
@@ -154,7 +154,7 @@ describe("createAccountDataRouter", () => {
     it("fails only the account whose routing threw, not the reads of its tick", async () => {
       const { source } = batchSource({
         supports: account => {
-          if (account.network.name === "bitcoin") throw new Error("unknown network");
+          if (account.network === "bitcoin") throw new Error("unknown network");
           return true;
         },
       });
@@ -165,7 +165,7 @@ describe("createAccountDataRouter", () => {
     });
 
     it("rejects only the accounts no source can answer", async () => {
-      const { source } = batchSource({ supports: account => account.network.name === "ethereum" });
+      const { source } = batchSource({ supports: account => account.network === "ethereum" });
       const router = createAccountDataRouter([source]);
       const [served, orphan] = await readAll(router, [descriptorOf(0), descriptorOf(1, "bitcoin")]);
       expect(served.status).toBe("fulfilled");
@@ -201,7 +201,7 @@ describe("createAccountDataRouter", () => {
   describe("coalescing single reads", () => {
     it("answers each caller as soon as its own source answers", async () => {
       const slow = singleSource("slow", {
-        supports: account => account.network.name === "bitcoin",
+        supports: account => account.network === "bitcoin",
       });
       const router = createAccountDataRouter([
         slow.source,

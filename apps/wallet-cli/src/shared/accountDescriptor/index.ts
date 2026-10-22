@@ -8,15 +8,14 @@ export {
   AccountBasedDescriptorV1Schema,
   serializeV1,
   parseV1,
+  upgradeLegacyDescriptor,
 } from "./v1";
 
 export type { Network } from "./network";
 export {
   NetworkSchema,
   parseNetworkArg,
-  serializeNetwork,
   networkFromCurrencyId,
-  networkStringFromCurrencyId,
   currencyIdFromNetwork,
   UnknownNetworkError,
 } from "./network";
