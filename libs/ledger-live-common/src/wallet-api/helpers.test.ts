@@ -1,4 +1,4 @@
-import { getInitialURL } from "./helpers";
+import { getInitialURL, isBitcoinSignPsbtOptionsAllowed } from "./helpers";
 
 describe("wallet-api helpers", () => {
   describe("isWhitelistedDomain (via getInitialURL)", () => {
@@ -530,6 +530,26 @@ describe("wallet-api helpers", () => {
       const resultUrl = new URL(result);
       expect(resultUrl.searchParams.get("params")).toBe(JSON.stringify({ foo: "bar" }));
       expect(result).not.toContain("other");
+    });
+  });
+
+  describe("isBitcoinSignPsbtOptionsAllowed", () => {
+    it.each([
+      ["bitcoin", undefined, true],
+      ["bitcoin", {}, true],
+      ["bitcoin", { dependencies: [] }, true],
+      ["bitcoin", { hwAppId: "Hashi" }, true],
+      ["bitcoin_testnet", { hwAppId: "Hashi Test" }, true],
+      ["bitcoin", { hwAppId: "Hashi Test" }, false],
+      ["bitcoin_testnet", { hwAppId: "Hashi" }, false],
+      ["bitcoin", { hwAppId: "Jibberish" }, false],
+      ["bitcoin", { hwAppId: "hashi" }, false],
+      ["bitcoin", { hwAppId: "" }, false],
+      ["litecoin", { hwAppId: "Hashi" }, false],
+      ["bitcoin", { hwAppId: "Hashi", dependencies: ["Bitcoin"] }, false],
+      ["bitcoin", { dependencies: ["Bitcoin"] }, false],
+    ])("%s with %j is allowed: %s", (currencyId, options, expected) => {
+      expect(isBitcoinSignPsbtOptionsAllowed(currencyId, options)).toBe(expected);
     });
   });
 });

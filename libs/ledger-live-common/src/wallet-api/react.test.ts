@@ -8,7 +8,8 @@ import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
 import type { useWalletAPIServerOptions } from "./react";
-import { AccountPublicKeyUnavailable } from "../errors";
+import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
+import { AccountPublicKeyUnavailable, SignPsbtAppNotAllowed } from "../errors";
 import { accountGetPublicKeyLogic } from "./logic";
 import {
   getAccountIdFromWalletAccountId,
@@ -594,6 +595,82 @@ describe("account.getPublicKey handler", () => {
     renderHook(() => useWalletAPIServer(options));
 
     await expect(getHandler()({ accountId: "x" })).resolves.toBe("edpkTestKey");
+  });
+});
+
+type BitcoinSignPsbtOptions = Parameters<WalletHandlers["bitcoin.signPsbt"]>[0]["options"];
+
+describe("bitcoin.signPsbt handler", () => {
+  const getHandler = () => getRegisteredHandler("bitcoin.signPsbt");
+  const signedOperation = {
+    operation: {},
+    signature: "signed",
+    rawData: { psbtSigned: "cHNidP8signed" },
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  function renderWithSignRaw(currency = CRYPTO_CURRENCIES_REGISTRY["bitcoin_testnet"]) {
+    const account = createFixtureAccount("01", currency);
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    const uiTxSignRaw = jest.fn(({ onSuccess }) => {
+      onSuccess(signedOperation);
+    });
+    renderHook(() =>
+      useWalletAPIServer(
+        createDefaultOptions({
+          accounts: [account],
+          uiHook: { "transaction.signRaw": uiTxSignRaw },
+        }),
+      ),
+    );
+    return { account, uiTxSignRaw };
+  }
+
+  it("forwards the request options to the raw signing UI", async () => {
+    const { account, uiTxSignRaw } = renderWithSignRaw();
+    const options = { hwAppId: "Hashi Test" };
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", psbt: "cHNidP8", options }),
+    ).resolves.toEqual({ psbtSigned: "cHNidP8signed" });
+
+    expect(uiTxSignRaw).toHaveBeenCalledTimes(1);
+    expect(uiTxSignRaw).toHaveBeenCalledWith(
+      expect.objectContaining({ account, transaction: "cHNidP8", options }),
+    );
+  });
+
+  it("passes no options to the raw signing UI when the request has none", async () => {
+    const { uiTxSignRaw } = renderWithSignRaw();
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", psbt: "cHNidP8" }),
+    ).resolves.toEqual({ psbtSigned: "cHNidP8signed" });
+
+    expect(uiTxSignRaw).toHaveBeenCalledTimes(1);
+    expect(uiTxSignRaw.mock.calls[0][0].options).toBeUndefined();
+  });
+
+  it.each<[string, "bitcoin" | "bitcoin_testnet" | "litecoin", BitcoinSignPsbtOptions]>([
+    ["an unknown app", "bitcoin_testnet", { hwAppId: "Jibberish" }],
+    ["an app allowed on another currency", "bitcoin", { hwAppId: "Hashi Test" }],
+    ["an app on a currency without allowed apps", "litecoin", { hwAppId: "Hashi" }],
+    ["extra app dependencies", "bitcoin_testnet", { hwAppId: "Hashi Test", dependencies: ["X"] }],
+  ])("rejects %s before opening the raw signing UI", async (_case, currencyId, options) => {
+    const { uiTxSignRaw } = renderWithSignRaw(CRYPTO_CURRENCIES_REGISTRY[currencyId]);
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", psbt: "cHNidP8", options }),
+    ).rejects.toBeInstanceOf(SignPsbtAppNotAllowed);
+
+    expect(uiTxSignRaw).not.toHaveBeenCalled();
   });
 });
 

@@ -25,8 +25,8 @@ import {
   resolveWalletApiSpendableBalance,
   resolveWalletApiMaxSpendable,
 } from "./converters";
-import { AccountPublicKeyUnavailable } from "../errors";
-import { isWalletAPISupportedCurrency } from "./helpers";
+import { AccountPublicKeyUnavailable, SignPsbtAppNotAllowed } from "../errors";
+import { isBitcoinSignPsbtOptionsAllowed, isWalletAPISupportedCurrency } from "./helpers";
 import {
   WalletAPICurrency,
   AppManifest,
@@ -772,20 +772,30 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiTxSignRaw) return;
 
-    server.setHandler("bitcoin.signPsbt", async ({ accountId, psbt, broadcast }) => {
+    server.setHandler("bitcoin.signPsbt", async ({ accountId, psbt, broadcast, options }) => {
       const signedOperation = await signRawTransactionLogic(
         { manifest, accounts, tracking },
         accountId,
         psbt,
         (account, parentAccount, tx) =>
           new Promise((resolve, reject) => {
+            const currencyId = getMainAccount(account, parentAccount).currency.id;
+            if (!isBitcoinSignPsbtOptionsAllowed(currencyId, options)) {
+              tracking.signRawTransactionFail(manifest);
+              reject(
+                new SignPsbtAppNotAllowed(
+                  `Device app "${options?.hwAppId}" is not allowed for ${currencyId}`,
+                ),
+              );
+              return;
+            }
             let done = false;
             return uiTxSignRaw({
               account,
               parentAccount,
               transaction: tx,
               broadcast,
-              options: undefined,
+              options,
               onSuccess: signedOperation => {
                 if (done) return;
                 done = true;

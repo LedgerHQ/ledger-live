@@ -9,7 +9,7 @@ import type {
   WalletAPICryptoCurrency,
   AppManifest,
 } from "./types";
-import { WALLET_API_FAMILIES } from "./constants";
+import { BITCOIN_SIGN_PSBT_ALLOWED_APPS, WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
 import { isSameDomain } from "./manifestDomainUtils";
 
@@ -24,6 +24,20 @@ export function isWalletAPISupportedCurrency(
     return includes(WALLET_API_FAMILIES, getCryptoCurrencyById(currency.parentCurrencyId).family);
   }
   return false;
+}
+
+/**
+ * Whether `bitcoin.signPsbt` may sign with the requested options on an account of `currencyId`.
+ * No `hwAppId` keeps the default app. A named app must be allowed for that currency, and extra
+ * app dependencies are not accepted.
+ */
+export function isBitcoinSignPsbtOptionsAllowed(
+  currencyId: string,
+  options: { hwAppId?: string; dependencies?: string[] } | undefined,
+): boolean {
+  if (options?.dependencies?.length) return false;
+  if (options?.hwAppId === undefined) return true;
+  return BITCOIN_SIGN_PSBT_ALLOWED_APPS[currencyId]?.includes(options.hwAppId) ?? false;
 }
 
 export function isWalletAPICryptoCurrency(
