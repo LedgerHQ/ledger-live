@@ -54,10 +54,10 @@ function renderAccount(account: Account) {
 }
 
 describe("AccountDetail transactions", () => {
-  it("lists the 3 latest operations of the account and its tokens", () => {
+  it("lists the 3 latest operations of the account and its tokens", async () => {
     renderAccount(ethAccount);
 
-    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.transactions);
+    const section = await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.transactions);
     expect(within(section).getByText("Transactions")).toBeVisible();
     expect(within(section).getAllByTestId(OPERATIONS_HISTORY_TEST_IDS.listItem)).toHaveLength(3);
   });

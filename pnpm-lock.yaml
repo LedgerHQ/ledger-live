@@ -1904,6 +1904,9 @@ importers:
       '@features/flow-account-detail':
         specifier: workspace:^
         version: link:../../features/flow/account-detail
+      '@features/flow-account-detail-hero':
+        specifier: workspace:^
+        version: link:../../features/flow/account-detail-hero
       '@features/flow-account-detail-settings':
         specifier: workspace:^
         version: link:../../features/flow/account-detail-settings
@@ -2048,6 +2051,9 @@ importers:
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
+      '@features/platform-quick-actions':
+        specifier: workspace:^
+        version: link:../../features/platform/quick-actions
       '@features/platform-style':
         specifier: workspace:^
         version: link:../../features/platform/style

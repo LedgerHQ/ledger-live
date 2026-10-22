@@ -37,13 +37,15 @@ function resolveWalletActions({
 function resolveDesktopCurrencyActions({
   isBuyAvailable,
   isSellAvailable,
+  isEarnAvailable,
   hasFunds,
 }: CurrencyQuickActionsInputs): readonly QuickAction[] {
   return [
     active("receive"),
+    activeIf("send", hasFunds),
     ...(isBuyAvailable ? [active("buy")] : []),
     activeIf("sell", isSellAvailable && hasFunds),
-    activeIf("send", hasFunds),
+    ...(isEarnAvailable ? [activeIf("earn", hasFunds)] : []),
   ];
 }
 
@@ -68,7 +70,16 @@ function resolveMobileCurrencyActions({
   ];
 }
 
+function resolveMobileAccountActions(inputs: CurrencyQuickActionsInputs): readonly QuickAction[] {
+  if (inputs.hasFunds) return resolveMobileCurrencyActions(inputs);
+  if (!inputs.isCurrencySupported) return [active("transfer")];
+  return [active("transfer"), ...(inputs.isBuyAvailable ? [active("buy")] : [])];
+}
+
 function resolveCurrencyActions(inputs: CurrencyQuickActionsInputs): readonly QuickAction[] {
+  if (inputs.platform === "mobile" && inputs.scope === "account") {
+    return resolveMobileAccountActions(inputs);
+  }
   if (inputs.platform === "mobile") return resolveMobileCurrencyActions(inputs);
   if (!inputs.isCurrencySupported) return [];
   return resolveDesktopCurrencyActions(inputs);
@@ -77,7 +88,7 @@ function resolveCurrencyActions(inputs: CurrencyQuickActionsInputs): readonly Qu
 /**
  * Visible quick actions, in display order. A hidden action is absent; a shown but disabled one is "inactive".
  * Wallet and asset scopes reproduce the existing Portfolio and Asset Detail bars; the account scope applies
- * the asset rules to a single account (its funds, its currency).
+ * the asset rules to a single account (its funds, its currency), except on mobile where an account without funds keeps only Transfer and Buy.
  */
 export function resolveQuickActions(inputs: QuickActionsInputs): readonly QuickAction[] {
   if (inputs.scope === "wallet") return resolveWalletActions(inputs);

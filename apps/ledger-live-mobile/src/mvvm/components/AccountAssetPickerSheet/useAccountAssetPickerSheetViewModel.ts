@@ -2,6 +2,8 @@ import { useCallback, useMemo } from "react";
 import { usePrecomputedAssetListData } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import type { AssetListItemViewModelResult } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import type { AccountAsset } from "LLM/utils/accountAssets";
+import { sortAssetsByValue } from "@features/platform-quick-actions";
+import { useCalculateCountervalueCallback } from "~/actions/general";
 import type { Asset } from "~/types/asset";
 
 export type AccountAssetPickerRow = Readonly<{
@@ -24,7 +26,16 @@ export function useAccountAssetPickerSheetViewModel(
   assets: readonly AccountAsset[],
   onSelect: (asset: AccountAsset) => void,
 ): AccountAssetPickerSheetViewModel {
-  const listAssets = useMemo(() => assets.map(toListAsset), [assets]);
+  const calculateCountervalue = useCalculateCountervalueCallback();
+  const listAssets = useMemo(
+    () =>
+      sortAssetsByValue(
+        assets,
+        ({ currency, account }) =>
+          calculateCountervalue(currency, account.balance)?.toNumber() ?? 0,
+      ).map(toListAsset),
+    [assets, calculateCountervalue],
+  );
   const precomputed = usePrecomputedAssetListData(listAssets);
 
   const rows = useMemo(

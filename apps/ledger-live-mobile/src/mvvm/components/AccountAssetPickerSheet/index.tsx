@@ -20,11 +20,13 @@ export function AccountAssetPickerSheet({ isOpen, assets, onSelect, onClose, tes
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
-      enableDynamicSizing
-      contentHasBottomSpace
+      snapPoints="fullWithOffset"
+      enableHandlePanningGesture={false}
       testID={testID}
     >
-      <AccountAssetPickerSheetContent assets={assets} onSelect={onSelect} testID={testID} />
+      {assets.length > 0 ? (
+        <AccountAssetPickerSheetContent assets={assets} onSelect={onSelect} testID={testID} />
+      ) : null}
     </QueuedBottomSheet>
   );
 }
