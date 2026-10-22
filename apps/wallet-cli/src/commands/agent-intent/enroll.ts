@@ -38,10 +38,8 @@ import {
 } from "../../agent-intent/detach";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
 
-/** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
- * right before writing — a concurrent enroll of the same profile id could pass the first check and
- * still lose the race to the second. */
-function assertProfileAvailable(session: Session, profileId: string): void {
+/** The session part of `assertProfileAvailable`, which `--detach` checks without the keychain. */
+function assertProfileNotInSession(session: Session, profileId: string): void {
   if (session.getAgentIntentProfile(profileId)) {
     throw new Error(
       `Agent Intent profile "${profileId}" already exists. Choose a different --profile id, or ` +
@@ -54,6 +52,13 @@ function assertProfileAvailable(session: Session, profileId: string): void {
         "it in session.yaml (or choose a different --profile id) before re-enrolling.",
     );
   }
+}
+
+/** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
+ * right before writing — a concurrent enroll of the same profile id could pass the first check and
+ * still lose the race to the second. */
+function assertProfileAvailable(session: Session, profileId: string): void {
+  assertProfileNotInSession(session, profileId);
   if (hasAgentIntentSecretKey(profileId)) {
     throw new Error(
       `A keychain entry for profile "${profileId}" already exists but is not recorded in the ` +
@@ -94,8 +99,10 @@ async function startDetachedEnroll(
   // The start lock keeps a concurrent --detach for this profile from passing the check, then
   // truncating and sharing the log, until this listener holds its own lock or has failed.
   const { child, first } = await withEnrollStartLock(profileId, async () => {
-    // Checked before the spawn truncates the log a running listener still writes to.
+    // Checked before the spawn truncates the log: a running listener still writes to it, and an
+    // existing profile's log is the only record of how its enrollment ended.
     assertNoLiveEnrollListener(profileId);
+    assertProfileNotInSession(await Session.read(), profileId);
     const started = spawnDetached(selfCommand(args), logPath);
     return { child: started, first: await readFirstLogJsonLine(started, logPath) };
   });
