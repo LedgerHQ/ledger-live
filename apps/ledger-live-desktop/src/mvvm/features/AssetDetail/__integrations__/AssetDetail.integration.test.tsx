@@ -1153,8 +1153,8 @@ describe("AssetDetail integration", () => {
   });
 
   describe("PnL section", () => {
-    const pnlEnabled = withFlagOverrides({
-      lwdWallet40: { enabled: true, params: { pnl: true } },
+    const wallet40Enabled = withFlagOverrides({
+      lwdWallet40: { enabled: true },
     });
 
     const setupBitcoinAsset = (accountId: string) => {
@@ -1165,23 +1165,11 @@ describe("AssetDetail integration", () => {
       return { account };
     };
 
-    it("does not render the PnL cards when the feature flag is off", async () => {
-      const { account } = setupBitcoinAsset("asset-detail-pnl-flag-off");
-
-      renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { accounts: [account], settings: AFTER_ONBOARDING_STATE },
-      });
-
-      await waitFor(() => expectHeader());
-      expect(screen.queryByRole("button", { name: /unrealised return/i })).not.toBeInTheDocument();
-      expect(screen.queryByText("Average entry price")).not.toBeInTheDocument();
-    });
-
-    it("renders both the unrealised return and average entry price cards when the feature flag is on", async () => {
+    it("renders both the unrealised return and average entry price cards", async () => {
       const { account } = setupBitcoinAsset("asset-detail-pnl-flag-on");
 
       renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+        initialState: { ...wallet40Enabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
       });
 
       await waitFor(() => {
@@ -1194,7 +1182,7 @@ describe("AssetDetail integration", () => {
       const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-open");
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+        initialState: { ...wallet40Enabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
       });
 
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -1213,7 +1201,7 @@ describe("AssetDetail integration", () => {
       const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-close");
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+        initialState: { ...wallet40Enabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
       });
 
       const card = await screen.findByRole("button", { name: /unrealised return/i });

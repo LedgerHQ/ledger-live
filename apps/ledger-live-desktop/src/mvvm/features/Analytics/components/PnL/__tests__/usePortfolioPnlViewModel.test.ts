@@ -12,8 +12,7 @@ const mockedUsePortfolioPnL = jest.mocked(usePortfolioPnL);
 
 const ZERO = new BigNumber(0);
 
-const flagsOn = withFlagOverrides({ lwdWallet40: { enabled: true, params: { pnl: true } } });
-const flagsOff = withFlagOverrides({ lwdWallet40: { enabled: false } });
+const flagsOn = withFlagOverrides({ lwdWallet40: { enabled: true } });
 
 const stateWithAccounts = { accounts: [BTC_ACCOUNT] };
 
@@ -36,16 +35,11 @@ beforeEach(() => {
 });
 
 describe("usePortfolioPnlViewModel", () => {
-  it("derives shouldDisplayPnl from the wallet feature flag", () => {
-    const on = renderPortfolioPnlViewModel({
+  it("shows the section when there are accounts", () => {
+    const { result } = renderPortfolioPnlViewModel({
       initialState: { ...flagsOn, ...stateWithAccounts },
     });
-    expect(on.result.current.shouldDisplayPnl).toBe(true);
-
-    const off = renderPortfolioPnlViewModel({
-      initialState: { ...flagsOff, ...stateWithAccounts },
-    });
-    expect(off.result.current.shouldDisplayPnl).toBe(false);
+    expect(result.current.shouldDisplayPnl).toBe(true);
   });
 
   it("hides the section when there are no accounts", () => {

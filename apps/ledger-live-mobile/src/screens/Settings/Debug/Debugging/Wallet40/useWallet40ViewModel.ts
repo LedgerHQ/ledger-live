@@ -13,7 +13,6 @@ export const WALLET_40_PARAMS = [
   { key: "aggregatedAssets", label: "Aggregated Assets" },
   { key: "myWallet", label: "My Wallet" },
   { key: "assetDiscoverability", label: "Asset Discoverability" },
-  { key: "pnl", label: "PnL" },
   { key: "earnUpselling", label: "Earn Upselling" },
   { key: "earnSimulator", label: "Earn Simulator" },
 ] as const;

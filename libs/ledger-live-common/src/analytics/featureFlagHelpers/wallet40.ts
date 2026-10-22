@@ -24,7 +24,6 @@ export const getWallet40Attributes = (
     myWallet: wallet40FeatureFlag?.params?.myWallet ?? false,
     assetDiscoverability: wallet40FeatureFlag?.params?.assetDiscoverability ?? false,
     aggregatedAssets: wallet40FeatureFlag?.params?.aggregatedAssets ?? false,
-    pnl: wallet40FeatureFlag?.params?.pnl ?? false,
     earnUpselling: wallet40FeatureFlag?.params?.earnUpselling ?? false,
     earnSimulator: wallet40FeatureFlag?.params?.earnSimulator ?? false,
   };
