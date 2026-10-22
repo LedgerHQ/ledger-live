@@ -181,12 +181,14 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      # Older commits (e.g. the LIVE-36190 pair) declare two unused mise plugins as "owner/repo",
-      # which the mise installed by setup-caches@develop reads as local folders and fails on.
-      # Their tools are commented out, so the section is dropped; tool versions stay the commit's own.
-      - name: Drop unused mise plugins (older commits)
+      # Older commits (e.g. the LIVE-36190 pair) don't install with the mise of setup-caches@develop:
+      # - two unused plugins declared as "owner/repo" are read as local folders (their tools are commented out);
+      # - the npm pin sometimes fails on a fresh runner ("requires configured install dependency node@…,
+      #   but its selected version is not installed"). Develop dropped it; installs use pnpm.
+      # Both are removed; the other tool versions stay the commit's own.
+      - name: Adapt mise.toml of older commits
         run: |
-          awk '/^\[plugins\]/{skip=1; next} /^\[/{skip=0} !skip' mise.toml > "$RUNNER_TEMP/mise.toml"
+          awk '/^\[/{section=$0} section=="[plugins]"{next} section=="[tools]" && /^npm *=/{next} {print}' mise.toml > "$RUNNER_TEMP/mise.toml"
           if ! cmp -s mise.toml "$RUNNER_TEMP/mise.toml"; then
             diff mise.toml "$RUNNER_TEMP/mise.toml" || true
             cp "$RUNNER_TEMP/mise.toml" mise.toml
@@ -285,12 +287,14 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      # Older commits (e.g. the LIVE-36190 pair) declare two unused mise plugins as "owner/repo",
-      # which the mise installed by setup-caches@develop reads as local folders and fails on.
-      # Their tools are commented out, so the section is dropped; tool versions stay the commit's own.
-      - name: Drop unused mise plugins (older commits)
+      # Older commits (e.g. the LIVE-36190 pair) don't install with the mise of setup-caches@develop:
+      # - two unused plugins declared as "owner/repo" are read as local folders (their tools are commented out);
+      # - the npm pin sometimes fails on a fresh runner ("requires configured install dependency node@…,
+      #   but its selected version is not installed"). Develop dropped it; installs use pnpm.
+      # Both are removed; the other tool versions stay the commit's own.
+      - name: Adapt mise.toml of older commits
         run: |
-          awk '/^\[plugins\]/{skip=1; next} /^\[/{skip=0} !skip' mise.toml > "$RUNNER_TEMP/mise.toml"
+          awk '/^\[/{section=$0} section=="[plugins]"{next} section=="[tools]" && /^npm *=/{next} {print}' mise.toml > "$RUNNER_TEMP/mise.toml"
           if ! cmp -s mise.toml "$RUNNER_TEMP/mise.toml"; then
             diff mise.toml "$RUNNER_TEMP/mise.toml" || true
             cp "$RUNNER_TEMP/mise.toml" mise.toml
