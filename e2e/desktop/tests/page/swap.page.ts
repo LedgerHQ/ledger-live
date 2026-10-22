@@ -173,6 +173,7 @@ export class SwapPage extends WebViewAppPage {
   async checkElementsPresenceOnSwapApprovalStep() {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
+    await expect(webview.getByTestId(this.executeSwapBtn)).toBeVisible();
     await this.softExpect(async soft => {
       await soft(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
       await soft(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
