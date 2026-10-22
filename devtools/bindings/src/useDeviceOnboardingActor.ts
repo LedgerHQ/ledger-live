@@ -17,7 +17,7 @@ import {
   type HostToolEvent,
   type OnboardingEvent,
 } from "@features/platform-device-onboarding";
-import { createActor, type ActorRefFrom } from "xstate";
+import { createActor, waitFor, type ActorRefFrom } from "xstate";
 import type { DeviceOnboardingPorts } from "./ports";
 
 type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
@@ -164,15 +164,22 @@ export function useDeviceOnboardingActor({
     setSessionReady(false);
   }, [stopActor]);
 
-  const resetActor = useCallback(() => {
-    stopActor();
+  /** Quits the run like the user would, so the device leaves its screens, then clears the tool. */
+  const resetActor = useCallback(async () => {
+    const current = actorRef.current;
+    actorRef.current = null;
+    if (current) {
+      current.send({ type: "QUIT" });
+      await waitFor(current, s => s.status === "done", { timeout: 3_000 }).catch(() => {});
+      current.stop();
+    }
     previousSnapshotRef.current = null;
     lastLoggedStep.current = null;
     setSnapshot(null);
     setSessionReady(false);
     setLog([]);
     setExit(null);
-  }, [stopActor]);
+  }, []);
 
   const startActor = useCallback(
     (input: StartOnboardingActorInput, hooks?: { beforeStart?: () => void }) => {
@@ -185,8 +192,11 @@ export function useDeviceOnboardingActor({
       const run: { actor: OnboardingActor | null } = { actor: null };
       const machine = deviceOnboardingMachine.provide({
         actions: {
-          leaveOnboarding: ({ context }, params) =>
-            leaveOnboardingRef.current?.(params.reason, context),
+          // A released run quits for the device only: the host stays where it is.
+          leaveOnboarding: ({ context }, params) => {
+            if (actorRef.current !== run.actor) return;
+            leaveOnboardingRef.current?.(params.reason, context);
+          },
         },
       });
       const actor = createActor(machine, {

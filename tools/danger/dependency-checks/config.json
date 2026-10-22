@@ -88,9 +88,6 @@
         "@bitcoinerlab/secp256k1": {
           "reason": "bitcoinjs `ecc` adapter. Depends on @noble/curves, no curve arithmetic of its own."
         },
-        "@dfinity/identity-secp256k1": {
-          "reason": "@dfinity signing identity. Depends on @noble/curves, no curve arithmetic of its own."
-        },
         "elliptic": {
           "tolerated": true,
           "reason": "Legacy pure-JS curve library reached only through third-party SDKs, and the fallback secp256k1 uses when its bindings are missing. Pinned to 6.6.1 by a root pnpm override.",

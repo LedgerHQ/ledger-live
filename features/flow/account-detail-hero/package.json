@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./native": "./src/nativeExports.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -28,15 +29,19 @@
   },
   "dependencies": {
     "@features/platform-quick-actions": "workspace:*",
-    "@ledgerhq/lumen-utils-shared": "catalog:"
+    "@ledgerhq/lumen-utils-shared": "catalog:",
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -46,9 +51,21 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:"
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   }
 }

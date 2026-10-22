@@ -188,14 +188,15 @@ describe("the on-device waiting screen", () => {
     expectChecksPassed(actor);
   });
 
-  it("skips leaving a screen it never entered", async () => {
-    const { fake } = await start({
+  it("still tries to leave a screen the device refused to enter", async () => {
+    const { actor, fake } = await start({
       osVersion: [os(unseeded)],
       earlyCheck: [refusedToggle("6982")],
       ...passingChecks,
     });
 
-    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter]);
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expectChecksPassed(actor);
   });
 
   it("is dismissed as soon as the checks pass, rather than when the user taps", async () => {
@@ -267,6 +268,17 @@ describe("the on-device waiting screen", () => {
       genuineCheck: [deviceRefusal],
     });
 
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
+  });
+
+  it("is dismissed on quit while it is still being entered", async () => {
+    const { actor, fake } = await launch({ osVersion: [os(unseeded)] });
+
+    actor.send({ type: "CONTINUE" });
     actor.send({ type: "QUIT" });
     await settle();
 
@@ -846,13 +858,13 @@ describe("the end of the checks", () => {
     actor.stop();
   });
 
-  it("completes a device that was already onboarded on entry without offering Ledger Sync", async () => {
+  it("offers Ledger Sync to a device that was already onboarded on entry", async () => {
     const { actor } = await start(
       { osVersion: [os(seeded)], ...passingChecks },
       { offerSync: true },
     );
 
-    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
   });
 
   it("ends an already onboarded device without the offer when sync is not on the table", async () => {
@@ -1027,13 +1039,10 @@ describe("device setup", () => {
   it.each([RecoveryKeyStatus.Choice, RecoveryKeyStatus.Running, RecoveryKeyStatus.Naming])(
     "sends an already onboarded device to the success exit while its Recovery Key flag is %s",
     async recoveryKeyStatus => {
-      const { actor } = await start(
-        {
-          osVersion: [os({ ...seeded, recoveryKeyStatus })],
-          ...passingChecks,
-        },
-        { offerSync: true },
-      );
+      const { actor } = await start({
+        osVersion: [os({ ...seeded, recoveryKeyStatus })],
+        ...passingChecks,
+      });
 
       expect(exitOf(actor)).toMatchObject({ reason: "completed" });
     },
@@ -1304,10 +1313,7 @@ describe("device setup", () => {
   });
 
   it("reports its session when an already onboarded device completes", async () => {
-    const { actor } = await launch(
-      { osVersion: [os(seeded)], ...passingChecks },
-      { offerSync: true },
-    );
+    const { actor } = await launch({ osVersion: [os(seeded)], ...passingChecks });
 
     actor.send({ type: "CONTINUE" });
     await settle();

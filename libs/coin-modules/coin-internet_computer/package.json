@@ -92,12 +92,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@dfinity/agent": "2.4.1",
-    "@dfinity/candid": "2.4.1",
-    "@dfinity/identity-secp256k1": "2.4.1",
-    "@dfinity/ledger-icp": "2.6.13",
-    "@dfinity/principal": "2.4.1",
-    "@dfinity/utils": "2.14.0",
+    "@icp-sdk/core": "6.1.1",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/logs": "catalog:",

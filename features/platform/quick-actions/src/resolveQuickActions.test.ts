@@ -90,17 +90,29 @@ describe("resolveQuickActions", () => {
     });
 
     describe("desktop", () => {
-      it("Receive, Buy, Sell, Send when everything is available", () => {
+      it("Receive, Send, Buy, Sell, Earn when everything is available", () => {
         const actions = resolveQuickActions(currency({ scope }));
 
-        expect(ids(actions)).toEqual(["receive", "buy", "sell", "send"]);
+        expect(ids(actions)).toEqual(["receive", "send", "buy", "sell", "earn"]);
         expect(actions.every(({ state }) => state === "active")).toBe(true);
       });
 
       it("hides Buy when the currency is not on the ramp", () => {
         const actions = resolveQuickActions(currency({ scope, isBuyAvailable: false }));
 
-        expect(ids(actions)).toEqual(["receive", "sell", "send"]);
+        expect(ids(actions)).toEqual(["receive", "send", "sell", "earn"]);
+      });
+
+      it("hides Earn when staking does not support the currency", () => {
+        const actions = resolveQuickActions(currency({ scope, isEarnAvailable: false }));
+
+        expect(ids(actions)).toEqual(["receive", "send", "buy", "sell"]);
+      });
+
+      it("keeps Earn shown but inactive without funds", () => {
+        const actions = resolveQuickActions(currency({ scope, hasFunds: false }));
+
+        expect(stateOf(actions, "earn")).toBe("inactive");
       });
 
       it("keeps Sell inactive when the currency is not on the ramp", () => {
@@ -118,37 +130,56 @@ describe("resolveQuickActions", () => {
         expect(stateOf(actions, "send")).toBe("inactive");
       });
     });
+  });
+  describe("asset scope on mobile", () => {
+    const mobile = (overrides: Partial<CurrencyQuickActionsInputs> = {}) =>
+      resolveQuickActions(currency({ scope: "asset", platform: "mobile", ...overrides }));
 
-    describe("mobile", () => {
-      const mobile = (overrides: Partial<CurrencyQuickActionsInputs> = {}) =>
-        resolveQuickActions(currency({ scope, platform: "mobile", ...overrides }));
+    it("Transfer, Buy, Swap, Sell, Earn when everything is available", () => {
+      expect(ids(mobile())).toEqual(["transfer", "buy", "swap", "sell", "earn"]);
+    });
 
-      it("Transfer, Buy, Swap, Sell, Earn when everything is available", () => {
-        expect(ids(mobile())).toEqual(["transfer", "buy", "swap", "sell", "earn"]);
+    it("hides Transfer without accounts", () => {
+      expect(ids(mobile({ hasAccounts: false }))).not.toContain("transfer");
+    });
+
+    it("hides Buy, Swap and Earn when unavailable", () => {
+      const actions = mobile({
+        isBuyAvailable: false,
+        isSwapAvailable: false,
+        isEarnAvailable: false,
       });
 
-      it("hides Transfer without accounts", () => {
-        expect(ids(mobile({ hasAccounts: false }))).not.toContain("transfer");
-      });
+      expect(ids(actions)).toEqual(["transfer", "sell"]);
+    });
 
-      it("hides Buy, Swap and Earn when unavailable", () => {
-        const actions = mobile({
-          isBuyAvailable: false,
-          isSwapAvailable: false,
-          isEarnAvailable: false,
-        });
+    it("hides Sell without funds or when not on the ramp", () => {
+      expect(ids(mobile({ hasFunds: false }))).not.toContain("sell");
+      expect(ids(mobile({ isSellAvailable: false }))).not.toContain("sell");
+    });
 
-        expect(ids(actions)).toEqual(["transfer", "sell"]);
-      });
+    it("shows Earn without funds", () => {
+      expect(ids(mobile({ hasFunds: false }))).toContain("earn");
+    });
+  });
 
-      it("hides Sell without funds or when not on the ramp", () => {
-        expect(ids(mobile({ hasFunds: false }))).not.toContain("sell");
-        expect(ids(mobile({ isSellAvailable: false }))).not.toContain("sell");
-      });
+  describe("account scope on mobile", () => {
+    const mobile = (overrides: Partial<CurrencyQuickActionsInputs> = {}) =>
+      resolveQuickActions(currency({ scope: "account", platform: "mobile", ...overrides }));
 
-      it("shows Earn without funds", () => {
-        expect(ids(mobile({ hasFunds: false }))).toContain("earn");
-      });
+    it("Transfer, Buy, Swap, Sell, Earn when funded and everything is available", () => {
+      expect(ids(mobile())).toEqual(["transfer", "buy", "swap", "sell", "earn"]);
+    });
+
+    it("keeps only Transfer and Buy without funds", () => {
+      expect(mobile({ hasFunds: false })).toEqual([
+        { id: "transfer", state: "active" },
+        { id: "buy", state: "active" },
+      ]);
+    });
+
+    it("keeps only Transfer without funds when Buy is unavailable", () => {
+      expect(ids(mobile({ hasFunds: false, isBuyAvailable: false }))).toEqual(["transfer"]);
     });
   });
 });

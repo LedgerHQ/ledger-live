@@ -104,6 +104,32 @@ describe("usePageViewModel", () => {
     expect(result.current.shouldRenderRightPanel).toBe(true);
   });
 
+  it("hides the swap console on asset detail routes when the A/B test disables it", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+        ptxSwapLiveAppOnPortfolio: { enabled: true },
+        lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+      }),
+    });
+
+    expect(result.current.shouldRenderRightPanel).toBe(false);
+    expect(result.current.rightPanelVariant).toBeUndefined();
+  });
+
+  it("keeps the swap console outside asset detail routes when the A/B test disables it", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/analytics"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        ...wallet40WithRightPanelFlags,
+        lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+      }),
+    });
+
+    expect(result.current.rightPanelVariant).toBe("swap");
+  });
+
   it("hides the right panel on /asset routes when aggregated assets is disabled", () => {
     mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
     const { result } = renderHook(() => usePageViewModel(), {

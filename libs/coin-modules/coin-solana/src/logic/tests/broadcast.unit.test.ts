@@ -132,6 +132,60 @@ describe("broadcast", () => {
     expect(sendRawTransaction).not.toHaveBeenCalled();
   });
 
+  it.each<{ label: string; err: TransactionError }>([
+    { label: "InsufficientFundsForRent", err: { InsufficientFundsForRent: { account_index: 0 } } },
+    { label: "InsufficientFundsForFee", err: "InsufficientFundsForFee" },
+    { label: "AccountInUse", err: "AccountInUse" },
+    { label: "AlreadyProcessed", err: "AlreadyProcessed" },
+    { label: "BlockhashNotFound", err: "BlockhashNotFound" },
+  ])("attaches no context fields on $label", async ({ err }) => {
+    const { api } = buildApi({ simulateValues: [{ err }] });
+
+    const error = await broadcast(api, txBase64).catch(e => e);
+    expect(error).not.toHaveProperty("err");
+    expect(error).not.toHaveProperty("instructionIndex");
+  });
+
+  it.each<{ label: string; err: TransactionError; message: string }>([
+    {
+      label: "Custom=17 (token account frozen)",
+      err: { InstructionError: [2, { Custom: 17 }] },
+      message: "Token account frozen",
+    },
+    {
+      label: "Custom=1 (token insufficient funds)",
+      err: { InstructionError: [2, { Custom: 1 }] },
+      message: "Insufficient funds",
+    },
+    {
+      label: "InsufficientFunds",
+      err: { InstructionError: [2, "InsufficientFunds"] },
+      message: "Insufficient funds",
+    },
+    {
+      label: "fallback",
+      err: { InstructionError: [2, { Custom: 9999 }] },
+      message: "Transaction simulation failed",
+    },
+  ])("attaches err and instructionIndex on InstructionError $label", async ({ err, message }) => {
+    const { api } = buildApi({ simulateValues: [{ err }] });
+
+    const error = await broadcast(api, txBase64).catch(e => e);
+    expect(error).toBeInstanceOf(InvalidTransactionError);
+    expect(error.message).toBe(message);
+    expect(error).toMatchObject({ err, instructionIndex: 2 });
+  });
+
+  it("attaches err without instructionIndex on unknown top-level err", async () => {
+    const err = { SomethingNew: { foo: 1 } } as unknown as TransactionError;
+    const { api } = buildApi({ simulateValues: [{ err }] });
+
+    const error = await broadcast(api, txBase64).catch(e => e);
+    expect(error.message).toBe("Transaction simulation failed");
+    expect(error).toMatchObject({ err });
+    expect(error).not.toHaveProperty("instructionIndex");
+  });
+
   it.each([
     ["a timeout", () => new TransactionExpiredTimeoutError("sig", 30)],
     ["an exceeded block height", () => new TransactionExpiredBlockheightExceededError("sig")],

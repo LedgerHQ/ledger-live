@@ -18,7 +18,7 @@ permissions:
 env:
   COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo"
   # The coin testers that run against coin-sandbox
-  COIN_SANDBOX_CURRENCIES: '["solana"]'
+  COIN_SANDBOX_CURRENCIES: '["solana", "tron"]'
 
 jobs:
   is-affected:

@@ -1,5 +1,5 @@
 import { getMainAccount, shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import invariant from "invariant";
 import React, { useCallback } from "react";

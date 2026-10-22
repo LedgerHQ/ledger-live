@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
-import { InfoState } from "@shared/ui-info-state/native";
+import { InfoState } from "@shared/ui-info-state";
 import type { RemoveAccountContentViewProps } from "./types";
 
 export function RemoveAccountContentView({

@@ -10,7 +10,7 @@ import {
   getAddressExplorer,
   getDefaultExplorerView,
   getTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
 import {
   isFinalizablePosition,
   useBaker,

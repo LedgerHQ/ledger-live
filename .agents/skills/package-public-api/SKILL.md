@@ -32,6 +32,14 @@ Enforced by `nx run <project>:lint:structure`
 ([the plugin](../../../tools/nx-plugins/enforce-package-structure/)), on every `index.*` under
 `src/`, at any depth.
 
+The rule follows a file's role, not its name. It follows every relative `export *` from a barrel,
+through any number of files, resolved as the web and native bundlers do, and it reads every
+source file named in `package.json#exports`, under any condition. Test support entries (a subpath
+segment starting with `test` or `mock`) are left out. Such a module may declare
+anything, but it re-exports like a barrel: `export *` from a relative file and an optional default
+re-export only. So `export * from "./exports"` in the index with the sorting or the proxy in
+`exports.ts` fails the same way (`hidden-barrel`, `cross-package-reexport`, …).
+
 ## Where private code goes
 
 Three recognised forms, usable at any depth:
@@ -84,7 +92,9 @@ wrapping in a named file rather than the barrel is the cheapest way to stay conf
 instead carries a **temporary** `skip` in
 [`exceptions.js`](../../../tools/nx-plugins/enforce-package-structure/exceptions.js). Entries there
 are team decisions with an exit condition, not a way around a failing check — never add one to make
-your own package pass.
+your own package pass. Its `FILE_EXCEPTIONS` lists the reached modules that held violations when
+the rule started following `export *`. That list only shrinks: a test fails on an entry whose file
+is gone or clean, so fixing a file means deleting its entry.
 
 ## Traps
 
@@ -119,7 +129,8 @@ See [structure-flow](../structure-flow/SKILL.md) for where the package itself be
 
 Refuse and point here when you see:
 
-- a named re-export (`export { a, b } from "./x"`) in any `index.*`
+- a named re-export (`export { a, b } from "./x"`) in any `index.*`, or in a file it reaches
+  through `export *`, or in a file named in `package.json#exports`
 - an `import`, a declaration or a local `export default` in any `index.*`
 - `export * as ns from` — namespacing is still sorting
 - a barrel re-exporting `internals`, or re-exporting another workspace package

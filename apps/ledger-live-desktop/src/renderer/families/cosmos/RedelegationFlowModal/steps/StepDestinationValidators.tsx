@@ -23,13 +23,10 @@ export default function StepValidators({
 
   const updateDestinationValidator = useCallback(
     ({ address }: { address: string }) => {
-      updateRedelegation({
-        ...transaction,
-        dstValAddress: address,
-      });
+      updateRedelegation({ dstValAddress: address });
       transitionTo("validators");
     },
-    [updateRedelegation, transaction, transitionTo],
+    [updateRedelegation, transitionTo],
   );
   return (
     <ValidatorField

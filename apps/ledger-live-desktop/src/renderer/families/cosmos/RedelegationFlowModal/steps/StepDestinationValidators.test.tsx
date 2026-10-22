@@ -5,10 +5,11 @@ import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/
 import StepDestinationValidators from "./StepDestinationValidators";
 import type { StepProps } from "../types";
 
+const mockUpdateTransaction = jest.fn((tx: object, patch: object) => ({ ...tx, ...patch }));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({
     createTransaction: () => ({}),
-    updateTransaction: (tx: object, patch: object) => ({ ...tx, ...patch }),
+    updateTransaction: mockUpdateTransaction,
   }),
 }));
 
@@ -45,6 +46,9 @@ describe("Cosmos Redelegation StepDestinationValidators", () => {
     const updater = (props.onUpdateTransaction as jest.Mock).mock.calls[0][0];
     const result = updater(props.transaction as Transaction);
     expect(result.dstValAddress).toBe("validatorB");
+    expect(mockUpdateTransaction).toHaveBeenCalledWith(props.transaction, {
+      dstValAddress: "validatorB",
+    });
     expect(props.transitionTo).toHaveBeenCalledWith("validators");
   });
 });

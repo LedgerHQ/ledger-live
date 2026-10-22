@@ -6,7 +6,7 @@ import {
   getAddressExplorer,
   getDefaultExplorerView,
   getTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
 import { isFinalizablePosition, useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import type { TezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import type { StakingPosition, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";

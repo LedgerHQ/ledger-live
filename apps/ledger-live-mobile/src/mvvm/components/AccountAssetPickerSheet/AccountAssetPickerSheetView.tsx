@@ -1,38 +1,50 @@
-import React from "react";
-import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
+import React, { useCallback } from "react";
+import type { ListRenderItemInfo } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BottomSheetFlatList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import AssetListItem from "LLM/components/AssetListItem";
 import { useTranslation } from "~/context/Locale";
-import type { AccountAssetPickerSheetViewModel } from "./useAccountAssetPickerSheetViewModel";
-
-const CONTENT_BOTTOM_SPACING = 24;
+import type {
+  AccountAssetPickerRow,
+  AccountAssetPickerSheetViewModel,
+} from "./useAccountAssetPickerSheetViewModel";
 
 type Props = AccountAssetPickerSheetViewModel & Readonly<{ testID?: string }>;
 
 export function AccountAssetPickerSheetView({ rows, onRowPress, testID }: Props) {
   const { t } = useTranslation();
-  const bottomInset = useBottomSheetBottomInset();
+  const { bottom: bottomInsets } = useSafeAreaInsets();
+
+  const renderItem = useCallback(
+    ({ item: { asset, precomputed } }: ListRenderItemInfo<AccountAssetPickerRow>) => (
+      <AssetListItem
+        asset={asset}
+        precomputed={precomputed}
+        onPress={onRowPress}
+        lx={LIST_ITEM_NEGATIVE_OFFSET}
+        hideNetwork
+      />
+    ),
+    [onRowPress],
+  );
 
   return (
-    <BottomSheetScrollView
-      testID={testID ? `${testID}-list` : undefined}
-      contentContainerStyle={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}
-      showsVerticalScrollIndicator={false}
-    >
+    <>
       <BottomSheetHeader spacing density="expanded" title={t("accountAssetPicker.title")} />
-      {rows.map(({ asset, precomputed }) => (
-        <AssetListItem
-          key={asset.currency.id}
-          asset={asset}
-          precomputed={precomputed}
-          onPress={onRowPress}
-          lx={rowStyle}
-          hideNetwork
-        />
-      ))}
-    </BottomSheetScrollView>
+      <BottomSheetFlatList
+        testID={testID ? `${testID}-list` : undefined}
+        data={rows}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+        contentContainerStyle={{ paddingBottom: bottomInsets }}
+      />
+    </>
   );
 }
 
-const rowStyle: LumenViewStyle = { marginHorizontal: "-s8" };
+const keyExtractor = ({ asset }: AccountAssetPickerRow) => asset.currency.id;
+
+const LIST_ITEM_NEGATIVE_OFFSET: LumenViewStyle = { marginHorizontal: "-s8" };

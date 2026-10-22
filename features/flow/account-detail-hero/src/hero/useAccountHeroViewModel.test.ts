@@ -52,10 +52,11 @@ describe("useAccountHeroViewModel", () => {
       expect(result.current.moreActions.map(({ id }) => id)).toEqual(["buy", "sell", "earn"]);
     });
 
-    it("drops Sell from More without funds", () => {
+    it("keeps only Transfer and Buy without funds", () => {
       const { result } = renderViewModel({ hasFunds: false });
 
-      expect(result.current.moreActions.map(({ id }) => id)).toEqual(["buy", "earn"]);
+      expect(tileIds(result.current.tiles)).toEqual(["transfer", "buy"]);
+      expect(result.current.moreActions).toEqual([]);
     });
 
     it("promotes Buy and Sell to tiles when Swap is unavailable", () => {
@@ -92,14 +93,15 @@ describe("useAccountHeroViewModel", () => {
   });
 
   describe("desktop", () => {
-    it("resolves Receive, Buy, Sell, Send with Sell and Send inactive without funds", () => {
+    it("resolves Receive, Send, Buy, Sell, Earn with Send, Sell and Earn inactive without funds", () => {
       const { result } = renderViewModel({ platform: "desktop", hasFunds: false });
 
       expect(result.current.actions).toEqual([
         { id: "receive", state: "active" },
+        { id: "send", state: "inactive" },
         { id: "buy", state: "active" },
         { id: "sell", state: "inactive" },
-        { id: "send", state: "inactive" },
+        { id: "earn", state: "inactive" },
       ]);
       expect(result.current.showSwapConsole).toBe(true);
     });
@@ -110,7 +112,7 @@ describe("useAccountHeroViewModel", () => {
         availability: availability({ isSendSupported: false }),
       });
 
-      expect(tileIds(result.current.actions)).toEqual(["receive", "buy", "sell"]);
+      expect(tileIds(result.current.actions)).toEqual(["receive", "buy", "sell", "earn"]);
     });
 
     it("leaves Receive out when the account can't receive", () => {
@@ -119,7 +121,7 @@ describe("useAccountHeroViewModel", () => {
         availability: availability({ isReceiveSupported: false }),
       });
 
-      expect(tileIds(result.current.actions)).toEqual(["buy", "sell", "send"]);
+      expect(tileIds(result.current.actions)).toEqual(["send", "buy", "sell", "earn"]);
     });
   });
 

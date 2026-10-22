@@ -42,6 +42,11 @@ export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
     ? describe(...args)
     : describe.skip("[not available on LNS] " + args[0], args[1]);
 
+export const describeIfNanoS = (...args: Parameters<typeof describe>) =>
+  process.env.SPECULOS_DEVICE === Device.LNS.name
+    ? describe(...args)
+    : describe.skip("[LNS only] " + args[0], args[1]);
+
 /** `describeIfNotNanoS` when one of the currencies is not supported on LNS, `describe` otherwise. */
 export const describeIfNanoSSupports = (...currencyIds: string[]) =>
   currencyIds.some(currencyId => isCurrencyUnsupportedOnLNS(currencyId))

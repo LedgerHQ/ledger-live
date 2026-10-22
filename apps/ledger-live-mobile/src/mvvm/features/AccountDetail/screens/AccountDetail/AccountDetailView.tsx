@@ -10,6 +10,7 @@ import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGr
 import type { Account } from "@ledgerhq/types-live";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../testIds";
 import { AssetsSection } from "./components/AssetsSection";
+import { Hero } from "./components/Hero";
 import { AccountRefreshStatus } from "./components/RefreshStatus";
 import { Transactions } from "./components/Transactions";
 import type { AccountRefresh } from "./useAccountRefresh";
@@ -48,7 +49,7 @@ export function AccountDetailView({ account, refresh }: Props) {
         />
         <Box lx={contentStyle}>
           <AccountDetailLayout
-            hero={<Box testID={ACCOUNT_DETAIL_TEST_IDS.hero} lx={heroStyle} />}
+            hero={<Hero account={account} />}
             customPlace={<Box testID={ACCOUNT_DETAIL_TEST_IDS.customPlace} lx={customPlaceStyle} />}
             assets={<AssetsSection account={account} />}
             transactions={<Transactions account={account} />}
@@ -61,9 +62,8 @@ export function AccountDetailView({ account, refresh }: Props) {
 }
 
 const screenStyle: LumenViewStyle = { flex: 1, backgroundColor: "canvas" };
-const contentStyle: LumenViewStyle = { padding: "s16" };
+const contentStyle: LumenViewStyle = { paddingHorizontal: "s16", paddingTop: "s4" };
 const sectionStyle: LumenViewStyle = { borderRadius: "md", padding: "s48" };
-const heroStyle: LumenViewStyle = { ...sectionStyle, backgroundColor: "error" };
 const customPlaceStyle: LumenViewStyle = {
   ...sectionStyle,
   padding: "s32",

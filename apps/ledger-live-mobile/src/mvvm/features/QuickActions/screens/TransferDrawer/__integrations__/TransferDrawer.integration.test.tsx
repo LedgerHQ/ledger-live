@@ -378,17 +378,17 @@ describe("TransferDrawer account scope", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("starts the send flow from the token when only a token can be sent", () => {
-    const account = withUsdc(0, 5);
-    const { result } = renderForAccount(account);
+  it("lists the account's assets without balance in the send picker too", () => {
+    const { result } = renderForAccount(withUsdc(0, 5));
 
-    findAction(result, "send").onPress();
+    act(() => findAction(result, "send").onPress());
 
-    expect(result.current.assetPicker.isOpen).toBe(false);
-    expect(mockOpenSendFlowForAccount).toHaveBeenCalledWith(
-      expect.objectContaining({ id: usdcAccount.id }),
-      expect.objectContaining({ id: account.id }),
-    );
+    expect(result.current.assetPicker.isOpen).toBe(true);
+    expect(result.current.assetPicker.assets.map(({ currency }) => currency.id)).toEqual([
+      ethAccount.currency.id,
+      usdcToken.id,
+    ]);
+    expect(mockOpenSendFlowForAccount).not.toHaveBeenCalled();
   });
 
   it("asks which asset to send when several assets of the account can be sent", () => {
@@ -498,12 +498,12 @@ describe("TransferDrawer account scope", () => {
       );
     });
 
-    it("lists no asset when only one can be sent", async () => {
-      const { user } = renderDrawer(withUsdc(0, 5));
+    it("doesn't render the picker when the account has a single asset", async () => {
+      const { user } = renderDrawer(withSpendable(ethAccount, 1));
 
       await user.press(await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.transferDrawer.send));
 
-      expect(within(screen.getByTestId(pickerList)).queryByText(usdcToken.name)).toBeNull();
+      expect(screen.queryByTestId(pickerList)).toBeNull();
       expect(mockOpenSendFlowForAccount).toHaveBeenCalledTimes(1);
     });
   });

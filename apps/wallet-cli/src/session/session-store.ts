@@ -82,6 +82,8 @@ const AgentIntentProfileSchema = z.object({
     .catch(undefined),
   // Last Cloud Sync version `agent-intent sync` merged; a cache, so a bad value is just dropped.
   ledgerSyncVersion: z.number().int().nonnegative().optional().catch(undefined),
+  // The wallet-cli version that cached it: a newer one may import accounts this one skipped.
+  ledgerSyncCliVersion: z.string().optional().catch(undefined),
   // Signed into the enrollment request and enforced by the frontend — persisted so `list`/`show`
   // can report "expired" instead of leaving a dead link marked `pending` forever.
   enrollmentExpiresAt: z.iso.datetime(),

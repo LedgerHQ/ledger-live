@@ -1,7 +1,7 @@
 import { biometricsTypeKey } from "@features/platform-app-lock";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import { InfoState } from "@shared/ui-info-state/native";
+import { InfoState } from "@shared/ui-info-state";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import React from "react";
 import type { ProtectionEnabledSheetProps } from "./types";

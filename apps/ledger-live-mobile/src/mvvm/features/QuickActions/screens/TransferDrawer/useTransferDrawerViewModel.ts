@@ -22,7 +22,8 @@ import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
 import { canReceive, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { listAccountAssets, listSpendableAssets, type AccountAsset } from "LLM/utils/accountAssets";
+import { hasAnyFunds, listHeldAssets } from "@features/platform-quick-actions";
+import type { AccountAsset } from "LLM/utils/accountAssets";
 import {
   useAccountAssetPicker,
   type AccountAssetPickerSheetProps,
@@ -54,7 +55,7 @@ function listSendableAssets(
   blacklistedTokenIds: readonly string[],
 ): readonly AccountAsset[] {
   if (isSendDisabledForFamily(account.currency.family)) return [];
-  return listSpendableAssets(listAccountAssets(account, new Set(blacklistedTokenIds)));
+  return listHeldAssets(account, new Set(blacklistedTokenIds));
 }
 
 function selectScopedAccount(state: State, scope: TransferDrawerScope): Account | undefined {
@@ -80,7 +81,7 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
     () => (account ? listSendableAssets(account, blacklistedTokenIds) : []),
     [account, blacklistedTokenIds],
   );
-  const hasFunds = scope.type === "account" ? sendableAssets.length > 0 : walletHasFunds;
+  const hasFunds = scope.type === "account" ? hasAnyFunds(sendableAssets) : walletHasFunds;
   const isReceiveSupported = !account || canReceive(account, undefined);
 
   const { handleOpenReceiveDrawer, openReceiveForAccount } = useOpenReceiveDrawer({

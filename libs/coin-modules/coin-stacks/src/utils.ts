@@ -1,3 +1,4 @@
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ResponseAddress } from "@zondax/ledger-stacks";
 
 /**
@@ -46,10 +47,21 @@ export const getPath = (path: string) => (path && path.substr(0, 2) !== "m/" ? `
 /**
  * Throws an error if the response contains an error code
  * @param r - The response from the Ledger device
- * @throws Error with the error code and message if the response has an error
+ * @throws UserRefusedOnDevice or LockedDeviceError for those device states, so the UI can react to
+ * them; otherwise an Error with the error code and message
  */
 export const throwIfError = (r: ResponseAddress) => {
-  if (!isNoErrorReturnCode(r.returnCode)) throw new Error(`${r.returnCode} - ${r.errorMessage}`);
+  if (isNoErrorReturnCode(r.returnCode)) return;
+  // @zondax/ledger-stacks swallows transport errors into { returnCode, errorMessage }, so the typed
+  // errors the UI reacts to have to be rebuilt from the return code.
+  switch (r.returnCode) {
+    case 0x6986:
+      throw new UserRefusedOnDevice();
+    case 0x5515:
+      throw new LockedDeviceError();
+    default:
+      throw new Error(`${r.returnCode} - ${r.errorMessage}`);
+  }
 };
 
 /**

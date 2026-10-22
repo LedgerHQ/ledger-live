@@ -3,6 +3,7 @@ name: testing
 description: |
   Write unit and integration tests for Ledger Wallet apps. 
   Use for Jest tests (Desktop/Mobile), MSW handlers and testing best practices.
+  Integration tests fake HTTP with MSW `jest.fn()` endpoint mocks instead of `jest.mock`-ing modules.
   Applies to "*.test.*", "*.spec.*", "**/tests/**", "**/__tests__/**", "**/__integrations__/**", "**/jest-setup*"
 ---
 
@@ -17,7 +18,7 @@ description: |
 
 1. **`toBeVisible()` over `toBeInTheDocument()`** — Always. `toBeInTheDocument` only checks DOM presence; elements can be hidden. Use `toBeInTheDocument` only when testing explicitly hidden elements.
 2. **Search before you create** — Before writing any mock, fixture, or helper, `rg` the codebase. If it exists, import it. If your new mock is reusable (2+ files), put it in a shared location.
-3. **Mock external deps only** — Never mock child components. Test integration.
+3. **Fake the network, not modules** — Integration tests run the real store, API clients and SDKs, and intercept HTTP with MSW [endpoint mocks](references/msw-endpoints.md). `jest.mock` only what cannot run under Jest (native modules, device transport). Never mock child components.
 4. **Network requests via MSW, never `fetch`** — New test code must not mock `fetch`; use Mock Service Worker handlers instead.
 5. **One behavior per test** — Name: `it("should <behavior> when <condition>")`.
 6. **Query priority**: `getByRole` > `getByLabelText` > `getByText` > `getByTestId` (last resort).
@@ -50,13 +51,16 @@ pnpm coin:<name> test-integ        # Integration tests (slow)
 
 ```typescript
 import { render, screen, waitFor } from "tests/testSetup";
-import { server } from "tests/server";
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http, server } from "tests/server";
 
-jest.mock("@ledgerhq/live-common/someService");
+const endpoints = { data: jest.fn<Response, [{ request: Request }]>() };
 
 describe("MyComponent", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    endpoints.data.mockReset().mockImplementation(() => HttpResponse.json({ name: "Bitcoin" }));
+    server.use(http.get("/api/data", endpoints.data));
+  });
 
   it("should render title", () => {
     render(<MyComponent title="Test" />);
@@ -71,12 +75,20 @@ describe("MyComponent", () => {
   });
 
   it("should display fetched data", async () => {
-    server.use(http.get("/api/data", () => HttpResponse.json({ name: "Bitcoin" })));
     render(<MyComponent />);
     await waitFor(() => expect(screen.getByText("Bitcoin")).toBeVisible());
+    expect(endpoints.data).toHaveBeenCalledTimes(1);
+  });
+
+  it("should display an error when the API fails", async () => {
+    endpoints.data.mockReturnValueOnce(HttpResponse.json({}, { status: 500 }));
+    render(<MyComponent />);
+    // ...
   });
 });
 ```
+
+Full recipe, traps and examples: [references/msw-endpoints.md](references/msw-endpoints.md).
 
 ---
 
@@ -135,20 +147,20 @@ render(<MyComponent />, {
 ## Mocking Patterns
 
 ```typescript
-// External dependency
-jest.mock("@ledgerhq/live-common/account/index");
-const mockedFn = jest.mocked(getMainAccount);
-mockedFn.mockReturnValue(mockAccount);
+// HTTP: override an endpoint mock, never jest.mock the client (see references/msw-endpoints.md)
+endpoints.data.mockReturnValueOnce(HttpResponse.json({ error: "Not found" }, { status: 404 }));
 
-// ViewModel (MVVM)
+// Dependency that cannot run under Jest (native module, device transport)
+jest.mock("react-native-some-native-module");
+jest.mocked(nativeFn).mockReturnValue(value);
+
+// ViewModel (MVVM): stub it only to unit test a View in isolation.
+// Integration tests keep the real ViewModel and fake its HTTP calls instead.
 jest.mock("../useMyViewModel", () => ({ useMyViewModel: jest.fn() }));
 jest.spyOn(UseMyViewModel, "useMyViewModel").mockImplementation(() => ({
   data: mockData,
   isLoading: false,
 }));
-
-// MSW override for error case
-server.use(http.get("/api/data", () => HttpResponse.json({ error: "Not found" }, { status: 404 })));
 ```
 
 ---

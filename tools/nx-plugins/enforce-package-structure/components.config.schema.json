@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "components.config.schema.json",
+  "title": "Universal components check",
+  "description": "Settings of the universal components check run by `lint:structure` (components.js). The check reads each package's `package.json#exports`, resolves every entry the way the app bundlers do, follows re-exports to the declaring module and collects the public components per entry and per platform. R1: a universal component is exported on both platforms under the same name. R5: a component is exported from universal entries or from platform entries, never both. Waivers live in exceptions.js, not here. See docs/adr/universal-components.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ignoredEntryPrefixes",
+    "platformEntries",
+    "conditions",
+    "extensions",
+    "componentWrappers"
+  ],
+  "definitions": {
+    "extension": {
+      "type": "string",
+      "pattern": "^(\\.[a-z]+)+$",
+      "examples": [".tsx", ".native.ts", ".web.tsx"]
+    },
+    "conditionList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path to this schema, for editor validation and completion."
+    },
+    "ignoredEntryPrefixes": {
+      "description": "Test support entries the check skips. An `exports` subpath is skipped when one of its `/`-separated segments starts with one of these prefixes: with `test`, `./testing` and `./testing/module-mock` are skipped. Matching is case-sensitive. Keep the list short: a skipped entry can ship components no rule sees.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "examples": [["test", "mock"]]
+    },
+    "platformEntries": {
+      "description": "Subpaths that are platform entries when their target is a plain string, mapped to their platform. A platform entry is resolved once, for its platform, and must point at a module of its own that carries its platform's suffix (`.web.*`, or `.native.*`, `.ios.*`, `.android.*`). The same subpath with a `react-native` condition is a universal entry instead.",
+      "type": "object",
+      "propertyNames": { "pattern": "^\\./" },
+      "additionalProperties": { "enum": ["web", "native"] },
+      "examples": [{ "./web": "web", "./native": "native" }]
+    },
+    "conditions": {
+      "description": "Export conditions each platform tries, in order, to pick an entry's file. The first key of the entry's condition object that appears in the list wins, as in Node's resolution. An entry whose condition object has `react-native` is a universal entry.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["web", "native"],
+      "properties": {
+        "web": {
+          "$ref": "#/definitions/conditionList",
+          "description": "Conditions the desktop bundler (Rspack) matches."
+        },
+        "native": {
+          "$ref": "#/definitions/conditionList",
+          "description": "Conditions the mobile bundler (Re.Pack) matches."
+        }
+      }
+    },
+    "extensions": {
+      "description": "Extensions tried, in order, to resolve a relative import without an extension: first `<path><ext>`, then `<path>/index<ext>`. An import with its own suffix (`./A.native`) also tries the exact file first. Each list must mirror its bundler, or the check reports what the app does not ship.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["web", "native"],
+      "properties": {
+        "web": {
+          "description": "Desktop order, from `resolve.extensions` in apps/ledger-live-desktop/tools/rspack/rspack.renderer.ts: `.web` files first, then unsuffixed ones.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/extension" }
+        },
+        "native": {
+          "description": "Mobile order, from `Repack.getResolveOptions(platform, { preferNativePlatform: true })`. Re.Pack ranks the extension before the suffix: for each of `.js`, `.jsx`, `.ts`, `.tsx` it tries `.ios`, `.android`, `.native`, then no suffix, so `A.ts` wins over `A.native.tsx`. iOS and Android share one list: a package does not ship different components to each.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/extension" }
+        }
+      }
+    },
+    "componentWrappers": {
+      "description": "Calls whose result is still a component, such as `memo(...)` or `React.memo(...)`. A PascalCase named export of a `.tsx` module is a component when it is a function declaration, a function or arrow expression, or a call to one of these, called directly or as a property (`React.forwardRef`). `createContext` results are not components, so leave it out.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*$" },
+      "examples": [["memo", "forwardRef"]]
+    }
+  }
+}

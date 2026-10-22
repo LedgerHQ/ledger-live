@@ -3,14 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "description": "Cross-platform Lottie player: dotlottie on web, lottie-react-native on mobile",
-  "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
-  "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    "./web": "./src/index.web.ts",
+    "./native": "./src/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

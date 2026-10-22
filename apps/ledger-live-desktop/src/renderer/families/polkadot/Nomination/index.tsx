@@ -11,7 +11,7 @@ import {
   hasPendingOperationType,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { urls } from "~/config/urls";

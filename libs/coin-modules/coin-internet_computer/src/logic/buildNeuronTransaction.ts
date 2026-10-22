@@ -1,16 +1,12 @@
-import { Expiry, requestIdOf, SubmitRequestType } from "@dfinity/agent";
-import { IDL } from "@dfinity/candid";
-import { AccountIdentifier, SubAccount } from "@dfinity/ledger-icp";
-import { Principal } from "@dfinity/principal";
+import { ReadRequestType, requestIdOf, SubmitRequestType } from "@icp-sdk/core/agent";
+import { IDL } from "@icp-sdk/core/candid";
+import { Principal } from "@icp-sdk/core/principal";
 import { sha256 } from "@noble/hashes/sha256";
-import {
-  DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
-  KNOWN_TOPICS,
-  MAINNET_GOVERNANCE_CANISTER_ID,
-} from "../consts";
+import { KNOWN_TOPICS, MAINNET_GOVERNANCE_CANISTER_ID } from "../consts";
 import { encodeCanisterIdlFunc, getCanisterIdlFunc, governanceIdlFactory } from "../network/candid";
 import { ICPNeuron, InternetComputerOperation, Transaction } from "../types";
-import { UnsignedTransaction } from "./buildTransaction";
+import { AccountIdentifier, SubAccount } from "./accountIdentifier";
+import { createIngressExpiry, UnsignedTransaction } from "./buildTransaction";
 import { derivePrincipalFromPubkey } from "./crypto";
 
 const governanceCanisterId = () => Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID);
@@ -35,15 +31,15 @@ const SPLIT_ARG_TYPE = IDL.Record({
 
 const buildGovernanceCall = (
   methodName: string,
-  arg: ArrayBuffer,
+  arg: Uint8Array,
   pubKey: string,
 ): UnsignedTransaction => ({
-  request_type: SubmitRequestType.Call,
-  canister_id: governanceCanisterId(),
-  method_name: methodName,
   arg,
+  canister_id: governanceCanisterId(),
+  ingress_expiry: createIngressExpiry(),
+  method_name: methodName,
+  request_type: SubmitRequestType.Call,
   sender: derivePrincipalFromPubkey(pubKey),
-  ingress_expiry: new Expiry(DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS),
 });
 
 // `manage_neuron` command variant per op (vendored ManageNeuronCommandRequest, bar Split — see
@@ -223,18 +219,17 @@ export const createUnsignedListNeuronsTransaction = (pubKey: string): UnsignedTr
 };
 
 /**
- * Read-state request that polls an update call's status. Per @dfinity/agent, the path is
- * `["request_status", requestId]` where requestId is the hash of the CALL content; sender and
- * ingress_expiry are reused from the call.
+ * Read-state request that polls an update call's status. The path is `["request_status",
+ * requestId]` where requestId is the hash of the CALL content; sender and ingress_expiry are reused
+ * from the call. Keys in sorted order, as for UnsignedTransaction.
  */
 export const createReadStateRequest = (unsignedTxn: UnsignedTransaction) => {
   const requestId = requestIdOf(unsignedTxn);
   const readStateContent = {
-    // @dfinity/agent's ReadRequestType.ReadState — the enum has no runtime export, so use its value.
-    request_type: "read_state",
-    paths: [[new TextEncoder().encode("request_status"), new Uint8Array(requestId)]],
-    sender: unsignedTxn.sender,
     ingress_expiry: unsignedTxn.ingress_expiry,
+    paths: [[new TextEncoder().encode("request_status"), new Uint8Array(requestId)]],
+    request_type: ReadRequestType.ReadState,
+    sender: unsignedTxn.sender,
   };
   return { readStateContent, requestId };
 };

@@ -99,8 +99,8 @@ The machine output also carries the session id, the device and the reason.
 
 | Reason | Meaning |
 |---|---|
-| `completed` | The setup is done, or the device was already set up. A seeded device is not offered Ledger Sync. |
-| `offerLedgerSync` | The device was just set up, and the app passed `offerSync`. |
+| `completed` | The setup is done, or the device was already set up, and the app did not pass `offerSync`. |
+| `offerLedgerSync` | The device is set up (just now or before), and the app passed `offerSync`. |
 | `legacyFallback` | The device needs the old onboarding flow. |
 | `resumeFirmwareUpdate` | The device is in bootloader or OSU mode: a firmware update was interrupted. |
 | `userQuit` | The user quit. |

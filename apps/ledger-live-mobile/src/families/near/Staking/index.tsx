@@ -5,7 +5,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { useNearMappedStakingPositions } from "@ledgerhq/live-common/families/near/react";
 import type {
   NearMappedStakingPosition,

@@ -2,10 +2,7 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import {
-  getDefaultExplorerView,
-  getAccountContractExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getTokenExplorer } from "@domain/entity-currency-crypto";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -70,7 +67,7 @@ const AssetHeader: React.ComponentType<Props> = React.memo(function AssetHeader(
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const getContract = () =>
     account.type === "TokenAccount" && parentAccount
-      ? getAccountContractExplorer(explorerView, account, parentAccount)
+      ? getTokenExplorer(explorerView, account.token.contractAddress, parentAccount.freshAddress)
       : null;
   const contract = getContract();
   const openLink = useCallback(() => {

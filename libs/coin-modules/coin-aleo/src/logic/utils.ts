@@ -575,6 +575,44 @@ export const toPrivateOperation = ({
   };
 };
 
+export const toPrivateFeeOperation = ({
+  feeRecord,
+  details,
+  address,
+}: {
+  feeRecord: AleoPrivateRecord;
+  details: AleoPublicTransactionDetailsResponse;
+  address: string;
+}): CoinFrameworkOperation => {
+  const hash = feeRecord.transaction_id.trim();
+  const date = toBlockDate(feeRecord.block_timestamp);
+
+  return {
+    id: hash,
+    type: "FEES",
+    senders: [address],
+    recipients: [],
+    value: 0n,
+    asset: { type: "native" },
+    details: {
+      functionId: feeRecord.function_name,
+      transactionType: "private",
+      ledgerOpType: "FEES",
+    },
+    tx: {
+      ...getFees({ details, address, hasOwnedFeeRecord: true }),
+      hash,
+      date,
+      block: {
+        hash: details.block_hash,
+        height: feeRecord.block_height,
+        time: date,
+      },
+      failed: details.status !== "Accepted",
+    },
+  };
+};
+
 export function resolveConfig(configOrCurrencyId: AleoCoinConfig | string): AleoCoinConfig {
   if (typeof configOrCurrencyId === "string") {
     const config = aleoConfig.getCoinConfig(configOrCurrencyId);

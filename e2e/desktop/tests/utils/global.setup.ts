@@ -4,6 +4,7 @@ import { FullConfig } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { responseLogfilePath } from "tests/utils/networkResponseLogger";
 import { mkdirSync, promises as fs, unlink, writeFileSync } from "fs";
+import os from "node:os";
 import {
   createNanoAppJsonFile,
   getDeviceFirmwareVersion,
@@ -38,6 +39,7 @@ export default async function globalSetup(_config: FullConfig) {
   writeFileSync(
     environmentFilePath,
     [
+      `OS=${os.type()} ${os.release()} (${process.platform}-${process.arch})`,
       `SPECULOS_DEVICE=${SPECULOS_DEVICE}`,
       `SPECULOS_FIRMWARE_VERSION=${SPECULOS_FIRMWARE_VERSION}`,
       `E2E_DESKTOP_FEATURE_FLAGS=${process.env.E2E_DESKTOP_FEATURE_FLAGS}`,

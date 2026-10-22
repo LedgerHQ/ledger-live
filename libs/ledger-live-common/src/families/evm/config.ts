@@ -1167,7 +1167,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
-        uri: "https://unichain-rpc.publicnode.com",
+        uri: "https://unichain.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",

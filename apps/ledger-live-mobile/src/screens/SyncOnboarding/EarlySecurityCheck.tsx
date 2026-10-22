@@ -10,7 +10,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
-import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
+import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailableDrawer";
 import { Linking, Platform } from "react-native";
 import { LanguagePrompt } from "./LanguagePrompt";
 import { NavigatorName, ScreenName } from "~/const";

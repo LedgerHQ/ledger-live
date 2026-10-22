@@ -8,11 +8,28 @@ import {
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { Trc10Asset, Trc20Asset } from "./tokenFixtures";
+
+export type Trc10Asset = { assetId: string; name: string; symbol: string; decimals: number };
+export type Trc20Asset = {
+  contractAddress: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+};
 
 export const TRON = getCryptoCurrencyById("tron");
 
-export const TRON_LOCAL_RPC = "http://127.0.0.1:9090";
+let tronRpc: string | undefined;
+
+/** The URL the sandbox gave the instance; it changes at every run, so it is set by `setup`. */
+export function setTronRpc(url: string): void {
+  tronRpc = url;
+}
+
+export function getTronRpc(): string {
+  if (tronRpc === undefined) throw new Error("setTronRpc was not called");
+  return tronRpc;
+}
 
 export function makeTronAccount(address: string): Account {
   const id = `js:2:tron:${address}:`;

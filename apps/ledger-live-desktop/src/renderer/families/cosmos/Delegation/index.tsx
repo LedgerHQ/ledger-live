@@ -1,14 +1,12 @@
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { TokenAccount } from "@ledgerhq/types-live";
-import {
-  useCosmosFamilyPreloadData,
-  useCosmosFamilyMappedDelegations,
-} from "@ledgerhq/live-common/families/cosmos/react";
+import { isStakingAccount, TokenAccount } from "@ledgerhq/types-live";
+import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
@@ -26,7 +24,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
 import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { getAccountUrl } from "~/renderer/utils";
@@ -45,6 +43,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: CosmosAccount }) => {
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -52,13 +51,12 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     pendingRewardsBalance: _pendingRewardsBalance,
     unbondings,
   } = account.stakingResources;
+  const validators = account.stakingResources.validators ?? [];
 
   const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const delegationEnabled = canDelegate(account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
-  const currencyId = account.currency.id;
-  const { validators } = useCosmosFamilyPreloadData(currencyId);
   const unit = useAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";

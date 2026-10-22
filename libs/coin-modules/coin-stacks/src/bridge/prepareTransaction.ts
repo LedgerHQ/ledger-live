@@ -4,12 +4,12 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import {
   AddressVersion,
   estimateTransactionByteLength,
-  fetchFeeEstimateTransaction,
   serializePayload,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { c32address } from "c32check";
 import invariant from "invariant";
+import { fetchLowTransactionFee } from "../network/fees";
 import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
 import { validateAddress } from "../common-logic";
@@ -48,15 +48,14 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     if (getEnv("API_STACKS_SKIP_FEE_ESTIMATE") && transaction.fee && transaction.fee.gt(0)) {
       patch.fee = transaction.fee;
     } else {
-      // [low, medium, high] tuple; index 0 matches this call's pre-existing "low" behavior.
-      const [fee] = await fetchFeeEstimateTransaction({
+      const fee = await fetchLowTransactionFee({
         payload: serializePayload(tx.payload),
         estimatedLength: estimateTransactionByteLength(tx),
         network,
         client: { baseUrl: getStacksBaseUrl() },
       });
 
-      patch.fee = new BigNumber(fee.fee);
+      patch.fee = new BigNumber(fee);
     }
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);
 

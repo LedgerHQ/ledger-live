@@ -417,7 +417,8 @@ the profile's `accountAccess`.
 - **Unsupported/malformed entries are isolated:** an account for a currency family wallet-cli
   doesn't support (only bitcoin/evm/solana) is `skipped`, a malformed one is `invalid` — the rest of
   the import still proceeds, and an `invalid` entry keeps the next sync from treating the data as
-  up to date.
+  up to date. The first sync after the wallet-cli version changes pulls every account again, so a
+  `skipped` one the new version supports is imported then.
 
 ### Proposing a payment (`agent-intent send`)
 

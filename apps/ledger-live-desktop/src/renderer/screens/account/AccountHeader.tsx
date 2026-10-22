@@ -12,10 +12,7 @@ import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import {
-  getDefaultExplorerView,
-  getAccountContractExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getTokenExplorer } from "@domain/entity-currency-crypto";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -174,7 +171,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const getContract = () =>
     account.type === "TokenAccount" && parentAccount
-      ? getAccountContractExplorer(explorerView, account, parentAccount)
+      ? getTokenExplorer(explorerView, account.token.contractAddress, parentAccount.freshAddress)
       : null;
   const submitNameChange = () => {
     if (account.type === "Account") {

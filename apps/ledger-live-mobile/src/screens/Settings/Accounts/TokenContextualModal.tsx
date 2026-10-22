@@ -5,10 +5,7 @@ import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { View, StyleSheet, LayoutChangeEvent } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import {
-  getAccountContractExplorer,
-  getDefaultExplorerView,
-} from "@ledgerhq/live-common/explorers";
+import { getTokenExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { createStructuredSelector } from "~/context/selectors";
 import { useNavigation } from "@react-navigation/native";
 import LText from "~/components/LText";
@@ -83,7 +80,7 @@ const TokenContextualModal = ({
   const explorerView = mainAccount ? getDefaultExplorerView(mainAccount.currency) : null;
   const url =
     explorerView && parentAccount
-      ? getAccountContractExplorer(explorerView, account, parentAccount)
+      ? getTokenExplorer(explorerView, account.token.contractAddress, parentAccount.freshAddress)
       : null;
 
   return (

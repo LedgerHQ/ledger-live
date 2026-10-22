@@ -18,7 +18,6 @@ import {
   isCosmosOperationExtraRaw,
   type CosmosAccount,
   type CosmosAccountRaw,
-  type CosmosResources,
   type CosmosResourcesRaw,
 } from "./types";
 
@@ -90,20 +89,6 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
     stakingAccount.stakingResources = parseLegacyCosmosResourcesRaw(cosmosResources);
   }
   stakingAccount.stakingResources ??= createEmptyStakingResources();
-
-  const staking = stakingAccount.stakingResources;
-  const publicKey =
-    account.xpub && account.xpub !== account.freshAddress ? account.xpub : undefined;
-  cosmosAccount.cosmosResources = {
-    delegations: staking.delegations,
-    redelegations: staking.redelegations,
-    unbondings: staking.unbondings,
-    delegatedBalance: staking.delegatedBalance,
-    pendingRewardsBalance: staking.pendingRewardsBalance,
-    unbondingBalance: staking.unbondingBalance,
-    ...(cosmosAccount.sequence !== undefined ? { sequence: cosmosAccount.sequence } : {}),
-    ...(publicKey ? { publicKey } : {}),
-  } as CosmosResources;
 }
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {

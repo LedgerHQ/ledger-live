@@ -476,4 +476,15 @@ export type StakeDescriptor = {
 export type CoinDescriptor = {
   send: SendDescriptor;
   stake?: StakeDescriptor;
+  /**
+   * Account-level analytics attributes, added to events about that account. Declared per
+   * coin; generic callers never inspect the account themselves. Never returns keys,
+   * addresses or balances.
+   */
+  getAccountTrackingAttributes?: (account: AccountLike) => Record<string, string | boolean>;
+  /**
+   * User-level analytics attributes, computed over all the user's accounts. Every coin
+   * receives every account and keeps its own. Never returns keys, addresses or balances.
+   */
+  getUserTrackingAttributes?: (accounts: AccountLike[]) => Record<string, number>;
 };

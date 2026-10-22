@@ -25,7 +25,7 @@ Why some actions are `—`:
 
 - **Mobile** groups Receive and Send under **Transfer**, which opens the Transfer sheet; they are never separate actions.
 - **Desktop** has no Transfer: Receive and Send are separate actions.
-- **Desktop** bars have no Swap or Earn: the existing desktop Portfolio and Asset Detail bars don't carry them.
+- **Desktop** bars have no Swap: it lives in the right-panel swap console.
 - **Mobile** wallet bar has no Sell or Earn: the existing Portfolio bar doesn't carry them.
 
 ### Wallet scope
@@ -53,13 +53,15 @@ Without a signer, only Connect and Buy a Ledger are shown.
 | Swap     | shown if swap is available                 | —                                     |
 | Sell     | shown if sell is available **and** funds   | shown; active if sell available and funds |
 | Send     | —                                          | shown; active if funds                |
-| Earn     | shown if earn is available                 | —                                     |
+| Earn     | shown if earn is available                 | shown if earn is available; active if funds |
 
 When the currency is not supported: mobile keeps only Transfer (like the Asset Detail Transfer button), desktop shows nothing.
 
+**Mobile account scope without funds** is narrower: only Transfer and Buy (Buy shown if buy is available). With funds it follows the mobile column above.
+
 ## `layoutQuickActionTiles(actions, { isSendSupported })`
 
-Mobile tile layout for the asset and account scopes.
+Mobile tile layout for the asset and account scopes (an account without funds only has Transfer · Buy).
 
 | Case                 | Tiles                                        | In More          |
 | -------------------- | -------------------------------------------- | ---------------- |
