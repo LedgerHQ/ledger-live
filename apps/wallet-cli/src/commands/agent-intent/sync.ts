@@ -15,6 +15,7 @@ import {
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
+import { walletCliVersion } from "../../shared/client-version";
 
 type AccountAccess = NonNullable<AgentIntentProfileMeta["accountAccess"]>;
 type EnrolledProfile = AgentIntentProfileMeta & { accountAccess: AccountAccess };
@@ -118,7 +119,7 @@ function mergeUnderLock(
   pulled: Extract<PullResult, { status: "new-data" } | { status: "deleted" }>,
   profile: EnrolledProfile,
   expected: AccountAccess,
-  pulledFromVersion: number | undefined,
+  cachedVersion: number | undefined,
 ): Promise<LedgerSyncImportReport> {
   return withSessionLock(async () => {
     const fresh = await Session.read();
@@ -130,7 +131,7 @@ function mergeUnderLock(
       );
     }
     // A concurrent sync already cached a result; this possibly older pull must not override it.
-    const versionMoved = current?.ledgerSyncVersion !== pulledFromVersion;
+    const versionMoved = current?.ledgerSyncVersion !== cachedVersion;
     if (pulled.status === "deleted") {
       if (versionMoved) return EMPTY_REPORT;
       fresh.updateAgentIntentProfile(profile.profileId, { ledgerSyncVersion: undefined });
@@ -140,7 +141,10 @@ function mergeUnderLock(
     const merged = mergeSyncedAccounts(fresh, pulled.accounts);
     // An invalid entry must come back on the next sync, so its version is not cached.
     if (merged.invalid.length === 0 && !versionMoved) {
-      fresh.updateAgentIntentProfile(profile.profileId, { ledgerSyncVersion: pulled.version });
+      fresh.updateAgentIntentProfile(profile.profileId, {
+        ledgerSyncVersion: pulled.version,
+        ledgerSyncCliVersion: walletCliVersion,
+      });
     }
     fresh.write();
     return merged;
@@ -172,7 +176,10 @@ export default defineCommand({
       const restored = await restoreAgentTrustchain(out, sdk, profile, credentials);
       const rotated = restored.applicationPath !== profile.accountAccess.applicationPath;
       const expected = { ...profile.accountAccess, applicationPath: restored.applicationPath };
-      const pulledFromVersion = rotated ? undefined : profile.ledgerSyncVersion;
+      const cachedVersion = rotated ? undefined : profile.ledgerSyncVersion;
+      // Skipped accounts don't block the cached version, so after an upgrade pull everything once.
+      const pulledFromVersion =
+        profile.ledgerSyncCliVersion === walletCliVersion ? cachedVersion : undefined;
 
       const pullSpin = out.spin("Pulling synchronized accounts…");
       let pulled: PullResult;
@@ -191,7 +198,16 @@ export default defineCommand({
       pullSpin?.stop();
       if (rotated) await persistRotation(profile, expected);
 
-      if (pulled.status === "up-to-date") {
+      // Sent without a version, a forced pull of a deleted document reads as up-to-date.
+      const deletedOnForcedPull =
+        pulled.status === "up-to-date" &&
+        pulledFromVersion === undefined &&
+        cachedVersion !== undefined;
+      if (deletedOnForcedPull) {
+        out.agentIntentSync(
+          await mergeUnderLock({ status: "deleted" }, profile, expected, cachedVersion),
+        );
+      } else if (pulled.status === "up-to-date") {
         out.agentIntentSync(EMPTY_REPORT);
       } else if (pulled.status === "malformed") {
         out.agentIntentSync({
@@ -199,7 +215,7 @@ export default defineCommand({
           invalid: [{ status: "invalid", id: "<account list>", reason: pulled.reason }],
         });
       } else {
-        out.agentIntentSync(await mergeUnderLock(pulled, profile, expected, pulledFromVersion));
+        out.agentIntentSync(await mergeUnderLock(pulled, profile, expected, cachedVersion));
       }
     });
   },

@@ -396,22 +396,32 @@ describe("ring-field resilience", () => {
     expect(session.getAgentIntentProfile("trading-bot")?.pendingRecovery).toBeUndefined();
   });
 
-  it("keeps a profile but drops its malformed cached Ledger Sync version", async () => {
+  it("keeps a profile but drops its malformed cached Ledger Sync versions", async () => {
     useTmpState();
     writeFileSync(
       getSessionPath(),
       YAML.stringify({
         accounts: [],
         agentIntentProfiles: [
-          makeAgentIntentProfile({ profileId: "cached", ledgerSyncVersion: 7 }),
-          { ...makeAgentIntentProfile({ profileId: "corrupt" }), ledgerSyncVersion: "seven" },
+          makeAgentIntentProfile({
+            profileId: "cached",
+            ledgerSyncVersion: 7,
+            ledgerSyncCliVersion: "2.9.0",
+          }),
+          {
+            ...makeAgentIntentProfile({ profileId: "corrupt" }),
+            ledgerSyncVersion: "seven",
+            ledgerSyncCliVersion: 290,
+          },
         ],
       }),
     );
     const session = await Session.read();
     expect(session.getAgentIntentProfile("cached")?.ledgerSyncVersion).toBe(7);
+    expect(session.getAgentIntentProfile("cached")?.ledgerSyncCliVersion).toBe("2.9.0");
     expect(session.getAgentIntentProfile("corrupt")).toBeDefined();
     expect(session.getAgentIntentProfile("corrupt")?.ledgerSyncVersion).toBeUndefined();
+    expect(session.getAgentIntentProfile("corrupt")?.ledgerSyncCliVersion).toBeUndefined();
   });
 
   it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
