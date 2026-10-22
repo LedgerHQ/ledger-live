@@ -765,13 +765,14 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       }
       dispatch(closeAllModal());
       setDrawer(undefined);
+      const selectDeviceRoute = "/onboarding/select-device";
       if (!device?.modelId) {
-        navigate("/onboarding");
+        navigate(selectDeviceRoute);
       } else {
         navigate(
           isSyncOnboardingSupported(device.modelId)
             ? `/sync-onboarding/${device.modelId}`
-            : "/onboarding",
+            : selectDeviceRoute,
         );
       }
     }, [device?.modelId, dispatch, location, navigate, setDrawer]);
