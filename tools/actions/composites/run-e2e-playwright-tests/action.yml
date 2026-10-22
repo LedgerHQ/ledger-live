@@ -120,7 +120,7 @@ runs:
 
         set +e
         "${XVFB_PREFIX[@]}" pnpm e2e:desktop test:playwright \
-          --max-failures 50 \
+          --max-failures 0 \
           $grep_option "$grep_filter" \
           $SHARD_ARG \
           $REPEAT_ARG \

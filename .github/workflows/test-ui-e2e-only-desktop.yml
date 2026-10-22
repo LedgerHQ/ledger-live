@@ -476,7 +476,8 @@ jobs:
         # Every run can also wait up to 30 minutes for a busy exclusive lock: without broadcast, tests
         # still lock the Pay card and the accounts CLI token approvals broadcast from.
         timeout-minutes: 70
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        # The branch copy, without the failure cap, so every test runs
+        uses: ./tools/actions/composites/run-e2e-playwright-tests
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.runner_filter }}
@@ -704,7 +705,8 @@ jobs:
       - name: Run Playwright E2E tests
         id: run-playwright
         timeout-minutes: 70
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        # The branch copy, without the failure cap, so every test runs
+        uses: ./tools/actions/composites/run-e2e-playwright-tests
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.runner_filter }}
@@ -727,6 +729,7 @@ jobs:
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_WITHOUT_BROADCAST: ${{ inputs.lock_without_broadcast && '1' || '' }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
