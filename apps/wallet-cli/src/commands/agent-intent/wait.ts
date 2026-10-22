@@ -19,6 +19,9 @@ import { readLiveLockHolderPid } from "../../shared/file-lock";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
 
 const POLL_INTERVAL_MS = 2_000;
+/** The SDK fails the relay at the link's expiry, so a pid still in the lock this long after it is
+ * one an unclean exit (SIGKILL, SIGHUP) left behind, which the OS may have reused. */
+const LISTENER_EXPIRY_GRACE_MS = 60_000;
 
 /** The message of the last error envelope the listener logged, if any. */
 function lastLoggedError(logPath: string): string | undefined {
@@ -102,7 +105,9 @@ function checkProfile(
     });
     return undefined;
   }
-  assertListenerAlive(profile, status, listenerPid, logPath);
+  const pastGrace = Date.now() > Date.parse(profile.enrollmentExpiresAt) + LISTENER_EXPIRY_GRACE_MS;
+  const livePid = pastGrace ? undefined : listenerPid;
+  assertListenerAlive(profile, status, livePid, logPath);
 
   // Capped at the expiry only while it is ahead; past it, --timeout applies as is.
   const end =
@@ -113,7 +118,7 @@ function checkProfile(
   out.agentIntentEnrollmentWaiting({
     profileId,
     expiresAt: profile.enrollmentExpiresAt,
-    listenerPid,
+    listenerPid: livePid,
     ...(enrollmentUrl === undefined ? {} : { enrollmentUrl }),
   });
   return undefined;
