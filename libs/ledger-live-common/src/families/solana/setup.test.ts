@@ -50,7 +50,7 @@ describe("Testing setup on Solana", () => {
       const message = "4c6f6e67204f66662d436861696e2054657374204d6573736167652e";
       const result = await messageSigner.signMessage(
         {} as Transport,
-        { freshAddressPath: freshAddressPath, freshAddress } as Account,
+        { freshAddressPath: freshAddressPath, freshAddress, currency: { id: "solana" } } as Account,
         { message: message } as AnyMessage,
       );
 

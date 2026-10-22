@@ -5,6 +5,10 @@ import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mockBridge from "./mock";
 import type { Transaction } from "../types";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { solanaConfig } from "../config";
+
+LiveConfig.setConfig(solanaConfig);
 
 const SENDER = "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx";
 const RECIPIENT = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";

@@ -3,6 +3,7 @@ import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from "@solana/spl-tok
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
 import { dropMemoLengthPrefixIfAny, listOperations } from "../listOperations";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -58,7 +59,10 @@ describe("listOperations", () => {
   it("should return empty list when no signatures found", async () => {
     mockGetSignaturesForAddress.mockResolvedValue([]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toEqual([]);
     expect(result.next).toBeUndefined();
@@ -88,7 +92,7 @@ describe("listOperations", () => {
       },
     ] as never);
 
-    const result = await listOperations(api, TEST_ADDRESS, {
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
       minHeight: 0,
       order: "desc",
       cursor,
@@ -103,7 +107,10 @@ describe("listOperations", () => {
     ]);
     mockGetParsedTransactions.mockResolvedValue([]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 100, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 100,
+      order: "desc",
+    });
 
     expect(result.items).toEqual([]);
     expect(mockGetParsedTransactions).not.toHaveBeenCalled();
@@ -122,7 +129,7 @@ describe("listOperations", () => {
     );
     mockGetParsedTransactions.mockResolvedValue([]);
 
-    const result = await listOperations(api, TEST_ADDRESS, {
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
       minHeight: 0,
       order: "desc",
       cursor,
@@ -161,7 +168,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items[0]).toMatchObject({
       type: "OUT",
@@ -200,7 +210,10 @@ describe("listOperations", () => {
     ])("types a lone %s/%s instruction as %s", async (program, type, expected) => {
       singleInstruction(program, type);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0]).toMatchObject({ type: expected, value: 5000n });
     });
@@ -208,7 +221,10 @@ describe("listOperations", () => {
     it("leaves a transfer alone", async () => {
       singleInstruction("system", "transfer");
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0]).toMatchObject({ type: "FEES" });
     });
@@ -236,7 +252,10 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0]).toMatchObject({ type: "FEES", value: 0n });
     });
@@ -262,7 +281,10 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0]).toMatchObject({ type: "FREEZE" });
     });
@@ -295,7 +317,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toEqual({
@@ -347,7 +372,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].type).toBe("IN");
@@ -405,7 +433,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].type).toBe("IN");
@@ -436,7 +467,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
   });
@@ -465,7 +499,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toMatchObject({ type: "FEES", value: 0n });
@@ -474,7 +511,7 @@ describe("listOperations", () => {
   it("should pass cursor as before parameter", async () => {
     mockGetSignaturesForAddress.mockResolvedValue([]);
 
-    await listOperations(api, TEST_ADDRESS, {
+    await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
       minHeight: 0,
       cursor: "prev-sig-hash",
       order: "desc",
@@ -509,10 +546,17 @@ describe("listOperations", () => {
     }));
     mockGetParsedTransactions.mockResolvedValue(txs);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     mockGetSignaturesForAddress.mockClear();
-    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
+    await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+      cursor: result.next,
+    });
     expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
       TEST_ADDRESS,
       expect.objectContaining({ before: "sig-99" }),
@@ -530,10 +574,17 @@ describe("listOperations", () => {
     mockGetSignaturesForAddress.mockResolvedValue(sigs);
     mockGetParsedTransactions.mockResolvedValue(sigs.map(() => null));
 
-    const first = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const first = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
     expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
 
-    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: first.next });
+    await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+      cursor: first.next,
+    });
 
     expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
   });
@@ -556,7 +607,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.next).toBeUndefined();
   });
@@ -593,7 +647,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 100, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 100,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].tx.block.height).toBe(200);
@@ -622,7 +679,10 @@ describe("listOperations", () => {
     }));
     mockGetParsedTransactions.mockResolvedValue(txs);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 99999, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 99999,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(0);
     expect(result.next).toBeUndefined();
@@ -648,7 +708,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].tx.failed).toBe(true);
@@ -676,7 +739,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].tx.hash).toBe("sig2");
@@ -703,7 +769,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(0);
   });
@@ -735,7 +804,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].type).toBe("NONE");
@@ -770,7 +842,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].type).toBe("IN");
@@ -806,7 +881,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].type).toBe("OUT");
@@ -842,7 +920,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].type).toBe("OUT");
@@ -869,7 +950,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(0);
   });
@@ -878,7 +962,7 @@ describe("listOperations", () => {
     mockGetSignaturesForAddress.mockRejectedValue(new Error("RPC error"));
 
     await expect(
-      listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" }),
+      listOperations(api, TEST_CONFIG, TEST_ADDRESS, { minHeight: 0, order: "desc" }),
     ).rejects.toThrow("RPC error");
   });
 
@@ -926,7 +1010,10 @@ describe("listOperations", () => {
     // JSON-RPC batch responses are not order-guaranteed: return them swapped.
     mockGetParsedTransactions.mockResolvedValue([txSig2, txSig1]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(2);
     expect(result.items[0]).toMatchObject({
@@ -962,7 +1049,10 @@ describe("listOperations", () => {
       },
     ]);
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].tx.hash).toBe("sig2");
@@ -979,11 +1069,18 @@ describe("listOperations", () => {
     mockGetSignaturesForAddress.mockResolvedValue(sigs);
     mockGetParsedTransactions.mockResolvedValue(sigs.map(() => null));
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toEqual([]);
     mockGetSignaturesForAddress.mockClear();
-    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
+    await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+      cursor: result.next,
+    });
     expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
       TEST_ADDRESS,
       expect.objectContaining({ before: "sig-99" }),
@@ -991,9 +1088,9 @@ describe("listOperations", () => {
   });
 
   it("should throw when order is asc", async () => {
-    await expect(listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "asc" })).rejects.toThrow(
-      "ascending order is not supported",
-    );
+    await expect(
+      listOperations(api, TEST_CONFIG, TEST_ADDRESS, { minHeight: 0, order: "asc" }),
+    ).rejects.toThrow("ascending order is not supported");
   });
 
   describe("staking operations", () => {
@@ -1046,7 +1143,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items).toHaveLength(1);
       const op = result.items[0];
@@ -1070,7 +1170,10 @@ describe("listOperations", () => {
         }),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items).toHaveLength(1);
       const op = result.items[0];
@@ -1094,7 +1197,10 @@ describe("listOperations", () => {
         }),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items).toHaveLength(1);
       const op = result.items[0];
@@ -1126,7 +1232,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items).toHaveLength(1);
       const op = result.items[0];
@@ -1153,7 +1262,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items).toHaveLength(1);
       expect(result.items[0].type).toBe("DELEGATE");
@@ -1170,7 +1282,10 @@ describe("listOperations", () => {
         }),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0].type).toBe("DELEGATE");
       expect(result.items[0].tx.feesPayer).toBeUndefined();
@@ -1187,7 +1302,10 @@ describe("listOperations", () => {
         }),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0].type).toBe("UNDELEGATE");
       expect(result.items[0].tx.feesPayer).toBeUndefined();
@@ -1210,7 +1328,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0].type).toBe("WITHDRAW_UNBONDED");
       expect(result.items[0].tx.feesPayer).toBeUndefined();
@@ -1242,7 +1363,10 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items[0].type).toBe("OUT");
       expect(result.items[0].tx.feesPayer).toBe(TEST_ADDRESS);
@@ -1307,7 +1431,10 @@ describe("listOperations", () => {
       ] as never;
       mockGetParsedTransactions.mockResolvedValue([tx]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOp = result.items.find(op => op.asset.type !== "native");
       expect(tokenOp).toMatchObject({ type: "BURN", value: 600n });
@@ -1333,7 +1460,10 @@ describe("listOperations", () => {
       ] as never;
       mockGetParsedTransactions.mockResolvedValue([tx]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOp = result.items.find(op => op.asset.type !== "native");
       expect(tokenOp).toMatchObject({ type: expected, value: 0n });
@@ -1352,7 +1482,10 @@ describe("listOperations", () => {
       };
       mockGetParsedTransactions.mockResolvedValue([makeTxWithTokenBalances([balance], [balance])]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items.find(op => op.asset.type !== "native")).toBeUndefined();
     });
@@ -1378,7 +1511,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -1430,7 +1566,7 @@ describe("listOperations", () => {
       ]);
 
       // Query by the token-account address, not the wallet.
-      const result = await listOperations(api, TOKEN_ACCOUNT, {
+      const result = await listOperations(api, TEST_CONFIG, TOKEN_ACCOUNT, {
         minHeight: 0,
         order: "desc",
       });
@@ -1474,7 +1610,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(0);
@@ -1500,7 +1639,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -1546,7 +1688,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -1576,7 +1721,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -1620,7 +1768,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(2);
@@ -1674,7 +1825,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -1703,7 +1857,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -1741,7 +1898,10 @@ describe("listOperations", () => {
         ),
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const byMint = new Map(
         result.items
@@ -1801,7 +1961,10 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOp = result.items.find(op => op.asset.type !== "native");
       expect(tokenOp).toMatchObject({ type: "OUT", senders: [TEST_ADDRESS] });
@@ -1846,7 +2009,10 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items.filter(op => op.asset.type !== "native")).toHaveLength(0);
     });
@@ -1857,7 +2023,11 @@ describe("listOperations", () => {
       });
       mockGetSignaturesForAddress.mockResolvedValue([]);
 
-      await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: "bareSig" });
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        cursor: "bareSig",
+      });
 
       const asked = mockGetSignaturesForAddressBatch.mock.calls[0][0];
       expect(asked.map(r => r.address)).toEqual([TEST_ADDRESS, ataAddressOf(USDC_MINT_FIXTURE)]);
@@ -1891,7 +2061,7 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, {
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
         minHeight: 0,
         order: "desc",
         limit: 1,
@@ -1928,7 +2098,10 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items.length).toBeGreaterThan(0);
     });
@@ -1940,7 +2113,7 @@ describe("listOperations", () => {
       });
       mockGetSignaturesForAddress.mockResolvedValue([]);
 
-      await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
       expect(mockGetSignaturesForAddressBatch).toHaveBeenCalledTimes(1);
       expect(mockGetSignaturesForAddressBatch.mock.calls[0][0]).toHaveLength(21);
@@ -1958,10 +2131,37 @@ describe("listOperations", () => {
       );
       mockGetParsedTransactions.mockResolvedValue([]);
 
-      await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", limit: 150 });
+      await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+        limit: 150,
+      });
 
       const sizes = mockGetParsedTransactions.mock.calls.map(([batch]) => batch.length);
       expect(sizes).toEqual([100, 50]);
+    });
+
+    it("reads the page and batch sizes from the coin config", async () => {
+      const signatures = Array.from({ length: 70 }, (_, i) => ({
+        signature: `sig${i}`,
+        slot: 1000 - i,
+        blockTime: 1700000000,
+        err: null,
+      }));
+      mockGetSignaturesForAddress.mockImplementation(async (_source, options) =>
+        options?.before ? [] : signatures,
+      );
+      mockGetParsedTransactions.mockResolvedValue([]);
+      const config = { ...TEST_CONFIG, node: { maxTxQuery: 70, batchSize: 30 } };
+
+      await listOperations(api, config, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ limit: 70 }),
+      );
+      const sizes = mockGetParsedTransactions.mock.calls.map(([batch]) => batch.length);
+      expect(sizes).toEqual([30, 30, 10]);
     });
 
     it("keeps reading when a whole batch yields no operation, instead of ending the sync", async () => {
@@ -1997,7 +2197,10 @@ describe("listOperations", () => {
           : sigs.map(() => null),
       );
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       expect(result.items.length).toBeGreaterThan(0);
       expect(mockGetSignaturesForAddress).toHaveBeenCalledTimes(2);
@@ -2066,7 +2269,10 @@ describe("listOperations", () => {
         },
       ]);
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const heights = result.items.map(op => op.tx.block.height);
       expect(heights).toEqual([...heights].sort((a, b) => b - a));

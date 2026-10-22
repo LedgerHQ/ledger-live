@@ -16,6 +16,7 @@ const config: SolanaCoinConfig = {
   status: { type: "active" },
   name: "Solana",
   unit: { name: "SOL", code: "SOL", magnitude: 9 },
+  rpcUrls: { solana: "https://solana.test.invalid" },
 };
 
 const undelegate: StakingTransactionIntent = {

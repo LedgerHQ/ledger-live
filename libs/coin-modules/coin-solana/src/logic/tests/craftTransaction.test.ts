@@ -1,6 +1,7 @@
 import { VersionedTransaction } from "@solana/web3.js";
 import { craftTransaction } from "../craftTransaction";
 import { server, rpcHandler, createTestChainApi } from "./helpers/msw-rpc.mock";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -29,7 +30,7 @@ describe("craftTransaction (MSW integration)", () => {
       }),
     );
 
-    const result = await craftTransaction(api, {
+    const result = await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -103,7 +104,7 @@ describe("craftTransaction (MSW integration)", () => {
     it("should craft a token transfer tx with correct amount", async () => {
       server.use(rpcHandler(tokenTransferHandlers("spl-token", 6)));
 
-      const result = await craftTransaction(api, {
+      const result = await craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -194,7 +195,7 @@ describe("craftTransaction (MSW integration)", () => {
     it("should craft a Token-2022 transfer tx with correct amount", async () => {
       server.use(rpcHandler(token2022TransferHandlers()));
 
-      const result = await craftTransaction(api, {
+      const result = await craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
