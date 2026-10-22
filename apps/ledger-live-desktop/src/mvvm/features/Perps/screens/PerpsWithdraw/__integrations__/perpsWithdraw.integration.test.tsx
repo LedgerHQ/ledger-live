@@ -89,12 +89,11 @@ describe("PerpsWithdraw integration", () => {
     expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
   });
 
-  it("should label the amount with the source currency", () => {
+  it("should label the amount in dollars", () => {
     renderWithdraw();
     openWithdraw();
 
-    expect(screen.getByText("USDC")).toBeVisible();
-    expect(screen.queryByText("USD")).not.toBeInTheDocument();
+    expect(screen.getByText("$")).toBeVisible();
   });
 
   it("should show the title and the available balance", () => {
@@ -102,7 +101,7 @@ describe("PerpsWithdraw integration", () => {
     openWithdraw();
 
     expect(screen.getByRole("dialog", { name: "Withdraw" })).toHaveAccessibleDescription(
-      /1,000\.5\sUSDC/,
+      /\$1,000\.50/,
     );
   });
 
@@ -111,7 +110,7 @@ describe("PerpsWithdraw integration", () => {
     openWithdraw({ sourceAccount: { ...sourceAccount, spendableBalance: new BigNumber(0) } });
 
     expect(screen.getByRole("dialog", { name: "Withdraw" })).toHaveAccessibleDescription(
-      /1,000\.5\sUSDC/,
+      /\$1,000\.50/,
     );
   });
 
