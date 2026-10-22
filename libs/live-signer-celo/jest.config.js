@@ -1,6 +1,9 @@
-const { createLibJestConfig } = require("@support/jest/lib");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
-module.exports = createLibJestConfig({
-  rootDir: __dirname,
-  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!tests/**/*.test.ts"],
-});
+module.exports = createSharedJestConfig(
+  {
+    roots: ["<rootDir>"],
+    collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!tests/**/*.test.ts"],
+  },
+  { esm: true },
+);

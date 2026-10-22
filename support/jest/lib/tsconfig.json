@@ -1,4 +1,0 @@
-{
-  "extends": "@support/tsconfig/node",
-  "include": ["index.js"]
-}

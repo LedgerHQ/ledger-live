@@ -1,11 +1,11 @@
-const { createLibJestConfig } = require("@support/jest/lib");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
-module.exports = createLibJestConfig(
+module.exports = createSharedJestConfig(
   {
-    rootDir: __dirname,
+    roots: ["<rootDir>"],
     testEnvironmentOptions: {
       customExportConditions: ["@ledgerhq/source"],
     },
   },
-  { extraEsmDeps: ["@ledgerhq\\+"] },
+  { esm: true, extraEsmDeps: ["@ledgerhq\\+"] },
 );

@@ -1,8 +1,6 @@
-const { createLibJestConfig } = require("@support/jest/lib");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
-module.exports = createLibJestConfig({
-  rootDir: __dirname,
-  passWithNoTests: true,
-  roots: ["<rootDir>/src"],
-  testMatch: ["**/*.test.ts"],
-});
+module.exports = createSharedJestConfig(
+  { rootDir: __dirname, passWithNoTests: true },
+  { esm: true },
+);

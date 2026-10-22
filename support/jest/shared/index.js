@@ -12,7 +12,15 @@ const jestSonarReporter = [
   { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" },
 ];
 
-const coverageReporters = ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"];
+const repositoryRoot = path.resolve(__dirname, "../../..");
+
+const lcovCoverageReporters = projectRoot => [
+  "json",
+  ["lcov", { file: "lcov.info", projectRoot }],
+  "text",
+];
+
+const coverageReporters = lcovCoverageReporters("../../");
 
 /**
  * Tail reporters shared by every config. Exported so callers that need to insert an extra
@@ -62,27 +70,44 @@ function withEsmDeps(config, { extraDeps = [] } = {}) {
   };
 }
 
-// ─── shared/* (logic packages) ──────────────────────────────────────────────
+// ─── shared/* and libs/* (node packages) ────────────────────────────────────
 
 /**
- * Flat jest config for a shared/* logic package running in node.
+ * Flat jest config for a node package: shared/* logic packages, and libs/* packages.
+ *
+ * `esm: true` applies `withEsmDeps` (with `extraEsmDeps`) to the result, after the overrides. The
+ * lcov `projectRoot` is the option when given, else derived from `overrides.rootDir` when set, else
+ * `../../` (a package two levels below the repository root).
+ *
+ *   module.exports = createSharedJestConfig();
+ *   module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
  *
  * @param {import('@jest/types').Config.InitialOptions} [overrides]
+ * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string }} [options]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedJestConfig(overrides = {}) {
-  return {
+function createSharedJestConfig(
+  overrides = {},
+  { esm = false, extraEsmDeps = [], projectRoot } = {},
+) {
+  const lcovRoot =
+    projectRoot ??
+    (overrides.rootDir === undefined
+      ? "../../"
+      : `${path.relative(overrides.rootDir, repositoryRoot)}/`);
+  const config = {
     testEnvironment: "node",
     roots: ["<rootDir>/src"],
     testMatch: ["**/*.test.ts"],
     testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/"],
     transform: swcTransform,
     coverageDirectory: "./coverage/",
-    coverageReporters,
-    reporters,
+    coverageReporters: lcovCoverageReporters(lcovRoot),
+    reporters: ["default", ...(process.env.CI ? ["github-actions"] : []), ...sharedReporters],
     setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
     ...overrides,
   };
+  return esm ? withEsmDeps(config, { extraDeps: extraEsmDeps }) : config;
 }
 
 // ─── shared/ui-* (UI packages) ──────────────────────────────────────────────
