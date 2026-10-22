@@ -47,11 +47,8 @@ type TopBarAction = {
   cta?: string;
 };
 
-/** A slot is either a generic action (button), the notification indicator (button + drawer), or the history button. */
-type TopBarSlot =
-  | { type: "action"; action: TopBarAction }
-  | { type: "notification" }
-  | { type: "history" };
+/** A slot is either a generic action (button) or the history button. */
+type TopBarSlot = { type: "action"; action: TopBarAction } | { type: "history" };
 
 type TopBarViewProps = {
   slots: TopBarSlot[];

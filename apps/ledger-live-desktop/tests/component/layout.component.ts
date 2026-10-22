@@ -35,13 +35,8 @@ export class Layout extends Component {
   );
   readonly drawerBuycryptoButton = this.legacyDrawerButton("drawer-exchange-button");
   readonly drawerExperimentalButton = this.topbarActionButton("experimental");
-  readonly drawerManagerButton = this.topbarActionButton("my-ledger").or(
-    this.legacyDrawerButton("drawer-manager-button"),
-  );
-  readonly drawerRecoverButton = this.sidebarButton(/recover/i).or(
-    this.legacyDrawerButton("drawer-recover-button"),
-  );
-  readonly recoverStatusIcon = this.drawerRecoverButton.locator("path").nth(1);
+  private readonly myWalletAvatar = this.page.getByTestId("my-wallet-avatar");
+  private readonly myWalletMyLedger = this.page.getByTestId("my-wallet-my-ledger");
 
   // topbar
   readonly topbarDiscreetButton = this.topbarActionButton("discreet").or(
@@ -53,7 +48,6 @@ export class Layout extends Component {
   readonly topbarSettingsButton = this.topbarActionButton("settings").or(
     this.page.getByTestId("topbar-settings-button"),
   );
-  readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
   readonly topbarLockButton = this.page.getByTestId("topbar-password-lock-button");
   readonly topbarHelpButton = this.page.getByTestId("topbar-help-button");
 
@@ -113,7 +107,8 @@ export class Layout extends Component {
 
   @step("Go to manager")
   async goToManager() {
-    await this.topbarMyLedgerButton.click();
+    await this.myWalletAvatar.click();
+    await this.myWalletMyLedger.click();
   }
 
   @step("Go to Settings")
@@ -124,7 +119,7 @@ export class Layout extends Component {
       return;
     }
 
-    await this.page.getByTestId("my-wallet-avatar").click();
+    await this.myWalletAvatar.click();
     await settingsButton.click();
   }
 
@@ -170,15 +165,5 @@ export class Layout extends Component {
   async openHelp() {
     await this.goToSettings();
     await this.page.getByTestId("settings-help-tab").click();
-  }
-
-  @step("Expect recover status icon to be visible")
-  async expectRecoverStatusIconToBeVisible(visible: boolean = true) {
-    await expect(this.drawerRecoverButton).toBeVisible();
-    if (visible) {
-      await expect(this.recoverStatusIcon).toBeVisible();
-    } else {
-      await expect(this.recoverStatusIcon).not.toBeVisible();
-    }
   }
 }
