@@ -191,6 +191,7 @@ const dataset: CurrenciesData<Transaction> = {
           name: "Unbonding - success",
           transaction: t => ({
             ...t,
+            amount: new BigNumber(100),
             mode: "undelegate",
             valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
@@ -217,6 +218,7 @@ const dataset: CurrenciesData<Transaction> = {
           name: "Delegate - success",
           transaction: t => ({
             ...t,
+            amount: new BigNumber(105),
             mode: "delegate",
             valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
@@ -270,6 +272,7 @@ const dataset: CurrenciesData<Transaction> = {
           name: "claimRewardCompound - success",
           transaction: t => ({
             ...t,
+            amount: new BigNumber(100),
             valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
             mode: "compoundReward",
           }),

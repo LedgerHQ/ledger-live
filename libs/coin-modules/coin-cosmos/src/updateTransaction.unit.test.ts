@@ -53,6 +53,7 @@ describe("updateTransaction", () => {
     const updated = updateTransaction(delegation, { mode: "delegate" });
 
     expect(updated.fees).toEqual(new BigNumber(10));
+    expect(updated.gas).toEqual(new BigNumber(20));
   });
 
   it("resets the fees and gas when valAddress changes", () => {
@@ -71,6 +72,7 @@ describe("updateTransaction", () => {
     const updated = updateTransaction(redelegation, { dstValAddress: "destination" });
 
     expect(updated.fees).toEqual(new BigNumber(10));
+    expect(updated.gas).toEqual(new BigNumber(20));
   });
 
   it("sets dstValAddress on a transaction that had none", () => {

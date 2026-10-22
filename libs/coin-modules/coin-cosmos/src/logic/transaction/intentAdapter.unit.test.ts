@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { intentToMessageParams } from "./intentAdapter";
 
@@ -82,6 +83,15 @@ describe("logic/transaction/intentAdapter", () => {
       expect(params.sourceValidator).toBe("cosmosvaloper1src");
       expect(params.validators[0].address).toBe("cosmosvaloper1dst");
     });
+
+    it.each(["delegate", "undelegate", "redelegate", "claimReward"] as const)(
+      "reads the %s mode from the type of a draft without validator",
+      type => {
+        const params = intentToMessageParams(stakingIntent({ type }), "cosmos", "uatom");
+        expect(params.mode).toBe(type);
+        expect(params.validators).toEqual([{ address: "", amount: new BigNumber(1_000_000) }]);
+      },
+    );
 
     it("throws on an unsupported staking mode (withdraw)", () => {
       expect(() =>

@@ -114,7 +114,7 @@ describe("logic/transaction/craftTransaction", () => {
 describe("logic/transaction/craftTransaction memo", () => {
   const craft = async (memo: unknown) => {
     const intent = { ...sendIntent, memo } as unknown as TransactionIntent;
-    const crafted = await craftTransaction(makeApi(), "cosmos", intent, {
+    const crafted = await craftTransaction(config, makeApi(), "cosmos", intent, {
       value: 500n,
       parameters: { gasLimit: "200000" },
     });
@@ -153,7 +153,7 @@ describe("logic/transaction/craftTransaction staking memo", () => {
     }) as unknown as TransactionIntent;
 
   const craft = async (intent: TransactionIntent) => {
-    const crafted = await craftTransaction(makeApi(), "cosmos", intent, {
+    const crafted = await craftTransaction(config, makeApi(), "cosmos", intent, {
       value: 500n,
       parameters: { gasLimit: "250000" },
     });

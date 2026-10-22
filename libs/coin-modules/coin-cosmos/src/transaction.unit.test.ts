@@ -79,7 +79,13 @@ describe("fromTransactionRaw", () => {
   });
 
   it("ignores validator fields on a send transaction", () => {
-    const result = fromTransactionRaw({ ...baseRaw, valAddress: SOURCE, sourceValidator: SOURCE });
+    const result = fromTransactionRaw({
+      ...baseRaw,
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+      sourceValidator: SOURCE,
+      validators: [{ address: DESTINATION, amount: "100" }],
+    });
     expect(result).not.toHaveProperty("valAddress");
     expect(result).not.toHaveProperty("dstValAddress");
     expect(result).not.toHaveProperty("validators");
