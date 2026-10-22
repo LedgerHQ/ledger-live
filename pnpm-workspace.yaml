@@ -58,16 +58,16 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.4.0
   "@ledgerhq/logs": 6.19.0
-  "@ledgerhq/auth": 0.1.0
-  "@ledgerhq/devices": 8.18.0
-  "@ledgerhq/hw-transport": 6.36.0
-  "@ledgerhq/hw-transport-mocker": 6.35.0
+  "@ledgerhq/auth": 0.1.1
+  "@ledgerhq/devices": 8.18.1
+  "@ledgerhq/hw-transport": 6.36.1
+  "@ledgerhq/hw-transport-mocker": 6.35.1
   "@ledgerhq/live-network": 3.2.0
   "@ledgerhq/live-promise": 0.4.0
-  "@ledgerhq/psbtv2": 0.6.1
-  "@ledgerhq/hw-ledger-key-ring-protocol": 1.0.0
-  "@ledgerhq/ledger-key-ring-protocol": 1.0.0
-  "@ledgerhq/live-config": 3.9.0
+  "@ledgerhq/psbtv2": 0.6.2
+  "@ledgerhq/hw-ledger-key-ring-protocol": 1.0.1
+  "@ledgerhq/ledger-key-ring-protocol": 1.1.0
+  "@ledgerhq/live-config": 3.9.1
   "@ledgerhq/live-env": 4.1.0
   "@ledgerhq/live-currency-format": 0.16.0
   "@ledgerhq/domain-service": 1.9.1
@@ -181,7 +181,8 @@ catalog:
   expect: 30.5.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
-  lodash: 4.17.21
+  bitcoinjs-lib: 7.0.4
+  lodash: 4.18.1
   msw: ^2.7.3
   jest: 30.5.0
   jest-circus: 30.5.0
@@ -219,8 +220,8 @@ catalog:
   qrcode: 1.5.4
   "@types/qrcode": 1.5.5
   otpauth: 9.5.1
-  zod: 4.4.3
-  semver: 7.7.3
+  zod: 4.6.7
+  semver: 7.8.5
   "@types/semver": 7.7.1
   "@types/ws": ^8.5.10
   undici: 7.18.2
@@ -285,6 +286,7 @@ overrides:
   "@ledgerhq/devices": "catalog:"
   "@ledgerhq/hw-transport": "catalog:"
   "@ledgerhq/context-module": "catalog:"
+  lodash: "catalog:"
   tslib: "2.6.2"
   "@ethersproject/providers>ws": "7.5.10"
   elliptic: "6.6.1"
