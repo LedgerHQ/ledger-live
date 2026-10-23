@@ -48,7 +48,7 @@ pbpaste | WALLET_PASS=$(<keychain lookup>) pnpm --silent wallet-cli start ring d
 - Without `-i`, the input comes from stdin, which must be piped.
 - Output files are written with mode 0600.
 
-**Decrypted output is a secret.** Route plaintext straight to its destination: a file with `-o`, a pipe into the process that consumes it, the clipboard, or a variable captured with `VAR=$(... ring decrypt ...)`. Leave it unread: printing it to the terminal, running `cat` on the decrypted file or echoing the variable puts the secret into your transcript, logs and scrollback.
+**Decrypted output is a secret.** Route plaintext straight to its destination: a file with `-o` (written 0600) or the clipboard pipe above. To feed another program, decrypt to a file with `-o`, then run that program on the file in its own call inside the sandbox: the bypassed call holds only the `wallet-cli` line (SKILL.md, Host sandbox), and a shell variable does not survive into the next call. Leave it unread: printing it to the terminal or running `cat` on the decrypted file puts the secret into your transcript, logs and scrollback.
 
 ## Rotation
 

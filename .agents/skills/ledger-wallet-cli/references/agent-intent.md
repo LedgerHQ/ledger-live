@@ -149,7 +149,7 @@ Done when you have reported every imported and unchanged label with its network,
 pnpm --silent wallet-cli start agent-intent send --profile <id> --from <sender> --to <recipient> --amount '<n> <TICKER>' --dry-run --output json
 ```
 
-Show the human the summary (`sender`, `recipient`, `displayAmount`, `asset`, and `feeStrategy` on Ethereum or `memo` on Solana) and get their confirmation, then run the same command without `--dry-run`. When the rule does not apply, run it without `--dry-run` directly.
+Show the human the summary (`sender`, `recipient`, `displayAmount`, `asset`, and `feeStrategy` on Ethereum or `memo` on Solana) and get their confirmation, then run the same command without `--dry-run`. When the rule does not apply, run it without `--dry-run` directly. Before every run without `--dry-run`, note the time with `date -u +%Y-%m-%dT%H:%M:%SZ` in its own call: step 11, No blind retry, matches on it.
 
 Done when the human has the review link (`deeplink`) and the `intentId` from the output. When the service returned no readable link, pass on the warning "accepted the intent but returned no readable review link" and find the intent as step 11, No blind retry, says; after a timeout or an HTTP 5xx, do the same before any new proposal. An intent that exists changes only through step 9 (cancel, then a new proposal).
 
@@ -172,7 +172,7 @@ wallet-cli does not check the sender's balance. The human reviews the intent and
 pnpm --silent wallet-cli start agent-intent swap --profile <id> --sender <sender> --from <currency id> --to <currency id> --amount <n> --dry-run --output json
 ```
 
-Show the human the summary (`sender`, `from.ticker`, `to.ticker`, `fromAmount`, `toAmount`, `provider`) and get their confirmation, then run the same command without `--dry-run`. Each run quotes again, so give the human the `toAmount` and `provider` of the real run with its link. When the rule does not apply, run it without `--dry-run` directly.
+Show the human the summary (`sender`, `from.ticker`, `to.ticker`, `fromAmount`, `toAmount`, `provider`) and get their confirmation, then run the same command without `--dry-run`. Each run quotes again, so give the human the `toAmount` and `provider` of the real run with its link. When the rule does not apply, run it without `--dry-run` directly. Note the time before every run without `--dry-run`, as in step 7.
 
 Done as in step 7: the human has the `deeplink` and the `intentId`, or, after the no-readable-link warning, a timeout or an HTTP 5xx, the result of step 11, No blind retry.
 
@@ -235,7 +235,7 @@ It needs an `enrolled` profile whose key is still on this machine (keychain or k
 
 - **Every real send is real.** Each `send` or `swap` without `--dry-run` creates a real pending intent; an unwanted one is rejected by the human or cancelled (step 9).
 - **One host.** Enrollment, recovery and review links open on `https://app.agents.ledger.com/` (staging profiles: `https://app.agents.ledger-test.com/`). Give the human the `intentId` with each review link, so they can find the intent there. Send a link only when it opens on that host; any other host is not Ledger's page: tell the human instead.
-- **No blind retry.** Every run uses a fresh nonce, so a re-run after a timeout, an HTTP 5xx or a missing review link proposes a second intent even when the first one landed. List `intents` (step 9) and take any intent of the same `type` (`send` or `swap`) and `sender`, created since the failed call, in any status, as the one that landed: give the human its `id` and `status`. The human may have approved it already, so a final status does not mean the call failed: `success` means the payment went through, and nothing is re-run. When none shows, tell the human, and re-run only on their yes. Done when the human has that `id`, or has said yes to the re-run.
+- **No blind retry.** Every run uses a fresh nonce, so a re-run after a timeout, an HTTP 5xx or a missing review link proposes a second intent even when the first one landed. List `intents` (step 9) and take an intent with `createdAt` no earlier than a minute before the time you noted before the call (step 7; the minute covers clock skew), of the same `type` (`send` or `swap`) and `sender`, and for a `send` the same `recipient`, in any status, as the one that landed: give the human its `id` and `status`. The human may have approved it already, so a final status does not mean the call failed: `success` means the payment went through, and nothing is re-run. When none shows, tell the human, and re-run only on their yes. Done when the human has that `id`, or has said yes to the re-run.
 
 ## 12. Errors
 
