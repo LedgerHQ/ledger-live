@@ -109,6 +109,11 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      lock_high_priority:
+        description: "Exclusive lock: high priority, as release and hotfix runs get"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -192,6 +197,7 @@ env:
   SPECULOS_APP_PROVIDER: ${{ inputs.app_provider || '1' }}
   # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
   E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
+  E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ (inputs.lock_high_priority || contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name)) && 'high' || 'normal' }}
 
 jobs:
   prepare-devices:
@@ -336,6 +342,7 @@ jobs:
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+            echo "- **Exclusive lock priority:** $E2E_EXCLUSIVE_LOCK_PRIORITY"
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
@@ -526,7 +533,6 @@ jobs:
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ steps.exclusive-lock.outputs.mode }}
-          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Stop Remote Config capture proxy
         id: capture-proxy
@@ -545,6 +551,7 @@ jobs:
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
             exclusive_lock=${{ steps.exclusive-lock.outputs.mode || 'remote' }}
+            exclusive_lock_priority=${{ env.E2E_EXCLUSIVE_LOCK_PRIORITY }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}
@@ -739,7 +746,6 @@ jobs:
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ steps.exclusive-lock.outputs.mode }}
-          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -751,6 +757,7 @@ jobs:
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
             exclusive_lock=${{ steps.exclusive-lock.outputs.mode || 'remote' }}
+            exclusive_lock_priority=${{ env.E2E_EXCLUSIVE_LOCK_PRIORITY }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}
@@ -936,7 +943,6 @@ jobs:
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ steps.exclusive-lock.outputs.mode }}
-          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -948,6 +954,7 @@ jobs:
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
             exclusive_lock=${{ steps.exclusive-lock.outputs.mode || 'remote' }}
+            exclusive_lock_priority=${{ env.E2E_EXCLUSIVE_LOCK_PRIORITY }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}

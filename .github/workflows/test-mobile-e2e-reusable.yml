@@ -112,6 +112,11 @@ on:
         required: false
         type: string
         default: ""
+      lock_high_priority:
+        description: "Exclusive lock: high priority, as release and hotfix runs get"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -291,6 +296,7 @@ env:
   # Broadcast on explicit request, or on the platform's own broadcast nightly (see the schedule above).
   IOS_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' }}
   ANDROID_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 0 * * 5' }}
+  E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ (inputs.lock_high_priority || contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name)) && 'high' || 'normal' }}
   # True only when BOTH platforms broadcast in the same run, which the nightlies never do: only an
   # explicit enable_broadcast dispatch covering both platforms. Equivalent to
   # IOS_BROADCAST_ENABLED && ANDROID_BROADCAST_ENABLED, which the env context cannot express here.
@@ -484,6 +490,7 @@ jobs:
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled (iOS):** $IOS_BROADCAST_ENABLED"
           echo "- **Broadcast enabled (Android):** $ANDROID_BROADCAST_ENABLED"
+          echo "- **Exclusive lock priority:** $E2E_EXCLUSIVE_LOCK_PRIORITY"
           echo "- **Slack notification:** $SLACK_NOTIF_STATUS"
           echo "- **Android Feature Flags:** $ANDROID_FEATURE_FLAGS"
           echo "- **iOS Feature Flags:** $IOS_FEATURE_FLAGS"
@@ -1001,7 +1008,6 @@ jobs:
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ steps.exclusive-lock.outputs.mode }}
-          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
         run: |
           if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
             GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run ledger-live-mobile-e2e-tests:test:ci -- -p ios $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
@@ -1019,6 +1025,7 @@ jobs:
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.IOS_BROADCAST_ENABLED }}
             exclusive_lock=${{ steps.exclusive-lock.outputs.mode || 'remote' }}
+            exclusive_lock_priority=${{ env.E2E_EXCLUSIVE_LOCK_PRIORITY }}
             firebase_env=${{ inputs.production_firebase && 'production' || 'testing' }}
             team=${{ inputs.team || 'all' }}
             test_filter=${{ inputs.test_filter }}
@@ -1383,7 +1390,6 @@ jobs:
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ steps.exclusive-lock.outputs.mode }}
-          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
         run: |
           if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
             GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run ledger-live-mobile-e2e-tests:test:ci -- -p android $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
@@ -1533,6 +1539,7 @@ jobs:
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.ANDROID_BROADCAST_ENABLED }}
             exclusive_lock=${{ steps.exclusive-lock.outputs.mode || 'remote' }}
+            exclusive_lock_priority=${{ env.E2E_EXCLUSIVE_LOCK_PRIORITY }}
             firebase_env=${{ inputs.production_firebase && 'production' || 'testing' }}
             team=${{ inputs.team || 'all' }}
             test_filter=${{ inputs.test_filter }}
