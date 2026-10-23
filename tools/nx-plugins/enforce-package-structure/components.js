@@ -844,9 +844,10 @@ function typeParameterAt(node, name) {
  * whose items declare `onPress` is checked like the contract itself, also behind a local alias
  * such as `type Tiles = Tile[]`. A local generic type binds its parameters to its type arguments,
  * so an argument is checked only where the type's body places it: `Box<T> = { value: T }` checks
- * it, `Omit<T, "onPress">` and `(value: T) => void` do not. Callback parameters, `keyof` operands,
- * the condition of a conditional type, types from other modules and the arguments of `Pick`,
- * `Omit` and other library types that drop props are not followed.
+ * it, `Omit<T, "onPress">` and `(value: T) => void` do not. Callback parameters, `keyof` of a type
+ * argument, the condition of a conditional type that tests one, types from other modules and the
+ * arguments of `Pick`, `Omit` and other library types that drop props are not followed, except
+ * that the contract's own heritage clauses check the type arguments of any base.
  *
  * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
  * @param {ReturnType<typeof parseModule>} module
@@ -858,11 +859,13 @@ function reachableProps(declaration, module) {
   const expanded = new Set();
   const expanding = [];
   const ids = new Map();
+  /** @param {ts.Node} node @returns {number} */
   function idOf(node) {
     if (!ids.has(node)) ids.set(node, ids.size);
     return ids.get(node);
   }
   // What a type argument stands for once the type parameters it names are replaced.
+  /** @param {ts.TypeNode} node @param {Bindings} bindings @returns {ts.TypeNode} */
   function resolve(node, bindings) {
     while (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
       const parameter = typeParameterAt(node, node.typeName.text);
@@ -872,6 +875,13 @@ function reachableProps(declaration, module) {
     }
     return node;
   }
+  /** @param {ts.TypeNode} node @param {Bindings} bindings @returns {boolean} */
+  function isBoundParameter(node, bindings) {
+    if (!ts.isTypeReferenceNode(node) || !ts.isIdentifier(node.typeName)) return false;
+    const parameter = typeParameterAt(node, node.typeName.text);
+    return Boolean(parameter && bindings.has(parameter));
+  }
+  /** @param {ts.TypeElement} prop @param {Bindings} bindings */
   function addProp(prop, bindings) {
     if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
     props.add(prop);
@@ -880,6 +890,11 @@ function reachableProps(declaration, module) {
   // A local type with no bound parameter reads the same everywhere, so it is expanded once; a
   // generic one is not expanded again inside itself with the same arguments, so recursive types
   // terminate.
+  /**
+   * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} local
+   * @param {ts.NodeArray<ts.TypeNode> | undefined} typeArguments
+   * @param {Bindings} bindings
+   */
   function expand(local, typeArguments, bindings) {
     const inner = new Map();
     (local.typeParameters ?? []).forEach((parameter, index) => {
@@ -906,14 +921,28 @@ function reachableProps(declaration, module) {
     }
     if (inner.size > 0) expanding.pop();
   }
+  /** @param {ts.Node} node @param {Bindings} bindings */
   function visit(node, bindings) {
     if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) return;
-    if (ts.isTypeOperatorNode(node) && node.operator === ts.SyntaxKind.KeyOfKeyword) return;
+    if (
+      ts.isTypeOperatorNode(node) &&
+      node.operator === ts.SyntaxKind.KeyOfKeyword &&
+      isBoundParameter(node.type, bindings)
+    ) {
+      return;
+    }
     if (ts.isTypeLiteralNode(node)) {
       for (const member of node.members) addProp(member, bindings);
       return;
     }
     if (ts.isConditionalTypeNode(node)) {
+      if (
+        !isBoundParameter(node.checkType, bindings) &&
+        !isBoundParameter(node.extendsType, bindings)
+      ) {
+        visit(node.checkType, bindings);
+        visit(node.extendsType, bindings);
+      }
       visit(node.trueType, bindings);
       visit(node.falseType, bindings);
       return;
@@ -927,19 +956,21 @@ function reachableProps(declaration, module) {
       ts.forEachChild(node, child => visit(child, bindings));
       return;
     }
-    if (!ts.isIdentifier(reference)) return;
-    const name = reference.text;
-    const parameter = typeParameterAt(node, name);
+    const name = ts.isIdentifier(reference) ? reference.text : "";
+    const parameter = name && typeParameterAt(node, name);
     if (parameter) {
       const bound = bindings.get(parameter);
       if (bound) visit(bound.node, bound.bindings);
       return;
     }
     // A namespace declaration shadows the module-level type of the same name.
-    const local = !enclosingScopeNames(node, false).has(name) && module.types.get(name);
+    const local = name && !enclosingScopeNames(node, false).has(name) && module.types.get(name);
+    // `interface CardProps extends Base<{ onPress(): void }>`, with `Base` imported.
+    const contractHeritage =
+      ts.isExpressionWithTypeArguments(node) && node.parent.parent === declaration;
     if (local) {
       expand(local, node.typeArguments, bindings);
-    } else if (PROPS_PRESERVING_TYPES.has(name)) {
+    } else if (PROPS_PRESERVING_TYPES.has(name) || contractHeritage) {
       for (const argument of node.typeArguments ?? []) visit(argument, bindings);
     }
   }

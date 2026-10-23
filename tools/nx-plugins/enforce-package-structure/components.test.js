@@ -995,6 +995,22 @@ test("R3 checks a type argument where a local generic places it in props", () =>
   }
 });
 
+test("R3 checks keyof, conditions and imported heritage arguments outside a local generic", () => {
+  const tile = "type Tile = { onPress(): void };\n";
+  for (const contractModule of [
+    'import type { Base } from "./Base";\nexport interface CardProps extends Base<{ onPress(): void }> { title: string }\n',
+    `${tile}export type CardProps = { sortBy: keyof Tile };\n`,
+    `${tile}export type CardProps = { k: Tile extends string ? 1 : 2 };\n`,
+    `${tile}export interface CardProps extends Omit<Tile, keyof Tile> {}\n`,
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
 test("R3 checks the props a local generic contract receives as type arguments", () => {
   for (const contractModule of [
     "type Box<T> = { value: T };\nexport type CardProps = Box<{ onPress(): void }>;\n",
