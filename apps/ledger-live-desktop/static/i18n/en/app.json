@@ -10682,6 +10682,18 @@
       }
     }
   },
+  "accountDetailHero": {
+    "assetPicker": {
+      "title": "Select an asset"
+    },
+    "actions": {
+      "receive": "Receive",
+      "send": "Send",
+      "buy": "Buy",
+      "sell": "Sell",
+      "earn": "Earn"
+    }
+  },
   "accountDetail": {
     "header": {
       "settings": "Account settings"

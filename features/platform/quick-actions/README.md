@@ -51,7 +51,7 @@ Without a signer, only Connect and Buy a Ledger are shown.
 | Receive  | —                                          | active                                |
 | Buy      | shown if buy is available                  | shown if buy is available             |
 | Swap     | shown if swap is available                 | —                                     |
-| Sell     | shown if sell is available **and** funds   | shown; active if sell available and funds |
+| Sell     | shown if sell is available **and** funds   | shown if sell is available; active if funds |
 | Send     | —                                          | shown; active if funds                |
 | Earn     | shown if earn is available                 | shown if earn is available; active if funds |
 
