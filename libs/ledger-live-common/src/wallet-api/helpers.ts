@@ -11,7 +11,7 @@ import type {
 } from "./types";
 import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
-import { isSameDomain } from "./manifestDomainUtils";
+import { isSameDomain, isUrlAllowedByManifestDomains } from "./manifestDomainUtils";
 
 export function isWalletAPISupportedCurrency(
   currency: Currency,
@@ -88,11 +88,22 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
  * accepted; http: is permitted in development so http://localhost manifests
  * can be loaded.
  *
+ * When `enforceManifestDomains` is set (the manifest domain check is on), the URL's origin
+ * must also be listed in the manifest's `domains`, so a subdomain the manifest does not
+ * declare is rejected.
+ *
  * @param url - The URL to validate
- * @param manifestUrl - The manifest URL to compare against
- * @returns true if the URL passes the registrable-domain + protocol check
+ * @param manifest - The manifest whose URL and domains the URL is checked against
+ * @param enforceManifestDomains - Whether the manifest's `domains` are enforced
+ * @returns true if the URL passes the registrable-domain and protocol checks, and the
+ * manifest-domains check when enforced
  */
-const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
+const isWhitelistedDomain = (
+  url: string,
+  manifest: AppManifest,
+  enforceManifestDomains: boolean,
+): boolean => {
+  const manifestUrl = manifest.url.toString();
   try {
     const parsedUrl = new URL(url);
     const parsedManifestUrl = new URL(manifestUrl);
@@ -129,6 +140,11 @@ const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
       return false;
     }
 
+    if (enforceManifestDomains && !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])) {
+      log("wallet-api/helpers", "isWhitelistedDomain: URL origin not in manifest domains");
+      return false;
+    }
+
     return true;
   } catch (error) {
     // Invalid URL format
@@ -140,11 +156,12 @@ const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
 export const getInitialURL = (
   inputs: Record<string, string | boolean | undefined> | undefined,
   manifest: AppManifest,
+  { enforceManifestDomains = false }: { enforceManifestDomains?: boolean } = {},
 ) => {
   try {
     if (
       typeof inputs?.goToURL === "string" &&
-      isWhitelistedDomain(inputs.goToURL, manifest.url.toString())
+      isWhitelistedDomain(inputs.goToURL, manifest, enforceManifestDomains)
     ) {
       if (manifest.params) {
         const goToURL = new URL(inputs.goToURL);

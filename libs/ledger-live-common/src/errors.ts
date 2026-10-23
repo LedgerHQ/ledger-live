@@ -1117,3 +1117,19 @@ export class CurrencyRegionRestrictedError extends Error {
 export class PaginationIntegrityError extends Error {
   override name = "PaginationIntegrityError";
 }
+
+/** A Live App request that was pending when the webview main frame moved to another origin. */
+export class BridgeSessionClosed extends Error {
+  override name = "BridgeSessionClosed";
+  constructor() {
+    super("The Live App main frame changed origin: the request was cancelled");
+  }
+}
+
+/** A Platform API method that is not listed in the Live App manifest `permissions`. */
+export class PlatformAPIPermissionDenied extends Error {
+  override name = "PlatformAPIPermissionDenied";
+  constructor(method: string) {
+    super(`Permission denied for method ${method}`);
+  }
+}
