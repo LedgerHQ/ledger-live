@@ -526,8 +526,8 @@ describe("PortfolioView", () => {
   });
 
   describe("Services Entry Points", () => {
-    const renderPortfolioWithServices = () =>
-      render(
+    function renderPortfolioWithServices() {
+      return render(
         <PortfolioView
           {...defaultProps}
           shouldDisplayPerpsEntryPoint={false}
@@ -546,6 +546,7 @@ describe("PortfolioView", () => {
           },
         },
       );
+    }
 
     it("should render the services between the crypto and stablecoin sections", async () => {
       renderPortfolioWithServices();
@@ -557,7 +558,9 @@ describe("PortfolioView", () => {
       expect(cryptos.compareDocumentPosition(services)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
       expect(services.compareDocumentPosition(stablecoins)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
       expect(
-        screen.getAllByTestId(/^portfolio-services-entry-point-/).map(tile => tile.dataset.testid),
+        screen.getAllByTestId(/^portfolio-services-entry-point-/).map(function getTestId(card) {
+          return card.dataset.testid;
+        }),
       ).toEqual(["portfolio-services-entry-point-borrow", "portfolio-services-entry-point-perps"]);
       expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
     });

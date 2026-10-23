@@ -3,8 +3,8 @@ import { ServicesEntryPoints } from "@features/flow-portfolio-services-entry-poi
 import { ScreenName } from "~/const";
 import { usePortfolioServicesSectionViewModel } from "./usePortfolioServicesSectionViewModel";
 
-export const PortfolioServicesSection = () => {
+export function PortfolioServicesSection() {
   const { onOpenService } = usePortfolioServicesSectionViewModel();
 
   return <ServicesEntryPoints page={ScreenName.Portfolio} onOpenService={onOpenService} />;
-};
+}

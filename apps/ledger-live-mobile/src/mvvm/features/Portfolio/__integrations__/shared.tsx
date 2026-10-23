@@ -74,12 +74,14 @@ export const overrideInitialStateWithServicesEntryPoints = withFlagOverrides(
     ptxPerpsLiveAppMobile: { enabled: true },
     ptxBorrowLiveApp: { enabled: true },
   },
-  state => ({
-    ...state,
-    accounts: {
-      active: [mockAccount],
-    },
-  }),
+  function withMockAccount(state) {
+    return {
+      ...state,
+      accounts: {
+        active: [mockAccount],
+      },
+    };
+  },
 );
 
 export const overrideInitialStateWithAssetSection =

@@ -36,12 +36,15 @@ const setupDadaApiLoading = () => {
   );
 };
 
-const renderedSectionsOrder = () =>
-  screen
+function renderedSectionsOrder() {
+  return screen
     .getAllByTestId(
       /^(PortfolioCryptosList|portfolio-services-entry-points|PortfolioStablecoinsList)$/,
     )
-    .map(node => node.props.testID);
+    .map(function getTestID(node) {
+      return node.props.testID;
+    });
+}
 
 describe("Portfolio Screen", () => {
   it("should render Portfolio", async () => {

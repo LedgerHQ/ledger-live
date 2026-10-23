@@ -9,23 +9,22 @@ interface UsePortfolioServicesSectionViewModelResult {
   onOpenService: (service: ServiceEntryPointId) => void;
 }
 
-export const usePortfolioServicesSectionViewModel =
-  (): UsePortfolioServicesSectionViewModelResult => {
-    const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+export function usePortfolioServicesSectionViewModel(): UsePortfolioServicesSectionViewModelResult {
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
-    const onOpenService = useCallback(
-      (service: ServiceEntryPointId) => {
-        switch (service) {
-          case "perps":
-            navigation.navigate(NavigatorName.Perps, { screen: ScreenName.PerpsTab });
-            return;
-          case "borrow":
-            navigation.navigate(NavigatorName.Borrow, { screen: ScreenName.Borrow, params: {} });
-            return;
-        }
-      },
-      [navigation],
-    );
+  const onOpenService = useCallback(
+    function onOpenService(service: ServiceEntryPointId) {
+      switch (service) {
+        case "perps":
+          navigation.navigate(NavigatorName.Perps, { screen: ScreenName.PerpsTab });
+          return;
+        case "borrow":
+          navigation.navigate(NavigatorName.Borrow, { screen: ScreenName.Borrow, params: {} });
+          return;
+      }
+    },
+    [navigation],
+  );
 
-    return { onOpenService };
-  };
+  return { onOpenService };
+}
