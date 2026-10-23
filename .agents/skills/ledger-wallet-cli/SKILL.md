@@ -505,8 +505,8 @@ pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethe
 - **Providers:** only `oneinch`, `velora`, `okx` and `lifi`, the ones the frontend can turn into a
   transaction today (`1inch` is accepted for `oneinch`). A quote that needs a Permit2 signature is
   skipped, and so is one whose token approval the frontend can't send: an approval of another token
-  than the one sold, or USDT with an allowance left (its `approve` fails until the allowance is
-  reset to 0). The intent would stay stuck in review.
+  than the one sold, or USDT with an allowance left or not reported (its `approve` fails until the
+  allowance is reset to 0). The intent would stay stuck in review.
 - **Token approval:** the best quote is kept even when the sold token needs an approval first. The
   reviewer approves it in the Agent Intent frontend, in a separate transaction with its own network
   fee, then reviews the swap. The command says so on stderr, and JSON output has
