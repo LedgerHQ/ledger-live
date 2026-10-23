@@ -11,10 +11,8 @@ export const STARTUP_EVENTS = {
   NAV_READY: "Splash screen faded",
 } as const;
 
-const NOT_LOGGED_EVENTS = new Set<string>([
-  STARTUP_EVENTS.STORE_STORAGE_READ,
-  STARTUP_EVENTS.CURRENCY_HYDRATED,
-]);
+// Startup-step branch: every event is shown, including the storage read and the currency hydration.
+const NOT_LOGGED_EVENTS = new Set<string>();
 
 const startupTsp = new Promise<number>(resolve => {
   // On dev it doesn't make sense to compare to the app starting time due to metro start time

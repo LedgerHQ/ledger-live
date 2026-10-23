@@ -176,6 +176,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
         await restoreTokensToCache(store.dispatch, persistedCryptoAssets, TOKEN_CACHE_TTL);
       }
+      logStartupEvent("Store tokens restored");
 
       // Handle account import with error recovery for async issues
       try {
@@ -186,6 +187,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         // Continue with app initialization even if account import fails
         // This prevents blocking deeplink navigation
       }
+      logStartupEvent("Store accounts imported");
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
@@ -238,6 +240,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // Initialize identities (single source of truth): migrate from legacy "user" if present, then persist under "identities" only
       await initIdentities(store, persistedIdentities ?? null, legacyUser ?? null);
+      logStartupEvent("Store identities ready");
 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
@@ -282,6 +285,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         }
       }
 
+      logStartupEvent("Store imports done");
       await bootstrapCardSession(store.dispatch);
       await restoreCardAuthStatus(store.dispatch, store.getState);
 
