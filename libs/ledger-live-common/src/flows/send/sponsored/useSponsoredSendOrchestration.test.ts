@@ -56,6 +56,7 @@ const rentOrder = (overrides: Record<string, unknown> = {}) => ({
 const makeSeam = (overrides: Record<string, unknown> = {}) => ({
   feeOptionId: "sponsored-fixture",
   providerName: "Provider",
+  providerTermsUrl: "https://provider.example/terms",
   waivesErrorKeys: [],
   waivesWarningKeys: [],
   reservationDedupKey: jest.fn().mockReturnValue("1.5"),
