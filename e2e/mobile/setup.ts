@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { getEnv, setEnv } from "@shared/env";
 import { device, log } from "detox";
 import { launchApp, setupEnvironment } from "@e2e/helpers/commonHelpers";
@@ -13,7 +16,16 @@ const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
 
 beforeAll(async () => {
-  const port = await launchApp({ newInstance: true, delete: true });
+  // Study (ios-e2e-no-delete): install once per simulator, then relaunch without reinstalling.
+  // Jest copies process.env per spec file, so a marker file (per Jest run and device) carries it.
+  const installedMarker = path.join(
+    os.tmpdir(),
+    `e2e-app-installed-${process.ppid}-${device.id.replace(/\W/g, "_")}`,
+  );
+  const firstOnDevice = !fs.existsSync(installedMarker);
+  const port = await launchApp({ newInstance: true, delete: firstOnDevice });
+  fs.writeFileSync(installedMarker, "");
+  log.info(`[timing] launchApp delete=${firstOnDevice} device=${device.id}`);
   await device.reverseTcpPort(8081);
   await device.reverseTcpPort(port);
   await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
