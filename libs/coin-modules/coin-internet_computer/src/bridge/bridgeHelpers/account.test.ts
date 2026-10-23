@@ -7,6 +7,7 @@ jest.mock("../../api", () => ({
 }));
 
 import * as api from "../../api";
+import { deriveAddressFromPubkey } from "../../logic/crypto";
 import { ICPAccount, ICPNeuron, NeuronsData, NeuronState } from "../../types";
 import { getAccountShape, postSync } from "./account";
 
@@ -126,6 +127,53 @@ describe("getAccountShape operation count", () => {
     );
 
     expect(shape).not.toHaveProperty("operationsCount");
+  });
+});
+
+const OTHER = "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
+const tx = (id: bigint, operation: unknown) => ({
+  id,
+  transaction: {
+    memo: 0n,
+    icrc1_memo: [],
+    operation,
+    timestamp: [{ timestamp_nanos: 1_750_760_223_449_601_159n }],
+    created_at_time: [{ timestamp_nanos: 1_750_760_220_000_000_000n }],
+  },
+});
+
+describe("getAccountShape history", () => {
+  it("maps transfers and skips mints, burns and approvals", async () => {
+    const address = deriveAddressFromPubkey(XPUB);
+    (api.fetchBlockHeight as jest.Mock).mockResolvedValue(new BigNumber(100));
+    (api.fetchBalance as jest.Mock).mockResolvedValue(new BigNumber(0));
+    (api.fetchTxns as jest.Mock).mockResolvedValue([
+      tx(4n, {
+        Transfer: {
+          from: OTHER,
+          to: address,
+          amount: { e8s: 5n },
+          fee: { e8s: 10_000n },
+          spender: [],
+        },
+      }),
+      tx(3n, { Mint: { to: address, amount: { e8s: 1n } } }),
+      tx(2n, { Burn: { from: address, amount: { e8s: 1n }, spender: [] } }),
+      tx(1n, {
+        Approve: {
+          from: address,
+          spender: OTHER,
+          fee: { e8s: 10_000n },
+          allowance: { e8s: 1n },
+          expected_allowance: [],
+          expires_at: [],
+        },
+      }),
+    ]);
+
+    const shape = await getAccountShape(infoWith(undefined), {} as any);
+
+    expect(shape.operations?.map(op => [op.type, op.blockHeight])).toEqual([["IN", 4]]);
   });
 });
 
