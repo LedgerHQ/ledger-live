@@ -17,8 +17,8 @@ permissions:
 
 env:
   COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo"
-  # The coin testers that run against coin-sandbox
-  COIN_SANDBOX_CURRENCIES: '["solana", "tron"]'
+  # The coin testers that run against coin-sandbox, and the coin-sandbox networks each one starts
+  COIN_SANDBOX_NETWORKS: '{"solana": ["solana"], "tron": ["tron"], "evm": ["ethereum"]}'
 
 jobs:
   is-affected:
@@ -144,7 +144,7 @@ jobs:
       # GH_BOT_* is installed on LedgerHQ/coin-sandbox. Then uncomment this step, use its token in the checkout
       # (`token:`) instead of `ssh-key:`, and delete the deploy key and the COIN_SANDBOX_DEPLOY_KEY secret.
       # - name: Generate a GitHub App token for coin-sandbox
-      #   if: contains(fromJSON(env.COIN_SANDBOX_CURRENCIES), matrix.chain)
+      #   if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
       #   id: coin-sandbox-token
       #   uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
       #   with:
@@ -154,7 +154,7 @@ jobs:
       #     permission-contents: read
 
       - name: Checkout coin-sandbox
-        if: contains(fromJSON(env.COIN_SANDBOX_CURRENCIES), matrix.chain)
+        if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: LedgerHQ/coin-sandbox
@@ -165,13 +165,13 @@ jobs:
           persist-credentials: false
 
       - name: Setup Deno
-        if: contains(fromJSON(env.COIN_SANDBOX_CURRENCIES), matrix.chain)
+        if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
         uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: 2.9.7
 
       - name: Login to GHCR
-        if: contains(fromJSON(env.COIN_SANDBOX_CURRENCIES), matrix.chain)
+        if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
@@ -179,15 +179,18 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull the coin-sandbox images
-        if: contains(fromJSON(env.COIN_SANDBOX_CURRENCIES), matrix.chain)
+        if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
         working-directory: coin-sandbox
         env:
           COIN_SANDBOX_REGISTRY: ghcr.io/ledgerhq/
-          NETWORK: ${{ matrix.chain }}
-        run: deno task pull "$NETWORK"
+          NETWORKS: ${{ join(fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain], ' ') }}
+        run: |
+          for network in $NETWORKS; do
+            deno task pull "$network"
+          done
 
       - name: Start coin-sandbox
-        if: contains(fromJSON(env.COIN_SANDBOX_CURRENCIES), matrix.chain)
+        if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
         working-directory: coin-sandbox
         env:
           COIN_SANDBOX_REGISTRY: ghcr.io/ledgerhq/
