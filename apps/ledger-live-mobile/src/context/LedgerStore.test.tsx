@@ -23,6 +23,7 @@ jest.mock("../db", () => {
     getHistory: empty,
     getKnownDevices: empty,
     getLargeScreenUpsellModalState: empty,
+    getPredictionsState: empty,
     getPostOnboardingState: empty,
     getProtect: empty,
     getMarketState: empty,

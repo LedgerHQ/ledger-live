@@ -21,6 +21,7 @@ import { knownDevicesStoreSelector } from "./reducers/knownDevices";
 import { ExportedWalletState } from "~/renderer/reducers/wallet";
 import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
+import type { PredictionsState } from "@domain/entity-predictions";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
@@ -67,6 +68,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   marketBanner: MarketBanner;
+  predictions: PredictionsState;
   knownDevices: KnownDevices;
   cryptoAssets: PersistedCAL;
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;

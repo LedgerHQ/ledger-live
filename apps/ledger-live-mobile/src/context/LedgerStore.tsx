@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import { restorePredictionsState } from "@domain/entity-predictions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
@@ -28,6 +29,7 @@ import {
   getHistory,
   getKnownDevices,
   getLargeScreenUpsellModalState,
+  getPredictionsState,
   getPostOnboardingState,
   getProtect,
   getMarketState,
@@ -104,6 +106,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         accountsData,
         postOnboardingState,
         largeScreenUpsellModalState,
+        predictionsState,
         marketState,
         marketListConfigState,
         marketBannerState,
@@ -125,6 +128,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),
+        retry(getPredictionsState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
@@ -194,6 +198,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (largeScreenUpsellModalState) {
         store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+      }
+
+      if (predictionsState) {
+        store.dispatch(restorePredictionsState(predictionsState));
       }
 
       if (marketState) {
