@@ -40,42 +40,84 @@ const nativeMocks = {
   "^@shared/ui-queued-bottom-sheet/keyboard$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
 };
 
-/**
- * Dual-project jest config for a features/flow package.
- *
- * - web project: jsdom, matches *.web.test.ts(x) — Desktop.
- * - native project: node, matches *.native.test.ts(x) — Mobile.
- *
- * @param {import('@jest/types').Config.InitialOptions} [overrides]
- * @returns {import('@jest/types').Config.InitialOptions}
- */
-function createFlowJestConfig(overrides = {}) {
-  const testPathIgnorePatterns = ["lib/", "lib-es/", "node_modules/"];
-  const coverageReporters = [
-    "json",
-    ["lcov", { file: "lcov.info", projectRoot: "../../../" }],
-    "text",
-  ];
-  const base = {
-    testPathIgnorePatterns,
+// Platform variants resolve like they do in the bundlers (Rspack `resolve.extensions`, Metro
+// platform extensions), so a `.web`/`.native` suffix stays confined to the file that needs one:
+// `import { FeatureTourView } from "./FeatureTourView"` picks the right side per project.
+const platformExtensions = platform => [
+  `${platform}.tsx`,
+  `${platform}.ts`,
+  "tsx",
+  "ts",
+  "js",
+  "jsx",
+  "json",
+];
+
+function baseProject() {
+  return {
+    testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/"],
     transform: swcTransform,
     transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformAllowlist.join("|")}))`],
-    coverageReporters,
+    coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   };
+}
 
-  // Platform variants resolve like they do in the bundlers (Rspack `resolve.extensions`, Metro
-  // platform extensions), so a `.web`/`.native` suffix stays confined to the file that needs one:
-  // `import { FeatureTourView } from "./FeatureTourView"` picks the right side per project.
-  const platformExtensions = platform => [
-    `${platform}.tsx`,
-    `${platform}.ts`,
-    "tsx",
-    "ts",
-    "js",
-    "jsx",
-    "json",
-  ];
+function webProject() {
+  return {
+    ...baseProject(),
+    displayName: "web",
+    testEnvironment: "jsdom",
+    moduleFileExtensions: platformExtensions("web"),
+    testMatch: [
+      "**/*.web.test.ts?(x)",
+      "**/*.web.spec.ts?(x)",
+      "**/!(*.web|*.native).test.ts?(x)",
+      "**/!(*.web|*.native).spec.ts?(x)",
+    ],
+    moduleNameMapper: { ...webMocks },
+    setupFilesAfterEnv: ["@testing-library/jest-dom", path.join(__dirname, "setup/web.js")],
+  };
+}
 
+function nativeProject() {
+  return {
+    ...baseProject(),
+    displayName: "native",
+    testEnvironment: "node",
+    resolver: path.join(__dirname, "resolver.native.js"),
+    moduleFileExtensions: platformExtensions("native"),
+    testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
+    moduleNameMapper: { ...nativeMocks },
+  };
+}
+
+/**
+ * Applies a project override: `setupFilesAfterEnv` and `moduleNameMapper` add to the project's
+ * own, every other key replaces the project's value.
+ *
+ * @param {import('@jest/types').Config.InitialProjectOptions} project
+ * @param {import('@jest/types').Config.InitialProjectOptions} overrides
+ * @returns {import('@jest/types').Config.InitialProjectOptions}
+ */
+function withProjectOverrides(project, { setupFilesAfterEnv, moduleNameMapper, ...overrides }) {
+  return {
+    ...project,
+    ...overrides,
+    ...(setupFilesAfterEnv && {
+      setupFilesAfterEnv: [...(project.setupFilesAfterEnv ?? []), ...setupFilesAfterEnv],
+    }),
+    ...(moduleNameMapper && {
+      moduleNameMapper: { ...project.moduleNameMapper, ...moduleNameMapper },
+    }),
+  };
+}
+
+/**
+ * @param {import('@jest/types').Config.InitialProjectOptions[]} projects
+ * @param {import('@jest/types').Config.InitialOptions} overrides
+ * @returns {import('@jest/types').Config.InitialOptions}
+ */
+function flowConfig(projects, overrides) {
   return {
     collectCoverage: true,
     coverageDirectory: "./coverage/",
@@ -86,33 +128,43 @@ function createFlowJestConfig(overrides = {}) {
         { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" },
       ],
     ],
-    projects: [
-      {
-        ...base,
-        displayName: "web",
-        testEnvironment: "jsdom",
-        moduleFileExtensions: platformExtensions("web"),
-        testMatch: [
-          "**/*.web.test.ts?(x)",
-          "**/*.web.spec.ts?(x)",
-          "**/!(*.web|*.native).test.ts?(x)",
-          "**/!(*.web|*.native).spec.ts?(x)",
-        ],
-        moduleNameMapper: { ...webMocks },
-        setupFilesAfterEnv: ["@testing-library/jest-dom", path.join(__dirname, "setup/web.js")],
-      },
-      {
-        ...base,
-        displayName: "native",
-        testEnvironment: "node",
-        resolver: path.join(__dirname, "resolver.native.js"),
-        moduleFileExtensions: platformExtensions("native"),
-        testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
-        moduleNameMapper: { ...nativeMocks },
-      },
-    ],
+    projects,
     ...overrides,
   };
 }
 
-module.exports = { createFlowJestConfig };
+/**
+ * Dual-project jest config for a features/flow package.
+ *
+ * - web project: jsdom, matches *.web.test.ts(x), for Desktop.
+ * - native project: node, matches *.native.test.ts(x), for Mobile.
+ *
+ * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
+ * `moduleNameMapper` add to the project's defaults, any other key replaces them.
+ *
+ * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @returns {import('@jest/types').Config.InitialOptions}
+ */
+function createFlowJestConfig({ webOverrides = {}, nativeOverrides = {}, ...overrides } = {}) {
+  return flowConfig(
+    [
+      withProjectOverrides(webProject(), webOverrides),
+      withProjectOverrides(nativeProject(), nativeOverrides),
+    ],
+    overrides,
+  );
+}
+
+/**
+ * Jest config for a features/flow package with native-only tests: the native project of
+ * createFlowJestConfig(), without the web one. Requires no web-only dependencies
+ * (jest-environment-jsdom, @testing-library/jest-dom).
+ *
+ * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @returns {import('@jest/types').Config.InitialOptions}
+ */
+function createFlowNativeJestConfig({ nativeOverrides = {}, ...overrides } = {}) {
+  return flowConfig([withProjectOverrides(nativeProject(), nativeOverrides)], overrides);
+}
+
+module.exports = { createFlowJestConfig, createFlowNativeJestConfig };

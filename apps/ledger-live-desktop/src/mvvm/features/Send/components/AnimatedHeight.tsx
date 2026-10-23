@@ -108,7 +108,7 @@ export function AnimatedHeight({ header, children, duration = 300 }: AnimatedHei
         className="flex w-full min-h-0 flex-col"
         style={{
           height: height === undefined ? undefined : `${height}px`,
-          overflow: isCapped || isAnimating ? "hidden" : "visible",
+          overflow: isAnimating ? "hidden" : "visible",
           transition: `height ${duration}ms ease`,
         }}
       >

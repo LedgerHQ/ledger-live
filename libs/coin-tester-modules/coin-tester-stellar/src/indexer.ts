@@ -17,7 +17,7 @@ export function initMswHandlers(): () => void {
     http.get("https://global.api.prd.ledger.com/cal/*", () => HttpResponse.json([])),
     http.get("https://nft.api.live.ledger.com/*", () => HttpResponse.json([])),
     http.get("https://earn.api.live.ledger.com/*", () => HttpResponse.json([])),
-    http.get("https://global.api.prd.ledger.com/countervalue/*", () => HttpResponse.json([])),
+    http.get("https://countervalues.live.ledger.com/*", () => HttpResponse.json([])),
   );
 
   server.listen({

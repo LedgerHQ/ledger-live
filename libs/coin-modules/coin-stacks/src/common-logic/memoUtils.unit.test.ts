@@ -1,5 +1,11 @@
 import { bufferCV, someCV, noneCV, cvToHex } from "@stacks/transactions";
-import { memoToBufferCV, hexMemoToString, bufferMemoToString, processMemoCV } from "./memoUtils";
+import {
+  memoToBufferCV,
+  hexMemoToString,
+  bufferMemoToString,
+  memoFromIntent,
+  processMemoCV,
+} from "./memoUtils";
 
 describe("memoToBufferCV", () => {
   test.each([undefined, null, ""])(
@@ -153,5 +159,19 @@ describe("processMemoCV", () => {
 
     const result = processMemoCV(serialized);
     expect(result).toBe(memo);
+  });
+});
+
+describe("memoFromIntent", () => {
+  test("should return the value of a memo-kind string memo", () => {
+    expect(memoFromIntent({ type: "string", kind: "memo", value: "1234" })).toBe("1234");
+  });
+
+  test.each([
+    undefined,
+    { type: "none" as const },
+    { type: "string" as const, kind: "memo" as const, value: "" },
+  ])("should return undefined for %p", memo => {
+    expect(memoFromIntent(memo)).toBeUndefined();
   });
 });

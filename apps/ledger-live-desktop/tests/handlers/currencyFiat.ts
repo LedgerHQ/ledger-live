@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 
-const CVS_BASE = "https://global.api.prd.ledger.com/countervalue";
+const CVS_BASE = "https://countervalues.live.ledger.com";
 
 const currencyFiatHandlers = [
   http.get(`${CVS_BASE}/v3/supported/fiat`, () =>

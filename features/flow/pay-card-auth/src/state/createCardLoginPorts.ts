@@ -5,7 +5,8 @@ import { clearAttempt, loadAttempt, saveAttempt } from "./attemptStore";
 import { createAuthorizeAttempt } from "./authorizeAttempt";
 import { markPayCardLoginIntroSeen } from "./loginIntroSlice";
 import { setSignedIn } from "./slice";
-import type { CardLoginPorts, OpenHostedLogin } from "./types";
+import type { OpenHostedLogin } from "./hostTypes";
+import type { CardLoginPorts } from "./types";
 
 export type CardLoginDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 

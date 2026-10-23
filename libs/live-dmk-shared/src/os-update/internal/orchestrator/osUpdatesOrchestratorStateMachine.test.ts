@@ -207,6 +207,7 @@ describe("OsUpdatesOrchestratorStateMachine", () => {
       if (state.type !== PreChecksStateType.UNEXPECTED_ERROR) {
         throw new Error("expected UNEXPECTED_ERROR");
       }
+      expect(state.error).toEqual(new Error("pre-checks crashed"));
       state.cancel();
 
       expect(actor.getSnapshot().value).toBe("Stopped");
@@ -278,6 +279,7 @@ describe("OsUpdatesOrchestratorStateMachine", () => {
         step: OsUpdatesSteps.CREATE_BACKUP,
         state: {
           type: CreateBackupStateType.UNEXPECTED_ERROR,
+          error: new Error("create-backup crashed"),
           cancel: expect.any(Function),
         },
       });
@@ -364,6 +366,7 @@ describe("OsUpdatesOrchestratorStateMachine", () => {
         step: OsUpdatesSteps.APPLY_UPDATES,
         state: {
           type: ApplyUpdatesStateType.UNEXPECTED_ERROR,
+          error: new Error("apply-updates crashed"),
           cancel: expect.any(Function),
         },
       });
@@ -435,6 +438,7 @@ describe("OsUpdatesOrchestratorStateMachine", () => {
         step: OsUpdatesSteps.RESTORE_BACKUP,
         state: {
           type: RestoreBackupStateType.UNEXPECTED_ERROR,
+          error: new Error("restore-backup crashed"),
           cancel: expect.any(Function),
         },
       });

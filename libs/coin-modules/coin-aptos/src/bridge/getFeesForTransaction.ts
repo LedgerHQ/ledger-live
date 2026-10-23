@@ -109,7 +109,9 @@ const CACHE = makeLRUCache(
   getFee,
   (account: Account, transaction: Transaction) => {
     const tokenAccount = getTokenAccount(account, transaction);
-    return `${tokenAccount ? tokenAccount.id : account.id}-${transaction.amount.toString()}}`;
+    // The recipient is part of the key: a transfer that creates the recipient's primary store
+    // costs far more gas than one to a recipient that already holds the asset.
+    return `${tokenAccount ? tokenAccount.id : account.id}-${transaction.recipient}-${transaction.amount.toString()}`;
   },
   seconds(30),
 );

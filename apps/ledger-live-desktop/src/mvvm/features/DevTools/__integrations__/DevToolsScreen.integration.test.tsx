@@ -38,10 +38,12 @@ jest.mock("@devtools/bindings", () => ({
   useAccountDescriptorToolProps: () => ({ marker: "account-descriptor-props" }),
   useAccountBalanceToolProps: () => ({ marker: "account-balance-props" }),
   useAccountDataToolProps: () => ({ marker: "account-data-props" }),
+  useAccountNameToolProps: () => ({ marker: "account-name-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
     middleware: () => (next: (action: unknown) => unknown) => next,
   }),
+  useAppConfigToolProps: () => ({ marker: "app-config-props" }),
 }));
 
 jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
@@ -76,6 +78,7 @@ describe("DevToolsScreen", () => {
         config: [
           { id: "feature-flags", config: { marker: "ff-props" } },
           { id: "env", config: { marker: "env-props" } },
+          { id: "app-config", config: { marker: "app-config-props" } },
           { id: "pay-card", config: { marker: "pay-card-props" } },
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
@@ -83,6 +86,7 @@ describe("DevToolsScreen", () => {
           { id: "account-data", config: { marker: "account-data-props" } },
           { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
           { id: "account-balance", config: { marker: "account-balance-props" } },
+          { id: "account-name", config: { marker: "account-name-props" } },
         ],
       }),
     );

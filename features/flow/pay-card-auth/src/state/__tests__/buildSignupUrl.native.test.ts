@@ -1,5 +1,5 @@
 import { buildSignupUrl } from "../buildSignupUrl";
-import type { CardLoginOauthConfig } from "../types";
+import type { CardLoginOauthConfig } from "../hostTypes";
 
 const oauthConfig: CardLoginOauthConfig = {
   apiUrl: "https://dev.api.baanx.com",

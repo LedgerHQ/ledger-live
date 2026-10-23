@@ -27,6 +27,8 @@ type BackupConfirmationSheetProps = Readonly<{
   onConfirmRestore: () => void;
   onConfirmDelete: () => void;
   onCancel: () => void;
+  /** The sheet is closed without a button. */
+  onDismiss: () => void;
 }>;
 
 export function BackupConfirmationSheet({
@@ -34,13 +36,14 @@ export function BackupConfirmationSheet({
   onConfirmRestore,
   onConfirmDelete,
   onCancel,
+  onDismiss,
 }: BackupConfirmationSheetProps) {
   const [kind, setKind] = useState(confirmation);
   if (confirmation && confirmation !== kind) setKind(confirmation);
   const content = kind ? CONFIRMATIONS[kind] : null;
 
   return (
-    <OsUpdateStateSheet isOpen={confirmation !== null} onClose={onCancel} hideHeader>
+    <OsUpdateStateSheet isOpen={confirmation !== null} onClose={onDismiss} hideHeader>
       {content ? (
         <InfoState
           preset="spot"

@@ -1,17 +1,16 @@
 import type {
   CraftedTransaction,
   FeeEstimation,
-  MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { transactionToHex } from "@stacks/transactions";
-import type { StacksTxData } from "../types";
+import type { StacksMemo, StacksTxData } from "../types";
 import { getNextSequence } from "./getNextSequence";
 import { buildUnsignedTx } from "./buildUnsignedTx";
 import { estimateFees } from "./estimateFees";
 
 export async function craftTransaction(
-  intent: TransactionIntent<MemoNotSupported, StacksTxData>,
+  intent: TransactionIntent<StacksMemo, StacksTxData>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
   const nonce = intent.sequence ?? (await getNextSequence(intent.sender));

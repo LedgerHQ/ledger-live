@@ -145,7 +145,7 @@ describe("useSwapNavigation (Market actions)", () => {
     });
 
     act(() => {
-      result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency);
+      result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency, { source: "Asset" });
     });
 
     expect(mockOpenAssetAndAccount).toHaveBeenCalledTimes(1);
@@ -154,6 +154,8 @@ describe("useSwapNavigation (Market actions)", () => {
         currencies: [bitcoin.id],
         areCurrenciesFiltered: true,
         useCase: "swap",
+        flow: "swap",
+        source: "Asset",
       }),
     );
     expect(mockNavigate).not.toHaveBeenCalled();

@@ -16,4 +16,5 @@ export const appConfigStorage: ConfigStorage = {
     ),
   clear: () => selectionsStorage.clearAll(),
   set: (key, value) => selectionsStorage.set(key, value),
+  remove: key => selectionsStorage.remove(key),
 };

@@ -47,6 +47,13 @@ export class AccountIdentifier {
     return new AccountIdentifier(Uint8Array.from(Buffer.from(hex, "hex")));
   }
 
+  /** True for exactly 32 bytes of hex whose leading CRC-32 matches the hash that follows it. */
+  static isValid(hex: string): boolean {
+    if (!/^[0-9a-f]{64}$/i.test(hex)) return false;
+    const bytes = Uint8Array.from(Buffer.from(hex, "hex"));
+    return new DataView(bytes.buffer).getUint32(0, false) === crc32(bytes.subarray(4));
+  }
+
   static fromPrincipal({
     principal,
     subAccount = SubAccount.default(),

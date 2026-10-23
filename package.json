@@ -207,6 +207,7 @@
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
     "@commitlint/prompt-cli": "catalog:",
+    "@ledgerhq/changelog": "workspace:*",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@nx/devkit": "catalog:",

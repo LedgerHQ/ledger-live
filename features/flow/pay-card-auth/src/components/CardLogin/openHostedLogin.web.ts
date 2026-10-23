@@ -1,4 +1,4 @@
-import type { HostedLoginResult } from "../../state/types";
+import type { HostedLoginResult } from "../../state/hostTypes";
 
 /**
  * The window reports nothing back, so `ledgerlive://paytab` carries the redirect and the answer is

@@ -33,6 +33,7 @@ rule that several packages of a layer need belongs in that layer's preset.
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
 | `libs` | `libs/` | Correctness rules as warnings, suspicious off |
+| `libs-coin` | `libs/coin-modules/`, `libs/wallet-btc/` | `libs`, with correctness as errors and suspicious as warnings, import cycles fatal (warnings in coin-bitcoin and wallet-btc), direct `createApi` imports forbidden |
 | `libs-coin-tester` | `libs/coin-tester-modules/` | `libs`, with correctness as errors and suspicious as warnings |
 
 A preset never weakens a rule a package had: where some packages of a layer are stricter than the

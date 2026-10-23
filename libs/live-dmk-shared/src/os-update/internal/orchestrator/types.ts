@@ -17,6 +17,7 @@ export type OsUpdatesState =
 export type OsUpdatesOrchestratorStateMachineContext = OsUpdatesOrchestratorStateMachineInput & {
   currentStep: OsUpdatesSteps;
   currentState: OsUpdatesState;
+  failedError?: unknown;
 };
 
 export enum OsUpdatesOrchestratorStateMachineEventType {

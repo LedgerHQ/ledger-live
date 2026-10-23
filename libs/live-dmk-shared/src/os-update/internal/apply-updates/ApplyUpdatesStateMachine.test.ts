@@ -929,6 +929,9 @@ describe("ApplyUpdatesStateMachine", () => {
 
       expect(restoreChildState()).toBe("OutOfMemory");
       expect(lastSentStateType()).toBe(ApplyUpdatesStateType.OUT_OF_MEMORY);
+      expect(sentStatesOfType(ApplyUpdatesStateType.OUT_OF_MEMORY)[0].error).toEqual(
+        OUT_OF_MEMORY_ERROR,
+      );
     });
 
     it("should send STOP to the parent when cancel is called on the OUT_OF_MEMORY state", async () => {
@@ -969,6 +972,9 @@ describe("ApplyUpdatesStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("AllowInstallFirmwareRefused");
       expect(lastSentStateType()).toBe(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED);
+      expect(
+        sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)[0].error,
+      ).toEqual(new RefusedByUserDAError());
     });
 
     it("should hand a failure during the install prompt over to CheckErrorCause", async () => {
@@ -1082,6 +1088,9 @@ describe("ApplyUpdatesStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("UnrecoverableError");
       expect(lastSentStateType()).toBe(ApplyUpdatesStateType.UNEXPECTED_ERROR);
+      expect(sentStatesOfType(ApplyUpdatesStateType.UNEXPECTED_ERROR)[0].error).toEqual(
+        new UnknownDAError("boom"),
+      );
     });
 
     it("should send STOP to the parent when cancel is called on the UNEXPECTED_ERROR state", async () => {

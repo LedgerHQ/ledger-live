@@ -174,7 +174,10 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToBuy(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
+    navigateToBuy(ledgerCurrency, tickerHint, {
+      currencyIds: rampNavigationCurrencyIds,
+      source: ASSET_DETAIL_TRACKING_PAGE_NAME,
+    });
   }, [ledgerCurrency, tickerHint, navigateToBuy, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSell = useCallback(() => {
@@ -184,7 +187,10 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToSell(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
+    navigateToSell(ledgerCurrency, tickerHint, {
+      currencyIds: rampNavigationCurrencyIds,
+      source: ASSET_DETAIL_TRACKING_PAGE_NAME,
+    });
   }, [ledgerCurrency, tickerHint, navigateToSell, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSend = useCallback(() => {
@@ -221,7 +227,7 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToSwap(ledgerCurrency);
+    navigateToSwap(ledgerCurrency, { source: ASSET_DETAIL_TRACKING_PAGE_NAME });
   }, [ledgerCurrency, navigateToSwap, trackingCurrencyId]);
 
   const actions = useMemo(() => {

@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useNavigate } from "react-router";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
@@ -19,6 +20,8 @@ import {
   useAccountBalanceToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useAppConfigToolProps,
+  useAccountNameToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -33,6 +36,7 @@ export function useDevToolsScreenViewModel() {
   const featureFlagsToolProps = useFeatureFlagsToolProps();
   const payCardToolProps = usePayCardToolProps();
   const envToolProps = useEnvDevToolProps();
+  const appConfigToolProps = useAppConfigToolProps();
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
 
@@ -89,11 +93,14 @@ export function useDevToolsScreenViewModel() {
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const legacyAccounts = useSelector(accountsSelector);
+  const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
 
   const config: DevToolsConfig = useMemo(
     () => [
       { id: "feature-flags", config: featureFlagsToolProps },
       { id: "env", config: envToolProps },
+      { id: "app-config", config: appConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
@@ -101,10 +108,12 @@ export function useDevToolsScreenViewModel() {
       { id: "account-data", config: accountDataToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
+      { id: "account-name", config: accountNameToolProps },
     ],
     [
       featureFlagsToolProps,
       envToolProps,
+      appConfigToolProps,
       payCardToolProps,
       trustchainToolProps,
       cloudSyncToolProps,
@@ -112,6 +121,7 @@ export function useDevToolsScreenViewModel() {
       accountDescriptorToolProps,
       accountBalanceToolProps,
       accountDataToolProps,
+      accountNameToolProps,
     ],
   );
 

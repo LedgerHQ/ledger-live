@@ -77,11 +77,11 @@ catalog:
   "@ledgerhq/lumen-ui-rnative": 0.1.67
   "@ledgerhq/lumen-utils-shared": 0.1.16
   # Wallet API
-  "@ledgerhq/wallet-api-client": 1.16.0
-  "@ledgerhq/wallet-api-client-react": 1.4.35
-  "@ledgerhq/wallet-api-core": 2.1.0
-  "@ledgerhq/wallet-api-server": 3.5.0
-  "@ledgerhq/wallet-api-simulator": 2.4.0
+  "@ledgerhq/wallet-api-client": 1.17.0
+  "@ledgerhq/wallet-api-client-react": 1.4.36
+  "@ledgerhq/wallet-api-core": 2.2.0
+  "@ledgerhq/wallet-api-server": 3.6.0
+  "@ledgerhq/wallet-api-simulator": 2.4.1
   "@ledgerhq/zcash-utils": 2.8.0
   # React Native
   react-native: 0.81.6
@@ -273,6 +273,16 @@ verifyDepsBeforeRun: false
 # See: https://github.com/google/prefab/issues/187
 virtualStoreDirMaxLength: 80
 
+# Optional deps only reachable from code paths we never load
+ignoredOptionalDependencies:
+  # @opentui/core: only its "./3d" entry imports them, wallet-cli renders the 2D TUI
+  - "@dimforge/rapier2d-simd-compat"
+  - bun-webgpu
+  - planck
+  - three
+  # @polkadot/rpc-provider: ScProvider light client, coin-polkadot uses WS/HTTP providers
+  - "@substrate/connect"
+
 overrides:
   # Older npm-only releases of our own libs: JFrog does not list them, so CI re-resolution fails
   "@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos": "workspace:^"
@@ -300,6 +310,8 @@ overrides:
   "@radix-ui/react-slot": "^1.2.4"
   "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3"
   "@ton/ton>zod": "catalog:"
+  # @expo/cli 54.x pins 0.81.5 exactly; align on react-native 0.81.6 to dedupe debugger-frontend
+  "@expo/cli>@react-native/dev-middleware": "0.81.6"
   jest-environment-node: "30.5.0"
   jest-mock: "30.5.0"
   jest-matcher-utils: "30.5.0"
@@ -311,6 +323,10 @@ overrides:
   "@jest/types": "30.5.0"
   expect: "30.5.0"
   "pretty-format@^30.0.0": "30.5.0"
+  # Only @polkadot/rpc-provider/mock (MockProvider) imports these; we never load it
+  "@polkadot/rpc-provider>@polkadot/types-support": "-"
+  "@polkadot/rpc-provider>mock-socket": "-"
+  "@polkadot/rpc-provider>nock": "-"
 
 patchedDependencies:
   "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch"

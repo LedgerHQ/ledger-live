@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { getLargeScreenUpsellDecision } from "../decision/getLargeScreenUpsellDecision";
-import { lastSeenUpsellModalSelector, retriesUpsellModalSelector } from "../state";
+import { lastSeenUpsellModalSelector, retriesUpsellModalSelector } from "../state/slice";
 import type { LargeScreenUpsellVariant } from "../utils/upsellContent";
 import type { LargeScreenUpsellDecision, NanoDeviceModelId } from "../types";
 

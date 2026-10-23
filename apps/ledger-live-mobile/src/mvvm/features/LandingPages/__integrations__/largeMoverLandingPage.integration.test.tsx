@@ -124,7 +124,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
   it("stays on the page when markets fail", async () => {
     const markets = { failed: false };
     server.use(
-      http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", () => {
+      http.get("https://countervalues.live.ledger.com/v3/markets", () => {
         markets.failed = true;
         return HttpResponse.json(null, { status: 500 });
       }),
@@ -209,7 +209,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     const captured: { to: string | null } = { to: null };
 
     server.use(
-      http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", ({ request }) => {
+      http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
         captured.to = new URL(request.url).searchParams.get("to");
 
         return HttpResponse.json([
@@ -269,7 +269,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     async (language, circulating, total) => {
       await i18n.changeLanguage(language);
       server.use(
-        http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", () =>
+        http.get("https://countervalues.live.ledger.com/v3/markets", () =>
           HttpResponse.json(bitcoinMarket()),
         ),
       );
@@ -289,7 +289,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     "formats the market cap with the selected counter-value currency symbol (%s)",
     async (counterValue, marketCap) => {
       server.use(
-        http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", () =>
+        http.get("https://countervalues.live.ledger.com/v3/markets", () =>
           HttpResponse.json(bitcoinMarket()),
         ),
       );

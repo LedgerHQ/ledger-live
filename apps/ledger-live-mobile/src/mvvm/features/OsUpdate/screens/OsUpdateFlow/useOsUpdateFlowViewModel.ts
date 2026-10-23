@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device } from "@ledgerhq/live-dmk-shared";
+import { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { getActiveConnectedDevice, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import {
+  getActiveConnectedDevice,
+  rnHidTransportIdentifier,
+  useDeviceManagementKit,
+} from "@ledgerhq/live-dmk-mobile";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { deviceBackupStorage } from "../../storage/deviceBackupStorage";
-import { clearOsUpdates, osUpdatesSelector } from "../../state/osUpdateSlice";
+import { clearOsUpdates, osUpdatesSelector, setHasBackup } from "../../state/osUpdateSlice";
 import { resetToMyLedger } from "../../utils/myLedgerNavigation";
 
-export type OsUpdateFlowMode = "bootloaderRepair" | "restoreBackup";
-
 export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode) {
-  const isBootloaderRepair = mode === "bootloaderRepair";
+  const isBootloaderRepair = mode === OsUpdateFlowMode.BOOTLOADER_REPAIR;
   // Both modes run the orchestrator without a resolved OS update, as soon as the screen opens.
   const hasNoResolvedUpdate = mode !== undefined;
   const navigation = useNavigation<BaseNavigation>();
@@ -22,11 +26,14 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const resolvedOsUpdates = useSelector(osUpdatesSelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const [osUpdates] = useState(hasNoResolvedUpdate ? [] : resolvedOsUpdates);
+  const wired = device.transport === rnHidTransportIdentifier;
   const connectedDevice = useMemo(
-    () => (dmk ? getActiveConnectedDevice(dmk, device) : undefined),
-    [dmk, device],
+    () => (dmk ? getActiveConnectedDevice(dmk, { wired }) : undefined),
+    [dmk, wired],
   );
+  const modelId = device.deviceModelId;
 
   const [isStarted, setIsStarted] = useState(hasNoResolvedUpdate);
   useKeepScreenAwake(isStarted);
@@ -37,7 +44,14 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
   const reconnectToMyLedger = useCallback(
     () =>
       resetToMyLedger(navigation, {
-        device: isBootloaderRepair ? undefined : device,
+        device: isBootloaderRepair
+          ? undefined
+          : {
+              deviceId: device.id,
+              deviceName: device.name,
+              modelId: device.deviceModelId,
+              wired: device.transport === rnHidTransportIdentifier,
+            },
         shouldDisplayMyWallet,
       }),
     [navigation, device, shouldDisplayMyWallet, isBootloaderRepair],
@@ -48,6 +62,7 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
   }, [canRun, reconnectToMyLedger]);
 
   const onCompleted = useCallback(() => {
+    dispatch(setHasBackup(false));
     dispatch(clearOsUpdates());
   }, [dispatch]);
 
@@ -81,5 +96,31 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
     [isStarted, dmk, connectedDevice, osUpdates, reconnectToMyLedger, onCompleted],
   );
 
-  return { whatsNew, orchestratorRun, onConfirmStart, onClose };
+  const analytics = useMemo(
+    () =>
+      connectedDevice
+        ? {
+            device,
+            mode,
+            updateCount: isBootloaderRepair ? undefined : osUpdates.length,
+            osVersionFrom:
+              lastSeenDevice?.modelId === modelId ? lastSeenDevice.deviceInfo.version : undefined,
+            osVersionTo: latestOsUpdate?.finalFirmware.version,
+            isStarted,
+          }
+        : null,
+    [
+      connectedDevice,
+      device,
+      mode,
+      isBootloaderRepair,
+      osUpdates,
+      lastSeenDevice,
+      modelId,
+      latestOsUpdate,
+      isStarted,
+    ],
+  );
+
+  return { whatsNew, orchestratorRun, onConfirmStart, onClose, analytics };
 }
