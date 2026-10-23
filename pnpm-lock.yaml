@@ -67,8 +67,8 @@ catalogs:
       specifier: 13.0.2
       version: 13.0.2
     '@ledgerhq/coin-xrp':
-      specifier: 12.1.0
-      version: 12.1.0
+      specifier: 12.2.1
+      version: 12.2.1
     '@ledgerhq/crypto-icons':
       specifier: 2.0.6
       version: 2.0.6
@@ -15607,7 +15607,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 12.1.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 12.2.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -24258,8 +24258,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-xrp@12.1.0':
-    resolution: {integrity: sha512-qqeYDl28wJVdAHJTOivvRIhapeU14I7oKKF8kzcI4h0gZcJN1DH5JrdtJJLcokeIxmOdPMztoj877Nf9owlPKQ==}
+  '@ledgerhq/coin-xrp@12.2.1':
+    resolution: {integrity: sha512-LCRh76Hh9aQQUGj1wjKlu74AJroqoqI1/0AHfCKxNa5mPIFKu06I9QsTkQxNKcZAwdxdyUpiCJFUk+Rhuw3RWw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -44167,7 +44167,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@12.1.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@ledgerhq/coin-xrp@12.2.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.3
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
