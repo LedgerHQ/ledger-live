@@ -79,7 +79,7 @@ runs:
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
         # pinned: following latest mise once broke plugin installs (TSDINT-1644)
-        version: "2026.9.1"
+        version: "2026.10.17"
         install: true
         cache: true
         reshim: true
