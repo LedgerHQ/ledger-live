@@ -19,7 +19,6 @@ const OWNING_TEAM_DEFERRAL =
 /** @type {Record<string, { skip?: boolean, allowNonRelative?: boolean, reason: string }>} */
 const PACKAGE_EXCEPTIONS = {
   // @ledgerhq/engagement
-  "features/flow/analytics-consent": { skip: true, reason: OWNING_TEAM_DEFERRAL },
   "features/flow/lazy-onboarding-banner": { skip: true, reason: OWNING_TEAM_DEFERRAL },
 
   // @ledgerhq/ptx
@@ -28,12 +27,11 @@ const PACKAGE_EXCEPTIONS = {
   "shared/env": {
     skip: true,
     reason:
-      "TEMPORARY. Typed facade over the legacy @ledgerhq/live-env, holding the repo's only " +
-      "BOUNDARY_EXCEPTION (tools/nx-plugins/enforce-boundaries/constraints.js) — it is the single " +
-      "legal path to that lib for new-architecture consumers, and its barrel currently carries the " +
-      "wrapping itself. Exit condition: move the facade out of src/index.ts into a named file " +
-      '(src/env.ts) and leave `export * from "./env"` behind, then delete this entry. That was ' +
-      "measured to work with no consumer impact; it is deferred, not blocked.",
+      "TEMPORARY. Deprecated typed facade over the legacy @ledgerhq/live-env (see " +
+      ".agents/skills/configuration), holding the repo's only BOUNDARY_EXCEPTION " +
+      "(tools/nx-plugins/enforce-boundaries/constraints.js). Its barrel carries the wrapping " +
+      "itself, and the package is retired rather than restructured. Exit condition: once its " +
+      "last definition has migrated, the package is deleted, and this entry with it.",
   },
 };
 
