@@ -103,7 +103,7 @@ describe("Market List Pagination Integration Test", () => {
     modifiedMarketsMock[20] = { ...modifiedMarketsMock[0] };
 
     server.use(
-      http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", ({ request }) => {
+      http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
         const searchParams = new URL(request.url).searchParams;
         const page = parseInt(searchParams.get("page") || "0");
         const pageSize = parseInt(searchParams.get("pageSize") || "20");

@@ -3,8 +3,8 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { GlobalMarketCapCard } from "..";
 
-const GLOBAL_MARKET_URL = "https://global.api.prd.ledger.com/countervalue/v3/markets/global";
-const SPOT_SIMPLE_URL = "https://global.api.prd.ledger.com/countervalue/v3/spot/simple";
+const GLOBAL_MARKET_URL = "https://countervalues.live.ledger.com/v3/markets/global";
+const SPOT_SIMPLE_URL = "https://countervalues.live.ledger.com/v3/spot/simple";
 
 describe("GlobalMarketCapCard", () => {
   it("shows a loading placeholder before the query resolves, then the card", async () => {

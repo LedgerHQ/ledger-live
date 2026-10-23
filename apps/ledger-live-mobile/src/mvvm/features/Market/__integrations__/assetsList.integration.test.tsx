@@ -74,7 +74,7 @@ function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: s
   ];
 
   server.use(
-    http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", ({ request }) => {
+    http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
       marketRequests.push(request.url);
       const searchParams = new URL(request.url).searchParams;
       const filter = searchParams.get("filter")?.toLowerCase();
@@ -225,7 +225,7 @@ describe("MarketScreen assets list (Block 3)", () => {
   it("renders DAI when its canonical Market id is starred", async () => {
     const marketRequests: string[] = [];
     server.use(
-      http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", ({ request }) => {
+      http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
         marketRequests.push(request.url);
         const ids = new URL(request.url).searchParams.get("ids")?.split(",") ?? [];
         const data =
@@ -298,10 +298,10 @@ describe("MarketScreen assets list (Block 3)", () => {
     const marketRequests: string[] = [];
 
     server.use(
-      http.get("https://global.api.prd.ledger.com/countervalue/v3/categories/trending", () =>
+      http.get("https://countervalues.live.ledger.com/v3/categories/trending", () =>
         HttpResponse.json([{ id: "infrastructure", name: "Infrastructure" }]),
       ),
-      http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", ({ request }) => {
+      http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
         marketRequests.push(request.url);
         const searchParams = new URL(request.url).searchParams;
         const category = searchParams.get("categories");
@@ -350,7 +350,7 @@ describe("MarketScreen assets list (Block 3)", () => {
     });
 
     server.use(
-      http.get("https://global.api.prd.ledger.com/countervalue/v3/markets", async ({ request }) => {
+      http.get("https://countervalues.live.ledger.com/v3/markets", async ({ request }) => {
         const searchParams = new URL(request.url).searchParams;
         const page = parseInt(searchParams.get("page") || "0");
         const pageSize = parseInt(searchParams.get("pageSize") || "20");

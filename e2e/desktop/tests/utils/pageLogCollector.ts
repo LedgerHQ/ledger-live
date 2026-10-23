@@ -38,14 +38,10 @@ const NETWORK_NOISE_HOSTS = [
   "googletagmanager.com",
   "datadoghq.com",
   "braze.com",
-  // ledger asset / cdn flood
+  // ledger asset / cdn / countervalues flood
   "cdn.live.ledger.com",
-];
-
-// countervalues flood: the gateway host is shared with other services, so match its path too
-const NETWORK_NOISE_URL_PREFIXES = [
-  "global.api.prd.ledger.com/countervalue/",
-  "global.api.stg.ledger-test.com/countervalue/",
+  "countervalues.live.ledger.com",
+  "countervalues.api.live.ledger.com",
 ];
 
 const NETWORK_NOISE_ASSET_PATH = "/_next/static/";
@@ -98,8 +94,6 @@ function isNoiseNetworkUrl(url: string): boolean {
   const lowerPath = pathname.toLowerCase();
   if (lowerPath.includes(NETWORK_NOISE_ASSET_PATH)) return true;
   if (NETWORK_NOISE_ASSET_EXTENSIONS.has(pathExtension(lowerPath))) return true;
-  const hostPath = `${host}${lowerPath}`;
-  if (NETWORK_NOISE_URL_PREFIXES.some(prefix => hostPath.startsWith(prefix))) return true;
   return NETWORK_NOISE_HOSTS.some(
     noiseHost => host === noiseHost || host.endsWith(`.${noiseHost}`),
   );
