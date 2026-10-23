@@ -14524,9 +14524,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
-      '@shared/env':
-        specifier: workspace:*
-        version: link:../../../shared/env
       '@solana/web3.js':
         specifier: 'catalog:'
         version: 1.99.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10)

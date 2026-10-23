@@ -18,12 +18,13 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import solanaCoinConfig from "@ledgerhq/coin-solana/config";
+import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { listSolanaStakingPositions, solanaActivationState } from "@ledgerhq/coin-solana/logic";
 import { getChainAPI as getSolanaChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { getStakeAccountMinimumBalanceForRentExemption } from "@ledgerhq/coin-solana/network/chain/web3";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
-import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
+import { chainConfigFrom } from "@ledgerhq/coin-solana/utils";
 import {
   createStakeAccountTransaction,
   delegateTransaction,
@@ -378,9 +379,8 @@ export class BridgeAdapter {
     tx: TransactionCommon,
   ): Promise<SolanaStakeLimits> {
     const currencyId = account.currency.id;
-    const api = getSolanaChainAPI({
-      endpoint: endpointByCurrencyId(solanaCoinConfig.getCoinConfig(currencyId), currencyId),
-    });
+    const config = getCurrencyConfiguration<SolanaCoinConfig>(currencyId);
+    const api = getSolanaChainAPI(chainConfigFrom(config, currencyId));
     const [minimumDelegation, rent, maxSpendable] = await Promise.all([
       api.getStakeMinimumDelegation(),
       getStakeAccountMinimumBalanceForRentExemption(api),

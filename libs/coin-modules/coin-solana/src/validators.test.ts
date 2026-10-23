@@ -1,19 +1,22 @@
-import type { Cluster } from "@solana/web3.js";
 import { getChainAPI } from "./network";
 import { getValidators } from "./network/validator-app";
 import type { ValidatorsAppValidator } from "./network/validator-app";
-import { LEDGER_VALIDATOR_BY_BITWISE, LEDGER_VALIDATOR_BY_FIGMENT } from "./utils";
+import { LEDGER_VALIDATOR_BY_BITWISE, LEDGER_VALIDATOR_BY_FIGMENT } from "./constants";
 import { fetchValidators, getSolanaValidators } from "./validators";
-import coinConfig, { type SolanaCoinConfig } from "./config";
+import type { SolanaCoinConfig, SolanaContext } from "./config";
+import { TEST_CONFIG } from "./test/coinConfig";
 
-coinConfig.setCoinConfig(
-  () =>
-    ({
-      token2022Enabled: false,
-      legacyOCMSMaxVersion: "1.0.0",
-      status: { type: "active" },
-    }) as SolanaCoinConfig,
-);
+const CONFIG: SolanaCoinConfig = {
+  ...TEST_CONFIG,
+  rpcUrls: { solana_devnet: "https://solana-devnet.test.invalid" },
+  validatorsUrl: "https://validators.test.invalid",
+};
+
+const contextOf = (config: SolanaCoinConfig): SolanaContext => ({
+  config: async () => config,
+  logger: () => {},
+});
+const context = contextOf(CONFIG);
 
 jest.mock("./network/validator-app");
 jest.mock("./network", () => ({
@@ -45,9 +48,9 @@ describe("fetchValidators", () => {
   });
 
   it("puts the Ledger validators first for solana", async () => {
-    mockedGetValidators.mockImplementationOnce((_cluster: Cluster) => Promise.resolve(validators));
+    mockedGetValidators.mockImplementationOnce(() => Promise.resolve(validators));
 
-    const result = await fetchValidators("solana");
+    const result = await fetchValidators(CONFIG, "solana");
 
     expect(result).toEqual(
       expect.arrayContaining([
@@ -59,11 +62,21 @@ describe("fetchValidators", () => {
   });
 
   it("returns the validators as-is for solana_testnet", async () => {
-    mockedGetValidators.mockImplementationOnce((_cluster: Cluster) => Promise.resolve(validators));
+    mockedGetValidators.mockImplementationOnce(() => Promise.resolve(validators));
 
-    const result = await fetchValidators("solana_testnet");
+    const result = await fetchValidators(CONFIG, "solana_testnet");
 
+    expect(mockedGetValidators).toHaveBeenCalledWith("https://validators.test.invalid", undefined);
     expect(result).toEqual(validators);
+  });
+
+  it("throws when the coin config has no validatorsUrl", async () => {
+    const { validatorsUrl: _, ...withoutValidatorsUrl } = CONFIG;
+
+    await expect(fetchValidators(withoutValidatorsUrl, "solana")).rejects.toThrow(
+      "no validatorsUrl in the coin config of solana",
+    );
+    expect(mockedGetValidators).not.toHaveBeenCalled();
   });
 
   it("derives the validators from the vote accounts for solana_devnet", async () => {
@@ -76,8 +89,11 @@ describe("fetchValidators", () => {
       getVoteAccounts: () => Promise.resolve({ current: [voteAccount] }),
     } as unknown as ReturnType<typeof getChainAPI>);
 
-    const result = await fetchValidators("solana_devnet");
+    const result = await fetchValidators(CONFIG, "solana_devnet");
 
+    expect(mockedGetChainAPI).toHaveBeenCalledWith({
+      endpoint: "https://solana-devnet.test.invalid",
+    });
     expect(mockedGetValidators).not.toHaveBeenCalled();
     expect(result).toEqual([
       {
@@ -90,7 +106,7 @@ describe("fetchValidators", () => {
   });
 
   it("throws for an unknown currency id", async () => {
-    await expect(fetchValidators("not_solana")).rejects.toThrow();
+    await expect(fetchValidators(CONFIG, "not_solana")).rejects.toThrow();
   });
 });
 
@@ -101,30 +117,77 @@ describe("getSolanaValidators", () => {
   });
 
   it("fetches only once for concurrent calls on the same currency", async () => {
-    mockedGetValidators.mockImplementation((_cluster: Cluster) => Promise.resolve(validators));
+    mockedGetValidators.mockImplementation(() => Promise.resolve(validators));
 
-    await Promise.all([getSolanaValidators("solana"), getSolanaValidators("solana")]);
-    await getSolanaValidators("solana");
+    await Promise.all([
+      getSolanaValidators(context, "solana"),
+      getSolanaValidators(context, "solana"),
+    ]);
+    await getSolanaValidators(context, "solana");
 
     expect(mockedGetValidators).toHaveBeenCalledTimes(1);
   });
 
   it("fetches again once the entry is cleared", async () => {
-    mockedGetValidators.mockImplementation((_cluster: Cluster) => Promise.resolve(validators));
+    mockedGetValidators.mockImplementation(() => Promise.resolve(validators));
 
-    await getSolanaValidators("solana");
+    await getSolanaValidators(context, "solana");
     getSolanaValidators.clear("solana");
-    await getSolanaValidators("solana");
+    await getSolanaValidators(context, "solana");
 
     expect(mockedGetValidators).toHaveBeenCalledTimes(2);
   });
 
+  it("keeps a separate cache per configured TTL", async () => {
+    mockedGetValidators.mockImplementation(() => Promise.resolve(validators));
+
+    await getSolanaValidators(context, "solana");
+    await getSolanaValidators(contextOf({ ...CONFIG, validators: { cacheTtlMs: 1000 } }), "solana");
+    await getSolanaValidators(context, "solana");
+
+    expect(mockedGetValidators).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not share a result between configs with the same currency and TTL", async () => {
+    const otherValidators = [{ ...validators[0], voteAccount: "from the other list" }];
+    mockedGetValidators.mockImplementation(async url =>
+      url === "https://other-validators.test.invalid" ? otherValidators : validators,
+    );
+    const otherContext = contextOf({
+      ...CONFIG,
+      validatorsUrl: "https://other-validators.test.invalid",
+    });
+
+    await getSolanaValidators(context, "solana");
+    const fromOther = await getSolanaValidators(otherContext, "solana");
+
+    expect(mockedGetValidators).toHaveBeenCalledTimes(2);
+    expect(fromOther).toEqual(expect.arrayContaining(otherValidators));
+    expect(fromOther).not.toEqual(expect.arrayContaining(validators));
+  });
+
+  it("clears every config variant of a currency", async () => {
+    mockedGetValidators.mockImplementation(() => Promise.resolve(validators));
+    const otherContext = contextOf({
+      ...CONFIG,
+      validatorsUrl: "https://other-validators.test.invalid",
+    });
+
+    await getSolanaValidators(context, "solana");
+    await getSolanaValidators(otherContext, "solana");
+    getSolanaValidators.clear("solana");
+    await getSolanaValidators(context, "solana");
+    await getSolanaValidators(otherContext, "solana");
+
+    expect(mockedGetValidators).toHaveBeenCalledTimes(4);
+  });
+
   it("does not cache failures", async () => {
     mockedGetValidators.mockRejectedValueOnce(new Error("validators.app is down"));
-    mockedGetValidators.mockImplementationOnce((_cluster: Cluster) => Promise.resolve(validators));
+    mockedGetValidators.mockImplementationOnce(() => Promise.resolve(validators));
 
-    await expect(getSolanaValidators("solana")).rejects.toThrow("validators.app is down");
-    await expect(getSolanaValidators("solana")).resolves.toEqual(
+    await expect(getSolanaValidators(context, "solana")).rejects.toThrow("validators.app is down");
+    await expect(getSolanaValidators(context, "solana")).resolves.toEqual(
       expect.arrayContaining(validators),
     );
   });

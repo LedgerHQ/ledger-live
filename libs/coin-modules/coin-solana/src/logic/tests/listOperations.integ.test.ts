@@ -2,6 +2,7 @@ import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { getChainAPI } from "../../network";
 import { listOperations } from "../listOperations";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const api = getChainAPI({ endpoint: "https://solana.coin.ledger.com" });
 
@@ -32,7 +33,7 @@ const KNOWN_TYPES = [
 
 describe("listOperations (integration)", () => {
   it("fetches operations for an active account", async () => {
-    const result = await listOperations(api, ACTIVE_ADDRESS, {
+    const result = await listOperations(api, TEST_CONFIG, ACTIVE_ADDRESS, {
       minHeight: 0,
       order: "desc",
       limit: 5,
@@ -50,7 +51,7 @@ describe("listOperations (integration)", () => {
   });
 
   it("returns pagination cursor when more results are available", async () => {
-    const result = await listOperations(api, ACTIVE_ADDRESS, {
+    const result = await listOperations(api, TEST_CONFIG, ACTIVE_ADDRESS, {
       minHeight: 0,
       order: "desc",
       limit: 2,
@@ -61,7 +62,7 @@ describe("listOperations (integration)", () => {
   });
 
   it("returns empty list for an unused address", async () => {
-    const result = await listOperations(api, UNUSED_ADDRESS, {
+    const result = await listOperations(api, TEST_CONFIG, UNUSED_ADDRESS, {
       minHeight: 0,
       order: "desc",
     });
@@ -71,7 +72,7 @@ describe("listOperations (integration)", () => {
   });
 
   it("supports cursor-based pagination", async () => {
-    const page1 = await listOperations(api, ACTIVE_ADDRESS, {
+    const page1 = await listOperations(api, TEST_CONFIG, ACTIVE_ADDRESS, {
       minHeight: 0,
       order: "desc",
       limit: 2,
@@ -79,7 +80,7 @@ describe("listOperations (integration)", () => {
 
     expect(typeof page1.next).toBe("string");
 
-    const page2 = await listOperations(api, ACTIVE_ADDRESS, {
+    const page2 = await listOperations(api, TEST_CONFIG, ACTIVE_ADDRESS, {
       minHeight: 0,
       order: "desc",
       limit: 2,
@@ -99,7 +100,7 @@ describe("listOperations (integration)", () => {
   // address. Querying by the ATA must surface the token ops, resolved to the
   // wallet owner (not the queried ATA).
   it("surfaces token operations when queried by the token-account (ATA) address (LIVE-35047)", async () => {
-    const result = await listOperations(api, LIVE_35047_USDC_ATA, {
+    const result = await listOperations(api, TEST_CONFIG, LIVE_35047_USDC_ATA, {
       minHeight: 0,
       order: "desc",
       limit: 100,

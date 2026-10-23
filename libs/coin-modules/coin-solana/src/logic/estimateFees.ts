@@ -14,6 +14,7 @@ import {
   resolveRecipientDescriptor,
   stakeAccountSeedOfIntent,
 } from "./craftTransaction";
+import type { SolanaCoinConfig } from "../config";
 import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
@@ -40,12 +41,11 @@ import type {
 } from "../types";
 import {
   DUMMY_SIGNATURE,
-  LEDGER_VALIDATOR_DEFAULT,
+  defaultLedgerValidatorOf,
+  feesOf,
   ZERO_FILLED_DUMMY_SIGNATURE,
   assertUnreachable,
 } from "../utils";
-
-const DEFAULT_TX_FEE = 5000;
 
 const BASE_TRANSACTION: Transaction = {
   family: "solana",
@@ -64,6 +64,7 @@ const BASE_TRANSACTION: Transaction = {
  */
 export async function estimateFees(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
@@ -85,7 +86,7 @@ export async function estimateFees(
       message.recentBlockhash = (await api.getLatestBlockhash()).blockhash;
     }
 
-    return { value: BigInt((await api.getFeeForMessage(message)) ?? DEFAULT_TX_FEE) };
+    return { value: BigInt((await api.getFeeForMessage(message)) ?? feesOf(config).defaultTxFee) };
   }
 
   const kind = mapIntentToTxKind(intent);
@@ -93,6 +94,7 @@ export async function estimateFees(
   const mint = await getMaybeMintOfIntent(api, intent);
   const fee = await estimateTxFee(
     api,
+    config,
     intent.sender,
     kind,
     mint ? tokenProgramOfMint(mint) : resolveTokenProgramFromAsset(intent.asset),
@@ -116,7 +118,7 @@ export async function estimateFees(
     const [stakeAccountAddress, stakeAccountRent, reserve] = await Promise.all([
       seed ? getStakeAccountAddressWithSeed({ fromAddress: intent.sender, seed }) : undefined,
       isCreation ? getStakeAccountMinimumBalanceForRentExemption(api) : undefined,
-      isCreation ? unstakeReserve(api, intent.sender) : 0n,
+      isCreation ? unstakeReserve(api, config, intent.sender) : 0n,
     ]);
     return {
       value: BigInt(fee),
@@ -153,11 +155,15 @@ export async function estimateFees(
 }
 
 /** Best-effort: a failure only makes send-max marginally less generous. */
-export async function unstakeReserve(api: ChainAPI, sender: string): Promise<bigint> {
+export async function unstakeReserve(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  sender: string,
+): Promise<bigint> {
   try {
     const [undelegateFee, withdrawFee] = await Promise.all([
-      estimateTxFee(api, sender, "stake.undelegate"),
-      estimateTxFee(api, sender, "stake.withdraw"),
+      estimateTxFee(api, config, sender, "stake.undelegate"),
+      estimateTxFee(api, config, sender, "stake.withdraw"),
     ]);
     return BigInt(undelegateFee + withdrawFee);
   } catch {
@@ -255,19 +261,20 @@ async function getMaybeTransferFee(
 
 export async function estimateTxFee(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   address: string,
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
 ) {
-  const tx = await createDummyTx(address, kind, tokenProgram, mintAddress);
-  const [onChainTx] = await buildVersionedTransaction(address, tx, api);
+  const tx = await createDummyTx(config, address, kind, tokenProgram, mintAddress);
+  const [onChainTx] = await buildVersionedTransaction(address, tx, api, config);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
     log("debug", `Solana api.getFeeForMessage returned invalid fee: <${fee}>`);
-    fee = await retryWithNewBlockhash(api, onChainTx);
+    fee = await retryWithNewBlockhash(api, config, onChainTx);
   }
 
   if (typeof fee !== "number") {
@@ -275,12 +282,13 @@ export async function estimateTxFee(
       "error",
       `Solana unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
     );
-    fee = DEFAULT_TX_FEE;
+    fee = feesOf(config).defaultTxFee;
   }
   return fee;
 }
 
 const createDummyTx = (
+  config: SolanaCoinConfig,
   address: string,
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
@@ -290,7 +298,7 @@ const createDummyTx = (
     case "transfer":
       return createDummyTransferTx(address);
     case "stake.createAccount":
-      return createDummyStakeCreateAccountTx(address);
+      return createDummyStakeCreateAccountTx(config, address);
     case "stake.delegate":
       return createDummyStakeDelegateTx(address);
     case "stake.undelegate":
@@ -333,7 +341,10 @@ const createDummyTransferTx = (address: string): Transaction => {
   };
 };
 
-const createDummyStakeCreateAccountTx = async (address: string): Promise<Transaction> => {
+const createDummyStakeCreateAccountTx = async (
+  config: SolanaCoinConfig,
+  address: string,
+): Promise<Transaction> => {
   return {
     ...BASE_TRANSACTION,
     model: {
@@ -344,7 +355,7 @@ const createDummyStakeCreateAccountTx = async (address: string): Promise<Transac
           kind: "stake.createAccount",
           amount: 0,
           delegate: {
-            voteAccAddress: LEDGER_VALIDATOR_DEFAULT.voteAccount,
+            voteAccAddress: defaultLedgerValidatorOf(config).voteAccount,
           },
           fromAccAddress: address,
           seed: "",
@@ -577,13 +588,18 @@ const randomAddresses = [
   "AEtRo9MKfLqGtjvxdz8H93R7SQxXLEkibVSJbs9XKnD1",
 ];
 
-async function retryWithNewBlockhash(api: ChainAPI, onChainTx: OnChainTransaction) {
+async function retryWithNewBlockhash(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  onChainTx: OnChainTransaction,
+) {
   if (onChainTx.message.recentBlockhash === undefined) {
     throw new Error("expected recentBlockhash");
   }
 
   onChainTx.message.recentBlockhash = await waitNextBlockhash(
     api,
+    config,
     onChainTx.message.recentBlockhash,
   );
 
@@ -594,9 +610,13 @@ function sleep(durationMS: number): Promise<void> {
   return new Promise(res => setTimeout(res, durationMS));
 }
 
-async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
-  const sleepTimeMS = 5000;
-  for (let i = 0; i < 5; i++) {
+async function waitNextBlockhash(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  currentBlockhash: string,
+) {
+  const { blockhashRetries, blockhashRetryDelayMs: sleepTimeMS } = feesOf(config);
+  for (let i = 0; i < blockhashRetries; i++) {
     log("info", `sleeping for ${sleepTimeMS} ms, waiting for a new blockhash`);
     await sleep(sleepTimeMS);
     const blockhash = await api.getLatestBlockhash();

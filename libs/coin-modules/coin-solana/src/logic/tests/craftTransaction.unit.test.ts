@@ -28,6 +28,8 @@ import { DUMMY_SIGNATURE } from "../../utils";
 import { buildVersionedTransaction, craftTransaction } from "../craftTransaction";
 import BigNumber from "bignumber.js";
 import { getStakeAccounts, type StakeAccount } from "../../network/chain/stake-activation/rpc";
+import { TEST_CONFIG } from "../../test/coinConfig";
+import { DEFAULT_COMPUTE_UNIT_MARGIN } from "../../constants";
 
 function stakeAccountFixture({
   address,
@@ -133,7 +135,7 @@ describe("craftTransaction — partner-built transaction", () => {
   });
 
   it("signs the partner's bytes rather than crafting from the intent", async () => {
-    const result = await craftTransaction(api, intent);
+    const result = await craftTransaction(api, TEST_CONFIG, intent);
 
     const deserialized = VersionedTransaction.deserialize(
       Buffer.from(result.transaction, "base64"),
@@ -144,7 +146,7 @@ describe("craftTransaction — partner-built transaction", () => {
   });
 
   it("refreshes the blockhash while the transaction is still unsigned", async () => {
-    const result = await craftTransaction(api, intent);
+    const result = await craftTransaction(api, TEST_CONFIG, intent);
 
     const deserialized = VersionedTransaction.deserialize(
       Buffer.from(result.transaction, "base64"),
@@ -154,7 +156,7 @@ describe("craftTransaction — partner-built transaction", () => {
   });
 
   it("honours custom fees without asking the chain", async () => {
-    const result = await craftTransaction(api, intent, { value: 12345n });
+    const result = await craftTransaction(api, TEST_CONFIG, intent, { value: 12345n });
 
     expect(result.details?.estimatedFee).toBe("12345");
     expect(mockGetFeeForMessage).not.toHaveBeenCalled();
@@ -162,13 +164,13 @@ describe("craftTransaction — partner-built transaction", () => {
 
   it("refuses a transaction whose fee payer is not the sender", async () => {
     await expect(
-      craftTransaction(api, { ...intent, sender: TEST_ADDRESS } as TransactionIntent),
+      craftTransaction(api, TEST_CONFIG, { ...intent, sender: TEST_ADDRESS } as TransactionIntent),
     ).rejects.toThrow("Sender does not match transaction fee payer");
   });
 
   it("refuses bytes it cannot deserialize", async () => {
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         ...intent,
         data: { type: "buffer", value: Buffer.from("bm90LWEtdHJhbnNhY3Rpb24=", "base64") },
       } as unknown as TransactionIntent),
@@ -196,7 +198,7 @@ describe("craftTransaction", () => {
     });
     mockGetFeeForMessage.mockResolvedValue(5000);
 
-    const result = await craftTransaction(api, {
+    const result = await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -223,6 +225,7 @@ describe("craftTransaction", () => {
 
     const result = await craftTransaction(
       api,
+      TEST_CONFIG,
       {
         intentType: "transaction",
         type: "send",
@@ -240,7 +243,7 @@ describe("craftTransaction", () => {
 
   it("should throw for invalid sender address", async () => {
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: "invalid!!!",
@@ -253,7 +256,7 @@ describe("craftTransaction", () => {
 
   it("should throw for invalid recipient address", async () => {
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -266,7 +269,7 @@ describe("craftTransaction", () => {
 
   it("should throw for amount exceeding MAX_SAFE_INTEGER", async () => {
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -279,7 +282,7 @@ describe("craftTransaction", () => {
 
   it("should throw for unsupported intent types", async () => {
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "unknown",
         type: "unknown",
         sender: TEST_ADDRESS,
@@ -297,7 +300,7 @@ describe("craftTransaction", () => {
     });
     mockGetFeeForMessage.mockResolvedValue(null);
 
-    const result = await craftTransaction(api, {
+    const result = await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -316,7 +319,7 @@ describe("craftTransaction", () => {
     });
     mockGetFeeForMessage.mockResolvedValue(5000);
 
-    await craftTransaction(api, {
+    await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -329,6 +332,7 @@ describe("craftTransaction", () => {
     expect(mockedBuildTransferInstructions).toHaveBeenCalledWith(
       api,
       expect.objectContaining({ memo: "test memo" }),
+      DEFAULT_COMPUTE_UNIT_MARGIN,
     );
   });
 
@@ -415,7 +419,7 @@ describe("craftTransaction", () => {
         currentEpoch: 100,
       });
 
-      await craftTransaction(mockApi, {
+      await craftTransaction(mockApi, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -434,6 +438,7 @@ describe("craftTransaction", () => {
             }),
           }),
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
@@ -443,7 +448,7 @@ describe("craftTransaction", () => {
         transferFeeConfig: undefined,
       });
 
-      await craftTransaction(mockApi, {
+      await craftTransaction(mockApi, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -457,6 +462,7 @@ describe("craftTransaction", () => {
         expect.not.objectContaining({
           extensions: expect.anything(),
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
@@ -469,7 +475,7 @@ describe("craftTransaction", () => {
         currentEpoch: 100,
       });
 
-      await craftTransaction(mockApi, {
+      await craftTransaction(mockApi, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -488,6 +494,7 @@ describe("craftTransaction", () => {
             }),
           }),
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
@@ -500,7 +507,7 @@ describe("craftTransaction", () => {
         currentEpoch: 100,
       });
 
-      await craftTransaction(mockApi, {
+      await craftTransaction(mockApi, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -521,6 +528,7 @@ describe("craftTransaction", () => {
             }),
           }),
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
@@ -533,7 +541,7 @@ describe("craftTransaction", () => {
         currentEpoch: 100,
       });
 
-      await craftTransaction(mockApi, {
+      await craftTransaction(mockApi, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -555,6 +563,7 @@ describe("craftTransaction", () => {
             }),
           }),
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
@@ -563,7 +572,7 @@ describe("craftTransaction", () => {
         recipientAtaExists: false,
       });
 
-      await craftTransaction(mockApi, {
+      await craftTransaction(mockApi, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -579,6 +588,7 @@ describe("craftTransaction", () => {
             shouldCreateAsAssociatedTokenAccount: true,
           }),
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
   });
@@ -648,6 +658,7 @@ describe("buildVersionedTransaction", () => {
         ADDRESS,
         rawTransaction,
         createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+        TEST_CONFIG,
       );
 
     expect(solanaTransaction).toEqual(expectedSolanaTransaction);
@@ -675,6 +686,7 @@ describe("buildVersionedTransaction", () => {
         ADDRESS,
         nonRawTransaction,
         createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+        TEST_CONFIG,
       );
 
     expect(recentBlockhash).toEqual(
@@ -705,6 +717,7 @@ describe("buildVersionedTransaction", () => {
         ADDRESS,
         rawTransaction,
         createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+        TEST_CONFIG,
       );
 
     expect(solanaTransaction.message.recentBlockhash).toBe(BLOCKHASH);
@@ -736,6 +749,7 @@ describe("buildVersionedTransaction", () => {
         ADDRESS,
         rawTransaction,
         createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+        TEST_CONFIG,
       );
 
     expect(solanaTransaction.message.recentBlockhash).toBe(OLD_BLOCKHASH);
@@ -767,6 +781,7 @@ describe("buildVersionedTransaction", () => {
         ADDRESS,
         rawTransaction,
         createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+        TEST_CONFIG,
       );
 
     expect(solanaTransaction.message.recentBlockhash).toBe(OLD_BLOCKHASH);
@@ -798,6 +813,7 @@ describe("buildVersionedTransaction", () => {
         ADDRESS,
         rawTransaction,
         createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+        TEST_CONFIG,
       );
 
     expect(solanaTransaction.message.recentBlockhash).toBe(BLOCKHASH);
@@ -828,6 +844,7 @@ describe("buildVersionedTransaction", () => {
       ADDRESS,
       rawTransaction,
       createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+      TEST_CONFIG,
     );
 
     expect(solanaTransaction.message.recentBlockhash).toBe(OLD_BLOCKHASH);
@@ -858,7 +875,7 @@ describe("buildInstructions edge cases", () => {
     } as unknown as Transaction;
 
     await expect(
-      buildVersionedTransaction(ADDRESS, tx, createMockChainApi(BLOCKHASH, 1)),
+      buildVersionedTransaction(ADDRESS, tx, createMockChainApi(BLOCKHASH, 1), TEST_CONFIG),
     ).rejects.toThrow("missing command descriptor");
   });
 
@@ -880,7 +897,7 @@ describe("buildInstructions edge cases", () => {
     } as unknown as Transaction;
 
     await expect(
-      buildVersionedTransaction(ADDRESS, tx, createMockChainApi(BLOCKHASH, 1)),
+      buildVersionedTransaction(ADDRESS, tx, createMockChainApi(BLOCKHASH, 1), TEST_CONFIG),
     ).rejects.toThrow("can not build invalid command");
   });
 
@@ -902,7 +919,7 @@ describe("buildInstructions edge cases", () => {
     } as unknown as Transaction;
 
     await expect(
-      buildVersionedTransaction(ADDRESS, tx, createMockChainApi(BLOCKHASH, 1)),
+      buildVersionedTransaction(ADDRESS, tx, createMockChainApi(BLOCKHASH, 1), TEST_CONFIG),
     ).rejects.toThrow("Raw transactions should not be built with this function");
   });
 
@@ -927,7 +944,12 @@ describe("buildInstructions edge cases", () => {
       model: { kind: "transfer", uiState: {} },
     } as unknown as Transaction;
 
-    const [solTx] = await buildVersionedTransaction(ADDRESS, tx, createMockChainApi(BLOCKHASH, 1));
+    const [solTx] = await buildVersionedTransaction(
+      ADDRESS,
+      tx,
+      createMockChainApi(BLOCKHASH, 1),
+      TEST_CONFIG,
+    );
 
     expect(solTx).toEqual(expectedSolanaTransaction);
     expect(solTx.message.recentBlockhash).toBe(BLOCKHASH);
@@ -956,7 +978,7 @@ describe("craftTransaction – staking", () => {
 
   describe("stake.createAccount", () => {
     it("should craft a valid transaction and pass the delegation command", async () => {
-      const result = await craftTransaction(api, {
+      const result = await craftTransaction(api, TEST_CONFIG, {
         intentType: "staking",
         type: "stake.createAccount",
         sender: TEST_ADDRESS,
@@ -975,11 +997,12 @@ describe("craftTransaction – staking", () => {
           amount: 5_000_000_000,
           delegate: expect.objectContaining({ voteAccAddress: TEST_RECIPIENT }),
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
     it("should subtract rent exemption from amount when useAllAmount is true", async () => {
-      await craftTransaction(api, {
+      await craftTransaction(api, TEST_CONFIG, {
         intentType: "staking",
         type: "stake.createAccount",
         sender: TEST_ADDRESS,
@@ -994,12 +1017,14 @@ describe("craftTransaction – staking", () => {
         expect.objectContaining({
           amount: 10_000_000_000 - 2_282_880,
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
     it("should use custom fees when provided", async () => {
       const result = await craftTransaction(
         api,
+        TEST_CONFIG,
         {
           intentType: "staking",
           type: "stake.createAccount",
@@ -1018,7 +1043,7 @@ describe("craftTransaction – staking", () => {
 
   describe("stake.delegate", () => {
     it("should craft a delegate command from the memo and the validator", async () => {
-      await craftTransaction(api, {
+      await craftTransaction(api, TEST_CONFIG, {
         intentType: "staking",
         type: "stake.delegate",
         sender: TEST_ADDRESS,
@@ -1041,12 +1066,13 @@ describe("craftTransaction – staking", () => {
           stakeAccAddr: "StakeAccXYZ111111111111111111111111111111111",
           voteAccAddr: TEST_RECIPIENT,
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
     it("should throw when the intent carries no stake account memo", async () => {
       await expect(
-        craftTransaction(api, {
+        craftTransaction(api, TEST_CONFIG, {
           intentType: "staking",
           type: "stake.delegate",
           sender: TEST_ADDRESS,
@@ -1062,7 +1088,7 @@ describe("craftTransaction – staking", () => {
 
   describe("stake.undelegate", () => {
     it("should craft an undelegate command", async () => {
-      await craftTransaction(api, {
+      await craftTransaction(api, TEST_CONFIG, {
         intentType: "staking",
         type: "stake.undelegate",
         sender: TEST_ADDRESS,
@@ -1078,6 +1104,7 @@ describe("craftTransaction – staking", () => {
           authorizedAccAddr: TEST_ADDRESS,
           stakeAccAddr: "StakeAccAddr1111111111111111111111111111111",
         }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
   });
@@ -1094,7 +1121,7 @@ describe("craftTransaction – staking", () => {
       ]);
 
       await expect(
-        craftTransaction(api, {
+        craftTransaction(api, TEST_CONFIG, {
           intentType: "transaction",
           type: "stake.withdraw",
           sender: TEST_ADDRESS,
@@ -1111,7 +1138,7 @@ describe("craftTransaction – staking", () => {
       jest.mocked(getStakeAccounts).mockResolvedValueOnce([]);
 
       await expect(
-        craftTransaction(api, {
+        craftTransaction(api, TEST_CONFIG, {
           intentType: "transaction",
           type: "stake.withdraw",
           sender: TEST_ADDRESS,
@@ -1133,7 +1160,7 @@ describe("craftTransaction – staking", () => {
         }),
       ]);
 
-      await craftTransaction(api, {
+      await craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "stake.withdraw",
         sender: TEST_ADDRESS,
@@ -1145,6 +1172,7 @@ describe("craftTransaction – staking", () => {
       expect(mockedBuildStakeWithdrawInstructions).toHaveBeenCalledWith(
         api,
         expect.objectContaining({ amount: 24_552_851 }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
 
@@ -1158,7 +1186,7 @@ describe("craftTransaction – staking", () => {
         }),
       ]);
 
-      await craftTransaction(api, {
+      await craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "stake.withdraw",
         sender: TEST_ADDRESS,
@@ -1170,6 +1198,7 @@ describe("craftTransaction – staking", () => {
       expect(mockedBuildStakeWithdrawInstructions).toHaveBeenCalledWith(
         api,
         expect.objectContaining({ amount: 24_552_851 - 2_282_880 - 20_000_000 }),
+        DEFAULT_COMPUTE_UNIT_MARGIN,
       );
     });
   });
@@ -1199,7 +1228,7 @@ describe("craftTransaction – token edge cases", () => {
     mockedGetMaybeTokenMint.mockResolvedValue(new Error("network failure"));
 
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -1214,7 +1243,7 @@ describe("craftTransaction – token edge cases", () => {
     mockedGetMaybeTokenMint.mockResolvedValue(undefined);
 
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -1237,7 +1266,7 @@ describe("craftTransaction – token edge cases", () => {
     mockedFindAssociatedTokenAccountPubkey.mockResolvedValue(new PublicKey(TEST_ADDRESS));
     mockedBuildTokenTransferInstructions.mockResolvedValue([]);
 
-    await craftTransaction(api, {
+    await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -1256,6 +1285,7 @@ describe("craftTransaction – token edge cases", () => {
           userInputType: "ata",
         },
       }),
+      DEFAULT_COMPUTE_UNIT_MARGIN,
     );
   });
 
@@ -1270,7 +1300,7 @@ describe("craftTransaction – token edge cases", () => {
     mockedBuildTokenTransferInstructions.mockResolvedValue([]);
 
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -1294,7 +1324,7 @@ describe("craftTransaction – token edge cases", () => {
     mockedBuildTokenTransferInstructions.mockResolvedValue([]);
 
     await expect(
-      craftTransaction(api, {
+      craftTransaction(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -1313,7 +1343,7 @@ describe("craftTransaction – token edge cases", () => {
     mockedFindAssociatedTokenAccountPubkey.mockResolvedValue(new PublicKey(TEST_RECIPIENT));
     mockedBuildTokenTransferInstructions.mockResolvedValue([]);
 
-    await craftTransaction(api, {
+    await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -1325,6 +1355,7 @@ describe("craftTransaction – token edge cases", () => {
     expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
       api,
       expect.objectContaining({ tokenProgram: "spl-token" }),
+      DEFAULT_COMPUTE_UNIT_MARGIN,
     );
   });
 });

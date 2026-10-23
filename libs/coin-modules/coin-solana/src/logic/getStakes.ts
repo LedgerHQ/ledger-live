@@ -1,5 +1,6 @@
 import type { Cursor, Page, Stake, StakeAction } from "@ledgerhq/coin-module-framework/api/types";
 import { isStakeLockUpInForce, withdrawableFromStake } from "../logic";
+import type { SolanaCoinConfig } from "../config";
 import type { ChainAPI } from "../network";
 import { getStakeAccounts, type StakeAccount } from "../network/chain/stake-activation/rpc";
 import type { SolanaStake } from "../types";
@@ -129,14 +130,15 @@ function computeFrameworkStakeActions(
  */
 export async function computeUnstakeReserve(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   address: string,
   stakeAccounts: StakeAccount[],
 ): Promise<number> {
   if (stakeAccounts.length === 0) return 0;
 
   const [undelegateFee, withdrawFee] = await Promise.all([
-    estimateTxFee(api, address, "stake.undelegate"),
-    estimateTxFee(api, address, "stake.withdraw"),
+    estimateTxFee(api, config, address, "stake.undelegate"),
+    estimateTxFee(api, config, address, "stake.withdraw"),
   ]);
 
   const activeStakes = stakeAccounts.filter(
