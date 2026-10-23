@@ -76,6 +76,7 @@ const OUT_DIR = opts["out-dir"];
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
 const GUEST_PCAP_DIR = path.join(OUT_DIR, "guest-network");
+const SCROLL_FLOW = path.join(import.meta.dirname, "scroll-performance.yaml");
 // Per device: with strict alternation, a device that never reads would otherwise go unnoticed.
 const MAX_CONSECUTIVE_FAILURES = 4;
 // After a dialog's process is restarted, let the device settle before the next launch.
@@ -286,6 +287,25 @@ const android = {
     if (!file) throw new Error(`network capture start on ${device}: ${stdout.trim()}`);
     return file;
   },
+  screenSizes: new Map(),
+  // A slow swipe from 75% to 30% of the screen height, so the list moves about half a screen.
+  async scrollDown(device) {
+    if (!this.screenSizes.has(device)) {
+      const { stdout } = await run("adb", ["-s", device, "shell", "wm", "size"], {
+        allowFail: true,
+      });
+      const sizes = [...stdout.matchAll(/(\d+)x(\d+)/g)].map(m => [Number(m[1]), Number(m[2])]);
+      this.screenSizes.set(device, sizes.at(-1) ?? [1080, 2400]);
+    }
+    const [width, height] = this.screenSizes.get(device);
+    const x = String(Math.round(width / 2));
+    const from = String(Math.round(height * 0.75));
+    const to = String(Math.round(height * 0.3));
+    await run("adb", ["-s", device, "shell", "input", "swipe", x, from, x, to, "600"], {
+      allowFail: true,
+    });
+    await sleep(800);
+  },
   async stopCapture(device) {
     await run("adb", ["-s", device, "emu", "network", "capture", "stop"], {
       allowFail: true,
@@ -376,6 +396,12 @@ const ios = {
     throw new Error("no emulator capture on iOS");
   },
   async stopCapture() {},
+  async scrollDown(device) {
+    await run(opts.maestro, ["--device", device, "test", SCROLL_FLOW], {
+      timeoutMs: 120_000,
+      allowFail: true,
+    });
+  },
   async diagnostics(device, file) {
     const { stdout } = await run(
       "xcrun",
@@ -434,11 +460,36 @@ export function parsePerformance(texts) {
   const after = joined.slice(at + label.length);
   const value = after.match(/(-?\d+)\s*ms\b/);
   if (!value || Number(value[1]) <= 0) return null;
+  return { appStartupTime: Number(value[1]), events: parseEvents(texts) };
+}
+
+// The "<event> (xN)" rows and their "<time> ms" on whatever part of the list is on screen.
+export function parseEvents(texts) {
   const events = {};
-  for (const m of after.matchAll(/([^\n,]+?) \(x(\d+)\)\s*,?\s*(-?\d+)\s*ms\b/g)) {
+  for (const m of texts.join("\n").matchAll(/([^\n,]+?) \(x(\d+)\)\s*,?\s*(-?\d+)\s*ms\b/g)) {
     events[m[1].trim()] = { count: Number(m[2]), time: Number(m[3]) };
   }
-  return { appStartupTime: Number(value[1]), events };
+  return events;
+}
+
+// Maestro only dumps the rows on screen, so the list is scrolled until no new event shows up.
+const MAX_SCROLLS = 4;
+
+async function readRemainingEvents(device, events) {
+  const all = { ...events };
+  for (let i = 0; i < MAX_SCROLLS; i++) {
+    await P.scrollDown(device);
+    const hierarchy = await run(opts.maestro, ["--device", device, "hierarchy"], {
+      timeoutMs: 120_000,
+      allowFail: true,
+    });
+    const found = Object.entries(parseEvents(hierarchyTexts(hierarchy.stdout))).filter(
+      ([name]) => !(name in all),
+    );
+    if (!found.length) break;
+    for (const [name, event] of found) all[name] = event;
+  }
+  return all;
 }
 
 async function readPerformance(device, debugName) {
@@ -456,7 +507,7 @@ async function readPerformance(device, debugName) {
       });
       lastTexts = hierarchyTexts(hierarchy.stdout);
       const parsed = parsePerformance(lastTexts);
-      if (parsed) return parsed;
+      if (parsed) return { ...parsed, events: await readRemainingEvents(device, parsed.events) };
       await sleep(2000);
     }
     // A second attempt cannot get past a system dialog; the launch is not trusted either.
