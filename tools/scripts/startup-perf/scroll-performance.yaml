@@ -1,0 +1,5 @@
+# Scrolls the Performance list down, so run.mjs can read the rows below the first screen (iOS;
+# Android swipes with adb, which is faster).
+appId: com.ledger.live
+---
+- scroll
