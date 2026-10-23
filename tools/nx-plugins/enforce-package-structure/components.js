@@ -883,7 +883,8 @@ function reachableProps(declaration, module) {
     }
     if (ts.isTypeReferenceNode(node)) {
       const name = ts.isIdentifier(node.typeName) ? node.typeName.text : "";
-      const local = module.types.get(name);
+      // A type parameter shadows the module-level type of the same name.
+      const local = !enclosingScopeNames(node, false).has(name) && module.types.get(name);
       if (local) {
         pending.push(...propsOfContract(node, module, seen));
         if (ts.isTypeAliasDeclaration(local) && !aliases.has(name)) {

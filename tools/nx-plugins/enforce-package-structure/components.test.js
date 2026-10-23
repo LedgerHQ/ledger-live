@@ -937,6 +937,19 @@ test("R3 follows cyclic local aliases once", () => {
   );
 });
 
+test("R3 does not resolve a type parameter to the module-level type it shadows", () => {
+  for (const contractModule of [
+    "type List<Tile> = Tile[];\nexport type CardProps = { items: List<string> };\n",
+    "type Box<Tile> = { value: Tile };\nexport type CardProps = Box<string>;\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": `type Tile = { onPress(): void };\n${contractModule}` })),
+      [],
+      contractModule,
+    );
+  }
+});
+
 test("R3 checks the props a local generic contract receives as type arguments", () => {
   for (const contractModule of [
     "type Box<T> = { value: T };\nexport type CardProps = Box<{ onPress(): void }>;\n",
