@@ -2,8 +2,7 @@ import React from "react";
 import { Box, Button, IconButton, NavBar, NavBarTrailing, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useExperimental } from "~/experimental";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
 import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
 import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
@@ -33,76 +32,74 @@ export function SyncOfferView({
 }: SyncOfferViewProps) {
   const { colorScheme } = useTheme();
   const theme = colorScheme === "dark" ? "dark" : "light";
-  const { top: topInset } = useSafeAreaInsets();
-  const topPadding = useExperimental() ? 0 : topInset;
 
   return (
-    <Box
-      testID={syncOfferTestIds.screen}
-      lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}
-      style={{ paddingTop: topPadding }}
-    >
-      <NavBar density="compact">
-        <NavBarTrailing>
-          <IconButton
-            appearance="no-background"
-            size="md"
-            icon={Close}
-            accessibilityLabel={closeLabel}
-            testID={syncOfferTestIds.quit}
-            onPress={onQuit}
-          />
-        </NavBarTrailing>
-      </NavBar>
-      <Box
-        lx={{ alignItems: "center", justifyContent: "center", minHeight: "s72", flexShrink: 1 }}
-        style={{ height: illustrationHeight }}
-      >
-        <Lottie
-          key={theme}
-          source={cloudSyncSources[theme]}
-          loop
-          style={{ width: illustrationSize, height: illustrationSize }}
-        />
-      </Box>
-      <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
-        <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
-          {title}
-        </Text>
-        <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-          {description}
-          {"\n\n"}
-          <Text
-            typography="body2"
-            accessibilityRole="link"
-            testID={syncOfferTestIds.learnMore}
-            onPress={onLearnMore}
-            style={{ textDecorationLine: "underline" }}
+    <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <SafeAreaView edges={["top"]} isFlex>
+        <Box lx={{ flex: 1, gap: "s24" }}>
+          <NavBar density="compact">
+            <NavBarTrailing>
+              <IconButton
+                appearance="no-background"
+                size="md"
+                icon={Close}
+                accessibilityLabel={closeLabel}
+                testID={syncOfferTestIds.quit}
+                onPress={onQuit}
+              />
+            </NavBarTrailing>
+          </NavBar>
+          <Box
+            lx={{ alignItems: "center", justifyContent: "center", minHeight: "s72", flexShrink: 1 }}
+            style={{ height: illustrationHeight }}
           >
-            {learnMoreLabel}
-          </Text>
-        </Text>
-      </Box>
-      <Box lx={{ gap: "s16", paddingHorizontal: "s16", paddingBottom: "s24" }}>
-        <Button
-          appearance="base"
-          size="lg"
-          isFull
-          testID={syncOfferTestIds.activate}
-          onPress={onActivate}
-        >
-          {activateLabel}
-        </Button>
-        <Button
-          appearance="transparent"
-          size="lg"
-          isFull
-          testID={syncOfferTestIds.skip}
-          onPress={onOpenSkip}
-        >
-          {skipLabel}
-        </Button>
-      </Box>
+            <Lottie
+              key={theme}
+              source={cloudSyncSources[theme]}
+              loop
+              style={{ width: illustrationSize, height: illustrationSize }}
+            />
+          </Box>
+          <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+            <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+              {title}
+            </Text>
+            <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+              {description}
+              {"\n\n"}
+              <Text
+                typography="body2"
+                accessibilityRole="link"
+                testID={syncOfferTestIds.learnMore}
+                onPress={onLearnMore}
+                style={{ textDecorationLine: "underline" }}
+              >
+                {learnMoreLabel}
+              </Text>
+            </Text>
+          </Box>
+          <Box lx={{ gap: "s16", paddingHorizontal: "s16", paddingBottom: "s24" }}>
+            <Button
+              appearance="base"
+              size="lg"
+              isFull
+              testID={syncOfferTestIds.activate}
+              onPress={onActivate}
+            >
+              {activateLabel}
+            </Button>
+            <Button
+              appearance="transparent"
+              size="lg"
+              isFull
+              testID={syncOfferTestIds.skip}
+              onPress={onOpenSkip}
+            >
+              {skipLabel}
+            </Button>
+          </Box>
+        </Box>
+      </SafeAreaView>
       <SkipLedgerSyncDrawer
         isOpen={skipDrawer.isOpen}
         handleClose={skipDrawer.onClose}

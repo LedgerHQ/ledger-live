@@ -12,7 +12,7 @@ import {
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useExperimental } from "~/experimental";
+import SafeAreaView from "~/components/SafeAreaView";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
@@ -84,51 +84,58 @@ export function ChecksView({
   errorDrawer,
   notGenuineDrawer,
 }: ChecksViewProps) {
-  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
-  const topPadding = useExperimental() ? 0 : topInset;
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
     <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <Box lx={{ flex: 1, gap: "s24" }} style={{ paddingTop: topPadding }}>
-        <NavBar density="compact">
-          {onQuit ? (
-            <NavBarTrailing>
-              <IconButton
-                appearance="no-background"
-                size="md"
-                icon={Close}
-                accessibilityLabel={closeLabel}
-                testID={checksTestIds.quit}
-                onPress={onQuit}
-              />
-            </NavBarTrailing>
-          ) : null}
-        </NavBar>
-        {illustration ? <Illustration kind={illustration} /> : null}
-        <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
-          <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
-            {title}
-          </Text>
-          {description ? (
-            <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-              {description}
+      <SafeAreaView edges={["top"]} isFlex>
+        <Box lx={{ flex: 1, gap: "s24" }}>
+          <NavBar density="compact">
+            {onQuit ? (
+              <NavBarTrailing>
+                <IconButton
+                  appearance="no-background"
+                  size="md"
+                  icon={Close}
+                  accessibilityLabel={closeLabel}
+                  testID={checksTestIds.quit}
+                  onPress={onQuit}
+                />
+              </NavBarTrailing>
+            ) : null}
+          </NavBar>
+          {illustration ? <Illustration kind={illustration} /> : null}
+          <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+            <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+              {title}
             </Text>
+            {description ? (
+              <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+                {description}
+              </Text>
+            ) : null}
+          </Box>
+          {primaryLabel ? (
+            <Box lx={{ paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
+              {primaryLoading ? (
+                <Button appearance="transparent" size="lg" isFull loading>
+                  {primaryLabel}
+                </Button>
+              ) : (
+                <Button
+                  appearance="base"
+                  size="lg"
+                  isFull
+                  testID={primaryTestID}
+                  onPress={onPrimary}
+                >
+                  {primaryLabel}
+                </Button>
+              )}
+            </Box>
           ) : null}
         </Box>
-        {primaryLabel ? (
-          <Box lx={{ paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
-            {primaryLoading ? (
-              <Button appearance="transparent" size="lg" isFull loading>
-                {primaryLabel}
-              </Button>
-            ) : (
-              <Button appearance="base" size="lg" isFull testID={primaryTestID} onPress={onPrimary}>
-                {primaryLabel}
-              </Button>
-            )}
-          </Box>
-        ) : null}
-      </Box>
+      </SafeAreaView>
       {allowSheet ? (
         <QueuedBottomSheet
           isRequestingToBeOpened
