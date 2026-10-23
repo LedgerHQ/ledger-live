@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import { platformSuffixWaivers } from "./src/suffix-imports.js";
@@ -54,8 +56,18 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "pay-request",
 ];
 
+const PLATFORM_STYLE = new URL("../../features/platform/style/", import.meta.url);
+
 export default defineConfig({
   extends: [base],
+  settings: {
+    // better-tailwindcss resolves `tailwindcss` from `cwd`, which is wherever oxlint runs unless
+    // set. The style package owns both the entry point and that dependency.
+    "better-tailwindcss": {
+      cwd: fileURLToPath(PLATFORM_STYLE),
+      entryPoint: fileURLToPath(new URL("tailwind.css", PLATFORM_STYLE)),
+    },
+  },
   rules: {
     // features/flow is the strictest layer in the repo and wants `any` to be fatal.
     "typescript/no-explicit-any": "error",
@@ -121,5 +133,15 @@ export default defineConfig({
       rules: { "react/no-children-prop": "off" },
     },
     platformSuffixWaivers(PLATFORM_SUFFIX_WAIVERS),
+    {
+      // Tailwind only runs on web; native styles go through Lumen's RN components.
+      files: ["**/*.web.{ts,tsx}"],
+      jsPlugins: lumen.configs.recommended.jsPlugins,
+      rules: {
+        ...lumen.configs.recommended.rules,
+        // `dark` is the Lumen color-scheme class toggled on <html> by ThemeProvider, not a utility.
+        "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["^dark$"] }],
+      },
+    },
   ],
 });
