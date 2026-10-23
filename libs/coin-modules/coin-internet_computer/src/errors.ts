@@ -346,3 +346,14 @@ export class ICPNodeRefused extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+// The signed call is past its ingress expiry (carried as `expiresAt`, ms epoch). The node would
+// refuse it, so it is never submitted; it has to be crafted and signed again.
+export class ICPTransactionExpired extends Error {
+  override name = "ICPTransactionExpired";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPTransactionExpired");
+    if (fields) Object.assign(this, fields);
+  }
+}

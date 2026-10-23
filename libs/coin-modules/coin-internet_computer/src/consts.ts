@@ -6,11 +6,16 @@ export const ICP_NET_ID_ROSETTA = "00000000000000020101";
 
 // Mac ICP fees
 export const ICP_FEES = 1e4;
+// The ledger refuses a transfer whose fee differs from its own transfer fee.
+export const TRANSFER_FEE = BigInt(ICP_FEES);
 
 export const E8S_PER_ICP = 100_000_000;
 
 // Max Memo value on ICP network
 export const MAX_MEMO_VALUE = Number.MAX_SAFE_INTEGER;
+
+// Ledger transfer amounts and memos are Nat64.
+export const MAX_NAT64 = 2n ** 64n - 1n;
 
 // API limits
 export const FETCH_TXNS_LIMIT = 100;
