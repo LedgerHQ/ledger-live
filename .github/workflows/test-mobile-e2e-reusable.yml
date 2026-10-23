@@ -545,8 +545,9 @@ jobs:
             echo "- Emulator CPUs (nproc): $(for serial in emulator-5554 emulator-5556; do printf '%s=%s ' "$serial" "$(adb -s "$serial" shell nproc | tr -d '\r')"; done)"
           } >> "$GITHUB_STEP_SUMMARY"
           # Cellular like the E2E emulators (tools/scripts/boot-android-emulators-ci.sh, which boots
-          # three emulators and can't be reused here): the emulated Wi-Fi delays every packet the
-          # guest receives by 100–300 ms.
+          # three emulators and can't be reused here). The emulated Wi-Fi delayed every packet the
+          # guest received by 0.2–0.5 s on the old runner, and on this one still holds large answers
+          # for ~240–500 ms while the app is busy (runs 39941337433, 39966755704); cellular adds ~0 ms.
           for serial in emulator-5554 emulator-5556; do
             adb -s "$serial" shell svc wifi disable
             cellular=false
@@ -593,7 +594,7 @@ jobs:
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           PAUSE_IDLE: ${{ inputs.pause_idle_emulator }}
           # The hosts of the two requests WaitForAppReady waits for, timed from the runner itself.
-          NET_BASELINE: ${{ inputs.capture_network && 'https://firebaseremoteconfig.googleapis.com/,https://global.api.prd.ledger.com/countervalue/v3/markets' || '' }}
+          NET_BASELINE: ${{ inputs.capture_network && 'https://firebaseremoteconfig.googleapis.com/,https://countervalues.live.ledger.com/v3/markets' || '' }}
           # The emulator's own capture of each launch; it only sees the cellular network, now always used.
           GUEST_CAPTURE: ${{ inputs.capture_network }}
         run: |
