@@ -1,4 +1,6 @@
 import type { AccountHeroAvailability } from "../hero/types";
+import { hasAccountActivity } from "./hasAccountActivity";
+import { resolveAccountHeroAvailability } from "./resolveAccountHeroAvailability";
 import { resolveEmptyState } from "./resolveEmptyState";
 import { resolveSwapConsole } from "./resolveSwapConsole";
 
@@ -52,5 +54,36 @@ describe("resolveEmptyState", () => {
       resolveEmptyState({ hasActivity: false, availability: availability(overrides) })
         .fundingActions,
     ).toEqual(expected);
+  });
+});
+
+describe("resolveAccountHeroAvailability", () => {
+  const support = { isCurrencySupported: true, isSendSupported: false, isReceiveSupported: true };
+
+  it("makes an action available when one asset of the account supports it", () => {
+    expect(
+      resolveAccountHeroAvailability({ buy: ["eth"], sell: [], swap: ["eth"], earn: [] }, support),
+    ).toEqual({
+      ...support,
+      isBuyAvailable: true,
+      isSellAvailable: false,
+      isSwapAvailable: true,
+      isEarnAvailable: false,
+    });
+  });
+});
+
+describe("hasAccountActivity", () => {
+  const empty = { operations: [], pendingOperations: [] };
+
+  it("has no activity without any operation", () => {
+    expect(hasAccountActivity({ ...empty, subAccounts: [empty] })).toBe(false);
+  });
+
+  it("counts operations and pending operations of the account and its tokens", () => {
+    expect(hasAccountActivity({ ...empty, pendingOperations: [{}] })).toBe(true);
+    expect(hasAccountActivity({ ...empty, subAccounts: [{ ...empty, operations: [{}] }] })).toBe(
+      true,
+    );
   });
 });

@@ -115,11 +115,10 @@ describe("resolveQuickActions", () => {
         expect(stateOf(actions, "earn")).toBe("inactive");
       });
 
-      it("keeps Sell inactive when the currency is not on the ramp", () => {
+      it("hides Sell when the currency is not on the ramp", () => {
         const actions = resolveQuickActions(currency({ scope, isSellAvailable: false }));
 
-        expect(stateOf(actions, "sell")).toBe("inactive");
-        expect(stateOf(actions, "send")).toBe("active");
+        expect(ids(actions)).toEqual(["receive", "send", "buy", "earn"]);
       });
 
       it("keeps Sell and Send inactive without funds", () => {

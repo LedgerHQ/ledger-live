@@ -2,7 +2,9 @@ import {
   hasAnyFunds,
   listHeldAssets,
   resolveAssetsByAction,
+  resolveAvailableAssetsByAction,
   sortAssetsByValue,
+  sumAssetValues,
 } from "./accountAssets";
 
 const amount = (value: number) => ({ gt: (other: number) => value > other });
@@ -89,11 +91,71 @@ describe("resolveAssetsByAction", () => {
   });
 });
 
+describe("resolveAvailableAssetsByAction", () => {
+  const assets = listHeldAssets(account({ eth: 1, usdc: 1, pol: 1 }), new Set());
+  const sources = {
+    buyableIds: ["ethereum", "usdc"],
+    sellableIds: ["usdc"],
+    swappableIds: ["ethereum", "pol"],
+    deactivatedIds: new Set<string>(),
+    isStakeable: (id: string) => id === "ethereum",
+  };
+
+  it("keeps, for each action, the assets listed by its source", () => {
+    const byAction = resolveAvailableAssetsByAction(assets, sources);
+
+    expect(ids(byAction.buy)).toEqual(["ethereum", "usdc"]);
+    expect(ids(byAction.sell)).toEqual(["usdc"]);
+    expect(ids(byAction.swap)).toEqual(["ethereum", "pol"]);
+    expect(ids(byAction.earn)).toEqual(["ethereum"]);
+  });
+
+  it("drops deactivated currencies from every action", () => {
+    const byAction = resolveAvailableAssetsByAction(assets, {
+      ...sources,
+      deactivatedIds: new Set(["ethereum"]),
+    });
+
+    expect(ids(byAction.buy)).toEqual(["usdc"]);
+    expect(ids(byAction.swap)).toEqual(["pol"]);
+    expect(byAction.earn).toEqual([]);
+  });
+});
+
 describe("sortAssetsByValue", () => {
   it("orders assets by value, highest first, keeping ties in place", () => {
     const values: Record<string, number> = { a: 1, b: 10, c: 1, d: 5 };
     const sorted = sortAssetsByValue(["a", "b", "c", "d"], id => values[id]);
 
     expect(sorted).toEqual(["b", "d", "a", "c"]);
+  });
+});
+
+type Asset = Readonly<{ balance: number; value?: number }>;
+const sum = (assets: readonly Asset[]) =>
+  sumAssetValues(
+    assets,
+    ({ balance }) => balance > 0,
+    ({ value }) => value,
+  );
+
+describe("sumAssetValues", () => {
+  it("is zero when every asset is empty", () => {
+    expect(sum([{ balance: 0 }, { balance: 0 }])).toBe(0);
+  });
+
+  it("is unknown when no funded asset has a value, even next to empty ones", () => {
+    expect(sum([{ balance: 0, value: 0 }, { balance: 5 }])).toBeUndefined();
+  });
+
+  it("adds the values of the funded assets that have one", () => {
+    expect(
+      sum([
+        { balance: 0, value: 0 },
+        { balance: 5, value: 10 },
+        { balance: 2 },
+        { balance: 1, value: 3 },
+      ]),
+    ).toBe(13);
   });
 });

@@ -61,6 +61,30 @@ export function resolveAssetsByAction<T extends HeldAsset<WithId, Spendable, unk
   };
 }
 
+export type AssetActionSources = Readonly<{
+  buyableIds: readonly string[];
+  sellableIds: readonly string[];
+  swappableIds: readonly string[];
+  deactivatedIds: ReadonlySet<string>;
+  isStakeable: (currencyId: string) => boolean;
+}>;
+
+export function resolveAvailableAssetsByAction<T extends HeldAsset<WithId, Spendable, unknown>>(
+  assets: readonly T[],
+  { buyableIds, sellableIds, swappableIds, deactivatedIds, isStakeable }: AssetActionSources,
+): AssetsByAction<T> {
+  const buyable = new Set(buyableIds);
+  const sellable = new Set(sellableIds);
+  const swappable = new Set(swappableIds);
+  const isActive = (currencyId: string) => !deactivatedIds.has(currencyId);
+  return resolveAssetsByAction(assets, {
+    isBuyable: id => isActive(id) && buyable.has(id),
+    isSellable: id => isActive(id) && sellable.has(id),
+    isSwappable: id => isActive(id) && swappable.has(id),
+    isStakeable: id => isActive(id) && isStakeable(id),
+  });
+}
+
 export function sortAssetsByValue<T>(
   assets: readonly T[],
   valueOf: (asset: T) => number,
@@ -69,4 +93,16 @@ export function sortAssetsByValue<T>(
     .map(asset => ({ asset, value: valueOf(asset) }))
     .sort((a, b) => b.value - a.value)
     .map(({ asset }) => asset);
+}
+
+export function sumAssetValues<T>(
+  assets: readonly T[],
+  isFunded: (asset: T) => boolean,
+  valueOf: (asset: T) => number | undefined,
+): number | undefined {
+  const funded = assets.filter(isFunded);
+  if (funded.length === 0) return 0;
+  const values = funded.map(valueOf).filter((value): value is number => value !== undefined);
+  if (values.length === 0) return undefined;
+  return values.reduce((sum, value) => sum + value, 0);
 }
