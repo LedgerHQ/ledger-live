@@ -25,6 +25,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useFeature } from "@features/platform-feature-flags";
+import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
@@ -70,7 +71,16 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
     if (!isOsUpdatesEnabled || !firmwareUpdate) return;
     // One-shot request: consumed on landing, whether or not there is an update to show.
     navigation.setParams({ firmwareUpdate: undefined });
-    if (hasOsUpdates) baseNavigation.navigate(ScreenName.OsUpdate, { device });
+    if (hasOsUpdates) {
+      baseNavigation.navigate(ScreenName.OsUpdate, {
+        device: {
+          id: device.deviceId,
+          name: device.deviceName ?? null,
+          deviceModelId: device.modelId,
+          transport: device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier,
+        },
+      });
+    }
   }, [isOsUpdatesEnabled, firmwareUpdate, hasOsUpdates, navigation, baseNavigation, device]);
 
   const refreshDeviceInfo = useCallback(() => {

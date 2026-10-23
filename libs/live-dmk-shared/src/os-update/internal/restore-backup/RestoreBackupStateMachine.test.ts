@@ -406,6 +406,9 @@ describe("RestoreBackupStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("OutOfMemory");
       expect(lastSentStateType()).toBe(RestoreBackupStateType.OUT_OF_MEMORY);
+      expect(sentStatesOfType(RestoreBackupStateType.OUT_OF_MEMORY)[0].error).toEqual(
+        OUT_OF_MEMORY_ERROR,
+      );
     });
 
     it("should keep the backup when the device ran out of room, so it can be restored later", async () => {
@@ -497,6 +500,9 @@ describe("RestoreBackupStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("UnrecoverableError");
       expect(lastSentStateType()).toBe(RestoreBackupStateType.UNEXPECTED_ERROR);
+      expect(sentStatesOfType(RestoreBackupStateType.UNEXPECTED_ERROR)[0].error).toEqual(
+        new UnknownDAError("boom"),
+      );
     });
 
     it("should ask the host to stop when cancel is called on the UNEXPECTED_ERROR state", async () => {

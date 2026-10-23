@@ -5,6 +5,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
+import { TrackingProvider } from "../../analytics/TrackingProvider";
 import { osUpdatePlatformComponents } from "../../components/osUpdatePlatformComponents";
 import { WhatsNewScreen } from "../WhatsNewScreen";
 import { useOsUpdateFlowViewModel } from "./useOsUpdateFlowViewModel";
@@ -12,33 +13,36 @@ import { useOsUpdateFlowViewModel } from "./useOsUpdateFlowViewModel";
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OsUpdate>;
 
 export default function OsUpdateFlow({ route }: Props) {
-  const { whatsNew, orchestratorRun, onConfirmStart, onClose } = useOsUpdateFlowViewModel(
-    route.params.device,
-    route.params.mode,
-  );
+  const { whatsNew, orchestratorRun, onConfirmStart, onClose, analytics } =
+    useOsUpdateFlowViewModel(route.params.device, route.params.mode);
 
-  if (orchestratorRun) {
-    return (
-      <Box lx={{ flex: 1 }}>
-        <PreventNativeBack />
-        <OsUpdatesOrchestratorComponent
-          {...orchestratorRun}
-          platformComponents={osUpdatePlatformComponents}
+  const content = (() => {
+    if (orchestratorRun) {
+      return (
+        <Box lx={{ flex: 1 }}>
+          <PreventNativeBack />
+          <OsUpdatesOrchestratorComponent
+            {...orchestratorRun}
+            platformComponents={osUpdatePlatformComponents}
+          />
+        </Box>
+      );
+    }
+
+    if (whatsNew) {
+      return (
+        <WhatsNewScreen
+          version={whatsNew.version}
+          notes={whatsNew.notes}
+          onStart={onConfirmStart}
+          onClose={onClose}
         />
-      </Box>
-    );
-  }
+      );
+    }
 
-  if (whatsNew) {
-    return (
-      <WhatsNewScreen
-        version={whatsNew.version}
-        notes={whatsNew.notes}
-        onStart={onConfirmStart}
-        onClose={onClose}
-      />
-    );
-  }
+    return null;
+  })();
 
-  return null;
+  if (!analytics) return content;
+  return <TrackingProvider {...analytics}>{content}</TrackingProvider>;
 }
