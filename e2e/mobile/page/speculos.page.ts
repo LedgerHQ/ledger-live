@@ -18,7 +18,9 @@ import {
   acceptBlindSigningWarning as acceptBlindSigningWarningDevice,
   shareViewKey,
   confirmContactAction as confirmContactActionDevice,
+  resetSpeculosEvents,
 } from "@ledgerhq/live-e2e-shared/speculos";
+import { signTronRentPayment } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { setExchangeDependencies } from "@e2e/utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
@@ -38,6 +40,16 @@ export default class SpeculosPage {
   @Step("Sign Send Transaction on Speculos {{{0.amount}}}")
   async signSendTransaction(tx: TransactionType) {
     await signSendTransaction(tx);
+  }
+
+  @Step("Sign the Tronify rent payment of {{{0}}} USDT to {{{1}}}")
+  async signTronRentPayment(amount: string, payee: string) {
+    await signTronRentPayment(amount, payee);
+  }
+
+  @Step("Clear the device screen events")
+  async resetSpeculosEvents() {
+    await resetSpeculosEvents(Number(process.env.SPECULOS_API_PORT));
   }
 
   @Step("Sign Delegation Transaction on Speculos {{{0.amount}}} to {{{0.provider}}}")

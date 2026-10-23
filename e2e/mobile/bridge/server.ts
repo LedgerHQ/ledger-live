@@ -171,6 +171,11 @@ export async function importContacts(contacts: Contact[]) {
   await fetchData({ type: "importContacts", id: uniqueId(), payload: contacts });
 }
 
+/** Replaces the app's coin-config overrides, which deep-merge over its default and remote config. */
+export async function overrideLiveConfig(payload: Record<string, unknown>) {
+  await postAndAwaitAck({ type: "overrideLiveConfig", id: uniqueId(), payload });
+}
+
 async function navigate(name: string) {
   postMessage({
     type: "navigate",
@@ -235,6 +240,28 @@ async function fetchData(
   });
 }
 
+/** Apart from the message id, which a fetchData call waits on for its response. */
+const ackKey = (id: string) => `ack:${id}`;
+
+/** Unlike fetchData, a missing ACK throws: the caller can't go on unless the app applied it. */
+function postAndAwaitAck(message: MessageData, timeout = BRIDGE_RESPONSE_TIMEOUT): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      global.pendingCallbacks.delete(ackKey(message.id));
+      delete webSocket.messages[message.id];
+      reject(new Error(`The app didn't acknowledge ${message.type} within ${timeout}ms`));
+    }, timeout);
+
+    global.pendingCallbacks.set(ackKey(message.id), {
+      callback: () => {
+        clearTimeout(timeoutId);
+        resolve();
+      },
+    });
+    postMessage(message);
+  });
+}
+
 export async function addKnownSpeculos(address: string) {
   postMessage({
     type: "addKnownSpeculos",
@@ -251,7 +278,7 @@ export async function removeKnownSpeculos(address: string) {
   postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: address });
 }
 
-/** Resolve the `fetchData` promise waiting on `key`, if any. Each response type does this. */
+/** Resolve the bridge call waiting on `key`, if any. Each response type and the ACK do this. */
 function resolvePending(key: string, payload: string) {
   const pending = global.pendingCallbacks?.get(key);
   if (!pending) return;
@@ -267,6 +294,7 @@ function onMessage(messageStr: string) {
     case "ACK":
       log(`${msg.id}`);
       delete webSocket.messages[msg.id];
+      resolvePending(ackKey(msg.id), "");
       break;
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);

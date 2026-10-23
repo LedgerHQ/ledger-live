@@ -45,6 +45,8 @@ type AmountScreenViewModelReady = Readonly<{
   networkFees: NetworkFeesViewModel;
   /** Set while the sponsored fee is offered for this send. */
   sponsoredFee: SponsoredFeeEntryViewModel | null;
+  /** Says why the sponsored option is off while its rent is still arriving. */
+  sponsoredRentNotice: string | null;
   quickActions: QuickActionsViewModel;
   reviewButton: ReviewButtonViewModel;
   message: AmountScreenMessage | null;

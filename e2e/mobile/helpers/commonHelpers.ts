@@ -10,6 +10,7 @@ import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { isPaytabSpec } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import { FAKE_TRONIFY_PORT } from "@ledgerhq/live-e2e-shared/tronify/constants";
 import {
   CARD_SESSION_BOOTSTRAP_ENV,
   resolveCardSessionBootstrap,
@@ -84,6 +85,22 @@ function mockServerDetoxUrlPattern(): string {
   }
 }
 
+/** The fake Tronify's port in this Jest worker: CI runs several workers on one host. */
+export function fakeTronifyPort(): number {
+  return FAKE_TRONIFY_PORT + Number(process.env.JEST_WORKER_ID ?? 1) - 1;
+}
+
+// Jest gives each spec file its own module registry, so this applies to the declaring file only.
+let broadcastsReachOnlyFakeNodes = false;
+
+/**
+ * Lets the app launched for this spec file broadcast: call it while registering the tests of a spec
+ * whose transactions only reach a local fake node, which answers them without forwarding them.
+ */
+export function allowBroadcastToFakeNodes() {
+  broadcastsReachOnlyFakeNodes = true;
+}
+
 /** Creates a regex string for Detox URL blacklisting. */
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
@@ -93,6 +110,8 @@ function createDetoxURLBlacklistRegex(): string {
     ".*tron.coin.ledger.com/wallet/getBrokerage.*",
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
+    // The Android emulator reaches the fake Tronify on this machine through 10.0.2.2.
+    `.*10.0.2.2:${fakeTronifyPort()}.*`,
     ".*speculos.*ldg-tech.com.*",
     mockServerDetoxUrlPattern(),
     ".*optimism.*",
@@ -117,7 +136,8 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       wsToken,
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
-      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
+      disable_broadcast:
+        getEnv("DISABLE_TRANSACTION_BROADCAST") && !broadcastsReachOnlyFakeNodes ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
       ...cardSession,
