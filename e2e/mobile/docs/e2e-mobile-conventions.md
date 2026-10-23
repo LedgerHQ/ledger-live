@@ -6,17 +6,13 @@ MUST and MUST NOT are required. SHOULD is the default, and the same section stat
 
 The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`contacts.page.ts`](../page/wallet/contacts.page.ts), [`contactDetail.page.ts`](../page/wallet/contactDetail.page.ts), [`contactName.drawer.ts`](../page/drawer/contactName.drawer.ts).
 
-## Webview and native
+## Detox operations MUST use the installed NativeElementHelpers and WebElementHelpers globals
 
-### Callers MUST reuse the installed NativeElementHelpers and WebElementHelpers globals
+Creating, finding, tapping, typing, reading, waiting, and scrolling a Detox element MUST use an installed global. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. Examples are `getElementById`, `tapById`, `getTextOfElement`, `waitForElementById`, `getWebElementByTestId`, and `tapWebElementByTestId`. A direct import of either object MUST be used only where those globals are not available.
 
-Callers MUST use an installed global function. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. A direct import of either object MUST be used only where those globals are not available.
+Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. When no installed global performs the operation, that function MUST be added to `NativeElementHelpers` or `WebElementHelpers`, installed in `jest.environment.ts`, and declared in `types/global.d.ts`. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers.
 
-A webview operation MUST call an installed `WebElementHelpers` global first, such as `getWebElementByTestId`. A caller MUST NOT call `web.element` when one of these globals can reach the element.
-
-A native operation MUST call an installed `NativeElementHelpers` global first, such as `getElementById`. A caller MUST NOT call `element(by...)` when one of these globals can reach the element.
-
-### A shared Live App test id SHOULD match the desktop test id
+## A shared Live App test id SHOULD match the desktop test id
 
 When a Live App element already has a test id on desktop, the mobile selector SHOULD use that same id.
 
@@ -29,6 +25,10 @@ A spec MUST declare only test metadata and invoke the sibling test function. The
 ### State MUST be arranged in fixtures and flags
 
 See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
+
+### State MUST NOT be arranged in UI steps
+
+A setup MUST NOT open screens or tap controls to reach the state under test.
 
 ### Tests MUST NOT use conditional steps
 
