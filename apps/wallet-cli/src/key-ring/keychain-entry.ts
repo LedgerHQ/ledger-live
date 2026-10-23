@@ -7,7 +7,7 @@ import { encryptData, decryptData, hexToBytes } from "./crypto";
 
 const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
-// Never holds entries, so probing it decrypts no real secret.
+// Only ever built, never read or written.
 const PROBE_SERVICE = `${APP_NAME}-probe`;
 // Without a pin, Linux `new Entry()` silently falls back to the kernel keyring, which loses the key
 // on reboot. Pinned, the constructor throws when no Secret Service is reachable.
@@ -18,8 +18,10 @@ export class KeychainUnavailableError extends Error {
   override name = "KeychainUnavailableError";
 }
 
-function probeSecretService(): void {
-  new Entry(PROBE_SERVICE, "probe", SECRET_SERVICE_ONLY).getPassword();
+// The pinned constructor is the whole check: a read would also report errors (a timeout, a locked
+// collection) that don't mean the Secret Service is missing.
+function probeSecretService(): Entry {
+  return new Entry(PROBE_SERVICE, "probe", SECRET_SERVICE_ONLY);
 }
 
 let probeKeychain: () => unknown = probeSecretService;

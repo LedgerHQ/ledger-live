@@ -97,10 +97,16 @@ describe("default Secret Service probe", () => {
 
   afterEach(() => restorePlatform());
 
-  it("reads a pinned probe entry and passes when it holds nothing", () => {
+  it("builds a pinned probe entry without reading it", () => {
     expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
     expect(constructed).toEqual([["ledger-wallet-cli-probe", "probe", SECRET_SERVICE_ONLY]]);
-    expect(reads).toBe(1);
+    expect(reads).toBe(0);
+  });
+
+  it("passes when the Secret Service is reachable but a read would fail", () => {
+    backendError = new Error("Secret Service: object locked");
+
+    expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
   });
 
   it("throws KeychainUnavailableError when the pinned entry can't be built", () => {
