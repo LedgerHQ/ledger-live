@@ -81,6 +81,12 @@ on:
         required: false
         type: boolean
         default: true
+      emulator_network:
+        description: "Android: emulator network path. cellular turns Wi-Fi off, and captures each launch inside the emulator too"
+        required: false
+        type: choice
+        options: [wifi, cellular]
+        default: wifi
 
 concurrency:
   group: mobile-startup-perf-${{ github.ref_name }}
@@ -132,6 +138,7 @@ jobs:
           SETTLE: ${{ inputs.settle_seconds }}
           THRESHOLD: ${{ inputs.threshold_ms }}
           SCENARIOS: ${{ inputs.scenarios }}
+          EMULATOR_NETWORK: ${{ inputs.emulator_network }}
           BRANCH_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
@@ -167,7 +174,7 @@ jobs:
             echo "- A: \`$LABEL_A\` → \`$A\`"
             echo "- B: \`$LABEL_B\` → \`$B\`"
             echo "- $PAIRS pairs per scenario, value read ${SETTLE}s after each launch"
-            echo "- Android: one job (runner) per scenario"
+            echo "- Android: one job (runner) per scenario, emulator network: $EMULATOR_NETWORK"
           } >> "$GITHUB_STEP_SUMMARY"
 
   build-android:
@@ -484,6 +491,8 @@ jobs:
           "$BIN/maestro" --version
 
       - name: Boot two emulators
+        env:
+          EMULATOR_NETWORK: ${{ inputs.emulator_network }}
         run: |
           set -euo pipefail
           tools/scripts/cleanup-android-emulators.sh || true
@@ -502,6 +511,19 @@ jobs:
             done
             echo "$serial booted"
           done
+          # cellular: traffic leaves through the emulated mobile network (eth0) instead of Wi-Fi (wlan0).
+          if [[ "$EMULATOR_NETWORK" == cellular ]]; then
+            for serial in emulator-5554 emulator-5556; do
+              adb -s "$serial" shell svc wifi disable
+              for _ in $(seq 30); do
+                net=$(adb -s "$serial" shell dumpsys connectivity | sed -n 's/.*Active default network: \([0-9]*\).*/\1/p' | head -1)
+                if adb -s "$serial" shell dumpsys connectivity | grep "NetworkAgentInfo{network{$net}" | grep -q CELLULAR; then
+                  echo "$serial default network: cellular"; break
+                fi
+                sleep 2
+              done
+            done
+          fi
           # Wait until post-boot work is done: 1-minute load average below 1 on both (max 15 min).
           deadline=$((SECONDS + 900))
           for serial in emulator-5554 emulator-5556; do
@@ -536,6 +558,8 @@ jobs:
           PAUSE_IDLE: ${{ inputs.pause_idle_emulator }}
           # The hosts of the two requests WaitForAppReady waits for, timed from the runner itself.
           NET_BASELINE: ${{ inputs.capture_network && 'https://firebaseremoteconfig.googleapis.com/,https://global.api.prd.ledger.com/countervalue/v3/markets' || '' }}
+          # The emulator's own capture only sees the mobile network, so only with Wi-Fi off.
+          GUEST_CAPTURE: ${{ inputs.emulator_network == 'cellular' }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -549,6 +573,7 @@ jobs:
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --pause-idle "$PAUSE_IDLE" \
             --net-baseline "$NET_BASELINE" \
+            --guest-capture "$GUEST_CAPTURE" \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse
@@ -576,6 +601,7 @@ jobs:
             --pcap "$PCAP" --samples "$RESULTS_DIR/android/samples.jsonl" \
             --summary "$GITHUB_STEP_SUMMARY" --json "$RESULTS_DIR/android/network.json"
           gzip -1 "$PCAP"
+          if [[ -d "$RESULTS_DIR/android/guest-network" ]]; then gzip -1 "$RESULTS_DIR/android/guest-network/"*.pcap || true; fi
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}

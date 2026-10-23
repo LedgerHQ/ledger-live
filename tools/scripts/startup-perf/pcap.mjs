@@ -199,15 +199,24 @@ const BURST_GAP_MS = 300;
 
 // TCP connections opened in the capture, keyed by who sent the SYN, with:
 // connect (SYN → SYN-ACK), firstAnswer (ClientHello → first server data, the TLS handshake round
-// trip), responseStart / responseEnd (the first server burst after the client's first data that
-// follows the handshake: the first request's answer), and failed when no SYN-ACK ever came.
+// trip), finishAt (the client's next data: its TLS finish), requestAt (its first request after
+// that), responseStart / responseEnd (the server burst that follows the request: its answer),
+// and failed when no SYN-ACK ever came.
 export function tcpConnections(packets) {
   const flows = new Map();
+  const closed = [];
   for (const p of packets) {
     if (p.proto !== "tcp") continue;
     const forward = `${p.src}|${p.sport}|${p.dst}|${p.dport}`;
     const backward = `${p.dst}|${p.dport}|${p.src}|${p.sport}`;
     if (p.syn && !p.ack) {
+      // Ports get reused over a long capture: a SYN on a pair that already connected, or whose
+      // SYN went unanswered for a while, opens a new connection. Otherwise it is a retransmission.
+      const existing = flows.get(forward);
+      if (existing && (existing.synAckAt || p.ts - existing.synAt > 5000)) {
+        closed.push(existing);
+        flows.delete(forward);
+      }
       if (!flows.has(forward)) {
         flows.set(forward, {
           client: `${p.src}:${p.sport}`,
@@ -227,14 +236,21 @@ export function tcpConnections(packets) {
     if (p.rst) flow.rstAt ??= p.ts;
     if (p.payloadLength > 0) flow.packets.push({ ts: p.ts, fromClient, payload: p.payload });
   }
-  return [...flows.values()].map(summariseFlow).sort((a, b) => a.synAt - b.synAt);
+  return [...closed, ...flows.values()].map(summariseFlow).sort((a, b) => a.synAt - b.synAt);
 }
+
+// A request is the first client packet this big after the TLS finish: smaller ones are the TLS
+// finish itself and HTTP/2 setup (preface, settings, window updates).
+const MIN_REQUEST_BYTES = 150;
 
 function summariseFlow(flow) {
   const { packets, ...rest } = flow;
   const hello = packets.find(p => p.fromClient);
   const firstServer = packets.find(p => !p.fromClient);
-  const request = firstServer && packets.find(p => p.fromClient && p.ts > firstServer.ts);
+  const finish = firstServer && packets.find(p => p.fromClient && p.ts > firstServer.ts);
+  const request =
+    finish &&
+    packets.find(p => p.fromClient && p.ts > finish.ts && p.payload.length >= MIN_REQUEST_BYTES);
   let responseStart = null;
   let responseEnd = null;
   if (request) {
@@ -252,6 +268,7 @@ function summariseFlow(flow) {
     connectMs: flow.synAckAt ? flow.synAckAt - flow.synAt : null,
     helloAt: hello?.ts ?? null,
     firstAnswerMs: hello && firstServer ? firstServer.ts - hello.ts : null,
+    finishAt: finish?.ts ?? null,
     requestAt: request?.ts ?? null,
     responseStart,
     responseEnd,
