@@ -15,11 +15,19 @@ import { dnsLookups, readPcap, tcpConnections } from "./pcap.mjs";
 
 const WINDOW_MS = 10_000;
 // The requests WaitForAppReady waits for, by TLS server name. The OFAC check is GET /v3/markets on
-// the countervalues service, the first request the app sends to that host at startup.
+// the countervalues service (LEDGER_COUNTERVALUES_API), whose host depends on the app version:
+// countervalues.live.ledger.com now, global.api.prd.ledger.com/countervalue in builds before
+// 1d51f35ac7b (e.g. the LIVE-36190 pair). Over HTTP/2 the request can also ride on a connection the
+// app opened to another Ledger host, which this match by server name does not see.
 export const GATES = [
-  { label: "Remote flags", host: "firebaseremoteconfig.googleapis.com" },
-  { label: "OFAC check", host: "global.api.prd.ledger.com" },
+  { label: "Remote flags", hosts: ["firebaseremoteconfig.googleapis.com"] },
+  { label: "OFAC check", hosts: ["countervalues.live.ledger.com", "global.api.prd.ledger.com"] },
 ];
+
+// A gate's connection, trying its hosts in order: a build that uses the first host can still open
+// an unrelated connection to the second one.
+const gateConnection = (g, connections) =>
+  g.hosts.map(h => connections.find(c => c.sni === h)).find(Boolean);
 
 // The runner's own traffic (job logs, artifacts) shares the capture.
 const RUNNER_HOSTS =
@@ -72,16 +80,10 @@ export function perLaunch(samples, connections, lookups, guest = () => null) {
       const inside = guest(s);
       const gates = {};
       for (const g of GATES) {
-        gates[g.host] = {
-          runner: requestSteps(
-            flows.find(c => c.sni === g.host),
-            lookups,
-          ),
+        gates[g.label] = {
+          runner: requestSteps(gateConnection(g, flows), lookups),
           emulator: inside
-            ? requestSteps(
-                inside.connections.find(c => c.sni === g.host),
-                inside.lookups,
-              )
+            ? requestSteps(gateConnection(g, inside.connections), inside.lookups)
             : null,
         };
       }
@@ -107,7 +109,9 @@ export function perLaunch(samples, connections, lookups, guest = () => null) {
           failed: c.failed,
         };
       }
-      const gateEnds = GATES.map(g => hosts[g.host]?.answerEndMs);
+      const gateEnds = GATES.map(g =>
+        g.hosts.map(h => hosts[h]?.answerEndMs).find(Number.isFinite),
+      );
       const waitStart = s.events?.["WaitForAppReady render"]?.time ?? null;
       const waitEnd = s.events?.["WaitForAppReady done"]?.time ?? null;
       const gatesAnsweredMs = gateEnds.every(Number.isFinite) ? Math.max(...gateEnds) : null;
@@ -158,7 +162,7 @@ export function toMarkdown(launches) {
       `| ${scenario} | ${g.length} | ${stat(g.map(l => l.launchToProcessMs))} | ${stat(g.map(l => l.waitStartMs))} → ${stat(g.map(l => l.waitEndMs))} | ${stat(g.map(l => l.gatesAnsweredMs))} | ${fromStart ? stat(g.map(l => l.waitAfterAnswersMs)) : "–"} | ${fmt(median(g.map(l => l.connections)))} / ${g.reduce((a, l) => a + l.failedConnections, 0)} / ${g.reduce((a, l) => a + l.ipv6Connections, 0)} |`,
     );
   }
-  const withEmulator = launches.some(l => GATES.some(g => l.gates[g.host]?.emulator));
+  const withEmulator = launches.some(l => GATES.some(g => l.gates[g.label]?.emulator));
   const views = withEmulator ? ["runner", "emulator"] : ["runner"];
   lines.push(
     "",
@@ -169,7 +173,7 @@ export function toMarkdown(launches) {
   );
   for (const [key, label] of STEPS) {
     const cells = GATES.flatMap(g =>
-      views.map(v => stat(launches.map(l => l.gates[g.host]?.[v]?.[key]))),
+      views.map(v => stat(launches.map(l => l.gates[g.label]?.[v]?.[key]))),
     );
     lines.push(`| ${label} | ${cells.join(" | ")} |`);
   }
@@ -181,13 +185,13 @@ export function toMarkdown(launches) {
   const counts = new Map();
   for (const l of launches)
     for (const h of Object.keys(l.hosts)) counts.set(h, (counts.get(h) ?? 0) + 1);
-  const gateHosts = new Set(GATES.map(g => g.host));
+  const gateHosts = new Set(GATES.flatMap(g => g.hosts));
   const hosts = [...counts.entries()]
     .sort((a, b) => Number(gateHosts.has(b[0])) - Number(gateHosts.has(a[0])) || b[1] - a[1])
     .slice(0, 15);
   for (const [host] of hosts) {
     const rows = launches.map(l => l.hosts[host]).filter(Boolean);
-    const gate = GATES.find(g => g.host === host);
+    const gate = GATES.find(g => g.hosts.includes(host));
     lines.push(
       `| ${gate ? `**${host}** (${gate.label})` : host} | ${rows.length}/${launches.length} | ${stat(rows.map(r => r.startMs))} | ${stat(rows.map(r => r.dnsMs))} | ${stat(rows.map(r => r.dnsToConnectMs))} | ${stat(rows.map(r => r.connectMs))} | ${stat(rows.map(r => r.tlsMs))} | ${stat(rows.map(r => r.answerStartMs))} → ${stat(rows.map(r => r.answerEndMs))} | ${rows.filter(r => r.failed).length} |`,
     );
