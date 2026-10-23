@@ -91,6 +91,7 @@ pnpm build                                  # scripts/build.mjs: dist/<target>/c
 - `pnpm build` compiles your own platform only. With `CI=true`, it compiles every release target, which needs every platform's native optional packages, such as `@napi-rs/keyring`. `prepare:npm`, `pack:check` and `smoke:npm` need that full build.
 - The embedded skill is generated from [`.agents/skills/`](../../.agents/skills) into `src/skills/manifest.gen.ts`. The file is gitignored and regenerated before `typecheck`, `test` and `build`. `pnpm check:skills` validates it.
 - The binary's copy and the copy published to [LedgerHQ/agent-skills](https://github.com/LedgerHQ/agent-skills) go through one transform, [`scripts/standalone-skill-transform.mjs`](./scripts/standalone-skill-transform.mjs). Don't add a second copy of its rules.
+- The agent plugin (manifests for Hermes, OpenClaw, Claude Code, Cursor and Codex, its README and a smoke test) lives in [`agent-plugin/`](./agent-plugin). `pnpm export:agent-plugin <dir>` writes it to `<dir>` with the skill and the wallet-cli version; nothing publishes it yet.
 
 `@ledgerhq/live-cli` ([`apps/cli`](../cli)) is a separate tool. It is internal and Speculos-only, and is used by e2e suites and CI.
 
