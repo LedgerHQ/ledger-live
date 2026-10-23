@@ -2429,8 +2429,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-startup-time (2.1.0):
-    - React-Core
   - react-native-tcp-socket (6.4.2):
     - CocoaAsyncSocket
     - React-Core
@@ -3643,7 +3641,6 @@ DEPENDENCIES:
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_cca9b0150d3835118913f0e7886b3a75/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_8d415c293c1750d7e96c0d7d5cf03c09/node_modules/react-native-safe-area-context`)"
   - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.2.0/node_modules/@react-native-community/slider`)"
-  - "react-native-startup-time (from `../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._a9294d9a27e522fe86656a91f8dd3c8c/node_modules/react-native-startup-time`)"
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_e476df7aee8b54af1e5cd1cf7231b8cf/node_modules/react-native-tcp-socket`)"
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_88fba3067278955e1853613372910fc3/node_modules/@react-native-vector-icons/material-design-icons`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_3476369c6b501856d0c306ef52d862bc/node_modules/react-native-video`)"
@@ -3897,8 +3894,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_8d415c293c1750d7e96c0d7d5cf03c09/node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../../../node_modules/.pnpm/@react-native-community+slider@5.2.0/node_modules/@react-native-community/slider"
-  react-native-startup-time:
-    :path: "../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._a9294d9a27e522fe86656a91f8dd3c8c/node_modules/react-native-startup-time"
   react-native-tcp-socket:
     :path: "../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_e476df7aee8b54af1e5cd1cf7231b8cf/node_modules/react-native-tcp-socket"
   react-native-vector-icons-material-design-icons:
@@ -4119,7 +4114,6 @@ SPEC CHECKSUMS:
   react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
   react-native-safe-area-context: eda63a662750758c1fdd7e719c9f1026c8d161cb
   react-native-slider: 205c30f4f19af8469c1c24bd4e3ec74038576a67
-  react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
   react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3
   react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6

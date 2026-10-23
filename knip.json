@@ -85,7 +85,6 @@
         "prop-types",
         "react-is",
         "react-native-fast-pbkdf2",
-        "react-native-navigation-bar-color",
         "react-native-randombytes",
         "stylis"
       ]
