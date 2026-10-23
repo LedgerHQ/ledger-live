@@ -46,7 +46,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "encrypt this file / these env vars / publish tokens", "GPG alternative", "secret manager", "decrypt anywhere with my Ledger" | `ring init` -> `ring encrypt --key <name>` / `ring decrypt --key <name>` |
 | "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
 | "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
-| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name> --source <runtime>` (no device; blocks until approved) |
+| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name> --source <runtime>` (no device; blocks until approved; add `--environment`/`--app-url` for the app the user named) |
 | "recover this agent", "re-enroll an agent into its trustchain"                       | `agent-intent recover --profile <id>` (no device; blocks until approved) |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
@@ -330,7 +330,7 @@ printed, logged, or included in any command's output (human or `--output json`).
 # human approves in the Agent Intent frontend (default environment: production):
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source claude-code
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source other \
-  --environment staging --expires-in 2h
+  --environment staging --app-url https://app.agents.ledger-test.com --expires-in 2h
 
 # Re-enroll an enrolled profile's existing key into its previous Trustchain, then
 # BLOCK until approved (environment/keycloak come from the profile):
@@ -350,12 +350,26 @@ pnpm --silent wallet-cli start agent-intent sync --profile my-bot --output json
 matches. Omitting it defaults to `other`. The frontend shows it as the agent's source; never pass a
 value outside this list.
 
+**Enroll with the app the user named.** The setup prompt from the Agent Intent app names the app to
+enroll with. Without `--environment` and `--app-url`, `enroll` uses production.
+
+- `app.agents.ledger.com`: `--environment production --app-url https://app.agents.ledger.com`
+- `app.agents.ledger-test.com`: `--environment staging --app-url https://app.agents.ledger-test.com`
+- Any other URL (for example `http://localhost:5173` or a preview deploy): `--app-url <that URL>`,
+  with `https://` added to a bare host, and ask the user whether it runs on `staging` or
+  `production` if that is unclear.
+
 **One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an
 `enrollment-pending` NDJSON event), then waits on an encrypted Trustchain relay channel bound into the
 signed request. The frontend delivers the completion over that channel; there is no `complete`
-command and no manual JSON fallback. **Keep the process running** until it prints the final
-`enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
-`accountAccessEnvironment`, `keyStore`). The wait is bounded by `--expires-in` (default 30m).
+command and no manual JSON fallback. Run it so you can read its output while it waits (for example in
+the background), and **send the enrollment URL to the user as soon as it is printed**. **Keep the
+process running** until it prints the final `enrolled` result (json: `status: "success"`,
+`enrolled: true`, `trustchainId`, `accountAccessEnvironment`, `keyStore`). The wait is bounded by
+`--expires-in` (default 30m).
+
+**Keep credentials private.** Send the user only the enrollment URL and the fingerprint, never the
+agent's secret key, access tokens or session file.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
