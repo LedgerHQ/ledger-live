@@ -46,11 +46,9 @@ export function useRecoverBannerState(protectId: string): {
 
   const dismissBanner = useCallback(() => {
     dispatch(setDisplayBanner({ protectId, displayBanner: false }));
-    try {
-      setStoreValue(DISPLAY_BANNER_STORAGE_KEY, "false", protectId);
-    } catch {
+    setStoreValue(DISPLAY_BANNER_STORAGE_KEY, "false", protectId).catch(() => {
       // Ignore persistence failures; dismissal is already reflected in Redux for this session.
-    }
+    });
   }, [dispatch, protectId]);
 
   return { data, dismissBanner };

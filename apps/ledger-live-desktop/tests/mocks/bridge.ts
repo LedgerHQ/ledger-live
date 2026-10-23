@@ -77,8 +77,8 @@ export const power: jest.Mocked<PowerBridge> = {
 };
 
 export const store: jest.Mocked<StoreBridge> = {
-  set: jest.fn(),
-  clear: jest.fn(),
+  set: jest.fn().mockResolvedValue(undefined),
+  clear: jest.fn().mockResolvedValue(undefined),
 };
 
 export const shell: jest.Mocked<ShellBridge> = {
