@@ -10,9 +10,9 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 - Deterministic testing scenarios for EVM-based coins
 - Support for multiple EVM chains (Ethereum, Polygon, Scroll, Blast, Sonic)
 - Local signer written in Typescript
-- The Ethereum and Polygon scenarios ask coin-sandbox for a real node (geth 1.17.8, bor 2.10.2: the versions of
-  production) and its Atlas indexer. USDC is preloaded by coin-sandbox at its mainnet address, and the account is funded
-  by airdrop. No mock: Atlas is the explorer and gas tracker, and any request that leaves the machine fails
+- The Ethereum, Polygon and BNB scenarios ask coin-sandbox for a real node (geth 1.17.8 on Ethereum and 1.7.8 on BNB, bor 2.10.2:
+  the versions of production) and its Atlas indexer. USDC (USDT on BNB) is preloaded by coin-sandbox at its mainnet address,
+  and the account is funded by airdrop. No mock: Atlas is the explorer and gas tracker, and any request that leaves the machine fails
 - The other scenarios still use Anvil, a mainnet fork, and a mocked explorer
 
 ## Usage
@@ -27,11 +27,11 @@ await executeScenario(scenarioEthereum);
 
 ## Development
 
-Run the tests with `pnpm coin:tester:evm start`. The Ethereum and Polygon scenarios need coin-sandbox's server running (`deno task
+Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon and BNB scenarios need coin-sandbox's server running (`deno task
 server` in its repository, port 8000; `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon, and `docker login
 jfrog.ledgerlabs.net` for the Atlas images (amd64 only, so emulated on Apple Silicon). It takes about a minute. The
 others need Docker for Anvil and network access to their fork RPC. To run one scenario:
-`pnpm coin:tester:evm start -t "scenario Polygon"`.
+`pnpm coin:tester:evm start -t "scenario BNB"`.
 
 ## Dependencies
 
