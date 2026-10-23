@@ -110,8 +110,9 @@ import the original provider, and declare the dependency themselves. This holds 
 
 ## Universal components
 
-A React component exported from an entry with a `react-native` condition is universal: it takes
-one props contract on both platforms. The [ADR](../../../docs/adr/universal-components.md) holds
+A React component exported from an entry that resolves per platform (a `react-native` condition,
+or no condition but different modules on web and native) is universal: it takes one props
+contract on both platforms. The [ADR](../../../docs/adr/universal-components.md) holds
 the full rules and authoring steps. `lint:structure` checks them as each rule lands; until then,
 review checks them.
 
