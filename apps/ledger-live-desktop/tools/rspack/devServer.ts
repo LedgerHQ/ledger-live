@@ -8,6 +8,7 @@ import { createWebviewPreloaderConfig } from "./rspack.webviewPreloader";
 import { createWebviewDappPreloaderConfig } from "./rspack.webviewDappPreloader";
 import { createZcashUtilityConfig } from "./rspack.zcashUtility";
 import { lldRoot } from "./utils";
+import { PORTFOLIO_PROXY_PATH } from "../../src/config/portfolioService";
 import path from "path";
 
 export interface DevServerOptions {
@@ -46,6 +47,17 @@ export async function createDevServer(options: DevServerOptions): Promise<Rspack
       "Access-Control-Allow-Origin": "*",
     },
     historyApiFallback: true,
+    // POC: the Portfolio service has no CORS headers, so the renderer reaches it through here.
+    proxy: process.env.PORTFOLIO_SERVICE_URL?.trim()
+      ? [
+          {
+            context: [PORTFOLIO_PROXY_PATH],
+            target: process.env.PORTFOLIO_SERVICE_URL.trim(),
+            changeOrigin: true,
+            pathRewrite: { [`^${PORTFOLIO_PROXY_PATH}`]: "" },
+          },
+        ]
+      : undefined,
     devMiddleware: {
       writeToDisk: true,
       stats: "errors-only",

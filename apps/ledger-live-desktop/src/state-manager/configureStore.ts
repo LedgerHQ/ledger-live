@@ -2,6 +2,7 @@ import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/to
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
+import { getPortfolioServiceUrl } from "~/config/portfolioService";
 import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -11,6 +12,7 @@ import {
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
+  portfolioApiExtra,
   pushDevicesApiExtra,
   redactCardApiAction,
   redactCardApiState,
@@ -94,6 +96,13 @@ const customCreateStore = ({
                 readCardSession,
                 isCardSessionCurrent,
                 refreshCardSession,
+              }),
+              ...portfolioApiExtra({
+                // POC, dev only: empty disables the service. Goes through the dev server proxy.
+                portfolioServiceUrl: getPortfolioServiceUrl(
+                  process.env.PORTFOLIO_SERVICE_URL,
+                  window.location.origin,
+                ),
               }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),

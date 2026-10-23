@@ -24,6 +24,7 @@
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
     "@domain/api-account-data": "workspace:*",
+    "@domain/api-account-portfolio": "workspace:*",
     "@domain/api-card-management": "workspace:*",
     "@domain/api-currency-token": "workspace:*",
     "@domain/entity-account": "workspace:*",
