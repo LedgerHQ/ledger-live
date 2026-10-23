@@ -12,7 +12,7 @@ import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
 import {
   beginDepositRequest,
   cancelDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(

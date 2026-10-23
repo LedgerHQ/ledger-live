@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { parseCurrencyUnit } from "../../currencies";
+import { parseCurrencyUnit } from "../../../currencies";
 
 /** Max-deposit fee buffer in smallest units, for native coins only. */
 export function getDepositMaxBuffer(

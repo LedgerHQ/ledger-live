@@ -1,10 +1,11 @@
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { fetchPerpsDepositQuote, PERPS_DEPOSIT_QUOTE_PROVIDER } from "./depositQuote";
-import { setWalletApiIdForAccountId } from "../converters";
-import { fetchQuotes } from "../Exchange/quotes/service/fetchQuotes";
-import type { FetchQuotesResult } from "../Exchange/quotes/service/types";
+import { fetchPerpsDepositQuote } from "./quote";
+import { PERPS_SWAPKIT_PROVIDER } from "../constants";
+import { setWalletApiIdForAccountId } from "../../converters";
+import { fetchQuotes } from "../../Exchange/quotes/service/fetchQuotes";
+import type { FetchQuotesResult } from "../../Exchange/quotes/service/types";
 
-jest.mock("../Exchange/quotes/service/fetchQuotes");
+jest.mock("../../Exchange/quotes/service/fetchQuotes");
 
 const mockedFetchQuotes = jest.mocked(fetchQuotes);
 
@@ -70,7 +71,7 @@ describe("fetchPerpsDepositQuote", () => {
 
     expect(mockedFetchQuotes).toHaveBeenCalledWith(
       {
-        providers: [PERPS_DEPOSIT_QUOTE_PROVIDER],
+        providers: [PERPS_SWAPKIT_PROVIDER],
         data: expect.objectContaining({
           amount: "10",
           sendAddress: "0xsender",
