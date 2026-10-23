@@ -91,11 +91,14 @@ function checkNoKeychainEntry(profileId: string, allowPlaintextKey: boolean): Ag
   try {
     exists = hasAgentIntentSecretKey(profileId);
   } catch (e) {
-    const refusal = `can't read the entry of profile "${profileId}"`;
-    assertPlaintextFallbackAllowed(e, refusal, allowPlaintextKey);
+    const failure = {
+      linux: `The OS keychain can't read the entry of profile "${profileId}"`,
+      elsewhere: `Could not read the OS keychain entry of profile "${profileId}"`,
+    };
+    assertPlaintextFallbackAllowed(e, failure, allowPlaintextKey);
     writeStderr(
-      `⚠ The OS keychain ${refusal} (${errMessage(e)}); the agent key goes to the plaintext ` +
-        `file ${agentIntentKeyFilePath(profileId)} because --allow-plaintext-key was passed.\n`,
+      `⚠ ${failure.linux} (${errMessage(e)}); the agent key goes to the plaintext file ` +
+        `${agentIntentKeyFilePath(profileId)} because --allow-plaintext-key was passed.\n`,
     );
     return "plaintext-file";
   }
@@ -126,24 +129,24 @@ function chooseKeyStore(profileId: string, allowPlaintextKey: boolean): AgentInt
 }
 
 // A reachable keychain that can't take the key (a refused write, an unreadable entry) gives way to
-// the key file only on Linux and only with --allow-plaintext-key.
+// the key file only on Linux and only with --allow-plaintext-key. `failure` names what went wrong,
+// in the Linux wording or in the generic error used elsewhere.
 function assertPlaintextFallbackAllowed(
   e: unknown,
-  refusal: string,
+  failure: { linux: string; elsewhere: string },
   allowPlaintextKey: boolean,
 ): void {
   if (process.platform !== "linux") {
     throw new Error(
-      `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +
-        "Intent needs a working OS keychain: macOS Keychain, Windows Credential Manager, or on " +
-        "Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an " +
-        "unlocked collection. Nothing was saved.",
+      `${failure.elsewhere} (${errMessage(e)}). Agent Intent needs a working OS keychain: macOS ` +
+        "Keychain, Windows Credential Manager, or on Linux a running Secret Service provider " +
+        "(e.g. gnome-keyring or KeePassXC) with an unlocked collection. Nothing was saved.",
       { cause: e },
     );
   }
   if (!allowPlaintextKey) {
     throw new KeychainUnavailableError(
-      `The OS keychain ${refusal} (${errMessage(e)}), so nothing was saved. ${REFUSED_WRITE_HINT}`,
+      `${failure.linux} (${errMessage(e)}), so nothing was saved. ${REFUSED_WRITE_HINT}`,
       { cause: e },
     );
   }
@@ -192,7 +195,11 @@ async function saveSecretKey(
       return "plaintext-file";
     }
     // Reachable but refusing the write, e.g. a locked collection with no one to unlock it.
-    assertPlaintextFallbackAllowed(e, "refused to store the agent key", allowPlaintextKey);
+    const failure = {
+      linux: "The OS keychain refused to store the agent key",
+      elsewhere: "Could not store the agent's secret key in the OS keychain",
+    };
+    assertPlaintextFallbackAllowed(e, failure, allowPlaintextKey);
     saveKeyFile(profileId, secretKey);
     writeStderr(
       `⚠ The OS keychain refused the write (${errMessage(e)}); the agent key went to the ` +

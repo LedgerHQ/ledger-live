@@ -305,7 +305,7 @@ describe("agent-intent enroll", () => {
 
       expect(err).not.toBeInstanceOf(KeychainUnavailableError);
       expect((err as Error).message).toMatch(
-        /Could not store the agent's secret key in the OS keychain \(User canceled the operation\.\)/,
+        /^Could not read the OS keychain entry of profile "test-agent" \(User canceled the operation\.\)\. Agent Intent needs a working OS keychain.*Nothing was saved\.$/,
       );
       expect(savedKeyFiles.size).toBe(0);
       expect(savedSecretKeys.size).toBe(0);
